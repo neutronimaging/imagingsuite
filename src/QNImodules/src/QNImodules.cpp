@@ -16,7 +16,8 @@
 #include "stdafx.h"
 #include "QNImodules.h"
 
-
+#include "SpotCleanModule.h"
+#include "ReferenceImageCorrectionModule.h"
 
 #include "../include/KiplProcessModuleBase.h"
 
@@ -34,8 +35,11 @@ DLL_EXPORT void * GetModule(const char * application, const char * name)
 	if (name!=NULL) {
 		std::string sName=name;
 
-//		if (sName=="BasicThreshold")
-//			return new BasicThreshold;
+		if (sName=="SpotClean")
+			return new SpotCleanModule;
+
+		if (sName=="ReferenceImageCorrection")
+			return new ReferenceImageCorrectionModule;
 
 	}
 
@@ -64,8 +68,11 @@ DLL_EXPORT int GetModuleList(const char * application, void *listptr)
 
 	std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-//	BasicThreshold bt;
-//	modulelist->operator []("BasicThreshold")=bt.GetParameters();
+	SpotCleanModule scm;
+	modulelist->operator []("SpotClean")=scm.GetParameters();
+
+	ReferenceImageCorrectionModule ricm;
+	modulelist->operator []("ReferenceImageCorrection")=ricm.GetParameters();
 
 	return 0;
 }
