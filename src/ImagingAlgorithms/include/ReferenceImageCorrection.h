@@ -8,9 +8,14 @@
 #ifndef REFERENCEIMAGECORRECTION_H_
 #define REFERENCEIMAGECORRECTION_H_
 
+#include "../src/stdafx.h"
 #include <base/timage.h>
+#include <logging/logger.h>
+namespace imagingalgorithms {
 
-class ReferenceImageCorrection {
+class DLL_EXPORT ReferenceImageCorrection {
+protected:
+	kipl::logging::Logger logger;
 public:
 	ReferenceImageCorrection();
 	virtual ~ReferenceImageCorrection();
@@ -44,5 +49,6 @@ protected:
 	size_t m_nBlackBodyROI[4];
 
 };
+}
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */

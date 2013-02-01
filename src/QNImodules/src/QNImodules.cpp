@@ -18,6 +18,7 @@
 
 #include "SpotCleanModule.h"
 #include "ReferenceImageCorrectionModule.h"
+#include "PolynomialCorrectionModule.h"
 
 #include "../include/KiplProcessModuleBase.h"
 
@@ -40,6 +41,9 @@ DLL_EXPORT void * GetModule(const char * application, const char * name)
 
 		if (sName=="ReferenceImageCorrection")
 			return new ReferenceImageCorrectionModule;
+
+		if (sName=="PolynomialCorrection")
+			return new PolynomialCorrectionModule;
 
 	}
 
@@ -73,6 +77,9 @@ DLL_EXPORT int GetModuleList(const char * application, void *listptr)
 
 	ReferenceImageCorrectionModule ricm;
 	modulelist->operator []("ReferenceImageCorrection")=ricm.GetParameters();
+
+	PolynomialCorrectionModule pcm;
+	modulelist->operator []("PolynomialCorrection")=pcm.GetParameters();
 
 	return 0;
 }

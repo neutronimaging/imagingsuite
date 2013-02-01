@@ -7,7 +7,9 @@
 #include "stdafx.h"
 #include "../include/SpotClean.h"
 
-SpotClean::SpotClean() {
+namespace imagingalgorithms {
+
+SpotClean::SpotClean() : logger("SpotClean"){
 	// TODO Auto-generated constructor stub
 
 }
@@ -16,3 +18,4 @@ SpotClean::~SpotClean() {
 	// TODO Auto-generated destructor stub
 }
 
+}

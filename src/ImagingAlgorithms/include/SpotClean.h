@@ -8,10 +8,19 @@
 #ifndef SPOTCLEAN_H_
 #define SPOTCLEAN_H_
 
-class SpotClean {
+#include "../src/stdafx.h"
+#include <logging/Logger.h>
+
+namespace imagingalgorithms
+{
+
+class DLL_EXPORT SpotClean {
+protected:
+	kipl::logging::Logger logger;
 public:
 	SpotClean();
 	virtual ~SpotClean();
 };
 
+}
 #endif /* SPOTCLEAN_H_ */
