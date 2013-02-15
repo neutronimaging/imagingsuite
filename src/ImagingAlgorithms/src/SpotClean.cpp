@@ -7,8 +7,15 @@
 #include "stdafx.h"
 #include <omp.h>
 
+#include <morphology/morphology.h>
+#include <morphology/morphfilters.h>
+#include <math/mathfunctions.h>
+#include <morphology/label.h>
+#include <filters/medianfilter.h>
 #include "../include/SpotClean.h"
-#include "../include/ImgAlgException.h"
+#include "../include/ImagingException.h"
+
+#include <vector>
 
 namespace ImagingAlgorithms {
 
@@ -148,7 +155,7 @@ kipl::base::TImage<float,2> SpotClean::CleanByList(kipl::base::TImage<float,2> i
 		}
 
 		if (N!=(corrected.size()+remaining.size()))
-			throw ImgAlgException("List sizes doesn't match in correction loop",__FILE__,__LINE__);
+			throw ImagingException("List sizes doesn't match in correction loop",__FILE__,__LINE__);
 
 		while (!corrected.empty()) {
 			pixel=corrected.front();
@@ -167,13 +174,13 @@ kipl::base::TImage<float,2> SpotClean::CleanByList(kipl::base::TImage<float,2> i
 	if (cnt!=0) {
 		ostringstream msg;
 		msg<<"Failed to correct "<<cnt<<" pixels";
-		throw ReconException(msg.str(),__FILE__,__LINE__);
+		throw ImagingException(msg.str(),__FILE__,__LINE__);
 	}
 	return result;
 }
 
 
-kipl::base::TImage<float,2> SpotClean::DetectSpots(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo2> *pixels)
+kipl::base::TImage<float,2> SpotClean::DetectSpots(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels)
 {
 	kipl::base::TImage<float,2> s=DetectionImage(img);
 //	kipl::base::TImage<float,2> s=StdDev(img,3);
@@ -192,15 +199,15 @@ kipl::base::TImage<float,2> SpotClean::DetectSpots(kipl::base::TImage<float,2> i
 	float *pWeight=s.GetDataPtr();
 	float *pRes=result.GetDataPtr();
 
-	kipl::containers::ArrayBuffer<PixelInfo2> processArray(img.Size());
+	kipl::containers::ArrayBuffer<PixelInfo> processArray(img.Size());
 
 	for (size_t i=0; i<img.Size(); i++) {
 		if ((pRes[i]<m_fMinLevel) || (m_fMaxLevel<pRes[i])) {
-			pixels->push_back(PixelInfo2(i,pRes[i],1.0f));
+			pixels->push_back(PixelInfo(i,pRes[i],1.0f));
 			pRes[i]=mark;
 		}
 		else if (pWeight[i]!=0) {
-			pixels->push_back(PixelInfo2(i,pRes[i],pWeight[i]));
+			pixels->push_back(PixelInfo(i,pRes[i],pWeight[i]));
 			pRes[i]=mark;
 		}
 	}
@@ -256,11 +263,11 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 }
 
 kipl::base::TImage<float,2> SpotClean::CleanByArray(kipl::base::TImage<float,2> img,
-													 kipl::containers::ArrayBuffer<PixelInfo2> *pixels)
+													 kipl::containers::ArrayBuffer<PixelInfo> *pixels)
 {
 	PrepareNeighborhood(img.Size(0),img.Size());
 
-	kipl::containers::ArrayBuffer<PixelInfo2 > toProcess(img.Size()), corrected(img.Size()), remaining(img.Size());
+	kipl::containers::ArrayBuffer<PixelInfo > toProcess(img.Size()), corrected(img.Size()), remaining(img.Size());
 
 	float neigborhood[8];
 	std::ostringstream msg;
@@ -270,7 +277,7 @@ kipl::base::TImage<float,2> SpotClean::CleanByArray(kipl::base::TImage<float,2> 
 	while (!toProcess.empty())
 	{
 		size_t N=toProcess.size();
-		PixelInfo2 *pixel=toProcess.dataptr();
+		PixelInfo *pixel=toProcess.dataptr();
 
 		for (size_t i=0; i<N; i++)
 		{
@@ -294,10 +301,10 @@ kipl::base::TImage<float,2> SpotClean::CleanByArray(kipl::base::TImage<float,2> 
 		}
 
 		if (N!=(corrected.size()+remaining.size()))
-			throw ReconException("List sizes doesn't match in correction loop",__FILE__,__LINE__);
+			throw ImagingException("List sizes doesn't match in correction loop",__FILE__,__LINE__);
 
 		// Insert the replacements
-		PixelInfo2 *correctedpixel=corrected.dataptr();
+		PixelInfo *correctedpixel=corrected.dataptr();
 		size_t correctedN=corrected.size();
 
 		for (size_t i=0; i<correctedN; i++) {
@@ -316,7 +323,7 @@ kipl::base::TImage<float,2> SpotClean::CleanByArray(kipl::base::TImage<float,2> 
 	}
 	if (cnt!=0) {
 		msg<<"Failed to correct "<<cnt<<" pixels";
-		throw ReconException(msg.str(),__FILE__,__LINE__);
+		throw ImagingException(msg.str(),__FILE__,__LINE__);
 	}
 	return img;
 }

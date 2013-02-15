@@ -51,6 +51,7 @@
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1186942528" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.760586873" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="kipl"/>
+									<listOptionValue builtIn="false" value="gomp"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1179045848" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/kipl/Debug}&quot;"/>
