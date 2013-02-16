@@ -58,7 +58,12 @@ public:
 	SpotClean();
 	virtual ~SpotClean(void);
 
-	int Setup(size_t iterations, float threshold, float width, bool bUseLUT); //, eSpotCleanAlgorithm alg);
+	int Setup(size_t iterations,
+			float threshold, float width,
+			float minlevel, float maxlevel,
+			int maxarea,
+			ImagingAlgorithms::DetectionMethod method);
+
 	kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, DetectionMethod method, size_t dims);
 	kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 	double ChangeStatistics(kipl::base::TImage<float,2> img);
@@ -69,10 +74,11 @@ public:
 
 		return s.str();
 	}
+	int Process(kipl::base::TImage<float,2> & img);
+	int Process(kipl::base::TImage<float,3> & img);
 
 protected:
-	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff);
-	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &coeff);
+
 
 	kipl::base::TImage<float,2> DetectSpots(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 	void ExcludeLargeRegions(kipl::base::TImage<float,2> &img);

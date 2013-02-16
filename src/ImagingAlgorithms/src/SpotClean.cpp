@@ -32,26 +32,32 @@ SpotClean::SpotClean() :
 	mLUT(1<<15,0.1f,0.0075f),
 	eEdgeProcessingStyle(kipl::filters::FilterBase::EdgeMirror)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
-SpotClean::~SpotClean() {
-	// TODO Auto-generated destructor stub
-}
-
-int SpotClean::Setup(size_t iterations, float threshold, float width,  bool bUseLUT)
+SpotClean::~SpotClean()
 {
-	m_fGamma      = threshold;
-	m_fSigma      = width;
-	m_nIterations = iterations;
+}
+
+int SpotClean::Setup(size_t iterations,
+		float threshold, float width,
+		float minlevel, float maxlevel,
+		int maxarea,
+		ImagingAlgorithms::DetectionMethod method)
+{
+	m_fGamma           = threshold;
+	m_fSigma           = width;
+	m_nIterations      = iterations;
+	m_fMaxLevel        = maxlevel;
+	m_fMinLevel        = minlevel;
+	m_nMaxArea         = maxarea;
+	m_eDetectionMethod = method;
 
 	mLUT.Setup(1<<15,m_fGamma,m_fSigma);
 
 	return 0;
 }
 
-int SpotClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff)
+int SpotClean::Process(kipl::base::TImage<float,2> & img)
 {
 	std::ostringstream msg;
 	msg.str("");
@@ -67,7 +73,7 @@ int SpotClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 	return 0;
 }
 
-int SpotClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &coeff)
+int SpotClean::Process(kipl::base::TImage<float,3> & img)
 {
 	std::ostringstream msg;
 	msg.str("");
