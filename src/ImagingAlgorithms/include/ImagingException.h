@@ -10,8 +10,9 @@
 
 #include <base/KiplException.h>
 #include <string>
+#include "stdafx.h"
 
-class ImagingException: public kipl::base::KiplException {
+class DLL_EXPORT ImagingException: public kipl::base::KiplException {
 public:
 	ImagingException();
 	virtual ~ImagingException();
