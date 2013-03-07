@@ -7,6 +7,8 @@
 
 #include "stdafx.h"
 #include "../include/ReferenceImageCorrection.h"
+#include <cstring>
+
 namespace ImagingAlgorithms {
 
 ReferenceImageCorrection::ReferenceImageCorrection() : logger("ReferenceImageCorrection") {
@@ -50,7 +52,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 	if (doseroi!=NULL) {
 		m_bHaveDoseROI=true;
-		memcpy(m_nDoseROI,roi,4*sizeof(size_t));
+		memcpy(m_nDoseROI,doseroi,4*sizeof(size_t));
 	}
 
 	if (bbroi!=NULL) {

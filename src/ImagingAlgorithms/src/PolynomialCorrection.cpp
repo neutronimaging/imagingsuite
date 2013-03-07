@@ -7,6 +7,9 @@
 
 #include "../include/PolynomialCorrection.h"
 #include "../include/ImagingException.h"
+#include <cstring>
+#include <cstddef>
+#include <sstream>
 #include <omp.h>
 
 namespace ImagingAlgorithms {
@@ -49,6 +52,7 @@ void PolynomialCorrection::Process(float *data, size_t N)
 {
 	//ptrdiff_t i;
 	ptrdiff_t uN=static_cast<ptrdiff_t>(N);
+
 	switch (m_nDegree)
 	{
 	case 1:
