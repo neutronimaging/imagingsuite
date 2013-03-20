@@ -26,6 +26,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include <cstring>
 
 
 DLL_EXPORT void * GetModule(const char * application, const char * name)
