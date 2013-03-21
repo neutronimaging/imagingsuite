@@ -21,6 +21,7 @@
 #define DLL_EXPORT
 #endif
 
+namespace ImagingAlgorithms {
 
 class DLL_EXPORT StripeFilter {
 private:
@@ -46,5 +47,5 @@ private:
 	size_t wdims[2];
 	kipl::math::fft::FFTBaseFloat *fft;
 };
-
+}
 #endif /* STRIPEFILTER_H_ */

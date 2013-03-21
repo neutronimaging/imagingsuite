@@ -19,6 +19,9 @@
 #include <sstream>
 #include <iostream>
 
+namespace ImagingAlgorithms {
+
+
 StripeFilter::StripeFilter(size_t const * const dims, std::string wname, size_t scale, float sigma) :
 	logger("StripeFilter"),
 	m_wt(wname),
@@ -64,7 +67,8 @@ void StripeFilter::CreateFilterWindow()
 	const float s=-1.0f/(2.0f*m_fSigma*m_fSigma);
 
 	for (size_t i=0; i<2*m_nFFTlength; i++) {
-		m_pDamping[i]=(1.0f-exp(static_cast<float>(i*i)*s));
+		float w=static_cast<float>(i)/static_cast<float>(2*m_nFFTlength);
+		m_pDamping[i]=(1.0f-exp(w*w*s));
 	}
 }
 
@@ -76,9 +80,10 @@ void StripeFilter::Process(kipl::base::TImage<float,2> &img)
 
 	list< kipl::wavelets::WaveletQuad<float> >::iterator it;
 	for (it=m_wt.data.begin(); it!=m_wt.data.end(); it++) {
-		FilterStripes(it->h);
+		FilterStripes(it->v);
 	}
 
+	m_wt.SaveSpectrum("wt.tif");
 	img=m_wt.synthesize();
 }
 
@@ -105,4 +110,5 @@ void StripeFilter::FilterStripes(kipl::base::TImage<float,2> &img)
 	}
 
 	img=transpose(timg);
+}
 }
