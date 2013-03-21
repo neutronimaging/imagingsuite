@@ -65,10 +65,11 @@ StripeFilter::~StripeFilter() {
 void StripeFilter::CreateFilterWindow()
 {
 	const float s=-1.0f/(2.0f*m_fSigma*m_fSigma);
+	const float scale=1.0f/(2.0f*m_nFFTlength);
 
 	for (size_t i=0; i<2*m_nFFTlength; i++) {
 		float w=static_cast<float>(i)/static_cast<float>(2*m_nFFTlength);
-		m_pDamping[i]=(1.0f-exp(w*w*s));
+		m_pDamping[i]=(1.0f-exp(w*w*s))*scale;
 	}
 }
 
@@ -77,38 +78,55 @@ void StripeFilter::Process(kipl::base::TImage<float,2> &img)
 	std::ostringstream msg;
 
 	m_wt.transform(img,m_nScale);
+	m_wt.SaveSpectrum("wt.tif");
 
 	list< kipl::wavelets::WaveletQuad<float> >::iterator it;
 	for (it=m_wt.data.begin(); it!=m_wt.data.end(); it++) {
-		FilterStripes(it->v);
+		FilterVerticalStripes(it->v);
 	}
-
-	m_wt.SaveSpectrum("wt.tif");
+	m_wt.SaveSpectrum("fwt.tif");
 	img=m_wt.synthesize();
 }
 
-void StripeFilter::FilterStripes(kipl::base::TImage<float,2> &img)
+void StripeFilter::FilterVerticalStripes(kipl::base::TImage<float,2> &img)
 {
 
 	const size_t nLines=img.Size(0);
 
-	kipl::base::Transpose<float> transpose;
-	kipl::base::TImage<float,2> timg=transpose(img);
+	float *pData=img.GetDataPtr();
 
 	for (size_t line=0; line<nLines; line++) {
 		memset(m_pLine,0,sizeof(float)*2*m_nFFTlength);
-		memcpy(m_pLine,timg.GetLinePtr(line),timg.Size(0));
+		GetVerticalLine(pData,m_pLine,line,nLines,img.Size(1));
 
 		(*fft)(m_pLine,m_pCLine);
 
 		for (size_t i=0; i< 2*m_nFFTlength; i++) {
-			m_pCLine[i]*=m_pDamping[i];
+//			m_pCLine[i]*=m_pDamping[i];
+			m_pCLine[i]/=2*m_nFFTlength;
 		}
 
 		(*fft)(m_pCLine, m_pLine);
-		memcpy(timg.GetLinePtr(line),m_pLine,timg.Size(0));
+		SetVerticalLine(m_pLine,pData,line,nLines,img.Size(1));
 	}
-
-	img=transpose(timg);
 }
+
+void StripeFilter::GetVerticalLine(float *pSrc, float *pLine, size_t pos, size_t stride, size_t len)
+{
+	float *pData=pSrc+pos;
+
+	for (size_t i=0; i<len; i++, pData+=stride) {
+		pLine[i]=*pData;
+	}
+}
+
+void StripeFilter::SetVerticalLine(float *pLine, float *pDest, size_t pos, size_t stride, size_t len)
+{
+	float *pData=pDest+pos;
+
+	for (size_t i=0; i<len; i++, pData+=stride) {
+		*pData=pLine[i];
+	}
+}
+
 }

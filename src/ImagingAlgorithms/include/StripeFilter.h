@@ -33,7 +33,9 @@ public:
 
 private:
 	void CreateFilterWindow();
-	void FilterStripes(kipl::base::TImage<float,2> &img);
+	void FilterVerticalStripes(kipl::base::TImage<float,2> &img);
+	void GetVerticalLine(float *pSrc, float *pLine, size_t pos, size_t stride, size_t len);
+	void SetVerticalLine(float *pLine, float *pDest, size_t pos, size_t stride, size_t len);
 
 	kipl::wavelets::WaveletTransform<float> m_wt;
 	size_t m_nScale;
