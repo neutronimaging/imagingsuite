@@ -15,8 +15,8 @@ using namespace std;
 int main(int argc, char *argv[]) {
 	cout << "Test platform for Imaging algorithms." << endl; // prints !!!Hello World!!!
 
-	//TestStripeFilter(argc,argv);
-	TestFFT(argc,argv);
+	TestStripeFilter(argc,argv);
+	//TestFFT(argc,argv);
 
 	return 0;
 }

@@ -78,13 +78,13 @@ void StripeFilter::Process(kipl::base::TImage<float,2> &img)
 	std::ostringstream msg;
 
 	m_wt.transform(img,m_nScale);
-	m_wt.SaveSpectrum("wt.tif");
+
 
 	list< kipl::wavelets::WaveletQuad<float> >::iterator it;
 	for (it=m_wt.data.begin(); it!=m_wt.data.end(); it++) {
 		FilterVerticalStripes(it->v);
 	}
-	m_wt.SaveSpectrum("fwt.tif");
+
 	img=m_wt.synthesize();
 }
 
@@ -102,8 +102,7 @@ void StripeFilter::FilterVerticalStripes(kipl::base::TImage<float,2> &img)
 		(*fft)(m_pLine,m_pCLine);
 
 		for (size_t i=0; i< 2*m_nFFTlength; i++) {
-//			m_pCLine[i]*=m_pDamping[i];
-			m_pCLine[i]/=2*m_nFFTlength;
+			m_pCLine[i]*=m_pDamping[i];
 		}
 
 		(*fft)(m_pCLine, m_pLine);

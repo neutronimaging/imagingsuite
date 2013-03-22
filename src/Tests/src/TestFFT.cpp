@@ -44,6 +44,7 @@ int TestFFT(int argc, char *argv[])
 	return 0;
 }
 
+
 void FilterVerticalStripes(kipl::base::TImage<float,2> &img)
 {
 
@@ -67,8 +68,8 @@ void FilterVerticalStripes(kipl::base::TImage<float,2> &img)
 
 		for (size_t i=0; i< 2*nFFTlength; i++) {
 //			pCLine[i]*=m_pDamping[i];
-//			pCLine[i]=static_cast<float>(i)/(2.0f*nFFTlength);
-			pCLine[i]/=(2.0f*nFFTlength);
+			pCLine[i]=static_cast<float>(i)/(2.0f*nFFTlength);
+//			pCLine[i]/=(2.0f*nFFTlength);
 		}
 
 		(*fft)(pCLine, pLine);
