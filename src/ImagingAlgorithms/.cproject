@@ -142,6 +142,8 @@
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1839085739" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.2136859671" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="kipl"/>
+									<listOptionValue builtIn="false" value="fftw3"/>
+									<listOptionValue builtIn="false" value="fftw3f"/>
 									<listOptionValue builtIn="false" value="gomp"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1884948688" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">

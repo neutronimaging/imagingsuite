@@ -77,8 +77,14 @@ void StripeFilter::Process(kipl::base::TImage<float,2> &img)
 {
 	std::ostringstream msg;
 
-	m_wt.transform(img,m_nScale);
-
+	try {
+		m_wt.transform(img,m_nScale);
+	}
+	catch (kipl::base::KiplException &e) {
+		logger(kipl::logging::Logger::LogWarning,e.what());
+		return;
+		//throw ImagingException(e.what(),__FILE__,__LINE__);
+	}
 
 	list< kipl::wavelets::WaveletQuad<float> >::iterator it;
 	for (it=m_wt.data.begin(); it!=m_wt.data.end(); it++) {
