@@ -1,24 +1,1265 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MuhRecMainWindow</class>
- <widget class="QMainWindow" name="MuhRecMainWindow" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MuhRecMainWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>562</width>
+    <height>569</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>MuhRecMainWindow</string>
   </property>
-  <widget class="QMenuBar" name="menuBar" />
-  <widget class="QToolBar" name="mainToolBar" />
-  <widget class="QWidget" name="centralWidget" />
-  <widget class="QStatusBar" name="statusBar" />
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QTabWidget" name="tabMainControl">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="currentIndex">
+       <number>3</number>
+      </property>
+      <widget class="QWidget" name="tabInformation">
+       <attribute name="title">
+        <string>Information</string>
+       </attribute>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>10</y>
+          <width>451</width>
+          <height>314</height>
+         </rect>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Project</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_Project</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEdit_Project"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Sample</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_Sample</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEdit_Sample"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Instrument</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_Instrument</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lineEdit_Instrument"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Operator</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_Operator</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="lineEdit_Operator"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Description</string>
+           </property>
+           <property name="buddy">
+            <cstring>textEdit_Description</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QTextEdit" name="textEdit_Description"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tabProjInfo">
+       <attribute name="title">
+        <string>Configure projections</string>
+       </attribute>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>531</width>
+          <height>673</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Projection images</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="1" colspan="3">
+             <widget class="QLineEdit" name="lineEdit_2"/>
+            </item>
+            <item row="4" column="1" colspan="3">
+             <widget class="QLineEdit" name="lineEdit_3"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Skip list</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_3</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>File index</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="3">
+             <widget class="QLineEdit" name="lineEdit"/>
+            </item>
+            <item row="2" column="4">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>114</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>File mask</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_2</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="3">
+             <widget class="QComboBox" name="comboBox_3">
+              <item>
+               <property name="text">
+                <string>No rotation</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>90 degrees CW</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>180 degrees CW</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>90 degrees CCW</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Binning</string>
+              </property>
+              <property name="buddy">
+               <cstring>spinBox_4</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2">
+             <widget class="QComboBox" name="comboBox_2">
+              <item>
+               <property name="text">
+                <string>No flip</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Horizontal flip</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Vertical flip</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Horizontal and vertical flip</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="4">
+             <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>Projection</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sinogram</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Same projection</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Same slice</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>114</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="6" column="1">
+             <widget class="QSpinBox" name="spinBox_4">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>8</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Path</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" colspan="3">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>First</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox">
+                <property name="maximum">
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_12">
+                <property name="text">
+                 <string>Step</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_2</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_2">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>500</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>Last</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_3</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_3">
+                <property name="maximum">
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="6" column="4">
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>Preview</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Reference images</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string>Take path</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEdit_4"/>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>118</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Open beam mask</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineEdit_5"/>
+            </item>
+            <item row="1" column="2">
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>118</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="0">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>93</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>First</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_5</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_5"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>Count</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_6</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_6"/>
+              </item>
+             </layout>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>Dark mask</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEdit_6"/>
+            </item>
+            <item row="3" column="2">
+             <spacer name="horizontalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>118</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0">
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>93</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_23">
+                <property name="text">
+                 <string>First</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_5</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_11"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_24">
+                <property name="text">
+                 <string>Count</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_6</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_12"/>
+              </item>
+             </layout>
+            </item>
+            <item row="5" column="1">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>27</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_18">
+              <property name="text">
+               <string>Dose ROI</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QLabel" name="label_19">
+                <property name="text">
+                 <string>x0</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_7</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_7"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>y0</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_8</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_8"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_21">
+                <property name="text">
+                 <string>x1</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_9</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_9"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_22">
+                <property name="text">
+                 <string>y1</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBox_10</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBox_10"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="title">
+            <string>Geometry</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0" colspan="2">
+             <widget class="QLabel" name="label_25">
+              <property name="text">
+               <string>Margins</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" colspan="3">
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>94</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="5">
+             <widget class="QLabel" name="label_29">
+              <property name="text">
+               <string>Left</string>
+              </property>
+              <property name="buddy">
+               <cstring>spinBox_13</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="6">
+             <widget class="QSpinBox" name="spinBox_13"/>
+            </item>
+            <item row="0" column="7">
+             <widget class="QLabel" name="label_30">
+              <property name="text">
+               <string>Right</string>
+              </property>
+              <property name="buddy">
+               <cstring>spinBox_14</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="8">
+             <widget class="QSpinBox" name="spinBox_14"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_26">
+              <property name="text">
+               <string>Slices</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="4">
+             <spacer name="horizontalSpacer_12">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>126</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="5">
+             <widget class="QLabel" name="label_31">
+              <property name="text">
+               <string>First</string>
+              </property>
+              <property name="buddy">
+               <cstring>spinBox_15</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="6">
+             <widget class="QSpinBox" name="spinBox_15"/>
+            </item>
+            <item row="1" column="7">
+             <widget class="QLabel" name="label_32">
+              <property name="text">
+               <string>Last</string>
+              </property>
+              <property name="buddy">
+               <cstring>spinBox_16</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="8">
+             <widget class="QSpinBox" name="spinBox_16"/>
+            </item>
+            <item row="2" column="0" colspan="3">
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>Scan angles</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3" colspan="2">
+             <spacer name="horizontalSpacer_13">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>62</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="5">
+             <widget class="QLabel" name="label_33">
+              <property name="text">
+               <string>Start</string>
+              </property>
+              <property name="buddy">
+               <cstring>doubleSpinBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="6">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+            </item>
+            <item row="2" column="7">
+             <widget class="QLabel" name="label_34">
+              <property name="text">
+               <string>Stop</string>
+              </property>
+              <property name="buddy">
+               <cstring>doubleSpinBox_2</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="8">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+            </item>
+            <item row="3" column="0" rowspan="2" colspan="4">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>Center of rotation</string>
+              </property>
+              <property name="buddy">
+               <cstring>doubleSpinBox_6</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="4" rowspan="2" colspan="2">
+             <spacer name="horizontalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>68</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="3" column="6" rowspan="2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_6"/>
+            </item>
+            <item row="3" column="7" rowspan="2" colspan="3">
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>113</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="0" colspan="5">
+             <widget class="QCheckBox" name="checkBox">
+              <property name="text">
+               <string>Correct axis tilt</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="5">
+             <widget class="QLabel" name="label_35">
+              <property name="text">
+               <string>Angle</string>
+              </property>
+              <property name="buddy">
+               <cstring>doubleSpinBox_3</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="6">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+            </item>
+            <item row="5" column="7">
+             <widget class="QLabel" name="label_36">
+              <property name="text">
+               <string>Pivot</string>
+              </property>
+              <property name="buddy">
+               <cstring>doubleSpinBox_4</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="8">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+            </item>
+            <item row="6" column="0" colspan="2">
+             <widget class="QLabel" name="label_37">
+              <property name="text">
+               <string>Resolution</string>
+              </property>
+              <property name="buddy">
+               <cstring>doubleSpinBox_5</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2" colspan="3">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+            </item>
+            <item row="6" column="10">
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="text">
+               <string>Configure geometry</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="10">
+             <widget class="QComboBox" name="comboBox_4">
+              <item>
+               <property name="text">
+                <string>Sequence</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Golden ratio</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tabProcSettings">
+       <attribute name="title">
+        <string>Processing configuration</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>521</width>
+          <height>431</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Preprocessing modules</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>440</y>
+          <width>531</width>
+          <height>93</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Back-projector configuration</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_38">
+           <property name="text">
+            <string>Back-projector module</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_7</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="lineEdit_7"/>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="pushButton_4">
+           <property name="text">
+            <string>Configure</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_39">
+           <property name="text">
+            <string>Rotation angle</string>
+           </property>
+           <property name="buddy">
+            <cstring>doubleSpinBox_7</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_7"/>
+         </item>
+         <item row="1" column="2">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>237</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tabMatrix">
+       <attribute name="title">
+        <string>Results</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>413</width>
+          <height>94</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Matrix settings</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_40">
+           <property name="text">
+            <string>Gray levels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Low</string>
+             </property>
+             <property name="buddy">
+              <cstring>doubleSpinBox_8</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_8"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>High</string>
+             </property>
+             <property name="buddy">
+              <cstring>doubleSpinBox_9</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_9"/>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="checkBox_3">
+           <property name="text">
+            <string>Auto levels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBox_2">
+           <property name="text">
+            <string>Reconstruct ROI</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>x0</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBox_17</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_17"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>y0</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBox_18</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_18"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>x1</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBox_19</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_19"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>y1</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBox_20</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_20"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_7">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>100</y>
+          <width>551</width>
+          <height>211</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Histogram</string>
+        </property>
+        <widget class="QLabel" name="label_47">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>190</y>
+           <width>81</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Entropy N/A</string>
+         </property>
+        </widget>
+        <widget class="QFrame" name="frame">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>531</width>
+           <height>171</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_8">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>310</y>
+          <width>548</width>
+          <height>123</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Output</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_7">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_48">
+           <property name="text">
+            <string>Destination path</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_8</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEdit_8"/>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_14">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>112</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_49">
+           <property name="text">
+            <string>Slice mask</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_9</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEdit_9"/>
+         </item>
+         <item row="1" column="2">
+          <widget class="QComboBox" name="comboBox_5">
+           <item>
+            <property name="text">
+             <string>8-bit TIFF</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>16-bit TIFF</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Float TIFF (32-bit)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>398</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="2">
+          <widget class="QPushButton" name="pushButton_5">
+           <property name="text">
+            <string>Save matrix</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tabLogging">
+       <attribute name="title">
+        <string>Logging</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>562</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="text">
+    <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
 </ui>
