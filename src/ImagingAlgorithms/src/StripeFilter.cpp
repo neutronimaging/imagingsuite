@@ -27,37 +27,39 @@ StripeFilter::StripeFilter(size_t const * const dims, std::string wname, size_t 
 	m_wt(wname),
 	m_nScale(scale),
 	m_fSigma(sigma),
-	m_nFFTlength(kipl::math::fft::NextPower2(1.25*dims[1])),
-	m_pDamping(NULL),
 	m_pLine(NULL),
-	m_pCLine(NULL),
-	fft(NULL)
+	m_pCLine(NULL)
 {
 	std::ostringstream msg;
+	for (size_t i=0; i<m_nScale; i++) {
+		m_nFFTlength[i]=kipl::math::fft::NextPower2(static_cast<size_t>(1.25*dims[1])>>i);
+		size_t N=2*m_nFFTlength[i];
+		fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
+		m_pDamping[i] = new float[N];
+	}
 
-	size_t N=2*m_nFFTlength;
-	m_pDamping = new float[N];
+	size_t N=2*m_nFFTlength[0];
+
 	m_pLine    = new float[N];
 	m_pCLine   = new complex<float>[N];
-
-	
-	fft=new kipl::math::fft::FFTBaseFloat(&N,1);
 
 	CreateFilterWindow();
 }
 
 StripeFilter::~StripeFilter() {
-	if (m_pDamping!=0)
-		delete [] m_pDamping;
+	if (m_pDamping[0]!=NULL)
+		for (size_t i=0; i<m_nScale; i++)
+			delete [] m_pDamping[i];
 
-	if (m_pLine!=0)
+	if (m_pLine!=NULL)
 		delete [] m_pLine;
 
-	if (m_pCLine!=0)
+	if (m_pCLine!=NULL)
 		delete [] m_pCLine;
 
-	if (fft!=NULL) {
-		delete fft;
+	if (fft[0]!=NULL) {
+		for (size_t i=0; i<m_nScale; i++)
+		delete fft[i];
 	}
 }
 
@@ -65,15 +67,17 @@ StripeFilter::~StripeFilter() {
 void StripeFilter::CreateFilterWindow()
 {
 	const float s=-1.0f/(2.0f*m_fSigma*m_fSigma);
-	const float scale=1.0f/(2.0f*m_nFFTlength);
 
-	for (size_t i=0; i<2*m_nFFTlength; i++) {
-		float w=static_cast<float>(i)/static_cast<float>(2*m_nFFTlength);
-		m_pDamping[i]=(1.0f-exp(w*w*s))*scale;
+	for (size_t j=0; j<m_nScale; j++) {
+		const float scale=1.0f/(2.0f*m_nFFTlength[j]);
+		for (size_t i=0; i<2*m_nFFTlength[j]; i++) {
+			float w=static_cast<float>(i)*scale;
+			m_pDamping[j][i]=(1.0f-exp(w*w*s))*scale;
+		}
 	}
 }
 
-void StripeFilter::Process(kipl::base::TImage<float,2> &img)
+void StripeFilter::Process(kipl::base::TImage<float,2> &img, StripeFilterOperation op)
 {
 	std::ostringstream msg;
 
@@ -87,14 +91,18 @@ void StripeFilter::Process(kipl::base::TImage<float,2> &img)
 	}
 
 	list< kipl::wavelets::WaveletQuad<float> >::iterator it;
-	for (it=m_wt.data.begin(); it!=m_wt.data.end(); it++) {
-		FilterVerticalStripes(it->v);
+	size_t level=0;
+	for (it=m_wt.data.begin(), level=0; it!=m_wt.data.end(); it++, level++) {
+		switch (op) {
+		case VerticalComponentZero : VerticalStripesZero(it->v); break;
+		case VerticalComponentFFT  : FilterVerticalStripes(it->v, level); break;
+		}
 	}
 
 	img=m_wt.synthesize();
 }
 
-void StripeFilter::FilterVerticalStripes(kipl::base::TImage<float,2> &img)
+void StripeFilter::FilterVerticalStripes(kipl::base::TImage<float,2> &img, size_t level)
 {
 
 	const size_t nLines=img.Size(0);
@@ -102,18 +110,23 @@ void StripeFilter::FilterVerticalStripes(kipl::base::TImage<float,2> &img)
 	float *pData=img.GetDataPtr();
 
 	for (size_t line=0; line<nLines; line++) {
-		memset(m_pLine,0,sizeof(float)*2*m_nFFTlength);
+		memset(m_pLine,0,sizeof(float)*2*m_nFFTlength[level]);
 		GetVerticalLine(pData,m_pLine,line,nLines,img.Size(1));
 
-		(*fft)(m_pLine,m_pCLine);
+		(*fft[level])(m_pLine,m_pCLine);
 
-		for (size_t i=0; i< 2*m_nFFTlength; i++) {
-			m_pCLine[i]*=m_pDamping[i];
+		for (size_t i=0; i< 2*m_nFFTlength[level]; i++) {
+			m_pCLine[i]*=m_pDamping[level][i];
 		}
 
-		(*fft)(m_pCLine, m_pLine);
+		(*fft[level])(m_pCLine, m_pLine);
 		SetVerticalLine(m_pLine,pData,line,nLines,img.Size(1));
 	}
+}
+
+void StripeFilter::VerticalStripesZero(kipl::base::TImage<float,2> &img)
+{
+	img=0.0f;
 }
 
 void StripeFilter::GetVerticalLine(float *pSrc, float *pLine, size_t pos, size_t stride, size_t len)
@@ -134,4 +147,33 @@ void StripeFilter::SetVerticalLine(float *pLine, float *pDest, size_t pos, size_
 	}
 }
 
+}
+
+std::string enum2string(ImagingAlgorithms::StripeFilterOperation op)
+{
+	std::string str;
+
+	switch (op) {
+	case ImagingAlgorithms::VerticalComponentZero :  return "verticalzero"; break;
+	case ImagingAlgorithms::VerticalComponentFFT  :  return "verticalfft"; break;
+	default : throw ImagingException("Unknown stripe filter operation", __FILE__, __LINE__);
+	}
+	return str;
+}
+
+void string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op)
+{
+		if (str=="verticalzero")
+			op=ImagingAlgorithms::VerticalComponentZero;
+		else if (str=="verticalfft")
+			op=ImagingAlgorithms::VerticalComponentFFT;
+		else
+			throw ImagingException("Could not translate string to stripe filter operation", __FILE__, __LINE__);
+}
+
+std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::StripeFilterOperation op)
+{
+	s<<enum2string(op);
+
+	return s;
 }
