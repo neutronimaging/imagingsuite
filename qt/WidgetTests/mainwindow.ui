@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>599</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,13 +37,36 @@
      <string>PushButton</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="PlotButton">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>230</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Plot</string>
+    </property>
+   </widget>
+   <widget class="QtAddons::Plotter" name="CurvePlotter" native="true">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>220</y>
+      <width>191</width>
+      <height>161</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>599</width>
      <height>21</height>
     </rect>
    </property>
@@ -64,6 +87,12 @@
    <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
    <header location="global">qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

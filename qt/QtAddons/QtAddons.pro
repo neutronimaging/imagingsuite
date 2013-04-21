@@ -11,10 +11,12 @@ TEMPLATE = lib
 
 DEFINES += QTADDONS_LIBRARY
 
-SOURCES += qtlogviewer.cpp
+SOURCES += qtlogviewer.cpp \
+    plotter.cpp
 
 HEADERS += qtlogviewer.h\
-        QtAddons_global.h
+        QtAddons_global.h \
+    plotter.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
