@@ -1,0 +1,12 @@
+#ifndef QTADDONS_GLOBAL_H
+#define QTADDONS_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(QTADDONS_LIBRARY)
+#  define QTADDONSSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define QTADDONSSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // QTADDONS_GLOBAL_H
