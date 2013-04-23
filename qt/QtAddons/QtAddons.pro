@@ -9,14 +9,22 @@ QT       += svg
 TARGET = QtAddons
 TEMPLATE = lib
 
+CMAKE_CXX_FLAGS += "-fPIC -fopenmp"
+
 DEFINES += QTADDONS_LIBRARY
 
 SOURCES += qtlogviewer.cpp \
-    plotter.cpp
+    plotter.cpp \
+    imagepainter.cpp \
+    imageviewerwidget.cpp
+
+
 
 HEADERS += qtlogviewer.h\
         QtAddons_global.h \
-    plotter.h
+    plotter.h \
+    imagepainter.h \
+    imageviewerwidget.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
