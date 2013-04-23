@@ -37,14 +37,10 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release/debug/ -lkipl
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/kipl-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Debug/release/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/kipl-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Debug/debug/ -lkipl
 else:symbian: LIBS += -lkipl
-else:unix: LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release/ -lkipl
+else:unix: LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/kipl-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release
-
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release/release/kipl.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release/debug/kipl.lib
-else:unix:!symbian: PRE_TARGETDEPS += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/Release/libkipl.a
+DEPENDPATH += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/include

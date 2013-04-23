@@ -65,7 +65,7 @@ void QtLogViewer::SetLogLevel(kipl::logging::Logger::LogLevel level)
         loglevel_combo.setCurrentIndex(static_cast<int>(level));
         std::ostringstream msg;
         msg<<"Changed log-level to "<<kipl::logging::Logger::GetLogLevel();
-        logger(kipl::logging::Logger::LogVerbose,msg.str());
+        logger(kipl::logging::Logger::LogMessage,msg.str());
 }
 
 void QtLogViewer::clear()
@@ -78,7 +78,6 @@ void QtLogViewer::save_clicked()
 {
     logger(kipl::logging::Logger::LogVerbose,"Save the log buffer");
 
- //   QFileDialog fd(this,"Save the log messages to...");
     QString filename = QFileDialog::getSaveFileName(this,
          tr("Save log file"), "/home", tr("log Files (*.log)"));
     QFile f( filename );
