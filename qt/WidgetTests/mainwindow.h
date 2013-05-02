@@ -19,12 +19,14 @@ public:
     
 private:
     Ui::MainWindow *ui;
+    float m_fScale;
 
 private slots:
     void TestClicked();
     void PlotClicked();
 
 
+    void on_ShowImageButton_clicked();
 };
 
 #endif // MAINWINDOW_H

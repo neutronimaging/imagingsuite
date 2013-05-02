@@ -3,13 +3,17 @@
 #include <QRect>
 #include <QColor>
 #include <QWidget>
+#include <QResizeEvent>
 #include <imagepainter.h>
+#include <logging/logger.h>
 
 namespace QtAddons {
 
 class ImageViewerWidget : public QWidget
 {
     Q_OBJECT
+
+    kipl::logging::Logger logger;
 public:
    // explicit ImageViewerWidget(QWidget *parent = 0);
     ImageViewerWidget(QWidget *parent = 0);
@@ -37,8 +41,8 @@ public slots:
 //    void zoomOut();
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *);
+    virtual void paintEvent(QPaintEvent *event);
+    virtual void resizeEvent(QResizeEvent * event);
 //    void mousePressEvent(QMouseEvent *event);
 //    void mouseMoveEvent(QMouseEvent *event);
 //    void mouseReleaseEvent(QMouseEvent *event);
@@ -49,6 +53,7 @@ protected:
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
     void refreshPixmap();
+    QSize widgetSize;
     enum { Margin = 5 };
 
 

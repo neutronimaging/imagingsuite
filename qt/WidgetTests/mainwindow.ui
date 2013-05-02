@@ -34,7 +34,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Test message</string>
     </property>
    </widget>
    <widget class="QPushButton" name="PlotButton">
@@ -60,14 +60,27 @@
      </rect>
     </property>
    </widget>
-   <widget class="QtAddons::ImageViewerWidget" name="Image" native="true">
+   <widget class="QtAddons::ImageViewerWidget" name="ImageView" native="true">
     <property name="geometry">
      <rect>
-      <x>350</x>
-      <y>210</y>
+      <x>280</x>
+      <y>220</y>
       <width>181</width>
       <height>151</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ShowImageButton">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>180</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show image</string>
     </property>
    </widget>
   </widget>
@@ -77,7 +90,7 @@
      <x>0</x>
      <y>0</y>
      <width>599</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

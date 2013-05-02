@@ -2,10 +2,13 @@
 #define IMAGEPAINTER_H
 #include <cstdlib>
 #include <QPixmap>
+#include <QWidget>
 #include <QMap>
 #include <QColor>
 #include <QRect>
+#include <QPainter>
 #include <map>
+#include <logging/logger.h>
 
 class QPainter;
 
@@ -14,10 +17,12 @@ namespace QtAddons {
 
 class ImagePainter
 {
+    QWidget * m_pParent;
+    kipl::logging::Logger logger;
 public:
-    ImagePainter();
+    ImagePainter(QWidget *parent=NULL);
     ~ImagePainter();
-    void Render(const QPainter &painter, int x, int y, int w, int h);
+    void Render(QPainter &painter, int x, int y, int w, int h);
 
     void set_image(float const * const data, size_t const * const dims);
     void set_image(float const * const data, size_t const * const dims, const float low, const float high);

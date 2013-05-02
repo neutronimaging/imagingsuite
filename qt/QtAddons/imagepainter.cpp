@@ -1,12 +1,14 @@
 #include "imagepainter.h"
 #include <math/image_statistics.h>
+#include <sstream>
 
 namespace QtAddons {
 
-ImagePainter::ImagePainter() :
-          //m_Interpolation(Gdk::INTERP_TILES),
-          m_data(NULL),
-          m_cdata(NULL)
+ImagePainter::ImagePainter(QWidget * parent) :
+    m_pParent(parent),
+    logger("ImagePainter"),
+    m_data(NULL),
+    m_cdata(NULL)
 {
       m_dims[0]=m_dims[1]=16;
       m_NData=m_dims[0]*m_dims[1];
@@ -29,21 +31,25 @@ ImagePainter::~ImagePainter()
         delete [] m_cdata;
 }
 
-void ImagePainter::Render(const QPainter &painter, int x, int y, int w, int h)
+void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 {
     float img_ratio        = static_cast<float>(m_dims[0])/static_cast<float>(m_dims[1]);
     float allocation_ratio = static_cast<float>(w)/static_cast<float>(h);
 
-    QPixmap scaled;
+    if (!m_pixmap_full.isNull())
+    {
+        logger(kipl::logging::Logger::LogMessage,"Drawing the image");
+        QSize widgetSize(w,h);
+        QPoint centerPoint(0,0);
+        // Scale new image which size is widgetSize
+        QPixmap scaledPixmap = m_pixmap_full.scaled(widgetSize, Qt::KeepAspectRatio);
+        // Calculate image center position into screen
+        centerPoint.setX((widgetSize.width()-scaledPixmap.width())/2);
+        centerPoint.setY((widgetSize.height()-scaledPixmap.height())/2);
+        // Draw image
 
-//    if (img_ratio < allocation_ratio)
-//        scaled=m_pixbuf_full->scale_simple(static_cast<int>(h*img_ratio),
-//                                     h,
-//                                     m_Interpolation);
-//    else
-//        scaled=m_pixbuf_full->scale_simple(w,
-//                                     static_cast<int>(w/img_ratio),
-//                                     m_Interpolation);
+        painter.drawPixmap(centerPoint,scaledPixmap);
+    }
 
 //    offset_x = (w-scaled->get_width())/2+x;
 //    offset_y = (h-scaled->get_height())/2+y;
@@ -231,38 +237,52 @@ void ImagePainter::show_clamped(bool show)
 
 void ImagePainter::prepare_pixbuf()
 {
+    ostringstream msg;
     if (m_cdata!=NULL)
         delete [] m_cdata;
 
-    m_cdata=new uchar[m_NData*4];
+    m_cdata=new uchar[m_NData*3];
     memset(m_cdata,0,3*sizeof(uchar)*m_NData);
 
     const float scale=255.0f/(m_MaxVal-m_MinVal);
     float val=0.0;
     int idx=0;
     for (int i=0; i<m_NData; i++) {
-        idx=4*i;
+        idx=3*i;
         if (m_data[i]==m_data[i]) {
             val=(m_data[i]-m_MinVal)*scale;
             if (255.0f<val)
-                m_cdata[idx+1]=255;
+                m_cdata[idx]=255;
             else if (val<0.0f)
-                m_cdata[idx+1]=0;
+                m_cdata[idx]=0;
             else
-                m_cdata[idx+1]=static_cast<uchar>(val);
+                m_cdata[idx]=static_cast<uchar>(val);
 
-            m_cdata[idx+3]=m_cdata[idx+2]=m_cdata[idx+1];
-            m_cdata[idx]=255;
+            m_cdata[idx+2]=m_cdata[idx+1]=m_cdata[idx];
         }
         else {
             m_cdata[idx]=255;
             m_cdata[idx+1]=0;
             m_cdata[idx+2]=0;
-            m_cdata[idx+3]=0;
         }
     }
 
-    QImage qimg(m_cdata,m_dims[0],m_dims[1],QImage::Format_ARGB32);
-    m_pixmap_full.fromImage(qimg);
+    msg.str(""); msg<<"Preparing Qimage for "<<m_dims[0]<<"x"<<m_dims[1];
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+    QImage qimg(m_cdata,m_dims[0],m_dims[1],3*m_dims[0],QImage::Format_RGB888);
+    QSize imgdims=qimg.size();
+    msg.str(""); msg<<"Qimage with "<<imgdims.width()<<"x"<<imgdims.height()<<" created";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    m_pixmap_full=QPixmap::fromImage(qimg);
+
+    if (m_pixmap_full.isNull()) {
+        logger(kipl::logging::Logger::LogMessage,"Pixmap failed");
+    }
+
+    if (m_pParent!=NULL) {
+        m_pParent->update();
+    }
+
 }
-} /* namespace Gtk_addons */
+}

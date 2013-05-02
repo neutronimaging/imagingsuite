@@ -5,7 +5,9 @@
 namespace QtAddons {
 
 ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    logger("ImageViewerWidget"),
+    m_ImagePainter(this)
 {
 }
 
@@ -25,8 +27,10 @@ QSize ImageViewerWidget::sizeHint() const
 
 void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
 {
-    QStylePainter painter(this);
+    //logger(kipl::logging::Logger::LogMessage,"paint event");
+    QPainter painter(this);
     QSize s=this->size();
+
     m_ImagePainter.Render(painter,0,0,s.width(),s.height());
 
     //   painter.drawPixmap(0, 0, pixmap);
@@ -45,12 +49,11 @@ void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
 //    }
 }
 
-void ImageViewerWidget::resizeEvent(QResizeEvent * )
+void ImageViewerWidget::resizeEvent(QResizeEvent *event )
 {
-//    QSize s=this->size();
-
-//    QStylePainter painter(this);
-//    m_ImagePainter.Render(painter,0,0,s.width(),s.height());
+    widgetSize = event->size();
+    // Call base class impl
+    QWidget::resizeEvent(event);
 }
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)

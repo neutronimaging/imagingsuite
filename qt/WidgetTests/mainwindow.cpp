@@ -1,11 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <cmath>
+#include <base/timage.h>
+#include <generators/Sine2D.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("MainWindow"),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_fScale(1.0)
 {
     ui->setupUi(this);
     kipl::logging::Logger::AddLogTarget(*ui->LogView);
@@ -36,4 +39,13 @@ void MainWindow::PlotClicked()
     }
 
     ui->CurvePlotter->setCurveData(0,data);
+}
+
+void MainWindow::on_ShowImageButton_clicked()
+{
+    m_fScale=fmod(m_fScale+1.0,10.0);
+    kipl::base::TImage<float,2> img=kipl::generators::Sine2D::JaehneRings(100,m_fScale);
+
+    ui->ImageView->set_image(img.GetDataPtr(),img.Dims());
+
 }
