@@ -30,6 +30,7 @@ public:
     void set_levels(const float level_low, const float level_high);
     void get_levels(float *level_low, float *level_high);
     void show_clamped(bool show);
+    QRect get_marked_roi();
 
  //   void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp; queue_draw(); }
 
@@ -43,9 +44,9 @@ public slots:
 protected:
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent * event);
-//    void mousePressEvent(QMouseEvent *event);
-//    void mouseMoveEvent(QMouseEvent *event);
-//    void mouseReleaseEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 //    void keyPressEvent(QKeyEvent *event);
 //    void wheelEvent(QWheelEvent *event);
         
@@ -53,10 +54,11 @@ protected:
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
     void refreshPixmap();
+    QRect rubberBandRect;
+    bool rubberBandIsShown;
+    QRect roiRect;
     QSize widgetSize;
     enum { Margin = 5 };
-
-
 };
 
 }

@@ -49,64 +49,44 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         // Draw image
 
         painter.drawPixmap(centerPoint,scaledPixmap);
+
+
+        offset_x = (w-scaledPixmap.width())/2+x;
+        offset_y = (h-scaledPixmap.height())/2+y;
+
+        scaled_width = scaledPixmap.width();
+        scaled_height = scaledPixmap.height();
+
+        m_fScale=scaledPixmap.width()/static_cast<float>(m_dims[0]);
+        if (!m_BoxList.empty() || !m_PlotList.empty()) {
+            if (!m_BoxList.empty()) {
+                QMap<int,QPair<QRect, QColor> >::iterator it;
+
+                for (it=m_BoxList.begin(); it!=m_BoxList.end(); it++) {
+                    QRect rect=it->first;
+
+                    painter.setPen(QPen(it->second));
+                    painter.drawRect(offset_x+rect.x()*m_fScale,offset_y+rect.y()*m_fScale,rect.width(),rect.height());
+                }
+            }
+
+            if (!m_PlotList.empty()) {
+
+                QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
+                for (it=m_PlotList.begin(); it!=m_PlotList.end(); it++) {
+
+                    painter.setPen(QPen(it->second));
+                    QPoint offset(offset_x,offset_y);
+
+                    for (int i=1; i<it->first.size(); i++) {
+                        painter.drawLine(offset+m_fScale*it->first[i-1],offset+m_fScale*it->first[i]);
+                    }
+                }
+            }
+        }
+
+        painter.setPen(QColor(Qt::black));
     }
-
-//    offset_x = (w-scaled->get_width())/2+x;
-//    offset_y = (h-scaled->get_height())/2+y;
-
-//    scaled_width = scaled->get_width();
-//    scaled_height = scaled->get_height();
-
-//    Cairo::Format format = Cairo::FORMAT_RGB24;
-
-//    Cairo::RefPtr< Cairo::ImageSurface > image_surface_ptr = Cairo::ImageSurface::create  (format, scaled->get_width(), scaled->get_height());
-
-//    // Create the new Context for the ImageSurface
-//    Cairo::RefPtr< Cairo::Context > image_context_ptr = Cairo::Context::create (image_surface_ptr);
-
-//    Gdk::Cairo::set_source_pixbuf (image_context_ptr, scaled, 0, 0);
-//    image_context_ptr->paint();
-
-//    cr->set_source(image_surface_ptr, offset_x, offset_y);
-//    cr->paint();
-
-//    if (!m_BoxList.empty() || !m_PlotList.empty()) {
-//        float scale=scaled->get_width()/static_cast<float>(m_dims[0]);
-
-//        cr->set_line_width(1.0);
-
-//        if (!m_BoxList.empty()) {
-
-//            std::map<int,ImageViewerRectangle>::iterator it;
-
-//            for (it=m_BoxList.begin(); it!=m_BoxList.end(); it++) {
-//                Gdk::Cairo::set_source_color(cr, it->second.color);
-//                cr->move_to(offset_x+it->second.x*scale,offset_y+it->second.y*scale);
-//                cr->rel_line_to(it->second.width*scale,0);
-//                cr->rel_line_to(0,it->second.height*scale);
-//                cr->rel_line_to(-it->second.width*scale,0);
-//                cr->rel_line_to(0,-it->second.height*scale);
-
-//                cr->stroke();
-//            }
-//        }
-
-//        if (!m_PlotList.empty()) {
-//            std::map<int,PlotData>::iterator it;
-
-//            for (it=m_PlotList.begin(); it!=m_PlotList.end(); it++) {
-
-//                Gdk::Cairo::set_source_color(cr, it->second.color);
-
-//                cr->move_to(offset_x+it->second.dataX[0]*scale,offset_y+it->second.dataY[0]*scale);
-//                for (int i=1; i<it->second.size(); i++) {
-//                    cr->line_to(offset_x+it->second.dataX[i]*scale,offset_y+it->second.dataY[i]*scale);
-//                }
-//                cr->stroke();
-//            }
-//        }
-//    }
-//    Gdk::Cairo::set_source_color(cr, Gdk::Color("black"));
 }
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims)
@@ -153,17 +133,17 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
 
 void ImagePainter::set_plot(QVector<QPointF> data, QColor color, int idx)
 {
-    m_PlotList[idx]=data;
+    m_PlotList[idx]=qMakePair<QVector<QPointF>, QColor>(data,color);
 }
 
 void ImagePainter::set_rectangle(QRect rect, QColor color, int idx)
 {
-    m_BoxList[idx]=rect;
+    m_BoxList[idx]=qMakePair<QRect,QColor>(rect,color);
 }
 
 int ImagePainter::clear_plot(int idx)
 {
-    QMap<int,QVector<QPointF> >::iterator it;
+    QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
 
     if (!m_PlotList.empty()) {
         if (idx<0)  {
@@ -183,7 +163,7 @@ int ImagePainter::clear_plot(int idx)
 
 int ImagePainter::clear_rectangle(int idx)
 {
-    QMap<int,QRect>::iterator it;
+    QMap<int,QPair<QRect, QColor> >::iterator it;
 
     if (!m_BoxList.empty()) {
         if (idx<0) {
@@ -267,12 +247,12 @@ void ImagePainter::prepare_pixbuf()
         }
     }
 
-    msg.str(""); msg<<"Preparing Qimage for "<<m_dims[0]<<"x"<<m_dims[1];
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+//    msg.str(""); msg<<"Preparing Qimage for "<<m_dims[0]<<"x"<<m_dims[1];
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
     QImage qimg(m_cdata,m_dims[0],m_dims[1],3*m_dims[0],QImage::Format_RGB888);
     QSize imgdims=qimg.size();
-    msg.str(""); msg<<"Qimage with "<<imgdims.width()<<"x"<<imgdims.height()<<" created";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+//    msg.str(""); msg<<"Qimage with "<<imgdims.width()<<"x"<<imgdims.height()<<" created";
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     m_pixmap_full=QPixmap::fromImage(qimg);
 

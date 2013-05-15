@@ -1,5 +1,7 @@
 #include "imageviewerwidget.h"
 #include <QStylePainter>
+#include <sstream>
+#include <cmath>
 
 
 namespace QtAddons {
@@ -7,8 +9,13 @@ namespace QtAddons {
 ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
-    m_ImagePainter(this)
+    m_ImagePainter(this),
+    rubberBandIsShown(false)
 {
+    QPalette palette;
+    palette.setColor(QPalette::Background,Qt::black);
+    setAutoFillBackground(true);
+    setPalette(palette);
 }
 
 //ImageViewerWidget::~ImageViewerWidget()
@@ -27,26 +34,17 @@ QSize ImageViewerWidget::sizeHint() const
 
 void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
 {
-    //logger(kipl::logging::Logger::LogMessage,"paint event");
+
     QPainter painter(this);
     QSize s=this->size();
 
     m_ImagePainter.Render(painter,0,0,s.width(),s.height());
 
-    //   painter.drawPixmap(0, 0, pixmap);
-
-//    if (rubberBandIsShown) {
-//        painter.setPen(palette().light().color());
-//        painter.drawRect(rubberBandRect.normalized()
-//                                       .adjusted(0, 0, -1, -1));
-//    }
-
-//    if (hasFocus()) {
-//        QStyleOptionFocusRect option;
-//        option.initFrom(this);
-//        option.backgroundColor = palette().dark().color();
-//        painter.drawPrimitive(QStyle::PE_FrameFocusRect, option);
-//    }
+    if (rubberBandIsShown) {
+        painter.setPen(palette().light().color());
+        painter.drawRect(rubberBandRect.normalized()
+                                       .adjusted(0, 0, -1, -1));
+    }
 }
 
 void ImageViewerWidget::resizeEvent(QResizeEvent *event )
@@ -56,9 +54,78 @@ void ImageViewerWidget::resizeEvent(QResizeEvent *event )
     QWidget::resizeEvent(event);
 }
 
+void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
+{
+    QRect rect(Margin, Margin,
+               width() - 2 * Margin, height() - 2 * Margin);
+
+    if (rubberBandIsShown) {
+        rubberBandIsShown = false;
+        updateRubberBandRegion();
+    }
+
+    if (event->button() == Qt::LeftButton) {
+        if (rect.contains(event->pos())) {
+            rubberBandIsShown = true;
+            rubberBandRect.setTopLeft(event->pos());
+            rubberBandRect.setBottomRight(event->pos());
+            updateRubberBandRegion();
+            setCursor(Qt::CrossCursor);
+        }
+    }
+    if (event->button() == Qt::RightButton) {
+        logger(kipl::logging::Logger::LogMessage,"Right");
+
+    }
+}
+
+void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    if (rubberBandIsShown) {
+        updateRubberBandRegion();
+        rubberBandRect.setBottomRight(event->pos());
+        updateRubberBandRegion();
+    }
+}
+
+void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    std::ostringstream msg;
+    if ((event->button() == Qt::LeftButton) && rubberBandIsShown) {
+        updateRubberBandRegion();
+
+        QRect r=rubberBandRect.normalized();
+        roiRect.setRect(floor((r.x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale()),
+                        floor((r.y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale()),
+                        floor(r.width()/m_ImagePainter.get_scale()),
+                        floor(r.height()/m_ImagePainter.get_scale())
+                        );
+
+//        msg<<"ROI selected @"<<roiRect.x()<<", "<<roiRect.y()<<" w="<<roiRect.width()<<", h="<<roiRect.height();
+//        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+}
+
+void ImageViewerWidget::updateRubberBandRegion()
+{
+    QRect rect = rubberBandRect.normalized();
+
+    update(rect.left(), rect.top(), rect.width(), 1);
+    update(rect.left(), rect.top(), 1, rect.height());
+    update(rect.left(), rect.bottom(), rect.width(), 1);
+    update(rect.right(), rect.top(), 1, rect.height());
+}
+
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)
 {
     m_ImagePainter.set_image(data,dims);
+}
+
+QRect ImageViewerWidget::get_marked_roi()
+{
+    rubberBandIsShown=false;
+    updateRubberBandRegion();
+    return roiRect;
 }
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)

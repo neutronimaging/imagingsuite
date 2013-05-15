@@ -36,7 +36,9 @@ public:
     void get_levels(float *level_low, float *level_high);
     void get_image_minmax(float *level_low, float *level_high);
     void show_clamped(bool show);
-
+    float get_scale() {return m_fScale;}
+    int get_offsetX() {return offset_x;}
+    int get_offsetY() {return offset_y;}
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
 protected:
     void prepare_pixbuf();
@@ -55,13 +57,14 @@ protected:
     int offset_y;
     int scaled_width;
     int scaled_height;
+    float m_fScale;
 
     //Gdk::InterpType m_Interpolation;
     float * m_data;  //<! float pixel buffer
     uchar * m_cdata;   //<! RGB Pixel buffer
 
-    QMap<int,QRect > m_BoxList;
-    QMap<int,QVector<QPointF> > m_PlotList;
+    QMap<int,QPair<QRect, QColor> > m_BoxList;
+    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList;
 
     QPixmap m_pixmap_full;
 };

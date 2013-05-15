@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>599</width>
-    <height>492</height>
+    <width>701</width>
+    <height>541</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,9 +27,9 @@
    <widget class="QPushButton" name="TestButton">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>50</y>
-      <width>85</width>
+      <x>80</x>
+      <y>190</y>
+      <width>141</width>
       <height>27</height>
      </rect>
     </property>
@@ -65,7 +65,7 @@
      <rect>
       <x>280</x>
       <y>220</y>
-      <width>181</width>
+      <width>271</width>
       <height>151</height>
      </rect>
     </property>
@@ -73,14 +73,55 @@
    <widget class="QPushButton" name="ShowImageButton">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>180</y>
-      <width>85</width>
+      <x>250</x>
+      <y>430</y>
+      <width>131</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
      <string>Show image</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>380</y>
+      <width>332</width>
+      <height>37</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="GetROIButton">
+       <property name="text">
+        <string>ROI</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="roi_x0"/>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="roi_y0"/>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="roi_x1"/>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="roi_y1"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="ModuleChainConfiguratorWidget" name="ModuleConf" native="true">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>10</y>
+      <width>281</width>
+      <height>191</height>
+     </rect>
     </property>
    </widget>
   </widget>
@@ -89,8 +130,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>599</width>
-     <height>21</height>
+     <width>701</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -122,6 +163,12 @@
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ModuleChainConfiguratorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">modulechainconfiguratorwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
