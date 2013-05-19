@@ -37,15 +37,18 @@ public:
     AddModuleDialog(QWidget *parent);
 //    ~AddModuleDialog();
 
-    int Initialize(std::string application, std::string application_path="");
-    int exec(std::string application, ModuleConfig &module);
+    int configure(std::string application, std::string application_path="");
+    virtual int exec();
+    ModuleConfig GetModuleConfig() {return m_ModuleConfig;}
 
-public slots:
-    void on_changed_module();
-    void on_change_objectfile();
+protected slots:
+    virtual void on_change_objectfile();
+    virtual void accept();
+    virtual void reject();
 
 protected:
-    virtual int exec() {return this->exec();}
+
+
     int UpdateModuleCombobox(QString fname);
     std::map<std::string, std::map<std::string, std::string> > GetModuleList(std::string filename);
 
@@ -57,7 +60,7 @@ protected:
     QLabel m_Label_module;
     QLineEdit m_Modulefile_edit;
 
-    QPushButton m_Filechooser_button;
+    QPushButton m_Button_Browse;
     QComboBox m_Combobox_modules;
 	
 	
@@ -69,5 +72,6 @@ protected:
 	std::map<std::string, std::map<std::string, std::string> > modulelist;
 	std::string m_sApplication;
 	std::string m_sApplicationPath;
+    ModuleConfig m_ModuleConfig;
 };
 #endif

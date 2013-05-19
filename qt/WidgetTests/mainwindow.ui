@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
-    <height>541</height>
+    <width>809</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>19</x>
       <y>9</y>
-      <width>201</width>
+      <width>381</width>
       <height>181</height>
      </rect>
     </property>
@@ -117,10 +117,10 @@
    <widget class="ModuleChainConfiguratorWidget" name="ModuleConf" native="true">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>410</x>
       <y>10</y>
-      <width>281</width>
-      <height>191</height>
+      <width>391</width>
+      <height>181</height>
      </rect>
     </property>
    </widget>
@@ -130,7 +130,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>701</width>
+     <width>809</width>
      <height>22</height>
     </rect>
    </property>

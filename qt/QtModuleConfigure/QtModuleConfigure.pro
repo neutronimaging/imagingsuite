@@ -24,7 +24,9 @@ HEADERS += qtmoduleconfigure.h\
     singlemoduleconfiguratorwidget.h \
     ApplicationBase.h \
     ModuleConfigurator.h \
-    AddModuleDialog.h
+    AddModuleDialog.h \
+    ../../../../qni/trunk/src/ImagingAlgorithms/src/targetver.h \
+    ../../../../qni/trunk/src/ImagingAlgorithms/src/stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
