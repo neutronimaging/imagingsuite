@@ -5,17 +5,20 @@
 #include <QPixmap>
 #include <QVector>
 #include <QWidget>
+#include <logging/logger.h>
+#include "qglyphs.h"
 
 class QToolButton;
 
 
 namespace QtAddons {
 class PlotSettings;
+class PlotData;
 
 class Plotter : public QWidget
 {
     Q_OBJECT
-
+    kipl::logging::Logger logger;
 public:
     Plotter(QWidget *parent = 0);
 
@@ -24,6 +27,7 @@ public:
     void clearCurve(int id);
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
+    bool ShowGrid;
 
 public slots:
     void zoomIn();
@@ -40,6 +44,7 @@ protected:
 
 private:
     void updateRubberBandRegion();
+    void refreshBounds();
     void refreshPixmap();
     void drawGrid(QPainter *painter);
     void drawCurves(QPainter *painter);
@@ -48,7 +53,7 @@ private:
 
     QToolButton *zoomInButton;
     QToolButton *zoomOutButton;
-    QMap<int, QVector<QPointF> > curveMap;
+    QMap<int, PlotData > curveMap;
     QVector<PlotSettings> zoomStack;
     int curZoom;
     bool rubberBandIsShown;
@@ -60,7 +65,10 @@ class PlotSettings
 {
 public:
     PlotSettings();
+    PlotSettings(const PlotSettings &s);
+    PlotSettings(const QVector<QPointF> &data);
 
+    const PlotSettings & operator= (const PlotSettings &s);
     void scroll(int dx, int dy);
     void adjust();
     double spanX() const { return maxX - minX; }
@@ -76,6 +84,23 @@ public:
 private:
     static void adjustAxis(double &min, double &max, int &numTicks);
 };
+
+class PlotData
+{
+public :
+    PlotData();
+    PlotData(const PlotData & data);
+    PlotData(const QVector<QPointF>  & datavect, ePlotGlyph gl=PlotGlyph_Square);
+    const PlotData & operator=(const PlotData & data);
+    QVector<QPointF> m_data;
+
+    double minX;
+    double maxX;
+    double minY;
+    double maxY;
+    ePlotGlyph glyph;
+};
+
 }
 
 #endif

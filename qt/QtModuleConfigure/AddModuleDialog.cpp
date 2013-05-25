@@ -66,7 +66,7 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
 
     connect(&m_Button_OK,SIGNAL(clicked()),this,SLOT(accept()));
     connect(&m_Button_Cancel,SIGNAL(clicked()),this,SLOT(reject()));
-    connect(&m_Button_Browse,SIGNAL(clicked()),this,SLOT(AddModule::on_change_objectfile()));
+    connect(&m_Button_Browse,SIGNAL(clicked()),this,SLOT(on_change_objectfile()));
 }
 
 int AddModuleDialog::configure(std::string application, std::string application_path)
@@ -208,6 +208,7 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
 
 void AddModuleDialog::on_change_objectfile()
 {
+ //   logger(kipl::logging::Logger::LogMessage,"Browse");
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),tr("libs (*.dylib)"));
 
     if (fileName.isEmpty()) {

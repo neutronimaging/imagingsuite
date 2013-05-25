@@ -12,6 +12,7 @@
 #ifndef __ADDMODULEDIALOG_H
 #define __ADDMODULEDIALOG_H
 
+#include <QWidget>
 #include <QDialog>
 #include <QLabel>
 #include <QPushButton>
@@ -30,12 +31,13 @@
 #include <logging/logger.h>
 #include <ModuleConfig.h>
 
-class AddModuleDialog : QDialog
+class AddModuleDialog : public QDialog
 {
+    Q_OBJECT
 	kipl::logging::Logger logger;
 public:
-    AddModuleDialog(QWidget *parent);
-//    ~AddModuleDialog();
+    explicit AddModuleDialog(QWidget *parent = NULL);
+    virtual ~AddModuleDialog() {}
 
     int configure(std::string application, std::string application_path="");
     virtual int exec();
@@ -47,8 +49,6 @@ protected slots:
     virtual void reject();
 
 protected:
-
-
     int UpdateModuleCombobox(QString fname);
     std::map<std::string, std::map<std::string, std::string> > GetModuleList(std::string filename);
 
@@ -68,7 +68,6 @@ protected:
     QPushButton m_Button_Cancel;
     QHBoxLayout m_Layout_Controls;
 
-//	ParameterManagerWidget parameter_manager;
 	std::map<std::string, std::map<std::string, std::string> > modulelist;
 	std::string m_sApplication;
 	std::string m_sApplicationPath;

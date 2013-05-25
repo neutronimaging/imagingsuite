@@ -1,12 +1,16 @@
 #include <QtGui>
 #include <cmath>
-
+#include <algorithm>
+#include <sstream>
 #include "plotter.h"
+#include "qglyphs.h"
+
 namespace QtAddons {
 
 Plotter::Plotter(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), logger("Plotter"), ShowGrid(false)
 {
+    setFont(QFont("Helvetic",10));
     setBackgroundRole(QPalette::Dark);
     setAutoFillBackground(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -14,12 +18,12 @@ Plotter::Plotter(QWidget *parent)
     rubberBandIsShown = false;
 
     zoomInButton = new QToolButton(this);
-    zoomInButton->setIcon(QIcon(":/images/zoomin.png"));
+    zoomInButton->setText("+");
     zoomInButton->adjustSize();
     connect(zoomInButton, SIGNAL(clicked()), this, SLOT(zoomIn()));
 
     zoomOutButton = new QToolButton(this);
-    zoomOutButton->setIcon(QIcon(":/images/zoomout.png"));
+    zoomOutButton->setText("-");
     zoomOutButton->adjustSize();
     connect(zoomOutButton, SIGNAL(clicked()), this, SLOT(zoomOut()));
 
@@ -60,13 +64,47 @@ void Plotter::zoomIn()
 
 void Plotter::setCurveData(int id, const QVector<QPointF> &data)
 {
-    curveMap[id] = data;
+    curveMap[id] = PlotData(data);
+    refreshBounds();
     refreshPixmap();
+}
+
+void Plotter::refreshBounds()
+{
+    std::ostringstream msg;
+
+    PlotSettings settings;
+
+    QMapIterator<int, PlotData> i(curveMap);
+    i.toFront();
+
+    settings.minX=i.value().minX;
+    settings.maxX=i.value().maxX;
+    settings.minY=i.value().minY;
+    settings.maxY=i.value().maxY;
+
+   while (i.hasNext()) {
+        i.next();
+
+        settings.minX=std::min(settings.minX,i.value().minX);
+        settings.maxX=std::max(settings.maxX,i.value().maxX);
+        settings.minY=std::min(settings.minY,i.value().minY);
+        settings.maxY=std::max(settings.maxY,i.value().maxY);
+    }
+
+    if (!zoomStack.empty())
+        zoomStack.clear();
+    zoomStack.append(settings);
+    curZoom = 0;
+    zoomInButton->hide();
+    zoomOutButton->hide();
+
 }
 
 void Plotter::clearCurve(int id)
 {
     curveMap.remove(id);
+    refreshBounds();
     refreshPixmap();
 }
 
@@ -241,8 +279,10 @@ void Plotter::drawGrid(QPainter *painter)
                                  / settings.numXTicks);
         double label = settings.minX + (i * settings.spanX()
                                           / settings.numXTicks);
+        if (ShowGrid) {
         painter->setPen(quiteDark);
         painter->drawLine(x, rect.top(), x, rect.bottom());
+        }
         painter->setPen(light);
         painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
         painter->drawText(x - 50, rect.bottom() + 5, 100, 20,
@@ -254,8 +294,10 @@ void Plotter::drawGrid(QPainter *painter)
                                    / settings.numYTicks);
         double label = settings.minY + (j * settings.spanY()
                                           / settings.numYTicks);
+        if (ShowGrid) {
         painter->setPen(quiteDark);
         painter->drawLine(rect.left(), y, rect.right(), y);
+        }
         painter->setPen(light);
         painter->drawLine(rect.left() - 5, y, rect.left(), y);
         painter->drawText(rect.left() - Margin, y - 10, Margin - 5, 20,
@@ -278,14 +320,18 @@ void Plotter::drawCurves(QPainter *painter)
 
     painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
 
-    QMapIterator<int, QVector<QPointF> > i(curveMap);
+    QMapIterator<int, PlotData > i(curveMap);
+
     while (i.hasNext()) {
         i.next();
 
         int id = i.key();
-        QVector<QPointF> data = i.value();
-        QPolygonF polyline(data.count());
+        QVector<QPointF> data = i.value().m_data;
 
+        QGlyphBase *pGlyph=BuildGlyph(i.value().glyph,static_cast<int>(this->font().pointSize()*0.75));
+
+        QPolygonF polyline(data.count());
+        painter->setPen(colorForIds[uint(id) % 6]);
         for (int j = 0; j < data.count(); ++j) {
             double dx = data[j].x() - settings.minX;
             double dy = data[j].y() - settings.minY;
@@ -294,21 +340,65 @@ void Plotter::drawCurves(QPainter *painter)
             double y = rect.bottom() - (dy * (rect.height() - 1)
                                            / settings.spanY());
             polyline[j] = QPointF(x, y);
+            if (pGlyph)
+                pGlyph->Draw(*painter,x,y);
         }
-        painter->setPen(colorForIds[uint(id) % 6]);
+
         painter->drawPolyline(polyline);
+
     }
 }
 
 PlotSettings::PlotSettings()
 {
-    minX = 0.0;
-    maxX = 10.0;
-    numXTicks = 5;
+    minX      = 0.0;
+    maxX      = 10.0;
+    numXTicks = 4;
 
-    minY = 0.0;
-    maxY = 10.0;
-    numYTicks = 5;
+    minY      = 0.0;
+    maxY      = 10.0;
+    numYTicks = 4;
+}
+
+PlotSettings::PlotSettings(const PlotSettings & s) :
+    minX(s.minX),
+    maxX(s.maxX),
+    numXTicks(s.numXTicks),
+    minY(s.minY),
+    maxY(s.maxY),
+    numYTicks(s.numYTicks)
+{
+}
+
+const PlotSettings & PlotSettings::operator= (const PlotSettings &s)
+{
+    minX      = s.minX;
+    maxX      = s.maxX;
+    numXTicks = s.numXTicks;
+    minY      = s.minY;
+    maxY      = s.maxY;
+    numYTicks = s.numYTicks;
+
+    return *this;
+}
+
+PlotSettings::PlotSettings(const QVector<QPointF> &data)
+{
+    int j=0;
+    minX=data[j].x();
+    maxX=data[j].x();
+    minY=data[j].y();
+    maxY=data[j].y();
+
+    for (j = 1; j < data.count(); j++) {
+        minX=std::min(data[j].x(),minX);
+        maxX=std::max(data[j].x(),maxX);
+        minY=std::min(data[j].y(),minY);
+        maxY=std::max(data[j].y(),maxY);
+    }
+
+    numXTicks = 4;
+    numYTicks = 4;
 }
 
 void PlotSettings::scroll(int dx, int dy)
@@ -347,5 +437,54 @@ void PlotSettings::adjustAxis(double &min, double &max, int &numTicks)
     max = std::ceil(max / step) * step;
 }
 
+PlotData::PlotData() :
+    minX(0.0),
+    maxX(0.0),
+    minY(0.0),
+    maxY(0.0),
+    glyph(PlotGlyph_Cross)
+{
+}
+
+PlotData::PlotData(const PlotData & data) :
+    m_data(data.m_data),
+    minX(data.minX),
+    maxX(data.maxX),
+    minY(data.minY),
+    maxY(data.maxY),
+    glyph(data.glyph)
+{
+
+}
+
+PlotData::PlotData(const QVector<QPointF> &datavect, ePlotGlyph gl)
+{
+    m_data=datavect;
+
+    maxX=minX=m_data[0].x();
+    maxY=minY=m_data[0].y();
+
+
+    for (int i=0; i<m_data.size(); i++) {
+        minX=std::min(minX,m_data[i].x());
+        maxX=std::max(maxX,m_data[i].x());
+        minY=std::min(minY,m_data[i].y());
+        maxY=std::max(maxY,m_data[i].y());
+    }
+
+    glyph=gl;
+}
+
+const PlotData & PlotData::operator=(const PlotData & data)
+{
+    m_data = data.m_data;
+    minX   = data.minX;
+    maxX   = data.maxX;
+    minY   = data.minY;
+    maxY   = data.maxY;
+    glyph  = data.glyph;
+
+    return *this;
+}
 }
 

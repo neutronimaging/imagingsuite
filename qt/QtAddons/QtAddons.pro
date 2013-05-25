@@ -16,7 +16,8 @@ DEFINES += QTADDONS_LIBRARY
 SOURCES += qtlogviewer.cpp \
     plotter.cpp \
     imagepainter.cpp \
-    imageviewerwidget.cpp
+    imageviewerwidget.cpp \
+    qglyphs.cpp
 
 
 
@@ -24,7 +25,8 @@ HEADERS += qtlogviewer.h\
         QtAddons_global.h \
     plotter.h \
     imagepainter.h \
-    imageviewerwidget.h
+    imageviewerwidget.h \
+    qglyphs.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
