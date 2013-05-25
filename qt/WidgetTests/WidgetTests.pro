@@ -48,8 +48,8 @@ DEPENDPATH += $$PWD/../QtModuleConfigure
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
 else:symbian: LIBS += -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Debug/ -lModuleConfig
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Debug/ -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/include
 INCLUDEPATH += /usr/include/libxml2

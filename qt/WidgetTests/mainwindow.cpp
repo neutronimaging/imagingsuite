@@ -3,6 +3,7 @@
 #include <cmath>
 #include <base/timage.h>
 #include <generators/Sine2D.h>
+#include <QListWidgetItem>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,6 +15,25 @@ MainWindow::MainWindow(QWidget *parent) :
     kipl::logging::Logger::AddLogTarget(*ui->LogView);
     connect(ui->TestButton,SIGNAL(clicked()),this,SLOT(TestClicked()));
     connect(ui->PlotButton,SIGNAL(clicked()),this,SLOT(PlotClicked()));
+
+    ui->myListWidget->setDragDropMode(QAbstractItemView::DragDrop);
+    ui->myListWidget->setDefaultDropAction(Qt::MoveAction);
+    ui->myListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    QListWidgetItem *item = new QListWidgetItem("Test 1");
+    item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+    item->setCheckState(Qt::Checked); // AND initialize check state
+    ui->myListWidget->insertItem(0,item);
+
+    QListWidgetItem *item2 = new QListWidgetItem("Test 2");
+    item2->setFlags(item2->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+    item2->setCheckState(Qt::Unchecked); // AND initialize check state
+    ui->myListWidget->insertItem(0,item2);
+
+    QListWidgetItem *item3 = new QListWidgetItem("Test 3");
+    item3->setFlags(item3->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+    item3->setCheckState(Qt::Unchecked); // AND initialize check state
+    ui->myListWidget->insertItem(0,item3);
+
 }
 
 MainWindow::~MainWindow()

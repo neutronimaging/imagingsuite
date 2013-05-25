@@ -6,6 +6,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QListView>
+#include <QListWidget>
+
 #include <QPushButton>
 
 #include <logging/logger.h>
@@ -42,40 +44,13 @@ protected:
     void BuildModuleManager();
     void BuildParameterManager();
     void UpdateCurrentModuleParameters();
+    void InsertModuleAfter(ModuleConfig &module);
+
 //	void UpdateParameterTable(Gtk::TreeModel::iterator iter);
-
-
-
-//	//Tree model modules:
-//	class ModelColumns : public Gtk::TreeModel::ColumnRecord
-//	{
-//	public:
-//		ModelColumns()
-//		{ add(m_col_id); add(m_col_active); add(m_col_name); add(m_col_shared_object); add(m_col_parameters); }
-
-//		Gtk::TreeModelColumn<unsigned int> m_col_id;
-//		Gtk::TreeModelColumn<bool> m_col_active;
-//		Gtk::TreeModelColumn<Glib::ustring> m_col_name;
-//		Gtk::TreeModelColumn<Glib::ustring> m_col_shared_object;
-//		Gtk::TreeModelColumn<std::map<std::string, std::string> > m_col_parameters;
-
-//	};
-
-//	//Tree model parameters:
-//	class ParameterColumns : public Gtk::TreeModel::ColumnRecord
-//	{
-//	public:
-//		ParameterColumns()
-//		{ add(m_col_id); add(m_col_name); add(m_col_value); }
-
-//		Gtk::TreeModelColumn<unsigned int> m_col_id;;
-//		Gtk::TreeModelColumn<Glib::ustring> m_col_name;
-//		Gtk::TreeModelColumn<Glib::ustring> m_col_value;
-//	};
 
     QHBoxLayout m_MainBox;
     QVBoxLayout m_ModuleBox;
-    QListView   m_ModuleListView;
+    QListWidget   m_ModuleListView;
     QHBoxLayout m_ModuleButtonBox;
     QPushButton m_ModuleAdd;
     QPushButton m_ModuleDelete;

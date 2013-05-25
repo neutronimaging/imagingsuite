@@ -1,6 +1,7 @@
 #include "modulechainconfiguratorwidget.h"
 #include "AddModuleDialog.h"
 #include <QIcon>
+#include <QListWidgetItem>
 
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     QWidget(parent),
@@ -46,6 +47,7 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
         msg.str("");
         msg<<"Got module "<<mcfg.m_sModule<<" from library "<<mcfg.m_sSharedObject;
         logger(kipl::logging::Logger::LogMessage,msg.str());
+        InsertModuleAfter(mcfg);
     }
 }
 
@@ -84,6 +86,17 @@ std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
     return modulelist;
 }
 
+void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
+{
+    logger(kipl::logging::Logger::LogMessage,"inserting");
+    QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(module.m_sModule));
+
+    item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+    item->setCheckState(Qt::Checked); // AND initialize check state
+    m_ModuleListView.insertItem(m_ModuleListView.currentRow()+1,item);
+
+}
+
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )
 {}
 
@@ -99,6 +112,10 @@ void ModuleChainConfiguratorWidget::BuildModuleManager()
     m_ModuleConfigure.setText("Config");
     m_ModuleConfigure.setToolTip(tr("Open the configure dialog of the selected module"));
     m_ModuleConfigure.setFont(QFont("Helvetic",10));
+
+    m_ModuleListView.setDragDropMode(QAbstractItemView::DragDrop);
+    m_ModuleListView.setDefaultDropAction(Qt::MoveAction);
+    m_ModuleListView.setSelectionMode(QAbstractItemView::SingleSelection);
 
     m_ModuleBox.addWidget(&m_ModuleListView);
     m_ModuleBox.addLayout(&m_ModuleButtonBox);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>809</width>
-    <height>532</height>
+    <width>894</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -124,14 +124,24 @@
      </rect>
     </property>
    </widget>
+   <widget class="QListWidget" name="myListWidget">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>240</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>809</width>
-     <height>22</height>
+     <width>894</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
