@@ -36,7 +36,6 @@ void ModuleChainConfiguratorWidget::configure(std::string application, std::stri
 void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 {
     ostringstream msg;
-    logger(kipl::logging::Logger::LogMessage,"Add module");
 
     AddModuleDialog dlg(this);
 
@@ -53,7 +52,21 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
 void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
 {
-    logger(kipl::logging::Logger::LogMessage,"Delete module");
+    ostringstream msg;
+    int currentRow=m_ModuleListView.currentRow();
+    msg<<"Current row="<<currentRow;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    if (0<=currentRow) {
+        msg.str("");
+        msg<<"Deleting row "<<currentRow;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        delete m_ModuleListView.takeItem(currentRow);
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"No module selected");
+    }
+
 }
 
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
@@ -105,13 +118,13 @@ void ModuleChainConfiguratorWidget::BuildModuleManager()
 {
     m_ModuleAdd.setText("Add");
     m_ModuleAdd.setToolTip(tr("Add a new module to the list"));
-    m_ModuleAdd.setFont(QFont("Helvetic",10));
+ //   m_ModuleAdd.setFont(QFont("Helvetic",10));
     m_ModuleDelete.setText("Delete");
     m_ModuleDelete.setToolTip(tr("Delete the selected module from the list"));
-    m_ModuleDelete.setFont(QFont("Helvetic",10));
+ //   m_ModuleDelete.setFont(QFont("Helvetic",10));
     m_ModuleConfigure.setText("Config");
     m_ModuleConfigure.setToolTip(tr("Open the configure dialog of the selected module"));
-    m_ModuleConfigure.setFont(QFont("Helvetic",10));
+ //   m_ModuleConfigure.setFont(QFont("Helvetic",10));
 
     m_ModuleListView.setDragDropMode(QAbstractItemView::DragDrop);
     m_ModuleListView.setDefaultDropAction(Qt::MoveAction);
@@ -129,9 +142,9 @@ void ModuleChainConfiguratorWidget::BuildParameterManager()
 {
     m_ParameterAdd.setText("Add");
     m_ParameterAdd.setToolTip(tr("Add a module parameter"));
-    m_ParameterAdd.setFont(QFont("Helvetic",10));
+//    m_ParameterAdd.setFont(QFont("Helvetic",10));
     m_ParameterDelete.setText("Delete");
-    m_ParameterDelete.setFont(QFont("Helvetic",10));
+//    m_ParameterDelete.setFont(QFont("Helvetic",10));
     m_ParameterDelete.setToolTip(tr("Delete a module parameter"));
 
     m_ParameterBox.addWidget(&m_ParameterListView);
