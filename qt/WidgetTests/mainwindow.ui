@@ -143,16 +143,6 @@
      </size>
     </property>
    </widget>
-   <widget class="SingleModuleConfiguratorWidget" name="SingleModuleConf" native="true">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>230</y>
-      <width>261</width>
-      <height>41</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="GetSingleModuleButton">
     <property name="geometry">
      <rect>
@@ -166,6 +156,16 @@
      <string>Get Module</string>
     </property>
    </widget>
+   <widget class="SingleModuleConfiguratorWidget" name="singlemodule" native="true">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>220</y>
+      <width>271</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -173,7 +173,7 @@
      <x>0</x>
      <y>0</y>
      <width>894</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

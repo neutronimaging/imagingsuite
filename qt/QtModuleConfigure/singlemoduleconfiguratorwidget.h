@@ -21,6 +21,8 @@ public:
     void SetModule(ModuleConfig module);
     ModuleConfig GetModule();
     void SetDescription(QString name);
+    QSize minimumSizeHint() const;
+    QSize sizeHint() const;
     
 signals:
     
@@ -28,10 +30,10 @@ public slots:
     virtual void on_ButtonConfigure_Clicked();
 
 private:
-    QHBoxLayout m_LayoutMain;
-    QLabel m_LabelDescription;
-    QLabel m_LabelModuleName;
-    QPushButton m_ButtonConfigure;
+    QHBoxLayout *m_LayoutMain;
+    QLabel *m_LabelDescription;
+    QLabel *m_LabelModuleName;
+    QPushButton *m_ButtonConfigure;
 
     ModuleConfig m_ModuleConfig;
 };
