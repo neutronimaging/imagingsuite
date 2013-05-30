@@ -2,12 +2,27 @@
 #include "AddModuleDialog.h"
 #include <QIcon>
 #include <QListWidgetItem>
+#include <QTreeWidgetItem>
+#include <list>
+#include <string>
+
+class QListWidgetModuleItem : public QListWidgetItem
+{
+public:
+    QListWidgetModuleItem(ModuleConfig & module) :
+        QListWidgetItem(QString::fromStdString(module.m_sModule)),
+        m_Module(module)
+    {}
+    ModuleConfig m_Module;
+};
 
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     QWidget(parent),
     logger("ModuleChainConfiguratorWidget"),
+    m_pCurrentModule(NULL),
     m_sApplication("muhrec"),
-    m_sApplicationPath("")
+    m_sApplicationPath(""),
+    m_pApplication(NULL)
 {
     this->setLayout(&m_MainBox);
     m_MainBox.addLayout(&m_ModuleBox);
@@ -22,6 +37,8 @@ ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     connect(&m_ParameterAdd,SIGNAL(clicked()),this,SLOT(on_Button_ParameterAdd()));
     connect(&m_ParameterDelete,SIGNAL(clicked()),this,SLOT(on_Button_ParameterDelete()));
 
+    connect(&m_ModuleListView,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,SLOT(on_Selected_Module(QListWidgetItem*,QListWidgetItem*)));
+
     show();
 }
 
@@ -31,6 +48,16 @@ void ModuleChainConfiguratorWidget::configure(std::string application, std::stri
     m_sApplicationPath = applicationpath;
     m_pConfigurator    = pConfigurator;
 
+}
+
+QSize ModuleChainConfiguratorWidget::minimumSizeHint() const
+{
+    return QSize(400, 150);
+}
+
+QSize ModuleChainConfiguratorWidget::sizeHint() const
+{
+    return QSize(450, 150);
 }
 
 void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
@@ -48,6 +75,7 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
         logger(kipl::logging::Logger::LogMessage,msg.str());
         InsertModuleAfter(mcfg);
     }
+    m_pCurrentModule=m_ModuleListView.currentItem();
 }
 
 void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
@@ -67,6 +95,8 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
         logger(kipl::logging::Logger::LogMessage,"No module selected");
     }
 
+    UpdateCurrentModuleParameters();
+
 }
 
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
@@ -77,54 +107,92 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 void ModuleChainConfiguratorWidget::on_Button_ParameterAdd()
 {
     logger(kipl::logging::Logger::LogMessage,"Add parameter");
+
+    if (m_ModuleListView.currentItem()!=NULL) {
+        QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
+        QTreeWidgetItem *item = NULL;
+
+        item=new QTreeWidgetItem(parent);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        item->setText(0,"NewParameter");
+        item->setText(1,"Value");
+    }
 }
 
 void ModuleChainConfiguratorWidget::on_Button_ParameterDelete()
 {
     logger(kipl::logging::Logger::LogMessage,"Delete parameter");
+    QTreeWidgetItem *item=m_ParameterListView.currentItem();
+    if (item) {
+        delete m_ParameterListView.takeTopLevelItem(m_ParameterListView.indexOfTopLevelItem(item));
+    }
 }
-void ModuleChainConfiguratorWidget::on_Selected_Module()
-{}
+
+void ModuleChainConfiguratorWidget::on_Selected_Module(QListWidgetItem* current,QListWidgetItem* previous)
+{
+    if (previous!=NULL) {
+        dynamic_cast<QListWidgetModuleItem *>(previous)->m_Module.parameters=GetParameterList();
+        m_pCurrentModule=current;
+    }
+    UpdateCurrentModuleParameters();
+}
 
 void ModuleChainConfiguratorWidget::SetModules(std::list<ModuleConfig> &modules)
-{}
+{
+  std::list<ModuleConfig>::iterator it;
+
+  m_ModuleListView.clear();
+
+  for (it=modules.begin(); it!=modules.end(); it++) {
+    InsertModuleAfter(*it);
+  }
+}
 
 std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
 {
     std::list<ModuleConfig> modulelist;
-    QMap<QString, ModuleConfig>::iterator it;
 
-    for (it=m_ModuleList.begin(); it!=m_ModuleList.end(); it++)
-        modulelist.push_back(it.value());
+    QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
+    if (item!=NULL)
+        item->m_Module.parameters=GetParameterList();
+
+    for (int i=0; i<m_ModuleListView.count(); i++) {
+        item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.item(i));
+
+        item->m_Module.m_bActive=item->checkState();
+        modulelist.push_back(item->m_Module);
+    }
     return modulelist;
 }
 
 void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
 {
     logger(kipl::logging::Logger::LogMessage,"inserting");
-    QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(module.m_sModule));
+    QListWidgetItem *item = new QListWidgetModuleItem(module);
 
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
     item->setCheckState(Qt::Checked); // AND initialize check state
     m_ModuleListView.insertItem(m_ModuleListView.currentRow()+1,item);
+    m_ModuleListView.setCurrentItem(item);
 
+    UpdateCurrentModuleParameters();
 }
 
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )
-{}
+{
+    m_pApplication=app;
+}
 
 // Builders
 void ModuleChainConfiguratorWidget::BuildModuleManager()
 {
-    m_ModuleAdd.setText("Add");
+    m_ModuleAdd.setText(tr("Add"));
     m_ModuleAdd.setToolTip(tr("Add a new module to the list"));
- //   m_ModuleAdd.setFont(QFont("Helvetic",10));
-    m_ModuleDelete.setText("Delete");
+
+    m_ModuleDelete.setText(tr("Delete"));
     m_ModuleDelete.setToolTip(tr("Delete the selected module from the list"));
- //   m_ModuleDelete.setFont(QFont("Helvetic",10));
-    m_ModuleConfigure.setText("Config");
+    m_ModuleConfigure.setText(tr("Config"));
     m_ModuleConfigure.setToolTip(tr("Open the configure dialog of the selected module"));
- //   m_ModuleConfigure.setFont(QFont("Helvetic",10));
 
     m_ModuleListView.setDragDropMode(QAbstractItemView::DragDrop);
     m_ModuleListView.setDefaultDropAction(Qt::MoveAction);
@@ -140,19 +208,50 @@ void ModuleChainConfiguratorWidget::BuildModuleManager()
 
 void ModuleChainConfiguratorWidget::BuildParameterManager()
 {
-    m_ParameterAdd.setText("Add");
+    m_ParameterAdd.setText(tr("Add"));
     m_ParameterAdd.setToolTip(tr("Add a module parameter"));
-//    m_ParameterAdd.setFont(QFont("Helvetic",10));
-    m_ParameterDelete.setText("Delete");
-//    m_ParameterDelete.setFont(QFont("Helvetic",10));
+    m_ParameterDelete.setText(tr("Delete"));
     m_ParameterDelete.setToolTip(tr("Delete a module parameter"));
 
     m_ParameterBox.addWidget(&m_ParameterListView);
     m_ParameterBox.addLayout(&m_ParameterButtonBox);
     m_ParameterButtonBox.addWidget(&m_ParameterAdd);
     m_ParameterButtonBox.addWidget(&m_ParameterDelete);
+    m_ParameterListView.setColumnCount(2);
 }
 
 void ModuleChainConfiguratorWidget::UpdateCurrentModuleParameters()
-{}
-//void ModuleChainConfiguratorWidget::UpdateParameterTable(Gtk::TreeModel::iterator iter);
+{
+    m_ParameterListView.clear();
+    QListWidgetModuleItem *moduleitem=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
+
+    QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
+    QTreeWidgetItem *item = NULL;
+
+    if (moduleitem!=NULL) {
+        std::map<std::string,std::string>::iterator it;
+
+        for (it=moduleitem->m_Module.parameters.begin();
+             it!=moduleitem->m_Module.parameters.end(); it++) {
+            item=new QTreeWidgetItem(parent);
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            item->setText(0,QString::fromStdString(it->first));
+            item->setText(1,QString::fromStdString(it->second));
+
+        }
+    }
+}
+
+std::map<std::string, std::string> ModuleChainConfiguratorWidget::GetParameterList()
+{
+    std::map<std::string, std::string> parlist;
+
+    for( int i = 0; i < m_ParameterListView.topLevelItemCount(); ++i )
+    {
+       QTreeWidgetItem *item = m_ParameterListView.topLevelItem( i );
+       parlist[item->text(0).toStdString()]=item->text(1).toStdString();
+    }
+
+    return parlist;
+}
+

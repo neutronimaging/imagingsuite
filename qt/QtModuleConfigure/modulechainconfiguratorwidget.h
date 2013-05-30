@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include <QListView>
 #include <QListWidget>
+#include <QListWidgetItem>
+#include <QTreeWidget>
 
 #include <QPushButton>
 
@@ -15,7 +17,8 @@
 #include "ModuleConfigurator.h"
 #include "ApplicationBase.h"
 
-#include <list>
+#include <map>
+#include <string>
 
 class ModuleChainConfiguratorWidget : public QWidget
 {
@@ -24,7 +27,10 @@ class ModuleChainConfiguratorWidget : public QWidget
 public:
     explicit ModuleChainConfiguratorWidget(QWidget *parent = 0);
     void configure(std::string application, std::string applicationpath="", ModuleConfigurator *pConfigurator=NULL);
-    
+    std::list<ModuleConfig> GetModules();
+    void SetModules(std::list<ModuleConfig> &modules);
+    QSize minimumSizeHint() const;
+    QSize sizeHint() const;
 signals:
     
 public slots:
@@ -33,11 +39,9 @@ public slots:
     virtual void on_Button_ConfigureModule();
     virtual void on_Button_ParameterAdd();
     virtual void on_Button_ParameterDelete();
-    virtual void on_Selected_Module();
+    virtual void on_Selected_Module(QListWidgetItem* current,QListWidgetItem* previous);
 
 protected:
-    void SetModules(std::list<ModuleConfig> &modules);
-    std::list<ModuleConfig> GetModules();
     void SetApplicationObject(ApplicationBase * app );
 
     // Builders
@@ -45,52 +49,29 @@ protected:
     void BuildParameterManager();
     void UpdateCurrentModuleParameters();
     void InsertModuleAfter(ModuleConfig &module);
-
-//	void UpdateParameterTable(Gtk::TreeModel::iterator iter);
+    std::map<std::string, std::string> GetParameterList();
 
     QHBoxLayout m_MainBox;
     QVBoxLayout m_ModuleBox;
-    QListWidget   m_ModuleListView;
+    QListWidget m_ModuleListView;
     QHBoxLayout m_ModuleButtonBox;
     QPushButton m_ModuleAdd;
     QPushButton m_ModuleDelete;
     QPushButton m_ModuleConfigure;
 
     QVBoxLayout m_ParameterBox;
-    QListView   m_ParameterListView;
+    QTreeWidget m_ParameterListView;
     QHBoxLayout m_ParameterButtonBox;
     QPushButton m_ParameterAdd;
     QPushButton m_ParameterDelete;
 
-
-//	ModelColumns m_ModuleColumns;
-//	ParameterColumns m_ParameterColumns;
-
-//	Gtk::HButtonBox m_ModuleButtonBox;
-//	Gtk::Button m_Button_ModuleAdd;
-//	Gtk::Button m_Button_ModuleDelete;
-//	Gtk::Button m_Button_ConfigureModule;
+    QListWidgetItem *m_pCurrentModule;
 
 
-//	Gtk::ScrolledWindow m_ModuleScrolledWindow;
-//	Gtk::TreeView m_ModuleTreeView;
-//	Glib::RefPtr<Gtk::ListStore> m_refModuleTreeModel;
-
-//	Gtk::HButtonBox m_ParameterButtonBox;
-//	Gtk::Button m_Button_ParameterAdd;
-//	Gtk::Button m_Button_ParameterDelete;
-
-//	Gtk::ScrolledWindow m_ParameterScrolledWindow;
-//	Gtk::TreeView m_ParameterTreeView;
-//	Glib::RefPtr<Gtk::ListStore> m_refParameterTreeModel;
-
-//	Gtk::TreeModel::iterator m_CurrentRow;
     std::string m_sApplication;
     std::string m_sApplicationPath;
     ApplicationBase * m_pApplication ;
     ModuleConfigurator * m_pConfigurator;
-    QMap<QString, ModuleConfig> m_ModuleList;
-
 };
 
 #endif // MODULECHAINCONFIGURATORWIDGET_H

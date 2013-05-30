@@ -28,6 +28,7 @@ private slots:
 
     void on_ShowImageButton_clicked();
     void on_GetROIButton_clicked();
+    void GetModulesClicked();
 };
 
 #endif // MAINWINDOW_H

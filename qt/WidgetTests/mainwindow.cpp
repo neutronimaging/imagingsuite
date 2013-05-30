@@ -15,24 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     kipl::logging::Logger::AddLogTarget(*ui->LogView);
     connect(ui->TestButton,SIGNAL(clicked()),this,SLOT(TestClicked()));
     connect(ui->PlotButton,SIGNAL(clicked()),this,SLOT(PlotClicked()));
-
-    ui->myListWidget->setDragDropMode(QAbstractItemView::DragDrop);
-    ui->myListWidget->setDefaultDropAction(Qt::MoveAction);
-    ui->myListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    QListWidgetItem *item = new QListWidgetItem("Test 1");
-    item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-    item->setCheckState(Qt::Checked); // AND initialize check state
-    ui->myListWidget->insertItem(0,item);
-
-    QListWidgetItem *item2 = new QListWidgetItem("Test 2");
-    item2->setFlags(item2->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-    item2->setCheckState(Qt::Unchecked); // AND initialize check state
-    ui->myListWidget->insertItem(0,item2);
-
-    QListWidgetItem *item3 = new QListWidgetItem("Test 3");
-    item3->setFlags(item3->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-    item3->setCheckState(Qt::Unchecked); // AND initialize check state
-    ui->myListWidget->insertItem(0,item3);
+    connect(ui->GetModulesButton,SIGNAL(clicked()),this,SLOT(GetModulesClicked()));
 
 }
 
@@ -61,6 +44,7 @@ void MainWindow::PlotClicked()
     ui->CurvePlotter->setCurveData(0,data);
 }
 
+
 void MainWindow::on_ShowImageButton_clicked()
 {
     m_fScale=fmod(m_fScale+1.0,10.0);
@@ -79,6 +63,20 @@ void MainWindow::on_ShowImageButton_clicked()
         ui->ImageView->set_plot(data,QColor(Qt::green),0);
     }
 
+}
+
+void MainWindow::GetModulesClicked()
+{
+    std::list<ModuleConfig> modules=ui->ModuleConf->GetModules();
+
+    std::list<ModuleConfig>::iterator it;
+    std::ostringstream msg;
+    msg<<"Got "<<modules.size()<<" modules from the widget\n";
+    for (it=modules.begin(); it!=modules.end(); it++) {
+        msg<<(it->m_sModule)<<"("<<(it->m_bActive ? "Active": "Disabled")<<"), has "<<(it->parameters.size())<<" parameters\n";
+    }
+
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 }
 
 void MainWindow::on_GetROIButton_clicked()
