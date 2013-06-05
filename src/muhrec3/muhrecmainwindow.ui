@@ -6,47 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>569</height>
+    <width>1003</width>
+    <height>854</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MuhRecMainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
+   <layout class="QHBoxLayout" name="horizontalLayout_7">
+    <item>
      <widget class="QTabWidget" name="tabMainControl">
       <property name="enabled">
        <bool>true</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>780</width>
+        <height>780</height>
+       </size>
+      </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <attribute name="title">
         <string>Information</string>
        </attribute>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>30</x>
           <y>10</y>
-          <width>451</width>
-          <height>314</height>
+          <width>681</width>
+          <height>421</height>
          </rect>
         </property>
         <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Project</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEdit_Project</cstring>
-           </property>
-          </widget>
-         </item>
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+         </property>
          <item row="0" column="1">
           <widget class="QLineEdit" name="lineEdit_Project"/>
          </item>
@@ -102,6 +107,16 @@
          <item row="4" column="1">
           <widget class="QTextEdit" name="textEdit_Description"/>
          </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Project</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_Project</cstring>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -109,13 +124,13 @@
        <attribute name="title">
         <string>Configure projections</string>
        </attribute>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>531</width>
-          <height>673</height>
+          <width>761</width>
+          <height>743</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -126,10 +141,10 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="1" column="1" colspan="3">
-             <widget class="QLineEdit" name="lineEdit_2"/>
+             <widget class="QLineEdit" name="editProjectionMask"/>
             </item>
             <item row="4" column="1" colspan="3">
-             <widget class="QLineEdit" name="lineEdit_3"/>
+             <widget class="QLineEdit" name="editProjectionSkipList"/>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="label_9">
@@ -137,7 +152,7 @@
                <string>Skip list</string>
               </property>
               <property name="buddy">
-               <cstring>lineEdit_3</cstring>
+               <cstring>editProjectionSkipList</cstring>
               </property>
              </widget>
             </item>
@@ -149,9 +164,9 @@
              </widget>
             </item>
             <item row="0" column="1" colspan="3">
-             <widget class="QLineEdit" name="lineEdit"/>
+             <widget class="QLineEdit" name="editProjectionPath"/>
             </item>
-            <item row="2" column="4">
+            <item row="2" column="5">
              <spacer name="horizontalSpacer_4">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -170,12 +185,12 @@
                <string>File mask</string>
               </property>
               <property name="buddy">
-               <cstring>lineEdit_2</cstring>
+               <cstring>editProjectionMask</cstring>
               </property>
              </widget>
             </item>
             <item row="6" column="3">
-             <widget class="QComboBox" name="comboBox_3">
+             <widget class="QComboBox" name="comboRotateProjection">
               <item>
                <property name="text">
                 <string>No rotation</string>
@@ -204,12 +219,12 @@
                <string>Binning</string>
               </property>
               <property name="buddy">
-               <cstring>spinBox_4</cstring>
+               <cstring>spinProjectionBinning</cstring>
               </property>
              </widget>
             </item>
             <item row="6" column="2">
-             <widget class="QComboBox" name="comboBox_2">
+             <widget class="QComboBox" name="comboFlipProjection">
               <item>
                <property name="text">
                 <string>No flip</string>
@@ -232,8 +247,8 @@
               </item>
              </widget>
             </item>
-            <item row="1" column="4">
-             <widget class="QComboBox" name="comboBox">
+            <item row="1" column="5">
+             <widget class="QComboBox" name="comboProjectionStyle">
               <item>
                <property name="text">
                 <string>Projection</string>
@@ -256,7 +271,7 @@
               </item>
              </widget>
             </item>
-            <item row="0" column="4">
+            <item row="0" column="5">
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -270,7 +285,7 @@
              </spacer>
             </item>
             <item row="6" column="1">
-             <widget class="QSpinBox" name="spinBox_4">
+             <widget class="QSpinBox" name="spinProjectionBinning">
               <property name="minimum">
                <number>1</number>
               </property>
@@ -285,7 +300,7 @@
                <string>Path</string>
               </property>
               <property name="buddy">
-               <cstring>lineEdit</cstring>
+               <cstring>editProjectionPath</cstring>
               </property>
              </widget>
             </item>
@@ -297,12 +312,12 @@
                  <string>First</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox</cstring>
+                 <cstring>spinFirstProjection</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox">
+               <widget class="QSpinBox" name="spinFirstProjection">
                 <property name="maximum">
                  <number>5000</number>
                 </property>
@@ -314,12 +329,12 @@
                  <string>Step</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_2</cstring>
+                 <cstring>spinProjectionStep</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_2">
+               <widget class="QSpinBox" name="spinProjectionStep">
                 <property name="minimum">
                  <number>1</number>
                 </property>
@@ -334,12 +349,12 @@
                  <string>Last</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_3</cstring>
+                 <cstring>spinLastProjection</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_3">
+               <widget class="QSpinBox" name="spinLastProjection">
                 <property name="maximum">
                  <number>5000</number>
                 </property>
@@ -347,10 +362,17 @@
               </item>
              </layout>
             </item>
-            <item row="6" column="4">
-             <widget class="QPushButton" name="pushButton_3">
+            <item row="5" column="5" rowspan="2">
+             <widget class="QPushButton" name="buttonPreview">
               <property name="text">
                <string>Preview</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QPushButton" name="buttonProjectionPath">
+              <property name="text">
+               <string>Browse</string>
               </property>
              </widget>
             </item>
@@ -364,16 +386,16 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="buttonTakePath">
               <property name="text">
-               <string>Take path</string>
+               <string>Path</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_4"/>
+             <widget class="QLineEdit" name="editReferencePath"/>
             </item>
-            <item row="0" column="2">
+            <item row="0" column="3">
              <spacer name="horizontalSpacer_7">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -394,9 +416,9 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_5"/>
+             <widget class="QLineEdit" name="editOpenBeamMask"/>
             </item>
-            <item row="1" column="2">
+            <item row="1" column="3">
              <spacer name="horizontalSpacer_8">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -430,12 +452,12 @@
                  <string>First</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_5</cstring>
+                 <cstring>spinFirstOpenBeam</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_5"/>
+               <widget class="QSpinBox" name="spinFirstOpenBeam"/>
               </item>
               <item>
                <widget class="QLabel" name="label_17">
@@ -443,12 +465,12 @@
                  <string>Count</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_6</cstring>
+                 <cstring>spinOpenBeamCount</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_6"/>
+               <widget class="QSpinBox" name="spinOpenBeamCount"/>
               </item>
              </layout>
             </item>
@@ -460,9 +482,9 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QLineEdit" name="lineEdit_6"/>
+             <widget class="QLineEdit" name="editDarkMask"/>
             </item>
-            <item row="3" column="2">
+            <item row="3" column="3">
              <spacer name="horizontalSpacer_9">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -496,12 +518,12 @@
                  <string>First</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_5</cstring>
+                 <cstring>spinFirstOpenBeam</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_11"/>
+               <widget class="QSpinBox" name="spinFirstDark"/>
               </item>
               <item>
                <widget class="QLabel" name="label_24">
@@ -509,12 +531,12 @@
                  <string>Count</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_6</cstring>
+                 <cstring>spinOpenBeamCount</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_12"/>
+               <widget class="QSpinBox" name="spinDarkCount"/>
               </item>
              </layout>
             </item>
@@ -546,12 +568,12 @@
                  <string>x0</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_7</cstring>
+                 <cstring>spinDoseROIx0</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_7"/>
+               <widget class="QSpinBox" name="spinDoseROIx0"/>
               </item>
               <item>
                <widget class="QLabel" name="label_20">
@@ -559,12 +581,12 @@
                  <string>y0</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_8</cstring>
+                 <cstring>spinDoseROIy0</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_8"/>
+               <widget class="QSpinBox" name="spinDoseROIy0"/>
               </item>
               <item>
                <widget class="QLabel" name="label_21">
@@ -572,12 +594,12 @@
                  <string>x1</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_9</cstring>
+                 <cstring>spinDoseROIx1</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_9"/>
+               <widget class="QSpinBox" name="spinDoseROIx1"/>
               </item>
               <item>
                <widget class="QLabel" name="label_22">
@@ -585,14 +607,21 @@
                  <string>y1</string>
                 </property>
                 <property name="buddy">
-                 <cstring>spinBox_10</cstring>
+                 <cstring>spinDoseROIy1</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_10"/>
+               <widget class="QSpinBox" name="spinDoseROIy1"/>
               </item>
              </layout>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="buttonBrowseReference">
+              <property name="text">
+               <string>Browse</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -629,12 +658,12 @@
                <string>Left</string>
               </property>
               <property name="buddy">
-               <cstring>spinBox_13</cstring>
+               <cstring>spinMarginLeft</cstring>
               </property>
              </widget>
             </item>
             <item row="0" column="6">
-             <widget class="QSpinBox" name="spinBox_13"/>
+             <widget class="QSpinBox" name="spinMarginLeft"/>
             </item>
             <item row="0" column="7">
              <widget class="QLabel" name="label_30">
@@ -642,12 +671,12 @@
                <string>Right</string>
               </property>
               <property name="buddy">
-               <cstring>spinBox_14</cstring>
+               <cstring>spinMarginRight</cstring>
               </property>
              </widget>
             </item>
             <item row="0" column="8">
-             <widget class="QSpinBox" name="spinBox_14"/>
+             <widget class="QSpinBox" name="spinMarginRight"/>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_26">
@@ -675,12 +704,12 @@
                <string>First</string>
               </property>
               <property name="buddy">
-               <cstring>spinBox_15</cstring>
+               <cstring>spinSlicesFirst</cstring>
               </property>
              </widget>
             </item>
             <item row="1" column="6">
-             <widget class="QSpinBox" name="spinBox_15"/>
+             <widget class="QSpinBox" name="spinSlicesFirst"/>
             </item>
             <item row="1" column="7">
              <widget class="QLabel" name="label_32">
@@ -688,12 +717,12 @@
                <string>Last</string>
               </property>
               <property name="buddy">
-               <cstring>spinBox_16</cstring>
+               <cstring>spinSlicesLast</cstring>
               </property>
              </widget>
             </item>
             <item row="1" column="8">
-             <widget class="QSpinBox" name="spinBox_16"/>
+             <widget class="QSpinBox" name="spinSlicesLast"/>
             </item>
             <item row="2" column="0" colspan="3">
              <widget class="QLabel" name="label_27">
@@ -721,12 +750,12 @@
                <string>Start</string>
               </property>
               <property name="buddy">
-               <cstring>doubleSpinBox</cstring>
+               <cstring>dspinAngleStart</cstring>
               </property>
              </widget>
             </item>
             <item row="2" column="6">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+             <widget class="QDoubleSpinBox" name="dspinAngleStart"/>
             </item>
             <item row="2" column="7">
              <widget class="QLabel" name="label_34">
@@ -734,12 +763,12 @@
                <string>Stop</string>
               </property>
               <property name="buddy">
-               <cstring>doubleSpinBox_2</cstring>
+               <cstring>dspinAngleStop</cstring>
               </property>
              </widget>
             </item>
             <item row="2" column="8">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+             <widget class="QDoubleSpinBox" name="dspinAngleStop"/>
             </item>
             <item row="3" column="0" rowspan="2" colspan="4">
              <widget class="QLabel" name="label_28">
@@ -747,7 +776,7 @@
                <string>Center of rotation</string>
               </property>
               <property name="buddy">
-               <cstring>doubleSpinBox_6</cstring>
+               <cstring>dspinRotationCenter</cstring>
               </property>
              </widget>
             </item>
@@ -765,7 +794,7 @@
              </spacer>
             </item>
             <item row="3" column="6" rowspan="2">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_6"/>
+             <widget class="QDoubleSpinBox" name="dspinRotationCenter"/>
             </item>
             <item row="3" column="7" rowspan="2" colspan="3">
              <spacer name="horizontalSpacer_5">
@@ -781,7 +810,7 @@
              </spacer>
             </item>
             <item row="5" column="0" colspan="5">
-             <widget class="QCheckBox" name="checkBox">
+             <widget class="QCheckBox" name="checkCorrectTilt">
               <property name="text">
                <string>Correct axis tilt</string>
               </property>
@@ -793,12 +822,12 @@
                <string>Angle</string>
               </property>
               <property name="buddy">
-               <cstring>doubleSpinBox_3</cstring>
+               <cstring>dspinTiltAngle</cstring>
               </property>
              </widget>
             </item>
             <item row="5" column="6">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+             <widget class="QDoubleSpinBox" name="dspinTiltAngle"/>
             </item>
             <item row="5" column="7">
              <widget class="QLabel" name="label_36">
@@ -806,12 +835,12 @@
                <string>Pivot</string>
               </property>
               <property name="buddy">
-               <cstring>doubleSpinBox_4</cstring>
+               <cstring>dspinTiltPivot</cstring>
               </property>
              </widget>
             </item>
             <item row="5" column="8">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+             <widget class="QDoubleSpinBox" name="dspinTiltPivot"/>
             </item>
             <item row="6" column="0" colspan="2">
              <widget class="QLabel" name="label_37">
@@ -819,22 +848,22 @@
                <string>Resolution</string>
               </property>
               <property name="buddy">
-               <cstring>doubleSpinBox_5</cstring>
+               <cstring>dspinResolution</cstring>
               </property>
              </widget>
             </item>
             <item row="6" column="2" colspan="3">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+             <widget class="QDoubleSpinBox" name="dspinResolution"/>
             </item>
             <item row="6" column="10">
-             <widget class="QPushButton" name="pushButton_2">
+             <widget class="QPushButton" name="buttonConfigGeometry">
               <property name="text">
                <string>Configure geometry</string>
               </property>
              </widget>
             </item>
             <item row="4" column="10">
-             <widget class="QComboBox" name="comboBox_4">
+             <widget class="QComboBox" name="comboDataSequence">
               <item>
                <property name="text">
                 <string>Sequence</string>
@@ -860,23 +889,33 @@
        <widget class="QGroupBox" name="groupBox_4">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>10</x>
           <y>0</y>
-          <width>521</width>
+          <width>701</width>
           <height>431</height>
          </rect>
         </property>
         <property name="title">
          <string>Preprocessing modules</string>
         </property>
+        <widget class="ModuleChainConfiguratorWidget" name="moduleconfigurator" native="true">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>681</width>
+           <height>391</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
        <widget class="QGroupBox" name="groupBox_5">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>440</y>
-          <width>531</width>
-          <height>93</height>
+          <width>711</width>
+          <height>101</height>
          </rect>
         </property>
         <property name="title">
@@ -888,16 +927,10 @@
            <property name="text">
             <string>Back-projector module</string>
            </property>
-           <property name="buddy">
-            <cstring>lineEdit_7</cstring>
-           </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="2">
-          <widget class="QLineEdit" name="lineEdit_7"/>
-         </item>
          <item row="0" column="3">
-          <widget class="QPushButton" name="pushButton_4">
+          <widget class="QPushButton" name="buttonConfigureBackProjector">
            <property name="text">
             <string>Configure</string>
            </property>
@@ -909,12 +942,12 @@
             <string>Rotation angle</string>
            </property>
            <property name="buddy">
-            <cstring>doubleSpinBox_7</cstring>
+            <cstring>dspinRotateRecon</cstring>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_7"/>
+          <widget class="QDoubleSpinBox" name="dspinRotateRecon"/>
          </item>
          <item row="1" column="2">
           <spacer name="horizontalSpacer_3">
@@ -929,6 +962,13 @@
            </property>
           </spacer>
          </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="labelBackProjectorName">
+           <property name="text">
+            <string>Back projection module</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -941,8 +981,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>413</width>
-          <height>94</height>
+          <width>551</width>
+          <height>101</height>
          </rect>
         </property>
         <property name="title">
@@ -964,12 +1004,12 @@
               <string>Low</string>
              </property>
              <property name="buddy">
-              <cstring>doubleSpinBox_8</cstring>
+              <cstring>dspinGrayLow</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_8"/>
+            <widget class="QDoubleSpinBox" name="dspinGrayLow"/>
            </item>
            <item>
             <widget class="QLabel" name="label_42">
@@ -977,24 +1017,24 @@
               <string>High</string>
              </property>
              <property name="buddy">
-              <cstring>doubleSpinBox_9</cstring>
+              <cstring>dspinGrayHigh</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_9"/>
+            <widget class="QDoubleSpinBox" name="dspinGrayHigh"/>
            </item>
           </layout>
          </item>
          <item row="0" column="2">
-          <widget class="QCheckBox" name="checkBox_3">
+          <widget class="QCheckBox" name="checkUseAutograyLevels">
            <property name="text">
             <string>Auto levels</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QCheckBox" name="checkBox_2">
+          <widget class="QCheckBox" name="checkUseMatrixROI">
            <property name="text">
             <string>Reconstruct ROI</string>
            </property>
@@ -1008,12 +1048,12 @@
               <string>x0</string>
              </property>
              <property name="buddy">
-              <cstring>spinBox_17</cstring>
+              <cstring>spinMatrixROI0</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBox_17"/>
+            <widget class="QSpinBox" name="spinMatrixROI0"/>
            </item>
            <item>
             <widget class="QLabel" name="label_44">
@@ -1021,12 +1061,12 @@
               <string>y0</string>
              </property>
              <property name="buddy">
-              <cstring>spinBox_18</cstring>
+              <cstring>spinMatrixROI1</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBox_18"/>
+            <widget class="QSpinBox" name="spinMatrixROI1"/>
            </item>
            <item>
             <widget class="QLabel" name="label_45">
@@ -1034,12 +1074,12 @@
               <string>x1</string>
              </property>
              <property name="buddy">
-              <cstring>spinBox_19</cstring>
+              <cstring>spinMatrixROI2</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBox_19"/>
+            <widget class="QSpinBox" name="spinMatrixROI2"/>
            </item>
            <item>
             <widget class="QLabel" name="label_46">
@@ -1047,12 +1087,12 @@
               <string>y1</string>
              </property>
              <property name="buddy">
-              <cstring>spinBox_20</cstring>
+              <cstring>spinMatrixROI3</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBox_20"/>
+            <widget class="QSpinBox" name="spinMatrixROI3"/>
            </item>
           </layout>
          </item>
@@ -1083,20 +1123,14 @@
           <string>Entropy N/A</string>
          </property>
         </widget>
-        <widget class="QFrame" name="frame">
+        <widget class="QtAddons::Plotter" name="widget" native="true">
          <property name="geometry">
           <rect>
-           <x>0</x>
+           <x>10</x>
            <y>20</y>
            <width>531</width>
            <height>171</height>
           </rect>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
          </property>
         </widget>
        </widget>
@@ -1198,8 +1232,29 @@
        <attribute name="title">
         <string>Logging</string>
        </attribute>
+       <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>10</y>
+          <width>691</width>
+          <height>731</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="ProjViewBox">
+        <property name="title">
+         <string>GroupBox</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -1208,8 +1263,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>562</width>
-     <height>21</height>
+     <width>1003</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1229,7 +1284,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -1260,6 +1315,26 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ModuleChainConfiguratorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">modulechainconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header>qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
