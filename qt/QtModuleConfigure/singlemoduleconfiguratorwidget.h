@@ -29,7 +29,7 @@ signals:
 public slots:
     virtual void on_ButtonConfigure_Clicked();
 
-private:
+protected:
     QHBoxLayout *m_LayoutMain;
     QLabel *m_LabelDescription;
     QLabel *m_LabelModuleName;

@@ -20,17 +20,13 @@ SingleModuleConfiguratorWidget::SingleModuleConfiguratorWidget(QWidget *parent) 
     m_LabelModuleName(new QLabel(QString::fromStdString(m_ModuleConfig.m_sModule),this)),
     m_ButtonConfigure(new QPushButton(tr("Settings"),this))
 {
-    std::clog<<"a";
     this->setLayout(m_LayoutMain);
-    std::clog<<"b";
     m_LayoutMain->addWidget(m_LabelDescription);
     m_LayoutMain->addWidget(m_LabelModuleName);
     m_LayoutMain->addWidget(m_ButtonConfigure);
 
-    std::clog<<"c";
     show();
-    std::clog<<"d\n";
-}
+ }
 
 QSize SingleModuleConfiguratorWidget::minimumSizeHint() const
 {
