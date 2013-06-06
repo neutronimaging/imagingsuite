@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1003</width>
+    <width>1100</width>
     <height>854</height>
    </rect>
   </property>
@@ -129,8 +129,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>761</width>
-          <height>743</height>
+          <width>797</width>
+          <height>747</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -623,6 +623,13 @@
               </property>
              </widget>
             </item>
+            <item row="6" column="2">
+             <widget class="QPushButton" name="buttonGetDoseROI">
+              <property name="text">
+               <string>Get ROI</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -981,130 +988,167 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>551</width>
+          <width>651</width>
           <height>101</height>
          </rect>
         </property>
         <property name="title">
          <string>Matrix settings</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_40">
-           <property name="text">
-            <string>Gray levels</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QLabel" name="label_41">
-             <property name="text">
-              <string>Low</string>
-             </property>
-             <property name="buddy">
-              <cstring>dspinGrayLow</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dspinGrayLow"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_42">
-             <property name="text">
-              <string>High</string>
-             </property>
-             <property name="buddy">
-              <cstring>dspinGrayHigh</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dspinGrayHigh"/>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="2">
-          <widget class="QCheckBox" name="checkUseAutograyLevels">
-           <property name="text">
-            <string>Auto levels</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="checkUseMatrixROI">
-           <property name="text">
-            <string>Reconstruct ROI</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_43">
-             <property name="text">
-              <string>x0</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinMatrixROI0</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinMatrixROI0"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_44">
-             <property name="text">
-              <string>y0</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinMatrixROI1</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinMatrixROI1"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_45">
-             <property name="text">
-              <string>x1</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinMatrixROI2</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinMatrixROI2"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_46">
-             <property name="text">
-              <string>y1</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinMatrixROI3</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinMatrixROI3"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <widget class="QLabel" name="label_40">
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>33</y>
+           <width>69</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Gray levels</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="checkUseAutograyLevels">
+         <property name="geometry">
+          <rect>
+           <x>369</x>
+           <y>33</y>
+           <width>95</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Auto levels</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="checkUseMatrixROI">
+         <property name="geometry">
+          <rect>
+           <x>13</x>
+           <y>66</y>
+           <width>126</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Reconstruct ROI</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="buttonGetMatrixROI">
+         <property name="geometry">
+          <rect>
+           <x>510</x>
+           <y>70</y>
+           <width>132</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Get ROI</string>
+         </property>
+        </widget>
+        <widget class="QWidget" name="">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string>Low</string>
+            </property>
+            <property name="buddy">
+             <cstring>dspinGrayLow</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dspinGrayLow"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>High</string>
+            </property>
+            <property name="buddy">
+             <cstring>dspinGrayHigh</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dspinGrayHigh"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>147</x>
+           <y>67</y>
+           <width>356</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_43">
+            <property name="text">
+             <string>x0</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinMatrixROI0</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinMatrixROI0"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_44">
+            <property name="text">
+             <string>y0</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinMatrixROI1</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinMatrixROI1"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_45">
+            <property name="text">
+             <string>x1</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinMatrixROI2</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinMatrixROI2"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_46">
+            <property name="text">
+             <string>y1</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinMatrixROI3</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinMatrixROI3"/>
+          </item>
+         </layout>
+        </widget>
        </widget>
        <widget class="QGroupBox" name="groupBox_7">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>100</y>
-          <width>551</width>
-          <height>211</height>
+          <width>651</width>
+          <height>291</height>
          </rect>
         </property>
         <property name="title">
@@ -1123,12 +1167,12 @@
           <string>Entropy N/A</string>
          </property>
         </widget>
-        <widget class="QtAddons::Plotter" name="widget" native="true">
+        <widget class="QtAddons::Plotter" name="plotHistogram" native="true">
          <property name="geometry">
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>531</width>
+           <width>631</width>
            <height>171</height>
           </rect>
          </property>
@@ -1138,7 +1182,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>310</y>
+          <y>390</y>
           <width>548</width>
           <height>123</height>
          </rect>
@@ -1250,8 +1294,83 @@
       <item>
        <widget class="QGroupBox" name="ProjViewBox">
         <property name="title">
-         <string>GroupBox</string>
+         <string>Display</string>
         </property>
+        <widget class="QGroupBox" name="groupBox_9">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>281</width>
+           <height>351</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Projections</string>
+         </property>
+         <widget class="QtAddons::ImageViewerWidget" name="projectionViewer" native="true">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>20</y>
+            <width>281</width>
+            <height>301</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QSlider" name="horizontalSlider">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>320</y>
+            <width>271</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_10">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>370</y>
+           <width>281</width>
+           <height>401</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Slices</string>
+         </property>
+         <widget class="QtAddons::ImageViewerWidget" name="widget" native="true">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>20</y>
+            <width>281</width>
+            <height>351</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QSlider" name="horizontalSlider_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>370</y>
+            <width>271</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+        <zorder>tabMainControl</zorder>
+        <zorder>groupBox_9</zorder>
+        <zorder>groupBox_10</zorder>
        </widget>
       </item>
      </layout>
@@ -1263,7 +1382,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1003</width>
+     <width>1100</width>
      <height>22</height>
     </rect>
    </property>
@@ -1332,6 +1451,12 @@
    <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
    <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
