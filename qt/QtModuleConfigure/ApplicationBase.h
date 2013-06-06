@@ -14,7 +14,7 @@
 #ifndef APPLICATIONBASE_H_
 #define APPLICATIONBASE_H_
 
-#include "stdafx.h"
+#include "../src/stdafx.h"
 class DLL_EXPORT ApplicationBase {
 public:
 	ApplicationBase();
