@@ -48,7 +48,7 @@
           <height>421</height>
          </rect>
         </property>
-        <layout class="QFormLayout" name="formLayout">
+        <layout class="QFormLayout" name="layoutInformationEntries">
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::FieldsStayAtSizeHint</enum>
          </property>
@@ -129,13 +129,13 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>797</width>
+          <width>771</width>
           <height>747</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="layoutProjectionInformation">
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="groupProjectionFiles">
            <property name="title">
             <string>Projection images</string>
            </property>
@@ -305,7 +305,7 @@
              </widget>
             </item>
             <item row="2" column="1" colspan="3">
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="layoutFileIndex">
               <item>
                <widget class="QLabel" name="label_11">
                 <property name="text">
@@ -380,15 +380,31 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_2">
+          <widget class="QGroupBox" name="groupReferenceImages">
            <property name="title">
             <string>Reference images</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="editOpenBeamMask"/>
+            </item>
+            <item row="1" column="3">
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>118</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item row="0" column="0">
              <widget class="QPushButton" name="buttonTakePath">
               <property name="text">
-               <string>Path</string>
+               <string>Reference path</string>
               </property>
              </widget>
             </item>
@@ -410,26 +426,16 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_14">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Open beam mask</string>
               </property>
              </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="editOpenBeamMask"/>
-            </item>
-            <item row="1" column="3">
-             <spacer name="horizontalSpacer_8">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>118</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
             <item row="2" column="0">
              <spacer name="horizontalSpacer">
@@ -445,7 +451,7 @@
              </spacer>
             </item>
             <item row="2" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="layoutOBMaskIndex">
               <item>
                <widget class="QLabel" name="label_16">
                 <property name="text">
@@ -511,7 +517,7 @@
              </spacer>
             </item>
             <item row="4" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout" name="layoutDarkIndex">
               <item>
                <widget class="QLabel" name="label_23">
                 <property name="text">
@@ -553,15 +559,8 @@
               </property>
              </spacer>
             </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_18">
-              <property name="text">
-               <string>Dose ROI</string>
-              </property>
-             </widget>
-            </item>
             <item row="6" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="layoutDoseROI">
               <item>
                <widget class="QLabel" name="label_19">
                 <property name="text">
@@ -630,11 +629,18 @@
               </property>
              </widget>
             </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_18">
+              <property name="text">
+               <string>Dose ROI</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_3">
+          <widget class="QGroupBox" name="groupGeometry">
            <property name="title">
             <string>Geometry</string>
            </property>
@@ -893,7 +899,7 @@
        <attribute name="title">
         <string>Processing configuration</string>
        </attribute>
-       <widget class="QGroupBox" name="groupBox_4">
+       <widget class="QGroupBox" name="groupModuleConfig">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -916,7 +922,7 @@
          </property>
         </widget>
        </widget>
-       <widget class="QGroupBox" name="groupBox_5">
+       <widget class="QGroupBox" name="groupBackProjConfig">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -983,13 +989,13 @@
        <attribute name="title">
         <string>Results</string>
        </attribute>
-       <widget class="QGroupBox" name="groupBox_6">
+       <widget class="QGroupBox" name="groupMatrixSettings">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
           <width>651</width>
-          <height>101</height>
+          <height>151</height>
          </rect>
         </property>
         <property name="title">
@@ -1024,8 +1030,8 @@
         <widget class="QCheckBox" name="checkUseMatrixROI">
          <property name="geometry">
           <rect>
-           <x>13</x>
-           <y>66</y>
+           <x>10</x>
+           <y>80</y>
            <width>126</width>
            <height>20</height>
           </rect>
@@ -1038,7 +1044,7 @@
          <property name="geometry">
           <rect>
            <x>510</x>
-           <y>70</y>
+           <y>80</y>
            <width>132</width>
            <height>31</height>
           </rect>
@@ -1047,8 +1053,16 @@
           <string>Get ROI</string>
          </property>
         </widget>
-        <widget class="QWidget" name="">
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>30</y>
+           <width>167</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="layoutGraylevels">
           <item>
            <widget class="QLabel" name="label_41">
             <property name="text">
@@ -1077,16 +1091,16 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
-           <x>147</x>
-           <y>67</y>
+           <x>150</x>
+           <y>80</y>
            <width>356</width>
            <height>27</height>
           </rect>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QHBoxLayout" name="layoutMatrixROI">
           <item>
            <widget class="QLabel" name="label_43">
             <property name="text">
@@ -1141,12 +1155,19 @@
           </item>
          </layout>
         </widget>
+        <zorder>label_40</zorder>
+        <zorder>checkUseAutograyLevels</zorder>
+        <zorder>checkUseMatrixROI</zorder>
+        <zorder>buttonGetMatrixROI</zorder>
+        <zorder>layoutWidget</zorder>
+        <zorder>layoutWidget</zorder>
+        <zorder>label_42</zorder>
        </widget>
-       <widget class="QGroupBox" name="groupBox_7">
+       <widget class="QGroupBox" name="groupHistogram">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>100</y>
+          <y>160</y>
           <width>651</width>
           <height>291</height>
          </rect>
@@ -1157,8 +1178,8 @@
         <widget class="QLabel" name="label_47">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>190</y>
+           <x>0</x>
+           <y>270</y>
            <width>81</width>
            <height>16</height>
           </rect>
@@ -1173,16 +1194,16 @@
            <x>10</x>
            <y>20</y>
            <width>631</width>
-           <height>171</height>
+           <height>241</height>
           </rect>
          </property>
         </widget>
        </widget>
-       <widget class="QGroupBox" name="groupBox_8">
+       <widget class="QGroupBox" name="groupOutput">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>390</y>
+          <y>450</y>
           <width>548</width>
           <height>123</height>
          </rect>
@@ -1197,25 +1218,12 @@
             <string>Destination path</string>
            </property>
            <property name="buddy">
-            <cstring>lineEdit_8</cstring>
+            <cstring>editDestPath</cstring>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit_8"/>
-         </item>
-         <item row="0" column="2">
-          <spacer name="horizontalSpacer_14">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>112</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          <widget class="QLineEdit" name="editDestPath"/>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_49">
@@ -1223,15 +1231,15 @@
             <string>Slice mask</string>
            </property>
            <property name="buddy">
-            <cstring>lineEdit_9</cstring>
+            <cstring>editSliceMask</cstring>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEdit_9"/>
+          <widget class="QLineEdit" name="editSliceMask"/>
          </item>
          <item row="1" column="2">
-          <widget class="QComboBox" name="comboBox_5">
+          <widget class="QComboBox" name="comboDestFileType">
            <item>
             <property name="text">
              <string>8-bit TIFF</string>
@@ -1263,9 +1271,16 @@
           </spacer>
          </item>
          <item row="2" column="2">
-          <widget class="QPushButton" name="pushButton_5">
+          <widget class="QPushButton" name="buttonSaveMatrix">
            <property name="text">
             <string>Save matrix</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QPushButton" name="buttonBrowseDestinationPath">
+           <property name="text">
+            <string>Browse</string>
            </property>
           </widget>
          </item>
@@ -1290,13 +1305,13 @@
      </widget>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="layoutDisplay">
       <item>
        <widget class="QGroupBox" name="ProjViewBox">
         <property name="title">
          <string>Display</string>
         </property>
-        <widget class="QGroupBox" name="groupBox_9">
+        <widget class="QGroupBox" name="groupProjections">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -1318,7 +1333,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="sliderProjections">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -1332,7 +1347,7 @@
           </property>
          </widget>
         </widget>
-        <widget class="QGroupBox" name="groupBox_10">
+        <widget class="QGroupBox" name="groupSlices">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -1354,7 +1369,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QSlider" name="horizontalSlider_2">
+         <widget class="QSlider" name="sliderSlices">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -1368,9 +1383,6 @@
           </property>
          </widget>
         </widget>
-        <zorder>tabMainControl</zorder>
-        <zorder>groupBox_9</zorder>
-        <zorder>groupBox_10</zorder>
        </widget>
       </item>
      </layout>
@@ -1383,7 +1395,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
