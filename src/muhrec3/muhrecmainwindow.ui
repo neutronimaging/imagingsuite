@@ -33,7 +33,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <attribute name="title">
@@ -129,7 +129,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>771</width>
+          <width>797</width>
           <height>747</height>
          </rect>
         </property>
@@ -1058,7 +1058,7 @@
           <rect>
            <x>150</x>
            <y>30</y>
-           <width>167</width>
+           <width>213</width>
            <height>30</height>
           </rect>
          </property>
@@ -1155,13 +1155,6 @@
           </item>
          </layout>
         </widget>
-        <zorder>label_40</zorder>
-        <zorder>checkUseAutograyLevels</zorder>
-        <zorder>checkUseMatrixROI</zorder>
-        <zorder>buttonGetMatrixROI</zorder>
-        <zorder>layoutWidget</zorder>
-        <zorder>layoutWidget</zorder>
-        <zorder>label_42</zorder>
        </widget>
        <widget class="QGroupBox" name="groupHistogram">
         <property name="geometry">
@@ -1395,7 +1388,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
