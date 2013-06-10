@@ -28,10 +28,29 @@ private:
     Ui::MuhRecMainWindow *ui;
     void SetApplicationPath(std::string path) {m_sApplicationPath=path;}
 
+    // Collection of call-backs
+protected slots:
+    void BrowseProjectionPath();
+    void BrowseReferencePath();
+    void BrowseDestinationPath();
+    void TakeProjectionPath();
+    void PreviewProjection();
+    void GetDoseROI();
+    void UpdateDoseROI();
+    void BinningChanged();
+    void FlipChanged();
+    void RotateChanged();
+    void DoseROIChanged();
+    void ReconROIChanged();
+    void CenterOfRotationChanged();
+    void ConfigureGeometry();
+    void GetMatrixROI();
+    void MatrixROIChanged();
+    void SaveMatrix();
+
 protected:
     /// Sets up all call-back functions during the initialization.
     void SetupCallBacks();
-    // Collection of call-backs
 
     // Other methods
     void UpdateMemoryUsage(size_t *roi);

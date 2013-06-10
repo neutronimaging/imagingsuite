@@ -33,7 +33,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <attribute name="title">
@@ -53,7 +53,7 @@
           <enum>QFormLayout::FieldsStayAtSizeHint</enum>
          </property>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit_Project"/>
+          <widget class="QLineEdit" name="editProjectName"/>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
@@ -61,12 +61,12 @@
             <string>Sample</string>
            </property>
            <property name="buddy">
-            <cstring>lineEdit_Sample</cstring>
+            <cstring>editSampleDescription</cstring>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEdit_Sample"/>
+          <widget class="QLineEdit" name="editSampleDescription"/>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_3">
@@ -74,12 +74,12 @@
             <string>Instrument</string>
            </property>
            <property name="buddy">
-            <cstring>lineEdit_Instrument</cstring>
+            <cstring>editInstrumentName</cstring>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit_Instrument"/>
+          <widget class="QLineEdit" name="editInstrumentName"/>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_4">
@@ -87,12 +87,12 @@
             <string>Operator</string>
            </property>
            <property name="buddy">
-            <cstring>lineEdit_Operator</cstring>
+            <cstring>editOperatorName</cstring>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEdit_Operator"/>
+          <widget class="QLineEdit" name="editOperatorName"/>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_5">
@@ -100,12 +100,12 @@
             <string>Description</string>
            </property>
            <property name="buddy">
-            <cstring>textEdit_Description</cstring>
+            <cstring>editExperimentDescription</cstring>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QTextEdit" name="textEdit_Description"/>
+          <widget class="QTextEdit" name="editExperimentDescription"/>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
@@ -113,7 +113,7 @@
             <string>Project</string>
            </property>
            <property name="buddy">
-            <cstring>lineEdit_Project</cstring>
+            <cstring>editProjectName</cstring>
            </property>
           </widget>
          </item>

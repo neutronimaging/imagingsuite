@@ -2,6 +2,17 @@
 
 #include "muhrecmainwindow.h"
 #include "ui_muhrecmainwindow.h"
+#include <math/mathfunctions.h>
+#include <base/thistogram.h>
+#include <strings/string2array.h>
+
+#include <BackProjectorBase.h>
+#include <ReconHelpers.h>
+#include <ReconException.h>
+
+#include <ModuleException.h>
+#include <ParameterHandling.h>
+
 #include <set>
 #include <sstream>
 #include <string>
@@ -31,6 +42,84 @@ MuhRecMainWindow::~MuhRecMainWindow()
 {
     delete ui;
 }
+
+
+void MuhRecMainWindow::SetupCallBacks()
+{
+    // Connecting buttons
+    connect(ui->buttonProjectionPath,SIGNAL(clicked()),this,SLOT(BrowseProjectionPath()));
+    connect(ui->buttonBrowseReference,SIGNAL(clicked()),this,SLOT(BrowseReferencePath()));
+    connect(ui->buttonBrowseDestinationPath,SIGNAL(clicked()),this,SLOT(BrowseDestinationPath()));
+    connect(ui->buttonTakePath,SIGNAL(clicked()),this,SLOT(TakeProjectionPath()));
+    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+    connect(ui->buttonGetDoseROI,SIGNAL(clicked()),this,SLOT(GetDoseROI()));
+    connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
+    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+    connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
+    connect(ui->buttonConfigGeometry, SIGNAL(clicked()), this,SLOT(ConfigureGeometry()));
+/*
+    void UpdateDoseROI();
+    void BinningChanged();
+    void FlipChanged();
+    void RotateChanged();
+    void DoseROIChanged();
+    void ReconROIChanged();
+    void CenterOfRotationChanged();
+    void MatrixROIChanged();
+*/
+}
+
+void MuhRecMainWindow::BrowseProjectionPath() {
+
+}
+
+void MuhRecMainWindow::BrowseReferencePath()
+{}
+
+void MuhRecMainWindow::BrowseDestinationPath()
+{}
+
+void MuhRecMainWindow::TakeProjectionPath()
+{}
+
+void MuhRecMainWindow::PreviewProjection()
+{}
+
+void MuhRecMainWindow::GetDoseROI()
+{}
+
+void MuhRecMainWindow::UpdateDoseROI()
+{}
+
+void MuhRecMainWindow::BinningChanged()
+{}
+
+void MuhRecMainWindow::FlipChanged()
+{}
+
+void MuhRecMainWindow::RotateChanged()
+{}
+
+void MuhRecMainWindow::DoseROIChanged()
+{}
+
+void MuhRecMainWindow::ReconROIChanged()
+{}
+
+void MuhRecMainWindow::CenterOfRotationChanged()
+{}
+
+void MuhRecMainWindow::ConfigureGeometry()
+{}
+
+void MuhRecMainWindow::GetMatrixROI()
+{}
+
+void MuhRecMainWindow::MatrixROIChanged()
+{}
+
+void MuhRecMainWindow::SaveMatrix()
+{}
 
 void MuhRecMainWindow::UpdateDialog()
 {
@@ -79,7 +168,13 @@ void MuhRecMainWindow::UpdateDialog()
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
     ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType);
-  //  ui->logviewer->SetLogLevel(m_Config.System.eLogLevel);
+    ui->editProjectName->setText(QString::fromStdString(m_Config.UserInformation.sProjectNumber));
+    ui->editOperatorName->setText(QString::fromStdString(m_Config.UserInformation.sOperator));
+    ui->editInstrumentName->setText(QString::fromStdString(m_Config.UserInformation.sInstrument));
+    ui->editSampleDescription->setText(QString::fromStdString(m_Config.UserInformation.sSample));
+    ui->editExperimentDescription->setText(QString::fromStdString(m_Config.UserInformation.sComment));
+
+
 
     str.str("");
     std::set<size_t>::iterator it;
@@ -107,6 +202,11 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.sDCFileMask = ui->editDarkMask->text().toStdString();
     m_Config.ProjectionInfo.nDCFirstIndex = ui->spinFirstDark->value();
     m_Config.ProjectionInfo.nDCCount = ui->spinDarkCount->value();
+    std::string str=ui->editProjectionSkipList->text().toStdString();
+    if (!str.empty())
+        kipl::strings::String2Set(str,m_Config.ProjectionInfo.nlSkipList);
+    else
+        m_Config.ProjectionInfo.nlSkipList.clear();
 
     m_Config.ProjectionInfo.dose_roi[0] = ui->spinDoseROIx0->value();
     m_Config.ProjectionInfo.dose_roi[1] = ui->spinDoseROIy0->value();
@@ -139,10 +239,10 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex());
 
+    m_Config.UserInformation.sProjectNumber = ui->editProjectName->text().toStdString();
+    m_Config.UserInformation.sOperator = ui->editOperatorName->text().toStdString();
+    m_Config.UserInformation.sInstrument = ui->editInstrumentName->text().toStdString();
+    m_Config.UserInformation.sSample = ui->editSampleDescription->text().toStdString();
+    m_Config.UserInformation.sComment = ui->editExperimentDescription->toPlainText().toStdString();
 
-//    str.str("");
-//    std::set<size_t>::iterator it;
-//    for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
-//        str<<*it<<" ";
-//    ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
 }
