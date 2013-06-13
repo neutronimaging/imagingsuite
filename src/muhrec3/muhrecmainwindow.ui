@@ -33,7 +33,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <attribute name="title">
@@ -1102,7 +1102,7 @@
          </property>
          <layout class="QHBoxLayout" name="layoutMatrixROI">
           <item>
-           <widget class="QLabel" name="label_43">
+           <widget class="QLabel" name="labelMX0">
             <property name="text">
              <string>x0</string>
             </property>
@@ -1115,7 +1115,7 @@
            <widget class="QSpinBox" name="spinMatrixROI0"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_44">
+           <widget class="QLabel" name="labelMX1">
             <property name="text">
              <string>y0</string>
             </property>
@@ -1128,7 +1128,7 @@
            <widget class="QSpinBox" name="spinMatrixROI1"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_45">
+           <widget class="QLabel" name="labelMX2">
             <property name="text">
              <string>x1</string>
             </property>
@@ -1141,7 +1141,7 @@
            <widget class="QSpinBox" name="spinMatrixROI2"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_46">
+           <widget class="QLabel" name="labelMX3">
             <property name="text">
              <string>y1</string>
             </property>
@@ -1352,7 +1352,7 @@
          <property name="title">
           <string>Slices</string>
          </property>
-         <widget class="QtAddons::ImageViewerWidget" name="widget" native="true">
+         <widget class="QtAddons::ImageViewerWidget" name="sliceViewer" native="true">
           <property name="geometry">
            <rect>
             <x>0</x>

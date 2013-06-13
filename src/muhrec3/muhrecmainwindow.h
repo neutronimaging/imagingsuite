@@ -36,22 +36,24 @@ protected slots:
     void TakeProjectionPath();
     void PreviewProjection();
     void GetDoseROI();
-    void UpdateDoseROI();
     void BinningChanged();
     void FlipChanged();
     void RotateChanged();
-    void DoseROIChanged();
-    void ReconROIChanged();
+    void DoseROIChanged(int x);
+    void ReconROIChanged(int x);
     void CenterOfRotationChanged();
     void ConfigureGeometry();
+    void GrayLevelsChanged(double x);
     void GetMatrixROI();
-    void MatrixROIChanged();
+    void MatrixROIChanged(int x);
+    void UseMatrixROI(int x);
     void SaveMatrix();
 
 protected:
     /// Sets up all call-back functions during the initialization.
     void SetupCallBacks();
-
+    void UpdateMatrixROI();
+    void UpdateDoseROI();
     // Other methods
     void UpdateMemoryUsage(size_t *roi);
     void SetImageSizeToAdjustment();
