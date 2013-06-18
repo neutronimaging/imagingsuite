@@ -7,6 +7,7 @@ namespace QtAddons {
 ImagePainter::ImagePainter(QWidget * parent) :
     m_pParent(parent),
     logger("ImagePainter"),
+    m_bHold_annotations(false),
     m_data(NULL),
     m_cdata(NULL)
 {
@@ -38,7 +39,7 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
     if (!m_pixmap_full.isNull())
     {
-        logger(kipl::logging::Logger::LogMessage,"Drawing the image");
+     //   logger(kipl::logging::Logger::LogMessage,"Drawing the image");
         QSize widgetSize(w,h);
         QPoint centerPoint(0,0);
         // Scale new image which size is widgetSize
@@ -58,32 +59,33 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         scaled_height = scaledPixmap.height();
 
         m_fScale=scaledPixmap.width()/static_cast<float>(m_dims[0]);
-        if (!m_BoxList.empty() || !m_PlotList.empty()) {
-            if (!m_BoxList.empty()) {
-                QMap<int,QPair<QRect, QColor> >::iterator it;
 
-                for (it=m_BoxList.begin(); it!=m_BoxList.end(); it++) {
-                    QRect rect=it->first;
+        if (!m_BoxList.empty()) {
 
-                    painter.setPen(QPen(it->second));
-                    painter.drawRect(offset_x+rect.x()*m_fScale,offset_y+rect.y()*m_fScale,rect.width(),rect.height());
-                }
+            QMap<int,QPair<QRect, QColor> >::iterator it;
+
+            for (it=m_BoxList.begin(); it!=m_BoxList.end(); it++) {
+                QRect rect=it->first;
+
+                painter.setPen(QPen(it->second));
+                painter.drawRect(offset_x+rect.x()*m_fScale,offset_y+rect.y()*m_fScale,rect.width()*m_fScale,rect.height()*m_fScale);
             }
+        }
 
-            if (!m_PlotList.empty()) {
+        if (!m_PlotList.empty()) {
 
-                QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
-                for (it=m_PlotList.begin(); it!=m_PlotList.end(); it++) {
+            QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
+            for (it=m_PlotList.begin(); it!=m_PlotList.end(); it++) {
 
-                    painter.setPen(QPen(it->second));
-                    QPoint offset(offset_x,offset_y);
+                painter.setPen(QPen(it->second));
+                QPoint offset(offset_x,offset_y);
 
-                    for (int i=1; i<it->first.size(); i++) {
-                        painter.drawLine(offset+m_fScale*it->first[i-1],offset+m_fScale*it->first[i]);
-                    }
+                for (int i=1; i<it->first.size(); i++) {
+                    painter.drawLine(offset+m_fScale*it->first[i-1],offset+m_fScale*it->first[i]);
                 }
             }
         }
+
 
         painter.setPen(QColor(Qt::black));
     }
@@ -105,8 +107,10 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     m_MinVal=m_ImageMin;
     m_MaxVal=m_ImageMax;
 
-    m_BoxList.clear();
-    m_PlotList.clear();
+    if (!m_bHold_annotations) {
+        m_BoxList.clear();
+        m_PlotList.clear();
+    }
 
     prepare_pixbuf();
 }
@@ -126,8 +130,11 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     m_MinVal=low;
     m_MaxVal=high;
 
-    m_BoxList.clear();
-    m_PlotList.clear();
+    if (!m_bHold_annotations) {
+        m_BoxList.clear();
+        m_PlotList.clear();
+    }
+
     prepare_pixbuf();
 }
 
@@ -139,6 +146,12 @@ void ImagePainter::set_plot(QVector<QPointF> data, QColor color, int idx)
 void ImagePainter::set_rectangle(QRect rect, QColor color, int idx)
 {
     m_BoxList[idx]=qMakePair<QRect,QColor>(rect,color);
+    m_pParent->update();
+}
+
+void ImagePainter::hold_annotations(bool hold)
+{
+    m_bHold_annotations=hold;
 }
 
 int ImagePainter::clear_plot(int idx)
@@ -177,6 +190,7 @@ int ImagePainter::clear_rectangle(int idx)
                 m_BoxList.erase (it);
             }
         }
+        m_pParent->update();
         return 1;
     }
 

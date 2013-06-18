@@ -14,6 +14,7 @@ class QToolButton;
 namespace QtAddons {
 class PlotSettings;
 class PlotData;
+class PlotCursor;
 
 class Plotter : public QWidget
 {
@@ -23,8 +24,14 @@ public:
     Plotter(QWidget *parent = 0);
 
     void setPlotSettings(const PlotSettings &settings);
-    void setCurveData(int id, const QVector<QPointF> &data);
+    void setCurveData(int id, const QVector<QPointF> &data);    
     void clearCurve(int id);
+    void clearAllCurves();
+
+    void setPlotCursor(int id, PlotCursor c);
+    void clearPlotCursor(int id);
+    void clearAllPlotCursors();
+
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
     bool ShowGrid;
@@ -48,12 +55,14 @@ private:
     void refreshPixmap();
     void drawGrid(QPainter *painter);
     void drawCurves(QPainter *painter);
+    void drawCursors(QPainter *painter);
 
     enum { Margin = 30 };
 
     QToolButton *zoomInButton;
     QToolButton *zoomOutButton;
     QMap<int, PlotData > curveMap;
+    QMap<int, PlotCursor > cursorMap;
     QVector<PlotSettings> zoomStack;
     int curZoom;
     bool rubberBandIsShown;
@@ -99,6 +108,23 @@ public :
     double minY;
     double maxY;
     ePlotGlyph glyph;
+};
+
+class PlotCursor
+{
+public:
+    enum Orientation {
+        Horizontal = 0,
+        Vertical   = 1
+    };
+
+    PlotCursor();
+    PlotCursor(const PlotCursor & c);
+    PlotCursor(double pos, QColor color, Orientation o);
+    const PlotCursor & operator=(const PlotCursor & c);
+    double m_fPosition;
+    QColor m_Color;
+    Orientation m_Orientation;
 };
 
 }

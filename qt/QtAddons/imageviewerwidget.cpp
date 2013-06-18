@@ -101,8 +101,6 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
                         floor(r.height()/m_ImagePainter.get_scale())
                         );
 
-//        msg<<"ROI selected @"<<roiRect.x()<<", "<<roiRect.y()<<" w="<<roiRect.width()<<", h="<<roiRect.height();
-//        logger(kipl::logging::Logger::LogMessage,msg.str());
     }
 }
 
@@ -151,6 +149,11 @@ void ImageViewerWidget::set_rectangle(QRect rect, QColor color, int idx)
 void ImageViewerWidget::clear_rectangle(int idx)
 {
     m_ImagePainter.clear_rectangle(idx);
+}
+
+void ImageViewerWidget::hold_annotations(bool hold)
+{
+    m_ImagePainter.hold_annotations(hold);
 }
 
 void ImageViewerWidget::clear_viewer()

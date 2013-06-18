@@ -30,6 +30,7 @@ public:
     int clear_plot(int idx=-1);
     void set_rectangle(QRect rect, QColor color, int idx);
     int  clear_rectangle(int idx=-1);
+    void hold_annotations(bool hold);
 
     int  clear();
     void set_levels(const float level_low, const float level_high);
@@ -58,6 +59,7 @@ protected:
     int scaled_width;
     int scaled_height;
     float m_fScale;
+    bool m_bHold_annotations;
 
     //Gdk::InterpType m_Interpolation;
     float * m_data;  //<! float pixel buffer

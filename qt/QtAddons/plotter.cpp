@@ -108,6 +108,31 @@ void Plotter::clearCurve(int id)
     refreshPixmap();
 }
 
+void Plotter::clearAllCurves()
+{
+    curveMap.clear();
+    refreshBounds();
+    refreshPixmap();
+}
+
+void Plotter::setPlotCursor(int id, PlotCursor c)
+{
+    cursorMap[id]=c;
+    refreshPixmap();
+}
+
+void Plotter::clearPlotCursor(int id)
+{
+    cursorMap.remove(id);
+    refreshPixmap();
+}
+
+void Plotter::clearAllPlotCursors()
+{
+    cursorMap.clear();
+    refreshPixmap();
+}
+
 QSize Plotter::minimumSizeHint() const
 {
     return QSize(6 * Margin, 4 * Margin);
@@ -260,6 +285,7 @@ void Plotter::refreshPixmap()
     painter.initFrom(this);
     drawGrid(&painter);
     drawCurves(&painter);
+    drawCursors(&painter);
     update();
 }
 
@@ -346,6 +372,68 @@ void Plotter::drawCurves(QPainter *painter)
 
         painter->drawPolyline(polyline);
 
+    }
+}
+
+void Plotter::drawCursors(QPainter *painter)
+{
+    std::ostringstream msg;
+
+    if (!cursorMap.empty()) {
+        PlotSettings settings = zoomStack[curZoom];
+        QRect rect(Margin, Margin,
+                   width() - 2 * Margin, height() - 2 * Margin);
+        if (!rect.isValid())
+            return;
+
+        painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
+
+        QMapIterator<int, PlotCursor > i(cursorMap);
+
+        while (i.hasNext()) {
+            i.next();
+            PlotCursor cur=i.value();
+
+            msg.str("");
+            double position=cur.m_fPosition;
+            painter->setPen(QColor(cur.m_Color));
+            if (cur.m_Orientation==PlotCursor::Horizontal) {
+                if (position<settings.minY)  {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.minY;
+                }
+
+                if (settings.maxY<position) {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.maxY;
+                }
+                painter->drawLine(rect.left(),
+                                 int(rect.bottom() - 1 - ((position-settings.minY) * (rect.height() - 2)
+                                                     / settings.spanY())),
+                                 rect.right(),
+                                 int(rect.bottom() - 1 - ((position -settings.minY) * (rect.height() - 2)
+                                                                                              / settings.spanY())));
+            }
+            else {
+                if (position<settings.minX)  {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.minX;
+                }
+
+                if (settings.maxX<position) {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.maxX;
+                }
+
+                painter->drawLine(rect.left() + 1+ int((position - settings.minX) * (rect.width() - 3)
+                                                / settings.spanX()),
+                                 rect.bottom() ,
+                                 rect.left() + 1+ int((position - settings.minX) * (rect.width() - 3)
+                                                              / settings.spanX()),
+                                 rect.top());
+                painter->setPen(Qt::SolidLine);
+            }
+        }
     }
 }
 
@@ -486,5 +574,33 @@ const PlotData & PlotData::operator=(const PlotData & data)
 
     return *this;
 }
+
+PlotCursor::PlotCursor() :
+    m_fPosition(0.0),
+    m_Color(QColor("red")),
+    m_Orientation(Horizontal)
+{}
+
+PlotCursor::PlotCursor(const PlotCursor & c) :
+m_fPosition(c.m_fPosition),
+m_Color(c.m_Color),
+m_Orientation(c.m_Orientation)
+{}
+
+PlotCursor::PlotCursor(double pos, QColor color, Orientation o) :
+    m_fPosition(pos),
+    m_Color(color),
+    m_Orientation(o)
+{}
+
+const PlotCursor & PlotCursor::operator=(const PlotCursor & c)
+{
+    m_fPosition=c.m_fPosition;
+    m_Color=c.m_Color;
+    m_Orientation=c.m_Orientation;
+
+    return *this;
+}
+
 }
 
