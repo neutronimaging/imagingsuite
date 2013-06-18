@@ -34,7 +34,7 @@ protected slots:
     void BrowseReferencePath();
     void BrowseDestinationPath();
     void TakeProjectionPath();
-    void PreviewProjection();
+
     void GetDoseROI();
     void BinningChanged();
     void FlipChanged();
@@ -48,6 +48,9 @@ protected slots:
     void MatrixROIChanged(int x);
     void UseMatrixROI(int x);
     void SaveMatrix();
+    void ProjectionIndexChanged(int x);
+    void PreviewProjection();
+    void PreviewProjection(int x);
 
 protected:
     /// Sets up all call-back functions during the initialization.

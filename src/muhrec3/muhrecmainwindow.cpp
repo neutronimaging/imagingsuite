@@ -3,13 +3,17 @@
 #include <QFileDialog>
 #include "muhrecmainwindow.h"
 #include "ui_muhrecmainwindow.h"
+
+#include <base/timage.h>
 #include <math/mathfunctions.h>
 #include <base/thistogram.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 #include <BackProjectorBase.h>
 #include <ReconHelpers.h>
 #include <ReconException.h>
+#include <ProjectionReader.h>
 
 #include <ModuleException.h>
 #include <ParameterHandling.h>
@@ -35,6 +39,7 @@ MuhRecMainWindow::MuhRecMainWindow(std::string application_path, QWidget *parent
 
     msg<<"Application path:"<<m_sApplicationPath;
     logger(kipl::logging::Logger::LogMessage,msg.str());
+    ui->projectionViewer->hold_annotations(true);
     UpdateDialog();
     SetupCallBacks();
 
@@ -56,7 +61,7 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
     connect(ui->buttonGetDoseROI,SIGNAL(clicked()),this,SLOT(GetDoseROI()));
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
-    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
     connect(ui->buttonConfigGeometry, SIGNAL(clicked()), this,SLOT(ConfigureGeometry()));
 
@@ -76,6 +81,15 @@ void MuhRecMainWindow::SetupCallBacks()
     // Graylevels
     connect(ui->dspinGrayLow,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
     connect(ui->dspinGrayHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
+
+    // Display projections
+    connect(ui->sliderProjections,SIGNAL(sliderMoved(int)),this,SLOT(PreviewProjection(int)));
+    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+    connect(ui->spinFirstProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
+    connect(ui->spinLastProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
+    connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
+    connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
+
 /*
     void BinningChanged();
     void FlipChanged();
@@ -120,9 +134,43 @@ void MuhRecMainWindow::TakeProjectionPath()
     ui->editReferencePath->setText(ui->editProjectionPath->text());
 }
 
+void MuhRecMainWindow::ProjectionIndexChanged(int x)
+{
+    ui->sliderProjections->setMaximum(ui->spinLastProjection->value());
+    ui->sliderProjections->setMinimum(ui->spinFirstProjection->value());
+    PreviewProjection();
+}
+
+void MuhRecMainWindow::PreviewProjection(int x)
+{
+    PreviewProjection();
+}
+
 void MuhRecMainWindow::PreviewProjection()
 {
+    std::ostringstream msg;
+    ProjectionReader reader;
+    kipl::base::TImage<float,2> img;
+    try {
+        std::string path=ui->editProjectionPath->text().toStdString();
+        kipl::strings::filenames::CheckPathSlashes(path,true);
+        std::string fmask=ui->editProjectionMask->text().toStdString();
 
+        msg.str("");
+        msg<<"Path: "<<path<<", fmask: "<<fmask;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        img=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
+                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+                        static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+
+        ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Could not load the projection for preview: \n"<<e.what();
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
 }
 
 void MuhRecMainWindow::GetDoseROI()
@@ -138,7 +186,7 @@ void MuhRecMainWindow::GetDoseROI()
         ui->spinDoseROIx0->setValue(rect.x());
         ui->spinDoseROIy0->setValue(rect.y());
         ui->spinDoseROIx1->setValue(rect.x()+rect.width());
-        ui->spinDoseROIy1->setValue(rect.x()+rect.height());
+        ui->spinDoseROIy1->setValue(rect.y()+rect.height());
         ui->spinDoseROIx0->blockSignals(false);
         ui->spinDoseROIy0->blockSignals(false);
         ui->spinDoseROIx1->blockSignals(false);
@@ -187,6 +235,8 @@ void MuhRecMainWindow::GrayLevelsChanged(double x)
     double low=ui->dspinGrayLow->value();
     double high=ui->dspinGrayHigh->value();
     ui->sliceViewer->set_levels(low,high);
+    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 }
 
 void MuhRecMainWindow::GetMatrixROI()

@@ -9,18 +9,21 @@ QT       += core gui
 TARGET = muhrec3
 TEMPLATE = app
 
-CMAKE_CXX_FLAGS += -fopenmp
+QMAKE_CXXFLAGS += -fopenmp
 
 SOURCES += main.cpp\
         muhrecmainwindow.cpp \
-    MuhrecInteractor.cpp
+    MuhrecInteractor.cpp \
+    configuregeometrydialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
-    MuhrecInteractor.h
+    MuhrecInteractor.h \
+    configuregeometrydialog.h
 
-FORMS    += muhrecmainwindow.ui
+FORMS    += muhrecmainwindow.ui \
+    configuregeometrydialog.ui
 
-LIBS += -L/usr/lib -lxml2
+LIBS += -L/usr/lib -lxml2 -lgomp
 
 INCLUDEPATH += /usr/include/libxml2
 
@@ -63,7 +66,8 @@ DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lReconFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
-else:unix: LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Debug/ -lReconFramework
 
 INCLUDEPATH += $$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/include
