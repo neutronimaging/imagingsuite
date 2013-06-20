@@ -141,6 +141,7 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
 void ImagePainter::set_plot(QVector<QPointF> data, QColor color, int idx)
 {
     m_PlotList[idx]=qMakePair<QVector<QPointF>, QColor>(data,color);
+    m_pParent->update();
 }
 
 void ImagePainter::set_rectangle(QRect rect, QColor color, int idx)
