@@ -41,6 +41,9 @@ MuhRecMainWindow::MuhRecMainWindow(std::string application_path, QWidget *parent
     logger(kipl::logging::Logger::LogMessage,msg.str());
     ui->projectionViewer->hold_annotations(true);
     UpdateDialog();
+    ProjectionIndexChanged(0);
+    ReconROIChanged(0);
+
     SetupCallBacks();
 
 }
@@ -90,6 +93,12 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
     connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
 
+    // Recon ROI
+    connect(ui->spinMarginLeft,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
+    connect(ui->spinMarginRight,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
+    connect(ui->spinSlicesFirst,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
+    connect(ui->spinSlicesLast,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
+    connect(ui->buttonGetReconROI,SIGNAL(clicked()),this,SLOT(GetReconROI()));
 /*
     void BinningChanged();
     void FlipChanged();
@@ -156,15 +165,13 @@ void MuhRecMainWindow::PreviewProjection()
         kipl::strings::filenames::CheckPathSlashes(path,true);
         std::string fmask=ui->editProjectionMask->text().toStdString();
 
-        msg.str("");
-        msg<<"Path: "<<path<<", fmask: "<<fmask;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
         img=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                         static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
         ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
+        SetImageDimensionLimits(img.Dims());
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -207,6 +214,41 @@ void MuhRecMainWindow::UpdateDoseROI()
     ui->projectionViewer->set_rectangle(rect,QColor("green"),0);
 }
 
+void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
+{
+    ui->spinDoseROIx0->setMaximum(dims[0]-1);
+    ui->spinDoseROIy0->setMaximum(dims[1]-1);
+    ui->spinDoseROIx1->setMaximum(dims[0]-1);
+    ui->spinDoseROIy1->setMaximum(dims[1]-1);
+
+    ui->spinMarginLeft->setMaximum(dims[0]-1);
+    ui->spinMarginRight->setMaximum(dims[0]-1);
+    ui->spinSlicesFirst->setMaximum(dims[1]-1);
+    ui->spinSlicesLast->setMaximum(dims[1]-1);
+}
+
+void MuhRecMainWindow::GetReconROI()
+{
+    QRect rect=ui->projectionViewer->get_marked_roi();
+
+    if (rect.width()*rect.height()!=0)
+    {
+        ui->spinMarginLeft->blockSignals(true);
+        ui->spinMarginRight->blockSignals(true);
+        ui->spinSlicesFirst->blockSignals(true);
+        ui->spinSlicesLast->blockSignals(true);
+        ui->spinMarginLeft->setValue(rect.x());
+        ui->spinSlicesFirst->setValue(rect.y());
+        ui->spinMarginRight->setValue(rect.x()+rect.width());
+        ui->spinSlicesLast->setValue(rect.y()+rect.height());
+        ui->spinMarginLeft->blockSignals(false);
+        ui->spinMarginRight->blockSignals(false);
+        ui->spinSlicesFirst->blockSignals(false);
+        ui->spinSlicesLast->blockSignals(false);
+        ReconROIChanged(0);
+    }
+}
+
 void MuhRecMainWindow::BinningChanged()
 {}
 
@@ -222,7 +264,16 @@ void MuhRecMainWindow::DoseROIChanged(int x)
 }
 
 void MuhRecMainWindow::ReconROIChanged(int x)
-{}
+{
+    QRect rect;
+
+    rect.setCoords(ui->spinMarginLeft->value(),
+                   ui->spinSlicesFirst->value(),
+                   ui->spinMarginRight->value(),
+                   ui->spinSlicesLast->value());
+
+    ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
+}
 
 void MuhRecMainWindow::CenterOfRotationChanged()
 {}

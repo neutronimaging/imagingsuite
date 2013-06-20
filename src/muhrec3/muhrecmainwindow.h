@@ -36,6 +36,7 @@ protected slots:
     void TakeProjectionPath();
 
     void GetDoseROI();
+    void GetReconROI();
     void BinningChanged();
     void FlipChanged();
     void RotateChanged();
@@ -57,6 +58,7 @@ protected:
     void SetupCallBacks();
     void UpdateMatrixROI();
     void UpdateDoseROI();
+    void SetImageDimensionLimits(size_t const * const dims);
     // Other methods
     void UpdateMemoryUsage(size_t *roi);
     void SetImageSizeToAdjustment();

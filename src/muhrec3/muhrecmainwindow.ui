@@ -130,7 +130,7 @@
           <x>0</x>
           <y>0</y>
           <width>797</width>
-          <height>747</height>
+          <height>755</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="layoutProjectionInformation">
@@ -978,6 +978,13 @@
                 <string>Golden ratio</string>
                </property>
               </item>
+             </widget>
+            </item>
+            <item row="1" column="9">
+             <widget class="QPushButton" name="buttonGetReconROI">
+              <property name="text">
+               <string>Get ROI</string>
+              </property>
              </widget>
             </item>
            </layout>
