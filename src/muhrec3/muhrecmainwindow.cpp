@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include "muhrecmainwindow.h"
 #include "ui_muhrecmainwindow.h"
+#include "configuregeometrydialog.h"
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -25,8 +26,8 @@
 
 MuhRecMainWindow::MuhRecMainWindow(std::string application_path, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MuhRecMainWindow),
     logger("MuhRec2MainWindow"),
+    ui(new Ui::MuhRecMainWindow),
     m_pEngine(NULL),
     m_nCurrentPage(0),
     m_sApplicationPath(application_path),
@@ -99,6 +100,13 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->spinSlicesFirst,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
     connect(ui->spinSlicesLast,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
     connect(ui->buttonGetReconROI,SIGNAL(clicked()),this,SLOT(GetReconROI()));
+
+    connect(ui->dspinRotationCenter,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
+    connect(ui->dspinTiltAngle,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
+    connect(ui->dspinTiltPivot,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
+    connect(ui->checkCorrectTilt,SIGNAL(stateChanged(int)),this,SLOT(CenterOfRotationChanged(int)));
+    connect(ui->buttonConfigGeometry,SIGNAL(clicked()),this,SLOT(ConfigureGeometry()));
+
 /*
     void BinningChanged();
     void FlipChanged();
@@ -159,19 +167,19 @@ void MuhRecMainWindow::PreviewProjection()
 {
     std::ostringstream msg;
     ProjectionReader reader;
-    kipl::base::TImage<float,2> img;
+
     try {
         std::string path=ui->editProjectionPath->text().toStdString();
         kipl::strings::filenames::CheckPathSlashes(path,true);
         std::string fmask=ui->editProjectionMask->text().toStdString();
 
-        img=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
+        m_PreviewImage=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                         static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
-        ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
-        SetImageDimensionLimits(img.Dims());
+        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
+        SetImageDimensionLimits(m_PreviewImage.Dims());
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -211,7 +219,7 @@ void MuhRecMainWindow::UpdateDoseROI()
                    ui->spinDoseROIx1->value(),
                    ui->spinDoseROIy1->value());
 
-    ui->projectionViewer->set_rectangle(rect,QColor("green"),0);
+    ui->projectionViewer->set_rectangle(rect,QColor("green").light(),0);
 }
 
 void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
@@ -273,13 +281,43 @@ void MuhRecMainWindow::ReconROIChanged(int x)
                    ui->spinSlicesLast->value());
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
+    CenterOfRotationChanged();
+}
+
+void MuhRecMainWindow::CenterOfRotationChanged(int x)
+{
+    CenterOfRotationChanged();
+}
+
+void  MuhRecMainWindow::CenterOfRotationChanged(double x)
+{
+    CenterOfRotationChanged();
 }
 
 void MuhRecMainWindow::CenterOfRotationChanged()
-{}
+{
+    double pos=ui->dspinRotationCenter->value()+ui->spinMarginLeft->value();
+    QVector<QPointF> coords;
+    coords.push_back(QPointF(pos,0));
+    coords.push_back(QPointF(pos,m_PreviewImage.Size(1)));
+
+
+    if (ui->checkCorrectTilt->checkState()) {
+        double pivot=ui->dspinTiltPivot->value();
+        double tantilt=tan(ui->dspinTiltAngle->value()*3.1415/180.0);
+        coords[0].setX(coords[0].x()-tantilt*pivot);
+        coords[1].setX(coords[1].x()+tantilt*(coords[1].y()-pivot));
+    }
+
+    ui->projectionViewer->set_plot(coords,QColor("red").light(),0);
+}
 
 void MuhRecMainWindow::ConfigureGeometry()
-{}
+{
+ ConfigureGeometryDialog dlg;
+
+ dlg.exec();
+}
 
 void MuhRecMainWindow::GrayLevelsChanged(double x)
 {

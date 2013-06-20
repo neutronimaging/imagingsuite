@@ -42,7 +42,8 @@ protected slots:
     void RotateChanged();
     void DoseROIChanged(int x);
     void ReconROIChanged(int x);
-    void CenterOfRotationChanged();
+    void CenterOfRotationChanged(int x);
+    void CenterOfRotationChanged(double x);
     void ConfigureGeometry();
     void GrayLevelsChanged(double x);
     void GetMatrixROI();
@@ -59,6 +60,7 @@ protected:
     void UpdateMatrixROI();
     void UpdateDoseROI();
     void SetImageDimensionLimits(size_t const * const dims);
+    void CenterOfRotationChanged();
     // Other methods
     void UpdateMemoryUsage(size_t *roi);
     void SetImageSizeToAdjustment();
