@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>839</width>
-    <height>366</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QtAddons::ImageViewerWidget" name="widget" native="true">
+  <widget class="QtAddons::ImageViewerWidget" name="viewerProjection" native="true">
    <property name="geometry">
     <rect>
      <x>496</x>
@@ -39,7 +39,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -71,7 +71,7 @@
      </widget>
     </item>
     <item row="0" column="5" colspan="2">
-     <widget class="QSpinBox" name="spinSPinMarginRight">
+     <widget class="QSpinBox" name="spinMarginRight">
       <property name="maximum">
        <number>9999</number>
       </property>
@@ -215,7 +215,7 @@
      </widget>
     </item>
     <item row="6" column="2">
-     <widget class="QDoubleSpinBox" name="doubleSpinBox">
+     <widget class="QDoubleSpinBox" name="dspinCenterRotation">
       <property name="maximum">
        <double>9999.000000000000000</double>
       </property>
@@ -238,7 +238,7 @@
      </spacer>
     </item>
     <item row="7" column="0">
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="checkUseTilt">
       <property name="text">
        <string>Find tilt angle</string>
       </property>
@@ -258,14 +258,14 @@
      </spacer>
     </item>
     <item row="8" column="0">
-     <widget class="QLabel" name="label_9">
+     <widget class="QLabel" name="labelTiltAngle">
       <property name="text">
        <string>Tilt angle</string>
       </property>
      </widget>
     </item>
     <item row="8" column="2">
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+     <widget class="QDoubleSpinBox" name="dspinTiltAngle">
       <property name="minimum">
        <double>-10.000000000000000</double>
       </property>
@@ -291,14 +291,11 @@
      </spacer>
     </item>
     <item row="9" column="0">
-     <widget class="QLabel" name="label_10">
+     <widget class="QLabel" name="labelTiltPivot">
       <property name="text">
        <string>Tilt pivot</string>
       </property>
      </widget>
-    </item>
-    <item row="9" column="2">
-     <widget class="QSpinBox" name="spinBox_8"/>
     </item>
     <item row="9" column="3" colspan="3">
      <spacer name="horizontalSpacer_6">
@@ -314,11 +311,14 @@
      </spacer>
     </item>
     <item row="9" column="6">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="buttonFindCenter">
       <property name="text">
        <string>Find center</string>
       </property>
      </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QDoubleSpinBox" name="dspinTiltPivot"/>
     </item>
    </layout>
   </widget>

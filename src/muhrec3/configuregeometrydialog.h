@@ -23,17 +23,25 @@ public:
     virtual int exec(ReconConfig &config);
 
 protected slots:
+    void FindCenter();
+    void UseTilt(bool x);
 
+private slots:
+    void onOKButtonClicked(){ this->setResult(QDialog::Accepted);}
+    void onCancelButtonClicked(){ this->setResult(QDialog::Rejected);}
 private:
     void UpdateConfig();
     void UpdateDialog();
-    void LoadImages();
+    int LoadImages();
 
     Ui::ConfigureGeometryDialog *ui;
 
     ReconConfig m_Config;
     kipl::base::TImage<float,2> m_Proj0Deg;
     kipl::base::TImage<float,2> m_Proj180Deg;
+    kipl::base::TImage<float,2> m_ProjDC;
+    kipl::base::TImage<float,2> m_ProjOB;
+    kipl::base::TImage<float,2> m_ProjCumulative;
 };
 
 #endif // CONFIGUREGEOMETRYDIALOG_H

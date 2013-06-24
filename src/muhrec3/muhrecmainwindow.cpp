@@ -316,6 +316,8 @@ void MuhRecMainWindow::ConfigureGeometry()
 {
  ConfigureGeometryDialog dlg;
 
+ UpdateConfig();
+
  dlg.exec(m_Config);
 }
 
@@ -468,6 +470,7 @@ void MuhRecMainWindow::UpdateDialog()
 void MuhRecMainWindow::UpdateConfig()
 {
     m_Config.ProjectionInfo.sPath     = ui->editProjectionPath->text().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sPath,true);
     m_Config.ProjectionInfo.sFileMask = ui->editProjectionMask->text().toStdString();
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
     m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
@@ -478,6 +481,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
     m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
+
     m_Config.ProjectionInfo.sOBFileMask = ui->editOpenBeamMask->text().toStdString();
     m_Config.ProjectionInfo.nOBFirstIndex = ui->spinFirstOpenBeam->value();
     m_Config.ProjectionInfo.nOBCount = ui->spinOpenBeamCount->value();
