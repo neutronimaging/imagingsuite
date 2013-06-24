@@ -316,7 +316,7 @@ void MuhRecMainWindow::ConfigureGeometry()
 {
  ConfigureGeometryDialog dlg;
 
- dlg.exec();
+ dlg.exec(m_Config);
 }
 
 void MuhRecMainWindow::GrayLevelsChanged(double x)
