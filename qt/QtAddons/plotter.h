@@ -99,7 +99,7 @@ class PlotData
 public :
     PlotData();
     PlotData(const PlotData & data);
-    PlotData(const QVector<QPointF>  & datavect, ePlotGlyph gl=PlotGlyph_Square);
+    PlotData(const QVector<QPointF>  & datavect, ePlotGlyph gl=PlotGlyph_None);
     const PlotData & operator=(const PlotData & data);
     QVector<QPointF> m_data;
 
