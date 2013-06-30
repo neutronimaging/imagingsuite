@@ -19,13 +19,14 @@ class MuhRecMainWindow : public QMainWindow, public ApplicationBase
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit MuhRecMainWindow(std::string application_path, QWidget *parent = 0);
+    explicit MuhRecMainWindow(QApplication *app, QWidget *parent = 0);
     ~MuhRecMainWindow();
     virtual void UpdateDialog();
     virtual void UpdateConfig();
 
 private:
     Ui::MuhRecMainWindow *ui;
+    QApplication *m_QtApp;
     void SetApplicationPath(std::string path) {m_sApplicationPath=path;}
 
     // Collection of call-backs
@@ -34,6 +35,7 @@ protected slots:
     void BrowseReferencePath();
     void BrowseDestinationPath();
     void TakeProjectionPath();
+    void GetSkipList();
 
     void GetDoseROI();
     void GetReconROI();
@@ -53,6 +55,14 @@ protected slots:
     void ProjectionIndexChanged(int x);
     void PreviewProjection();
     void PreviewProjection(int x);
+
+    // Menu slots
+    void MenuFileNew();
+    void MenuFileOpen();
+    void MenuFileSave();
+    void MenuFileSaveAs();
+    void MenuFileQuit();
+    void MenuHelpAbout();
 
 protected:
     /// Sets up all call-back functions during the initialization.

@@ -17,15 +17,12 @@ int main(int argc, char *argv[])
 
 int RunGUI(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
-    std::string application_path=argv[0];
-
-    application_path.substr(0,application_path.find_last_of('/'));
-    MuhRecMainWindow w(application_path);
+    MuhRecMainWindow w(&app);
     w.show();
     
-    return a.exec();
+    return app.exec();
 }
 
 int RunOffline(int argc, char *argv[])

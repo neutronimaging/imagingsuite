@@ -1,9 +1,11 @@
 #include <sstream>
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include "muhrecmainwindow.h"
 #include "ui_muhrecmainwindow.h"
 #include "configuregeometrydialog.h"
+#include "findskiplistdialog.h"
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -24,13 +26,14 @@
 #include <string>
 
 
-MuhRecMainWindow::MuhRecMainWindow(std::string application_path, QWidget *parent) :
+MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("MuhRec2MainWindow"),
     ui(new Ui::MuhRecMainWindow),
+    m_QtApp(app),
     m_pEngine(NULL),
     m_nCurrentPage(0),
-    m_sApplicationPath(application_path),
+    m_sApplicationPath(app->applicationDirPath().toAscii()),
     m_sConfigFilename("noname.xml")
 {
     std::ostringstream msg;
@@ -65,6 +68,7 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
     connect(ui->buttonGetDoseROI,SIGNAL(clicked()),this,SLOT(GetDoseROI()));
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
+    connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
     connect(ui->buttonConfigGeometry, SIGNAL(clicked()), this,SLOT(ConfigureGeometry()));
@@ -107,6 +111,12 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->checkCorrectTilt,SIGNAL(stateChanged(int)),this,SLOT(CenterOfRotationChanged(int)));
     connect(ui->buttonConfigGeometry,SIGNAL(clicked()),this,SLOT(ConfigureGeometry()));
 
+    // Menus
+    connect(ui->actionNew,SIGNAL(triggered()),this,SLOT(MenuFileNew()));
+    connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(MenuFileOpen()));
+    connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(MenuFileSave()));
+    connect(ui->actionSave_As,SIGNAL(triggered()),this,SLOT(MenuFileSaveAs()));
+    connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(MenuFileQuit()));
 /*
     void BinningChanged();
     void FlipChanged();
@@ -186,6 +196,19 @@ void MuhRecMainWindow::PreviewProjection()
         msg<<"Could not load the projection for preview: \n"<<e.what();
         logger(kipl::logging::Logger::LogMessage,msg.str());
     }
+}
+
+void MuhRecMainWindow::GetSkipList()
+{
+    UpdateConfig();
+
+    FindSkipListDialog dlg;
+
+    int res=dlg.exec(m_Config);
+
+    if (res==QDialog::Accepted)
+        ui->editProjectionSkipList->setText(dlg.getSkipList());
+
 }
 
 void MuhRecMainWindow::GetDoseROI()
@@ -397,6 +420,79 @@ void MuhRecMainWindow::UseMatrixROI(int x)
         ui->labelMX3->hide();
 
     }
+}
+
+void MuhRecMainWindow::MenuFileNew()
+{
+    LoadDefaults();
+    UpdateDialog();
+}
+
+void MuhRecMainWindow::MenuFileOpen()
+{
+    std::ostringstream msg;
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open reconstruction configuration"),tr("configurations (*.xml)"));
+
+    QMessageBox msgbox;
+
+    msgbox.setWindowTitle(tr("Config file error"));
+    msgbox.setText(tr("Failed to load the configuration file"));
+
+    try {
+        m_Config.LoadConfigFile(fileName.toStdString(),"reconstructor");
+    }
+    catch (ReconException & e) {
+        msg<<"Failed to load the configuration file :\n"<<
+             e.what();
+        msgbox.setDetailedText(QString::fromStdString(msg.str()));
+        msgbox.exec();
+    }
+    catch (ModuleException & e) {
+        msg<<"Failed to load the configuration file :\n"<<
+             e.what();
+        msgbox.setDetailedText(QString::fromStdString(msg.str()));
+        msgbox.exec();
+    }
+    catch (kipl::base::KiplException & e) {
+        msg<<"Failed to load the configuration file :\n"<<
+             e.what();
+        msgbox.setDetailedText(QString::fromStdString(msg.str()));
+        msgbox.exec();
+    }
+    catch (std::exception & e) {
+        msg<<"Failed to load the configuration file :\n"<<
+             e.what();
+        msgbox.setDetailedText(QString::fromStdString(msg.str()));
+        msgbox.exec();
+    }
+
+    UpdateDialog();
+
+}
+
+void MuhRecMainWindow::MenuFileSave()
+{
+
+}
+
+void MuhRecMainWindow::MenuFileSaveAs()
+{
+
+}
+
+void MuhRecMainWindow::MenuFileQuit()
+{
+    m_QtApp->quit();
+}
+
+void MuhRecMainWindow::MenuHelpAbout()
+{
+
+}
+
+void MuhRecMainWindow::LoadDefaults()
+{
+
 }
 
 void MuhRecMainWindow::SaveMatrix()

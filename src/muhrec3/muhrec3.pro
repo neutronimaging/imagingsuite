@@ -14,14 +14,17 @@ QMAKE_CXXFLAGS += -fopenmp
 SOURCES += main.cpp\
         muhrecmainwindow.cpp \
     MuhrecInteractor.cpp \
-    configuregeometrydialog.cpp
+    configuregeometrydialog.cpp \
+    findskiplistdialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
-    configuregeometrydialog.h
+    configuregeometrydialog.h \
+    findskiplistdialog.h
 
 FORMS    += muhrecmainwindow.ui \
-    configuregeometrydialog.ui
+    configuregeometrydialog.ui \
+    findskiplistdialog.ui
 
 LIBS += -L/usr/lib -lxml2 -lgomp
 

@@ -14,13 +14,13 @@
    <string>MuhRecMainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>9</x>
       <y>9</y>
       <width>1081</width>
-      <height>782</height>
+      <height>790</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -42,7 +42,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabInformation">
         <attribute name="title">
@@ -138,8 +138,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>634</width>
-           <height>671</height>
+           <width>806</width>
+           <height>744</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="layoutProjectionInformation">
@@ -356,6 +356,13 @@
                </property>
                <property name="maximum">
                 <number>8</number>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="4">
+              <widget class="QPushButton" name="buttonGetSkipList">
+               <property name="text">
+                <string>Get skip list</string>
                </property>
               </widget>
              </item>
@@ -1403,7 +1410,7 @@
      <x>0</x>
      <y>0</y>
      <width>1107</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
