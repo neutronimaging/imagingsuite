@@ -1,0 +1,110 @@
+<reconstructor>
+    <userinformation>
+        <operator>unknown</operator>
+        <instrument>beamline</instrument>
+        <projectnumber>P11xxxx</projectnumber>
+        <sample>Test bodies</sample>
+        <comment>No comment</comment>
+    </userinformation>
+    <system>
+        <memory>6000</memory>
+        <loglevel>message</loglevel>
+    </system>
+    <projections>
+        <dims>2048 2048</dims>
+        <resolution>0.1 0.1</resolution>
+        <firstindex>1</firstindex>
+        <lastindex>625</lastindex>
+        <projectionstep>1</projectionstep>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <imagetype>projections</imagetype>
+        <center>512</center>
+        <translation>false</translation>
+        <tiltangle>0</tiltangle>
+        <tiltpivot>0</tiltpivot>
+        <correcttilt>false</correcttilt>
+        <filemask>proj_####.fits</filemask>
+        <path>/home/data/projections</path>
+        <referencepath>/home/data/projections</referencepath>
+        <obfilemask>ob_####.fits</obfilemask>
+        <obfirstindex>1</obfirstindex>
+        <obcount>5</obcount>
+        <dcfilemask>dc_####.fits</dcfilemask>
+        <dcfirstindex>1</dcfirstindex>
+        <dccount>5</dccount>
+        <roi>0 0 1024 1024</roi>
+        <doseroi>50 50 150 250</doseroi>
+        <scanarc>0 360</scanarc>
+    </projections>
+    <matrix>
+        <dims>999 999 16</dims>
+        <rotation>32</rotation>
+        <serialize>false</serialize>
+        <path>/home/data/recon/</path>
+        <matrixname>objects_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>-0.0553 0.155324</grayinterval>
+        <useroi>false</useroi>
+        <roi>0 0 100 100 </roi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <uselut>true</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>SpotClean2</modulename>
+                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <gamma>0.01</gamma>
+                    <iterations>1</iterations>
+                    <maxarea>100</maxarea>
+                    <maxlevel>12</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <sigma>0.001</sigma>
+                </parameters>
+            </module>
+            <module>
+                <modulename>MedianMixRingClean</modulename>
+                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <threshold>0.025</threshold>
+                    <width>0.0025</width>
+                </parameters>
+            </module>
+            <module>
+                <modulename>ProjectionFilterSingle</modulename>
+                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>hamming</filtertype>
+                    <order>0</order>
+                    <usebias>true</usebias>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBPparallel</modulename>
+                <sharedobject>/opt/muhrec/libStdBackProjectors.so</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>64</SliceBlock>
+                    <SubVolume>1</SubVolume>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>

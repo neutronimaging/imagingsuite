@@ -1,0 +1,114 @@
+<reconstructor>
+    <userinformation>
+        <operator>John Doe</operator>
+        <instrument>ICON</instrument>
+        <projectnumber>Pxxxxx</projectnumber>
+        <sample>Sample</sample>
+        <comment>No comment</comment>
+    </userinformation>
+    <system>
+        <memory>1500</memory>
+        <loglevel>message</loglevel>
+    </system>
+    <projections>
+        <dims>2048 2048</dims>
+        <resolution>0.0135 0.0135</resolution>
+        <binning>1</binning>
+        <firstindex>1</firstindex>
+        <lastindex>626</lastindex>
+        <projectionstep>2</projectionstep>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <imagetype>projections</imagetype>
+        <center>1024.0</center>
+        <translation>false</translation>
+        <tiltangle>0.0</tiltangle>
+        <tiltpivot>0</tiltpivot>
+        <correcttilt>false</correcttilt>
+        <filemask>projection_####.fits</filemask>
+        <path>c:\</path>
+        <referencepath>c:\</referencepath>
+        <obfilemask>ob_####.fits</obfilemask>
+        <obfirstindex>1</obfirstindex>
+        <obcount>5</obcount>
+        <dcfilemask>dc_####.fits</dcfilemask>
+        <dcfirstindex>1</dcfirstindex>
+        <dccount>5</dccount>
+        <roi>0 0 2048 2048</roi>
+        <doseroi>0 0 10 10</doseroi>
+        <scanarc>0 360</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipnone</flip>
+    </projections>
+    <matrix>
+        <dims>525 475 16</dims>
+        <rotation>0</rotation>
+        <serialize>false</serialize>
+        <path>c:\</path>
+        <matrixname>slice_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>-1.0 2.0</grayinterval>
+        <useroi>false</useroi>
+        <roi>0 0 2048 2048</roi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>StdPreprocModules.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <uselut>false</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>SpotClean2</modulename>
+                <sharedobject>StdPreprocModules.dll</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <detectionmethod>ring</detectionmethod>
+                    <gamma>0.08</gamma>
+                    <iterations>1</iterations>
+                    <maxarea>100</maxarea>
+                    <maxlevel>2</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <sigma>0.001</sigma>
+                </parameters>
+            </module>
+            <module>
+                <modulename>MedianMixRingClean</modulename>
+                <sharedobject>StdPreprocModules.dll</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <threshold>0.025</threshold>
+                    <width>0.0025</width>
+                </parameters>
+            </module>
+            <module>
+                <modulename>ProjectionFilterSingle</modulename>
+                <sharedobject>StdPreprocModules.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>hamming</filtertype>
+                    <order>0</order>
+                    <usebias>true</usebias>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBPparallel</modulename>
+                <sharedobject>StdBackprojectors.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1</SubVolume>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>

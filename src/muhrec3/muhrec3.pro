@@ -15,16 +15,19 @@ SOURCES += main.cpp\
         muhrecmainwindow.cpp \
     MuhrecInteractor.cpp \
     configuregeometrydialog.cpp \
-    findskiplistdialog.cpp
+    findskiplistdialog.cpp \
+    recondialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
     configuregeometrydialog.h \
-    findskiplistdialog.h
+    findskiplistdialog.h \
+    recondialog.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
-    findskiplistdialog.ui
+    findskiplistdialog.ui \
+    recondialog.ui
 
 LIBS += -L/usr/lib -lxml2 -lgomp
 

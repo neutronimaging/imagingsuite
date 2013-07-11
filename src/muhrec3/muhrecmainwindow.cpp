@@ -37,13 +37,13 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sConfigFilename("noname.xml")
 {
     std::ostringstream msg;
+    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
     ui->setupUi(this);
     kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
-
-    msg<<"Application path:"<<m_sApplicationPath;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
     ui->projectionViewer->hold_annotations(true);
+
+    LoadDefaults();
     UpdateDialog();
     ProjectionIndexChanged(0);
     ReconROIChanged(0);
@@ -188,6 +188,10 @@ void MuhRecMainWindow::PreviewProjection()
                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                         static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
+//        float lo,hi;
+//        ui->projectionViewer->get_levels(&lo,&hi);
+
+//        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
         ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
         SetImageDimensionLimits(m_PreviewImage.Dims());
     }
@@ -425,6 +429,7 @@ void MuhRecMainWindow::UseMatrixROI(int x)
 void MuhRecMainWindow::MenuFileNew()
 {
     LoadDefaults();
+    m_sConfigFilename="nonmame.xml";
     UpdateDialog();
 }
 
@@ -472,12 +477,23 @@ void MuhRecMainWindow::MenuFileOpen()
 
 void MuhRecMainWindow::MenuFileSave()
 {
+    if (m_sConfigFilename=="noname.xml")
+        MenuFileSaveAs();
+    else {
+        std::ofstream conffile(m_sConfigFilename.c_str());
 
+        conffile<<m_Config.WriteXML();
+    }
 }
 
 void MuhRecMainWindow::MenuFileSaveAs()
 {
+    QString fname=QFileDialog::getSaveFileName(this,"Save configuration file",QDir::homePath());
 
+    m_sConfigFilename=fname.toStdString();
+    std::ofstream conffile(m_sConfigFilename.c_str());
+
+    conffile<<m_Config.WriteXML();
 }
 
 void MuhRecMainWindow::MenuFileQuit()
@@ -487,16 +503,47 @@ void MuhRecMainWindow::MenuFileQuit()
 
 void MuhRecMainWindow::MenuHelpAbout()
 {
-
 }
 
 void MuhRecMainWindow::LoadDefaults()
 {
+#ifdef _MSC_VER
+    std::string defaultsname="resources/defaults_windows.xml";
+#else
+    std::string defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
+#endif
 
+    std::ostringstream msg;
+
+    kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
+    try {
+        m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
+    }
+    catch (ReconException &e) {
+        msg<<"Loading defaults failed :\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+    }
+    catch (ModuleException &e) {
+        msg<<"Loading defaults failed :\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"Loading defaults failed :\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+    }
+
+    m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
+    m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
+    m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+
+    UpdateDialog();
+    //UpdateMemoryUsage(config.ProjectionInfo.roi);
 }
 
 void MuhRecMainWindow::SaveMatrix()
-{}
+{
+
+}
 
 void MuhRecMainWindow::UpdateDialog()
 {

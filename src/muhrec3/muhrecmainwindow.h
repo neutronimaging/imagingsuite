@@ -23,6 +23,7 @@ public:
     ~MuhRecMainWindow();
     virtual void UpdateDialog();
     virtual void UpdateConfig();
+    MuhrecInteractor * GetInteractor();
 
 private:
     Ui::MuhRecMainWindow *ui;

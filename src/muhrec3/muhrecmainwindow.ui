@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1107</width>
+    <width>1250</width>
     <height>853</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <rect>
       <x>9</x>
       <y>9</y>
-      <width>1081</width>
+      <width>1231</width>
       <height>790</height>
      </rect>
     </property>
@@ -37,7 +37,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>780</width>
+         <width>830</width>
          <height>780</height>
         </size>
        </property>
@@ -1320,8 +1320,8 @@
          <rect>
           <x>0</x>
           <y>20</y>
-          <width>281</width>
-          <height>351</height>
+          <width>381</width>
+          <height>341</height>
          </rect>
         </property>
         <property name="title">
@@ -1332,7 +1332,7 @@
           <rect>
            <x>0</x>
            <y>20</y>
-           <width>281</width>
+           <width>371</width>
            <height>301</height>
           </rect>
          </property>
@@ -1348,7 +1348,7 @@
           <rect>
            <x>0</x>
            <y>320</y>
-           <width>271</width>
+           <width>371</width>
            <height>22</height>
           </rect>
          </property>
@@ -1362,7 +1362,7 @@
          <rect>
           <x>0</x>
           <y>370</y>
-          <width>281</width>
+          <width>381</width>
           <height>401</height>
          </rect>
         </property>
@@ -1374,7 +1374,7 @@
           <rect>
            <x>0</x>
            <y>20</y>
-           <width>281</width>
+           <width>371</width>
            <height>351</height>
           </rect>
          </property>
@@ -1390,7 +1390,7 @@
           <rect>
            <x>0</x>
            <y>370</y>
-           <width>271</width>
+           <width>371</width>
            <height>22</height>
           </rect>
          </property>
@@ -1409,7 +1409,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1107</width>
+     <width>1250</width>
      <height>22</height>
     </rect>
    </property>
@@ -1429,7 +1429,13 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuReconstruct">
+    <property name="title">
+     <string>Reconstruct</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuReconstruct"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1475,15 +1481,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>ModuleChainConfiguratorWidget</class>
+   <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">modulechainconfiguratorwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header>qtlogviewer.h</header>
+   <header location="global">imageviewerwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1493,9 +1493,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::ImageViewerWidget</class>
+   <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
-   <header location="global">imageviewerwidget.h</header>
+   <header location="global">modulechainconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header>qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
