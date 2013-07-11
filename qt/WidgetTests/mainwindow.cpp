@@ -46,7 +46,6 @@ void MainWindow::PlotClicked()
     ui->CurvePlotter->setPlotCursor(1,QtAddons::PlotCursor(0.25,QColor("red"),QtAddons::PlotCursor::Horizontal));
 }
 
-
 void MainWindow::on_ShowImageButton_clicked()
 {
     m_fScale=fmod(m_fScale+1.0,10.0);

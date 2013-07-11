@@ -1,6 +1,7 @@
 #include "imagepainter.h"
 #include <math/image_statistics.h>
 #include <sstream>
+#include <base/thistogram.h>
 
 namespace QtAddons {
 
@@ -11,16 +12,14 @@ ImagePainter::ImagePainter(QWidget * parent) :
     m_data(NULL),
     m_cdata(NULL)
 {
-      m_dims[0]=m_dims[1]=16;
-      m_NData=m_dims[0]*m_dims[1];
-      m_data=new float[m_NData];
+      const int N=16;
+      size_t dims[2]={N,N};
+      float data[N*N];
 
-      for (int i=0; i<m_NData; i++)
-          m_data[i]=static_cast<float>(i);
-      m_MinVal = 0.0f;
-      m_MaxVal = static_cast<float>(m_NData);
+      for (int i=0; i<N*N; i++)
+          data[i]=static_cast<float>(i);
 
-      prepare_pixbuf();
+      set_image(data,dims);
 }
 
 ImagePainter::~ImagePainter()
@@ -93,26 +92,9 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims)
 {
-    if (m_data!=NULL) {
-        delete [] m_data;
-    }
-    m_dims[0]=dims[0];
-    m_dims[1]=dims[1];
-    m_NData=m_dims[0]*m_dims[1];
-    m_data=new float[m_NData];
-
-    memcpy(m_data,data,sizeof(float)*m_NData);
-
-    kipl::math::minmax(m_data,m_NData,&m_ImageMin, &m_ImageMax);
-    m_MinVal=m_ImageMin;
-    m_MaxVal=m_ImageMax;
-
-    if (!m_bHold_annotations) {
-        m_BoxList.clear();
-        m_PlotList.clear();
-    }
-
-    prepare_pixbuf();
+    float mi,ma;
+    kipl::math::minmax(data,dims[0]*dims[1],&mi, &ma);
+    set_image(data,dims,mi,ma);
 }
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims, const float low, const float high)
@@ -129,6 +111,17 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     kipl::math::minmax(m_data,m_NData,&m_ImageMin, &m_ImageMax);
     m_MinVal=low;
     m_MaxVal=high;
+    const size_t nHistSize=256;
+    float haxis[nHistSize];
+    size_t hist[nHistSize];
+    kipl::base::Histogram(m_data,m_NData,hist,nHistSize,m_ImageMin,m_ImageMax,haxis);
+    m_Histogram.clear();
+    for (int i=0; i<nHistSize; i++) {
+        m_Histogram.append(QPointF(haxis[i],static_cast<float>(hist[i])));
+    }
+    ostringstream msg;
+    msg<<"Hist has n="<<m_Histogram.size();
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if (!m_bHold_annotations) {
         m_BoxList.clear();
@@ -262,12 +255,8 @@ void ImagePainter::prepare_pixbuf()
         }
     }
 
-//    msg.str(""); msg<<"Preparing Qimage for "<<m_dims[0]<<"x"<<m_dims[1];
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
     QImage qimg(m_cdata,m_dims[0],m_dims[1],3*m_dims[0],QImage::Format_RGB888);
     QSize imgdims=qimg.size();
-//    msg.str(""); msg<<"Qimage with "<<imgdims.width()<<"x"<<imgdims.height()<<" created";
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     m_pixmap_full=QPixmap::fromImage(qimg);
 
@@ -279,5 +268,10 @@ void ImagePainter::prepare_pixbuf()
         m_pParent->update();
     }
 
+}
+
+const QVector<QPointF> & ImagePainter::get_image_histogram()
+{
+    return m_Histogram;
 }
 }

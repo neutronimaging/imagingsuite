@@ -36,6 +36,7 @@ public:
     void set_levels(const float level_low, const float level_high);
     void get_levels(float *level_low, float *level_high);
     void get_image_minmax(float *level_low, float *level_high);
+    const QVector<QPointF> &get_image_histogram();
     void show_clamped(bool show);
     float get_scale() {return m_fScale;}
     int get_offsetX() {return offset_x;}
@@ -67,6 +68,7 @@ protected:
 
     QMap<int,QPair<QRect, QColor> > m_BoxList;
     QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList;
+    QVector<QPointF> m_Histogram;
 
     QPixmap m_pixmap_full;
 };
