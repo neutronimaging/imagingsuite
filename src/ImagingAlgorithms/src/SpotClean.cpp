@@ -16,6 +16,7 @@
 #include "../include/ImagingException.h"
 
 #include <vector>
+#include <iterator>
 
 namespace ImagingAlgorithms {
 
