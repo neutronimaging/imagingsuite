@@ -24,7 +24,9 @@ public:
     Plotter(QWidget *parent = 0);
 
     void setPlotSettings(const PlotSettings &settings);
-    void setCurveData(int id, const QVector<QPointF> &data);    
+    void setCurveData(int id, const QVector<QPointF> &data);
+    void setCurveData(int id, float const * const x, float const * const y, const int N);
+    void setCurveData(int id, float const * const x, size_t const * const y, const int N);
     void clearCurve(int id);
     void clearAllCurves();
 

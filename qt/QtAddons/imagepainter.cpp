@@ -120,8 +120,6 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
         m_Histogram.append(QPointF(haxis[i],static_cast<float>(hist[i])));
     }
     ostringstream msg;
-    msg<<"Hist has n="<<m_Histogram.size();
-    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if (!m_bHold_annotations) {
         m_BoxList.clear();

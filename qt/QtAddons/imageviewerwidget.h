@@ -75,6 +75,8 @@ protected:
     bool rubberBandIsShown;
     QRect roiRect;
     eViewerMouseModes m_MouseMode;
+    Qt::MouseButton m_PressedButton;
+    QPoint m_LastMotionPosition;
     QSize widgetSize;
     enum { Margin = 5 };
 };

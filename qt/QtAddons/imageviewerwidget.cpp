@@ -12,7 +12,8 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
     m_ImagePainter(this),
-    rubberBandIsShown(false)
+    rubberBandIsShown(false),
+    m_PressedButton(Qt::NoButton)
 {
     QPalette palette;
     palette.setColor(QPalette::Background,Qt::black);
@@ -164,6 +165,8 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
     }
     if (event->button() == Qt::RightButton) {
         logger(kipl::logging::Logger::LogMessage,"Right");
+        m_PressedButton=event->button();
+        m_LastMotionPosition=event->pos();
 
     }
     QWidget::mousePressEvent(event);
@@ -179,6 +182,33 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     else {
 
     }
+
+    if (m_PressedButton == Qt::RightButton) {
+        float minlevel, maxlevel;
+
+        get_levels(&minlevel, &maxlevel);
+
+        float fWindow=maxlevel-minlevel;
+        float fLevel=minlevel+fWindow/2.0f;
+
+        float fLevelStep  = fWindow/1000.0f;
+        float fWindowStep = fWindow/1000.0f;
+        //msg.str("");
+
+        int dx=static_cast<int>(event->pos().x() - m_LastMotionPosition.x());
+        int dy=static_cast<int>(event->pos().y() - m_LastMotionPosition.y());
+        m_LastMotionPosition=event->pos();
+        if (abs(dx)<abs(dy))
+            fLevel+=dy*fLevelStep;
+        else
+            fWindow+=dx*fWindowStep;
+
+       // msg<<"W="<<m_Window<<", L="<<m_Level;
+
+        //set_tooltip_text(msg.str());
+        set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
+    }
+
     QWidget::mouseMoveEvent(event);
 }
 
@@ -196,6 +226,9 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
                         );
 
     }
+
+    if (event->button() == Qt::RightButton )
+        m_PressedButton = Qt::NoButton;
 
     QWidget::mouseReleaseEvent(event);
 }
@@ -216,8 +249,8 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_ImagePainter.set_image(data,dims);
     float mi,ma;
     m_ImagePainter.get_image_minmax(&mi,&ma);
-    msg<<"Set image with min="<<mi<<", max="<<ma;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+//    msg<<"Set image with min="<<mi<<", max="<<ma;
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
 }
 
 QRect ImageViewerWidget::get_marked_roi()

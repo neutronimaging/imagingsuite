@@ -69,6 +69,26 @@ void Plotter::setCurveData(int id, const QVector<QPointF> &data)
     refreshPixmap();
 }
 
+void Plotter::setCurveData(int id, const float *const x,const float *const y, const int N)
+{
+    QVector<QPointF> data;
+
+    for (int i=0; i<N; i++)
+        data.append(QPointF(x[i],y[i]));
+
+    setCurveData(id,data);
+}
+
+void Plotter::setCurveData(int id, const float *const x,const size_t *const y, const int N)
+{
+    QVector<QPointF> data;
+
+    for (int i=0; i<N; i++)
+        data.append(QPointF(x[i],static_cast<float>(y[i])));
+
+    setCurveData(id,data);
+}
+
 void Plotter::refreshBounds()
 {
     std::ostringstream msg;
