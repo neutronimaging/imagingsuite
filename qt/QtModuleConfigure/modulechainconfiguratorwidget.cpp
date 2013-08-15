@@ -218,6 +218,7 @@ void ModuleChainConfiguratorWidget::BuildParameterManager()
     m_ParameterButtonBox.addWidget(&m_ParameterAdd);
     m_ParameterButtonBox.addWidget(&m_ParameterDelete);
     m_ParameterListView.setColumnCount(2);
+    m_ParameterListView.setHeaderLabels(QStringList()<<tr("Parameter")<<tr("Value"));
 }
 
 void ModuleChainConfiguratorWidget::UpdateCurrentModuleParameters()

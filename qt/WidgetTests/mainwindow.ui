@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>894</width>
-    <height>543</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,8 +73,8 @@
    <widget class="QPushButton" name="ShowImageButton">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>430</y>
+      <x>680</x>
+      <y>310</y>
       <width>131</width>
       <height>27</height>
      </rect>
@@ -146,8 +146,8 @@
    <widget class="QPushButton" name="GetSingleModuleButton">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>280</y>
+      <x>50</x>
+      <y>480</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -156,15 +156,54 @@
      <string>Get Module</string>
     </property>
    </widget>
-   <widget class="QWidget" name="singlemodule" native="true">
+   <widget class="SingleModuleConfiguratorWidget" name="singlemodule" native="true">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>470</y>
+      <width>400</width>
+      <height>40</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>220</y>
-      <width>271</width>
-      <height>31</height>
+      <y>380</y>
+      <width>291</width>
+      <height>80</height>
      </rect>
     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -173,7 +212,7 @@
      <x>0</x>
      <y>0</y>
      <width>894</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -211,6 +250,12 @@
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SingleModuleConfiguratorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">singlemoduleconfiguratorwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

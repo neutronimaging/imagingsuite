@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->PlotButton,SIGNAL(clicked()),this,SLOT(PlotClicked()));
     connect(ui->GetModulesButton,SIGNAL(clicked()),this,SLOT(GetModulesClicked()));
 
+    ui->singlemodule->Configure("muhrec");
 }
 
 MainWindow::~MainWindow()
