@@ -64,6 +64,7 @@ protected slots:
     void MenuFileSaveAs();
     void MenuFileQuit();
     void MenuHelpAbout();
+    void MenuReconstructStart();
 
 protected:
     /// Sets up all call-back functions during the initialization.

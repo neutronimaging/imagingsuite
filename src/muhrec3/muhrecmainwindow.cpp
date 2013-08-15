@@ -6,6 +6,7 @@
 #include "ui_muhrecmainwindow.h"
 #include "configuregeometrydialog.h"
 #include "findskiplistdialog.h"
+#include "recondialog.h"
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -117,13 +118,7 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(MenuFileSave()));
     connect(ui->actionSave_As,SIGNAL(triggered()),this,SLOT(MenuFileSaveAs()));
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(MenuFileQuit()));
-/*
-    void BinningChanged();
-    void FlipChanged();
-    void RotateChanged();
-    void CenterOfRotationChanged();
-    void MatrixROIChanged();
-*/
+    connect(ui->actionStartReconstruction,SIGNAL(triggered()),this,SLOT(MenuReconstructStart()));
 }
 
 void MuhRecMainWindow::BrowseProjectionPath()
@@ -170,13 +165,13 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
 void MuhRecMainWindow::PreviewProjection(int x)
 {
-    PreviewProjection();
-}
-
-void MuhRecMainWindow::PreviewProjection()
-{
     std::ostringstream msg;
     ProjectionReader reader;
+
+    if (x<0) {
+       int slice = ui->spinFirstProjection->value();
+       ui->sliderProjections->setValue(slice);
+    }
 
     try {
         std::string path=ui->editProjectionPath->text().toStdString();
@@ -200,6 +195,12 @@ void MuhRecMainWindow::PreviewProjection()
         msg<<"Could not load the projection for preview: \n"<<e.what();
         logger(kipl::logging::Logger::LogMessage,msg.str());
     }
+
+}
+
+void MuhRecMainWindow::PreviewProjection()
+{
+    PreviewProjection(-1);
 }
 
 void MuhRecMainWindow::GetSkipList()
@@ -505,6 +506,215 @@ void MuhRecMainWindow::MenuHelpAbout()
 {
 }
 
+void MuhRecMainWindow::MenuReconstructStart()
+{
+
+
+    ReconDialog dlg(&m_Interactor);
+    bool bBuildFailure=false;
+
+    ostringstream msg;
+    ostringstream confpath;
+    // Save current recon settings
+    string path=QDir::homePath().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(path,true);
+    confpath<<path<<"CurrentRecon.xml";
+    try {
+        UpdateConfig();
+        ofstream of(confpath.str().c_str());
+        if (!of.is_open()) {
+            msg.str("");
+            msg<<"Failed to open config file: "<<confpath.str();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            return ;
+        }
+
+        of<<m_Config.WriteXML();
+        of.flush();
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Saving current config failed with exception: "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return;
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Saving current config failed with exception: "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return;
+    }
+
+
+    if (m_pEngine!=NULL) {
+        delete m_pEngine;
+    }
+
+    m_pEngine=NULL;
+
+    m_Config.MatrixInfo.bAutomaticSerialize=false;
+    if (m_Config.System.nMemory<m_nRequiredMemory) {
+        msg.str("");
+        msg<<"The requested matrix is larger ("<<m_nRequiredMemory<<"Mb) than the memorylimit ("
+            <<m_Config.System.nMemory<<"Mb)\n\n"
+            <<"Do you want to continue with reconstruction direct to disk?";
+        QMessageBox largesize_dlg(this);
+        largesize_dlg.setText(QString::fromStdString(msg.str()));
+        largesize_dlg.setWindowTitle("Matrix size warning");
+
+        int res=largesize_dlg.exec();
+//		largesize_dlg.hide();
+//		//while (largesize_dlg.is_visible()); // 2.4
+
+        if (res==QMessageBox::Rejected) {
+            return;
+        }
+        m_Config.MatrixInfo.bAutomaticSerialize=true;
+    }
+    else
+        m_Config.MatrixInfo.bAutomaticSerialize=false;
+
+    msg.str("");
+    try {
+        m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
+    }
+    catch (std::exception &e) {
+        msg<<"Reconstructor initialization failed with an STL exception: "<<endl
+            <<e.what();
+        bBuildFailure=true;
+    }
+    catch (ModuleException &e) {
+        msg<<"Reconstructor initialization failed with a ModuleException: \n"
+            <<e.what();
+        bBuildFailure=true;
+    }
+    catch (ReconException &e) {
+        msg<<"Reconstructor initialization failed with a recon exception: "<<endl
+            <<e.what();
+        bBuildFailure=true;
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"Reconstructor initialization failed a Kipl exception: "<<endl
+            <<e.what();
+        bBuildFailure=true;
+    }
+    catch (...) {
+        msg<<"Reconstructor initialization failed with an unknown exception";
+        bBuildFailure=true;
+    }
+
+    if (bBuildFailure) {
+        logger(kipl::logging::Logger::LogError,msg.str());
+        QMessageBox error_dlg;
+        error_dlg.setText("Failed to build reconstructor due to plugin exception. See log message for more information.");
+        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
+
+        error_dlg.exec();
+
+        if (m_pEngine!=NULL)
+            delete m_pEngine;
+        m_pEngine=NULL;
+
+        return ;
+    }
+
+    msg.str("");
+    bool bRunFailure=false;
+    try {
+        if (m_pEngine!=NULL) {
+            int res=0;
+            ui->tabMainControl->setCurrentIndex(3);
+            res=dlg.exec(m_pEngine);
+
+            if (res==QDialog::Accepted) {
+                logger(kipl::logging::Logger::LogVerbose,"Finished with OK");
+                if ((m_Config.MatrixInfo.bAutomaticSerialize==false)) {
+                    PreviewProjection(); // Display the projection if it was not done already
+                    ui->tabMainControl->setCurrentIndex(3);
+                    if (ui->checkUseAutograyLevels->checkState()) {
+                        const int nBins=256;
+                        float x[nBins];
+                        size_t y[nBins];
+                        m_pEngine->GetHistogram(x,y,nBins);
+                        ui->plotHistogram->setCurveData(0,x,y,nBins);
+
+                        size_t lowlevel=0;
+                        size_t highlevel=0;
+                        kipl::base::FindLimits(y, nBins, 99.0, &lowlevel, &highlevel);
+                        ui->dspinGrayLow->setValue(x[lowlevel]);
+                        ui->dspinGrayHigh->setValue(x[highlevel]);
+
+                        msg.str("");
+                        msg<<kipl::math::Entropy(y+1,nBins-2);
+                        ui->labelMatrixEntropy->setText(QString::fromStdString(msg.str()));
+                    }
+
+                    m_pEngine->GetMatrixDims(m_Config.MatrixInfo.nDims);
+                    msg.str("");
+                    msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
+                    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                    ui->sliderSlices->setRange(m_Config.ProjectionInfo.roi[1],m_Config.ProjectionInfo.roi[1]+m_Config.MatrixInfo.nDims[2]-1);
+                    ui->sliderSlices->setValue(m_Config.ProjectionInfo.roi[1]);
+
+                    msg.str("");
+                    msg<<"Matrix display interval ["<<m_Config.MatrixInfo.fGrayInterval[0]<<", "<<m_Config.MatrixInfo.fGrayInterval[1]<<"]";
+                    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+  //                  DisplayNewSlice();
+                }
+                else {
+                    delete m_pEngine;
+                    m_pEngine=NULL;
+                }
+
+            }
+            if (res==QDialog::Rejected)
+                logger(kipl::logging::Logger::LogVerbose,"Finished with Cancel");
+        }
+    }
+    catch (std::exception &e) {
+        msg<<"Reconstruction failed: "<<endl
+            <<e.what();
+        bRunFailure=true;
+    }
+    catch (ModuleException &e) {
+        msg<<"Reconstruction failed with a module exception: \n"
+            <<e.what();
+        bRunFailure=true;
+    }
+    catch (ReconException &e) {
+        msg<<"Reconstruction failed: "<<endl
+            <<e.what();
+        bRunFailure=true;
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"Reconstruction failed: "<<endl
+            <<e.what();
+        bRunFailure=true;
+    }
+
+    catch (...) {
+        msg<<"Reconstruction failed";
+        bRunFailure=true;
+    }
+
+    if (bRunFailure) {
+        logger(kipl::logging::Logger::LogError,msg.str());
+
+        QMessageBox error_dlg;
+        error_dlg.setText("Failed to run the reconstructor.");
+        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
+
+        error_dlg.exec();
+        if (m_pEngine!=NULL)
+            delete m_pEngine;
+        m_pEngine=NULL;
+
+        return ;
+    }
+}
+
 void MuhRecMainWindow::LoadDefaults()
 {
 #ifdef _MSC_VER
@@ -595,7 +805,8 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
-    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType);
+    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType-2);
+    // -2 to skip matlab types
 
     ui->editProjectName->setText(QString::fromStdString(m_Config.UserInformation.sProjectNumber));
     ui->editOperatorName->setText(QString::fromStdString(m_Config.UserInformation.sOperator));
@@ -667,7 +878,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.roi[3] = ui->spinMatrixROI3->value();
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
-    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex());
+    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+2);
+    // +2 to skip the matlab file types
 
     m_Config.UserInformation.sProjectNumber = ui->editProjectName->text().toStdString();
     m_Config.UserInformation.sOperator = ui->editOperatorName->text().toStdString();

@@ -31,7 +31,7 @@ int ReconDialog::exec(ReconEngine * engine)
 {
     m_Engine=engine;
     finish=false;
-    logger(kipl::logging::Logger::LogVerbose,"Before");
+    logger(kipl::logging::Logger::LogMessage,"Start");
 
     m_Interactor->Reset();
 #ifdef NEVERDO
@@ -84,13 +84,14 @@ int ReconDialog::exec(ReconEngine * engine)
     }
 
     if (bFailure) {
-//        Gtk::MessageDialog error_dlg(msg.str(),false,Gtk::MESSAGE_ERROR);
-//        error_dlg.run();
-//        error_dlg.hide();
+        QMessageBox error_dlg(this);
+        error_dlg.setText("Reconstruction failed");
+        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
+        error_dlg.exec();
         logger(kipl::logging::Logger::LogError,msg.str());
-
+        return Rejected;
     }
-    return 0;
+    return Accepted;
 #endif
 }
 
