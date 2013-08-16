@@ -58,17 +58,20 @@ public:
     explicit SingleModuleSettingsDialog(std::string sApplicationName, QWidget *parent);
 
     virtual int exec(ModuleConfig &config);
-    ModuleConfig getModule() { return m_ModuleConfig;}
+    ModuleConfig getModule();
 
 public slots:
     virtual void on_ButtonBrowse_Clicked();
     virtual void on_ButtonBox_Clicked(QAbstractButton *button);
+    virtual void on_ComboBox_Changed(QString value);
 
 private:
     virtual int exec();
     void BuildDialog();
-    int UpdateModuleCombobox(QString fname);
+    int UpdateModuleCombobox(QString fname, bool bSetFirstIndex=true);
     std::map<std::string, std::map<std::string, std::string> > GetModuleList(std::string filename);
+    std::map<std::string, std::string> GetParameterList();
+    void UpdateCurrentModuleParameters();
 
 
     std::string m_sApplication;

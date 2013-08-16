@@ -1,8 +1,11 @@
 #include "singlemoduleconfiguratorwidget.h"
+#include "QListWidgetModuleItem.h"
+
 #include <iostream>
 #include <sstream>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QApplication>
 #include <ModuleException.h>
 #include <base/KiplException.h>
 
@@ -81,16 +84,11 @@ void SingleModuleConfiguratorWidget::on_ButtonConfigure_Clicked()
 {
     SingleModuleSettingsDialog dlg(m_sApplication,this);
 
-    logger(kipl::logging::Logger::LogMessage,"Clicked configure");
     int res=dlg.exec(m_ModuleConfig);
 
     if (res==QDialog::Accepted) {
-        logger(kipl::logging::Logger::LogMessage,"Accepted");
         m_ModuleConfig=dlg.getModule();
         m_LabelModuleName.setText(QString::fromStdString(m_ModuleConfig.m_sModule));
-    }
-    else {
-            logger(kipl::logging::Logger::LogMessage,"Rejected");
     }
 }
 
@@ -102,18 +100,34 @@ SingleModuleSettingsDialog::SingleModuleSettingsDialog(std::string sApplicationN
     BuildDialog();
     connect(&m_ButtonBrowse,SIGNAL(clicked()),this,SLOT(on_ButtonBrowse_Clicked()));
     connect(&m_Buttons,SIGNAL(clicked(QAbstractButton*)),this,SLOT(on_ButtonBox_Clicked(QAbstractButton*)));
-
+    connect(&m_ComboModules,SIGNAL(currentIndexChanged(QString)),this,SLOT(on_ComboBox_Changed(QString)));
     show();
 
 }
 
 int SingleModuleSettingsDialog::exec(ModuleConfig &config)
 {
+    std::ostringstream msg;
+    m_ModuleConfig=config;
+
+    QDir dir;
+    if (dir.exists(QString::fromStdString(m_ModuleConfig.m_sSharedObject))) {
+        UpdateModuleCombobox(QString::fromStdString(m_ModuleConfig.m_sSharedObject),false);
+        msg<<"Index for "<<config.m_sModule<<" set to "<<m_ComboModules.findText(QString::fromStdString(config.m_sModule));
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+
+        m_ComboModules.setCurrentIndex(m_ComboModules.findText(QString::fromStdString(config.m_sModule)));
+        m_ModuleConfig=config;
+        UpdateCurrentModuleParameters();
+    }
+
     return exec();
 }
 
 int SingleModuleSettingsDialog::exec()
-{ return QDialog::exec(); }
+{
+    return QDialog::exec();
+}
 
 void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 {
@@ -148,8 +162,10 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 }
 
 void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),tr("libs (*.dylib)"));
+{      
+    QString apppath=QCoreApplication::applicationDirPath();
+
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),apppath,tr("libs (*.dylib)"));
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");
@@ -163,8 +179,8 @@ void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 
     logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
 
-    if (UpdateModuleCombobox(fileName)!=0)
-        return;
+    if (UpdateModuleCombobox(fileName)==0)
+        m_ModuleConfig.m_sSharedObject=fileName.toStdString();
 }
 
 void SingleModuleSettingsDialog::BuildDialog()
@@ -186,12 +202,18 @@ void SingleModuleSettingsDialog::BuildDialog()
 
     m_Buttons.addButton(QDialogButtonBox::Ok);
     m_Buttons.addButton(QDialogButtonBox::Cancel);
-    m_Buttons.addButton("Delete",QDialogButtonBox::ActionRole);
-    m_Buttons.addButton("Add",QDialogButtonBox::ActionRole);
+//    m_Buttons.addButton("Delete",QDialogButtonBox::ActionRole);
+//    m_Buttons.addButton("Add",QDialogButtonBox::ActionRole);
 
 }
 
-int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname)
+ModuleConfig SingleModuleSettingsDialog::getModule()
+{
+    m_ModuleConfig.parameters=GetParameterList();
+    return m_ModuleConfig;
+}
+
+int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname, bool bSetFirstIndex)
 {
     std::ostringstream msg;
 
@@ -226,6 +248,9 @@ int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname)
     for (it=m_ModuleList.begin(); it!=m_ModuleList.end(); it++) {
         m_ComboModules.addItem(QString::fromStdString(it->first));
     }
+
+    if (bSetFirstIndex)
+        m_ComboModules.setCurrentIndex(0);
 
     return 0;
 }
@@ -297,4 +322,44 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
 
     return m_ModuleList;
 }
+void SingleModuleSettingsDialog::on_ComboBox_Changed(QString value)
+{
+    m_ModuleConfig.m_sModule=value.toStdString();
+    m_ModuleConfig.parameters=m_ModuleList[m_ModuleConfig.m_sModule];
+    UpdateCurrentModuleParameters();
 
+}
+
+
+std::map<std::string, std::string> SingleModuleSettingsDialog::GetParameterList()
+{
+    std::map<std::string, std::string> parlist;
+
+    for( int i = 0; i < m_ParameterListView.topLevelItemCount(); ++i )
+    {
+       QTreeWidgetItem *item = m_ParameterListView.topLevelItem( i );
+       parlist[item->text(0).toStdString()]=item->text(1).toStdString();
+    }
+
+    return parlist;
+}
+
+void SingleModuleSettingsDialog::UpdateCurrentModuleParameters()
+{
+    m_ParameterListView.clear();
+    QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
+    QTreeWidgetItem *item = NULL;
+
+    if (!m_ModuleConfig.m_sModule.empty()) {
+        std::map<std::string,std::string>::iterator it;
+
+        for (it=m_ModuleConfig.parameters.begin();
+             it!=m_ModuleConfig.parameters.end(); it++) {
+            item=new QTreeWidgetItem(parent);
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            item->setText(0,QString::fromStdString(it->first));
+            item->setText(1,QString::fromStdString(it->second));
+
+        }
+    }
+}

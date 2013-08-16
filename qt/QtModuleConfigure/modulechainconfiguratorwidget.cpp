@@ -1,4 +1,6 @@
 #include "modulechainconfiguratorwidget.h"
+#include "QListWidgetModuleItem.h"
+
 #include "AddModuleDialog.h"
 #include <QIcon>
 #include <QListWidgetItem>
@@ -6,15 +8,7 @@
 #include <list>
 #include <string>
 
-class QListWidgetModuleItem : public QListWidgetItem
-{
-public:
-    QListWidgetModuleItem(ModuleConfig & module) :
-        QListWidgetItem(QString::fromStdString(module.m_sModule)),
-        m_Module(module)
-    {}
-    ModuleConfig m_Module;
-};
+
 
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     QWidget(parent),
