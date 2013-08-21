@@ -13,13 +13,15 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     logger("ImageViewerWidget"),
     m_ImagePainter(this),
     rubberBandIsShown(false),
-    m_PressedButton(Qt::NoButton)
+    m_PressedButton(Qt::NoButton),
+    m_MouseMode(ViewerROI)
 {
     QPalette palette;
     palette.setColor(QPalette::Background,Qt::black);
     setAutoFillBackground(true);
     setPalette(palette);
     setFocusPolicy(Qt::ClickFocus);
+    setCursor(Qt::CrossCursor);
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));

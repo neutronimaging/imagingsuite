@@ -18,7 +18,9 @@ SOURCES += qtlogviewer.cpp \
     plotter.cpp \
     imagepainter.cpp \
     imageviewerwidget.cpp \
-    qglyphs.cpp
+    qglyphs.cpp \
+    plotpainter.cpp \
+    plotwidget.cpp
 
 
 
@@ -27,7 +29,9 @@ HEADERS += qtlogviewer.h\
     plotter.h \
     imagepainter.h \
     imageviewerwidget.h \
-    qglyphs.h
+    qglyphs.h \
+    plotpainter.h \
+    plotwidget.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
