@@ -34,6 +34,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_QtApp(app),
     m_pEngine(NULL),
     m_nCurrentPage(0),
+    m_nRequiredMemory(0),
     m_sApplicationPath(app->applicationDirPath().toAscii()),
     m_sConfigFilename("noname.xml")
 {
@@ -43,7 +44,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
     ui->projectionViewer->hold_annotations(true);
-
+    ui->ConfiguratorBackProj->Configure("muhrecbp");
     LoadDefaults();
     UpdateDialog();
     ProjectionIndexChanged(0);
@@ -98,6 +99,9 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->spinLastProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
     connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
     connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
+
+    // Display slices
+    connect(ui->sliderSlices,SIGNAL(sliderMoved(int)),this,SLOT(DisplaySlice(int)));
 
     // Recon ROI
     connect(ui->spinMarginLeft,SIGNAL(valueChanged(int)),this,SLOT(ReconROIChanged(int)));
@@ -189,6 +193,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
         ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
         SetImageDimensionLimits(m_PreviewImage.Dims());
+        UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -203,6 +208,36 @@ void MuhRecMainWindow::PreviewProjection()
     PreviewProjection(-1);
 }
 
+void MuhRecMainWindow::DisplaySlice(int x)
+{
+    std::ostringstream msg;
+    int nSelectedSlice=x;
+
+    if (x<0) {
+        nSelectedSlice=m_Config.ProjectionInfo.roi[1];
+        ui->sliderProjections->setValue(nSelectedSlice);
+
+    }
+
+    try {
+        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice-m_Config.ProjectionInfo.roi[1]);
+        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
+                                   static_cast<float>(ui->dspinGrayLow->value()),
+                                   static_cast<float>(ui->dspinGrayHigh->value()));
+
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Failed to display slice \n"<<e.what();
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+
+}
+
+void MuhRecMainWindow::DisplaySlice()
+{
+    DisplaySlice(-1);
+}
 void MuhRecMainWindow::GetSkipList()
 {
     UpdateConfig();
@@ -286,13 +321,19 @@ void MuhRecMainWindow::GetReconROI()
 }
 
 void MuhRecMainWindow::BinningChanged()
-{}
+{
+
+}
 
 void MuhRecMainWindow::FlipChanged()
-{}
+{
+
+}
 
 void MuhRecMainWindow::RotateChanged()
-{}
+{
+
+}
 
 void MuhRecMainWindow::DoseROIChanged(int x)
 {
@@ -302,14 +343,16 @@ void MuhRecMainWindow::DoseROIChanged(int x)
 void MuhRecMainWindow::ReconROIChanged(int x)
 {
     QRect rect;
+    size_t * dims=m_Config.ProjectionInfo.roi;
 
-    rect.setCoords(ui->spinMarginLeft->value(),
-                   ui->spinSlicesFirst->value(),
-                   ui->spinMarginRight->value(),
-                   ui->spinSlicesLast->value());
+    rect.setCoords(dims[0]=ui->spinMarginLeft->value(),
+                   dims[1]=ui->spinSlicesFirst->value(),
+                   dims[2]=ui->spinMarginRight->value(),
+                   dims[3]=ui->spinSlicesLast->value());
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
     CenterOfRotationChanged();
+    UpdateMemoryUsage(dims);
 }
 
 void MuhRecMainWindow::CenterOfRotationChanged(int x)
@@ -346,7 +389,14 @@ void MuhRecMainWindow::ConfigureGeometry()
 
  UpdateConfig();
 
- dlg.exec(m_Config);
+ int res=dlg.exec(m_Config);
+
+ if (res==QDialog::Accepted) {
+    dlg.GetConfig(m_Config);
+    UpdateDialog();
+    UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+ }
+
 }
 
 void MuhRecMainWindow::GrayLevelsChanged(double x)
@@ -371,7 +421,7 @@ void MuhRecMainWindow::GetMatrixROI()
         ui->spinMatrixROI0->setValue(rect.x());
         ui->spinMatrixROI1->setValue(rect.y());
         ui->spinMatrixROI2->setValue(rect.x()+rect.width());
-        ui->spinMatrixROI3->setValue(rect.x()+rect.height());
+        ui->spinMatrixROI3->setValue(rect.y()+rect.height());
         ui->spinMatrixROI0->blockSignals(false);
         ui->spinMatrixROI1->blockSignals(false);
         ui->spinMatrixROI2->blockSignals(false);
@@ -661,7 +711,7 @@ void MuhRecMainWindow::MenuReconstructStart()
                     msg<<"Matrix display interval ["<<m_Config.MatrixInfo.fGrayInterval[0]<<", "<<m_Config.MatrixInfo.fGrayInterval[1]<<"]";
                     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-  //                  DisplayNewSlice();
+                    DisplaySlice();
                 }
                 else {
                     delete m_pEngine;
@@ -717,17 +767,29 @@ void MuhRecMainWindow::MenuReconstructStart()
 
 void MuhRecMainWindow::LoadDefaults()
 {
-#ifdef _MSC_VER
-    std::string defaultsname="resources/defaults_windows.xml";
-#else
-    std::string defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
-#endif
+    std::string defaultsname;
+    QDir dir;
+    QString currentname=dir.homePath()+"/CurrentRecon.xml";
 
+    bool bUseDefaults=true;
+    if (dir.exists(currentname)) {
+        defaultsname=currentname.toStdString();
+        bUseDefaults=false;
+    }
+    else {
+    #ifdef _MSC_VER
+         defaultsname="resources/defaults_windows.xml";
+    #else
+        defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
+    #endif
+        bUseDefaults=true;
+    }
     std::ostringstream msg;
 
     kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
     try {
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
+
     }
     catch (ReconException &e) {
         msg<<"Loading defaults failed :\n"<<e.what();
@@ -742,17 +804,80 @@ void MuhRecMainWindow::LoadDefaults()
         logger(kipl::logging::Logger::LogError,msg.str());
     }
 
-    m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
-    m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
-    m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+    if (bUseDefaults) {
+        m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
+        m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
+        m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+    }
 
     UpdateDialog();
-    //UpdateMemoryUsage(config.ProjectionInfo.roi);
+    UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
 }
 
 void MuhRecMainWindow::SaveMatrix()
 {
 
+}
+
+void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
+{
+    ostringstream msg;
+    try  {
+        ostringstream text;
+        m_nRequiredMemory=0;
+        double nMatrixMemory=0;
+        double nBufferMemory=0;
+        // Matrix size
+        double length = abs(static_cast<ptrdiff_t>(roi[2])-static_cast<ptrdiff_t>(roi[0]));
+        double height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
+        text.str("");
+
+        nMatrixMemory = length*length*height*sizeof(float);
+        // Memory for temp matrix
+        double blocksize=GetIntParameter(m_Config.backprojector.parameters,"SliceBlock");
+        blocksize=min(blocksize,height);
+        nBufferMemory = length*length*blocksize*sizeof(float);
+        // Projection buffer
+        double projbuffersize=GetIntParameter(m_Config.backprojector.parameters,"ProjectionBufferSize");
+        nBufferMemory += length*height*projbuffersize*sizeof(float);
+
+        // Projection Data
+        double nprojections=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+        nBufferMemory += length*height*nprojections*sizeof(float);
+
+        nMatrixMemory/=1024*1024;
+        nBufferMemory/=(1024*1024);
+        text.str("");
+        m_nRequiredMemory=static_cast<size_t>(nBufferMemory+nMatrixMemory);
+        text<<"Memory usage: "<<m_nRequiredMemory
+           <<"Mb (matrix: "<<ceil(nMatrixMemory)<<", buffers: "
+           <<ceil(nBufferMemory)<<") system max "
+           <<m_Config.System.nMemory<<"Mb";
+
+        ui->statusBar->showMessage(QString::fromStdString(text.str()));
+    }
+    catch (ModuleException &e) {
+        msg<<"Failed to compute the memory usage\n"<<e.what();
+    }
+    catch (ReconException &e) {
+        msg<<"Failed to compute the memory usage\n"<<e.what();
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"Failed to compute the memory usage\n"<<e.what();
+    }
+    catch (std::exception &e) {
+        msg<<"Failed to compute the memory usage\n"<<e.what();
+    }
+    catch (...) {
+        msg<<"Failed to compute the memory usage\n";
+    }
+
+    if (!msg.str().empty()) {
+        QMessageBox error_dlg;
+        error_dlg.setWindowTitle("Error");
+        error_dlg.setText("Failed to build reconstructor due to plugin exception");
+        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
+    }
 }
 
 void MuhRecMainWindow::UpdateDialog()
@@ -819,6 +944,7 @@ void MuhRecMainWindow::UpdateDialog()
     for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
         str<<*it<<" ";
     ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
+    ui->ConfiguratorBackProj->SetModule(m_Config.backprojector);
 }
 
 void MuhRecMainWindow::UpdateConfig()
@@ -877,6 +1003,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.roi[2] = ui->spinMatrixROI2->value();
     m_Config.MatrixInfo.roi[3] = ui->spinMatrixROI3->value();
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+2);
     // +2 to skip the matlab file types
@@ -886,5 +1013,6 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.UserInformation.sInstrument = ui->editInstrumentName->text().toStdString();
     m_Config.UserInformation.sSample = ui->editSampleDescription->text().toStdString();
     m_Config.UserInformation.sComment = ui->editExperimentDescription->toPlainText().toStdString();
-
+    m_Config.backprojector = ui->ConfiguratorBackProj->GetModule();
 }
+

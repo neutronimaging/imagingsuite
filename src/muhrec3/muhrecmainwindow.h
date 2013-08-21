@@ -56,6 +56,8 @@ protected slots:
     void ProjectionIndexChanged(int x);
     void PreviewProjection();
     void PreviewProjection(int x);
+    void DisplaySlice();
+    void DisplaySlice(int x);
 
     // Menu slots
     void MenuFileNew();
@@ -79,7 +81,6 @@ protected:
 
     void LoadDefaults();
     void LoadReconSettings();
-    void DisplayNewSlice();
 
 private:
     // Data members

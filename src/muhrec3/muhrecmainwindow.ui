@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1250</width>
-    <height>853</height>
+    <height>861</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,13 +42,13 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabInformation">
         <attribute name="title">
          <string>Information</string>
         </attribute>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>40</x>
@@ -621,13 +621,6 @@
                </item>
               </widget>
              </item>
-             <item row="6" column="10">
-              <widget class="QPushButton" name="buttonConfigGeometry">
-               <property name="text">
-                <string>Configure geometry</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="5">
               <widget class="QLabel" name="label_29">
                <property name="text">
@@ -772,6 +765,12 @@
              </item>
              <item row="5" column="0" colspan="5">
               <widget class="QCheckBox" name="checkCorrectTilt">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Correct axis tilt</string>
                </property>
@@ -860,6 +859,13 @@
                </property>
               </widget>
              </item>
+             <item row="6" column="10">
+              <widget class="QPushButton" name="buttonConfigGeometry">
+               <property name="text">
+                <string>Configure geometry</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -899,27 +905,13 @@
            <x>0</x>
            <y>440</y>
            <width>711</width>
-           <height>101</height>
+           <height>121</height>
           </rect>
          </property>
          <property name="title">
           <string>Back-projector configuration</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_38">
-            <property name="text">
-             <string>Back-projector module</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="buttonConfigureBackProjector">
-            <property name="text">
-             <string>Configure</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_39">
             <property name="text">
@@ -953,12 +945,8 @@
             </property>
            </spacer>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="labelBackProjectorName">
-            <property name="text">
-             <string>Back projection module</string>
-            </property>
-           </widget>
+          <item row="0" column="0" colspan="3">
+           <widget class="SingleModuleConfiguratorWidget" name="ConfiguratorBackProj" native="true"/>
           </item>
          </layout>
         </widget>
@@ -1412,9 +1400,6 @@
          </property>
         </widget>
        </widget>
-       <zorder>groupProjections</zorder>
-       <zorder>groupSlices</zorder>
-       <zorder>tabMainControl</zorder>
       </widget>
      </item>
     </layout>
@@ -1542,6 +1527,12 @@
    <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
    <header>qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SingleModuleConfiguratorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">singlemoduleconfiguratorwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
