@@ -165,7 +165,7 @@ void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 {      
     QString apppath=QCoreApplication::applicationDirPath();
 
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),apppath,tr("libs (*.dylib)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),apppath);
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");

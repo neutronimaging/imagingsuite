@@ -95,6 +95,20 @@ void Plotter::refreshBounds()
 
     PlotSettings settings;
 
+    QMap<int, PlotData>::iterator it=curveMap.begin();
+
+    settings.minX=it.value().minX;
+    settings.maxX=it.value().maxX;
+    settings.minY=it.value().minY;
+    settings.maxY=it.value().maxY;
+
+    for (it=curveMap.begin(); it!=curveMap.end(); it++){
+        settings.minX=std::min(settings.minX,it.value().minX);
+        settings.maxX=std::max(settings.maxX,it.value().maxX);
+        settings.minY=std::min(settings.minY,it.value().minY);
+        settings.maxY=std::max(settings.maxY,it.value().maxY);
+    }
+/*
     QMapIterator<int, PlotData> i(curveMap);
     i.toFront();
 
@@ -111,7 +125,7 @@ void Plotter::refreshBounds()
         settings.minY=std::min(settings.minY,i.value().minY);
         settings.maxY=std::max(settings.maxY,i.value().maxY);
     }
-
+*/
     if (!zoomStack.empty())
         zoomStack.clear();
     zoomStack.append(settings);
