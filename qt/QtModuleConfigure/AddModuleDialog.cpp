@@ -21,6 +21,7 @@
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCoreApplication>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -79,7 +80,10 @@ int AddModuleDialog::configure(std::string application, std::string application_
 
 int AddModuleDialog::exec()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),tr("libs (*.dylib | *.so)"));
+    QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
+    logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");
@@ -101,7 +105,7 @@ int AddModuleDialog::exec()
 
 int AddModuleDialog::UpdateModuleCombobox(QString fname)
 {
-	std::ostringstream msg;
+    std::ostringstream msg;
 
     try {
         modulelist.clear();
@@ -135,58 +139,58 @@ int AddModuleDialog::UpdateModuleCombobox(QString fname)
         m_Combobox_modules.addItem(QString::fromStdString(it->first));
     }
 
-	return 0;
+    return 0;
 }
 
 std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetModuleList(std::string filename)
 {
-	std::ostringstream msg;
-	HINSTANCE hinstLib;
+    std::ostringstream msg;
+    HINSTANCE hinstLib;
 #ifdef _MSC_VER
-	std::wstring so(filename.length(),' ');
+    std::wstring so(filename.length(),' ');
 
-	copy(filename.begin(),filename.end(),so.begin());
-	hinstLib = LoadLibrary(so.c_str());
+    copy(filename.begin(),filename.end(),so.begin());
+    hinstLib = LoadLibrary(so.c_str());
 #else
-	hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
+    hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
 
-	if (hinstLib != NULL) 
-    { 
-		MODULELIST fnGetModuleList;
+    if (hinstLib != NULL)
+    {
+        MODULELIST fnGetModuleList;
 #ifdef _MSC_VER
-		fnGetModuleList = reinterpret_cast<MODULELIST>(GetProcAddress(hinstLib, "GetModuleList"));
+        fnGetModuleList = reinterpret_cast<MODULELIST>(GetProcAddress(hinstLib, "GetModuleList"));
 #else
-		fnGetModuleList = reinterpret_cast<MODULELIST>(dlsym(hinstLib, "GetModuleList"));
+        fnGetModuleList = reinterpret_cast<MODULELIST>(dlsym(hinstLib, "GetModuleList"));
 #endif
         msg.str("");
         msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == NULL ? "no" : "yes");
         logger(kipl::logging::Logger::LogMessage,msg.str());
-		 // If the function address is valid, call the function.
-		if (NULL != fnGetModuleList) 
+         // If the function address is valid, call the function.
+        if (NULL != fnGetModuleList)
         {
 
-			if (fnGetModuleList(m_sApplication.c_str(),&modulelist)!=0) {
-				msg.str("");
-				msg<<"Shared object file "<<filename<<" does not contain modules for "<<m_sApplication;
+            if (fnGetModuleList(m_sApplication.c_str(),&modulelist)!=0) {
+                msg.str("");
+                msg<<"Shared object file "<<filename<<" does not contain modules for "<<m_sApplication;
                 logger(kipl::logging::Logger::LogError,msg.str());
-				throw ModuleException(msg.str(),__FILE__,__LINE__);
-			}
+                throw ModuleException(msg.str(),__FILE__,__LINE__);
+            }
 
         }
-		else
-		{
-			msg.str("");
-			msg<<"Failed to get the module list from "<<filename<<" (Error: "
+        else
+        {
+            msg.str("");
+            msg<<"Failed to get the module list from "<<filename<<" (Error: "
 #ifdef _MSC_VER
-					<<GetLastError()<<")";
+                    <<GetLastError()<<")";
 #else
-					<<dlerror()<<")";
+                    <<dlerror()<<")";
 #endif
 
-			throw ModuleException(msg.str(),__FILE__,__LINE__);
-		}
-	}
+            throw ModuleException(msg.str(),__FILE__,__LINE__);
+        }
+    }
     else {
         msg.str("");
         msg<<"Failed to open library file "<<filename;
@@ -203,7 +207,7 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
         throw ModuleException(msg.str(),__FILE__,__LINE__);
     }
 
-	return modulelist;
+    return modulelist;
 }
 
 void AddModuleDialog::on_change_objectfile()

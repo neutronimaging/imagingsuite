@@ -163,7 +163,7 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 
 void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 {      
-    QString apppath=QCoreApplication::applicationDirPath();
+    QString apppath=QCoreApplication::applicationDirPath()+"/../Frameworks";
 
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),apppath);
 
