@@ -388,15 +388,15 @@ void MuhRecMainWindow::ConfigureGeometry()
  ConfigureGeometryDialog dlg;
 
  UpdateConfig();
-
+ logger(kipl::logging::Logger::LogMessage,"before");
  int res=dlg.exec(m_Config);
-
+logger(kipl::logging::Logger::LogMessage,"after");
  if (res==QDialog::Accepted) {
     dlg.GetConfig(m_Config);
     UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
  }
-
+logger(kipl::logging::Logger::LogMessage,"leaving");
 }
 
 void MuhRecMainWindow::GrayLevelsChanged(double x)
