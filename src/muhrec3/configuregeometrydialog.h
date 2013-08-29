@@ -5,6 +5,7 @@
 #include <ReconConfig.h>
 #include <base/timage.h>
 #include <logging/logger.h>
+#include <vector>
 
 namespace Ui {
 class ConfigureGeometryDialog;
@@ -30,6 +31,18 @@ private slots:
     void onOKButtonClicked(){ this->setResult(QDialog::Accepted);}
     void onCancelButtonClicked(){ this->setResult(QDialog::Rejected);}
 private:
+
+    void LSQ_fit1(vector<float> &v, float *k, float *m);
+    kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
+    float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
+                                                        kipl::base::TImage<float,2> proj_180);
+    float LeastSquareCenter(	kipl::base::TImage<float,2> proj_0,
+                                                        kipl::base::TImage<float,2> proj_180);
+    float CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end);
+    void CumulateProjection(const kipl::base::TImage<float,2> img, const kipl::base::TImage<float,2> biimg);
+    pair<size_t, size_t> FindBoundary(const kipl::base::TImage<float,2> img, float level);
+    pair<size_t, size_t> FindMaxBoundary();
+
     void UpdateConfig();
     void UpdateDialog();
     int LoadImages();
@@ -42,6 +55,12 @@ private:
     kipl::base::TImage<float,2> m_ProjDC;
     kipl::base::TImage<float,2> m_ProjOB;
     kipl::base::TImage<float,2> m_ProjCumulative;
+    std::vector<float> m_vCoG;
+    kipl::base::TImage<float,2> m_grayCumulate;
+    kipl::base::TImage<float,2> m_biCumulate;
+    std::vector<pair<size_t, size_t> > m_vBoundary;
 };
 
 #endif // CONFIGUREGEOMETRYDIALOG_H
+
+

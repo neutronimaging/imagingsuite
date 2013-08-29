@@ -73,7 +73,6 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
-    connect(ui->buttonConfigGeometry, SIGNAL(clicked()), this,SLOT(ConfigureGeometry()));
 
     // Dose roi size
     connect(ui->spinDoseROIx0,SIGNAL(valueChanged(int)),this,SLOT(DoseROIChanged(int)));
@@ -388,15 +387,14 @@ void MuhRecMainWindow::ConfigureGeometry()
  ConfigureGeometryDialog dlg;
 
  UpdateConfig();
- logger(kipl::logging::Logger::LogMessage,"before");
+
  int res=dlg.exec(m_Config);
-logger(kipl::logging::Logger::LogMessage,"after");
+
  if (res==QDialog::Accepted) {
     dlg.GetConfig(m_Config);
     UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
  }
-logger(kipl::logging::Logger::LogMessage,"leaving");
 }
 
 void MuhRecMainWindow::GrayLevelsChanged(double x)

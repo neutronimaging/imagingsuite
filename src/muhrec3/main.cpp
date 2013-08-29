@@ -32,12 +32,12 @@ int main(int argc, char *argv[])
     bool licensefail=false;
     std::string errormsg;
     try {
+        //std::clog<<"Home path:"<<homedir<<", app path:"<<application_path<<std::endl;
         std::list<std::string> liclist;
-        liclist.push_back(homedir+"./license/license_muhrec.dat");
-        liclist.push_back(application_path+"./license_muhrec.dat");
-        liclist.push_back(application_path+"./license.dat");
-        liclist.push_back(homedir+"./license_muhrec.dat");
-
+        liclist.push_back(homedir+"/license/license_muhrec.dat");
+        liclist.push_back(application_path+"/license_muhrec.dat");
+        liclist.push_back(application_path+"/license.dat");
+        liclist.push_back(homedir+"/license_muhrec.dat");
 
         license.Initialize(liclist,"muhrec");
     }
@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 
         mbox.setText(QString::fromStdString(msg.str()));
         mbox.setWindowTitle("License error");
+        mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
         mbox.exec();
         return -1;
     }

@@ -9,6 +9,9 @@
 #include <base/KiplException.h>
 #include <strings/filenames.h>
 #include <filters/medianfilter.h>
+#include <math/mathconstants.h>
+#include <base/tsubimage.h>
+#include <morphology/morphfilters.h>
 
 #include <exception>
 
@@ -51,8 +54,263 @@ void ConfigureGeometryDialog::GetConfig(ReconConfig & config)
 
 void ConfigureGeometryDialog::FindCenter()
 {
+    ostringstream msg;
     UpdateConfig();
+    size_t *roi=m_Config.ProjectionInfo.roi;
+    msg.str("");
+    msg<<"Find center: Current ROI ["<<roi[0]<<", "<<roi[2]<<"]";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims(),-0.1f,1.3);
+
+    m_vCoG.clear();
+    switch (ui->comboEstimatationMethod->currentIndex()) {
+        case 0:
+            LeastSquareCenter(m_Proj0Deg,m_Proj180Deg);
+            break;
+        case 1:
+            CorrelationCenter(m_Proj0Deg,m_Proj180Deg);
+            break;
+        default:
+            CorrelationCenter(m_Proj0Deg,m_Proj180Deg);
+            break;
+    }
+
+    float k=0.0f,m=0.0f;
+    LSQ_fit1(m_vCoG,&k,&m);
+    m_Config.ProjectionInfo.fTiltAngle=atan(k)*180.0f/fPi;
+
+    m_Config.ProjectionInfo.fCenter=k*(0.5f* m_Config.ProjectionInfo.nDims[1])+m;
+    UpdateDialog();
+
+    QVector<QPointF> plot_data;
+    for (size_t i=0; i<m_vCoG.size(); i++) {
+        plot_data.append(QPointF(m_vCoG[i]+roi[0],static_cast<float>(i+roi[1])));
+    }
+
+    ui->viewerProjection->set_plot(plot_data,QColor("red"),0);
+
+    msg.str("");
+    msg<<"Estimated center="<<m<<", tilt="<<k<<endl;
+    logger(kipl::logging::Logger::LogVerbose,msg.str());
+    plot_data.clear();
+    plot_data.append(QPointF(k*roi[1]+m+roi[0],0.0f));
+    plot_data.append(QPointF(k*roi[3]+m+roi[0],m_Proj0Deg.Size(1)-1.0f));
+
+    ui->viewerProjection->set_plot(plot_data,QColor("yellow"),1);
 }
+
+void ConfigureGeometryDialog::LSQ_fit1(std::vector<float> &v, float *k, float *m)
+{
+    size_t *roi=m_Config.ProjectionInfo.roi;
+    float a,b,c,d,e,f,val;
+
+    a=static_cast<float>(v.size());
+    b=c=d=e=f=0.0f;
+
+    vector<float>::iterator it;
+    float x=0.0f;
+    for (it=v.begin(), x=static_cast<float>(roi[1]); it!=v.end(); it++, x++) {
+        val=*it;
+        b+=x;
+        d+=x*x;
+        e+=val;
+        f+=x*val;
+    }
+
+    c=b;
+    *k=(a*f-c*e)/(a*d-b*c);
+    *m=(e*d-b*f)/(a*d-b*c);
+}
+
+kipl::base::TImage<float,2> ConfigureGeometryDialog::ThresholdProjection(const kipl::base::TImage<float,2> img, float level)
+{
+    kipl::base::TImage<float,2> result(img.Dims());
+
+    float const * const pImg=img.GetDataPtr();
+    float *pRes=result.GetDataPtr();
+
+    for (size_t i=0; i<img.Size(); i++) {
+        pRes[i]=static_cast<float>(level<pImg[i]);
+    }
+
+    return result;
+}
+
+float ConfigureGeometryDialog::CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
+                                                    kipl::base::TImage<float,2> proj_180)
+{
+    logger(kipl::logging::Logger::LogMessage,"Center estimation using correlation");
+
+    size_t *roi = m_Config.ProjectionInfo.roi;
+
+    std::ofstream cogfile("cog_corr.txt");
+
+    kipl::base::TImage<float,2> limg0,limg180;
+    size_t start[2]={roi[0],roi[1]};
+    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    kipl::base::TSubImage<float,2> cropper;
+    limg0=cropper.Get(proj_0,start,length);
+    limg180 = kipl::base::Mirror(cropper.Get(m_Proj180Deg,start,length),kipl::base::ImageAxisX);
+
+    size_t len=limg0.Size(0)/3;
+
+    size_t dims[2]={len*2,limg0.Size(1)};
+    kipl::base::TImage<float,2> corrimg(dims);
+
+    for (size_t y=0; y<limg0.Size(1); y++) {
+        float *corr=corrimg.GetLinePtr(y);
+        const float * const p0   = limg0.GetLinePtr(y)+len;
+        const float * const p180 = limg180.GetLinePtr(y);
+
+        for (size_t idx=0; idx<2*len; idx++ ) {
+            corr[idx]=0.0f;
+            for (size_t x=0; x<len; x++) {
+                corr[idx]+=p0[x]*p180[idx+x];
+            }
+        }
+        size_t pos=0;
+        for (size_t i=1; i<2*len; i++)
+            if (corr[pos]<corr[i]) pos=i;
+        float value=(static_cast<float>(pos)-static_cast<float>(len))*0.5f+(static_cast<float>(limg0.Size(0))*0.5f);
+
+        cogfile<<y<<" "<<len<<" "<<limg0.Size(0)<<" "<<pos<<" "<<value<<std::endl;
+        m_vCoG.push_back(value);
+    }
+
+    return 0.0f;
+}
+
+float ConfigureGeometryDialog::LeastSquareCenter(	kipl::base::TImage<float,2> proj_0,
+                                                    kipl::base::TImage<float,2> proj_180)
+{
+    logger(kipl::logging::Logger::LogMessage,"Center estimation using least squared error");
+
+    size_t *roi = m_Config.ProjectionInfo.roi;
+    kipl::base::TImage<float,2> limg0,limg180;
+    size_t start[2]={roi[0],roi[1]};
+    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    kipl::base::TSubImage<float,2> cropper;
+    std::ostringstream msg;
+
+    msg<<"x ["<<start[0]<<", "<<length[0]<<"], y ["<<start[1]<<", "<<length[1]<<"]";
+
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+    limg0=cropper.Get(proj_0,start,length);
+    limg180 = kipl::base::Mirror(cropper.Get(proj_180,start,length),kipl::base::ImageAxisX);
+
+    ofstream cogfile("cog_lsc.txt");
+
+    size_t len=limg0.Size(0)/3;
+
+    size_t dims[2]={len*2,limg0.Size(1)};
+    kipl::base::TImage<float,2> corrimg(dims);
+    float diff=0.0f;
+    for (size_t y=0; y<limg0.Size(1); y++) {
+        float *corr=corrimg.GetLinePtr(y);
+        const float * const p0   = limg0.GetLinePtr(y)+len;
+        const float * const p180 = limg180.GetLinePtr(y);
+
+        for (size_t idx=0; idx<2*len; idx++ ) {
+            corr[idx]=0.0f;
+            for (size_t x=0; x<len; x++) {
+                diff=p0[x]-p180[idx+x];
+                corr[idx]+=diff*diff;
+            }
+        }
+        size_t pos=0;
+        for (size_t i=1; i<2*len; i++)
+            if (corr[i]<corr[pos]) pos=i;
+        float value=(static_cast<float>(len)-static_cast<float>(pos))*0.5f+(static_cast<float>(limg0.Size(0))*0.5f);
+
+        cogfile<<y<<" "<<len<<" "<<limg0.Size(0)<<" "<<pos<<" "<<value<<std::endl;
+
+        m_vCoG.push_back(value);
+    }
+
+    return 0.0f;
+}
+
+float ConfigureGeometryDialog::CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end)
+{
+    m_vCoG.clear();
+    size_t *roi = m_Config.ProjectionInfo.roi;
+    for (size_t y=roi[1]; y<roi[3]; y++) {
+        double sum=0.0;
+        double cogsum=0.0;
+        float const * const pLine=img.GetLinePtr(y);
+        for (size_t x=start; x<end; x++) {
+            cogsum+=pLine[x]*(x-start);
+            sum+=pLine[x];
+        }
+        if (sum!=0) {
+            m_vCoG.push_back(static_cast<float>(start+cogsum/sum));
+        }
+    }
+    return 0.0f;
+}
+
+void ConfigureGeometryDialog::CumulateProjection(const kipl::base::TImage<float,2> img, const kipl::base::TImage<float,2> biimg)
+{
+
+    float const * const pImg=img.GetDataPtr();
+    float *pCumImg=m_grayCumulate.GetDataPtr();
+
+    for (size_t i=0; i<img.Size(); i++) {
+        pCumImg[i]+=pImg[i];
+    }
+
+    float kernel[9]={1,1,1,1,1,1,1,1,1};
+    size_t dims[2]={3,3};
+    kipl::morphology::TErode<float,2> erode(kernel,dims);
+
+
+    float const * const pBiImg=biimg.GetDataPtr();
+    pCumImg=m_biCumulate.GetDataPtr();
+    for (size_t i=0; i<img.Size(); i++) {
+        pCumImg[i]+=pBiImg[i];
+    }
+}
+
+pair<size_t, size_t> ConfigureGeometryDialog::FindBoundary(const kipl::base::TImage<float,2> img, float level)
+{
+    float *profile=new float[img.Size(0)];
+    memset(profile,0, sizeof(float)*img.Size(0));
+
+    for (size_t y=0; y<img.Size(1); y++) {
+        float const * const pLine=img.GetLinePtr(y);
+        for (size_t x=0; x<img.Size(0); x++) {
+            profile[x]+=pLine[x];
+        }
+    }
+    pair<size_t, size_t> b(0,img.Size(0)-1);
+
+    float th=level*(img.Size(1)+1);
+    for ( ; b.first<b.second; b.first++)
+        if (th<profile[b.first])
+            break;
+
+    for ( ; b.first<b.second; b.second--)
+        if (th<profile[b.second])
+            break;
+
+    delete [] profile;
+    return b;
+}
+
+pair<size_t, size_t> ConfigureGeometryDialog::FindMaxBoundary()
+{
+    vector<pair<size_t, size_t> >::iterator it=m_vBoundary.begin();
+
+    pair<size_t, size_t> b=*it;
+
+    for (it=m_vBoundary.begin() ; it!=m_vBoundary.end(); it++) {
+        b.first=min(b.first,it->first);
+        b.second=max(b.second,it->second);
+    }
+    return b;
+}
+
 
 void ConfigureGeometryDialog::UseTilt(bool x)
 {
@@ -264,7 +522,7 @@ void ConfigureGeometryDialog::UpdateConfig()
     m_Config.ProjectionInfo.roi[0]       = ui->spinMarginLeft->value();
     m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
     m_Config.ProjectionInfo.roi[2]       = ui->spinMarginRight->value();
-    m_Config.ProjectionInfo.roi[3]       = ui->spinMarginLeft->value();
+    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
@@ -279,7 +537,7 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->spinMarginLeft->setValue(m_Config.ProjectionInfo.roi[0]);
     ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
     ui->spinMarginRight->setValue(m_Config.ProjectionInfo.roi[2]);
-    ui->spinMarginLeft->setValue(m_Config.ProjectionInfo.roi[3]);
+    ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
     ui->dspinAngleFirst->setValue(m_Config.ProjectionInfo.fScanArc[0]);
     ui->dspinAngleLast->setValue(m_Config.ProjectionInfo.fScanArc[1]);
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
