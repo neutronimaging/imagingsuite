@@ -204,6 +204,11 @@ void ImagePainter::set_levels(const float level_low, const float level_high)
     prepare_pixbuf();
 }
 
+float ImagePainter::getValue(int x, int y)
+{
+    return m_data[x+m_dims[0]*y];
+}
+
 void ImagePainter::get_levels(float *level_low, float *level_high)
 {
     *level_low  = m_MinVal;

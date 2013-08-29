@@ -70,6 +70,7 @@ protected:
 
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
+    void showToolTip(QPoint position, QString message);
     void refreshPixmap();
     QRect rubberBandRect;
     bool rubberBandIsShown;

@@ -161,7 +161,6 @@ std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
 
 void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
 {
-    logger(kipl::logging::Logger::LogMessage,"inserting");
     QListWidgetItem *item = new QListWidgetModuleItem(module);
 
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag

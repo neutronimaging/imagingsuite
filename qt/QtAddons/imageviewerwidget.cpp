@@ -22,6 +22,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     setPalette(palette);
     setFocusPolicy(Qt::ClickFocus);
     setCursor(Qt::CrossCursor);
+    this->setMouseTracking(true);
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));
@@ -138,8 +139,8 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
 
 void ImageViewerWidget::enterEvent(QEvent *)
 {
- //   logger(kipl::logging::Logger::LogMessage,"Entered");
-   // toolTip.fromAscii("Hepp");
+  // logger(kipl::logging::Logger::LogMessage,"Entered");
+
 }
 
 void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
@@ -166,16 +167,19 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
 //            m_ImagePainter.pan(event->pos());
     }
     if (event->button() == Qt::RightButton) {
-        logger(kipl::logging::Logger::LogMessage,"Right");
         m_PressedButton=event->button();
         m_LastMotionPosition=event->pos();
-
     }
-    QWidget::mousePressEvent(event);
+
+
+   QWidget::mousePressEvent(event);
 }
 
 void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 {
+
+    std::ostringstream msg;
+
     if (rubberBandIsShown) {
         updateRubberBandRegion();
         rubberBandRect.setBottomRight(event->pos());
@@ -195,7 +199,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
         float fLevelStep  = fWindow/1000.0f;
         float fWindowStep = fWindow/1000.0f;
-        //msg.str("");
+        msg.str("");
 
         int dx=static_cast<int>(event->pos().x() - m_LastMotionPosition.x());
         int dy=static_cast<int>(event->pos().y() - m_LastMotionPosition.y());
@@ -205,10 +209,23 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         else
             fWindow+=dx*fWindowStep;
 
-       // msg<<"W="<<m_Window<<", L="<<m_Level;
+        msg<<"W="<<fWindow<<", L="<<fLevel;
 
-        //set_tooltip_text(msg.str());
+        showToolTip(event->pos(),QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
+    }
+    else {
+        int const * const dims=m_ImagePainter.get_image_dims();
+
+        int xpos=static_cast<int>((event->pos().x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale());
+        int ypos=static_cast<int>((event->pos().y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale());
+
+        if ((0<=xpos) && (0<=ypos) && (xpos<dims[0]) && (ypos<dims[1])) {
+            msg.str("");
+            msg<<m_ImagePainter.getValue(xpos,ypos)<<" @ ("<<xpos<<", "<<ypos<<")";
+
+            showToolTip(event->globalPos(),QString::fromStdString(msg.str()));
+        }
     }
 
     QWidget::mouseMoveEvent(event);
@@ -232,6 +249,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::RightButton )
         m_PressedButton = Qt::NoButton;
 
+
     QWidget::mouseReleaseEvent(event);
 }
 
@@ -243,6 +261,24 @@ void ImageViewerWidget::updateRubberBandRegion()
     update(rect.left(), rect.top(), 1, rect.height());
     update(rect.left(), rect.bottom(), rect.width(), 1);
     update(rect.right(), rect.top(), 1, rect.height());
+}
+
+void ImageViewerWidget::showToolTip(QPoint position, QString message)
+{
+    QFont ttfont=this->font();
+    ttfont.setPointSize(static_cast<int>(ttfont.pointSize()*0.9));
+    QPalette color;
+    int setval = 0;
+
+    color.setColor( QPalette::Active,QPalette::QPalette::ToolTipBase,Qt::yellow);
+    qreal x = position.x()+this->pos().x()+5;
+    qreal y = position.y()+this->pos().y()-15;
+    QPoint ttpos (x, y);
+
+    QToolTip::setPalette(color);
+    QToolTip::setFont(ttfont);
+
+    QToolTip::showText(ttpos, message,this);
 }
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)

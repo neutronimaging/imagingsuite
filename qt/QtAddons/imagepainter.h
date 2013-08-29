@@ -37,10 +37,12 @@ public:
     void get_levels(float *level_low, float *level_high);
     void get_image_minmax(float *level_low, float *level_high);
     const QVector<QPointF> &get_image_histogram();
+    int const * const get_image_dims() {return m_dims;}
     void show_clamped(bool show);
     float get_scale() {return m_fScale;}
     int get_offsetX() {return offset_x;}
     int get_offsetY() {return offset_y;}
+    float getValue(int x, int y);
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
 protected:
     void prepare_pixbuf();
