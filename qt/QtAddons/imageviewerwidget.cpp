@@ -12,7 +12,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
     m_ImagePainter(this),
-    rubberBandIsShown(false),
+    m_RubberBandStatus(RubberBandHide),
     m_PressedButton(Qt::NoButton),
     m_MouseMode(ViewerROI)
 {
@@ -80,8 +80,9 @@ void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
 
     m_ImagePainter.Render(painter,0,0,s.width(),s.height());
 
-    if (rubberBandIsShown) {
+    if (m_RubberBandStatus != RubberBandHide) {
         painter.setPen(palette().light().color());
+        painter.setPen(Qt::PenStyle()
         painter.drawRect(rubberBandRect.normalized()
                                        .adjusted(0, 0, -1, -1));
     }
@@ -149,15 +150,15 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
     QRect rect(Margin, Margin,
                width() - 2 * Margin, height() - 2 * Margin);
 
-    if (rubberBandIsShown) {
-        rubberBandIsShown = false;
+    if (m_RubberBandStatus != RubberBandHide) {
+        m_RubberBandStatus = RubberBandHide;
         updateRubberBandRegion();
     }
 
     if (event->button() == Qt::LeftButton) {
         if (m_MouseMode==ViewerROI)
             if (rect.contains(event->pos())) {
-                rubberBandIsShown = true;
+                m_RubberBandStatus = RubberBandDrag;
                 rubberBandRect.setTopLeft(event->pos());
                 rubberBandRect.setBottomRight(event->pos());
                 updateRubberBandRegion();
@@ -180,7 +181,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
     std::ostringstream msg;
 
-    if (rubberBandIsShown) {
+    if (m_RubberBandStatus == RubberBandDrag) {
         updateRubberBandRegion();
         rubberBandRect.setBottomRight(event->pos());
         updateRubberBandRegion();
@@ -234,7 +235,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     std::ostringstream msg;
-    if ((event->button() == Qt::LeftButton) && rubberBandIsShown) {
+    if ((event->button() == Qt::LeftButton) && (m_RubberBandStatus == RubberBandDrag)) {
         updateRubberBandRegion();
 
         QRect r=rubberBandRect.normalized();
@@ -243,6 +244,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
                         floor(r.width()/m_ImagePainter.get_scale()),
                         floor(r.height()/m_ImagePainter.get_scale())
                         );
+        m_RubberBandStatus = RubberBandFreeze;
 
     }
 
@@ -293,7 +295,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 
 QRect ImageViewerWidget::get_marked_roi()
 {
-    rubberBandIsShown=false;
+    m_RubberBandStatus = RubberBandHide;
     updateRubberBandRegion();
     return roiRect;
 }

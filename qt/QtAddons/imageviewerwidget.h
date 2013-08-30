@@ -26,6 +26,14 @@ public:
         ViewerZoom=1,
         ViewerPan=2
     };
+
+    enum eRubberBandStatus
+    {
+        RubberBandHide=0,
+        RubberBandFreeze=1,
+        RubberBandDrag=2
+    };
+
    // explicit ImageViewerWidget(QWidget *parent = 0);
     ImageViewerWidget(QWidget *parent = 0);
     //~ImageViewerWidget();
@@ -73,7 +81,7 @@ protected:
     void showToolTip(QPoint position, QString message);
     void refreshPixmap();
     QRect rubberBandRect;
-    bool rubberBandIsShown;
+    eRubberBandStatus m_RubberBandStatus;
     QRect roiRect;
     eViewerMouseModes m_MouseMode;
     Qt::MouseButton m_PressedButton;
