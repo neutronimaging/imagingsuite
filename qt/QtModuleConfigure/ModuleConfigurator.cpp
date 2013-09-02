@@ -84,8 +84,8 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		if (!msg.str().empty())
 			throw ModuleException(msg.str(),__FILE__,__LINE__);
 
-		res=m_Dialog->run(m_Config, parameters, m_Image);
-		m_Dialog->hide();
+        res=m_Dialog->exec(m_Config, parameters, m_Image);
+
 		m_Image.FreeImage();
 	}
 	else {

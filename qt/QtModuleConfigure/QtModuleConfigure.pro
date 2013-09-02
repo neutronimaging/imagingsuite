@@ -16,7 +16,8 @@ SOURCES += qtmoduleconfigure.cpp \
     singlemoduleconfiguratorwidget.cpp \
     ApplicationBase.cpp \
     ModuleConfigurator.cpp \
-    AddModuleDialog.cpp
+    AddModuleDialog.cpp \
+    ConfiguratorDialogBase.cpp
 
 HEADERS += qtmoduleconfigure.h\
         QtModuleConfigure_global.h \
@@ -25,7 +26,8 @@ HEADERS += qtmoduleconfigure.h\
     ApplicationBase.h \
     ModuleConfigurator.h \
     AddModuleDialog.h \
-    QListWidgetModuleItem.h
+    QListWidgetModuleItem.h \
+    ConfiguratorDialogBase.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

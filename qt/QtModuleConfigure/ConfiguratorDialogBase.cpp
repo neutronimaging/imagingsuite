@@ -15,16 +15,23 @@
 //
 
 #include "stdafx.h"
-#include "../include/ConfiguratorDialogBase.h"
-
+#include "ConfiguratorDialogBase.h"
+#include <QDialogButtonBox>
+#include <QPushButton>
 // This is the constructor of a class that has been exported.
 // see ModuleConfigurator.h for the class definition
 ConfiguratorDialogBase::ConfiguratorDialogBase(std::string name) :
-	logger(name)
+    logger(name),
+    m_ControlButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply)
 {
-	set_title(name);
-	add_button(Gtk::Stock::CANCEL,Gtk::RESPONSE_CANCEL);
-	add_button(Gtk::Stock::OK,Gtk::RESPONSE_OK);
+    setWindowTitle(QString::fromStdString(name));
+    this->setLayout(&m_LayoutMain);
+    m_LayoutMain.addWidget(&m_FrameMain);
+    m_LayoutMain.addWidget(&m_ControlButtons);
+
+//	set_title(name);
+//	add_button(Gtk::Stock::CANCEL,Gtk::RESPONSE_CANCEL);
+//	add_button(Gtk::Stock::OK,Gtk::RESPONSE_OK);
 }
 
 ConfiguratorDialogBase::~ConfiguratorDialogBase()

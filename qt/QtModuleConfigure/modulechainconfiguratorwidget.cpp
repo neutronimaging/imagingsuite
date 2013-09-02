@@ -7,6 +7,7 @@
 #include <QTreeWidgetItem>
 #include <list>
 #include <string>
+#include <ModuleException.h>
 
 
 
@@ -16,7 +17,8 @@ ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     m_pCurrentModule(NULL),
     m_sApplication("muhrec"),
     m_sApplicationPath(""),
-    m_pApplication(NULL)
+    m_pApplication(NULL),
+    m_pConfigurator(NULL)
 {
     this->setLayout(&m_MainBox);
     m_MainBox.addLayout(&m_ModuleBox);
@@ -96,6 +98,39 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 {
     logger(kipl::logging::Logger::LogMessage,"Configure module");
+    std::ostringstream msg;
+
+    if (m_pConfigurator!=NULL) {
+        if (m_pCurrentModule!=NULL) {
+            QListWidgetModuleItem *pCurrentModule=dynamic_cast<QListWidgetModuleItem *>(m_pCurrentModule);
+            UpdateCurrentModuleParameters();
+            m_pApplication->UpdateConfig();
+            std::string modulename = pCurrentModule->m_Module.m_sModule;
+            std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
+            size_t      pos        = soname.find_last_of('.');
+            pos = soname.find_last_not_of("0123456789.",pos);
+            std::string guisoname  = soname.substr(0,pos+1)+"GUI"+soname.substr(pos+1);
+
+            msg.str(""); msg<<"Configuring "<<modulename<<" from "<<soname<<" with "<<guisoname<<std::endl;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+
+            try {
+                std::map<std::string, std::string> parameters=pCurrentModule->m_Module.parameters;
+
+                bool res=m_pConfigurator->configure(m_sApplication,guisoname,modulename,parameters);
+                if (res==true) {
+                    logger(kipl::logging::Logger::LogMessage,"using parameters");
+                    pCurrentModule->m_Module.parameters=parameters;
+                    UpdateCurrentModuleParameters();
+                }
+            }
+            catch (ModuleException &e) {
+                msg.str("");
+                msg<<"Failed to open dialog: "<<e.what();
+                logger(kipl::logging::Logger::LogWarning,msg.str());
+            }
+        }
+    }
 }
 
 void ModuleChainConfiguratorWidget::on_Button_ParameterAdd()

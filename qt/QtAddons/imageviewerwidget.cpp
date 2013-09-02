@@ -82,7 +82,7 @@ void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
 
     if (m_RubberBandStatus != RubberBandHide) {
         painter.setPen(palette().light().color());
-        painter.setPen(Qt::PenStyle()
+        //painter.setPen(Qt::PenStyle()
         painter.drawRect(rubberBandRect.normalized()
                                        .adjusted(0, 0, -1, -1));
     }

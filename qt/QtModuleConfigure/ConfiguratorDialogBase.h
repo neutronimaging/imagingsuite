@@ -30,6 +30,9 @@
 #endif
 
 #include <QDialog>
+#include <QFrame>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 #include <string>
 #include <map>
 #include <base/timage.h>
@@ -45,12 +48,16 @@ public:
 	ConfiguratorDialogBase(std::string name);
 	virtual ~ConfiguratorDialogBase();
 	
-	virtual bool run(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)=0;
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)=0;
 
 protected:
-
+    virtual int exec() { return QDialog::exec(); }
 	kipl::base::TImage<float,2> GetProjection(kipl::base::TImage<float,3> img, size_t n);
 	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> img, size_t n);
+
+    QVBoxLayout m_LayoutMain;
+    QFrame m_FrameMain;
+    QDialogButtonBox m_ControlButtons;
 
 	ConfigBase * m_Config;
 };

@@ -28,6 +28,7 @@ class ModuleChainConfiguratorWidget : public QWidget
 public:
     explicit ModuleChainConfiguratorWidget(QWidget *parent = 0);
     void configure(std::string application, std::string applicationpath="", ModuleConfigurator *pConfigurator=NULL);
+    void SetApplicationObject(ApplicationBase * app );
     std::list<ModuleConfig> GetModules();
     void SetModules(std::list<ModuleConfig> &modules);
     QSize minimumSizeHint() const;
@@ -43,7 +44,7 @@ public slots:
     virtual void on_Selected_Module(QListWidgetItem* current,QListWidgetItem* previous);
 
 protected:
-    void SetApplicationObject(ApplicationBase * app );
+
 
     // Builders
     void BuildModuleManager();
