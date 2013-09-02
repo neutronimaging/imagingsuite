@@ -12,7 +12,8 @@ rm -f *.1.0.0.dylib
 `$CPCMD /Users/kaestner/repos/src/src/libs/recon2/trunk/StdBackProjectors/qt/StdBackProjectors-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdBackProjectors.1.0.0.dylib .`
 `$CPCMD /Users/kaestner/repos/src/src/libs/recon2/trunk/StdPreprocModules/qt/StdPreprocModules-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModules.1.0.0.dylib .`
 `$CPCMD /Users/kaestner/repos/src/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.1.0.0.dylib .`
-#`$CPCMD /Users/kaestner/QtSDK/Madde/sysroots/harmattan_sysroot_10.2011.34-1_slim/usr/lib/libgomp.so.1.0.0.dylib .`
+# `$CPCMD /Users/kaestner/QtSDK/Madde/sysroots/harmattan_sysroot_10.2011.34-1_slim/usr/lib/libgomp.so.1.0.0 .`
+`$CPCMD /Users/kaestner/repos/tomography/trunk/src/StdPreprocModulesGUI-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModulesGUI.1.0.0.dylib .`
 
 rm -f *.1.dylib
 rm -f *.1.0.dylib

@@ -16,13 +16,15 @@ SOURCES += main.cpp\
     MuhrecInteractor.cpp \
     configuregeometrydialog.cpp \
     findskiplistdialog.cpp \
-    recondialog.cpp
+    recondialog.cpp \
+    PreProcModuleConfigurator.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
     configuregeometrydialog.h \
     findskiplistdialog.h \
-    recondialog.h
+    recondialog.h \
+    PreProcModuleConfigurator.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \

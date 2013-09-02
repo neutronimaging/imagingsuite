@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "MuhrecInteractor.h"
+#include "PreProcModuleConfigurator.h"
 #include <ApplicationBase.h>
 
 #include <ReconConfig.h>
@@ -86,6 +87,7 @@ private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
     MuhrecInteractor m_Interactor;
+    PreProcModuleConfigurator m_ModuleConfigurator;
     ReconEngine     *m_pEngine;
     ReconFactory     m_Factory;
     int              m_nCurrentPage;

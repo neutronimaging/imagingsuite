@@ -32,6 +32,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     logger("MuhRec2MainWindow"),
     ui(new Ui::MuhRecMainWindow),
     m_QtApp(app),
+    m_ModuleConfigurator(&m_Config),
     m_pEngine(NULL),
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
@@ -45,12 +46,14 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
     ui->projectionViewer->hold_annotations(true);
     ui->ConfiguratorBackProj->Configure("muhrecbp");
+    ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
+    ui->moduleconfigurator->SetApplicationObject(this);
+
     LoadDefaults();
     UpdateDialog();
     ProjectionIndexChanged(0);
     ReconROIChanged(0);
-
-    SetupCallBacks();
+        SetupCallBacks();
 
 }
 
