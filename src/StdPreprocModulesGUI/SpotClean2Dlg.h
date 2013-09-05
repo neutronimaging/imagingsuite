@@ -20,14 +20,14 @@
 class SpotClean2Dlg : public ConfiguratorDialogBase
 {
 public:
-	SpotClean2Dlg(void);
+    SpotClean2Dlg(QWidget * parent = NULL);
 	virtual ~SpotClean2Dlg(void);
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
 private:
-	void UpdateDialog();
-	void UpdateParameters();
+    virtual void ApplyParameters();
+    virtual void UpdateDialog();
+    virtual void UpdateParameters();
 	void UpdateParameterList(std::map<std::string, std::string> &parameters);
-	void on_refresh();
     QVBoxLayout m_vbox_main;
     QHBoxLayout m_hbox_viewers;
 

@@ -1,4 +1,5 @@
-CPCMD="ln -s "
+#CPCMD="ln -s "
+CPCMD="cp "
 DEST="muhrec3-build-desktop-Qt_4_8_1__gcc__Release/muhrec3.app/Contents/MacOS"
 pushd .
 cd $DEST

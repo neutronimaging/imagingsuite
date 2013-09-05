@@ -6,8 +6,8 @@
 #include <math/sums.h>
 #include <math/mathfunctions.h>
 
-SpotClean2Dlg::SpotClean2Dlg(void) :
-	ConfiguratorDialogBase("SpotClean2Dlg"),
+SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
+    ConfiguratorDialogBase("SpotClean2Dlg", true, parent),
 	lbl_gamma("Gamma"),
 	lbl_sigma("Sigma"),
 	lbl_iterations("Iterations"),
@@ -33,6 +33,8 @@ SpotClean2Dlg::SpotClean2Dlg(void) :
     m_viewer_difference.set_image(data,dims);
 	m_viewer_original.set_image(data,dims);
 	m_viewer_processed.set_image(data,dims);
+
+  //  m_viewer_original.setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
 
 //	m_frame_original.set_size_request(256,256);
 
@@ -99,9 +101,6 @@ SpotClean2Dlg::SpotClean2Dlg(void) :
     setWindowTitle("Configure spot clean");
 
     show();
-
-//	m_button_refresh.signal_clicked().connect(sigc::mem_fun(*this,
-//		&SpotClean2Dlg::on_refresh));
 }
 
 SpotClean2Dlg::~SpotClean2Dlg(void)
@@ -109,7 +108,7 @@ SpotClean2Dlg::~SpotClean2Dlg(void)
 
 }
 
-void SpotClean2Dlg::on_refresh()
+void SpotClean2Dlg::ApplyParameters()
 {
 	kipl::base::TImage<float,2> img(m_Projections.Dims());
 	memcpy(img.GetDataPtr(),m_Projections.GetDataPtr(),img.Size()*sizeof(float));
@@ -190,7 +189,7 @@ int SpotClean2Dlg::exec(ConfigBase *config, std::map<std::string, std::string> &
 	m_nMaxArea=GetIntParameter(parameters,"maxarea");
 
 	UpdateDialog();
-	on_refresh();
+    ApplyParameters();
 
     int res=QDialog::exec();
     
