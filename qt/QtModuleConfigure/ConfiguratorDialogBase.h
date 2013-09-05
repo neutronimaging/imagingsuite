@@ -29,6 +29,7 @@
 #define DLL_EXPORT
 #endif
 
+#include <QWidget>
 #include <QDialog>
 #include <QFrame>
 #include <QDialogButtonBox>
@@ -42,16 +43,23 @@
 
 class DLL_EXPORT ConfiguratorDialogBase : public QDialog
 {
+    Q_OBJECT
+
 protected:
 	kipl::logging::Logger logger;
 public:
-	ConfiguratorDialogBase(std::string name);
-	virtual ~ConfiguratorDialogBase();
+    explicit ConfiguratorDialogBase(std::string name, bool hasApply, QWidget *parent=NULL);
+    virtual ~ConfiguratorDialogBase();
 	
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)=0;
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
 
+public slots:
+    void on_ButtonBox_Clicked(QAbstractButton *button);
 protected:
     virtual int exec() { return QDialog::exec(); }
+    virtual void UpdateDialog() = 0;
+    virtual void UpdateParameters() = 0;
+    virtual void ApplyParameters() = 0;
 	kipl::base::TImage<float,2> GetProjection(kipl::base::TImage<float,3> img, size_t n);
 	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> img, size_t n);
 

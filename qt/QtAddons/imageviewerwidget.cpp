@@ -20,6 +20,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     palette.setColor(QPalette::Background,Qt::black);
     setAutoFillBackground(true);
     setPalette(palette);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::ClickFocus);
     setCursor(Qt::CrossCursor);
     this->setMouseTracking(true);
@@ -39,7 +40,7 @@ QSize ImageViewerWidget::minimumSizeHint() const
 
 QSize ImageViewerWidget::sizeHint() const
 {
-    return QSize(12 * Margin, 8 * Margin);
+    return QSize(256, 256);
 }
 
 void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot

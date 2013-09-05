@@ -174,7 +174,7 @@ QSize Plotter::minimumSizeHint() const
 
 QSize Plotter::sizeHint() const
 {
-    return QSize(12 * Margin, 8 * Margin);
+    return QSize(256, 256);
 }
 
 void Plotter::paintEvent(QPaintEvent * /* event */)

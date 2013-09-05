@@ -117,8 +117,8 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             try {
                 std::map<std::string, std::string> parameters=pCurrentModule->m_Module.parameters;
 
-                bool res=m_pConfigurator->configure(m_sApplication,guisoname,modulename,parameters);
-                if (res==true) {
+                int res=m_pConfigurator->configure(m_sApplication,guisoname,modulename,parameters);
+                if (res==QDialog::Accepted) {
                     logger(kipl::logging::Logger::LogMessage,"using parameters");
                     pCurrentModule->m_Module.parameters=parameters;
                     UpdateCurrentModuleParameters();

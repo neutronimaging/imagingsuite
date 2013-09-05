@@ -20,22 +20,51 @@
 #include <QPushButton>
 // This is the constructor of a class that has been exported.
 // see ModuleConfigurator.h for the class definition
-ConfiguratorDialogBase::ConfiguratorDialogBase(std::string name) :
+
+ConfiguratorDialogBase::ConfiguratorDialogBase(std::string name, bool hasApply, QWidget *parent) :
+    QDialog(parent),
     logger(name),
-    m_ControlButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply)
+    m_ControlButtons(hasApply ? (QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply) : (QDialogButtonBox::Ok | QDialogButtonBox::Cancel))
 {
     setWindowTitle(QString::fromStdString(name));
     this->setLayout(&m_LayoutMain);
     m_LayoutMain.addWidget(&m_FrameMain);
     m_LayoutMain.addWidget(&m_ControlButtons);
 
-//	set_title(name);
-//	add_button(Gtk::Stock::CANCEL,Gtk::RESPONSE_CANCEL);
-//	add_button(Gtk::Stock::OK,Gtk::RESPONSE_OK);
+    connect(&m_ControlButtons,SIGNAL(clicked(QAbstractButton*)),this,SLOT(on_ButtonBox_Clicked(QAbstractButton*)));
 }
 
 ConfiguratorDialogBase::~ConfiguratorDialogBase()
 {
+}
+
+int ConfiguratorDialogBase::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+{
+    return QDialog::exec();
+}
+
+void ConfiguratorDialogBase::on_ButtonBox_Clicked(QAbstractButton *button)
+{
+    std::ostringstream msg;
+    QDialogButtonBox::StandardButton standardButton = m_ControlButtons.standardButton(button);
+
+    logger(kipl::logging::Logger::LogMessage,"Clicked");
+    switch(standardButton) {
+        // Standard buttons:
+        case QDialogButtonBox::Ok:
+            logger(kipl::logging::Logger::LogMessage,"Ok");
+            UpdateParameters();
+            accept();
+            break;
+        case QDialogButtonBox::Cancel:
+        logger(kipl::logging::Logger::LogMessage,"Cancel");
+            reject();
+            break;
+        case QDialogButtonBox::Apply:
+        logger(kipl::logging::Logger::LogMessage,"Apply");
+            ApplyParameters();
+            break;
+        }
 }
 
 kipl::base::TImage<float,2> ConfiguratorDialogBase::GetProjection(kipl::base::TImage<float,3> img, size_t n)
