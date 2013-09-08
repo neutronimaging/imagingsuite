@@ -2,6 +2,9 @@
 #define IMAGINGTOOLMAIN_H
 
 #include <QMainWindow>
+#include "ImagingToolConfig.h"
+#include <logging/logger.h>
+
 
 namespace Ui {
 class ImagingToolMain;
@@ -17,6 +20,7 @@ public:
     
 private:
     Ui::ImagingToolMain *ui;
+
 };
 
 #endif // IMAGINGTOOLMAIN_H

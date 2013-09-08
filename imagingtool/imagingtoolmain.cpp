@@ -6,6 +6,7 @@ ImagingToolMain::ImagingToolMain(QWidget *parent) :
     ui(new Ui::ImagingToolMain)
 {
     ui->setupUi(this);
+
 }
 
 ImagingToolMain::~ImagingToolMain()

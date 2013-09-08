@@ -18,13 +18,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>0</y>
+      <y>10</y>
       <width>1061</width>
       <height>511</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_merge">
      <attribute name="title">
@@ -40,59 +40,13 @@
      <attribute name="title">
       <string>FTS 2 TIFF</string>
      </attribute>
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>200</y>
-        <width>64</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="comboBox_2">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>200</y>
-        <width>64</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_7">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>200</y>
-        <width>48</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Rotate</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_8">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>200</y>
-        <width>48</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Mirror</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>23</x>
+        <x>20</x>
         <y>21</y>
-        <width>518</width>
-        <height>122</height>
+        <width>598</width>
+        <height>141</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -104,7 +58,7 @@
         </widget>
        </item>
        <item row="0" column="1" colspan="5">
-        <widget class="QLineEdit" name="lineEdit">
+        <widget class="QLineEdit" name="f2t_edit_srcpath">
          <property name="minimumSize">
           <size>
            <width>350</width>
@@ -114,7 +68,13 @@
         </widget>
        </item>
        <item row="0" column="6">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="f2t_button_browsesrcpath">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="text">
           <string>Browse</string>
          </property>
@@ -122,18 +82,27 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_2">
+         <property name="minimumSize">
+          <size>
+           <width>85</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="text">
           <string>File mask</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1" colspan="5">
-        <widget class="QLineEdit" name="lineEdit_2">
+        <widget class="QLineEdit" name="f2t_edit_srcfilemask">
          <property name="minimumSize">
           <size>
            <width>350</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="text">
+          <string>proj_####.fts</string>
          </property>
         </widget>
        </item>
@@ -165,7 +134,7 @@
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="f2t_spin_firstprojection">
          <property name="maximum">
           <number>10000</number>
          </property>
@@ -179,7 +148,7 @@
         </widget>
        </item>
        <item row="2" column="4">
-        <widget class="QSpinBox" name="spinBox_2">
+        <widget class="QSpinBox" name="f2t_spin_lastprojection">
          <property name="maximum">
           <number>10000</number>
          </property>
@@ -206,7 +175,7 @@
         </widget>
        </item>
        <item row="3" column="1" colspan="5">
-        <widget class="QLineEdit" name="lineEdit_3">
+        <widget class="QLineEdit" name="f2t_edit_skiplist">
          <property name="minimumSize">
           <size>
            <width>350</width>
@@ -216,13 +185,273 @@
         </widget>
        </item>
        <item row="3" column="6">
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="f2t_button_findprojections">
          <property name="text">
           <string>Find projections</string>
          </property>
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QPushButton" name="f2t_button_convert">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>380</y>
+        <width>150</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Convert files</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>250</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Destination</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>0</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Source</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="f2t_chec_fixzeros">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>220</y>
+        <width>87</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fix zeros</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>180</y>
+        <width>158</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Rotate</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="f2t_combo_rotate">
+         <item>
+          <property name="text">
+           <string>No rotate</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Rotate 90 CW</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Rotate 180</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Rotate 90 CCW</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>180</y>
+        <width>156</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Mirror</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="f2t_combo_mirror">
+         <item>
+          <property name="text">
+           <string>No flip</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Horizontal flip</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Vertical flip</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Horizontal and vertical flip</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>270</y>
+        <width>603</width>
+        <height>98</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="f2t_button_takepath">
+         <property name="minimumSize">
+          <size>
+           <width>85</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <widget class="QLineEdit" name="f2t_edit_destpath">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="f2t_button_browsedestpath">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>File mask</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="f2t_edit_destfilemask">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>proj_####.tif</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="minimumSize">
+          <size>
+           <width>70</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>First index</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="f2t_spin_destfirstindex">
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>278</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_logging">
+     <attribute name="title">
+      <string>Logging</string>
+     </attribute>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>19</x>
+        <y>19</y>
+        <width>761</width>
+        <height>441</height>
+       </rect>
+      </property>
      </widget>
     </widget>
    </widget>
@@ -233,7 +462,7 @@
      <x>0</x>
      <y>0</y>
      <width>1082</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
