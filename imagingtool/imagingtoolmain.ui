@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1082</width>
+    <width>1008</width>
     <height>580</height>
    </rect>
   </property>
@@ -17,14 +17,14 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1061</width>
-      <height>511</height>
+      <x>20</x>
+      <y>20</y>
+      <width>981</width>
+      <height>501</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_merge">
      <attribute name="title">
@@ -45,11 +45,58 @@
        <rect>
         <x>20</x>
         <y>21</y>
-        <width>598</width>
-        <height>141</height>
+        <width>599</width>
+        <height>155</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="1" colspan="5">
+        <widget class="QLineEdit" name="f2t_edit_srcfilemask">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>proj_####.fts</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Skip list</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QSpinBox" name="f2t_spin_firstprojection">
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QPushButton" name="f2t_button_browsesrcpath">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QSpinBox" name="f2t_spin_lastprojection">
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -67,16 +114,34 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QPushButton" name="f2t_button_browsesrcpath">
+       <item row="4" column="6">
+        <widget class="QPushButton" name="f2t_button_findprojections">
+         <property name="text">
+          <string>Find projections</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Index</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Last</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="5">
+        <widget class="QLineEdit" name="f2t_edit_skiplist">
          <property name="minimumSize">
           <size>
-           <width>150</width>
+           <width>350</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="text">
-          <string>Browse</string>
          </property>
         </widget>
        </item>
@@ -93,68 +158,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="5">
-        <widget class="QLineEdit" name="f2t_edit_srcfilemask">
-         <property name="minimumSize">
-          <size>
-           <width>350</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>proj_####.fts</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="6">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>78</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Index</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>First</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QSpinBox" name="f2t_spin_firstprojection">
-         <property name="maximum">
-          <number>10000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Last</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="4">
-        <widget class="QSpinBox" name="f2t_spin_lastprojection">
-         <property name="maximum">
-          <number>10000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5" colspan="2">
+       <item row="3" column="5" colspan="2">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -167,27 +171,17 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_4">
+       <item row="3" column="1">
+        <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Skip list</string>
+          <string>First</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1" colspan="5">
-        <widget class="QLineEdit" name="f2t_edit_skiplist">
-         <property name="minimumSize">
-          <size>
-           <width>350</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="6">
-        <widget class="QPushButton" name="f2t_button_findprojections">
+       <item row="1" column="6">
+        <widget class="QPushButton" name="f2t_button_preview">
          <property name="text">
-          <string>Find projections</string>
+          <string>Preview</string>
          </property>
         </widget>
        </item>
@@ -196,8 +190,8 @@
      <widget class="QPushButton" name="f2t_button_convert">
       <property name="geometry">
        <rect>
-        <x>480</x>
-        <y>380</y>
+        <x>470</x>
+        <y>430</y>
         <width>150</width>
         <height>32</height>
        </rect>
@@ -216,7 +210,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>250</y>
+        <y>310</y>
         <width>91</width>
         <height>16</height>
        </rect>
@@ -238,7 +232,7 @@
        <string>Source</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="f2t_chec_fixzeros">
+     <widget class="QCheckBox" name="f2t_check_fixzeros">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -251,7 +245,7 @@
        <string>Fix zeros</string>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -294,12 +288,12 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>200</x>
         <y>180</y>
-        <width>156</width>
+        <width>199</width>
         <height>26</height>
        </rect>
       </property>
@@ -337,11 +331,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>270</y>
+        <y>330</y>
         <width>603</width>
         <height>98</height>
        </rect>
@@ -438,17 +432,125 @@
        </item>
       </layout>
      </widget>
+     <widget class="QtAddons::ImageViewerWidget" name="f2t_imageviewer" native="true">
+      <property name="geometry">
+       <rect>
+        <x>630</x>
+        <y>20</y>
+        <width>341</width>
+        <height>321</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>250</y>
+        <width>482</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QCheckBox" name="f2t_check_useroi">
+         <property name="text">
+          <string>Use ROI</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>x0</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox">
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>y0</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_2">
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>x1</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_3">
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>y1</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_4">
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="f2t_button_getroi">
+         <property name="text">
+          <string>Get ROI</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_logging">
      <attribute name="title">
       <string>Logging</string>
      </attribute>
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
       <property name="geometry">
        <rect>
-        <x>19</x>
-        <y>19</y>
-        <width>761</width>
+        <x>30</x>
+        <y>20</y>
+        <width>741</width>
         <height>441</height>
        </rect>
       </property>
@@ -461,8 +563,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1082</width>
-     <height>22</height>
+     <width>1008</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -477,6 +579,20 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header location="global">qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
