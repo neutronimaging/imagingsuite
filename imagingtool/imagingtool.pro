@@ -14,13 +14,15 @@ SOURCES += main.cpp\
         imagingtoolmain.cpp \
     findskiplistdialog.cpp \
     ImagingToolConfig.cpp \
-    stdafx.cpp
+    stdafx.cpp \
+    Fits2Tif.cpp
 
 HEADERS  += imagingtoolmain.h \
     findskiplistdialog.h \
     ImagingToolConfig.h \
     targetver.h \
-    stdafx.h
+    stdafx.h \
+    Fits2Tif.h
 
 FORMS    += imagingtoolmain.ui \
     findskiplistdialog.ui

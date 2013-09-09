@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1008</width>
-    <height>580</height>
+    <height>594</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>20</x>
       <y>20</y>
       <width>981</width>
-      <height>501</height>
+      <height>521</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -45,7 +45,7 @@
        <rect>
         <x>20</x>
         <y>21</y>
-        <width>599</width>
+        <width>600</width>
         <height>155</height>
        </rect>
       </property>
@@ -191,7 +191,7 @@
       <property name="geometry">
        <rect>
         <x>470</x>
-        <y>430</y>
+        <y>460</y>
         <width>150</width>
         <height>32</height>
        </rect>
@@ -210,7 +210,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>310</y>
+        <y>340</y>
         <width>91</width>
         <height>16</height>
        </rect>
@@ -250,7 +250,7 @@
        <rect>
         <x>20</x>
         <y>180</y>
-        <width>158</width>
+        <width>196</width>
         <height>26</height>
        </rect>
       </property>
@@ -291,9 +291,9 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>240</x>
         <y>180</y>
-        <width>199</width>
+        <width>267</width>
         <height>26</height>
        </rect>
       </property>
@@ -335,7 +335,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>330</y>
+        <y>360</y>
         <width>603</width>
         <height>98</height>
        </rect>
@@ -442,13 +442,13 @@
        </rect>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>250</y>
-        <width>482</width>
-        <height>29</height>
+        <width>584</width>
+        <height>39</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -469,7 +469,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox">
+          <widget class="QSpinBox" name="f2t_spin_x0">
            <property name="maximum">
             <number>10000</number>
            </property>
@@ -487,7 +487,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_2">
+          <widget class="QSpinBox" name="f2t_spin_y0">
            <property name="maximum">
             <number>10000</number>
            </property>
@@ -505,7 +505,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_3">
+          <widget class="QSpinBox" name="f2t_spin_x1">
            <property name="maximum">
             <number>10000</number>
            </property>
@@ -523,7 +523,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_4">
+          <widget class="QSpinBox" name="f2t_spin_y1">
            <property name="maximum">
             <number>10000</number>
            </property>
@@ -564,7 +564,7 @@
      <x>0</x>
      <y>0</y>
      <width>1008</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
