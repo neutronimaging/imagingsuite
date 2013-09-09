@@ -37,7 +37,7 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 		return -1;
 	}
 
-	size_t *crop=NULL;
+    size_t *crop=config.bCrop ? config.nCrop : NULL;
 	kipl::base::TImage<float,2> src,dst;
 	std::string dstname,dstmask,ext;
 	kipl::strings::filenames::CheckPathSlashes(config.sDestPath,true);

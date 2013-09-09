@@ -34,7 +34,8 @@ private:
 
     void UpdateDialog();
     void UpdateConfig();
-
+    void SaveConfig();
+    void LoadConfig();
 };
 
 #endif // IMAGINGTOOLMAIN_H

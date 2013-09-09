@@ -10,7 +10,11 @@
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
 #include <base/timage.h>
+
+
 #include <sstream>
+#include <fstream>
+
 
 ImagingToolMain::ImagingToolMain(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +31,7 @@ ImagingToolMain::ImagingToolMain(QWidget *parent) :
     connect(ui->f2t_button_takepath,        SIGNAL(clicked()),this,SLOT(f2t_TakePath()));
     connect(ui->f2t_button_browsedestpath,  SIGNAL(clicked()),this,SLOT(f2t_BrowseDestPath()));
     connect(ui->f2t_button_convert,         SIGNAL(clicked()),this,SLOT(f2t_Convert()));
+    LoadConfig();
 }
 
 ImagingToolMain::~ImagingToolMain()
@@ -74,14 +79,35 @@ void ImagingToolMain::f2t_Preview()
 void ImagingToolMain::f2t_FindProjections()
 {
     FindSkipListDialog dlg;
+    UpdateConfig();
 
-    int res = dlg.exec();
+    std::string fname,ext;
 
-    if ( res == QDialog::Accepted )
-    {
-        logger(kipl::logging::Logger::LogMessage,"Accepted skiplist");
+    kipl::strings::filenames::MakeFileName(m_config.fits2tif.sSourceMask,
+                                           m_config.fits2tif.nFirstSrc,
+                                           fname,
+                                           ext,
+                                           '#',
+                                           '0');
+
+    fname = m_config.fits2tif.sSourcePath+fname;
+
+    if (QFile::exists(QString::fromStdString(fname))) {
+
+
+        int res = dlg.exec(m_config.fits2tif.sSourcePath,m_config.fits2tif.sSourceMask, m_config.fits2tif.nFirstSrc, m_config.fits2tif.nLastSrc);
+
+        if ( res == QDialog::Accepted )
+        {
+            logger(kipl::logging::Logger::LogMessage,"Accepted skiplist");
+            ui->f2t_edit_skiplist->setText(dlg.getSkipList());
+        }
     }
+    else {
+        QMessageBox dlg;
 
+        dlg.setText("Please enter a valid path and file mask");
+    }
 }
 
 void ImagingToolMain::f2t_GetROI()
@@ -113,7 +139,13 @@ void ImagingToolMain::f2t_BrowseDestPath()
 
 void ImagingToolMain::f2t_Convert()
 {
+
     std::ostringstream msg;
+
+    UpdateConfig();
+    SaveConfig();
+
+
     Fits2Tif f2t;
 
     try {
@@ -191,4 +223,29 @@ void ImagingToolMain::UpdateConfig()
 
     kipl::strings::String2Set(ui->f2t_edit_skiplist->text().toStdString(), m_config.fits2tif.skip_list);
 
+}
+
+void ImagingToolMain::SaveConfig()
+{
+   QString fname;
+   QDir dir;
+
+   fname=dir.homePath()+"/.imagingtools";
+   if (!dir.exists(fname)) {
+     dir.mkdir(fname);
+   }
+
+   fname=fname + "/imagingtool_config.xml";
+   std::ofstream ofile(fname.toAscii());
+
+   ofile<<m_config.WriteXML();
+
+}
+
+void ImagingToolMain::LoadConfig()
+{
+    QString fname=QDir::homePath()+"/.imagingtools/imagingtool_config.xml";
+    if (QFile::exists(fname)) {
+        m_config.LoadConfigFile(fname.toStdString());
+    }
 }

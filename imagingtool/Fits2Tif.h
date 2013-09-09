@@ -9,7 +9,7 @@
 #define FITS2TIF_H_
 
 #include <logging/logger.h>
-#include "imagingtoolconfig.h"
+#include "ImagingToolConfig.h"
 
 
 class Fits2Tif {
