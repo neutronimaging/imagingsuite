@@ -26,6 +26,16 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
     m_nMaxNumberProjections(0)
 {
     ui->setupUi(this);
+
+    m_nROI[0]=0;
+    m_nROI[1]=0;
+    m_nROI[2]=10;
+    m_nROI[3]=10;
+    ui->skip_spin_x0->setValue(0);
+    ui->skip_spin_y0->setValue(0);
+    ui->skip_spin_x1->setValue(10);
+    ui->skip_spin_y1->setValue(10);
+
     connect(ui->skip_spin_expnumproj,SIGNAL(valueChanged(int)),SLOT(ChangedNumberOfProjections(int)));
     connect(ui->skip_spin_x0, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
     connect(ui->skip_spin_y0, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
@@ -33,6 +43,7 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
     connect(ui->skip_spin_y1, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
     connect(ui->skip_button_getdoselist,SIGNAL(clicked()),SLOT(LoadDoseList()));
     connect(ui->skip_button_getroi,SIGNAL(clicked()),SLOT(GetROI()));
+
 
 }
 
@@ -44,7 +55,7 @@ int FindSkipListDialog::exec(std::string path, std::string fmask, int first, int
     m_sPath     = path;
 
     std::ostringstream msg;
-    m_nMaxNumberProjections=m_nLast-m_nLast+1;
+    m_nMaxNumberProjections=m_nLast-m_nFirst+1;
 
     ui->skip_spin_expnumproj->setMaximum(m_nMaxNumberProjections);
     ui->skip_spin_expnumproj->setMinimum(0);
@@ -78,6 +89,7 @@ void FindSkipListDialog::LoadDoseList()
     ProjectionReader reader;
     m_DoseData.clear();
     m_SortedDoses.clear();
+    UpdateParameters();
     float fDose=0.0f;
     try {
         for (int i=m_nFirst; i<=m_nLast; i++) {
@@ -87,7 +99,7 @@ void FindSkipListDialog::LoadDoseList()
                                         i,
                                         kipl::base::ImageFlipNone,
                                         kipl::base::ImageRotateNone,
-                                        1,
+                                        1.0f,
                                         m_nROI);
 
                    m_DoseData.append(QPoint(static_cast<float>(i),fDose));
@@ -99,6 +111,7 @@ void FindSkipListDialog::LoadDoseList()
             msg<<"Dose data size missmatch. size(DosePlot)="<<m_DoseData.size()<<", size(SortedDoses)="<<m_SortedDoses.size();
             throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
         }
+
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox msgbox;
@@ -127,6 +140,8 @@ void FindSkipListDialog::LoadDoseList()
         reject();
     }
 
+    ui->skip_plot->setCurveData(0,m_DoseData);
+
 }
 
 void FindSkipListDialog::ChangedNumberOfProjections(int x)
@@ -145,7 +160,6 @@ void FindSkipListDialog::ChangedNumberOfProjections(int x)
     for (it2=sortedSkip.begin(); it2!=sortedSkip.end(); it2++) {
         skipstr<<*it2<<" ";
     }
-
 
     ui->skip_edit_skiplist->setText(QString::fromStdString(skipstr.str()));
 }
@@ -171,6 +185,14 @@ void FindSkipListDialog::ChangedROI(int x)
 {
 
 
+}
+
+void FindSkipListDialog::UpdateParameters()
+{
+    m_nROI[0]=ui->skip_spin_x0->value();
+    m_nROI[1]=ui->skip_spin_y0->value();
+    m_nROI[2]=ui->skip_spin_x1->value();
+    m_nROI[3]=ui->skip_spin_y1->value();
 }
 
 

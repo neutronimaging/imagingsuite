@@ -80,3 +80,19 @@ DEPENDPATH += $$PWD/../../../src/libs/modules/trunk/ModuleConfig/include
 
 
 
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lReconFramework
+else:symbian: LIBS += -lReconFramework
+else:unix: LIBS += -L$$PWD/../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
+
+INCLUDEPATH += $$PWD/../../../src/src/libs/recon2/trunk/ReconFramework/include
+DEPENDPATH += $$PWD/../../../src/src/libs/recon2/trunk/ReconFramework/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
+else:symbian: LIBS += -lModuleConfig
+else:unix: LIBS += -L$$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
+
+INCLUDEPATH += $$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/include

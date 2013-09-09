@@ -226,9 +226,21 @@
     <rect>
      <x>280</x>
      <y>170</y>
-     <width>85</width>
+     <width>191</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
    </property>
    <property name="text">
     <string>Get dose list</string>

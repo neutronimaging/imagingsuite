@@ -23,6 +23,7 @@ ImagingToolMain::ImagingToolMain(QWidget *parent) :
 {
     ui->setupUi(this);
     logger.AddLogTarget(*ui->logviewer);
+    LoadConfig();
     UpdateDialog();
     connect(ui->f2t_button_browsesrcpath,   SIGNAL(clicked()),this,SLOT(f2t_BrowseSrcPath()));
     connect(ui->f2t_button_preview,         SIGNAL(clicked()),this,SLOT(f2t_Preview()));
@@ -31,7 +32,7 @@ ImagingToolMain::ImagingToolMain(QWidget *parent) :
     connect(ui->f2t_button_takepath,        SIGNAL(clicked()),this,SLOT(f2t_TakePath()));
     connect(ui->f2t_button_browsedestpath,  SIGNAL(clicked()),this,SLOT(f2t_BrowseDestPath()));
     connect(ui->f2t_button_convert,         SIGNAL(clicked()),this,SLOT(f2t_Convert()));
-    LoadConfig();
+
 }
 
 ImagingToolMain::~ImagingToolMain()

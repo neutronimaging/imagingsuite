@@ -35,8 +35,7 @@ protected slots:
 
 private:
     Ui::FindSkipListDialog *ui;
-
-
+    void UpdateParameters();
 
     std::string m_sPath;
     std::string m_sFileMask;
