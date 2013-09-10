@@ -52,21 +52,21 @@ else:unix: LIBS += -L$$PWD/../../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4
 INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtModuleConfigure
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
 else:symbian: LIBS += -lkipl
-else:unix: LIBS += -L$$PWD/../../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lkipl
+else:unix: LIBS += -L$$PWD/../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../src/src/libs/kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../../src/libs/kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../../src/libs/kipl/trunk/kipl/src
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
 else:symbian: LIBS += -lModuleConfig
-else:unix: LIBS += -L$$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
+else:unix: LIBS += -L$$PWD/../../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
 
-INCLUDEPATH += $$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../src/src/libs/modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../src/libs/modules/trunk/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../src/libs/modules/trunk/ModuleConfig/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lQtAddons
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lQtAddons
@@ -87,15 +87,17 @@ DEPENDPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/include
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lReconFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
-else:unix: LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
+else:unix: LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/include
+INCLUDEPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
+DEPENDPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/StdPreprocModules/qt/StdPreprocModules-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lStdPreprocModules
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/StdPreprocModules/qt/StdPreprocModules-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lStdPreprocModules
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lStdPreprocModules
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lStdPreprocModules
 else:symbian: LIBS += -lStdPreprocModules
-else:unix: LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/StdPreprocModules/qt/StdPreprocModules-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lStdPreprocModules
+else:unix: LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lStdPreprocModules
 
-INCLUDEPATH += $$PWD/../../../../src/src/libs/recon2/trunk/StdPreprocModules/include
-DEPENDPATH += $$PWD/../../../../src/src/libs/recon2/trunk/StdPreprocModules/include
+INCLUDEPATH += $$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/include
+DEPENDPATH += $$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/include
