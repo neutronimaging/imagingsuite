@@ -567,9 +567,17 @@ void MuhRecMainWindow::MenuReconstructStart()
     ostringstream msg;
     ostringstream confpath;
     // Save current recon settings
-    string path=QDir::homePath().toStdString();
-    kipl::strings::filenames::CheckPathSlashes(path,true);
-    confpath<<path<<"CurrentRecon.xml";
+    QDir dir;
+
+    QString path=dir.homePath()+"/.imagingtools";
+
+    logger(kipl::logging::Logger::LogMessage,path.toStdString());
+    if (!dir.exists(path)) {
+        dir.mkdir(path);
+    }
+    std::string sPath=path.toStdString();
+    kipl::strings::filenames::CheckPathSlashes(sPath,true);
+    confpath<<sPath<<"CurrentRecon.xml";
     try {
         UpdateConfig();
         ofstream of(confpath.str().c_str());
@@ -770,7 +778,7 @@ void MuhRecMainWindow::LoadDefaults()
 {
     std::string defaultsname;
     QDir dir;
-    QString currentname=dir.homePath()+"/CurrentRecon.xml";
+    QString currentname=dir.homePath()+"/.imagingtools/CurrentRecon.xml";
 
     bool bUseDefaults=true;
     if (dir.exists(currentname)) {

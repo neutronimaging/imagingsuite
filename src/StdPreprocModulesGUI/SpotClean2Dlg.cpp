@@ -34,42 +34,26 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
 	m_viewer_original.set_image(data,dims);
 	m_viewer_processed.set_image(data,dims);
 
-  //  m_viewer_original.setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-
-//	m_frame_original.set_size_request(256,256);
-
-//	m_frame_processed.set_size_request(256,256);
-//    m_frame_original("Original"),
-//	m_frame_processed("Processed"),
-//	m_frame_difference("Difference"),
-//	m_frame_plots("Histogram of detection signal"),
-
-//	m_frame_difference.add(m_viewer_difference);
-//	m_frame_difference.set_size_request(256,256);
-//	m_hbox_viewers.pack_end(m_frame_difference);
-//	m_hbox_viewers.pack_end(m_frame_processed);
-//	m_hbox_viewers.pack_end(m_frame_original);
-//	m_vbox_main.pack_start(m_hbox_viewers);
-
 	const int nDigits=4;
 
-//	m_entry_gamma.set_digits(nDigits);
-//	m_entry_gamma.get_adjustment()->configure(m_fGamma,0.0,100.0,0.01,0.1,0.0);
+    m_entry_gamma.setDecimals(nDigits);
+    m_entry_gamma.setRange(0.0,10.0);
+    m_entry_gamma.setSingleStep(0.01);
 
-//	m_entry_sigma.set_digits(nDigits);
-//	m_entry_sigma.get_adjustment()->configure(m_fSigma,0.0,100.0,0.01,0.1,0.0);
+    m_entry_sigma.setDecimals(nDigits);
+    m_entry_sigma.setRange(0.0,10.0);
+    m_entry_sigma.setSingleStep(0.001);
 
-//	m_entry_iterations.set_digits(0);
-//	m_entry_iterations.get_adjustment()->configure(m_nIterations,1,100.0,1.0,10.0,0.0);
+    m_entry_iterations.setRange(1,10);
+    m_entry_maxarea.setRange(1,500);
 
-//	m_entry_maxarea.set_digits(0);
-//	m_entry_maxarea.get_adjustment()->configure(m_nMaxArea,1,1000.0,1.0,10.0,0.0);
+    m_entry_min.setDecimals(nDigits);
+    m_entry_min.setRange(-1.0e6,1.0e6);
+    m_entry_min.setSingleStep(0.1);
 
-//	m_entry_min.set_digits(nDigits);
-//	m_entry_min.get_adjustment()->configure(m_fMinLevel,-1.0e6,1.0e6,1,10,0.0);
-
-//	m_entry_max.set_digits(nDigits);
-//	m_entry_max.get_adjustment()->configure(m_fMaxLevel,-1.0e6,1.0e6,1,10,0.0);
+    m_entry_max.setDecimals(nDigits);
+    m_entry_max.setRange(-1.0e6,1.0e6);
+    m_entry_max.setSingleStep(0.1);
 
     m_hbox_parameters.addWidget(&lbl_gamma);
     m_hbox_parameters.addWidget(&m_entry_gamma);
@@ -87,16 +71,8 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
     m_hbox_minmax.addWidget(&m_entry_max);
     m_vbox_parameters.addLayout(&m_hbox_minmax);
 
-    m_vbox_parameters.addWidget(&m_button_refresh);
     m_hbox_params_plot.addLayout(&m_vbox_parameters);
-
-    //m_plot.ShowAxes(true);
-//    m_frame_plots.(&m_plot);
-//	m_frame_plots.set_size_request(256,160);
-//    m_hbox_params_plot.addWidget(&m_frame_plots);
-
     m_vbox_main.addLayout(&m_hbox_params_plot);
-//	get_vbox()->add(m_vbox_main);
 
     setWindowTitle("Configure spot clean");
 
@@ -110,6 +86,7 @@ SpotClean2Dlg::~SpotClean2Dlg(void)
 
 void SpotClean2Dlg::ApplyParameters()
 {
+    logger(kipl::logging::Logger::LogMessage,"Apply paramters");
 	kipl::base::TImage<float,2> img(m_Projections.Dims());
 	memcpy(img.GetDataPtr(),m_Projections.GetDataPtr(),img.Size()*sizeof(float));
 
@@ -121,10 +98,10 @@ void SpotClean2Dlg::ApplyParameters()
 	kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
 	m_viewer_original.set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
 
-
 	std::map<std::string, std::string> parameters;
 	UpdateParameters();
 	UpdateParameterList(parameters);
+
 	cleaner.Configure(*m_Config, parameters);
 
 
@@ -163,15 +140,13 @@ void SpotClean2Dlg::ApplyParameters()
 	m_viewer_processed.set_image(pimg.GetDataPtr(), pimg.Dims(),axis[nLo],axis[nHi]);
 
 	kipl::base::TImage<float,2> diff=pimg-img;
-//	memset(hist,0,N*sizeof(size_t));
-//	memset(axis,0,N*sizeof(float));
-//	kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
-//	kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
+    memset(hist,0,N*sizeof(size_t));
+    memset(axis,0,N*sizeof(float));
+    kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
 	for (size_t i=0; i<diff.Size(); i++)
 		diff[i]=diff[i]!=0.0;
 	m_viewer_difference.set_image(diff.GetDataPtr(), diff.Dims());
-
-
 }
 
 int SpotClean2Dlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)

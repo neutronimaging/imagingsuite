@@ -12,6 +12,7 @@
 #include <ReconConfig.h>
 #include <QFrame>
 #include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -43,8 +44,8 @@ private:
     QHBoxLayout m_hbox_params_plot;
     QVBoxLayout m_vbox_parameters;
     QHBoxLayout m_hbox_parameters;
-    QSpinBox m_entry_gamma;
-    QSpinBox m_entry_sigma;
+    QDoubleSpinBox m_entry_gamma;
+    QDoubleSpinBox m_entry_sigma;
     QSpinBox m_entry_iterations;
     QSpinBox m_entry_maxarea;
     QLabel lbl_gamma;
@@ -53,12 +54,10 @@ private:
     QLabel lbl_maxarea;
 
     QHBoxLayout m_hbox_minmax;
-    QSpinBox m_entry_min;
-    QSpinBox m_entry_max;
+    QDoubleSpinBox m_entry_min;
+    QDoubleSpinBox m_entry_max;
     QLabel lbl_min;
     QLabel lbl_max;
-
-    QPushButton m_button_refresh;
 
 	ReconConfig *m_Config;
 	SpotClean2 cleaner;

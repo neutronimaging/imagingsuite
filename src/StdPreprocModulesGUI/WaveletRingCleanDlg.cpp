@@ -16,18 +16,19 @@
 #include <StripeFilter.h>
 #include <list>
 
-WaveletRingCleanDlg::WaveletRingCleanDlg():
-ConfiguratorDialogBase("MedianMixRingClean2Dlg"),
-m_frame_original("Original"),
-m_frame_processed("Processed"),
-m_frame_difference("Difference"),
+#include <QMessageBox>
+
+WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent):
+ConfiguratorDialogBase("MedianMixRingClean2Dlg",true,parent),
+//m_frame_original("Original"),
+//m_frame_processed("Processed"),
+//m_frame_difference("Difference"),
 lbl_waveletname("Wavelet name"),
 lbl_levels("Lambda"),
 lbl_sigma("Sigma"),
-m_button_refresh(Gtk::Stock::REFRESH),
 m_nLevels(4),
 m_fSigma(0.1f),
-m_sWaveletName("daub25")
+m_sWaveletName("daub17")
 {
 	float data[16]={1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
 	size_t dims[2]={4,4};
@@ -36,53 +37,49 @@ m_sWaveletName("daub25")
 	m_viewer_original.set_image(data,dims);
 	m_viewer_processed.set_image(data,dims);
 
-	m_frame_original.add(m_viewer_original);
-	m_frame_original.set_size_request(256,256);
+//	m_frame_original.add(m_viewer_original);
+//	m_frame_original.set_size_request(256,256);
 
-	m_frame_processed.add(m_viewer_processed);
-	m_frame_processed.set_size_request(256,256);
+//	m_frame_processed.add(m_viewer_processed);
+//	m_frame_processed.set_size_request(256,256);
 
-	m_frame_difference.add(m_viewer_difference);
-	m_frame_difference.set_size_request(256,256);
-	m_hbox_viewers.pack_end(m_frame_difference);
-	m_hbox_viewers.pack_end(m_frame_processed);
-	m_hbox_viewers.pack_end(m_frame_original);
-	m_vbox_main.pack_start(m_hbox_viewers);
+//	m_frame_difference.add(m_viewer_difference);
+//	m_frame_difference.set_size_request(256,256);
+    m_hbox_viewers.addWidget(&m_viewer_original);
+    m_hbox_viewers.addWidget(&m_viewer_processed);
+    m_hbox_viewers.addWidget(&m_viewer_difference);
+    m_vbox_main.addLayout(&m_hbox_viewers);
 
 	const int nDigits=5;
-	m_entry_levels.set_digits(0);
-	m_entry_levels.get_adjustment()->configure(m_nLevels,1,10,1,1,0.0);
+    m_entry_levels.setRange(1,10);
 
-	m_entry_sigma.set_digits(nDigits);
-	m_entry_sigma.get_adjustment()->configure(m_fSigma,0.0,1.0,0.01,0.1,0.0);
+    m_entry_sigma.setDecimals(nDigits);
+    m_entry_sigma.setRange(0.0,1.0);
+    m_entry_sigma.setSingleStep(0.01);
 
-	m_hbox_parameters.pack_start(lbl_levels);
-	m_hbox_parameters.pack_start(m_entry_levels);
+    m_hbox_parameters.addWidget(&lbl_levels);
+    m_hbox_parameters.addWidget(&m_entry_levels);
 
-	m_hbox_parameters.pack_start(lbl_sigma);
-	m_hbox_parameters.pack_start(m_entry_sigma);
+    m_hbox_parameters.addWidget(&lbl_sigma);
+    m_hbox_parameters.addWidget(&m_entry_sigma);
 
 	prepare_waveletcombobox();
 
-	m_hbox_parameters.pack_start(lbl_waveletname);
-	m_hbox_parameters.pack_start(m_combobox_wavelets);
-	m_hbox_parameters.pack_start(m_combobox_method);
+    m_hbox_parameters.addWidget(&lbl_waveletname);
+    m_hbox_parameters.addWidget(&m_combobox_wavelets);
+    m_hbox_parameters.addWidget(&m_combobox_method);
 
-	m_vbox_parameters.pack_start(m_hbox_parameters);
-	m_vbox_parameters.pack_start(m_button_refresh);
+    m_vbox_parameters.addLayout(&m_hbox_parameters);
 
-	m_vbox_main.pack_start(m_vbox_parameters);
-	get_vbox()->add(m_vbox_main);
+    m_vbox_main.addLayout(&m_vbox_parameters);
+    m_FrameMain.setLayout(&m_vbox_main);
 
-	set_title("Configure wavelet ring clean");
+    setWindowTitle("Configure wavelet ring clean");
 
-	get_vbox()->show_all_children();
+    show();
 
-	m_button_refresh.signal_clicked().connect(sigc::mem_fun(*this,
-		&WaveletRingCleanDlg::on_refresh));
-
-	m_entry_levels.signal_value_changed().connect(sigc::mem_fun(*this,
-			&WaveletRingCleanDlg::on_change_level));
+//	m_entry_levels.signal_value_changed().connect(sigc::mem_fun(*this,
+//			&WaveletRingCleanDlg::on_change_level));
 }
 
 WaveletRingCleanDlg::~WaveletRingCleanDlg() {
@@ -96,35 +93,23 @@ void WaveletRingCleanDlg::prepare_waveletcombobox()
 	std::list<std::string> wlist=wk.NameList();
 	std::list<std::string>::iterator it;
 
-#if GTK_MAJOR_VERSION<3
-	m_combobox_wavelets.clear_items();
-#else
-	m_combobox_wavelets.remove_all();
-#endif
-	int default_wavelet, idx;
+    m_combobox_wavelets.clear();
+
+    int default_wavelet, idx;
 	for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) {
-		Glib::ustring str=*it;
-		if (str==m_sWaveletName)
+        QString str=QString::fromStdString(*it);
+        if (*it==m_sWaveletName)
 			default_wavelet=idx;
-#if GTK_MAJOR_VERSION<3
-		m_combobox_wavelets.append_text(str); // 2.4
-#else
-		m_combobox_wavelets.append(str);
-#endif
+        m_combobox_wavelets.addItem(str);
 	}
 
-	m_combobox_wavelets.set_active(default_wavelet);
-#ifdef _MSC_VER
-	m_combobox_method.append_text("verticalzero");
-	m_combobox_method.append_text("verticalfft");
-#else
-	m_combobox_method.append("verticalzero");
-	m_combobox_method.append("verticalfft");
-#endif
+    m_combobox_wavelets.setCurrentIndex(default_wavelet);
 
+    m_combobox_method.addItem("verticalzero");
+    m_combobox_method.addItem("verticalfft");
 }
 
-void WaveletRingCleanDlg::on_refresh()
+void WaveletRingCleanDlg::ApplyParameters()
 {
 	size_t dims[3]={m_Projections.Size(0), 1,m_Projections.Size(2)};
 	kipl::base::TImage<float,3> img(dims);
@@ -154,7 +139,8 @@ void WaveletRingCleanDlg::on_refresh()
 		cleaner.Process(img, pars);
 	}
 	catch (kipl::base::KiplException &e) {
-		Gtk::MessageDialog errdlg("Failed to process sinogram.",false,Gtk::MESSAGE_ERROR);
+        QMessageBox errdlg(this);
+        errdlg.setText("Failed to process sinogram.");
 
 		logger(kipl::logging::Logger::LogWarning,e.what());
 		return ;
@@ -181,7 +167,7 @@ void WaveletRingCleanDlg::on_change_level()
 {
 }
 
-bool WaveletRingCleanDlg::run(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int WaveletRingCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
 {
 	m_Projections=img;
 
@@ -201,32 +187,31 @@ bool WaveletRingCleanDlg::run(ConfigBase *config, std::map<std::string, std::str
 	UpdateDialog();
 
 	try {
-		on_refresh();
+        ApplyParameters();
 	}
 	catch (kipl::base::KiplException &e) {
 		logger(kipl::logging::Logger::LogError,e.what());
 		return false;
 	}
 
-	gint res=Gtk::Dialog::run();
+    int res=QDialog::exec();
 
-	if (res==Gtk::RESPONSE_OK) {
+    if (res==QDialog::Accepted) {
 		logger(kipl::logging::Logger::LogMessage,"Use settings");
 		UpdateParameters();
 		UpdateParameterList(parameters);
-		return true;
 	}
 	else
 	{
 		logger(kipl::logging::Logger::LogMessage,"Discard settings");
 	}
-	return false;
+    return res;
 }
 
 void WaveletRingCleanDlg::UpdateDialog()
 {
-	m_entry_levels.set_value(m_nLevels);
-	m_entry_sigma.set_value(m_fSigma);
+    m_entry_levels.setValue(m_nLevels);
+    m_entry_sigma.setValue(m_fSigma);
 	int default_wavelet, idx;
 
 	kipl::wavelets::WaveletKernel<float> wk("daub4");
@@ -235,22 +220,21 @@ void WaveletRingCleanDlg::UpdateDialog()
 	std::list<std::string>::iterator it;
 
 	for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) {
-		Glib::ustring str=*it;
-		if (str==m_sWaveletName)
+        if (*it==m_sWaveletName)
 			default_wavelet=idx;
 	}
 
-	m_combobox_wavelets.set_active(default_wavelet);
-	m_combobox_method.set_active(0);
+    m_combobox_wavelets.setCurrentIndex(default_wavelet);
+    m_combobox_method.setCurrentIndex(1);
 }
 
 void WaveletRingCleanDlg::UpdateParameters()
 {
-	m_sWaveletName    = m_combobox_wavelets.get_active_text();
-	m_nLevels         = m_entry_levels.get_value();
-	m_fSigma          = m_entry_sigma.get_value();
+    m_sWaveletName    = m_combobox_wavelets.currentText().toStdString();
+    m_nLevels         = m_entry_levels.value();
+    m_fSigma          = m_entry_sigma.value();
 	m_bParallel       = false;
-	string2enum(m_combobox_method.get_active_text(), m_eCleaningMethod);
+    string2enum(m_combobox_method.currentText().toStdString(), m_eCleaningMethod);
 }
 
 void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -262,15 +246,15 @@ void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string>
 	parameters["method"]   = enum2string(m_eCleaningMethod);
 }
 
-kipl::base::TImage<float,2> WaveletRingCleanDlg::GetSinogram(kipl::base::TImage<float,3> &proj, size_t index)
-{
-	size_t dims[2]={proj.Size(0),proj.Size(2)};
+//kipl::base::TImage<float,2> WaveletRingCleanDlg::GetSinogram(kipl::base::TImage<float,3> &proj, size_t index)
+//{
+//	size_t dims[2]={proj.Size(0),proj.Size(2)};
 
-	kipl::base::TImage<float,2> sino(dims);
+//	kipl::base::TImage<float,2> sino(dims);
 
-	for (size_t i=0; i<proj.Size(2); i++)
-		memcpy(sino.GetLinePtr(i),proj.GetLinePtr(index,i),sizeof(float)*proj.Size(0));
+//	for (size_t i=0; i<proj.Size(2); i++)
+//		memcpy(sino.GetLinePtr(i),proj.GetLinePtr(index,i),sizeof(float)*proj.Size(0));
 
-	return sino;
-}
+//	return sino;
+//}
 

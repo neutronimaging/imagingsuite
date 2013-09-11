@@ -7,12 +7,20 @@
 
 #ifndef WaveletRingCleanDlg_H_
 #define WaveletRingCleanDlg_H_
-#include <gtkmm.h>
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QLabel>
+#include <QWidget>
+
 #include <base/timage.h>
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
-#include <ImageViewermm.h>
-#include <PlotViewermm.h>
+#include <imageviewerwidget.h>
+#include <plotter.h>
 
 #include <WaveletRingClean.h>
 #include <StripeFilter.h>
@@ -20,39 +28,40 @@
 
 class WaveletRingCleanDlg: public ConfiguratorDialogBase {
 public:
-	WaveletRingCleanDlg();
+    WaveletRingCleanDlg(QWidget * parent = NULL);
 	virtual ~WaveletRingCleanDlg();
-	virtual bool run(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+protected slots:
+    void on_refresh();
+    void on_change_level();
+
 private:
 	void prepare_waveletcombobox();
+    virtual void ApplyParameters();
 	void UpdateDialog();
 	void UpdateParameters();
 	void UpdateParameterList(std::map<std::string, std::string> &parameters);
-	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> &proj, size_t index);
+//	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> &proj, size_t index);
 
-	void on_refresh();
-	void on_change_level();
-	Gtk::VBox m_vbox_main;
-	Gtk::HBox m_hbox_viewers;
+    QVBoxLayout m_vbox_main;
+    QHBoxLayout m_hbox_viewers;
 
-	Gtk::Frame m_frame_original;
-	Gtk::Frame m_frame_processed;
-	Gtk::Frame m_frame_difference;
-	Gtk_addons::ImageViewer m_viewer_original;
-	Gtk_addons::ImageViewer m_viewer_processed;
-	Gtk_addons::ImageViewer m_viewer_difference;
+//	Gtk::Frame m_frame_original;
+//	Gtk::Frame m_frame_processed;
+//	Gtk::Frame m_frame_difference;
+    QtAddons::ImageViewerWidget m_viewer_original;
+    QtAddons::ImageViewerWidget m_viewer_processed;
+    QtAddons::ImageViewerWidget m_viewer_difference;
 
-	Gtk::VBox m_vbox_parameters;
-	Gtk::HBox m_hbox_parameters;
-	Gtk::SpinButton m_entry_levels;
-	Gtk::SpinButton m_entry_sigma;
-	Gtk::ComboBoxText m_combobox_wavelets;
-	Gtk::ComboBoxText m_combobox_method;
-	Gtk::Label lbl_waveletname;
-	Gtk::Label lbl_levels;
-	Gtk::Label lbl_sigma;
-
-	Gtk::Button m_button_refresh;
+    QVBoxLayout m_vbox_parameters;
+    QHBoxLayout m_hbox_parameters;
+    QSpinBox m_entry_levels;
+    QDoubleSpinBox m_entry_sigma;
+    QComboBox m_combobox_wavelets;
+    QComboBox m_combobox_method;
+    QLabel lbl_waveletname;
+    QLabel lbl_levels;
+    QLabel lbl_sigma;
 
 	ReconConfig *m_Config;
 	WaveletRingClean cleaner;

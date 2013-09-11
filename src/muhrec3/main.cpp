@@ -1,6 +1,7 @@
 #include <QtGui/QApplication>
 #include <QDir>
 #include <QMessageBox>
+#include <QFileDialog>
 #include "muhrecmainwindow.h"
 #include <string>
 #include <utilities/nodelocker.h>
@@ -32,9 +33,8 @@ int main(int argc, char *argv[])
     bool licensefail=false;
     std::string errormsg;
     try {
-        //std::clog<<"Home path:"<<homedir<<", app path:"<<application_path<<std::endl;
         std::list<std::string> liclist;
-        liclist.push_back(homedir+"/license/license_muhrec.dat");
+        liclist.push_back(homedir+"/.imagingtools/license_muhrec.dat");
         liclist.push_back(application_path+"/license_muhrec.dat");
         liclist.push_back(application_path+"/license.dat");
         liclist.push_back(homedir+"/license_muhrec.dat");
@@ -58,10 +58,25 @@ int main(int argc, char *argv[])
         logger(kipl::logging::Logger::LogError,msg.str());
         QMessageBox mbox;
 
+       // mbox.addButton("Have license file",QMessageBox::AcceptRole);
+        mbox.addButton(QMessageBox::Save);
         mbox.setText(QString::fromStdString(msg.str()));
         mbox.setWindowTitle("License error");
         mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
-        mbox.exec();
+        int res=mbox.exec();
+        std::cout<<"Res ="<<res<<std::endl;
+        if (res==QMessageBox::Save) {
+            QDir dir;
+            QString fname=QFileDialog::getOpenFileName(&mbox,"Select the license file",dir.homePath(),"*.dat");
+
+            if (!fname.isEmpty()) {
+                if (!dir.exists(dir.homePath()+"/.imagingtools")) {
+                    dir.mkdir(QDir::homePath()+"/.imagingtools");
+                }
+                QFile::copy(fname,dir.homePath()+"/.imagingtools/license_muhrec.dat");
+            }
+        }
+
         return -1;
     }
 
@@ -174,4 +189,5 @@ int RunOffline(QApplication *app)
 
     return 0;
 }
+
 

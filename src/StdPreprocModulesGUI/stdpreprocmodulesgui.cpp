@@ -10,7 +10,7 @@
 //#include "MedianMixRingCleanDlg.h"
 //#include "ProjectionFilterSingleDlg.h"
 //#include "PolynomialCorrectionDlg.h"
-//#include "WaveletRingCleanDlg.h"
+#include "WaveletRingCleanDlg.h"
 
 DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 {
@@ -53,8 +53,8 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 //		if (sName=="ISSfilter")
 //			return new ISSfilterDlg;
 
-//		if (sName=="WaveletRingClean")
-//			return new WaveletRingCleanDlg;
+        if (sName=="WaveletRingClean")
+            return new WaveletRingCleanDlg;
 
 //		if (sName=="PolynomialCorrection")
 //			return new PolynomialCorrectionDlg;
