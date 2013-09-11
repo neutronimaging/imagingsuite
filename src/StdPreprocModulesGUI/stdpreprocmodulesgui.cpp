@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "StdPreprocModulesGUI.h"
+#include "stdpreprocmodulesgui.h"
 #include <ConfiguratorDialogBase.h>
 #include "SpotClean2Dlg.h"
 //#include "ISSfilterDlg.h"
