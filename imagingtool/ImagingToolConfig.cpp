@@ -388,7 +388,7 @@ void ImagingToolConfig::Fits2TifConfig::ParseXML(xmlTextReaderPtr reader)
 				bCrop=kipl::strings::string2bool(sValue);
 			}
 			if (sName=="roi") {
-				nCrop[0]=0;
+                kipl::strings::String2Array(sValue,nCrop,4);
 			}
 			if (sName=="flip") {
 				string2enum(sValue,flip);

@@ -35,19 +35,19 @@ FORMS    += imagingtoolmain.ui \
 LIBS += -ltiff -lxml2 -lcfitsio -lgomp
 INCLUDEPATH += /usr/include/libxml2
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix: LIBS += -L$$PWD/../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lkipl
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
+#else:symbian: LIBS += -lkipl
+#else:unix: LIBS += -L$$PWD/../../../src/src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../src/src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../src/src/libs/kipl/trunk/kipl/include
+#INCLUDEPATH += $$PWD/../../../src/src/libs/kipl/trunk/kipl/include
+#DEPENDPATH += $$PWD/../../../src/src/libs/kipl/trunk/kipl/include
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
 else:symbian: LIBS += -lkipl
-else:unix: LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lkipl
+else:unix: LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/kipl-build-desktop-Qt_4_8_1_in_PATH__System__Release/ -lkipl
 
 
 INCLUDEPATH += $$PWD/../../../src/libs/kipl/trunk/kipl/include

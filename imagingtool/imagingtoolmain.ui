@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1008</width>
-    <height>594</height>
+    <height>737</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_merge">
      <attribute name="title">
@@ -541,21 +541,16 @@
       </layout>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_logging">
-     <attribute name="title">
-      <string>Logging</string>
-     </attribute>
-     <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>20</y>
-        <width>741</width>
-        <height>441</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
+   </widget>
+   <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>550</y>
+      <width>981</width>
+      <height>131</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -564,7 +559,7 @@
      <x>0</x>
      <y>0</y>
      <width>1008</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

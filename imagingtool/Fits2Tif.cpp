@@ -39,6 +39,8 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 
     size_t *crop=config.bCrop ? config.nCrop : NULL;
 	kipl::base::TImage<float,2> src,dst;
+    kipl::base::TImage<short,2> simg;
+
 	std::string dstname,dstmask,ext;
 	kipl::strings::filenames::CheckPathSlashes(config.sDestPath,true);
 	dstmask=config.sDestPath+config.sDestMask;
@@ -49,30 +51,54 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 	std::list<std::string>::iterator it;
 	int i=config.nFirstDest;
 	for (it=filelist.begin(); it!=filelist.end(); it++, i++) {
-		try {
-			kipl::io::ReadFITS(src,it->c_str(),crop);
-		}
-		catch (kipl::base::KiplException &e) {
-			msg.str("");
-			msg<<"Failed to open :"<<*it<<"\n"<<e.what();
-			logger(kipl::logging::Logger::LogError,msg.str());
-			return -1;
-		}
-		catch (std::exception &e) {
-			msg.str("");
-			msg<<"Failed to open :"<<*it<<"\n"<<e.what();
-			logger(kipl::logging::Logger::LogError,msg.str());
 
-			return -1;
-		}
+        if (config.bReplaceZeros==true) {
+            try {
+                kipl::io::ReadFITS(simg,it->c_str(),crop);
+            }
+            catch (kipl::base::KiplException &e) {
+                msg.str("");
+                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+                return -1;
+            }
+            catch (std::exception &e) {
+                msg.str("");
+                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
 
-		if (config.bReplaceZeros==true) {
-			float *pImg=src.GetDataPtr();
-			for (size_t i=0; i<src.Size(); i++) {
-				if (pImg[i]<1.0f)
-					pImg[i]=32767.0f;
-			}
-		}
+                return -1;
+            }
+            if (it==filelist.begin())
+                src.Resize(simg.Dims());
+
+            unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
+            float *pImg=src.GetDataPtr();
+            for (size_t i=0; i<simg.Size(); i++) {
+                pImg[i]=static_cast<float>(pSImg[i]);
+            }
+        }
+        else
+        {
+            try {
+                kipl::io::ReadFITS(src,it->c_str(),crop);
+            }
+            catch (kipl::base::KiplException &e) {
+                msg.str("");
+                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+                return -1;
+            }
+            catch (std::exception &e) {
+                msg.str("");
+                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+
+                return -1;
+            }
+        }
+        kipl::base::TImage<float,2> dst2;
+        //dst.FreeImage();
 		switch (config.flip) {
 		case kipl::base::ImageFlipNone       :
 			dst=src; break;
@@ -81,24 +107,27 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 		case kipl::base::ImageFlipVertical   :
 			dst=rotate.MirrorVertical(src); break;
 		case kipl::base::ImageFlipHorizontalVertical :
-			dst=rotate.MirrorHorizontal(rotate.MirrorVertical(src)); break;
+            dst2=rotate.MirrorVertical(src);
+            dst=rotate.MirrorHorizontal(dst2); break;
 		}
+
 
 		switch (config.rotate) {
 		case kipl::base::ImageRotateNone : break;
+            dst2=dst;
 		case kipl::base::ImageRotate90   :
-			dst=rotate.Rotate90(dst); break;
+            dst2=rotate.Rotate90(dst); break;
 		case kipl::base::ImageRotate180  :
-			dst=rotate.Rotate180(dst); break;
+            dst2=rotate.Rotate180(dst); break;
 		case kipl::base::ImageRotate270  :
-			dst=rotate.Rotate270(dst); break;
+            dst2=rotate.Rotate270(dst); break;
 		}
 
 		kipl::strings::filenames::MakeFileName(dstmask,i,dstname,ext,'#','0');
 		msg.str("");
 		msg<<"Converting "<<*it<<" -> "<<dstname;
 		logger(kipl::logging::Logger::LogMessage,msg.str());
-		kipl::io::WriteTIFF(dst,dstname.c_str(),0.0f, 65535.0f );
+        kipl::io::WriteTIFF(dst2,dstname.c_str(),0.0f, 65535.0f );
 	}
 
 	return 0;

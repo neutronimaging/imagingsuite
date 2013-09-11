@@ -66,8 +66,21 @@ void ImagingToolMain::f2t_Preview()
     fname = m_config.fits2tif.sSourcePath+fname;
 
     if (QFile::exists(QString::fromStdString(fname))) {
-        kipl::base::TImage<float,2> img;
-        kipl::io::ReadFITS(img,fname.c_str(),NULL);
+        kipl::base::TImage<float> img;
+        if (m_config.fits2tif.bReplaceZeros==true) {
+            kipl::base::TImage<short,2> simg;
+            kipl::io::ReadFITS(simg,fname.c_str(),NULL);
+            img.Resize(simg.Dims());
+            unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
+            float *pImg=img.GetDataPtr();
+            for (size_t i=0; i<simg.Size(); i++) {
+                pImg[i]=static_cast<float>(pSImg[i]);
+            }
+        }
+        else {
+            kipl::io::ReadFITS(img,fname.c_str(),NULL);
+        }
+
         ui->f2t_imageviewer->set_image(img.GetDataPtr(),img.Dims());
     }
     else {
