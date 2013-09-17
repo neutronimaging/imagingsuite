@@ -366,6 +366,7 @@ SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
     logger("SetGrayLevelsDialog"),
     m_label1("Low value"),
     m_label2("High value"),
+    m_buttonClose("Close"),
     m_pParent(dynamic_cast<ImageViewerWidget*>(parent))
 
 {
@@ -376,6 +377,7 @@ SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
     m_HorizontalLayout.insertWidget(3,&m_spinHigh);
     m_VerticalLayout.insertWidget(0,&m_Plotter);
     m_VerticalLayout.insertLayout(1,&m_HorizontalLayout);
+    m_VerticalLayout.insertWidget(2,&m_buttonClose);
     this->setLayout(&m_VerticalLayout);
     this->setWindowTitle(tr("Set viewer gray levels"));
     float fMin;
@@ -395,8 +397,10 @@ SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
     m_Plotter.setCurveData(0,hist);
     GrayLevelsChanged(0.0);
 
+
     connect(&m_spinLow,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
     connect(&m_spinHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
+    connect(&m_buttonClose,SIGNAL(clicked()),this,SLOT(accept()));
 }
 
 void SetGrayLevelsDialog::GrayLevelsChanged(double x)

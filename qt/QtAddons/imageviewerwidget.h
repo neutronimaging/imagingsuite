@@ -12,6 +12,7 @@
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QPushButton>
 
 namespace QtAddons {
 
@@ -109,6 +110,7 @@ protected:
     QLabel m_label2;
     QVBoxLayout m_VerticalLayout;
     QHBoxLayout m_HorizontalLayout;
+    QPushButton m_buttonClose;
 
     ImageViewerWidget *m_pParent;
 
