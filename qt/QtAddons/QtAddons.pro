@@ -10,7 +10,7 @@ TARGET = QtAddons
 TEMPLATE = lib
 
 QMAKE_CXXFLAGS += -fPIC -fopenmp
-LIBS += -lgomp
+QMAKE_LFLAGS += -lgomp
 
 DEFINES += QTADDONS_LIBRARY
 
