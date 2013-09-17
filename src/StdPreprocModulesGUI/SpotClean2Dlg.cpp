@@ -63,6 +63,15 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
     m_hbox_parameters.addWidget(&m_entry_iterations);
     m_hbox_parameters.addWidget(&lbl_maxarea);
     m_hbox_parameters.addWidget(&m_entry_maxarea);
+    m_hbox_parameters.addWidget(&lbl_detection);
+
+    m_combo_detectionmethod.addItem("stddev");
+    m_combo_detectionmethod.addItem("ring");
+    m_combo_detectionmethod.addItem("median");
+    m_combo_detectionmethod.addItem("minmax");
+    m_combo_detectionmethod.addItem("trikernel");
+
+    m_hbox_parameters.addWidget(&m_combo_detectionmethod);
     m_vbox_parameters.addLayout(&m_hbox_parameters);
 
     m_hbox_minmax.addWidget(&lbl_min);
@@ -190,6 +199,7 @@ void SpotClean2Dlg::UpdateDialog()
     m_entry_max.setValue(m_fMaxLevel);
     m_entry_min.setValue(m_fMinLevel);
     m_entry_maxarea.setValue(m_nMaxArea);
+    m_combo_detectionmethod.setCurrentIndex(m_eDetectionMethod);
 }
 
 void SpotClean2Dlg::UpdateParameters()
@@ -201,6 +211,7 @@ void SpotClean2Dlg::UpdateParameters()
     m_fMaxLevel   = m_entry_max.value();
     m_fMinLevel   = m_entry_min.value();
     m_nMaxArea	  = m_entry_maxarea.value();
+    m_eDetectionMethod = static_cast<ImagingAlgorithms::DetectionMethod>(m_combo_detectionmethod.currentIndex());
 }
 
 void SpotClean2Dlg::UpdateParameterList(std::map<std::string, std::string> &parameters)

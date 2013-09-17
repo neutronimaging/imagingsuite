@@ -26,6 +26,7 @@ HEADERS += stdpreprocmodulesgui.h\
 INCLUDEPATH += /usr/include/libxml2
 
 QMAKE_CXXFLAGS += -fPIC -fopenmp
+QMAKE_LFLAGS += -lgomp
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -93,8 +94,6 @@ else:unix: LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/Reco
 
 INCLUDEPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
-
-
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lStdPreprocModules
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lStdPreprocModules

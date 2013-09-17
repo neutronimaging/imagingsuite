@@ -10,6 +10,7 @@
 #include <SpotClean2.h>
 #include <SpotClean.h>
 #include <ReconConfig.h>
+#include <QComboBox>
 #include <QFrame>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -48,10 +49,12 @@ private:
     QDoubleSpinBox m_entry_sigma;
     QSpinBox m_entry_iterations;
     QSpinBox m_entry_maxarea;
+    QComboBox m_combo_detectionmethod;
     QLabel lbl_gamma;
     QLabel lbl_sigma;
     QLabel lbl_iterations;
     QLabel lbl_maxarea;
+    QLabel lbl_detection;
 
     QHBoxLayout m_hbox_minmax;
     QDoubleSpinBox m_entry_min;

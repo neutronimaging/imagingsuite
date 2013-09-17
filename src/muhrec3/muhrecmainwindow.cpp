@@ -125,6 +125,7 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->actionSave_As,SIGNAL(triggered()),this,SLOT(MenuFileSaveAs()));
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(MenuFileQuit()));
     connect(ui->actionStartReconstruction,SIGNAL(triggered()),this,SLOT(MenuReconstructStart()));
+    connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(MenuHelpAbout()));
 }
 
 void MuhRecMainWindow::BrowseProjectionPath()
@@ -212,6 +213,9 @@ void MuhRecMainWindow::PreviewProjection()
 
 void MuhRecMainWindow::DisplaySlice(int x)
 {
+    if (m_pEngine==NULL)
+        return;
+
     std::ostringstream msg;
     int nSelectedSlice=x;
 
@@ -480,9 +484,54 @@ void MuhRecMainWindow::UseMatrixROI(int x)
 
 void MuhRecMainWindow::MenuFileNew()
 {
-    LoadDefaults();
-    m_sConfigFilename="nonmame.xml";
+    std::string defaultsname;
+    #ifdef Q_OS_DARWIN
+        defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
+    #endif
+
+    #ifdef Q_OS_WIN
+         defaultsname="resources/defaults_windows.xml";
+    #endif
+    #ifdef Q_OS_LINUX
+        defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
+    #endif
+
+    std::ostringstream msg;
+
+    kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
+    try {
+        m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
+
+    }
+    catch (ReconException &e) {
+        msg<<"Loading defaults failed :\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+    }
+    catch (ModuleException &e) {
+        msg<<"Loading defaults failed :\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"Loading defaults failed :\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+    }
+
+    m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
+    m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
+    m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+
+//    size_t pos = 0;
+//    std::string oldstr="@executable_path";
+//    while((pos = m_Config.backprojector.m_sSharedObject.find(oldstr, pos)) != std::string::npos)
+//    {
+//       m_Config.backprojector.m_sSharedObject.replace(pos, oldstr.length(), m_sApplicationPath);
+//       pos += m_sApplicationPath.length();
+//    }
+
+    logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
     UpdateDialog();
+    UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+    m_sConfigFilename="noname.xml";
 }
 
 void MuhRecMainWindow::MenuFileOpen()
@@ -555,6 +604,17 @@ void MuhRecMainWindow::MenuFileQuit()
 
 void MuhRecMainWindow::MenuHelpAbout()
 {
+    QMessageBox dlg;
+    std::ostringstream msg;
+
+    msg<<"MuhRec 3\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
+
+    msg<<"Using \nQt version: 4.8.1\n"
+      <<"LibTIFF, zLib, fftw3, libcfitsio";
+
+    dlg.setText(QString::fromStdString(msg.str()));
+
+    dlg.exec();
 }
 
 void MuhRecMainWindow::MenuReconstructStart()
@@ -786,10 +846,13 @@ void MuhRecMainWindow::LoadDefaults()
         bUseDefaults=false;
     }
     else {
-    #ifdef _MSC_VER
+      //  m_QtApp->
+    #ifdef Q_OS_WIN32
          defaultsname="resources/defaults_windows.xml";
-    #else
+    #elseif Q_OS_LINUX
         defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
+    #elseif Q_OS_DARWIN
+        defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
     #endif
         bUseDefaults=true;
     }

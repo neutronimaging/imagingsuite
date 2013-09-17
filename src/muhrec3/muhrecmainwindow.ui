@@ -161,6 +161,12 @@
             <layout class="QGridLayout" name="gridLayout_2">
              <item row="6" column="3">
               <widget class="QComboBox" name="comboRotateProjection">
+               <property name="toolTip">
+                <string>Rotate the projection</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <item>
                 <property name="text">
                  <string>No rotation</string>
@@ -184,7 +190,14 @@
               </widget>
              </item>
              <item row="0" column="1" colspan="3">
-              <widget class="QLineEdit" name="editProjectionPath"/>
+              <widget class="QLineEdit" name="editProjectionPath">
+               <property name="toolTip">
+                <string>Enter the path to the projection data</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
+              </widget>
              </item>
              <item row="2" column="1" colspan="3">
               <layout class="QHBoxLayout" name="layoutFileIndex">
@@ -200,6 +213,12 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="spinFirstProjection">
+                 <property name="toolTip">
+                  <string>The index of the first projection</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
                  <property name="maximum">
                   <number>5000</number>
                  </property>
@@ -217,6 +236,12 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="spinProjectionStep">
+                 <property name="toolTip">
+                  <string>File index increment</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
                  <property name="minimum">
                   <number>1</number>
                  </property>
@@ -237,6 +262,12 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="spinLastProjection">
+                 <property name="toolTip">
+                  <string>The index of the last projection</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
                  <property name="maximum">
                   <number>5000</number>
                  </property>
@@ -246,6 +277,12 @@
              </item>
              <item row="1" column="4">
               <widget class="QComboBox" name="comboProjectionStyle">
+               <property name="toolTip">
+                <string>Data representation in the images</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <item>
                 <property name="text">
                  <string>Projection</string>
@@ -279,10 +316,20 @@
               </widget>
              </item>
              <item row="4" column="1" colspan="3">
-              <widget class="QLineEdit" name="editProjectionSkipList"/>
+              <widget class="QLineEdit" name="editProjectionSkipList">
+               <property name="toolTip">
+                <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
+               </property>
+              </widget>
              </item>
              <item row="0" column="4">
               <widget class="QPushButton" name="buttonProjectionPath">
+               <property name="toolTip">
+                <string>Browse for the projection path</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <property name="text">
                 <string>Browse</string>
                </property>
@@ -327,6 +374,12 @@
              </item>
              <item row="6" column="4">
               <widget class="QPushButton" name="buttonPreview">
+               <property name="toolTip">
+                <string>Preview the projection</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <property name="text">
                 <string>Preview</string>
                </property>
@@ -336,10 +389,23 @@
               </widget>
              </item>
              <item row="1" column="1" colspan="3">
-              <widget class="QLineEdit" name="editProjectionMask"/>
+              <widget class="QLineEdit" name="editProjectionMask">
+               <property name="toolTip">
+                <string>The file mask of the projections (format: file_####.ext)</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
+              </widget>
              </item>
              <item row="6" column="2">
               <widget class="QComboBox" name="comboFlipProjection">
+               <property name="toolTip">
+                <string>Mirror the projection in different directions</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <item>
                 <property name="text">
                  <string>No flip</string>
@@ -364,6 +430,12 @@
              </item>
              <item row="6" column="1">
               <widget class="QSpinBox" name="spinProjectionBinning">
+               <property name="toolTip">
+                <string>Binning factor of the projections</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <property name="minimum">
                 <number>1</number>
                </property>
@@ -374,6 +446,12 @@
              </item>
              <item row="4" column="4">
               <widget class="QPushButton" name="buttonGetSkipList">
+               <property name="toolTip">
+                <string>Find the retake images in the projection data set</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <property name="text">
                 <string>Get skip list</string>
                </property>
@@ -389,17 +467,31 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="1" column="1">
-              <widget class="QLineEdit" name="editOpenBeamMask"/>
+              <widget class="QLineEdit" name="editOpenBeamMask">
+               <property name="toolTip">
+                <string>File mask for open beam images (Format: file_####.ext)</string>
+               </property>
+              </widget>
              </item>
              <item row="0" column="0">
               <widget class="QPushButton" name="buttonTakePath">
+               <property name="toolTip">
+                <string>Copy the projection data path to the reference data path</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
                <property name="text">
                 <string>Reference path</string>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="editReferencePath"/>
+              <widget class="QLineEdit" name="editReferencePath">
+               <property name="toolTip">
+                <string>Path to the reference data</string>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_14">
@@ -428,6 +520,9 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="spinFirstOpenBeam">
+                 <property name="toolTip">
+                  <string>File index of the first open beam image</string>
+                 </property>
                  <property name="maximum">
                   <number>5000</number>
                  </property>
@@ -445,6 +540,9 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="spinOpenBeamCount">
+                 <property name="toolTip">
+                  <string>Number of open beam images</string>
+                 </property>
                  <property name="maximum">
                   <number>5000</number>
                  </property>
@@ -460,7 +558,11 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLineEdit" name="editDarkMask"/>
+              <widget class="QLineEdit" name="editDarkMask">
+               <property name="toolTip">
+                <string>File maskof the dark current image (Format: file_####.ext)</string>
+               </property>
+              </widget>
              </item>
              <item row="4" column="1">
               <layout class="QHBoxLayout" name="layoutDarkIndex">
@@ -475,7 +577,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinFirstDark"/>
+                <widget class="QSpinBox" name="spinFirstDark">
+                 <property name="toolTip">
+                  <string>File index of the first dark current image</string>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QLabel" name="label_24">
@@ -488,7 +594,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinDarkCount"/>
+                <widget class="QSpinBox" name="spinDarkCount">
+                 <property name="toolTip">
+                  <string>Number of dark current images</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -566,6 +676,12 @@
              </item>
              <item row="0" column="2">
               <widget class="QPushButton" name="buttonBrowseReference">
+               <property name="toolTip">
+                <string>Browse for reference data</string>
+               </property>
+               <property name="whatsThis">
+                <string>Browse for reference data path</string>
+               </property>
                <property name="text">
                 <string>Browse</string>
                </property>

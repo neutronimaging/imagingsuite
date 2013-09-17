@@ -26,4 +26,6 @@ for f in `ls *.1.0.0.dylib`; do
     ln -s $bn.1.0.dylib $bn.1.dylib
 done
 
+`$CPCMD /Users/kaestner/repos/tomography/trunk/src/muhrec3/resources/* $DEST/../Resources`
+
 popd

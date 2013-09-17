@@ -30,6 +30,9 @@ protected slots:
 private slots:
     void onOKButtonClicked(){ this->setResult(QDialog::Accepted);}
     void onCancelButtonClicked(){ this->setResult(QDialog::Rejected);}
+    void onROIButtonClicked();
+    void ROIChanged(int x);
+
 private:
 
     void LSQ_fit1(vector<float> &v, float *k, float *m);

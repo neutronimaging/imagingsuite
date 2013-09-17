@@ -24,6 +24,12 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
     connect(ui->checkUseTilt,SIGNAL(toggled(bool)),SLOT(UseTilt(bool)));
+    connect(ui->buttonGetROI,SIGNAL(clicked()),SLOT(onROIButtonClicked()));
+
+    connect(ui->spinMarginLeft,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
+    connect(ui->spinMarginRight,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
+    connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
+    connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
 }
 
 ConfigureGeometryDialog::~ConfigureGeometryDialog()
@@ -50,6 +56,42 @@ void ConfigureGeometryDialog::GetConfig(ReconConfig & config)
 {
     UpdateConfig();
     config=m_Config;
+}
+
+void ConfigureGeometryDialog::onROIButtonClicked()
+{
+    QRect rect=ui->viewerProjection->get_marked_roi();
+
+    if (rect.width()*rect.height()!=0)
+    {
+        ui->spinMarginLeft->blockSignals(true);
+        ui->spinMarginRight->blockSignals(true);
+        ui->spinSliceFirst->blockSignals(true);
+        ui->spinSliceLast->blockSignals(true);
+        ui->spinMarginLeft->setValue(rect.x());
+        ui->spinSliceFirst->setValue(rect.y());
+        ui->spinMarginRight->setValue(rect.x()+rect.width());
+        ui->spinSliceLast->setValue(rect.y()+rect.height());
+        ui->spinMarginLeft->blockSignals(false);
+        ui->spinMarginRight->blockSignals(false);
+        ui->spinSliceFirst->blockSignals(false);
+        ui->spinSliceLast->blockSignals(false);
+        ROIChanged(0);
+    }
+}
+
+void ConfigureGeometryDialog::ROIChanged(int x)
+{
+    QRect rect;
+    size_t * dims=m_Config.ProjectionInfo.roi;
+
+    rect.setCoords(dims[0]=ui->spinMarginLeft->value(),
+                   dims[1]=ui->spinSliceFirst->value(),
+                   dims[2]=ui->spinMarginRight->value(),
+                   dims[3]=ui->spinSliceLast->value());
+
+    ui->viewerProjection
+            ->set_rectangle(rect,QColor("yellow"),1);
 }
 
 void ConfigureGeometryDialog::FindCenter()
@@ -543,5 +585,7 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
+
+    ROIChanged(0);
 }
 

@@ -10,6 +10,7 @@ TARGET = muhrec3
 TEMPLATE = app
 
 QMAKE_CXXFLAGS += -fopenmp
+QMAKE_LFLAGS += -lgomp
 
 SOURCES += main.cpp\
         muhrecmainwindow.cpp \
@@ -31,7 +32,7 @@ FORMS    += muhrecmainwindow.ui \
     findskiplistdialog.ui \
     recondialog.ui
 
-LIBS += -L/usr/lib -lxml2 -lgomp
+LIBS += -L/usr/lib -lxml2
 
 INCLUDEPATH += /usr/include/libxml2
 
