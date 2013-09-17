@@ -46,7 +46,8 @@ enum DetectionMethod {
 	Detection_StdDev = 0,
 	Detection_Ring,
 	Detection_Median,
-	Detection_MinMax
+    Detection_MinMax,
+    Detection_TriKernel
 };
 
 class DLL_EXPORT SpotClean
@@ -91,6 +92,8 @@ protected:
 	kipl::base::TImage<float,2> MedianDetection(kipl::base::TImage<float,2> img);
 	kipl::base::TImage<float,2> MinMaxDetection(kipl::base::TImage<float,2> img);
 	kipl::base::TImage<float,2> RingDetection(kipl::base::TImage<float,2> img);
+    kipl::base::TImage<float,2> TriKernel(kipl::base::TImage<float,2> img);
+    void OneKernel(kipl::base::TImage<float,2> img, size_t size, float sigma, kipl::base::TImage<float,2> & dimg);
 
 
 

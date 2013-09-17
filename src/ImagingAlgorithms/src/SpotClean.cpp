@@ -10,6 +10,7 @@
 #include <morphology/morphology.h>
 #include <morphology/morphfilters.h>
 #include <math/mathfunctions.h>
+#include <math/image_statistics.h>
 #include <morphology/label.h>
 #include <filters/medianfilter.h>
 #include "../include/SpotClean.h"
@@ -385,10 +386,11 @@ kipl::base::TImage<float,2> SpotClean::DetectionImage(kipl::base::TImage<float,2
 {
 	kipl::base::TImage<float,2> det_img;
 	switch (m_eDetectionMethod) {
-	case Detection_StdDev : det_img = StdDevDetection(img,3); break;
-	case Detection_Ring   : det_img = RingDetection(img); break;
-	case Detection_Median : det_img = MedianDetection(img); break;
-	case Detection_MinMax : det_img = MinMaxDetection(img); break;
+    case Detection_StdDev    : det_img = StdDevDetection(img,3); break;
+    case Detection_Ring      : det_img = RingDetection(img); break;
+    case Detection_Median    : det_img = MedianDetection(img); break;
+    case Detection_MinMax    : det_img = MinMaxDetection(img); break;
+    case Detection_TriKernel : det_img = TriKernel(img); break;
 	};
 
 	return det_img;
@@ -476,6 +478,41 @@ kipl::base::TImage<float,2> SpotClean::BoxFilter(kipl::base::TImage<float,2> img
 	return filterV(imgU, eEdgeProcessingStyle);
 }
 
+kipl::base::TImage<float,2> SpotClean::TriKernel(kipl::base::TImage<float,2> img)
+{
+    kipl::base::TImage<float,2> dimg(img.Dims());
+    dimg=0.0f;
+
+    OneKernel(img,3,m_fGamma,dimg);
+    OneKernel(img,5,m_fGamma,dimg);
+    OneKernel(img,7,m_fGamma,dimg);
+
+    return dimg;
+}
+
+void SpotClean::OneKernel(kipl::base::TImage<float,2> img, size_t size, float sigma, kipl::base::TImage<float,2> & dimg)
+{
+    kipl::base::TImage<float,2> fimg;
+    float *pImg  = img.GetDataPtr();
+
+
+    fimg=BoxFilter(img,size);
+    float *pFImg = fimg.GetDataPtr();
+
+    for (size_t i=0; i<dimg.Size(); i++) {
+        pFImg[i]=fabs(pImg[i]-pFImg[i]);
+    }
+
+    pair<double,double> stats=kipl::math::statistics(pFImg,fimg.Size());
+
+    float level=stats.first+sigma*stats.second;
+
+    float *pDImg = dimg.GetDataPtr();
+    for (size_t i=0; i<dimg.Size(); i++) {
+        pDImg[i]=pDImg[i] || (level < pFImg[i]);
+    }
+}
+
 kipl::base::TImage<float,2> SpotClean::StdDevDetection(kipl::base::TImage<float,2> img, size_t dim)
 {
 	kipl::base::TImage<float,2> img2=kipl::math::sqr(img);
@@ -507,6 +544,7 @@ void string2enum(std::string str, ImagingAlgorithms::DetectionMethod & method)
 	if (str=="ring")   method=ImagingAlgorithms::Detection_Ring;
 	if (str=="median") method=ImagingAlgorithms::Detection_Median;
 	if (str=="minmax") method=ImagingAlgorithms::Detection_MinMax;
+    if (str=="trikernel") method=ImagingAlgorithms::Detection_TriKernel;
 }
 
 std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::DetectionMethod method)
@@ -523,6 +561,7 @@ std::string enum2string(ImagingAlgorithms::DetectionMethod method)
 	case ImagingAlgorithms::Detection_Ring   : return "ring";
 	case ImagingAlgorithms::Detection_Median : return "median";
 	case ImagingAlgorithms::Detection_MinMax : return "minmax";
+    case ImagingAlgorithms::Detection_TriKernel : return "trikernel";
 	};
 
 	return "ring";

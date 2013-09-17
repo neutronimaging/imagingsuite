@@ -9,6 +9,7 @@ QT       -= core gui
 TARGET = ImagingAlgorithms
 TEMPLATE = lib
 QMAKE_CXXFLAGS += -fPIC -fopenmp
+QMAKE_LFLAGS += -lgomp
 
 DEFINES += IMAGINGALGORITHMS_LIBRARY
 
@@ -55,8 +56,6 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../src/l
 else:symbian: LIBS += -lkipl
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release -lkipl
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug -lkipl
-
-LIBS += -lgomp
 
 INCLUDEPATH += $$PWD/../../../../../../src/libs/kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../../src/libs/kipl/trunk/kipl/include
