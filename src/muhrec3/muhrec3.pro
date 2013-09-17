@@ -32,7 +32,7 @@ FORMS    += muhrecmainwindow.ui \
     findskiplistdialog.ui \
     recondialog.ui
 
-LIBS += -L/usr/lib -lxml2
+LIBS += -L/usr/lib -lxml2 -lgomp
 
 INCLUDEPATH += /usr/include/libxml2
 

@@ -180,6 +180,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
        ui->sliderProjections->setValue(slice);
     }
 
+    msg.str("");
     try {
         std::string path=ui->editProjectionPath->text().toStdString();
         kipl::strings::filenames::CheckPathSlashes(path,true);
@@ -190,19 +191,31 @@ void MuhRecMainWindow::PreviewProjection(int x)
                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                         static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
-//        float lo,hi;
-//        ui->projectionViewer->get_levels(&lo,&hi);
+        if (x < 0) {
+            ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
+        }
+        else {
+            float lo,hi;
+            ui->projectionViewer->get_levels(&lo,&hi);
+            ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+        }
 
-//        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
         SetImageDimensionLimits(m_PreviewImage.Dims());
         UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+    }
+    catch (ReconException &e) {
+        msg.str("");
+        msg<<"Could not load the projection for preview: \n"<<e.what();
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        PreviewProjection( ui->spinFirstProjection->value());
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
         logger(kipl::logging::Logger::LogMessage,msg.str());
+        PreviewProjection( ui->spinFirstProjection->value());
     }
+
 
 }
 

@@ -45,7 +45,7 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     if (res<0)
         return QDialog::Rejected;
 
-    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims(),0,1.3);
+    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims());
 
     UpdateDialog();
 
@@ -103,7 +103,9 @@ void ConfigureGeometryDialog::FindCenter()
     msg<<"Find center: Current ROI ["<<roi[0]<<", "<<roi[2]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims(),-0.1f,1.3);
+    float fMin,fMax;
+    ui->viewerProjection->get_levels(&fMin,&fMax);
+    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims(),fMin, fMax);
 
     m_vCoG.clear();
     switch (ui->comboEstimatationMethod->currentIndex()) {
@@ -377,6 +379,9 @@ int ConfigureGeometryDialog::LoadImages()
 
     ProjectionReader reader;
 
+    size_t filtdims[]={3,3};
+    kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
+
     msg.str("");
     QMessageBox loaderror_dlg;
 
@@ -390,7 +395,7 @@ int ConfigureGeometryDialog::LoadImages()
 
     // Load references
     try {
-        if (m_Config.ProjectionInfo.nOBCount)
+        if (m_Config.ProjectionInfo.nOBCount) {
             m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
                     m_Config.ProjectionInfo.sOBFileMask,
                     1,
@@ -398,6 +403,9 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
                     NULL);
+             m_ProjOB=medfilt(m_ProjOB);
+        }
+
     }
     catch (ReconException & e) {
         msg<<"Failed to load the open beam image (ReconException): "<<e.what();
@@ -432,8 +440,7 @@ int ConfigureGeometryDialog::LoadImages()
     BuildFileList(&m_Config,&projlist);
     std::map<float,ProjectionInfo>::iterator it,marked;
 
-    size_t filtdims[]={3,3};
-    kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
+
 
     try {
         marked=projlist.begin();
