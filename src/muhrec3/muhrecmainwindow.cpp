@@ -633,7 +633,7 @@ void MuhRecMainWindow::MenuHelpAbout()
 void MuhRecMainWindow::MenuReconstructStart()
 {
 
-
+    ui->tabMainControl->setCurrentIndex(4);
     ReconDialog dlg(&m_Interactor);
     bool bBuildFailure=false;
 
@@ -1000,6 +1000,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
     ui->checkCorrectTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
+    ui->check_stitchprojections->setChecked(m_Config.ProjectionInfo.bTranslate);
     ui->moduleconfigurator->SetModules(m_Config.modules);
     ui->dspinRotateRecon->setValue(m_Config.MatrixInfo.fRotation);
 
@@ -1078,6 +1079,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fTiltAngle = ui->dspinTiltAngle->value();
     m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
     m_Config.ProjectionInfo.bCorrectTilt = ui->checkCorrectTilt->checkState();
+    m_Config.ProjectionInfo.bTranslate = ui->check_stitchprojections->checkState();
     m_Config.modules = ui->moduleconfigurator->GetModules();
     m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
     m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();

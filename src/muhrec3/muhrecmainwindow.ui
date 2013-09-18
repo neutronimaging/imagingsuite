@@ -982,6 +982,13 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="9">
+              <widget class="QCheckBox" name="check_stitchprojections">
+               <property name="text">
+                <string>Stitch projections</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -1551,6 +1558,7 @@
      <string>Reconstruct</string>
     </property>
     <addaction name="actionStartReconstruction"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReconstruct"/>
@@ -1616,6 +1624,11 @@
    </property>
    <property name="shortcut">
     <string>Meta+R</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>

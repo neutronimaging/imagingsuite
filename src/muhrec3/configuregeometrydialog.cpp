@@ -46,6 +46,10 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
         return QDialog::Rejected;
 
     ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims());
+    ui->spinMarginLeft->setRange(0,m_Proj0Deg.Size(0));
+    ui->spinMarginRight->setRange(0,m_Proj0Deg.Size(0));
+    ui->spinSliceFirst->setRange(0,m_Proj0Deg.Size(1));
+    ui->spinSliceLast->setRange(0,m_Proj0Deg.Size(1));
 
     UpdateDialog();
 
@@ -84,14 +88,15 @@ void ConfigureGeometryDialog::ROIChanged(int x)
 {
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
+    if (0<=x) {
+        dims[0]=ui->spinMarginLeft->value();
+        dims[1]=ui->spinSliceFirst->value();
+        dims[2]=ui->spinMarginRight->value();
+        dims[3]=ui->spinSliceLast->value();
+    }
+    rect.setCoords(dims[0], dims[1], dims[2], dims[3]);
 
-    rect.setCoords(dims[0]=ui->spinMarginLeft->value(),
-                   dims[1]=ui->spinSliceFirst->value(),
-                   dims[2]=ui->spinMarginRight->value(),
-                   dims[3]=ui->spinSliceLast->value());
-
-    ui->viewerProjection
-            ->set_rectangle(rect,QColor("yellow"),1);
+    ui->viewerProjection->set_rectangle(rect,QColor("yellow"),1);
 }
 
 void ConfigureGeometryDialog::FindCenter()
@@ -582,6 +587,10 @@ void ConfigureGeometryDialog::UpdateConfig()
 
 void ConfigureGeometryDialog::UpdateDialog()
 {
+    ui->spinMarginLeft->blockSignals(true);
+    ui->spinMarginRight->blockSignals(true);
+    ui->spinSliceFirst->blockSignals(true);
+    ui->spinSliceLast->blockSignals(true);
     ui->checkUseTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
     ui->spinMarginLeft->setValue(m_Config.ProjectionInfo.roi[0]);
     ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
@@ -593,6 +602,10 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
 
-    ROIChanged(0);
+    ROIChanged(-1);
+    ui->spinMarginLeft->blockSignals(false);
+    ui->spinMarginRight->blockSignals(false);
+    ui->spinSliceFirst->blockSignals(false);
+    ui->spinSliceLast->blockSignals(false);
 }
 
