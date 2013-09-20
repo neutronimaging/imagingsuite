@@ -9,6 +9,7 @@ QtLogViewer::QtLogViewer(QWidget *parent) :
     logger("QtLogViewer"),
     save_button("Save"),
     clear_button("Clear"),
+    m_LogFile((QDir::homePath()+"/muhlog.txt").toAscii()),
     m_CurrentLoglevel(kipl::logging::Logger::LogError)
 {
     this->setLayout(&vbox);
@@ -45,7 +46,7 @@ size_t QtLogViewer::Write(std::string str)
 {
     QMutexLocker locker(&m_Mutex);
     textedit.append(QString(str.c_str()));
-
+    m_LogFile<<str<<std::endl;
     return 0;
 }
 

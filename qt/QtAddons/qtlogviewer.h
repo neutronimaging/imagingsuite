@@ -10,6 +10,7 @@
 #include <QTextEdit>
 #include <qmutex.h>
 #include <logging/logger.h>
+#include <fstream>
 
 namespace QtAddons {
 class QTADDONSSHARED_EXPORT QtLogViewer : public QWidget, public kipl::logging::LogWriter{
@@ -41,6 +42,8 @@ protected:
     QPushButton save_button;
     QPushButton clear_button;
     QComboBox   loglevel_combo;
+
+    std::ofstream m_LogFile;
 
     QMutex m_Mutex;
     kipl::logging::Logger::LogLevel m_CurrentLoglevel;
