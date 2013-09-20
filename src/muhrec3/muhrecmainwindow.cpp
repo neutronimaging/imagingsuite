@@ -901,7 +901,70 @@ void MuhRecMainWindow::LoadDefaults()
 
 void MuhRecMainWindow::SaveMatrix()
 {
+    UpdateConfig();
+    std::ostringstream msg;
+    if (m_pEngine!=NULL) {
+        try {
+            m_pEngine->Serialize(&m_Config.MatrixInfo);
 
+            std::string fname=m_Config.MatrixInfo.sDestinationPath<<"ReconConfig.xml";
+            kipl::strings::filenames::CheckPathSlashes(fname,false);
+            std::ofstream configfile(fname.c_str());
+            configfile<<m_Config.WriteXML();
+            configfile.close();
+
+//			int repdims[2]={595,842};
+//			ReconReport report(repdims);
+
+//			const int nBins=256;
+//			float axis[nBins];
+//			size_t hist[nBins];
+//			engine->GetHistogram(axis,hist,nBins);
+//			kipl::base::TImage<float,2> xy;
+//			size_t dims[3];
+//			engine->GetMatrixDims(dims);
+//			xy=engine->GetSlice(dims[2]/2);
+//			ostringstream reportname;
+//			reportname<<config.MatrixInfo.sDestinationPath;
+//			if (!config_filename.empty()) {
+//				std::string path;
+//				std::string name;
+//				std::vector<std::string> extensions;
+//				kipl::strings::filenames::StripFileName(config_filename,
+//					path,name,extensions);
+//				reportname<<name<<".pdf";
+//			}
+//			else
+//				reportname<<"reconstruction_report.pdf";
+
+//			report.CreateReport(reportname.str(),&config,&xy,&xy,&xy,hist,axis,nBins);
+        }
+        catch (ReconException &e) {
+            msg<<"A recon exception occurred "<<e.what();
+        }
+        catch (kipl::base::KiplException &e) {
+            msg<<"A kipl exception occurred "<<e.what();
+        }
+        catch (std::exception &e) {
+            msg<<"A STL exception occurred "<<e.what();
+        }
+        catch (...) {
+            msg<<"An unknown exception occurred ";
+        }
+        if (!msg.str().empty()) {
+            QMessageBox msgdlg;
+
+            msgdlg.setWindowTitle("Error");
+            msgdlg.setText("Failed to save the reconstructed slices");
+            msgdlg.setDetailedText(QString::fromStdString(msg.str()));
+            msgdlg.exec();
+
+            logger(kipl::logging::Logger::LogError,msg.str());
+        }
+    }
+    else {
+        logger(kipl::logging::Logger::LogWarning,"Save matrix is not implemented");
+    }
 }
 
 void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
