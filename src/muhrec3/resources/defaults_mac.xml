@@ -100,7 +100,7 @@
         </preprocessing>
         <backprojector>
             <module>
-                <modulename>MultiProjBPparallel</modulename>
+                <modulename>MultiProjBP</modulename>
                 <sharedobject>@executable_path/../Frameworks/libStdBackProjectors.1.0.0.dylib</sharedobject>
                 <active>true</active>
                 <parameters>
