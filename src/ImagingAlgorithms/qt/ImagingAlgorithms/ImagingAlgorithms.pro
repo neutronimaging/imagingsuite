@@ -8,7 +8,7 @@ QT       -= core gui
 
 TARGET = ImagingAlgorithms
 TEMPLATE = lib
-QMAKE_CXXFLAGS += -fPIC -fopenmp
+QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
 QMAKE_LFLAGS += -lgomp
 
 DEFINES += IMAGINGALGORITHMS_LIBRARY
