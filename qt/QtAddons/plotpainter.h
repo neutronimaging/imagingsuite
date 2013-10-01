@@ -39,22 +39,21 @@ public:
 
     void zoomIn();
     void zoomOut();
+    enum { Margin = 30 };
+    bool m_bShowGrid;
 
 private:
-    void updateRubberBandRegion();
     void refreshBounds();
-    void refreshPixmap();
+
     void drawGrid(QPainter *painter);
     void drawCurves(QPainter *painter);
     void drawCursors(QPainter *painter);
-
-    enum { Margin = 30 };
 
     QMap<int, PlotData > curveMap;
     QMap<int, PlotCursor > cursorMap;
     QVector<PlotSettings> zoomStack;
     int curZoom;
-    QPixmap pixmap;
+
 };
 
 class PlotSettings

@@ -9,7 +9,7 @@ QT       += svg
 TARGET = QtAddons
 TEMPLATE = lib
 
-QMAKE_CXXFLAGS += -fPIC -fopenmp
+QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
 QMAKE_LFLAGS += -lgomp
 LIBS += -lgomp
 
@@ -21,7 +21,8 @@ SOURCES += qtlogviewer.cpp \
     imageviewerwidget.cpp \
     qglyphs.cpp \
     plotpainter.cpp \
-    plotwidget.cpp
+    plotwidget.cpp \
+    reportgeneratorbase.cpp
 
 
 
@@ -32,7 +33,8 @@ HEADERS += qtlogviewer.h\
     imageviewerwidget.h \
     qglyphs.h \
     plotpainter.h \
-    plotwidget.h
+    plotwidget.h \
+    reportgeneratorbase.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
