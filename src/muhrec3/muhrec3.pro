@@ -9,7 +9,7 @@ QT       += core gui
 TARGET = muhrec3
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -fopenmp
+QMAKE_CXXFLAGS += -fopenmp -O2
 QMAKE_LFLAGS += -lgomp
 
 SOURCES += main.cpp\

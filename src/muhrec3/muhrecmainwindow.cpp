@@ -185,23 +185,28 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string path=ui->editProjectionPath->text().toStdString();
         kipl::strings::filenames::CheckPathSlashes(path,true);
         std::string fmask=ui->editProjectionMask->text().toStdString();
+        std::string name, ext;
+        kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
+      //  logger(kipl::logging::Logger::LogMessage,name);
+        if (QFile::exists(QString::fromStdString(path+name))) {
 
-        m_PreviewImage=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
-                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                        static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+            m_PreviewImage=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
+                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+                            static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
-        if (x < 0) {
-            ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
+            if (x < 0) {
+                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
+            }
+            else {
+                float lo,hi;
+                ui->projectionViewer->get_levels(&lo,&hi);
+                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+            }
+
+            SetImageDimensionLimits(m_PreviewImage.Dims());
+            UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
         }
-        else {
-            float lo,hi;
-            ui->projectionViewer->get_levels(&lo,&hi);
-            ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-        }
-
-        SetImageDimensionLimits(m_PreviewImage.Dims());
-        UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     }
     catch (ReconException &e) {
         msg.str("");
@@ -907,7 +912,7 @@ void MuhRecMainWindow::SaveMatrix()
         try {
             m_pEngine->Serialize(&m_Config.MatrixInfo);
 
-            std::string fname=m_Config.MatrixInfo.sDestinationPath<<"ReconConfig.xml";
+            std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
             kipl::strings::filenames::CheckPathSlashes(fname,false);
             std::ofstream configfile(fname.c_str());
             configfile<<m_Config.WriteXML();

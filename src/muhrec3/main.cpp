@@ -34,10 +34,10 @@ int main(int argc, char *argv[])
     std::string errormsg;
     try {
         std::list<std::string> liclist;
-        liclist.push_back(homedir+"/.imagingtools/license_muhrec.dat");
-        liclist.push_back(application_path+"/license_muhrec.dat");
-        liclist.push_back(application_path+"/license.dat");
-        liclist.push_back(homedir+"/license_muhrec.dat");
+        liclist.push_back(homedir+".imagingtools/license_muhrec.dat");
+        liclist.push_back(application_path+"license_muhrec.dat");
+        liclist.push_back(application_path+"license.dat");
+        liclist.push_back(homedir+"license_muhrec.dat");
 
         license.Initialize(liclist,"muhrec");
     }
@@ -54,12 +54,13 @@ int main(int argc, char *argv[])
             msg<<"MuhRec is not registered on this computer\n";
 
         msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate MuhRec.\n";
-        msg<<"\nActivation code: "<<license.GetNodeString().front();
+        msg<<"\nActivation code: "<<*license.GetNodeString().begin();
         logger(kipl::logging::Logger::LogError,msg.str());
         QMessageBox mbox;
 
        // mbox.addButton("Have license file",QMessageBox::AcceptRole);
         mbox.addButton(QMessageBox::Save);
+        mbox.addButton(QMessageBox::Abort);
         mbox.setText(QString::fromStdString(msg.str()));
         mbox.setWindowTitle("License error");
         mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
                 if (!dir.exists(dir.homePath()+"/.imagingtools")) {
                     dir.mkdir(QDir::homePath()+"/.imagingtools");
                 }
+                std::cout<<(dir.homePath()+"/.imagingtools/license_muhrec.dat").toStdString()<<std::endl;
                 QFile::copy(fname,dir.homePath()+"/.imagingtools/license_muhrec.dat");
             }
         }

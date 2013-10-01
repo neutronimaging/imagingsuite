@@ -25,7 +25,7 @@ HEADERS += stdpreprocmodulesgui.h\
 
 INCLUDEPATH += /usr/include/libxml2
 
-QMAKE_CXXFLAGS += -fPIC -fopenmp
+QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
 QMAKE_LFLAGS += -lgomp
 
 symbian {
