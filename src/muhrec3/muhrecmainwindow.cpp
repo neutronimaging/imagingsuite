@@ -661,7 +661,7 @@ void MuhRecMainWindow::MenuReconstructStart()
         ofstream of(confpath.str().c_str());
         if (!of.is_open()) {
             msg.str("");
-            msg<<"Failed to open config file: "<<confpath.str();
+            msg<<"Failed to open config file: "<<confpath.str()<<" for writing.";
             logger(kipl::logging::Logger::LogError,msg.str());
             return ;
         }
@@ -694,16 +694,18 @@ void MuhRecMainWindow::MenuReconstructStart()
         msg.str("");
         msg<<"The requested matrix is larger ("<<m_nRequiredMemory<<"Mb) than the memorylimit ("
             <<m_Config.System.nMemory<<"Mb)\n\n"
-            <<"Do you want to continue with reconstruction direct to disk?";
+            <<"Do you want to continue with reconstruction direct to disk?\n"
+           <<"Current location is:\n"
+          <<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
         QMessageBox largesize_dlg(this);
+        largesize_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+        largesize_dlg.setDefaultButton(QMessageBox::Ok);
         largesize_dlg.setText(QString::fromStdString(msg.str()));
         largesize_dlg.setWindowTitle("Matrix size warning");
 
         int res=largesize_dlg.exec();
-//		largesize_dlg.hide();
-//		//while (largesize_dlg.is_visible()); // 2.4
 
-        if (res==QMessageBox::Rejected) {
+        if (res!=QMessageBox::Ok) {
             return;
         }
         m_Config.MatrixInfo.bAutomaticSerialize=true;
@@ -968,7 +970,13 @@ void MuhRecMainWindow::SaveMatrix()
         }
     }
     else {
-        logger(kipl::logging::Logger::LogWarning,"Save matrix is not implemented");
+        logger(kipl::logging::Logger::LogWarning,"There is no matrix to save yet.");
+        QMessageBox msgdlg;
+
+        msgdlg.setWindowTitle("Error");
+        msgdlg.setText("There is no matrix to save yet.");
+
+        msgdlg.exec();
     }
 }
 

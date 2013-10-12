@@ -14,14 +14,16 @@ SOURCES += stdpreprocmodulesgui.cpp \
     SpotClean2Dlg.cpp \
     dllmain.cpp \
     FullLogNormDlg.cpp \
-    WaveletRingCleanDlg.cpp
+    WaveletRingCleanDlg.cpp \
+    projectionfilterdlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
     stdafx.h \
     SpotClean2Dlg.h \
     FullLogNormDlg.h \
-    WaveletRingCleanDlg.h
+    WaveletRingCleanDlg.h \
+    projectionfilterdlg.h
 
 INCLUDEPATH += /usr/include/libxml2
 

@@ -19,7 +19,7 @@
 #include <QMessageBox>
 
 WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent):
-ConfiguratorDialogBase("MedianMixRingClean2Dlg",true,parent),
+ConfiguratorDialogBase("MedianMixRingClean2Dlg",true, true,parent),
 //m_frame_original("Original"),
 //m_frame_processed("Processed"),
 //m_frame_difference("Difference"),

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     std::string application_path=app.applicationDirPath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
-
+#ifndef __APPLE__
     kipl::utilities::NodeLocker license(homedir);
     bool licensefail=false;
     std::string errormsg;
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
         return -1;
     }
-
+#endif
 
     if (argc==1)
         return RunGUI(&app);

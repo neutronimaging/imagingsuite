@@ -7,7 +7,7 @@
 #include <math/mathfunctions.h>
 
 SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
-    ConfiguratorDialogBase("SpotClean2Dlg", true, parent),
+    ConfiguratorDialogBase("SpotClean2Dlg", true, true, parent),
 	lbl_gamma("Gamma"),
 	lbl_sigma("Sigma"),
 	lbl_iterations("Iterations"),

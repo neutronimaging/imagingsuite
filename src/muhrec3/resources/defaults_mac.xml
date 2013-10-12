@@ -2,7 +2,7 @@
     <userinformation>
         <operator>unknown</operator>
         <instrument>beamline</instrument>
-        <projectnumber>P11xxxx</projectnumber>
+        <projectnumber>P20yyxxxx</projectnumber>
         <sample>Test bodies</sample>
         <comment>No comment</comment>
     </userinformation>
@@ -14,7 +14,7 @@
         <dims>2048 2048</dims>
         <resolution>0.1 0.1</resolution>
         <firstindex>1</firstindex>
-        <lastindex>625</lastindex>
+        <lastindex>626</lastindex>
         <projectionstep>1</projectionstep>
         <repeatline>false</repeatline>
         <scantype>sequential</scantype>
@@ -76,7 +76,7 @@
             </module>
             <module>
                 <modulename>WaveletRingClean</modulename>
-                <sharedobject>/Users/kaestner/Applications/muhrec3.app/Contents/Frameworks/libStdPreprocModules.1.0.0.dylib</sharedobject>
+                <sharedobject>@executable_path/../Frameworks/libStdPreprocModules.1.0.0.dylib</sharedobject>
                 <active>true</active>
                 <parameters>
                     <decnum>4</decnum>

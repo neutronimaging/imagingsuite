@@ -8,7 +8,7 @@
 //#include "ISSfilterDlg.h"
 #include "FullLogNormDlg.h"
 //#include "MedianMixRingCleanDlg.h"
-//#include "ProjectionFilterSingleDlg.h"
+#include "ProjectionFilterDlg.h"
 //#include "PolynomialCorrectionDlg.h"
 #include "WaveletRingCleanDlg.h"
 
@@ -26,8 +26,8 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 		//if (sName=="LogProjection")
 		//	return new LogProjection;
 
-//		if (sName=="ProjectionFilterSingle")
-//			return new ProjectionFilterSingleDlg;
+        if (sName=="ProjectionFilterSingle")
+            return new ProjectionFilterDlg;
 
 		//if (sName=="SpotClean")
 		//	return new SpotClean;
