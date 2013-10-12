@@ -48,9 +48,10 @@ class DLL_EXPORT ConfiguratorDialogBase : public QDialog
 protected:
 	kipl::logging::Logger logger;
 public:
-    explicit ConfiguratorDialogBase(std::string name, bool hasApply, QWidget *parent=NULL);
+    explicit ConfiguratorDialogBase(std::string name, bool hasApply, bool needImages, QWidget *parent=NULL);
     virtual ~ConfiguratorDialogBase();
-	
+    bool NeedImages() {return m_bNeedImages;}
+
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
 
 public slots:
@@ -60,12 +61,14 @@ protected:
     virtual void UpdateDialog() = 0;
     virtual void UpdateParameters() = 0;
     virtual void ApplyParameters() = 0;
+
 	kipl::base::TImage<float,2> GetProjection(kipl::base::TImage<float,3> img, size_t n);
 	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> img, size_t n);
 
     QVBoxLayout m_LayoutMain;
     QFrame m_FrameMain;
     QDialogButtonBox m_ControlButtons;
+    bool m_bNeedImages;
 
 	ConfigBase * m_Config;
 };

@@ -66,7 +66,8 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		msg.str("");
 
 		try {
-			GetImage(ModuleName);
+            if (m_Dialog->NeedImages())
+                GetImage(ModuleName);
 		}
 		catch (ModuleException &e)
 		{
