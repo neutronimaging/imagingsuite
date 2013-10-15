@@ -19,7 +19,8 @@ SOURCES += \
     ../../src/SpotClean.cpp \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/PolynomialCorrection.cpp \
-    ../../src/ImagingException.cpp
+    ../../src/ImagingException.cpp \
+    ../../src/TranslateProjections.cpp
 
 HEADERS += \
     ../../include/targetver.h \
@@ -30,7 +31,8 @@ HEADERS += \
     ../../include/PolynomialCorrection.h \
     ../../include/ImagingException.h \
     ../../src/targetver.h \
-    ../../src/stdafx.h
+    ../../src/stdafx.h \
+    ../../include/TranslateProjections.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -51,6 +53,7 @@ unix:!symbian {
     INSTALLS += target
 }
 
+LIBS += -lgomp
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug/debug/ -lkipl
 else:symbian: LIBS += -lkipl
