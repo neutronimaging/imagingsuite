@@ -1,0 +1,37 @@
+/*
+ * GeneralFilter.h
+ *
+ *  Created on: Jun 22, 2011
+ *      Author: kaestner
+ */
+
+#ifndef ISSFILTERMODULE_H_
+#define ISSFILTERMODULE_H_
+
+#include <KiplProcessModuleBase.h>
+
+class PoreSizeMapModule: public KiplProcessModuleBase {
+public:
+	PoreSizeMapModule();
+	virtual ~PoreSizeMapModule();
+	
+	virtual int Configure(std::map<std::string, std::string> parameters);
+	virtual std::map<std::string, std::string> GetParameters();
+protected:
+	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
+
+	void ScaleImage(kipl::base::TImage<float,3> & img, bool forward);
+
+	bool m_bAutoScale;
+	float m_fSlope;
+	float m_fIntercept;
+
+	float m_fTau;
+	float m_fLambda;
+	float m_fAlpha;
+	int m_nIterations;
+	std::string m_sIterationPath;
+	bool m_bSaveIterations;
+};
+
+#endif /* DATASCALER_H_ */
