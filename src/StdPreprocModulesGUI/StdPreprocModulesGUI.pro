@@ -15,7 +15,8 @@ SOURCES += stdpreprocmodulesgui.cpp \
     dllmain.cpp \
     FullLogNormDlg.cpp \
     WaveletRingCleanDlg.cpp \
-    projectionfilterdlg.cpp
+    projectionfilterdlg.cpp \
+    MorphSpotCleanDlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
@@ -23,7 +24,8 @@ HEADERS += stdpreprocmodulesgui.h\
     SpotClean2Dlg.h \
     FullLogNormDlg.h \
     WaveletRingCleanDlg.h \
-    projectionfilterdlg.h
+    projectionfilterdlg.h \
+    MorphSpotCleanDlg.h
 
 INCLUDEPATH += /usr/include/libxml2
 

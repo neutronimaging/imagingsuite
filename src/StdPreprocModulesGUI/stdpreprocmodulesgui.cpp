@@ -11,6 +11,7 @@
 #include "ProjectionFilterDlg.h"
 //#include "PolynomialCorrectionDlg.h"
 #include "WaveletRingCleanDlg.h"
+#include "MorphSpotCleanDlg.h"
 
 DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 {
@@ -58,6 +59,9 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 
 //		if (sName=="PolynomialCorrection")
 //			return new PolynomialCorrectionDlg;
+        if (sName=="MorphSpotClean")
+            return new MorphSpotCleanDlg;
+
 	}	
 	return NULL;
 }
