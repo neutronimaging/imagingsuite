@@ -21,7 +21,8 @@ SOURCES += \
     ../../src/PolynomialCorrection.cpp \
     ../../src/ImagingException.cpp \
     ../../src/TranslateProjections.cpp \
-    ../../src/MorphSpotClean.cpp
+    ../../src/MorphSpotClean.cpp \
+    ../../src/pixelinfo.cpp
 
 HEADERS += \
     ../../include/targetver.h \
@@ -34,7 +35,8 @@ HEADERS += \
     ../../src/targetver.h \
     ../../src/stdafx.h \
     ../../include/TranslateProjections.h \
-    ../../include/MorphSpotClean.h
+    ../../include/MorphSpotClean.h \
+    ../../include/pixelinfo.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

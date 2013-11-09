@@ -9,6 +9,7 @@
 #define IMGALG_SPOTCLEAN_H_
 
 #include "stdafx.h"
+#include "pixelinfo.h"
 
 #include <base/timage.h>
 #include <strings/miscstring.h>
@@ -24,23 +25,6 @@
 #include <list>
 
 namespace ImagingAlgorithms {
-
-class DLL_EXPORT PixelInfo {
-public:
-	PixelInfo() :pos(0), value(0.0f), weight(0.0f) {}
-	PixelInfo(int nPos,float fValue, float fWeight) : pos(nPos), value(fValue), weight(fWeight) {}
-	PixelInfo(const PixelInfo &info) : pos(info.pos), value(info.value), weight(info.weight) {}
-	PixelInfo & operator=(const PixelInfo & info) {
-		pos   = info.pos;
-		value = info.value;
-		weight = info.weight;
-
-		return *this;
-	}
-	int pos;
-	float value;
-	float weight;
-};
 
 enum DetectionMethod {
 	Detection_StdDev = 0,
