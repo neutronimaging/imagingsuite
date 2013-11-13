@@ -37,7 +37,7 @@ ProjectionFilterDlg::~ProjectionFilterDlg()
 
 }
 
-int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> UNUSED(img))
 {
     m_Config=dynamic_cast<ReconConfig *>(config);
 
@@ -103,7 +103,7 @@ void ProjectionFilterDlg::UpdateParameterList(std::map<std::string, std::string>
     parameters["usebias"]=kipl::strings::bool2string(m_bUseBias);
 }
 
-void ProjectionFilterDlg::UpdateDialogFromParameterList(std::map<std::string, std::string> &parameters)
+void ProjectionFilterDlg::UpdateDialogFromParameterList(std::map<std::string, std::string> & UNUSED(parameters))
 {
 
 }

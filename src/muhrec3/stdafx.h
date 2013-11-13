@@ -3,17 +3,17 @@
 // are changed infrequently
 //
 
-#ifndef __STDPREPROCGUI_STDAFX_
-#define __STDPREPROCGUI_STDAFX_
+#ifndef _STDAFXMUH3_H
+#define _STDAFXMUH3_H
 
 #include "targetver.h"
 
 #ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
-#endif
+#include <stdio.h>
+#include <tchar.h>
+#else
 
+#endif
 
 #ifdef __GNUC__
 #define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))

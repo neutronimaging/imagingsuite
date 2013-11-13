@@ -2,6 +2,9 @@
 #define MUHRECMAINWINDOW_H
 
 #include <QMainWindow>
+
+#include <list>
+
 #include "MuhrecInteractor.h"
 #include "PreProcModuleConfigurator.h"
 #include <ApplicationBase.h>
@@ -49,6 +52,8 @@ protected slots:
     void CenterOfRotationChanged(int x);
     void CenterOfRotationChanged(double x);
     void ConfigureGeometry();
+    void StoreGeometrySetting();
+    void ClearGeometrySettings();
     void GrayLevelsChanged(double x);
     void GetMatrixROI();
     void MatrixROIChanged(int x);
@@ -86,17 +91,24 @@ protected:
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
+    ReconConfig      m_LastReconConfig;
+
     MuhrecInteractor m_Interactor;
     PreProcModuleConfigurator m_ModuleConfigurator;
+
     ReconEngine     *m_pEngine;
     ReconFactory     m_Factory;
+
     int              m_nCurrentPage;
     size_t           m_nRequiredMemory;
     std::string      m_sApplicationPath;
     std::string      m_sConfigFilename; //<! Name of the configuration file
     std::map<float, ProjectionInfo> m_ProjectionList;
+
     kipl::base::TImage<float,2>     m_PreviewImage;
     kipl::base::TImage<float,2>     m_SliceImage;
+    kipl::base::TImage<float,2>     m_LastMidSlice;
+    std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_StoredReconList;
 };
 
 #endif // MUHRECMAINWINDOW_H

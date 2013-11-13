@@ -149,7 +149,7 @@
            <x>0</x>
            <y>0</y>
            <width>806</width>
-           <height>744</height>
+           <height>757</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="layoutProjectionInformation">
@@ -978,7 +978,7 @@
              <item row="6" column="10">
               <widget class="QPushButton" name="buttonConfigGeometry">
                <property name="text">
-                <string>Configure geometry</string>
+                <string>Setup geometry</string>
                </property>
               </widget>
              </item>
@@ -986,6 +986,20 @@
               <widget class="QCheckBox" name="check_stitchprojections">
                <property name="text">
                 <string>Stitch projections</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="10">
+              <widget class="QPushButton" name="buttonStoreGeometry">
+               <property name="text">
+                <string>Store geometry</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="10">
+              <widget class="QPushButton" name="buttonClearGeometryList">
+               <property name="text">
+                <string>Clear list</string>
                </property>
               </widget>
              </item>

@@ -30,7 +30,7 @@ FullLogNormDlg::FullLogNormDlg(QWidget *parent) :
 FullLogNormDlg::~FullLogNormDlg() {
 }
 
-int FullLogNormDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int FullLogNormDlg::exec(ConfigBase * UNUSED(config), std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> UNUSED(img))
 {
 	UpdateDialogFromParameterList(parameters);
     UpdateDialog();

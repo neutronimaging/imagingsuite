@@ -74,6 +74,8 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->buttonGetDoseROI,SIGNAL(clicked()),this,SLOT(GetDoseROI()));
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
+    connect(ui->buttonStoreGeometry,SIGNAL(clicked()),this,SLOT(StoreGeometrySetting()));
+    connect(ui->buttonClearGeometryList,SIGNAL(clicked()),this,SLOT(ClearGeometrySettings()));
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
 
@@ -163,7 +165,7 @@ void MuhRecMainWindow::TakeProjectionPath()
     ui->editReferencePath->setText(ui->editProjectionPath->text());
 }
 
-void MuhRecMainWindow::ProjectionIndexChanged(int x)
+void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
 {
     ui->sliderProjections->setMaximum(ui->spinLastProjection->value());
     ui->sliderProjections->setMinimum(ui->spinFirstProjection->value());
@@ -359,12 +361,12 @@ void MuhRecMainWindow::RotateChanged()
 
 }
 
-void MuhRecMainWindow::DoseROIChanged(int x)
+void MuhRecMainWindow::DoseROIChanged(int UNUSED(x))
 {
     UpdateDoseROI();
 }
 
-void MuhRecMainWindow::ReconROIChanged(int x)
+void MuhRecMainWindow::ReconROIChanged(int UNUSED(x))
 {
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
@@ -379,12 +381,12 @@ void MuhRecMainWindow::ReconROIChanged(int x)
     UpdateMemoryUsage(dims);
 }
 
-void MuhRecMainWindow::CenterOfRotationChanged(int x)
+void MuhRecMainWindow::CenterOfRotationChanged(int UNUSED(x))
 {
     CenterOfRotationChanged();
 }
 
-void  MuhRecMainWindow::CenterOfRotationChanged(double x)
+void  MuhRecMainWindow::CenterOfRotationChanged(double UNUSED(x))
 {
     CenterOfRotationChanged();
 }
@@ -422,7 +424,38 @@ void MuhRecMainWindow::ConfigureGeometry()
  }
 }
 
-void MuhRecMainWindow::GrayLevelsChanged(double x)
+void MuhRecMainWindow::StoreGeometrySetting()
+{
+   std::ostringstream msg;
+    if (m_LastMidSlice.Size()!=0) {
+        m_StoredReconList.push_back(std::make_pair(m_LastReconConfig,m_LastMidSlice));
+        msg<<"Stored last recon config (list size "<<m_StoredReconList.size()<<")";
+    }
+    else
+        msg<<"Data was not reconstructed, no geometry was stored";
+
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+}
+
+void MuhRecMainWindow::ClearGeometrySettings()
+{
+    QMessageBox confirm_dlg;
+
+    confirm_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+    confirm_dlg.setDefaultButton(QMessageBox::Abort);
+    confirm_dlg.setText("Do you want to clear the list with stored reconstruction settings?");
+    confirm_dlg.setWindowTitle("Clear configuration list");
+
+    int res=confirm_dlg.exec();
+
+    if (res!=QMessageBox::Ok) {
+        logger(kipl::logging::Logger::LogMessage, "The list with stored configurations was cleared.");
+        m_StoredReconList.clear();
+    }
+}
+
+void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
 {
     double low=ui->dspinGrayLow->value();
     double high=ui->dspinGrayHigh->value();
@@ -453,7 +486,7 @@ void MuhRecMainWindow::GetMatrixROI()
     }
 }
 
-void MuhRecMainWindow::MatrixROIChanged(int x)
+void MuhRecMainWindow::MatrixROIChanged(int UNUSED(x))
 {
     logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
     UpdateMatrixROI();
@@ -767,6 +800,14 @@ void MuhRecMainWindow::MenuReconstructStart()
 
             if (res==QDialog::Accepted) {
                 logger(kipl::logging::Logger::LogVerbose,"Finished with OK");
+
+                // Store info about last recon
+                m_LastReconConfig=m_Config;
+                size_t dims[3];
+                m_pEngine->GetMatrixDims(dims);
+                m_LastMidSlice = m_pEngine->GetSlice(dims[2]/2);
+
+                // Prepare visualization
                 if ((m_Config.MatrixInfo.bAutomaticSerialize==false)) {
                     PreviewProjection(); // Display the projection if it was not done already
                     ui->tabMainControl->setCurrentIndex(3);
