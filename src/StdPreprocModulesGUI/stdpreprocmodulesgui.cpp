@@ -8,7 +8,7 @@
 //#include "ISSfilterDlg.h"
 #include "FullLogNormDlg.h"
 //#include "MedianMixRingCleanDlg.h"
-#include "ProjectionFilterDlg.h"
+#include "projectionfilterdlg.h"
 //#include "PolynomialCorrectionDlg.h"
 #include "WaveletRingCleanDlg.h"
 #include "MorphSpotCleanDlg.h"

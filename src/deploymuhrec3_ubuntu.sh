@@ -3,9 +3,9 @@ CPCMD="cp "
 REPOSPATH="/home/kaestner/repos"
 
 DEST="$REPOSPATH/tomography/muhrec3"
-mkdir $DEST
-mkdir $DEST/bin
-mkdir $DEST/Frameworks
+mkdir --parent $DEST
+mkdir --parent $DEST/bin
+mkdir --parent $DEST/Frameworks
 
 pushd .
 cd $DEST/Frameworks

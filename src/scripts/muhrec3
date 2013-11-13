@@ -1,6 +1,7 @@
 #!/bin/sh
 
-BASEPATH=`pwd`
+RP="`readlink -e $0`"
+BASEPATH="`dirname $RP`"
 
 MUHREC_BASE_PATH=$BASEPATH
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASEPATH/Frameworks

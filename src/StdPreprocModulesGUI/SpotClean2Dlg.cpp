@@ -37,11 +37,11 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
 	const int nDigits=4;
 
     m_entry_gamma.setDecimals(nDigits);
-    m_entry_gamma.setRange(0.0,10.0);
+    m_entry_gamma.setRange(0.0,100000.0);
     m_entry_gamma.setSingleStep(0.01);
 
     m_entry_sigma.setDecimals(nDigits);
-    m_entry_sigma.setRange(0.0,10.0);
+    m_entry_sigma.setRange(0.0,100000.0);
     m_entry_sigma.setSingleStep(0.001);
 
     m_entry_iterations.setRange(1,10);
