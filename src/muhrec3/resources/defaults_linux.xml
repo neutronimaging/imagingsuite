@@ -53,7 +53,7 @@
         <preprocessing>
             <module>
                 <modulename>FullLogNorm</modulename>
-                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <sharedobject>../Framework/libStdPreprocModules.so</sharedobject>
                 <active>true</active>
                 <parameters>
                     <uselut>true</uselut>
@@ -62,7 +62,7 @@
             </module>
             <module>
                 <modulename>SpotClean2</modulename>
-                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <sharedobject>../Framework/libStdPreprocModules.so</sharedobject>
                 <active>false</active>
                 <parameters>
                     <gamma>0.01</gamma>
@@ -75,7 +75,7 @@
             </module>
             <module>
                 <modulename>MedianMixRingClean</modulename>
-                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <sharedobject>../Framework/libStdPreprocModules.so</sharedobject>
                 <active>false</active>
                 <parameters>
                     <threshold>0.025</threshold>
@@ -84,7 +84,7 @@
             </module>
             <module>
                 <modulename>ProjectionFilterSingle</modulename>
-                <sharedobject>/opt/muhrec/libStdPreprocModules.so</sharedobject>
+                <sharedobject>../Framework/libStdPreprocModules.so</sharedobject>
                 <active>true</active>
                 <parameters>
                     <cutoff>0.5</cutoff>
@@ -97,7 +97,7 @@
         <backprojector>
             <module>
                 <modulename>MultiProjBPparallel</modulename>
-                <sharedobject>/opt/muhrec/libStdBackProjectors.so</sharedobject>
+                <sharedobject>../Framework/libStdBackProjectors.so</sharedobject>
                 <active>true</active>
                 <parameters>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
