@@ -38,7 +38,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
     m_sApplicationPath(app->applicationDirPath().toAscii()),
-    m_sConfigFilename("noname.xml")
+    m_sConfigFilename("noname.xml"),
+    m_bCurrentReconStored(true)
 {
     std::ostringstream msg;
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
@@ -430,40 +431,49 @@ void MuhRecMainWindow::ConfigureGeometry()
 
 void MuhRecMainWindow::StoreGeometrySetting()
 {
-   std::ostringstream msg;
-    if (m_LastMidSlice.Size()!=0) {
-        m_StoredReconList.push_back(std::make_pair(m_LastReconConfig,m_LastMidSlice));
-        msg<<"Stored last recon config (list size "<<m_StoredReconList.size()<<")";
+    if (!m_bCurrentReconStored)
+    {
+        std::ostringstream msg;
+        if (m_LastMidSlice.Size()!=0) {
+            m_StoredReconList.push_back(std::make_pair(m_LastReconConfig,m_LastMidSlice));
+            msg<<"Stored last recon config (list size "<<m_StoredReconList.size()<<")";
+        }
+        else
+            msg<<"Data was not reconstructed, no geometry was stored";
+
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        m_bCurrentReconStored = true;
     }
-    else
-        msg<<"Data was not reconstructed, no geometry was stored";
-
-    logger(kipl::logging::Logger::LogMessage,msg.str());
-
 }
 
 void MuhRecMainWindow::ClearGeometrySettings()
 {
-    QMessageBox confirm_dlg;
+    if (!m_StoredReconList.empty())
+    {
+        QMessageBox confirm_dlg;
 
-    confirm_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
-    confirm_dlg.setDefaultButton(QMessageBox::Abort);
-    confirm_dlg.setText("Do you want to clear the list with stored reconstruction settings?");
-    confirm_dlg.setWindowTitle("Clear configuration list");
+        confirm_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+        confirm_dlg.setDefaultButton(QMessageBox::Abort);
+        confirm_dlg.setText("Do you want to clear the list with stored reconstruction settings?");
+        confirm_dlg.setWindowTitle("Clear configuration list");
 
-    int res=confirm_dlg.exec();
+        int res=confirm_dlg.exec();
 
-    if (res==QMessageBox::Ok) {
-        logger(kipl::logging::Logger::LogMessage, "The list with stored configurations was cleared.");
-        m_StoredReconList.clear();
+        if (res==QMessageBox::Ok) {
+            logger(kipl::logging::Logger::LogMessage, "The list with stored configurations was cleared.");
+            m_StoredReconList.clear();
+            m_bCurrentReconStored = false;
+        }
     }
 }
 
 void MuhRecMainWindow::ViewGeometryList()
 {
-    ViewGeometryListDialog dlg;
-    dlg.setList(m_StoredReconList);
-    dlg.exec();
+    if (!m_StoredReconList.empty()) {
+        ViewGeometryListDialog dlg;
+        dlg.setList(m_StoredReconList);
+        dlg.exec();
+    }
 }
 
 void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
@@ -813,7 +823,8 @@ void MuhRecMainWindow::MenuReconstructStart()
                 logger(kipl::logging::Logger::LogVerbose,"Finished with OK");
 
                 // Store info about last recon
-                m_LastReconConfig=m_Config;
+                m_LastReconConfig     = m_Config;
+                m_bCurrentReconStored = false;
                 size_t dims[3];
                 m_pEngine->GetMatrixDims(dims);
                 m_LastMidSlice = m_pEngine->GetSlice(dims[2]/2);

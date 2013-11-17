@@ -5,7 +5,10 @@
 #include <QListWidgetItem>
 #include <list>
 #include <string>
+
 #include <base/timage.h>
+#include <logging/logger.h>
+
 #include <ReconConfig.h>
 
 
@@ -23,7 +26,7 @@ enum eChangedConfigFields {
 class ViewGeometryListDialog : public QDialog
 {
     Q_OBJECT
-    
+    kipl::logging::Logger logger;
 public:
     explicit ViewGeometryListDialog(QWidget *parent = 0);
     ~ViewGeometryListDialog();
@@ -34,7 +37,7 @@ public:
     // Collection of call-backs
 protected slots:
     void ClearAllChecked();
-    void ShowSelected(QListWidgetItem *current,QListWidgetItem *previous);
+    void ShowSelected(QListWidgetItem *current);
     void ComputeTilt();
     void MaxROI();
 

@@ -110,6 +110,7 @@ private:
     kipl::base::TImage<float,2>     m_SliceImage;
     kipl::base::TImage<float,2>     m_LastMidSlice;
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_StoredReconList;
+    bool m_bCurrentReconStored;
 };
 
 #endif // MUHRECMAINWINDOW_H

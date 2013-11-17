@@ -1,6 +1,6 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-REPOSPATH="/home/kaestner/repos"
+REPOSPATH="/home/`whoami`/repos"
 
 DEST="$REPOSPATH/tomography/muhrec3"
 mkdir --parent $DEST

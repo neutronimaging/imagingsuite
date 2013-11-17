@@ -65,6 +65,7 @@ else:symbian: LIBS += -lModuleConfig
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug/ -lModuleConfig
 
+
 INCLUDEPATH += $$PWD/../../../../src/libs/modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../src/libs/modules/trunk/ModuleConfig/include
 

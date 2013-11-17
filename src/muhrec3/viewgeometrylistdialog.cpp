@@ -14,8 +14,6 @@
 #include <QIcon>
 #include <QPixmap>
 
-#define _MYLISTITEM
-#ifdef _MYLISTITEM
 class ConfigListItem : public QListWidgetItem
 {
 public:
@@ -25,16 +23,18 @@ public:
     kipl::base::TImage<float,2> image;
     ReconConfig config;
 };
-#endif
+
 
 
 ViewGeometryListDialog::ViewGeometryListDialog(QWidget *parent) :
     QDialog(parent),
+    logger("ViewGeometryListDialog"),
     ui(new Ui::ViewGeometryListDialog)
 {
     ui->setupUi(this);
     ui->listWidget->setIconSize(QSize(150,150));
 
+    SetupCallbacks();
 }
 
 ViewGeometryListDialog::~ViewGeometryListDialog()
@@ -47,7 +47,7 @@ void ViewGeometryListDialog::SetupCallbacks(){
     connect(ui->buttonComputeTilt,SIGNAL(clicked()),this,SLOT(ComputeTilt()));
     connect(ui->buttonComputROI,SIGNAL(clicked()),this,SLOT(MaxROI()));
 
-    connect(ui->listWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,SLOT(ShowSelected(QListWidgetItem*,QListWidgetItem*)));
+    connect(ui->listWidget,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(ShowSelected(QListWidgetItem*)));
 }
 
 void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > >  &reconList)
@@ -57,7 +57,7 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > >::iterator it;
     int index=0;
     for (it=reconList.begin(); it!=reconList.end(); it++) {
-#ifdef _MYLISTITEM
+
         msg.str("");
         msg<<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
           <<"Slice="<<(it->first.ProjectionInfo.roi[1])<<std::endl;
@@ -75,21 +75,6 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
         item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
         item->setData(Qt::CheckStateRole,Qt::Unchecked);
         ui->listWidget->addItem(item);
-#else
-        msg.str("");
-        msg<<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
-          <<"Slice="<<(it->first.ProjectionInfo.roi[1])<<std::endl;
-        QListWidgetItem *item = new QListWidgetItem;
-        QPixmap pixmap=CreateIconFromImage(it->second,
-                                           it->first.MatrixInfo.fGrayInterval[0],
-                                           it->first.MatrixInfo.fGrayInterval[1]);
-        QIcon icon(pixmap);
-        item->setIcon(pixmap);
-
-        item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
-        item->setData(Qt::CheckStateRole,Qt::Unchecked);
-        ui->listWidget->addItem(item);
-#endif
     }
 }
 
@@ -126,11 +111,17 @@ eChangedConfigFields ViewGeometryListDialog::changedConfigFields()
 
 void ViewGeometryListDialog::ClearAllChecked()
 {
+    for(int row = 0; row < ui->listWidget->count(); row++)
+    {
+        QListWidgetItem *item = ui->listWidget->item(row);
+        item->setCheckState(Qt::Unchecked);
+    }
 
 }
 
-void ViewGeometryListDialog::ShowSelected(QListWidgetItem *current, QListWidgetItem * UNUSED(previous))
+void ViewGeometryListDialog::ShowSelected(QListWidgetItem *current)
 {
+    logger(kipl::logging::Logger::LogMessage,"Item clicked");
 
     ConfigListItem *item = reinterpret_cast<ConfigListItem *>(current);
 

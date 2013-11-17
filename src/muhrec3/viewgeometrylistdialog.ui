@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Stored configurations</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonComputROI">
    <property name="geometry">
@@ -32,7 +32,7 @@
   <widget class="QListWidget" name="listWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>10</x>
      <y>30</y>
      <width>361</width>
      <height>401</height>
@@ -42,30 +42,17 @@
   <widget class="QtAddons::ImageViewerWidget" name="imageViewer" native="true">
    <property name="geometry">
     <rect>
-     <x>409</x>
+     <x>380</x>
      <y>29</y>
-     <width>381</width>
+     <width>391</width>
      <height>401</height>
     </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="buttonComputeTilt">
-   <property name="geometry">
-    <rect>
-     <x>800</x>
-     <y>30</y>
-     <width>114</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Compute tilt</string>
    </property>
   </widget>
   <widget class="QPushButton" name="buttonClearSelected">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>440</y>
      <width>114</width>
      <height>32</height>
@@ -75,18 +62,45 @@
     <string>Clear selected</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>800</x>
-     <y>60</y>
-     <width>114</width>
-     <height>32</height>
+     <x>790</x>
+     <y>30</y>
+     <width>131</width>
+     <height>100</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Compute ROI</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="buttonComputeTilt">
+      <property name="text">
+       <string>Compute tilt</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="labelTilt">
+      <property name="text">
+       <string>Tilt is not computed</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Compute ROI</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="labelROI">
+      <property name="text">
+       <string>No ROI</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <customwidgets>
