@@ -199,7 +199,8 @@ void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
     QListWidgetItem *item = new QListWidgetModuleItem(module);
 
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-    item->setCheckState(Qt::Checked); // AND initialize check state
+    item->setCheckState(module.m_bActive ? Qt::Checked : Qt::Unchecked); // AND initialize check state
+
     m_ModuleListView.insertItem(m_ModuleListView.currentRow()+1,item);
     m_ModuleListView.setCurrentItem(item);
 
