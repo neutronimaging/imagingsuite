@@ -7,6 +7,7 @@
 #include "configuregeometrydialog.h"
 #include "findskiplistdialog.h"
 #include "recondialog.h"
+#include "viewgeometrylistdialog.h"
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -74,8 +75,11 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->buttonGetDoseROI,SIGNAL(clicked()),this,SLOT(GetDoseROI()));
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
+
+    // Geometry list buttons
     connect(ui->buttonStoreGeometry,SIGNAL(clicked()),this,SLOT(StoreGeometrySetting()));
     connect(ui->buttonClearGeometryList,SIGNAL(clicked()),this,SLOT(ClearGeometrySettings()));
+    connect(ui->buttonViewGeometryList,SIGNAL(clicked()),this,SLOT(ViewGeometryList()));
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
 
@@ -449,10 +453,17 @@ void MuhRecMainWindow::ClearGeometrySettings()
 
     int res=confirm_dlg.exec();
 
-    if (res!=QMessageBox::Ok) {
+    if (res==QMessageBox::Ok) {
         logger(kipl::logging::Logger::LogMessage, "The list with stored configurations was cleared.");
         m_StoredReconList.clear();
     }
+}
+
+void MuhRecMainWindow::ViewGeometryList()
+{
+    ViewGeometryListDialog dlg;
+    dlg.setList(m_StoredReconList);
+    dlg.exec();
 }
 
 void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))

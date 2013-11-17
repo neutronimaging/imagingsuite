@@ -54,6 +54,7 @@ protected slots:
     void ConfigureGeometry();
     void StoreGeometrySetting();
     void ClearGeometrySettings();
+    void ViewGeometryList();
     void GrayLevelsChanged(double x);
     void GetMatrixROI();
     void MatrixROIChanged(int x);
