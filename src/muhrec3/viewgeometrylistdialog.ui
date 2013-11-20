@@ -6,17 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>925</width>
+    <width>987</width>
     <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Stored configurations</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonComputROI">
+  <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>350</x>
      <y>440</y>
      <width>621</width>
      <height>32</height>
@@ -65,35 +65,61 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>790</x>
+     <x>780</x>
      <y>30</y>
-     <width>131</width>
-     <height>100</height>
+     <width>201</width>
+     <height>119</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <widget class="QPushButton" name="buttonComputeTilt">
       <property name="text">
        <string>Compute tilt</string>
       </property>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>58</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0" colspan="2">
      <widget class="QLabel" name="labelTilt">
       <property name="text">
        <string>Tilt is not computed</string>
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
+    <item row="2" column="0">
+     <widget class="QPushButton" name="buttonMaxROI">
       <property name="text">
        <string>Compute ROI</string>
       </property>
      </widget>
     </item>
-    <item>
+    <item row="2" column="1">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>58</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="0" colspan="2">
      <widget class="QLabel" name="labelROI">
       <property name="text">
        <string>No ROI</string>
@@ -114,7 +140,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonComputROI</sender>
+   <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>ViewGeometryListDialog</receiver>
    <slot>accept()</slot>
@@ -130,7 +156,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonComputROI</sender>
+   <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>ViewGeometryListDialog</receiver>
    <slot>reject()</slot>

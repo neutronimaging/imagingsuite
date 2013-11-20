@@ -472,7 +472,27 @@ void MuhRecMainWindow::ViewGeometryList()
     if (!m_StoredReconList.empty()) {
         ViewGeometryListDialog dlg;
         dlg.setList(m_StoredReconList);
-        dlg.exec();
+        int res=dlg.exec();
+
+        if (res==QDialog::Accepted) {
+            if (dlg.changedConfigFields() & ConfigField_Tilt) {
+                float center,tilt, pivot;
+                dlg.getTilt(center, tilt, pivot);
+                ui->dspinTiltAngle->setValue(tilt);
+                ui->dspinTiltPivot->setValue(pivot);
+                ui->dspinRotationCenter->setValue(center);
+            }
+
+            if (dlg.changedConfigFields() & ConfigField_ROI) {
+
+                dlg.getROI(m_Config.MatrixInfo.roi);
+
+                ui->spinMatrixROI0->setValue(m_Config.MatrixInfo.roi[0]);
+                ui->spinMatrixROI1->setValue(m_Config.MatrixInfo.roi[1]);
+                ui->spinMatrixROI2->setValue(m_Config.MatrixInfo.roi[2]);
+                ui->spinMatrixROI3->setValue(m_Config.MatrixInfo.roi[3]);
+            }
+        }
     }
 }
 

@@ -32,7 +32,9 @@ public:
     ~ViewGeometryListDialog();
 
     void setList(std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > >  &reconList);
-    eChangedConfigFields changedConfigFields();
+    int changedConfigFields();
+    void getTilt(float &center, float &tilt, float &pivot);
+    void getROI(size_t *roi);
     
     // Collection of call-backs
 protected slots:
@@ -46,7 +48,11 @@ private:
     QPixmap CreateIconFromImage(kipl::base::TImage<float,2> &img, float lo, float hi);
     Ui::ViewGeometryListDialog *ui;
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_reconList;
-    eChangedConfigFields m_eChangeConfigFields;
+    int m_eChangeConfigFields;
+    float m_fTilt;
+    float m_fPivot;
+    float m_fCenter;
+    size_t m_nMatrixROI[4];
 };
 
 #endif // VIEWGEOMETRYLISTDIALOG_H
