@@ -585,7 +585,7 @@ void MuhRecMainWindow::MenuFileNew()
          defaultsname="resources/defaults_windows.xml";
     #endif
     #ifdef Q_OS_LINUX
-        defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
+        defaultsname=m_sApplicationPath+"../resources/defaults_linux.xml";
     #endif
 
     std::ostringstream msg;

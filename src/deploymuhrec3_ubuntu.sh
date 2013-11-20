@@ -6,6 +6,7 @@ DEST="$REPOSPATH/tomography/muhrec3"
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
 mkdir --parent $DEST/Frameworks
+mkdir --parent $DEST/resources
 
 pushd .
 cd $DEST/Frameworks
@@ -41,6 +42,8 @@ cd $DEST/bin
 cd ..
 `$CPCMD $REPOSPATH/tomography/trunk/src/scripts/muhrec3 .`
 chmod +x muhrec3
+
+cp $REPOSPATH/tomography/trunk/src/muhrec3/resources/*.xml .
 popd
 
 
