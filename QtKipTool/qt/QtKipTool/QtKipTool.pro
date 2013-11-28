@@ -46,5 +46,21 @@ else:unix: LIBS += -L$$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/Mo
 INCLUDEPATH += $$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/include
 
-LIBS += -L/usr/lib -lxml2 -ltiff
+LIBS += -L/usr/lib -lxml2 -ltiff -lcfitsio -lgomp
 INCLUDEPATH += /usr/include/libxml2
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lQtAddons
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lQtAddons
+else:symbian: LIBS += -lQtAddons
+else:unix: LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lQtAddons
+
+INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lQtModuleConfigure
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lQtModuleConfigure
+else:symbian: LIBS += -lQtModuleConfigure
+else:unix: LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lQtModuleConfigure
+
+INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release

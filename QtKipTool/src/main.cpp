@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
       else
           msg<<"KipTool is not registered on this computer\n";
 
-      msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate MuhRec.\n";
+      msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate KipTool.\n";
       msg<<"\nActivation code: "<<*license.GetNodeString().begin();
       logger(kipl::logging::Logger::LogError,msg.str());
       QMessageBox mbox;
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
               if (!dir.exists(dir.homePath()+"/.imagingtools")) {
                   dir.mkdir(QDir::homePath()+"/.imagingtools");
               }
-              std::cout<<(dir.homePath()+"/.imagingtools/license_muhrec.dat").toStdString()<<std::endl;
-              QFile::copy(fname,dir.homePath()+"/.imagingtools/license_muhrec.dat");
+              std::cout<<(dir.homePath()+"/.imagingtools/license_kiptool.dat").toStdString()<<std::endl;
+              QFile::copy(fname,dir.homePath()+"/.imagingtools/license_kiptool.dat");
           }
       }
 
