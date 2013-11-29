@@ -29,18 +29,20 @@ private slots:
     void on_combo_plotselector_currentIndexChanged(int index);
     void on_slider_images_sliderMoved(int position);
 
-    void on_MenuFileNew();
-    void on_MenuFileOpen();
-    void on_MenuFileSave();
-    void on_MenuFileSaveAs();
-    void on_MenuFileQuit();
-    void on_MenuStartProcessing();
-    void on_MenuHelpAbout();
+    void on_actionNew_triggered();
+    void on_actionOpen_triggered();
+    void on_actionSave_triggered();
+    void on_actionSave_as_triggered();
+    void on_actionQuit_triggered();
+    void on_actionStart_processing_triggered();
+    void on_actionAbout_triggered();
 
 private:
     void UpdateDialog();
     void UpdateConfig();
     void SetupCallbacks();
+    void UpdateMatrixROI();
+
     Ui::KipToolMainWindow *ui;
 
     KiplProcessConfig m_config;

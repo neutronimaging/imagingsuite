@@ -22,7 +22,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_forms">
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_projectinfo">
            <attribute name="title">
@@ -671,7 +671,7 @@
      <x>0</x>
      <y>0</y>
      <width>1134</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
