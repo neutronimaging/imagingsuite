@@ -23,7 +23,7 @@
 // Main config class
 
 KiplProcessConfig::KiplProcessConfig(void) :
-	logger("KiplProcessConfig")
+    ConfigBase("KiplProcessConfig")
 {
 }
 
@@ -38,7 +38,7 @@ std::string KiplProcessConfig::WriteXML()
 
 	int indent=4;
 	str<<"<kiplprocessing>\n";
-		str<<mUserInformation.WriteXML(indent);
+        str<<UserInformation.WriteXML(indent);
 		str<<mSystemInformation.WriteXML(indent);
 		str<<mImageInformation.WriteXML(indent);
 
@@ -60,72 +60,16 @@ std::string KiplProcessConfig::WriteXML()
 		return str.str();
 }
 
-void KiplProcessConfig::LoadConfigFile(std::string filename)
+void KiplProcessConfig::ParseConfig(xmlTextReaderPtr reader, std::string sName)
 {
-    xmlTextReaderPtr reader;
-    const xmlChar *name;
-    std::string sName;
-    int ret;
+    if (sName=="system")
+        mSystemInformation.ParseXML(reader);
 
-    modules.clear();
-    reader = xmlReaderForFile(filename.c_str(), NULL, 0);
-    if (reader != NULL) {
-    	ret = xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);
+    if (sName=="image")
+        mImageInformation.ParseXML(reader);
 
-        if (name==NULL) {
-            throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
-        }
-        sName=reinterpret_cast<const char *>(name);
-        
-        if (sName!="kiplprocessing") {
-			throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
-        }
-        
-        logger(kipl::logging::Logger::LogVerbose,"Got project");
-    	
-        ret = xmlTextReaderRead(reader);
-        
-        while (ret == 1) {
-        	if (xmlTextReaderNodeType(reader)==1) {
-	            name = xmlTextReaderConstName(reader);
-	            
-	            if (name==NULL) {
-					throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
-	            }
-	            sName=reinterpret_cast<const char *>(name);
-
-				if (sName=="userinformation")
-					mUserInformation.ParseXML(reader);
-
-				if (sName=="system")
-					mSystemInformation.ParseXML(reader);
-
-				if (sName=="image")
-					mImageInformation.ParseXML(reader);
-
-				if (sName=="outimage")
-					mOutImageInformation.ParseXML(reader);
-
-				if (sName=="processchain")
-					ParseProcessChain(reader);
-        	}
-            ret = xmlTextReaderRead(reader);
-        }
-        xmlFreeTextReader(reader);
-        if (ret != 0) {
-        	std::stringstream str;
-        	str<<"KiplProcessConfig failed to parse "<<filename;
-			throw KiplFrameworkException(str.str(),__FILE__,__LINE__);
-        }
-    } else {
-    	std::stringstream str;
-    	str<<"KiplProcessConfig failed to open "<<filename;
-		throw KiplFrameworkException(str.str(),__FILE__,__LINE__);
-    }
-
-    logger(kipl::logging::Logger::LogVerbose,"Parsing parameter file done");
-
+    if (sName=="outimage")
+        mOutImageInformation.ParseXML(reader);
 }
 
 void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
@@ -168,103 +112,6 @@ void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
 	}
 }
 
-// User info class methods
-
-KiplProcessConfig::cUserInformation::cUserInformation() :
-	sOperator("A. Kaestner"),
-	sInstrument("ICON"),
-	sProjectNumber("P11000"),
-	sSample("N/A"),
-	sComment("No comment")
-{
-}
-	
-KiplProcessConfig::cUserInformation::cUserInformation(const KiplProcessConfig::cUserInformation &info) :
-	sOperator(info.sOperator),
-	sInstrument(info.sInstrument),
-	sProjectNumber(info.sProjectNumber),
-	sSample(info.sSample),
-	sComment(info.sComment)
-{
-}
-
-KiplProcessConfig::cUserInformation & KiplProcessConfig::cUserInformation::operator=(const KiplProcessConfig::cUserInformation & info)
-{
-	sOperator      = info.sOperator;
-	sInstrument    = info.sInstrument;
-	sProjectNumber = info.sProjectNumber;
-	sSample        = info.sSample;
-	sComment       = info.sComment;
-
-	return *this;
-}
-
-std::string KiplProcessConfig::cUserInformation::WriteXML(size_t indent)
-{
-	using namespace std;
-	ostringstream str;
-
-	str<<setw(indent)  <<" "<<"<userinformation>"<<endl;
-		str<<setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
-		str<<setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
-		str<<setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
-		str<<setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
-		str<<setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
-	str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
-
-	return str.str();
-}
-
-
-void KiplProcessConfig::cUserInformation::ParseXML(xmlTextReaderPtr reader)
-{
-	const xmlChar *name, *value;
-    int ret = xmlTextReaderRead(reader);
-    std::string sName, sValue;
-    int depth=xmlTextReaderDepth(reader);
-
-    while (ret == 1) {
-    	if (xmlTextReaderNodeType(reader)==1) {
-	        name = xmlTextReaderConstName(reader);
-	        ret=xmlTextReaderRead(reader);
-	        
-	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
-				throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
-	        }
-	        if (value!=NULL)
-	        	sValue=reinterpret_cast<const char *>(value);
-	        else
-	        	sValue="Empty";
-	        sName=reinterpret_cast<const char *>(name);
-
-	        if (sName=="operator") {
-				sOperator=reinterpret_cast<const char *>(value);
-	        }
-
-	        if (sName=="instrument") {
-				sInstrument=reinterpret_cast<const char *>(value);
-	        }
-
-			if (sName=="projectnumber") {
-				sProjectNumber=reinterpret_cast<const char *>(value);
-	        }
-
-			if (sName=="sample") {
-				sSample=reinterpret_cast<const char *>(value);
-	        }
-
-			if (sName=="comment") {
-				if (value!=NULL)
-					sComment=reinterpret_cast<const char *>(value);
-	        }
-
-		}
-        ret = xmlTextReaderRead(reader);
-        if (xmlTextReaderDepth(reader)<depth)
-        	ret=0;
-	}
-}
 
 // System information methods
 

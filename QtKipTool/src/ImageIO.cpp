@@ -17,13 +17,15 @@ kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config)
 		if (config.mImageInformation.bUseROI==true) {
 			kipl::io::ReadImageStack(img,fname,
 				config.mImageInformation.nFirstFileIndex,
-				config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex,1,
+                config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
+                config.mImageInformation.nStepFileIndex,
 				config.mImageInformation.nROI);
 		}
 		else {
 			kipl::io::ReadImageStack(img,fname,
 				config.mImageInformation.nFirstFileIndex,
-				config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex,1,
+                config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
+                config.mImageInformation.nStepFileIndex,
 				NULL);
 		}
 	}

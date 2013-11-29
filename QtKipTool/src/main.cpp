@@ -70,7 +70,6 @@ int main(int argc, char *argv[])
       logger(kipl::logging::Logger::LogError,msg.str());
       QMessageBox mbox;
 
-     // mbox.addButton("Have license file",QMessageBox::AcceptRole);
       mbox.addButton(QMessageBox::Save);
       mbox.addButton(QMessageBox::Abort);
       mbox.setText(QString::fromStdString(msg.str()));
@@ -129,7 +128,7 @@ int RunOffline(QApplication * a)
         KiplFactory factory;
 
         try {
-            config.LoadConfigFile(fname);
+            config.LoadConfigFile(fname,"kiplprocessing");
             engine=factory.BuildEngine(config);
         }
         catch (ModuleException & e) {

@@ -19,27 +19,12 @@
 #include <io/io_stack.h>
 
 #include <ModuleConfig.h>
+#include <ConfigBase.h>
 
-class DLL_EXPORT KiplProcessConfig
+class DLL_EXPORT KiplProcessConfig : public ConfigBase
 {
-protected:
-	kipl::logging::Logger logger;
 
 public:
-	struct DLL_EXPORT cUserInformation {
-		cUserInformation() ;
-		cUserInformation(const cUserInformation &info);
-		cUserInformation & operator=(const cUserInformation & info);
-		std::string WriteXML(size_t indent=0);
-		void ParseXML(xmlTextReaderPtr reader);
-
-		std::string sOperator;
-		std::string sInstrument;
-		std::string sProjectNumber;
-		std::string sSample;
-		std::string sComment;
-	};
-
 	struct DLL_EXPORT cSystemInformation {
 		cSystemInformation();
 		cSystemInformation(const cSystemInformation &a);
@@ -65,6 +50,7 @@ public:
 		size_t nROI[4];
 		size_t nFirstFileIndex;
 		size_t nLastFileIndex;
+        size_t nStepFileIndex;
 	};
 
 	struct DLL_EXPORT cOutImageInformation {
@@ -84,17 +70,14 @@ public:
 	KiplProcessConfig(void);
 	~KiplProcessConfig(void);
 	std::string WriteXML();
-	void LoadConfigFile(std::string configfile);
 
-	cUserInformation      mUserInformation;
 	cSystemInformation    mSystemInformation;
 	cImageInformation     mImageInformation;
 	cOutImageInformation  mOutImageInformation;
 
-	std::list<ModuleConfig> modules;
-
 private:
-	void ParseProcessChain(xmlTextReaderPtr reader);
+    virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName);
+    virtual void ParseProcessChain(xmlTextReaderPtr reader);
 };
 
 #endif

@@ -147,10 +147,10 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 		}
 		m_ResultImage.info.SetMetricX(m_InputImage->info.GetMetricX());
 		m_ResultImage.info.SetMetricY(m_InputImage->info.GetMetricY());
-		m_ResultImage.info.sArtist=m_Config.mUserInformation.sOperator;
-		m_ResultImage.info.sCopyright=m_Config.mUserInformation.sOperator;
+        m_ResultImage.info.sArtist=m_Config.UserInformation.sOperator;
+        m_ResultImage.info.sCopyright=m_Config.UserInformation.sOperator;
 		m_ResultImage.info.sSoftware="Kipl Processing Framework";
-		m_ResultImage.info.sDescription=m_Config.mUserInformation.sSample;
+        m_ResultImage.info.sDescription=m_Config.UserInformation.sSample;
 
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
 		msg.str("");

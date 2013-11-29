@@ -20,22 +20,22 @@ public:
     
 private slots:
     void on_button_browsedatapath_clicked();
-
     void on_button_getROI_clicked();
-
     void on_button_loaddata_clicked();
-
     void on_button_browsedestination_clicked();
-
     void on_check_crop_stateChanged(int arg1);
-
     void on_button_savedata_clicked();
-
     void on_check_showorighist_stateChanged(int arg1);
-
     void on_combo_plotselector_currentIndexChanged(int index);
-
     void on_slider_images_sliderMoved(int position);
+
+    void on_MenuFileNew();
+    void on_MenuFileOpen();
+    void on_MenuFileSave();
+    void on_MenuFileSaveAs();
+    void on_MenuFileQuit();
+    void on_MenuStartProcessing();
+    void on_MenuHelpAbout();
 
 private:
     void UpdateDialog();
