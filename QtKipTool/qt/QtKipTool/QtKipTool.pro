@@ -13,14 +13,17 @@ TEMPLATE = app
 SOURCES += ../../src/main.cpp\
         ../../src/kiptoolmainwindow.cpp \
     ../../src/ImageIO.cpp \
-    ../../src/stdafx.cpp
+    ../../src/stdafx.cpp \
+    ../../src/confighistorydialog.cpp
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
     ../../src/ImageIO.h \
     ../../src/targetver.h \
-    ../../src/stdafx.h
+    ../../src/stdafx.h \
+    ../../src/confighistorydialog.h
 
-FORMS    += ../../src/kiptoolmainwindow.ui
+FORMS    += ../../src/kiptoolmainwindow.ui \
+    ../../src/confighistorydialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl

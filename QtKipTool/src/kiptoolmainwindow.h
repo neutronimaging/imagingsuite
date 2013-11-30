@@ -5,6 +5,8 @@
 #include <logging/logger.h>
 #include <KiplProcessConfig.h>
 
+#include <list>
+
 namespace Ui {
 class KipToolMainWindow;
 }
@@ -18,7 +20,7 @@ public:
     explicit KipToolMainWindow(QWidget *parent = 0);
     ~KipToolMainWindow();
     
-private slots:
+protected slots:
     void on_button_browsedatapath_clicked();
     void on_button_getROI_clicked();
     void on_button_loaddata_clicked();
@@ -35,6 +37,8 @@ private slots:
     void on_actionSave_as_triggered();
     void on_actionQuit_triggered();
     void on_actionStart_processing_triggered();
+    void on_actionProcessing_history_triggered();
+    void on_actionClear_History_triggered();
     void on_actionAbout_triggered();
 
 private:
@@ -42,10 +46,17 @@ private:
     void UpdateConfig();
     void SetupCallbacks();
     void UpdateMatrixROI();
+    void LoadDefaults();
+    void SaveConfiguration(QString qfname);
 
     Ui::KipToolMainWindow *ui;
 
+    QString m_sFileName;
     KiplProcessConfig m_config;
+    kipl::base::TImage<float,3> m_OriginalImage;
+    kipl::base::TImage<float,3> m_ProcessedImage;
+
+    std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };
 
 #endif // KIPTOOLMAINWINDOW_H

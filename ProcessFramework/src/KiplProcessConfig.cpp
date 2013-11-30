@@ -189,7 +189,8 @@ KiplProcessConfig::cImageInformation::cImageInformation() :
 		sSourceFileMask("slice_####.tif"),
 		bUseROI(false),
 		nFirstFileIndex(1),
-		nLastFileIndex(100)
+        nLastFileIndex(100),
+        nStepFileIndex(1)
 {
 	nROI[0]=nROI[1]=0;
 	nROI[2]=nROI[3]=100;
@@ -200,7 +201,8 @@ KiplProcessConfig::cImageInformation::cImageInformation(const cImageInformation 
 	sSourceFileMask(a.sSourceFileMask),
 	bUseROI(a.bUseROI),
 	nFirstFileIndex(a.nFirstFileIndex),
-	nLastFileIndex(a.nLastFileIndex)
+    nLastFileIndex(a.nLastFileIndex),
+    nStepFileIndex(a.nStepFileIndex)
 {
 	nROI[0]=a.nROI[0];
 	nROI[1]=a.nROI[1];

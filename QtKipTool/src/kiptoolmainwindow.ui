@@ -22,7 +22,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_forms">
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_projectinfo">
            <attribute name="title">
@@ -526,7 +526,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_plots">
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_histograms">
            <property name="enabled">
@@ -552,10 +552,19 @@
             </item>
            </layout>
           </widget>
-          <widget class="QtAddons::ImageViewerWidget" name="tab_differenceimage">
+          <widget class="QWidget" name="tab_differenceimage">
            <attribute name="title">
             <string>Difference</string>
            </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QtAddons::ImageViewerWidget" name="imageviewer_difference" native="true"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_plots">
            <attribute name="title">
@@ -671,7 +680,7 @@
      <x>0</x>
      <y>0</y>
      <width>1134</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -689,6 +698,8 @@
      <string>Process</string>
     </property>
     <addaction name="actionStart_processing"/>
+    <addaction name="actionProcessing_history"/>
+    <addaction name="actionClear_History"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -745,6 +756,16 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionProcessing_history">
+   <property name="text">
+    <string>Processing history</string>
+   </property>
+  </action>
+  <action name="actionClear_History">
+   <property name="text">
+    <string>Clear History</string>
    </property>
   </action>
  </widget>
