@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <logging/logger.h>
 #include <KiplProcessConfig.h>
+#include <KiplEngine.h>
+#include <KiplFactory.h>
 
 #include <list>
 
@@ -50,11 +52,19 @@ private:
     void SaveConfiguration(QString qfname);
 
     Ui::KipToolMainWindow *ui;
+    KiplEngine *m_Engine;
+    KiplFactory m_Factory;
+
+    std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,float> > > m_PlotList;
+    std::map<std::string, kipl::containers::PlotData<float,size_t> > m_HistogramList;
+    kipl::containers::PlotData<float,size_t> m_OriginalHistogram;
+
 
     QString m_sFileName;
     KiplProcessConfig m_config;
     kipl::base::TImage<float,3> m_OriginalImage;
-    kipl::base::TImage<float,3> m_ProcessedImage;
+    bool m_bRescaleViewers;
+    bool m_bJustLoaded;
 
     std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };

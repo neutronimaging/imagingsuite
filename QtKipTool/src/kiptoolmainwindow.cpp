@@ -2,9 +2,10 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-
+#include <KiplFrameworkException.h>
 #include <ModuleException.h>
 #include <utilities/TimeDate.h>
+#include <math/image_statistics.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -16,7 +17,10 @@ KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("KipToolMainWindow"),
     ui(new Ui::KipToolMainWindow),
-    m_sFileName("noname.xml")
+    m_sFileName("noname.xml"),
+    m_Engine(NULL),
+    m_bRescaleViewers(false),
+    m_bJustLoaded(false)
 {
     ui->setupUi(this);
     logger.AddLogTarget(*(ui->widget_logviewer));
@@ -74,7 +78,6 @@ void KipToolMainWindow::LoadDefaults()
         m_config.mImageInformation.sSourcePath         = QDir::homePath().toStdString();
         m_config.mOutImageInformation.sDestinationPath = QDir::homePath().toStdString();
     }
-
 }
 
 
@@ -178,11 +181,15 @@ void KipToolMainWindow::on_button_loaddata_clicked()
     UpdateConfig();
     try {
         m_OriginalImage = LoadVolumeImage(m_config);
-        m_ProcessedImage = m_OriginalImage;
-        m_ProcessedImage.Clone();
+        if (m_Engine!=NULL) {
+            delete m_Engine;
+            m_Engine = NULL;
+        }
+
         ui->slider_images->setMinimum(0);
         ui->slider_images->setMaximum(m_OriginalImage.Size(2)-1);
         ui->slider_images->setValue(0);
+        m_bJustLoaded = true;
         on_slider_images_sliderMoved(0);
         // Todo: Show histogram...
     }
@@ -230,19 +237,47 @@ logger(kipl::logging::Logger::LogMessage,"plot selector index changed");
 
 void KipToolMainWindow::on_slider_images_sliderMoved(int position)
 {
-    if (1<m_OriginalImage.Size()) {
-        ui->imageviewer_original->set_image(m_OriginalImage.GetLinePtr(0,position),m_OriginalImage.Dims());
-    }
-    if (1<m_ProcessedImage.Size()) {
-        ui->imageviewer_processed->set_image(m_ProcessedImage.GetLinePtr(0,position),m_ProcessedImage.Dims());
-        if ((m_OriginalImage.Size(0)==m_ProcessedImage.Size(0)) && (m_OriginalImage.Size(0)==m_ProcessedImage.Size(0))) {
-            kipl::base::TImage<float,2> diff(m_OriginalImage.Dims());
+    if ((m_OriginalImage.Size()!=0) && (position<m_OriginalImage.Size(2)) && (0<=position)) {
+        float lo = 0.0f;
+        float hi = 0.0f;
+        if (m_bJustLoaded) {
+            m_bJustLoaded = false;
+            kipl::math::minmax(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),&lo,&hi);
+        }
+        else
+            ui->imageviewer_original->get_levels(&lo,&hi);
 
-            for (int i=0; i<diff.Size(); i++) {
-                diff[i]=m_ProcessedImage.GetLinePtr(0,position)[i]-m_OriginalImage.GetLinePtr(0,position)[i];
+        ui->imageviewer_original->set_image(m_OriginalImage.GetLinePtr(0,position),m_OriginalImage.Dims(),lo,hi);
+        if (m_Engine!=NULL) {
+            kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
 
+            if ((result.Size(0)==m_OriginalImage.Size(0)) &&
+                (result.Size(1)==m_OriginalImage.Size(1)) &&
+                (result.Size(2)==m_OriginalImage.Size(2)))
+            {
+                if (m_bRescaleViewers) {
+                    ui->imageviewer_processed->set_image(result.GetLinePtr(0,position),result.Dims());
+                    m_bRescaleViewers=false;
+                }
+                else {
+                    ui->imageviewer_processed->get_levels(&lo,&hi);
+                    ui->imageviewer_processed->set_image(result.GetLinePtr(0,position),result.Dims(),lo,hi);
+                }
+
+                kipl::base::TImage<float,2> diff(result.Dims());
+                float *pDiff=diff.GetDataPtr();
+                float *pRes=result.GetLinePtr(0,position);
+                float *pImg=m_OriginalImage.GetLinePtr(0,position);
+
+                for (int i=0; i<diff.Size(); i++) {
+                        pDiff[i]=pRes[i]-pImg[i];
+                }
+                ui->imageviewer_difference->set_image(pDiff,diff.Dims());
             }
-            ui->imageviewer_difference->set_image(diff.GetDataPtr(),diff.Dims());
+        }
+        else {
+            ui->imageviewer_processed->clear_viewer();
+            ui->imageviewer_difference->clear_viewer();
         }
     }
 }
@@ -314,11 +349,125 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
     UpdateConfig();
     QString qfname=QDir::homePath()+"/.imagingtools/CurrentKIPToolConfig.xml";
     SaveConfiguration(qfname);
-//  todo: Start the processing
+//  Start the processing
+    std::ostringstream msg;
 
-    kipl::base::TImage<float,2> img(m_ProcessedImage.Dims());
+
+    if (m_OriginalImage.Size()==0) {
+        QMessageBox dlg;
+        dlg.setText("Please load an image before you start processing!");
+        dlg.exec();
+        return;
+    }
+
+    if (m_config.modules.empty()) {
+        QMessageBox dlg;
+        dlg.setText("There are no modules in the process chain.");
+        dlg.exec();
+        return;
+    }
+
+    if (m_Engine) {
+        delete m_Engine;
+        m_Engine=NULL;
+    }
+
+    bool bBuildFailed=false;
+
+    try {
+        m_Engine=m_Factory.BuildEngine(m_config);
+    }
+    catch (ModuleException &e) {
+        bBuildFailed=true;
+        msg.str("");
+        msg<<"ModuleException: "<<e.what();
+    }
+    catch (KiplFrameworkException &e) {
+        bBuildFailed=true;
+        msg.str("");
+        msg<<"KiplFrameworkException: "<<e.what();
+    }
+    catch (kipl::base::KiplException &e) {
+        bBuildFailed=true;
+        msg.str("");
+        msg<<"KiplException: "<<e.what();
+    }
+    catch (std::exception &e) {
+        bBuildFailed=true;
+        msg.str("");
+        msg<<"STL Exception: "<<e.what();
+    }
+    catch (...) {
+        bBuildFailed=true;
+        msg.str("");
+        msg<<"Unhandled exception";
+    }
+
+    if (bBuildFailed) {
+        logger(kipl::logging::Logger::LogError,msg.str());
+        QMessageBox dlg;
+
+        dlg.setText("Failed to build the process chain.");
+        dlg.exec();
+        return;
+    }
+
+    logger(kipl::logging::Logger::LogMessage,"The process chain was built successfully.");
+
+    bool bExecutionFailed=false;
+    m_PlotList.clear();
+    m_HistogramList.clear();
+
+    msg.str("");
+    try {
+        m_Engine->Run(&m_OriginalImage);
+
+        m_PlotList=m_Engine->GetPlots();
+        m_HistogramList=m_Engine->GetHistograms();
+    }
+    catch (ModuleException &e) {
+        bBuildFailed=true;
+        msg.str("");
+        msg<<"ModuleException: "<<e.what();
+    }
+    catch (KiplFrameworkException &e) {
+        bExecutionFailed=true;
+        msg<<"KiplFrameworkException: "<<e.what();
+    }
+    catch (kipl::base::KiplException &e) {
+        bExecutionFailed=true;
+        msg<<"KiplException: "<<e.what();
+    }
+    catch (std::exception &e) {
+        bExecutionFailed=true;
+        msg<<"STL Exception: "<<e.what();
+    }
+    catch (...) {
+        bExecutionFailed=true;
+        msg<<"Unhandled exception";
+    }
+
+    if (bExecutionFailed) {
+        logger(kipl::logging::Logger::LogError,msg.str());
+        QMessageBox dlg;
+        dlg.setText("The process chain exectution failed");
+        dlg.exec();
+        return;
+    }
+
+    logger(kipl::logging::Logger::LogMessage,"The process chain ended successfully");
+
+    m_bRescaleViewers=true;
+    on_slider_images_sliderMoved(ui->slider_images->value());
+    //UpdatePlotView();
+    //UpdateHistogramView();
+
+//  post processing admin
+    kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
+    kipl::base::TImage<float,2> img(result.Dims());
+
     m_config.UserInformation.sDate = kipl::utilities::TimeStamp();
-    memcpy(img.GetDataPtr(),m_ProcessedImage.GetLinePtr(0,m_ProcessedImage.Size(2)/2),img.Size()*sizeof(float));
+    memcpy(img.GetDataPtr(),result.GetLinePtr(0,result.Size(2)/2),img.Size()*sizeof(float));
     m_configHistory.push_back(make_pair(m_config,img));
 
 }
