@@ -18,7 +18,7 @@ DLL_EXPORT void * GetModule(const char *application, const char * name)
 		std::string sName=name;
 
 		if (sName=="ISSfilter")
-			return new PoreSizeMapModule;
+            return new ISSfilterModule;
 	}
 
 	return NULL;
@@ -56,7 +56,7 @@ DLL_EXPORT int GetModuleList(const char *application, void *listptr)
 
 	std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-	PoreSizeMapModule iss;
+    ISSfilterModule iss;
 	modulelist->operator []("ISSfilter")=iss.GetParameters();
 
 	return 0;

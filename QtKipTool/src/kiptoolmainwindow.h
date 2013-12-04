@@ -49,6 +49,8 @@ private:
     void SetupCallbacks();
     void UpdateMatrixROI();
     void LoadDefaults();
+    void UpdateHistogramView();
+    void UpdatePlotView();
     void SaveConfiguration(QString qfname);
 
     Ui::KipToolMainWindow *ui;

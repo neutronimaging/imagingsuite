@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 
       msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate KipTool.\n";
       msg<<"\nActivation code: "<<*license.GetNodeString().begin();
+      msg<<"KipTool is <b>not</b> a free software and is only available if you add Anders Kaestner as coauthor in the resulting publications.";
       logger(kipl::logging::Logger::LogError,msg.str());
       QMessageBox mbox;
 

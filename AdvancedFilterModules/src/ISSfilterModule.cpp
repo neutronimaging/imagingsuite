@@ -17,7 +17,7 @@
 #include <scalespace/ISSfilterQ3D.h>
 #include <containers/PlotData.h>
 
-PoreSizeMapModule::PoreSizeMapModule() :
+ISSfilterModule::ISSfilterModule() :
 KiplProcessModuleBase("ISSfilterModule", true),
 	m_bAutoScale(false),	
 	m_fSlope(1.0f),
@@ -27,31 +27,35 @@ KiplProcessModuleBase("ISSfilterModule", true),
 	m_fAlpha(0.25f),
 	m_nIterations(10),
 	m_sIterationPath("./issiteration_####.tif"),
-	m_bSaveIterations(false)
+    m_bSaveIterations(false),
+    m_eRegularization(akipl::scalespace::RegularizationTV2),
+    m_eInitialImage(akipl::scalespace::InitialImageOriginal)
 {
 
 }
 
-PoreSizeMapModule::~PoreSizeMapModule() {
+ISSfilterModule::~ISSfilterModule() {
 }
 
 
-int PoreSizeMapModule::Configure(std::map<std::string, std::string> parameters)
+int ISSfilterModule::Configure(std::map<std::string, std::string> parameters)
 {
-	m_fSlope = GetFloatParameter(parameters,"slope");
-	m_fIntercept = GetFloatParameter(parameters,"intercept");
-	m_bAutoScale = kipl::strings::string2bool(GetStringParameter(parameters,"autoscale"));
-	m_fTau       = GetFloatParameter(parameters,"tau");
-	m_fLambda    = GetFloatParameter(parameters,"lambda");
-	m_fAlpha     = GetFloatParameter(parameters,"alpha");
-	m_nIterations = GetIntParameter(parameters,"iterations");
+    m_fSlope          = GetFloatParameter(parameters,"slope");
+    m_fIntercept      = GetFloatParameter(parameters,"intercept");
+    m_bAutoScale      = kipl::strings::string2bool(GetStringParameter(parameters,"autoscale"));
+    m_fTau            = GetFloatParameter(parameters,"tau");
+    m_fLambda         = GetFloatParameter(parameters,"lambda");
+    m_fAlpha          = GetFloatParameter(parameters,"alpha");
+    m_nIterations     = GetIntParameter(parameters,"iterations");
 	m_bSaveIterations = kipl::strings::string2bool(GetStringParameter(parameters,"saveiterations"));
-	m_sIterationPath = parameters["iterationpath"];
+    m_sIterationPath  = parameters["iterationpath"];
+    string2enum(GetStringParameter(parameters,"regularization"), m_eRegularization);
+    string2enum(GetStringParameter(parameters,"initialimage"),   m_eInitialImage);
 
 	return 0;
 }
 
-std::map<std::string, std::string> PoreSizeMapModule::GetParameters()
+std::map<std::string, std::string> ISSfilterModule::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
 
@@ -66,16 +70,20 @@ std::map<std::string, std::string> PoreSizeMapModule::GetParameters()
 
 	parameters["saveiterations"] = kipl::strings::bool2string(m_bSaveIterations);
 	parameters["iterationpath"]  = m_sIterationPath;
-
+    parameters["regularization"] = enum2string(m_eRegularization);
+    parameters["initialimage"]   = enum2string(m_eInitialImage);
 
 	return parameters;
 }
 
-int PoreSizeMapModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int ISSfilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
 	ScaleImage(img,true);
 
 	akipl::scalespace::ISSfilterQ3D<float> filter;
+
+    filter.eInitialImage = m_eInitialImage;
+    filter.m_eRegularization = m_eRegularization;
 	
 	filter.Process(img,m_fTau,m_fLambda,m_fAlpha,m_nIterations,m_bSaveIterations,m_sIterationPath);
 
@@ -90,7 +98,7 @@ int PoreSizeMapModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<s
 	return 0;
 }
 
-void PoreSizeMapModule::ScaleImage(kipl::base::TImage<float,3> & img, bool forward)
+void ISSfilterModule::ScaleImage(kipl::base::TImage<float,3> & img, bool forward)
 {
 	float slope=1.0f, intercept=0.0f;
 

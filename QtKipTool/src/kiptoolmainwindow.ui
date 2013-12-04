@@ -526,7 +526,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_plots">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_histograms">
            <property name="enabled">
@@ -540,13 +540,6 @@
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
                <widget class="QtAddons::Plotter" name="plotter_histogram" native="true"/>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="check_showorighist">
-                <property name="text">
-                 <string>Show original histogram</string>
-                </property>
-               </widget>
               </item>
              </layout>
             </item>

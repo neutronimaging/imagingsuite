@@ -9,11 +9,12 @@
 #define ISSFILTERMODULE_H_
 
 #include <KiplProcessModuleBase.h>
+#include <scalespace/filterenums.h>
 
-class PoreSizeMapModule: public KiplProcessModuleBase {
+class ISSfilterModule: public KiplProcessModuleBase {
 public:
-	PoreSizeMapModule();
-	virtual ~PoreSizeMapModule();
+    ISSfilterModule();
+    virtual ~ISSfilterModule();
 	
 	virtual int Configure(std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
@@ -32,6 +33,8 @@ protected:
 	int m_nIterations;
 	std::string m_sIterationPath;
 	bool m_bSaveIterations;
+    akipl::scalespace::eRegularizationType m_eRegularization;
+    akipl::scalespace::eInitialImageType m_eInitialImage;
 };
 
 #endif /* DATASCALER_H_ */

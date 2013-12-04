@@ -6,6 +6,7 @@
 #include <ModuleException.h>
 #include <utilities/TimeDate.h>
 #include <math/image_statistics.h>
+#include <base/thistogram.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -17,8 +18,9 @@ KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("KipToolMainWindow"),
     ui(new Ui::KipToolMainWindow),
-    m_sFileName("noname.xml"),
     m_Engine(NULL),
+    m_OriginalHistogram(1024),
+    m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
     m_bJustLoaded(false)
 {
@@ -162,6 +164,44 @@ void KipToolMainWindow::on_button_getROI_clicked()
     }
 }
 
+void KipToolMainWindow::UpdateHistogramView()
+{
+    std::map<std::string, kipl::containers::PlotData<float,size_t> >::iterator it;
+    int idx=1;
+
+    if (!m_HistogramList.empty()) {
+
+        for (it=m_HistogramList.begin(); it!=m_HistogramList.end(); it++, idx++) {
+            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),it->second.Size());
+        }
+
+        ui->plotter_histogram->setCurveData(0,m_OriginalHistogram.GetX(), m_OriginalHistogram.GetY(),m_OriginalHistogram.Size());
+    }
+    else {
+        ui->plotter_histogram->clearAllCurves();
+    }
+    //plotviewer_histogram.show_all();
+}
+
+void KipToolMainWindow::UpdatePlotView()
+{
+    std::map<std::string, kipl::containers::PlotData<float,float> >::iterator plot_it;
+    std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,float> > >::iterator module_it;
+    int idx=0;
+
+    if (!m_PlotList.empty()) {
+        for (module_it=m_PlotList.begin(); module_it!=m_PlotList.end(); module_it++) {
+            ui->plotter_plots->clearAllCurves();
+            idx=0;
+            for (plot_it=module_it->second.begin(); plot_it!=module_it->second.end(); plot_it++,idx++) {
+                ui->plotter_plots->setCurveData(idx,plot_it->second.GetX(),plot_it->second.GetY(),plot_it->second.Size());
+            }
+        }
+    }
+
+        //plotviewer_plots.show_all();
+}
+
 void KipToolMainWindow::UpdateMatrixROI()
 {
     logger(kipl::logging::Logger::LogMessage,"Update MatrixROI");
@@ -192,6 +232,13 @@ void KipToolMainWindow::on_button_loaddata_clicked()
         m_bJustLoaded = true;
         on_slider_images_sliderMoved(0);
         // Todo: Show histogram...
+        float *axis = new float[m_OriginalHistogram.Size()];
+        size_t *bins = new size_t[m_OriginalHistogram.Size()];
+        kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),bins,m_OriginalHistogram.Size(),0,0,axis);
+
+        m_OriginalHistogram.SetData(axis,bins,m_OriginalHistogram.Size());
+        delete [] axis;
+        delete [] bins;
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
@@ -221,8 +268,15 @@ void KipToolMainWindow::on_check_crop_stateChanged(int arg1)
 void KipToolMainWindow::on_button_savedata_clicked()
 {
     logger(kipl::logging::Logger::LogMessage,"Save processed data");
-
-    // Todo: Implement the processed data
+    if (m_Engine!=NULL) {
+        UpdateConfig();
+        m_Engine->SaveImage(&m_config.mOutImageInformation);
+    }
+    else {
+        QMessageBox dlg;
+        dlg.setText("There is not processed data to save");
+        dlg.exec();
+    }
 }
 
 void KipToolMainWindow::on_check_showorighist_stateChanged(int arg1)
@@ -459,8 +513,8 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
 
     m_bRescaleViewers=true;
     on_slider_images_sliderMoved(ui->slider_images->value());
-    //UpdatePlotView();
-    //UpdateHistogramView();
+    UpdatePlotView();
+    UpdateHistogramView();
 
 //  post processing admin
     kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
