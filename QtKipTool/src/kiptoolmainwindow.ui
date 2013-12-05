@@ -22,7 +22,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_forms">
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_projectinfo">
            <attribute name="title">
@@ -505,6 +505,30 @@
             <item row="7" column="3">
              <widget class="QLineEdit" name="edit_destinationmask"/>
             </item>
+            <item row="7" column="4">
+             <widget class="QComboBox" name="combo_FileType">
+              <item>
+               <property name="text">
+                <string>Default</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>8bit TIFF</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>16bit TIFF</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>float TIFF</string>
+               </property>
+              </item>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="tab_7">
@@ -673,7 +697,7 @@
      <x>0</x>
      <y>0</y>
      <width>1134</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

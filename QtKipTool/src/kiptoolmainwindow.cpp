@@ -125,6 +125,12 @@ void KipToolMainWindow::UpdateConfig()
     m_config.mImageInformation.nROI[3] = ui->spin_crop3->value();
 
     m_config.modules = ui->widget_moduleconfigurator->GetModules();
+    switch (ui->combo_FileType->currentIndex()) {
+        case 0: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
+        case 1: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits; break;
+        case 2: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
+        case 3: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat; break;
+    }
 }
 
 void KipToolMainWindow::SetupCallbacks()
