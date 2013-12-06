@@ -100,7 +100,15 @@ void KipToolMainWindow::UpdateDialog()
     ui->spin_crop1->setValue(m_config.mImageInformation.nROI[1]);
     ui->spin_crop2->setValue(m_config.mImageInformation.nROI[2]);
     ui->spin_crop3->setValue(m_config.mImageInformation.nROI[3]);
+    int idx=0;
+    switch (m_config.mOutImageInformation.eResultImageType) {
+        case kipl::io::TIFF8bits  : idx=1; break;
+        case kipl::io::TIFF16bits : idx=2; break;
+        case kipl::io::TIFFfloat  : idx=3; break;
+        default: idx=0;
+    }
 
+    ui->combo_FileType->setCurrentIndex(idx);
     ui->widget_moduleconfigurator->SetModules(m_config.modules);
 }
 
@@ -126,7 +134,14 @@ void KipToolMainWindow::UpdateConfig()
 
     m_config.modules = ui->widget_moduleconfigurator->GetModules();
     switch (ui->combo_FileType->currentIndex()) {
-        case 0: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
+        case 0: {
+            switch (m_OriginalImage.info.nBitsPerSample) {
+                case 8  : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits;  break;
+                case 16 : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
+                case 32 : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat;  break;
+                default : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
+            }
+        }
         case 1: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits; break;
         case 2: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
         case 3: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat; break;
@@ -186,7 +201,6 @@ void KipToolMainWindow::UpdateHistogramView()
     else {
         ui->plotter_histogram->clearAllCurves();
     }
-    //plotviewer_histogram.show_all();
 }
 
 void KipToolMainWindow::UpdatePlotView()
@@ -204,8 +218,6 @@ void KipToolMainWindow::UpdatePlotView()
             }
         }
     }
-
-        //plotviewer_plots.show_all();
 }
 
 void KipToolMainWindow::UpdateMatrixROI()
@@ -283,11 +295,6 @@ void KipToolMainWindow::on_button_savedata_clicked()
         dlg.setText("There is not processed data to save");
         dlg.exec();
     }
-}
-
-void KipToolMainWindow::on_check_showorighist_stateChanged(int arg1)
-{
-logger(kipl::logging::Logger::LogMessage,"Show orig hist");
 }
 
 void KipToolMainWindow::on_combo_plotselector_currentIndexChanged(int index)

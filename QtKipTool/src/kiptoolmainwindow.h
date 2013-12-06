@@ -29,7 +29,6 @@ protected slots:
     void on_button_browsedestination_clicked();
     void on_check_crop_stateChanged(int arg1);
     void on_button_savedata_clicked();
-    void on_check_showorighist_stateChanged(int arg1);
     void on_combo_plotselector_currentIndexChanged(int index);
     void on_slider_images_sliderMoved(int position);
 
