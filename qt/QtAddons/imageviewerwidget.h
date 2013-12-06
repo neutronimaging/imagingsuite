@@ -13,6 +13,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QList>
 
 namespace QtAddons {
 
@@ -21,6 +22,9 @@ class ImageViewerWidget : public QWidget
     Q_OBJECT
 
     kipl::logging::Logger logger;
+    static QList<ImageViewerWidget *> s_ViewerList;
+    static int m_nViewerCounter;
+    QString m_sViewerName;
 public:
     enum eViewerMouseModes {
         ViewerROI=0,
@@ -37,7 +41,7 @@ public:
 
    // explicit ImageViewerWidget(QWidget *parent = 0);
     ImageViewerWidget(QWidget *parent = 0);
-    //~ImageViewerWidget();
+    ~ImageViewerWidget();
 
     void set_image(float const * const data, size_t const * const dims);
     void set_image(float const * const data, size_t const * const dims, const float low, const float high);
@@ -52,6 +56,8 @@ public:
     void get_levels(float *level_low, float *level_high);
     void get_minmax(float *level_low, float *level_high);
     void show_clamped(bool show);
+    QString viewerName();
+    void set_viewerName(QString &name);
     QRect get_marked_roi();
     const QVector<QPointF> & get_histogram();
 

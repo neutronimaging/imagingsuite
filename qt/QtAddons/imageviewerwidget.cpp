@@ -8,6 +8,9 @@
 
 namespace QtAddons {
 
+int ImageViewerWidget::m_nViewerCounter = -1;
+QList<ImageViewerWidget *> ImageViewerWidget::s_ViewerList;
+
 ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
@@ -24,14 +27,28 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     setFocusPolicy(Qt::ClickFocus);
     setCursor(Qt::CrossCursor);
     this->setMouseTracking(true);
+    m_nViewerCounter++;
+    m_sViewerName = QString("ImageViewer ")+QString::number(m_nViewerCounter);
+    s_ViewerList.push_back(this);
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));
 }
 
-//ImageViewerWidget::~ImageViewerWidget()
-//{
-//}
+ImageViewerWidget::~ImageViewerWidget()
+{
+    s_ViewerList.removeOne(this);
+}
+
+QString ImageViewerWidget::viewerName()
+{
+    return m_sViewerName;
+}
+
+void ImageViewerWidget::set_viewerName(QString &name)
+{
+    m_sViewerName = name;
+}
 
 QSize ImageViewerWidget::minimumSizeHint() const
 {
