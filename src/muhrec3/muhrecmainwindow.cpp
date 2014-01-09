@@ -202,11 +202,23 @@ void MuhRecMainWindow::PreviewProjection(int x)
                             static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                             static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
+            float lo,hi;
+
             if (x < 0) {
-                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims());
+                const size_t NHist=512;
+                size_t hist[NHist];
+                float axis[NHist];
+                size_t nLo=0;
+                size_t nHi=0;
+                kipl::base::Histogram(m_PreviewImage.GetDataPtr(),m_PreviewImage.Size(),hist,NHist,0.0f,0.0f,axis);
+                kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+                lo=axis[nLo];
+                hi=axis[nHi];
+
+                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
             }
             else {
-                float lo,hi;
+
                 ui->projectionViewer->get_levels(&lo,&hi);
                 ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
             }
@@ -886,6 +898,12 @@ void MuhRecMainWindow::MenuReconstructStart()
                     DisplaySlice();
                 }
                 else {
+                    std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
+                    kipl::strings::filenames::CheckPathSlashes(fname,false);
+                    std::ofstream configfile(fname.c_str());
+                    configfile<<m_Config.WriteXML();
+                    configfile.close();
+
                     delete m_pEngine;
                     m_pEngine=NULL;
                 }

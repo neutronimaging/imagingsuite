@@ -5,5 +5,7 @@ fname=~/muhrec3_`uname -s`_`uname -m`_`date +%Y%m%d`_rev`svn info |grep Revision
 echo $fname
 pushd .
 cd ~/repos/tomography
-tar -jcvhf $fname muhrec3
-popd 
+#tar -jcvhf $fname muhrec3
+tar -jcvf $fname muhrec3
+popd
+ 

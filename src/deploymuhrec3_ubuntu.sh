@@ -43,7 +43,7 @@ cd ..
 `$CPCMD $REPOSPATH/tomography/trunk/src/scripts/muhrec3 .`
 chmod +x muhrec3
 
-cp $REPOSPATH/tomography/trunk/src/muhrec3/resources/*.xml .
+cp $REPOSPATH/tomography/trunk/src/muhrec3/resources/*.xml resources
 popd
 
 
