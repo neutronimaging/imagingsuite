@@ -31,11 +31,11 @@ tstCovariance::tstCovariance()
     size_t dims[2]={100,6};
     kipl::base::TImage<float,2> img(dims);
     img=0.0f;
-    for (int i=0; i<dims[1]; i++) {
+    for (int i=0; i<int(dims[1]); i++) {
         float *d=img.GetLinePtr(i);
         float w=2*(i+1)*3.1415926f/float(dims[0]);
  //       std::cout<<"w="<<w<<std::endl;
-        for (int j=0; j<dims[0]; j++) {
+        for (int j=0; j<int(dims[0]); j++) {
             d[j]=sin(j*w)+i;
         }
     }
@@ -68,8 +68,8 @@ void tstCovariance::testSymmetry()
 
     TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
 
-    for (int i=0; i<img.Size(1); i++) {
-        for (int j=i; j<img.Size(1); j++) {
+    for (int i=0; i<int(img.Size(1)); i++) {
+        for (int j=i; j<int(img.Size(1)); j++) {
             QCOMPARE(C[i][j],C[j][i]);
         }
     }
@@ -85,7 +85,7 @@ void tstCovariance::testIntactData()
 
     TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
 
-    for (int i=0; i<img.Size(); i++)
+    for (int i=0; i<int(img.Size()); i++)
         QCOMPARE(img[i],sin2D[i]);
 
 }
