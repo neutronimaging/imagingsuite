@@ -123,6 +123,7 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 
 	KiplProcessConfig::cOutImageInformation *config= info==NULL ? &m_Config.mOutImageInformation : info;
 
+    m_Config.mOutImageInformation=*config;
 
 	kipl::strings::filenames::CheckPathSlashes(config->sDestinationPath,true);
 		fname=config->sDestinationPath+config->sDestinationFileMask;
@@ -164,6 +165,17 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 				minval,maxval,
 				0,m_ResultImage.Size(2),m_Config.mImageInformation.nFirstFileIndex,
 				config->eResultImageType,plane);
+
+        std::string confname = config->sDestinationPath + "kiplscript.xml";
+
+        std::ofstream conffile(confname.c_str());
+
+        if (conffile.is_open()) {
+            conffile<<m_Config.WriteXML();
+            conffile.flush();
+        }
+
+
 	}
 	catch (kipl::base::KiplException &e) {
 		msg<<"KiplException with message: "<<e.what();

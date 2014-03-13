@@ -9,6 +9,10 @@ QT       -= core gui
 TARGET = BaseModules
 TEMPLATE = lib
 
+QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+QMAKE_LFLAGS += -lgomp
+LIBS += -lgomp
+
 DEFINES += BASEMODULES_LIBRARY
 
 SOURCES += \

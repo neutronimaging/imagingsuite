@@ -9,6 +9,9 @@ QT       += core gui
 TARGET = QtKipTool
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+QMAKE_LFLAGS += -lgomp
+LIBS += -lgomp
 
 SOURCES += ../../src/main.cpp\
         ../../src/kiptoolmainwindow.cpp \
