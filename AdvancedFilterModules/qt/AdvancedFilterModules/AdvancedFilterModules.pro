@@ -15,13 +15,15 @@ SOURCES += \
     ../../src/stdafx.cpp \
     ../../src/ISSfilterModule.cpp \
     ../../src/dllmain.cpp \
-    ../../src/AdvancedFilterModules.cpp
+    ../../src/AdvancedFilterModules.cpp \
+    ../../src/NonLinDiffusion.cpp
 
 HEADERS += \
     ../../src/targetver.h \
     ../../src/stdafx.h \
     ../../src/ISSfilterModule.h \
-    ../../src/AdvancedFilterModules.h
+    ../../src/AdvancedFilterModules.h \
+    ../../src/NonLinDiffusion.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

@@ -18,6 +18,7 @@
 #include <string>
 #include <sstream>
 #include "ISSfilterModule.h"
+#include "NonLinDiffusion.h"
 #include <logging/logger.h>
 
 
@@ -31,6 +32,10 @@ DLL_EXPORT void * GetModule(const char *application, const char * name)
 
 		if (sName=="ISSfilter")
             return new ISSfilterModule;
+
+        if (sName=="NonLinDiffusion")
+            return new NonLinDiffusionModule;
+
 	}
 
 	return NULL;
@@ -71,5 +76,8 @@ DLL_EXPORT int GetModuleList(const char *application, void *listptr)
     ISSfilterModule iss;
 	modulelist->operator []("ISSfilter")=iss.GetParameters();
 
-	return 0;
+    NonLinDiffusionModule nld;
+    modulelist->operator []("NonLinDiffusion")=nld.GetParameters();
+
+    return 0;
 }
