@@ -9,9 +9,12 @@ QT       -= core gui
 TARGET = PorespaceModules
 TEMPLATE = lib
 
-QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
-QMAKE_LFLAGS += -lgomp
-LIBS += -lgomp
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+}
+
 
 DEFINES += PORESPACEMODULES_LIBRARY
 

@@ -20,6 +20,10 @@
 #include "kiptoolmainwindow.h"
 #include "ImageIO.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 int RunGUI(QApplication * a);
 int RunOffline(QApplication * a);
 
@@ -94,6 +98,9 @@ int main(int argc, char *argv[])
       return -1;
   }
 
+#ifdef _OPENMP
+    omp_set_nested(1);
+#endif
 
     if (argc<2) {
         return RunGUI(&a);
@@ -119,7 +126,6 @@ int RunOffline(QApplication * a)
     std::ostringstream msg;
     kipl::logging::Logger logger("QtKipTool::RunOffline");
 
-    omp_set_nested(1);
     // Command line mode
     if ((2<a->argc()) && (!strcmp(a->argv()[1],"-f"))) {
         std::string fname(a->argv()[2]);

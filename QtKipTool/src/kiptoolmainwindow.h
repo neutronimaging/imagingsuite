@@ -42,6 +42,9 @@ protected slots:
     void on_actionClear_History_triggered();
     void on_actionAbout_triggered();
 
+private slots:
+    void on_combo_sliceplane_activated(int index);
+
 private:
     void UpdateDialog();
     void UpdateConfig();
@@ -66,6 +69,7 @@ private:
     kipl::base::TImage<float,3> m_OriginalImage;
     bool m_bRescaleViewers;
     bool m_bJustLoaded;
+    kipl::base::eImagePlanes m_eSlicePlane;
 
     std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };

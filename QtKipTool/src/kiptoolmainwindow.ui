@@ -17,6 +17,9 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_global">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_forms">
         <item>
@@ -681,11 +684,37 @@
        </layout>
       </item>
       <item>
-       <widget class="QSlider" name="slider_images">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="topMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <item>
+         <widget class="QComboBox" name="combo_sliceplane">
+          <item>
+           <property name="text">
+            <string>X-Y</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>X-Z</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Y-Z</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="slider_images">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -697,7 +726,7 @@
      <x>0</x>
      <y>0</y>
      <width>1134</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

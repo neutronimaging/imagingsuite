@@ -9,9 +9,12 @@ QT       += core gui
 TARGET = QtKipTool
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
-QMAKE_LFLAGS += -lgomp
-LIBS += -lgomp
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+}
+
 
 SOURCES += ../../src/main.cpp\
         ../../src/kiptoolmainwindow.cpp \
@@ -52,7 +55,7 @@ else:unix: LIBS += -L$$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/Mo
 INCLUDEPATH += $$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/include
 
-LIBS += -L/usr/lib -lxml2 -ltiff -lcfitsio -lgomp
+LIBS += -L/usr/lib -lxml2 -ltiff -lcfitsio
 INCLUDEPATH += /usr/include/libxml2
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lQtAddons

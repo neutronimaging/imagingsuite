@@ -44,9 +44,12 @@ unix:!symbian {
     INSTALLS += target
 }
 
-QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
-QMAKE_LFLAGS += -lgomp
-LIBS += -lgomp
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+}
+
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig

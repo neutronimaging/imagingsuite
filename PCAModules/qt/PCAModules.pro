@@ -9,6 +9,13 @@ QT       -= core gui
 TARGET = PCAModules
 TEMPLATE = lib
 
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+}
+
+
 DEFINES += PCAMODULES_LIBRARY
 
 SOURCES += ../src/pcamodules.cpp \

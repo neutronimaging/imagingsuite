@@ -7,6 +7,7 @@
 #include <utilities/TimeDate.h>
 #include <math/image_statistics.h>
 #include <base/thistogram.h>
+#include <base/textractor.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -22,7 +23,8 @@ KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
     m_OriginalHistogram(1024),
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
-    m_bJustLoaded(false)
+    m_bJustLoaded(false),
+    m_eSlicePlane(kipl::base::ImagePlaneXY)
 {
     ui->setupUi(this);
     logger.AddLogTarget(*(ui->widget_logviewer));
@@ -304,7 +306,14 @@ logger(kipl::logging::Logger::LogMessage,"plot selector index changed");
 
 void KipToolMainWindow::on_slider_images_sliderMoved(int position)
 {
-    if ((m_OriginalImage.Size()!=0) && (position<m_OriginalImage.Size(2)) && (0<=position)) {
+    int maxslice;
+    switch (m_eSlicePlane) {
+    case kipl::base::ImagePlaneXY: maxslice = m_OriginalImage.Size(2); break;
+    case kipl::base::ImagePlaneXZ: maxslice = m_OriginalImage.Size(1); break;
+    case kipl::base::ImagePlaneYZ: maxslice = m_OriginalImage.Size(0); break;
+    }
+
+    if ((m_OriginalImage.Size()!=0) && (position<maxslice) && (0<=position)) {
         float lo = 0.0f;
         float hi = 0.0f;
         if (m_bJustLoaded) {
@@ -314,7 +323,11 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
         else
             ui->imageviewer_original->get_levels(&lo,&hi);
 
-        ui->imageviewer_original->set_image(m_OriginalImage.GetLinePtr(0,position),m_OriginalImage.Dims(),lo,hi);
+        kipl::base::TImage<float,2> slice_original, slice_result;
+
+        slice_original=kipl::base::ExtractSlice(m_OriginalImage,static_cast<size_t>(position),m_eSlicePlane);
+
+        ui->imageviewer_original->set_image(slice_original.GetDataPtr(),slice_original.Dims(),lo,hi);
         if (m_Engine!=NULL) {
             kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
 
@@ -322,19 +335,20 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
                 (result.Size(1)==m_OriginalImage.Size(1)) &&
                 (result.Size(2)==m_OriginalImage.Size(2)))
             {
+                slice_result = kipl::base::ExtractSlice(result,position,m_eSlicePlane);
                 if (m_bRescaleViewers) {
-                    ui->imageviewer_processed->set_image(result.GetLinePtr(0,position),result.Dims());
+                    ui->imageviewer_processed->set_image(slice_result.GetDataPtr(), slice_result.Dims());
                     m_bRescaleViewers=false;
                 }
                 else {
                     ui->imageviewer_processed->get_levels(&lo,&hi);
-                    ui->imageviewer_processed->set_image(result.GetLinePtr(0,position),result.Dims(),lo,hi);
+                    ui->imageviewer_processed->set_image(slice_result.GetDataPtr(), slice_result.Dims(),lo,hi);
                 }
 
-                kipl::base::TImage<float,2> diff(result.Dims());
+                kipl::base::TImage<float,2> diff(slice_original.Dims());
                 float *pDiff=diff.GetDataPtr();
-                float *pRes=result.GetLinePtr(0,position);
-                float *pImg=m_OriginalImage.GetLinePtr(0,position);
+                float *pRes=slice_result.GetDataPtr();
+                float *pImg=slice_original.GetDataPtr();
 
                 for (int i=0; i<diff.Size(); i++) {
                         pDiff[i]=pRes[i]-pImg[i];
@@ -571,4 +585,18 @@ void KipToolMainWindow::on_actionClear_History_triggered()
 void KipToolMainWindow::on_actionAbout_triggered()
 {
 logger(kipl::logging::Logger::LogMessage,"About");
+}
+
+void KipToolMainWindow::on_combo_sliceplane_activated(int index)
+{
+    std::ostringstream msg;
+    m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<index);
+    int maxslices=static_cast<int>(m_OriginalImage.Size(2-index));
+    ui->slider_images->setMaximum(maxslices-1);
+    ui->slider_images->setValue(maxslices/2);
+
+    msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices<<" "<<m_OriginalImage;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    on_slider_images_sliderMoved(maxslices/2);
 }
