@@ -14,6 +14,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QList>
+#include <QSet>
 
 namespace QtAddons {
 
@@ -52,7 +53,7 @@ public:
     void hold_annotations(bool hold);
 
     void clear_viewer();
-    void set_levels(const float level_low, const float level_high);
+    void set_levels(const float level_low, const float level_high, bool updatelinked=true);
     void get_levels(float *level_low, float *level_high);
     void get_minmax(float *level_low, float *level_high);
     void show_clamped(bool show);
@@ -65,7 +66,8 @@ public:
 
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
-
+    void LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect=true);
+    void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=NULL);
 public slots:
 //    void zoomIn();
 //    void zoomOut();
@@ -82,6 +84,8 @@ protected:
 //    void wheelEvent(QWheelEvent *event);
         
 protected:
+    void UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w);
+    void UpdateLinkedViewers();
 
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
@@ -94,6 +98,7 @@ protected:
     Qt::MouseButton m_PressedButton;
     QPoint m_LastMotionPosition;
     QSize widgetSize;
+    QSet<ImageViewerWidget *> m_LinkedViewers;
     enum { Margin = 5 };
 };
 

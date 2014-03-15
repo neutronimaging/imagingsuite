@@ -70,19 +70,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="ShowImageButton">
-    <property name="geometry">
-     <rect>
-      <x>680</x>
-      <y>310</y>
-      <width>131</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Show image</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -205,6 +192,42 @@
      </item>
     </layout>
    </widget>
+   <widget class="QtAddons::ImageViewerWidget" name="ImageView_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>220</y>
+      <width>271</width>
+      <height>151</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>430</y>
+      <width>225</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="ShowImageButton">
+       <property name="text">
+        <string>Show image</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="check_linkimages">
+       <property name="text">
+        <string>Link images</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -212,7 +235,7 @@
      <x>0</x>
      <y>0</y>
      <width>894</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

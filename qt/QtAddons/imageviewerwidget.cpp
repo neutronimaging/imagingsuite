@@ -353,9 +353,12 @@ void ImageViewerWidget::clear_viewer()
     m_ImagePainter.clear();
 }
 
-void ImageViewerWidget::set_levels(const float level_low, const float level_high)
+void ImageViewerWidget::set_levels(const float level_low, const float level_high, bool updatelinked)
 {
     m_ImagePainter.set_levels(level_low,level_high);
+    if (updatelinked) {
+        UpdateLinkedViewers();
+    }
 }
 
 void ImageViewerWidget::get_levels(float *level_low, float *level_high)
@@ -376,6 +379,46 @@ void ImageViewerWidget::show_clamped(bool show)
 const QVector<QPointF> & ImageViewerWidget::get_histogram()
 {
     return m_ImagePainter.get_image_histogram();
+}
+
+void ImageViewerWidget::LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect)
+{
+    m_LinkedViewers.insert(w);
+    if (connect) {
+        w->LinkImageViewer(this,false);
+    }
+}
+
+void ImageViewerWidget::ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w)
+{
+    if (w)
+    {
+        QSet<ImageViewerWidget *>::iterator i=m_LinkedViewers.find(w);
+        m_LinkedViewers.erase(i);
+    }
+    else {
+        QSetIterator<ImageViewerWidget *> i(m_LinkedViewers);
+        while (i.hasNext())
+             i.next()->ClearLinkedImageViewers(this);
+
+        m_LinkedViewers.clear();
+    }
+}
+
+void ImageViewerWidget::UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w)
+{
+    float level_low, level_high;
+    w->get_levels(&level_low, &level_high);
+    set_levels(level_low, level_high,false);
+}
+
+void ImageViewerWidget::UpdateLinkedViewers()
+{
+    if (!m_LinkedViewers.empty()) {
+        QSetIterator<ImageViewerWidget *> i(m_LinkedViewers);
+         while (i.hasNext())
+             i.next()->UpdateFromLinkedViewer(this);
+    }
 }
 
 SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :

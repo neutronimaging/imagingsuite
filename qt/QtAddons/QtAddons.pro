@@ -9,9 +9,12 @@ QT       += svg
 TARGET = QtAddons
 TEMPLATE = lib
 
-QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
-QMAKE_LFLAGS += -lgomp
-LIBS += -lgomp
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+}
+
 
 DEFINES += QTADDONS_LIBRARY
 

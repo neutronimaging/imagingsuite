@@ -53,6 +53,7 @@ void MainWindow::on_ShowImageButton_clicked()
     kipl::base::TImage<float,2> img=kipl::generators::Sine2D::JaehneRings(100,m_fScale);
 
     ui->ImageView->set_image(img.GetDataPtr(),img.Dims());
+    ui->ImageView_2->set_image(img.GetDataPtr(),img.Dims());
     int flip=static_cast<int>(m_fScale) & 1;
     if (flip) {
         ui->ImageView->set_rectangle(QRect(10,10,30,40),QColor(Qt::red),0);
@@ -89,4 +90,15 @@ void MainWindow::on_GetROIButton_clicked()
     ui->roi_y0->setValue(rect.y());
     ui->roi_x1->setValue(rect.x()+rect.width());
     ui->roi_y1->setValue(rect.x()+rect.height());
+}
+
+void MainWindow::on_check_linkimages_toggled(bool checked)
+{
+    QtAddons::ImageViewerWidget *v1=dynamic_cast<QtAddons::ImageViewerWidget *>(ui->ImageView);
+    QtAddons::ImageViewerWidget *v2=dynamic_cast<QtAddons::ImageViewerWidget *>(ui->ImageView_2);
+
+    if (checked)
+        v1->LinkImageViewer(v2);
+    else
+       v1->ClearLinkedImageViewers();
 }
