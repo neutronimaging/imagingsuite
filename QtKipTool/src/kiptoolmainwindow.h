@@ -45,6 +45,8 @@ protected slots:
 private slots:
     void on_combo_sliceplane_activated(int index);
 
+    void on_check_linkviewers_toggled(bool checked);
+
 private:
     void UpdateDialog();
     void UpdateConfig();

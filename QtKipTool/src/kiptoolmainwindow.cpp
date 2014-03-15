@@ -600,3 +600,14 @@ void KipToolMainWindow::on_combo_sliceplane_activated(int index)
 
     on_slider_images_sliderMoved(maxslices/2);
 }
+
+void KipToolMainWindow::on_check_linkviewers_toggled(bool checked)
+{
+    QtAddons::ImageViewerWidget *v1=dynamic_cast<QtAddons::ImageViewerWidget *>(ui->imageviewer_original);
+    QtAddons::ImageViewerWidget *v2=dynamic_cast<QtAddons::ImageViewerWidget *>(ui->imageviewer_processed);
+
+    if (checked)
+        v1->LinkImageViewer(v2);
+    else
+        v1->ClearLinkedImageViewers();
+}

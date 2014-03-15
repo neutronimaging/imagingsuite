@@ -708,6 +708,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="check_linkviewers">
+          <property name="text">
+           <string>Link images</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QSlider" name="slider_images">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -818,9 +828,15 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::ImageViewerWidget</class>
+   <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
-   <header location="global">imageviewerwidget.h</header>
+   <header location="global">modulechainconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header>qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -830,15 +846,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::QtLogViewer</class>
+   <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ModuleChainConfiguratorWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">modulechainconfiguratorwidget.h</header>
+   <header location="global">imageviewerwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
