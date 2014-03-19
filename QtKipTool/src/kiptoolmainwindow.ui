@@ -553,7 +553,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_plots">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab_histograms">
            <property name="enabled">
@@ -598,6 +598,63 @@
               </item>
               <item>
                <widget class="QtAddons::Plotter" name="plotter_plots" native="true"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Profiles</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Horizontal profile</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QtAddons::Plotter" name="plotter_hprofile" native="true"/>
+              </item>
+              <item>
+               <widget class="QSlider" name="slider_hprofile">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_21">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Vertical profile</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QtAddons::Plotter" name="plotter_vprofile" native="true"/>
+              </item>
+              <item>
+               <widget class="QSlider" name="slider_vprofile">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -828,27 +885,27 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>ModuleChainConfiguratorWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">modulechainconfiguratorwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
-   <header>qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ModuleChainConfiguratorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">modulechainconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

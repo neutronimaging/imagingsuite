@@ -47,6 +47,12 @@ private slots:
 
     void on_check_linkviewers_toggled(bool checked);
 
+    void on_tabWidget_plots_currentChanged(int index);
+
+    void on_slider_hprofile_sliderMoved(int position);
+
+    void on_slider_vprofile_sliderMoved(int position);
+
 private:
     void UpdateDialog();
     void UpdateConfig();
@@ -72,6 +78,10 @@ private:
     bool m_bRescaleViewers;
     bool m_bJustLoaded;
     kipl::base::eImagePlanes m_eSlicePlane;
+    kipl::base::TImage<float,2> m_SliceOriginal;
+    kipl::base::TImage<float,2> m_SliceResult;
+    int m_nSliceSizeX;
+    int m_nSliceSizeY;
 
     std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };

@@ -267,6 +267,8 @@ void KipToolMainWindow::on_button_loaddata_clicked()
         dlg.setDetailedText(QString::fromStdString(e.what()));
         dlg.exec();
     }
+    ui->combo_sliceplane->setCurrentIndex(0);
+    on_combo_sliceplane_activated(0);
 }
 
 void KipToolMainWindow::on_button_browsedestination_clicked()
@@ -301,7 +303,7 @@ void KipToolMainWindow::on_button_savedata_clicked()
 
 void KipToolMainWindow::on_combo_plotselector_currentIndexChanged(int index)
 {
-logger(kipl::logging::Logger::LogMessage,"plot selector index changed");
+    logger(kipl::logging::Logger::LogMessage,"plot selector index changed");
 }
 
 void KipToolMainWindow::on_slider_images_sliderMoved(int position)
@@ -323,11 +325,11 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
         else
             ui->imageviewer_original->get_levels(&lo,&hi);
 
-        kipl::base::TImage<float,2> slice_original, slice_result;
 
-        slice_original=kipl::base::ExtractSlice(m_OriginalImage,static_cast<size_t>(position),m_eSlicePlane);
 
-        ui->imageviewer_original->set_image(slice_original.GetDataPtr(),slice_original.Dims(),lo,hi);
+        m_SliceOriginal=kipl::base::ExtractSlice(m_OriginalImage,static_cast<size_t>(position),m_eSlicePlane);
+
+        ui->imageviewer_original->set_image(m_SliceOriginal.GetDataPtr(),m_SliceOriginal.Dims(),lo,hi);
         if (m_Engine!=NULL) {
             kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
 
@@ -335,20 +337,20 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
                 (result.Size(1)==m_OriginalImage.Size(1)) &&
                 (result.Size(2)==m_OriginalImage.Size(2)))
             {
-                slice_result = kipl::base::ExtractSlice(result,position,m_eSlicePlane);
+                m_SliceResult = kipl::base::ExtractSlice(result,position,m_eSlicePlane);
                 if (m_bRescaleViewers) {
-                    ui->imageviewer_processed->set_image(slice_result.GetDataPtr(), slice_result.Dims());
+                    ui->imageviewer_processed->set_image(m_SliceResult.GetDataPtr(), m_SliceResult.Dims());
                     m_bRescaleViewers=false;
                 }
                 else {
                     ui->imageviewer_processed->get_levels(&lo,&hi);
-                    ui->imageviewer_processed->set_image(slice_result.GetDataPtr(), slice_result.Dims(),lo,hi);
+                    ui->imageviewer_processed->set_image(m_SliceResult.GetDataPtr(), m_SliceResult.Dims(),lo,hi);
                 }
 
-                kipl::base::TImage<float,2> diff(slice_original.Dims());
+                kipl::base::TImage<float,2> diff(m_SliceOriginal.Dims());
                 float *pDiff=diff.GetDataPtr();
-                float *pRes=slice_result.GetDataPtr();
-                float *pImg=slice_original.GetDataPtr();
+                float *pRes=m_SliceResult.GetDataPtr();
+                float *pImg=m_SliceOriginal.GetDataPtr();
 
                 for (int i=0; i<diff.Size(); i++) {
                         pDiff[i]=pRes[i]-pImg[i];
@@ -360,6 +362,8 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
             ui->imageviewer_processed->clear_viewer();
             ui->imageviewer_difference->clear_viewer();
         }
+        on_slider_hprofile_sliderMoved(ui->slider_hprofile->value());
+        on_slider_vprofile_sliderMoved(ui->slider_vprofile->value());
     }
 }
 
@@ -531,7 +535,7 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
     if (bExecutionFailed) {
         logger(kipl::logging::Logger::LogError,msg.str());
         QMessageBox dlg;
-        dlg.setText("The process chain exectution failed");
+        dlg.setText("The process chain execution failed");
         dlg.exec();
         return;
     }
@@ -599,6 +603,25 @@ void KipToolMainWindow::on_combo_sliceplane_activated(int index)
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     on_slider_images_sliderMoved(maxslices/2);
+
+    switch (m_eSlicePlane) {
+        case kipl::base::ImagePlaneXY :
+            m_nSliceSizeX=m_OriginalImage.Size(0)-1;
+            m_nSliceSizeY=m_OriginalImage.Size(1)-1;
+        break;
+        case kipl::base::ImagePlaneXZ :
+            m_nSliceSizeX=m_OriginalImage.Size(0)-1;
+            m_nSliceSizeY=m_OriginalImage.Size(2)-1;
+        break;
+        case kipl::base::ImagePlaneYZ :
+            m_nSliceSizeX=m_OriginalImage.Size(1)-1;
+            m_nSliceSizeY=m_OriginalImage.Size(2)-1;
+        break;
+    }
+    ui->slider_hprofile->setMaximum(m_nSliceSizeY);
+    ui->slider_hprofile->setValue(m_nSliceSizeY/2);
+    ui->slider_vprofile->setMaximum(m_nSliceSizeX);
+    ui->slider_vprofile->setValue(m_nSliceSizeX/2);
 }
 
 void KipToolMainWindow::on_check_linkviewers_toggled(bool checked)
@@ -610,4 +633,72 @@ void KipToolMainWindow::on_check_linkviewers_toggled(bool checked)
         v1->LinkImageViewer(v2);
     else
         v1->ClearLinkedImageViewers();
+}
+
+void KipToolMainWindow::on_tabWidget_plots_currentChanged(int index)
+{
+    if (index==3) {
+        on_slider_hprofile_sliderMoved(ui->slider_hprofile->value());
+        on_slider_vprofile_sliderMoved(ui->slider_vprofile->value());
+    }
+    else {
+        ui->imageviewer_original->clear_plot(0);
+        ui->imageviewer_original->clear_plot(1);
+    }
+}
+
+void KipToolMainWindow::on_slider_hprofile_sliderMoved(int position)
+{
+    if (ui->tabWidget_plots->currentIndex()==3) {
+        QVector<QPointF> cursor;
+
+        cursor.append(QPointF(0.0,static_cast<double>(position)));
+        cursor.append(QPointF(m_nSliceSizeX,position));
+        ui->imageviewer_original->set_plot(cursor,QColor("red"),0);
+
+        QVector<QPointF> data;
+        float *pImg=m_SliceOriginal.GetLinePtr(position);
+        for (int i=0; i<m_SliceOriginal.Size(0); i++)
+            data.append(QPointF(i,static_cast<double>(pImg[i])));
+
+        ui->plotter_hprofile->setCurveData(0,data);
+
+        if (m_Engine!=NULL) {
+            ui->imageviewer_processed->set_plot(cursor,QColor("red"),0);
+            data.clear();
+            pImg=m_SliceResult.GetLinePtr(position);
+            for (int i=0; i<m_SliceResult.Size(0); i++)
+                data.append(QPointF(i,static_cast<double>(pImg[i])));
+
+            ui->plotter_hprofile->setCurveData(1,data);
+        }
+    }
+}
+
+void KipToolMainWindow::on_slider_vprofile_sliderMoved(int position)
+{
+    if (ui->tabWidget_plots->currentIndex()==3) {
+        QVector<QPointF> cursor;
+        cursor.append(QPointF(position,0));
+        cursor.append(QPointF(position,m_nSliceSizeY));
+        ui->imageviewer_original->set_plot(cursor,QColor("red"),1);
+
+        QVector<QPointF> data;
+        float *pImg=m_SliceOriginal.GetDataPtr()+position;
+        int sx=m_SliceOriginal.Size(0);
+        for (int i=0; i<m_SliceOriginal.Size(1); i++)
+            data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
+
+        ui->plotter_vprofile->setCurveData(0,data);
+
+        if (m_Engine!=NULL) {
+            ui->imageviewer_processed->set_plot(cursor,QColor("red"),1);
+            data.clear();
+            pImg=m_SliceResult.GetDataPtr()+position;
+            for (int i=0; i<m_SliceResult.Size(1); i++)
+                data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
+
+            ui->plotter_vprofile->setCurveData(1,data);
+        }
+    }
 }
