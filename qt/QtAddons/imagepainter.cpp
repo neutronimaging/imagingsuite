@@ -161,6 +161,7 @@ int ImagePainter::clear_plot(int idx)
                 m_PlotList.erase (it);
             }
         }
+        m_pParent->update();
         return 1;
     }
     return 0;
