@@ -317,17 +317,19 @@ void ImagingToolConfig::ResliceConfig::ParseXML(xmlTextReaderPtr reader)
 }
 
 ImagingToolConfig::Fits2TifConfig::Fits2TifConfig() :
-sSourcePath(""),
-sSourceMask("file_####.fts"),
-nFirstSrc(1),
-nLastSrc(100),
-bCrop(false),
-flip(kipl::base::ImageFlipNone),
-rotate(kipl::base::ImageRotateNone),
-bReplaceZeros(false),
-sDestPath(""),
-sDestMask("dest_####.tif"),
-nFirstDest(1)
+    sSourcePath(""),
+    sSourceMask("file_####.fts"),
+    nFirstSrc(1),
+    nLastSrc(100),
+    bCrop(false),
+    flip(kipl::base::ImageFlipNone),
+    rotate(kipl::base::ImageRotateNone),
+    bReplaceZeros(false),
+    sDestPath(""),
+    sDestMask("dest_####.tif"),
+    nFirstDest(1),
+    bSortGoldenScan(false),
+    nGoldenScanArc(0)
 {
 	nCrop[0]=0;
 	nCrop[1]=0;
@@ -399,6 +401,18 @@ void ImagingToolConfig::Fits2TifConfig::ParseXML(xmlTextReaderPtr reader)
 			if (sName=="replacezeros") {
 				bReplaceZeros=kipl::strings::string2bool(sValue);
 			}
+            if (sName=="usespotclean") {
+                bUseSpotClean=kipl::strings::string2bool(sValue);
+            }
+            if (sName=="spotthreshold") {
+                fSpotThreshold = atof(sValue.c_str());
+            }
+            if (sName=="sortgoldenscan") {
+                bSortGoldenScan = kipl::strings::string2bool(sValue);
+            }
+            if (sName=="goldenscanarc") {
+                nGoldenScanArc = atoi(sValue.c_str());
+            }
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -434,7 +448,11 @@ std::string ImagingToolConfig::Fits2TifConfig::WriteXML(size_t indent)
 		xml<<std::setw(indent+blockindent)<<" "<<"<flip>"<<flip<<"</flip>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<rotate>"<<rotate<<"</rotate>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<replacezeros>"<<(bReplaceZeros ? "true": "false")<<"</replacezeros>\n";
-	xml<<std::setw(indent-1)<<" "<<"</fits2tif>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<usespotclean>"<<(bUseSpotClean ? "true": "false")<<"</usespotclean>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<spotthreshold>"<<fSpotThreshold<<"</spotthreshold>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<sortgoldenscan>"<< (bSortGoldenScan ? "true" : "false")<<"</sortgoldenscan>";
+        xml<<std::setw(indent+blockindent)<<" "<<"<goldenscanarc>"<<nGoldenScanArc<<"</goldenscanarc>";
+    xml<<std::setw(indent-1)<<" "<<"</fits2tif>\n";
 
 	return xml.str();
 }

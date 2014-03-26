@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     findskiplistdialog.cpp \
     ImagingToolConfig.cpp \
     stdafx.cpp \
-    Fits2Tif.cpp
+    Fits2Tif.cpp \
+    Reslicer.cpp
 
 HEADERS  += imagingtoolmain.h \
     findskiplistdialog.h \
     ImagingToolConfig.h \
     targetver.h \
     stdafx.h \
-    Fits2Tif.h
+    Fits2Tif.h \
+    Reslicer.h
 
 FORMS    += imagingtoolmain.ui \
     findskiplistdialog.ui
@@ -83,3 +85,11 @@ else:unix: LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/ModuleCo
 
 INCLUDEPATH += $$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms
+else:symbian: LIBS += -lImagingAlgorithms
+else:unix: LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lImagingAlgorithms
+
+INCLUDEPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include

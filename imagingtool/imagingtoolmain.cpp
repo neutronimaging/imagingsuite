@@ -56,37 +56,43 @@ void ImagingToolMain::f2t_Preview()
 
     std::string fname,ext;
 
-    kipl::strings::filenames::MakeFileName(m_config.fits2tif.sSourceMask,
-                                           m_config.fits2tif.nFirstSrc,
-                                           fname,
-                                           ext,
-                                           '#',
-                                           '0');
+    try {
+        kipl::strings::filenames::MakeFileName(m_config.fits2tif.sSourceMask,
+                                               m_config.fits2tif.nFirstSrc,
+                                               fname,
+                                               ext,
+                                               '#',
+                                               '0');
 
-    fname = m_config.fits2tif.sSourcePath+fname;
+        fname = m_config.fits2tif.sSourcePath+fname;
 
-    if (QFile::exists(QString::fromStdString(fname))) {
-        kipl::base::TImage<float> img;
-        if (m_config.fits2tif.bReplaceZeros==true) {
-            kipl::base::TImage<short,2> simg;
-            kipl::io::ReadFITS(simg,fname.c_str(),NULL);
-            img.Resize(simg.Dims());
-            unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
-            float *pImg=img.GetDataPtr();
-            for (size_t i=0; i<simg.Size(); i++) {
-                pImg[i]=static_cast<float>(pSImg[i]);
+        if (QFile::exists(QString::fromStdString(fname))) {
+            kipl::base::TImage<float> img;
+            if (m_config.fits2tif.bReplaceZeros==true) {
+                kipl::base::TImage<short,2> simg;
+                kipl::io::ReadFITS(simg,fname.c_str(),NULL);
+                img.Resize(simg.Dims());
+                unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
+                float *pImg=img.GetDataPtr();
+                for (size_t i=0; i<simg.Size(); i++) {
+                    pImg[i]=static_cast<float>(pSImg[i]);
+                }
             }
+            else {
+                kipl::io::ReadFITS(img,fname.c_str(),NULL);
+            }
+
+            ui->f2t_imageviewer->set_image(img.GetDataPtr(),img.Dims());
         }
         else {
-            kipl::io::ReadFITS(img,fname.c_str(),NULL);
+            logger(kipl::logging::Logger::LogWarning,"File does not exist");
         }
-
-        ui->f2t_imageviewer->set_image(img.GetDataPtr(),img.Dims());
     }
-    else {
-        logger(kipl::logging::Logger::LogWarning,"File does not exist");
-    }
+    catch (kipl::base::KiplException &e) {
+        std::ostringstream msg;
 
+        logger(kipl::logging::Logger::LogError, e.what());
+    }
 
 }
 
@@ -179,6 +185,16 @@ void ImagingToolMain::UpdateDialog()
 {
     std::ostringstream str;
 
+    // Reslicer
+    ui->reslice_check_XZ->setCheckState(m_config.reslice.bResliceXZ);
+    ui->reslice_check_YZ->setCheckState(m_config.reslice.bResliceYZ);
+    ui->reslice_edit_FileMask->setText(QString::fromStdString(m_config.reslice.sSourceMask));
+    ui->reslice_edit_InputPath->setText(QString::fromStdString(m_config.reslice.sSourcePath));
+    ui->reslice_edit_OutPath->setText(QString::fromStdString(m_config.reslice.sDestinationPath));
+    ui->reslice_spin_FirstImage->setValue(m_config.reslice.nFirst);
+    ui->reslice_spin_LastImage->setValue(m_config.reslice.nLast);
+
+
     // Fits 2 TIFF
     ui->f2t_edit_srcpath->setText(QString::fromStdString(m_config.fits2tif.sSourcePath));
     ui->f2t_edit_srcfilemask->setText(QString::fromStdString(m_config.fits2tif.sSourceMask));
@@ -199,6 +215,10 @@ void ImagingToolMain::UpdateDialog()
     ui->f2t_spin_y0->setValue(m_config.fits2tif.nCrop[1]);
     ui->f2t_spin_x1->setValue(m_config.fits2tif.nCrop[2]);
     ui->f2t_spin_y1->setValue(m_config.fits2tif.nCrop[3]);
+    ui->f2t_spin_spotthreshold->setValue((m_config.fits2tif.fSpotThreshold));
+    ui->f2t_check_cleanspots->setChecked(m_config.fits2tif.bUseSpotClean);
+    ui->f2t_check_sortgolden->setChecked(m_config.fits2tif.bSortGoldenScan);
+    ui->f2t_combo_goldenscan->setCurrentIndex(m_config.fits2tif.nGoldenScanArc);
 
     str.str("");
     std::set<size_t>::iterator it;
@@ -235,6 +255,12 @@ void ImagingToolMain::UpdateConfig()
     m_config.fits2tif.nCrop[2]    = ui->f2t_spin_x1->value();
     m_config.fits2tif.nCrop[3]    = ui->f2t_spin_y1->value();
 
+    m_config.fits2tif.fSpotThreshold = ui->f2t_spin_spotthreshold->value();
+    m_config.fits2tif.bUseSpotClean  = ui->f2t_check_cleanspots->checkState();
+
+    m_config.fits2tif.bSortGoldenScan = ui->f2t_check_sortgolden->checkState();
+    m_config.fits2tif.nGoldenScanArc = ui->f2t_combo_goldenscan->currentIndex();
+
     kipl::strings::String2Set(ui->f2t_edit_skiplist->text().toStdString(), m_config.fits2tif.skip_list);
 
 }
@@ -262,4 +288,31 @@ void ImagingToolMain::LoadConfig()
     if (QFile::exists(fname)) {
         m_config.LoadConfigFile(fname.toStdString());
     }
+}
+
+
+void ImagingToolMain::on_reslice_button_BrowseInPath_clicked()
+{
+    QString projdir=QFileDialog::getExistingDirectory(this,
+                                      "Select location of the slices",
+                                      ui->reslice_edit_InputPath->text());
+
+    if (!projdir.isEmpty())
+        ui->reslice_edit_InputPath->setText(projdir);
+
+}
+
+void ImagingToolMain::on_reslice_button_BrowseOutPath_clicked()
+{
+    QString projdir=QFileDialog::getExistingDirectory(this,
+                                      "Select location of the projections",
+                                      ui->reslice_edit_OutPath->text());
+
+    if (!projdir.isEmpty())
+        ui->reslice_edit_OutPath->setText(projdir);
+}
+
+void ImagingToolMain::on_reslice_button_process_clicked()
+{
+
 }

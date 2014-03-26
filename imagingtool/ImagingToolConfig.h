@@ -82,6 +82,11 @@ public:
 		std::string sDestPath;
 		std::string sDestMask;
 		size_t nFirstDest;
+        bool bUseSpotClean;
+        float fSpotThreshold;
+
+        bool bSortGoldenScan;
+        int nGoldenScanArc;
 	};
 
 	ImagingToolConfig() : logger("TomoMergeConfig") {}

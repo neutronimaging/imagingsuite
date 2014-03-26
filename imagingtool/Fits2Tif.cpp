@@ -9,12 +9,15 @@
 // $Rev: 694 $
 //
 #include "stdafx.h"
+
+#include <map>
 #include "Fits2Tif.h"
 #include <base/timage.h>
 #include <base/trotate.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
+#include <MorphSpotClean.h>
 
 Fits2Tif::Fits2Tif() : logger("Fits2Tif")
 {
@@ -58,7 +61,7 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
             }
             catch (kipl::base::KiplException &e) {
                 msg.str("");
-                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+                msg<<"At line "<<__LINE__<<" Failed to open :"<<*it<<"\n"<<e.what();
                 logger(kipl::logging::Logger::LogError,msg.str());
                 return -1;
             }
@@ -85,7 +88,7 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
             }
             catch (kipl::base::KiplException &e) {
                 msg.str("");
-                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+                msg<<"At line "<<__LINE__<<" Failed to open :"<<*it<<"\n"<<e.what();
                 logger(kipl::logging::Logger::LogError,msg.str());
                 return -1;
             }
@@ -113,8 +116,9 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 
 
 		switch (config.rotate) {
-		case kipl::base::ImageRotateNone : break;
+        case kipl::base::ImageRotateNone :
             dst2=dst;
+            break;
 		case kipl::base::ImageRotate90   :
             dst2=rotate.Rotate90(dst); break;
 		case kipl::base::ImageRotate180  :
@@ -122,6 +126,13 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 		case kipl::base::ImageRotate270  :
             dst2=rotate.Rotate270(dst); break;
 		}
+
+        if (config.bUseSpotClean) {
+            ImagingAlgorithms::MorphSpotClean cleaner;
+            cleaner.setConnectivity(kipl::morphology::conn4);
+            cleaner.setCleanMethod(ImagingAlgorithms::MorphCleanPeaks);
+            cleaner.Process(dst2,config.fSpotThreshold);
+        }
 
 		kipl::strings::filenames::MakeFileName(dstmask,i,dstname,ext,'#','0');
 		msg.str("");
@@ -142,16 +153,55 @@ void Fits2Tif::BuildFileList(ImagingToolConfig::Fits2TifConfig &config, std::lis
 
 	filelist.clear();
 
-	logger(kipl::logging::Logger::LogMessage,"Building file list");
-	for (size_t i=config.nFirstSrc; i<=config.nLastSrc; i++) {
-		if (config.skip_list.find(i)==config.skip_list.end()) {
-			kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0');
-			filelist.push_back(srcname);
-		}
-		else {
-			msg.str("");
-			msg<<"Skipping index "<<i;
-			logger(kipl::logging::Logger::LogMessage,msg.str());
-		}
-	}
+    if (config.bSortGoldenScan) {
+        logger(kipl::logging::Logger::LogMessage,"Building file list for a golden scan");
+        std::map<float,std::string> tmplist;
+      //  float fScanArc = config.nGoldenScanArc == 0 ? 180.0f : 360.0f;
+          float fScanArc = 180.0f;
+          msg.str("");
+          msg<<"Using arc "<<fScanArc<<" first="<<config.nFirstSrc<<", last="<<config.nLastSrc;
+          logger(kipl::logging::Logger::LogMessage,msg.str());
+        const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+
+        int cnt=0;
+        for (size_t i=config.nFirstSrc; i<=config.nLastSrc; i++) {
+           // if (config.skip_list.find(i)==config.skip_list.end()) {
+                kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0');
+
+                float angle=fmod(cnt*fScanArc*fGoldenSection,180.0f);
+                tmplist.insert(std::make_pair(angle,srcname));
+
+                std::cout<<"cnt="<<cnt<<", i="<<i<<", size(tmplist)="<<tmplist.size()<<", angle="<<angle<<std::endl;
+                cnt++;
+//            }
+//            else {
+//                msg.str("");
+//                msg<<"Skipping index "<<i;
+//                logger(kipl::logging::Logger::LogMessage,msg.str());
+//            }
+        }
+
+        std::map<float,std::string>::iterator it;
+        for (it=tmplist.begin(); it!=tmplist.end(); it++)
+            filelist.push_back(it->second);
+
+        msg.str("");
+        msg<<"tmp size="<<tmplist.size()<<", flist size="<<filelist.size();
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"Building file list");
+        for (size_t i=config.nFirstSrc; i<=config.nLastSrc; i++) {
+            if (config.skip_list.find(i)==config.skip_list.end()) {
+                kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0');
+                filelist.push_back(srcname);
+            }
+            else {
+                msg.str("");
+                msg<<"Skipping index "<<i;
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+            }
+        }
+    }
 }
