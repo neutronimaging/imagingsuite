@@ -29,8 +29,6 @@ protected slots:
     void f2t_Convert();
 
 private slots:
-    void on_button_ResliceBrowseInPath_clicked();
-
     void on_reslice_button_BrowseInPath_clicked();
 
     void on_reslice_button_BrowseOutPath_clicked();

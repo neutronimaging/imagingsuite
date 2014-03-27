@@ -4,6 +4,7 @@
 #include "ui_imagingtoolmain.h"
 #include "findskiplistdialog.h"
 #include "Fits2Tif.h"
+#include "Reslicer.h"
 #include <base/kiplenums.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
@@ -186,14 +187,17 @@ void ImagingToolMain::UpdateDialog()
     std::ostringstream str;
 
     // Reslicer
-    ui->reslice_check_XZ->setCheckState(m_config.reslice.bResliceXZ);
-    ui->reslice_check_YZ->setCheckState(m_config.reslice.bResliceYZ);
+    ui->reslice_check_XZ->setChecked(m_config.reslice.bResliceXZ);
+    ui->reslice_check_YZ->setChecked(m_config.reslice.bResliceYZ);
     ui->reslice_edit_FileMask->setText(QString::fromStdString(m_config.reslice.sSourceMask));
     ui->reslice_edit_InputPath->setText(QString::fromStdString(m_config.reslice.sSourcePath));
     ui->reslice_edit_OutPath->setText(QString::fromStdString(m_config.reslice.sDestinationPath));
     ui->reslice_spin_FirstImage->setValue(m_config.reslice.nFirst);
     ui->reslice_spin_LastImage->setValue(m_config.reslice.nLast);
-
+    ui->reslice_spin_firstXZ->setValue(m_config.reslice.nFirstXZ);
+    ui->reslice_spin_lastXZ->setValue(m_config.reslice.nLastXZ);
+    ui->reslice_spin_firstYZ->setValue(m_config.reslice.nFirstYZ);
+    ui->reslice_spin_lastYZ->setValue(m_config.reslice.nLastYZ);
 
     // Fits 2 TIFF
     ui->f2t_edit_srcpath->setText(QString::fromStdString(m_config.fits2tif.sSourcePath));
@@ -231,6 +235,18 @@ void ImagingToolMain::UpdateDialog()
 void ImagingToolMain::UpdateConfig()
 {
     std::ostringstream str;
+    // Reslicer
+    m_config.reslice.bResliceXZ  = ui->reslice_check_XZ->checkState();
+    m_config.reslice.bResliceYZ  = ui->reslice_check_YZ->checkState();
+    m_config.reslice.sSourceMask = ui->reslice_edit_FileMask->text().toStdString();
+    m_config.reslice.sSourcePath = ui->reslice_edit_InputPath->text().toStdString();
+    m_config.reslice.sDestinationPath = ui->reslice_edit_OutPath->text().toStdString();
+    m_config.reslice.nFirst = ui->reslice_spin_FirstImage->value();
+    m_config.reslice.nLast = ui->reslice_spin_LastImage->value();
+    m_config.reslice.nFirstXZ = ui->reslice_spin_firstXZ->value();
+    m_config.reslice.nLastXZ = ui->reslice_spin_lastXZ->value();
+    m_config.reslice.nFirstYZ = ui->reslice_spin_firstYZ->value();
+    m_config.reslice.nLastYZ = ui->reslice_spin_lastYZ->value();
 
     // Fits 2 TIFF
     m_config.fits2tif.sSourcePath = ui->f2t_edit_srcpath->text().toStdString();
@@ -314,5 +330,10 @@ void ImagingToolMain::on_reslice_button_BrowseOutPath_clicked()
 
 void ImagingToolMain::on_reslice_button_process_clicked()
 {
+    UpdateConfig();
 
+    TIFFReslicer reslicer;
+
+
+    reslicer.process();
 }

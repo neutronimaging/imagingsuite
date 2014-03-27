@@ -55,6 +55,10 @@ public:
 
 		size_t nFirst;
 		size_t nLast;
+        size_t nFirstXZ;
+        size_t nLastXZ;
+        size_t nFirstYZ;
+        size_t nLastYZ;
 
 		bool bResliceXZ;
 		bool bResliceYZ;
