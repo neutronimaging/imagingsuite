@@ -65,7 +65,7 @@ DEPENDPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
 else:symbian: LIBS += -lModuleConfig
-else:unix: LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
+else:unix: LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../src/libs/modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../src/libs/modules/trunk/ModuleConfig/include
@@ -77,14 +77,6 @@ else:unix: LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/ReconFr
 
 INCLUDEPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
 DEPENDPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
-else:symbian: LIBS += -lModuleConfig
-else:unix: LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lModuleConfig
-
-INCLUDEPATH += $$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../src/src/libs/modules/trunk/ModuleConfig/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms

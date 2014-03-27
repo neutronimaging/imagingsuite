@@ -330,10 +330,63 @@ void ImagingToolMain::on_reslice_button_BrowseOutPath_clicked()
 
 void ImagingToolMain::on_reslice_button_process_clicked()
 {
+
     UpdateConfig();
 
     TIFFReslicer reslicer;
+    std::string sSrcMask=m_config.reslice.sSourcePath+m_config.reslice.sSourceMask;
+    std::ostringstream msg;
 
+    std::string sDstMask=m_config.reslice.sDestinationPath+m_config.reslice.sSourceMask;
+    std::string a,b;
+    size_t pos=sDstMask.find('#',0);
+    if (pos==string::npos) {
+        QMessageBox dlg;
 
-    reslicer.process();
+        dlg.setText("Failed to create destination filename.\n There are no # in the file mask.");
+        dlg.exec();
+        return;
+    }
+    a=sDstMask.substr(0,pos);
+    b=sDstMask.substr(pos);
+
+    if (m_config.reslice.bResliceXZ) {
+        sDstMask=a+"XZ"+b;
+        logger(kipl::logging::Logger::LogMessage,sDstMask);
+        try {
+        reslicer.process(sSrcMask,
+            m_config.reslice.nFirst,
+            m_config.reslice.nLast,
+            sDstMask, kipl::base::ImagePlaneXZ);
+        }
+        catch (kipl::base::KiplException &E) {
+            msg.str("");
+            msg<<"XZ-Reslicing failed with an exception\n"<<E.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            QMessageBox dlg;
+            dlg.setText("XZ-Reslicing failed");
+            dlg.exec();
+            return;
+        }
+    }
+
+    if (m_config.reslice.bResliceYZ) {
+        sDstMask=a+"YZ"+b;
+        logger(kipl::logging::Logger::LogMessage,sDstMask);
+        try {
+        reslicer.process(sSrcMask,
+            m_config.reslice.nFirst,
+            m_config.reslice.nLast,
+            sDstMask, kipl::base::ImagePlaneYZ);
+        }
+        catch (kipl::base::KiplException &E) {
+            msg.str("");
+            msg<<"YZ-Reslicing failed with an exception\n"<<E.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            QMessageBox dlg;
+            dlg.setText("YZ-Reslicing failed");
+            dlg.exec();
+            return;
+        }
+    }
 }

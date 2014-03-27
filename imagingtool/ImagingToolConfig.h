@@ -94,6 +94,7 @@ public:
 	};
 
 	ImagingToolConfig() : logger("TomoMergeConfig") {}
+
 	std::string WriteXML();
 	void LoadConfigFile(std::string filename);
 
