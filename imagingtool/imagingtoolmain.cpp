@@ -332,6 +332,7 @@ void ImagingToolMain::on_reslice_button_process_clicked()
 {
 
     UpdateConfig();
+    SaveConfig();
 
     TIFFReslicer reslicer;
     std::string sSrcMask=m_config.reslice.sSourcePath+m_config.reslice.sSourceMask;
@@ -368,6 +369,7 @@ void ImagingToolMain::on_reslice_button_process_clicked()
             dlg.exec();
             return;
         }
+        logger(kipl::logging::Logger::LogMessage,"Reslice XZ done.");
     }
 
     if (m_config.reslice.bResliceYZ) {
@@ -388,5 +390,8 @@ void ImagingToolMain::on_reslice_button_process_clicked()
             dlg.exec();
             return;
         }
+        logger(kipl::logging::Logger::LogMessage,"Reslice YZ done.");
+
     }
+
 }

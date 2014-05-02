@@ -255,7 +255,11 @@ std::string ImagingToolConfig::ResliceConfig::WriteXML(size_t indent)
 		xml<<std::setw(indent+blockindent)<<" "<<"<first>"<<nFirst<<"</first>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<last>"<<nLast<<"</last>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<reslicexz>"<<kipl::strings::bool2string(bResliceXZ)<<"</reslicexz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<firstxz>"<<nFirstXZ<<"</firstxz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<lastxz>"<<nLastXZ<<"</lastxz>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<resliceyz>"<<kipl::strings::bool2string(bResliceYZ)<<"</resliceyz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<firstyz>"<<nFirstYZ<<"</firstyz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<lastyz>"<<nLastYZ<<"</lastyz>\n";
 	xml<<std::setw(indent-1)<<" "<<"</reslice>\n";
 
 	return xml.str();
@@ -306,9 +310,26 @@ void ImagingToolConfig::ResliceConfig::ParseXML(xmlTextReaderPtr reader)
 				bResliceXZ=kipl::strings::string2bool(sValue);
 	        }
 
+            if (sName=="firstxz") {
+                nFirstXZ=atoi(sValue.c_str());
+            }
+
+            if (sName=="lastxz") {
+                nLastXZ=atoi(sValue.c_str());
+            }
+
 			if (sName=="resliceyz") {
 				bResliceYZ=kipl::strings::string2bool(sValue);
 	        }
+
+            if (sName=="firstyz") {
+                nFirstYZ=atoi(sValue.c_str());
+            }
+
+            if (sName=="lastyz") {
+                nLastYZ=atoi(sValue.c_str());
+            }
+
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
