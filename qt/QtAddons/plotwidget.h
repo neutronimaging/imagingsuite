@@ -6,7 +6,7 @@
 #include <logging/logger.h>
 #include <plotpainter.h>
 
-namespace painter {
+namespace QtAddons {
 class PlotWidget : public QWidget
 {
     Q_OBJECT
@@ -50,7 +50,7 @@ protected:
     bool rubberBandIsShown;
     QRect rubberBandRect;
     QPixmap pixmap;
-    painter::PlotPainter m_PlotPainter;
+    PlotPainter m_PlotPainter;
 };
 
 }

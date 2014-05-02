@@ -7,14 +7,12 @@
 #include <QWidget>
 #include <logging/logger.h>
 #include "qglyphs.h"
+#include "plotpainter.h"
 
 class QToolButton;
 
 
 namespace QtAddons {
-class PlotSettings;
-class PlotData;
-class PlotCursor;
 
 class Plotter : public QWidget
 {
@@ -72,62 +70,7 @@ private:
     QPixmap pixmap;
 };
 
-class PlotSettings
-{
-public:
-    PlotSettings();
-    PlotSettings(const PlotSettings &s);
-    PlotSettings(const QVector<QPointF> &data);
 
-    const PlotSettings & operator= (const PlotSettings &s);
-    void scroll(int dx, int dy);
-    void adjust();
-    double spanX() const { return maxX - minX; }
-    double spanY() const { return maxY - minY; }
-
-    double minX;
-    double maxX;
-    int numXTicks;
-    double minY;
-    double maxY;
-    int numYTicks;
-
-private:
-    static void adjustAxis(double &min, double &max, int &numTicks);
-};
-
-class PlotData
-{
-public :
-    PlotData();
-    PlotData(const PlotData & data);
-    PlotData(const QVector<QPointF>  & datavect, ePlotGlyph gl=PlotGlyph_None);
-    const PlotData & operator=(const PlotData & data);
-    QVector<QPointF> m_data;
-
-    double minX;
-    double maxX;
-    double minY;
-    double maxY;
-    ePlotGlyph glyph;
-};
-
-class PlotCursor
-{
-public:
-    enum Orientation {
-        Horizontal = 0,
-        Vertical   = 1
-    };
-
-    PlotCursor();
-    PlotCursor(const PlotCursor & c);
-    PlotCursor(double pos, QColor color, Orientation o);
-    const PlotCursor & operator=(const PlotCursor & c);
-    double m_fPosition;
-    QColor m_Color;
-    Orientation m_Orientation;
-};
 
 }
 

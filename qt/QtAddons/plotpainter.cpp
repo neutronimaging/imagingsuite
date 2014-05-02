@@ -1,7 +1,7 @@
 #include "plotpainter.h"
 #include <cmath>
 
-namespace painter {
+namespace QtAddons {
 PlotPainter::PlotPainter(QWidget *parent):
     m_pParent(parent),
     logger("PlotPainter")

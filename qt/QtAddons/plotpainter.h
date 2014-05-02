@@ -12,7 +12,7 @@ class QPainter;
 class QPixmap;
 class QColor;
 
-namespace painter {
+namespace QtAddons {
 class PlotData;
 class PlotSettings;
 class PlotCursor;

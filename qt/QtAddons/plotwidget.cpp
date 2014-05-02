@@ -1,5 +1,5 @@
 #include "plotwidget.h"
-namespace painter {
+namespace QtAddons {
 
 PlotWidget::PlotWidget(QWidget *parent) :
     QWidget(parent),
