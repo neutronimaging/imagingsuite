@@ -44,8 +44,8 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         // Scale new image which size is widgetSize
         QPixmap scaledPixmap = m_pixmap_full.scaled(widgetSize, Qt::KeepAspectRatio);
         // Calculate image center position into screen
-        centerPoint.setX((widgetSize.width()-scaledPixmap.width())/2);
-        centerPoint.setY((widgetSize.height()-scaledPixmap.height())/2);
+        centerPoint.setX(x+(widgetSize.width()-scaledPixmap.width())/2);
+        centerPoint.setY(y+(widgetSize.height()-scaledPixmap.height())/2);
         // Draw image
 
         painter.drawPixmap(centerPoint,scaledPixmap);

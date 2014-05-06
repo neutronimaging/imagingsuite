@@ -7,7 +7,8 @@
 #include <QColor>
 #include <QPrinter>
 #include <QString>
-#include <imagepainter.h>
+#include "imagepainter.h"
+#include "plotpainter.h"
 
 namespace QtAddons {
 class ReportGeneratorBase
@@ -23,6 +24,7 @@ protected:
     QPrinter m_Printer;
     QPainter m_Painter;
     ImagePainter m_ImagePainter;
+    PlotPainter m_PlotPainter;
     double m_fWidth;
     double m_fHeight;
     double m_fLine;

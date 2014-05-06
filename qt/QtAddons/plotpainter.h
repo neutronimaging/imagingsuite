@@ -41,6 +41,7 @@ public:
     void zoomOut();
     enum { Margin = 30 };
     bool m_bShowGrid;
+    QFont m_Font;
 
 private:
     void refreshBounds();
@@ -53,6 +54,9 @@ private:
     QMap<int, PlotCursor > cursorMap;
     QVector<PlotSettings> zoomStack;
     int curZoom;
+
+    QSize m_Size;
+    QPoint m_Pos;
 
 };
 

@@ -1,11 +1,16 @@
 #include "plotpainter.h"
 #include <cmath>
+#include <sstream>
+
+#include <QPalette>
 
 namespace QtAddons {
 PlotPainter::PlotPainter(QWidget *parent):
     m_pParent(parent),
-    logger("PlotPainter")
+    logger("PlotPainter"),
+    m_Font(QFont("Helvetic",parent!=NULL ? 10 :6 ))
 {
+    setPlotSettings(PlotSettings());
 }
 
 PlotPainter::~PlotPainter()
@@ -15,41 +20,266 @@ PlotPainter::~PlotPainter()
 
 void PlotPainter::Render(QPainter &painter, int x, int y, int w, int h)
 {
+    m_Size.setWidth(w);
+    m_Size.setHeight(h);
+    m_Pos.setX(x);
+    m_Pos.setY(y);
+    painter.setFont(m_Font);
 
+    drawGrid(&painter);
+    drawCurves(&painter);
+    drawCursors(&painter);
 }
 
 void PlotPainter::setPlotSettings(const PlotSettings &settings)
-{}
+{
+    zoomStack.clear();
+    zoomStack.append(settings);
+    curZoom = 0;
+}
 
 void PlotPainter::setCurveData(int id, const QVector<QPointF> &data)
-{}
+{
+    curveMap[id] = PlotData(data);
+    refreshBounds();
+}
 
 void PlotPainter::setCurveData(int id, float const * const x, float const * const y, const int N)
-{}
+{
+    QVector<QPointF> data;
+
+    for (int i=0; i<N; i++)
+        data.append(QPointF(x[i],y[i]));
+
+    setCurveData(id,data);
+}
 
 void PlotPainter::setCurveData(int id, float const * const x, size_t const * const y, const int N)
-{}
+{
+    QVector<QPointF> data;
+
+    for (int i=0; i<N; i++)
+        data.append(QPointF(x[i],static_cast<float>(y[i])));
+
+    setCurveData(id,data);
+}
 
 void PlotPainter::clearCurve(int id)
-{}
+{
+    curveMap.remove(id);
+    refreshBounds();
+}
 
 void PlotPainter::clearAllCurves()
-{}
+{
+    curveMap.clear();
+    refreshBounds();
+}
 
 void PlotPainter::setPlotCursor(int id, PlotCursor c)
-{}
+{
+    cursorMap[id]=c;
+}
 
 void PlotPainter::clearPlotCursor(int id)
-{}
+{
+    cursorMap.remove(id);
+}
 
 void PlotPainter::clearAllPlotCursors()
-{}
+{
+    cursorMap.clear();
+}
 
 void PlotPainter::zoomIn()
 {}
 
 void PlotPainter::zoomOut()
 {}
+
+void PlotPainter::refreshBounds()
+{
+    std::ostringstream msg;
+
+    PlotSettings settings;
+
+    QMap<int, PlotData>::iterator it=curveMap.begin();
+
+    settings.minX=it.value().minX;
+    settings.maxX=it.value().maxX;
+    settings.minY=it.value().minY;
+    settings.maxY=it.value().maxY;
+
+    for (it=curveMap.begin(); it!=curveMap.end(); it++){
+        settings.minX=std::min(settings.minX,it.value().minX);
+        settings.maxX=std::max(settings.maxX,it.value().maxX);
+        settings.minY=std::min(settings.minY,it.value().minY);
+        settings.maxY=std::max(settings.maxY,it.value().maxY);
+    }
+
+    if (!zoomStack.empty())
+        zoomStack.clear();
+    zoomStack.append(settings);
+    curZoom = 0;
+}
+
+void PlotPainter::drawGrid(QPainter *painter)
+{
+    QRect rect(m_Pos.x()+Margin, m_Pos.y()+Margin,
+               m_Size.width() - 2 * Margin, m_Size.height() - 2 * Margin);
+    if (!rect.isValid())
+        return;
+
+    PlotSettings settings = zoomStack[curZoom];
+    QPalette palette;
+    QPen quiteDark;// = palette.dark().color().light();
+    QPen light;
+    QPen black;
+    quiteDark.setColor(QColor(32,32,32));
+    black.setColor(QColor(0,0,0));
+    light.setColor(QColor(224,224,224));
+
+
+    for (int i = 0; i <= settings.numXTicks; ++i) {
+        int x = rect.left() + (i * (rect.width() - 1)
+                                 / settings.numXTicks);
+        double label = settings.minX + (i * settings.spanX()
+                                          / settings.numXTicks);
+        if (m_bShowGrid) {
+            painter->setPen(quiteDark);
+            painter->drawLine(x, rect.top(), x, rect.bottom());
+        }
+        painter->setPen(quiteDark);
+        painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
+        painter->setPen(black);
+        painter->drawText(x - 50, rect.bottom() + 3, 100, 20,
+                          Qt::AlignHCenter | Qt::AlignTop,
+                          QString::number(label,'g',2));
+
+    }
+    for (int j = 0; j <= settings.numYTicks; ++j) {
+        int y = rect.bottom() - (j * (rect.height() - 1)
+                                   / settings.numYTicks);
+        double label = settings.minY + (j * settings.spanY()
+                                          / settings.numYTicks);
+        if (m_bShowGrid) {
+            painter->setPen(quiteDark);
+            painter->drawLine(rect.left(), y, rect.right(), y);
+        }
+        painter->setPen(quiteDark);
+        painter->drawLine(rect.left() - 3, y, rect.left(), y);
+        painter->setPen(black);
+        painter->drawText(rect.left() - Margin, y - 10, Margin - 5, 20,
+                          Qt::AlignRight | Qt::AlignVCenter,
+                          QString::number(label,'g',2));
+    }
+    painter->setPen(quiteDark);
+    painter->drawRect(rect.adjusted(0, 0, -1, -1));
+}
+
+void PlotPainter::drawCurves(QPainter *painter)
+{
+    static const QColor colorForIds[6] = {
+        Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta, Qt::yellow
+    };
+    PlotSettings settings = zoomStack[curZoom];
+    QRect rect(m_Pos.x()+Margin, m_Pos.y()+Margin,
+               m_Size.width() - 2 * Margin, m_Size.height() - 2 * Margin);
+    if (!rect.isValid())
+        return;
+
+    painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
+
+    QMapIterator<int, PlotData > i(curveMap);
+
+    while (i.hasNext()) {
+        i.next();
+
+        int id = i.key();
+        QVector<QPointF> data = i.value().m_data;
+
+        QGlyphBase *pGlyph=BuildGlyph(i.value().glyph,static_cast<int>(m_Font.pointSize()*0.75));
+
+        QPolygonF polyline(data.count());
+        painter->setPen(colorForIds[uint(id) % 6]);
+        for (int j = 0; j < data.count(); ++j) {
+            double dx = data[j].x() - settings.minX;
+            double dy = data[j].y() - settings.minY;
+            double x = rect.left() + (dx * (rect.width() - 1)
+                                         / settings.spanX());
+            double y = rect.bottom() - (dy * (rect.height() - 1)
+                                           / settings.spanY());
+            polyline[j] = QPointF(x, y);
+            if (pGlyph)
+                pGlyph->Draw(*painter,x,y);
+        }
+
+        painter->drawPolyline(polyline);
+
+    }
+}
+
+void PlotPainter::drawCursors(QPainter *painter)
+{
+    std::ostringstream msg;
+
+    if (!cursorMap.empty()) {
+        PlotSettings settings = zoomStack[curZoom];
+        QRect rect(m_Pos.x()+Margin, m_Pos.y()+Margin,
+                   m_Size.width() - 2 * Margin, m_Size.height() - 2 * Margin);
+        if (!rect.isValid())
+            return;
+
+        painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
+
+        QMapIterator<int, PlotCursor > i(cursorMap);
+
+        while (i.hasNext()) {
+            i.next();
+            PlotCursor cur=i.value();
+
+            msg.str("");
+            double position=cur.m_fPosition;
+            painter->setPen(QColor(cur.m_Color));
+            if (cur.m_Orientation==PlotCursor::Horizontal) {
+                if (position<settings.minY)  {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.minY;
+                }
+
+                if (settings.maxY<position) {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.maxY;
+                }
+                painter->drawLine(rect.left(),
+                                 int(rect.bottom() - 1 - ((position-settings.minY) * (rect.height() - 2)
+                                                     / settings.spanY())),
+                                 rect.right(),
+                                 int(rect.bottom() - 1 - ((position -settings.minY) * (rect.height() - 2)
+                                                                                              / settings.spanY())));
+            }
+            else {
+                if (position<settings.minX)  {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.minX;
+                }
+
+                if (settings.maxX<position) {
+                    painter->setPen(Qt::DashLine);
+                    position=settings.maxX;
+                }
+
+                painter->drawLine(rect.left() + 1+ int((position - settings.minX) * (rect.width() - 3)
+                                                / settings.spanX()),
+                                 rect.bottom() ,
+                                 rect.left() + 1+ int((position - settings.minX) * (rect.width() - 3)
+                                                              / settings.spanX()),
+                                 rect.top());
+                painter->setPen(Qt::SolidLine);
+            }
+        }
+    }
+}
 
 //------------------------------------------------------
 PlotSettings::PlotSettings()
