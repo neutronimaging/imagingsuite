@@ -58,11 +58,12 @@ unix:!symbian {
 }
 
 LIBS += -lgomp
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Debug -lkipl
 
-INCLUDEPATH += $$PWD/../../../../../../src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../src/libs/kipl/trunk/kipl/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/release/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/debug/ -lkipl
+else:symbian: LIBS += -lkipl
+else:unix: LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/ -lkipl
+
+INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
