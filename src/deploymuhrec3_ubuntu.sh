@@ -17,8 +17,8 @@ rm -f *.1.0.0.dylib
 
 `$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.so.1.0.0 .`
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.so.1.0.0 .`
 `$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libReconFramework.so.1.0.0 .`
 `$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdBackProjectors/StdBackProjectors-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdBackProjectors.so.1.0.0 .`
 `$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModules.so.1.0.0 .`

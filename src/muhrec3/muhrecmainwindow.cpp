@@ -799,6 +799,7 @@ void MuhRecMainWindow::MenuReconstructStart()
     else
         m_Config.MatrixInfo.bAutomaticSerialize=false;
 
+
     msg.str("");
     try {
         m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
