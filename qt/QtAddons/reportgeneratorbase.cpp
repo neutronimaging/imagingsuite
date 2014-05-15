@@ -32,26 +32,6 @@ int ReportGeneratorBase::DrawImage(float *pImg, int *srcdims, int *dstdims, int 
     return 0;
 }
 
-int ReportGeneratorBase::Plot(size_t *data, float *axis, int N, int x, int y, int w, int h)
-{
-    int res=0;
-//    float *fdata=new float[N];
-//    for (int i=0; i<N; i++)
-//        fdata[i]=static_cast<float>(data[i]);
-
-//    int res=Plot(cr,fdata,axis,N,x,y,w,h);
-
-//    delete [] fdata;
-    return res;
-}
-
-int ReportGeneratorBase::Plot(float *data, float *axis, int N, int x, int y, int w, int h)
-{
-
-    return 0;
-}
-
-
 double ReportGeneratorBase::MakeHeader(const std::string name)
 {
 
