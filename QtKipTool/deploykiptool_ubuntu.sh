@@ -16,8 +16,8 @@ rm -f *.so.1.0.0
 
 `$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.so.1.0.0 .`
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.so.1.0.0 .`
 `$CPCMD $REPOSPATH/kiptool/trunk/ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/libProcessFramework.so.1.0.0 .`
 
 # Module libs
