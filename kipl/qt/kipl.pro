@@ -9,7 +9,12 @@ QT       -= core gui
 TARGET = kipl
 TEMPLATE = lib
 
+contains(QMAKE_HOST.arch, x86_64):{
+QMAKE_LFLAGS *= /MACHINE:X64
+}
+
 unix:INCLUDEPATH += "../../../../external/src/linalg"
+x64:INCLUDEPATH += "../../../../external/src/linalg"
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
