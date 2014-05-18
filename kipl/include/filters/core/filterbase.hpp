@@ -25,7 +25,7 @@ TFilterBase<T,nDims>::TFilterBase(T const * const kernel, size_t const * const k
 		throw kipl::base::KiplException("Zero sized kernel",__FILE__,__LINE__);
 
 	pKernel=new T[nKernel];
-	nKernelIndex = new int[nKernel];
+    nKernelIndex = new ptrdiff_t[nKernel];
 	memcpy(nKernelDims, kDims, nDims*sizeof(size_t));
 	memcpy(pKernel,kernel,nKernel*sizeof(T));
 
@@ -46,7 +46,7 @@ TFilterBase<T,nDims>::TFilterBase(size_t const * const kDims) :
 	if (nKernel==0)
 		throw kipl::base::KiplException("Zero sized kernel",__FILE__,__LINE__);
 
-	nKernelIndex = new int[nKernel];
+    nKernelIndex = new ptrdiff_t[nKernel];
 	pKernel      = new T[nKernel];
 	memcpy(nKernelDims, kDims, nDims*sizeof(size_t));
 }
@@ -135,7 +135,7 @@ int TFilterBase<T,nDims>::ProcessCore(T const * const img,
 			nResLineIndex+=nSliceStep*resDims[0];
 		}
 	}
-	return nLines;
+    return static_cast<int>(nLines);
 }
 
 template<typename T, size_t nDims>

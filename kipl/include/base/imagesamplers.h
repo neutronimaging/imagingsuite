@@ -11,12 +11,12 @@
 #ifndef IMAGESAMPLERS_H
 #define IMAGESAMPLERS_H
 
-
+#include "../kipl_global.h"
 #include "timage.h"
 
 namespace kipl { namespace base {
 
-void BinDimensions(size_t const * const origdims, size_t nDims, size_t const * const nbin,size_t const * const resultdims);
+KIPLSHARED_EXPORT void BinDimensions(size_t const * const origdims, size_t nDims, size_t const * const nbin,size_t const * const resultdims);
 
 /// \brief Downsizes an image by bining pixels
 ///	\param img input image

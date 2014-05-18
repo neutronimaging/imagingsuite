@@ -1,18 +1,19 @@
 #ifndef __THISTOGRAM_H
 #define __THISTOGRAM_H
+#include "../kipl_global.h"
 #include "timage.h"
 #include <vector>
 #include <map>
 #include <fstream>
 
 namespace kipl { namespace base {
-int Histogram(float const * const data, size_t Ndata, size_t  * const hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
+KIPLSHARED_EXPORT int Histogram(float const * const data, size_t Ndata, size_t  * const hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
 
-std::map<float, size_t> ExactHistogram(float const * const data, size_t Ndata);
+KIPLSHARED_EXPORT std::map<float, size_t> ExactHistogram(float const * const data, size_t Ndata);
 
-int FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi);
+KIPLSHARED_EXPORT int FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi);
 
-double Entropy(size_t const * const hist, size_t N);
+KIPLSHARED_EXPORT double Entropy(size_t const * const hist, size_t N);
 
 template<typename T>
 class THistogram

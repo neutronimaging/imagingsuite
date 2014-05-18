@@ -20,11 +20,11 @@ size_t FilterBase::PrepareIndex(size_t const * const imgDims,
 	len-=klen;
 
 	memset(this->nKernelIndex,0, sizeof(int)*nKernel);
-	int kProd=1;
-	int imgProd=1;
+    size_t kProd=1;
+    size_t imgProd=1;
 	for (size_t dim=0; dim<nDims; dim++) {
 		kProd*=nKernelDims[dim];
-		const int cnCenter=static_cast<int>(nKernelDims[dim]>>1);
+        const int cnCenter=static_cast<int>(nKernelDims[dim]/2);
 		for (int i=0; i<static_cast<int>(nKernel); i++) {
 			nKernelIndex[i] += ((i % kProd)*nKernelDims[dim]/kProd - cnCenter)*imgProd;
 		}

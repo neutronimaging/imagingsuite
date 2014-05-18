@@ -1,12 +1,12 @@
 #ifndef __IMAGEINFO_H
 #define __IMAGEINFO_H
-
+#include "../kipl_global.h"
 #include <string>
 #include <iostream>
 
 namespace kipl { namespace base {
 
-	class ImageInfo {
+    KIPLSHARED_EXPORT class ImageInfo {
 	public: 
 		ImageInfo() : 
 			sSoftware("KIPL image processing library"),
@@ -79,6 +79,6 @@ namespace kipl { namespace base {
 
 }}
 
-std::ostream & operator<<(std::ostream &s, kipl::base::ImageInfo &info);
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream &s, kipl::base::ImageInfo &info);
 #endif
 

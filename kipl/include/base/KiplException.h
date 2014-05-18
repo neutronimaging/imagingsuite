@@ -11,11 +11,12 @@
 
 #ifndef KIPLEXCEPTION_H_
 #define KIPLEXCEPTION_H_
+#include "../kipl_global.h"
 #include <string>
 
 namespace kipl { namespace base {
 
-class KiplException
+KIPLSHARED_EXPORT class KiplException
 {
 public :
 	KiplException();
@@ -30,7 +31,7 @@ protected :
 	
 };
 
-class DimsException : public KiplException 
+KIPLSHARED_EXPORT class DimsException : public KiplException
 {
 public : 
 	DimsException();

@@ -256,7 +256,7 @@ std::set<std::string> NodeLocker::GetMACaddress() // Print MAC address
 		}
 
 		if (macstr.str()!="00-00-00-00-00-00")
-			maclist.push_back(macstr.str());
+            maclist.insert(macstr.str());
 		AdapterList=AdapterList->Next;
 	  }
 

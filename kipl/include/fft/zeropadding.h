@@ -7,7 +7,7 @@
 
 #ifndef ZEROPADDING_H_
 #define ZEROPADDING_H_
-
+#include "../kipl_global.h"
 #include "../base/timage.h"
 
 namespace kipl { namespace math { namespace fft {
@@ -17,7 +17,7 @@ namespace kipl { namespace math { namespace fft {
 		PadCenter
 	};
 
-size_t NextPower2(size_t N);
+KIPLSHARED_EXPORT size_t NextPower2(size_t N);
 
 template <typename T>
 void ZeroPad(kipl::base::TImage<T,2> &img, kipl::base::TImage<T,2> &padded, size_t const * const dims, size_t * const insert, ePaddingPosition position);

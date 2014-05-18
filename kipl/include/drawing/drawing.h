@@ -11,6 +11,7 @@
 //
 #ifndef __DRAWING_H
 #define __DRAWING_H
+#include "../kipl_global.h"
 #include <string>
 #include "../base/timage.h"
 #include "../logging/logger.h"
@@ -132,8 +133,8 @@ protected:
 
 }}
 
-void string2enum(std::string str, kipl::drawing::ePaintMethod &method);
-std::string enum2string(kipl::drawing::ePaintMethod method);
+KIPLSHARED_EXPORT void string2enum(std::string str, kipl::drawing::ePaintMethod &method);
+KIPLSHARED_EXPORT std::string enum2string(kipl::drawing::ePaintMethod method);
 
 #include "core/drawing.hpp"
 

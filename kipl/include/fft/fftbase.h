@@ -9,6 +9,7 @@
 #ifndef _FFTBASE_H_
 #define _FFTBASE_H_
 
+#include "../kipl_global.h"
 #include <complex>
 #include <cstring>
 #include <fftw3.h>
@@ -27,7 +28,7 @@ namespace kipl { namespace math { namespace fft {
 ///	allocate any data to external pointers.
 ///
 ///@author Anders Kaestner
-class FFTBase{
+KIPLSHARED_EXPORT class FFTBase{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
@@ -80,7 +81,7 @@ protected:
 };
 
 
-class FFTBaseFloat{
+KIPLSHARED_EXPORT class FFTBaseFloat{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform

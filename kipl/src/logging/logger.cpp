@@ -43,6 +43,8 @@ LogStreamWriter::LogStreamWriter(std::string fname)
 size_t LogStreamWriter::Write(std::string str)
 {
     fout<<str;
+
+    return 0;
 }
 
 LogStreamWriter::~LogStreamWriter()

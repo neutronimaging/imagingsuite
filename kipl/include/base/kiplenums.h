@@ -11,7 +11,11 @@
 
 #ifndef KIPLENUMS_H_
 #define KIPLENUMS_H_
+#include "../kipl_global.h"
+
 #include <iostream>
+
+
 
 namespace kipl { namespace base {
 
@@ -52,16 +56,16 @@ enum eImageRotate {
 
 }}
 
-std::ostream & operator<<(std::ostream & s, kipl::base::eImagePlanes plane);
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream & s, kipl::base::eImagePlanes plane);
 
-std::string enum2string(kipl::base::eImagePlanes plane);
-void  string2enum(std::string str, kipl::base::eImagePlanes &plane);
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eImagePlanes plane);
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eImagePlanes &plane);
 
-std::ostream &operator<<(std::ostream & s, kipl::base::eImageFlip flip);
-std::ostream &operator<<(std::ostream & s, kipl::base::eImageRotate rot);
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eImageFlip flip);
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eImageRotate rot);
 
-void  string2enum(std::string str, kipl::base::eImageFlip &flip);
-void  string2enum(std::string str, kipl::base::eImageRotate &rot);
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eImageFlip &flip);
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eImageRotate &rot);
 
 
 #endif /*KIPLENUMS_H_*/

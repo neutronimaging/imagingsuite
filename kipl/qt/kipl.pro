@@ -14,12 +14,21 @@ QMAKE_LFLAGS *= /MACHINE:X64
 }
 
 unix:INCLUDEPATH += "../../../../external/src/linalg"
-x64:INCLUDEPATH += "../../../../external/src/linalg"
 
+
+
+unix {
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+}
+}
+
+win32 {
+    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
+    LIBPATH += ../../../../external/lib64
+    QMAKE_CXXFLAGS += /openmp /O2
 }
 
 DEFINES += KIPL_LIBRARY
@@ -77,7 +86,7 @@ SOURCES += \
     ../src/morphology/skeleton.cpp
 
 HEADERS +=\
-        kipl_global.h \
+    ../include/kipl_global.h \
     ../include/algorithms/sortalg.h \
     ../include/base/tsubimage.h \
     ../include/base/trotate.h \
@@ -249,8 +258,8 @@ HEADERS +=\
     ../include/base/core/thistogram.hpp
 
 
-win32:CONFIG(release, debug|release): LIBS += -lgomp -lm -lz -ltiff
-else:win32:CONFIG(debug, debug|release): LIBS += -lgomp -lm -lz -ltiff
+win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+else:win32:CONFIG(debug, debug|release): LIBS +=
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 

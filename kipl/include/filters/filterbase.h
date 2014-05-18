@@ -1,5 +1,6 @@
 #ifndef __FILTERBASE_H
 #define __FILTERBASE_H
+#include "../kipl_global.h"
 #include <iostream>
 #include "../base/timage.h"
 
@@ -9,7 +10,7 @@ class testFilterBase;
 
 namespace kipl { namespace filters {
 
-class FilterBase {
+KIPLSHARED_EXPORT class FilterBase {
 public:
 	enum EdgeProcessingStyle {
 	EdgeZero=0,		// Pad the edge by zeros
@@ -24,7 +25,7 @@ protected:
 		size_t const * const nKernelDims, 
 		size_t const nDims);
 
-	int * nKernelIndex;
+    ptrdiff_t * nKernelIndex;
 	size_t nKernel;
 };
 
@@ -71,7 +72,7 @@ protected:
 	
 };
 
-std::ostream & operator<<(std::ostream &str, FilterBase::EdgeProcessingStyle eps);
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream &str, FilterBase::EdgeProcessingStyle eps);
 }}
 
 #include "core/filterbase.hpp"
