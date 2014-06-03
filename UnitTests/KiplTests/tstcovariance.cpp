@@ -7,24 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-class tstCovariance : public QObject
-{
-    Q_OBJECT
-    
-public:
-    tstCovariance();
-    
-private Q_SLOTS:
-
-    void testDims();
-    void testSymmetry();
-    void testIntactData();
-    void testSmallDataCov();
-    void testSmallDataCorr();
-private:
-    kipl::base::TImage<float,2> sin2D;
-
-};
+#include "tstcovariance.h"
 
 tstCovariance::tstCovariance()
 {
@@ -104,10 +87,10 @@ void tstCovariance::testSmallDataCov()
 
     for (int i=0 ; i<img.Size(1); i++) {
         for (int j=0 ; j<img.Size(1); j++) {
-            std::cout<<std::setw(12)<<C[i][j];
+  //          std::cout<<std::setw(12)<<C[i][j];
 
         }
-        std::cout<<std::endl;
+//        std::cout<<std::endl;
         QVERIFY(fabs(C[i][i]-0.5)<1e-7);
     }
 }
@@ -132,6 +115,3 @@ void tstCovariance::testSmallDataCorr()
     }
 }
 
-QTEST_APPLESS_MAIN(tstCovariance)
-
-#include "tstcovariance.moc"
