@@ -1,4 +1,4 @@
-#include <dirent.h>
+//#include <dirent.h>
 #include <sstream>
 #include <iostream>
 #include <string>
@@ -30,6 +30,7 @@ DirAnalyzer::DirAnalyzer()
 
 void DirAnalyzer::GetDirList(std::string path)
 {
+    /*
     m_vDirContents.clear();
 
     DIR *dir;
@@ -45,6 +46,7 @@ void DirAnalyzer::GetDirList(std::string path)
         msg<<"Could not open path "<<path;
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
+    */
 }
 
 FileItem DirAnalyzer::GetFileMask(std::string str)

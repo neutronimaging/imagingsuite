@@ -16,7 +16,7 @@
 
 namespace kipl { namespace base {
 
-KIPLSHARED_EXPORT class KiplException
+class KIPLSHARED_EXPORT KiplException
 {
 public :
 	KiplException();
@@ -31,7 +31,7 @@ protected :
 	
 };
 
-KIPLSHARED_EXPORT class DimsException : public KiplException
+class KIPLSHARED_EXPORT DimsException : public KiplException
 {
 public : 
 	DimsException();

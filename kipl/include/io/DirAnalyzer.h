@@ -1,10 +1,11 @@
 #ifndef DIRANALYZER_H
 #define DIRANALYZER_H
+#include "../kipl_global.h"
 #include <vector>
 #include <string>
 
 namespace kipl { namespace io {
-class FileItem
+class KIPLSHARED_EXPORT FileItem
 {
 public:
     FileItem();
@@ -15,7 +16,7 @@ public:
     std::string m_sExt;
 };
 
-class DirAnalyzer
+class Q_DECL_EXPORT DirAnalyzer
 {
 public:
     DirAnalyzer();

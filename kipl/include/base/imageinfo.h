@@ -6,7 +6,7 @@
 
 namespace kipl { namespace base {
 
-    KIPLSHARED_EXPORT class ImageInfo {
+    class KIPLSHARED_EXPORT ImageInfo {
 	public: 
 		ImageInfo() : 
 			sSoftware("KIPL image processing library"),
@@ -79,6 +79,6 @@ namespace kipl { namespace base {
 
 }}
 
-KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream &s, kipl::base::ImageInfo &info);
+std::ostream KIPLSHARED_EXPORT  & operator<<(std::ostream &s, kipl::base::ImageInfo &info);
 #endif
 

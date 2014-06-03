@@ -10,7 +10,7 @@ class testFilterBase;
 
 namespace kipl { namespace filters {
 
-KIPLSHARED_EXPORT class FilterBase {
+class KIPLSHARED_EXPORT FilterBase {
 public:
 	enum EdgeProcessingStyle {
 	EdgeZero=0,		// Pad the edge by zeros
@@ -72,7 +72,7 @@ protected:
 	
 };
 
-KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream &str, FilterBase::EdgeProcessingStyle eps);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &str, FilterBase::EdgeProcessingStyle eps);
 }}
 
 #include "core/filterbase.hpp"
