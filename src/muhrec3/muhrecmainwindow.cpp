@@ -14,6 +14,7 @@
 #include <base/thistogram.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
+#include <io/DirAnalyzer.h>
 
 #include <BackProjectorBase.h>
 #include <ReconHelpers.h>
@@ -103,7 +104,7 @@ void MuhRecMainWindow::SetupCallBacks()
 
     // Display projections
     connect(ui->sliderProjections,SIGNAL(sliderMoved(int)),this,SLOT(PreviewProjection(int)));
-    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+  //  connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
     connect(ui->spinFirstProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
     connect(ui->spinLastProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
     connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
@@ -137,12 +138,31 @@ void MuhRecMainWindow::SetupCallBacks()
 
 void MuhRecMainWindow::BrowseProjectionPath()
 {
-    QString projdir=QFileDialog::getExistingDirectory(this,
+//    QString projdir=QFileDialog::getExistingDirectory(this,
+//                                      "Select location of the projections",
+//                                      ui->editProjectionPath->text());
+
+    QString projdir=QFileDialog::getOpenFileName(this,
                                       "Select location of the projections",
                                       ui->editProjectionPath->text());
+    if (!projdir.isEmpty()) {
+        std::string pdir=projdir.toStdString();
 
-    if (!projdir.isEmpty())
-        ui->editProjectionPath->setText(projdir);
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
+
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        ui->editProjectionPath->setText(path);
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(fname);
+
+        ui->editProjectionMask->setText(QString::fromStdString(fi.m_sMask));
+    }
 }
 
 void MuhRecMainWindow::BrowseReferencePath()
@@ -194,7 +214,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string fmask=ui->editProjectionMask->text().toStdString();
         std::string name, ext;
         kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
-      //  logger(kipl::logging::Logger::LogMessage,name);
+
         if (QFile::exists(QString::fromStdString(path+name))) {
 
             m_PreviewImage=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
@@ -226,6 +246,14 @@ void MuhRecMainWindow::PreviewProjection(int x)
             SetImageDimensionLimits(m_PreviewImage.Dims());
             UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
         }
+        else {
+            QMessageBox mbox(this);
+            msg.str("");
+            msg<<"Could not load the image "<<path<<name<<std::endl<<"the file does not exist.";
+            logger(kipl::logging::Logger::LogError,msg.str());
+            mbox.setText(QString::fromStdString(msg.str()));
+            mbox.exec();
+        }
     }
     catch (ReconException &e) {
         msg.str("");
@@ -239,8 +267,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
         logger(kipl::logging::Logger::LogMessage,msg.str());
         PreviewProjection( ui->spinFirstProjection->value());
     }
-
-
 }
 
 void MuhRecMainWindow::PreviewProjection()

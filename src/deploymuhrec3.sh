@@ -17,13 +17,13 @@ fi
 
 
 `$CPCMD /Users/kaestner/repos/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD /Users/kaestner/repos/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD /Users/kaestner/repos/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /Users/kaestner/repos/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /Users/kaestner/repos/gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/StdBackProjectors/StdBackProjectors-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD /Users/kaestner/repos/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD /Users/kaestner/repos/kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /Users/kaestner/repos/tomography/trunk/src/StdPreprocModulesGUI-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
 
 rm -f ./MacOS/*.dylib
