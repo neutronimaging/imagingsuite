@@ -83,7 +83,8 @@ SOURCES += \
     ../src/utilities/TimeDate.cpp \
     ../src/pca/pca.cpp \
     ../src/math/covariance.cpp \
-    ../src/morphology/skeleton.cpp
+    ../src/morphology/skeleton.cpp \
+    ../src/io/DirAnalyzer.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -255,7 +256,8 @@ HEADERS +=\
     ../include/math/core/covariance.hpp \
     ../include/filters/GaborFilter.h \
     ../include/morphology/skeleton.h \
-    ../include/base/core/thistogram.hpp
+    ../include/base/core/thistogram.hpp \
+    ../include/io/DirAnalyzer.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
