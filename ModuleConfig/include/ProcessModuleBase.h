@@ -22,6 +22,7 @@
 #include <profile/Timer.h>
 #include <logging/logger.h>
 #include <strings/miscstring.h>
+#include <algorithm>
 
 class DLL_EXPORT ProcessModuleBase {
 protected:
@@ -39,7 +40,7 @@ public:
 	double ExecTime() {return timer.ElapsedSeconds();}
 	virtual std::string Version() {
 		ostringstream s;
-		s<<"ProcessModuleBase ("<<std::max(kipl::strings::VersionNumber("$Rev$"), ProcessModuleBase::SourceVersion())<<")";
+    //	s<<"ProcessModuleBase ("<<std::max(kipl::strings::VersionNumber("$Rev$"), ProcessModuleBase::SourceVersion())<<")";
 
 		return s.str();
 	}
