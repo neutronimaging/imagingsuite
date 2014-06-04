@@ -10,20 +10,20 @@
 //
 #ifndef LOGGER_H_
 #define LOGGER_H_
-
+#include "../kipl_global.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <list>
 
 namespace kipl { namespace logging {
-class LogWriter {
+class KIPLSHARED_EXPORT LogWriter {
 public:
 	virtual size_t Write(std::string str);
 	virtual ~LogWriter() {}
 }; 
 
-class LogStreamWriter : public LogWriter
+class KIPLSHARED_EXPORT LogStreamWriter : public LogWriter
 {
 public:
     LogStreamWriter(std::string fname);
@@ -33,7 +33,7 @@ protected:
     std::ofstream fout;
 };
 
-class Logger {
+class KIPLSHARED_EXPORT Logger {
 public:
 
 	/// \brief Enum used to select the current minimum log level
@@ -82,13 +82,13 @@ protected:
 /// \brief Interface for log enums to the stream class
 /// \param os The target stream
 /// \param level The log level to print out
-std::ostream & operator<<(std::ostream &os, kipl::logging::Logger::LogLevel level);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &os, kipl::logging::Logger::LogLevel level);
 
 /// \brief String to enum converter
 /// \param s The string to convert
 /// \param level The translated enum value for the entered string
 /// \throws ReconException if the string translation failed
-void string2enum(std::string s, kipl::logging::Logger::LogLevel &level);
+void KIPLSHARED_EXPORT string2enum(std::string s, kipl::logging::Logger::LogLevel &level);
 }}
 
 #endif /*LOGGER_H_*/

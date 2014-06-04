@@ -1,12 +1,13 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
+#include "../kipl_global.h"
 #include <sys/types.h>
 #include <time.h>
 #include <iostream>
 
 namespace kipl { namespace profile {
-class Timer {
+class KIPLSHARED_EXPORT Timer {
 public :
   /// \brief Default c'tor which calibrates all timers upon first call
 	Timer();
@@ -50,6 +51,6 @@ private :
 }}
 
 /// \breif Formatted output of the timer to an ostream.
-std::ostream & operator<<(std::ostream &s, kipl::profile::Timer &t);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::profile::Timer &t);
 
 #endif /*MICROTIMER_H_*/
