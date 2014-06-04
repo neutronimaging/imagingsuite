@@ -9,7 +9,7 @@ QtLogViewer::QtLogViewer(QWidget *parent) :
     logger("QtLogViewer"),
     save_button("Save"),
     clear_button("Clear"),
-    m_LogFile((QDir::homePath()+"/muhlog.txt").toAscii()),
+    m_LogFile((QDir::homePath()+"/muhlog.txt").toStdString().c_str()),
     m_CurrentLoglevel(kipl::logging::Logger::LogError)
 {
     this->setLayout(&vbox);
