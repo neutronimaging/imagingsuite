@@ -9,9 +9,7 @@ QT       -= gui
 TARGET = kipl
 TEMPLATE = lib
 
-contains(QMAKE_HOST.arch, x86_64):{
-QMAKE_LFLAGS *= /MACHINE:X64
-}
+
 
 unix:INCLUDEPATH += "../../../../external/src/linalg"
 
@@ -26,6 +24,9 @@ unix:!macx {
 }
 
 win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+    QMAKE_LFLAGS *= /MACHINE:X64
+    }
     INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
     LIBPATH += ../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
