@@ -20,7 +20,7 @@ unix:!macx {
 win32 {
     INCLUDEPATH += ../../../../../external/include
     LIBPATH += ../../../../../external/lib64
-    LIBS += -llibxml2
+    LIBS += -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -69,7 +69,7 @@ unix:!symbian {
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Release/debug/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Debug/debug -lkipl
 else:symbian: LIBS += -lkipl
 else:unix: LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/ -lkipl
 
