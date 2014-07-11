@@ -1,11 +1,12 @@
 #ifndef SINE2D_H_
 #define SINE2D_H_
 
+#include "../kipl_global.h"
 #include "../base/timage.h"
 
 namespace kipl { namespace generators { 
 
-class Sine2D
+class KIPLSHARED_EXPORT Sine2D
 {
 private:
 	Sine2D() {}

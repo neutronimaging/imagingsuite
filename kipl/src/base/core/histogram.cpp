@@ -8,7 +8,8 @@
 #include "../../../include/math/sums.h"
 
 namespace kipl { namespace base {
-int Histogram(float const * const data, size_t nData, size_t * const hist, size_t nBins, float lo=0.0f, float hi=0.0f, float * const pAxis=NULL)
+//int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
+int Histogram(float * data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis)
 {
 
     float start=0;

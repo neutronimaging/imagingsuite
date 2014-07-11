@@ -153,7 +153,7 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		last=h.end(); last--;
 		if (maxIt==last) {
 			cerr<<"Rosin: Histogram has max at the last bin, no right tail?"<<endl;
-			return h.size()-1;
+            return static_cast<int>(h.size()-1);
 		}
 		
 		while ((!*last) && (last!=first)) 
