@@ -1,4 +1,9 @@
+#if QT_VERSION >= 0x050000
 #include <QtGui>
+#else
+#include <QtWidgets>
+#endif
+
 #include <cmath>
 #include <algorithm>
 #include <sstream>
@@ -406,7 +411,6 @@ void Plotter::drawCurves(QPainter *painter)
         }
 
         painter->drawPolyline(polyline);
-
     }
 }
 

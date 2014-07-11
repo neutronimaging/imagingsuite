@@ -1,6 +1,7 @@
 #ifndef MODULECHAINCONFIGURATORWIDGET_H
 #define MODULECHAINCONFIGURATORWIDGET_H
 
+#include "QtModuleConfigure_global.h"
 #include <QWidget>
 #include <QMap>
 #include <QHBoxLayout>
@@ -21,7 +22,7 @@
 #include <map>
 #include <string>
 
-class ModuleChainConfiguratorWidget : public QWidget
+class QTMODULECONFIGURESHARED_EXPORT ModuleChainConfiguratorWidget : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;

@@ -132,7 +132,11 @@ void PlotPainter::drawGrid(QPainter *painter)
 
     PlotSettings settings = zoomStack[curZoom];
     QPalette palette;
+#ifdef _MSC_VER
     QPen quiteDark;// = palette.dark().color().light();
+#else
+    QPen quiteDark = palette.dark().color().light();
+#endif
     QPen light;
     QPen black;
     quiteDark.setColor(QColor(32,32,32));

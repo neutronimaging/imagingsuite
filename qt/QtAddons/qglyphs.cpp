@@ -45,5 +45,19 @@ QGlyphBase * BuildGlyph(ePlotGlyph glyph, int size)
 } // namespace QtAddons
 
 std::ostream & operator<<(std::ostream &s, QtAddons::ePlotGlyph pg)
-{}
+{
+    switch (pg) {
+    case QtAddons::PlotGlyph_None:         s<<"PlotGlyph_None";
+    case QtAddons::PlotGlyph_Cross:        s<<"PlotGlyph_Cross";
+    case QtAddons::PlotGlyph_Plus:         s<<"PlotGlyph_Plot";
+    case QtAddons::PlotGlyph_Square:       s<<"PlotGlyph_Square";
+    case QtAddons::PlotGlyph_FilledSquare: s<<"PlotGlyph_FilleSquare";
+    case QtAddons::PlotGlyph_Circle:       s<<"PlotGlyph_Circle";
+    case QtAddons::PlotGlyph_FilledCircle: s<<"PlotGlyph_FilledCircle";
+    default:                     s<<"PlotGlyph_None";
+    }
+
+    return s;
+
+}
 

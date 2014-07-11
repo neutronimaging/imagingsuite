@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+QT       += widgets
+
 TARGET = QtModuleConfigure
 TEMPLATE = lib
 
@@ -11,6 +13,16 @@ unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+}
+
+unix {
+    INCLUDEPATH += /usr/include/libxml2
+}
+
+win32 {
+    INCLUDEPATH += ../../../../external/include
+    LIBPATH += ../../../../../external/lib64
+    QMAKE_CXXFLAGS += /openmp /O2
 }
 
 
@@ -53,18 +65,18 @@ unix:!symbian {
     INSTALLS += target
 }
 
-INCLUDEPATH += /usr/include/libxml2
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/debug/ -lModuleConfig
+
+win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/qt/ModuleConfig-Qt_5_2_1-Release/release/ -lModuleConfig
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/qt/ModuleConfig-Qt_5_2_1-Debug/debug/ -lModuleConfig
 else:symbian: LIBS += -lModuleConfig
 else:unix: LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/ -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/debug/ -lkipl
+win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Release/release/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Debug/debug/ -lkipl
 else:symbian: LIBS += -lkipl
 else:unix: LIBS += -L$$PWD/../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/ -lkipl
 

@@ -21,14 +21,9 @@
 #define __CONFIGURATORDIALOGBASE_H
 #ifdef _MSC_VER
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-
-#define DLL_EXPORT __declspec(dllexport)
-
-#else
-#define DLL_EXPORT
 #endif
 
+#include "QtModuleConfigure_global.h"
 #include <QWidget>
 #include <QDialog>
 #include <QFrame>
@@ -41,7 +36,7 @@
 
 #include <ConfigBase.h>
 
-class DLL_EXPORT ConfiguratorDialogBase : public QDialog
+class QTMODULECONFIGURESHARED_EXPORT ConfiguratorDialogBase : public QDialog
 {
     Q_OBJECT
 

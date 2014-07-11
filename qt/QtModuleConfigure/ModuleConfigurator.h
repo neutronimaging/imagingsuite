@@ -19,7 +19,8 @@
 // defined with this macro as being exported.
 #ifndef __MODULECONFIGURATOR_H
 #define __MODULECONFIGURATOR_H
-#include "stdafx.h"
+#include "QtModuleConfigure_global.h"
+
 #include "ConfiguratorDialogBase.h"
 #include <ConfigBase.h>
 #include <base/timage.h>
@@ -28,11 +29,6 @@
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef void * (__cdecl *FACTORY)(const char *, const char *);
 typedef int (__cdecl *DESTROYER)(const char *, void *);
-#ifdef MODULECONFIGURATOR_EXPORTS
-#define MODULECONFIGURATOR_API __declspec(dllexport)
-#else
-#define MODULECONFIGURATOR_API __declspec(dllimport)
-#endif
 #else // Shared object specific for gcc
 typedef void * (*FACTORY)(const char *, const char *) ;
 typedef int (*DESTROYER)(const char *, void *);
@@ -40,7 +36,7 @@ typedef  void * HINSTANCE;
 #define MODULECONFIGURATOR_API
 #endif
 // This class is exported from the ModuleConfigurator.dll
-class MODULECONFIGURATOR_API ModuleConfigurator {
+class QTMODULECONFIGURESHARED_EXPORT ModuleConfigurator {
 protected:
 	kipl::logging::Logger logger;
 public:

@@ -1,6 +1,7 @@
 #ifndef SINGLEMODULECONFIGURATORWIDGET_H
 #define SINGLEMODULECONFIGURATORWIDGET_H
 
+#include "QtModuleConfigure_global.h"
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -19,7 +20,7 @@
 #include <map>
 #include <string>
 
-class SingleModuleConfiguratorWidget : public QFrame
+class QTMODULECONFIGURESHARED_EXPORT SingleModuleConfiguratorWidget : public QFrame
 {
     Q_OBJECT
     kipl::logging::Logger logger;

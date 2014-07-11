@@ -290,7 +290,11 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
     QPalette color;
     int setval = 0;
 
+#if QT_VERSION < 0x050000
     color.setColor( QPalette::Active,QPalette::QPalette::ToolTipBase,Qt::yellow);
+#else
+//    color.setColor(QPalette::Active,QPalette::QPalette::ToolTipBase,QColor::yellow());
+#endif
     qreal x = position.x()+this->pos().x()+5;
     qreal y = position.y()+this->pos().y()-15;
     QPoint ttpos (x, y);

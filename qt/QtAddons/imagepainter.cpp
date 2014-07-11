@@ -33,8 +33,8 @@ ImagePainter::~ImagePainter()
 
 void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 {
-    float img_ratio        = static_cast<float>(m_dims[0])/static_cast<float>(m_dims[1]);
-    float allocation_ratio = static_cast<float>(w)/static_cast<float>(h);
+//    float img_ratio        = static_cast<float>(m_dims[0])/static_cast<float>(m_dims[1]);
+//    float allocation_ratio = static_cast<float>(w)/static_cast<float>(h);
 
     if (!m_pixmap_full.isNull())
     {
@@ -99,12 +99,14 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims, const float low, const float high)
 {
+    m_dims[0]=static_cast<int>(dims[0]);
+    m_dims[1]=static_cast<int>(dims[1]);
+    m_NData=m_dims[0]*m_dims[1];
     if (m_data!=NULL) {
         delete [] m_data;
+        m_data = NULL;
     }
-    m_dims[0]=dims[0];
-    m_dims[1]=dims[1];
-    m_NData=m_dims[0]*m_dims[1];
+
     m_data=new float[m_NData];
 
     memcpy(m_data,data,sizeof(float)*m_NData);
@@ -114,7 +116,10 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     const size_t nHistSize=256;
     float haxis[nHistSize];
     size_t hist[nHistSize];
-    kipl::base::Histogram(m_data,m_NData,hist,nHistSize,m_ImageMin,m_ImageMax,haxis);
+#ifndef _MSC_VER
+    kipl::base::Histogram(m_data,static_cast<size_t>(m_NData),hist,nHistSize,m_ImageMin, m_ImageMax, haxis);
+#endif
+
     m_Histogram.clear();
     for (int i=0; i<nHistSize; i++) {
         m_Histogram.append(QPointF(haxis[i],static_cast<float>(hist[i])));

@@ -1,13 +1,14 @@
 #ifndef PLOTWIDGET_H
 #define PLOTWIDGET_H
 
+#include "QtAddons_global.h"
 #include <QWidget>
 #include <QToolButton>
 #include <logging/logger.h>
-#include <plotpainter.h>
+#include "plotpainter.h"
 
 namespace QtAddons {
-class PlotWidget : public QWidget
+class QTADDONSSHARED_EXPORT PlotWidget : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;

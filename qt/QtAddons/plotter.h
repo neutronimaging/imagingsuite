@@ -1,6 +1,7 @@
 #ifndef PLOTTER_H
 #define PLOTTER_H
 
+#include "QtAddons_global.h"
 #include <QMap>
 #include <QPixmap>
 #include <QVector>
@@ -14,7 +15,7 @@ class QToolButton;
 
 namespace QtAddons {
 
-class Plotter : public QWidget
+class QTADDONSSHARED_EXPORT Plotter : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;

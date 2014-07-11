@@ -1,11 +1,20 @@
 #ifndef REPORTGENERATORBASE_H
 #define REPORTGENERATORBASE_H
+#if QT_VERSION >= 0x050000
+#include <QtGui>
+#include <QPrinter>
+#else
+#include <QtWidgets>
+#include <QtPrintSupport/QPrinter>
+#endif
+
+
 #include <logging/logger.h>
 
 #include <string>
 #include <QPainter>
 #include <QColor>
-#include <QPrinter>
+
 #include <QString>
 #include "imagepainter.h"
 #include "plotpainter.h"

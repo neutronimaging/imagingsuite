@@ -14,8 +14,9 @@
 #ifndef APPLICATIONBASE_H_
 #define APPLICATIONBASE_H_
 
-#include "../src/stdafx.h"
-class DLL_EXPORT ApplicationBase {
+#include "QtModuleConfigure_global.h"
+
+class QTMODULECONFIGURESHARED_EXPORT ApplicationBase {
 public:
 	ApplicationBase();
 	virtual ~ApplicationBase();

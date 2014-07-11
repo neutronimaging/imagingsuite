@@ -1,5 +1,6 @@
 #include "reportgeneratorbase.h"
 #include <sstream>
+#include <ctime>
 
 namespace QtAddons {
 ReportGeneratorBase::ReportGeneratorBase(std::string name) :
@@ -28,6 +29,7 @@ int ReportGeneratorBase::DrawImage(float *pImg, int *srcdims, int *dstdims, int 
     size_t imgdims[4]={srcdims[0],srcdims[1],srcdims[2],srcdims[3]};
 
     m_ImagePainter.set_image(pImg,imgdims);
+
     m_ImagePainter.Render(m_Painter,x,y,dstdims[0],dstdims[1]);
     return 0;
 }

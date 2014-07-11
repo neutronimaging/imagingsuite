@@ -1,13 +1,14 @@
 #ifndef PLOTPAINTER_H
 #define PLOTPAINTER_H
 
+#include "QtAddons_global.h"
 #include <QVector>
 #include <QMap>
 #include <logging/logger.h>
 #include "qglyphs.h"
 
 class QWidget;
-struct QPointF;
+//struct QPointF;
 class QPainter;
 class QPixmap;
 class QColor;
@@ -17,7 +18,7 @@ class PlotData;
 class PlotSettings;
 class PlotCursor;
 
-class PlotPainter
+class QTADDONSSHARED_EXPORT PlotPainter
 {
     QWidget * m_pParent;
     kipl::logging::Logger logger;
@@ -60,7 +61,7 @@ private:
 
 };
 
-class PlotSettings
+class QTADDONSSHARED_EXPORT PlotSettings
 {
 public:
     PlotSettings();
@@ -84,7 +85,7 @@ public:
     static void adjustAxis(double &min, double &max, int &numTicks);
 };
 
-class PlotData
+class QTADDONSSHARED_EXPORT PlotData
 {
 public :
     PlotData();
@@ -100,7 +101,7 @@ public :
     QtAddons::ePlotGlyph glyph;
 };
 
-class PlotCursor
+class QTADDONSSHARED_EXPORT PlotCursor
 {
 public:
     enum Orientation {

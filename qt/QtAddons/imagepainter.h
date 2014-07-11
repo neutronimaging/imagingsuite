@@ -1,5 +1,6 @@
 #ifndef IMAGEPAINTER_H
 #define IMAGEPAINTER_H
+#include "QtAddons_global.h"
 #include <cstdlib>
 #include <QPixmap>
 #include <QWidget>
@@ -15,7 +16,7 @@ class QPainter;
 
 namespace QtAddons {
 
-class ImagePainter
+class QTADDONSSHARED_EXPORT ImagePainter
 {
     QWidget * m_pParent;
     kipl::logging::Logger logger;

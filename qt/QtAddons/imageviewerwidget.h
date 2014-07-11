@@ -1,12 +1,13 @@
 #ifndef IMAGEVIEWERWIDGET_H
 #define IMAGEVIEWERWIDGET_H
+#include "QtAddons_global.h"
 #include <QRect>
 #include <QColor>
 #include <QWidget>
 #include <QResizeEvent>
-#include <imagepainter.h>
+#include "imagepainter.h"
 #include <logging/logger.h>
-#include <plotter.h>
+#include "plotter.h"
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QDialog>
@@ -18,7 +19,7 @@
 
 namespace QtAddons {
 
-class ImageViewerWidget : public QWidget
+class QTADDONSSHARED_EXPORT ImageViewerWidget : public QWidget
 {
     Q_OBJECT
 
