@@ -97,7 +97,7 @@ int GaussianSampler(	const kipl::base::TImage<ImgType,NDim> &img,
 	try {
 		result.Resize(dims);
 	}
-	catch (const kipl::base::KiplException & E) {
+    catch (kipl::base::KiplException & E) {
 		throw kipl::base::KiplException(E.what(),__FILE__,__LINE__);
 	}
 	

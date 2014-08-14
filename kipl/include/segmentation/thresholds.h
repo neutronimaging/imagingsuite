@@ -102,7 +102,7 @@ namespace kipl { namespace segmentation {
 			const T0 th,
 			CmpType cmp=cmp_greater,
 			TM * mask = reinterpret_cast<TM *>(NULL),
-			const size_t Nmask=size_t(0))
+            size_t Nmask=size_t(0))
 	{
 		T1 cmptrue,cmpfalse;
 		if (cmp==cmp_greater) 

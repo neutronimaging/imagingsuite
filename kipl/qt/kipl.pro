@@ -16,10 +16,16 @@ unix:INCLUDEPATH += "../../../../external/src/linalg"
 
 
 unix {
+    QMAKE_CXXFLAGS += -fPIC -O2
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+}
+else
+{
+INCLUDEPATH += /usr/local/include
+LIBPATH += /usr/local/lib
 }
 }
 

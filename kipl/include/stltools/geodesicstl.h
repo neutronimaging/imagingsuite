@@ -22,6 +22,7 @@
 //#include "../visualization/gnuplot_i.h"
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 namespace kipl { namespace STLmorphology {
 
@@ -94,14 +95,14 @@ int RecByErosion(std::vector<T> & g, std::vector<T> & f)
 		fpos=f.begin();
 		gpos=g.begin();
 		T prev=*fpos;
-		*fpos=max(*fpos,*gpos);
+        *fpos=std::max(*fpos,*gpos);
 	
 		fpos++; gpos++;
 		
 		for (; fpos!=f.end(); fpos++, gpos++) {
-			minf=min(prev,*fpos);
+            minf=std::min(prev,*fpos);
 			prev=*fpos;
-			*fpos=max(*gpos,minf);
+            *fpos=std::max(*gpos,minf);
 			
 		}
 	
@@ -109,16 +110,16 @@ int RecByErosion(std::vector<T> & g, std::vector<T> & f)
 		gpos=g.end(); gpos--;
 	
 		prev=*fpos;	
-		*fpos=max(*fpos,*gpos);
+        *fpos=std::max(*fpos,*gpos);
 	
 		fpos--; gpos--;
 		for ( ; fpos!=f.begin(); fpos--, gpos--) {
-			minf=min(prev,*fpos);
+            minf=std::min(prev,*fpos);
 			prev=*fpos;
-			*fpos=max(*gpos,minf);
+            *fpos=std::max(*gpos,minf);
 		}	
-		minf=min(prev,*fpos);
-		*fpos=max(*gpos,minf);
+        minf=std::min(prev,*fpos);
+        *fpos=std::max(*gpos,minf);
 	}
 	return 1;
 

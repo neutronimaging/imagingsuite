@@ -23,7 +23,7 @@ namespace morphology {
 template <typename ImgType,size_t NDim>
 int RMin(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &extremes, MorphConnect &conn, bool bilevel=true)
 {
-    const unsigned int *dims=img.Dims();
+    const size_t *dims=img.Dims();
 	//Statistics stats=ComputeImageStats(img);
 	//ImgType max=(ImgType)stats.Max();
 	ImgType max=img.Max();
@@ -81,7 +81,7 @@ int RMin(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType
 template <typename ImgType,size_t NDim>
 int RMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &extremes, MorphConnect &conn)
 {
-    const int *dims=img.Dims();
+    const size_t *dims=img.Dims();
 	
 	ImgType min=img.Min();
 	extremes=img;
