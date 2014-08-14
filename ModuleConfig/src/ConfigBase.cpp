@@ -20,9 +20,10 @@
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 
-ConfigBase::ConfigBase(std::string name) :
+ConfigBase::ConfigBase(std::string name, std::string path) :
 	logger(name),
-	m_sName(name)
+    m_sName(name),
+    m_sApplicationPath(path)
 {
 
 }
@@ -34,6 +35,7 @@ ConfigBase::~ConfigBase(void)
 ConfigBase::ConfigBase(const ConfigBase &config) :
 	logger(config.m_sName),
 	m_sName(config.m_sName),
+    m_sApplicationPath(config.m_sApplicationPath),
     modules(config.modules)
 {
 
@@ -43,6 +45,7 @@ ConfigBase::ConfigBase(const ConfigBase &config) :
 const ConfigBase & ConfigBase::operator=(const ConfigBase &config)
 {
 	m_sName=config.m_sName;
+    m_sApplicationPath=config.m_sApplicationPath;
 	modules=config.modules;
 
 	return *this;

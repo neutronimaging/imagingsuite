@@ -17,6 +17,11 @@ unix:!macx {
     INCLUDEPATH += /usr/include/libxml2
 }
 
+unix:macx {
+    LIBS += -L/usr/lib -lxml2
+    INCLUDEPATH += /usr/include/libxml2
+}
+
 win32 {
     INCLUDEPATH += ../../../../../external/include
     LIBPATH += ../../../../../external/lib64

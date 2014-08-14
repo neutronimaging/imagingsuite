@@ -39,6 +39,7 @@ class DLL_EXPORT ConfigBase
 protected:
 	kipl::logging::Logger logger;
 	std::string m_sName;
+    std::string m_sApplicationPath;
 
 public:
 	struct DLL_EXPORT cUserInformation {
@@ -55,7 +56,7 @@ public:
         std::string sDate;
 	};
 
-	ConfigBase(std::string name="ConfigBase");
+    ConfigBase(std::string name="ConfigBase", std::string path="");
     ConfigBase(const ConfigBase &config);
     virtual const ConfigBase & operator=(const ConfigBase &config);
 
