@@ -5,7 +5,9 @@
  *      Author: anders
  */
 #include "stdafx.h"
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 #include <morphology/morphology.h>
 #include <morphology/morphfilters.h>

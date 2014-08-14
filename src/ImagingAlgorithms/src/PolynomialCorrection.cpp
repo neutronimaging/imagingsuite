@@ -10,7 +10,9 @@
 #include <cstring>
 #include <cstddef>
 #include <sstream>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 namespace ImagingAlgorithms {
 
