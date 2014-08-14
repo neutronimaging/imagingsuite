@@ -1028,6 +1028,19 @@ void MuhRecMainWindow::LoadDefaults()
         m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
         m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
         m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+
+        std::list<ModuleConfig>::iterator it;
+
+        std::string sSearchStr = "@executable_path";
+        std::string sModulePath=m_QtApp->applicationDirPath().toStdString();
+        size_t pos=0;
+        for (it=m_Config.modules.begin(); it!=m_Config.modules.end(); it++) {
+            pos=it->m_sSharedObject.find(sSearchStr);
+            logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
+            if (pos!=std::string::npos)
+                it->m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+            logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
+        }
     }
 
     UpdateDialog();
