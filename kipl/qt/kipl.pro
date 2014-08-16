@@ -13,20 +13,19 @@ TEMPLATE = lib
 
 unix:INCLUDEPATH += "../../../../external/src/linalg"
 
-
-
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
+}
+
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
 }
-else
-{
-INCLUDEPATH += /usr/local/include
-LIBPATH += /usr/local/lib
-}
+
+unix:macx {
+    INCLUDEPATH += /usr/local/include
+    QMAKE_LIBDIR += /usr/local/lib
 }
 
 win32 {
@@ -34,7 +33,7 @@ win32 {
     QMAKE_LFLAGS *= /MACHINE:X64
     }
     INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    LIBPATH += ../../../../external/lib64
+    QMAKE_LIBDIR += ../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
