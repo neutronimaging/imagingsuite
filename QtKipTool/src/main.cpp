@@ -1,8 +1,9 @@
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QDir>
 #include <QMessageBox>
 #include <QString>
 #include <QFileDialog>
+#include <QVector>
 
 #include <sstream>
 #include <strings/filenames.h>
@@ -125,10 +126,12 @@ int RunOffline(QApplication * a)
 {
     std::ostringstream msg;
     kipl::logging::Logger logger("QtKipTool::RunOffline");
+    QVector<QString> args=a->arguments().toVector();
+
 
     // Command line mode
-    if ((2<a->argc()) && (!strcmp(a->argv()[1],"-f"))) {
-        std::string fname(a->argv()[2]);
+    if ((2<args.size()) && (args[1]=="-f")) {
+        std::string fname(args[2].toStdString());
 
         KiplProcessConfig config;
         KiplEngine *engine=NULL;

@@ -11,14 +11,14 @@ pushd .
 cd $DEST/Frameworks
 rm -f *.so.1.0.0
 
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.so.1.0.0 .`
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.so.1.0.0 .`
+`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.so.1.0.0 .`
+`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.so.1.0.0 .`
 
 `$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.so.1.0.0 .`
-`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.so.1.0.0 .`
-`$CPCMD $REPOSPATH/kiptool/trunk/ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/libProcessFramework.so.1.0.0 .`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.so.1.0.0 .`
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/kiptool/trunk/ProcessFramework/build-ProcessFramework-Qt5-Release/libProcessFramework.so.1.0.0 .`
 
 # Module libs
 `$CPCMD $REPOSPATH/kiptool/trunk/AdvancedFilterModules/qt/AdvancedFilterModules-build-desktop-Qt_4_8_1_in_PATH__System__Release/libAdvancedFilterModules.so.1.0.0 .`
@@ -41,7 +41,7 @@ for f in `ls *.so.1.0.0`; do
 done
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/kiptool/trunk/QtKipTool/qt/QtKipTool-build-desktop-Qt_4_8_1_in_PATH__System__Release/QtKipTool .`
+`$CPCMD $REPOSPATH/kiptool/trunk/QtKipTool/build-QtKipTool-Qt5-Release/QtKipTool .`
 cd ..
 `$CPCMD $REPOSPATH/kiptool/trunk/QtKipTool/scripts/kiptool .`
 chmod +x kiptool
