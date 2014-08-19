@@ -6,8 +6,8 @@ DESTPATH="qt/QtKipTool-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/Q
 `$CPCMD ../AdvancedFilterModules/qt/AdvancedFilterModules-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libAdvancedFilterModules.1.0.0.dylib $DESTPATH`
 `$CPCMD ../PCAModules/PCAModules-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libPCAModules.1.0.0.dylib $DESTPATH`
 
-`$CPCMD ../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.1.0.0.dylib $DESTPATH`
-`$CPCMD ../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.1.0.0.dylib $DESTPATH`
+`$CPCMD ../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.1.0.0.dylib $DESTPATH`
+`$CPCMD ../../../modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.1.0.0.dylib $DESTPATH`
 `$CPCMD ../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.1.0.0.dylib $DESTPATH`
 `$CPCMD ../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.1.0.0.dylib $DESTPATH`
 

@@ -19,8 +19,8 @@ fi
 `$CPCMD $REPOSPATH/kiptool/trunk/ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/libProcessFramework.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/kiptool/trunk/AdvancedFilterModules/qt/AdvancedFilterModules-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libAdvancedFilterModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/kiptool/trunk/PCAModules/PCAModules-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libPCAModules.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
