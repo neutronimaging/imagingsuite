@@ -1,11 +1,17 @@
 #ifndef PLOTWIDGET_H
 #define PLOTWIDGET_H
 
+
 #include "QtAddons_global.h"
+
+#include <QColor>
 #include <QWidget>
 #include <QToolButton>
+
 #include <logging/logger.h>
+
 #include "plotpainter.h"
+
 
 namespace QtAddons {
 class QTADDONSSHARED_EXPORT PlotWidget : public QWidget

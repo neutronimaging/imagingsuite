@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QPixmap>
 #include <QVector>
+#include <QColor>
 #include <QWidget>
 #include <logging/logger.h>
 #include "qglyphs.h"
@@ -23,9 +24,9 @@ public:
     Plotter(QWidget *parent = 0);
 
     void setPlotSettings(const PlotSettings &settings);
-    void setCurveData(int id, const QVector<QPointF> &data);
-    void setCurveData(int id, float const * const x, float const * const y, const int N);
-    void setCurveData(int id, float const * const x, size_t const * const y, const int N);
+    void setCurveData(int id, const QVector<QPointF> &data, QColor color=QColor("blue"), ePlotGlyph pg=PlotGlyph_None);
+    void setCurveData(int id, float const * const x, float const * const y, const int N, QColor color=QColor("blue"), ePlotGlyph pg=PlotGlyph_None);
+    void setCurveData(int id, float const * const x, size_t const * const y, const int N, QColor color=QColor("blue"), ePlotGlyph pg=PlotGlyph_None);
     void clearCurve(int id);
     void clearAllCurves();
 
@@ -59,6 +60,7 @@ private:
     void drawCursors(QPainter *painter);
 
     enum { Margin = 30 };
+    enum { GlyphSize = 10};
 
     QToolButton *zoomInButton;
     QToolButton *zoomOutButton;

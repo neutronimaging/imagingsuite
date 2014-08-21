@@ -17,9 +17,9 @@ enum ePlotGlyph {
 
 class QGlyphBase {
 public:
-    QGlyphBase(int size, ePlotGlyph gtype) : m_nSize(size), m_nSize2(size>>1), m_type(gtype) {};
+    QGlyphBase(int size, ePlotGlyph gtype) : m_nSize(size), m_nSize2(size>>1), m_type(gtype) {}
     QGlyphBase(QGlyphBase & glyph) ;
-    virtual ~QGlyphBase() {};
+    virtual ~QGlyphBase() {}
 
 //    QGlyphBase & operator=(QGlyphBase & glyph);
 

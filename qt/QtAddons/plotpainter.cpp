@@ -379,6 +379,7 @@ PlotData::PlotData() :
     maxX(0.0),
     minY(0.0),
     maxY(0.0),
+    color(QColor("blue")),
     glyph(QtAddons::PlotGlyph_Cross)
 {
 }
@@ -389,12 +390,13 @@ PlotData::PlotData(const PlotData & data) :
     maxX(data.maxX),
     minY(data.minY),
     maxY(data.maxY),
+    color(data.color),
     glyph(data.glyph)
 {
 
 }
 
-PlotData::PlotData(const QVector<QPointF> &datavect, QtAddons::ePlotGlyph gl)
+PlotData::PlotData(const QVector<QPointF> &datavect, QColor col, QtAddons::ePlotGlyph gl)
 {
     m_data=datavect;
 
@@ -408,7 +410,7 @@ PlotData::PlotData(const QVector<QPointF> &datavect, QtAddons::ePlotGlyph gl)
         minY=std::min(minY,m_data[i].y());
         maxY=std::max(maxY,m_data[i].y());
     }
-
+    color=col;
     glyph=gl;
 }
 
@@ -419,6 +421,7 @@ const PlotData & PlotData::operator=(const PlotData & data)
     maxX   = data.maxX;
     minY   = data.minY;
     maxY   = data.maxY;
+    color  = data.color;
     glyph  = data.glyph;
 
     return *this;

@@ -90,7 +90,7 @@ class QTADDONSSHARED_EXPORT PlotData
 public :
     PlotData();
     PlotData(const PlotData & data);
-    PlotData(const QVector<QPointF>  & datavect, QtAddons::ePlotGlyph gl=QtAddons::PlotGlyph_None);
+    PlotData(const QVector<QPointF>  & datavect, QColor color=QColor("blue"), QtAddons::ePlotGlyph gl=QtAddons::PlotGlyph_None);
     const PlotData & operator=(const PlotData & data);
     QVector<QPointF> m_data;
 
@@ -98,6 +98,7 @@ public :
     double maxX;
     double minY;
     double maxY;
+    QColor color;
     QtAddons::ePlotGlyph glyph;
 };
 

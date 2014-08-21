@@ -67,31 +67,31 @@ void Plotter::zoomIn()
     }
 }
 
-void Plotter::setCurveData(int id, const QVector<QPointF> &data)
+void Plotter::setCurveData(int id, const QVector<QPointF> &data, QColor color, ePlotGlyph pg)
 {
-    curveMap[id] = PlotData(data);
+    curveMap[id] = PlotData(data,color,pg);
     refreshBounds();
     refreshPixmap();
 }
 
-void Plotter::setCurveData(int id, const float *const x,const float *const y, const int N)
+void Plotter::setCurveData(int id, const float *const x,const float *const y, const int N,QColor color, ePlotGlyph pg)
 {
     QVector<QPointF> data;
 
     for (int i=0; i<N; i++)
         data.append(QPointF(x[i],y[i]));
 
-    setCurveData(id,data);
+    setCurveData(id,data,color,pg);
 }
 
-void Plotter::setCurveData(int id, const float *const x,const size_t *const y, const int N)
+void Plotter::setCurveData(int id, const float *const x, const size_t *const y, const int N, QColor color, ePlotGlyph pg)
 {
     QVector<QPointF> data;
 
     for (int i=0; i<N; i++)
         data.append(QPointF(x[i],static_cast<float>(y[i])));
 
-    setCurveData(id,data);
+    setCurveData(id,data,color,pg);
 }
 
 void Plotter::refreshBounds()
@@ -352,7 +352,7 @@ void Plotter::drawGrid(QPainter *painter)
         painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
         painter->drawText(x - 50, rect.bottom() + 5, 100, 20,
                           Qt::AlignHCenter | Qt::AlignTop,
-                          QString::number(label));
+                          QString::number(label,'g',2));
     }
     for (int j = 0; j <= settings.numYTicks; ++j) {
         int y = rect.bottom() - (j * (rect.height() - 1)
@@ -393,20 +393,38 @@ void Plotter::drawCurves(QPainter *painter)
         int id = i.key();
         QVector<QPointF> data = i.value().m_data;
 
-        QGlyphBase *pGlyph=BuildGlyph(i.value().glyph,static_cast<int>(this->font().pointSize()*0.75));
-
         QPolygonF polyline(data.count());
-        painter->setPen(colorForIds[uint(id) % 6]);
-        for (int j = 0; j < data.count(); ++j) {
-            double dx = data[j].x() - settings.minX;
-            double dy = data[j].y() - settings.minY;
-            double x = rect.left() + (dx * (rect.width() - 1)
-                                         / settings.spanX());
-            double y = rect.bottom() - (dy * (rect.height() - 1)
-                                           / settings.spanY());
-            polyline[j] = QPointF(x, y);
-            if (pGlyph)
-                pGlyph->Draw(*painter,x,y);
+       // painter->setPen(colorForIds[uint(id) % 6]);
+        painter->setPen(i.value().color);
+        int nGlyphSize = static_cast<int>(this->font().pointSize()*0.75);
+
+        if ((i.value().glyph==QtAddons::PlotGlyph_None) || (rect.width() < 1.05 * data.count()*nGlyphSize)) {
+            for (int j = 0; j < data.count(); ++j) {
+                double dx = data[j].x() - settings.minX;
+                double dy = data[j].y() - settings.minY;
+                double x = rect.left() + (dx * (rect.width() - 1)
+                                             / settings.spanX());
+                double y = rect.bottom() - (dy * (rect.height() - 1)
+                                               / settings.spanY());
+                polyline[j] = QPointF(x, y);
+            }
+        }
+        else {
+            QGlyphBase *pGlyph=BuildGlyph(i.value().glyph,nGlyphSize);
+
+            for (int j = 0; j < data.count(); ++j) {
+                double dx = data[j].x() - settings.minX;
+                double dy = data[j].y() - settings.minY;
+                double x = rect.left() + (dx * (rect.width() - 1)
+                                             / settings.spanX());
+                double y = rect.bottom() - (dy * (rect.height() - 1)
+                                               / settings.spanY());
+                polyline[j] = QPointF(x, y);
+                if (pGlyph)
+                    pGlyph->Draw(*painter,x,y);
+            }
+
+            delete pGlyph;
         }
 
         painter->drawPolyline(polyline);
