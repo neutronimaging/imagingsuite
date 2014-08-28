@@ -6,7 +6,7 @@
 
 namespace kipl { namespace base {
 
-    KIPLSHARED_EXPORT struct coords3D {
+    struct KIPLSHARED_EXPORT coords3D {
 		coords3D(short xx,short yy, short zz) : x(xx), y(yy), z(zz) {}
 		coords3D() : x(0), y(0), z(0), reserved(0) {}
 		coords3D(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
@@ -27,7 +27,7 @@ namespace kipl { namespace base {
 		}
 	};
 
-    KIPLSHARED_EXPORT struct coords2D {
+    struct KIPLSHARED_EXPORT coords2D {
 		size_t x;
 		size_t y;
 
@@ -39,7 +39,7 @@ namespace kipl { namespace base {
 		}
 	};
 
-    KIPLSHARED_EXPORT class Index2Coordinates {
+    class KIPLSHARED_EXPORT Index2Coordinates {
 	public:
 		Index2Coordinates(size_t const * const dims, size_t N);
 		bool operator () (size_t pos, coords3D *c);

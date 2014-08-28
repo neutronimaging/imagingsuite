@@ -124,7 +124,7 @@ int TFilterBase<T,nDims>::ProcessCore(T const * const img,
 					T value=pKernel[i];
 					if (value!=0) { 
 						T const * const pImg=img+nKernelIndex[i]+nCenter;
-			
+
 						InnerLoop(pImg+nImgLineIndex,pRes+nResLineIndex, value,cnLineLength);
 					}
 				}
@@ -424,7 +424,7 @@ int TFilterBase<T,nDims>::ProcessEdge3D(T const * const img,
 {
 	size_t nSlice=imgDims[0]*imgDims[1];
 	if (epStyle == EdgeValid) {
-		size_t nTopSlices = nKernelDims[2]>>1;
+        size_t nTopSlices = nKernelDims[2]/2;
 		memset(res, 0, nSlice*nTopSlices*sizeof(T));
 		size_t nBottomSlices = nTopSlices - (1-nKernelDims[2]%2);
 		size_t nLastSlice    = imgDims[2]-nBottomSlices; 

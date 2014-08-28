@@ -30,10 +30,13 @@ int MedianFilter(vector<T> & data,vector<T> &out, size_t len)
 	T *base=new T[len];
 	out.resize(data.size());
 
-	for (size_t i=0; i<data.size(); i++) {
+    int sd=data.size();
+    int len2e=len2-(1-len%2);
+
+    for (int i=0; i<sd; i++) {
 		l=0;
-		for (size_t j=-len2; j<len2-(1-len%2); j++) {
-			if ((j+i>=0) && (j+i)<data.size()) {
+        for (size_t j=-len2; j<len2e; j++) {
+            if ((j+i>=0) && (j+i)<sd) {
 				base[l++]=data[i+j];
 			}
 		}
@@ -145,10 +148,12 @@ template<class T>
 vector<T> filter(vector<T> &x, vector<double> &H)
 {
 	vector<T> tmp(x.size());
-	for (size_t i=0; i<x.size(); i++) {
-		//cout<<i<<", ";
+    ptrdiff_t sx=x.size();
+    ptrdiff_t sH=H.size();
+
+    for (ptrdiff_t i=0; i<sx; i++) {
 		tmp[i]=0;
-		for (size_t j=0; j<H.size(); j++) {
+        for (ptrdiff_t j=0; j<sH; j++) {
 			if ((i-j)>=0)
 				tmp[i]+=H[j]*x[i-j];
 		}

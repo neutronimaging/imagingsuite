@@ -134,8 +134,8 @@ bool NodeLocker::Initialize(std::string licfname, std::string key,  std::string 
 			msg.str("");
 			msg<<"Code from file: "<<license<<", generated code:"<<nodestring ;
             logger(logging::Logger::LogVerbose,msg.str());
-			
-            if (m_bAccessGranted = (nodestring == license)) {
+            m_bAccessGranted = (nodestring == license);
+            if (m_bAccessGranted) {
                 m_sMessage = "Access granted";
 				break;
             }
@@ -351,7 +351,7 @@ std::set<std::string> NodeLocker::GetNodeString(std::string hwinfo)
 		int sum=1;
 
         std::string nodestr = *macit;
-        for (int i=0; i<nodestr.size(); i++) {
+        for (size_t i=0; i<nodestr.size(); i++) {
             sum^=static_cast<int>(nodestr[i]);
 			node.push_back(static_cast<char>(sum %10)+'0');
 		}

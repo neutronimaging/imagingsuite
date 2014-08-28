@@ -68,7 +68,7 @@ protected:
 	virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) = 0;
 	T *pKernel;
 
-	size_t nKernelDims[nDims];
+    size_t nKernelDims[8];
 	
 };
 

@@ -89,12 +89,12 @@ double Covariance<T>::ComputePairSum(int a,int b, bool bCenter)
         double mb=m_fMean[b];
 
 
-        for (size_t i=0; i<m_nElements; i++) {
+        for (int i=0; i<m_nElements; i++) {
             sum+=(pA[i]-ma)*(pB[i]-mb);
         }
     }
     else {
-        for (size_t i=0; i<m_nElements; i++) {
+        for (int i=0; i<m_nElements; i++) {
             sum+=pA[i]*pB[i];
         }
     }

@@ -291,8 +291,9 @@ namespace core {
 		
 		
 		// Filling upp other dimension sizes with length 1
-		for (i=0; i<NDim; i++) {dims[i]=tempdims[i]; }
-		for (i=NDim; i<8; i++) dims[i]=1; 
+        int ii;
+        for (ii=0; ii<NDim; ii++) {dims[ii]=tempdims[ii]; }
+        for (ii=NDim; ii<8; ii++) dims[ii]=1;
 		
 		offset+=sizeof(int)*(NDim+NDim%2);
 		
@@ -322,7 +323,7 @@ namespace core {
 		
 		DataTag &datatag=*((DataTag*)(pData+offset));
 		long nelements=1;
-		for (size_t j=0; j<NDim; j++) {
+        for (int j=0; j<NDim; j++) {
 			nelements*=dims[j];
 		}
 	

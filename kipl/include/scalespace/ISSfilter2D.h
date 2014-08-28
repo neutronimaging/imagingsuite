@@ -30,7 +30,7 @@ public:
 	~ISSfilter() {if (m_fErrorPlot!=NULL) delete [] m_fErrorPlot;}
 	int Process(kipl::base::TImage<T,2> &img, float dTau, float dLambda, float dAlpha, int nN);
 	void ErrorCurve(bool bErrorPlot) {m_bErrorPlot=bErrorPlot;}
-	double const * const ErrorCurve() {return m_fErrorPlot;}
+    double const * ErrorCurve() {return m_fErrorPlot;}
 
 private:
 	enum Direction {
@@ -152,14 +152,16 @@ int ISSfilter<T>::_LeadDiff(	kipl::base::TImage<T,2> &img,
 	diff=static_cast<T>(0);
 	T *pDiff;
 	T *pA, *pB;
-	size_t x,y;
+    int x,y;
 
-	size_t const * const dims=img.Dims();
-	int sx=dims[0]-1;	
-	int sy=dims[1]-1;	
+    size_t const * const dims=img.Dims();
+    int sx=dims[0]-1;
+    int sy=dims[1]-1;
+    int d0=dims[0];
+    int d1=dims[1];
 	switch (dir) {
 		case dirX : 
-			for (y=0; y<dims[1]; y++) {
+            for (y=0; y<d1; y++) {
 				pA=img.GetLinePtr(y);
 				pB=pA+1;
 				pDiff=diff.GetLinePtr(y);
@@ -177,7 +179,7 @@ int ISSfilter<T>::_LeadDiff(	kipl::base::TImage<T,2> &img,
 				pB=img.GetLinePtr(y+1);
 				pDiff=diff.GetLinePtr(y);
 				
-				for (x=0; x<dims[0]; x++)
+                for (x=0; x<d0; x++)
 					pDiff[x]=pB[x]-pA[x];				
 			}
 			//memset(diff.GetLinePtr(sy),0,sizeof(T)*dims[0]);

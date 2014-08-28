@@ -28,7 +28,7 @@ namespace kipl { namespace math { namespace fft {
 ///	allocate any data to external pointers.
 ///
 ///@author Anders Kaestner
-KIPLSHARED_EXPORT class FFTBase{
+class KIPLSHARED_EXPORT FFTBase{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
@@ -81,7 +81,7 @@ protected:
 };
 
 
-KIPLSHARED_EXPORT class FFTBaseFloat{
+class KIPLSHARED_EXPORT FFTBaseFloat{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
