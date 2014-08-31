@@ -82,7 +82,7 @@ int TFilterBase<T,nDims>::ProcessCore(T const * const img,
 	size_t nDimsProd=1;
 	for (size_t i=1; i<nDims; i++)  {
 		nDimsProd *= imgDims[i-1];
-		nCenter+=nDimsProd*(nKernelDims[i]>>1);
+        nCenter+=nDimsProd*(nKernelDims[i]/2);
 	}
 
 	const size_t cnLineLength = imgDims[0]-nKernelDims[0]+1;
@@ -161,7 +161,7 @@ int TFilterBase<T,nDims>::ProcessEdge1D(T const * const img,
 		  size_t const * const imgDims, 
 		  const FilterBase::EdgeProcessingStyle epStyle)
 {
-	const size_t cnCenter=nKernelDims[0]>>1;
+    const size_t cnCenter=nKernelDims[0]/2;
 	if (epStyle==EdgeValid) {
 		memset(res,0,cnCenter*sizeof(T));		
 		memset(res+imgDims[0]-cnCenter,0,sizeof(T)*cnCenter);
@@ -246,7 +246,7 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 		  size_t const * const imgDims, 
 		  const FilterBase::EdgeProcessingStyle epStyle)
 {
-	const size_t cnCenter[2]={nKernelDims[0]>>1, nKernelDims[1]>>1};
+    const size_t cnCenter[2]={nKernelDims[0]/2, nKernelDims[1]/2};
 	
 	size_t nLen = imgDims[0]*(nKernelDims[1]-cnCenter[1]-1);
 	const ptrdiff_t nLastLine=imgDims[1]-(nKernelDims[1]-cnCenter[1]-2);
@@ -265,10 +265,10 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 	else {
 		
 		kipl::base::TImage<T,2> edge;
-		ptrdiff_t nLeftPixels  = nKernelDims[0]>>1;
-		size_t nRightPixels = (nKernelDims[0]>>1) - (1-nKernelDims[0]%2);
-		ptrdiff_t nFrontLines  = nKernelDims[1]>>1;
-		ptrdiff_t nBackLines   = (nKernelDims[1]>>1) - (1-nKernelDims[1]%2);
+        ptrdiff_t nLeftPixels  = nKernelDims[0]/2;
+        size_t nRightPixels = (nKernelDims[0]/2) - (1-nKernelDims[0]%2);
+        ptrdiff_t nFrontLines  = nKernelDims[1]/2;
+        ptrdiff_t nBackLines   = (nKernelDims[1]/2) - (1-nKernelDims[1]%2);
 		
 		size_t nEdgeDims[2]={0,0};
 		T *pEdge=NULL;
@@ -327,7 +327,7 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 			case EdgeMirror :
 				// Process top and bottom
 				nEdgeDims[0]=imgDims[0]+nKernelDims[0]-1;
-				nEdgeDims[1]=2*(nKernelDims[1]>>1)+(nKernelDims[1]-(nKernelDims[1]>>1)-1);
+                nEdgeDims[1]=2*(nKernelDims[1]/2)+(nKernelDims[1]-(nKernelDims[1]/2)-1); // ???
 				edge.Resize(nEdgeDims);
 				edge=static_cast<T>(0);
 				// Process top edge
@@ -376,7 +376,7 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				ProcessCore(edge.GetDataPtr(),nEdgeDims,res+res_offset,imgDims);
 
 				// Left-right processing
-				nEdgeDims[0]=2*(nKernelDims[0]>>1)+(nKernelDims[0]-(nKernelDims[0]>>1)-1);
+                nEdgeDims[0]=2*(nKernelDims[0]/2)+(nKernelDims[0]-(nKernelDims[0]/2)-1);
 				nEdgeDims[1]=imgDims[1];
 				edge.Resize(nEdgeDims);
 				// Left edge
