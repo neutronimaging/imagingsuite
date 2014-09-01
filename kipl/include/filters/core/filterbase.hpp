@@ -2,6 +2,7 @@
 #define __FILTERBASE_HPP_
 #include <limits>
 #include "../../base/KiplException.h"
+#include <iostream>
 //#include "../../visualization/GNUPlot.h"
 //#include "../../io/io_matlab.h"
 
@@ -63,10 +64,11 @@ TFilterBase<T,nDims>::~TFilterBase()
 template<typename T, size_t nDims>
 kipl::base::TImage<T,nDims> TFilterBase<T,nDims>::operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle epStyle)
 {
-	kipl::base::TImage<T,nDims> dest(src.Dims());
+
+    kipl::base::TImage<T,nDims> dest(src.Dims());
 
 	InitResultArray(src,dest);
-	ProcessCore(src.GetDataPtr(), src.Dims(), dest.GetDataPtr(), dest.Dims());
+    ProcessCore(src.GetDataPtr(), src.Dims(), dest.GetDataPtr(), dest.Dims());
 	ProcessEdge(src.GetDataPtr(), dest.GetDataPtr(), src.Dims(), epStyle);
 
 	return dest;
@@ -86,7 +88,7 @@ int TFilterBase<T,nDims>::ProcessCore(T const * const img,
 	}
 
 	const size_t cnLineLength = imgDims[0]-nKernelDims[0]+1;
-	
+
 	PrepareIndex(imgDims, nKernelDims, nDims);
 
 	T *pRes=res+nCenter;

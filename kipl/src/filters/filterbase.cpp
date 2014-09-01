@@ -19,7 +19,7 @@ size_t FilterBase::PrepareIndex(size_t const * const imgDims,
 	}
 	len-=klen;
 
-	memset(this->nKernelIndex,0, sizeof(int)*nKernel);
+    memset(this->nKernelIndex,0, sizeof(ptrdiff_t)*nKernel);
     size_t kProd=1;
     size_t imgProd=1;
 	for (size_t dim=0; dim<nDims; dim++) {
