@@ -7,7 +7,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 QT += widgets printsupport
 }
 else {
-QT       += svg widgets printsupport
+QT       += widgets printsupport
 }
 
 TARGET = QtAddons
@@ -18,6 +18,7 @@ unix:!macx {
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
 }
+
 
 win32 {
     INCLUDEPATH += ../../../../../external/include
@@ -67,15 +68,11 @@ unix:!symbian {
     INSTALLS += target
 }
 
-greaterThan(QT_MAJOR_VERSION, 4) {
 win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt_5_2_1_64bit-Debug/debug -lkipl
 else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
 else:unix:CONFIG(debug, debug|release) LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
-} else {
 symbian: LIBS += -lkipl
-else:unix: LIBS += -L$$PWD/../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/ -lkipl
-}
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
