@@ -3,6 +3,7 @@
 #include "../../filters/filterbase.h"
 #include "../morphfilters.h"
 #include <iostream>
+#include <limits>
 
 namespace kipl { namespace morphology {
 template<typename T>

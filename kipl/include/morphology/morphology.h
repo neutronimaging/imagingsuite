@@ -12,6 +12,7 @@
 #define __MORPHOLOGY_H
 
 //#include "filter.h"
+#include "../kipl_global.h"
 #include <cstddef>
 #include <string>
 
@@ -35,7 +36,7 @@ namespace kipl { namespace morphology {
 	
 	/// \brief Support class to compute the indices for a neighborhood at a given connectivity
 	/// The class does edge checking
-	class CNeighborhood {
+    class KIPLSHARED_EXPORT CNeighborhood {
 	public: 
 		/// \brief Constructor to configure the neighborhood
 		/// \param dims dimension sizes of the image
@@ -333,7 +334,7 @@ namespace kipl { namespace morphology {
 
 	/// \brief Base class to implement a structure element
 	/// \todo Implement the needed infrastructure to use structure element objects
-	class CStructureElement
+    class KIPLSHARED_EXPORT CStructureElement
 	{
 	public:
 		/// Default construtor of the structure element
@@ -344,9 +345,9 @@ namespace kipl { namespace morphology {
 
 }}
 
-std::string enum2string(kipl::morphology::MorphConnect mc);
-std::ostream & operator<<(std::ostream &s, kipl::morphology::MorphConnect mc);
-void string2enum(std::string str, kipl::morphology::MorphConnect &mc);
+std::string KIPLSHARED_EXPORT enum2string(kipl::morphology::MorphConnect mc);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::morphology::MorphConnect mc);
+void KIPLSHARED_EXPORT string2enum(std::string str, kipl::morphology::MorphConnect &mc);
 
 #endif
 

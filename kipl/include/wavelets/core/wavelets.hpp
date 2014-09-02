@@ -12,6 +12,7 @@
 #include <cmath>
 #include <base/kiplenums.h>
 #include <io/io_tiff.h>
+#include <algorithm>
 using namespace std;
 
 

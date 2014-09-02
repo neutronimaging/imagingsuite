@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+#include <../include/kipl_global.h>
 #include <cstring>
 #include <cstdlib>
 #include <vector>
@@ -35,7 +35,7 @@ const char wrong_slash='\\';
 #endif
 namespace kipl { namespace strings { namespace filenames {
 
-void StripFileName(const std::string filestr, 
+void KIPLSHARED_EXPORT StripFileName(const std::string filestr,
 		std::string &path, 
 		std::string & name, 
 		std::vector<std::string> &extensions)
@@ -71,7 +71,7 @@ void StripFileName(const std::string filestr,
 
 }
 
-int MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar, const char cFillChar)
+int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar, const char cFillChar)
 {
 	string::size_type first=filename.find_first_of(cWildCardChar);
 	string::size_type last=filename.find_first_not_of(cWildCardChar,first);
@@ -112,7 +112,7 @@ int GetStrNum(char const * const str)
 	return atoi(str+i);
 }
 
-int ExtractWildCard(const char *src, char *prefix, char *suffix)
+int KIPLSHARED_EXPORT ExtractWildCard(const char *src, char *prefix, char *suffix)
 {
 	const char *pW=strpbrk(src,"*");
 	if (!pW) {
@@ -129,7 +129,7 @@ int ExtractWildCard(const char *src, char *prefix, char *suffix)
 	return 0;
 }
 
-int CheckPathSlashes(std::string &path, bool bAddSlashAtEnd=true)
+int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd=true)
 {
 	int cnt=0;
 	if (!path.empty()) {

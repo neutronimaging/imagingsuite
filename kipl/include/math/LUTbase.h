@@ -10,12 +10,12 @@
 //
 #ifndef LUTBASE_H_
 #define LUTBASE_H_
-
+#include "../kipl_global.h"
 #include <iostream>
 #include <string>
 
 namespace kipl { namespace math {
-class LUTbase
+class KIPLSHARED_EXPORT LUTbase
 {
 public:
 	LUTbase(size_t len, float lo, float hi);
@@ -48,5 +48,5 @@ protected:
 };
 }}
 
-std::ostream & operator<<(std::ostream &s, kipl::math::LUTbase &lut);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::math::LUTbase &lut);
 #endif /*LUTBASE_H_*/

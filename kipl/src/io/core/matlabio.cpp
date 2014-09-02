@@ -17,7 +17,7 @@
 using namespace std;
 namespace kipl { namespace io {
 
-void GetMATDims(char const * const filename,size_t * dims)
+void KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims)
 {
 
 }
@@ -164,7 +164,7 @@ namespace core {
 		return 0;
 	}
 
-	int ReadMATmatrix(char **data, size_t *dims, int &NDim, mxClassID  & type, char  **varname, const char *fname)
+    int KIPLSHARED_EXPORT ReadMATmatrix(char **data, size_t *dims, int &NDim, mxClassID  & type, char  **varname, const char *fname)
 	{
 		FILE *inf;
 		stringstream s;

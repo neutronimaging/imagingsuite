@@ -17,7 +17,7 @@ namespace kipl { namespace math { namespace fft {
 		PadCenter
 	};
 
-KIPLSHARED_EXPORT size_t NextPower2(size_t N);
+size_t KIPLSHARED_EXPORT NextPower2(size_t N);
 
 template <typename T>
 void ZeroPad(kipl::base::TImage<T,2> &img, kipl::base::TImage<T,2> &padded, size_t const * const dims, size_t * const insert, ePaddingPosition position);

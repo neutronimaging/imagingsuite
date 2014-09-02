@@ -17,7 +17,7 @@
 namespace kipl { namespace base {
 
 template <typename T, size_t NDims>
-T min(const kipl::base::TImage<T,NDims> img)
+T min(const kipl::base::TImage<T,NDims> &img)
 {
 	const size_t N=img.Size();
 	T const * const pImg=img.GetDataPtr();

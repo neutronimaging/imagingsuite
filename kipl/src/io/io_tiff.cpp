@@ -26,7 +26,7 @@ bool GetSlopeOffset(std::string msg, float &slope, float &offset)
 }
 
 
-int GetTIFFDims(char const * const fname,size_t *dims)
+int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname,size_t *dims)
 {
 	TIFF *image;
 	//TIFFErrorHandler warn = TIFFSetWarningHandler(0);
@@ -48,7 +48,7 @@ int GetTIFFDims(char const * const fname,size_t *dims)
 	return 0;
 }
 
-int WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname)
+int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname)
 {
 	TIFF *image;
 	std::stringstream msg;

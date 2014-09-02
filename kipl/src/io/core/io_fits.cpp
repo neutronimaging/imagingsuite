@@ -4,19 +4,19 @@
 #include <sstream>
 
 namespace kipl { namespace io {
-int FITSDataType(unsigned char x) 	{ return TBYTE; }
-int FITSDataType(char x)           	{ return TSBYTE; }
-int FITSDataType(unsigned short x) 	{ return TUSHORT; }
-int FITSDataType(short x) 			{ return TSHORT; }
-int FITSDataType(int x) 				{ return TINT; }
-int FITSDataType(unsigned int x) 	{ return TUINT; }
-int FITSDataType(long x) 				{ return TLONG; }
-int FITSDataType(long long x)			{ return TLONGLONG; }
-int FITSDataType(unsigned long x) 	{ return TULONG; }
-int FITSDataType(float x) 			{ return TFLOAT; }
-int FITSDataType(double x) 			{ return TDOUBLE; }
+int KIPLSHARED_EXPORT FITSDataType(unsigned char x) 	{ return TBYTE; }
+int KIPLSHARED_EXPORT FITSDataType(char x)           	{ return TSBYTE; }
+int KIPLSHARED_EXPORT FITSDataType(unsigned short x) 	{ return TUSHORT; }
+int KIPLSHARED_EXPORT FITSDataType(short x) 			{ return TSHORT; }
+int KIPLSHARED_EXPORT FITSDataType(int x) 				{ return TINT; }
+int KIPLSHARED_EXPORT FITSDataType(unsigned int x) 	{ return TUINT; }
+int KIPLSHARED_EXPORT FITSDataType(long x) 				{ return TLONG; }
+int KIPLSHARED_EXPORT FITSDataType(long long x)			{ return TLONGLONG; }
+int KIPLSHARED_EXPORT FITSDataType(unsigned long x) 	{ return TULONG; }
+int KIPLSHARED_EXPORT FITSDataType(float x) 			{ return TFLOAT; }
+int KIPLSHARED_EXPORT FITSDataType(double x) 			{ return TDOUBLE; }
 
-void GetFITSDims(char const * const filename,size_t * dims)
+void KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
 {
 	fitsfile *fptr;
 	int status=0;

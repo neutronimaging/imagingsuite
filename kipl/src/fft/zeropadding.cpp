@@ -4,13 +4,13 @@
  *  Created on: Aug 16, 2011
  *      Author: anders
  */
-
+#include "../include/kipl_global.h"
 #include <cstdlib>
 #include <cmath>
 
 namespace kipl { namespace math { namespace fft {
 
-size_t NextPower2(size_t N)
+size_t KIPLSHARED_EXPORT NextPower2(size_t N)
 {
 	const double logtwo=log(2.0);
 

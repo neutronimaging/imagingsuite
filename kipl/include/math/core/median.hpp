@@ -10,12 +10,12 @@ void median(T *v,const size_t n, S * med)
 {
         T *tmp=new T[n];
         memcpy(tmp,v,n*sizeof(T));
-        heapsort(tmp,n);
+        heapsort(tmp,static_cast<int>(n));
         *med=0;
         if ((n & 1) == 1)
-        	*med=tmp[n>>1];
+            *med=tmp[n/2];
         else
-            *med=static_cast<T>(0.5*(tmp[(n>>1)-1]+tmp[n>>1]));
+            *med=static_cast<T>(0.5*(tmp[(n/2)-1]+tmp[n/2]));
 
         delete [] tmp;
 }
@@ -23,7 +23,7 @@ void median(T *v,const size_t n, S * med)
 template<class T, class S>
 void median_STL(T *v,const size_t n, S * med)
 {
-        size_t mid=n>>1;
+        size_t mid=n/2;
         
         *med=0;
         if ((n & 1) == 1) {
