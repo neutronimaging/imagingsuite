@@ -9,23 +9,24 @@
 #include <omp.h>
 #endif
 
+#include "../include/SpotClean.h"
 #include <morphology/morphology.h>
 #include <morphology/morphfilters.h>
 #include <math/mathfunctions.h>
 #include <math/image_statistics.h>
 #include <morphology/label.h>
 #include <filters/medianfilter.h>
-#include "../include/SpotClean.h"
 #include "../include/ImagingException.h"
 
 #include <vector>
 #include <iterator>
+#include <limits>
 
 namespace ImagingAlgorithms {
 
 SpotClean::SpotClean() :
 	logger("ImagingAlgorithms::SpotClean"),
-	mark(std::numeric_limits<float>::max()),
+    mark(std::numeric_limits<float>::max()),
 	m_fGamma(0.1f),
 	m_fSigma(0.001f),
 	m_nIterations(1),
@@ -50,7 +51,7 @@ int SpotClean::Setup(size_t iterations,
 {
 	m_fGamma           = threshold;
 	m_fSigma           = width;
-	m_nIterations      = iterations;
+    m_nIterations      = static_cast<int>(iterations);
 	m_fMaxLevel        = maxlevel;
 	m_fMinLevel        = minlevel;
 	m_nMaxArea         = maxarea;
@@ -95,9 +96,9 @@ int SpotClean::Process(kipl::base::TImage<float,3> & img)
 
 			kipl::base::TImage<float,2> proj(img.Dims());
 			kipl::containers::ArrayBuffer<PixelInfo> spots(proj.Size());
-
+            int nSlices=static_cast<int>(img.Size(2));
 			#pragma omp for
-			for (ptrdiff_t i=0; i<img.Size(2); i++) {
+            for (ptrdiff_t i=0; i<nSlices; i++) {
 				memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),sizeof(float)*proj.Size());
 				res=DetectSpots(proj,&spots);
 				proj=CleanByArray(res,&spots);
@@ -122,7 +123,7 @@ kipl::base::TImage<float,2> SpotClean::CleanByList(kipl::base::TImage<float,2> i
 	float *pWeight=s.GetDataPtr();
 	float *pRes=result.GetDataPtr();
 
-	const float mark = numeric_limits<float>::max();
+    float mark = numeric_limits<float>::max();
 	for (size_t i=0; i<img.Size(); i++) {
 		if (pWeight[i]!=0) {
 			processList.push_back(PixelInfo(i,pRes[i],pWeight[i]));

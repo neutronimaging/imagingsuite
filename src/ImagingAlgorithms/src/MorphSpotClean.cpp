@@ -234,6 +234,8 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectBoth(kipl::base::TImage<float,
         else if (m_fThreshold<abs(pPeaks[i]-val))
             pImg[i]=pPeaks[i];
     }
+
+    return detection;
 }
 
 

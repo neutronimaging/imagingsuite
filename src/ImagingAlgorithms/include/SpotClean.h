@@ -39,7 +39,7 @@ class DLL_EXPORT SpotClean
 protected:
 	kipl::logging::Logger logger;
 public:
-	const float mark;
+    float mark;
 	SpotClean();
 	virtual ~SpotClean(void);
 
