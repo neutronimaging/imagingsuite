@@ -7,6 +7,8 @@
 #define STDCALL
 #endif
 
+
+#include "../../kipl_global.h"
 #include <cstdlib>
 #include <iostream>
 namespace kipl { namespace io { namespace core { 
@@ -34,8 +36,9 @@ typedef enum {
 	mxOBJECT_CLASS
 } mxClassID;
 
-std::ostream & operator<<(std::ostream & s, mxClassID id);
-size_t sizeofMAT(mxClassID id);
+std::ostream KIPLSHARED_EXPORT  & operator<<(std::ostream & s, mxClassID id);
+
+size_t KIPLSHARED_EXPORT sizeofMAT(mxClassID id);
 
 //#define __STDCALL
 /** \brief Reads the first matrix of a mat file (raw read)
@@ -50,7 +53,7 @@ size_t sizeofMAT(mxClassID id);
   \note The function allocates memory for both data and name. This memory has to be deallocated 
   manually by delete [].
 */
-int ReadMATmatrix(char **data, size_t *dims, int &NDim, mxClassID  & type, char  **varname, const char *fname);
+int KIPLSHARED_EXPORT ReadMATmatrix(char **data, size_t *dims, int &NDim, mxClassID  & type, char  **varname, const char *fname);
 //int __STDCALL ReadMATmatrix(char **data, int & rows, int & cols, mxClassID & type, char **name, const char *fname);
 
 /** \brief Writes mat file with the data (raw version)
@@ -62,14 +65,15 @@ int ReadMATmatrix(char **data, size_t *dims, int &NDim, mxClassID  & type, char 
 	\param fname Filename of the file to be written
 
 */
-int WriteMATmatrix(void *data,const size_t * dims, size_t NDim, mxClassID type, const char *varname, const char *fname);
+int KIPLSHARED_EXPORT WriteMATmatrix(void *data,const size_t * dims, size_t NDim, mxClassID type, const char *varname, const char *fname);
 //int __STDCALL WriteMATmatrix(void *data, int rows, int cols, mxClassID type, const char *varname, const char *fname);
 
 /// Reads the file head of a mat file
-int  ReadMAThead(FILE **inf, size_t & rows, size_t & cols, mxClassID  & type, char  **varname, const char *fname);
+int  KIPLSHARED_EXPORT ReadMAThead(FILE **inf, size_t & rows, size_t & cols, mxClassID  & type, char  **varname, const char *fname);
 
 /// Writes the file head of a mat file
-int STDCALL WriteMAThead(FILE **of, 
+//int KIPLSHARED_EXPORT STDCALL WriteMAThead(FILE **of,
+int KIPLSHARED_EXPORT WriteMAThead(FILE **of,
 				 const size_t *dims, 
 				 size_t NDim, 
 				 mxClassID type, 
@@ -77,22 +81,23 @@ int STDCALL WriteMAThead(FILE **of,
 				 const char *fname);
 
 /// Finishes of the writing of a mat file
-int STDCALL FinishWriteMAT(FILE **of, int headsize=0x88);
+//int KIPLSHARED_EXPORT STDCALL FinishWriteMAT(FILE **of, int headsize=0x88);
+int KIPLSHARED_EXPORT FinishWriteMAT(FILE **of, int headsize=0x88);
 
 /** \brief Get the text name of of MAT class id
 	\param id Class ID
 	\param str String containing the class description
 */
-std::string ClassIDstr(mxClassID id);
+std::string KIPLSHARED_EXPORT ClassIDstr(mxClassID id);
 
-mxClassID GetMatlabClassID( float a );
-mxClassID GetMatlabClassID( double a );
-mxClassID GetMatlabClassID( char a );
-mxClassID GetMatlabClassID( unsigned char a );
-mxClassID GetMatlabClassID( short a );
-mxClassID GetMatlabClassID( unsigned short a );
-mxClassID GetMatlabClassID( int a );
-mxClassID GetMatlabClassID( unsigned int a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( float a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( double a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( char a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( unsigned char a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( short a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( unsigned short a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( int a );
+mxClassID KIPLSHARED_EXPORT GetMatlabClassID( unsigned int a );
 //mxClassID GetMatlabClassID( long long a );
 //mxClassID GetMatlabClassID( unsigned long long a );
 

@@ -10,6 +10,7 @@
 //
 #ifndef IOSTACK_H_
 #define IOSTACK_H_
+#include "../kipl_global.h"
 #include "../strings/filenames.h"
 #include "../base/timage.h"
 #include "../base/kiplenums.h"
@@ -33,8 +34,8 @@ enum eFileType {
 	PNG16bits
 };
 
-std::ostream & operator<<(std::ostream &s, kipl::io::eFileType ft);
-void string2enum(const std::string str, kipl::io::eFileType &ft);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
+void KIPLSHARED_EXPORT string2enum(const std::string str, kipl::io::eFileType &ft);
 /// \brief Read a series of tiff image and stores as a 3D image
 /// \brief img target image
 /// \brief fname file name mask of the image sequence, must contain a *

@@ -11,6 +11,7 @@
 
 #ifndef IMAGEARITHMETICS_H_
 #define IMAGEARITHMETICS_H_
+#include "../../kipl_global.h"
 #include <iostream>
 
 namespace kipl { namespace base { namespace core {
@@ -88,14 +89,14 @@ void SSE2Mult(float *a, const float b, const size_t N) {BasicMult(a,b,N);}
 void SSE2Div(float *a, float *b, const size_t N) {BasicDiv(a,b,N);}
 void SSE2Div(float *a, const float b, const size_t N) {BasicDiv(a,b,N);}
 #else
-void SSE2Add(float *a, float *b, const size_t N);
-void SSE2Add(float *a, const float b, const size_t N);
-void SSE2Minus(float *a, float *b, const size_t N);
-void SSE2Minus(float *a, const float b, const size_t N);
-void SSE2Mult(float *a, float *b, const size_t N);
-void SSE2Mult(float *a, const float b, const size_t N);
-void SSE2Div(float *a, float *b, const size_t N);
-void SSE2Div(float *a, const float b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Add(float *a, float *b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Add(float *a, const float b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Minus(float *a, float *b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Minus(float *a, const float b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Mult(float *a, float *b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Mult(float *a, const float b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Div(float *a, float *b, const size_t N);
+void KIPLSHARED_EXPORT SSE2Div(float *a, const float b, const size_t N);
 #endif
 
 }}}

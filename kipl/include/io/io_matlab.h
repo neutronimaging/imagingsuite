@@ -44,7 +44,7 @@ int WriteMATint(const kipl::base::TImage<ImgType,NDim> &img, char const * const 
 ///	\return Error code 	
 ///	\retval 0 The reading failed
 ///	\retval 1 Successful 
-int ReadMATdbl(kipl::base::TImage<double,2> &img,const char *fname);
+int KIPLSHARED_EXPORT ReadMATdbl(kipl::base::TImage<double,2> &img,const char *fname);
 
 /// \brief Writes any image data type into a int32 matrix in a MAT file 
 ///	\param img the image to be stored
@@ -52,7 +52,7 @@ int ReadMATdbl(kipl::base::TImage<double,2> &img,const char *fname);
 ///	\return Error code 	
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
-int ReadMATint(kipl::base::TImage<int,2> &img, char const * const fname);
+int KIPLSHARED_EXPORT ReadMATint(kipl::base::TImage<int,2> &img, char const * const fname);
 
 template <class ImgType,size_t NDim>
 int WriteMATdbl(const kipl::base::TImage<ImgType,NDim> &img,
@@ -370,7 +370,7 @@ int SliceWriteMAT(kipl::base::TImage<ImgType,3u> & img,
 	return 1;
 }
 
-void GetMATDims(char const * const filename,size_t * dims);
+void KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims);
 
 }}
 

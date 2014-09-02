@@ -506,12 +506,12 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 ///	\return Error code
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
-int WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname);
+int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname);
 
 /// \brief Gets the dimensions of a tiff image without reading the image
 /// \param fname file name of the image file
 /// \param dims array with the dimensions
-int GetTIFFDims(char const * const fname, size_t *dims);
+int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname, size_t *dims);
 
 /// \brief Reads a single line out of a tiff file
 /// \param data buffer array for the data

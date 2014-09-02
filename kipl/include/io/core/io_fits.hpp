@@ -22,17 +22,17 @@ int FITSDataType(float x) 			{ return TFLOAT; }
 int FITSDataType(double x) 			{ return TDOUBLE; }
 */
 
-int FITSDataType(unsigned char x);
-int FITSDataType(char x);
-int FITSDataType(unsigned short x);
-int FITSDataType(short x);
-int FITSDataType(int x);
-int FITSDataType(unsigned int x);
-int FITSDataType(long x);
-int FITSDataType(long long x);
-int FITSDataType(unsigned long x);
-int FITSDataType(float x);
-int FITSDataType(double x);
+int KIPLSHARED_EXPORT FITSDataType(unsigned char x);
+int KIPLSHARED_EXPORT FITSDataType(char x);
+int KIPLSHARED_EXPORT FITSDataType(unsigned short x);
+int KIPLSHARED_EXPORT FITSDataType(short x);
+int KIPLSHARED_EXPORT FITSDataType(int x);
+int KIPLSHARED_EXPORT FITSDataType(unsigned int x);
+int KIPLSHARED_EXPORT FITSDataType(long x);
+int KIPLSHARED_EXPORT FITSDataType(long long x);
+int KIPLSHARED_EXPORT FITSDataType(unsigned long x);
+int KIPLSHARED_EXPORT FITSDataType(float x);
+int KIPLSHARED_EXPORT FITSDataType(double x);
 
 template <typename ImgType>
 int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop)
