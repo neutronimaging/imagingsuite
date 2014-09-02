@@ -8,7 +8,7 @@
 #include <QtPrintSupport/QPrinter>
 #endif
 
-
+#include "QtAddons_global.h"
 #include <logging/logger.h>
 
 #include <string>
@@ -20,7 +20,7 @@
 #include "plotpainter.h"
 
 namespace QtAddons {
-class ReportGeneratorBase
+class QTADDONSSHARED_EXPORT ReportGeneratorBase
 {
 protected:
     kipl::logging::Logger logger;
