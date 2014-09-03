@@ -14,10 +14,10 @@
 #define _MODULEEXCEPTION_H_
 #include <string>
 
-#include "../src/stdafx.h"
+#include "ModuleConfig_global.h"
 #include <base/KiplException.h>
 
-class  DLL_EXPORT ModuleException : public kipl::base::KiplException
+class  MODULECONFIGSHARED_EXPORT ModuleException : public kipl::base::KiplException
 {
 public:
 	ModuleException(void);

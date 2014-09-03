@@ -50,6 +50,7 @@ std::string ModuleConfig::WriteXML(int indent)
 
 	return str.str();
 }
+
 void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 {
 	std::ostringstream msg;

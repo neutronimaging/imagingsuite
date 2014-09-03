@@ -22,11 +22,12 @@ typedef int (*DESTROYER)(const char *,void *);
 typedef  void * HINSTANCE;
 #endif
 
+#include "ModuleConfig_global.h"
 #include <string>
 #include <logging/logger.h>
 #include "ProcessModuleBase.h"
 
-class DLL_EXPORT ModuleItemBase
+class MODULECONFIGSHARED_EXPORT ModuleItemBase
 {
 protected:
 	kipl::logging::Logger logger;

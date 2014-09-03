@@ -12,15 +12,8 @@
 
 #ifndef __CONFIGBASE_H
 #define __CONFIGBASE_H
-#ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
 
-#define DLL_EXPORT __declspec(dllexport)
-
-#else
-#define DLL_EXPORT
-#endif
+#include "ModuleConfig_global.h"
 
 #include <map>
 #include <list>
@@ -34,7 +27,7 @@
 #include <logging/logger.h>
 //#include <io/io_stack.h>
 
-class DLL_EXPORT ConfigBase
+class MODULECONFIGSHARED_EXPORT ConfigBase
 {
 protected:
 	kipl::logging::Logger logger;
@@ -42,7 +35,7 @@ protected:
     std::string m_sApplicationPath;
 
 public:
-	struct DLL_EXPORT cUserInformation {
+    struct MODULECONFIGSHARED_EXPORT cUserInformation {
 		cUserInformation() ;
 		cUserInformation(const cUserInformation &info);
 		cUserInformation & operator=(const cUserInformation & info);

@@ -47,7 +47,7 @@ SOURCES += \
     ../../src/ConfigBase.cpp
 
 HEADERS +=\
-        ModuleConfig_global.h \
+     ../../include/ModuleConfig_global.h \
     ../../include/targetver.h \
     ../../include/ProcessModuleBase.h \
     ../../include/ParameterHandling.h \

@@ -16,21 +16,21 @@
 #ifndef __PARAMETERHANDLING_H
 #define __PARAMETERHANDLING_H
 
-#include "../src/stdafx.h"
+#include "ModuleConfig_global.h"
 
 #include <map>
 #include <string>
 
-std::string DLL_EXPORT GetStringParameter(std::map<std::string, std::string> parameters, std::string parameter);
+std::string MODULECONFIGSHARED_EXPORT GetStringParameter(std::map<std::string, std::string> parameters, std::string parameter);
 
-float DLL_EXPORT GetFloatParameter(std::map<std::string, std::string> parameters, std::string parameter);
+float MODULECONFIGSHARED_EXPORT GetFloatParameter(std::map<std::string, std::string> parameters, std::string parameter);
 
-int DLL_EXPORT GetIntParameter(std::map<std::string, std::string> parameters, std::string parameter);
+int MODULECONFIGSHARED_EXPORT GetIntParameter(std::map<std::string, std::string> parameters, std::string parameter);
 
-int DLL_EXPORT GetFloatParameterVector(std::map<std::string, std::string> parameters, std::string parameter,float *arr, int N);
+int MODULECONFIGSHARED_EXPORT GetFloatParameterVector(std::map<std::string, std::string> parameters, std::string parameter,float *arr, int N);
 
-int DLL_EXPORT GetIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,int *arr, int N);
+int MODULECONFIGSHARED_EXPORT GetIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,int *arr, int N);
 
-int DLL_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,size_t *arr, int N);
+int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,size_t *arr, int N);
 
 #endif

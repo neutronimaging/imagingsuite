@@ -12,25 +12,15 @@
 
 #ifndef MODULECONFIG_H_
 #define MODULECONFIG_H_
+#include "ModuleConfig_global.h"
 #include <map>
 #include <list>
 #include <string>
 
 #include <libxml/xmlreader.h>
-
 #include <logging/logger.h>
 
-#ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-
-#define DLL_EXPORT __declspec(dllexport)
-
-#else
-#define DLL_EXPORT
-#endif
-
-class DLL_EXPORT ModuleConfig
+class MODULECONFIGSHARED_EXPORT ModuleConfig
 {
 protected:
 	kipl::logging::Logger logger;

@@ -13,7 +13,7 @@
 #ifndef PROCESSMODULEBASE_H_
 #define PROCESSMODULEBASE_H_
 
-#include "../src/stdafx.h"
+#include "ModuleConfig_global.h"
 
 #include <string>
 #include <map>
@@ -24,7 +24,7 @@
 #include <strings/miscstring.h>
 #include <algorithm>
 
-class DLL_EXPORT ProcessModuleBase {
+class MODULECONFIGSHARED_EXPORT ProcessModuleBase {
 protected:
 	kipl::logging::Logger logger;
 public:
