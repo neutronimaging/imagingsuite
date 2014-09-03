@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "singlemoduleconfiguratorwidget.h"
 #include "QListWidgetModuleItem.h"
 
