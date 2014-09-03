@@ -28,7 +28,7 @@ public:
     explicit SingleModuleConfiguratorWidget(QWidget *parent = 0);
     void Configure(std::string sApplicationName);
 
-    void SetModule(ModuleConfig module);
+    void SetModule(ModuleConfig &module);
     void setDescriptionLabel(QString lbl);
     ModuleConfig GetModule();
     void SetDescription(QString name);

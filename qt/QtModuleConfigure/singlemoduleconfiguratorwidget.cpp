@@ -62,7 +62,7 @@ QSize SingleModuleConfiguratorWidget::sizeHint() const
 {
     return QSize(300, 50);
 }
-void SingleModuleConfiguratorWidget::SetModule(ModuleConfig module)
+void SingleModuleConfiguratorWidget::SetModule(ModuleConfig &module)
 {
     m_ModuleConfig=module;
     m_LabelModuleName.setText(QString::fromStdString(m_ModuleConfig.m_sModule));
