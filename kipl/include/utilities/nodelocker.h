@@ -1,6 +1,7 @@
 #ifndef __NODELOCKER_H
 #define __NODELOCKER_H
 
+#include "../kipl_global.h"
 #include <string>
 #include <list>
 #include <set>
@@ -8,7 +9,7 @@
 
 namespace kipl { namespace utilities { 
 
-class NodeLocker {
+class KIPLSHARED_EXPORT NodeLocker {
 private:
 	kipl::logging::Logger logger;
 public:
