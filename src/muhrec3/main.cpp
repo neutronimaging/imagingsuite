@@ -1,7 +1,9 @@
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QDir>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QString>
+#include <QVector>
 #include "muhrecmainwindow.h"
 #include <string>
 #include <utilities/nodelocker.h>
@@ -139,15 +141,18 @@ int RunOffline(QApplication *app)
     std::ostringstream msg;
     kipl::logging::Logger logger("MuhRec3::RunOffline");
 
+#ifdef _OPENMP
     omp_set_nested(1);
-    if (2<app->argc()) {
-        if (!strcmp(app->argv()[1],"-f")) {
-          logger(kipl::logging::Logger::LogMessage,"MuhRec2 is running in offline mode");
+#endif
+    QVector<QString> args=app->arguments().toVector();
+    if (2<args.size()) {
+        if (args[1]=="-f") {
+          logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in offline mode");
           try {
                   ReconFactory factory;
                   logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
                   ReconConfig config;
-                  config.LoadConfigFile(app->argv()[2],"reconstructor");
+                  config.LoadConfigFile(args[2].toStdString(),"reconstructor");
                   config.MatrixInfo.bAutomaticSerialize=true;
                   ReconEngine *pEngine=factory.BuildEngine(config,NULL);
                   if (pEngine!=NULL) {

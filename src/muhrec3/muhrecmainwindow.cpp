@@ -38,7 +38,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_pEngine(NULL),
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
-    m_sApplicationPath(app->applicationDirPath().toAscii()),
+    m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sConfigFilename("noname.xml"),
     m_bCurrentReconStored(true)
 {
