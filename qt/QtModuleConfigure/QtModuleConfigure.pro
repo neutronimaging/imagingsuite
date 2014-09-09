@@ -3,14 +3,8 @@
 # Project created by QtCreator 2013-05-04T14:04:46
 #
 #-------------------------------------------------
-greaterThan(QT_MAJOR_VERSION, 4) {
-QT       += core widgets
-}
-else {
-QT       += core gui
-}
 
-QT       += widgets
+QT       += core widgets
 
 TARGET = QtModuleConfigure
 TEMPLATE = lib
