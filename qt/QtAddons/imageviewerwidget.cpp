@@ -15,9 +15,11 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
     m_ImagePainter(this),
+    m_rubberBandLine(QRubberBand::Line, this),
     m_RubberBandStatus(RubberBandHide),
-    m_PressedButton(Qt::NoButton),
-    m_MouseMode(ViewerROI)
+    m_MouseMode(ViewerROI),
+    m_PressedButton(Qt::NoButton)
+
 {
     QPalette palette;
     palette.setColor(QPalette::Background,Qt::black);
@@ -142,6 +144,11 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
             dlg.exec();
             break;
         }
+    case 'k':
+    case 'K':
+        setCursor(Qt::PointingHandCursor);
+        m_MouseMode=ViewerProfile;
+        break;
     case 'r':
     case 'R':
         setCursor(Qt::CrossCursor);
@@ -182,6 +189,24 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
                 updateRubberBandRegion();
                 setCursor(Qt::CrossCursor);
             }
+        if (m_MouseMode==ViewerProfile) {
+                m_rubberBandOrigin = event->pos();
+                m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, QSize()));
+                m_rubberBandLine.show();
+        }
+
+//            void Widget::mouseMoveEvent(QMouseEvent *event)
+//            {
+//                rubberBand->setGeometry(QRect(origin, event->pos()).normalized());
+//            }
+
+//            void Widget::mouseReleaseEvent(QMouseEvent *event)
+//            {
+//                rubberBand->hide();
+//                // determine selection, for example using QRect::intersects()
+//                // and QRect::contains().
+//            }
+
 //        if (m_MouseMode==ViewerPan)
 //            m_ImagePainter.pan(event->pos());
     }
@@ -190,13 +215,11 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
         m_LastMotionPosition=event->pos();
     }
 
-
    QWidget::mousePressEvent(event);
 }
 
 void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 {
-
     std::ostringstream msg;
 
     if (m_RubberBandStatus == RubberBandDrag) {
@@ -207,7 +230,11 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     else {
 
     }
+    if (m_MouseMode==ViewerProfile)
+        m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
+
+    QPoint tooltipOffset(50,65);
     if (m_PressedButton == Qt::RightButton) {
         float minlevel, maxlevel;
 
@@ -230,7 +257,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
         msg<<"W="<<fWindow<<", L="<<fLevel;
 
-        showToolTip(event->pos(),QString::fromStdString(msg.str()));
+        showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
     else {
@@ -243,7 +270,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
             msg.str("");
             msg<<m_ImagePainter.getValue(xpos,ypos)<<" @ ("<<xpos<<", "<<ypos<<")";
 
-            showToolTip(event->globalPos(),QString::fromStdString(msg.str()));
+            showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
         }
     }
 
@@ -253,7 +280,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     std::ostringstream msg;
-    if ((event->button() == Qt::LeftButton) && (m_RubberBandStatus == RubberBandDrag)) {
+    if ((event->button() == Qt::LeftButton)) {
+        if (m_RubberBandStatus == RubberBandDrag) {
         updateRubberBandRegion();
 
         QRect r=rubberBandRect.normalized();
@@ -263,7 +291,10 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
                         floor(r.height()/m_ImagePainter.get_scale())
                         );
         m_RubberBandStatus = RubberBandFreeze;
-
+        }
+        if (m_MouseMode==ViewerProfile) {
+            m_rubberBandLine.hide();
+        }
     }
 
     if (event->button() == Qt::RightButton )
@@ -277,10 +308,12 @@ void ImageViewerWidget::updateRubberBandRegion()
 {
     QRect rect = rubberBandRect.normalized();
 
-    update(rect.left(), rect.top(), rect.width(), 1);
-    update(rect.left(), rect.top(), 1, rect.height());
-    update(rect.left(), rect.bottom(), rect.width(), 1);
-    update(rect.right(), rect.top(), 1, rect.height());
+    if (m_MouseMode==ViewerROI) {
+        update(rect.left(), rect.top(), rect.width(), 1);
+        update(rect.left(), rect.top(), 1, rect.height());
+        update(rect.left(), rect.bottom(), rect.width(), 1);
+        update(rect.right(), rect.top(), 1, rect.height());
+    }
 }
 
 void ImageViewerWidget::showToolTip(QPoint position, QString message)
@@ -434,7 +467,6 @@ SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
     m_pParent(dynamic_cast<ImageViewerWidget*>(parent))
 
 {
-
     m_HorizontalLayout.insertWidget(0,&m_label1);
     m_HorizontalLayout.insertWidget(1,&m_spinLow);
     m_HorizontalLayout.insertWidget(2,&m_label2);

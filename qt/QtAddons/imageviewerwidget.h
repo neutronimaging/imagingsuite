@@ -4,6 +4,7 @@
 #include <QRect>
 #include <QColor>
 #include <QWidget>
+#include <QRubberBand>
 #include <QResizeEvent>
 #include "imagepainter.h"
 #include <logging/logger.h>
@@ -31,7 +32,8 @@ public:
     enum eViewerMouseModes {
         ViewerROI=0,
         ViewerZoom=1,
-        ViewerPan=2
+        ViewerPan=2,
+        ViewerProfile=3
     };
 
     enum eRubberBandStatus
@@ -93,6 +95,8 @@ protected:
     void showToolTip(QPoint position, QString message);
     void refreshPixmap();
     QRect rubberBandRect;
+    QRubberBand m_rubberBandLine;
+    QPoint m_rubberBandOrigin;
     eRubberBandStatus m_RubberBandStatus;
     QRect roiRect;
     eViewerMouseModes m_MouseMode;

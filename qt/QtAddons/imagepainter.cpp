@@ -8,6 +8,10 @@ namespace QtAddons {
 ImagePainter::ImagePainter(QWidget * parent) :
     m_pParent(parent),
     logger("ImagePainter"),
+    m_ImageMin(0.0f),
+    m_ImageMax(1.0f),
+    m_MinVal(0.0f),
+    m_MaxVal(1.0f),
     m_bHold_annotations(false),
     m_data(NULL),
     m_cdata(NULL)
@@ -33,12 +37,8 @@ ImagePainter::~ImagePainter()
 
 void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 {
-//    float img_ratio        = static_cast<float>(m_dims[0])/static_cast<float>(m_dims[1]);
-//    float allocation_ratio = static_cast<float>(w)/static_cast<float>(h);
-
     if (!m_pixmap_full.isNull())
     {
-     //   logger(kipl::logging::Logger::LogMessage,"Drawing the image");
         QSize widgetSize(w,h);
         QPoint centerPoint(0,0);
         // Scale new image which size is widgetSize
@@ -49,7 +49,6 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         // Draw image
 
         painter.drawPixmap(centerPoint,scaledPixmap);
-
 
         offset_x = (w-scaledPixmap.width())/2+x;
         offset_y = (h-scaledPixmap.height())/2+y;
@@ -85,7 +84,6 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
             }
         }
 
-
         painter.setPen(QColor(Qt::black));
     }
 }
@@ -113,15 +111,14 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     kipl::math::minmax(m_data,m_NData,&m_ImageMin, &m_ImageMax);
     m_MinVal=low;
     m_MaxVal=high;
-    const size_t nHistSize=256;
+
+    const size_t nHistSize=1024;
     float haxis[nHistSize];
     size_t hist[nHistSize];
-#ifndef _MSC_VER
     kipl::base::Histogram(m_data,static_cast<size_t>(m_NData),hist,nHistSize,m_ImageMin, m_ImageMax, haxis);
-#endif
 
     m_Histogram.clear();
-    for (int i=0; i<nHistSize; i++) {
+    for (size_t i=0; i<nHistSize; i++) {
         m_Histogram.append(QPointF(haxis[i],static_cast<float>(hist[i])));
     }
     ostringstream msg;
