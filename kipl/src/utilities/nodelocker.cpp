@@ -375,8 +375,9 @@ std::string NodeLocker::ComputeCodeString(std::string nodeinfo, std::string name
 	}
 	key=key.substr(0,32);
 
+    name+=expires;
 	while (name.size()<32) {
-		name+=name+expires;
+        name+=name;
 	}
 	name=name.substr(0,32);
 //    std::cout<<"ComputeCodeString: node="<<nodeinfo<<", name="<<name<<", key="<<key<<", expires="<<expires<<std::endl;

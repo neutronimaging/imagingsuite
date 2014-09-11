@@ -50,8 +50,8 @@ template <class T, size_t nDims>
 int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle)
 {
 	using namespace std;
-	int edgeinfo= (pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) << 1) +
-			((pos[1]<nHalfKernel[1]) << 2)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) << 3) ;
+    int edgeinfo= (pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) * 2) +
+            ((pos[1]<nHalfKernel[1]) * 4)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) * 8) ;
 //	int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
 //	int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
 	int startY = 1 < nDims ? -nHalfKernel[1] : 1 ;
@@ -376,7 +376,7 @@ kipl::base::TImage<T,N> TWeightedMedianFilter<T,N>::operator() (kipl::base::TIma
 			T * pLine=result.GetLinePtr(y);
 			for (int x=startX; x<endX; x++) {
 				pos[0]=x-this->nHalfKernel[0];
-				ExtractNeighborhood(src,pos,kern,edgeStyle);
+                TMedianFilter<T,N>::ExtractNeighborhood(src,pos,kern,edgeStyle);
 				ExpandData(kern,kern2);
 				kipl::math::median(kern2,m_nBufferLength, pLine+x);
 			}
