@@ -1,20 +1,19 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-DEST="muhrec3-build-desktop-Qt_4_8_1__gcc__Release/muhrec3.app/Contents/MacOS"
+DEST="build-muhrec3-Qt5-Release/muhrec3.app/Contents/MacOS"
 pushd .
 cd $DEST
 rm -f *.1.0.0.dylib
 
-`$CPCMD /Users/kaestner/repos/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libReconFramework.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/StdBackProjectors/StdBackProjectors-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdBackProjectors.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModules.1.0.0.dylib .`
-`$CPCMD /Users/kaestner/repos/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.1.0.0.dylib .`
-# `$CPCMD /Users/kaestner/QtSDK/Madde/sysroots/harmattan_sysroot_10.2011.34-1_slim/usr/lib/libgomp.so.1.0.0 .`
-`$CPCMD /Users/kaestner/repos/tomography/trunk/src/StdPreprocModulesGUI-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModulesGUI.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/libReconFramework.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/StdBackProjectors/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/src/libs/recon2/trunk/StdPreprocModules/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib .`
+`$CPCMD /Users/kaestner/repos/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.1.0.0.dylib .`
 
 rm -f *.1.dylib
 rm -f *.1.0.dylib

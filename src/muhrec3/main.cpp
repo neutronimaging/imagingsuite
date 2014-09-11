@@ -1,4 +1,6 @@
 #include <QtWidgets/QApplication>
+#include <QDesktopServices>
+#include <QPushButton>
 #include <QDir>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -30,65 +32,74 @@ int main(int argc, char *argv[])
     std::string application_path=app.applicationDirPath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
-#ifndef __APPLE__
     kipl::utilities::NodeLocker license(homedir);
+#ifndef NEVER
     bool licensefail=false;
+    int res=0;
     std::string errormsg;
-    try {
-        std::list<std::string> liclist;
-        liclist.push_back(homedir+".imagingtools/license_muhrec.dat");
-        liclist.push_back(application_path+"license_muhrec.dat");
-        liclist.push_back(application_path+"license.dat");
-        liclist.push_back(homedir+"license_muhrec.dat");
+    do {
+        try {
+            std::list<std::string> liclist;
+            liclist.push_back(homedir+".imagingtools/license_muhrec.dat");
+            liclist.push_back(application_path+"license_muhrec.dat");
+            liclist.push_back(application_path+"license.dat");
+            liclist.push_back(homedir+"license_muhrec.dat");
 
-        license.Initialize(liclist,"muhrec");
-    }
-    catch (kipl::base::KiplException &e) {
-        errormsg=e.what();
-        licensefail=true;
-    }
-
-    if (licensefail || !license.AccessGranted()) {
-        msg.str("");
-        if (licensefail)
-            msg<<"Could not locate the license file\n"<<errormsg<<"\n";
-        else
-            msg<<"MuhRec is not registered on this computer\n";
-
-        msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate MuhRec.\n";
-        msg<<"\nActivation code: "<<*license.GetNodeString().begin();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        QMessageBox mbox;
-
-       // mbox.addButton("Have license file",QMessageBox::AcceptRole);
-        mbox.addButton(QMessageBox::Save);
-        mbox.addButton(QMessageBox::Abort);
-        mbox.setText(QString::fromStdString(msg.str()));
-        mbox.setWindowTitle("License error");
-        mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
-        int res=mbox.exec();
-        std::cout<<"Res ="<<res<<std::endl;
-        if (res==QMessageBox::Save) {
-            QDir dir;
-            QString fname=QFileDialog::getOpenFileName(&mbox,"Select the license file",dir.homePath(),"*.dat");
-
-            if (!fname.isEmpty()) {
-                if (!dir.exists(dir.homePath()+"/.imagingtools")) {
-                    dir.mkdir(QDir::homePath()+"/.imagingtools");
-                }
-                std::cout<<(dir.homePath()+"/.imagingtools/license_muhrec.dat").toStdString()<<std::endl;
-                QFile::copy(fname,dir.homePath()+"/.imagingtools/license_muhrec.dat");
-            }
+            license.Initialize(liclist,"muhrec");
+        }
+        catch (kipl::base::KiplException &e) {
+            errormsg=e.what();
+            licensefail=true;
         }
 
-        return -1;
-    }
-#endif
+        if (licensefail || !license.AccessGranted()) {
+            msg.str("");
+            if (licensefail)
+                msg<<"Could not locate the license file\n"<<errormsg<<"\n";
+            else
+                msg<<"MuhRec is not registered on this computer\n";
 
-    if (argc==1)
-        return RunGUI(&app);
-    else
-        return RunOffline(&app);
+            msg<<"\nPlease press register to request an activation key for MuhRec.\n";
+            msg<<"\nActivation code: "<<*license.GetNodeString().begin()<<std::endl;
+            msg<<"On computers with many network adapters, please deactivate the wifi and restart the application.\n";
+            msg<<"When you obtained the email containing the key, press the save button and select the file containing the key."
+
+            logger(kipl::logging::Logger::LogError,msg.str());
+            QMessageBox mbox;
+
+            QPushButton *registerbutton=mbox.addButton("Register",QMessageBox::AcceptRole);
+            mbox.addButton(QMessageBox::Save);
+            mbox.addButton(QMessageBox::Abort);
+            mbox.setText(QString::fromStdString(msg.str()));
+            mbox.setWindowTitle("License error");
+            mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
+            res=mbox.exec();
+            std::cout<<"Res ="<<res<<std::endl;
+            if (res==QMessageBox::Save) {
+                QDir dir;
+                QString fname=QFileDialog::getOpenFileName(&mbox,"Select the license file",dir.homePath(),"*.dat");
+
+                if (!fname.isEmpty()) {
+                    if (!dir.exists(dir.homePath()+"/.imagingtools")) {
+                        dir.mkdir(QDir::homePath()+"/.imagingtools");
+                    }
+                    std::cout<<(dir.homePath()+"/.imagingtools/license_muhrec.dat").toStdString()<<std::endl;
+                    QFile::copy(fname,dir.homePath()+"/.imagingtools/license_muhrec.dat");
+                }
+            }
+            if (mbox.clickedButton() == registerbutton) {
+                logger(kipl::logging::Logger::LogMessage,"Opening default web browser.");
+                QDesktopServices::openUrl(QUrl("http://www.imagingscience.ch/usermanager/index.php?nodekey="+QString::fromStdString(*license.GetNodeString().begin())));
+            }
+        }
+    } while (!license.AccessGranted() && res!=QMessageBox::Abort);
+#endif
+    if (license.AccessGranted()) {
+        if (app.arguments().size()==1)
+            return RunGUI(&app);
+        else
+            return RunOffline(&app);
+    }
 
     return 0;
 }

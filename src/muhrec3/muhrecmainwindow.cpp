@@ -553,10 +553,18 @@ void MuhRecMainWindow::GetMatrixROI()
         ui->spinMatrixROI1->blockSignals(true);
         ui->spinMatrixROI2->blockSignals(true);
         ui->spinMatrixROI3->blockSignals(true);
-        ui->spinMatrixROI0->setValue(rect.x());
-        ui->spinMatrixROI1->setValue(rect.y());
-        ui->spinMatrixROI2->setValue(rect.x()+rect.width());
-        ui->spinMatrixROI3->setValue(rect.y()+rect.height());
+        if (m_Config.MatrixInfo.bUseROI) {
+            ui->spinMatrixROI0->setValue(rect.x()+m_Config.MatrixInfo.roi[0]);
+            ui->spinMatrixROI1->setValue(rect.y()+m_Config.MatrixInfo.roi[1]);
+            ui->spinMatrixROI2->setValue(rect.x()+rect.width()+m_Config.MatrixInfo.roi[0]);
+            ui->spinMatrixROI3->setValue(rect.y()+rect.height()+m_Config.MatrixInfo.roi[1]);
+        }
+        else {
+            ui->spinMatrixROI0->setValue(rect.x());
+            ui->spinMatrixROI1->setValue(rect.y());
+            ui->spinMatrixROI2->setValue(rect.x()+rect.width());
+            ui->spinMatrixROI3->setValue(rect.y()+rect.height());
+        }
         ui->spinMatrixROI0->blockSignals(false);
         ui->spinMatrixROI1->blockSignals(false);
         ui->spinMatrixROI2->blockSignals(false);
