@@ -29,6 +29,12 @@
 
 namespace kipl { namespace utilities { 
 
+NodeLocker::NodeLocker(std::string path) :
+    logger("NodeLocker"),
+    m_sMessage("No message"),
+    sPath(path)
+{}
+
 bool NodeLocker::Initialize(std::list<std::string> &liclist, std::string key,  std::string hwinfo)
 {
     std::list<std::string>::iterator it;
@@ -413,6 +419,16 @@ void NodeLocker::GenerateLicenseFile(std::string node,std::string name, std::str
 	outfile<<"</license>\n";
 
 	outfile.close();
+}
+
+bool NodeLocker::AccessGranted()
+{
+    return m_bAccessGranted;
+}
+
+std::string NodeLocker::GetLockerMessage()
+{
+    return m_sMessage;
 }
 
 bool NodeLocker::IsExpired(std::string expire)

@@ -13,7 +13,7 @@ class KIPLSHARED_EXPORT NodeLocker {
 private:
 	kipl::logging::Logger logger;
 public:
-    NodeLocker(std::string path) : logger("NodeLocker"),m_sMessage("No message"),sPath(path) {}
+    NodeLocker(std::string path);
 	/// \brief Takes a ipconfig dumpfile and creates a license file
 	/// \param hwfname file name of the dump file
 	/// \param key additional key 
@@ -33,8 +33,10 @@ public:
 	bool Initialize(std::list<std::string> &liclist, std::string key,  std::string hwinfo="");
 	/// \brief Indicates whether the node lock check was successful or not.
 	/// \returns true if access is granted.
-	bool AccessGranted() { return m_bAccessGranted; }
-    std::string GetMessage() {return m_sMessage; }
+    bool AccessGranted();
+
+
+    std::string GetLockerMessage();
 	
 	/// \brief Retrieves the first MAC adress of the computer
 	std::string GetMAC(std::string hwinfo="");

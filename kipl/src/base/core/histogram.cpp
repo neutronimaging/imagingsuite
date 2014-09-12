@@ -1,3 +1,4 @@
+#include "../../include/kipl_global.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstddef>
@@ -9,7 +10,8 @@
 
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
-int Histogram(float * data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis)
+
+int KIPLSHARED_EXPORT Histogram(float * data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis)
 {
 
     float start=0;
@@ -71,7 +73,7 @@ std::map<float, size_t> ExactHistogram(float const * const data, size_t Ndata)
 }
 
 
-double Entropy(size_t const * const hist, size_t N)
+double  KIPLSHARED_EXPORT Entropy(size_t const * const hist, size_t N)
 {
 	double p=0.0;
 	double entropy=0.0;
@@ -88,7 +90,7 @@ double Entropy(size_t const * const hist, size_t N)
 	return entropy;
 }
 
-int FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi)
+int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi)
 {
 	ptrdiff_t *cumulated=new ptrdiff_t[N];
 	memset(cumulated,0,sizeof(ptrdiff_t)*N);
