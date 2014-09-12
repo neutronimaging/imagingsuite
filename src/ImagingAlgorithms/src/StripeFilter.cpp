@@ -4,7 +4,7 @@
  *  Created on: Aug 13, 2011
  *      Author: anders
  */
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "../include/StripeFilter.h"
 #include "../include/ImagingException.h"

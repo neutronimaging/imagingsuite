@@ -1,6 +1,9 @@
 #ifndef TRANSLATEPROJECTIONS_H
 #define TRANSLATEPROJECTIONS_H
 
+#include "ImagingAlgorithms_global.h"
+
+//#include "stdafx.h"
 #include <base/timage.h>
 #include <iostream>
 #include <string>
@@ -13,7 +16,7 @@ enum eTranslateSampling {
     TranslateGaussian
 };
 
-class TranslateProjections
+class IMAGINGALGORITHMSSHARED_EXPORT TranslateProjections
 {
 public:
     TranslateProjections();
@@ -29,7 +32,7 @@ protected:
 
 }
 
-std::string enum2string(ImagingAlgorithms::eTranslateSampling e);
-void string2enum(std::string s, ImagingAlgorithms::eTranslateSampling &e);
-std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eTranslateSampling e);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eTranslateSampling e);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string s, ImagingAlgorithms::eTranslateSampling &e);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, ImagingAlgorithms::eTranslateSampling e);
 #endif // TRANSLATEPROJECTIONS_H

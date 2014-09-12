@@ -1,6 +1,8 @@
 #ifndef MORPHSPOTCLEAN_H
 #define MORPHSPOTCLEAN_H
 
+#include "ImagingAlgorithms_global.h"
+//#include "stdafx.h"
 #include <base/timage.h>
 #include <morphology/morphology.h>
 #include <logging/logger.h>
@@ -20,7 +22,7 @@ enum eMorphCleanMethod {
     MorphCleanBoth
 };
 
-class MorphSpotClean
+class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
 {
     kipl::logging::Logger logger;
     const float mark;
@@ -77,7 +79,7 @@ protected:
 
 }
 
-std::string enum2string(ImagingAlgorithms::eMorphCleanMethod mc);
-std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphCleanMethod mc);
-void string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eMorphCleanMethod mc);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, ImagingAlgorithms::eMorphCleanMethod mc);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc);
 #endif // MORPHSPOTCLEAN_H

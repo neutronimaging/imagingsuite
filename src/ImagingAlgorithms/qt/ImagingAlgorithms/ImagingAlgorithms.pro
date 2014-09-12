@@ -30,7 +30,7 @@ DEFINES += IMAGINGALGORITHMS_LIBRARY NOMINMAX
 
 SOURCES += \
     ../../src/StripeFilter.cpp \
-    ../../src/stdafx.cpp \
+#    ../../src/stdafx.cpp \
     ../../src/SpotClean.cpp \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/PolynomialCorrection.cpp \
@@ -40,18 +40,19 @@ SOURCES += \
     ../../src/pixelinfo.cpp
 
 HEADERS += \
-    ../../include/targetver.h \
+ #   ../../include/targetver.h \
     ../../include/StripeFilter.h \
-    ../../include/stdafx.h \
+ #   ../../include/stdafx.h \
     ../../include/SpotClean.h \
     ../../include/ReferenceImageCorrection.h \
     ../../include/PolynomialCorrection.h \
     ../../include/ImagingException.h \
-    ../../src/targetver.h \
-    ../../src/stdafx.h \
+ #   ../../src/targetver.h \
+ #   ../../src/stdafx.h \
     ../../include/TranslateProjections.h \
     ../../include/MorphSpotClean.h \
-    ../../include/pixelinfo.h
+    ../../include/pixelinfo.h \
+    ../../include/ImagingAlgorithms_global.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

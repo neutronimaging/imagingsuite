@@ -7,12 +7,12 @@
 
 #ifndef IMAGINGEXCEPTION_H_
 #define IMAGINGEXCEPTION_H_
-
+#include "ImagingAlgorithms_global.h"
 #include <base/KiplException.h>
 #include <string>
-#include "stdafx.h"
+//#include "stdafx.h"
 
-class DLL_EXPORT ImagingException: public kipl::base::KiplException {
+class IMAGINGALGORITHMSSHARED_EXPORT ImagingException: public kipl::base::KiplException {
 public:
 	ImagingException();
 	virtual ~ImagingException();

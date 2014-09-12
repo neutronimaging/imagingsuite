@@ -8,6 +8,7 @@
 #ifndef STRIPEFILTER_H_
 #define STRIPEFILTER_H_
 
+#include "ImagingAlgorithms_global.h"
 #include <wavelets/wavelets.h>
 
 #include <base/timage.h>
@@ -15,12 +16,6 @@
 #include <fft/fftbase.h>
 #include <logging/logger.h>
 #include <iostream>
-#ifdef _MSC_VER
-#define DLL_EXPORT __declspec(dllexport)
-#include <windows.h>
-#else
-#define DLL_EXPORT
-#endif
 
 namespace ImagingAlgorithms {
 
@@ -29,7 +24,7 @@ enum StripeFilterOperation {
 	VerticalComponentFFT
 };
 
-class DLL_EXPORT StripeFilter {
+class IMAGINGALGORITHMSSHARED_EXPORT StripeFilter {
 private:
 	kipl::logging::Logger logger;
 public:
@@ -58,8 +53,8 @@ private:
 };
 }
 
-std::string DLL_EXPORT enum2string(ImagingAlgorithms::StripeFilterOperation op);
-void DLL_EXPORT string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op);
-std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::StripeFilterOperation op);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::StripeFilterOperation op);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream & s, ImagingAlgorithms::StripeFilterOperation op);
 
 #endif /* STRIPEFILTER_H_ */

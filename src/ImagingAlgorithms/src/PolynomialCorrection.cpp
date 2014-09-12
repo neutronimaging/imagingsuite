@@ -1,10 +1,12 @@
 /*
+ *
  * PolynomialCorrection.cpp
  *
  *  Created on: Jan 28, 2013
  *      Author: kaestner
  */
-#include "stdafx.h"
+//#include "ImagingAlgorithms_global.h"
+//#include "stdafx.h"
 #include "../include/PolynomialCorrection.h"
 #include "../include/ImagingException.h"
 #include <cstring>

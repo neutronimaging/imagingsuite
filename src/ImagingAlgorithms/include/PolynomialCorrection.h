@@ -7,12 +7,13 @@
 
 #ifndef IMGALGPOLYNOMIALCORRECTION_H_
 #define IMGALGPOLYNOMIALCORRECTION_H_
-#include "../src/stdafx.h"
+#include "ImagingAlgorithms_global.h"
+//#include "../src/stdafx.h"
 #include <logging/logger.h>
 
 namespace ImagingAlgorithms {
 
-class DLL_EXPORT PolynomialCorrection {
+class IMAGINGALGORITHMSSHARED_EXPORT PolynomialCorrection {
 protected:
 	kipl::logging::Logger logger;
 public:

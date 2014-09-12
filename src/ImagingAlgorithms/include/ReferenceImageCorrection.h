@@ -7,13 +7,14 @@
 
 #ifndef IMGALG_REFERENCEIMAGECORRECTION_H_
 #define IMGALG_REFERENCEIMAGECORRECTION_H_
+#include "ImagingAlgorithms_global.h"
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <base/timage.h>
 #include <logging/logger.h>
 namespace ImagingAlgorithms {
 
-class DLL_EXPORT ReferenceImageCorrection {
+class IMAGINGALGORITHMSSHARED_EXPORT ReferenceImageCorrection {
 protected:
 	kipl::logging::Logger logger;
 public:

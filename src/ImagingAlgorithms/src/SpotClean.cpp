@@ -4,7 +4,7 @@
  *  Created on: Jan 17, 2013
  *      Author: anders
  */
-#include "stdafx.h"
+//#include "stdafx.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

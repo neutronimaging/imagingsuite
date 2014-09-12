@@ -4,7 +4,7 @@
  *  Created on: Jan 25, 2013
  *      Author: kaestner
  */
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include <sstream>
 #include "../include/ImagingException.h"

@@ -7,8 +7,9 @@
 
 #ifndef IMGALG_SPOTCLEAN_H_
 #define IMGALG_SPOTCLEAN_H_
+#include "ImagingAlgorithms_global.h"
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "pixelinfo.h"
 
 #include <base/timage.h>
@@ -34,7 +35,7 @@ enum DetectionMethod {
     Detection_TriKernel
 };
 
-class DLL_EXPORT SpotClean
+class IMAGINGALGORITHMSSHARED_EXPORT SpotClean
 {
 protected:
 	kipl::logging::Logger logger;
@@ -122,8 +123,8 @@ protected:
 
 }
 
-void DLL_EXPORT string2enum(std::string str, ImagingAlgorithms::DetectionMethod & method);
-std::string DLL_EXPORT enum2string(ImagingAlgorithms::DetectionMethod method);
-std::ostream DLL_EXPORT & operator<<(std::ostream &s, ImagingAlgorithms::DetectionMethod method);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::DetectionMethod & method);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::DetectionMethod method);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, ImagingAlgorithms::DetectionMethod method);
 
 #endif /* SPOTCLEAN_H_ */

@@ -5,7 +5,7 @@
  *      Author: anders
  */
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "../include/ReferenceImageCorrection.h"
 #include <cstring>
 

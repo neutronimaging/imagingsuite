@@ -1,10 +1,11 @@
 #ifndef PIXELINFO_H
 #define PIXELINFO_H
-#include "stdafx.h"
+#include "ImagingAlgorithms_global.h"
+//#include "stdafx.h"
 
 namespace ImagingAlgorithms {
 
-class DLL_EXPORT PixelInfo {
+class IMAGINGALGORITHMSSHARED_EXPORT PixelInfo {
 public:
     PixelInfo();
     PixelInfo(int nPos,float fValue, float fWeight);
