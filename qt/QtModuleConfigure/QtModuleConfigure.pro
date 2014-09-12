@@ -37,7 +37,8 @@ SOURCES += qtmoduleconfigure.cpp \
     ApplicationBase.cpp \
     ModuleConfigurator.cpp \
     AddModuleDialog.cpp \
-    ConfiguratorDialogBase.cpp
+    ConfiguratorDialogBase.cpp \
+    stdafx.cpp
 
 HEADERS += qtmoduleconfigure.h\
         QtModuleConfigure_global.h \
@@ -47,7 +48,8 @@ HEADERS += qtmoduleconfigure.h\
     ModuleConfigurator.h \
     AddModuleDialog.h \
     QListWidgetModuleItem.h \
-    ConfiguratorDialogBase.h
+    ConfiguratorDialogBase.h \
+    stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

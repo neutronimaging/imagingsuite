@@ -82,7 +82,11 @@ int AddModuleDialog::exec()
 {
     QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
     logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
+#ifdef Q_OS_WIN
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+#else
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+#endif
 
 
     if (fileName.isEmpty()) {

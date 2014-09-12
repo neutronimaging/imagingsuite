@@ -19,9 +19,7 @@
 // defined with this macro as being exported.
 #ifndef __CONFIGURATORDIALOGBASE_H
 #define __CONFIGURATORDIALOGBASE_H
-#ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#endif
+
 
 #include "QtModuleConfigure_global.h"
 #include <QWidget>
