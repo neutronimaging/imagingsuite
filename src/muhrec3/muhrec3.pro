@@ -56,6 +56,17 @@ unix:!symbian {
     INCLUDEPATH += /usr/include/libxml2
 }
 
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/release/ -lQtModuleConfigure
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Debug/debug/ -lQtModuleConfigure
 else:symbian: LIBS += -lQtModuleConfigure
@@ -92,8 +103,8 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trun
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/debug/ -lkipl
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
 else:symbian: LIBS += -lkipl
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl

@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
             msg<<"\nPlease press register to request an activation key for MuhRec.\n";
             msg<<"\nActivation code: "<<*license.GetNodeString().begin()<<std::endl;
             msg<<"On computers with many network adapters, please deactivate the wifi and restart the application.\n";
-            msg<<"When you obtained the email containing the key, press the save button and select the file containing the key."
+            msg<<"When you obtained the email containing the key, press the save button and select the file containing the key.";
 
             logger(kipl::logging::Logger::LogError,msg.str());
             QMessageBox mbox;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
             mbox.addButton(QMessageBox::Abort);
             mbox.setText(QString::fromStdString(msg.str()));
             mbox.setWindowTitle("License error");
-            mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
+            mbox.setDetailedText(QString::fromStdString(license.GetLockerMessage()));
             res=mbox.exec();
             std::cout<<"Res ="<<res<<std::endl;
             if (res==QMessageBox::Save) {

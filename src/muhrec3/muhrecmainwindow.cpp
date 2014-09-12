@@ -190,7 +190,7 @@ void MuhRecMainWindow::TakeProjectionPath()
     ui->editReferencePath->setText(ui->editProjectionPath->text());
 }
 
-void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
+void MuhRecMainWindow::ProjectionIndexChanged(int x)
 {
     ui->sliderProjections->setMaximum(ui->spinLastProjection->value());
     ui->sliderProjections->setMinimum(ui->spinFirstProjection->value());
@@ -404,12 +404,12 @@ void MuhRecMainWindow::RotateChanged()
 
 }
 
-void MuhRecMainWindow::DoseROIChanged(int UNUSED(x))
+void MuhRecMainWindow::DoseROIChanged(int x)
 {
     UpdateDoseROI();
 }
 
-void MuhRecMainWindow::ReconROIChanged(int UNUSED(x))
+void MuhRecMainWindow::ReconROIChanged(int x)
 {
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
@@ -424,12 +424,12 @@ void MuhRecMainWindow::ReconROIChanged(int UNUSED(x))
     UpdateMemoryUsage(dims);
 }
 
-void MuhRecMainWindow::CenterOfRotationChanged(int UNUSED(x))
+void MuhRecMainWindow::CenterOfRotationChanged(int x)
 {
     CenterOfRotationChanged();
 }
 
-void  MuhRecMainWindow::CenterOfRotationChanged(double UNUSED(x))
+void  MuhRecMainWindow::CenterOfRotationChanged(double x)
 {
     CenterOfRotationChanged();
 }
@@ -534,7 +534,7 @@ void MuhRecMainWindow::ViewGeometryList()
     }
 }
 
-void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
+void MuhRecMainWindow::GrayLevelsChanged(double x)
 {
     double low=ui->dspinGrayLow->value();
     double high=ui->dspinGrayHigh->value();
@@ -573,7 +573,7 @@ void MuhRecMainWindow::GetMatrixROI()
     }
 }
 
-void MuhRecMainWindow::MatrixROIChanged(int UNUSED(x))
+void MuhRecMainWindow::MatrixROIChanged(int x)
 {
     logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
     UpdateMatrixROI();
@@ -1005,9 +1005,9 @@ void MuhRecMainWindow::LoadDefaults()
       //  m_QtApp->
     #ifdef Q_OS_WIN32
          defaultsname="resources/defaults_windows.xml";
-    #elseif Q_OS_LINUX
+    #elif Q_OS_LINUX
         defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
-    #elseif Q_OS_DARWIN
+    #elif Q_OS_DARWIN
         defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
     #endif
         bUseDefaults=true;

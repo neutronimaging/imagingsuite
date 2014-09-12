@@ -4,7 +4,7 @@
  *  Created on: Jan 21, 2012
  *      Author: anders
  */
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "PreProcModuleConfigurator.h"
 #include <sstream>
 #include <ConfigBase.h>

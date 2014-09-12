@@ -9,8 +9,8 @@
 #include "targetver.h"
 
 #ifdef _MSC_VER
-#include <stdio.h>
-#include <tchar.h>
+//#include <stdio.h>
+//#include <tchar.h>
 #else
 
 #endif
