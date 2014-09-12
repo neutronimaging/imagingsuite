@@ -47,8 +47,6 @@ protected:
 private:
 	void LoadModuleObject();
 
-
-
 	HINSTANCE hinstLib;
     FACTORY m_fnModuleFactory;
 	DESTROYER m_fnDestroyer;
