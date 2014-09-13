@@ -1,4 +1,4 @@
-#include "../../include/kipl_global.h"
+#include "../../../include/kipl_global.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstddef>
