@@ -1005,10 +1005,14 @@ void MuhRecMainWindow::LoadDefaults()
       //  m_QtApp->
     #ifdef Q_OS_WIN32
          defaultsname="resources/defaults_windows.xml";
-    #elif Q_OS_LINUX
-        defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
-    #elif Q_OS_DARWIN
-        defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
+    #else
+        #ifdef Q_OS_LINUX
+            defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
+        #else
+            #ifdef Q_OS_DARWIN
+                defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
+            #endif
+        #endif
     #endif
         bUseDefaults=true;
     }
