@@ -100,8 +100,8 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../qni/trunk/sr
 INCLUDEPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/ReconFramework-build-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/src/libs/recon2/trunk/ReconFramework/ReconFramework-build-Qt5-Debug/debug/ -lReconFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
