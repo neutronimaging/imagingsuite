@@ -62,7 +62,8 @@ MorphSpotCleanDlg::~MorphSpotCleanDlg(void)
 
 void MorphSpotCleanDlg::ApplyParameters()
 {
-    logger(kipl::logging::Logger::LogMessage,"Apply paramters");
+//    logger(kipl::logging::Logger::LogMessage,"Apply parameters");
+    std::cout<<"Apply parameters"<<std::endl;
 	kipl::base::TImage<float,2> img(m_Projections.Dims());
 	memcpy(img.GetDataPtr(),m_Projections.GetDataPtr(),img.Size()*sizeof(float));
 
@@ -78,36 +79,37 @@ void MorphSpotCleanDlg::ApplyParameters()
 	UpdateParameters();
 	UpdateParameterList(parameters);
 
-	cleaner.Configure(*m_Config, parameters);
+    m_Cleaner.Configure(*m_Config, parameters);
 
+    kipl::base::TImage<float,2> det=m_Cleaner.DetectionImage(img);
+    size_t cumhist[N];
+    memset(hist,0,N*sizeof(size_t));
+    memset(axis,0,N*sizeof(float));
+    kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::math::cumsum(hist,cumhist,N);
 
-//	kipl::base::TImage<float,2> det=cleaner.DetectionImage(img);
-//	size_t cumhist[N];
-//	memset(hist,0,N*sizeof(size_t));
-//	memset(axis,0,N*sizeof(float));
-//	kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
-//	kipl::math::cumsum(hist,cumhist,N);
+    float fcumhist[N];
+    size_t ii=0;
+    for (ii=0;ii<N;ii++) {
+        fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
+        if (0.99f<fcumhist[ii])
+            break;
+    }
 
-//	float fcumhist[N];
-//	size_t ii=0;
-//	for (ii=0;ii<N;ii++) {
-//		fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
-//		if (0.99f<fcumhist[ii])
-//			break;
-//	}
-
-//	size_t N99=ii;
-//    m_plot.setCurveData(0,axis,fcumhist,N99);
-//	float threshold[N];
-//	for (size_t i=0; i<N; i++) {
-//		threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
-//	}
+    size_t N99=ii;
+    m_plot.setCurveData(0,axis,fcumhist,N99);
+    float threshold[N];
+    // In case of sigmoid mixing
+//    for (size_t i=0; i<N; i++) {
+//        threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
+//    }
 //    m_plot.setCurveData(1,axis,threshold,N99);
+    m_plot.setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
 
 	std::map<std::string,std::string> pars;
 	kipl::base::TImage<float,2> pimg=img;
 	pimg.Clone();
-	cleaner.Process(pimg, pars);
+    m_Cleaner.Process(pimg, pars);
 
 	memset(hist,0,N*sizeof(size_t));
 	memset(axis,0,N*sizeof(float));

@@ -25,6 +25,7 @@ public:
     MorphSpotCleanDlg(QWidget * parent = NULL);
     virtual ~MorphSpotCleanDlg(void);
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -53,7 +54,7 @@ private:
     QLabel lbl_Connectivity;
 
 	ReconConfig *m_Config;
-    MorphSpotCleanModule cleaner;
+    MorphSpotCleanModule m_Cleaner;
 	kipl::base::TImage<float,3> m_Projections;
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
