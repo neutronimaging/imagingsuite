@@ -1,19 +1,20 @@
 #ifndef __SUMS_H
 #define __SUMS_H
 
+#include "../kipl_global.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 namespace kipl { namespace math {
-double sum(float const * const data, const size_t N);
-size_t sum(size_t const * const data, const size_t N);
+double KIPLSHARED_EXPORT sum(float const * const data, const size_t N);
+size_t KIPLSHARED_EXPORT  sum(size_t const * const data, const size_t N);
 
-double sum2(float const * const data, const size_t N);
+double KIPLSHARED_EXPORT  sum2(float const * const data, const size_t N);
 
-int cumsum(float const * const data, double * cumdata, size_t N, bool norm=false);
+int KIPLSHARED_EXPORT  cumsum(float const * const data, double * cumdata, size_t N, bool norm=false);
 
-int cumsum(size_t const * const data, size_t * cumdata, size_t N);
+int KIPLSHARED_EXPORT cumsum(size_t const * const data, size_t * cumdata, size_t N);
 
 template <typename T>
 double meansquareddiff(T const * const dataA, T const * const dataB, const size_t N)

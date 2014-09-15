@@ -1,11 +1,11 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
+#include "../include/math/sums.h"
 #include <cstddef>
 namespace kipl { namespace math {
 
-double sum(float const * const data, const size_t N)
+double KIPLSHARED_EXPORT sum(float const * const data, const size_t N)
 {
 	double s=0.0;
 	const ptrdiff_t sN=static_cast<ptrdiff_t>(N);
@@ -16,7 +16,7 @@ double sum(float const * const data, const size_t N)
 	return s;
 }
 
-size_t sum(size_t const * const data, const size_t N)
+size_t KIPLSHARED_EXPORT sum(size_t const * const data, const size_t N)
 {
 	size_t s=0;
 	const ptrdiff_t sN=static_cast<ptrdiff_t>(N);
@@ -29,7 +29,7 @@ size_t sum(size_t const * const data, const size_t N)
 }
 
 
-int sum2(float const * const data, double *s, double *s2, const size_t N)
+int KIPLSHARED_EXPORT sum2(float const * const data, double *s, double *s2, const size_t N)
 {
 	double local_s=0.0;
 	double local_s2=0.0;
@@ -50,7 +50,7 @@ int sum2(float const * const data, double *s, double *s2, const size_t N)
 	return 0;
 }
 
-int cumsum(float const * const data, double * cumdata, size_t N, bool norm)
+int KIPLSHARED_EXPORT cumsum(float const * const data, double * cumdata, size_t N, bool norm)
 {
 	cumdata[0]=data[0];
 	for (size_t i=1; i<N; i++)
@@ -64,7 +64,7 @@ int cumsum(float const * const data, double * cumdata, size_t N, bool norm)
 	return 0;
 }
 
-int cumsum(size_t const * const data, size_t * cumdata, size_t N)
+int KIPLSHARED_EXPORT cumsum(size_t const * const data, size_t * cumdata, size_t N)
 {
 	cumdata[0]=data[0];
 	for (size_t i=1; i<N; i++)
