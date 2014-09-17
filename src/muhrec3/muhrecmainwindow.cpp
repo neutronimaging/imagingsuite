@@ -1367,5 +1367,5 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
 
 void MuhRecMainWindow::on_buttonGetPathDC_clicked()
 {
-    ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
+    ui->editDarkMask->setText(ui->editProjectionMask->text());
 }
