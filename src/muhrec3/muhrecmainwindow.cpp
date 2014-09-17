@@ -70,7 +70,7 @@ void MuhRecMainWindow::SetupCallBacks()
 {
     // Connecting buttons
     connect(ui->buttonProjectionPath,SIGNAL(clicked()),this,SLOT(BrowseProjectionPath()));
-    connect(ui->buttonBrowseReference,SIGNAL(clicked()),this,SLOT(BrowseReferencePath()));
+ //   connect(ui->buttonBrowseReference,SIGNAL(clicked()),this,SLOT(BrowseReferencePath()));
     connect(ui->buttonBrowseDestinationPath,SIGNAL(clicked()),this,SLOT(BrowseDestinationPath()));
     connect(ui->buttonTakePath,SIGNAL(clicked()),this,SLOT(TakeProjectionPath()));
     connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
@@ -138,13 +138,9 @@ void MuhRecMainWindow::SetupCallBacks()
 
 void MuhRecMainWindow::BrowseProjectionPath()
 {
-//    QString projdir=QFileDialog::getExistingDirectory(this,
-//                                      "Select location of the projections",
-//                                      ui->editProjectionPath->text());
-
     QString projdir=QFileDialog::getOpenFileName(this,
                                       "Select location of the projections",
-                                      ui->editProjectionPath->text());
+                                      ui->editProjectionMask->text());
     if (!projdir.isEmpty()) {
         std::string pdir=projdir.toStdString();
 
@@ -156,23 +152,37 @@ void MuhRecMainWindow::BrowseProjectionPath()
         ptrdiff_t pos=pdir.find_last_of(slash);
 
         QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        ui->editProjectionPath->setText(path);
         std::string fname=pdir.substr(pos+1);
         kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(fname);
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
 
         ui->editProjectionMask->setText(QString::fromStdString(fi.m_sMask));
     }
 }
 
-void MuhRecMainWindow::BrowseReferencePath()
+void MuhRecMainWindow::on_buttonBrowseReference_clicked()
 {
-    QString projdir=QFileDialog::getExistingDirectory(this,
-                                      "Select location of the reference projections",
-                                      ui->editReferencePath->text());
+    std::string sPath, sFname;
+    std::vector<std::string> exts;
+    if (ui->editOpenBeamMask->text().isEmpty())
+        kipl::strings::filenames::StripFileName(ui->editProjectionMask->text().toStdString(),sPath,sFname,exts);
+    else
+        kipl::strings::filenames::StripFileName(ui->editOpenBeamMask->text().toStdString(),sPath,sFname,exts);
 
-    if (!projdir.isEmpty())
-        ui->editReferencePath->setText(projdir);
+//    QString projdir=QFileDialog::getOpenFileName(this,
+//                                      "Select a dark current file",
+//                                      QString::fromStdString(sPath));
+
+    QString projdir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the open-beam projections",
+                                      ui->editOpenBeamMask->text());
+
+    if (!projdir.isEmpty()) {
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(projdir.toStdString());
+
+        ui->editOpenBeamMask->setText(QString::fromStdString(fi.m_sMask));
+    }
 }
 
 void MuhRecMainWindow::BrowseDestinationPath()
@@ -187,7 +197,8 @@ void MuhRecMainWindow::BrowseDestinationPath()
 
 void MuhRecMainWindow::TakeProjectionPath()
 {
-    ui->editReferencePath->setText(ui->editProjectionPath->text());
+
+    ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
 }
 
 void MuhRecMainWindow::ProjectionIndexChanged(int x)
@@ -209,15 +220,16 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
     msg.str("");
     try {
-        std::string path=ui->editProjectionPath->text().toStdString();
-        kipl::strings::filenames::CheckPathSlashes(path,true);
+  //      std::string path=ui->editProjectionMask->text().toStdString();
+
         std::string fmask=ui->editProjectionMask->text().toStdString();
+    //    kipl::strings::filenames::CheckPathSlashes(fmask,true);
         std::string name, ext;
         kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
 
-        if (QFile::exists(QString::fromStdString(path+name))) {
+        if (QFile::exists(QString::fromStdString(name))) {
 
-            m_PreviewImage=reader.Read(path,fmask,static_cast<size_t>(ui->sliderProjections->value()),
+            m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
                             static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                             static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                             static_cast<float>(ui->spinProjectionBinning->value()),NULL);
@@ -249,7 +261,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
         else {
             QMessageBox mbox(this);
             msg.str("");
-            msg<<"Could not load the image "<<path<<name<<std::endl<<"the file does not exist.";
+            msg<<"Could not load the image "<<name<<std::endl<<"the file does not exist.";
             logger(kipl::logging::Logger::LogError,msg.str());
             mbox.setText(QString::fromStdString(msg.str()));
             mbox.exec();
@@ -897,7 +909,7 @@ void MuhRecMainWindow::MenuReconstructStart()
                 m_LastMidSlice = m_pEngine->GetSlice(dims[2]/2);
 
                 // Prepare visualization
-                if ((m_Config.MatrixInfo.bAutomaticSerialize==false)) {
+                if (m_Config.MatrixInfo.bAutomaticSerialize==false) {
                     PreviewProjection(); // Display the projection if it was not done already
                     ui->tabMainControl->setCurrentIndex(3);
                     if (ui->checkUseAutograyLevels->checkState()) {
@@ -1197,7 +1209,7 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
 void MuhRecMainWindow::UpdateDialog()
 {
     std::ostringstream str;
-    ui->editProjectionPath->setText(QString::fromStdString(m_Config.ProjectionInfo.sPath));
+ //   ui->editProjectionPath->setText(QString::fromStdString(m_Config.ProjectionInfo.sPath));
     ui->editProjectionMask->setText(QString::fromStdString(m_Config.ProjectionInfo.sFileMask));
     ui->spinFirstProjection->setValue(m_Config.ProjectionInfo.nFirstIndex);
     ui->spinLastProjection->setValue(m_Config.ProjectionInfo.nLastIndex);
@@ -1206,7 +1218,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjectionBinning->setValue(m_Config.ProjectionInfo.fBinning);
     ui->comboFlipProjection->setCurrentIndex(m_Config.ProjectionInfo.eFlip);
     ui->comboRotateProjection->setCurrentIndex(m_Config.ProjectionInfo.eRotate);
-    ui->editReferencePath->setText(QString::fromStdString(m_Config.ProjectionInfo.sReferencePath));
+//    ui->editReferencePath->setText(QString::fromStdString(m_Config.ProjectionInfo.sReferencePath));
     ui->editOpenBeamMask->setText(QString::fromStdString(m_Config.ProjectionInfo.sOBFileMask));
     ui->spinFirstOpenBeam->setValue(m_Config.ProjectionInfo.nOBFirstIndex);
     ui->spinOpenBeamCount->setValue(m_Config.ProjectionInfo.nOBCount);
@@ -1264,9 +1276,11 @@ void MuhRecMainWindow::UpdateDialog()
 
 void MuhRecMainWindow::UpdateConfig()
 {
-    m_Config.ProjectionInfo.sPath     = ui->editProjectionPath->text().toStdString();
-    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sPath,true);
+    m_Config.ProjectionInfo.sPath="";
+    m_Config.ProjectionInfo.sReferencePath="";
+
     m_Config.ProjectionInfo.sFileMask = ui->editProjectionMask->text().toStdString();
+    //kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sFileMask,true);
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
     m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
@@ -1275,8 +1289,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.eFlip = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
     m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
-    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
-    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
+//    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
+//    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
 
     m_Config.ProjectionInfo.sOBFileMask = ui->editOpenBeamMask->text().toStdString();
     m_Config.ProjectionInfo.nOBFirstIndex = ui->spinFirstOpenBeam->value();
@@ -1332,3 +1346,26 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.backprojector = ui->ConfiguratorBackProj->GetModule();
 }
 
+
+void MuhRecMainWindow::on_buttonBrowseDC_clicked()
+{
+    std::string sPath, sFname;
+    std::vector<std::string> exts;
+    kipl::strings::filenames::StripFileName(ui->editProjectionMask->text().toStdString(),sPath,sFname,exts);
+    QString projdir=QFileDialog::getOpenFileName(this,
+                                      "Select a dark current file",
+                                      QString::fromStdString(sPath));
+    if (!projdir.isEmpty()) {
+        std::string pdir=projdir.toStdString();
+
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+        ui->editDarkMask->setText(QString::fromStdString(fi.m_sMask));
+    }
+}
+
+void MuhRecMainWindow::on_buttonGetPathDC_clicked()
+{
+    ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
+}

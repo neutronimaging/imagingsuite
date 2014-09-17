@@ -168,7 +168,7 @@ void ViewGeometryListDialog::ComputeTilt()
                 swap(a,b);
 
             m_fPivot  = a->first;
-            m_fTilt   = 180.0f / fPi *atan((b->second-a->second)/(float(b->first)-float(a->first)));
+            m_fTilt   = -180.0f / fPi *atan((b->second-a->second)/(float(b->first)-float(a->first)));
             m_fCenter = a->second;
             m_eChangeConfigFields = m_eChangeConfigFields | (int)ConfigField_Tilt;
             msg<<"Tilt "<<m_fTilt<<"deg @ "<<m_fPivot;

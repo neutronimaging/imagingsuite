@@ -37,7 +37,6 @@ private:
     // Collection of call-backs
 protected slots:
     void BrowseProjectionPath();
-    void BrowseReferencePath();
     void BrowseDestinationPath();
     void TakeProjectionPath();
     void GetSkipList();
@@ -88,6 +87,13 @@ protected:
 
     void LoadDefaults();
     void LoadReconSettings();
+
+private slots:
+    void on_buttonBrowseReference_clicked();
+
+    void on_buttonBrowseDC_clicked();
+
+    void on_buttonGetPathDC_clicked();
 
 private:
     // Data members

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1195</width>
-    <height>855</height>
+    <height>861</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <attribute name="title">
@@ -152,6 +152,59 @@
               <string>Projection images</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_2">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Path</string>
+                </property>
+                <property name="buddy">
+                 <cstring>editProjectionMask</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Skip list</string>
+                </property>
+                <property name="buddy">
+                 <cstring>editProjectionSkipList</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_8">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>File index</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1" colspan="3">
+               <widget class="QLineEdit" name="editProjectionSkipList">
+                <property name="toolTip">
+                 <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QPushButton" name="buttonProjectionPath">
+                <property name="toolTip">
+                 <string>Browse for the projection path</string>
+                </property>
+                <property name="whatsThis">
+                 <string/>
+                </property>
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
               <item row="6" column="3">
                <widget class="QComboBox" name="comboRotateProjection">
                 <property name="toolTip">
@@ -182,13 +235,19 @@
                 </item>
                </widget>
               </item>
-              <item row="0" column="1" colspan="3">
-               <widget class="QLineEdit" name="editProjectionPath">
+              <item row="6" column="1">
+               <widget class="QSpinBox" name="spinProjectionBinning">
                 <property name="toolTip">
-                 <string>Enter the path to the projection data</string>
+                 <string>Binning factor of the projections</string>
                 </property>
                 <property name="whatsThis">
                  <string/>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>8</number>
                 </property>
                </widget>
               </item>
@@ -196,6 +255,12 @@
                <layout class="QHBoxLayout" name="layoutFileIndex">
                 <item>
                  <widget class="QLabel" name="label_11">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
                    <string>First</string>
                   </property>
@@ -219,6 +284,12 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_12">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
                    <string>Step</string>
                   </property>
@@ -245,6 +316,12 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_13">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
                    <string>Last</string>
                   </property>
@@ -298,63 +375,6 @@
                 </item>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>File mask</string>
-                </property>
-                <property name="buddy">
-                 <cstring>editProjectionMask</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1" colspan="3">
-               <widget class="QLineEdit" name="editProjectionSkipList">
-                <property name="toolTip">
-                 <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="4">
-               <widget class="QPushButton" name="buttonProjectionPath">
-                <property name="toolTip">
-                 <string>Browse for the projection path</string>
-                </property>
-                <property name="whatsThis">
-                 <string/>
-                </property>
-                <property name="text">
-                 <string>Browse</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Skip list</string>
-                </property>
-                <property name="buddy">
-                 <cstring>editProjectionSkipList</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>Path</string>
-                </property>
-                <property name="buddy">
-                 <cstring>editProjectionPath</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_8">
-                <property name="text">
-                 <string>File index</string>
-                </property>
-               </widget>
-              </item>
               <item row="6" column="0">
                <widget class="QLabel" name="label_10">
                 <property name="text">
@@ -378,16 +398,6 @@
                 </property>
                 <property name="shortcut">
                  <string>Meta+P</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1" colspan="3">
-               <widget class="QLineEdit" name="editProjectionMask">
-                <property name="toolTip">
-                 <string>The file mask of the projections (format: file_####.ext)</string>
-                </property>
-                <property name="whatsThis">
-                 <string/>
                 </property>
                </widget>
               </item>
@@ -421,22 +431,6 @@
                 </item>
                </widget>
               </item>
-              <item row="6" column="1">
-               <widget class="QSpinBox" name="spinProjectionBinning">
-                <property name="toolTip">
-                 <string>Binning factor of the projections</string>
-                </property>
-                <property name="whatsThis">
-                 <string/>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>8</number>
-                </property>
-               </widget>
-              </item>
               <item row="4" column="4">
                <widget class="QPushButton" name="buttonGetSkipList">
                 <property name="toolTip">
@@ -450,6 +444,16 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="1" colspan="3">
+               <widget class="QLineEdit" name="editProjectionMask">
+                <property name="toolTip">
+                 <string>Enter the path to the projection data</string>
+                </property>
+                <property name="whatsThis">
+                 <string/>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -459,13 +463,6 @@
               <string>Reference images</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="editOpenBeamMask">
-                <property name="toolTip">
-                 <string>File mask for open beam images (Format: file_####.ext)</string>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="0">
                <widget class="QPushButton" name="buttonTakePath">
                 <property name="toolTip">
@@ -475,27 +472,7 @@
                  <string/>
                 </property>
                 <property name="text">
-                 <string>Reference path</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="editReferencePath">
-                <property name="toolTip">
-                 <string>Path to the reference data</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_14">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Open beam mask</string>
+                 <string>Open beam</string>
                 </property>
                </widget>
               </item>
@@ -542,13 +519,6 @@
                  </widget>
                 </item>
                </layout>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_15">
-                <property name="text">
-                 <string>Dark mask</string>
-                </property>
-               </widget>
               </item>
               <item row="3" column="1">
                <widget class="QLineEdit" name="editDarkMask">
@@ -691,6 +661,40 @@
                <widget class="QLabel" name="label_18">
                 <property name="text">
                  <string>Dose ROI</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="editOpenBeamMask">
+                <property name="toolTip">
+                 <string>Path to the reference data</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Open beam index</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QPushButton" name="buttonBrowseDC">
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="buttonGetPathDC">
+                <property name="text">
+                 <string>Dark current</string>
                 </property>
                </widget>
               </item>
@@ -1202,7 +1206,7 @@
             <rect>
              <x>150</x>
              <y>30</y>
-             <width>261</width>
+             <width>269</width>
              <height>30</height>
             </rect>
            </property>
@@ -1260,7 +1264,7 @@
             <rect>
              <x>150</x>
              <y>80</y>
-             <width>404</width>
+             <width>420</width>
              <height>27</height>
             </rect>
            </property>
@@ -1574,7 +1578,7 @@
      <x>0</x>
      <y>0</y>
      <width>1195</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
