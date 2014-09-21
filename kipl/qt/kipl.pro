@@ -90,7 +90,8 @@ SOURCES += \
     ../src/pca/pca.cpp \
     ../src/math/covariance.cpp \
     ../src/morphology/skeleton.cpp \
-    ../src/io/DirAnalyzer.cpp
+    ../src/io/DirAnalyzer.cpp \
+    ../src/math/linfit.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -263,7 +264,9 @@ HEADERS +=\
     ../include/filters/GaborFilter.h \
     ../include/morphology/skeleton.h \
     ../include/base/core/thistogram.hpp \
-    ../include/io/DirAnalyzer.h
+    ../include/io/DirAnalyzer.h \
+    ../include/math/linfit.h \
+    ../include/math/core/linfit.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
