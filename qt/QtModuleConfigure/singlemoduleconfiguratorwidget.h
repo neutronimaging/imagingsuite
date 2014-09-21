@@ -26,7 +26,7 @@ class QTMODULECONFIGURESHARED_EXPORT SingleModuleConfiguratorWidget : public QFr
     kipl::logging::Logger logger;
 public:
     explicit SingleModuleConfiguratorWidget(QWidget *parent = 0);
-    void Configure(std::string sApplicationName);
+    void Configure(std::string sApplicationName, std::string sDefaultModuleSource="", std::string sApplicationPath="");
 
     void SetModule(ModuleConfig &module);
     void setDescriptionLabel(QString lbl);
@@ -42,6 +42,8 @@ public slots:
 
 protected:
     std::string  m_sApplication;
+    std::string  m_sDefaultModuleSource;
+    std::string  m_sApplicationPath;
     QFrame       m_MainFrame;
     QHBoxLayout  m_LayoutMain;
     QLabel       m_LabelDescription;
@@ -56,7 +58,7 @@ class SingleModuleSettingsDialog : QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit SingleModuleSettingsDialog(std::string sApplicationName, QWidget *parent);
+    explicit SingleModuleSettingsDialog(std::string sApplicationName,std::string sDefaultModuleSource ,QWidget *parent);
 
     virtual int exec(ModuleConfig &config);
     ModuleConfig getModule();
@@ -76,6 +78,7 @@ private:
 
 
     std::string m_sApplication;
+    std::string m_sDefaultModuleSource;
     QVBoxLayout m_LayoutMain;
     QHBoxLayout m_LayoutModule;
     QLabel      m_LabelModuleName;

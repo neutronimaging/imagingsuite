@@ -39,7 +39,7 @@ public:
     explicit AddModuleDialog(QWidget *parent = NULL);
     virtual ~AddModuleDialog() {}
 
-    int configure(std::string application, std::string application_path="");
+    int configure(std::string application, std::string defaultsource="", std::string application_path="");
     virtual int exec();
     ModuleConfig GetModuleConfig() {return m_ModuleConfig;}
 
@@ -71,6 +71,7 @@ protected:
 	std::map<std::string, std::map<std::string, std::string> > modulelist;
 	std::string m_sApplication;
 	std::string m_sApplicationPath;
+    std::string m_sDefaultModuleSource;
     ModuleConfig m_ModuleConfig;
 };
 #endif

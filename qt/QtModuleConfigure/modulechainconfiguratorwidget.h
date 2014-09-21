@@ -30,6 +30,7 @@ public:
     explicit ModuleChainConfiguratorWidget(QWidget *parent = 0);
     void configure(std::string application, std::string applicationpath="", ModuleConfigurator *pConfigurator=NULL);
     void SetApplicationObject(ApplicationBase * app );
+    void SetDefaultModuleSource(std::string file);
     std::list<ModuleConfig> GetModules();
     void SetModules(std::list<ModuleConfig> &modules);
     QSize minimumSizeHint() const;
@@ -73,6 +74,7 @@ protected:
 
     std::string m_sApplication;
     std::string m_sApplicationPath;
+    std::string m_sDefaultModuleSource;
     ApplicationBase * m_pApplication ;
     ModuleConfigurator * m_pConfigurator;
 };

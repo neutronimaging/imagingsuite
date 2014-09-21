@@ -44,9 +44,11 @@ SingleModuleConfiguratorWidget::SingleModuleConfiguratorWidget(QWidget *parent) 
 
 }
 
-void SingleModuleConfiguratorWidget::Configure(std::string sApplicationName)
+void SingleModuleConfiguratorWidget::Configure(std::string sApplicationName, std::string sDefaultModuleSource, std::string sApplicationPath)
 {
-    m_sApplication=sApplicationName;
+    m_sApplication         = sApplicationName;
+    m_sApplicationPath     = sApplicationPath;
+    m_sDefaultModuleSource = sDefaultModuleSource;
 }
 
 void SingleModuleConfiguratorWidget::setDescriptionLabel(QString lbl)
@@ -83,7 +85,7 @@ void SingleModuleConfiguratorWidget::SetDescription(QString name)
 
 void SingleModuleConfiguratorWidget::on_ButtonConfigure_Clicked()
 {
-    SingleModuleSettingsDialog dlg(m_sApplication,this);
+    SingleModuleSettingsDialog dlg(m_sApplication,m_sDefaultModuleSource,this);
 
     int res=dlg.exec(m_ModuleConfig);
 
@@ -93,10 +95,11 @@ void SingleModuleConfiguratorWidget::on_ButtonConfigure_Clicked()
     }
 }
 
-SingleModuleSettingsDialog::SingleModuleSettingsDialog(std::string sApplicationName, QWidget *parent) :
+SingleModuleSettingsDialog::SingleModuleSettingsDialog(std::string sApplicationName, std::string sDefaultModuleSource, QWidget *parent) :
     QDialog(parent),
     logger("SingleModuleSettingsDialog"),
-    m_sApplication(sApplicationName)
+    m_sApplication(sApplicationName),
+    m_sDefaultModuleSource(sDefaultModuleSource)
 {
     BuildDialog();
     connect(&m_ButtonBrowse,SIGNAL(clicked()),this,SLOT(on_ButtonBrowse_Clicked()));
@@ -120,6 +123,9 @@ int SingleModuleSettingsDialog::exec(ModuleConfig &config)
         m_ComboModules.setCurrentIndex(m_ComboModules.findText(QString::fromStdString(config.m_sModule)));
         m_ModuleConfig=config;
         UpdateCurrentModuleParameters();
+    }
+    else {
+        UpdateModuleCombobox(QString::fromStdString(m_sDefaultModuleSource),false);
     }
 
     return exec();
@@ -164,21 +170,31 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 
 void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 {      
-    QString apppath=QCoreApplication::applicationDirPath()+"/../Frameworks";
+    logger(kipl::logging::Logger::LogMessage,"browse");
+    QString appPath = QCoreApplication::applicationDirPath()+"../Frameworks";
+    logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),apppath);
+    QString fileName=QString::fromStdString(m_sDefaultModuleSource);
+
+    if (fileName.isEmpty()) {
+        #ifdef Q_OS_WIN
+            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+        #else
+            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+        #endif
+    }
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");
         return;
     }
 
+    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
+
     if (fileName.toStdString() == m_ModuleConfig.m_sSharedObject ) {
         logger(kipl::logging::Logger::LogMessage,"The same library file was selected.");
         return;
     }
-
-    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
 
     if (UpdateModuleCombobox(fileName)==0)
         m_ModuleConfig.m_sSharedObject=fileName.toStdString();
@@ -203,9 +219,6 @@ void SingleModuleSettingsDialog::BuildDialog()
 
     m_Buttons.addButton(QDialogButtonBox::Ok);
     m_Buttons.addButton(QDialogButtonBox::Cancel);
-//    m_Buttons.addButton("Delete",QDialogButtonBox::ActionRole);
-//    m_Buttons.addButton("Add",QDialogButtonBox::ActionRole);
-
 }
 
 ModuleConfig SingleModuleSettingsDialog::getModule()

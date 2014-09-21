@@ -70,10 +70,11 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     connect(&m_Button_Browse,SIGNAL(clicked()),this,SLOT(on_change_objectfile()));
 }
 
-int AddModuleDialog::configure(std::string application, std::string application_path)
+int AddModuleDialog::configure(std::string application, std::string defaultsource, std::string application_path)
 {
-    m_sApplication     = application;
-    m_sApplicationPath = application_path;
+    m_sApplication         = application;
+    m_sApplicationPath     = application_path;
+    m_sDefaultModuleSource = defaultsource;
 
     return 0;
 }
@@ -82,12 +83,16 @@ int AddModuleDialog::exec()
 {
     QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
     logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
-#ifdef Q_OS_WIN
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-#else
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
-#endif
 
+    QString fileName=QString::fromStdString(m_sDefaultModuleSource);
+
+    if (fileName.isEmpty()) {
+        #ifdef Q_OS_WIN
+            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+        #else
+            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+        #endif
+    }
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");

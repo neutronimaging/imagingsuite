@@ -74,7 +74,7 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
     AddModuleDialog dlg(this);
 
     ModuleConfig mcfg;
-    dlg.configure(m_sApplication,m_sApplicationPath);
+    dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath);
     if (dlg.exec()==QDialog::Accepted) {
         mcfg=dlg.GetModuleConfig();
         msg.str("");
@@ -221,6 +221,11 @@ void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )
 {
     m_pApplication=app;
+}
+
+void ModuleChainConfiguratorWidget::SetDefaultModuleSource(string file)
+{
+    m_sDefaultModuleSource = file;
 }
 
 // Builders
