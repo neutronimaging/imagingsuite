@@ -4,7 +4,7 @@
 #include <QMessageBox>
 
 ProjectionFilterDlg::ProjectionFilterDlg(QWidget * parent) :
-    ConfiguratorDialogBase("ProjectionFilterDlg",false,false,parent),
+    ConfiguratorDialogBase("ProjectionFilterDlg",false,false,false,parent),
     m_checkbox_usebias("Use DC bias"),
     m_label_filter("Filter window"),
     m_label_cutoff("Cut-of frequency")

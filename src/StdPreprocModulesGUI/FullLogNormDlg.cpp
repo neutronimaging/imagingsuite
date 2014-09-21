@@ -12,7 +12,7 @@
 #include <ParameterHandling.h>
 
 FullLogNormDlg::FullLogNormDlg(QWidget *parent) :
-    ConfiguratorDialogBase("FullLogNormDlg", false,false, parent),
+    ConfiguratorDialogBase("FullLogNormDlg", false,false, false, parent),
 	m_checkbox_usedose("Use dose correction"),
 	m_checkbox_uselut("Use look-up table computing"),
 	m_bUseDose(false),

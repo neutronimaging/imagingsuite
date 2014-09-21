@@ -25,6 +25,10 @@ public:
     virtual ~MorphSpotCleanDlg();
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
 
+private slots:
+
+    void on_buttonApply_clicked();
+
 private:
     Ui::MorphSpotCleanDlg *ui;
 
@@ -40,7 +44,10 @@ private:
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     float m_fThreshold;
-
+    int   m_nEdgeSmoothLength;
+    int   m_nMaxArea;
+    float m_fMinLevel;
+    float m_fMaxLevel;
 };
 
 #endif // MORPHSPOTCLEANDLG_H
