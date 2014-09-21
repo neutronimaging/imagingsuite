@@ -18,7 +18,7 @@ SOURCES += stdpreprocmodulesgui.cpp \
     FullLogNormDlg.cpp \
     WaveletRingCleanDlg.cpp \
     projectionfilterdlg.cpp \
-    MorphSpotCleanDlg.cpp
+    morphspotcleandlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
@@ -27,7 +27,7 @@ HEADERS += stdpreprocmodulesgui.h\
     FullLogNormDlg.h \
     WaveletRingCleanDlg.h \
     projectionfilterdlg.h \
-    MorphSpotCleanDlg.h
+    morphspotcleandlg.h
 
 
 symbian {
@@ -135,3 +135,6 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trun
 
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
+
+FORMS += \
+    morphspotcleandlg.ui
