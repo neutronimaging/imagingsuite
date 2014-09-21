@@ -78,5 +78,5 @@ ls PlugIns
 
 cd $QTPATH/bin/
 echo "Do deploy..."
-./macdeployqt $DEST -dmg
+./macdeployqt $DEST #-dmg
 popd 

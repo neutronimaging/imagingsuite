@@ -43,15 +43,19 @@ protected slots:
     void ComputeTilt();
     void MaxROI();
 
+private slots:
+
+    void on_buttonSelectAll_clicked();
+
 private:
     void SetupCallbacks();
     QPixmap CreateIconFromImage(kipl::base::TImage<float,2> &img, float lo, float hi);
     Ui::ViewGeometryListDialog *ui;
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_reconList;
     int m_eChangeConfigFields;
-    float m_fTilt;
-    float m_fPivot;
-    float m_fCenter;
+    double m_fTilt;
+    double m_fPivot;
+    double m_fCenter;
     size_t m_nMatrixROI[4];
 };
 

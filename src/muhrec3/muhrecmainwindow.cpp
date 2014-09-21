@@ -48,8 +48,30 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
     ui->projectionViewer->hold_annotations(true);
-    ui->ConfiguratorBackProj->Configure("muhrecbp");
+    std::string defaultmodules;
+#ifdef Q_OS_WIN
+        defaultmodules=m_sApplicationPath+"/StdBackProjectors.dll";
+#else
+    #ifdef Q_OS_MAC
+        defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
+    #else
+        defaultmodules = m_sApplicationPath+"/../Frameworks/libStdBackProjectors.so";
+    #endif
+#endif
+    ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
+
+#ifdef Q_OS_WIN
+        defaultmodules=m_sApplicationPath+"/StdPreprocModules.dll";
+#else
+    #ifdef Q_OS_MAC
+        defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
+    #else
+        defaultmodules = m_sApplicationPath+"/../Frameworks/libStdPreprocModules.so";
+    #endif
+#endif
+
     ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
+    ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
     ui->moduleconfigurator->SetApplicationObject(this);
 
     LoadDefaults();
@@ -78,10 +100,7 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
 
-    // Geometry list buttons
-    connect(ui->buttonStoreGeometry,SIGNAL(clicked()),this,SLOT(StoreGeometrySetting()));
-    connect(ui->buttonClearGeometryList,SIGNAL(clicked()),this,SLOT(ClearGeometrySettings()));
-    connect(ui->buttonViewGeometryList,SIGNAL(clicked()),this,SLOT(ViewGeometryList()));
+
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
 
@@ -134,6 +153,10 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(MenuFileQuit()));
     connect(ui->actionStartReconstruction,SIGNAL(triggered()),this,SLOT(MenuReconstructStart()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(MenuHelpAbout()));
+
+    connect(ui->actionStore_geometry,SIGNAL(triggered()),this,SLOT(StoreGeometrySetting()));
+    connect(ui->actionView_geometry_list,SIGNAL(triggered()),this,SLOT(ViewGeometryList()));
+    connect(ui->actionClear_list,SIGNAL(triggered()),this,SLOT(ClearGeometrySettings()));
 }
 
 void MuhRecMainWindow::BrowseProjectionPath()

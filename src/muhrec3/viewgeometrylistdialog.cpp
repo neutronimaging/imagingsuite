@@ -10,6 +10,7 @@
 
 #include <base/timage.h>
 #include <math/mathconstants.h>
+#include <math/linfit.h>
 
 #include <QListWidgetItem>
 #include <QMessageBox>
@@ -142,46 +143,50 @@ void ViewGeometryListDialog::ComputeTilt()
     std::ostringstream msg;
 
     if (2<=ui->listWidget->count()) {
-        std::map<size_t,float> centers;
+        int N=1024;
+        size_t *slice=new size_t[N];
+        size_t minsliceidx=0;
+        float *center=new float[N];
+        int cnt=0;
         for(int row = 0; row < ui->listWidget->count(); row++)
         {
             ConfigListItem *item = dynamic_cast<ConfigListItem *>(ui->listWidget->item(row));
 
             if (item->checkState()==Qt::Checked) {
-                centers[item->config.ProjectionInfo.roi[1]]=item->config.ProjectionInfo.fCenter;
+                slice[cnt]=item->config.ProjectionInfo.roi[1];
+                if (slice[cnt]<slice[minsliceidx])
+                    minsliceidx=cnt;
+                center[cnt]=item->config.ProjectionInfo.fCenter;
+                cnt++;
             }
+
         }
+        if (1<cnt) {
+            double R2;
+            kipl::math::LinearLSFit(slice,center,cnt,&m_fCenter,&m_fTilt, &R2);
 
-        if (centers.size()==2) {
-            std::map<size_t,float>::iterator a=centers.begin();
-            std::map<size_t,float>::iterator b=a++;
+            msg.str("");
+            msg<<"Center="<<m_fCenter<<", k="<<m_fTilt<<", R2="<<R2;
+            logger(kipl::logging::Logger::LogMessage, msg.str());
+            m_fPivot  = slice[minsliceidx];
+            m_fCenter += m_fPivot*m_fTilt;
+            m_fTilt   = -180.0f / fPi *atan(m_fTilt);
 
-            if (b->first==a->first) {
-                QMessageBox msgdlg;
-
-                msgdlg.setText("You have selected two items from the same slice.");
-                msgdlg.exec();
-                return;
-            }
-
-            if (b->first<a->first)
-                swap(a,b);
-
-            m_fPivot  = a->first;
-            m_fTilt   = -180.0f / fPi *atan((b->second-a->second)/(float(b->first)-float(a->first)));
-            m_fCenter = a->second;
             m_eChangeConfigFields = m_eChangeConfigFields | (int)ConfigField_Tilt;
-            msg<<"Tilt "<<m_fTilt<<"deg @ "<<m_fPivot;
-            ui->labelTilt->setText(QString::fromStdString(msg.str()));
+            msg.str("");
+            ui->labelTilt->setText(QString("%1").arg(m_fTilt,0,'g',4));
+            ui->labelCenter->setText(QString("%1").arg(m_fCenter,0,'g',4));
+            ui->labelPivot->setText(QString("%1").arg(m_fPivot,0,'g',4));
+            ui->labelR2->setText(QString("%1").arg(R2,0,'g',4));
         }
         else {
             QMessageBox msgdlg;
 
-            msgdlg.setText("You have checked more than two items. Tilt can only be computed with two items.");
+            msgdlg.setText("You have only checked one item. Tilt can only be computed with at least two items.");
             msgdlg.exec();
-            return;
         }
-
+        delete [] slice;
+        delete [] center;
     }
     else {
          QMessageBox msgdlg;
@@ -245,4 +250,15 @@ void ViewGeometryListDialog::MaxROI()
 void ViewGeometryListDialog::getROI(size_t *roi)
 {
     memcpy(roi,m_nMatrixROI,4*sizeof(size_t));
+}
+
+
+void ViewGeometryListDialog::on_buttonSelectAll_clicked()
+{
+    for(int row = 0; row < ui->listWidget->count(); row++)
+    {
+        QListWidgetItem *item = ui->listWidget->item(row);
+        item->setCheckState(Qt::Checked);
+    }
+
 }

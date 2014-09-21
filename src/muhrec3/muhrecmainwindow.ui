@@ -748,26 +748,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="7">
-               <widget class="QCheckBox" name="check_stitchprojections">
-                <property name="text">
-                 <string>Stitch projections</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="8">
-               <widget class="QPushButton" name="buttonStoreGeometry">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Store geometry</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_26">
                 <property name="text">
@@ -807,40 +787,6 @@
                 <property name="maximum">
                  <number>10000</number>
                 </property>
-               </widget>
-              </item>
-              <item row="1" column="7">
-               <widget class="QPushButton" name="buttonGetReconROI">
-                <property name="text">
-                 <string>Get ROI</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="8">
-               <widget class="QPushButton" name="buttonViewGeometryList">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>View geometry list</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="7">
-               <widget class="QComboBox" name="comboDataSequence">
-                <item>
-                 <property name="text">
-                  <string>Sequence</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Golden ratio</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item row="2" column="0">
@@ -887,19 +833,6 @@
                 </property>
                 <property name="maximum">
                  <double>2000.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="8">
-               <widget class="QPushButton" name="buttonClearGeometryList">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Clear list</string>
                 </property>
                </widget>
               </item>
@@ -1032,7 +965,35 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="8">
+              <item row="3" column="7">
+               <widget class="QComboBox" name="comboDataSequence">
+                <item>
+                 <property name="text">
+                  <string>Sequence</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Golden ratio</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="7">
+               <widget class="QPushButton" name="buttonGetReconROI">
+                <property name="text">
+                 <string>Get ROI</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="7">
+               <widget class="QCheckBox" name="check_stitchprojections">
+                <property name="text">
+                 <string>Stitch projections</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="7">
                <widget class="QPushButton" name="buttonConfigGeometry">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1604,8 +1565,17 @@
     <addaction name="actionStartReconstruction"/>
     <addaction name="actionPreferences"/>
    </widget>
+   <widget class="QMenu" name="menuGeometry">
+    <property name="title">
+     <string>Geometry</string>
+    </property>
+    <addaction name="actionStore_geometry"/>
+    <addaction name="actionView_geometry_list"/>
+    <addaction name="actionClear_list"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReconstruct"/>
+   <addaction name="menuGeometry"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1673,6 +1643,27 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionStore_geometry">
+   <property name="text">
+    <string>Store geometry</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+G</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="actionView_geometry_list">
+   <property name="text">
+    <string>View geometry list</string>
+   </property>
+  </action>
+  <action name="actionClear_list">
+   <property name="text">
+    <string>Clear list</string>
    </property>
   </action>
  </widget>
