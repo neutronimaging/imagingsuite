@@ -21,18 +21,20 @@
 // This is the constructor of a class that has been exported.
 // see ModuleConfigurator.h for the class definition
 
-ConfiguratorDialogBase::ConfiguratorDialogBase(std::string name, bool hasApply, bool needImages, QWidget *parent) :
+ConfiguratorDialogBase::ConfiguratorDialogBase(std::string name, bool emptyDialog, bool hasApply, bool needImages, QWidget *parent) :
     QDialog(parent),
     logger(name),
     m_ControlButtons(hasApply ? (QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply) : (QDialogButtonBox::Ok | QDialogButtonBox::Cancel)),
     m_bNeedImages(needImages)
 {
-    setWindowTitle(QString::fromStdString(name));
-    this->setLayout(&m_LayoutMain);
-    m_LayoutMain.addWidget(&m_FrameMain);
-    m_LayoutMain.addWidget(&m_ControlButtons);
+    if (!emptyDialog) {
+        setWindowTitle(QString::fromStdString(name));
+        this->setLayout(&m_LayoutMain);
+        m_LayoutMain.addWidget(&m_FrameMain);
+        m_LayoutMain.addWidget(&m_ControlButtons);
 
-    connect(&m_ControlButtons,SIGNAL(clicked(QAbstractButton*)),this,SLOT(on_ButtonBox_Clicked(QAbstractButton*)));
+        connect(&m_ControlButtons,SIGNAL(clicked(QAbstractButton*)),this,SLOT(on_ButtonBox_Clicked(QAbstractButton*)));
+    }
 }
 
 ConfiguratorDialogBase::~ConfiguratorDialogBase()
