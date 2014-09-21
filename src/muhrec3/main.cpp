@@ -38,13 +38,13 @@ int main(int argc, char *argv[])
     int res=0;
     std::string errormsg;
     do {
+        std::list<std::string> liclist;
+        liclist.push_back(homedir+".imagingtools/license_muhrec.dat");
+        liclist.push_back(application_path+"license_muhrec.dat");
+        liclist.push_back(application_path+"license.dat");
+        liclist.push_back(homedir+"license_muhrec.dat");
+        licensefail=false;
         try {
-            std::list<std::string> liclist;
-            liclist.push_back(homedir+".imagingtools/license_muhrec.dat");
-            liclist.push_back(application_path+"license_muhrec.dat");
-            liclist.push_back(application_path+"license.dat");
-            liclist.push_back(homedir+"license_muhrec.dat");
-
             license.Initialize(liclist,"muhrec");
         }
         catch (kipl::base::KiplException &e) {

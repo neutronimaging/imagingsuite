@@ -19,7 +19,6 @@ if [ ! -d "./Frameworks" ]; then
  mkdir ./Frameworks
 fi
 
-
 `$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
@@ -29,6 +28,11 @@ fi
 `$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
+
+if [ ! -d "./Resources" ]; then
+ mkdir ./Resources
+fi 
+`$CPCMD $REPOSPATH/tomography/trunk/src/muhrec3.icns $DEST/Contents/Resources`
 
 rm -f ./MacOS/*.dylib
 
