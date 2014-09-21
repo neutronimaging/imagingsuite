@@ -171,18 +171,15 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 {      
     logger(kipl::logging::Logger::LogMessage,"browse");
-    QString appPath = QCoreApplication::applicationDirPath()+"../Frameworks";
+    QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
     logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
-    QString fileName=QString::fromStdString(m_sDefaultModuleSource);
-
-    if (fileName.isEmpty()) {
-        #ifdef Q_OS_WIN
-            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-        #else
-            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
-        #endif
-    }
+    QString fileName;
+    #ifdef Q_OS_WIN
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+    #else
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+    #endif
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");

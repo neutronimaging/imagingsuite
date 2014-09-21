@@ -74,6 +74,9 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
     AddModuleDialog dlg(this);
 
     ModuleConfig mcfg;
+//    msg.str(""); msg<<"Add:Preconf: "<<m_sDefaultModuleSource;
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
+
     dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath);
     if (dlg.exec()==QDialog::Accepted) {
         mcfg=dlg.GetModuleConfig();

@@ -81,10 +81,17 @@ int AddModuleDialog::configure(std::string application, std::string defaultsourc
 
 int AddModuleDialog::exec()
 {
+    std::ostringstream msg;
+
     QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
-    logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
+
+    msg<<"appPath "<<appPath.toStdString();
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     QString fileName=QString::fromStdString(m_sDefaultModuleSource);
+    msg.str(""); msg<<"default module "<<m_sDefaultModuleSource;
+
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if (fileName.isEmpty()) {
         #ifdef Q_OS_WIN
@@ -94,6 +101,7 @@ int AddModuleDialog::exec()
         #endif
     }
 
+    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");
         return 0;
@@ -221,9 +229,19 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
 
 void AddModuleDialog::on_change_objectfile()
 {
- //   logger(kipl::logging::Logger::LogMessage,"Browse");
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),tr("libs (*.dylib)"));
+    std::ostringstream msg;
 
+    QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
+
+    QString fileName;
+
+    #ifdef Q_OS_WIN
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+    #else
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+    #endif
+
+    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");
         return;
@@ -233,8 +251,6 @@ void AddModuleDialog::on_change_objectfile()
         logger(kipl::logging::Logger::LogMessage,"The same library file was selected.");
         return;
     }
-
-    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
 
     if (UpdateModuleCombobox(fileName)!=0)
         return;

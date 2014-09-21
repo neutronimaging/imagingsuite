@@ -257,7 +257,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
         msg<<"W="<<fWindow<<", L="<<fLevel;
 
-        showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
+   //     showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
+        showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
     else {
@@ -270,7 +271,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
             msg.str("");
             msg<<m_ImagePainter.getValue(xpos,ypos)<<" @ ("<<xpos<<", "<<ypos<<")";
 
-            showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
+    //        showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
+            showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
         }
     }
 
