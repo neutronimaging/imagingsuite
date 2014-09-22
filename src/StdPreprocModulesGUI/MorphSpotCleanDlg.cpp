@@ -36,8 +36,8 @@ void MorphSpotCleanDlg::ApplyParameters()
     size_t nLo, nHi;
     kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
- //   ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
-       ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),0.0f,1.5f);
+    ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
+ //      ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),0.0f,1.5f);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -52,7 +52,8 @@ void MorphSpotCleanDlg::ApplyParameters()
     size_t cumhist[N];
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
-    kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
+  //  kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::math::cumsum(hist,cumhist,N);
 
     float fcumhist[N];
@@ -64,7 +65,7 @@ void MorphSpotCleanDlg::ApplyParameters()
     }
 
     size_t N99=ii;
-    ui->plotDetection->setCurveData(0,axis,fcumhist,N99);
+    ui->plotDetection->setCurveData(0,axis,hist,N99);
     float threshold[N];
     // In case of sigmoid mixing
 //    for (size_t i=0; i<N; i++) {
@@ -91,7 +92,8 @@ void MorphSpotCleanDlg::ApplyParameters()
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
     for (size_t i=0; i<diff.Size(); i++)
         diff[i]=(diff[i]!=0.0 ? 1.0f : 0.0f);
-    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
+   // ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
+     ui->viewerDifference->set_image(det.GetDataPtr(), det.Dims());
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
