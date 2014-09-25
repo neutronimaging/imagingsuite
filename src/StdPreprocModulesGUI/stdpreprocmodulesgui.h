@@ -7,15 +7,16 @@
 #ifndef __STDPREPROCMODULESGUI_H
 #define __STDPREPROCMODULESGUI_H
 
-#ifdef _MSC_VER
-#define DLL_EXPORT __declspec(dllexport)
-#include <windows.h>
-#else
-#define DLL_EXPORT
-#endif
+#include "StdPreprocModulesGUI_global.h"
+//#ifdef _MSC_VER
+//#define DLL_EXPORT __declspec(dllexport)
+//#include <windows.h>
+//#else
+//#define DLL_EXPORT
+//#endif
 
 extern "C" {
-DLL_EXPORT void * GetGUIModule(const char *application, const char *name);
-DLL_EXPORT int DestroyGUIModule(const char *application, void *obj);
+void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char *application, const char *name);
+int STDPREPROCMODULESGUISHARED_EXPORT DestroyGUIModule(const char *application, void *obj);
 }
 #endif 

@@ -10,6 +10,12 @@
     <height>499</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -34,7 +40,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="widget" native="true"/>
+          <widget class="QtAddons::ImageViewerWidget" name="viewerOriginal" native="true"/>
          </item>
         </layout>
        </item>
@@ -54,7 +60,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="widget_2" native="true"/>
+          <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
          </item>
         </layout>
        </item>
@@ -78,7 +84,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="widget_3" native="true"/>
+          <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true"/>
          </item>
         </layout>
        </item>
@@ -98,7 +104,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="widget_4" native="true"/>
+          <widget class="QtAddons::ImageViewerWidget" name="viewerDifference" native="true"/>
          </item>
         </layout>
        </item>
@@ -131,6 +137,12 @@
        </item>
        <item>
         <widget class="QLabel" name="label_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Mix width</string>
          </property>
@@ -141,6 +153,12 @@
        </item>
        <item>
         <widget class="QLabel" name="label_7">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Smooth</string>
          </property>
@@ -165,6 +183,20 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

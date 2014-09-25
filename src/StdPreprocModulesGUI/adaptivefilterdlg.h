@@ -1,6 +1,6 @@
 #ifndef ADAPTIVEFILTERDLG_H
 #define ADAPTIVEFILTERDLG_H
-
+#include "StdPreprocModulesGUI_global.h"
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
 #include <ReconConfig.h>
@@ -20,6 +20,9 @@ public:
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
 
+private slots:
+    void on_buttonBox_clicked(QAbstractButton *button);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -27,6 +30,8 @@ private:
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     Ui::AdaptiveFilterDlg *ui;
+
+    kipl::base::TImage<float,3> m_Projections;
 
     float m_fLambda;
     float m_fSigma;

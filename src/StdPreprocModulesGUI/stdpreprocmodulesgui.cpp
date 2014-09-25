@@ -1,7 +1,8 @@
 // StdPreprocModulesGUI.cpp : Defines the exported functions for the DLL application.
 //
 
-#include "stdafx.h"
+//#include "stdafx.h"
+#include "StdPreprocModulesGUI_global.h"
 #include "stdpreprocmodulesgui.h"
 #include <ConfiguratorDialogBase.h>
 #include "SpotClean2Dlg.h"
@@ -13,8 +14,9 @@
 #include "WaveletRingCleanDlg.h"
 #include "MorphSpotCleanDlg.h"
 #include "datascalerdlg.h"
+#include "adaptivefilterdlg.h"
 
-DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
+void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name)
 {
 	if (strcmp(application,"muhrec")!=0)
 		return NULL;
@@ -40,8 +42,8 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 		//if (sName=="GeneralFilter")
 		//	return new GeneralFilter;
 
-		//if (sName=="AdaptiveFilter")
-		//	return new AdaptiveFilter;
+        if (sName=="AdaptiveFilter")
+            return new AdaptiveFilterDlg;
 
 		//if (sName=="BasicRingClean")
 		//	return new BasicRingClean;
@@ -60,6 +62,7 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 
         if (sName=="PolynomialCorrection")
             return new PolynomialCorrectionDlg;
+
         if (sName=="MorphSpotClean")
             return new MorphSpotCleanDlg;
 
