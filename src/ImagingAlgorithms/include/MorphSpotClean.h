@@ -32,6 +32,8 @@ public:
 
     void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
     void setCleanMethod(eMorphCleanMethod mcm);
+    void setLimits(float fMin, float fMax, int nMaxArea);
+    void setEdgeConditioning(int nSmoothLenght);
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 
 protected:

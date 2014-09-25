@@ -13,7 +13,11 @@ MorphSpotClean::MorphSpotClean() :
     mark(std::numeric_limits<float>::max()),
     m_eConnectivity(kipl::morphology::conn8),
     m_eMorphClean(MorphCleanBoth),
-    m_nEdgeSmoothLength(5)
+    m_nEdgeSmoothLength(5),
+    m_nMaxArea(100),
+    m_fMinLevel(-0.1f),
+    m_fMaxLevel(12.0f),
+    m_fThreshold(0.1f)
 {
 
 }
@@ -141,6 +145,21 @@ void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TIma
     }
 
     delete [] buffer;
+}
+
+void MorphSpotClean::setLimits(float fMin,float fMax, int nMaxArea)
+{
+    m_fMinLevel = fMin;
+    m_fMaxLevel = fMax;
+    if (0<nMaxArea)
+        m_nMaxArea = nMaxArea;
+}
+
+void MorphSpotClean::setEdgeConditioning(int nSmoothLenght)
+{
+    if (1<nSmoothLenght)
+        m_nEdgeSmoothLength=nSmoothLenght;
+
 }
 
 void MorphSpotClean::UnpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img)
