@@ -9,9 +9,10 @@
 #include "FullLogNormDlg.h"
 //#include "MedianMixRingCleanDlg.h"
 #include "projectionfilterdlg.h"
-//#include "PolynomialCorrectionDlg.h"
+#include "PolynomialCorrectionDlg.h"
 #include "WaveletRingCleanDlg.h"
 #include "MorphSpotCleanDlg.h"
+#include "datascalerdlg.h"
 
 DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 {
@@ -48,8 +49,8 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
 //		if (sName=="MedianMixRingClean")
 //			return new MedianMixRingCleanDlg;
 
-		//if (sName=="DataScaler")
-		//	return new DataScaler;
+        if (sName=="DataScaler")
+            return new DataScalerDlg;
 
 //		if (sName=="ISSfilter")
 //			return new ISSfilterDlg;
@@ -57,8 +58,8 @@ DLL_EXPORT void * GetGUIModule(const char * application, const char * name)
         if (sName=="WaveletRingClean")
             return new WaveletRingCleanDlg;
 
-//		if (sName=="PolynomialCorrection")
-//			return new PolynomialCorrectionDlg;
+        if (sName=="PolynomialCorrection")
+            return new PolynomialCorrectionDlg;
         if (sName=="MorphSpotClean")
             return new MorphSpotCleanDlg;
 
