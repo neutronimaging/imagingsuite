@@ -53,7 +53,7 @@ protected:
     ModuleConfig m_ModuleConfig;
 };
 
-class SingleModuleSettingsDialog : QDialog
+class QTMODULECONFIGURESHARED_EXPORT SingleModuleSettingsDialog : QDialog
 {
     Q_OBJECT
     kipl::logging::Logger logger;
