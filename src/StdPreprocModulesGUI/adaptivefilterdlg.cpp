@@ -4,6 +4,7 @@
 #include <ParameterHandling.h>
 #include <AdaptiveFilter.h>
 #include <base/thistogram.h>
+#include <base/tprofile.h>
 #include <plotter.h>
 #include <map>
 #include <string>
@@ -62,8 +63,20 @@ void AdaptiveFilterDlg::ApplyParameters()
     kipl::base::Histogram(sino.GetDataPtr(), sino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     ui->viewerOriginal->set_image(sino.GetDataPtr(),sino.Dims(),axis[nLo],axis[nHi]);
-    ui->plotHistogram->setCurveData(0,axis,hist,N);
+
+    float *sinoprofile=new float[sino.Size(1)];
+    kipl::base::verticalprofile2D(sino.GetDataPtr(),sino.Dims(),sinoprofile);
+    float *sinoangles=new float[sino.Size(1)];
+    ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
+    float da=(rc->ProjectionInfo.fScanArc[1]-rc->ProjectionInfo.fScanArc[0])/(sino.Size(1)-1);
+    for (size_t i=0; i<sino.Size(1); i++)
+        sinoangles[i]=rc->ProjectionInfo.fScanArc[0]+i*da;
+
+    ui->plotHistogram->setCurveData(0,sinoprofile,sinoangles,sino.Size(1),Qt::blue);
     ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(m_fLambda,Qt::red,QtAddons::PlotCursor::Vertical));
+
+//    ui->plotHistogram->setCurveData(0,axis,hist,N);
+//    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(m_fLambda,Qt::red,QtAddons::PlotCursor::Vertical));
 
     AdaptiveFilter module;
 
