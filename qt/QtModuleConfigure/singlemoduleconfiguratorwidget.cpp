@@ -361,6 +361,7 @@ void SingleModuleSettingsDialog::UpdateCurrentModuleParameters()
     QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
     QTreeWidgetItem *item = NULL;
 
+    m_ParameterListView.setColumnWidth(0,this->width()/2);
     if (!m_ModuleConfig.m_sModule.empty()) {
         std::map<std::string,std::string>::iterator it;
 

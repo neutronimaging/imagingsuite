@@ -272,6 +272,8 @@ void ModuleChainConfiguratorWidget::BuildParameterManager()
 void ModuleChainConfiguratorWidget::UpdateCurrentModuleParameters()
 {
     m_ParameterListView.clear();
+    m_ParameterListView.setColumnWidth(0,this->width()/5);
+    //m_ParameterListView.setColumnWidth(1,m_ParameterListView.width()/2);
     QListWidgetModuleItem *moduleitem=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
 
     QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
