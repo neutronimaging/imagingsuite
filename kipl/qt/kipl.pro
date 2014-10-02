@@ -266,7 +266,9 @@ HEADERS +=\
     ../include/base/core/thistogram.hpp \
     ../include/io/DirAnalyzer.h \
     ../include/math/linfit.h \
-    ../include/math/core/linfit.hpp
+    ../include/math/core/linfit.hpp \
+    ../include/base/tprofile.h \
+    ../include/base/core/tprofile.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
