@@ -95,6 +95,8 @@ private slots:
 
     void on_buttonGetPathDC_clicked();
 
+    void on_comboSlicePlane_activated(int index);
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
@@ -115,6 +117,11 @@ private:
     kipl::base::TImage<float,2>     m_PreviewImage;
     kipl::base::TImage<float,2>     m_SliceImage;
     kipl::base::TImage<float,2>     m_LastMidSlice;
+
+    kipl::base::eImagePlanes m_eSlicePlane;
+    size_t m_nSliceSizeX;
+    size_t m_nSliceSizeY;
+
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_StoredReconList;
     bool m_bCurrentReconStored;
 };

@@ -133,6 +133,12 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-100.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item>
@@ -149,7 +155,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinSigma"/>
+        <widget class="QDoubleSpinBox" name="spinSigma">
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-100.000000000000000</double>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_7">
@@ -165,7 +178,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinSize"/>
+        <widget class="QSpinBox" name="spinSize">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>5</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

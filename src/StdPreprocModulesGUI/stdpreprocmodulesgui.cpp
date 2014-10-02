@@ -12,7 +12,7 @@
 #include "projectionfilterdlg.h"
 #include "PolynomialCorrectionDlg.h"
 #include "WaveletRingCleanDlg.h"
-//#include "MorphSpotCleanDlg.h"
+#include "MorphSpotCleanDlg.h"
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
 
@@ -63,8 +63,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
         if (sName=="PolynomialCorrection")
             return new PolynomialCorrectionDlg;
 
-//        if (sName=="MorphSpotClean")
-//            return new MorphSpotCleanDlg;
+        if (sName=="MorphSpotClean")
+            return new MorphSpotCleanDlg;
 
 	}	
 	return NULL;

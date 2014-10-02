@@ -18,7 +18,7 @@ SOURCES += stdpreprocmodulesgui.cpp \
     FullLogNormDlg.cpp \
     WaveletRingCleanDlg.cpp \
     projectionfilterdlg.cpp \
- #   morphspotcleandlg.cpp \
+    morphspotcleandlg.cpp \
     polynomialcorrectiondlg.cpp \
     datascalerdlg.cpp \
     adaptivefilterdlg.cpp
@@ -30,7 +30,7 @@ HEADERS += stdpreprocmodulesgui.h\
     FullLogNormDlg.h \
     WaveletRingCleanDlg.h \
     projectionfilterdlg.h \
-  #  morphspotcleandlg.h \
+    morphspotcleandlg.h \
     polynomialcorrectiondlg.h \
     datascalerdlg.h \
     adaptivefilterdlg.h
@@ -145,4 +145,5 @@ DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 FORMS += \
     polynomialcorrectiondlg.ui \
     datascalerdlg.ui \
-    adaptivefilterdlg.ui
+    adaptivefilterdlg.ui \
+    morphspotcleandlg.ui

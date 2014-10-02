@@ -318,13 +318,13 @@ void MuhRecMainWindow::DisplaySlice(int x)
     int nSelectedSlice=x;
 
     if (x<0) {
-        nSelectedSlice=m_Config.ProjectionInfo.roi[1];
+        nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
         ui->sliderProjections->setValue(nSelectedSlice);
-
     }
 
     try {
-        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice-m_Config.ProjectionInfo.roi[1]);
+        //kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice-m_Config.ProjectionInfo.roi[1]);
+        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
         ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
                                    static_cast<float>(ui->dspinGrayLow->value()),
                                    static_cast<float>(ui->dspinGrayHigh->value()));
@@ -958,8 +958,13 @@ void MuhRecMainWindow::MenuReconstructStart()
                     msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
                     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-                    ui->sliderSlices->setRange(m_Config.ProjectionInfo.roi[1],m_Config.ProjectionInfo.roi[1]+m_Config.MatrixInfo.nDims[2]-1);
-                    ui->sliderSlices->setValue(m_Config.ProjectionInfo.roi[1]);
+//                    ui->sliderSlices->setRange(m_Config.ProjectionInfo.roi[1],m_Config.ProjectionInfo.roi[1]+m_Config.MatrixInfo.nDims[2]-1);
+//                    ui->sliderSlices->setValue(m_Config.ProjectionInfo.roi[1]);
+                    ui->sliderSlices->setRange(0,m_Config.MatrixInfo.nDims[2]-1);
+                    ui->sliderSlices->setValue(m_Config.MatrixInfo.nDims[2]/2);
+                    m_nSliceSizeX=m_Config.MatrixInfo.nDims[0];
+                    m_nSliceSizeY=m_Config.MatrixInfo.nDims[1];
+                    m_eSlicePlane=kipl::base::ImagePlaneXY;
 
                     msg.str("");
                     msg<<"Matrix display interval ["<<m_Config.MatrixInfo.fGrayInterval[0]<<", "<<m_Config.MatrixInfo.fGrayInterval[1]<<"]";
@@ -1391,4 +1396,35 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
 void MuhRecMainWindow::on_buttonGetPathDC_clicked()
 {
     ui->editDarkMask->setText(ui->editProjectionMask->text());
+}
+
+void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
+{
+    std::ostringstream msg;
+    m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<index);
+    size_t dims[3];
+    m_pEngine->GetMatrixDims(dims);
+    int maxslices=static_cast<int>(dims[2-index]);
+    ui->sliderSlices->setMaximum(maxslices-1);
+    ui->sliderSlices->setValue(maxslices/2);
+
+    msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    DisplaySlice(maxslices/2);
+
+    switch (m_eSlicePlane) {
+        case kipl::base::ImagePlaneXY :
+            m_nSliceSizeX=dims[0]-1;
+            m_nSliceSizeY=dims[1]-1;
+        break;
+        case kipl::base::ImagePlaneXZ :
+            m_nSliceSizeX=dims[0]-1;
+            m_nSliceSizeY=dims[2]-1;
+        break;
+        case kipl::base::ImagePlaneYZ :
+            m_nSliceSizeX=dims[1]-1;
+            m_nSliceSizeY=dims[2]-1;
+        break;
+    }
 }

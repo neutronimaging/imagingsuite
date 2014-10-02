@@ -1519,11 +1519,46 @@
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="sliderSlices">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QComboBox" name="comboSlicePlane">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>10</width>
+                <height>0</height>
+               </size>
+              </property>
+              <item>
+               <property name="text">
+                <string>XY</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>XZ</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>YZ</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="sliderSlices">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -1670,15 +1705,15 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::ImageViewerWidget</class>
+   <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
-   <header location="global">imageviewerwidget.h</header>
+   <header location="global">qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
+   <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">imageviewerwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1688,9 +1723,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::QtLogViewer</class>
+   <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
-   <header>qtlogviewer.h</header>
+   <header location="global">plotter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
