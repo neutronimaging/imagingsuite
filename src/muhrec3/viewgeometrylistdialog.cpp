@@ -11,6 +11,7 @@
 #include <base/timage.h>
 #include <math/mathconstants.h>
 #include <math/linfit.h>
+#include <base/thistogram.h>
 
 #include <QListWidgetItem>
 #include <QMessageBox>
@@ -63,6 +64,10 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
 
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > >::iterator it;
 
+    const size_t NHist=512;
+    size_t hist[NHist];
+    float axis[NHist];
+
     for (it=reconList.begin(); it!=reconList.end(); it++) {
 
         msg.str("");
@@ -74,9 +79,18 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
         item->config = it->first;
         item->image  = it->second;
 
+        size_t nLo=0;
+        size_t nHi=0;
+        memset(hist,0,sizeof(size_t)*NHist);
+        memset(axis,0,sizeof(float)*NHist);
+        kipl::base::Histogram(item->image.GetDataPtr(),item->image.Size(),hist,NHist,0.0f,0.0f,axis);
+        kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+        float lo=axis[nLo];
+        float hi=axis[nHi];
+
         QPixmap pixmap=CreateIconFromImage(it->second,
-                                           it->first.MatrixInfo.fGrayInterval[0],
-                                           it->first.MatrixInfo.fGrayInterval[1]);
+                                           lo,
+                                           hi);
         QIcon icon(pixmap);
         item->setIcon(pixmap);
 
@@ -131,10 +145,24 @@ void ViewGeometryListDialog::ShowSelected(QListWidgetItem *current)
 {
     ConfigListItem *item = reinterpret_cast<ConfigListItem *>(current);
 
+    const size_t NHist=512;
+    size_t hist[NHist];
+    float axis[NHist];
+    memset(hist,0,sizeof(size_t)*NHist);
+    memset(axis,0,sizeof(float)*NHist);
+
+    size_t nLo=0;
+    size_t nHi=0;
+
+    kipl::base::Histogram(item->image.GetDataPtr(),item->image.Size(),hist,NHist,0.0f,0.0f,axis);
+    kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+    float lo=axis[nLo];
+    float hi=axis[nHi];
+
     ui->imageViewer->set_image(item->image.GetDataPtr(),
                                item->image.Dims(),
-                               item->config.MatrixInfo.fGrayInterval[0],
-                               item->config.MatrixInfo.fGrayInterval[1]);
+                               lo,
+                               hi);
 
 }
 

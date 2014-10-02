@@ -506,6 +506,7 @@ void MuhRecMainWindow::StoreGeometrySetting()
 {
     if (!m_bCurrentReconStored)
     {
+        UpdateConfig();
         std::ostringstream msg;
         if (m_LastMidSlice.Size()!=0) {
             m_StoredReconList.push_back(std::make_pair(m_LastReconConfig,m_LastMidSlice));
@@ -710,7 +711,7 @@ void MuhRecMainWindow::MenuFileNew()
 void MuhRecMainWindow::MenuFileOpen()
 {
     std::ostringstream msg;
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open reconstruction configuration"),tr("configurations (*.xml)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open reconstruction configuration"),tr("*.xml"));
 
     QMessageBox msgbox;
 
