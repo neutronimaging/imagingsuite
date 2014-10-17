@@ -12,18 +12,18 @@ pushd .
 cd $DEST/Frameworks
 rm -f *.1.0.0.dylib
 
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.so.1.0.0 .`
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.so.1.0.0 .`
+`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.so.1.0.0 .`
+`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.so.1.0.0 .`
+`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/libkipl.so.1.0.0 .`
-`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/libModuleConfig.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libReconFramework.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdBackProjectors/StdBackProjectors-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdBackProjectors.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/StdPreprocModules-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.so.1.0.0 .`
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/libReconFramework.so.1.0.0 .`
+`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdBackProjectors/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.so.1.0.0 .`
+`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/tomography/trunk/src/StdPreprocModulesGUI-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libStdPreprocModulesGUI.so.1.0.0 .`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.so.1.0.0 .`
 
 rm -f *.so
 rm -f *.so.1
@@ -38,7 +38,7 @@ for f in `ls *.so.1.0.0`; do
 done
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/tomography/trunk/src/muhrec3-build-Qt_4_8_1_in_PATH__System__Release/muhrec3 .`
+`$CPCMD $REPOSPATH/tomography/trunk/build-muhrec3-Qt5-Release/muhrec3 .`
 cd ..
 `$CPCMD $REPOSPATH/tomography/trunk/src/scripts/muhrec3 .`
 chmod +x muhrec3

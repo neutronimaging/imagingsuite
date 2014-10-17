@@ -10,9 +10,9 @@
 #include "FullLogNormDlg.h"
 //#include "MedianMixRingCleanDlg.h"
 #include "projectionfilterdlg.h"
-#include "PolynomialCorrectionDlg.h"
+#include "polynomialcorrectiondlg.h"
 #include "WaveletRingCleanDlg.h"
-#include "MorphSpotCleanDlg.h"
+#include "morphspotcleandlg.h"
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
 
