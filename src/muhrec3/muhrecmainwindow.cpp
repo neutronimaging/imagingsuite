@@ -1347,7 +1347,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fScanArc[0] = ui->dspinAngleStart->value();
     m_Config.ProjectionInfo.fScanArc[1] = ui->dspinAngleStop->value();
     m_Config.ProjectionInfo.scantype = static_cast<ReconConfig::cProjections::eScanType>(ui->comboDataSequence->currentIndex());
-    m_Config.ProjectionInfo.fResolution[0] = ui->dspinResolution->value();
+    m_Config.ProjectionInfo.fResolution[0] = m_Config.ProjectionInfo.fResolution[1] = ui->dspinResolution->value();
     m_Config.ProjectionInfo.fTiltAngle = ui->dspinTiltAngle->value();
     m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
     m_Config.ProjectionInfo.bCorrectTilt = ui->checkCorrectTilt->checkState();
