@@ -90,10 +90,10 @@ void MorphSpotCleanDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    for (size_t i=0; i<diff.Size(); i++)
-        diff[i]=(diff[i]!=0.0 ? 1.0f : 0.0f);
-   // ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
-     ui->viewerDifference->set_image(det.GetDataPtr(), det.Dims());
+//    for (size_t i=0; i<diff.Size(); i++)
+//        diff[i]=(diff[i]!=0.0 ? 1.0f : 0.0f);
+    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
+   //  ui->viewerDifference->set_image(det.GetDataPtr(), det.Dims());
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
