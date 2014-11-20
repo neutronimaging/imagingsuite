@@ -17,7 +17,8 @@ ReconDialog::ReconDialog(InteractionBase *interactor, QWidget *parent) :
     fraction(0.0f),
     finish(false),
     m_Engine(NULL),
-    m_Interactor(interactor)
+    m_Interactor(interactor),
+    m_bRerunBackproj(false)
 {
     ui->setupUi(this);
 }
@@ -27,9 +28,10 @@ ReconDialog::~ReconDialog()
     delete ui;
 }
 
-int ReconDialog::exec(ReconEngine * engine)
+int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 {
     m_Engine=engine;
+    m_bRerunBackproj=bRerunBackProj;
     finish=false;
     logger(kipl::logging::Logger::LogMessage,"Start");
 
@@ -115,7 +117,7 @@ void ReconDialog::process()
     QMessageBox dlg;
     dlg.setWindowTitle("Reconstruction error");
     try {
-        m_Engine->Run3D();
+        m_Engine->Run3D(m_bRerunBackproj);
     }
     catch (ReconException &e)
     {

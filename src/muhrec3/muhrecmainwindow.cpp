@@ -824,6 +824,7 @@ void MuhRecMainWindow::MenuReconstructStart()
 
         of<<m_Config.WriteXML();
         of.flush();
+        logger(kipl::logging::Logger::LogMessage,"Saved current recon config");
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -837,13 +838,6 @@ void MuhRecMainWindow::MenuReconstructStart()
         logger(kipl::logging::Logger::LogError,msg.str());
         return;
     }
-
-
-    if (m_pEngine!=NULL) {
-        delete m_pEngine;
-    }
-
-    m_pEngine=NULL;
 
     m_Config.MatrixInfo.bAutomaticSerialize=false;
     if (m_Config.System.nMemory<m_nRequiredMemory) {
@@ -869,49 +863,69 @@ void MuhRecMainWindow::MenuReconstructStart()
     else
         m_Config.MatrixInfo.bAutomaticSerialize=false;
 
+    std::list<string> freelist;
 
-    msg.str("");
-    try {
-        m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
-    }
-    catch (std::exception &e) {
-        msg<<"Reconstructor initialization failed with an STL exception: "<<endl
-            <<e.what();
-        bBuildFailure=true;
-    }
-    catch (ModuleException &e) {
-        msg<<"Reconstructor initialization failed with a ModuleException: \n"
-            <<e.what();
-        bBuildFailure=true;
-    }
-    catch (ReconException &e) {
-        msg<<"Reconstructor initialization failed with a recon exception: "<<endl
-            <<e.what();
-        bBuildFailure=true;
-    }
-    catch (kipl::base::KiplException &e) {
-        msg<<"Reconstructor initialization failed a Kipl exception: "<<endl
-            <<e.what();
-        bBuildFailure=true;
-    }
-    catch (...) {
-        msg<<"Reconstructor initialization failed with an unknown exception";
-        bBuildFailure=true;
-    }
+    freelist.push_back("grayinterval");
+    freelist.push_back("center");
+    bool bRerunBackproj=!m_Config.ConfigChanged(m_LastReconConfig,freelist);
+    msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+    if ( !bRerunBackproj || m_pEngine==NULL) {
+        logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
+        msg.str("");
+        try {
+            if (m_pEngine!=NULL) {
+                delete m_pEngine;
+            }
 
-    if (bBuildFailure) {
-        logger(kipl::logging::Logger::LogError,msg.str());
-        QMessageBox error_dlg;
-        error_dlg.setText("Failed to build reconstructor due to plugin exception. See log message for more information.");
-        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            m_pEngine=NULL;
 
-        error_dlg.exec();
+            m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
+        }
+        catch (std::exception &e) {
+            msg<<"Reconstructor initialization failed with an STL exception: "<<endl
+                <<e.what();
+            bBuildFailure=true;
+        }
+        catch (ModuleException &e) {
+            msg<<"Reconstructor initialization failed with a ModuleException: \n"
+                <<e.what();
+            bBuildFailure=true;
+        }
+        catch (ReconException &e) {
+            msg<<"Reconstructor initialization failed with a recon exception: "<<endl
+                <<e.what();
+            bBuildFailure=true;
+        }
+        catch (kipl::base::KiplException &e) {
+            msg<<"Reconstructor initialization failed a Kipl exception: "<<endl
+                <<e.what();
+            bBuildFailure=true;
+        }
+        catch (...) {
+            msg<<"Reconstructor initialization failed with an unknown exception";
+            bBuildFailure=true;
+        }
 
-        if (m_pEngine!=NULL)
-            delete m_pEngine;
-        m_pEngine=NULL;
+        if (bBuildFailure) {
+            logger(kipl::logging::Logger::LogError,msg.str());
+            QMessageBox error_dlg;
+            error_dlg.setText("Failed to build reconstructor due to plugin exception. See log message for more information.");
+            error_dlg.setDetailedText(QString::fromStdString(msg.str()));
 
-        return ;
+            error_dlg.exec();
+
+            if (m_pEngine!=NULL)
+                delete m_pEngine;
+            m_pEngine=NULL;
+
+            return ;
+        }
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
+        m_pEngine->SetConfig(m_Config);
+        bRerunBackproj=true;
     }
 
     msg.str("");
@@ -920,7 +934,7 @@ void MuhRecMainWindow::MenuReconstructStart()
         if (m_pEngine!=NULL) {
             int res=0;
             ui->tabMainControl->setCurrentIndex(3);
-            res=dlg.exec(m_pEngine);
+            res=dlg.exec(m_pEngine,bRerunBackproj);
 
             if (res==QDialog::Accepted) {
                 logger(kipl::logging::Logger::LogVerbose,"Finished with OK");
@@ -959,8 +973,6 @@ void MuhRecMainWindow::MenuReconstructStart()
                     msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
                     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-//                    ui->sliderSlices->setRange(m_Config.ProjectionInfo.roi[1],m_Config.ProjectionInfo.roi[1]+m_Config.MatrixInfo.nDims[2]-1);
-//                    ui->sliderSlices->setValue(m_Config.ProjectionInfo.roi[1]);
                     ui->sliderSlices->setRange(0,m_Config.MatrixInfo.nDims[2]-1);
                     ui->sliderSlices->setValue(m_Config.MatrixInfo.nDims[2]/2);
                     m_nSliceSizeX=m_Config.MatrixInfo.nDims[0];

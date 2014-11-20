@@ -3,7 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{graphicx}
+\usepackage[pdflatex]{graphicx}
 \author{Anders Kaestner}
 \title{MuhRec API documentation}
 \date{\today}
@@ -11,6 +11,14 @@
 \maketitle
 \section{Introduction}
 \subsection{Architecture}
+MuhRec is base on a modular concept that allows the programmer to dynamically add new modules in the processing chain. 
+\subsection{Library structure}
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{figures/KiplComponents.pdf}
+\caption{Library dependencies for MuhRec.}
+\end{figure}
+\section{The image class}
 \section{Preprocessing modules}
 \section{Back projection modules}
 \end{document}

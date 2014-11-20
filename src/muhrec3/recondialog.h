@@ -20,7 +20,7 @@ public:
     ~ReconDialog();
     void progress();
     void process();
-    virtual int exec(ReconEngine *engine);
+    virtual int exec(ReconEngine *engine, bool bRerunBackProj);
 
 protected slots:
     void pressedCancel();
@@ -37,6 +37,7 @@ protected:
     bool finish;
     ReconEngine * m_Engine;
     InteractionBase * m_Interactor;
+    bool m_bRerunBackproj;
 };
 
 #endif // RECONDIALOG_H

@@ -8,13 +8,14 @@
 #include <QVector>
 #include "muhrecmainwindow.h"
 #include <string>
+#include <strings/miscstring.h>
 #include <utilities/nodelocker.h>
 #include <ReconException.h>
 #include <ModuleException.h>
 
 int RunGUI(QApplication *app);
 int RunOffline(QApplication *app);
-
+void TestConfig();
 
 int main(int argc, char *argv[])
 {
