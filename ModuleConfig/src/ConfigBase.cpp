@@ -225,4 +225,52 @@ std::string ConfigBase::cUserInformation::WriteXML(size_t indent)
 	return str.str();
 }
 
+bool ConfigBase::ConfigChanged(ConfigBase & config, std::list<std::string> freelist)
+{
+    std::string thisconf=WriteXML();
+    std::string otherconf=config.WriteXML();
 
+    size_t tpos0 = 0;
+    size_t tpos1 = 0;
+    size_t tlen  = 0;
+
+    size_t opos0 = 0;
+    size_t opos1 = 0;
+    size_t olen  = 0;
+    while ((tpos0<thisconf.size()) && (tpos0!=std::string::npos) && (opos0!=std::string::npos)) {
+        tpos0++; opos0++;
+        tpos1=thisconf.find_first_of('\n',tpos0);  tlen = tpos1-tpos0;
+        opos1=otherconf.find_first_of('\n',opos0); olen = opos1-opos0;
+
+        if (thisconf.compare(tpos0,tlen,otherconf,opos0,olen)!=0) { // are the lines different?
+
+            size_t thisclose = thisconf.find_first_of('>',tpos0)+1;
+            size_t otherclose = otherconf.find_first_of('>',opos0)+1;
+            std::string thispar  = thisconf.substr(thisconf.find_first_of('<',tpos0)+1,thisclose-thisconf.find_first_of('<',tpos0)-2);
+            std::string otherpar = otherconf.substr(otherconf.find_first_of('<',opos0)+1,otherclose-otherconf.find_first_of('<',opos0)-2);
+
+            std::clog<<"current parameter: "<<thispar<<", "<<otherpar<<std::endl;
+            if (thispar.compare(otherpar)!=0) // paremeters are different, a clear true  {
+            {
+                std::ostringstream msg;
+                msg<<"Parameters "<<thispar<<" and "<<otherpar<<" differs between the configurations";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                return true;
+            }
+
+            if (find(freelist.begin(),freelist.end(),thispar)==freelist.end()) // parameter is in the free list
+            {
+                std::ostringstream msg;
+                msg<<"Parameter "<<thispar<<" differs between the configurations";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                return true;
+            }
+        }
+
+        tpos0=tpos1;
+        opos0=opos1;
+    }
+    return false;
+}
