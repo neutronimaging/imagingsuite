@@ -867,6 +867,19 @@ void MuhRecMainWindow::MenuReconstructStart()
 
     freelist.push_back("grayinterval");
     freelist.push_back("center");
+    freelist.push_back("operator");
+    freelist.push_back("instrument");
+    freelist.push_back("projectnumber");
+    freelist.push_back("sample");
+    freelist.push_back("comment");
+    freelist.push_back("rotation");
+    freelist.push_back("tiltangle");
+    freelist.push_back("tiltpivot");
+    freelist.push_back("correcttilt");
+    freelist.push_back("tiltpivot");
+    //freelist.push_back("usematrixroi");
+    //freelist.push_back("matrixroi");
+
     bool bRerunBackproj=!m_Config.ConfigChanged(m_LastReconConfig,freelist);
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
     logger(kipl::logging::Logger::LogMessage,msg.str());
