@@ -870,7 +870,9 @@ void MuhRecMainWindow::MenuReconstructStart()
     bool bRerunBackproj=!m_Config.ConfigChanged(m_LastReconConfig,freelist);
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
     logger(kipl::logging::Logger::LogMessage,msg.str());
-    if ( !bRerunBackproj || m_pEngine==NULL) {
+    if ( bRerunBackproj==false || m_pEngine==NULL || m_Config.MatrixInfo.bAutomaticSerialize==true) {
+        bRerunBackproj=false; // Just in case if other cases outruled re-run
+
         logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
         msg.str("");
         try {
@@ -924,7 +926,7 @@ void MuhRecMainWindow::MenuReconstructStart()
     }
     else {
         logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
-        m_pEngine->SetConfig(m_Config);
+        m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
         bRerunBackproj=true;
     }
 
