@@ -268,7 +268,7 @@ int MinImpose(const kipl::base::TImage<T,NDim> &f, const kipl::base::TImage<T,ND
 template <typename T>
 kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect conn)
 {
-    std::cout<<"Fillhole: "<<img<<std::endl;
+    std::stringstream msg;
     kipl::base::TImage<T,2> fm(img.Dims());
 
     T maxval;
@@ -286,15 +286,23 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::morphology:
         pB[0]=pA[0];
         pB[last]=pA[last];
     }
-    std::cout<<"Fillhole: pre rec"<<std::endl;
-    return kipl::morphology::RecByErosion(img,fm,kipl::morphology::conn8);
+    kipl::base::TImage<T,2> tmp(img.Dims());
+    try {
+        tmp=kipl::morphology::RecByErosion(img,fm,conn);
+    }
+    catch (kipl::base::KiplException & e) {
+        msg<<"FillHoles failed with a kipl exception: "<<e.what();
+        throw kipl::base::KiplException(msg.str());
+    }
+
+    return tmp;
 }
 
 template <typename T>
 kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect conn)
 {
     kipl::base::TImage<T,2> fm(img.Dims());
-
+    std::stringstream msg;
     T maxval;
     T minval;
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&minval, & maxval);
@@ -316,7 +324,8 @@ kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::morphology
         tmp=kipl::morphology::RecByDilation(img,fm,conn);
     }
     catch (kipl::base::KiplException & e) {
-        std::cout<<"failed with kipl exception: "<<e.what();
+        msg<<"FillPeaks failed with a kipl exception: "<<e.what();
+        throw kipl::base::KiplException(msg.str());
     }
     return tmp;
 }
