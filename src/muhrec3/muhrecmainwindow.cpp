@@ -50,7 +50,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->projectionViewer->hold_annotations(true);
     std::string defaultmodules;
 #ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"/StdBackProjectors.dll";
+        defaultmodules=m_sApplicationPath+"StdBackProjectors.dll";
 #else
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
@@ -61,7 +61,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
 
 #ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"/StdPreprocModules.dll";
+        defaultmodules=m_sApplicationPath+"StdPreprocModules.dll";
 #else
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
