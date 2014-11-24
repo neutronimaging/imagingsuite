@@ -330,9 +330,11 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
 #else
 //    color.setColor(QPalette::Active,QPalette::QPalette::ToolTipBase,QColor::yellow());
 #endif
-    qreal x = position.x()+this->pos().x()+5;
-    qreal y = position.y()+this->pos().y()-15;
-    QPoint ttpos (x, y);
+//    qreal x = position.x()+this->pos().x()+5;
+//    qreal y = position.y()+this->pos().y()-15;
+//    QPoint ttpos (x, y);
+
+    QPoint ttpos=position;
 
     QToolTip::setPalette(color);
     QToolTip::setFont(ttfont);
@@ -346,8 +348,6 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_ImagePainter.set_image(data,dims);
     float mi,ma;
     m_ImagePainter.get_image_minmax(&mi,&ma);
-//    msg<<"Set image with min="<<mi<<", max="<<ma;
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
 }
 
 QRect ImageViewerWidget::get_marked_roi()
