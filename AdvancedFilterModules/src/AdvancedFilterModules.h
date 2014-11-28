@@ -12,13 +12,13 @@
 #ifndef _ADVANCEDFILTERMODULES_H
 #define _ADVANCEDFILTERMODULES_H
 
-#include "stdafx.h"
+#include "AdvancedFilterModules_global.h"
 
 extern "C" {
-DLL_EXPORT void * GetModule(const char *application, const char * name);
-DLL_EXPORT int Destroy(const char *application, void *obj);
-DLL_EXPORT int LibVersion();
-DLL_EXPORT int GetModuleList(const char *application, void *listptr);
+ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const char * name);
+ADVANCEDFILTERMODULES_EXPORT int Destroy(const char *application, void *obj);
+ADVANCEDFILTERMODULES_EXPORT int LibVersion();
+ADVANCEDFILTERMODULES_EXPORT int GetModuleList(const char *application, void *listptr);
 }
 
 #endif

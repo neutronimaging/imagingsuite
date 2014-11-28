@@ -8,10 +8,11 @@
 #ifndef REMOVEBACKGROUND_H_
 #define REMOVEBACKGROUND_H_
 
+#include "ClassificationModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <segmentation/thresholds.h>
 
-class RemoveBackground: public KiplProcessModuleBase {
+class CLASSIFICATIONMODULES_EXPORT RemoveBackground: public KiplProcessModuleBase {
 public:
 	RemoveBackground();
 	virtual ~RemoveBackground();

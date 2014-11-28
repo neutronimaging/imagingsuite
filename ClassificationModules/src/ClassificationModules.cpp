@@ -13,7 +13,7 @@
 // ClassificationModules.cpp : Defines the exported functions for the DLL application.
 //
 
-#include "stdafx.h"
+#include "ClassificationModules_global.h"
 #include "ClassificationModules.h"
 
 
@@ -31,7 +31,7 @@
 #include <string>
 
 
-DLL_EXPORT void * GetModule(const char * application, const char * name)
+void * GetModule(const char * application, const char * name)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return NULL;
@@ -60,7 +60,7 @@ DLL_EXPORT void * GetModule(const char * application, const char * name)
 	return NULL;
 }
 
-DLL_EXPORT int Destroy(const char * application, void *obj)
+int Destroy(const char * application, void *obj)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return -1;
@@ -70,12 +70,12 @@ DLL_EXPORT int Destroy(const char * application, void *obj)
 	return 0;
 }
 
-DLL_EXPORT int LibVersion()
+int LibVersion()
 {
 	return -1;
 }
 
-DLL_EXPORT int GetModuleList(const char * application, void *listptr)
+int GetModuleList(const char * application, void *listptr)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return -1;

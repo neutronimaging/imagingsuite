@@ -8,10 +8,11 @@
 #ifndef DOUBLETHRESHOLD_H_
 #define DOUBLETHRESHOLD_H_
 
+#include "ClassificationModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <segmentation/thresholds.h>
 
-class DoubleThreshold: public KiplProcessModuleBase {
+class CLASSIFICATIONMODULES_EXPORT DoubleThreshold: public KiplProcessModuleBase {
 public:
 	DoubleThreshold();
 	virtual ~DoubleThreshold();

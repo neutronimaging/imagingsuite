@@ -8,9 +8,10 @@
 #ifndef FuzzyCMeans_H_
 #define FuzzyCMeans_H_
 
+#include "ClassificationModules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class FuzzyCMeans: public KiplProcessModuleBase {
+class CLASSIFICATIONMODULES_EXPORT FuzzyCMeans: public KiplProcessModuleBase {
 public:
 	FuzzyCMeans();
 	virtual ~FuzzyCMeans();

@@ -8,9 +8,10 @@
 #ifndef BASICTHRESHOLD_H_
 #define BASICTHRESHOLD_H_
 
+#include "ClassificationModules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class BasicThreshold: public KiplProcessModuleBase {
+class CLASSIFICATIONMODULES_EXPORT BasicThreshold: public KiplProcessModuleBase {
 public:
 	BasicThreshold();
 	virtual ~BasicThreshold();

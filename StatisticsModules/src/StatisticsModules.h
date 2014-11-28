@@ -7,13 +7,13 @@
 #ifndef __STATISTICSMODULES_H
 #define __STATISTICSMODULES_H
 
-#include "stdafx.h"
+#include "statisticsmodules_global.h"
 
 extern "C" {
-DLL_EXPORT void * GetModule(const char *application, const char * name);
-DLL_EXPORT int Destroy(const char *application, void *obj);
-DLL_EXPORT int LibVersion();
-DLL_EXPORT int GetModuleList(const char *application, void *listptr);
+STATISTICSMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name);
+STATISTICSMODULESSHARED_EXPORT int Destroy(const char *application, void *obj);
+STATISTICSMODULESSHARED_EXPORT int LibVersion();
+STATISTICSMODULESSHARED_EXPORT int GetModuleList(const char *application, void *listptr);
 }
 
 #endif

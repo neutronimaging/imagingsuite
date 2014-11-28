@@ -7,13 +7,13 @@
 #ifndef __BASEMODULES_H
 #define __BASEMODULES_H
 
-#include "stdafx.h"
+#include "BaseModules_global.h"
 
 extern "C" {
-DLL_EXPORT void * GetModule(const char *application, const char * name);
-DLL_EXPORT int Destroy(const char *application, void *obj);
-DLL_EXPORT int LibVersion();
-DLL_EXPORT int GetModuleList(const char *application, void *listptr);
+BASEMODULES_EXPORT void * GetModule(const char *application, const char * name);
+BASEMODULES_EXPORT int Destroy(const char *application, void *obj);
+BASEMODULES_EXPORT int LibVersion();
+BASEMODULES_EXPORT int GetModuleList(const char *application, void *listptr);
 }
 
 #endif

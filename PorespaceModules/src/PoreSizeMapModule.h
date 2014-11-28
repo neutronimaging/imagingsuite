@@ -14,11 +14,12 @@
 #ifndef PORESIZEMAPMODULE_H_
 #define PORESIZEMAPMODULE_H_
 
+#include "PorespaceModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <map>
 #include <string>
 
-class PoreSizeMapModule: public KiplProcessModuleBase
+class PORESPACEMODULES_EXPORT PoreSizeMapModule: public KiplProcessModuleBase
 {
 public:
 	PoreSizeMapModule();

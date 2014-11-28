@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
       msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate KipTool.\n";
       msg<<"\nActivation code: "<<*license.GetNodeString().begin();
-      msg<<"KipTool is <b>not</b> a free software and is only available if you add Anders Kaestner as coauthor in the resulting publications.";
+      msg<<"KipTool is not a free software and is only available if you add Anders Kaestner as coauthor in the resulting publications.";
       logger(kipl::logging::Logger::LogError,msg.str());
       QMessageBox mbox;
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
       mbox.addButton(QMessageBox::Abort);
       mbox.setText(QString::fromStdString(msg.str()));
       mbox.setWindowTitle("License error");
-      mbox.setDetailedText(QString::fromStdString(license.GetMessage()));
+      mbox.setDetailedText(QString::fromStdString(license.GetLockerMessage()));
       int res=mbox.exec();
       std::cout<<"Res ="<<res<<std::endl;
       if (res==QMessageBox::Save) {
@@ -92,6 +92,9 @@ int main(int argc, char *argv[])
                   dir.mkdir(QDir::homePath()+"/.imagingtools");
               }
               std::cout<<(dir.homePath()+"/.imagingtools/license_kiptool.dat").toStdString()<<std::endl;
+              if (QFile::exists(dir.homePath()+"/.imagingtools/license_kiptool.dat"))
+                  QFile::remove(dir.homePath()+"/.imagingtools/license_kiptool.dat");
+
               QFile::copy(fname,dir.homePath()+"/.imagingtools/license_kiptool.dat");
           }
       }

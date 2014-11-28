@@ -8,9 +8,10 @@
 #ifndef CLAMPDATA_H_
 #define CLAMPDATA_H_
 
+#include "BaseModules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class ClampData: public KiplProcessModuleBase {
+class BASEMODULES_EXPORT ClampData: public KiplProcessModuleBase {
 public:
 	ClampData();
 	virtual ~ClampData();

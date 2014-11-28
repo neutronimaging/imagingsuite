@@ -12,6 +12,7 @@
 #ifndef __KIPLENGINE_H
 #define __KIPLENGINE_H
 
+#include "ProcessFramework_global.h"
 #include <map>
 #include <string>
 
@@ -22,7 +23,7 @@
 #include "../include/KiplProcessConfig.h"
 #include "../include/KiplModuleItem.h"
 
-class DLL_EXPORT KiplEngine
+class PROCESSFRAMEWORKSHARED_EXPORT KiplEngine
 {
 protected:
 	kipl::logging::Logger logger;

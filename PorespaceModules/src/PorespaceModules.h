@@ -4,16 +4,16 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // ADVANCEDFILTERMODULES_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#ifndef _ADVANCEDFILTERMODULES_H
-#define _ADVANCEDFILTERMODULES_H
+#ifndef _PORESPACEMODULES_H
+#define _PORESPACEMODULES_H
 
-#include "stdafx.h"
+#include "PorespaceModules_global.h"
 
 extern "C" {
-DLL_EXPORT void * GetModule(const char *application, const char * name);
-DLL_EXPORT int Destroy(const char *application, void *obj);
-DLL_EXPORT int LibVersion();
-DLL_EXPORT int GetModuleList(const char *application, void *listptr);
+PORESPACEMODULES_EXPORT void * GetModule(const char *application, const char * name);
+PORESPACEMODULES_EXPORT int Destroy(const char *application, void *obj);
+PORESPACEMODULES_EXPORT int LibVersion();
+PORESPACEMODULES_EXPORT int GetModuleList(const char *application, void *listptr);
 }
 
 #endif

@@ -11,7 +11,7 @@
 
 #ifndef __KIPLPROCESSCONFIG_H
 #define __KIPLPROCESSCONFIG_H
-
+#include "ProcessFramework_global.h"
 #include <list>
 #include <string>
 
@@ -21,11 +21,11 @@
 #include <ModuleConfig.h>
 #include <ConfigBase.h>
 
-class DLL_EXPORT KiplProcessConfig : public ConfigBase
+class PROCESSFRAMEWORKSHARED_EXPORT KiplProcessConfig : public ConfigBase
 {
 
 public:
-	struct DLL_EXPORT cSystemInformation {
+    struct PROCESSFRAMEWORKSHARED_EXPORT cSystemInformation {
 		cSystemInformation();
 		cSystemInformation(const cSystemInformation &a);
 		cSystemInformation & operator=(const cSystemInformation &a);
@@ -36,7 +36,7 @@ public:
 		std::string WriteXML(size_t indent=0);
 	};
 
-	struct DLL_EXPORT cImageInformation {			
+    struct PROCESSFRAMEWORKSHARED_EXPORT cImageInformation {
 		cImageInformation();
 		cImageInformation(const cImageInformation &a);
 		cImageInformation & operator=(const cImageInformation &a);
@@ -53,7 +53,7 @@ public:
         size_t nStepFileIndex;
 	};
 
-	struct DLL_EXPORT cOutImageInformation {
+    struct PROCESSFRAMEWORKSHARED_EXPORT cOutImageInformation {
 		cOutImageInformation();
 		cOutImageInformation(const cOutImageInformation &a);
 		cOutImageInformation & operator=(const cOutImageInformation &a);

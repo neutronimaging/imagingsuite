@@ -36,7 +36,8 @@ HEADERS += \
     ../../include/KiplFactory.h \
     ../../include/KiplEngine.h \
     ../../src/targetver.h \
-    ../../src/stdafx.h
+    ../../src/stdafx.h \
+    ../../include/ProcessFramework_global.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

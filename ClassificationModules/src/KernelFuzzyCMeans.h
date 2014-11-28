@@ -8,9 +8,10 @@
 #ifndef KernelFuzzyCMeans_H_
 #define KernelFuzzyCMeans_H_
 
+#include "ClassificationModules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class KernelFuzzyCMeans: public KiplProcessModuleBase {
+class CLASSIFICATIONMODULES_EXPORT KernelFuzzyCMeans: public KiplProcessModuleBase {
 public:
 	KernelFuzzyCMeans();
 	virtual ~KernelFuzzyCMeans();

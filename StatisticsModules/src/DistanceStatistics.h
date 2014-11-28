@@ -8,9 +8,10 @@
 #ifndef DISTANCESTATS_H_
 #define DISTANCESTATS_H_
 
+#include "statisticsmodules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class DistanceStatistics: public KiplProcessModuleBase {
+class STATISTICSMODULESSHARED_EXPORT DistanceStatistics: public KiplProcessModuleBase {
 public:
 	DistanceStatistics();
 	virtual ~DistanceStatistics();

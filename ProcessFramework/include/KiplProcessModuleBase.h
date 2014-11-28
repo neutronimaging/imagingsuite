@@ -13,7 +13,9 @@
 
 #ifndef __PREPROCMODULEBASE_H
 #define __PREPROCMODULEBASE_H
-#include "../src/stdafx.h"
+
+#include "ProcessFramework_global.h"
+//#include "../src/stdafx.h"
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -25,7 +27,7 @@
 
 #include <ProcessModuleBase.h>
 
-class  DLL_EXPORT KiplProcessModuleBase : public ProcessModuleBase
+class PROCESSFRAMEWORKSHARED_EXPORT KiplProcessModuleBase : public ProcessModuleBase
 {
 public:
 	KiplProcessModuleBase(std::string name="KiplProcessModuleBase", bool bComputeHistogram=false);
@@ -41,7 +43,7 @@ protected:
 	std::map<std::string, kipl::containers::PlotData<float,float> > m_PlotList;
 	kipl::containers::PlotData<float,size_t> m_Histogram;
 	bool m_bComputeHistogram;
-	size_t m_nHistogramSize;
+    size_t m_nHistogramSize;
 };
 
 

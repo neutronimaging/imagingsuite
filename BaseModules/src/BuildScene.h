@@ -8,9 +8,10 @@
 #ifndef BUILDSCENE_H_
 #define BUILDSCENE_H_
 
+#include "BaseModules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class BuildScene: public KiplProcessModuleBase {
+class BASEMODULES_EXPORT BuildScene: public KiplProcessModuleBase {
 public:
 	BuildScene();
 	virtual ~BuildScene();

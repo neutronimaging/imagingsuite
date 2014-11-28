@@ -8,10 +8,11 @@
 #ifndef ISSFILTERMODULE_H_
 #define ISSFILTERMODULE_H_
 
+#include "AdvancedFilterModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <scalespace/filterenums.h>
 
-class ISSfilterModule: public KiplProcessModuleBase {
+class ADVANCEDFILTERMODULES_EXPORT ISSfilterModule: public KiplProcessModuleBase {
 public:
     ISSfilterModule();
     virtual ~ISSfilterModule();

@@ -19,13 +19,13 @@
 #ifndef __CLASSIFICATIONMODULES_H
 #define __CLASSIFICATIONMODULES_H
 
-#include "stdafx.h"
+#include "ClassificationModules_global.h"
 
 extern "C" {
-DLL_EXPORT void * GetModule(const char * application, const char * name);
-DLL_EXPORT int Destroy(const char * application, void *obj);
-DLL_EXPORT int LibVersion();
-DLL_EXPORT int GetModuleList(const char * application, void *listptr);
+CLASSIFICATIONMODULES_EXPORT void * GetModule(const char * application, const char * name);
+CLASSIFICATIONMODULES_EXPORT int Destroy(const char * application, void *obj);
+CLASSIFICATIONMODULES_EXPORT int LibVersion();
+CLASSIFICATIONMODULES_EXPORT int GetModuleList(const char * application, void *listptr);
 }
 
 #endif

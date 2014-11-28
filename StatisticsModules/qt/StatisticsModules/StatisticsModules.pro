@@ -1,61 +1,35 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2013-10-29T07:39:53
+# Project created by QtCreator 2014-11-28T16:21:35
 #
 #-------------------------------------------------
 
-QT       += core
+QT       -= gui
 
-TARGET = BaseModules
+TARGET = StatisticsModules
 TEMPLATE = lib
+
+DEFINES += STATISTICSMODULES_LIBRARY
+
+SOURCES += \
+    ../../src/DistanceStatistics.cpp \
+    ../../src/ImageHistogram.cpp \
+    ../../src/StatisticsModules.cpp
+
+HEADERS += ../../src/statisticsmodules_global.h \
+    ../../src/DistanceStatistics.h \
+    ../../src/ImageHistogram.h \
+    ../../src/StatisticsModules.h
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
-}
-
-
-DEFINES += BASEMODULES_LIBRARY
-
-SOURCES += \
-    ../../src/VolumeProject.cpp \
-    ../../src/stdafx.cpp \
-    ../../src/ScaleData.cpp \
-    ../../src/DoseCorrection.cpp \
-    ../../src/dllmain.cpp \
-    ../../src/ClampData.cpp \
-    ../../src/BuildScene.cpp \
-    ../../src/BaseModules.cpp
-
-HEADERS += \
-    ../../src/VolumeProject.h \
-    ../../src/targetver.h \
-    ../../src/stdafx.h \
-    ../../src/ScaleData.h \
-    ../../src/DoseCorrection.h \
-    ../../src/ClampData.h \
-    ../../src/BuildScene.h \
-    ../../src/BaseModules.h \
-    ../../src/BaseModules_global.h
-
-symbian {
-    MMP_RULES += EXPORTUNFROZEN
-    TARGET.UID3 = 0xE6BE8260
-    TARGET.CAPABILITY = 
-    TARGET.EPOCALLOWDLLDATA = 1
-    addFiles.sources = BaseModules.dll
-    addFiles.path = !:/sys/bin
-    DEPLOYMENT += addFiles
-}
-
-unix:!symbian {
-    maemo5 {
-        target.path = /opt/usr/lib
-    } else {
-        target.path = /usr/lib
-    }
-    INSTALLS += target
 }
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/release/ -lProcessFramework

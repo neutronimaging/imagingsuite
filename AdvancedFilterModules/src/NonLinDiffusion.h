@@ -1,10 +1,11 @@
 #ifndef NONLINDIFFUSION_H
 #define NONLINDIFFUSION_H
 
+#include "AdvancedFilterModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <scalespace/filterenums.h>
 
-class NonLinDiffusionModule: public KiplProcessModuleBase {
+class ADVANCEDFILTERMODULES_EXPORT NonLinDiffusionModule: public KiplProcessModuleBase {
 public:
     NonLinDiffusionModule();
     virtual ~NonLinDiffusionModule();

@@ -12,10 +12,11 @@
 #ifndef __KIPLFACTORY_H
 #define __KIPLFACTORY_H
 
+#include "ProcessFramework_global.h"
 #include "KiplEngine.h"
 #include "KiplProcessConfig.h"
 
-class DLL_EXPORT KiplFactory
+class PROCESSFRAMEWORKSHARED_EXPORT KiplFactory
 {
 public:
 	KiplFactory(void);

@@ -8,9 +8,10 @@
 #ifndef MASKEDHISTOGRAM_H_
 #define MASKEDHISTOGRAM_H_
 
+#include "statisticsmodules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class ImageHistogram: public KiplProcessModuleBase {
+class STATISTICSMODULESSHARED_EXPORT ImageHistogram: public KiplProcessModuleBase {
 public:
 	ImageHistogram();
 	virtual ~ImageHistogram();
