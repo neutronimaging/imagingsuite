@@ -67,7 +67,8 @@ template <class ImgType, int NDim>
 		int setLambda(LambdaEstBase<ImgType,NDim> *le, int N=10000);
 
 	protected:
-		int GradientInfo() { AbsGradient(this->v,this->g,true); return 0;}
+        int GradientInfo() { //AbsGradient(this->v,this->g,true);
+            return 0;}
 		int Solver() {AOSiteration(); return 0;}
 		int Regularization() {return DiffusionBaseFilter<ImgType,NDim>::Regularization(this->u,this->v);}
 		/// \brief Performs one AOS iteration 
@@ -258,59 +259,60 @@ template <class ImgType, int NDim>
 template <class ImgType, int NDim>
 int NonLinDiffusionFilter<ImgType,NDim>::operator()(kipl::base::TImage<float,NDim> &img)
 {
-	switch (NDim) {
-	case 2:
-		AllocateKernel(max(max(img.Size(0),img.Size(1)),img.Size(2)));
-		break;
-	case 3:
-		AllocateKernel(max(max(img.Size(0),img.Size(1)),img.Size(2)));
-		break;
-	default:
-		cerr<<"Chosen dimension is not supported"<<endl;
-		return 0;
-	}
-	this->u=img;
-	img.FreeImage();
 
-	this->v.Resize(this->u.Dims()); 
-    //g.resize(u.Dims()); // Don't forget to allocate g or (dx,dy,dz)
+//	switch (NDim) {
+//	case 2:
+//		AllocateKernel(max(max(img.Size(0),img.Size(1)),img.Size(2)));
+//		break;
+//	case 3:
+//		AllocateKernel(max(max(img.Size(0),img.Size(1)),img.Size(2)));
+//		break;
+//	default:
+//		cerr<<"Chosen dimension is not supported"<<endl;
+//		return 0;
+//	}
+//	this->u=img;
+//	img.FreeImage();
 
-	InitFilters(this->u.Size(0), this->u.Size(1)*this->u.Size(2));
-	const size_t *dims=this->u.Dims();
+//	this->v.Resize(this->u.Dims());
+//    //g.resize(u.Dims()); // Don't forget to allocate g or (dx,dy,dz)
 
-	kipl::profile::Timer timer;
+//	InitFilters(this->u.Size(0), this->u.Size(1)*this->u.Size(2));
+//	const size_t *dims=this->u.Dims();
 
-	for (int i=0; i<this->Nit; i++) {
-		ostringstream msg;
-        msg<<"["<<i<<"] ";
-		cout<<setw(8)<<msg.str()<<flush;
+//	kipl::profile::Timer timer;
+
+//	for (int i=0; i<this->Nit; i++) {
+//		ostringstream msg;
+//        msg<<"["<<i<<"] ";
+//		cout<<setw(8)<<msg.str()<<flush;
 				
-		if (this->sigma.front()>0) 
-            this->UpdateGaussianFilter(dims[0], dims[0]*dims[1],i);
+//		if (this->sigma.front()>0)
+//            this->UpdateGaussianFilter(dims[0], dims[0]*dims[1],i);
 			
 
-        this->g.FreeImage(); // Save memory for the temporary image during smoothing
+//        this->g.FreeImage(); // Save memory for the temporary image during smoothing
 
-        DiffusionBaseFilter<ImgType,NDim>::Regularization(this->u,this->v);
-        cout<<"Post reg"<<flush;
+//        DiffusionBaseFilter<ImgType,NDim>::Regularization(this->u,this->v);
+//        cout<<"Post reg"<<flush;
 
-        AbsGradient(this->v,this->g,true); // Compute the gradient magn of v, g=|(grad v)|^2
-        cout<<"Post grad "<<flush;
+//        AbsGradient(this->v,this->g,true); // Compute the gradient magn of v, g=|(grad v)|^2
+//        cout<<"Post grad "<<flush;
 
-        //Diffusivity();		// Compute the diffusivity of g, g=G(g) from LUT
-        cout<<"Post diffus "<<flush;
+//        //Diffusivity();		// Compute the diffusivity of g, g=G(g) from LUT
+//        cout<<"Post diffus "<<flush;
 
-        //Solver();		// Solve one AOS step, u=AOS(u,g)
-        cout<<"Post solve"<<flush<<endl;
-	}
+//        //Solver();		// Solve one AOS step, u=AOS(u,g)
+//        cout<<"Post solve"<<flush<<endl;
+//	}
 	
-	this->v.FreeImage();
-	this->g.FreeImage();
-	this->dx.FreeImage();
-	this->dy.FreeImage();
+//	this->v.FreeImage();
+//	this->g.FreeImage();
+//	this->dx.FreeImage();
+//	this->dy.FreeImage();
 
-	img=this->u;
-	this->u.FreeImage();
+//	img=this->u;
+//	this->u.FreeImage();
 		
 	return 1;
 }
