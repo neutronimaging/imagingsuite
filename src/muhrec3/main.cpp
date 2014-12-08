@@ -178,6 +178,14 @@ int RunOffline(QApplication *app)
                           logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
                           pEngine->Run3D();
                           logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
+                          std::string confname=config.MatrixInfo.sDestinationPath;
+                          kipl::strings::filenames::CheckPathSlashes(confname,true);
+                          confname+="CurrentRecon.xml";
+
+                          ofstream conffile(confname.c_str());
+
+                          conffile<<config.WriteXML();
+                          conffile.close();
                   }
                   else {
                           logger(kipl::logging::Logger::LogMessage, "There is no reconstruction engine, skipping reconstruction");
