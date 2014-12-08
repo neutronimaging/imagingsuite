@@ -156,7 +156,13 @@ int RunOffline(QApplication *app)
 #ifdef _OPENMP
     omp_set_nested(1);
 #endif
-    QVector<QString> args=app->arguments().toVector();
+    QVector<QString> qargs=app->arguments().toVector();
+    std::vector<std::string> args;
+
+    for (int i=0; i<qargs.size(); i++) {
+        args.push_back(qargs[i].toStdString());
+    }
+
     if (2<args.size()) {
         if (args[1]=="-f") {
           logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in offline mode");
@@ -164,7 +170,8 @@ int RunOffline(QApplication *app)
                   ReconFactory factory;
                   logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
                   ReconConfig config;
-                  config.LoadConfigFile(args[2].toStdString(),"reconstructor");
+                  config.LoadConfigFile(args[2],"reconstructor");
+                  config.GetCommandLinePars(args);
                   config.MatrixInfo.bAutomaticSerialize=true;
                   ReconEngine *pEngine=factory.BuildEngine(config,NULL);
                   if (pEngine!=NULL) {
