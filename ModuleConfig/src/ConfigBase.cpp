@@ -249,7 +249,7 @@ bool ConfigBase::ConfigChanged(ConfigBase & config, std::list<std::string> freel
             std::string thispar  = thisconf.substr(thisconf.find_first_of('<',tpos0)+1,thisclose-thisconf.find_first_of('<',tpos0)-2);
             std::string otherpar = otherconf.substr(otherconf.find_first_of('<',opos0)+1,otherclose-otherconf.find_first_of('<',opos0)-2);
 
-            std::clog<<"current parameter: "<<thispar<<", "<<otherpar<<std::endl;
+        //    std::clog<<"current parameter: "<<thispar<<", "<<otherpar<<std::endl;
             if (thispar.compare(otherpar)!=0) // paremeters are different, a clear true  {
             {
                 std::ostringstream msg;
@@ -273,4 +273,64 @@ bool ConfigBase::ConfigChanged(ConfigBase & config, std::list<std::string> freel
         opos0=opos1;
     }
     return false;
+}
+
+void ConfigBase::GetCommandLinePars(int argc, char * argv[])
+{
+    std::vector<std::string> args;
+
+    for (int i=0; i<=argc; i++) {
+            args.push_back(argv[i]);
+    }
+
+    GetCommandLinePars(args);
+}
+
+void ConfigBase::GetCommandLinePars(std::vector<std::string> &args)
+{
+    ConfigBase::ParseArgv(args); // The arguments from the base class
+    ParseArgv(args);             // The arguments from the refined class
+}
+
+void ConfigBase::ParseArgv(std::vector<std::string> &args)
+{
+    std::ostringstream msg;
+    logger(kipl::logging::Logger::LogMessage,"Base class argvparse");
+    std::string group;
+    std::string var;
+    std::string value;
+
+    std::vector<std::string>::iterator it;//=args.begin(); it++;it++; it++;
+    for (it=args.begin()+3 ; it!=args.end(); it++) {
+        std::clog<<*it<<std::endl;
+        try {
+            EvalArg(*it,group,var,value);
+        }
+        catch (ModuleException &e) {
+            msg<<"Failed to parse argument "<<e.what();
+            logger(kipl::logging::Logger::LogWarning,msg.str());
+        }
+        if (group=="userinformation") {
+            if (var=="operator")      UserInformation.sOperator=value;
+            if (var=="instrument")    UserInformation.sInstrument=value;
+            if (var=="projectnumber") UserInformation.sProjectNumber=value;
+            if (var=="sample")        UserInformation.sSample=value;
+            if (var=="comment")       UserInformation.sComment=value;
+        }
+    }
+}
+
+void ConfigBase::EvalArg(std::string arg, std::string &group, std::string &var, std::string &value)
+{
+    size_t possep=arg.find(':');
+    if (possep==std::string::npos)
+        throw ModuleException("Could not find a separator",__FILE__,__LINE__);
+
+    size_t poseq=arg.find('=',possep);
+    if (poseq==std::string::npos)
+        throw ModuleException("Could not find an assignment",__FILE__,__LINE__);
+
+    group=arg.substr(0,possep);
+    var=arg.substr(possep+1,poseq-possep-1);
+    value=arg.substr(poseq+1);
 }

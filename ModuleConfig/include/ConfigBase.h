@@ -19,6 +19,7 @@
 #include <list>
 #include <set>
 #include <string>
+#include <vector>
 
 #include <libxml/xmlreader.h>
 
@@ -32,6 +33,7 @@
 /// The class requires libXML2 to compile.
 class MODULECONFIGSHARED_EXPORT ConfigBase
 {
+    friend class ConfigBaseTest;
 protected:
 	kipl::logging::Logger logger;
     std::string m_sName; ///< Name of the application
@@ -80,12 +82,17 @@ public:
     void LoadConfigFile(std::string configfile, std::string ProjectName);
 
     bool ConfigChanged(ConfigBase & config, std::list<std::string> freelist);
+
+    void GetCommandLinePars(int argc, char *argv[]);
+    void GetCommandLinePars(std::vector<std::string> &args);
 protected:
     /// Parser for an opened XML formatted input file.
     /// \param reader Reference to an xml reader struct for the opened configuration file.
     /// \param sName Name of the config block to parse.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName)=0;
 
+    virtual void ParseArgv(std::vector<std::string> &args);
+    void EvalArg(std::string arg, std::string &group, std::string &var, std::string &value);
     /// Parse the User information config block.
     /// \param reader Reference to an xml reader struct for the opened configuration file.
 	void ParseUserInformation(xmlTextReaderPtr reader);
