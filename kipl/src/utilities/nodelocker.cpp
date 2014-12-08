@@ -40,6 +40,7 @@ bool NodeLocker::Initialize(std::list<std::string> &liclist, std::string key,  s
     std::list<std::string>::iterator it;
 	std::ifstream f;
     std::ostringstream msg;
+    m_bAccessGranted=false;
 	for (it=liclist.begin(); it!=liclist.end(); it++) {
 		kipl::strings::filenames::CheckPathSlashes(*it,false);
         msg.str("");
@@ -64,14 +65,10 @@ bool NodeLocker::Initialize(std::list<std::string> &liclist, std::string key,  s
 
 bool NodeLocker::Initialize(std::string licfname, std::string key,  std::string hwinfo)
 {
-
-//#ifdef __APPLE__
-#ifdef __NEVER__
-    return true;
-#else
     std::ostringstream msg;
     std::cout<<"Opening "<<licfname<<std::endl;
 	std::ifstream licfile(licfname.c_str());
+    m_bAccessGranted=false;
 
 	if (licfile.fail())
 		throw kipl::base::KiplException("Could not find the license file.",__FILE__,__LINE__);
@@ -155,7 +152,6 @@ bool NodeLocker::Initialize(std::string licfname, std::string key,  std::string 
 	}
 
 	return m_bAccessGranted;
-#endif
 }
 
 std::string NodeLocker::GetMAC(std::string hwinfo)
