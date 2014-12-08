@@ -4,6 +4,8 @@
 #include <QString>
 #include <QFileDialog>
 #include <QVector>
+#include <QDesktopServices>
+#include <QPushButton>
 
 #include <sstream>
 #include <strings/filenames.h>
@@ -40,78 +42,94 @@ int main(int argc, char *argv[])
     std::string homedir = dir.homePath().toStdString();
     kipl::strings::filenames::CheckPathSlashes(homedir,true);
 
-    std::string errormsg;
-
     std::string application_path=a.applicationDirPath().toStdString();
 
     kipl::utilities::NodeLocker license(homedir);
 
     bool licensefail=false;
-    try {
+    int res=0;
+    std::string errormsg;
+    do {
+        std::cout<<"start lic loop"<<std::endl;
+        licensefail=false;
+        res=0;
         std::list<std::string> liclist;
 
         liclist.push_back(application_path+"./license_kiptool.dat");
         liclist.push_back(application_path+"./license.dat");
         liclist.push_back(homedir+".imagingtools/license_kiptool.dat");
         liclist.push_back(homedir+"./license.dat");
+        try {
+            license.Initialize(liclist,"kiptool");
+        }
+        catch (kipl::base::KiplException &e) {
+            errormsg=e.what();
+            licensefail=true;
+        }
 
-        license.Initialize(liclist,"kiptool");
-    }
-    catch (kipl::base::KiplException &e) {
-        errormsg=e.what();
-        licensefail=true;
-    }
+        if (licensefail || !license.AccessGranted()) {
+            msg.str("");
+            if (licensefail)
+                msg<<"Could not locate the license file\n"<<errormsg<<"\n";
+            else
+                msg<<"KipTool is not registered on this computer\n";
 
+            msg<<"\nPlease press register to request an activation key for KipTool.\n";
+            msg<<"\nActivation code: "<<*license.GetNodeString().begin()<<std::endl;
+            msg<<"On computers with many network adapters, please deactivate the wifi and restart the application.\n";
+            msg<<"When you obtained the email containing the key, press the save button and select the file containing the key.";
 
-  if (licensefail || !license.AccessGranted()) {
-      msg.str("");
-      if (licensefail)
-          msg<<"Could not locate the license file\n"<<errormsg<<"\n";
-      else
-          msg<<"KipTool is not registered on this computer\n";
+            logger(kipl::logging::Logger::LogError,msg.str());
 
-      msg<<"\nPlease contact Anders Kaestner (anders.kaestner@psi.ch) to activate KipTool.\n";
-      msg<<"\nActivation code: "<<*license.GetNodeString().begin();
-      msg<<"KipTool is not a free software and is only available if you add Anders Kaestner as coauthor in the resulting publications.";
-      logger(kipl::logging::Logger::LogError,msg.str());
-      QMessageBox mbox;
+            QMessageBox mbox;
 
-      mbox.addButton(QMessageBox::Save);
-      mbox.addButton(QMessageBox::Abort);
-      mbox.setText(QString::fromStdString(msg.str()));
-      mbox.setWindowTitle("License error");
-      mbox.setDetailedText(QString::fromStdString(license.GetLockerMessage()));
-      int res=mbox.exec();
-      std::cout<<"Res ="<<res<<std::endl;
-      if (res==QMessageBox::Save) {
-          QDir dir;
-          QString fname=QFileDialog::getOpenFileName(&mbox,"Select the license file",dir.homePath(),"*.dat");
+            QPushButton *registerbutton=mbox.addButton("Register",QMessageBox::AcceptRole);
+            mbox.addButton(QMessageBox::Save);
+            mbox.addButton(QMessageBox::Abort);
+            mbox.setText(QString::fromStdString(msg.str()));
+            mbox.setWindowTitle("License error");
+            mbox.setDetailedText(QString::fromStdString(license.GetLockerMessage()));
+            res=mbox.exec();
+            res=mbox.result();
+            std::cout<<"Res ="<<res<<std::endl;
+            if (res==QMessageBox::Save) {
+                QDir dir;
+                QString fname=QFileDialog::getOpenFileName(&mbox,"Select the license file",dir.homePath(),"*.dat");
 
-          if (!fname.isEmpty()) {
-              if (!dir.exists(dir.homePath()+"/.imagingtools")) {
-                  dir.mkdir(QDir::homePath()+"/.imagingtools");
-              }
-              std::cout<<(dir.homePath()+"/.imagingtools/license_kiptool.dat").toStdString()<<std::endl;
-              if (QFile::exists(dir.homePath()+"/.imagingtools/license_kiptool.dat"))
-                  QFile::remove(dir.homePath()+"/.imagingtools/license_kiptool.dat");
+                if (!fname.isEmpty()) {
+                    if (!dir.exists(dir.homePath()+"/.imagingtools")) {
+                        dir.mkdir(QDir::homePath()+"/.imagingtools");
+                    }
+                    QString licfname=dir.homePath()+"/.imagingtools/license_kiptool.dat";
 
-              QFile::copy(fname,dir.homePath()+"/.imagingtools/license_kiptool.dat");
-          }
-      }
+                    if (QFile::exists(licfname)) {
+                        QFile::remove(licfname);
+                    }
 
-      return -1;
-  }
+                    std::cout<<licfname.toStdString()<<std::endl;
+                    QFile::copy(fname,licfname);
+                }
+             }
+             if (mbox.clickedButton() == registerbutton) {
+                logger(kipl::logging::Logger::LogMessage,"Opening default web browser.");
+                QDesktopServices::openUrl(QUrl("http://www.imagingscience.ch/usermanager/index.php?nodekey="+QString::fromStdString(*license.GetNodeString().begin())));
+             }
+         }
+        cout<<"End lic loop granted="<<(license.AccessGranted() ? "true" : "false")<<", "<<res<<endl;
+    } while ((!license.AccessGranted()) && (res!=QMessageBox::Abort));
 
-#ifdef _OPENMP
-    omp_set_nested(1);
-#endif
+    if (res!=QMessageBox::Abort) {
+        #ifdef _OPENMP
+            omp_set_nested(1);
+        #endif
 
-    if (argc<2) {
-        return RunGUI(&a);
-    }
-    else
-    {
-        return RunOffline(&a);
+            if (argc<2) {
+                return RunGUI(&a);
+            }
+            else
+            {
+                return RunOffline(&a);
+            }
     }
 
     return 0;

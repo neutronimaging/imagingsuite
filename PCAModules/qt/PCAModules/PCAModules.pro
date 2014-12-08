@@ -18,16 +18,16 @@ unix:!macx {
 
 DEFINES += PCAMODULES_LIBRARY
 
-SOURCES += ../src/pcamodules.cpp \
-    ../src/PCAFilterModule.cpp \
-    ../src/stdafx.cpp
+SOURCES += ../../src/pcamodules.cpp \
+    ../../src/PCAFilterModule.cpp \
+    ../../src/stdafx.cpp
 
 HEADERS += \
-    ../src/PCAFilterModule.h \
-    ../src/targetver.h \
-    ../src/stdafx.h \
-    ../src/PCAModules_global.h \
-    ../src/pcamodules.h
+    ../../src/PCAFilterModule.h \
+    ../../src/targetver.h \
+    ../../src/stdafx.h \
+    ../../src/PCAModules_global.h \
+    ../../src/pcamodules.h
 
 unix:INCLUDEPATH += $$PWD/../../../../src/external/src/linalg
 
