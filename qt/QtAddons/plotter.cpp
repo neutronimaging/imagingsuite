@@ -374,9 +374,6 @@ void Plotter::drawGrid(QPainter *painter)
 
 void Plotter::drawCurves(QPainter *painter)
 {
-    static const QColor colorForIds[6] = {
-        Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta, Qt::yellow
-    };
     PlotSettings settings = zoomStack[curZoom];
     QRect rect(Margin, Margin,
                width() - 2 * Margin, height() - 2 * Margin);
