@@ -1,6 +1,6 @@
 #ifndef __FILTERENUMS_H
 #define __FILTERENUMS_H
-
+#include "../kipl_global.h"
 #include <iostream>
 #include <string>
 
@@ -25,16 +25,16 @@ enum eRegularizationType {
 
 }}
 
-std::ostream & operator<<(std::ostream &s, akipl::scalespace::eFilterType ft);
-void string2enum(std::string str, akipl::scalespace::eFilterType &ft);
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream &s, akipl::scalespace::eFilterType ft);
+KIPLSHARED_EXPORT void string2enum(std::string str, akipl::scalespace::eFilterType &ft);
 
-std::ostream & operator<<(std::ostream & s, akipl::scalespace::eInitialImageType it);
-void string2enum(std::string str, akipl::scalespace::eInitialImageType &it);
-std::string enum2string(akipl::scalespace::eInitialImageType it);
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream & s, akipl::scalespace::eInitialImageType it);
+KIPLSHARED_EXPORT void string2enum(std::string str, akipl::scalespace::eInitialImageType &it);
+KIPLSHARED_EXPORT std::string enum2string(akipl::scalespace::eInitialImageType it);
 
-std::ostream & operator<<(std::ostream & s, akipl::scalespace::eRegularizationType rt);
-std::string enum2string(akipl::scalespace::eRegularizationType rt);
-void string2enum(std::string str, akipl::scalespace::eRegularizationType &rt);
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream & s, akipl::scalespace::eRegularizationType rt);
+KIPLSHARED_EXPORT std::string enum2string(akipl::scalespace::eRegularizationType rt);
+KIPLSHARED_EXPORT void string2enum(std::string str, akipl::scalespace::eRegularizationType &rt);
 #endif
 
 
