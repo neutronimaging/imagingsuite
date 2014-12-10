@@ -19,7 +19,7 @@
 
 ISSfilterModule::ISSfilterModule() :
 KiplProcessModuleBase("ISSfilterModule", true),
-	m_bAutoScale(false),	
+    m_bAutoScale(true),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
 	m_fTau(0.125f),

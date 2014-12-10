@@ -8,6 +8,7 @@
 #include <math/image_statistics.h>
 #include <base/thistogram.h>
 #include <base/textractor.h>
+#include <io/DirAnalyzer.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -87,7 +88,7 @@ void KipToolMainWindow::LoadDefaults()
 
 void KipToolMainWindow::UpdateDialog()
 {
-    ui->edit_datapath->setText(QString::fromStdString(m_config.mImageInformation.sSourcePath));
+    m_config.mImageInformation.sSourcePath.clear();
     ui->edit_datafilemask->setText(QString::fromStdString(m_config.mImageInformation.sSourceFileMask));
 
     ui->edit_destinationpath->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationPath));
@@ -116,7 +117,7 @@ void KipToolMainWindow::UpdateDialog()
 
 void KipToolMainWindow::UpdateConfig()
 {
-    m_config.mImageInformation.sSourcePath     = ui->edit_datapath->text().toStdString();
+    m_config.mImageInformation.sSourcePath.clear();
     kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
     m_config.mImageInformation.sSourceFileMask = ui->edit_datafilemask->text().toStdString();
 
@@ -156,12 +157,26 @@ void KipToolMainWindow::SetupCallbacks()
 
 void KipToolMainWindow::on_button_browsedatapath_clicked()
 {
-    QString projdir=QFileDialog::getExistingDirectory(this,
-                                      "Select location of the image data",
-                                      ui->edit_datapath->text());
+    QString projdir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the images",
+                                      ui->edit_datafilemask->text());
+    if (!projdir.isEmpty()) {
+        std::string pdir=projdir.toStdString();
 
-    if (!projdir.isEmpty())
-        ui->edit_datapath->setText(projdir);
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
+
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+        ui->edit_datafilemask->setText(QString::fromStdString(fi.m_sMask));
+    }
 }
 
 void KipToolMainWindow::on_button_getROI_clicked()
@@ -195,7 +210,7 @@ void KipToolMainWindow::UpdateHistogramView()
     if (!m_HistogramList.empty()) {
 
         for (it=m_HistogramList.begin(); it!=m_HistogramList.end(); it++, idx++) {
-            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),it->second.Size());
+            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),it->second.Size(),QColor("red"));
         }
 
         ui->plotter_histogram->setCurveData(0,m_OriginalHistogram.GetX(), m_OriginalHistogram.GetY(),m_OriginalHistogram.Size());
@@ -661,7 +676,7 @@ void KipToolMainWindow::on_slider_hprofile_sliderMoved(int position)
         for (int i=0; i<m_SliceOriginal.Size(0); i++)
             data.append(QPointF(i,static_cast<double>(pImg[i])));
 
-        ui->plotter_hprofile->setCurveData(0,data);
+        ui->plotter_hprofile->setCurveData(0,data,QColor("blue"));
 
         if (m_Engine!=NULL) {
             ui->imageviewer_processed->set_plot(cursor,QColor("red"),0);
@@ -670,7 +685,7 @@ void KipToolMainWindow::on_slider_hprofile_sliderMoved(int position)
             for (int i=0; i<m_SliceResult.Size(0); i++)
                 data.append(QPointF(i,static_cast<double>(pImg[i])));
 
-            ui->plotter_hprofile->setCurveData(1,data);
+            ui->plotter_hprofile->setCurveData(1,data,QColor("red"));
         }
     }
 }
@@ -689,7 +704,7 @@ void KipToolMainWindow::on_slider_vprofile_sliderMoved(int position)
         for (int i=0; i<m_SliceOriginal.Size(1); i++)
             data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
 
-        ui->plotter_vprofile->setCurveData(0,data);
+        ui->plotter_vprofile->setCurveData(0,data,QColor("blue"));
 
         if (m_Engine!=NULL) {
             ui->imageviewer_processed->set_plot(cursor,QColor("red"),1);
@@ -698,7 +713,7 @@ void KipToolMainWindow::on_slider_vprofile_sliderMoved(int position)
             for (int i=0; i<m_SliceResult.Size(1); i++)
                 data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
 
-            ui->plotter_vprofile->setCurveData(1,data);
+            ui->plotter_vprofile->setCurveData(1,data,QColor("red"));
         }
     }
 }
