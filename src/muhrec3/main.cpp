@@ -19,6 +19,7 @@ void TestConfig();
 
 int main(int argc, char *argv[])
 {
+    std::cout<<"Starting muhrec3"<<std::endl;
     kipl::logging::Logger logger("MuhRec3");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
 
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
     kipl::utilities::NodeLocker license(homedir);
-#ifndef NEVER
+
     bool licensefail=false;
     int res=0;
     std::string errormsg;
@@ -94,12 +95,17 @@ int main(int argc, char *argv[])
             }
         }
     } while (!license.AccessGranted() && res!=QMessageBox::Abort);
-#endif
+
+    std::cout<<"License status "<<kipl::strings::bool2string(license.AccessGranted())<<std::endl;
     if (license.AccessGranted()) {
-        if (app.arguments().size()==1)
+        if (app.arguments().size()==1) {
+            std::cout<<"Running MuhRec in GUI mode."<<std::endl;
             return RunGUI(&app);
-        else
+        }
+        else {
+            std::cout<<"Running MuhRec in CLI mode."<<std::endl;
             return RunOffline(&app);
+        }
     }
 
     return 0;
