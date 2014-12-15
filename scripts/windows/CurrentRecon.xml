@@ -1,0 +1,103 @@
+<reconstructor>
+    <userinformation>
+        <operator>Anders Kaestner</operator>
+        <instrument>ICON</instrument>
+        <projectnumber>P11001</projectnumber>
+        <sample>Unknown item</sample>
+        <comment>No comment</comment>
+    </userinformation>
+    <system>
+        <memory>1500</memory>
+        <loglevel>message</loglevel>
+    </system>
+    <projections>
+        <dims>2048 2048</dims>
+        <resolution>0.043 0.043</resolution>
+        <binning>1</binning>
+        <firstindex>1</firstindex>
+        <lastindex>625</lastindex>
+        <projectionstep>1</projectionstep>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <imagetype>projections</imagetype>
+        <center>295.24</center>
+        <translation>false</translation>
+        <tiltangle>-0.5729</tiltangle>
+        <tiltpivot>400</tiltpivot>
+        <correcttilt>true</correcttilt>
+        <filemask>E:/data1/P08062_wood/raw_CCD/wood_####.fits</filemask>
+        <path></path>
+        <referencepath></referencepath>
+        <obfilemask>E:/data1/P08062_wood/raw_CCD/ob_####.fits</obfilemask>
+        <obfirstindex>1</obfirstindex>
+        <obcount>5</obcount>
+        <dcfilemask>E:/data1/P08062_wood/raw_CCD/dark_####.fits</dcfilemask>
+        <dcfirstindex>1</dcfirstindex>
+        <dccount>5</dccount>
+        <roi>249 300 841 332</roi>
+        <doseroi>258 124 294 163</doseroi>
+        <scanarc>0 360</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipvertical</flip>
+    </projections>
+    <matrix>
+        <dims>592 592 32</dims>
+        <rotation>0</rotation>
+        <serialize>true</serialize>
+        <path>c:\data\</path>
+        <matrixname>slice_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>-0.09 1</grayinterval>
+        <useroi>false</useroi>
+        <roi>59 156 123 206 </roi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>C:/Users/kaestner/repos/tomography/trunk/src/build-muhrec3-Qt5-Release/release/StdPreprocModules.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <uselut>false</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>ProjectionFilterSingle</modulename>
+                <sharedobject>C:/Users/kaestner/repos/tomography/trunk/src/build-muhrec3-Qt5-Release/release/StdPreprocModules.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <usebias>true</usebias>
+                </parameters>
+            </module>
+            <module>
+                <modulename>WaveletRingClean</modulename>
+                <sharedobject>C:/Users/kaestner/repos/tomography/trunk/src/build-muhrec3-Qt5-Release/release/StdPreprocModules.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <decnum>4</decnum>
+                    <method>verticalfft</method>
+                    <parallel>false</parallel>
+                    <sigma>0.1</sigma>
+                    <wname>daub25</wname>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBPparallel</modulename>
+                <sharedobject>C:/Users/kaestner/repos/tomography/trunk/src/build-muhrec3-Qt5-Release/release/StdBackProjectors.dll</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1 1</SubVolume>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>
