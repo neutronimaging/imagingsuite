@@ -265,6 +265,8 @@ void KipToolMainWindow::on_button_loaddata_clicked()
         ui->slider_images->setMaximum(m_OriginalImage.Size(2)-1);
         ui->slider_images->setValue(0);
         m_bJustLoaded = true;
+        ui->combo_sliceplane->setCurrentIndex(0);
+        on_combo_sliceplane_activated(0);
         on_slider_images_sliderMoved(0);
         // Todo: Show histogram...
         float *axis = new float[m_OriginalHistogram.Size()];
@@ -282,8 +284,7 @@ void KipToolMainWindow::on_button_loaddata_clicked()
         dlg.setDetailedText(QString::fromStdString(e.what()));
         dlg.exec();
     }
-    ui->combo_sliceplane->setCurrentIndex(0);
-    on_combo_sliceplane_activated(0);
+
 }
 
 void KipToolMainWindow::on_button_browsedestination_clicked()
@@ -617,8 +618,6 @@ void KipToolMainWindow::on_combo_sliceplane_activated(int index)
     msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices<<" "<<m_OriginalImage;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    on_slider_images_sliderMoved(maxslices/2);
-
     switch (m_eSlicePlane) {
         case kipl::base::ImagePlaneXY :
             m_nSliceSizeX=m_OriginalImage.Size(0)-1;
@@ -633,10 +632,16 @@ void KipToolMainWindow::on_combo_sliceplane_activated(int index)
             m_nSliceSizeY=m_OriginalImage.Size(2)-1;
         break;
     }
+
     ui->slider_hprofile->setMaximum(m_nSliceSizeY);
     ui->slider_hprofile->setValue(m_nSliceSizeY/2);
+
     ui->slider_vprofile->setMaximum(m_nSliceSizeX);
     ui->slider_vprofile->setValue(m_nSliceSizeX/2);
+
+    on_slider_images_sliderMoved(maxslices/2);
+    on_slider_hprofile_sliderMoved(m_nSliceSizeY/2);
+    on_slider_vprofile_sliderMoved(m_nSliceSizeX/2);
 }
 
 void KipToolMainWindow::on_check_linkviewers_toggled(bool checked)
@@ -659,6 +664,10 @@ void KipToolMainWindow::on_tabWidget_plots_currentChanged(int index)
     else {
         ui->imageviewer_original->clear_plot(0);
         ui->imageviewer_original->clear_plot(1);
+        if (m_Engine!=NULL) {
+            ui->imageviewer_processed->clear_plot(0);
+            ui->imageviewer_processed->clear_plot(1);
+        }
     }
 }
 

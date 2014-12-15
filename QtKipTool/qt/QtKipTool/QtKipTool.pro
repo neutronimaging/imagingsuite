@@ -30,7 +30,7 @@ unix:!symbian {
         LIBS += -lgomp
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -ltiff -lxml2 -lcfitsio
     INCLUDEPATH += /usr/include/libxml2
 }
 
