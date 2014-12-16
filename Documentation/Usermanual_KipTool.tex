@@ -62,9 +62,18 @@ Select the ISS filter in the drop-down and press OK. The module now appears in t
 When the data is loaded and at least one module is configured you can start the processing by going to the Process menu and select Process. The processing starts and when it is completed the result is displayed in the image viewer for processed data. When you now drag the slider below the viewers you can inspect the images in parallel.  
 
 \section{Save the processed data}
+When the processing is complete you probably want to save the results to disk. Select the data tab again and enter destination path using the browse button and enter the file mask using \#'s as place holders for the index numbers, exceeding \#'s will be filled with zeros. When you press save the data will be saved in the same format as the original data. You can however also select a different format by using the drop-down for file formats. 
 
 \chapter{Detailed description}
 \section{Processing modules}
+There are many modules available for KipTool. Unfortunately many are also under development which means that they can crash the software or are very slow. The modules that are documented here are well tested and will work.
+\subsection{The ISS filter}
+The Inverse Scale Space Filter is a an edge preserving de-noising filter based on the paper \cite{burger2006}. The filter solves the differential equation:
+\begin{eqnarray}
+\frac{du}{dt}&=&\frac{\nabla\cdot \nabla u}{|\nabla u|} + \lambda(u-f-v)\nonumber\\
+\frac{dv}{dt}&=&\alpha (u-v)
+\end{eqnarray}
+using an iterative solver on the discrete equations. Here the solution time $T=N\cdot\tau$ can be selected using number of iterations, $N$, and time increments, $\tau$. For stability reasons it is important that the value of $\tau$ is less than 0.125.
 
 \chapter{Continued development}
 Kiptool is continuously developing to adapt to new challenges at the neutron
