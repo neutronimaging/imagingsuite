@@ -37,7 +37,8 @@ SOURCES += \
     ../../src/ImagingException.cpp \
     ../../src/TranslateProjections.cpp \
     ../../src/MorphSpotClean.cpp \
-    ../../src/pixelinfo.cpp
+    ../../src/pixelinfo.cpp \
+    ../../src/gammaclean.cpp
 
 HEADERS += \
  #   ../../include/targetver.h \
@@ -52,7 +53,8 @@ HEADERS += \
     ../../include/TranslateProjections.h \
     ../../include/MorphSpotClean.h \
     ../../include/pixelinfo.h \
-    ../../include/ImagingAlgorithms_global.h
+    ../../include/ImagingAlgorithms_global.h \
+    ../../include/gammaclean.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
