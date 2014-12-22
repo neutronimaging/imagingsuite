@@ -135,6 +135,8 @@ HEADERS +=\
     ../include/filters/kernelbase.h \
     ../include/filters/filterbase.h \
     ../include/filters/filter.h \
+    ../include/filters/laplacianofgradients.h \
+    ../include/filters/core/laplacianofgradients.hpp \
     ../include/filters/core/medianfilter.hpp \
     ../include/filters/core/filterbase.hpp \
     ../include/filters/core/filter.hpp \
