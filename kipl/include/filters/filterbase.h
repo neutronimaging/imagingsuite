@@ -37,7 +37,7 @@ public:
 	TFilterBase(size_t const * const kDims);
 	TFilterBase(T const * const kernel, size_t const * const kDims);
 	~TFilterBase();
-	virtual kipl::base::TImage<T,nDims> operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle);
+    virtual kipl::base::TImage<T,nDims> operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle);
 protected:
 	int ProcessCore(T const * const img,
 		  size_t const * const imgDims,	

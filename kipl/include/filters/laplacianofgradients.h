@@ -5,7 +5,7 @@
 
 namespace kipl { namespace filters {
 template <typename T>
-kipl::base::TImage<T,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, float sigma);
+kipl::base::TImage<float,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, float sigma);
 
 }}
 

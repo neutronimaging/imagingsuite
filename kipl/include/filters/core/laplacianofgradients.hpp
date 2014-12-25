@@ -2,10 +2,12 @@
 #define LAPLACIANOFGRADIENTS_HPP
 
 #include "../filter.h"
+#include "../filterbase.h"
+#include "../../base/imagecast.h"
 
 namespace kipl { namespace filters {
 template <typename T>
-kipl::base::TImage<T,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, float sigma)
+kipl::base::TImage<float,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, float sigma)
 {
     // Full kernel
     // LoG(x,y)=1/s^2 (2-(x^2+y^2)/s^2) exp(-(x^2+y^2)/(2s^2))
@@ -14,7 +16,7 @@ kipl::base::TImage<T,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, floa
     // g(x) = Gauss x
     // g(y) = Gauss y
     // g_xx(x) = 1/s^2 (1-x/s^2) exp(-(x^2+y^2)/(2 s^2))
-    kipl::base::TImage<T,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.Dims());
 
     int N=ceil(sigma*2);
     int N2=2*N+1;
@@ -35,9 +37,10 @@ kipl::base::TImage<T,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, floa
 //    }
     const float d[3]={-1,2,-1};
     size_t LoGDims[2]={N2, N2};
-    kipl::filters::TFilter<T,2> LoG(klog,LoGDims);
-
-    res=LoG(img);
+    kipl::filters::TFilter<float,2> LoG(klog,LoGDims);
+    kipl::base::TImage<float,2> fimg;
+    fimg=kipl::base::ImageCaster<T,float,2>::cast(img);
+    res=LoG(fimg,kipl::filters::FilterBase::EdgeMirror);
     delete [] klog;
     return res;
 }
