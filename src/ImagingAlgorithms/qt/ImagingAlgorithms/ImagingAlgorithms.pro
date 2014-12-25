@@ -54,7 +54,7 @@ HEADERS += \
     ../../include/MorphSpotClean.h \
     ../../include/pixelinfo.h \
     ../../include/ImagingAlgorithms_global.h \
-    ../../include/gammaclean.h
+    ../../include/gammaclean.h \
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
