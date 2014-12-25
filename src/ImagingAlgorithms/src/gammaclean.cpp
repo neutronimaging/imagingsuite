@@ -1,5 +1,5 @@
 #include "../include/gammaclean.h"
-#include <filters/laplacianofgradients.h>
+#include <filters/laplacianofgaussian.h>
 #include <filters/medianfilter.h>
 #include <math/median.h>
 #include "../include/ImagingException.h"
@@ -24,7 +24,7 @@ GammaClean::GammaClean() :
 kipl::base::TImage<float,2> GammaClean::process(kipl::base::TImage<float,2> & img)
 {
     std::stringstream msg;
-    kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGradients(img,m_fSigma);
+    kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGaussian(img,m_fSigma);
 
     size_t meddims[2]={m_nMedianSize,m_nMedianSize};
     kipl::filters::TMedianFilter<float,2> med3(meddims);
