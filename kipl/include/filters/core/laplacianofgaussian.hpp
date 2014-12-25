@@ -7,7 +7,7 @@
 
 namespace kipl { namespace filters {
 template <typename T>
-kipl::base::TImage<float,2> LaplacianOfGradients(kipl::base::TImage<T,2> & img, float sigma)
+kipl::base::TImage<float,2> LaplacianOfGaussian(kipl::base::TImage<T,2> & img, float sigma)
 {
     // Full kernel
     // LoG(x,y)=1/s^2 (2-(x^2+y^2)/s^2) exp(-(x^2+y^2)/(2s^2))
