@@ -1,5 +1,6 @@
 DIRECTORY="/Users/kaestner/Applications"
-QTPATH="/Applications/Qt531/5.3/clang_64"
+#QTPATH="/Applications/Qt531/5.3/clang_64"
+QTPATH="/Applications/Qt54/5.4/clang_64/"
 DEST="$DIRECTORY/muhrec3.app"
 REPOSPATH="/Users/kaestner/repos"
 
