@@ -9,10 +9,27 @@ QT       += core
 TARGET = BaseModules
 TEMPLATE = lib
 
-unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -lgomp
-    LIBS += -lgomp
+unix:!symbian {
+    INCLUDEPATH += "../../../../external/src/linalg"
+    QMAKE_CXXFLAGS += -fPIC -O2
+
+    unix:!macx {
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+    }
+
+    unix:macx {
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
+    }
+
+    maemo5 {
+        target.path = /opt/usr/lib
+    } else {
+        target.path = /usr/lib
+    }
+    INSTALLS += target
 }
 
 
@@ -49,20 +66,13 @@ symbian {
     DEPLOYMENT += addFiles
 }
 
-unix:!symbian {
-    maemo5 {
-        target.path = /opt/usr/lib
-    } else {
-        target.path = /usr/lib
-    }
-    INSTALLS += target
-}
+
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/release/ -lProcessFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/debug/ -lProcessFramework
 else:symbian: LIBS += -lProcessFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Release/ -lProcessFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/ -lProcessFramework
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include

@@ -73,7 +73,17 @@ The Inverse Scale Space Filter is a an edge preserving de-noising filter based o
 \frac{du}{dt}&=&\frac{\nabla\cdot \nabla u}{|\nabla u|} + \lambda(u-f-v)\nonumber\\
 \frac{dv}{dt}&=&\alpha (u-v)
 \end{eqnarray}
-using an iterative solver on the discrete equations. Here the solution time $T=N\cdot\tau$ can be selected using number of iterations, $N$, and time increments, $\tau$. For stability reasons it is important that the value of $\tau$ is less than 0.125.
+using an iterative solver on the discrete equations. Here the solution time $T=N\cdot\tau$ can be selected using number of iterations, $N$, and time increments, $\tau$. For stability reasons it is important that the value of $\tau$ is less than 0.125. Decrease $\tau$ if you want to improve the quality of the solution but then $N$ must be increased to maintain constant $T$. The sensitivity to noise is decreased for small $\tau$. Another constraint is that $\alpha<1/4 \lambda$ otherwise the eigenvalues of the system become complex and the solution will oscillate. The equation works best when the data is normalized to zero-mean and variance equal to one, this can be done automatically by setting the parameter autoscale to true. This setting will compute a new normalization for every data set, i.e. if you tune the filter for a small ROI and change to the full image a new normalization will be made and the setting are not guaranteed to be perfect. 
+\subsubsection{The error curve}
+The error curve shows how the filter performs. Figure \ref{fig_iss_errorplot} shows an error plot for the ISS filter when it runs to stability. Here, it can be seen that after a large change the filter brings the error back to a minimum, i.e. the original image is obtained again. Ideally, you should never let the filter run beyond the error curve peak and mostly the best result is obtained in the interval (2/3 $\epsilon_{max}$, $\epsilon_{max}$]. You can also use the error curve to check if the filter settings are stable. A stable filter produce a smooth error curve while the in-stable solution produce an oscillating error curve.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/iss_module/errorplot.pdf}
+\caption{Error plot for the ISS-ROF filter using the original image as $u_0$.}\label{fig_iss_errorplot}
+\end{figure}
+
+\subsubsection{The difference image}
+A quality check is to inspect the difference image. A well tuned ISS filter should only show noise and artifact in the difference image between original and filtered. If you see any structures you know that the filter is modifying the structures in the image. This is an indication that you should try to tweak the parameters a bit more.
 
 \chapter{Continued development}
 Kiptool is continuously developing to adapt to new challenges at the neutron
