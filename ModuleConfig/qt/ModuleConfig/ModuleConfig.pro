@@ -13,16 +13,19 @@ unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
-}
     LIBS += -L/usr/lib -lxml2
     INCLUDEPATH += /usr/include/libxml2
-
 }
 
 unix:macx {
-    LIBS += -L/usr/lib -lxml2
-    INCLUDEPATH += /usr/include/libxml2
+    LIBS += -L/opt/local/lib -lxml2
+    INCLUDEPATH += /opt/local/include/libxml2
 }
+
+
+
+}
+
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
