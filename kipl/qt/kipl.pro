@@ -9,23 +9,22 @@ QT       -= gui
 TARGET = kipl
 TEMPLATE = lib
 
-
-
-unix:INCLUDEPATH += "../../../../external/src/linalg"
-
 unix {
+    INCLUDEPATH += "../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
-}
 
-unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -lgomp
-    LIBS += -lgomp
-}
 
-unix:macx {
-    INCLUDEPATH += /usr/local/include
-    QMAKE_LIBDIR += /usr/local/lib
+    unix:!macx {
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+    }
+
+    unix:macx {
+        INCLUDEPATH += /usr/local/include
+        QMAKE_LIBDIR += /usr/local/lib
+    }
+
 }
 
 win32 {
