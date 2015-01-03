@@ -8,15 +8,20 @@ QT       += core widgets
 
 TARGET = QtModuleConfigure
 TEMPLATE = lib
+unix {
 
 unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp -O2 -fPIC
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+    INCLUDEPATH += /usr/include/libxml2
+}
+unix:macx {
+    QMAKE_CXXFLAGS += -O2 -fPIC
+    INCLUDEPATH += /opt/local/include/libxml2
 }
 
-unix {
-    INCLUDEPATH += /usr/include/libxml2
+
 }
 
 win32 {
