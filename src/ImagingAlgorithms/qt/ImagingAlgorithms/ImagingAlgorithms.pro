@@ -16,14 +16,17 @@ unix {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        LIBS += -L/usr/lib -lxml2
+        INCLUDEPATH += /usr/include/libxml2
     }
     else
     {
-    INCLUDEPATH += /usr/local/include
-    LIBPATH += /usr/local/lib
+        INCLUDEPATH += /usr/local/include
+        INCLUDEPATH += /opt/local/include/libxml2
+        LIBPATH += /usr/local/lib
+        LIBS += -L/opt/local/lib/ -lxml2
     }
-    LIBS += -L/usr/lib -lxml2
-    INCLUDEPATH += /usr/include/libxml2
+
 
 }
 DEFINES += IMAGINGALGORITHMS_LIBRARY NOMINMAX
