@@ -343,6 +343,7 @@ ImagingToolConfig::FileConversionConfig::FileConversionConfig() :
     nFirstSrc(1),
     nLastSrc(100),
     nReadOffset(0),
+    nStride(100),
     nImagesPerFile(1),
     nImgSizeX(100),
     nImgSizeY(100),
@@ -402,6 +403,10 @@ void ImagingToolConfig::FileConversionConfig::ParseXML(xmlTextReaderPtr reader)
 
             if (sName=="readoffset") {
                 nReadOffset=atoi(sValue.c_str());
+            }
+
+            if (sName=="stride") {
+                nStride=atoi(sValue.c_str());
             }
 
             if (sName=="imagesperfile") {

@@ -10,7 +10,7 @@ if [[ "$unamestr" == 'Linux' ]]; then
    EXT1="so.1.0"
    EXT2="so.1"
 elif [[ "$unamestr" == 'Darwin' ]]; then
-   DEST="imagingtool-build-desktop-Desktop_Qt_4_8_1_for_GCC__Qt_SDK__Release/imagingtool.app/Contents/MacOS"
+   DEST="build-imagingtool-Qt5-Release/imagingtool.app/Contents/MacOS"
    REPOSPATH="/Users/kaestner/repos"
    EXT="1.0.0.dylib"
    EXT1="1.0.dylib"
@@ -21,10 +21,11 @@ pushd .
 cd $DEST
 rm -f *.$EXT
 
-`$CPCMD $REPOSPATH/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.$EXT .`
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.$EXT .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libReconFramework.$EXT .`
-`$CPCMD $REPOSPATH/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.$EXT .`
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.$EXT .`
+`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.$EXT .`
+`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/libReconFramework.$EXT .`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.$EXT .`
+`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.$EXT .`
 
 rm -f *.$EXT1
 rm -f *.$EXT2

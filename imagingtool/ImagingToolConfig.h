@@ -77,7 +77,9 @@ public:
 		size_t nFirstSrc;
 		size_t nLastSrc;
         size_t nReadOffset;
+        size_t nStride;
         size_t nImagesPerFile;
+
         size_t nImgSizeX;
         size_t nImgSizeY;
         kipl::base::eDataType datatype;

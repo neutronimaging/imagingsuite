@@ -10,6 +10,7 @@
 #include <strings/filenames.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
+#include <io/io_generic.h>
 #include <io/DirAnalyzer.h>
 #include <base/timage.h>
 
@@ -72,6 +73,17 @@ void ImagingToolMain::f2t_Preview()
 
     std::string fname,ext;
 
+    std::map<std::string,int> extensions;
+    extensions[".fts"]  = 0;
+    extensions[".fits"] = 0;
+    extensions[".fit"]  = 0;
+    extensions[".fts"]  = 0;
+    extensions[".dat"]  = 1;
+    extensions[".dmp"]  = 1;
+    extensions[".DMP"]  = 1;
+    extensions[".raw"]  = 1;
+    extensions[".bin"]  = 1;
+
     try {
         kipl::strings::filenames::MakeFileName(m_config.fileconv.sSourceMask,
                                                m_config.fileconv.nFirstSrc,
@@ -95,7 +107,19 @@ void ImagingToolMain::f2t_Preview()
                 }
             }
             else {
-                kipl::io::ReadFITS(img,fname.c_str(),NULL);
+                switch (extensions[ext]) {
+                    case 0 : kipl::io::ReadFITS(img,fname.c_str(),NULL); break;
+                case 1 : kipl::io::ReadGeneric(img,fname.c_str(),
+                                               m_config.fileconv.nImgSizeX,
+                                               m_config.fileconv.nImgSizeY,
+                                               m_config.fileconv.nReadOffset,
+                                               m_config.fileconv.nStride,
+                                                               size_t imagesperfile,
+                                                               kipl::base::eDataType dt,
+                                                               kipl::base::eEndians endian,
+                                                               size_t imageindex,
+                                                               size_t const * const nCrop=NULL);
+                }
             }
 
             ui->f2t_imageviewer->set_image(img.GetDataPtr(),img.Dims());
