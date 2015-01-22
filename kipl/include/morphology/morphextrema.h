@@ -381,5 +381,51 @@ kipl::base::TImage<T,2> FillExtrema(kipl::base::TImage<T,2> &img)
 //    }
     return tmp;
 }
+
+template <typename T>
+kipl::base::TImage<T,2> FillHole2(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect conn)
+{
+//    std::stringstream msg;
+//    std::map<T,list<ptrdiff_t> > fifo;
+//    kipl::base::TImage<T,2> fm(img.Dims());
+
+//    T maxval;
+//    T minval;
+//    kipl::math::minmax(img.GetDataPtr(),img.Size(),&minval, & maxval);
+//    // Initialize output image (borders=input, central region=max input) and queue
+//    fm=maxval;
+//    T *pA=img.GetDataPtr();
+//    T *pB=fm.GetDataPtr();
+
+//    ptrdiff_t p=0;
+//    ptrdiff_t sx1=img.Size(0)-1;
+
+//    for (int i=0; i<img.Size(0); i++, p++) {
+//        pB[p]=pA[p];
+//        fifo[pA[p]].push_back(p);
+//    }
+//    memcpy(fm.GetLinePtr(0),img.GetLinePtr(0),img.Size(0)*sizeof(T));
+//    memcpy(fm.GetLinePtr(img.Size(1)-1),img.GetLinePtr(img.Size(1)-1),img.Size(0)*sizeof(T));
+
+//    size_t last=img.Size(0)-1;
+//    for (size_t i=1; i<img.Size(1)-1; i++) {
+//        pB[p]=pA[p];
+//        fifo[pA[p]].push_back(p);
+//        p+=sx1;
+//        pB[p]=pA[p];
+//        fifo[pA[p]].push_back(p);
+//        p++
+//    }
+
+//    for (int i=0; i<img.Size(0); i++, p++) {
+//        pB[p]=pA[p];
+//        fifo[pA[p]].push_back(p);
+//    }
+
+//    // Main loop
+
+
+    return img;
+}
 }}
 #endif

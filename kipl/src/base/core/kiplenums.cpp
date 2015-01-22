@@ -75,5 +75,58 @@ void  string2enum(std::string str, kipl::base::eImageRotate &rot)
 	else throw kipl::base::KiplException("Could not transform string to rotation type", __FILE__, __LINE__);
 }
 
+std::string enum2string(kipl::base::eDataType dt)
+{
+    std::string s;
+    switch (dt) {
+        case kipl::base::UInt4 :  s="UInt4"; break;
+        case kipl::base::UInt8 :  s="UInt8"; break;
+        case kipl::base::UInt12 : s="UInt12"; break;
+        case kipl::base::UInt16 : s="UInt16"; break;
+        default : s="Unknown data type"; break;
+    }
 
+    return s;
+}
 
+void  string2enum(std::string str, kipl::base::eDataType &dt)
+{
+    if (str=="UInt4") dt=kipl::base::UInt4;
+    else if (str=="UInt8") dt=kipl::base::UInt8;
+    else if (str=="UInt12") dt=kipl::base::UInt12;
+    else if (str=="UInt16") dt=kipl::base::UInt16;
+    else throw kipl::base::KiplException("Could not transform string to data type enum", __FILE__, __LINE__);
+}
+
+std::ostream &operator<<(std::ostream & s, kipl::base::eDataType dt)
+{
+    s<<enum2string(dt);
+
+    return s;
+}
+
+std::string enum2string(kipl::base::eEndians endian)
+{
+    std::string s;
+    switch (endian) {
+        case kipl::base::SmallEndian :  s="SmallEndian"; break;
+        case kipl::base::BigEndian : s="BigEndian"; break;
+        default : s="Unknown data type"; break;
+    }
+
+    return s;
+}
+
+void  string2enum(std::string str, kipl::base::eEndians &endian)
+{
+    if (str=="SmallEndian") endian=kipl::base::SmallEndian;
+    else if (str=="BigEndian") endian=kipl::base::BigEndian;
+    else throw kipl::base::KiplException("Could not transform string to endian enum", __FILE__, __LINE__);
+}
+
+std::ostream &operator<<(std::ostream & s, kipl::base::eEndians endian)
+{
+    s<<enum2string(endian);
+
+    return s;
+}

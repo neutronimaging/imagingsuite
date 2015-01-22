@@ -90,7 +90,8 @@ SOURCES += \
     ../src/math/covariance.cpp \
     ../src/morphology/skeleton.cpp \
     ../src/io/DirAnalyzer.cpp \
-    ../src/math/linfit.cpp
+    ../src/math/linfit.cpp \
+    ../src/generators/spotgenerator.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -269,7 +270,10 @@ HEADERS +=\
     ../include/math/linfit.h \
     ../include/math/core/linfit.hpp \
     ../include/base/tprofile.h \
-    ../include/base/core/tprofile.hpp
+    ../include/base/core/tprofile.hpp \
+    ../include/generators/spotgenerator.h \
+    ../include/io/io_generic.h \
+    ../include/io/core/io_generic.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
