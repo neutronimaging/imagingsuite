@@ -65,9 +65,9 @@ public:
 
 	};
 
-	class Fits2TifConfig {
+    class FileConversionConfig {
 	public:
-		Fits2TifConfig();
+        FileConversionConfig();
 		std::string WriteXML(size_t indent=4);
 		void ParseXML(xmlTextReaderPtr reader);
 
@@ -76,6 +76,12 @@ public:
 
 		size_t nFirstSrc;
 		size_t nLastSrc;
+        size_t nReadOffset;
+        size_t nImagesPerFile;
+        size_t nImgSizeX;
+        size_t nImgSizeY;
+        kipl::base::eDataType datatype;
+
 		std::set<size_t> skip_list;
 		bool bCrop;
 		size_t nCrop[4];
@@ -100,7 +106,7 @@ public:
 
 	MergeConfig merge;
 	ResliceConfig reslice;
-	Fits2TifConfig fits2tif;
+    FileConversionConfig fileconv;
 
 };
 #endif

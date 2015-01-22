@@ -60,7 +60,7 @@ void ImagingToolConfig::LoadConfigFile(std::string filename)
 					reslice.ParseXML(reader);
 
 				if (sName=="fits2tif")
-					fits2tif.ParseXML(reader);
+					fileconv.ParseXML(reader);
         	}
             ret = xmlTextReaderRead(reader);
         }
@@ -87,7 +87,7 @@ std::string ImagingToolConfig::WriteXML()
 	xml<<"<tomomerge>\n";
 	xml<<merge.WriteXML(4);
 	xml<<reslice.WriteXML(4);
-	xml<<fits2tif.WriteXML(4);
+	xml<<fileconv.WriteXML(4);
 	xml<<"</tomomerge>\n";
 
 	return xml.str();
@@ -337,11 +337,16 @@ void ImagingToolConfig::ResliceConfig::ParseXML(xmlTextReaderPtr reader)
     }
 }
 
-ImagingToolConfig::Fits2TifConfig::Fits2TifConfig() :
+ImagingToolConfig::FileConversionConfig::FileConversionConfig() :
     sSourcePath(""),
     sSourceMask("file_####.fts"),
     nFirstSrc(1),
     nLastSrc(100),
+    nReadOffset(0),
+    nImagesPerFile(1),
+    nImgSizeX(100),
+    nImgSizeY(100),
+    datatype(kipl::base::UInt16),
     bCrop(false),
     flip(kipl::base::ImageFlipNone),
     rotate(kipl::base::ImageRotateNone),
@@ -358,7 +363,7 @@ ImagingToolConfig::Fits2TifConfig::Fits2TifConfig() :
 	nCrop[3]=100;
 }
 
-void ImagingToolConfig::Fits2TifConfig::ParseXML(xmlTextReaderPtr reader)
+void ImagingToolConfig::FileConversionConfig::ParseXML(xmlTextReaderPtr reader)
 {
 	const xmlChar *name, *value;
     int ret = xmlTextReaderRead(reader);
@@ -394,6 +399,24 @@ void ImagingToolConfig::Fits2TifConfig::ParseXML(xmlTextReaderPtr reader)
 		    if (sName=="srclast") {
 		    	nLastSrc=atoi(sValue.c_str());
 		    }
+
+            if (sName=="readoffset") {
+                nReadOffset=atoi(sValue.c_str());
+            }
+
+            if (sName=="imagesperfile") {
+                nImagesPerFile=atoi(sValue.c_str());
+            }
+            if (sName=="sizex") {
+                nImgSizeX=atoi(sValue.c_str());
+            }
+            if (sName=="sizey") {
+                nImgSizeY=atoi(sValue.c_str());
+            }
+            if (sName=="datatype") {
+                string2enum(sValue,datatype);
+            }
+
 			if (sName=="dstpath")
 				sDestPath=sValue;
 
@@ -441,7 +464,7 @@ void ImagingToolConfig::Fits2TifConfig::ParseXML(xmlTextReaderPtr reader)
     }
 }
 
-std::string ImagingToolConfig::Fits2TifConfig::WriteXML(size_t indent)
+std::string ImagingToolConfig::FileConversionConfig::WriteXML(size_t indent)
 {
 	std::ostringstream xml;
 
@@ -461,6 +484,11 @@ std::string ImagingToolConfig::Fits2TifConfig::WriteXML(size_t indent)
 				xml<<*it<<" ";
 			xml<<"</skip>\n";
 		}
+        xml<<std::setw(indent+blockindent)<<" "<<"<readoffset>"<<nReadOffset<<"</readoffset>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<imagesperfile>"<<nImagesPerFile<<"</imagesperfile>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<sizex>"<<nImgSizeX<<"</sizex>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<sizey>"<<nImgSizeY<<"</sizey>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<datatype>"<<enum2string(datatype)<<"</datatype>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<crop>"<<(bCrop ? "true":"false")<<"</crop>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<roi>"<<nCrop[0]<<" "
 				<<nCrop[1]<<" "

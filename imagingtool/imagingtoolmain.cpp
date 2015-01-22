@@ -10,6 +10,7 @@
 #include <strings/filenames.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
+#include <io/DirAnalyzer.h>
 #include <base/timage.h>
 
 
@@ -43,12 +44,26 @@ ImagingToolMain::~ImagingToolMain()
 
 void ImagingToolMain::f2t_BrowseSrcPath()
 {
-    QString projdir=QFileDialog::getExistingDirectory(this,
-                                      "Select location of the projections",
-                                      ui->f2t_edit_srcpath->text());
+    QString projdir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the images",
+                                      ui->f2t_edit_srcfilemask->text());
+    if (!projdir.isEmpty()) {
+        std::string pdir=projdir.toStdString();
 
-    if (!projdir.isEmpty())
-        ui->f2t_edit_srcpath->setText(projdir);
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
+
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+        ui->f2t_edit_srcfilemask->setText(QString::fromStdString(fi.m_sMask));
+    }
 }
 
 void ImagingToolMain::f2t_Preview()
@@ -58,18 +73,18 @@ void ImagingToolMain::f2t_Preview()
     std::string fname,ext;
 
     try {
-        kipl::strings::filenames::MakeFileName(m_config.fits2tif.sSourceMask,
-                                               m_config.fits2tif.nFirstSrc,
+        kipl::strings::filenames::MakeFileName(m_config.fileconv.sSourceMask,
+                                               m_config.fileconv.nFirstSrc,
                                                fname,
                                                ext,
                                                '#',
                                                '0');
 
-        fname = m_config.fits2tif.sSourcePath+fname;
+        fname = m_config.fileconv.sSourcePath+fname;
 
         if (QFile::exists(QString::fromStdString(fname))) {
             kipl::base::TImage<float> img;
-            if (m_config.fits2tif.bReplaceZeros==true) {
+            if (m_config.fileconv.bReplaceZeros==true) {
                 kipl::base::TImage<short,2> simg;
                 kipl::io::ReadFITS(simg,fname.c_str(),NULL);
                 img.Resize(simg.Dims());
@@ -104,19 +119,19 @@ void ImagingToolMain::f2t_FindProjections()
 
     std::string fname,ext;
 
-    kipl::strings::filenames::MakeFileName(m_config.fits2tif.sSourceMask,
-                                           m_config.fits2tif.nFirstSrc,
+    kipl::strings::filenames::MakeFileName(m_config.fileconv.sSourceMask,
+                                           m_config.fileconv.nFirstSrc,
                                            fname,
                                            ext,
                                            '#',
                                            '0');
 
-    fname = m_config.fits2tif.sSourcePath+fname;
+    fname = m_config.fileconv.sSourcePath+fname;
 
     if (QFile::exists(QString::fromStdString(fname))) {
 
 
-        int res = dlg.exec(m_config.fits2tif.sSourcePath,m_config.fits2tif.sSourceMask, m_config.fits2tif.nFirstSrc, m_config.fits2tif.nLastSrc);
+        int res = dlg.exec(m_config.fileconv.sSourcePath,m_config.fileconv.sSourceMask, m_config.fileconv.nFirstSrc, m_config.fileconv.nLastSrc);
 
         if ( res == QDialog::Accepted )
         {
@@ -145,7 +160,7 @@ void ImagingToolMain::f2t_GetROI()
 
 void ImagingToolMain::f2t_TakePath()
 {
-    ui->f2t_edit_destpath->setText(ui->f2t_edit_srcpath->text());
+//    ui->f2t_edit_srcfilemask->setText(ui->f2t_edit_srcpath->text());
 }
 
 void ImagingToolMain::f2t_BrowseDestPath()
@@ -170,7 +185,7 @@ void ImagingToolMain::f2t_Convert()
     Fits2Tif f2t;
 
     try {
-        f2t.process(m_config.fits2tif);
+        f2t.process(m_config.fileconv);
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
@@ -190,7 +205,6 @@ void ImagingToolMain::UpdateDialog()
     ui->reslice_check_XZ->setChecked(m_config.reslice.bResliceXZ);
     ui->reslice_check_YZ->setChecked(m_config.reslice.bResliceYZ);
     ui->reslice_edit_FileMask->setText(QString::fromStdString(m_config.reslice.sSourceMask));
-    ui->reslice_edit_InputPath->setText(QString::fromStdString(m_config.reslice.sSourcePath));
     ui->reslice_edit_OutPath->setText(QString::fromStdString(m_config.reslice.sDestinationPath));
     ui->reslice_spin_FirstImage->setValue(m_config.reslice.nFirst);
     ui->reslice_spin_LastImage->setValue(m_config.reslice.nLast);
@@ -200,33 +214,32 @@ void ImagingToolMain::UpdateDialog()
     ui->reslice_spin_lastYZ->setValue(m_config.reslice.nLastYZ);
 
     // Fits 2 TIFF
-    ui->f2t_edit_srcpath->setText(QString::fromStdString(m_config.fits2tif.sSourcePath));
-    ui->f2t_edit_srcfilemask->setText(QString::fromStdString(m_config.fits2tif.sSourceMask));
+    ui->f2t_edit_srcfilemask->setText(QString::fromStdString(m_config.fileconv.sSourceMask));
 
-    ui->f2t_edit_destpath->setText(QString::fromStdString(m_config.fits2tif.sDestPath));
-    ui->f2t_edit_destfilemask->setText(QString::fromStdString(m_config.fits2tif.sDestMask));
+    ui->f2t_edit_destpath->setText(QString::fromStdString(m_config.fileconv.sDestPath));
+    ui->f2t_edit_destfilemask->setText(QString::fromStdString(m_config.fileconv.sDestMask));
 
-    ui->f2t_spin_firstprojection->setValue(m_config.fits2tif.nFirstSrc);
-    ui->f2t_spin_lastprojection->setValue(m_config.fits2tif.nLastSrc);
-    ui->f2t_spin_destfirstindex->setValue(m_config.fits2tif.nFirstDest);
+    ui->f2t_spin_firstprojection->setValue(m_config.fileconv.nFirstSrc);
+    ui->f2t_spin_lastprojection->setValue(m_config.fileconv.nLastSrc);
+    ui->f2t_spin_destfirstindex->setValue(m_config.fileconv.nFirstDest);
 
-    ui->f2t_combo_mirror->setCurrentIndex(m_config.fits2tif.flip);
-    ui->f2t_combo_rotate->setCurrentIndex(m_config.fits2tif.rotate);
-    ui->f2t_check_fixzeros->setChecked(m_config.fits2tif.bReplaceZeros);
+    ui->f2t_combo_mirror->setCurrentIndex(m_config.fileconv.flip);
+    ui->f2t_combo_rotate->setCurrentIndex(m_config.fileconv.rotate);
+    ui->f2t_check_fixzeros->setChecked(m_config.fileconv.bReplaceZeros);
 
-    ui->f2t_check_useroi->setChecked(m_config.fits2tif.bCrop);
-    ui->f2t_spin_x0->setValue(m_config.fits2tif.nCrop[0]);
-    ui->f2t_spin_y0->setValue(m_config.fits2tif.nCrop[1]);
-    ui->f2t_spin_x1->setValue(m_config.fits2tif.nCrop[2]);
-    ui->f2t_spin_y1->setValue(m_config.fits2tif.nCrop[3]);
-    ui->f2t_spin_spotthreshold->setValue((m_config.fits2tif.fSpotThreshold));
-    ui->f2t_check_cleanspots->setChecked(m_config.fits2tif.bUseSpotClean);
-    ui->f2t_check_sortgolden->setChecked(m_config.fits2tif.bSortGoldenScan);
-    ui->f2t_combo_goldenscan->setCurrentIndex(m_config.fits2tif.nGoldenScanArc);
+    ui->f2t_check_useroi->setChecked(m_config.fileconv.bCrop);
+    ui->f2t_spin_x0->setValue(m_config.fileconv.nCrop[0]);
+    ui->f2t_spin_y0->setValue(m_config.fileconv.nCrop[1]);
+    ui->f2t_spin_x1->setValue(m_config.fileconv.nCrop[2]);
+    ui->f2t_spin_y1->setValue(m_config.fileconv.nCrop[3]);
+    ui->f2t_spin_spotthreshold->setValue((m_config.fileconv.fSpotThreshold));
+    ui->f2t_check_cleanspots->setChecked(m_config.fileconv.bUseSpotClean);
+    ui->f2t_check_sortgolden->setChecked(m_config.fileconv.bSortGoldenScan);
+    ui->f2t_combo_goldenscan->setCurrentIndex(m_config.fileconv.nGoldenScanArc);
 
     str.str("");
     std::set<size_t>::iterator it;
-    for (it=m_config.fits2tif.skip_list.begin(); it!=m_config.fits2tif.skip_list.end(); it++)
+    for (it=m_config.fileconv.skip_list.begin(); it!=m_config.fileconv.skip_list.end(); it++)
         str<<*it<<" ";
     ui->f2t_edit_skiplist->setText(QString::fromStdString(str.str()));
 }
@@ -238,8 +251,9 @@ void ImagingToolMain::UpdateConfig()
     // Reslicer
     m_config.reslice.bResliceXZ  = ui->reslice_check_XZ->checkState();
     m_config.reslice.bResliceYZ  = ui->reslice_check_YZ->checkState();
+    m_config.reslice.sSourcePath="";
     m_config.reslice.sSourceMask = ui->reslice_edit_FileMask->text().toStdString();
-    m_config.reslice.sSourcePath = ui->reslice_edit_InputPath->text().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_config.reslice.sSourceMask,false);
     m_config.reslice.sDestinationPath = ui->reslice_edit_OutPath->text().toStdString();
     m_config.reslice.nFirst = ui->reslice_spin_FirstImage->value();
     m_config.reslice.nLast = ui->reslice_spin_LastImage->value();
@@ -249,35 +263,36 @@ void ImagingToolMain::UpdateConfig()
     m_config.reslice.nLastYZ = ui->reslice_spin_lastYZ->value();
 
     // Fits 2 TIFF
-    m_config.fits2tif.sSourcePath = ui->f2t_edit_srcpath->text().toStdString();
-    kipl::strings::filenames::CheckPathSlashes(m_config.fits2tif.sSourcePath,true);
-    m_config.fits2tif.sSourceMask = ui->f2t_edit_srcfilemask->text().toStdString();
+    m_config.fileconv.sSourcePath = "";
 
-    m_config.fits2tif.sDestPath   = ui->f2t_edit_destpath->text().toStdString();
-    kipl::strings::filenames::CheckPathSlashes(m_config.fits2tif.sDestPath,true);
-    m_config.fits2tif.sDestMask   = ui->f2t_edit_destfilemask->text().toStdString();
+    m_config.fileconv.sSourceMask = ui->f2t_edit_srcfilemask->text().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_config.fileconv.sSourceMask,false);
 
-    m_config.fits2tif.nFirstSrc   = ui->f2t_spin_firstprojection->value();
-    m_config.fits2tif.nLastSrc    = ui->f2t_spin_lastprojection->value();
-    m_config.fits2tif.nFirstDest  = ui->f2t_spin_destfirstindex->value();
+    m_config.fileconv.sDestPath   = ui->f2t_edit_destpath->text().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_config.fileconv.sDestPath,true);
+    m_config.fileconv.sDestMask   = ui->f2t_edit_destfilemask->text().toStdString();
 
-    m_config.fits2tif.flip        = static_cast<kipl::base::eImageFlip>(ui->f2t_combo_mirror->currentIndex());
-    m_config.fits2tif.rotate      = static_cast<kipl::base::eImageRotate>(ui->f2t_combo_rotate->currentIndex());
-    m_config.fits2tif.bReplaceZeros = ui->f2t_check_fixzeros->checkState();
+    m_config.fileconv.nFirstSrc   = ui->f2t_spin_firstprojection->value();
+    m_config.fileconv.nLastSrc    = ui->f2t_spin_lastprojection->value();
+    m_config.fileconv.nFirstDest  = ui->f2t_spin_destfirstindex->value();
 
-    m_config.fits2tif.bCrop       = ui->f2t_check_useroi->checkState();
-    m_config.fits2tif.nCrop[0]    = ui->f2t_spin_x0->value();
-    m_config.fits2tif.nCrop[1]    = ui->f2t_spin_y0->value();
-    m_config.fits2tif.nCrop[2]    = ui->f2t_spin_x1->value();
-    m_config.fits2tif.nCrop[3]    = ui->f2t_spin_y1->value();
+    m_config.fileconv.flip        = static_cast<kipl::base::eImageFlip>(ui->f2t_combo_mirror->currentIndex());
+    m_config.fileconv.rotate      = static_cast<kipl::base::eImageRotate>(ui->f2t_combo_rotate->currentIndex());
+    m_config.fileconv.bReplaceZeros = ui->f2t_check_fixzeros->checkState();
 
-    m_config.fits2tif.fSpotThreshold = ui->f2t_spin_spotthreshold->value();
-    m_config.fits2tif.bUseSpotClean  = ui->f2t_check_cleanspots->checkState();
+    m_config.fileconv.bCrop       = ui->f2t_check_useroi->checkState();
+    m_config.fileconv.nCrop[0]    = ui->f2t_spin_x0->value();
+    m_config.fileconv.nCrop[1]    = ui->f2t_spin_y0->value();
+    m_config.fileconv.nCrop[2]    = ui->f2t_spin_x1->value();
+    m_config.fileconv.nCrop[3]    = ui->f2t_spin_y1->value();
 
-    m_config.fits2tif.bSortGoldenScan = ui->f2t_check_sortgolden->checkState();
-    m_config.fits2tif.nGoldenScanArc = ui->f2t_combo_goldenscan->currentIndex();
+    m_config.fileconv.fSpotThreshold = ui->f2t_spin_spotthreshold->value();
+    m_config.fileconv.bUseSpotClean  = ui->f2t_check_cleanspots->checkState();
 
-    kipl::strings::String2Set(ui->f2t_edit_skiplist->text().toStdString(), m_config.fits2tif.skip_list);
+    m_config.fileconv.bSortGoldenScan = ui->f2t_check_sortgolden->checkState();
+    m_config.fileconv.nGoldenScanArc = ui->f2t_combo_goldenscan->currentIndex();
+
+    kipl::strings::String2Set(ui->f2t_edit_skiplist->text().toStdString(), m_config.fileconv.skip_list);
 
 }
 
@@ -292,7 +307,7 @@ void ImagingToolMain::SaveConfig()
    }
 
    fname=fname + "/imagingtool_config.xml";
-   std::ofstream ofile(fname.toAscii());
+   std::ofstream ofile(fname.toStdString().c_str());
 
    ofile<<m_config.WriteXML();
 
@@ -309,13 +324,26 @@ void ImagingToolMain::LoadConfig()
 
 void ImagingToolMain::on_reslice_button_BrowseInPath_clicked()
 {
-    QString projdir=QFileDialog::getExistingDirectory(this,
+    QString projdir=QFileDialog::getOpenFileName(this,
                                       "Select location of the slices",
-                                      ui->reslice_edit_InputPath->text());
+                                      ui->reslice_edit_FileMask->text());
+    if (!projdir.isEmpty()) {
+        std::string pdir=projdir.toStdString();
 
-    if (!projdir.isEmpty())
-        ui->reslice_edit_InputPath->setText(projdir);
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
 
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+        ui->reslice_edit_FileMask->setText(QString::fromStdString(fi.m_sMask));
+    }
 }
 
 void ImagingToolMain::on_reslice_button_BrowseOutPath_clicked()

@@ -29,7 +29,7 @@ Fits2Tif::~Fits2Tif() {
 	// TODO Auto-generated destructor stub
 }
 
-int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
+int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 {
 	std::ostringstream msg;
 	std::list<std::string> filelist;
@@ -41,6 +41,7 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 	}
 
     size_t *crop=config.bCrop ? config.nCrop : NULL;
+
 	kipl::base::TImage<float,2> src,dst;
     kipl::base::TImage<short,2> simg;
 
@@ -48,58 +49,41 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 	kipl::strings::filenames::CheckPathSlashes(config.sDestPath,true);
 	dstmask=config.sDestPath+config.sDestMask;
 
-	logger(kipl::logging::Logger::LogMessage,"Converting fits to tiff");
+    logger(kipl::logging::Logger::LogMessage,"Converting files to tiff");
 
 	kipl::base::TRotate<float> rotate;
 	std::list<std::string>::iterator it;
 	int i=config.nFirstDest;
 	for (it=filelist.begin(); it!=filelist.end(); it++, i++) {
+        try {
+            kipl::io::ReadFITS(simg,it->c_str(),crop);
+        }
+        catch (kipl::base::KiplException &e) {
+            msg.str("");
+            msg<<"At line "<<__LINE__<<" Failed to open :"<<*it<<"\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            return -1;
+        }
+        catch (std::exception &e) {
+            msg.str("");
+            msg<<"Failed to open :"<<*it<<"\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+
+            return -1;
+        }
+
+        if (it==filelist.begin())
+            src.Resize(simg.Dims());
 
         if (config.bReplaceZeros==true) {
-            try {
-                kipl::io::ReadFITS(simg,it->c_str(),crop);
-            }
-            catch (kipl::base::KiplException &e) {
-                msg.str("");
-                msg<<"At line "<<__LINE__<<" Failed to open :"<<*it<<"\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
-                return -1;
-            }
-            catch (std::exception &e) {
-                msg.str("");
-                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
-
-                return -1;
-            }
-            if (it==filelist.begin())
-                src.Resize(simg.Dims());
-
             unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
             float *pImg=src.GetDataPtr();
             for (size_t i=0; i<simg.Size(); i++) {
                 pImg[i]=static_cast<float>(pSImg[i]);
             }
         }
-        else
-        {
-            try {
-                kipl::io::ReadFITS(src,it->c_str(),crop);
-            }
-            catch (kipl::base::KiplException &e) {
-                msg.str("");
-                msg<<"At line "<<__LINE__<<" Failed to open :"<<*it<<"\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
-                return -1;
-            }
-            catch (std::exception &e) {
-                msg.str("");
-                msg<<"Failed to open :"<<*it<<"\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
 
-                return -1;
-            }
-        }
+
         kipl::base::TImage<float,2> dst2;
         //dst.FreeImage();
 		switch (config.flip) {
@@ -113,7 +97,6 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
             dst2=rotate.MirrorVertical(src);
             dst=rotate.MirrorHorizontal(dst2); break;
 		}
-
 
 		switch (config.rotate) {
         case kipl::base::ImageRotateNone :
@@ -144,12 +127,12 @@ int Fits2Tif::process(ImagingToolConfig::Fits2TifConfig &config)
 	return 0;
 }
 
-void Fits2Tif::BuildFileList(ImagingToolConfig::Fits2TifConfig &config, std::list<std::string> &filelist)
+std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist)
 {
 	std::ostringstream msg;
 	std::string srcname,srcmask,ext;
-	kipl::strings::filenames::CheckPathSlashes(config.sSourcePath,true);
-	srcmask=config.sSourcePath+config.sSourceMask;
+    kipl::strings::filenames::CheckPathSlashes(config.sSourceMask,false);
+    srcmask=config.sSourceMask;
 
 	filelist.clear();
 
@@ -173,12 +156,6 @@ void Fits2Tif::BuildFileList(ImagingToolConfig::Fits2TifConfig &config, std::lis
 
                 std::cout<<"cnt="<<cnt<<", i="<<i<<", size(tmplist)="<<tmplist.size()<<", angle="<<angle<<std::endl;
                 cnt++;
-//            }
-//            else {
-//                msg.str("");
-//                msg<<"Skipping index "<<i;
-//                logger(kipl::logging::Logger::LogMessage,msg.str());
-//            }
         }
 
         std::map<float,std::string>::iterator it;
@@ -204,4 +181,6 @@ void Fits2Tif::BuildFileList(ImagingToolConfig::Fits2TifConfig &config, std::lis
             }
         }
     }
+
+    return ext;
 }

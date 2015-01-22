@@ -4,13 +4,48 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core widgets
 
 TARGET = imagingtool
 TEMPLATE = app
 
-QMAKE_CXXFLAGS +=  -fPIC -fopenmp
-QMAKE_LFLAGS += -fopenmp
+unix:!symbian {
+    maemo5 {
+        target.path = /opt/usr/lib
+    } else {
+        target.path = /usr/lib
+    }
+    INSTALLS += target
+
+    unix:macx {
+        QMAKE_CXXFLAGS += -fPIC -O2
+        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include/libxml2
+        QMAKE_LIBDIR += /opt/local/lib
+        QMAKE_INFO_PLIST = Info.plist
+        ICON = muhrec3.icns
+    }
+    else {
+        QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
+    }
+
+    LIBS += -ltiff -lxml2
+
+}
+
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2
+}
 
 
 SOURCES += main.cpp\
@@ -33,55 +68,46 @@ FORMS    += imagingtoolmain.ui \
     findskiplistdialog.ui
 
 
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
 
-LIBS += -ltiff -lxml2 -lcfitsio -lgomp
-INCLUDEPATH += /usr/include/libxml2
+INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/qt/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix: LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lkipl
-
-
-INCLUDEPATH += $$PWD/../../../src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../src/libs/kipl/trunk/kipl/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lQtAddons
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lQtAddons
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../gui/trunk/qt/build_QtAddons-Qt5-Release/release/ -lQtAddons
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Release/debug/ -lQtAddons
 else:symbian: LIBS += -lQtAddons
-else:unix: LIBS += -L$$PWD/../../../gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lQtAddons
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/ -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../gui/trunk/qt/QtAddons
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lReconFramework
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
-else:unix: LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
 
 INCLUDEPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
 DEPENDPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/qt/ModuleConfig-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
 else:symbian: LIBS += -lModuleConfig
-else:unix: LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release -lModuleConfig
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release -lModuleConfig
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../src/libs/modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../src/libs/modules/trunk/ModuleConfig/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/qt/ReconFramework-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lReconFramework
-else:symbian: LIBS += -lReconFramework
-else:unix: LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lReconFramework
-
-INCLUDEPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms
 else:symbian: LIBS += -lImagingAlgorithms
-else:unix: LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/ -lImagingAlgorithms
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/ -lImagingAlgorithms
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Debug/ -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include

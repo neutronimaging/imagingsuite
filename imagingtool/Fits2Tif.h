@@ -17,11 +17,11 @@ class Fits2Tif {
 public:
 	Fits2Tif();
 	virtual ~Fits2Tif();
-    int process(ImagingToolConfig::Fits2TifConfig &config);
+    int process(ImagingToolConfig::FileConversionConfig &config);
 
 	float progress() {return 0.0f;}
 protected:
-    void BuildFileList(ImagingToolConfig::Fits2TifConfig &config, std::list<std::string> &filelist);
+    std::string BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist);
 
 };
 
