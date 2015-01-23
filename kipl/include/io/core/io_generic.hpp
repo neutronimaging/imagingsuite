@@ -68,43 +68,45 @@ int ReadGeneric(ifstream &file,kipl::base::TImage<unsigned short> &img,
     file.seekg(file_offset);
 
     size_t dims[2]={size_x, size_y};
-    img.resize(dims);
+    img.Resize(dims);
     converter data[3];
 
 
-    unsigned char * buffer = new unsigned char[stride];
+    char * buffer = new char[stride];
+
     unsigned short *sbuffer= reinterpret_cast<unsigned short *>(buffer);
     for (size_t i=0; i<size_y; i++) {
         for (size_t j=0; j<stride; j++)
             file.get(buffer[j]);
-        T * pLine = img.GetLinePtr(i);
+        unsigned short * pLine = img.GetLinePtr(i);
         switch (dt) {
         case kipl::base::UInt4 :
             for (size_t j=0, k=0; j<size_x; j+=2, k++) {
                   data[0].c=buffer[k];
 
-                  pLine[j]   = static_cast<T>(data[0].nibbles.lo);
-                  pLine[j+1] = static_cast<T>(data[0].nibbles.hi);
+                  pLine[j]   = static_cast<unsigned short>(data[0].nibbles.lo);
+                  pLine[j+1] = static_cast<unsigned short>(data[0].nibbles.hi);
             }
             break;
         case kipl::base::UInt8 :
             for (size_t j=0; j<size_x; j++)
-                pLine[j]=static_cast<T>(buffer[i]);
+                pLine[j]=static_cast<unsigned short>(buffer[i]);
             break;
         case kipl::base::UInt12 :
             for (size_t j=0, k=0; j<size_x; j+=2, k+=3) {
+                // Careful with signed unsigned...
                   data[0].c=buffer[k];
                   data[1].c=buffer[k+1];
                   data[2].c=buffer[k+2];
 
-                  pLine[j]   = static_cast<T>(data[1].nibbles.hi + (data[0].b<<4));
-                  pLine[j+1] = static_cast<T>(data[1].nibbles.lo + (data[2].b<<4));
+                  pLine[j]   = static_cast<unsigned short>(data[1].nibbles.hi + (data[0].b<<4));
+                  pLine[j+1] = static_cast<unsigned short>(data[1].nibbles.lo + (data[2].b<<4));
             }
             break;
         case kipl::base::UInt16 :
 
             for (size_t j=0, k=0; j<size_x; j++) {
-                  pLine[j]   = static_cast<T>(sbuffer[j]);
+                  pLine[j]   = static_cast<unsigned short>(sbuffer[j]);
 
             }
             break;
@@ -127,7 +129,7 @@ int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
                 size_t imageindex,
-                size_t const * const nCrop=NULL)
+                size_t const * const nCrop)
 {
     return 0;
 }
@@ -142,7 +144,7 @@ int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
                 size_t imagesperfile,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
-                size_t const * const nCrop=NULL)
+                size_t const * const nCrop)
 {
 
     return 0;

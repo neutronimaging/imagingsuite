@@ -33,5 +33,7 @@ int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
                 size_t const * const nCrop=NULL);
 
 }}
+
+#include "core/io_generic.hpp"
 #endif // IO_GENERIC_H
 

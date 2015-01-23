@@ -1,4 +1,5 @@
 #include "../../include/strings/string2array.h"
+#include "../../include/base/KiplException.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -76,7 +77,7 @@ size_t String2Array(std::string str, size_t *v, size_t N)
 	return i+1;
 }
 
-#ifndef _WIN32
+
 size_t String2Array(std::string str, ptrdiff_t *v, size_t N)
 {
 	std::string data, element;
@@ -93,7 +94,7 @@ size_t String2Array(std::string str, ptrdiff_t *v, size_t N)
 
 	return i+1;
 }
-#endif
+
 size_t String2Array(std::string str, int *v, size_t N)
 {
 	std::string data, element;
@@ -128,4 +129,23 @@ size_t String2Set(std::string str, std::set<size_t> &v)
 	
 	return i;
 }
+
+size_t String2Array(std::string str, std::vector<float> &v)
+{
+    throw kipl::base::KiplException("String2Array is not implemented for vector<float>",__FILE__,__LINE__);
+    return 0;
+}
+
+size_t String2Array(std::string str, std::vector<size_t> &v)
+{
+    throw kipl::base::KiplException("String2Array is not implemented for vector<size_t>",__FILE__,__LINE__);
+    return 0;
+}
+
+size_t String2Array(std::string str, std::vector<int> &v)
+{
+    throw kipl::base::KiplException("String2Array is not implemented for vector<int>",__FILE__,__LINE__);
+    return 0;
+}
+
 }}
