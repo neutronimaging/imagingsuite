@@ -70,6 +70,7 @@ void ImagingToolMain::f2t_BrowseSrcPath()
 void ImagingToolMain::f2t_Preview()
 {
     UpdateConfig();
+    std::ostringstream msg;
 
     std::string fname,ext;
 
@@ -108,7 +109,7 @@ void ImagingToolMain::f2t_Preview()
             }
             else {
                 switch (extensions[ext]) {
-                    case 0 : kipl::io::ReadFITS(img,fname.c_str(),NULL); break;
+                    case 0 : kipl::io::ReadFITS(img,fname.c_str(),m_config.fileconv.bCrop ? m_config.fileconv.nCrop : NULL); break;
                 case 1 : kipl::io::ReadGeneric(img,fname.c_str(),
                                                m_config.fileconv.nImgSizeX,
                                                m_config.fileconv.nImgSizeY,
@@ -117,11 +118,13 @@ void ImagingToolMain::f2t_Preview()
                                                m_config.fileconv.nImagesPerFile,
                                                m_config.fileconv.datatype,
                                                m_config.fileconv.endian,
-                                               m_config.fileconv.nImageIndex,
+                                               ui->f2t_spin_imgidx->value(),
                                                m_config.fileconv.bCrop ? m_config.fileconv.nCrop : NULL);
                 }
             }
 
+            msg<<img<<std::endl;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
             ui->f2t_imageviewer->set_image(img.GetDataPtr(),img.Dims());
         }
         else {
@@ -246,6 +249,7 @@ void ImagingToolMain::UpdateDialog()
     ui->f2t_spin_firstprojection->setValue(m_config.fileconv.nFirstSrc);
     ui->f2t_spin_lastprojection->setValue(m_config.fileconv.nLastSrc);
     ui->f2t_spin_destfirstindex->setValue(m_config.fileconv.nFirstDest);
+    ui->f2t_check_reverseidx->setChecked(m_config.fileconv.bReverseIdx);
 
     ui->f2t_combo_mirror->setCurrentIndex(m_config.fileconv.flip);
     ui->f2t_combo_rotate->setCurrentIndex(m_config.fileconv.rotate);

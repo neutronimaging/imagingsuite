@@ -43,7 +43,7 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
     size_t *crop=config.bCrop ? config.nCrop : NULL;
 
 	kipl::base::TImage<float,2> src,dst;
-    kipl::base::TImage<short,2> simg;
+    kipl::base::TImage<unsigned short,2> simg;
 
 	std::string dstname,dstmask,ext;
 	kipl::strings::filenames::CheckPathSlashes(config.sDestPath,true);
@@ -76,13 +76,20 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
             src.Resize(simg.Dims());
 
         if (config.bReplaceZeros==true) {
-            unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
+            short *pSImg=reinterpret_cast<short *>(simg.GetDataPtr());
             float *pImg=src.GetDataPtr();
             for (size_t i=0; i<simg.Size(); i++) {
                 pImg[i]=static_cast<float>(pSImg[i]);
             }
         }
+        else {
+            unsigned short *pSImg=simg.GetDataPtr();
+            float *pImg=src.GetDataPtr();
+            for (size_t i=0; i<simg.Size(); i++) {
+                pImg[i]=static_cast<float>(pSImg[i]);
+            }
 
+        }
 
         kipl::base::TImage<float,2> dst2;
         //dst.FreeImage();

@@ -76,6 +76,7 @@ public:
 
         int nFirstSrc;
         int nLastSrc;
+        bool bReverseIdx;
         size_t nReadOffset;
         int nStride;
         int nImagesPerFile;
