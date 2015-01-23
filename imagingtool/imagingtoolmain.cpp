@@ -90,7 +90,7 @@ void ImagingToolMain::f2t_Preview()
                                                fname,
                                                ext,
                                                '#',
-                                               '0');
+                                               '0',false);
 
         fname = m_config.fileconv.sSourcePath+fname;
 
@@ -114,11 +114,11 @@ void ImagingToolMain::f2t_Preview()
                                                m_config.fileconv.nImgSizeY,
                                                m_config.fileconv.nReadOffset,
                                                m_config.fileconv.nStride,
-                                                               size_t imagesperfile,
-                                                               kipl::base::eDataType dt,
-                                                               kipl::base::eEndians endian,
-                                                               size_t imageindex,
-                                                               size_t const * const nCrop=NULL);
+                                               m_config.fileconv.nImagesPerFile,
+                                               m_config.fileconv.datatype,
+                                               m_config.fileconv.endian,
+                                               m_config.fileconv.nImageIndex,
+                                               m_config.fileconv.bCrop ? m_config.fileconv.nCrop : NULL);
                 }
             }
 

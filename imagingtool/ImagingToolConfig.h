@@ -74,15 +74,18 @@ public:
 		std::string sSourcePath;
 		std::string sSourceMask;
 
-		size_t nFirstSrc;
-		size_t nLastSrc;
+        int nFirstSrc;
+        int nLastSrc;
         size_t nReadOffset;
-        size_t nStride;
-        size_t nImagesPerFile;
+        int nStride;
+        int nImagesPerFile;
+        int nImageIndex;
 
         size_t nImgSizeX;
         size_t nImgSizeY;
         kipl::base::eDataType datatype;
+        kipl::base::eEndians endian;
+
 
 		std::set<size_t> skip_list;
 		bool bCrop;
