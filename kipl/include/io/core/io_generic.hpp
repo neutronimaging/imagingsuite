@@ -64,13 +64,17 @@ int ReadGeneric(ifstream &file,kipl::base::TImage<unsigned short> &img,
                 size_t imageindex,
                 size_t const * const nCrop=NULL)
 {
+    if (imagesperfile<=imageindex) {
+        throw kipl::base::KiplException("Tried to access a non-existing image",__FILE__,__LINE__);
+    }
+
     size_t file_offset=imageindex*size_y*stride+offset;
+    std::cout<<"Offset="<<file_offset<<std::endl;
     file.seekg(file_offset);
 
     size_t dims[2]={size_x, size_y};
     img.Resize(dims);
     converter data[3];
-
 
     char * buffer = new char[stride];
 
@@ -111,8 +115,6 @@ int ReadGeneric(ifstream &file,kipl::base::TImage<unsigned short> &img,
             }
             break;
         }
-
-
     }
 
     return 0;
@@ -131,6 +133,15 @@ int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
                 size_t imageindex,
                 size_t const * const nCrop)
 {
+    ifstream datfile(fname, ios_base::binary);
+
+    kipl::base::TImage<unsigned short> tmp;
+
+    ReadGeneric(datfile,tmp,size_x,size_y,offset,stride,imagesperfile,dt,endian, imageindex,nCrop);
+
+    for (int i=0; i<img.Size(); i++)
+        img[i]=static_cast<ImgType>(tmp[i]);
+
     return 0;
 }
 
