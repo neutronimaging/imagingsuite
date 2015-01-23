@@ -21,7 +21,7 @@ public:
 
 	float progress() {return 0.0f;}
 protected:
-    std::string BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist);
+    std::string BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist,bool bReversedIndex=false);
 
 };
 

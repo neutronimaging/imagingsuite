@@ -127,7 +127,7 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 	return 0;
 }
 
-std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist)
+std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist, bool bReversedIndex)
 {
 	std::ostringstream msg;
 	std::string srcname,srcmask,ext;
@@ -149,7 +149,7 @@ std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &con
         int cnt=0;
         for (size_t i=config.nFirstSrc; i<=config.nLastSrc; i++) {
            // if (config.skip_list.find(i)==config.skip_list.end()) {
-                kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0');
+                kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0',bReversedIndex);
 
                 float angle=fmod(cnt*fScanArc*fGoldenSection,180.0f);
                 tmplist.insert(std::make_pair(angle,srcname));
