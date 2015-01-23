@@ -22,7 +22,7 @@ namespace kipl { namespace strings { namespace filenames {
 /// \param ext Extension of the file. If several extensions exist, only the last will be returned
 
 /// \returns The function always returns 0.
-int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar ='X', const char cFillChar='0');
+int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar ='X', const char cFillChar='0', bool bReversedIndex=false);
 
 /// \brief Finds the first numeric information in a string
 /// \param str String to be analyzed

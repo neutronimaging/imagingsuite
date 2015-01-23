@@ -71,7 +71,7 @@ void KIPLSHARED_EXPORT StripFileName(const std::string filestr,
 
 }
 
-int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar, const char cFillChar)
+int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar, const char cFillChar,bool bReversedIndex)
 {
 	string::size_type first=filename.find_first_of(cWildCardChar);
 	string::size_type last=filename.find_first_not_of(cWildCardChar,first);
@@ -79,13 +79,27 @@ int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::stri
 	if (last==string::npos)
 		last=filename.length();
 
-	ostringstream fnstr;
+    ostringstream fnstr, numstr;
 
 	fnstr<<filename.substr(0,first);
 
-		fnstr.width(last-first);
-	fnstr.fill(cFillChar);
-	fnstr<<num<<filename.substr(last);
+    numstr.width(last-first);
+    numstr.fill(cFillChar);
+    numstr<<num;
+    std::string idxstring;
+    if (bReversedIndex) {
+        std::string tmp=numstr.str();
+        std::string::reverse_iterator it;
+        idxstring.clear();
+        for (it=tmp.rbegin(); it!=tmp.rend(); it++) {
+            idxstring.push_back(*it);
+        }
+    }
+    else {
+        idxstring=numstr.str();
+    }
+
+    fnstr<<idxstring<<filename.substr(last);
 
 	fnstr.width(1);
 
