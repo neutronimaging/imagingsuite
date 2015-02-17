@@ -71,11 +71,12 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
         }
 
         sName=reinterpret_cast<const char *>(name);
-
-        logger(kipl::logging::Logger::LogError,sName);
-        if (sName!=ProjectName) {
+        msg.str(""); msg<<"Found "<<sName<<" expect "<<ProjectName;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        if (std::string(sName)!=ProjectName) {
             msg.str();
             msg<<"Unexpected project contents in parameter file ("<<sName<<"!="<<ProjectName<<")";
+            logger(kipl::logging::Logger::LogMessage,msg.str());
             throw ModuleException(msg.str(),__FILE__,__LINE__);
         }
         
@@ -166,6 +167,10 @@ void ConfigBase::ParseUserInformation(xmlTextReaderPtr reader)
                     UserInformation.sDate=reinterpret_cast<const char *>(value);
             }
 
+            if (sName=="version") {
+                if (value!=NULL)
+                    UserInformation.sVersion=reinterpret_cast<const char *>(value);
+            }
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -183,7 +188,9 @@ ConfigBase::cUserInformation::cUserInformation() :
 	sProjectNumber("P11001"),
 	sSample("Unknown item"),
     sComment("No comment"),
-    sDate(kipl::utilities::TimeStamp())
+    sDate(kipl::utilities::TimeStamp()),
+    sVersion("0")
+
 {
 }
 
@@ -193,7 +200,8 @@ ConfigBase::cUserInformation::cUserInformation(const cUserInformation &info) :
 	sProjectNumber(info.sProjectNumber),
 	sSample(info.sSample),
     sComment(info.sComment),
-    sDate(info.sDate)
+    sDate(info.sDate),
+    sVersion(info.sVersion)
 {
 }
 
@@ -205,6 +213,8 @@ ConfigBase::cUserInformation & ConfigBase::cUserInformation::operator = (const c
 	sSample        = info.sSample;
 	sComment       = info.sComment;
     sDate          = info.sDate;
+    sVersion       = info.sVersion;
+
 	return * this;
 }
 
@@ -220,6 +230,7 @@ std::string ConfigBase::cUserInformation::WriteXML(size_t indent)
 		str<<setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
 		str<<setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
         str<<setw(indent+4)  <<" "<<"<date>"<<sDate<<"</date>\n";
+        str<<setw(indent+4)  <<" "<<"<version>"<<sVersion<<"</version>\n";
 	str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
 
 	return str.str();
