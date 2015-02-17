@@ -56,6 +56,7 @@ public:
         std::string sSample;        ///< Short sample description
         std::string sComment;       ///< Optional comment
         std::string sDate;          ///< Processing date
+        std::string sVersion;       ///< Application version
 	};
 
     /// Main constructor used to initialize a new configuration set
