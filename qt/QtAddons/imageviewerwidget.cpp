@@ -234,7 +234,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
 
-    QPoint tooltipOffset(50,65);
+    QPoint tooltipOffset(0,0);
     if (m_PressedButton == Qt::RightButton) {
         float minlevel, maxlevel;
 
@@ -257,8 +257,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
         msg<<"W="<<fWindow<<", L="<<fLevel;
 
-   //     showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
-        showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
+        //showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
+        showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
     else {
@@ -272,7 +272,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
             msg<<m_ImagePainter.getValue(xpos,ypos)<<" @ ("<<xpos<<", "<<ypos<<")";
 
     //        showToolTip(event->pos()+tooltipOffset,QString::fromStdString(msg.str()));
-            showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
+            showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
+            //showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
         }
     }
 
@@ -323,16 +324,12 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
     QFont ttfont=this->font();
     ttfont.setPointSize(static_cast<int>(ttfont.pointSize()*0.9));
     QPalette color;
-    int setval = 0;
 
 #if QT_VERSION < 0x050000
     color.setColor( QPalette::Active,QPalette::QPalette::ToolTipBase,Qt::yellow);
 #else
 //    color.setColor(QPalette::Active,QPalette::QPalette::ToolTipBase,QColor::yellow());
 #endif
-//    qreal x = position.x()+this->pos().x()+5;
-//    qreal y = position.y()+this->pos().y()-15;
-//    QPoint ttpos (x, y);
 
     QPoint ttpos=position;
 
@@ -340,6 +337,7 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
     QToolTip::setFont(ttfont);
 
     QToolTip::showText(ttpos, message,this);
+
 }
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)
