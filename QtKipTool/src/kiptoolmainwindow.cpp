@@ -385,7 +385,7 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
 
 void KipToolMainWindow::on_actionNew_triggered()
 {
-    logger(kipl::logging::Logger::LogMessage,"New config");
+    logger(kipl::logging::Logger::LogMessage,"New config requested");
     KiplProcessConfig cfg;
     m_config = cfg;
     ui->imageviewer_original->clear_viewer();
@@ -393,17 +393,34 @@ void KipToolMainWindow::on_actionNew_triggered()
     ui->plotter_histogram->clearAllCurves();
     ui->plotter_plots->clearAllCurves();
     ui->imageviewer_difference->clear_viewer();
+    UpdateDialog();
 }
 
 void KipToolMainWindow::on_actionOpen_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"open config");
+
+    QString qfname;
+
+    qfname=QFileDialog::getOpenFileName(this,"Select configuration file to open",qfname,"*.xml");
+
+    if (!qfname.isEmpty()) {
+        m_sFileName = qfname;
+        LoadConfiguration(qfname);
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"The configuration name was empty, no file saved.");
+
+    }
+
 }
 
 
 void KipToolMainWindow::on_actionSave_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"save config");
+
+    UpdateConfig();
 
     if (m_sFileName == "noname.xml") {
         on_actionSave_as_triggered();
@@ -415,7 +432,7 @@ void KipToolMainWindow::on_actionSave_triggered()
 
 void KipToolMainWindow::on_actionSave_as_triggered()
 {
-    logger(kipl::logging::Logger::LogMessage,"save config as");
+    logger(kipl::logging::Logger::LogMessage,"Save config as");
 
     QString qfname=QDir::homePath()+"/"+m_sFileName;
 
@@ -424,7 +441,9 @@ void KipToolMainWindow::on_actionSave_as_triggered()
     if (!qfname.isEmpty()) {
         m_sFileName = qfname;
         SaveConfiguration(qfname);
-
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"The configuration name was empty, no file saved.");
     }
 
 }
@@ -436,6 +455,46 @@ void KipToolMainWindow::SaveConfiguration(QString qfname)
     std::ofstream cfgfile(fname.c_str());
 
     cfgfile<<m_config.WriteXML();
+}
+
+void  KipToolMainWindow::LoadConfiguration(QString qfname)
+{
+    std::string fname = qfname.toStdString();
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    QString sError;
+    bool bError=false;
+    try {
+        m_config.LoadConfigFile(fname,"kiplprocessing");
+    }
+    catch (ModuleException &e) {
+        sError=QString::fromStdString(e.what());
+        bError=true;
+    }
+    catch (kipl::base::KiplException &e) {
+        sError=QString::fromStdString(e.what());
+        bError=true;
+    }
+    catch (std::exception &e) {
+        sError=QString::fromStdString(e.what());
+        bError=true;
+    }
+    catch (...) {
+        sError="Unsupported exception was collected while reading configuration file.";
+        bError=true;
+    }
+
+    if (!bError)
+        UpdateDialog();
+    else {
+        QMessageBox msg(this);
+
+        msg.setText("Failed to open configuration file");
+        msg.setDetailedText(sError);
+        msg.addButton(QMessageBox::Ok);
+
+        msg.exec();
+    }
 }
 
 void KipToolMainWindow::on_actionQuit_triggered()

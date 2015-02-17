@@ -62,6 +62,7 @@ private:
     void UpdateHistogramView();
     void UpdatePlotView();
     void SaveConfiguration(QString qfname);
+    void LoadConfiguration(QString qfname);
 
     Ui::KipToolMainWindow *ui;
     KiplEngine *m_Engine;
