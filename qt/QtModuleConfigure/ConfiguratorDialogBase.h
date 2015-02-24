@@ -22,7 +22,7 @@
 
 
 #include "QtModuleConfigure_global.h"
-#include <QWidget>
+//#include <QWidget>
 #include <QDialog>
 #include <QFrame>
 #include <QDialogButtonBox>
