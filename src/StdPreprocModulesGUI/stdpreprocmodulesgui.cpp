@@ -1,10 +1,9 @@
 // StdPreprocModulesGUI.cpp : Defines the exported functions for the DLL application.
 //
 
-//#include "stdafx.h"
 #include "StdPreprocModulesGUI_global.h"
 #include "stdpreprocmodulesgui.h"
-#include <ConfiguratorDialogBase.h>
+//#include <ConfiguratorDialogBase.h>
 #include "SpotClean2Dlg.h"
 //#include "ISSfilterDlg.h"
 #include "FullLogNormDlg.h"
@@ -15,6 +14,8 @@
 #include "morphspotcleandlg.h"
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
+
+class ConfiguratorDialogBase;
 
 void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name)
 {
