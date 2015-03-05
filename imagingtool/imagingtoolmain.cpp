@@ -265,6 +265,14 @@ void ImagingToolMain::UpdateDialog()
     ui->f2t_check_sortgolden->setChecked(m_config.fileconv.bSortGoldenScan);
     ui->f2t_combo_goldenscan->setCurrentIndex(m_config.fileconv.nGoldenScanArc);
 
+    ui->f2t_spin_stride->setValue(m_config.fileconv.nStride);
+    ui->f2t_spin_raw_offset->setValue(m_config.fileconv.nReadOffset);
+    ui->f2t_spin_imgperfile->setValue(m_config.fileconv.nImagesPerFile);
+    ui->f2t_spin_raw_sizex->setValue(m_config.fileconv.nImgSizeX);
+    ui->f2t_spin_raw_sizey->setValue(m_config.fileconv.nImgSizeY);
+    ui->f2t_spin_imgidx->setValue(m_config.fileconv.nImageIndex);
+    ui->f2t_check_reverseidx->setChecked(m_config.fileconv.bReverseIdx);
+
     str.str("");
     std::set<size_t>::iterator it;
     for (it=m_config.fileconv.skip_list.begin(); it!=m_config.fileconv.skip_list.end(); it++)
@@ -319,6 +327,14 @@ void ImagingToolMain::UpdateConfig()
 
     m_config.fileconv.bSortGoldenScan = ui->f2t_check_sortgolden->checkState();
     m_config.fileconv.nGoldenScanArc = ui->f2t_combo_goldenscan->currentIndex();
+
+    m_config.fileconv.nStride = ui->f2t_spin_stride->value();
+    m_config.fileconv.nReadOffset = ui->f2t_spin_raw_offset->value();
+    m_config.fileconv.nImagesPerFile = ui->f2t_spin_imgperfile->value();
+    m_config.fileconv.nImgSizeX = ui->f2t_spin_raw_sizex->value();
+    m_config.fileconv.nImgSizeY = ui->f2t_spin_raw_sizey->value();
+    m_config.fileconv.nImageIndex = ui->f2t_spin_imgidx->value();
+    m_config.fileconv.bReverseIdx = ui->f2t_check_reverseidx->checkState();
 
     kipl::strings::String2Set(ui->f2t_edit_skiplist->text().toStdString(), m_config.fileconv.skip_list);
 
