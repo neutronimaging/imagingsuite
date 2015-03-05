@@ -93,7 +93,9 @@ protected:
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName)=0;
 
     virtual void ParseArgv(std::vector<std::string> &args);
+
     void EvalArg(std::string arg, std::string &group, std::string &var, std::string &value);
+
     /// Parse the User information config block.
     /// \param reader Reference to an xml reader struct for the opened configuration file.
 	void ParseUserInformation(xmlTextReaderPtr reader);
