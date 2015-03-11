@@ -45,8 +45,8 @@ unix:!symbian {
 
     unix:macx {
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /usr/local/include
-        QMAKE_LIBDIR += /usr/local/lib
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
         QMAKE_INFO_PLIST = Info.plist
         ICON = muhrec3.icns
     }

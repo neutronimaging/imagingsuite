@@ -19,6 +19,18 @@ HEADERS += ../../src/imagingmodules.h\
     ../../src/translateprojectionmodule.h \
     ../../src/ImagingModules_global.h
 
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+}
+
+unix:macx {
+    QMAKE_CXXFLAGS += -fPIC -O2
+    INCLUDEPATH += /opt/local/include
+    QMAKE_LIBDIR += /opt/local/lib
+}
+
 symbian {
     MMP_RULES += EXPORTUNFROZEN
     TARGET.UID3 = 0xE2A168C3

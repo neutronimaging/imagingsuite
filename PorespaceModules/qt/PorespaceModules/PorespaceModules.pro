@@ -10,11 +10,16 @@ TARGET = PorespaceModules
 TEMPLATE = lib
 
 unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
 }
 
+unix:macx {
+    QMAKE_CXXFLAGS += -fPIC -O2
+    INCLUDEPATH += /opt/local/include
+    QMAKE_LIBDIR += /opt/local/lib
+}
 
 DEFINES += PORESPACEMODULES_LIBRARY
 

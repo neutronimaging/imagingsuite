@@ -10,9 +10,15 @@ TARGET = PCAModules
 TEMPLATE = lib
 
 unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+}
+
+unix:macx {
+    QMAKE_CXXFLAGS += -fPIC -O2
+    INCLUDEPATH += /opt/local/include
+    QMAKE_LIBDIR += /opt/local/lib
 }
 
 
@@ -65,8 +71,8 @@ else:symbian: LIBS += -lkipl
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../../src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../src/libs/kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../..//kipl/trunk/kipl/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/release/ -lProcessFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/debug/ -lProcessFramework
@@ -74,5 +80,5 @@ else:symbian: LIBS += -lProcessFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../ProcessFramework/build-ProcessFramework-Qt5-Release/ -lProcessFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../ProcessFramework/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
 
-INCLUDEPATH += $$PWD/../../ProcessFramework/include
-DEPENDPATH += $$PWD/../../ProcessFramework/include
+INCLUDEPATH += $$PWD/../../../ProcessFramework/include
+DEPENDPATH += $$PWD/../../../ProcessFramework/include
