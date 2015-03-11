@@ -15,14 +15,15 @@ unix {
 
 
     unix:!macx {
-        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
     }
 
     unix:macx {
-        INCLUDEPATH += /usr/local/include
-        QMAKE_LIBDIR += /usr/local/lib
+        QMAKE_CXXFLAGS += -fPIC -O2
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
     }
 
 }
@@ -91,7 +92,8 @@ SOURCES += \
     ../src/morphology/skeleton.cpp \
     ../src/io/DirAnalyzer.cpp \
     ../src/math/linfit.cpp \
-    ../src/generators/spotgenerator.cpp
+    ../src/generators/spotgenerator.cpp \
+    ../src/io/analyzefileext.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -273,7 +275,8 @@ HEADERS +=\
     ../include/base/core/tprofile.hpp \
     ../include/generators/spotgenerator.h \
     ../include/io/io_generic.h \
-    ../include/io/core/io_generic.hpp
+    ../include/io/core/io_generic.hpp \
+    ../include/io/analyzefileext.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi

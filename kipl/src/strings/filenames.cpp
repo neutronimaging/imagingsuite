@@ -161,4 +161,18 @@ int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd=tr
 	return cnt;
 }
 
+std::string KIPLSHARED_EXPORT GetFileExtension(const std::string fname)
+{
+   std::string ext;
+
+   string::size_type pos=fname.find_last_of('.');
+   if (pos!=string::npos)
+       ext=fname.substr(pos);
+   else
+       ext.clear();
+
+   return ext;
+}
+
+
 }}}

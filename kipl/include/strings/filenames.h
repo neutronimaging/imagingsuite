@@ -56,6 +56,11 @@ int KIPLSHARED_EXPORT ExtractWildCard(const char *src, char *prefix, char *suffi
 /// \param bAddSlashAtEnd checks wether the last character is a slash and adds a slash if missing.
 int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd=true);
 
+/// \brief Get the file extension from a file name (the remaining string after a '.')
+///	\param filestr input string with the full filename
+///	\returns the file extension
+std::string KIPLSHARED_EXPORT GetFileExtension(const std::string filestr);
+
 }}}
 
 #endif
