@@ -10,7 +10,7 @@ TARGET = ModuleConfig
 TEMPLATE = lib
 unix {
 unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
     LIBS += -L/usr/lib -lxml2
@@ -18,8 +18,10 @@ unix:!macx {
 }
 
 unix:macx {
+    QMAKE_CXXFLAGS += -fPIC -O2
+    QMAKE_LIBDIR += /opt/local/lib
     LIBS += -L/opt/local/lib -lxml2
-    INCLUDEPATH += /opt/local/include/libxml2
+    INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
 }
 
 
