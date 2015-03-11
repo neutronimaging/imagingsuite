@@ -16,8 +16,11 @@
 #include <base/trotate.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
+#include <io/io_generic.h>
+#include <io/analyzefileext.h>
 #include <strings/filenames.h>
 #include <MorphSpotClean.h>
+
 
 Fits2Tif::Fits2Tif() : logger("Fits2Tif")
 {
@@ -34,6 +37,8 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 	std::ostringstream msg;
 	std::list<std::string> filelist;
 	BuildFileList(config,filelist);
+    std::string fm=config.sSourceMask;
+    kipl::io::eExtensionTypes exttype=kipl::io::GetFileExtensionType(fm);
 
 	if (filelist.empty()) {
 		logger(kipl::logging::Logger::LogWarning,"Empty file list");
@@ -44,6 +49,7 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 
 	kipl::base::TImage<float,2> src,dst;
     kipl::base::TImage<unsigned short,2> simg;
+    std::list<kipl::base::TImage<unsigned short,2> > imglist;
 
 	std::string dstname,dstmask,ext;
 	kipl::strings::filenames::CheckPathSlashes(config.sDestPath,true);
@@ -55,8 +61,27 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 	std::list<std::string>::iterator it;
 	int i=config.nFirstDest;
 	for (it=filelist.begin(); it!=filelist.end(); it++, i++) {
+        imglist.clear();
         try {
-            kipl::io::ReadFITS(simg,it->c_str(),crop);
+            switch (exttype) {
+            case kipl::io::ExtensionDMP :
+            case kipl::io::ExtensionDAT :
+
+            case kipl::io::ExtensionRAW : kipl::io::ReadGeneric(imglist,it->c_str(),
+                                                                config.nImgSizeX,config.nImgSizeY,
+                                                                config.nReadOffset,config.nStride,
+                                                                config.nImagesPerFile,
+                                                                config.datatype,config.endian,crop);
+                break;
+            case kipl::io::ExtensionFITS: kipl::io::ReadFITS(simg,it->c_str(),crop); imglist.push_back(simg); break;
+            case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(simg,it->c_str(),crop); imglist.push_back(simg); break;
+            case kipl::io::ExtensionTXT :
+            case kipl::io::ExtensionXML :
+            case kipl::io::ExtensionPNG :
+            case kipl::io::ExtensionMAT :
+            case kipl::io::ExtensionHDF :
+            default : throw kipl::base::KiplException("The chosen file type is not implemented",__FILE__,__LINE__);
+            }
         }
         catch (kipl::base::KiplException &e) {
             msg.str("");

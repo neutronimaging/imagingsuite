@@ -32,7 +32,7 @@ unix:!symbian {
         INCLUDEPATH += /usr/include/libxml2
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -ltiff -lxml2 -lcfitsio
 
 }
 
