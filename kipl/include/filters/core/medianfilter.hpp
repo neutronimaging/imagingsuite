@@ -14,8 +14,8 @@ namespace kipl { namespace filters {
 template <class T, size_t nDims>
 TMedianFilter<T,nDims>::TMedianFilter(size_t const * const Dims) : kipl::filters::TFilterBase<T,nDims>(Dims)
 {
-	if (nDims!=2)
-		throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
+//	if (nDims!=2)
+//		throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
 	bilevel=false; 
 	quick_median=true;
 	
@@ -52,8 +52,10 @@ int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src
 	using namespace std;
     int edgeinfo= (pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) * 2) +
             ((pos[1]<nHalfKernel[1]) * 4)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) * 8) ;
-//	int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
-//	int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
+
+
+    int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
+    int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
 	int startY = 1 < nDims ? -nHalfKernel[1] : 1 ;
 	int endY   = 1 < nDims ? this->nKernelDims[1]-nHalfKernel[1] : 1 ;
 	int startX = -nHalfKernel[0];
@@ -62,7 +64,7 @@ int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src
 	T * pImg=src.GetLinePtr(pos[1])+pos[0];
 
 	memset(data,0,this->nKernelDims[0]*this->nKernelDims[1]*sizeof(T));
-//	const size_t paceZ  = 2 < nDims ? src.Size(1)*src.Size(0) : 0;
+    const size_t paceZ  = 2 < nDims ? src.Size(1)*src.Size(0) : 0;
 
 	switch (edgeinfo) {
 	case 0: break;
