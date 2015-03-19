@@ -19,6 +19,8 @@ unix:!macx {
 unix:macx {
     QMAKE_CXXFLAGS += -O2 -fPIC
     INCLUDEPATH += /opt/local/include/libxml2
+    INCLUDEPATH += /opt/local/include
+    QMAKE_LIBDIR += /opt/local/lib
 }
 
 
