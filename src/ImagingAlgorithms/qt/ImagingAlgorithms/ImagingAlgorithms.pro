@@ -23,7 +23,7 @@ unix {
     {
         INCLUDEPATH += /usr/local/include
         INCLUDEPATH += /opt/local/include/libxml2
-        LIBPATH += /usr/local/lib
+        QMAKE_LIBDIR += /opt/local/lib
         LIBS += -L/opt/local/lib/ -lxml2
     }
 
