@@ -9,6 +9,7 @@
 #define FITS2TIF_H_
 
 #include <logging/logger.h>
+#include <base/timage.h>
 #include "ImagingToolConfig.h"
 
 
@@ -18,11 +19,12 @@ public:
 	Fits2Tif();
 	virtual ~Fits2Tif();
     int process(ImagingToolConfig::FileConversionConfig &config);
+    int GetImage(std::list<kipl::base::TImage<float,2> > &imglist, std::string fname, ImagingToolConfig::FileConversionConfig &config);
 
 	float progress() {return 0.0f;}
 protected:
     std::string BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist,bool bReversedIndex=false);
-
+    int PrepareImage(kipl::base::TImage<float,2> &img);
 };
 
 #endif /* FITS2TIF_H_ */

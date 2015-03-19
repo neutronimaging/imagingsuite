@@ -37,19 +37,14 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 	std::ostringstream msg;
 	std::list<std::string> filelist;
 	BuildFileList(config,filelist);
-    std::string fm=config.sSourceMask;
-    kipl::io::eExtensionTypes exttype=kipl::io::GetFileExtensionType(fm);
+
 
 	if (filelist.empty()) {
 		logger(kipl::logging::Logger::LogWarning,"Empty file list");
 		return -1;
 	}
 
-    size_t *crop=config.bCrop ? config.nCrop : NULL;
-
-	kipl::base::TImage<float,2> src,dst;
-    kipl::base::TImage<unsigned short,2> simg;
-    std::list<kipl::base::TImage<unsigned short,2> > imglist;
+    std::list<kipl::base::TImage<float,2> > imglist;
 
 	std::string dstname,dstmask,ext;
 	kipl::strings::filenames::CheckPathSlashes(config.sDestPath,true);
@@ -57,49 +52,81 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
 
     logger(kipl::logging::Logger::LogMessage,"Converting files to tiff");
 
-	kipl::base::TRotate<float> rotate;
 	std::list<std::string>::iterator it;
 	int i=config.nFirstDest;
-	for (it=filelist.begin(); it!=filelist.end(); it++, i++) {
+    for (it=filelist.begin(); it!=filelist.end(); it++) {
         imglist.clear();
-        try {
-            switch (exttype) {
-            case kipl::io::ExtensionDMP :
-            case kipl::io::ExtensionDAT :
 
-            case kipl::io::ExtensionRAW : kipl::io::ReadGeneric(imglist,it->c_str(),
+        GetImage(imglist,*it,config);
+        std::list<kipl::base::TImage<float,2> >::iterator imgit;
+
+        for (imgit=imglist.begin(); imgit!=imglist.end(); imgit++,i++) {
+            kipl::strings::filenames::MakeFileName(dstmask,i,dstname,ext,'#','0');
+            msg.str("");
+            msg<<"Converting "<<*it<<" -> "<<dstname;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+            kipl::io::WriteTIFF(*imgit,dstname.c_str(),0.0f,65535.0f);
+        }
+	}
+
+	return 0;
+}
+
+int Fits2Tif::GetImage(std::list<kipl::base::TImage<float,2> > &imglist, std::string fname, ImagingToolConfig::FileConversionConfig &config)
+{
+    imglist.clear();
+    std::list<kipl::base::TImage<unsigned short,2> > simglist;
+    std::ostringstream msg;
+    std::string fm=config.sSourceMask;
+    kipl::io::eExtensionTypes exttype=kipl::io::GetFileExtensionType(fm);
+    kipl::base::TImage<unsigned short> simg;
+    kipl::base::TRotate<float> rotate;
+    size_t *crop=config.bCrop ? config.nCrop : NULL;
+
+    try {
+        switch (exttype) {
+        case kipl::io::ExtensionDMP :
+        case kipl::io::ExtensionDAT :
+
+        case kipl::io::ExtensionRAW : kipl::io::ReadGeneric(simglist,fname.c_str(),
                                                                 config.nImgSizeX,config.nImgSizeY,
                                                                 config.nReadOffset,config.nStride,
                                                                 config.nImagesPerFile,
                                                                 config.datatype,config.endian,crop);
                 break;
-            case kipl::io::ExtensionFITS: kipl::io::ReadFITS(simg,it->c_str(),crop); imglist.push_back(simg); break;
-            case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(simg,it->c_str(),crop); imglist.push_back(simg); break;
-            case kipl::io::ExtensionTXT :
-            case kipl::io::ExtensionXML :
-            case kipl::io::ExtensionPNG :
-            case kipl::io::ExtensionMAT :
-            case kipl::io::ExtensionHDF :
-            default : throw kipl::base::KiplException("The chosen file type is not implemented",__FILE__,__LINE__);
-            }
+        case kipl::io::ExtensionFITS: kipl::io::ReadFITS(simg,fname.c_str(),crop); simglist.push_back(simg); break;
+        case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(simg,fname.c_str(),crop); simglist.push_back(simg); break;
+        case kipl::io::ExtensionTXT :
+        case kipl::io::ExtensionXML :
+        case kipl::io::ExtensionPNG :
+        case kipl::io::ExtensionMAT :
+        case kipl::io::ExtensionHDF :
+        default : throw kipl::base::KiplException("The chosen file type is not implemented",__FILE__,__LINE__);
         }
-        catch (kipl::base::KiplException &e) {
-            msg.str("");
-            msg<<"At line "<<__LINE__<<" Failed to open :"<<*it<<"\n"<<e.what();
-            logger(kipl::logging::Logger::LogError,msg.str());
-            return -1;
-        }
-        catch (std::exception &e) {
-            msg.str("");
-            msg<<"Failed to open :"<<*it<<"\n"<<e.what();
-            logger(kipl::logging::Logger::LogError,msg.str());
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"At line "<<__LINE__<<" Failed to open :"<<fname<<"\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Failed to open :"<<fname<<"\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
 
-            return -1;
-        }
+        return -1;
+    }
 
-        if (it==filelist.begin())
-            src.Resize(simg.Dims());
+    msg.str("");
+    msg<<"GetImage got "<<simglist.size()<<" images from "<<fname;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+    kipl::base::TImage<float,2> src, dst, dst2;
 
+    std::list<kipl::base::TImage<unsigned short,2> >::iterator it;
+
+    for (it=simglist.begin(); it!=simglist.end(); it++) {
+        simg=*it;
         if (config.bReplaceZeros==true) {
             short *pSImg=reinterpret_cast<short *>(simg.GetDataPtr());
             float *pImg=src.GetDataPtr();
@@ -113,34 +140,32 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
             for (size_t i=0; i<simg.Size(); i++) {
                 pImg[i]=static_cast<float>(pSImg[i]);
             }
-
         }
 
-        kipl::base::TImage<float,2> dst2;
         //dst.FreeImage();
-		switch (config.flip) {
-		case kipl::base::ImageFlipNone       :
-			dst=src; break;
-		case kipl::base::ImageFlipHorizontal :
-			dst=rotate.MirrorHorizontal(src); break;
-		case kipl::base::ImageFlipVertical   :
-			dst=rotate.MirrorVertical(src); break;
-		case kipl::base::ImageFlipHorizontalVertical :
+        switch (config.flip) {
+        case kipl::base::ImageFlipNone       :
+            dst=src; break;
+        case kipl::base::ImageFlipHorizontal :
+            dst=rotate.MirrorHorizontal(src); break;
+        case kipl::base::ImageFlipVertical   :
+            dst=rotate.MirrorVertical(src); break;
+        case kipl::base::ImageFlipHorizontalVertical :
             dst2=rotate.MirrorVertical(src);
             dst=rotate.MirrorHorizontal(dst2); break;
-		}
+        }
 
-		switch (config.rotate) {
+        switch (config.rotate) {
         case kipl::base::ImageRotateNone :
             dst2=dst;
             break;
-		case kipl::base::ImageRotate90   :
+        case kipl::base::ImageRotate90   :
             dst2=rotate.Rotate90(dst); break;
-		case kipl::base::ImageRotate180  :
+        case kipl::base::ImageRotate180  :
             dst2=rotate.Rotate180(dst); break;
-		case kipl::base::ImageRotate270  :
+        case kipl::base::ImageRotate270  :
             dst2=rotate.Rotate270(dst); break;
-		}
+        }
 
         if (config.bUseSpotClean) {
             ImagingAlgorithms::MorphSpotClean cleaner;
@@ -148,15 +173,10 @@ int Fits2Tif::process(ImagingToolConfig::FileConversionConfig &config)
             cleaner.setCleanMethod(ImagingAlgorithms::MorphCleanPeaks);
             cleaner.Process(dst2,config.fSpotThreshold);
         }
+        imglist.push_back(dst2);
+    }
 
-		kipl::strings::filenames::MakeFileName(dstmask,i,dstname,ext,'#','0');
-		msg.str("");
-		msg<<"Converting "<<*it<<" -> "<<dstname;
-		logger(kipl::logging::Logger::LogMessage,msg.str());
-        kipl::io::WriteTIFF(dst2,dstname.c_str(),0.0f, 65535.0f );
-	}
-
-	return 0;
+    return 0;
 }
 
 std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &config, std::list<std::string> &filelist, bool bReversedIndex)

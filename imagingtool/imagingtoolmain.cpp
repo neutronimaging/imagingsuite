@@ -91,44 +91,25 @@ void ImagingToolMain::f2t_Preview()
                                                fname,
                                                ext,
                                                '#',
-                                               '0',false);
+                                               '0',m_config.fileconv.bReverseIdx);
 
         fname = m_config.fileconv.sSourcePath+fname;
+        Fits2Tif f2t;
 
         if (QFile::exists(QString::fromStdString(fname))) {
             kipl::base::TImage<float> img;
-            if (m_config.fileconv.bReplaceZeros==true) {
-                kipl::base::TImage<short,2> simg;
-                kipl::io::ReadFITS(simg,fname.c_str(),NULL);
-                img.Resize(simg.Dims());
-                unsigned short *pSImg=reinterpret_cast<unsigned short *>(simg.GetDataPtr());
-                float *pImg=img.GetDataPtr();
-                for (size_t i=0; i<simg.Size(); i++) {
-                    pImg[i]=static_cast<float>(pSImg[i]);
-                }
-            }
-            else {
-                switch (extensions[ext]) {
-                    case 0 : kipl::io::ReadFITS(img,fname.c_str(),m_config.fileconv.bCrop ? m_config.fileconv.nCrop : NULL); break;
-                case 1 : kipl::io::ReadGeneric(img,fname.c_str(),
-                                               m_config.fileconv.nImgSizeX,
-                                               m_config.fileconv.nImgSizeY,
-                                               m_config.fileconv.nReadOffset,
-                                               m_config.fileconv.nStride,
-                                               m_config.fileconv.nImagesPerFile,
-                                               m_config.fileconv.datatype,
-                                               m_config.fileconv.endian,
-                                               ui->f2t_spin_imgidx->value(),
-                                               m_config.fileconv.bCrop ? m_config.fileconv.nCrop : NULL);
-                }
-            }
+            std::list<kipl::base::TImage<float,2> > imglist;
+            f2t.GetImage(imglist,fname,m_config.fileconv);
 
-            msg<<img<<std::endl;
+            msg<<imglist.front()<<std::endl;
             logger(kipl::logging::Logger::LogMessage,msg.str());
+            img=imglist.front();
             ui->f2t_imageviewer->set_image(img.GetDataPtr(),img.Dims());
         }
         else {
-            logger(kipl::logging::Logger::LogWarning,"File does not exist");
+            msg.str("");
+            msg<<"Could not open file "<<fname;
+            logger(kipl::logging::Logger::LogWarning,msg.str());
         }
     }
     catch (kipl::base::KiplException &e) {
@@ -136,6 +117,11 @@ void ImagingToolMain::f2t_Preview()
 
         logger(kipl::logging::Logger::LogError, e.what());
     }
+    catch (...) {
+        logger(kipl::logging::Logger::LogError, "An error occured during reading showing preview");
+
+    }
+
 
 }
 
