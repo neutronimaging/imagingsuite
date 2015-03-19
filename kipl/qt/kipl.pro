@@ -93,7 +93,8 @@ SOURCES += \
     ../src/io/DirAnalyzer.cpp \
     ../src/math/linfit.cpp \
     ../src/generators/spotgenerator.cpp \
-    ../src/io/analyzefileext.cpp
+    ../src/io/analyzefileext.cpp \
+    ../src/io/io_generic.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
