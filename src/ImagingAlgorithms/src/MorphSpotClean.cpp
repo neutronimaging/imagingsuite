@@ -12,67 +12,76 @@ MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_eConnectivity(kipl::morphology::conn8),
-    m_eMorphClean(MorphCleanBoth),
+    m_eMorphDetect(MorphDetectBoth),
+    m_eMorphClean(MorphCleanReplace),
     m_nEdgeSmoothLength(5),
     m_nMaxArea(100),
     m_fMinLevel(-0.1f),
     m_fMaxLevel(12.0f),
-    m_fThreshold(0.1f)
+    m_fThreshold(0.1f),
+    m_fSigma(0.001f),
+    m_LUT(1<<15,0.1f,0.0075f)
 {
 
 }
 
 
-void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th)
+void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float sigma)
 {
     m_fThreshold = th;
+    m_fSigma = sigma;
 
-    ProcessReplace(img);
+    switch (m_eMorphClean) {
+        case MorphCleanReplace  : ProcessReplace(img); break;
+        case MorphCleanFill     : ProcessFill(img); break;
+    }
+
+}
+
+void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks)
+{
+    PadEdges(img,padded);
+
+    switch (m_eMorphDetect) {
+    case MorphDetectHoles :
+        noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
+        break;
+    case MorphDetectPeaks :
+        nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
+        break;
+
+    case MorphDetectBoth :
+        noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
+        nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
+        break;
+    }
 }
 
 void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
 {
-    kipl::base::TImage<float,2> padded,noholes,nopeaks;
+    kipl::base::TImage<float,2> padded,noholes, nopeaks;
 
-    PadEdges(img,padded);
-
+    FillOutliers(img,padded,noholes,nopeaks);
     size_t N=padded.Size();
+
     float *pImg=padded.GetDataPtr();
-
-    float *pHoles=NULL;
-    float *pPeaks=NULL;
-
-    switch (m_eMorphClean) {
-    case MorphCleanHoles :
-        noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
-        pHoles=noholes.GetDataPtr();
-        break;
-    case MorphCleanPeaks :
-        nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
-        break;
-
-    case MorphCleanBoth :
-        noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
-        nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
-        pHoles=noholes.GetDataPtr();
-        pPeaks=nopeaks.GetDataPtr();
-        break;
-    }
+    float *pHoles=noholes.GetDataPtr();
+    float *pPeaks=nopeaks.GetDataPtr();
 
     for (size_t i=0; i<N; i++) {
         float val=pImg[i];
-        switch (m_eMorphClean) {
-        case MorphCleanHoles :
+        switch (m_eMorphDetect) {
+        case MorphDetectHoles :
             if (m_fThreshold<abs(val-pHoles[i]))
                 pImg[i]=pHoles[i];
             break;
 
-        case MorphCleanPeaks :
+        case MorphDetectPeaks :
             if (m_fThreshold<abs(pPeaks[i]-val))
                 pImg[i]=pPeaks[i];
             break;
 
-        case MorphCleanBoth :
+        case MorphDetectBoth :
             if (m_fThreshold<abs(val-pHoles[i]))
                 pImg[i]=pHoles[i];
             if (m_fThreshold<abs(pPeaks[i]-val))
@@ -87,10 +96,41 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
 void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
 {
     kipl::base::TImage<float,2> res;
+    kipl::base::TImage<float,2> padded,noholes, nopeaks;
+
+    FillOutliers(img,padded,noholes,nopeaks);
+    size_t N=padded.Size();
+    res=padded; res.Clone();
+
+    float *pImg=padded.GetDataPtr();
+    float *pRes=res.GetDataPtr();
+    float *pHoles=noholes.GetDataPtr();
+    float *pPeaks=nopeaks.GetDataPtr();
 
     kipl::containers::ArrayBuffer<PixelInfo> spots(img.Size());
+    float diff=0.0f;
+    for (size_t i=0; i<N; i++) {
+        float val=pImg[i];
+        switch (m_eMorphDetect) {
+        case MorphDetectHoles :
+            diff=abs(val-pHoles[i]);
+            break;
 
-    res=DetectSpots(img,&spots);
+        case MorphDetectPeaks :
+            diff=abs(val-pPeaks[i]);
+            break;
+
+        case MorphDetectBoth :
+            diff=max(abs(val-pHoles[i]),abs(val-pPeaks[i]));
+            break;
+        }
+
+        if (m_fThreshold<diff) {
+            spots.push_back(PixelInfo(i,val,kipl::math::Simoid(diff,m_fThreshold,m_fSigma));
+            pRes[i]=mark;
+        }
+    }
+
     img=CleanByArray(res,&spots);
 
 }
@@ -103,8 +143,9 @@ void MorphSpotClean::setConnectivity(kipl::morphology::MorphConnect conn)
     m_eConnectivity = conn;
 }
 
-void MorphSpotClean::setCleanMethod(eMorphCleanMethod mcm)
+void MorphSpotClean::setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm)
 {
+    m_eMorphDetect =mdm;
     m_eMorphClean = mcm;
 }
 
@@ -173,10 +214,10 @@ void MorphSpotClean::UnpadEdges(kipl::base::TImage<float,2> &padded, kipl::base:
 kipl::base::TImage<float,2> MorphSpotClean::DetectionImage(kipl::base::TImage<float,2> img)
 {
     kipl::base::TImage<float,2> det_img;
-    switch (m_eMorphClean) {
-    case MorphCleanHoles    : det_img = DetectHoles(img);  break;
-    case MorphCleanPeaks    : det_img = DetectPeaks(img);  break;
-    case MorphCleanBoth     : det_img = DetectBoth(img);   break;
+    switch (m_eMorphDetect) {
+    case MorphDetectHoles    : det_img = DetectHoles(img);  break;
+    case MorphDetectPeaks    : det_img = DetectPeaks(img);  break;
+    case MorphDetectBoth     : det_img = DetectBoth(img);   break;
     };
 
     return det_img;
@@ -436,9 +477,8 @@ std::string enum2string(ImagingAlgorithms::eMorphCleanMethod mc)
 {
 
     switch (mc) {
-    case ImagingAlgorithms::MorphCleanHoles : return "morphcleanholes"; break;
-    case ImagingAlgorithms::MorphCleanPeaks : return "morphcleanpeaks"; break;
-    case ImagingAlgorithms::MorphCleanBoth  : return "morphcleanboth"; break;
+    case ImagingAlgorithms::MorphCleanReplace : return "morphcleanreplace"; break;
+    case ImagingAlgorithms::MorphCleanFill : return "morphcleanfill"; break;
     default: throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
     }
 
@@ -454,8 +494,36 @@ std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphCleanMethod 
 
 void string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc)
 {
-    if (str=="morphcleanholes") mc=ImagingAlgorithms::MorphCleanHoles;
-    else if (str=="morphcleanpeaks") mc=ImagingAlgorithms::MorphCleanPeaks;
-    else if (str=="morphcleanboth") mc=ImagingAlgorithms::MorphCleanBoth;
+    if (str=="morphcleanreplace") mc=ImagingAlgorithms::MorphCleanReplace;
+    else if (str=="morphcleanfill") mc=ImagingAlgorithms::MorphCleanFill;
     else throw ImagingException("String could not be converted to eMorphCleanMethod",__FILE__,__LINE__);
+}
+
+
+std::string enum2string(ImagingAlgorithms::eMorphDetectionMethod mc)
+{
+
+    switch (mc) {
+    case ImagingAlgorithms::MorphDetectHoles : return "morphcleanholes"; break;
+    case ImagingAlgorithms::MorphDetectPeaks : return "morphcleanpeaks"; break;
+    case ImagingAlgorithms::MorphDetectBoth  : return "morphcleanboth"; break;
+    default: throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
+    }
+
+    return "bad value";
+}
+
+std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphDetectionMethod mc)
+{
+    s<<enum2string(mc);
+
+    return s;
+}
+
+void string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &mc)
+{
+    if (str=="morphdetectholes") mc=ImagingAlgorithms::MorphDetectHoles;
+    else if (str=="morphdetectpeaks") mc=ImagingAlgorithms::MorphDetectPeaks;
+    else if (str=="morphdetectboth") mc=ImagingAlgorithms::MorphDetectBoth;
+    else throw ImagingException("String could not be converted to eMorphDetectMethod",__FILE__,__LINE__);
 }

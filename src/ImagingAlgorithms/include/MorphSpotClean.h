@@ -7,6 +7,7 @@
 #include <morphology/morphology.h>
 #include <logging/logger.h>
 #include <containers/ArrayBuffer.h>
+#include <math/LUTCollection.h>
 
 #include <string>
 #include <iostream>
@@ -16,10 +17,15 @@
 
 namespace ImagingAlgorithms {
 
+enum eMorphDetectionMethod {
+    MorphDetectHoles = 0,
+    MorphDetectPeaks,
+    MorphDetectBoth
+};
+
 enum eMorphCleanMethod {
-    MorphCleanHoles = 0,
-    MorphCleanPeaks,
-    MorphCleanBoth
+    MorphCleanReplace =0,
+    MorphCleanFill
 };
 
 class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
@@ -31,12 +37,13 @@ public:
     void Process(kipl::base::TImage<float,2> &img, float th);
 
     void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
-    void setCleanMethod(eMorphCleanMethod mcm);
+    void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     void setLimits(float fMin, float fMax, int nMaxArea);
     void setEdgeConditioning(int nSmoothLenght);
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 
 protected:
+    void FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
     void ProcessReplace(kipl::base::TImage<float,2> &img);
     void ProcessFill(kipl::base::TImage<float,2> &img);
 
@@ -65,11 +72,14 @@ protected:
 
     kipl::morphology::MorphConnect m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
+    eMorphDetectionMethod          m_eMorphDetect;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
     float m_fMinLevel;
     float m_fMaxLevel;
     float m_fThreshold;
+    float m_fSigma;
+    kipl::math::SigmoidLUT m_LUT;
 
     kipl::base::TImage<float,2> mask;
     int sx;
