@@ -16,7 +16,7 @@ public:
     std::string m_sExt;
 };
 
-class Q_DECL_EXPORT DirAnalyzer
+class KIPLSHARED_EXPORT DirAnalyzer
 {
 public:
     DirAnalyzer();

@@ -1,7 +1,9 @@
 //#include <dirent.h>
 #include <sstream>
 #include <iostream>
+#include <stddef.h>
 #include <string>
+#include <cstdlib>
 #include "../../include/base/KiplException.h"
 #include "../../include/io/DirAnalyzer.h"
 
