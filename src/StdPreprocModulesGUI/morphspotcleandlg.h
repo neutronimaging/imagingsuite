@@ -42,6 +42,7 @@ private:
     MorphSpotCleanModule m_Cleaner;
     kipl::base::TImage<float,3> m_Projections;
     kipl::morphology::MorphConnect m_eConnectivity;
+    ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     float m_fThreshold;
     int   m_nEdgeSmoothLength;

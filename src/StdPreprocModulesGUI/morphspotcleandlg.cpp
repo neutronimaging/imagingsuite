@@ -11,7 +11,8 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),
     ui(new Ui::MorphSpotCleanDlg),
     m_eConnectivity(kipl::morphology::conn8),
-    m_eCleanMethod(ImagingAlgorithms::MorphCleanBoth),
+    m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
+    m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold(0.05f)
 {
     ui->setupUi(this);
