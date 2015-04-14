@@ -4,6 +4,7 @@
 #include <morphology/label.h>
 #include "../include/ImagingException.h"
 #include <math/median.h>
+#include <math/mathfunctions.h>
 
 
 namespace ImagingAlgorithms {
@@ -126,7 +127,7 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
         }
 
         if (m_fThreshold<diff) {
-            spots.push_back(PixelInfo(i,val,kipl::math::Simoid(diff,m_fThreshold,m_fSigma));
+            spots.push_back(PixelInfo(i,val,kipl::math::Sigmoid(diff,m_fThreshold,m_fSigma)));
             pRes[i]=mark;
         }
     }

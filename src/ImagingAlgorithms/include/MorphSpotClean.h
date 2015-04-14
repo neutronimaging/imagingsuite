@@ -34,7 +34,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
     const float mark;
 public:
     MorphSpotClean();
-    void Process(kipl::base::TImage<float,2> &img, float th);
+    void Process(kipl::base::TImage<float,2> &img, float th, float sigma);
 
     void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
