@@ -93,11 +93,11 @@ bool NodeLocker::Initialize(std::string licfname, std::string key,  std::string 
 		licfile.getline(linestr,512);
 		line=linestr;
 
-        size_t start=line.find('<');
-		size_t end=line.find('>');
+        std::string::size_type start= line.find('<');
+        std::string::size_type end= line.find('>');
 		item=line.substr(start+1,end-start-1);
 		value=line.substr(end+1);
-		value=value.substr(0,value.find('<'));
+        value=value.substr(0,value.find('<'));
 
 		if (item=="user")
 			name=value;

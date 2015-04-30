@@ -8,24 +8,23 @@ QT       -= gui
 
 TARGET = kipl
 TEMPLATE = lib
+#CONFIG = c++11
 
 unix {
     INCLUDEPATH += "../../../../external/src/linalg"
-    QMAKE_CXXFLAGS += -fPIC -O2
-
+    QMAKE_CXXFLAGS += -fPIC -O2 #-std=c++11
+    #QMAKE_LFLAGS +=  -stdlib=libc++
 
     unix:!macx {
-        QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
+        QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
     }
 
     unix:macx {
-        QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
-
 }
 
 win32 {
@@ -36,6 +35,11 @@ win32 {
     QMAKE_LIBDIR += ../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
+
+win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 
 DEFINES += KIPL_LIBRARY
 
@@ -277,13 +281,11 @@ HEADERS +=\
     ../include/generators/spotgenerator.h \
     ../include/io/io_generic.h \
     ../include/io/core/io_generic.hpp \
-    ../include/io/analyzefileext.h
+    ../include/io/analyzefileext.h \
+    ../include/generators/core/noiseimage.hpp
 
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

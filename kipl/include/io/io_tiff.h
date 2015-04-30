@@ -353,14 +353,14 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 	// We need to set some values for basic tags before we can add any data
 	TIFFGetField(image, TIFFTAG_IMAGEWIDTH,&dimx);
 	TIFFGetField(image, TIFFTAG_IMAGELENGTH, &dimy);
-	int adjcrop[4]={min(static_cast<size_t>(dimx),crop[0]),
-				    min(static_cast<size_t>(dimy),crop[1]),
-				    min(static_cast<size_t>(dimx),crop[2]),
-				    min(static_cast<size_t>(dimy),crop[3])};
+    int adjcrop[4]={static_cast<int>(min(static_cast<size_t>(dimx),crop[0])),
+                    static_cast<int>(min(static_cast<size_t>(dimy),crop[1])),
+                    static_cast<int>(min(static_cast<size_t>(dimx),crop[2])),
+                    static_cast<int>(min(static_cast<size_t>(dimy),crop[3]))};
 	if ((adjcrop[2]-adjcrop[0])==0) kipl::base::KiplException("Failed to crop image in X",__FILE__,__LINE__);
 	if ((adjcrop[3]-adjcrop[1])==0) kipl::base::KiplException("Failed to crop image in Y",__FILE__,__LINE__);
 	
-	size_t imgdims[2]={adjcrop[2]-adjcrop[0],adjcrop[3]-adjcrop[1]};
+    size_t imgdims[2]={static_cast<size_t>(adjcrop[2]-adjcrop[0]),static_cast<size_t>(adjcrop[3]-adjcrop[1])};
 
 	bufferSize = TIFFScanlineSize(image);
 	try {

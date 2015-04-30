@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-06-02T22:05:38
+# Project created by QtCreator 2015-04-12T15:42:45
 #
 #-------------------------------------------------
 
@@ -8,20 +8,18 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = tst_tdiranalysistest
+TARGET = tst_tnoiseimagetest
 CONFIG   += console
+#CONFIG   += c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-win32 {
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    LIBPATH += ../../../../external/lib64
-    QMAKE_CXXFLAGS += /openmp /O2
-}
+QMAKE_CXXFLAGS += -O2
 
-SOURCES += tst_tdiranalysistest.cpp
+SOURCES += tst_tnoiseimagetest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/build-kipl-Qt5-Release/debug/ -lkipl

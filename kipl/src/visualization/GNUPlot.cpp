@@ -260,7 +260,7 @@ string GNUPlot::OpenBinaryPlotFile(ofstream &outfile)
 
 	if (outfile.bad())
 	{
-		cerr << "Cannot create temorary file" << name << endl;
+        std::cerr << "Cannot create temorary file" << name.str() << std::endl;
 		return string("");
 	}
 

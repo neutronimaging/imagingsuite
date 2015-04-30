@@ -53,7 +53,7 @@ std::string Byte2Hex(unsigned char val)
 
 int VersionNumber(std::string vstr)
 {
-	size_t pos=vstr.find_first_of("0123456789");
+    std::string::size_type pos=vstr.find_first_of("0123456789");
 
 	int ver=-1;
 	if (pos!=std::string::npos) {

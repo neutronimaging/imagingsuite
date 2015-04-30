@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include "../kipl_global.h"
+#include <cstddef>
 #ifdef _OPENMP
 #include <omp.h>
 #endif

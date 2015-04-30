@@ -436,7 +436,7 @@ namespace core {
 		//fwrite(dummy,1,2,of);
 
 		// set the flags
-		char flags[]={type,0,0,0}; // real values, nonglobal, nonlogical, single precision
+        char flags[]={static_cast<char>(type),0,0,0}; // real values, nonglobal, nonlogical, single precision
 		int *iflag;
 		iflag=(int *) flags;
 		fwrite(iflag,sizeof(int),1,of);
@@ -720,7 +720,7 @@ namespace core {
 		//fwrite(dummy,1,2,of);
 
 		// set the flags
-		char flags[]={type,0,0,0}; // real values, nonglobal, nonlogical, single precision
+        char flags[]={static_cast<char>(type),0,0,0}; // real values, nonglobal, nonlogical, single precision
 		int *iflag;
 		iflag=(int *) flags;
 		fwrite(iflag,sizeof(int),1,*of);

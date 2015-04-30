@@ -314,7 +314,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 		CMetricBase::initialize(d);
 		float w[3]={0.0f,1.0f,1.0f};
 		memcpy(w_fwd,w,size*sizeof(float));
-		int index[3]={0,1,dims[0]};
+        int index[3]={0,1,static_cast<int>(dims[0])};
 		memcpy(i_fwd,index,size*sizeof(int));
 		return 0;
 	}
@@ -337,7 +337,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 		CMetricBase::initialize(d);
 		float w[5]={0.0f,1.0f,1.0f,1.0f,1.0f};
 		memcpy(w_fwd,w,size*sizeof(float));
-		int index[5]={0,1,dims[0],dims[0]-1,dims[0]+1};
+        int index[5]={0,1,static_cast<int>(dims[0]),static_cast<int>(dims[0]-1),static_cast<int>(dims[0]+1)};
 		memcpy(i_fwd,index,size*sizeof(int));
 		return 0;
 	}
@@ -360,7 +360,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 		CMetricBase::initialize(d);
 		float w[5]={0.0f,1.0f,1.0f,sqrt(2.0f),sqrt(2.0f)};
 		memcpy(w_fwd,w,size*sizeof(float));
-		int index[5]={0,1,dims[0],dims[0]-1,dims[0]+1};
+        int index[5]={0,1,static_cast<int>(dims[0]),static_cast<int>(dims[0]-1),static_cast<int>(dims[0]+1)};
 		memcpy(i_fwd,index,size*sizeof(int));
 		return 0;
 	}

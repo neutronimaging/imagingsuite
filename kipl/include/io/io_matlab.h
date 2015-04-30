@@ -5,6 +5,7 @@
  *   anders.kaestner@env.ethz.ch                                           *
  *                                                                         *
  ***************************************************************************/
+#include <cstddef>
 #include "../base/timage.h"
 #include "../base/kiplenums.h"
 #include "core/matlabio.h"
@@ -244,11 +245,11 @@ int SliceReadMAT2(kipl::base::TImage<ImgType,NDim> & img,
 		
 		if (i==0) {
 			if (crop) {
-				unsigned int dims[]={crop[2]-crop[0]+1,crop[3]-crop[1]+1,n};
+                size_t dims[]={crop[2]-crop[0]+1,crop[3]-crop[1]+1,n};
 				img.resize(dims);
 			}
 			else {
-				unsigned int dims[]={tmp.SizeX(),tmp.SizeY(),n};
+                size_t dims[]={tmp.SizeX(),tmp.SizeY(),n};
 				img.resize(dims);
 			}
 		}
@@ -301,7 +302,7 @@ int SliceReadMAT(kipl::base::TImage<ImgType,3u> & img,
 		
 		if (i==0) {
 			if (crop) {
-				size_t dims[]={crop[2]-crop[0]+1,crop[3]-crop[1]+1,n};
+                size_t dims[]={crop[2]-crop[0]+size_t(1),crop[3]-crop[1]+size_t(1),static_cast<size_t>(n)};
 				img.Resize(dims);
 				
 			}
