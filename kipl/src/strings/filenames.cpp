@@ -86,7 +86,9 @@ int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::stri
     numstr.width(last-first);
     numstr.fill(cFillChar);
     numstr<<num;
+
     std::string idxstring;
+    //std::cout<<numstr.str()<<" "<<(bReversedIndex ? "true": "false")<<std::endl;
     if (bReversedIndex) {
         std::string tmp=numstr.str();
         std::string::reverse_iterator it;
@@ -98,6 +100,7 @@ int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::stri
     else {
         idxstring=numstr.str();
     }
+
 
     fnstr<<idxstring<<filename.substr(last);
 
