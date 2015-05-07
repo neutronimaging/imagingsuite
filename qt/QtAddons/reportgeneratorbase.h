@@ -1,5 +1,6 @@
 #ifndef REPORTGENERATORBASE_H
 #define REPORTGENERATORBASE_H
+
 #if QT_VERSION < 0x050000
 #include <QtGui>
 #include <QPrinter>

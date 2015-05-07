@@ -3,12 +3,8 @@
 # Project created by QtCreator 2013-04-20T17:38:34
 #
 #-------------------------------------------------
-greaterThan(QT_MAJOR_VERSION, 4) {
-QT += widgets printsupport
-}
-else {
-QT       += widgets printsupport
-}
+
+QT       += core widgets printsupport
 
 TARGET = QtAddons
 TEMPLATE = lib
