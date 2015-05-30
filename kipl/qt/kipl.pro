@@ -98,7 +98,8 @@ SOURCES += \
     ../src/math/linfit.cpp \
     ../src/generators/spotgenerator.cpp \
     ../src/io/analyzefileext.cpp \
-    ../src/io/io_generic.cpp
+    ../src/io/io_generic.cpp \
+    ../src/filters/nonlocalmeans.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -282,7 +283,9 @@ HEADERS +=\
     ../include/io/io_generic.h \
     ../include/io/core/io_generic.hpp \
     ../include/io/analyzefileext.h \
-    ../include/generators/core/noiseimage.hpp
+    ../include/generators/core/noiseimage.hpp \
+    ../include/filters/nonlocalmeans.h \
+    ../include/filters/core/nonlocalmeans.hpp
 
 
 
