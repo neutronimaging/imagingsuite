@@ -15,7 +15,8 @@ SOURCES += \
     ../../src/ISSfilterModule.cpp \
     ../../src/dllmain.cpp \
     ../../src/AdvancedFilterModules.cpp \
-    ../../src/NonLinDiffusion.cpp
+    ../../src/NonLinDiffusion.cpp \
+    ../../src/nonlocalmeansmodule.cpp
 
 HEADERS += \
     ../../src/targetver.h \
@@ -23,7 +24,8 @@ HEADERS += \
     ../../src/ISSfilterModule.h \
     ../../src/AdvancedFilterModules.h \
     ../../src/NonLinDiffusion.h \
-    ../../src/AdvancedFilterModules_global.h
+    ../../src/AdvancedFilterModules_global.h \
+    ../../src/nonlocalmeansmodule.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -71,11 +73,11 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Debug/debug/ -lProcessFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Debug/debug/ -lProcessFramework
 else:symbian: LIBS += -lProcessFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/ -lProcessFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Release/ -lProcessFramework
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
