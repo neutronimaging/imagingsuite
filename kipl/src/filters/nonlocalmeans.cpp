@@ -1,9 +1,10 @@
 #include "../../include/filters/nonlocalmeans.h"
 #include "../../include/filters/filter.h"
+#include <cmath>
 
 namespace akipl {
 NonLocalMeans::NonLocalMeans(int k, double h) :
-    m_fWidth(h*h),
+    m_fWidth(1.0f/(h*h)),
     m_fWidthLimit(2.65f*h),
     m_nBoxSize(k)
 {}
@@ -38,8 +39,11 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,3> &f, kipl::base::TImag
 
     size_t nfilt=m_nBoxSize*m_nBoxSize*m_nBoxSize;
     float *kernel=new float[nfilt];
+    for (int i=0; i<nfilt; i++) {
+       kernel[i]=1.0f;
+    }
     kipl::filters::TFilter<float,3> box(kernel,fdims);
-    ff=box(f,kipl::filters::FilterBase::EdgeMirror);
+    ff=box(f,kipl::filters::FilterBase::EdgeValid);
     delete [] kernel;
 
     // NL loops
@@ -54,7 +58,7 @@ void NonLocalMeans::nlm_core(float *f, float *ff, float *g, size_t N)
     float q;
     for (size_t i=0; i<N; i++) {
         float wi=w[i];
-        float gg=0.0f;
+        float gg=g[i];
         float fi=f[i];
         for (size_t j=i; j<N; j++) {
             q=weight(ff[i],ff[j]);
@@ -73,7 +77,7 @@ float NonLocalMeans::weight(float a, float b)
 {
     float diff=a-b;
 
-    return (diff<m_fWidthLimit) ? exp(-diff*diff/m_fWidth) : 0.0f;
+    return (diff<m_fWidthLimit) ? exp(-diff*diff*m_fWidth) : 0.0f;
 }
 
 }

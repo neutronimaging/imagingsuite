@@ -1,0 +1,11 @@
+exec times
+100x100 slices
+5x5x5 kernel
+N
+11  25s
+21  89s
+31  194s
+
+3x3x3 kernel
+11  24.2s
+

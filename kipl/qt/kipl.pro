@@ -309,4 +309,7 @@ unix:!symbian {
     INSTALLS += target
 }
 
+DISTFILES += \
+    ../include/filters/nonlocalmeans.txt
+
 
