@@ -19,6 +19,7 @@
 #include <sstream>
 #include "ISSfilterModule.h"
 #include "NonLinDiffusion.h"
+#include "nonlocalmeansmodule.h"
 #include <logging/logger.h>
 
 
@@ -35,6 +36,9 @@ DLL_EXPORT void * GetModule(const char *application, const char * name)
 
         if (sName=="NonLinDiffusion")
             return new NonLinDiffusionModule;
+
+        if (sName=="NonLocalMeansFilter")
+            return new NonLocalMeansModule;
 
 	}
 
@@ -79,5 +83,7 @@ DLL_EXPORT int GetModuleList(const char *application, void *listptr)
     NonLinDiffusionModule nld;
     modulelist->operator []("NonLinDiffusion")=nld.GetParameters();
 
+    NonLocalMeansModule nlm;
+    modulelist->operator []("NonLocalMeansFilter")=nlm.GetParameters();
     return 0;
 }
