@@ -4,6 +4,7 @@
 #include <filters/nonlocalmeans.h>
 
 NonLocalMeansModule::NonLocalMeansModule() :
+    KiplProcessModuleBase("NonLocalMeansModule", true),
     m_fSensitivity(1000.0f),
     m_nWidth(5)
 {

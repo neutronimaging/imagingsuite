@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets
+QT       += core widgets printsupport
 
 TARGET = QtKipTool
 TEMPLATE = app

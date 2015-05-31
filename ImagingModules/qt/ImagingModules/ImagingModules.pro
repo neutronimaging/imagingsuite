@@ -63,8 +63,8 @@ DEPENDPATH += $$PWD/../../../ProcessFramework/include
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms
 else:symbian: LIBS += -lImagingAlgorithms
-else:unix:CONFIG(release, debug|release):  LIBS += -L$$PWD/../../../../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/ -lImagingAlgorithms
-else:unix:CONFIG(debug, debug|release):    LIBS += -L$$PWD/../../../../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Debug/ -lImagingAlgorithms
+else:unix:CONFIG(release, debug|release):  LIBS += -L$$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/ -lImagingAlgorithms
+else:unix:CONFIG(debug, debug|release):    LIBS += -L$$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Debug/ -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/src

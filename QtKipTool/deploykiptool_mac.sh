@@ -45,7 +45,30 @@ cd ..
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
-cp /Users/kaestner/repos/tomography/trunk/src/muhrec3/resources/* ./Resources
+#cp /Users/kaestner/repos/tomography/trunk/src/muhrec3/resources/* ./Resources
+
+echo "copy plugins"
+pwd
+if [ ! -d "./PlugIns" ]; then
+ mkdir ./PlugIns
+fi
+
+if [ ! -d "./PlugIns/platforms" ]; then
+ mkdir ./PlugIns/platforms
+fi
+cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+
+if [ ! -d "./PlugIns/printsupport" ]; then
+ mkdir ./PlugIns/printsupport
+fi
+cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+
+if [ ! -d "./PlugIns/accessible" ]; then
+ mkdir ./PlugIns/accessible
+fi
+cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+pwd
+ls PlugIns
 
 popd
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
