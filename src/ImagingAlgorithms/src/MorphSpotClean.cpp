@@ -35,6 +35,7 @@ void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float s
     switch (m_eMorphClean) {
         case MorphCleanReplace  : ProcessReplace(img); break;
         case MorphCleanFill     : ProcessFill(img); break;
+    default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
 }
@@ -55,6 +56,8 @@ void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::
         noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
         nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
         break;
+
+    default: throw ImagingException("Unkown detection method selected", __FILE__,__LINE__);
     }
 }
 
