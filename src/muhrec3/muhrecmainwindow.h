@@ -111,6 +111,8 @@ private:
     int              m_nCurrentPage;
     size_t           m_nRequiredMemory;
     std::string      m_sApplicationPath;
+    std::string      m_sHomePath;
+    std::string      m_sConfigPath;
     std::string      m_sConfigFilename; //<! Name of the configuration file
     std::map<float, ProjectionInfo> m_ProjectionList;
 

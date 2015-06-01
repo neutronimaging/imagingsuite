@@ -7,7 +7,7 @@
 
 #ifndef WaveletRingCleanDlg_H_
 #define WaveletRingCleanDlg_H_
-/*
+
 #include <ConfiguratorDialogBase.h>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -75,5 +75,5 @@ private:
 	ImagingAlgorithms::StripeFilterOperation m_eCleaningMethod;
 
 };
-*/
+
 #endif /* WaveletRingCleanDlg_H_ */

@@ -5,7 +5,6 @@
  *      Author: kaestner
  */
 
-/*
 #include "stdafx.h"
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
@@ -22,9 +21,9 @@
 
 WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent):
 ConfiguratorDialogBase("MedianMixRingClean2Dlg",false,true, true,parent),
-m_frame_original("Original"),
-m_frame_processed("Processed"),
-m_frame_difference("Difference"),
+//m_frame_original("Original"),
+//m_frame_processed("Processed"),
+//m_frame_difference("Difference"),
 lbl_waveletname("Wavelet name"),
 lbl_levels("Lambda"),
 lbl_sigma("Sigma"),
@@ -39,14 +38,14 @@ m_sWaveletName("daub17")
     m_viewer_original.set_image(data,dims);
     m_viewer_processed.set_image(data,dims);
 
-    m_frame_original.(m_viewer_original);
-    m_frame_original.set_size_request(256,256);
+//    m_frame_original.(m_viewer_original);
+//    m_frame_original.set_size_request(256,256);
 
-    m_frame_processed.add(m_viewer_processed);
-    m_frame_processed.set_size_request(256,256);
+//    m_frame_processed.add(m_viewer_processed);
+//    m_frame_processed.set_size_request(256,256);
 
-    m_frame_difference.add(m_viewer_difference);
-    m_frame_difference.set_size_request(256,256);
+//    m_frame_difference.add(m_viewer_difference);
+//    m_frame_difference.set_size_request(256,256);
     m_hbox_viewers.addWidget(&m_viewer_original);
     m_hbox_viewers.addWidget(&m_viewer_processed);
     m_hbox_viewers.addWidget(&m_viewer_difference);
@@ -80,8 +79,7 @@ m_sWaveletName("daub17")
 
     show();
 
-    m_entry_levels.signal_value_changed().connect(sigc::mem_fun(*this,
-            &WaveletRingCleanDlg::on_change_level));
+    //m_entry_levels.signal_value_changed().connect(sigc::mem_fun(*this,&WaveletRingCleanDlg::on_change_level));
 }
 
 WaveletRingCleanDlg::~WaveletRingCleanDlg() {
@@ -260,4 +258,4 @@ kipl::base::TImage<float,2> WaveletRingCleanDlg::GetSinogram(kipl::base::TImage<
     return sino;
 }
 
-*/
+

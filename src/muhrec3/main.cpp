@@ -16,6 +16,7 @@
 int RunGUI(QApplication *app);
 int RunOffline(QApplication *app);
 void TestConfig();
+//#define USE_NODE_LOCK
 
 int main(int argc, char *argv[])
 {
@@ -30,12 +31,14 @@ int main(int argc, char *argv[])
     std::string homedir = QDir::homePath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(homedir,true);
+    std::cout<<"home dir="<<homedir<<std::endl;
 
     std::string application_path=app.applicationDirPath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
     kipl::utilities::NodeLocker license(homedir);
 
+#ifdef USE_NODE_LOCK
     bool licensefail=false;
     int res=0;
     std::string errormsg;
@@ -98,6 +101,7 @@ int main(int argc, char *argv[])
 
     std::cout<<"License status "<<kipl::strings::bool2string(license.AccessGranted())<<std::endl;
     if (license.AccessGranted()) {
+#endif
         if (app.arguments().size()==1) {
             std::cout<<"Running MuhRec in GUI mode."<<std::endl;
             return RunGUI(&app);
@@ -106,7 +110,9 @@ int main(int argc, char *argv[])
             std::cout<<"Running MuhRec in CLI mode."<<std::endl;
             return RunOffline(&app);
         }
+#ifdef USE_NODE_LOCK
     }
+#endif
 
     return 0;
 }

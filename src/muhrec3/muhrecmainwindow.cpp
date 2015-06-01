@@ -39,14 +39,33 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
     m_sApplicationPath(app->applicationDirPath().toStdString()),
+    m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
     m_bCurrentReconStored(true)
 {
     std::ostringstream msg;
-    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
     ui->setupUi(this);
     kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
+
+    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+    kipl::strings::filenames::CheckPathSlashes(m_sHomePath,true);
+
+    m_sConfigPath = m_sHomePath + ".imagingtools";
+    kipl::strings::filenames::CheckPathSlashes(m_sConfigPath,true);
+
+    QDir dir;
+
+    if (!dir.exists(QString::fromStdString(m_sConfigPath))) {
+        dir.mkdir(QString::fromStdString(m_sConfigPath));
+    }
+
+    msg.str("");
+    msg<<"ApplicationPath = "<<m_sApplicationPath<<std::endl
+      <<"HomePath         = "<<m_sHomePath<<std::endl
+      <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
     ui->projectionViewer->hold_annotations(true);
     std::string defaultmodules;
 #ifdef Q_OS_WIN
@@ -812,6 +831,7 @@ void MuhRecMainWindow::MenuReconstructStart()
     std::string sPath=path.toStdString();
     kipl::strings::filenames::CheckPathSlashes(sPath,true);
     confpath<<sPath<<"CurrentRecon.xml";
+
     try {
         UpdateConfig();
         ofstream of(confpath.str().c_str());
@@ -1060,17 +1080,17 @@ void MuhRecMainWindow::MenuReconstructStart()
 
 void MuhRecMainWindow::LoadDefaults()
 {
-    std::string defaultsname;
+
     QDir dir;
-    QString currentname=dir.homePath()+"/.imagingtools/CurrentRecon.xml";
+
+    std::string defaultsname=m_sHomePath+".imagingtools/CurrentRecon.xml";
+    kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
 
     bool bUseDefaults=true;
-    if (dir.exists(currentname)) {
-        defaultsname=currentname.toStdString();
+    if (dir.exists(QString::fromStdString(defaultsname))) {
         bUseDefaults=false;
     }
     else {
-      //  m_QtApp->
     #ifdef Q_OS_WIN32
          defaultsname="resources/defaults_windows.xml";
     #else
@@ -1105,9 +1125,9 @@ void MuhRecMainWindow::LoadDefaults()
     }
 
     if (bUseDefaults) {
-        m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
-        m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
-        m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+        m_Config.ProjectionInfo.sPath              = m_sHomePath;
+        m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
+        m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
 
         std::list<ModuleConfig>::iterator it;
 
