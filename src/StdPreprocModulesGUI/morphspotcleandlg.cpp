@@ -1,5 +1,5 @@
+
 #include "morphspotcleandlg.h"
-#include "ui_morphspotcleandlg.h"
 
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
@@ -112,6 +112,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
     string2enum(GetStringParameter(parameters,"connectivity"), m_eConnectivity);
 
     m_fThreshold        = GetFloatParameter(parameters,"threshold");
+    m_fSigma            = GetFloatParameter(parameters,"sigma");
     m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
     m_nMaxArea          = GetIntParameter(parameters,"maxarea");
     m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
@@ -140,6 +141,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
 void MorphSpotCleanDlg::UpdateDialog()
 {
     ui->spinThreshold->setValue(m_fThreshold);
+    ui->spinSigma->setValue(m_fSigma);
     ui->comboMethod->setCurrentIndex(m_eCleanMethod);
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
@@ -153,6 +155,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_eCleanMethod = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboMethod->currentIndex());
     m_eConnectivity = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
     m_fThreshold = ui->spinThreshold->value();
+    m_fSigma     = ui->spinSigma->value();
     m_fMinLevel = ui->spinMinValue->value();
     m_fMaxLevel = ui->spinMaxValue->value();
     m_nMaxArea  = ui->spinArea->value();
@@ -160,10 +163,11 @@ void MorphSpotCleanDlg::UpdateParameters()
 }
 
 void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
-{
+{    
     parameters["connectivity"] = enum2string(m_eConnectivity);
     parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
     parameters["threshold"]    = kipl::strings::value2string(m_fThreshold);
+    parameters["sigma"]        = kipl::strings::value2string(m_fSigma);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
@@ -175,3 +179,4 @@ void MorphSpotCleanDlg::on_buttonApply_clicked()
 {
     ApplyParameters();
 }
+

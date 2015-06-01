@@ -80,10 +80,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true">
-         <zorder></zorder>
-         <zorder>viewerDifference</zorder>
-        </widget>
+        <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true"/>
        </item>
       </layout>
      </item>
@@ -127,7 +124,21 @@
      <item>
       <widget class="QDoubleSpinBox" name="spinThreshold">
        <property name="decimals">
-        <number>4</number>
+        <number>5</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Sigma</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="spinSigma">
+       <property name="decimals">
+        <number>5</number>
        </property>
       </widget>
      </item>

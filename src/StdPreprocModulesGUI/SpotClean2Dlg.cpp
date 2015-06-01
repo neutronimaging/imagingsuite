@@ -1,4 +1,6 @@
+/*
 #include "stdafx.h"
+
 #include "SpotClean2Dlg.h"
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
@@ -8,12 +10,12 @@
 
 SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
     ConfiguratorDialogBase("SpotClean2Dlg", false, true, true, parent),
-	lbl_gamma("Gamma"),
-	lbl_sigma("Sigma"),
-	lbl_iterations("Iterations"),
-	lbl_maxarea("Max spot area"),
-	lbl_min("Min value"),
-	lbl_max("Max value"),
+    lbl_gamma("Gamma"),
+    lbl_sigma("Sigma"),
+    lbl_iterations("Iterations"),
+    lbl_maxarea("Max spot area"),
+    lbl_min("Min value"),
+    lbl_max("Max value"),
 	m_eDetectionMethod(ImagingAlgorithms::Detection_Median),
 	m_fGamma(0.05f),
 	m_fSigma(0.005f),
@@ -24,68 +26,68 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
 {
     float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
 	size_t dims[2]={4,4};
-    m_FrameMain.setLayout(&m_vbox_main);
-    m_vbox_main.addLayout(&m_hbox_viewers);
-    m_hbox_viewers.addWidget(&m_viewer_original);
-    m_hbox_viewers.addWidget(&m_viewer_processed);
-    m_hbox_viewers.addWidget(&m_viewer_difference);
-    m_hbox_viewers.addWidget(&m_plot);
-    m_viewer_difference.set_image(data,dims);
-	m_viewer_original.set_image(data,dims);
-	m_viewer_processed.set_image(data,dims);
+//    m_FrameMain.setLayout(&m_vbox_main);
+//    m_vbox_main.addLayout(&m_hbox_viewers);
+//    m_hbox_viewers.addWidget(&m_viewer_original);
+//    m_hbox_viewers.addWidget(&m_viewer_processed);
+//    m_hbox_viewers.addWidget(&m_viewer_difference);
+//    m_hbox_viewers.addWidget(&m_plot);
+//    m_viewer_difference.set_image(data,dims);
+//	m_viewer_original.set_image(data,dims);
+//	m_viewer_processed.set_image(data,dims);
 
 	const int nDigits=4;
 
-    m_entry_gamma.setDecimals(nDigits);
-    m_entry_gamma.setRange(0.0,100000.0);
-    m_entry_gamma.setSingleStep(0.01);
+//    m_entry_gamma.setDecimals(nDigits);
+//    m_entry_gamma.setRange(0.0,100000.0);
+//    m_entry_gamma.setSingleStep(0.01);
 
-    m_entry_sigma.setDecimals(nDigits);
-    m_entry_sigma.setRange(0.0,100000.0);
-    m_entry_sigma.setSingleStep(0.001);
+//    m_entry_sigma.setDecimals(nDigits);
+//    m_entry_sigma.setRange(0.0,100000.0);
+//    m_entry_sigma.setSingleStep(0.001);
 
-    m_entry_iterations.setRange(1,10);
-    m_entry_maxarea.setRange(1,500);
+//    m_entry_iterations.setRange(1,10);
+//    m_entry_maxarea.setRange(1,500);
 
-    m_entry_min.setDecimals(nDigits);
-    m_entry_min.setRange(-1.0e6,1.0e6);
-    m_entry_min.setSingleStep(0.1);
+//    m_entry_min.setDecimals(nDigits);
+//    m_entry_min.setRange(-1.0e6,1.0e6);
+//    m_entry_min.setSingleStep(0.1);
 
-    m_entry_max.setDecimals(nDigits);
-    m_entry_max.setRange(-1.0e6,1.0e6);
-    m_entry_max.setSingleStep(0.1);
+//    m_entry_max.setDecimals(nDigits);
+//    m_entry_max.setRange(-1.0e6,1.0e6);
+//    m_entry_max.setSingleStep(0.1);
 
-    m_hbox_parameters.addWidget(&lbl_gamma);
-    m_hbox_parameters.addWidget(&m_entry_gamma);
-    m_hbox_parameters.addWidget(&lbl_sigma);
-    m_hbox_parameters.addWidget(&m_entry_sigma);
-    m_hbox_parameters.addWidget(&lbl_iterations);
-    m_hbox_parameters.addWidget(&m_entry_iterations);
-    m_hbox_parameters.addWidget(&lbl_maxarea);
-    m_hbox_parameters.addWidget(&m_entry_maxarea);
-    m_hbox_parameters.addWidget(&lbl_detection);
+//    m_hbox_parameters.addWidget(&lbl_gamma);
+//    m_hbox_parameters.addWidget(&m_entry_gamma);
+//    m_hbox_parameters.addWidget(&lbl_sigma);
+//    m_hbox_parameters.addWidget(&m_entry_sigma);
+//    m_hbox_parameters.addWidget(&lbl_iterations);
+//    m_hbox_parameters.addWidget(&m_entry_iterations);
+//    m_hbox_parameters.addWidget(&lbl_maxarea);
+//    m_hbox_parameters.addWidget(&m_entry_maxarea);
+//    m_hbox_parameters.addWidget(&lbl_detection);
 
-    m_combo_detectionmethod.addItem("stddev");
-    m_combo_detectionmethod.addItem("ring");
-    m_combo_detectionmethod.addItem("median");
-    m_combo_detectionmethod.addItem("minmax");
-    m_combo_detectionmethod.addItem("trikernel");
+//    m_combo_detectionmethod.addItem("stddev");
+//    m_combo_detectionmethod.addItem("ring");
+//    m_combo_detectionmethod.addItem("median");
+//    m_combo_detectionmethod.addItem("minmax");
+//    m_combo_detectionmethod.addItem("trikernel");
 
-    m_hbox_parameters.addWidget(&m_combo_detectionmethod);
-    m_vbox_parameters.addLayout(&m_hbox_parameters);
+//    m_hbox_parameters.addWidget(&m_combo_detectionmethod);
+//    m_vbox_parameters.addLayout(&m_hbox_parameters);
 
-    m_hbox_minmax.addWidget(&lbl_min);
-    m_hbox_minmax.addWidget(&m_entry_min);
-    m_hbox_minmax.addWidget(&lbl_max);
-    m_hbox_minmax.addWidget(&m_entry_max);
-    m_vbox_parameters.addLayout(&m_hbox_minmax);
+//    m_hbox_minmax.addWidget(&lbl_min);
+//    m_hbox_minmax.addWidget(&m_entry_min);
+//    m_hbox_minmax.addWidget(&lbl_max);
+//    m_hbox_minmax.addWidget(&m_entry_max);
+//    m_vbox_parameters.addLayout(&m_hbox_minmax);
 
-    m_hbox_params_plot.addLayout(&m_vbox_parameters);
-    m_vbox_main.addLayout(&m_hbox_params_plot);
+//    m_hbox_params_plot.addLayout(&m_vbox_parameters);
+//    m_vbox_main.addLayout(&m_hbox_params_plot);
 
-    setWindowTitle("Configure spot clean");
+//    setWindowTitle("Configure spot clean");
 
-    show();
+//    show();
 }
 
 SpotClean2Dlg::~SpotClean2Dlg(void)
@@ -105,7 +107,7 @@ void SpotClean2Dlg::ApplyParameters()
 	size_t nLo, nHi;
 	kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
 	kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-	m_viewer_original.set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
+//	m_viewer_original.set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
 
 	std::map<std::string, std::string> parameters;
 	UpdateParameters();
@@ -130,12 +132,12 @@ void SpotClean2Dlg::ApplyParameters()
 	}
 
 	size_t N99=ii;
-    m_plot.setCurveData(0,axis,fcumhist,N99);
+//    m_plot.setCurveData(0,axis,fcumhist,N99);
 	float threshold[N];
 	for (size_t i=0; i<N; i++) {
 		threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
 	}
-    m_plot.setCurveData(1,axis,threshold,N99);
+//    m_plot.setCurveData(1,axis,threshold,N99);
 
 	std::map<std::string,std::string> pars;
 	kipl::base::TImage<float,2> pimg=img;
@@ -146,7 +148,7 @@ void SpotClean2Dlg::ApplyParameters()
 	memset(axis,0,N*sizeof(float));
 	kipl::base::Histogram(pimg.GetDataPtr(), pimg.Size(), hist, N, 0.0f, 0.0f, axis);
 	kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-	m_viewer_processed.set_image(pimg.GetDataPtr(), pimg.Dims(),axis[nLo],axis[nHi]);
+//	m_viewer_processed.set_image(pimg.GetDataPtr(), pimg.Dims(),axis[nLo],axis[nHi]);
 
 	kipl::base::TImage<float,2> diff=pimg-img;
     memset(hist,0,N*sizeof(size_t));
@@ -155,7 +157,7 @@ void SpotClean2Dlg::ApplyParameters()
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
 	for (size_t i=0; i<diff.Size(); i++)
 		diff[i]=diff[i]!=0.0;
-	m_viewer_difference.set_image(diff.GetDataPtr(), diff.Dims());
+//	m_viewer_difference.set_image(diff.GetDataPtr(), diff.Dims());
 }
 
 int SpotClean2Dlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
@@ -193,25 +195,25 @@ int SpotClean2Dlg::exec(ConfigBase *config, std::map<std::string, std::string> &
 void SpotClean2Dlg::UpdateDialog()
 {
 	// m_combobox_method. ...
-    m_entry_gamma.setValue(m_fGamma);
-    m_entry_sigma.setValue(m_fSigma);
-    m_entry_iterations.setValue(m_nIterations);
-    m_entry_max.setValue(m_fMaxLevel);
-    m_entry_min.setValue(m_fMinLevel);
-    m_entry_maxarea.setValue(m_nMaxArea);
-    m_combo_detectionmethod.setCurrentIndex(m_eDetectionMethod);
+//    m_entry_gamma.setValue(m_fGamma);
+//    m_entry_sigma.setValue(m_fSigma);
+//    m_entry_iterations.setValue(m_nIterations);
+//    m_entry_max.setValue(m_fMaxLevel);
+//    m_entry_min.setValue(m_fMinLevel);
+//    m_entry_maxarea.setValue(m_nMaxArea);
+//    m_combo_detectionmethod.setCurrentIndex(m_eDetectionMethod);
 }
 
 void SpotClean2Dlg::UpdateParameters()
 {
 	//m_eDetectionMethod =
-    m_fGamma      = m_entry_gamma.value();
-    m_fSigma      = m_entry_sigma.value();
-    m_nIterations = m_entry_iterations.value();
-    m_fMaxLevel   = m_entry_max.value();
-    m_fMinLevel   = m_entry_min.value();
-    m_nMaxArea	  = m_entry_maxarea.value();
-    m_eDetectionMethod = static_cast<ImagingAlgorithms::DetectionMethod>(m_combo_detectionmethod.currentIndex());
+//    m_fGamma      = m_entry_gamma.value();
+//    m_fSigma      = m_entry_sigma.value();
+//    m_nIterations = m_entry_iterations.value();
+//    m_fMaxLevel   = m_entry_max.value();
+//    m_fMinLevel   = m_entry_min.value();
+//    m_nMaxArea	  = m_entry_maxarea.value();
+//    m_eDetectionMethod = static_cast<ImagingAlgorithms::DetectionMethod>(m_combo_detectionmethod.currentIndex());
 }
 
 void SpotClean2Dlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -224,3 +226,4 @@ void SpotClean2Dlg::UpdateParameterList(std::map<std::string, std::string> &para
 	parameters["minlevel"]   = kipl::strings::value2string(m_fMinLevel);
 	parameters["maxarea"]   = kipl::strings::value2string(m_nMaxArea);
 }
+*/

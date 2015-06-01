@@ -37,8 +37,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 		//if (sName=="SpotClean")
 		//	return new SpotClean;
 
-		if (sName=="SpotClean2")
-			return new SpotClean2Dlg;
+//		if (sName=="SpotClean2")
+//			return new SpotClean2Dlg;
 
 		//if (sName=="GeneralFilter")
 		//	return new GeneralFilter;
@@ -58,8 +58,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 //		if (sName=="ISSfilter")
 //			return new ISSfilterDlg;
 
-        if (sName=="WaveletRingClean")
-            return new WaveletRingCleanDlg;
+//        if (sName=="WaveletRingClean")
+//            return new WaveletRingCleanDlg;
 
         if (sName=="PolynomialCorrection")
             return new PolynomialCorrectionDlg;
@@ -71,7 +71,7 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 	return NULL;
 }
 
-DLL_EXPORT int DestroyGUIModule(const char * application, void *obj)
+STDPREPROCMODULESGUISHARED_EXPORT int DestroyGUIModule(const char * application, void *obj)
 {
 	if (strcmp(application,"muhrec")!=0)
 		return -1;

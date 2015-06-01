@@ -4,6 +4,8 @@
  *  Created on: Mar 1, 2012
  *      Author: kaestner
  */
+
+/*
 #include "stdafx.h"
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
@@ -20,9 +22,9 @@
 
 WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent):
 ConfiguratorDialogBase("MedianMixRingClean2Dlg",false,true, true,parent),
-//m_frame_original("Original"),
-//m_frame_processed("Processed"),
-//m_frame_difference("Difference"),
+m_frame_original("Original"),
+m_frame_processed("Processed"),
+m_frame_difference("Difference"),
 lbl_waveletname("Wavelet name"),
 lbl_levels("Lambda"),
 lbl_sigma("Sigma"),
@@ -33,18 +35,18 @@ m_sWaveletName("daub17")
 	float data[16]={1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
 	size_t dims[2]={4,4};
 
-	m_viewer_difference.set_image(data,dims);
-	m_viewer_original.set_image(data,dims);
-	m_viewer_processed.set_image(data,dims);
+    m_viewer_difference.set_image(data,dims);
+    m_viewer_original.set_image(data,dims);
+    m_viewer_processed.set_image(data,dims);
 
-//	m_frame_original.add(m_viewer_original);
-//	m_frame_original.set_size_request(256,256);
+    m_frame_original.(m_viewer_original);
+    m_frame_original.set_size_request(256,256);
 
-//	m_frame_processed.add(m_viewer_processed);
-//	m_frame_processed.set_size_request(256,256);
+    m_frame_processed.add(m_viewer_processed);
+    m_frame_processed.set_size_request(256,256);
 
-//	m_frame_difference.add(m_viewer_difference);
-//	m_frame_difference.set_size_request(256,256);
+    m_frame_difference.add(m_viewer_difference);
+    m_frame_difference.set_size_request(256,256);
     m_hbox_viewers.addWidget(&m_viewer_original);
     m_hbox_viewers.addWidget(&m_viewer_processed);
     m_hbox_viewers.addWidget(&m_viewer_difference);
@@ -63,7 +65,7 @@ m_sWaveletName("daub17")
     m_hbox_parameters.addWidget(&lbl_sigma);
     m_hbox_parameters.addWidget(&m_entry_sigma);
 
-	prepare_waveletcombobox();
+    prepare_waveletcombobox();
 
     m_hbox_parameters.addWidget(&lbl_waveletname);
     m_hbox_parameters.addWidget(&m_combobox_wavelets);
@@ -78,8 +80,8 @@ m_sWaveletName("daub17")
 
     show();
 
-//	m_entry_levels.signal_value_changed().connect(sigc::mem_fun(*this,
-//			&WaveletRingCleanDlg::on_change_level));
+    m_entry_levels.signal_value_changed().connect(sigc::mem_fun(*this,
+            &WaveletRingCleanDlg::on_change_level));
 }
 
 WaveletRingCleanDlg::~WaveletRingCleanDlg() {
@@ -93,7 +95,7 @@ void WaveletRingCleanDlg::prepare_waveletcombobox()
 	std::list<std::string> wlist=wk.NameList();
 	std::list<std::string>::iterator it;
 
-    m_combobox_wavelets.clear();
+//    m_combobox_wavelets.clear();
 
     int default_wavelet, idx;
 	for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) {
@@ -126,7 +128,7 @@ void WaveletRingCleanDlg::ApplyParameters()
 	kipl::base::Histogram(origsino.GetDataPtr(), origsino.Size(), hist, N, 0.0f, 0.0f, axis);
 
 	kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-	m_viewer_original.set_image(origsino.GetDataPtr(),origsino.Dims(),axis[nLo],axis[nHi]);
+    m_viewer_original.set_image(origsino.GetDataPtr(),origsino.Dims(),axis[nLo],axis[nHi]);
 
 	std::map<std::string, std::string> parameters;
 	UpdateParameters();
@@ -153,14 +155,14 @@ void WaveletRingCleanDlg::ApplyParameters()
 	memset(axis,0,N*sizeof(float));
 	kipl::base::Histogram(procsino.GetDataPtr(), procsino.Size(), hist, N, 0.0f, 0.0f, axis);
 	kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-	m_viewer_processed.set_image(procsino.GetDataPtr(), procsino.Dims(),axis[nLo],axis[nHi]);
+    m_viewer_processed.set_image(procsino.GetDataPtr(), procsino.Dims(),axis[nLo],axis[nHi]);
 
 	kipl::base::TImage<float,2> diff=procsino-origsino;
 	memset(hist,0,N*sizeof(size_t));
 	memset(axis,0,N*sizeof(float));
 	kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
 	kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
-	m_viewer_difference.set_image(diff.GetDataPtr(), diff.Dims());
+    m_viewer_difference.set_image(diff.GetDataPtr(), diff.Dims());
 }
 
 void WaveletRingCleanDlg::on_change_level()
@@ -233,7 +235,7 @@ void WaveletRingCleanDlg::UpdateParameters()
     m_sWaveletName    = m_combobox_wavelets.currentText().toStdString();
     m_nLevels         = m_entry_levels.value();
     m_fSigma          = m_entry_sigma.value();
-	m_bParallel       = false;
+    m_bParallel       = false;
     string2enum(m_combobox_method.currentText().toStdString(), m_eCleaningMethod);
 }
 
@@ -246,15 +248,16 @@ void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string>
 	parameters["method"]   = enum2string(m_eCleaningMethod);
 }
 
-//kipl::base::TImage<float,2> WaveletRingCleanDlg::GetSinogram(kipl::base::TImage<float,3> &proj, size_t index)
-//{
-//	size_t dims[2]={proj.Size(0),proj.Size(2)};
+kipl::base::TImage<float,2> WaveletRingCleanDlg::GetSinogram(kipl::base::TImage<float,3> &proj, size_t index)
+{
+    size_t dims[2]={proj.Size(0),proj.Size(2)};
 
-//	kipl::base::TImage<float,2> sino(dims);
+    kipl::base::TImage<float,2> sino(dims);
 
-//	for (size_t i=0; i<proj.Size(2); i++)
-//		memcpy(sino.GetLinePtr(i),proj.GetLinePtr(index,i),sizeof(float)*proj.Size(0));
+    for (size_t i=0; i<proj.Size(2); i++)
+        memcpy(sino.GetLinePtr(i),proj.GetLinePtr(index,i),sizeof(float)*proj.Size(0));
 
-//	return sino;
-//}
+    return sino;
+}
 
+*/

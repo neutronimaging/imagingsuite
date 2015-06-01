@@ -7,7 +7,8 @@
 
 #ifndef WaveletRingCleanDlg_H_
 #define WaveletRingCleanDlg_H_
-
+/*
+#include <ConfiguratorDialogBase.h>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDoubleSpinBox>
@@ -15,9 +16,10 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QWidget>
+#include <QFrame>
 
 #include <base/timage.h>
-#include <ConfiguratorDialogBase.h>
+
 #include <ConfigBase.h>
 #include <imageviewerwidget.h>
 #include <plotter.h>
@@ -41,18 +43,18 @@ private:
 	void UpdateDialog();
 	void UpdateParameters();
 	void UpdateParameterList(std::map<std::string, std::string> &parameters);
-//	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> &proj, size_t index);
+    kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> &proj, size_t index);
 
     QVBoxLayout m_vbox_main;
     QHBoxLayout m_hbox_viewers;
 
-//	Gtk::Frame m_frame_original;
-//	Gtk::Frame m_frame_processed;
-//	Gtk::Frame m_frame_difference;
     QtAddons::ImageViewerWidget m_viewer_original;
     QtAddons::ImageViewerWidget m_viewer_processed;
     QtAddons::ImageViewerWidget m_viewer_difference;
 
+    QFrame m_frame_original;
+    QFrame m_frame_processed;
+    QFrame m_frame_difference;
     QVBoxLayout m_vbox_parameters;
     QHBoxLayout m_hbox_parameters;
     QSpinBox m_entry_levels;
@@ -73,5 +75,5 @@ private:
 	ImagingAlgorithms::StripeFilterOperation m_eCleaningMethod;
 
 };
-
+*/
 #endif /* WaveletRingCleanDlg_H_ */

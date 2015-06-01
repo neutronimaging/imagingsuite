@@ -1,9 +1,11 @@
 #ifndef MORPHSPOTCLEANDLG_H
 #define MORPHSPOTCLEANDLG_H
 
+#include <ConfiguratorDialogBase.h>
+#include "ui_morphspotcleandlg.h"
 #include <base/timage.h>
 #include <morphology/morphology.h>
-#include <ConfiguratorDialogBase.h>
+
 #include <ConfigBase.h>
 #include <imageviewerwidget.h>
 #include <plotter.h>
@@ -45,6 +47,7 @@ private:
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     float m_fThreshold;
+    float m_fSigma;
     int   m_nEdgeSmoothLength;
     int   m_nMaxArea;
     float m_fMinLevel;

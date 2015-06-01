@@ -4,6 +4,7 @@
 #include <ProjectionReader.h>
 #include <base/KiplException.h>
 #include <QMessageBox>
+#include <plotter.h>
 #include <set>
 
 #include <sstream>
