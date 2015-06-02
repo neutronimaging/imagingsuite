@@ -28,8 +28,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
         if (sName=="FullLogNorm")
             return new FullLogNormDlg;
 
-		//if (sName=="LogProjection")
-		//	return new LogProjection;
+//        if (sName=="LogProjection")
+//            return new LogProjection;
 
         if (sName=="ProjectionFilterSingle")
             return new ProjectionFilterDlg;
@@ -49,8 +49,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 		//if (sName=="BasicRingClean")
 		//	return new BasicRingClean;
 
-//		if (sName=="MedianMixRingClean")
-//			return new MedianMixRingCleanDlg;
+//        if (sName=="MedianMixRingClean")
+//            return new MedianMixRingCleanDlg;
 
         if (sName=="DataScaler")
             return new DataScalerDlg;
@@ -58,8 +58,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 //		if (sName=="ISSfilter")
 //			return new ISSfilterDlg;
 
-//        if (sName=="WaveletRingClean")
-//            return new WaveletRingCleanDlg;
+        if (sName=="WaveletRingClean")
+            return new WaveletRingCleanDlg;
 
         if (sName=="PolynomialCorrection")
             return new PolynomialCorrectionDlg;
