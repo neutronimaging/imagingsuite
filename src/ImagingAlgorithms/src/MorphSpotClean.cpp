@@ -13,7 +13,7 @@ MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_eConnectivity(kipl::morphology::conn8),
-    m_eMorphDetect(MorphDetectBoth),
+    m_eMorphDetect(MorphDetectHoles),
     m_eMorphClean(MorphCleanReplace),
     m_nEdgeSmoothLength(5),
     m_nMaxArea(100),
