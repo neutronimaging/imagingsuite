@@ -151,12 +151,12 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Method</string>
+        <string>Detection method</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboMethod">
+      <widget class="QComboBox" name="comboDetectionMethod">
        <item>
         <property name="text">
          <string>Holes</string>
@@ -170,6 +170,27 @@
        <item>
         <property name="text">
          <string>Both</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Clean method</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboCleanMethod">
+       <item>
+        <property name="text">
+         <string>Replace</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Fill (Experimental)</string>
         </property>
        </item>
       </widget>

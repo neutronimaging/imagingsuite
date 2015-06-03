@@ -40,63 +40,62 @@ void MorphSpotCleanDlg::ApplyParameters()
     kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
- //      ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),0.0f,1.5f);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
     UpdateParameterList(parameters);
 
-//    m_Cleaner.Configure(*m_Config, parameters);
+    m_Cleaner.Configure(*m_Config, parameters);
 
-//    kipl::base::TImage<float,2> det=m_Cleaner.DetectionImage(img);
-//    for (int i=0; i<img.Size(); i++)
-//        if (det[i]!=det[i]) det[i]=0;
+    kipl::base::TImage<float,2> det=m_Cleaner.DetectionImage(img);
+    for (int i=0; i<img.Size(); i++)
+        if (det[i]!=det[i]) det[i]=0;
 
-//    size_t cumhist[N];
-//    memset(hist,0,N*sizeof(size_t));
-//    memset(axis,0,N*sizeof(float));
-//  //  kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
-//    kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
-//    kipl::math::cumsum(hist,cumhist,N);
+    size_t cumhist[N];
+    memset(hist,0,N*sizeof(size_t));
+    memset(axis,0,N*sizeof(float));
+  //  kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::math::cumsum(hist,cumhist,N);
 
-//    float fcumhist[N];
-//    size_t ii=0;
-//    for (ii=0;ii<N;ii++) {
-//        fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
-//        if (0.99f<fcumhist[ii])
-//            break;
+    float fcumhist[N];
+    size_t ii=0;
+    for (ii=0;ii<N;ii++) {
+        fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
+        if (0.99f<fcumhist[ii])
+            break;
+    }
+
+    size_t N99=ii;
+    ui->plotDetection->setCurveData(0,axis,hist,N99);
+    float threshold[N];
+    // In case of sigmoid mixing
+//    for (size_t i=0; i<N; i++) {
+//        threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
 //    }
+//    m_plot.setCurveData(1,axis,threshold,N99);
+    ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
 
-//    size_t N99=ii;
-//    ui->plotDetection->setCurveData(0,axis,hist,N99);
-//    float threshold[N];
-//    // In case of sigmoid mixing
-////    for (size_t i=0; i<N; i++) {
-////        threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
-////    }
-////    m_plot.setCurveData(1,axis,threshold,N99);
-//    ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+    std::map<std::string,std::string> pars;
+    kipl::base::TImage<float,2> pimg=img;
+    pimg.Clone();
+    m_Cleaner.Process(pimg, pars);
 
-//    std::map<std::string,std::string> pars;
-//    kipl::base::TImage<float,2> pimg=img;
-//    pimg.Clone();
-//    m_Cleaner.Process(pimg, pars);
+    memset(hist,0,N*sizeof(size_t));
+    memset(axis,0,N*sizeof(float));
+    kipl::base::Histogram(pimg.GetDataPtr(), pimg.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
+    ui->viewerProcessed->set_image(pimg.GetDataPtr(), pimg.Dims(),axis[nLo],axis[nHi]);
 
-//    memset(hist,0,N*sizeof(size_t));
-//    memset(axis,0,N*sizeof(float));
-//    kipl::base::Histogram(pimg.GetDataPtr(), pimg.Size(), hist, N, 0.0f, 0.0f, axis);
-//    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-//    ui->viewerProcessed->set_image(pimg.GetDataPtr(), pimg.Dims(),axis[nLo],axis[nHi]);
-
-//    kipl::base::TImage<float,2> diff=pimg-img;
-//    memset(hist,0,N*sizeof(size_t));
-//    memset(axis,0,N*sizeof(float));
-//    kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
-//    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-////    for (size_t i=0; i<diff.Size(); i++)
-////        diff[i]=(diff[i]!=0.0 ? 1.0f : 0.0f);
-//    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
-//   //  ui->viewerDifference->set_image(det.GetDataPtr(), det.Dims());
+    kipl::base::TImage<float,2> diff=pimg-img;
+    memset(hist,0,N*sizeof(size_t));
+    memset(axis,0,N*sizeof(float));
+    kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
+//    for (size_t i=0; i<diff.Size(); i++)
+//        diff[i]=(diff[i]!=0.0 ? 1.0f : 0.0f);
+    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
+   //  ui->viewerDifference->set_image(det.GetDataPtr(), det.Dims());
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
@@ -111,6 +110,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
     msg.str("");
     try {
         string2enum(GetStringParameter(parameters,"cleanmethod"), m_eCleanMethod);
+        string2enum(GetStringParameter(parameters,"detectionmethod"), m_eDetectionMethod);
         string2enum(GetStringParameter(parameters,"connectivity"), m_eConnectivity);
 
         m_fThreshold        = GetFloatParameter(parameters,"threshold");
@@ -121,17 +121,17 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
     }
     catch (ModuleException &e) {
-        msg<<"Failed to get parameters: "<<e.what();
+        msg<<"Module exception: Failed to get parameters: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         return -1;
     }
     catch (kipl::base::KiplException &e) {
-        msg<<"Failed to get parameters: "<<e.what();
+        msg<<"Kipl Exception: Failed to get parameters: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         return -1;
     }
     catch (std::exception &e) {
-        msg<<"Failed to get parameters: "<<e.what();
+        msg<<"STL exception: Failed to get parameters: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         return -1;
     }
@@ -159,7 +159,8 @@ void MorphSpotCleanDlg::UpdateDialog()
 {
     ui->spinThreshold->setValue(m_fThreshold);
     ui->spinSigma->setValue(m_fSigma);
-    ui->comboMethod->setCurrentIndex(m_eCleanMethod);
+    ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
+    ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
     ui->spinMinValue->setValue(m_fMinLevel);
@@ -169,7 +170,8 @@ void MorphSpotCleanDlg::UpdateDialog()
 
 void MorphSpotCleanDlg::UpdateParameters()
 {
-    m_eCleanMethod = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboMethod->currentIndex());
+    m_eCleanMethod = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
+    m_eDetectionMethod = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
     m_eConnectivity = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
     m_fThreshold = ui->spinThreshold->value();
     m_fSigma     = ui->spinSigma->value();
@@ -183,6 +185,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
 {    
     parameters["connectivity"] = enum2string(m_eConnectivity);
     parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
+    parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
     parameters["threshold"]    = kipl::strings::value2string(m_fThreshold);
     parameters["sigma"]        = kipl::strings::value2string(m_fSigma);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
