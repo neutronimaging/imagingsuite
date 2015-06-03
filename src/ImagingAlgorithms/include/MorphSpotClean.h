@@ -43,7 +43,7 @@ public:
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 
 protected:
-    void FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
+    void FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
     void ProcessReplace(kipl::base::TImage<float,2> &img);
     void ProcessFill(kipl::base::TImage<float,2> &img);
 
@@ -74,6 +74,7 @@ protected:
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
     int m_nEdgeSmoothLength;
+    int m_nPadMargin;
     int m_nMaxArea;
     float m_fMinLevel;
     float m_fMaxLevel;

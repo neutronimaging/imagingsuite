@@ -16,6 +16,7 @@ MorphSpotClean::MorphSpotClean() :
     m_eMorphDetect(MorphDetectHoles),
     m_eMorphClean(MorphCleanReplace),
     m_nEdgeSmoothLength(5),
+    m_nPadMargin(1),
     m_nMaxArea(100),
     m_fMinLevel(-0.1f),
     m_fMaxLevel(12.0f),
@@ -40,7 +41,7 @@ void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float s
 
 }
 
-void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks)
+void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks)
 {
     PadEdges(img,padded);
 
@@ -155,16 +156,18 @@ void MorphSpotClean::setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod
 
 void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded)
 {
-    size_t dims[2]={img.Size(0)+2, img.Size(1)+2};
+    size_t dims[2]={img.Size(0)+2*m_nPadMargin, img.Size(1)+2*m_nPadMargin};
     padded.Resize(dims);
     size_t last=padded.Size(0);
     size_t nLine=img.Size(0);
 
     for (size_t i=0; i<img.Size(1); i++) {
         float *pPad=padded.GetLinePtr(i+1);
-        memcpy(pPad+1,img.GetLinePtr(i),nLine*sizeof(float));
-        pPad[0]    = pPad[1];
-        pPad[last-1] = pPad[last-2];
+        memcpy(pPad+m_nPadMargin,img.GetLinePtr(i),nLine*sizeof(float));
+        if (m_nPadMargin==1) {
+            pPad[0]    = pPad[1];
+            pPad[last-1] = pPad[last-2];
+        }
     }
 
     memcpy(padded.GetLinePtr(0)+1,img.GetLinePtr(0),nLine*sizeof(float));

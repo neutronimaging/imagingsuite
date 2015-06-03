@@ -33,5 +33,5 @@ else:symbian: LIBS += -lkipl
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../../../src/libs/kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../src/libs/kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/src

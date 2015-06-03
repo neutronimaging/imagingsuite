@@ -37,7 +37,7 @@ TestMorphSpotClean::TestMorphSpotClean()
 
     pos1=24;
     pos2=10;
-    float ref=holes[pos1];
+
     points[pos1]=0.0f;
     points[pos2]=100.0f;
 
