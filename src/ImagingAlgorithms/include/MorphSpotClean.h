@@ -95,4 +95,9 @@ protected:
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eMorphCleanMethod mc);
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, ImagingAlgorithms::eMorphCleanMethod mc);
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc);
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eMorphDetectionMethod md);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, ImagingAlgorithms::eMorphDetectionMethod md);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &md);
+
 #endif // MORPHSPOTCLEAN_H
