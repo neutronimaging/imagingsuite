@@ -377,7 +377,7 @@ namespace Nonlinear {
 		return 1;
 	}
 
-	int SumOfGaussians::Hessian(long double x, Array2D<long double> & hes)
+    int SumOfGaussians::Hessian(long double UNUSED(x), Array2D<long double> & UNUSED(hes))
 	{
 
 		cerr<<"The Hessian is not available"<<endl;
@@ -391,7 +391,7 @@ namespace Nonlinear {
 		*/
 	}
 
-	int SumOfGaussians::Jacobian(long double x, Array2D<long double> & jac)
+    int SumOfGaussians::Jacobian(long double UNUSED(x), Array2D<long double> & UNUSED(jac))
 	{
 		cerr<<"The Jacobian is not available"<<endl;
 		return 1;

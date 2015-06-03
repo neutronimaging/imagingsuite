@@ -237,7 +237,7 @@ int SliceReadMAT2(kipl::base::TImage<ImgType,NDim> & img,
 	char tmpstr[16];
 	logstream<<"Reading slice:"<<endl;
 	kipl::base::TImage<ImgType,2> tmp;
-	for (int i=0; i<n; i++) {
+    for (size_t i=0; i<n; i++) {
 		sprintf(tmpstr,"[%d]",i);
 //		logstream<<std::setw(8)<<tmpstr<<std::flush;
 //		MakeFileName(fname,i*nstep+start,filename,ext);

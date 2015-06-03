@@ -53,7 +53,7 @@ LogStreamWriter::~LogStreamWriter()
 }
 
 
-Logger::Logger(std::string str, std::ostream &s) 
+Logger::Logger(std::string str, std::ostream & UNUSED(s))
 {
 #ifdef MULTITARGET
     if (Logger::LogTargets.empty())
