@@ -110,7 +110,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 }
 
 template <typename ImgType>
-int WriteFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname)
+int WriteFITS(kipl::base::TImage<ImgType,2> & UNUSED(src),char const * const UNUSED(fname))
 {
 	throw kipl::base::KiplException("WriteFITS is not implemented");
 	return 0;

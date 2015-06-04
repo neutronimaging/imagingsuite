@@ -107,7 +107,7 @@ int WriteMAT(const kipl::base::TImage<ImgType,NDim> &img,
 ///	\param fname file name of the destination file (including extension .mat)
 ///	\return 1 if successful, 0 if fail
 template <typename ImgType, size_t NDim>
-int ReadMAT(kipl::base::TImage<ImgType,NDim> &img, char const * const fname, size_t const * const nCrop=NULL)
+int ReadMAT(kipl::base::TImage<ImgType,NDim> &img, char const * const fname, size_t const * const UNUSED(nCrop)=NULL)
 {
 	std::stringstream msg;
 	kipl::base::TImage<ImgType,NDim> tmp;
@@ -217,12 +217,12 @@ int ReadMAT(kipl::base::TImage<ImgType,NDim> &img, char const * const fname, siz
 ///	\todo Implement cropping
 template<typename ImgType, size_t NDim>
 int SliceReadMAT2(kipl::base::TImage<ImgType,NDim> & img, 
-		char const * const fname, 
-		size_t start,
+        char const * const UNUSED(fname),
+        size_t UNUSED(start),
 		size_t n,
-		size_t nstep=1,
+        size_t UNUSED(nstep)=1,
 		size_t *crop=NULL, 
-		double rot=0.0, 
+        double UNUSED(rot)=0.0,
 		std::ostream &logstream=std::cout)
 {
 	std::cerr<<"kipl::io::SliceReadMAT2 is not implemented."<<std::endl;
@@ -283,7 +283,7 @@ int SliceReadMAT(kipl::base::TImage<ImgType,3u> & img,
 		int n,
 		int nstep=1,
 		int const * const crop=NULL, 
-		double rot=0.0, 
+        double UNUSED(rot)=0.0,
 		std::ostream &logstream=std::cout)
 {
 	char fprefix[256],fsuffix[256];
