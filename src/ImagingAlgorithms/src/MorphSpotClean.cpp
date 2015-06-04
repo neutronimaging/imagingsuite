@@ -20,8 +20,8 @@ MorphSpotClean::MorphSpotClean() :
     m_nMaxArea(100),
     m_fMinLevel(-0.1f),
     m_fMaxLevel(12.0f),
-    m_fThreshold(0.1f),
-    m_fSigma(0.001f),
+    m_fThreshold(0.025f),
+    m_fSigma(0.00f),
     m_LUT(1<<15,0.1f,0.0075f)
 {
 
@@ -221,6 +221,7 @@ void MorphSpotClean::UnpadEdges(kipl::base::TImage<float,2> &padded, kipl::base:
 kipl::base::TImage<float,2> MorphSpotClean::DetectionImage(kipl::base::TImage<float,2> img)
 {
     kipl::base::TImage<float,2> det_img;
+
     switch (m_eMorphDetect) {
     case MorphDetectHoles    : det_img = DetectHoles(img);  break;
     case MorphDetectPeaks    : det_img = DetectPeaks(img);  break;
@@ -269,7 +270,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectPeaks(kipl::base::TImage<float
     pPeaks=nopeaks.GetDataPtr();
 
     for (size_t i=0; i<N; i++) {
-        pImg[i]=(m_fThreshold<abs(pPeaks[i]-pImg[i]));
+        pImg[i]=abs(pPeaks[i]-pImg[i]);
     }
 
     UnpadEdges(padded,detection);
@@ -296,10 +297,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectBoth(kipl::base::TImage<float,
 
     for (size_t i=0; i<N; i++) {
         float val=pImg[i];
-        if (m_fThreshold<abs(val-pHoles[i]))
-            pImg[i]=pHoles[i];
-        else if (m_fThreshold<abs(pPeaks[i]-val))
-            pImg[i]=pPeaks[i];
+        pImg[i]=max(abs(val-pHoles[i]),abs(pPeaks[i]-val));
     }
 
     return detection;
@@ -503,7 +501,11 @@ void string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc)
 {
     if (str=="morphcleanreplace") mc=ImagingAlgorithms::MorphCleanReplace;
     else if (str=="morphcleanfill") mc=ImagingAlgorithms::MorphCleanFill;
-    else throw ImagingException("String could not be converted to eMorphCleanMethod",__FILE__,__LINE__);
+    else {
+        std::ostringstream msg;
+        msg<<"String ("<<str<<") could not be converted to eMorphCleanMethod";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 }
 
 
@@ -532,5 +534,9 @@ void string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &mc)
     if (str=="morphdetectholes") mc=ImagingAlgorithms::MorphDetectHoles;
     else if (str=="morphdetectpeaks") mc=ImagingAlgorithms::MorphDetectPeaks;
     else if (str=="morphdetectboth") mc=ImagingAlgorithms::MorphDetectBoth;
-    else throw ImagingException("String could not be converted to eMorphDetectMethod",__FILE__,__LINE__);
+    else {
+        std::ostringstream msg;
+        msg<<"String ("<<str<<") could not be converted to eMorphDetectionMethod";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 }

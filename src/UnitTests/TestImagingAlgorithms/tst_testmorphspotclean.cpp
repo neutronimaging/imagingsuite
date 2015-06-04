@@ -31,7 +31,7 @@ TestMorphSpotClean::TestMorphSpotClean()
     size_t dims[2]={7,7};
     holes.Resize(dims);
 
-    for (int i=0; i<holes.Size(); i++) {
+    for (size_t i=0; i<holes.Size(); i++) {
         holes[i]=i/10.0f;
     }
 
@@ -48,10 +48,8 @@ TestMorphSpotClean::TestMorphSpotClean()
 
 void TestMorphSpotClean::CleanHoles()
 {
-    std::stringstream msg;
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    size_t dims[2]={7,7};
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
@@ -65,10 +63,8 @@ void TestMorphSpotClean::CleanHoles()
 
 void TestMorphSpotClean::CleanPeaks()
 {
-    std::stringstream msg;
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    size_t dims[2]={7,7};
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
@@ -82,10 +78,8 @@ void TestMorphSpotClean::CleanPeaks()
 
 void TestMorphSpotClean::CleanBoth()
 {
-    std::stringstream msg;
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    size_t dims[2]={7,7};
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
