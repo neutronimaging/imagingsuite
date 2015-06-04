@@ -243,7 +243,7 @@ void MuhRecMainWindow::TakeProjectionPath()
     ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
 }
 
-void MuhRecMainWindow::ProjectionIndexChanged(int x)
+void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
 {
     ui->sliderProjections->setMaximum(ui->spinLastProjection->value());
     ui->sliderProjections->setMinimum(ui->spinFirstProjection->value());
@@ -458,12 +458,12 @@ void MuhRecMainWindow::RotateChanged()
 
 }
 
-void MuhRecMainWindow::DoseROIChanged(int x)
+void MuhRecMainWindow::DoseROIChanged(int UNUSED(x))
 {
     UpdateDoseROI();
 }
 
-void MuhRecMainWindow::ReconROIChanged(int x)
+void MuhRecMainWindow::ReconROIChanged(int UNUSED(x))
 {
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
@@ -478,12 +478,12 @@ void MuhRecMainWindow::ReconROIChanged(int x)
     UpdateMemoryUsage(dims);
 }
 
-void MuhRecMainWindow::CenterOfRotationChanged(int x)
+void MuhRecMainWindow::CenterOfRotationChanged(int UNUSED(x))
 {
     CenterOfRotationChanged();
 }
 
-void  MuhRecMainWindow::CenterOfRotationChanged(double x)
+void  MuhRecMainWindow::CenterOfRotationChanged(double UNUSED(x))
 {
     CenterOfRotationChanged();
 }
@@ -589,7 +589,7 @@ void MuhRecMainWindow::ViewGeometryList()
     }
 }
 
-void MuhRecMainWindow::GrayLevelsChanged(double x)
+void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
 {
     double low=ui->dspinGrayLow->value();
     double high=ui->dspinGrayHigh->value();

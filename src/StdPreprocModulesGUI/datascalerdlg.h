@@ -17,7 +17,7 @@ class DataScalerDlg : public ConfiguratorDialogBase
 public:
     explicit DataScalerDlg(QWidget *parent = 0);
     ~DataScalerDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & UNUSED_img);
 
 private:
     virtual void ApplyParameters();

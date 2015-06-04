@@ -167,7 +167,7 @@ void WaveletRingCleanDlg::on_change_level()
 {
 }
 
-int WaveletRingCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int WaveletRingCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img)
 {
 	m_Projections=img;
 

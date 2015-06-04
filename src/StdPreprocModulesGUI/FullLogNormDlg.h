@@ -16,7 +16,7 @@ class FullLogNormDlg: public ConfiguratorDialogBase {
 public:
     FullLogNormDlg(QWidget * parent = NULL);
 	virtual ~FullLogNormDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();

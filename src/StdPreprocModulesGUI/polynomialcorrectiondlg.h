@@ -19,7 +19,7 @@ public:
     explicit PolynomialCorrectionDlg(QWidget *parent = 0);
     ~PolynomialCorrectionDlg();
 
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private slots:
     void on_spinOrder_valueChanged(int arg1);

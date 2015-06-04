@@ -22,7 +22,7 @@ AdaptiveFilterDlg::~AdaptiveFilterDlg()
     delete ui;
 }
 
-int AdaptiveFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int AdaptiveFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img)
 {
     m_Projections=img;
 

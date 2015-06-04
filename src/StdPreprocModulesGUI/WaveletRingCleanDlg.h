@@ -32,7 +32,7 @@ class WaveletRingCleanDlg: public ConfiguratorDialogBase {
 public:
     WaveletRingCleanDlg(QWidget * parent = NULL);
 	virtual ~WaveletRingCleanDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 protected slots:
     void on_refresh();
     void on_change_level();

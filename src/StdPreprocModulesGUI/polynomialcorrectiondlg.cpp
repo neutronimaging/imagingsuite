@@ -17,7 +17,7 @@ PolynomialCorrectionDlg::~PolynomialCorrectionDlg()
     delete ui;
 }
 
-int PolynomialCorrectionDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int PolynomialCorrectionDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img)
 {
     m_Projections=img;
 

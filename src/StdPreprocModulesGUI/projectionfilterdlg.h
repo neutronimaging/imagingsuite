@@ -17,8 +17,9 @@ class ProjectionFilterDlg : public ConfiguratorDialogBase
 public:
     ProjectionFilterDlg(QWidget * parent = NULL);
     virtual ~ProjectionFilterDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img);
 private:
+    virtual int exec() {return QDialog::exec();}
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();

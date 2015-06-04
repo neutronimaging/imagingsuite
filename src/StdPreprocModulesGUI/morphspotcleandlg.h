@@ -25,11 +25,13 @@ class MorphSpotCleanDlg : public ConfiguratorDialogBase
 public:
     explicit MorphSpotCleanDlg(QWidget *parent = 0);
     virtual ~MorphSpotCleanDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private slots:
 
     void on_buttonApply_clicked();
+
+    void on_comboDectionDisplay_currentIndexChanged(int index);
 
 private:
     Ui::MorphSpotCleanDlg *ui;
@@ -46,6 +48,11 @@ private:
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
+
+    kipl::base::TImage<float,2> m_OriginalImage;
+    kipl::base::TImage<float,2> m_ProcessedImage;
+    kipl::base::TImage<float,2> m_DetectionImage;
+
     float m_fThreshold;
     float m_fSigma;
     int   m_nEdgeSmoothLength;

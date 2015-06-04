@@ -9,4 +9,10 @@
 #  define STDPREPROCMODULESGUISHARED_EXPORT Q_DECL_IMPORT
 #endif
 
+#ifdef __GNUC__
+#define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#define UNUSED(x) UNUSED_ ## x
+#endif
+
 #endif // STDPREPROCMODULESGUI_GLOBAL_H

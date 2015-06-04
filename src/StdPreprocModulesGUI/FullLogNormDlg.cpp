@@ -5,7 +5,7 @@
  *      Author: kaestner
  */
 
-#include "stdafx.h"
+#include "StdPreprocModulesGUI_global.h"
 #include "FullLogNormDlg.h"
 
 #include <strings/miscstring.h>
@@ -30,7 +30,7 @@ FullLogNormDlg::FullLogNormDlg(QWidget *parent) :
 FullLogNormDlg::~FullLogNormDlg() {
 }
 
-int FullLogNormDlg::exec(ConfigBase * UNUSED(config), std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> UNUSED(img))
+int FullLogNormDlg::exec(ConfigBase * UNUSED(config), std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
 {
 	UpdateDialogFromParameterList(parameters);
     UpdateDialog();

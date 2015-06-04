@@ -30,16 +30,17 @@ MorphSpotCleanDlg::~MorphSpotCleanDlg()
 
 void MorphSpotCleanDlg::ApplyParameters()
 {
-    kipl::base::TImage<float,2> img(m_Projections.Dims());
-    memcpy(img.GetLinePtr(0,m_Projections.Size(2)/2),m_Projections.GetDataPtr(),img.Size()*sizeof(float));
+    //kipl::base::TImage<float,2> img(m_Projections.Dims());
+    m_OriginalImage=GetProjection(m_Projections,m_Projections.Size(2)/2);
 
     const size_t N=512;
     size_t hist[N];
     float axis[N];
     size_t nLo, nHi;
-    kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
+
+    kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerOrignal->set_image(img.GetDataPtr(),img.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -47,15 +48,16 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     m_Cleaner.Configure(*m_Config, parameters);
 
-    kipl::base::TImage<float,2> det=m_Cleaner.DetectionImage(img);
-    for (int i=0; i<img.Size(); i++)
-        if (det[i]!=det[i]) det[i]=0;
+    m_DetectionImage=m_Cleaner.DetectionImage(m_OriginalImage);
+    for (size_t i=0; i<m_DetectionImage.Size(); i++)
+        if (m_DetectionImage[i]!=m_DetectionImage[i]) m_DetectionImage[i]=0;
 
     size_t cumhist[N];
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
-  //  kipl::base::Histogram(det.GetDataPtr(), det.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
+
+    kipl::base::Histogram(m_DetectionImage.GetDataPtr(), m_DetectionImage.Size(), hist, N, 0.0f, 0.0f, axis);
+
     kipl::math::cumsum(hist,cumhist,N);
 
     float fcumhist[N];
@@ -67,38 +69,37 @@ void MorphSpotCleanDlg::ApplyParameters()
     }
 
     size_t N99=ii;
-    ui->plotDetection->setCurveData(0,axis,hist,N99);
+    ui->plotDetection->setCurveData(0,axis,fcumhist,N99);
     float threshold[N];
-    // In case of sigmoid mixing
-//    for (size_t i=0; i<N; i++) {
-//        threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
-//    }
-//    m_plot.setCurveData(1,axis,threshold,N99);
-    ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+    if (m_eCleanMethod==ImagingAlgorithms::MorphCleanFill) { // In case of sigmoid mixing
+        for (size_t i=0; i<N; i++) {
+            threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
+        }
+        ui->plotDetection->setCurveData(1,axis,threshold,N99);
+    }
+    else {
+        ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+    }
 
     std::map<std::string,std::string> pars;
-    kipl::base::TImage<float,2> pimg=img;
-    pimg.Clone();
-    m_Cleaner.Process(pimg, pars);
+    m_ProcessedImage=m_OriginalImage;
+    m_ProcessedImage.Clone();
+    m_Cleaner.Process(m_ProcessedImage, pars);
+
+    std::ostringstream msg;
+    msg.str(""); msg<<"Processed image"<<m_ProcessedImage;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
-    kipl::base::Histogram(pimg.GetDataPtr(), pimg.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerProcessed->set_image(pimg.GetDataPtr(), pimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
 
-    kipl::base::TImage<float,2> diff=pimg-img;
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
-    kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-//    for (size_t i=0; i<diff.Size(); i++)
-//        diff[i]=(diff[i]!=0.0 ? 1.0f : 0.0f);
-    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
-   //  ui->viewerDifference->set_image(det.GetDataPtr(), det.Dims());
+    on_comboDectionDisplay_currentIndexChanged(ui->comboDectionDisplay->currentIndex());
 }
 
-int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img)
+int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
 {
 
     std::ostringstream msg;
@@ -200,3 +201,61 @@ void MorphSpotCleanDlg::on_buttonApply_clicked()
     ApplyParameters();
 }
 
+
+void MorphSpotCleanDlg::on_comboDectionDisplay_currentIndexChanged(int index)
+{
+    std::ostringstream msg;
+
+    msg<<"Change display index to "<<index;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    if (m_OriginalImage.Size()==0) {
+        msg.str(""); msg<<"Original image void";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+
+        return;
+    }
+    if (m_OriginalImage.Size()!=m_ProcessedImage.Size()) {
+        msg.str(""); msg<<"Original image: "<<m_OriginalImage<<std::endl<<"Processed image: "<<m_ProcessedImage;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+
+        return;
+    }
+
+    kipl::base::TImage<float,2> dimg=m_ProcessedImage;
+
+    logger(kipl::logging::Logger::LogMessage,"Start switching");
+    switch (index) {
+    case 0: // Difference
+        dimg=m_OriginalImage-m_ProcessedImage;
+        break;
+    case 1:
+        for (size_t i=0; i<dimg.Size(); i++) {
+            if (m_OriginalImage[i]!=0.0f)
+                dimg[i] = 100*(m_OriginalImage[i]-m_ProcessedImage[i])/m_OriginalImage[i];
+            else
+                dimg[i]=0.0f;
+        }
+    case 2: // Detection image
+        dimg=m_DetectionImage;
+        break;
+    case 3: // Hit map
+        dimg=m_OriginalImage-m_ProcessedImage;
+        for (size_t i=0; i<dimg.Size(); i++)
+            dimg[i] = dimg[i]!=0 ? 1.0f : 0.0f;
+        break;
+    }
+    size_t nLo,nHi;
+
+    const size_t N=512;
+    float axis[N];
+    size_t hist[N];
+
+    memset(hist,0,N*sizeof(size_t));
+    memset(axis,0,N*sizeof(float));
+
+    kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
+    logger(kipl::logging::Logger::LogMessage,"Start display");
+    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
+}

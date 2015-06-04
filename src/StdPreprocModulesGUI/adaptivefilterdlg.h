@@ -18,7 +18,7 @@ public:
     explicit AdaptiveFilterDlg(QWidget *parent = 0);
     ~AdaptiveFilterDlg();
 
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
