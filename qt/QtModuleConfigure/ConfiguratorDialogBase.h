@@ -45,7 +45,7 @@ public:
     virtual ~ConfiguratorDialogBase();
     bool NeedImages() {return m_bNeedImages;}
 
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 public slots:
     void on_ButtonBox_Clicked(QAbstractButton *button);
