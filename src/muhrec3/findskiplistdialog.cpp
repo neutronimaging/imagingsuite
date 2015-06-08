@@ -72,7 +72,7 @@ void FindSkipListDialog::LoadDoseList(ReconConfig &config)
     m_DoseData.clear();
     m_SortedDoses.clear();
     float fDose=0.0f;
-    for (int i=config.ProjectionInfo.nFirstIndex; i<=config.ProjectionInfo.nLastIndex; i++) {
+    for (size_t i=config.ProjectionInfo.nFirstIndex; i<=config.ProjectionInfo.nLastIndex; i++) {
 
                fDose=reader.GetProjectionDose(config.ProjectionInfo.sPath,
                                     config.ProjectionInfo.sFileMask,
@@ -86,7 +86,7 @@ void FindSkipListDialog::LoadDoseList(ReconConfig &config)
                m_SortedDoses.insert(std::make_pair(fDose,i));
     }
     ui->plotProjectionDose->setCurveData(0,m_DoseData);
-    if (m_SortedDoses.size()!=m_DoseData.size()) {
+    if (m_SortedDoses.size()!=static_cast<size_t>(m_DoseData.size())) {
         msg.str("");
         msg<<"Dose data size missmatch. size(DosePlot)="<<m_DoseData.size()<<", size(SortedDoses)="<<m_SortedDoses.size();
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);

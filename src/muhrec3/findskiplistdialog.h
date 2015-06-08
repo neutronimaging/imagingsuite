@@ -23,6 +23,7 @@ public:
     QString getSkipList();
 
 protected:
+    virtual int exec() { return QDialog::exec();}
     void LoadDoseList(ReconConfig &config);
 
 protected slots:
