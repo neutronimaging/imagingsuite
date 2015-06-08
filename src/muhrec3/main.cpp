@@ -190,9 +190,11 @@ int RunOffline(QApplication *app)
                           logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
                           pEngine->Run3D();
                           logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
+
                           std::string confname=config.MatrixInfo.sDestinationPath;
                           kipl::strings::filenames::CheckPathSlashes(confname,true);
-                          confname+="CurrentRecon.xml";
+                          std::string basename=config.MatrixInfo.sFileMask.substr(0,config.MatrixInfo.sFileMask.find_first_of('#'));
+                          confname+=basename+"_recon.xml";
 
                           ofstream conffile(confname.c_str());
 
