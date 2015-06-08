@@ -19,7 +19,9 @@ unix:!symbian {
 
     unix:macx {
         QMAKE_CXXFLAGS += -fPIC -O2
+        INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons # due to strange ordering during ui build...
         INCLUDEPATH += /opt/local/include
+
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
         QMAKE_INFO_PLIST = Info.plist
