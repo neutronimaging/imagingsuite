@@ -20,6 +20,14 @@ GammaClean::GammaClean() :
 
 }
 
+void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t medsize)
+{
+    m_fSigma=sigma;
+    m_fThreshold3=th3;
+    m_fThreshold5=th5;
+    m_fThreshold7=th7;
+    m_nMedianSize=medsize;
+}
 
 kipl::base::TImage<float,2> GammaClean::process(kipl::base::TImage<float,2> & img)
 {
@@ -73,68 +81,57 @@ kipl::base::TImage<float,2> GammaClean::process(kipl::base::TImage<float,2> & im
 
     std::list<ptrdiff_t>::iterator it;
     float *pRes=res.GetDataPtr();
+    float *pImg=img.GetDataPtr();
+
     for (it=m3.begin(); it!=m3.end(); it++) {
-        pRes[*it]=imgm3[*it];
+        MedianNeighborhood(pImg,pRes,*it,m_nNG3,9);
     }
-
-    ptrdiff_t sx=img.Size(0);
-    float medvec[4];
-    int medN=0;
-
-
-    ptrdiff_t ng5[4]={-2*sx,-2,2,2*sx};
-    ptrdiff_t toprow5    = 2*sx;
-    ptrdiff_t bottomrow5 = static_cast<ptrdiff_t>(img.Size())-2*sx-1;
 
     for (it=m5.begin(); it!=m5.end(); it++) {
-        if (*it<toprow5) {
-            medvec[0]=img[(*it)+ng5[1]];
-            medvec[1]=img[(*it)+ng5[2]];
-            medvec[2]=img[(*it)+ng5[3]];
-            medN=3;
-        }
-        else if (bottomrow5<*it) {
-            medvec[0]=img[(*it)+ng5[1]];
-            medvec[1]=img[(*it)+ng5[2]];
-            medvec[2]=img[(*it)+ng5[0]];
-            medN=3;
-        } else {
-            medvec[0]=img[(*it)+ng5[0]];
-            medvec[1]=img[(*it)+ng5[1]];
-            medvec[2]=img[(*it)+ng5[2]];
-            medvec[3]=img[(*it)+ng5[3]];
-            medN=4;
-        }
-        kipl::math::median_quick_select(medvec,medN,pRes+(*it));
+        MedianNeighborhood(pImg,pRes,*it,m_nNG5,25);
     }
 
-    ptrdiff_t ng7[4]={-3*sx,-3,3,3*sx};
-    ptrdiff_t toprow7    = 3*sx;
-    ptrdiff_t bottomrow7 = static_cast<ptrdiff_t>(img.Size())-3*sx-1;
     for (it=m7.begin(); it!=m7.end(); it++) {
-
-        if (*it<toprow7) {
-            medvec[0]=img[(*it)+ng7[1]];
-            medvec[1]=img[(*it)+ng7[2]];
-            medvec[2]=img[(*it)+ng7[3]];
-            medN=3;
-        }
-        else if (bottomrow7<*it) {
-            medvec[0]=img[(*it)+ng7[1]];
-            medvec[1]=img[(*it)+ng7[2]];
-            medvec[2]=img[(*it)+ng7[0]];
-            medN=3;
-        } else {
-            medvec[0]=img[(*it)+ng7[0]];
-            medvec[1]=img[(*it)+ng7[1]];
-            medvec[2]=img[(*it)+ng7[2]];
-            medvec[3]=img[(*it)+ng7[3]];
-            medN=4;
-        }
-        kipl::math::median_quick_select(medvec,medN,pRes+(*it));
+        MedianNeighborhood(pImg,pRes,*it,m_nNG7,49);
     }
+
     return res;
 }
+
+void GammaClean::PrepareNeighborhoods(size_t *dims)
+{
+    for (ptrdiff_t i=-1,idx=0; i<=1; i++)
+        for (ptrdiff_t j=-1; j<=1; j++, idx++)
+            m_nNG3[idx]=i*dims[0]+j;
+
+    for (ptrdiff_t i=-2,idx=0; i<=2; i++)
+        for (ptrdiff_t j=-2; j<=2; j++, idx++)
+            m_nNG5[idx]=i*dims[0]+j;
+
+    for (ptrdiff_t i=-3,idx=0; i<=3; i++)
+        for (ptrdiff_t j=-3; j<=3; j++, idx++)
+            m_nNG7[idx]=i*dims[0]+j;
+
+}
+
+void GammaClean::MedianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, ptrdiff_t *ng, size_t N)
+{
+    size_t medN=N;
+    ptrdiff_t p;
+    for (size_t i=0; i<N; i++) {
+        p=pos+ng[i];
+
+        if ((p<0) || (m_nData<=p)) {
+            medN--;
+        }
+        else {
+            medvec[i]=pImg[p];
+        }
+    }
+
+    kipl::math::median_quick_select(medvec,medN,pRes+pos);
+}
+
 
 }
 
