@@ -23,6 +23,8 @@ public:
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_comboCompare_currentIndexChanged(int index);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -32,6 +34,8 @@ private:
     Ui::AdaptiveFilterDlg *ui;
 
     kipl::base::TImage<float,3> m_Projections;
+    kipl::base::TImage<float,2> m_Sino;
+    kipl::base::TImage<float,2> m_ProcessedSino;
 
     float m_fLambda;
     float m_fSigma;

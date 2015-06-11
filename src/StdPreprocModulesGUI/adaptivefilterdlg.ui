@@ -91,16 +91,17 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QLabel" name="label_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Difference</string>
-           </property>
+          <widget class="QComboBox" name="comboCompare">
+           <item>
+            <property name="text">
+             <string>Difference</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Change map</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
