@@ -18,6 +18,8 @@
 
 SaveProjections::SaveProjections() :
 	PreprocModuleBase("SaveProjections"),
+    m_sPath("./"),
+    m_sFileMask("projections_####.tif"),
 	m_eImageType(ReconConfig::cProjections::ImageType_Projections)
 {
 }
@@ -29,7 +31,9 @@ std::map<std::basic_string<char>, std::basic_string<char> > SaveProjections::Get
 {
 	std::map<std::basic_string<char>, std::basic_string<char> > parameters;
 
-	parameters["filemask"]="./projections_####.tif";
+    parameters["path"]=m_sPath;
+    parameters["filemask"]=m_sFileMask;
+
 	kipl::strings::filenames::CheckPathSlashes(parameters["filemask"],false);
 
 	parameters["imagetype"]=enum2string(m_eImageType); 
@@ -41,6 +45,8 @@ int SaveProjections::Configure(ReconConfig config, std::map<std::basic_string<ch
 {
 	m_config=config;
 
+    m_sPath = parameters["path"];
+    kipl::strings::filenames::CheckPathSlashes(m_sPath,true);
 	m_sFileMask  = parameters["filemask"];
 	string2enum(parameters["imagetype"],m_eImageType);
 
@@ -49,9 +55,10 @@ int SaveProjections::Configure(ReconConfig config, std::map<std::basic_string<ch
 
 int SaveProjections::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
 {
+    std::string filemask=m_sPath+m_sFileMask;
 	switch (m_eImageType) {
 		case ReconConfig::cProjections::ImageType_Projections :
-			kipl::io::WriteImageStack(img,m_sFileMask,
+            kipl::io::WriteImageStack(img,filemask,
 				0.0f, 0.0f,
 				0, img.Size(2), 1,
 				kipl::io::TIFFfloat,kipl::base::ImagePlaneXY);
@@ -62,7 +69,7 @@ int SaveProjections::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std:
 				std::string fname,ext;
 				for (size_t i=0; i<img.Size(1); i++) {	
 					ExtractSinogram(img,sino,i);
-					kipl::strings::filenames::MakeFileName(m_sFileMask,i+m_config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+                    kipl::strings::filenames::MakeFileName(filemask,i+m_config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
 					kipl::io::WriteTIFF32(sino,fname.c_str());
 				}
 			}

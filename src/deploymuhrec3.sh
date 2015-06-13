@@ -29,6 +29,8 @@ fi
 `$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModulesGUI-Qt5-Release/libInspectorModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModules-Qt5-Release/libInspectorModules.1.0.0.dylib $DEST/Contents/Frameworks`
 
 if [ ! -d "./Resources" ]; then
  mkdir ./Resources

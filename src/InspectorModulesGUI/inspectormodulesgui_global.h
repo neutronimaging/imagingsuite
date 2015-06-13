@@ -9,4 +9,10 @@
 #  define INSPECTORMODULESGUISHARED_EXPORT Q_DECL_IMPORT
 #endif
 
+#ifdef __GNUC__
+#define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#define UNUSED(x) UNUSED_ ## x
+#endif
+
 #endif // INSPECTORMODULESGUI_GLOBAL_H

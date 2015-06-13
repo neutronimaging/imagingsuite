@@ -31,6 +31,7 @@ protected:
 	virtual int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
 
 	ReconConfig m_config;
+    std::string m_sPath;
 	std::string m_sFileMask;
 	ReconConfig::cProjections::eImageType m_eImageType;
 };
