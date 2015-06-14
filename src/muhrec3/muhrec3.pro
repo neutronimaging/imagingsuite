@@ -24,8 +24,9 @@ unix:!symbian {
 
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
         ICON = muhrec3.icns
+#        QMAKE_INFO_PLIST = Info.plist
+
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -121,3 +122,4 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/k
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
+

@@ -39,10 +39,7 @@ The software includes the following features:
 \item Various options for normalization.
 \end{itemize}
 
-MuhRec2 is the next step of the reconstructor development. It provides more
-flexibility in
-terms of configuration. The design of the reconstruction engine has an open API
-that makes it possible for users to add their own processing modules. In
+MuhRec3 is the next step of my reconstruction tool development. It provides more flexibility in terms of configuration. The design of the reconstruction engine has an open API that makes it possible for users to add their own processing modules. In
 addition the user can configure order in which the preprocessing modules are
 executed. Due to major changes in the architecture of the software it was not
 possible to maintain backwards compatibility with the configuration files from
@@ -60,7 +57,7 @@ There are two reasons for the Muh. Firstly, the author lives in the Swiss villag
 (which by the way has nothing to do with cows). The software was to large extent developed
 on the train commuting between Muhen and Paul Scherrer Institut. The development distance
 can hence be determined to be about 20000~km. The second reason is that the cow is the
-national proudness of Switzerland \ldots and the cow says 'Muh'.
+national proudness of Switzerland \ldots and the cow says 'Muh'. The third reason is that there are many cows surrounding PSI.
 
 \chapter{A First Reconstruction}
 \section{Project information}
@@ -218,6 +215,15 @@ the file mask for the slices. The mask has the same format as the projection
 data i.e. \verb+base####.ext+. The extension must be entered manually as it is
 not adapted to the selected file type. The last selection to make is the file
 format which can be either tiff with different bit depths or matlab binary.
+
+\section{The geometry list}
+It is possible to store the current configuration in the geometry list using the application menu item Geometry. This can be used to test the effect of different settings without losing the original settings. Each parameter set will be stored with the central slice to make comparison easier. If you have reconstructed several slices on different places you can use the entries of the list to calculate the axis tilt. 
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.4]{figures/GeometryListDlg.png}
+\caption{The Geometry list dialog.}
+\end{figure}
+
 
 \chapter{Detailed descriptions}
 \section{Processing modules}
@@ -476,8 +482,13 @@ This ring cleaning module works in the sinogram domain. It does the cleaning usi
 \begin{description}
  \item[decnum] Number of decomposition levels. \\Default value: 5
  \item[sigma] Width of the Gaussian that forms the stop band. \\ Default value 0.1
- \item[wname]The name of the filter description file. The files are found in the installation directory under filters. \\Default value: daub25
+ \item[wname]The name of the wavelet base. \\Default value: daub25
 \end{description}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/WaveletRingCleanDlg.png}
+\caption{Dialog to tune the ring correction using wavelet ringclean. Left panel is original, mid shows the processed sinogram, and the panel to the right shows the difference.}
+\end{figure}
 
 \subsection{CountNANs}
 This module is mainly for debugging use. It counts the number of pixels set
@@ -498,10 +509,17 @@ set of 32-bit tif images.
 
 Object file: libInspectorModules.so
 \begin{description}
- \item[filemask] \verb+./projections_####.tif+
-\item[type] Selects the file type of the projection data. It can be either
+\item[path] Path to the destination folder 
+\item[filemask] File mask of the written files. It shall always contain a block of \verb+#+'s as placeholder for the file index. Default value:\verb+./projections_####.tif+
+\item[imagetype] Selects the file type of the projection data. It can be either
 projections or sinograms. \\Default value: projections.
+\item[filetype] Selects the precision of the data in the written files. It can be 8- or 16- bit unsigned or 32 bit floating point.\\Default value: 32bit floating point.
 \end{description}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/SaveProjectionsDlg.png}
+\caption{Dialog to set the values of the SaveProjections module.}
+\end{figure}
 
 \section{The Viewer}
 The viewer area on the right hand side of the application main window is used to
@@ -579,9 +597,6 @@ different detector rotations.
 \caption{Possible acquisition axis tilts.}\label{fig_axistilt}
 \end{figure}
 
-\section{The configuration list}
-
-
 \section{Reconstructing from the command line}\label{sec_cmdline}
 In addition to the GUI you can also start MuhRec from the command line. This can done by typing
 \begin{verbatim}
@@ -602,6 +617,38 @@ The \verb+block+ is the xml block in the parameter file (userinformation, system
 muhrec3 -f parameters.xml "projections:roi=10 10 100 100" 
 \end{verbatim}
 Muhrec use less memory when it is operated in CLI mode. 
+
+\subsubsection{Invoking Muhrec from a script}
+Sometimes it is convenient to use a script to run muhrec. Here is an example using python
+\begin{verbatim}
+#!/usr/bin/env python
+
+print("Processing some frames.")
+
+projpath="/Volumes/DataDisk/P20140142"
+destpath=projpath+"/04_evaluation/20141126"
+muhrec="/Users/kaestner/Applications/muhrec3.app/Contents/MacOS/muhrec3"
+cfgpath=projpath+"/04_evaluation/20141126/recon_roots.xml"
+
+from subprocess import call
+from math import fmod
+firstproj=1;
+firstframe=0
+lastframe=3
+for i in range(firstframe,lastframe) :
+	# select projection sub set
+	firstindex="projections:firstindex="+str(firstproj+i*180)
+	lastindex="projections:lastindex="+str(firstproj+(i+1)*180)
+	# set file mask for the slices
+	matrixname="matrix:matrixname=frame_"+("%04d" % i)+"-slice_####.tif"
+	# adjust the reconstruction angles to alternating between 0-180 and 180-360
+	angle=fmod(i,2)*180 
+	scanarc="projections:scanarc="+str(angle)+" "+str(angle+180)
+	# call the reconstruction
+	call([muhrec, "-f", cfgpath, firstindex, lastindex, matrixname, scanarc])
+\end{verbatim}
+
+This script assumes that you have a well configured Recon.xml file and that the data is acquired as a long sequence, e.g. a time series of CTs.
 
 \chapter{Continued development}
 MuhRec is continuously developing to adapt to new challenges at the neutron

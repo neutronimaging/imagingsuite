@@ -34,6 +34,7 @@ protected:
     std::string m_sPath;
 	std::string m_sFileMask;
 	ReconConfig::cProjections::eImageType m_eImageType;
+    kipl::io::eFileType m_eFileType;
 };
 
 #endif /* PROJECTIONINSPECTOR_H_ */

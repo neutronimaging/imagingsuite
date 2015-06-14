@@ -7,9 +7,14 @@
 
 PolynomialCorrectionDlg::PolynomialCorrectionDlg(QWidget *parent) :
     ConfiguratorDialogBase("PolynomialCorrectionDlg",true,false,true,parent),
-    ui(new Ui::PolynomialCorrectionDlg)
+    ui(new Ui::PolynomialCorrectionDlg),
+    m_nPolyOrder(1)
 {
+    memset(m_fCoefs,0,sizeof(float)*10);
+    m_fCoefs[1]=1.0f;
+
     ui->setupUi(this);
+    UpdateDialog();
 }
 
 PolynomialCorrectionDlg::~PolynomialCorrectionDlg()
@@ -25,12 +30,10 @@ int PolynomialCorrectionDlg::exec(ConfigBase * config, std::map<std::string, std
 
     m_nPolyOrder = GetFloatParameter(parameters,"order");
     kipl::strings::String2Array(GetStringParameter(parameters,"coefficents"),m_fCoefs,m_nPolyOrder+1);
-
-
+    ui->spinOrder->setValue(m_nPolyOrder);
     on_spinOrder_valueChanged(m_nPolyOrder);
-
-    ApplyParameters();
     UpdateDialog();
+    ApplyParameters();
 
     int res=QDialog::exec();
 
@@ -49,17 +52,15 @@ int PolynomialCorrectionDlg::exec(ConfigBase * config, std::map<std::string, std
 
 void PolynomialCorrectionDlg::ApplyParameters()
 {
-    kipl::base::TImage<float,3> img(m_Projections);
-
-    img.Clone();
-
     const size_t N=512;
     size_t hist[N];
     float axis[N];
     size_t nLo, nHi;
 
-    kipl::base::TImage<float,2> origimg(img.Dims());
+    kipl::base::TImage<float,2> origimg(m_Projections.Dims());
     memcpy(origimg.GetDataPtr(), m_Projections.GetLinePtr(0,m_Projections.Size(2)/2), sizeof(float)*origimg.Size());
+    kipl::base::TImage<float,2> resimg=origimg; resimg.Clone();
+    kipl::base::TImage<float,2> procimg=origimg; procimg.Clone();
 
     kipl::base::Histogram(origimg.GetDataPtr(), origimg.Size(), hist, N, 0.0f, 0.0f, axis);
 
@@ -74,10 +75,7 @@ void PolynomialCorrectionDlg::ApplyParameters()
 
     std::map<std::string,std::string> pars;
 
-    corrector.Process(img, pars);
-
-    kipl::base::TImage<float,2> procimg(img.Dims());
-    memcpy(procimg.GetDataPtr(),img.GetLinePtr(0,img.Size(2)/2),sizeof(float)*procimg.Size());
+    corrector.Process(procimg, pars);
 
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
@@ -127,12 +125,7 @@ void PolynomialCorrectionDlg::UpdateParameters()
 void PolynomialCorrectionDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {
     parameters["order"]       = kipl::strings::value2string(m_nPolyOrder);
-
-    std::ostringstream coefstr;
-    for (size_t i=0; i<=m_nPolyOrder; i++)
-        coefstr<<m_fCoefs[i]<<(i!=m_nPolyOrder ? " ": "");
-
-    parameters["coefficents"] = coefstr.str();
+    parameters["coefficents"] = kipl::strings::Array2String(m_fCoefs,m_nPolyOrder+1);
 }
 
 void PolynomialCorrectionDlg::on_spinOrder_valueChanged(int arg1)

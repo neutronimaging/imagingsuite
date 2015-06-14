@@ -29,7 +29,7 @@ int AdaptiveFilterDlg::exec(ConfigBase * config, std::map<std::string, std::stri
     m_Config=config;
     m_fLambda     = GetFloatParameter(parameters,"lambda");
     m_fSigma      = GetFloatParameter(parameters,"sigma");
-    m_nFilterSize = GetIntParameter(parameters,"size");
+    m_nFilterSize = GetIntParameter(parameters,"filtersize");
 
     UpdateDialog();
     ApplyParameters();
@@ -123,7 +123,7 @@ void AdaptiveFilterDlg::UpdateParameterList(std::map<std::string, std::string> &
 {
     parameters["lambda"] = kipl::strings::value2string(m_fLambda);
     parameters["sigma"]  = kipl::strings::value2string(m_fSigma);
-    parameters["size"]   = kipl::strings::value2string(m_nFilterSize);
+    parameters["filtersize"]   = kipl::strings::value2string(m_nFilterSize);
 }
 
 void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
@@ -134,22 +134,31 @@ void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
 
 void AdaptiveFilterDlg::on_comboCompare_currentIndexChanged(int index)
 {
-    kipl::base::TImage<float,2> diff=m_Sino-m_ProcessedSino;
-
-    switch (index) {
-    case 0: break;
-    case 1:
-        for (int i=0; diff.Size(); i++)
-            diff[i]= diff[i]!=0.0f;
-        break;
-    }
-
+    kipl::base::TImage<float,2> diff(m_Sino.Dims());
     const size_t N=512;
     size_t hist[N];
     float axis[N];
     size_t nLo, nHi;
 
+    float *pDiff=diff.GetDataPtr();
+
+    switch (index) {
+    case 0:
+        logger(kipl::logging::Logger::LogMessage,"Difference");
+        for (size_t i=0; i<m_Sino.Size(); i++)
+            pDiff[i] = (m_Sino[i]-m_ProcessedSino[i]);
+        break;
+    case 1:
+        logger(kipl::logging::Logger::LogMessage,"Change map");
+        for (size_t i=0; i<m_Sino.Size(); i++)
+            pDiff[i] = ((m_Sino[i]-m_ProcessedSino[i])!=0.0f) ? 1.0f : 0.0f;
+
+        break;
+    }
+
     kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
+
     ui->viewerDifference->set_image(diff.GetDataPtr(),diff.Dims(),axis[nLo],axis[nHi]);
+
 }

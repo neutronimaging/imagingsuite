@@ -32,16 +32,12 @@ fi
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModulesGUI-Qt5-Release/libInspectorModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModules-Qt5-Release/libInspectorModules.1.0.0.dylib $DEST/Contents/Frameworks`
 
-if [ ! -d "./Resources" ]; then
- mkdir ./Resources
-fi 
-`$CPCMD $REPOSPATH/tomography/trunk/src/muhrec3.icns $DEST/Contents/Resources`
+# if [ ! -d "./Resources" ]; then
+#  mkdir ./Resources
+# fi 
+# `$CPCMD $REPOSPATH/tomography/trunk/src/muhrec3/resources/muh_icon.icns $DEST/Contents/Resources`
 
 rm -f ./MacOS/*.dylib
-
-#for f in `ls ./Frameworks/*.1.0.0.dylib`; do
-#	ln -s ../$f "./MacOS/`basename $f .1.0.0.dylib`.1.dylib"
-#done
 
 cd Frameworks
 rm -f *.1.0.dylib

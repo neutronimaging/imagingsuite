@@ -28,6 +28,7 @@ protected:
     std::string m_sPath;
     std::string m_sFileMask;
     ReconConfig::cProjections::eImageType m_eImageType;
+    kipl::io::eFileType m_eFileType;
 
 private slots:
     void on_buttonBrowse_clicked();
