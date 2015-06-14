@@ -36,6 +36,7 @@ enum eFileType {
 
 std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
 void KIPLSHARED_EXPORT string2enum(const std::string str, kipl::io::eFileType &ft);
+std::string KIPLSHARED_EXPORT enum2string(kipl::io::eFileType ft);
 /// \brief Read a series of tiff image and stores as a 3D image
 /// \brief img target image
 /// \brief fname file name mask of the image sequence, must contain a *

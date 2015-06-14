@@ -2,6 +2,7 @@
 #include "../../include/base/KiplException.h"
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 
 namespace kipl { namespace strings {
 bool GetElement(std::string &str, std::string &element)
@@ -147,5 +148,60 @@ size_t String2Array(std::string str, std::vector<int> &v)
     throw kipl::base::KiplException("String2Array is not implemented for vector<int>",__FILE__,__LINE__);
     return 0;
 }
+
+
+std::string Array2String(double *v, size_t N)
+{
+    std::ostringstream s;
+
+    for (size_t i=0; i<N; i++) {
+        s<<v[i]<<(i<(N-1) ? " " : "");
+    }
+    return s.str();
+}
+
+std::string Array2String(float *v, size_t N)
+{
+    std::ostringstream s;
+
+    for (size_t i=0; i<N; i++) {
+        s<<v[i]<<(i<(N-1) ? " " : "");
+    }
+    return s.str();
+}
+
+std::string Array2String(size_t *v, size_t N)
+{
+    std::ostringstream s;
+
+    for (size_t i=0; i<N; i++) {
+        s<<v[i]<<(i<(N-1) ? " " : "");
+    }
+    return s.str();
+}
+
+
+std::string Array2String(ptrdiff_t *v, size_t N)
+{
+    std::ostringstream s;
+
+    for (size_t i=0; i<N; i++) {
+        s<<v[i]<<(i<(N-1) ? " " : "");
+    }
+    return s.str();
+}
+
+
+std::string Array2String(int *v, size_t N)
+{
+    std::ostringstream s;
+
+    for (size_t i=0; i<N; i++) {
+        s<<v[i]<<(i<(N-1) ? " " : "");
+    }
+    return s.str();
+}
+
+
 
 }}

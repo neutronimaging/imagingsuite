@@ -16,6 +16,12 @@ size_t KIPLSHARED_EXPORT String2Array(std::string str, size_t *v, size_t N);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, ptrdiff_t *v, size_t N);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, int *v, size_t N);
 
+std::string KIPLSHARED_EXPORT Array2String(double *v, size_t N);
+std::string KIPLSHARED_EXPORT Array2String(float *v, size_t N);
+std::string KIPLSHARED_EXPORT Array2String(size_t *v, size_t N);
+std::string KIPLSHARED_EXPORT Array2String(ptrdiff_t *v, size_t N);
+std::string KIPLSHARED_EXPORT Array2String(int *v, size_t N);
+
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<float> &v);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<size_t> &v);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<int> &v);

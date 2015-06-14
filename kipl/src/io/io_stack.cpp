@@ -17,18 +17,26 @@
 namespace kipl { namespace io {
 	std::ostream & operator<<(std::ostream &s, kipl::io::eFileType ft)
 {
-	switch (ft) {
-	case kipl::io::MatlabVolume : s<<"MatlabVolume"; break;
-	case kipl::io::MatlabSlices : s<<"MatlabSlices"; break;
-	case kipl::io::TIFF8bits    : s<<"TIFF8bits";    break;
-	case kipl::io::TIFF16bits   : s<<"TIFF16bits";   break;
-	case kipl::io::TIFFfloat    : s<<"TIFFfloat";    break;
-	case kipl::io::PNG8bits     : s<<"PNG8bits";     break;
-	case kipl::io::PNG16bits    : s<<"PNG16bits";    break;
-	default : throw kipl::base::KiplException("Unknown matrix file type",__FILE__,__LINE__); break;
-	}
+        s<<enum2string(ft);
 
-	return s;
+        return s;
+}
+
+std::string enum2string(kipl::io::eFileType ft)
+{
+    std::string s;
+    switch (ft) {
+    case kipl::io::MatlabVolume : s="MatlabVolume"; break;
+    case kipl::io::MatlabSlices : s="MatlabSlices"; break;
+    case kipl::io::TIFF8bits    : s="TIFF8bits";    break;
+    case kipl::io::TIFF16bits   : s="TIFF16bits";   break;
+    case kipl::io::TIFFfloat    : s="TIFFfloat";    break;
+    case kipl::io::PNG8bits     : s="PNG8bits";     break;
+    case kipl::io::PNG16bits    : s="PNG16bits";    break;
+    default : throw kipl::base::KiplException("Unknown file type",__FILE__,__LINE__); break;
+    }
+
+    return s;
 }
 
 void string2enum(const std::string str, kipl::io::eFileType &ft)
