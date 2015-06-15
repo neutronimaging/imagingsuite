@@ -38,6 +38,7 @@ template <typename ImgType>
 int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop)
 {
 	using namespace std; 
+    ostringstream msg;
 	fitsfile *fptr;
 	int status=0;
 	fits_open_image(&fptr, fname, READONLY, &status);
@@ -71,8 +72,11 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
 	}
 	else {
-		if ((nCrop[2]<=nCrop[0]) || (nCrop[3]<=nCrop[1]))
-			throw kipl::base::KiplException("Invalid cropping region",__FILE__,__LINE__);
+        if ((nCrop[2]<=nCrop[0]) || (nCrop[3]<=nCrop[1])) {
+            msg.str("");
+            msg<<"Invalid cropping region for file "<<fname<<" ("<<nCrop[0]<<", "<<nCrop[1]<<", "<<nCrop[2]<<", "<<nCrop[3]<<")";
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+        }
 			
 		dims[0]=nCrop[2]-nCrop[0];
 		dims[1]=nCrop[3]-nCrop[1];
