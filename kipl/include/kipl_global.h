@@ -1,7 +1,7 @@
 #ifndef KIPL_GLOBAL_H
 #define KIPL_GLOBAL_H
 
-#ifdef QT_VERSION
+//#ifdef QT_VERSION
 #include <QtCore/qglobal.h>
 
 	#if defined(KIPL_LIBRARY)
@@ -9,9 +9,9 @@
 	#else
 	#  define KIPLSHARED_EXPORT Q_DECL_IMPORT
 	#endif
-#else
-	#define KIPLSHARED_EXPORT
-#endif
+//#else
+//	#define KIPLSHARED_EXPORT
+//#endif
 
 #ifdef __GNUC__
 #define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
