@@ -13,6 +13,8 @@ copy %REPOS%\src\libs\recon2\trunk\ReconFramework\build-ReconFramework-Qt5-Relea
 copy %REPOS%\src\libs\recon2\trunk\StdBackProjectors\build-StdBackProjectors-Qt5-Release\release\StdBackProjectors.dll .
 copy %REPOS%\src\libs\recon2\trunk\StdPreprocModules\build-StdPreprocModules-Qt5-Release\release\StdPreprocModules.dll .
 copy %REPOS%\tomography\trunk\src\build-StdPreprocModulesGUI-Qt5-Release\release\StdPreprocModulesGUI.dll .
+copy %REPOS%\tomography\trunk\src\build-InspectorModulesGUI-Qt5-Release\release\InspectorModulesGUI.dll .
+copy %REPOS%\tomography\trunk\src\build-InspectorModules-Qt5-Release\release\InspectorModules.dll .
 
 copy %REPOS%\external\lib64\libtiff.dll .
 copy %REPOS%\external\lib64\libjpeg-62.dll .
