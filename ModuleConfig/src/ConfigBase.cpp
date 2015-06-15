@@ -10,7 +10,7 @@
 // $Id$
 //
 
-#include "stdafx.h"
+#include "../include/ModuleConfig_global.h"
 #include "../include/ConfigBase.h"
 #include "../include/ModuleException.h"
 #include <sstream>
