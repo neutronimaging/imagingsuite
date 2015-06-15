@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "QtModuleConfigure_global.h"
 #include "singlemoduleconfiguratorwidget.h"
 #include "QListWidgetModuleItem.h"
 

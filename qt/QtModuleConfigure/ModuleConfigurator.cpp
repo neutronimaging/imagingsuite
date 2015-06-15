@@ -13,8 +13,8 @@
 
 // ModuleConfigurator.cpp : Defines the exported functions for the DLL application.
 //
-
 #include "stdafx.h"
+#include "QtModuleConfigure_global.h"
 #include "ModuleConfigurator.h"
 #include <ModuleException.h>
 #ifndef _MSC_VER

@@ -12,6 +12,7 @@
 
 
 #include "stdafx.h"
+#include "QtModuleConfigure_global.h"
 #undef max
 #include <iostream>
 #include <sstream>

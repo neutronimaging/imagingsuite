@@ -14,7 +14,6 @@
 // ModuleConfigurator.cpp : Defines the exported functions for the DLL application.
 //
 
-//#include "stdafx.h"
 #include "ConfiguratorDialogBase.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
