@@ -20,7 +20,7 @@ GammaClean::GammaClean() :
 
 }
 
-void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t medsize)
+void GammaClean::Configure(float sigma, float th3, float th5, float th7, size_t medsize)
 {
     m_fSigma=sigma;
     m_fThreshold3=th3;
@@ -29,7 +29,7 @@ void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t 
     m_nMedianSize=medsize;
 }
 
-kipl::base::TImage<float,2> GammaClean::process(kipl::base::TImage<float,2> & img)
+kipl::base::TImage<float,2> GammaClean::Process(kipl::base::TImage<float,2> & img)
 {
     std::stringstream msg;
     kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGaussian(img,m_fSigma);
@@ -132,6 +132,10 @@ void GammaClean::MedianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, ptr
     kipl::math::median_quick_select(medvec,medN,pRes+pos);
 }
 
+kipl::base::TImage<float,2> GammaClean::DetectionImage(kipl::base::TImage<float,2> & img)
+{
+    return img;
+}
 
 }
 

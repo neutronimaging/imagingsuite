@@ -10,8 +10,10 @@ class GammaClean
 {
 public:
     GammaClean();
-    kipl::base::TImage<float,2> process(kipl::base::TImage<float,2> & img);
-    void configure(float sigma, float th3, float th5, float th7, size_t medsize);
+    kipl::base::TImage<float,2> Process(kipl::base::TImage<float,2> & img);
+    void Configure(float sigma, float th3, float th5, float th7, size_t medsize);
+
+    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> &img);
 
 private:
     void PrepareNeighborhoods(size_t *dims);
