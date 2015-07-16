@@ -27,6 +27,8 @@
 #include <omp.h>
 #endif
 
+//#define USE_NODE_LOCK
+
 int RunGUI(QApplication * a);
 int RunOffline(QApplication * a);
 
@@ -42,8 +44,8 @@ int main(int argc, char *argv[])
     std::string homedir = dir.homePath().toStdString();
     kipl::strings::filenames::CheckPathSlashes(homedir,true);
 
+#ifdef USE_NODE_LOCK
     std::string application_path=a.applicationDirPath().toStdString();
-
     kipl::utilities::NodeLocker license(homedir);
 
     bool licensefail=false;
@@ -119,6 +121,7 @@ int main(int argc, char *argv[])
     } while ((!license.AccessGranted()) && (res!=QMessageBox::Abort));
 
     if (res!=QMessageBox::Abort) {
+#endif
         #ifdef _OPENMP
             omp_set_nested(1);
         #endif
@@ -130,8 +133,9 @@ int main(int argc, char *argv[])
             {
                 return RunOffline(&a);
             }
+#ifdef USE_NODE_LOCK
     }
-
+#endif
     return 0;
 }
 
