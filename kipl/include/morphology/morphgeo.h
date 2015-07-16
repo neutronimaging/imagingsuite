@@ -153,6 +153,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 		const kipl::base::TImage<ImgType,NDimF> &f, 
 		kipl::morphology::MorphConnect conn)
 {
+    std::ostringstream msg;
 
 	kipl::base::TImage<ImgType,NDimG> temp;
 	deque<int> fifo;
@@ -182,14 +183,18 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     ImgType const * const pg=g.GetDataPtr();
     ImgType const * const pf=f.GetDataPtr();
     ImgType *ptemp=temp.GetDataPtr();
-	
+    size_t errcnt=0L;
     for (i=0; i<f.Size(); i++) {
         if (pg[i]<pf[i]) {
-            throw kipl::base::KiplException("Error RecByDilation: f>g",__FILE__,__LINE__);
+            errcnt++;
         }
         ptemp[i]=pf[i];
     }
-	
+    if (errcnt) {
+        msg.str("");
+        msg<<"Error RecByDilation: f>g ("<<errcnt<<" times)";
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
 	
     // Set up indexing arrays
     ptrdiff_t cNGpm,cNG;

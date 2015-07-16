@@ -99,7 +99,8 @@ SOURCES += \
     ../src/generators/spotgenerator.cpp \
     ../src/io/analyzefileext.cpp \
     ../src/io/io_generic.cpp \
-    ../src/filters/nonlocalmeans.cpp
+    ../src/filters/nonlocalmeans.cpp \
+    ../src/math/PoissonNoise.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -285,7 +286,8 @@ HEADERS +=\
     ../include/io/analyzefileext.h \
     ../include/generators/core/noiseimage.hpp \
     ../include/filters/nonlocalmeans.h \
-    ../include/filters/core/nonlocalmeans.hpp
+    ../include/filters/core/nonlocalmeans.hpp \
+    ../include/math/PoissonNoise.h
 
 
 
