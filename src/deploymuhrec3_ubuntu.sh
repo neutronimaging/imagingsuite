@@ -25,6 +25,9 @@ rm -f *.1.0.0.dylib
 
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.so.1.0.0 .`
 
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModules-Qt5-Release/libInspectorModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModulesGUI-Qt5-Release/libInspectorModulesGUI.so.1.0.0 .`
+
 rm -f *.so
 rm -f *.so.1
 rm -f *.so.1.0
