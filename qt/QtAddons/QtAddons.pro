@@ -8,6 +8,7 @@ QT       += core widgets printsupport
 
 TARGET = QtAddons
 TEMPLATE = lib
+CONFIG += c++11
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2

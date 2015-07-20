@@ -8,6 +8,8 @@ QT       += core widgets
 
 TARGET = QtModuleConfigure
 TEMPLATE = lib
+CONFIG += c++11
+
 unix {
 
 unix:!macx {
