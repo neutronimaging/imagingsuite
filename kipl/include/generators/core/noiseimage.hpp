@@ -21,7 +21,7 @@ void NoiseGenerator<T,N>::Gauss(kipl::base::TImage<T,N> &img, float m, float s)
 }
 
 template <typename T, size_t N>
-void NoiseGenerator<T,N>::Poisson(kipl::base::TImage<T,N> &img, float lambda,float k)
+void NoiseGenerator<T,N>::Poisson(kipl::base::TImage<T,N> &img, float lambda)
 {
 #if __cplusplus > 199711L
     std::poisson_distribution<T> distr(lambda);
