@@ -1,9 +1,11 @@
 #ifndef POISSONNOISE_H
 #define POISSONNOISE_H
 
+#include <cstdlib>
+
 namespace kipl { namespace math {
 
-float Poisson(float m, float s);
+size_t Poisson(float m, float N);
 
 void PoissonNoise(float *pData, size_t N, float lambda=0.0f, float k=1.0f);
 

@@ -16,12 +16,13 @@ template <typename T, size_t N>
 class NoiseGenerator {
 public:
     void Gauss(kipl::base::TImage<T,N> &img, float m, float s);
-    void Poisson(kipl::base::TImage<T,N> &img, float lambda);
+    void Poisson(kipl::base::TImage<T,N> &img, float lambda,float k);
 
 private:
     #if __cplusplus > 199711L
     std::default_random_engine m_Generator;
-#endif
+    #endif
+
 };
 
 }}

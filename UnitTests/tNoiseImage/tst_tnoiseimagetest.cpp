@@ -12,14 +12,15 @@ public:
     TNoiseImageTest();
 
 private Q_SLOTS:
-    void testCase1();
+    void testGauss();
+    void testPoisson();
 };
 
 TNoiseImageTest::TNoiseImageTest()
 {
 }
 
-void TNoiseImageTest::testCase1()
+void TNoiseImageTest::testGauss()
 {
     QVERIFY2(true, "Failure");
 
@@ -30,7 +31,10 @@ void TNoiseImageTest::testCase1()
     kipl::generators::NoiseGenerator<float,2> noise;
 
     noise.Gauss(img,10.0f,1.0f);
+}
 
+void TNoiseImageTest::testPoisson()
+{
 
 }
 
