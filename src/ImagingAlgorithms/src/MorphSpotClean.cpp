@@ -55,7 +55,18 @@ void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::
 
     case MorphDetectBoth :
         noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
-        nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
+
+        // Original
+        //nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
+
+        // Alternative
+        for (size_t i=0; i<padded.Size(); i++ )
+            padded[i]=-padded[i];
+        nopeaks=kipl::morphology::FillHole(padded,m_eConnectivity);
+        for (size_t i=0; i<padded.Size(); i++ ) {
+            padded[i]=-padded[i];
+            nopeaks[i]=-nopeaks[i];
+        }
         break;
 
     default: throw ImagingException("Unkown detection method selected", __FILE__,__LINE__);

@@ -9,6 +9,7 @@ QT       -= gui
 TARGET = ImagingAlgorithms
 TEMPLATE = lib
 
+CONFIG += c++11
 
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
