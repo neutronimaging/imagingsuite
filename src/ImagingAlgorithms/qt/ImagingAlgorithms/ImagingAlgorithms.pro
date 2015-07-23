@@ -60,6 +60,7 @@ HEADERS += \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \
 
+
 symbian {
     MMP_RULES += EXPORTUNFROZEN
     TARGET.UID3 = 0xE18A5065
