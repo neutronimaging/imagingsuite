@@ -9,6 +9,7 @@ QT       += widgets
 TARGET = InspectorModulesGUI
 TEMPLATE = lib
 DEFINES += INSPECTORMODULESGUI_LIBRARY
+CONFIG += c++11
 
 SOURCES += inspectormodulesgui.cpp \
     saveprojectionsdlg.cpp

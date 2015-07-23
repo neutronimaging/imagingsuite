@@ -8,6 +8,7 @@ QT       += core widgets
 
 TARGET = StdPreprocModulesGUI
 TEMPLATE = lib
+CONFIG += c++11
 
 DEFINES += STDPREPROCMODULESGUI_LIBRARY
 

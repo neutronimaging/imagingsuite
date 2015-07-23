@@ -8,6 +8,7 @@ QT       += core widgets printsupport
 
 TARGET = muhrec3
 TEMPLATE = app
+CONFIG += c++11
 
 unix:!symbian {
     maemo5 {

@@ -8,6 +8,7 @@ QT       += core widgets
 
 TARGET = InspectorModules
 TEMPLATE = lib
+CONFIG += c++11
 
 DEFINES += INSPECTORMODULES_LIBRARY
 
