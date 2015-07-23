@@ -40,9 +40,12 @@ std::string KiplException::what()
 		return sMessage;	
 	}
 
+    if (sFileName.empty())
+        return sMessage;
+
 	std::ostringstream str;
 	
-    str<<sExceptionName<<" occured in file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
+    str<<"An "<<sExceptionName<<" was thrown in file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
 	
 	return str.str();
 }
