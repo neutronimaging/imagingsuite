@@ -15,8 +15,6 @@ void NoiseGenerator<T,N>::Gauss(kipl::base::TImage<T,N> &img, float m, float s)
     for (size_t i=0; i<img.Size(); i++) {
         pImg[i]+=distr(m_Generator);
     }
-#else
-
 #endif
 }
 
@@ -31,7 +29,7 @@ void NoiseGenerator<T,N>::Poisson(kipl::base::TImage<T,N> &img, float lambda)
     }
 #else
     kipl::base::TImage<size_t,N> tmp(img.Dims());
-    kipl::math::PoissonNoise(tmp.GetDataPtr(),tmp.Size(),lambda,k);
+    kipl::math::PoissonNoise(tmp.GetDataPtr(),tmp.Size(),lambda);
     for (size_t i=0; i<img.Size(); i++) {
         img[i]=static_cast<T>(tmp[i]);
     }

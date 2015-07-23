@@ -10,7 +10,7 @@ QT       -= gui
 
 TARGET = tst_tnoiseimagetest
 CONFIG   += console
-#CONFIG   += c++11
+CONFIG   += c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app

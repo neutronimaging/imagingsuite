@@ -16,7 +16,7 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
 
     // Box filter
     kipl::base::TImage<float,2> ff(f.Dims());
-    size_t fdims[2]={m_nBoxSize, m_nBoxSize};
+    size_t fdims[2]={static_cast<size_t>(m_nBoxSize), static_cast<size_t>(m_nBoxSize)};
 
     size_t nfilt=m_nBoxSize*m_nBoxSize;
     float *kernel=new float[nfilt];
@@ -35,7 +35,7 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,3> &f, kipl::base::TImag
 
     // Box filter
     kipl::base::TImage<float,3> ff(f.Dims());
-    size_t fdims[3]={m_nBoxSize, m_nBoxSize, m_nBoxSize};
+    size_t fdims[3]={static_cast<size_t>(m_nBoxSize), static_cast<size_t>(m_nBoxSize), static_cast<size_t>(m_nBoxSize)};
 
     size_t nfilt=m_nBoxSize*m_nBoxSize*m_nBoxSize;
     float *kernel=new float[nfilt];

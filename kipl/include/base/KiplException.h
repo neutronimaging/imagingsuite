@@ -19,12 +19,13 @@ namespace kipl { namespace base {
 class KIPLSHARED_EXPORT KiplException
 {
 public :
-	KiplException();
-	KiplException(std::string message);
-	KiplException(std::string message, std::string filename, const size_t linenumber);
+ //   KiplException(std::string exname="KiplException");
+    KiplException(std::string message, std::string exname="KiplException");
+    KiplException(std::string message, std::string filename, const size_t linenumber, std::string exname="KiplException");
 	virtual ~KiplException();
 	virtual std::string what();
 protected :
+    std::string sExceptionName;
 	std::string sMessage;
 	std::string sFileName;
 	size_t nLineNumber;
@@ -35,11 +36,11 @@ class KIPLSHARED_EXPORT DimsException : public KiplException
 {
 public : 
 	DimsException();
-	DimsException(std::string message) : KiplException(message) 
+    DimsException(std::string message) : KiplException(message, "DimsException")
 	{}
 	DimsException(std::string message, 
 			std::string filename, 
-			const size_t linenumber) : KiplException(message,filename, linenumber) 
+            const size_t linenumber) : KiplException(message,filename, linenumber, "DimsException")
 	{}
 };
 

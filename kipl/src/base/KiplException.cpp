@@ -8,22 +8,29 @@ namespace kipl
 namespace base
 {
 
-KiplException::KiplException()
-{
-}
+//KiplException::KiplException(std::string exname)
+//{
+//}
 
 KiplException::~KiplException()
 {
 }
 
-KiplException::KiplException(const std::string message) : sMessage(message), nLineNumber(0)
+KiplException::KiplException(const std::string message,const std::string exname) :
+    sExceptionName(exname),
+    sMessage(message),
+    nLineNumber(0)
 {}
 
 KiplException::KiplException(const std::string message, 
 		const std::string filename, 
-		const size_t linenumber) : sMessage(message), sFileName(filename), nLineNumber(linenumber)
+        const size_t linenumber,
+        const std::string exname) :
+    sExceptionName(exname),
+    sMessage(message),
+    sFileName(filename),
+    nLineNumber(linenumber)
 {
-	
 }
 
 std::string KiplException::what()
@@ -35,7 +42,7 @@ std::string KiplException::what()
 
 	std::ostringstream str;
 	
-	str<<"In file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
+    str<<sExceptionName<<" occured in file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
 	
 	return str.str();
 }
