@@ -45,7 +45,6 @@ unix:!symbian {
     }
 
     LIBS += -ltiff -lxml2
-
 }
 
 win32 {
