@@ -7,7 +7,7 @@
 namespace kipl { namespace strings {
 bool GetElement(std::string &str, std::string &element)
 {	
-	size_t pos=str.find_first_not_of(' ');
+    size_t pos=str.find_first_not_of(" ,:");
 	if (pos!=str.npos)
 		str=str.substr(pos);
 	else {
@@ -15,7 +15,7 @@ bool GetElement(std::string &str, std::string &element)
 		return false;
 	}
 	
-	pos=str.find(' ');
+    pos=str.find_first_of(" ,:");
 	if (pos==str.npos) { // Last element
 		element=str;
 		return false;
