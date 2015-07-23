@@ -21,9 +21,6 @@
 class  MODULECONFIGSHARED_EXPORT ModuleException : public kipl::base::KiplException
 {
 public:
-    /// Basic constructor
-    ModuleException(void);
-
     /// Constructor to create an exception carrying a message
     /// \param msg The message
 	ModuleException(std::string msg);
@@ -37,9 +34,6 @@ public:
     /// Destructor
 	virtual ~ModuleException(void);
 
-    /// The message of the exception
-    /// \returns A string contatining the exception message.
-	virtual std::string what();
 };
 
 #endif
