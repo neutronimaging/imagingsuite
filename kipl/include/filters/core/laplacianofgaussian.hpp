@@ -36,7 +36,7 @@ kipl::base::TImage<float,2> LaplacianOfGaussian(kipl::base::TImage<T,2> & img, f
 //        k[N-i]=k[N+i];
 //    }
     const float d[3]={-1,2,-1};
-    size_t LoGDims[2]={N2, N2};
+    size_t LoGDims[2]={size_t(N2), size_t(N2)};
     kipl::filters::TFilter<float,2> LoG(klog,LoGDims);
     kipl::base::TImage<float,2> fimg;
     fimg=kipl::base::ImageCaster<T,float,2>::cast(img);
