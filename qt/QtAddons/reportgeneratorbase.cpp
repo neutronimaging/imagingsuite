@@ -26,7 +26,7 @@ void ReportGeneratorBase::OpenDestination(QString fname)
 
 int ReportGeneratorBase::DrawImage(float *pImg, int *srcdims, int *dstdims, int x,int y, bool drawframe)
 {
-    size_t imgdims[4]={srcdims[0],srcdims[1],srcdims[2],srcdims[3]};
+    size_t imgdims[4]={size_t(srcdims[0]),size_t(srcdims[1]),size_t(srcdims[2]),size_t(srcdims[3])};
 
     m_ImagePainter.set_image(pImg,imgdims);
 

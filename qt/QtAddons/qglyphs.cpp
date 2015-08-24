@@ -1,4 +1,5 @@
 #include "qglyphs.h"
+#include <sstream>
 
 namespace QtAddons {
 
@@ -46,18 +47,20 @@ QGlyphBase * BuildGlyph(ePlotGlyph glyph, int size)
 
 std::ostream & operator<<(std::ostream &s, QtAddons::ePlotGlyph pg)
 {
+    std::string str;
     switch (pg) {
-    case QtAddons::PlotGlyph_None:         s<<"PlotGlyph_None";
-    case QtAddons::PlotGlyph_Cross:        s<<"PlotGlyph_Cross";
-    case QtAddons::PlotGlyph_Plus:         s<<"PlotGlyph_Plot";
-    case QtAddons::PlotGlyph_Square:       s<<"PlotGlyph_Square";
-    case QtAddons::PlotGlyph_FilledSquare: s<<"PlotGlyph_FilleSquare";
-    case QtAddons::PlotGlyph_Circle:       s<<"PlotGlyph_Circle";
-    case QtAddons::PlotGlyph_FilledCircle: s<<"PlotGlyph_FilledCircle";
-    default:                     s<<"PlotGlyph_None";
+    case QtAddons::PlotGlyph_None:         str="PlotGlyph_None"; break;
+    case QtAddons::PlotGlyph_Cross:        str="PlotGlyph_Cross"; break;
+    case QtAddons::PlotGlyph_Plus:         str="PlotGlyph_Plot"; break;
+    case QtAddons::PlotGlyph_Square:       str="PlotGlyph_Square"; break;
+    case QtAddons::PlotGlyph_FilledSquare: str="PlotGlyph_FilleSquare"; break;
+    case QtAddons::PlotGlyph_Circle:       str="PlotGlyph_Circle"; break;
+    case QtAddons::PlotGlyph_FilledCircle: str="PlotGlyph_FilledCircle"; break;
+    default:                               str="PlotGlyph_None"; break;
     }
 
-    return s;
+    s<<str;
 
+    return s;
 }
 

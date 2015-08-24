@@ -1,15 +1,15 @@
 #ifndef REPORTGENERATORBASE_H
 #define REPORTGENERATORBASE_H
+#include "QtAddons_global.h"
 
-#if QT_VERSION < 0x050000
-#include <QtGui>
-#include <QPrinter>
-#else
+//#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+//#include <QtGui>
+//#include <QPrinter>
+//#else
 #include <QtWidgets>
 #include <QtPrintSupport/QPrinter>
-#endif
+//#endif
 
-#include "QtAddons_global.h"
 #include <logging/logger.h>
 
 #include <string>
@@ -31,7 +31,9 @@ public:
 
 protected:
     void OpenDestination(QString fname);
+#ifndef QT_NO_PRINTER
     QPrinter m_Printer;
+#endif
     QPainter m_Painter;
     ImagePainter m_ImagePainter;
     double m_fWidth;
