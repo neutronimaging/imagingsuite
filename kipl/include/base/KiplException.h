@@ -21,7 +21,7 @@ class KIPLSHARED_EXPORT KiplException
 public :
  //   KiplException(std::string exname="KiplException");
     KiplException(std::string message, std::string exname="KiplException");
-    KiplException(std::string message, std::string filename, const size_t linenumber, std::string exname="KiplException");
+    KiplException(std::string message, std::string filename, size_t linenumber, std::string exname="KiplException");
 	virtual ~KiplException();
 	virtual std::string what();
 protected :

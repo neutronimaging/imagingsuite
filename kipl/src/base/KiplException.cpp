@@ -22,10 +22,10 @@ KiplException::KiplException(const std::string message,const std::string exname)
     nLineNumber(0)
 {}
 
-KiplException::KiplException(const std::string message, 
-		const std::string filename, 
-        const size_t linenumber,
-        const std::string exname) :
+KiplException::KiplException(std::string message,
+        std::string filename,
+        size_t linenumber,
+        std::string exname) :
     sExceptionName(exname),
     sMessage(message),
     sFileName(filename),

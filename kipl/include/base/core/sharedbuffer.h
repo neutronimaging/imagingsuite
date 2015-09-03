@@ -53,7 +53,7 @@ class buffer {
 				if (m_pRawPointer==NULL) {
 					std::ostringstream msg;
 					msg<<"Failed to allocate "<<(N+16)*sizeof(T)<<" bytes";
-					throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                    throw kipl::base::KiplException(msg.str(),std::string(__FILE__),size_t(__LINE__));
 				}
 				data=reinterpret_cast<T*>(m_pRawPointer);
 			}
