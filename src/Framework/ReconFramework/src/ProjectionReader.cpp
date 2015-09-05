@@ -260,7 +260,7 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
 	else {
 		throw ReconException("Unknown file type",__FILE__, __LINE__); 
 	}
-	size_t bins[2]={binning, binning};
+    size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
 	kipl::base::TImage<float,2> binned;
 	msg.str("");
 	msg<<"Failed to resample or rotate the projection with a ";

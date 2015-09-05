@@ -24,9 +24,9 @@
 AdaptiveFilter::AdaptiveFilter() :
 	PreprocModuleBase("AdaptiveFilter"),
 	pLUT(NULL),
+    m_nFilterSize(7),
 	m_fLambda(0.1f),
 	m_fSigma(0.01f),
-    m_nFilterSize(7),
     m_fEccentricityMin(0.3f),
     m_fEccentricityMax(0.7f),
     m_fFilterStrength(0.5f),
@@ -99,7 +99,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     for (int i=0; i<m_nFilterSize; i++)
         k[i]=w;
 
-    size_t dimx[2]={m_nFilterSize, 1};
+    size_t dimx[2]={static_cast<size_t>(m_nFilterSize), 1UL};
 
     kipl::filters::TFilter<float,2> filterx(k,dimx);
 

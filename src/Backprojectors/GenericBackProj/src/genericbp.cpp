@@ -21,6 +21,8 @@ GenericBP::~GenericBP()
 size_t GenericBP::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
  // Back project single projections at angle and weighted. This is an inifite task that is terminated when bLastProjection is true.
+
+    return 0;
 }
 
 size_t GenericBP::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
@@ -28,7 +30,7 @@ size_t GenericBP::Process(kipl::base::TImage<float,3> proj, std::map<std::string
     // Back project a set of projections stored in a volume as xy-slices
     // In the parameter list there will be the parameters angles and weights are provided from the framework.
     // The method Process for single projections is usually called here
-
+    return 0;
 }
 
 int GenericBP::Configure(ReconConfig config, std::map<std::string, std::string> parameters)

@@ -75,7 +75,7 @@ int MedianMixRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<
 	kipl::base::TImage<float,2> proj(img.Dims());
 	kipl::base::TImage<float,2> med(img.Dims());
 
-	size_t filtdims[2]={5, img.Size(1)<5 ? 1 : 5};
+    size_t filtdims[2]={5UL, img.Size(1)<5UL ? 1UL : 5UL};
 
 	kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
 	size_t N=proj.Size();
@@ -119,7 +119,7 @@ int MedianMixRingClean::ComputeProfile(kipl::base::TImage<float,3> &img)
 		pMean[j]*=scale;
 	}
 
-	size_t filtdims[2]={meanproj.Size(1)<3 ? 5: 3,meanproj.Size(1)<3 ? 1 : 3};
+    size_t filtdims[2]={meanproj.Size(1)<3UL ? 5UL: 3UL,meanproj.Size(1)<3UL ? 1UL : 3UL};
 	kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
 
 

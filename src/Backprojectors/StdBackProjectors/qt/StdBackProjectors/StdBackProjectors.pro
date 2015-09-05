@@ -86,14 +86,11 @@ unix:!symbian {
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ReconFramework/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
-else:unix: CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
-else:unix: CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
+else:unix: CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Release/ -lReconFramework
+else:unix: CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Debug/ -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../ReconFramework/include
-DEPENDPATH += $$PWD/../../../ReconFramework/src
-
-
-
+INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
+DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig

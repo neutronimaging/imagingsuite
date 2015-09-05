@@ -61,7 +61,7 @@ int SinoSpotClean::CleanSinogramSpots(kipl::base::TImage<float,2> &img, int leng
 {
 	int cnt=0;
 
-	size_t dims[2]={1, 2*length+1};
+    size_t dims[2]={1UL, static_cast<size_t>(2*length+1)};
 	int weights[256];
 	for (int i=0; i<dims[1]; i++)
 		weights[i]=1;

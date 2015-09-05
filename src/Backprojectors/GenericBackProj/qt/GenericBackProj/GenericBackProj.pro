@@ -8,6 +8,7 @@ QT       -= gui
 
 TARGET = GenericBackProj
 TEMPLATE = lib
+CONFIG += c++11
 
 DEFINES += GENERICBACKPROJ_LIBRARY
 
@@ -56,24 +57,26 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../build-ReconFramework-Qt5-Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../build-ReconFramework-Qt5-Release/debug/ -lReconFramework
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Release/ -lReconFramework
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Debug/ -lReconFramework
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/debug/ -lReconFramework
-else:unix: LIBS += -L$$PWD/../../../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
+INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
+DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
-INCLUDEPATH += $$PWD/../../../../../../src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../../../src/libs/recon2/trunk/ReconFramework/include
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix: LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-
-INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/debug/ -lModuleConfig
-else:unix: LIBS += -L$$PWD/../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/ -lModuleConfig
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/ -lModuleConfig
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/ -lModuleConfig
 
-INCLUDEPATH += $$PWD/../../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/src
