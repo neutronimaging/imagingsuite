@@ -110,6 +110,8 @@ int SpotClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 		case SpotClean_LevelSets:
 			img=ProcessLevelSets(img);
 			break;
+        case SpotClean_AbsUnbiased:
+            throw ReconException("AbsUnbiased is not implemented",__FILE__,__LINE__);
 	}
 	
 	return 0;
@@ -206,7 +208,7 @@ kipl::base::TImage<float,2> SpotClean::ProcessLevelSets(kipl::base::TImage<float
 		float *pImg=img.GetDataPtr();
 	
 		#pragma omp for
-		for (i=0; i<s.Size(); i++)
+        for (i=0; i<static_cast<int>(s.Size()); i++)
 				if (this->fThreshold < pS[i])
 					pImg[i]=0;
 		
@@ -234,7 +236,7 @@ kipl::base::TImage<float,2> SpotClean::ProcessPixelList(kipl::base::TImage<float
 	kipl::morphology::EuclideanDistance(mask,dist);
 
 	std::map<float,std::list<size_t> > spotlist;
-	for (int i=0; i<dist.Size(); i++) {
+    for (int i=0; i<static_cast<int>(dist.Size()); i++) {
 		if (dist[i]!=0) {
 			spotlist[dist[i]].push_back(i);
 		}
