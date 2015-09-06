@@ -50,8 +50,8 @@ template <class T, size_t nDims>
 int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle)
 {
 	using namespace std;
-    int edgeinfo= (pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) * 2) +
-            ((pos[1]<nHalfKernel[1]) * 4)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) * 8) ;
+    int edgeinfo=static_cast<int> ((pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) * 2) +
+            ((pos[1]<nHalfKernel[1]) * 4)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) * 8)) ;
 
 
     int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;

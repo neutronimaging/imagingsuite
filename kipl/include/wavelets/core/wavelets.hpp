@@ -476,7 +476,7 @@ WaveletQuad<T> WaveletTransform<T>::transform(WaveletQuad<T> &q)
 {
 	// Maybe add one pixel after half, check with Matlab ...
 
-	if ((q.a.Size(0)<kernel.size()) || (q.a.Size(1)<kernel.size()))
+    if ((q.a.Size(0)<static_cast<size_t>(kernel.size()) || (q.a.Size(1)<static_cast<size_t>(kernel.size()))))
 		throw kipl::base::KiplException("Image smaller than wavelet kernel size",__FILE__,__LINE__);
 
 	size_t dims[2]={(q.a.Size(0)+kernel.size()-1+(q.a.Size(0) & 1))/2, (q.a.Size(1)+kernel.size()-1+(q.a.Size(1) & 1))/2};
@@ -507,7 +507,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 	tmp=T(0);
 
 	// Transform rows
-	for (int i=0; i<tmp.Size(1); i++) {
+    for (int i=0; i<static_cast<int>(tmp.Size(1)); i++) {
 		switch (padtype) {
 		  case kipl::base::PadMirror   : pad_mirror(src.GetLinePtr(i),src.Size(0),row,filter_width); break;
 		  case kipl::base::PadPeriodic : pad_periodic(src.GetLinePtr(i),src.Size(0),row,filter_width); break;
@@ -539,7 +539,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 #else
         for (int j = begin; j <= end; j++)
         {
-          for (int k = 0; k < dst.Size(0); k++)
+          for (int k = 0; k < static_cast<int>(dst.Size(0)); k++)
           {
               dest[k] += H[j] * padded_row[(2*k)-j+1];
           }
@@ -556,7 +556,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
      T * padded_col=col+filter_width;
 
 
-     for (int x = 0; x < dst.Size(0); x++)
+     for (int x = 0; x < static_cast<int>(dst.Size(0)); x++)
      {
     	get_col(tmp,dstcol,x,0,(int)tmp.Size(1));
 
@@ -593,7 +593,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 #else
         for (int m = begin; m <= end; m++)
         {
-            for (int k = 0; k < dst.Size(1); k++)
+            for (int k = 0; k < static_cast<int>(dst.Size(1)); k++)
             {
                 dstcol[k] += V[m] * padded_col[(2*k)-m+1];
             }
