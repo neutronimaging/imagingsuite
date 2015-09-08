@@ -81,7 +81,7 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname)
 		TIFFSetField(image, 270, src.info.sDescription.c_str());
 	
 	// Write the information to the file
-	TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), src.Size()*sizeof(unsigned short));
+    TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), src.Size()*sizeof(unsigned short));
 	
 	// Close the file
 	TIFFClose(image);
