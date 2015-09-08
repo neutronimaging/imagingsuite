@@ -9,9 +9,9 @@ copy %REPOS%\modules\trunk\ModuleConfig\build-ModuleConfig-Qt5-Release\release\M
 copy %REPOS%\gui\trunk\qt\build-QtAddons-Qt5-Release\release\QtAddons.dll .
 copy %REPOS%\gui\trunk\qt\build-QtModuleConfigure-Qt5-Release\release\QtModuleConfigure.dll .
 copy %REPOS%\kipl\trunk\kipl\build-kipl-Qt5-Release\release\kipl.dll .
-copy %REPOS%\src\libs\recon2\trunk\ReconFramework\build-ReconFramework-Qt5-Release\release\ReconFramework.dll .
-copy %REPOS%\src\libs\recon2\trunk\StdBackProjectors\build-StdBackProjectors-Qt5-Release\release\StdBackProjectors.dll .
-copy %REPOS%\src\libs\recon2\trunk\StdPreprocModules\build-StdPreprocModules-Qt5-Release\release\StdPreprocModules.dll .
+copy %REPOS%\tomography\trunk\src\build-ReconFramework-Qt5-Release\release\ReconFramework.dll .
+copy %REPOS%\tomography\trunk\src\build-StdBackProjectors-Qt5-Release\release\StdBackProjectors.dll .
+copy %REPOS%\tomography\trunk\src\build-StdPreprocModules-Qt5-Release\release\StdPreprocModules.dll .
 copy %REPOS%\tomography\trunk\src\build-StdPreprocModulesGUI-Qt5-Release\release\StdPreprocModulesGUI.dll .
 copy %REPOS%\tomography\trunk\src\build-InspectorModulesGUI-Qt5-Release\release\InspectorModulesGUI.dll .
 copy %REPOS%\tomography\trunk\src\build-InspectorModules-Qt5-Release\release\InspectorModules.dll .

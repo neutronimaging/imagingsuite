@@ -69,32 +69,32 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 
 int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-    std::ostringstream msg;
-    ImagingAlgorithms::GammaClean cleaner;
-    cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
+//    std::ostringstream msg;
+//    ImagingAlgorithms::GammaClean cleaner;
+//    cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
 
-    try {
-        cleaner.Process(img);
-    }
-    catch (ImagingException & e) {
-        msg.str();
-        msg<<"Failed to process data with ImagingException : "<<std::endl<<e.what();
-        throw ReconException(msg.str(),__FILE__,__LINE__);
-    }
-    catch (kipl::base::KiplException & e) {
-        msg.str();
-        msg<<"Failed to process data with KiplException : "<<std::endl<<e.what();
-        throw ReconException(msg.str(),__FILE__,__LINE__);
-    }
-    catch (std::exception & e) {
-        msg.str();
-        msg<<"Failed to process data with STL exception : "<<std::endl<<e.what();
-        throw ReconException(msg.str(),__FILE__,__LINE__);
-    }
-    catch (...) {
+//    try {
+//        cleaner.Process(img);
+//    }
+//    catch (ImagingException & e) {
+//        msg.str();
+//        msg<<"Failed to process data with ImagingException : "<<std::endl<<e.what();
+//        throw ReconException(msg.str(),__FILE__,__LINE__);
+//    }
+//    catch (kipl::base::KiplException & e) {
+//        msg.str();
+//        msg<<"Failed to process data with KiplException : "<<std::endl<<e.what();
+//        throw ReconException(msg.str(),__FILE__,__LINE__);
+//    }
+//    catch (std::exception & e) {
+//        msg.str();
+//        msg<<"Failed to process data with STL exception : "<<std::endl<<e.what();
+//        throw ReconException(msg.str(),__FILE__,__LINE__);
+//    }
+//    catch (...) {
 
 
-    }
+//    }
 
 //    msg.str(""); msg<<"Processed image"<<img;
 //    logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -103,49 +103,51 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
 
 int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
 {
-    const int N = static_cast<int>(img.Size(2));
+//    const int N = static_cast<int>(img.Size(2));
 
-    int i;
+//    int i;
 
-    kipl::base::TImage<float,2> proj(img.Dims());
-    ImagingAlgorithms::GammaClean cleaner;
-    cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
+//    kipl::base::TImage<float,2> proj(img.Dims());
+//    ImagingAlgorithms::GammaClean cleaner;
+//    cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
 
-    for (i=0; i<N; i++) {
-        memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
-        cleaner.Process(proj);
-        memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
-    }
+//    for (i=0; i<N; i++) {
+//        memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
+//        cleaner.Process(proj);
+//        memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
+//    }
 
     return 0;
 }
 
 int GammaSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & img)
 {
-    const int N = static_cast<int>(img.Size(2));
+//    const int N = static_cast<int>(img.Size(2));
 
-    int i;
-    std::clog<<"Starting parallel processing"<<std::endl;
-#pragma omp parallel
-    {
-        kipl::base::TImage<float,2> proj(img.Dims());
-        ImagingAlgorithms::GammaClean cleaner;
-        cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
+//    int i;
+//    std::clog<<"Starting parallel processing"<<std::endl;
+//#pragma omp parallel
+//    {
+//        kipl::base::TImage<float,2> proj(img.Dims());
+//        ImagingAlgorithms::GammaClean cleaner;
+//        cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
 
-#pragma omp for
-        for (i=0; i<N; i++) {
-            memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
-            cleaner.Process(proj);
-            memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
-        }
-    }
+//#pragma omp for
+//        for (i=0; i<N; i++) {
+//            memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
+//            cleaner.Process(proj);
+//            memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
+//        }
+//    }
 
     return 0;
 }
 
 kipl::base::TImage<float,2> GammaSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img)
 {
-    ImagingAlgorithms::GammaClean cleaner;
-    cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
-    return cleaner.DetectionImage(img);
+//    ImagingAlgorithms::GammaClean cleaner;
+//    cleaner.Configure(m_fSigma,m_fThreshold3,m_fThreshold5,m_fThreshold7,m_nMedianSize);
+//    return cleaner.DetectionImage(img);
+
+    return img;
 }

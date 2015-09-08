@@ -101,16 +101,18 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../../../external/src/linalg ../../../../../../external/include ../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../../../external/lib64
+    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../../external/src/linalg
+    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../../external/include
+    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
     DEFINES += NOMINMAX
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ReconFramework/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Release/ -lReconFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Debug/ -lReconFramework

@@ -75,8 +75,11 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../../../external/include
+    INCLUDEPATH += $$PWD/../../../../../external/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -109,8 +112,8 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../qni/trunk
 INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Framework/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Framework/ReconFramework/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-ReconFramework-Qt5-Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-ReconFramework-Qt5-Release/ -lReconFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-ReconFramework-Qt5-Debug/ -lReconFramework
@@ -118,8 +121,8 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-ReconFramewo
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../StdPreprocModules/build-StdPreprocModules-Qt5-Release/release/ -lStdPreprocModules
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../StdPreprocModules/build-StdPreprocModules-Qt5-Debug/debug/ -lStdPreprocModules
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-StdPreprocModules-Qt5-Release/release/ -lStdPreprocModules
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-StdPreprocModules-Qt5-Debug/debug/ -lStdPreprocModules
 else:symbian: LIBS += -lStdPreprocModules
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-StdPreprocModules-Qt5-Release/ -lStdPreprocModules
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-StdPreprocModules-Qt5-Debug/ -lStdPreprocModules
