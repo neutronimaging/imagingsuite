@@ -309,6 +309,7 @@ void ProjectionFilterSingle::FilterProjection(kipl::base::TImage<float,2> & img)
 	float *pLine=new float[nLenPad];
 
 	for (size_t line=0; line<(nLines); line++) {
+        memset(pLine,0,sizeof(float)*nLenPad);
 		size_t insert=Pad(img.GetLinePtr(line),img.Size(0),pLine,nLenPad);
 		fft->operator()(pLine,pFTLine);
 

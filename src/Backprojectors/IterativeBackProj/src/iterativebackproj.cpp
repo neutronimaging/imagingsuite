@@ -1,11 +1,13 @@
-#include "iterativebackproj.h"
+#include "iterativebackproj_global.h"
+#include <cstdlib>
+#include <string>
 
 #include <BackProjectorBase.h>
 #include <InteractionBase.h>
-#include "genericbp.h"
 
-#include <cstdlib>
-#include <string>
+#include "genericbp.h"
+#include "iterativebackproj.h"
+#include "sirtbp.h"
 
 void * GetModule(const char *application, const char * name, void *vinteractor)
 {
@@ -18,6 +20,9 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
 
         if (sName=="GenericBP")
             return new GenericBP(interactor);
+
+        if (sName=="SIRTbp")
+            return new SIRTbp(interactor);
     }
 
     return NULL;
@@ -50,8 +55,13 @@ int GetModuleList(const char * application, void *listptr)
 
     std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
+    std::map<std::string, std::map<std::string, std::string> > &modules = *modulelist;
+
     GenericBP mpbp;
-    modulelist->operator []("GenericBP")=mpbp.GetParameters();
+    modules["GenericBP"]=mpbp.GetParameters();
+
+    SIRTbp sirtbp;
+    modules["SIRTbp"]=sirtbp.GetParameters();
 
     return 0;
 }

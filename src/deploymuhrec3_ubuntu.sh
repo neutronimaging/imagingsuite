@@ -19,14 +19,15 @@ rm -f *.1.0.0.dylib
 
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.so.1.0.0 .`
 `$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/libReconFramework.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdBackProjectors/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.so.1.0.0 .`
-
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-Release/libReconFramework.so.1.0.0 .`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.so.1.0.0 .`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.so.1.0.0 .`
 
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModules-Qt5-Release/libInspectorModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModulesGUI-Qt5-Release/libInspectorModulesGUI.so.1.0.0 .`
+
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-IterativeBackProj-Qt5-Release .`
 
 rm -f *.so
 rm -f *.so.1
