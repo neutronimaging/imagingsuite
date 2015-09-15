@@ -76,6 +76,9 @@ protected:
 	void Done();
 
 	bool TransferMatrix(size_t *dims);
+
+    void MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins);
+    void UnpadProjections(kipl::base::TImage<float,3> &projections, size_t *roi, size_t *margins);
 	ReconConfig m_Config;
 
 	size_t m_FirstSlice;

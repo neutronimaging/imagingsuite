@@ -131,6 +131,7 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="dims") kipl::strings::String2Array(value,ProjectionInfo.nDims,2);
             if (var=="resolution") kipl::strings::String2Array(value,ProjectionInfo.fResolution,2);
             if (var=="binning") ProjectionInfo.fBinning=atof(value.c_str());
+            if (var=="margin") ProjectionInfo.nMargin=atoi(value.c_str());
             if (var=="firstindex") ProjectionInfo.nFirstIndex=static_cast<size_t>(atoi(value.c_str()));
             if (var=="lastindex") ProjectionInfo.nLastIndex=static_cast<size_t>(atoi(value.c_str()));
             if (var=="projectionstep") ProjectionInfo.nProjectionStep=static_cast<size_t>(atoi(value.c_str()));
@@ -498,6 +499,7 @@ std::string ReconConfig::cSystem::WriteXML(size_t indent)
 //---------
 ReconConfig::cProjections::cProjections() :
 fBinning(1),
+nMargin(2),
 nFirstIndex(1),
 nLastIndex(625),
 nProjectionStep(1),
@@ -534,6 +536,7 @@ fScanArc[0]=0; fScanArc[1]=360;
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
 	fBinning(a.fBinning),
+    nMargin(a.nMargin),
 	nFirstIndex(a.nFirstIndex),
 	nLastIndex(a.nLastIndex),
 	nProjectionStep(a.nProjectionStep),
@@ -573,6 +576,7 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjections &a)
 {
 	fBinning        = a.fBinning;
+    nMargin         = a.nMargin;
 	nFirstIndex     = a.nFirstIndex;
 	nProjectionStep = a.nProjectionStep;
 	bRepeatLine     = a.bRepeatLine;
@@ -623,6 +627,7 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	str<<setw(indent+4)  <<" "<<"<dims>"<<nDims[0]<<" "<<nDims[1]<<"</dims>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<resolution>"<<fResolution[0]<<" "<<fResolution[1]<<"</resolution>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<binning>"<<fBinning<<"</binning>\n";
+    str<<setw(indent+4)  <<" "<<"<margin>"<<nMargin<<"</margin>\n";
 	str<<setw(indent+4)  <<" "<<"<firstindex>"<<nFirstIndex<<"</firstindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<lastindex>"<<nLastIndex<<"</lastindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<projectionstep>"<<nProjectionStep<<"</projectionstep>"<<std::endl;

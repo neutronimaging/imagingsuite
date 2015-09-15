@@ -79,6 +79,7 @@ public:
         size_t nDims[2];            ///< Dimensions of the projections.
         float fResolution[2];       ///< Resolution of the projections in mm/pixel.
         float fBinning;             ///< Binning factor, currently only integers are valid.
+        size_t nMargin;             ///< Width of the image margin to relax the boundary processing criteria
         size_t nFirstIndex;         ///< The index number of the first projection in the data set
         size_t nLastIndex;          ///< The index number of the last projection in the data set
         size_t nProjectionStep;     ///< Increment of the projection index during read

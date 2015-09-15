@@ -995,6 +995,16 @@ void ReconEngine::Done()
 		m_Interactor->Done();
 }
 
+void ReconEngine::MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins)
+{
+
+}
+
+void ReconEngine::UnpadProjections(kipl::base::TImage<float,3> &projections, size_t *roi, size_t *margins)
+{
+
+}
+
 //==========================================
 // ProjectionBlock
 
@@ -1044,3 +1054,4 @@ ProjectionBlock & ProjectionBlock::operator=(const ProjectionBlock &b)
 ProjectionBlock::~ProjectionBlock()
 {
 }
+
