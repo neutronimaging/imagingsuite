@@ -9,7 +9,8 @@
 // $Rev: 915 $
 // $Id: StdPreprocModules.cpp 915 2011-04-22 10:52:16Z kaestner $
 //
-#include "stdafx.h"
+//#include "stdafx.h"
+#include "../include/StdBackProjectors_global.h"
 #include "../include/StdBackProjectors.h"
 #include <BackProjectorBase.h>
 #include <InteractionBase.h>
@@ -21,7 +22,7 @@
 #include <string>
 
 
-DLL_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
+STDBACKPROJECTORS_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
     if (strcmp(application,"muhrecbp"))
 		return NULL;
@@ -46,7 +47,7 @@ DLL_EXPORT void * GetModule(const char *application, const char * name, void *vi
 	return NULL;
 }
 
-DLL_EXPORT int Destroy(const char *application,void *obj)
+STDBACKPROJECTORS_EXPORT int Destroy(const char *application,void *obj)
 {
 	kipl::logging::Logger logger("StdBackProj::Destroy");
     if (strcmp(application,"muhrecbp"))
@@ -61,12 +62,12 @@ DLL_EXPORT int Destroy(const char *application,void *obj)
 	return 0;
 }
 
-DLL_EXPORT int LibVersion()
+STDBACKPROJECTORS_EXPORT int LibVersion()
 {
 	return -1;
 }
 
-DLL_EXPORT int GetModuleList(const char * application, void *listptr)
+STDBACKPROJECTORS_EXPORT int GetModuleList(const char * application, void *listptr)
 {
     if (strcmp(application,"muhrecbp"))
 		return -1;

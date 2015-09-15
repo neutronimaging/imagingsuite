@@ -9,7 +9,7 @@
 // $Rev: 652 $
 //
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "../include/StdBackProjectorBase.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"

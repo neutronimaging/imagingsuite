@@ -9,7 +9,7 @@
 // $Rev: 726 $
 //
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "../include/MultiProjBP.h"
 #include "../include/ReconException.h"
 #include <base/timage.h>

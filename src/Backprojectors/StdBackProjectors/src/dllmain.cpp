@@ -1,6 +1,6 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "stdafx.h"
-#ifdef _MSC_VER
+//#include "stdafx.h"
+#ifdef NEVER//_MSC_VER
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

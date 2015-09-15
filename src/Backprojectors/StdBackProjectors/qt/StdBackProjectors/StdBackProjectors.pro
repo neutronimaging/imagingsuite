@@ -61,7 +61,8 @@ HEADERS +=\
     ../../include/NNMultiProjBP.h \
     ../../include/MultiProjBPparallel.h \
     ../../include/MultiProjBP.h \
-    ../../src/stdafx.h
+    ../../src/stdafx.h \
+    ../../include/StdBackProjectors_global.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
