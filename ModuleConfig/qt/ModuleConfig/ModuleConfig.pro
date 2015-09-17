@@ -21,6 +21,7 @@ unix:!macx {
 }
 
 unix:macx {
+    QMAKE_MAC_SDK = macosx10.11
     QMAKE_CXXFLAGS += -fPIC -O2
     QMAKE_LIBDIR += /opt/local/lib
     LIBS += -L/opt/local/lib -lxml2
