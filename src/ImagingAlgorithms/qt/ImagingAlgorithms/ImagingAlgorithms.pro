@@ -14,6 +14,7 @@ CONFIG += c++11
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
     unix:!macx {
+
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
@@ -22,6 +23,7 @@ unix {
     }
     else
     {
+        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /usr/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
