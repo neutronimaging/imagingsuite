@@ -13,8 +13,7 @@ CONFIG += c++11
 
 unix {
     INCLUDEPATH += "../../../../external/src/linalg"
-    QMAKE_CXXFLAGS += -fPIC -O2 #-std=c++11
-    #QMAKE_LFLAGS +=  -stdlib=libc++
+    QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
         QMAKE_CXXFLAGS += -fopenmp
@@ -23,6 +22,7 @@ unix {
     }
 
     unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
