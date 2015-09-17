@@ -379,7 +379,7 @@ bool ReconEngine::Serialize(size_t *dims)
 	else {
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
 
-		if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorBase::MatrixZXY)
+		if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
 			plane=kipl::base::ImagePlaneYZ;
 
 		size_t nSlices=0;

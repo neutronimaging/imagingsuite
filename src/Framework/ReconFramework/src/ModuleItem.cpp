@@ -78,7 +78,7 @@ BackProjItem & BackProjItem::operator=(BackProjItem & item)
 	return *this;
 }
 
-BackProjectorBase * BackProjItem::GetModule()
+BackProjectorModuleBase * BackProjItem::GetModule()
 {
 	return m_Module;
 }
@@ -114,7 +114,7 @@ void BackProjItem::LoadModuleObject(InteractionBase *interactor)
 		 // If the function address is valid, call the function.
 		if (NULL != m_fnModuleFactory) 
         {
-			m_Module=reinterpret_cast<BackProjectorBase *>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void *>(interactor)));
+			m_Module=reinterpret_cast<BackProjectorModuleBase *>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void *>(interactor)));
 			if (m_Module==NULL) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;

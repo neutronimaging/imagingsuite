@@ -25,7 +25,7 @@
 #include "ReconConfig.h"
 
 /// Abstract base class for backprojection modules. It can used as base as is but is mostly refined by a second based class.
-class RECONFRAMEWORKSHARED_EXPORT BackProjectorBase
+class RECONFRAMEWORKSHARED_EXPORT BackProjectorModuleBase
 {
 protected:
     kipl::logging::Logger logger; ///< Logger instance for back-projection objects
@@ -43,7 +43,7 @@ public:
     /// \param name Specifies the name of the backprojector, is mainly used by the logger.
     /// \param alignment Specifies the memory alignment supported by the backprojector.
     /// \param interactor reference to an interactor object to report the backprojection progress etc.
-	BackProjectorBase(std::string application, std::string name, eMatrixAlignment alignment, InteractionBase *interactor=NULL);
+    BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment alignment, InteractionBase *interactor=NULL);
 
     /// Add one projection to the back-projection stack
     /// \param proj The projection
@@ -101,7 +101,7 @@ public:
 	virtual void GetHistogram(float *x, size_t *y, size_t N)=0;
 
     /// Destructor to clean up allocated memory.
-	virtual ~BackProjectorBase(void);
+    virtual ~BackProjectorModuleBase(void);
 
     /// Execution time of the latest back-projection run.
     /// \returns The execution time in seconds.

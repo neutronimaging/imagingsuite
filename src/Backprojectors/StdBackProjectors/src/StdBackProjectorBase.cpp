@@ -28,7 +28,7 @@
 #define USE_PROJ_PADDING
 
 StdBackProjectorBase::StdBackProjectorBase(std::string name, eMatrixAlignment align,InteractionBase *interactor) :
-BackProjectorBase("muhrec",name, align, interactor),
+BackProjectorModuleBase("muhrec",name, align, interactor),
 nProjCounter(0), 
 SizeU(0),
 SizeV(0),

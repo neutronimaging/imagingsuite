@@ -18,7 +18,7 @@
 
 #include <list>
 #include "PreprocModuleBase.h"
-#include "BackProjectorBase.h"
+#include "BackProjectorModuleBase.h"
 #include "ProjectionReader.h"
 #include "ReconHelpers.h"
 #include "ModuleItem.h"

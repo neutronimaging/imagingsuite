@@ -11,10 +11,10 @@
 // $Id$
 //
 #include "stdafx.h"
-#include "../include/BackProjectorBase.h"
+#include "../include/BackProjectorModuleBase.h"
 #include "../include/ReconException.h"
 
-BackProjectorBase::BackProjectorBase(std::string application, std::string name, eMatrixAlignment align, InteractionBase *interactor) :
+BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, InteractionBase *interactor) :
 	logger(name),
 	MatrixAlignment(align),
 	m_sModuleName(name),
@@ -31,11 +31,11 @@ BackProjectorBase::BackProjectorBase(std::string application, std::string name, 
 	}
 }
 
-BackProjectorBase::~BackProjectorBase(void)
+BackProjectorModuleBase::~BackProjectorModuleBase(void)
 {
 }
 
-size_t BackProjectorBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
+size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
 	std::ostringstream msg;
 
@@ -45,7 +45,7 @@ size_t BackProjectorBase::Process(kipl::base::TImage<float,2> proj, float angle,
 	return 0;
 }
 
-size_t BackProjectorBase::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
+size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
 {
 	std::ostringstream msg;
 
@@ -56,7 +56,7 @@ size_t BackProjectorBase::Process(kipl::base::TImage<float,3> proj, std::map<std
 }
 
 
-kipl::base::TImage<float,2> BackProjectorBase::GetSlice(size_t idx)
+kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 {
 	size_t origin[2]={0,0};
 	size_t dims[2]={0,0};
@@ -113,7 +113,7 @@ kipl::base::TImage<float,2> BackProjectorBase::GetSlice(size_t idx)
 	return slice;
 }
 
-size_t BackProjectorBase::GetNSlices()
+size_t BackProjectorModuleBase::GetNSlices()
 {
 	switch (MatrixAlignment) {
 		case MatrixXYZ : 
@@ -125,7 +125,7 @@ size_t BackProjectorBase::GetNSlices()
 	return volume.Size(2);
 }
 
-bool BackProjectorBase::UpdateStatus(float val, std::string msg)
+bool BackProjectorModuleBase::UpdateStatus(float val, std::string msg)
 {
 	if (m_Interactor!=NULL) {
 		return m_Interactor->SetProgress(val,msg);

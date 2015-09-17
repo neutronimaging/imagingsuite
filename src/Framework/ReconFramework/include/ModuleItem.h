@@ -22,7 +22,7 @@
 #include <ModuleItemBase.h>
 #include "InteractionBase.h"
 #include "PreprocModuleBase.h"
-#include "BackProjectorBase.h"
+#include "BackProjectorModuleBase.h"
 
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef void * (__cdecl *BP_FACTORY)(const char *, const char *, void *);
@@ -70,7 +70,7 @@ public:
 	BackProjItem & operator=(BackProjItem & item);
 
     /// Provides a reference to the BackProjector object held by the item.
-	BackProjectorBase * GetModule();
+	BackProjectorModuleBase * GetModule();
 
     /// The status of the created module.
     /// \returns true if there is an allocated module in the item.
@@ -95,7 +95,7 @@ protected:
     std::string m_sSharedObject;    ///< Name of the library file.
     std::string  m_sModuleName; ///< Name of the loaded module.
 
-    BackProjectorBase *m_Module;    ///< Reference to the loaded module.
+    BackProjectorModuleBase *m_Module;    ///< Reference to the loaded module.
 };
 
 #endif

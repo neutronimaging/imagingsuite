@@ -12,7 +12,7 @@
 //#include "stdafx.h"
 #include "../include/StdBackProjectors_global.h"
 #include "../include/StdBackProjectors.h"
-#include <BackProjectorBase.h>
+#include <BackProjectorModuleBase.h>
 #include <InteractionBase.h>
 #include "../include/MultiProjBP.h"
 #include "../include/MultiProjBPparallel.h"
@@ -55,7 +55,7 @@ STDBACKPROJECTORS_EXPORT int Destroy(const char *application,void *obj)
 
 	std::ostringstream msg;
 	if (obj!=NULL) {
-		BackProjectorBase *module=reinterpret_cast<BackProjectorBase *>(obj);
+		BackProjectorModuleBase *module=reinterpret_cast<BackProjectorModuleBase *>(obj);
 		delete module;
 	}
 

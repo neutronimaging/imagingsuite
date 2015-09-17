@@ -17,11 +17,11 @@
 #include <vector>
 #include <base/timage.h>
 #include <ReconConfig.h>
-#include <BackProjectorBase.h>
+#include <BackProjectorModuleBase.h>
 #include <InteractionBase.h>
 #include <logging/logger.h>
 
-class StdBackProjectorBase : public BackProjectorBase
+class StdBackProjectorBase : public BackProjectorModuleBase
 {
 protected:
 	struct ProjectionInfo {

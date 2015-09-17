@@ -25,6 +25,7 @@ unix {
     }
 
     unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -47,12 +48,16 @@ else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 
 SOURCES += reconalgorithms.cpp \
     forwardprojectorbase.cpp \
-    basicforwardprojector.cpp
+    basicforwardprojector.cpp \
+    backprojectorbase.cpp \
+    basicbackprojector.cpp
 
 HEADERS += reconalgorithms.h\
         reconalgorithms_global.h \
     forwardprojectorbase.h \
-    basicforwardprojector.h
+    basicforwardprojector.h \
+    backprojectorbase.h \
+    basicbackprojector.h
 
 unix {
     target.path = /usr/lib

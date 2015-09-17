@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <string>
 
-#include <BackProjectorBase.h>
+#include <BackProjectorModuleBase.h>
 #include <InteractionBase.h>
 
 #include "genericbp.h"
@@ -36,7 +36,7 @@ int Destroy(const char *application,void *obj)
 
     std::ostringstream msg;
     if (obj!=NULL) {
-        BackProjectorBase *module=reinterpret_cast<BackProjectorBase *>(obj);
+        BackProjectorModuleBase *module=reinterpret_cast<BackProjectorModuleBase *>(obj);
         delete module;
     }
 

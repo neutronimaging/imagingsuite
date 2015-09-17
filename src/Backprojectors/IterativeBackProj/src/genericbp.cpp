@@ -4,7 +4,7 @@
 #include <strings/miscstring.h>
 
 GenericBP::GenericBP(InteractionBase *interactor) :
-    BackProjectorBase("muhrec","GenericBP",BackProjectorBase::MatrixXYZ,interactor),
+    BackProjectorModuleBase("muhrec","GenericBP",BackProjectorModuleBase::MatrixXYZ,interactor),
     m_sStringParameter("string"),
     m_fFloatParameter(1.23f),
     m_bBooleanParameter(true),

@@ -1,7 +1,7 @@
 #include "sirtbp.h"
 
 SIRTbp::SIRTbp(InteractionBase *interactor) :
-    BackProjectorBase("muhrec","SIRTbp",BackProjectorBase::MatrixXYZ,interactor)
+    BackProjectorModuleBase("muhrec","SIRTbp",BackProjectorModuleBase::MatrixXYZ,interactor)
 {
 
 }

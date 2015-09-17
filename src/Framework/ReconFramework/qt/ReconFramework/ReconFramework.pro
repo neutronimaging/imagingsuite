@@ -40,9 +40,9 @@ HEADERS += \
     ../../include/PreprocModuleBase.h \
     ../../include/ModuleItem.h \
     ../../include/InteractionBase.h \
-    ../../include/BackProjectorBase.h \
 #    ../../src/stdafx.h \
-    ../../include/ReconFramework_global.h
+    ../../include/ReconFramework_global.h \
+    ../../include/BackProjectorModuleBase.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -63,6 +63,7 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include/libxml2
         INCLUDEPATH += /opt/local/include/

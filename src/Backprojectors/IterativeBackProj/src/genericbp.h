@@ -1,8 +1,8 @@
 #ifndef GENERICBP_H
 #define GENERICBP_H
 
-#include <BackProjectorBase.h>
-class GenericBP : public BackProjectorBase
+#include <BackProjectorModuleBase.h>
+class GenericBP : public BackProjectorModuleBase
 {
 public:
     GenericBP(InteractionBase *interactor=NULL);

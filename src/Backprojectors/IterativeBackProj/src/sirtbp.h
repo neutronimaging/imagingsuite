@@ -2,10 +2,10 @@
 #define SIRTBP_H
 
 #include "iterativebackproj_global.h"
-#include <BackProjectorBase.h>
+#include <BackProjectorModuleBase.h>
 #include <ParameterHandling.h>
 
-class SIRTbp : public BackProjectorBase
+class SIRTbp : public BackProjectorModuleBase
 {
 public:
     SIRTbp(InteractionBase *interactor=NULL);

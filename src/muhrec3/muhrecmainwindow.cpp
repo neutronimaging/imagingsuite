@@ -16,7 +16,7 @@
 #include <strings/filenames.h>
 #include <io/DirAnalyzer.h>
 
-#include <BackProjectorBase.h>
+#include <BackProjectorModuleBase.h>
 #include <ReconHelpers.h>
 #include <ReconException.h>
 #include <ProjectionReader.h>
