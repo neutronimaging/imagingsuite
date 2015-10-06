@@ -55,10 +55,10 @@ void MultiProjectionBPparallel::BackProject()
 		ptrdiff_t y=0;
 		#pragma omp parallel
 		{
-			__m128 column[1024];
+            __m128 column[2048];
 			__m128 a,b;
 			float fPosU=0.0f;
-			float fLocalStartUp[128];
+            float fLocalStartUp[1024];
 			#pragma omp for
 			for (y=1; y<=SizeY; y++)
 			{
