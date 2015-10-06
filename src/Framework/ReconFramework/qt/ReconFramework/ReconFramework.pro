@@ -25,7 +25,7 @@ SOURCES += \
     ../../src/ModuleItem.cpp \
     ../../src/InteractionBase.cpp \
 #   ../../src/dllmain.cpp \
-    ../../src/BackProjectorBase.cpp
+    ../../src/BackProjectorModuleBase.cpp
 
 HEADERS += \
 #    ../../include/targetver.h \
