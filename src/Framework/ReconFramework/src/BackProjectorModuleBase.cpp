@@ -11,6 +11,9 @@
 // $Id$
 //
 #include "stdafx.h"
+
+#include <math/mathconstants.h>
+
 #include "../include/BackProjectorModuleBase.h"
 #include "../include/ReconException.h"
 
@@ -132,4 +135,68 @@ bool BackProjectorModuleBase::UpdateStatus(float val, std::string msg)
 	}
 
 	return false;
+}
+
+void BackProjectorModuleBase::ClearAll()
+{
+    mask.clear();
+    memset(MatrixDims,0,3*sizeof(size_t));
+}
+
+void BackProjectorModuleBase::BuildCircleMask()
+{
+    size_t nSizeX=0;
+    size_t nSizeY=0;
+    if (MatrixAlignment==BackProjectorModuleBase::MatrixXYZ) {
+        nSizeX=MatrixDims[0];
+        nSizeY=MatrixDims[1];
+    }
+    else {
+        nSizeX=MatrixDims[1];
+        nSizeY=MatrixDims[2];
+    }
+
+    const float matrixCenterX=static_cast<float>(nSizeX>>1);
+    const float matrixCenterY=static_cast<float>(nSizeY>>1);
+    mask.resize(nSizeY);
+
+    float R=matrixCenterX-1;
+    if (mConfig.ProjectionInfo.bCorrectTilt) {
+        float slices=0;
+        if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+            slices=mConfig.ProjectionInfo.roi[3];
+        }
+        else {
+            slices=mConfig.ProjectionInfo.nDims[1];
+        }
+        R-=floor(tan(fabs(mConfig.ProjectionInfo.fTiltAngle)*fPi/180.0f)*slices);
+    }
+
+    const float R2=R*R;
+    for (size_t i=0; i<nSizeY; i++) {
+        float y=static_cast<float>(i)-matrixCenterY;
+        float y2=y*y;
+
+        if (y2<=R2) {
+            float x=sqrt(R2-y2);
+            mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
+            mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+        }
+        else {
+            mask[i].first  = 0u;
+            mask[i].second = 0u;
+        }
+        if (mConfig.MatrixInfo.bUseROI) {
+            if ((mConfig.MatrixInfo.roi[1]<=i) && (i<=mConfig.MatrixInfo.roi[3])) {
+                mask[i].first=max(mask[i].first,mConfig.MatrixInfo.roi[0]);
+                mask[i].second=min(mask[i].second,mConfig.MatrixInfo.roi[2]);
+            }
+            else {
+                mask[i].first=0u;
+                mask[i].second=0u;
+            }
+        }
+
+    }
+
 }

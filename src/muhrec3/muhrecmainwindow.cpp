@@ -339,9 +339,11 @@ void MuhRecMainWindow::DisplaySlice(int x)
     if (x<0) {
         nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
         ui->sliderProjections->setValue(nSelectedSlice);
+     //   on_comboSlicePlane_activated(0);
     }
 
     try {
+
         //kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice-m_Config.ProjectionInfo.roi[1]);
         kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
         ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),

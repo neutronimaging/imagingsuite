@@ -37,11 +37,11 @@ void MultiProjectionBP::BackProject()
 {
 	std::stringstream msg;
 	const size_t SizeY         = mask.size();		 // The mask size is used since there may be less elements than the matrix size.
-	const size_t SizeZ         = volume.Size(0)>>2; // Already adjusted by a factor 4
-	const size_t SizeV4		   = SizeV>>2;
+	const size_t SizeZ         = volume.Size(0)/4; // Already adjusted by a factor 4
+	const size_t SizeV4		   = SizeV/4;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
-	const size_t NProjections=nProjectionBufferSize;
-	//__m128 *column=new __m128[4*SizeZ];
+	const size_t NProjections  = nProjectionBufferSize;
+
 	__m128 column[2048];
 	
 	// This back projection is made for pillars in z

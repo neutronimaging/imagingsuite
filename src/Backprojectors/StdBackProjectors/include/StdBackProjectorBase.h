@@ -53,11 +53,8 @@ public:
 	float Max();
 	const std::vector<std::pair<size_t,size_t> > & GetMask() {return mask;}
 protected:
-	void ClearAll();
+    virtual void ClearAll();
 
-	std::vector<std::pair<size_t,size_t> > mask;
-	
-	void BuildCircleMask();
 	virtual void BackProject()=0;
 	std::vector<std::pair<ProjectionInfo, kipl::base::TImage<float, 2> > > ProjectionList;
 	kipl::base::TImage<float,3> projections;
@@ -66,7 +63,7 @@ protected:
 	size_t SizeV;
 	size_t SizeProj;
 	size_t MatrixCenterX;
-	size_t MatrixDims[3];
+
 	float ProjCenter;
 	float fWeights[1024];
 	float fSin[1024];

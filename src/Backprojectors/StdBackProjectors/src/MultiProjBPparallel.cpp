@@ -9,7 +9,6 @@
 // $Rev: 726 $
 //
 
-//#include "stdafx.h"
 #include "../include/MultiProjBPparallel.h"
 #include "../include/ReconException.h"
 #include <base/timage.h>
@@ -41,8 +40,8 @@ void MultiProjectionBPparallel::BackProject()
 {
 	std::stringstream msg;
 	const ptrdiff_t SizeY         = mask.size();		 // The mask size is used since there may be less elements than the matrix size.
-	const size_t SizeZ         = volume.Size(0)>>2; // Already adjusted by a factor 4
-	const size_t SizeV4		   = projections.Size(0) >> 2;
+	const size_t SizeZ         = volume.Size(0)/4; // Already adjusted by a factor 4
+	const size_t SizeV4		   = projections.Size(0)/4;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
 	const size_t NProjections  = nProjectionBufferSize;
 	
@@ -59,6 +58,7 @@ void MultiProjectionBPparallel::BackProject()
 			__m128 a,b;
 			float fPosU=0.0f;
             float fLocalStartUp[1024];
+            memset(fLocalStartUp,0,1024*sizeof(float));
 			#pragma omp for
 			for (y=1; y<=SizeY; y++)
 			{
@@ -91,10 +91,10 @@ void MultiProjectionBPparallel::BackProject()
 						__m128 * ProjColumnA = reinterpret_cast<__m128 *>(projections.GetLinePtr(nPosU, i));
 						__m128 * ProjColumnB = ProjColumnA+SizeV4;
 
-						__m128 sum;
+						__m128 sum=_mm_set_ps1(0.0f);
 						for (size_t z=0; z<SizeZ; z++)	// Back-project on z
 						{
-							const float interpB = abs(fPosU);			// Interpolation weight right
+							const float interpB = abs(fPosU-z*centerinc);			// Interpolation weight right
 							const float interpA = 1.0f-interpB;				// Interpolation weight left
 
 							__m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
@@ -151,7 +151,7 @@ void MultiProjectionBPparallel::BackProject()
 
 						__m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
 						__m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
-						__m128 sum;
+						__m128 sum=_mm_set_ps1(0.0f);
 						for (size_t z=0; z<SizeZ; z++)	// Back-project on z
 						{
 							a=_mm_mul_ps(ProjColumnA[z],w0_128);
