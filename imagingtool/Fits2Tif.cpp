@@ -170,8 +170,8 @@ int Fits2Tif::GetImage(std::list<kipl::base::TImage<float,2> > &imglist, std::st
         if (config.bUseSpotClean) {
             ImagingAlgorithms::MorphSpotClean cleaner;
             cleaner.setConnectivity(kipl::morphology::conn4);
-            cleaner.setCleanMethod(ImagingAlgorithms::MorphCleanPeaks);
-            cleaner.Process(dst2,config.fSpotThreshold);
+            cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks,ImagingAlgorithms::MorphCleanReplace);
+            cleaner.Process(dst2,config.fSpotThreshold,config.fSpotSigma);
         }
         imglist.push_back(dst2);
     }

@@ -5,6 +5,7 @@
 #include "findskiplistdialog.h"
 #include "Fits2Tif.h"
 #include "Reslicer.h"
+#include "mergevolumesdialog.h"
 #include <base/kiplenums.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
@@ -17,7 +18,6 @@
 
 #include <sstream>
 #include <fstream>
-
 
 ImagingToolMain::ImagingToolMain(QWidget *parent) :
     QMainWindow(parent),
@@ -42,6 +42,8 @@ ImagingToolMain::~ImagingToolMain()
 {
     delete ui;
 }
+
+
 
 void ImagingToolMain::f2t_BrowseSrcPath()
 {
@@ -452,4 +454,12 @@ void ImagingToolMain::on_reslice_button_process_clicked()
 
     }
 
+}
+
+void ImagingToolMain::on_actionMerge_volume_triggered()
+{
+    MergeVolumesDialog dlg;
+
+    dlg.exec();
+    std::cout<<"Hepp"<<std::endl;
 }

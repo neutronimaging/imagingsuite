@@ -8,6 +8,7 @@ QT       += core widgets
 
 TARGET = imagingtool
 TEMPLATE = app
+CONFIG += c++11
 
 unix:!symbian {
     maemo5 {
@@ -18,6 +19,7 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
@@ -53,7 +55,9 @@ SOURCES += main.cpp\
     ImagingToolConfig.cpp \
     stdafx.cpp \
     Fits2Tif.cpp \
-    Reslicer.cpp
+    Reslicer.cpp \
+    mergevolumesdialog.cpp \
+    mergevolume.cpp
 
 HEADERS  += imagingtoolmain.h \
     findskiplistdialog.h \
@@ -61,11 +65,14 @@ HEADERS  += imagingtoolmain.h \
     targetver.h \
     stdafx.h \
     Fits2Tif.h \
-    Reslicer.h
+    Reslicer.h \
+    imagingtool_global.h \
+    mergevolumesdialog.h \
+    mergevolume.h
 
 FORMS    += imagingtoolmain.ui \
-    findskiplistdialog.ui
-
+    findskiplistdialog.ui \
+    mergevolumesdialog.ui
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
@@ -73,7 +80,7 @@ else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/ki
 else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/src
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/debug/ -lQtAddons
@@ -84,14 +91,14 @@ else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../gui/trunk/qt/
 INCLUDEPATH += $$PWD/../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../gui/trunk/qt/QtAddons
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../tomography/trunk/src/build-ReconFramework-Qt5-Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../tomography/trunk/src/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../tomography/trunk/src/build-ReconFramework-Qt5-Release/ -lReconFramework
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../tomography/trunk/src/build-ReconFramework-Qt5-Debug/ -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../src/libs/recon2/trunk/ReconFramework/include
+INCLUDEPATH += $$PWD/../../../tomography/trunk/src/Framework/ReconFramework/include
+DEPENDPATH += $$PWD/../../../tomography/trunk/src/Framework/ReconFramework/src
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
@@ -110,3 +117,4 @@ else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../qni/trunk/src
 
 INCLUDEPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include
+

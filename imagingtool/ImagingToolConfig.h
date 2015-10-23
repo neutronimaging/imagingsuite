@@ -100,6 +100,7 @@ public:
 		size_t nFirstDest;
         bool bUseSpotClean;
         float fSpotThreshold;
+        float fSpotSigma;
 
         bool bSortGoldenScan;
         int nGoldenScanArc;

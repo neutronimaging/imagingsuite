@@ -499,8 +499,8 @@ std::string ImagingToolConfig::FileConversionConfig::WriteXML(size_t indent)
 				<<nCrop[1]<<" "
 				<<nCrop[2]<<" "
 				<<nCrop[3]<<"</roi>\n";
-		xml<<std::setw(indent+blockindent)<<" "<<"<flip>"<<flip<<"</flip>\n";
-		xml<<std::setw(indent+blockindent)<<" "<<"<rotate>"<<rotate<<"</rotate>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<flip>"<<flip<<"</flip>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<rotate>"<<rotate<<"</rotate>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<replacezeros>"<<(bReplaceZeros ? "true": "false")<<"</replacezeros>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<usespotclean>"<<(bUseSpotClean ? "true": "false")<<"</usespotclean>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<spotthreshold>"<<fSpotThreshold<<"</spotthreshold>\n";

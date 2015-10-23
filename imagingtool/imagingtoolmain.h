@@ -28,12 +28,15 @@ protected slots:
     void f2t_BrowseDestPath();
     void f2t_Convert();
 
+
 private slots:
     void on_reslice_button_BrowseInPath_clicked();
 
     void on_reslice_button_BrowseOutPath_clicked();
 
     void on_reslice_button_process_clicked();
+
+    void on_actionMerge_volume_triggered();
 
 private:
     Ui::ImagingToolMain *ui;

@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_merge">
      <attribute name="title">
@@ -1084,6 +1084,32 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuSlices">
+    <property name="title">
+     <string>Slices</string>
+    </property>
+    <addaction name="actionMerge_volume"/>
+    <addaction name="actionReslice"/>
+   </widget>
+   <widget class="QMenu" name="menuConverters">
+    <property name="title">
+     <string>Converters</string>
+    </property>
+    <addaction name="actionFITS_to_TIFF"/>
+    <addaction name="actionGeneric_to_TIFF"/>
+    <addaction name="actionTIFF_to_vtk"/>
+   </widget>
+   <widget class="QMenu" name="menuImage_quality">
+    <property name="title">
+     <string>Image quality</string>
+    </property>
+    <addaction name="actionMTF"/>
+    <addaction name="actionFourier_shell_analysis"/>
+    <addaction name="actionIAEA_contrast"/>
+   </widget>
+   <addaction name="menuSlices"/>
+   <addaction name="menuConverters"/>
+   <addaction name="menuImage_quality"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -1094,6 +1120,46 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionMerge_volume">
+   <property name="text">
+    <string>Merge volume</string>
+   </property>
+  </action>
+  <action name="actionReslice">
+   <property name="text">
+    <string>Reslice</string>
+   </property>
+  </action>
+  <action name="actionFITS_to_TIFF">
+   <property name="text">
+    <string>FITS to TIFF</string>
+   </property>
+  </action>
+  <action name="actionGeneric_to_TIFF">
+   <property name="text">
+    <string>Generic to TIFF</string>
+   </property>
+  </action>
+  <action name="actionTIFF_to_vtk">
+   <property name="text">
+    <string>TIFF to vtk</string>
+   </property>
+  </action>
+  <action name="actionIAEA_contrast">
+   <property name="text">
+    <string>IAEA contrast</string>
+   </property>
+  </action>
+  <action name="actionMTF">
+   <property name="text">
+    <string>MTF</string>
+   </property>
+  </action>
+  <action name="actionFourier_shell_analysis">
+   <property name="text">
+    <string>Fourier shell analysis</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
