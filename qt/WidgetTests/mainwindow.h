@@ -30,6 +30,7 @@ private slots:
     void on_GetROIButton_clicked();
     void GetModulesClicked();
     void on_check_linkimages_toggled(bool checked);
+    void on_pushButton_listdata_clicked();
 };
 
 #endif // MAINWINDOW_H

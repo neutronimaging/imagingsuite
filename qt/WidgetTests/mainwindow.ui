@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>894</width>
-    <height>580</height>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -202,7 +202,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -228,6 +228,29 @@
      </item>
     </layout>
    </widget>
+   <widget class="ReaderConfigListWidget" name="ImageLoaders" native="true">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>520</y>
+      <width>541</width>
+      <height>171</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_listdata">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>520</y>
+      <width>115</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>List data sets</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -252,6 +275,12 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">modulechainconfiguratorwidget.h</header>
@@ -270,15 +299,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::ImageViewerWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">imageviewerwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SingleModuleConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">singlemoduleconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReaderConfigListWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">readerconfiglistwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

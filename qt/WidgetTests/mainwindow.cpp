@@ -1,9 +1,15 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include <cmath>
+
+#include <QListWidgetItem>
+
+
 #include <base/timage.h>
 #include <generators/Sine2D.h>
-#include <QListWidgetItem>
+
+#include <buildfilelist.h>
+
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -61,7 +67,7 @@ void MainWindow::on_ShowImageButton_clicked()
     else {
         QVector<QPointF> data;
 
-        for (int i=0;i<img.Size(0); i++)
+        for (int i=0;i<static_cast<int>(img.Size(0)); i++)
             data.append(QPointF(i,20+50*sin(2*3.14*i/100.0f)));
         ui->ImageView->set_plot(data,QColor(Qt::green),0);
     }
@@ -101,4 +107,22 @@ void MainWindow::on_check_linkimages_toggled(bool checked)
         v1->LinkImageViewer(v2);
     else
        v1->ClearLinkedImageViewers();
+}
+
+void MainWindow::on_pushButton_listdata_clicked()
+{
+    std::list<ImageLoader> loaderlist;
+
+    loaderlist=ui->ImageLoaders->GetList();
+    for (auto it=loaderlist.begin(); it!=loaderlist.end(); it++) {
+        std::cout<<*it<<std::endl;
+    }
+
+    std::list<std::string> flist=BuildFileList(loaderlist);
+
+    for (auto it=flist.begin(); it!=flist.end(); it++) {
+        std::cout<<*it<<std::endl;
+    }
+
+
 }

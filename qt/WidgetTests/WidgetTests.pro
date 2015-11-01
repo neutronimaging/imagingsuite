@@ -6,6 +6,7 @@
 
 QT       += svg widgets printsupport
 #QT       += core gui
+CONFIG += c++11
 
 TARGET = WidgetTests
 TEMPLATE = app
@@ -68,3 +69,17 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trun
 
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderConfig-Qt5-Release/release/ -lReaderConfig
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderConfig-Qt5-Release/debug/ -lReaderConfig
+else:unix: LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderConfig-Qt5-Release/ -lReaderConfig
+
+INCLUDEPATH += $$PWD/../../../../modules/trunk/ReaderConfig
+DEPENDPATH += $$PWD/../../../../modules/trunk/ReaderConfig
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderGUI-Qt5-Release/release/ -lReaderGUI
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderGUI-Qt5-Release/debug/ -lReaderGUI
+else:unix: LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderGUI-Qt5-Release/ -lReaderGUI
+
+INCLUDEPATH += $$PWD/../../../../modules/trunk/ReaderGUI
+DEPENDPATH += $$PWD/../../../../modules/trunk/ReaderGUI
