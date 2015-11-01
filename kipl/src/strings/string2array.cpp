@@ -131,6 +131,24 @@ size_t String2Set(std::string str, std::set<size_t> &v)
 	return i;
 }
 
+size_t String2List(std::string str, std::list<int> &v)
+{
+    std::string data, element;
+    data=str;
+    bool status=true;
+    v.clear();
+    size_t i=0;
+    while (status) {
+        status=GetElement(data,element);
+        if (!element.empty()) {
+            v.push_back(atoi(element.c_str()));
+            i++;
+        }
+    }
+
+    return i;
+}
+
 size_t String2Array(std::string str, std::vector<float> &v)
 {
     throw kipl::base::KiplException("String2Array is not implemented for vector<float>",__FILE__,__LINE__);
