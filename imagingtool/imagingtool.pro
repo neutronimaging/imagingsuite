@@ -51,7 +51,6 @@ win32 {
 
 SOURCES += main.cpp\
         imagingtoolmain.cpp \
-    findskiplistdialog.cpp \
     ImagingToolConfig.cpp \
     stdafx.cpp \
     Fits2Tif.cpp \
@@ -62,7 +61,6 @@ SOURCES += main.cpp\
     fileconversiondialog.cpp
 
 HEADERS  += imagingtoolmain.h \
-    findskiplistdialog.h \
     ImagingToolConfig.h \
     targetver.h \
     stdafx.h \
@@ -75,7 +73,6 @@ HEADERS  += imagingtoolmain.h \
     fileconversiondialog.h
 
 FORMS    += imagingtoolmain.ui \
-    findskiplistdialog.ui \
     mergevolumesdialog.ui \
     reslicerdialog.ui \
     fileconversiondialog.ui

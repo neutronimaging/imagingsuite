@@ -22,7 +22,10 @@ pushd .
 cd $DEST
 rm -f *.$EXT
 
+
 `$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-$target/libModuleConfig.$EXT .`
+`$CPCMD $REPOSPATH/modules/trunk/build-ReaderConfig-Qt5-$target/libReaderConfig.$EXT .`
+`$CPCMD $REPOSPATH/modules/trunk/build-ReaderGUI-Qt5-$target/libReaderGUI.$EXT .`
 `$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-$target/libQtAddons.$EXT .`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-$target/libReconFramework.$EXT .`
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-$target/libkipl.$EXT .`

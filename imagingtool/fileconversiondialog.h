@@ -15,6 +15,9 @@ public:
     explicit FileConversionDialog(QWidget *parent = 0);
     ~FileConversionDialog();
 
+private slots:
+    void on_pushButton_GetSkipList_clicked();
+
 private:
     Ui::FileConversionDialog *ui;
 };

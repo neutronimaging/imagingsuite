@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>693</width>
-    <height>641</height>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="ImageLoaderConfig" native="true">
+           <widget class="ReaderConfigListWidget" name="ImageLoaderConfig" native="true">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -218,6 +218,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ReaderConfigListWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">readerconfiglistwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

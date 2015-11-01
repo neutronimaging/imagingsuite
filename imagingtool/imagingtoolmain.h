@@ -20,19 +20,13 @@ public:
     ~ImagingToolMain();
     
 protected slots:
-    void f2t_BrowseSrcPath();
-    void f2t_Preview();
-    void f2t_FindProjections();
-    void f2t_GetROI();
-    void f2t_TakePath();
-    void f2t_BrowseDestPath();
-    void f2t_Convert();
-
 
 private slots:
     void on_actionMerge_volume_triggered();
 
     void on_actionReslice_triggered();
+
+    void on_actionConvertFiles_triggered();
 
 private:
     Ui::ImagingToolMain *ui;
