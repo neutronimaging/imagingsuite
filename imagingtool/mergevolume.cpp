@@ -4,6 +4,7 @@
 #include <strings/filenames.h>
 #include <base/timage.h>
 #include <io/io_tiff.h>
+#include <strings/miscstring.h>
 
 #include "mergevolume.h"
 
@@ -56,7 +57,7 @@ void MergeVolume::Process()
 
 void MergeVolume::CopyMerge()
 {
-    logger(kipl::logging::Logger::LogVerbose,"Starting copy merge");
+    logger(kipl::logging::Logger::LogMessage,"Starting to merge volumes");
 
     std::string src_fname;
     std::string dst_fname;
@@ -68,7 +69,7 @@ void MergeVolume::CopyMerge()
     std::ostringstream cmd,msg;
     int cnt=m_nFirstDest;
     int i,j,k;
-    //::MessageDialog errdlg("Hepp",false,Gtk::MESSAGE_ERROR);
+
     double total_images=(m_nStartOverlapA-m_nFirstA)+(m_nLastB-m_nFirstB)+1;
     // Copy data A
     int res=0;
@@ -83,16 +84,13 @@ void MergeVolume::CopyMerge()
         if (res!=0) {
             msg.str("");
             msg<<"Could not copy "<<src_fname<<" to "<<dst_fname;
-    //        errdlg.set_message(msg.str());
-    //        errdlg.run();
+            logger(logger.LogError,msg.str());
             return ;
         }
-//        progress->set_fraction(static_cast<double>(cnt)/total_images);
-//        while (Gtk::Main::events_pending())
-//            Gtk::Main::iteration(false);
     }
 
  //   progress->set_text("Mixing data sets");
+    logger(logger.LogMessage,"Mixing data sets");
     std::string src_maskB = m_sPathB;
     // Here will the interpolation happen
     kipl::base::TImage<float,2> a,b;
@@ -114,35 +112,32 @@ void MergeVolume::CopyMerge()
 
             kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
             kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
-//            progress->set_fraction(static_cast<double>(cnt)/total_images);
-//            while (Gtk::Main::events_pending())
-//                Gtk::Main::iteration(false);
         }
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
         msg<<"Failed to mix the data sets :"<<e.what();
-//        errdlg.set_message(msg.str());
-//        errdlg.run();
+        logger(logger.LogError,msg.str());
+
         return ;
     }
     catch (std::exception &e) {
         msg.str("");
         msg<<"Failed to mix the data sets :"<<e.what();
-//        errdlg.set_message(msg.str());
-//        errdlg.run();
+        logger(logger.LogError,msg.str());
+
         return ;
     }
     catch (...) {
         msg.str("");
         msg<<"Failed to mix the data sets unknown exception";
-//        errdlg.set_message(msg.str());
-//        errdlg.run();
+        logger(logger.LogError,msg.str());
+
         return ;
     }
 
     // Copy data B
-//    progress->set_text("Copying data B");
+    logger(logger.LogMessage,"Copying data B");
     for ( ; j<=m_nLastB; j++, cnt++) {
         kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
         kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
@@ -153,23 +148,15 @@ void MergeVolume::CopyMerge()
         if (res!=0) {
             msg.str("");
             msg<<"Could not copy "<<src_fname<<" to "<<dst_fname;
-//            errdlg.set_message(msg.str());
-//            errdlg.run();
+            logger(logger.LogError,msg.str());
+
             return ;
         }
-//        progress->set_fraction(static_cast<double>(cnt)/total_images);
-
-//        while (Gtk::Main::events_pending())
-//            Gtk::Main::iteration(false);
     }
-//    progress->set_text("Idle");
-//    progress->set_fraction(0.0);
 }
 
 void MergeVolume::CropMerge() {
-//    UpdateConfig();
-//    SaveConfig();
-    logger(kipl::logging::Logger::LogVerbose,"Starting crop merge");
+    logger(kipl::logging::Logger::LogMessage,"Starting to merge cropped slices");
 
     std::string src_fname;
     std::string dst_fname;
@@ -181,7 +168,6 @@ void MergeVolume::CropMerge() {
     std::ostringstream cmd,msg;
     size_t cnt=m_nFirstDest;
     size_t i,j,k;
- //   Gtk::MessageDialog errdlg("Hepp",false,Gtk::MESSAGE_ERROR);
     double total_images=(m_nStartOverlapA-m_nFirstA)+(m_nLastB-m_nFirstB);
     // Copy data A
     int res=0;
@@ -193,7 +179,7 @@ void MergeVolume::CropMerge() {
             static_cast<size_t>(m_nCrop[2]+m_nCropOffset[0]),
             static_cast<size_t>(m_nCrop[3]+m_nCropOffset[1])};
 
- //   progress->set_text("Copying data A");
+    logger(logger.LogMessage,"Copying data A");
     int bps=0;
     for (i=m_nFirstA; i<m_nStartOverlapA; i++, cnt++) {
         kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
@@ -206,12 +192,9 @@ void MergeVolume::CropMerge() {
         case 32: kipl::io::WriteTIFF32(a,dst_fname.c_str()); break;
         default: throw kipl::base::KiplException("Unhandled number of bits",__FILE__,__LINE__);
         }
-//        progress->set_fraction(static_cast<double>(cnt)/total_images);
-//        while (Gtk::Main::events_pending())
-//            Gtk::Main::iteration(false);
     }
 
-//    progress->set_text("Mixing data sets");
+    logger(logger.LogMessage,"Mixing data sets");
     std::string src_maskB = m_sPathB;
     // Here will the interpolation happen
 
@@ -234,36 +217,33 @@ void MergeVolume::CropMerge() {
 
             kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
             kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
-//            progress->set_fraction(static_cast<double>(cnt)/total_images);
-//            while (Gtk::Main::events_pending())
-//                Gtk::Main::iteration(false);
         }
     }
 
     catch (kipl::base::KiplException &e) {
         msg.str("");
         msg<<"Failed to mix the data sets :"<<e.what();
-//        errdlg.set_message(msg.str());
-//        errdlg.run();
+        logger(logger.LogError,msg.str());
+
         return ;
     }
     catch (std::exception &e) {
         msg.str("");
         msg<<"Failed to mix the data sets :"<<e.what();
-//        errdlg.set_message(msg.str());
-//        errdlg.run();
+        logger(logger.LogError,msg.str());
+
         return ;
     }
     catch (...) {
         msg.str("");
         msg<<"Failed to mix the data sets unknown exception";
-//        errdlg.set_message(msg.str());
-//        errdlg.run();
+
+        logger(logger.LogError,msg.str());
+
         return ;
     }
 
     // Copy data B
-//    progress->set_text("Copying data B");
     for ( ; j<=m_nLastB; j++, cnt++) {
         kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
         kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
@@ -274,14 +254,7 @@ void MergeVolume::CropMerge() {
         case 32: kipl::io::WriteTIFF32(a,dst_fname.c_str()); break;
         default: throw kipl::base::KiplException("Unhandled number of bits",__FILE__,__LINE__);
         }
-
-//        progress->set_fraction(static_cast<double>(cnt)/total_images);
-
-//        while (Gtk::Main::events_pending())
-//            Gtk::Main::iteration(false);
     }
-//    progress->set_text("Idle");
-//    progress->set_fraction(0.0);
 }
 
 void MergeVolume::LoadVerticalSlice(std::string filemask,
@@ -324,4 +297,30 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
     }
 
     delete [] data;
+}
+
+std::string MergeVolume::WriteXML(size_t indent)
+{
+    std::ostringstream xml;
+
+    xml<<std::setw(indent)<<" "<<"<merge>\n";
+        xml<<std::setw(indent+4)<<" "<<"<path_a>"<<m_sPathA<<"</path_a>\n";
+        xml<<std::setw(indent+4)<<" "<<"<path_b>"<<m_sPathB<<"</path_b>\n";
+        xml<<std::setw(indent+4)<<" "<<"<path_dest>"<<m_sPathOut<<"</path_dest>\n";
+
+        xml<<std::setw(indent+4)<<" "<<"<first_a>"<<m_nFirstA<<"</first_a>\n";
+        xml<<std::setw(indent+4)<<" "<<"<last_a>"<<m_nLastA<<"</last_a>\n";
+        xml<<std::setw(indent+4)<<" "<<"<startoverlap_a>"<<m_nStartOverlapA<<"</startoverlap_a>\n";
+        xml<<std::setw(indent+4)<<" "<<"<overlaplength>"<<m_nOverlapLength<<"</overlaplength>\n";
+
+        xml<<std::setw(indent+4)<<" "<<"<first_b>"<<m_nFirstB<<"</first_b>\n";
+        xml<<std::setw(indent+4)<<" "<<"<last_b>"<<m_nLastB<<"</last_b>\n";
+        xml<<std::setw(indent+4)<<" "<<"<first_dest>"<<m_nFirstDest<<"</first_dest>\n";
+
+        xml<<std::setw(indent+4)<<" "<<"<cropslices>"<<kipl::strings::bool2string(m_bCropSlices)<<"</cropslices>\n";
+        xml<<std::setw(indent+4)<<" "<<"<crop>"<<m_nCrop[0]<<" "<<m_nCrop[1]<<" "<<m_nCrop[2]<<" "<<m_nCrop[3]<<"</crop>\n";
+        xml<<std::setw(indent+4)<<" "<<"<cropboffset>"<<m_nCropOffset[0]<<" "<<m_nCropOffset[1]<<"</cropboffset>\n";
+
+    xml<<std::setw(indent)<<" "<<"</merge>\n";
+    return xml.str();
 }

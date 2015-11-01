@@ -42,9 +42,14 @@ private slots:
 
     void on_checkBox_crop_toggled(bool checked);
 
+    void on_pushButton_TestMix_clicked();
+
 protected:
     void UpdateDialog();
     void UpdateConfig();
+    void SaveConfig();
+    void LoadConfig();
+
     void LoadVerticalSlice(std::string filemask,
                                         int first,
                                         int last,
@@ -53,7 +58,10 @@ protected:
     MergeVolume m_merger;
     kipl::base::TImage<float,2> m_VerticalImgA;
     kipl::base::TImage<float,2> m_VerticalImgB;
-    kipl::base::TImage<float,2> m_imgResult;
+    kipl::base::TImage<float,2> m_VerticalImgResult;
+    kipl::base::TImage<float,2> m_VerticalImgLocalResult;
+    kipl::base::TImage<float,2> m_HorizontalSliceResult;
+
 private:
     Ui::MergeVolumesDialog *ui;
 };

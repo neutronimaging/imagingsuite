@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_merge">
      <attribute name="title">
@@ -1164,15 +1164,15 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header location="global">qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header location="global">qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

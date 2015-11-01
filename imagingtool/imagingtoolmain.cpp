@@ -1,11 +1,10 @@
+
+#include <sstream>
+#include <fstream>
+
 #include <QFileDialog>
 #include <QMessageBox>
-#include "imagingtoolmain.h"
-#include "ui_imagingtoolmain.h"
-#include "findskiplistdialog.h"
-#include "Fits2Tif.h"
-#include "Reslicer.h"
-#include "mergevolumesdialog.h"
+
 #include <base/kiplenums.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
@@ -15,9 +14,12 @@
 #include <io/DirAnalyzer.h>
 #include <base/timage.h>
 
-
-#include <sstream>
-#include <fstream>
+#include "imagingtoolmain.h"
+#include "ui_imagingtoolmain.h"
+#include "findskiplistdialog.h"
+#include "Fits2Tif.h"
+#include "reslicerdialog.h"
+#include "mergevolumesdialog.h"
 
 ImagingToolMain::ImagingToolMain(QWidget *parent) :
     QMainWindow(parent),
@@ -353,113 +355,18 @@ void ImagingToolMain::LoadConfig()
     }
 }
 
-
-void ImagingToolMain::on_reslice_button_BrowseInPath_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the slices",
-                                      ui->reslice_edit_FileMask->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        std::string fname=pdir.substr(pos+1);
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->reslice_edit_FileMask->setText(QString::fromStdString(fi.m_sMask));
-    }
-}
-
-void ImagingToolMain::on_reslice_button_BrowseOutPath_clicked()
-{
-    QString projdir=QFileDialog::getExistingDirectory(this,
-                                      "Select location of the projections",
-                                      ui->reslice_edit_OutPath->text());
-
-    if (!projdir.isEmpty())
-        ui->reslice_edit_OutPath->setText(projdir);
-}
-
-void ImagingToolMain::on_reslice_button_process_clicked()
-{
-
-    UpdateConfig();
-    SaveConfig();
-
-    TIFFReslicer reslicer;
-    std::string sSrcMask=m_config.reslice.sSourcePath+m_config.reslice.sSourceMask;
-    std::ostringstream msg;
-
-    std::string sDstMask=m_config.reslice.sDestinationPath+m_config.reslice.sSourceMask;
-    std::string a,b;
-    size_t pos=sDstMask.find('#',0);
-    if (pos==string::npos) {
-        QMessageBox dlg;
-
-        dlg.setText("Failed to create destination filename.\n There are no # in the file mask.");
-        dlg.exec();
-        return;
-    }
-    a=sDstMask.substr(0,pos);
-    b=sDstMask.substr(pos);
-
-    if (m_config.reslice.bResliceXZ) {
-        sDstMask=a+"XZ"+b;
-        logger(kipl::logging::Logger::LogMessage,sDstMask);
-        try {
-        reslicer.process(sSrcMask,
-            m_config.reslice.nFirst,
-            m_config.reslice.nLast,
-            sDstMask, kipl::base::ImagePlaneXZ);
-        }
-        catch (kipl::base::KiplException &E) {
-            msg.str("");
-            msg<<"XZ-Reslicing failed with an exception\n"<<E.what();
-            logger(kipl::logging::Logger::LogError,msg.str());
-            QMessageBox dlg;
-            dlg.setText("XZ-Reslicing failed");
-            dlg.exec();
-            return;
-        }
-        logger(kipl::logging::Logger::LogMessage,"Reslice XZ done.");
-    }
-
-    if (m_config.reslice.bResliceYZ) {
-        sDstMask=a+"YZ"+b;
-        logger(kipl::logging::Logger::LogMessage,sDstMask);
-        try {
-        reslicer.process(sSrcMask,
-            m_config.reslice.nFirst,
-            m_config.reslice.nLast,
-            sDstMask, kipl::base::ImagePlaneYZ);
-        }
-        catch (kipl::base::KiplException &E) {
-            msg.str("");
-            msg<<"YZ-Reslicing failed with an exception\n"<<E.what();
-            logger(kipl::logging::Logger::LogError,msg.str());
-            QMessageBox dlg;
-            dlg.setText("YZ-Reslicing failed");
-            dlg.exec();
-            return;
-        }
-        logger(kipl::logging::Logger::LogMessage,"Reslice YZ done.");
-
-    }
-
-}
-
 void ImagingToolMain::on_actionMerge_volume_triggered()
 {
     MergeVolumesDialog dlg;
 
+    logger(logger.LogMessage,"Opening merge volume dialog");
     dlg.exec();
-    std::cout<<"Hepp"<<std::endl;
+}
+
+void ImagingToolMain::on_actionReslice_triggered()
+{
+    ReslicerDialog dlg;
+
+    logger(logger.LogMessage,"Opening reslice dialog");
+    dlg.exec();
 }

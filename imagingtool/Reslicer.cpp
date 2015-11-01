@@ -10,24 +10,38 @@
 //
 
 #include "stdafx.h"
-#include "Reslicer.h"
-
-#include <strings/filenames.h>
-#include <base/KiplException.h>
-
 #include <cstring>
 #include <cmath>
 #include <sstream>
+#include <iomanip>
+
+#include <strings/filenames.h>
+#include <strings/miscstring.h>
+#include <base/KiplException.h>
+
+#include "Reslicer.h"
 
 
 TIFFReslicer::TIFFReslicer() :
-logger("TIFFReslicer"),
-m_nMaxBlock(128),
-m_nSliceCount(0),
-m_nCurrentFile(0),
-m_nCurrentBlock(0),
-m_nBlocks(0),
-buffer(NULL)
+    logger("TIFFReslicer"),
+    m_sSourceMask(),
+    m_sDestinationPath(),
+
+    m_nFirst(0),
+    m_nLast(100),
+    m_nFirstXZ(0),
+    m_nLastXZ(0),
+    m_nFirstYZ(0),
+    m_nLastYZ(0),
+
+    m_bResliceXZ(true),
+    m_bResliceYZ(true),
+    m_nMaxBlock(128),
+    m_nSliceCount(0),
+    m_nCurrentFile(0),
+    m_nCurrentBlock(0),
+    m_nBlocks(0),
+    buffer(NULL)
 {
 	memset(m_DstImages,0,m_nMaxBlock*sizeof(TIFF *));
 	TIFFSetWarningHandler(0);
@@ -42,6 +56,80 @@ TIFFReslicer::~TIFFReslicer() {
 	}
 	if (buffer!=NULL)
 		delete [] buffer;
+}
+
+std::string TIFFReslicer::WriteXML(size_t indent)
+{
+    std::ostringstream xml;
+
+    size_t blockindent=4;
+    xml<<std::setw(indent)<<" "<<"<reslice>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<srcmask>"<<m_sSourceMask<<"</srcmask>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<dstpath>"<<m_sDestinationPath<<"</dstpath>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<first>"<<m_nFirst<<"</first>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<last>"<<m_nLast<<"</last>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<reslicexz>"<<kipl::strings::bool2string(m_bResliceXZ)<<"</reslicexz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<firstxz>"<<m_nFirstXZ<<"</firstxz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<lastxz>"<<m_nLastXZ<<"</lastxz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<resliceyz>"<<kipl::strings::bool2string(m_bResliceYZ)<<"</resliceyz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<firstyz>"<<m_nFirstYZ<<"</firstyz>\n";
+        xml<<std::setw(indent+blockindent)<<" "<<"<lastyz>"<<m_nLastYZ<<"</lastyz>\n";
+    xml<<std::setw(indent)<<" "<<"</reslice>\n";
+
+    return xml.str();
+}
+
+//void TIFFReslicer::ParseXML(xmlTextReaderPtr reader)
+//{
+
+//}
+int TIFFReslicer::process()
+{
+//    std::string a,b;
+//    size_t pos=sDstMask.find('#',0);
+//    if (pos==string::npos) {
+//        QMessageBox dlg;
+
+//        dlg.setText("Failed to create destination filename.\n There are no # in the file mask.");
+//        dlg.exec();
+//        return;
+//    }
+//    a=sDstMask.substr(0,pos);
+//    b=sDstMask.substr(pos);
+
+    std::ostringstream msg;
+    if (m_bResliceXZ){
+//        sDstMask=a+"XZ"+b;
+//        logger(kipl::logging::Logger::LogMessage,sDstMask);
+        try {
+            process(m_sSourceMask,m_nFirst,m_nLast,m_sDestinationPath,kipl::base::ImagePlaneXZ);
+        }
+        catch (kipl::base::KiplException &E) {
+            msg.str("");
+            msg<<"XZ-Reslicing failed with an exception\n"<<E.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+
+            return -1;
+        }
+        logger(kipl::logging::Logger::LogMessage,"Reslice XZ done.");
+
+    }
+
+    if (m_bResliceYZ) {
+        try {
+            process(m_sSourceMask,m_nFirst,m_nLast,m_sDestinationPath,kipl::base::ImagePlaneXZ);
+        }
+        catch (kipl::base::KiplException &E) {
+            msg.str("");
+            msg<<"YZ-Reslicing failed with an exception\n"<<E.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+
+            return -1;
+        }
+        logger(kipl::logging::Logger::LogMessage,"Reslice YZ done.");
+    }
+
+    return 0;
 }
 
 int TIFFReslicer::process(std::string sSrcMask, size_t nFirst, size_t nLast, std::string sDstMask, kipl::base::eImagePlanes plane)

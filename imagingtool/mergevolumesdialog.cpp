@@ -1,9 +1,11 @@
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDir>
 
 #include <io/DirAnalyzer.h>
 #include <io/io_tiff.h>
@@ -231,6 +233,7 @@ void MergeVolumesDialog::on_pushButton_browseout_clicked()
 void MergeVolumesDialog::on_pushButton_startmerge_clicked()
 {
     UpdateConfig();
+    SaveConfig();
     try {
         m_merger.Process();
     }
@@ -248,14 +251,126 @@ void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
     switch (index) {
     case 0 :
         logger(kipl::logging::Logger::LogMessage,"Display local vertical");
+        ui->viewer_result->set_image(m_VerticalImgLocalResult.GetDataPtr(),
+                                     m_VerticalImgLocalResult.Dims());
         break; // Local vertical
     case 1 :
         logger(kipl::logging::Logger::LogMessage,"Display full vertical");
+        ui->viewer_result->set_image(m_VerticalImgResult.GetDataPtr(),
+                                     m_VerticalImgResult.Dims());
         break; // Full vertical
     case 2 :
         logger(kipl::logging::Logger::LogMessage,"Display mixed");
 
+        logger(kipl::logging::Logger::LogMessage,"Display local vertical");
+        ui->viewer_result->set_image(m_HorizontalSliceResult.GetDataPtr(),
+                                     m_HorizontalSliceResult.Dims());
+
         break; // Mixed slice
     }
 }
+
+void MergeVolumesDialog::on_pushButton_TestMix_clicked()
+{
+    UpdateConfig();
+    SaveConfig();
+    std::ostringstream msg;
+
+    logger(logger.LogMessage,"on_testmix");
+    if ((m_merger.m_nStartOverlapA<m_merger.m_nFirstA) ||
+            (m_merger.m_nLastA<(m_merger.m_nStartOverlapA+m_merger.m_nOverlapLength))) {
+        msg.str("");
+        msg<<"Indexing error in data A: FirstA="<<m_merger.m_nFirstA<<", StartOverlapA="<<m_merger.m_nStartOverlapA<<", OverlapLength="<<m_merger.m_nOverlapLength;
+        logger(logger.LogError,msg.str());
+        return;
+    }
+
+    if (((m_merger.m_nLastA-m_merger.m_nFirstA)<m_merger.m_nOverlapLength) ||
+            ((m_merger.m_nLastB-m_merger.m_nFirstB)<m_merger.m_nOverlapLength))
+    {
+        logger(logger.LogError,"Overlap length is greater than the number of slices");
+        return;
+    }
+
+    if (!m_VerticalImgA.Size() || !m_VerticalImgB.Size()) {
+        logger(logger.LogError,"Data is not loaded");
+        return;
+    }
+
+   if (m_VerticalImgA.Size(0)==m_VerticalImgB.Size(0)) {
+        size_t dims[2]={static_cast<size_t>(m_VerticalImgA.Size(0)),
+                        static_cast<size_t>(m_merger.m_nStartOverlapA+m_merger.m_nLastB+1-m_merger.m_nFirstA-m_merger.m_nFirstB)};
+        m_VerticalImgResult.Resize(dims);
+        memcpy(m_VerticalImgResult.GetDataPtr(),
+            m_VerticalImgA.GetDataPtr(),
+            (m_merger.m_nStartOverlapA-m_merger.m_nFirstA)*m_VerticalImgA.Size(0)*sizeof(float));
+        memcpy(m_VerticalImgResult.GetLinePtr(m_merger.m_nOverlapLength+m_merger.m_nStartOverlapA-m_merger.m_nFirstA),
+            m_VerticalImgB.GetLinePtr(m_merger.m_nOverlapLength),
+            (m_merger.m_nLastB-m_merger.m_nFirstB-m_merger.m_nOverlapLength)*m_VerticalImgB.Size(0)*sizeof(float));
+        size_t idxa=m_merger.m_nStartOverlapA-m_merger.m_nFirstA;
+        size_t idxb=0;
+        size_t i;
+        float *pA, *pB, *pMix;
+        float scale=1.0f/m_merger.m_nOverlapLength;
+        for (i=0; i<m_merger.m_nOverlapLength; i++,idxa++,idxb++) {
+            pA=m_VerticalImgA.GetLinePtr(idxa);
+            pB=m_VerticalImgB.GetLinePtr(idxb);
+            pMix=m_VerticalImgResult.GetLinePtr(idxa);
+
+            for (size_t j=0; j<m_VerticalImgA.Size(0); j++) {
+                pMix[j]=(1.0f-i*scale)*pA[j]+i*scale*pB[j];
+            }
+        }
+
+        if (m_VerticalImgResult.Size(0)<m_VerticalImgResult.Size(1)) {
+            int half=m_VerticalImgResult.Size(0)/2;
+            int idx_start=idxa-half;
+            idx_start=idx_start < 0 ? 0 : idx_start;
+
+            int idx_stop=idxa+half;
+            idx_stop=m_VerticalImgResult.Size(1) < idx_stop  ? m_VerticalImgResult.Size(1) : idx_stop;
+
+            size_t dims[2]={m_VerticalImgResult.Size(0),static_cast<size_t>(idx_stop-idx_start)};
+            m_VerticalImgLocalResult.Resize(dims);
+            memcpy(m_VerticalImgLocalResult.GetDataPtr(),
+                   m_VerticalImgResult.GetLinePtr(idx_start),
+                   m_VerticalImgLocalResult.Size()*sizeof(float));
+        }
+        else {
+            m_VerticalImgLocalResult=m_VerticalImgResult;
+            m_VerticalImgLocalResult.Clone();
+        }
+
+        ui->comboBox_result->setCurrentIndex(0);
+        on_comboBox_result_currentIndexChanged(0);
+    }
+   else
+   {
+       logger(logger.LogError,"Width mismatch between data A and B");
+       return;
+   }
+
+}
+
+void MergeVolumesDialog::SaveConfig()
+{
+    QDir dir;
+    //QString qfname=
+    std::string fname=dir.homePath().toStdString();
+
+    kipl::strings::filenames::CheckPathSlashes(fname,true);
+    fname+="volumemerge.xml";
+
+    logger(logger.LogMessage,fname);
+
+    std::ofstream conffile(fname.c_str());
+
+    conffile<<m_merger.WriteXML(0);
+}
+
+void MergeVolumesDialog::LoadConfig()
+{
+
+}
+
 

@@ -21,8 +21,24 @@ public:
 	TIFFReslicer();
 	virtual ~TIFFReslicer();
 	int process(std::string sSrcMask, size_t nFirst, size_t nLast, std::string sDstMask, kipl::base::eImagePlanes plane);
-
+    int process();
 	float progress();
+
+    std::string WriteXML(size_t indent=4);
+    //void ParseXML(xmlTextReaderPtr reader);
+
+    std::string m_sSourceMask;
+    std::string m_sDestinationPath;
+
+    int m_nFirst;
+    int m_nLast;
+    int m_nFirstXZ;
+    int m_nLastXZ;
+    int m_nFirstYZ;
+    int m_nLastYZ;
+
+    bool m_bResliceXZ;
+    bool m_bResliceYZ;
 protected:
 	int GetHeader(std::string fname);
 	int CreateHeaders(std::string mask, size_t nFirst, size_t nLast, size_t width, size_t height);

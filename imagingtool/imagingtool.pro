@@ -57,7 +57,9 @@ SOURCES += main.cpp\
     Fits2Tif.cpp \
     Reslicer.cpp \
     mergevolumesdialog.cpp \
-    mergevolume.cpp
+    mergevolume.cpp \
+    reslicerdialog.cpp \
+    fileconversiondialog.cpp
 
 HEADERS  += imagingtoolmain.h \
     findskiplistdialog.h \
@@ -68,11 +70,15 @@ HEADERS  += imagingtoolmain.h \
     Reslicer.h \
     imagingtool_global.h \
     mergevolumesdialog.h \
-    mergevolume.h
+    mergevolume.h \
+    reslicerdialog.h \
+    fileconversiondialog.h
 
 FORMS    += imagingtoolmain.ui \
     findskiplistdialog.ui \
-    mergevolumesdialog.ui
+    mergevolumesdialog.ui \
+    reslicerdialog.ui \
+    fileconversiondialog.ui
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
@@ -118,3 +124,17 @@ else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../qni/trunk/src
 INCLUDEPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../qni/trunk/src/ImagingAlgorithms/include
 
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../modules/trunk/build-ReaderConfig-Qt5-Release/release/ -lReaderConfig
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../modules/trunk/build-ReaderConfig-Qt5-Release/debug/ -lReaderConfig
+else:unix: LIBS += -L$$PWD/../../../modules/trunk/build-ReaderConfig-Qt5-Release/ -lReaderConfig
+
+INCLUDEPATH += $$PWD/../../../modules/trunk/ReaderConfig
+DEPENDPATH += $$PWD/../../../modules/trunk/ReaderConfig
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../modules/trunk/build-ReaderGUI-Qt5-Release/release/ -lReaderGUI
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../modules/trunk/build-ReaderGUI-Qt5-Release/debug/ -lReaderGUI
+else:unix: LIBS += -L$$PWD/../../../modules/trunk/build-ReaderGUI-Qt5-Release/ -lReaderGUI
+
+INCLUDEPATH += $$PWD/../../../modules/trunk/ReaderGUI
+DEPENDPATH += $$PWD/../../../modules/trunk/ReaderGUI
