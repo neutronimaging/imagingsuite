@@ -32,23 +32,23 @@ DirAnalyzer::DirAnalyzer()
 
 void DirAnalyzer::GetDirList(std::string path)
 {
-    /*
-    m_vDirContents.clear();
 
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir (path.c_str())) != NULL) {
-      while ((ent = readdir (dir)) != NULL) {
-        m_vDirContents.push_back(ent->d_name);
-      }
-      closedir (dir);
-    } else {
-        // could not open directory
-        std::stringstream msg;
-        msg<<"Could not open path "<<path;
-        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
-    }
-    */
+//    m_vDirContents.clear();
+
+//    DIR *dir;
+//    struct dirent *ent;
+//    if ((dir = opendir (path.c_str())) != NULL) {
+//      while ((ent = readdir (dir)) != NULL) {
+//        m_vDirContents.push_back(ent->d_name);
+//      }
+//      closedir (dir);
+//    } else {
+//        // could not open directory
+//        std::stringstream msg;
+//        msg<<"Could not open path "<<path;
+//        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+//    }
+
 }
 
 FileItem DirAnalyzer::GetFileMask(std::string str)
