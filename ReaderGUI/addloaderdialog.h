@@ -1,6 +1,6 @@
 #ifndef ADDLOADERDIALOG_H
 #define ADDLOADERDIALOG_H
-
+#include "readergui_global.h"
 #include <QDialog>
 
 #include <datasetbase.h>
@@ -9,7 +9,7 @@ namespace Ui {
 class AddLoaderDialog;
 }
 
-class AddLoaderDialog : public QDialog
+class READERGUISHARED_EXPORT AddLoaderDialog : public QDialog
 {
     Q_OBJECT
 

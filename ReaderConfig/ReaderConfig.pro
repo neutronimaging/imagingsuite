@@ -15,17 +15,52 @@ DEFINES += READERCONFIG_LIBRARY
 
 SOURCES += readerconfig.cpp \
     datasetbase.cpp \
-    buildfilelist.cpp
+    buildfilelist.cpp \
+    imagereader.cpp \
+    readerexception.cpp
 
 HEADERS += readerconfig.h\
         readerconfig_global.h \
     datasetbase.h \
-    buildfilelist.h
+    buildfilelist.h \
+    imagereader.h \
+    readerexception.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+unix {
+    INCLUDEPATH += "../../../../external/src/linalg"
+    QMAKE_CXXFLAGS += -fPIC -O2
+
+    unix:!macx {
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+    }
+
+    unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
+    }
+}
+
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+    QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += ../../../external/src/linalg ../../../external/include ../../../external/include/cfitsio
+    QMAKE_LIBDIR += ../../../external/lib64
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
+win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lcfitsio
 
 win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
