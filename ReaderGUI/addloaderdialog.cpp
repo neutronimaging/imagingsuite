@@ -59,7 +59,7 @@ int AddLoaderDialog::exec()
 
 void AddLoaderDialog::UpdateDialog()
 {
-    ui->lineEdit_FileMask->setText(QString::fromStdString(m_loader.m_filemask));
+    ui->lineEdit_FileMask->setText(QString::fromStdString(m_loader.m_sFilemask));
     ui->spinBox_First->setValue(m_loader.m_nFirst);
     ui->spinBox_Last->setValue(m_loader.m_nLast);
     ui->spinBox_Step->setValue(m_loader.m_nStep);
@@ -67,7 +67,7 @@ void AddLoaderDialog::UpdateDialog()
 
 void AddLoaderDialog::UpdateConfig()
 {
-    m_loader.m_filemask = ui->lineEdit_FileMask->text().toStdString();
+    m_loader.m_sFilemask = ui->lineEdit_FileMask->text().toStdString();
     m_loader.m_nFirst   = ui->spinBox_First->value();
     m_loader.m_nLast    = ui->spinBox_Last->value();
     m_loader.m_nStep    = ui->spinBox_Step->value();

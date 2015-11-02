@@ -69,7 +69,7 @@ void ReaderConfigListWidget::on_Button_AddLoader_clicked()
     if (res==QDialog::Accepted) {
         item->loader=dlg.m_loader;
         msg.str("");
-        msg<<"File mask: "<<(item->loader.m_filemask)<<std::endl
+        msg<<"File mask: "<<(item->loader.m_sFilemask)<<std::endl
            <<"Index interval ["<<(item->loader.m_nFirst)
            <<", "<<(item->loader.m_nLast)<<"]";
 
@@ -107,7 +107,7 @@ void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* c
     if (res==QDialog::Accepted) {
         item->loader=dlg.m_loader;
         msg.str("");
-        msg<<"File mask: "<<(item->loader.m_filemask)<<std::endl
+        msg<<"File mask: "<<(item->loader.m_sFilemask)<<std::endl
            <<"Index interval ["<<(item->loader.m_nFirst)
            <<", "<<(item->loader.m_nLast)<<"]";
 

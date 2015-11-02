@@ -9,7 +9,7 @@
 #include <base/kiplenums.h>
 #include <strings/string2array.h>
 
-#include <ImageReader.h>
+#include <imagereader.h>
 #include <buildfilelist.h>
 #include <datasetbase.h>
 
@@ -86,7 +86,7 @@ int FindSkipListDialog::exec(std::string path, std::string fmask, int first, int
 //    m_sPath     = path;
 
     ImageLoader il;
-    il.m_filemask=path+fmask;
+    il.m_sFilemask=path+fmask;
     il.m_nFirst=first;
     il.m_nLast=last;
     il.m_nStep=1;
