@@ -188,6 +188,11 @@ std::list<int> FindSkipListDialog::getSkipList()
     return slist;
 }
 
+QString FindSkipListDialog::getSkipListString()
+{
+    return ui->skip_edit_skiplist->text();
+}
+
 void FindSkipListDialog::GetROI()
 {
     QRect ROI = ui->skip_imageviewer->get_marked_roi();

@@ -7,7 +7,7 @@
 #include "datasetbase.h"
 
 ImageLoader::ImageLoader() :
-    m_filemask("image_####.tif"),
+    m_sFilemask("image_####.tif"),
     m_nFirst(0),
     m_nLast(99),
     m_nStep(1),
@@ -77,7 +77,7 @@ kipl::base::TImage<float,3> ImageLoader::Load(kipl::base::eImageRotate rot, kipl
 
 std::ostream & operator<<(std::ostream &s, ImageLoader &il)
 {
-    s<<"FileMask:"<<il.m_filemask<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]";
+    s<<"FileMask:"<<il.m_sFilemask<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]";
 
     return s;
 }

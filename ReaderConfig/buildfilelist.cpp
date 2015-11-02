@@ -26,7 +26,7 @@ std::list<std::string> BuildFileList(std::list<ImageLoader> &il, std::list<int> 
                     continue;
                 }
             }
-            kipl::strings::filenames::MakeFileName(loader.m_filemask,i,fname,ext,'#','0');
+            kipl::strings::filenames::MakeFileName(loader.m_sFilemask,i,fname,ext,'#','0');
             flist.push_back(fname);
         }
     }

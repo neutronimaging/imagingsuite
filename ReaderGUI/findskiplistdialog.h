@@ -34,6 +34,7 @@ public:
     virtual int exec(std::string path, std::string fmask, int first, int last);
     virtual int exec(std::list<std::string> &filelist);
     std::list<int> getSkipList();
+    QString getSkipListString();
 
 protected slots:
     void ChangedNumberOfProjections(int x);

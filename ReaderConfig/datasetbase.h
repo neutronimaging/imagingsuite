@@ -17,7 +17,7 @@ public:
 
     kipl::base::TImage<float,2> Load(int idx, kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop=NULL);
     kipl::base::TImage<float,3> Load(kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop=NULL);
-    std::string m_filemask;
+    std::string m_sFilemask;
     int m_nFirst;
     int m_nLast;
     int m_nStep;

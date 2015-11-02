@@ -15,6 +15,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #include <base/timage.h>
 #include <io/io_matlab.h>
@@ -63,7 +64,6 @@ void ImageReader::GetImageSize(std::string filename, float binning, size_t *dims
     extensions[".fts"]=1;
     extensions[".tif"]=2;
     extensions[".tiff"]=2;
-    extensions[".TIF"]=2;
     extensions[".png"]=3;
 
     size_t extpos=filename.find_last_of(".");
@@ -72,6 +72,7 @@ void ImageReader::GetImageSize(std::string filename, float binning, size_t *dims
     try {
         if (extpos!=filename.npos) {
             std::string ext=filename.substr(extpos);
+            std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
             switch (extensions[ext]) {
             case 0  : kipl::io::GetMATDims(filename.c_str(),dims);  break;
             case 1  : kipl::io::GetFITSDims(filename.c_str(),dims); break;
@@ -186,7 +187,6 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
         float binning,
         size_t const * const nCrop)
 {
-//	std::cout<<"Reading: "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning<<std::endl;
     size_t dims[8];
     try {
         GetImageSize(filename, binning,dims);
@@ -236,6 +236,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     kipl::base::TImage<float,2> img;
     if (extpos!=filename.npos) {
         std::string ext=filename.substr(extpos);
+        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
         try {
             switch (extensions[ext]) {
             case 0  : img=ReadMAT(filename,pCrop);  break;

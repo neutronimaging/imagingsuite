@@ -17,14 +17,16 @@ SOURCES += readerconfig.cpp \
     datasetbase.cpp \
     buildfilelist.cpp \
     imagereader.cpp \
-    readerexception.cpp
+    readerexception.cpp \
+    imagewriter.cpp
 
 HEADERS += readerconfig.h\
         readerconfig_global.h \
     datasetbase.h \
     buildfilelist.h \
     imagereader.h \
-    readerexception.h
+    readerexception.h \
+    imagewriter.h
 
 unix {
     target.path = /usr/lib
