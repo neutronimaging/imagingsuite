@@ -1,16 +1,21 @@
 #include <list>
 #include <string>
 
+#include <QFileDialog>
+#include <QFile>
+
 #include <findskiplistdialog.h>
 #include <buildfilelist.h>
+#include <imagereader.h>
 
+#include <strings/filenames.h>
 
 #include "fileconversiondialog.h"
 #include "ui_fileconversiondialog.h"
 
-
 FileConversionDialog::FileConversionDialog(QWidget *parent) :
     QDialog(parent),
+    logger("FileConversionDialog"),
     ui(new Ui::FileConversionDialog)
 {
     ui->setupUi(this);
@@ -21,29 +26,6 @@ FileConversionDialog::~FileConversionDialog()
     delete ui;
 }
 
-
-//void ImagingToolMain::f2t_BrowseSrcPath()
-//{
-//    QString projdir=QFileDialog::getOpenFileName(this,
-//                                      "Select location of the images",
-//                                      ui->f2t_edit_srcfilemask->text());
-//    if (!projdir.isEmpty()) {
-//        std::string pdir=projdir.toStdString();
-
-//        #ifdef _MSC_VER
-//        const char slash='\\';
-//        #else
-//        const char slash='/';
-//        #endif
-//        ptrdiff_t pos=pdir.find_last_of(slash);
-
-//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-//        std::string fname=pdir.substr(pos+1);
-//        kipl::io::DirAnalyzer da;
-//        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-//    }
-//}
 
 //void ImagingToolMain::f2t_Preview()
 //{
@@ -103,39 +85,6 @@ FileConversionDialog::~FileConversionDialog()
 
 //}
 
-//void ImagingToolMain::f2t_FindProjections()
-//{
-//    FindSkipListDialog dlg;
-//    UpdateConfig();
-
-//    std::string fname,ext;
-
-//    kipl::strings::filenames::MakeFileName(m_config.fileconv.sSourceMask,
-//                                           m_config.fileconv.nFirstSrc,
-//                                           fname,
-//                                           ext,
-//                                           '#',
-//                                           '0');
-
-//    fname = m_config.fileconv.sSourcePath+fname;
-
-//    if (QFile::exists(QString::fromStdString(fname))) {
-
-
-//        int res = dlg.exec(m_config.fileconv.sSourcePath,m_config.fileconv.sSourceMask, m_config.fileconv.nFirstSrc, m_config.fileconv.nLastSrc);
-
-//        if ( res == QDialog::Accepted )
-//        {
-//            logger(kipl::logging::Logger::LogMessage,"Accepted skiplist");
-//            ui->f2t_edit_skiplist->setText(dlg.getSkipList());
-//        }
-//    }
-//    else {
-//        QMessageBox dlg;
-
-//        dlg.setText("Please enter a valid path and file mask");
-//    }
-//}
 
 //void ImagingToolMain::f2t_GetROI()
 //{
@@ -149,20 +98,6 @@ FileConversionDialog::~FileConversionDialog()
 //    ui->f2t_imageviewer->set_rectangle(ROI,QColor(Qt::green),0);
 //}
 
-//void ImagingToolMain::f2t_TakePath()
-//{
-////    ui->f2t_edit_srcfilemask->setText(ui->f2t_edit_srcpath->text());
-//}
-
-//void ImagingToolMain::f2t_BrowseDestPath()
-//{
-//    QString projdir=QFileDialog::getExistingDirectory(this,
-//                                      "Select destination of converted the projections",
-//                                      ui->f2t_edit_destpath->text());
-
-//    if (!projdir.isEmpty())
-//        ui->f2t_edit_destpath->setText(projdir);
-//}
 
 //void ImagingToolMain::f2t_Convert()
 //{
@@ -199,6 +134,91 @@ void FileConversionDialog::on_pushButton_GetSkipList_clicked()
     int res=dlg.exec(filelist);
 
     if (res==QDialog::Accepted) {
+        logger(logger.LogMessage,"Got a skiplist");
+        ui->lineEdit_SkipList->setText(dlg.getSkipListString());
+    }
+}
 
+void FileConversionDialog::on_pushButton_BrowseDestination_clicked()
+{
+    QString projdir=QFileDialog::getExistingDirectory(this,
+                                      "Select destination of the converted images",
+                                      ui->lineEdit_DestinationPath->text());
+
+    if (!projdir.isEmpty())
+        ui->lineEdit_DestinationPath->setText(projdir);
+}
+
+void FileConversionDialog::on_pushButton_StartConversion_clicked()
+{
+    std::ostringstream msg;
+    std::string ext1, ext2;
+
+    std::list<ImageLoader> ll=ui->ImageLoaderConfig->GetList();
+    ext1=kipl::strings::filenames::GetFileExtension(ll.front().m_sFilemask);
+
+    for (auto it=ll.begin(); it!=ll.end(); it++) {
+        if (ext1!=kipl::strings::filenames::GetFileExtension((*it).m_sFilemask)) {
+            logger(logger.LogMessage,"The data sets don't have the same file type.");
+            return ;
+        }
+    }
+
+    std::list<std::string> flist=BuildFileList(ll);
+
+    ext2=kipl::strings::filenames::GetFileExtension(ui->lineEdit_DestinationMask->text().toStdString());
+    msg.str("");
+    msg<<"The input data has ext="<<ext1<<", and will be saved as ext="<<ext2;
+    logger(logger.LogMessage,msg.str());
+    if (ext2==ext1)
+    {
+        CopyImages(flist);
+    }
+    else {
+        ConvertImages(flist);
+    }
+
+}
+
+void FileConversionDialog::CopyImages(std::list<std::string> &flist)
+{
+    logger(logger.LogMessage,"Will copy the files in a common sequence.");
+
+    std::string destmask=ui->lineEdit_DestinationPath->text().toStdString();
+    std::string destname,ext;
+    kipl::strings::filenames::CheckPathSlashes(destmask,true);
+    destmask+=ui->lineEdit_DestinationMask->text().toStdString();
+    int destcnt=ui->spinBox_FirstDestinationIndex->value();
+
+    for (auto it=flist.begin(); it!=flist.end(); it++) {
+        kipl::strings::filenames::MakeFileName(destmask,destcnt,destname,ext,'#','0',false);
+
+        QFile::copy(QString::fromStdString(*it),QString::fromStdString(destname));
+        destcnt++;
+    }
+}
+
+void FileConversionDialog::ConvertImages(std::list<std::string> &flist)
+{
+    logger(logger.LogMessage,"Will convert the files in a common sequence.");
+
+    ImageReader imgreader;
+    std::string destmask=ui->lineEdit_DestinationPath->text().toStdString();
+    std::string ext_out=kipl::strings::filenames::GetFileExtension(destmask);
+
+    std::string destname,ext;
+    kipl::strings::filenames::CheckPathSlashes(destmask,true);
+    destmask+=ui->lineEdit_DestinationMask->text().toStdString();
+    int destcnt=ui->spinBox_FirstDestinationIndex->value();
+
+    kipl::base::TImage<float,2> img;
+
+    for (auto it=flist.begin(); it!=flist.end(); it++) {
+        img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,NULL);
+
+        kipl::strings::filenames::MakeFileName(destmask,destcnt,destname,ext,'#','0',false);
+
+
+        destcnt++;
     }
 }
