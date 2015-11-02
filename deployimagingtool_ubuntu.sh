@@ -12,14 +12,34 @@ mkdir --parent $DEST/resources
 pushd .
 cd $DEST/Frameworks
 
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtAddons-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtAddons.so.1.0.0 .`
-`$CPCMD $REPOSPATH/gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libQtModuleConfigure.so.1.0.0 .`
+target="Release"
+platform='unknown'
+unamestr=`uname`
+if [[ "$unamestr" == 'Linux' ]]; then
+   REPOSPATH="/home/kaestner/repos"
+   EXT="so.1.0.0"
+   EXT1="so.1.0"
+   EXT2="so.1"
+elif [[ "$unamestr" == 'Darwin' ]]; then
+   DEST="build-imagingtool-Qt5-$target/imagingtool.app/Contents/MacOS"
+   REPOSPATH="/Users/kaestner/repos"
+   EXT="1.0.0.dylib"
+   EXT1="1.0.dylib"
+   EXT2="1.dylib"
+fi
 
-`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/libImagingAlgorithms.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/ReconFramework-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libReconFramework.so.1.0.0 .`
+pushd .
+cd $DEST
+rm -f *.$EXT
 
-`$CPCMD $REPOSPATH/src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libkipl.so.1.0.0 .`
-`$CPCMD $REPOSPATH/src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/libModuleConfig.so.1.0.0 .`
+
+`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-$target/libModuleConfig.$EXT .`
+`$CPCMD $REPOSPATH/modules/trunk/build-ReaderConfig-Qt5-$target/libReaderConfig.$EXT .`
+`$CPCMD $REPOSPATH/modules/trunk/build-ReaderGUI-Qt5-$target/libReaderGUI.$EXT .`
+`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-$target/libQtAddons.$EXT .`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-$target/libReconFramework.$EXT .`
+`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-$target/libkipl.$EXT .`
+`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-$target/libImagingAlgorithms.$EXT .`
 
 rm -f *.so
 rm -f *.so.1

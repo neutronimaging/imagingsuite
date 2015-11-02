@@ -100,7 +100,8 @@ else:symbian: LIBS += -lReconFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../tomography/trunk/src/build-ReconFramework-Qt5-Release/ -lReconFramework
 else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../tomography/trunk/src/build-ReconFramework-Qt5-Debug/ -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../tomography/trunk/src/Framework/ReconFramework/include
+INCLUDEPATH += $$PWD/../../../tomography/trunk/src/Framework/Reco
+nFramework/include
 DEPENDPATH += $$PWD/../../../tomography/trunk/src/Framework/ReconFramework/src
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
