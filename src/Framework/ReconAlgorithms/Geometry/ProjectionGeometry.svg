@@ -14,7 +14,7 @@
    viewBox="0 0 1052.3622 744.09448"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.91 r"
    sodipodi:docname="ProjectionGeometry.svg">
   <sodipodi:namedview
      id="base"
@@ -23,17 +23,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0063969"
-     inkscape:cx="480.99474"
-     inkscape:cy="386.46351"
+     inkscape:zoom="1.3531463"
+     inkscape:cx="526.1811"
+     inkscape:cy="372.04724"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1401"
-     inkscape:window-height="855"
-     inkscape:window-x="134"
-     inkscape:window-y="34"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="1920"
+     inkscape:window-height="1174"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
   <defs
      id="defs4" />
   <metadata
@@ -425,6 +425,17 @@
            d="m 718.66,431.11 -0.01,0.31 -0.01,0.34 -0.01,0.36 -0.02,0.37 -0.03,0.39 -0.04,0.39 -0.05,0.41 -0.05,0.41 -0.07,0.42 -0.08,0.43 -0.09,0.42 -0.1,0.43 -0.11,0.42 -0.13,0.42 -0.14,0.41 -0.15,0.41 -0.17,0.4 -0.19,0.38 -0.2,0.37 -0.21,0.36 -0.24,0.34 -0.25,0.32 -0.27,0.3 -0.29,0.27 -0.31,0.25 -0.16,0.12 -0.17,0.1 -0.17,0.1 -0.18,0.1 -0.18,0.08 -0.19,0.08 -0.2,0.07 -0.2,0.06 -0.2,0.05 -0.21,0.05 -0.22,0.03 -0.22,0.02 -0.23,0.02 -0.24,0 -0.05,-1.09 c 2.44,0 2.74,-3.19 2.74,-6.03 0,-2.44 -0.39,-4.99 -1.59,-9.92 l -10.41,0 c 0.84,3.2 1.84,7.18 3.83,10.72 1.36,2.43 3.19,5.23 5.43,5.23 l 0.05,1.09 c -6.92,0 -14.59,-14.04 -14.59,-25.45 0,-4.69 1.44,-10.22 5.98,-10.22 l 0,1.1 c -1.65,0 -2.7,1.45 -2.7,6.07 0,2.1 0.3,4.99 1.59,9.86 l 10.38,0 c -0.55,-2.28 -1.6,-6.51 -3.5,-10.11 -1.74,-3.39 -3.63,-5.82 -5.77,-5.82 l 0,-1.1 c 7.02,0 14.6,14.3 14.6,25.46 z"
            inkscape:connector-curvature="0"
            style="fill:#000000;stroke-width:0" /></g>    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 517.31288,566.0881 c 3.11657,13.91279 5.40386,27.64129 -8.86822,37.68994"
+       id="path4388"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 35.472883,666.5946 321.473007,0"
+       id="path4390"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      transform="translate(-266.53715,-281.47242)"
