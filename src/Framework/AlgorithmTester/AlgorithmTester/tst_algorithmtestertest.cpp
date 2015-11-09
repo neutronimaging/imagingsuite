@@ -7,6 +7,7 @@
 #include <io/io_tiff.h>
 
 #include <basicforwardprojector.h>
+#include <nnforwardprojector.h>
 
 class AlgorithmTesterTest : public QObject
 {
@@ -27,21 +28,32 @@ AlgorithmTesterTest::AlgorithmTesterTest()
 void AlgorithmTesterTest::testCase1()
 {
     list<float> angles;
-    for (int i=0; i<7; i++)
-        angles.push_back(i*15.0f);
+    int N=360;
+    float dt=360.0f/N;
+    for (int i=0; i<N; i++)
+        angles.push_back(i*dt);
 
-    BasicForwardProjector bfp;
+   // BasicForwardProjector bfp;
+    NNForwardProjector nnfp;
     kipl::base::TImage<float,2> slice;
     kipl::base::TImage<float,2> proj;
 
-    kipl::io::ReadTIFF(slice,"../../data/phantom256.tif");
-
-    bfp.project(slice,angles,proj);
+    kipl::io::ReadTIFF(slice,"../../data/simple_sample.tif");
+    nnfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
+    kipl::io::WriteTIFF32(proj,"result_simplesample.tif");
 
-    kipl::io::WriteTIFF32(proj,"proj_phantom256.tif");
+    kipl::io::ReadTIFF(slice,"../../data/disk256.tif");
+    nnfp.project(slice,angles,proj);
+    QVERIFY(angles.size()==proj.Size(1));
+    kipl::io::WriteTIFF32(proj,"result_disk256.tif");
 
-    QVERIFY2(true, "Failure");
+    kipl::io::ReadTIFF(slice,"../../data/twodisks256.tif");
+    nnfp.project(slice,angles,proj);
+    QVERIFY(angles.size()==proj.Size(1));
+    kipl::io::WriteTIFF32(proj,"result_twodisks256.tif");
+
+  //  QVERIFY2(true, "Failure");
 }
 
 QTEST_APPLESS_MAIN(AlgorithmTesterTest)

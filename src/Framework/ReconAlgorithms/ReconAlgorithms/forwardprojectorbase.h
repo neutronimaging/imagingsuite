@@ -19,9 +19,11 @@ public:
     virtual int project(kipl::base::TImage<float,2> &slice, std::list<float> & angles, kipl::base::TImage<float,2> &proj) = 0;
 
 protected:
-    int buildMask(size_t *dims);
+    int buildMask(const size_t *dims);
 
     list<pair<int, int> > m_Mask;
+    float m_cx;
+    float m_cy;
 
 };
 

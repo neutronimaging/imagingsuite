@@ -50,14 +50,18 @@ SOURCES += reconalgorithms.cpp \
     forwardprojectorbase.cpp \
     basicforwardprojector.cpp \
     backprojectorbase.cpp \
-    basicbackprojector.cpp
+    basicbackprojector.cpp \
+    nnforwardprojector.cpp \
+    reconalgorithmexception.cpp
 
 HEADERS += reconalgorithms.h\
         reconalgorithms_global.h \
     forwardprojectorbase.h \
     basicforwardprojector.h \
     backprojectorbase.h \
-    basicbackprojector.h
+    basicbackprojector.h \
+    nnforwardprojector.h \
+    reconalgorithmexception.h
 
 unix {
     target.path = /usr/lib
