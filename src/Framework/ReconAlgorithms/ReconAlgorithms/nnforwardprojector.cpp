@@ -38,16 +38,16 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
                 float *pRow=slice.GetLinePtr(row);
                 float h=row-m_cy;
                 float width=sqrt(m_cy*m_cy-h*h);   // Half width
-//                float phi=acos(h/m_cy);            // Half angle of row
-//                float pc=kipl::math::sgn(h)*h*cos(phi);
-
-
+                float phi   = acos(h/m_cy);
+                float alpha = 0.5f*fPi - theta_rad;
+                float beta  = 0.5f*fPi + theta_rad - phi;
+                float pc    = h * sin(alpha)/sin(beta) + m_cy;
                 //float pc=h*cos(phi);
 
                 float dp=width*sin(theta_rad);
-                float pc=kipl::math::sgn(h)*h*h/m_cy-0.5*dp;
-                int p0=pc-dp+m_cy;
-                int p1=pc+dp+m_cy;
+               // float pc=kipl::math::sgn(h)*h*h/m_cy-0.5*dp;
+                int p0=pc-dp;
+                int p1=pc+dp;
 
                 if (p1<p0)
                     swap(p0,p1);
