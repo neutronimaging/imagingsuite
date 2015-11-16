@@ -35,6 +35,15 @@ double erff(double x);
 
 /// The complementary error function
 double erffc(double x);
+
+}
+
+namespace kipl { namespace math {
+template <typename T> T sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+}
+
 }
 #endif
 
