@@ -58,7 +58,7 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
 //                        for (int j=0; j<dx; j++)
 //                            pProj[p]+=pRow[static_cast<int>(floor(m+(i+j)*dx))];
 //                    else
-                        pProj[p]+=pRow[static_cast<int>(floor(m+i*dx))];
+                       pProj[p]+=pRow[static_cast<int>(floor(m+i*dx))];
                 }
             }
         }
