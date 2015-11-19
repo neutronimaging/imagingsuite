@@ -4,7 +4,7 @@ N=32;
 img=zeros(N);
 m_cy=N/2;
 R=m_cy;
-theta=45;
+theta=225;
 theta_rad=theta*pi/180;
 clear width p0 p1 pc
 width=zeros(1,N);
@@ -16,10 +16,11 @@ for row = 1:N
     h=row-m_cy;
 	width(row)=sqrt(R*R-h*h);   
     phi=acos(h/R); 
-%    alpha=pi/2-theta_rad;
 
+
+    %pc(row)=m_cy*(sin(theta_rad)-cos(theta_rad))+m_cy ...
     pc(row)=m_cy*(sin(theta_rad)-cos(theta_rad))+m_cy ...
-        + cos(theta_rad)*h;
+        - cos(theta_rad)*h;
     dp=width(row)*sin(theta_rad);
     
     p0(row)=pc(row)-dp;

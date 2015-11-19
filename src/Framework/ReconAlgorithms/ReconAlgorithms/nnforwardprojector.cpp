@@ -38,27 +38,24 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
                 float *pRow=slice.GetLinePtr(row);
                 float h=row-m_cy;
                 float width=sqrt(m_cy*m_cy-h*h);   // Half width
-                float phi   = acos(h/m_cy);
-                float alpha = 0.5f*fPi - theta_rad;
-                float beta  = 0.5f*fPi + theta_rad - phi;
-                float pc    = h * sin(alpha)/sin(beta) + m_cy;
-                //float pc=h*cos(phi);
+
+                //float pc=m_cy*(sin(theta_rad)-cos(theta_rad))+m_cy + cos(theta_rad)*h;
+                float pc=m_cy*(sin(theta_rad)-cos(theta_rad)) - cos(theta_rad)*h;
 
                 float dp=width*sin(theta_rad);
-               // float pc=kipl::math::sgn(h)*h*h/m_cy-0.5*dp;
+
                 int p0=pc-dp;
                 int p1=pc+dp;
 
-                if (p1<p0)
-                    swap(p0,p1);
+//                if (p1<p0)
+//                    swap(p0,p1);
 
-                const float m=m_cx - kipl::math::sgn(dx)*width;               // Position on row in slice
+//                const float m=m_cx - kipl::math::sgn(dx)*width;               // Position on row in slice
+                const float m=m_cx - width;               // Position on row in slice
                 for (int p=p0, i=0; p<=p1; p++,i++) {        // this is where more fancy weighting schemes are expected
-//                    if (i+dx<2*width)
-//                        for (int j=0; j<dx; j++)
-//                            pProj[p]+=pRow[static_cast<int>(floor(m+(i+j)*dx))];
-//                    else
-                       pProj[p]+=pRow[static_cast<int>(floor(m+i*dx))];
+                        int rowpos=static_cast<int>(floor(m+i*dx));
+                        if ((0<=rowpos) && (rowpos<dims[1]))
+                            pProj[p]+=pRow[rowpos];
                 }
             }
         }

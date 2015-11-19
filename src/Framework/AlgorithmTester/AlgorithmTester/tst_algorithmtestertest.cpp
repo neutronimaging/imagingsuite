@@ -29,6 +29,7 @@ void AlgorithmTesterTest::testCase1()
 {
     list<float> angles;
     int N=360;
+
     float dt=360.0f/N;
     for (int i=0; i<N; i++)
         angles.push_back(i*dt);
