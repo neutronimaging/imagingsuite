@@ -22,13 +22,14 @@ unix {
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
-        QMAKE_MAC_SDK = macosx10.11
+
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
     }
 
     unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }

@@ -29,6 +29,7 @@
 ReconEngine::ReconEngine(std::string name, InteractionBase *interactor) :
 	logger(name),
 	m_FirstSlice(0),
+    m_ProjectionMargin(2),
 	m_ProjectionReader(interactor),
     m_BackProjector(NULL),
     nProcessedBlocks(0),
@@ -796,6 +797,13 @@ int ReconEngine::Process3D(size_t *roi)
 	std::list<ModuleItem *>::iterator it_Module;
 	msg<<"Processing ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogMessage,msg.str());
+    size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
+
+    if (m_ProjectionMargin<=roi[1])
+        extroi[1]-=m_ProjectionMargin;
+
+    extroi[3]+=m_ProjectionMargin;
+
 	// Initialize the plug-ins with the current ROI
 	try {
 		msg.str("");
@@ -807,7 +815,7 @@ int ReconEngine::Process3D(size_t *roi)
 			msg.str("");
 			msg<<"Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-			(*it_Module)->GetModule()->SetROI(roi);
+            (*it_Module)->GetModule()->SetROI(extroi);
 			logger(kipl::logging::Logger::LogMessage,"ROI set");
 		}
 	}
@@ -857,14 +865,14 @@ int ReconEngine::Process3D(size_t *roi)
 
 	timer.Tic();
 
-	kipl::base::TImage<float,3> projections;
+    kipl::base::TImage<float,3> ext_projections;
 
 	logger(kipl::logging::Logger::LogVerbose,"Reading Projections.");
 
 	msg.str("");
 
 	try {
-		projections=m_ProjectionReader.Read(m_Config,roi,parameters);
+        ext_projections=m_ProjectionReader.Read(m_Config,extroi,parameters);
 	}
 	catch (ReconException &e) {
 		msg<<"Reading projections failed with a recon exception: "<<e.what();
@@ -886,7 +894,7 @@ int ReconEngine::Process3D(size_t *roi)
 			msg<<"Processing: "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
 			if (!(m_bCancel=UpdateProgress(0.0f, msg.str())))
-				(*it_Module)->GetModule()->Process(projections,parameters);
+                (*it_Module)->GetModule()->Process(ext_projections,parameters);
 			else
 				break;
 		}
@@ -904,6 +912,19 @@ int ReconEngine::Process3D(size_t *roi)
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 	
+    kipl::base::TImage<float,3> projections;
+    size_t dims[3];
+
+    if (m_ProjectionMargin!=0) { // Remove padding
+        dims[0]=ext_projections.Size(0);
+        dims[1]=ext_projections.Size(1);
+        dims[2]=ext_projections.Size(2)-(roi[1]!=extroi[1] ? m_ProjectionMargin : 0) - (roi[3]!=extroi[3] ? m_ProjectionMargin : 0);
+        projections.Resize(dims);
+        memcpy(projections.GetDataPtr(),ext_projections.GetLinePtr(0,(roi[1]!=extroi[1] ? m_ProjectionMargin : 0)), projections.Size() * sizeof(float));
+    } else {
+        projections=ext_projections;
+    }
+
     if (m_Config.MatrixInfo.bAutomaticSerialize==false) // Don't store the projections for the reconstruction to disk case
         m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
 

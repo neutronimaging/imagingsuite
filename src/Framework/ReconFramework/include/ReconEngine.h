@@ -82,6 +82,7 @@ protected:
 	ReconConfig m_Config;
 
 	size_t m_FirstSlice;
+    size_t m_ProjectionMargin;
 	ProjectionReader m_ProjectionReader;             //!< Instance of the projection reader
 	
 	std::list<ModuleItem *> m_PreprocList;

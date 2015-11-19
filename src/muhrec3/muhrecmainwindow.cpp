@@ -349,6 +349,9 @@ void MuhRecMainWindow::DisplaySlice(int x)
         ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
                                    static_cast<float>(ui->dspinGrayLow->value()),
                                    static_cast<float>(ui->dspinGrayHigh->value()));
+        msg.str("");
+        msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
+        ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
 
     }
     catch (kipl::base::KiplException &e) {

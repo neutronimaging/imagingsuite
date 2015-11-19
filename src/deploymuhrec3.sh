@@ -24,9 +24,9 @@ fi
 `$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdBackProjectors/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/src/libs/recon2/trunk/StdPreprocModules/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-Release/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModulesGUI-Qt5-Release/libInspectorModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
@@ -65,17 +65,29 @@ fi
 if [ ! -d "./PlugIns/platforms" ]; then
  mkdir ./PlugIns/platforms
 fi
-cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+
+if [ ! -f "./PlugIns/platforms/libqcocoa.dylib" ]; then 
+	cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+fi
 
 if [ ! -d "./PlugIns/printsupport" ]; then
  mkdir ./PlugIns/printsupport
 fi
-cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+
+if [ ! -f "./PlugIns/printsupport/libcocoaprintersupport.dylib" ]; then 
+	cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+fi
 
 if [ ! -d "./PlugIns/accessible" ]; then
  mkdir ./PlugIns/accessible
 fi
-cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+
+if [ ! -f "./PlugIns/accessible/libqtaccessiblewidgets.dylib" ]; then 
+	cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+fi
+
+
+
 pwd
 ls PlugIns
 
