@@ -406,7 +406,8 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 	size_t dims[3]={nCrop[2]-nCrop[0],nCrop[3]-nCrop[1],ProjectionList.size()};
     dims[1]=config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram ? nCrop[3] : dims[1];
 	kipl::base::TImage<float,3> img(dims);
-	size_t roi[4]; memcpy(roi,config.ProjectionInfo.roi,4*sizeof(size_t));
+//	size_t roi[4]; memcpy(roi,config.ProjectionInfo.roi,4*sizeof(size_t));
+    size_t roi[4]; memcpy(roi,nCrop,4*sizeof(size_t));
 
 	std::ostringstream dose;
 	std::ostringstream angle;
@@ -425,7 +426,8 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 					config.ProjectionInfo.eRotate,
 					config.ProjectionInfo.fBinning,
 					config.ProjectionInfo.dose_roi)<<" ";
-			proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,config.ProjectionInfo.roi);
+        //	proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,config.ProjectionInfo.roi);
+            proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,nCrop);
 
 			memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
 			i++;

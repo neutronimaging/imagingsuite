@@ -804,6 +804,10 @@ int ReconEngine::Process3D(size_t *roi)
 
     extroi[3]+=m_ProjectionMargin;
 
+    msg.str("");
+    msg<<"Processing ext ROI ["<<extroi[0]<<", "<<extroi[1]<<", "<<extroi[2]<<", "<<extroi[3]<<"]";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
 	// Initialize the plug-ins with the current ROI
 	try {
 		msg.str("");
@@ -917,10 +921,15 @@ int ReconEngine::Process3D(size_t *roi)
 
     if (m_ProjectionMargin!=0) { // Remove padding
         dims[0]=ext_projections.Size(0);
-        dims[1]=ext_projections.Size(1);
-        dims[2]=ext_projections.Size(2)-(roi[1]!=extroi[1] ? m_ProjectionMargin : 0) - (roi[3]!=extroi[3] ? m_ProjectionMargin : 0);
+        dims[1]=ext_projections.Size(1)-(roi[1]!=extroi[1] ? m_ProjectionMargin : 0) - (roi[3]!=extroi[3] ? m_ProjectionMargin : 0);
+        dims[2]=ext_projections.Size(2);
         projections.Resize(dims);
-        memcpy(projections.GetDataPtr(),ext_projections.GetLinePtr(0,(roi[1]!=extroi[1] ? m_ProjectionMargin : 0)), projections.Size() * sizeof(float));
+
+        msg.str("");
+        msg<<"ext: "<<ext_projections<<", proj: "<<projections;
+        logger(logger.LogMessage,msg.str());
+        for (size_t i=0; i<projections.Size(2); i++)
+            memcpy(projections.GetLinePtr(0,i),ext_projections.GetLinePtr((roi[1]!=extroi[1] ? m_ProjectionMargin : 0),i), projections.Size(0) * projections.Size(1) * sizeof(float));
     } else {
         projections=ext_projections;
     }
