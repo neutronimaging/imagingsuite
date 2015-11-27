@@ -8,9 +8,10 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = tst_testmorphspotclean
+TARGET = testimagingalgorithms
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += c++11
 
 TEMPLATE = app
 
@@ -40,7 +41,8 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-SOURCES += tst_testmorphspotclean.cpp
+SOURCES += \
+    tst_testImagingAlgorithms.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms

@@ -44,7 +44,8 @@ SOURCES += \
     ../../src/TranslateProjections.cpp \
     ../../src/MorphSpotClean.cpp \
     ../../src/pixelinfo.cpp \
-    ../../src/gammaclean.cpp
+    ../../src/gammaclean.cpp \
+    ../../src/averageimage.cpp
 
 HEADERS += \
  #   ../../include/targetver.h \
@@ -61,6 +62,7 @@ HEADERS += \
     ../../include/pixelinfo.h \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \
+    ../../include/averageimage.h
 
 
 symbian {

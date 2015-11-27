@@ -5,7 +5,7 @@ namespace ImagingAlgorithms {
 PixelInfo::PixelInfo() :
     pos(0),
     value(0.0f),
-    weight(0.0f)
+    weight(1.0f)
 {}
 
 PixelInfo::PixelInfo(int nPos,float fValue, float fWeight) :
