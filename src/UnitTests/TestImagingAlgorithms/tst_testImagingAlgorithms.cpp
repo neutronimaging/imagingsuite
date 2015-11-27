@@ -76,8 +76,6 @@ void TestImagingAlgorithms::PixelInfo()
     QCOMPARE(pi3.pos,10);
     QCOMPARE(pi3.value,20.0f);
     QCOMPARE(pi3.weight,40.0f);
-
-
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
