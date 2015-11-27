@@ -28,6 +28,7 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
@@ -80,3 +81,11 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../mod
 
 INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/src
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/release/ -lReconAlgorithms
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/debug/ -lReconAlgorithms
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/ -lReconAlgorithms
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Debug/ -lReconAlgorithms
+
+INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
+DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms

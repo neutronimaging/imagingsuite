@@ -1,6 +1,6 @@
 #include "genericbackproj.h"
 
-#include <BackProjectorBase.h>
+#include <backprojectorbase.h>
 #include <InteractionBase.h>
 #include "genericbp.h"
 

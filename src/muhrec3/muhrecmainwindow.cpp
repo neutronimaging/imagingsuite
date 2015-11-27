@@ -262,15 +262,13 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
     msg.str("");
     try {
-  //      std::string path=ui->editProjectionMask->text().toStdString();
-
         std::string fmask=ui->editProjectionMask->text().toStdString();
-    //    kipl::strings::filenames::CheckPathSlashes(fmask,true);
+
         std::string name, ext;
         kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
 
         if (QFile::exists(QString::fromStdString(name))) {
-
+            int sliderval=ui->sliderProjections->value();
             m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
                             static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                             static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
@@ -296,6 +294,11 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 ui->projectionViewer->get_levels(&lo,&hi);
                 ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
             }
+            msg.str("");
+            msg<<sliderval<<" ("<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
+                 (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
+
+            ui->label_projindex->setText(QString::fromStdString(msg.str()));
 
             SetImageDimensionLimits(m_PreviewImage.Dims());
             UpdateMemoryUsage(m_Config.ProjectionInfo.roi);

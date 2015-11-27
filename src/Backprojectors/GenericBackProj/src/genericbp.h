@@ -1,12 +1,14 @@
 #ifndef GENERICBP_H
 #define GENERICBP_H
 
+#include <map>
+
 #include <BackProjectorBase.h>
 class GenericBP : public BackProjectorBase
 {
 public:
     GenericBP(InteractionBase *interactor=NULL);
-    ~GenericBP();
+    virtual ~GenericBP();
 
     /// Add one projection to the back-projection stack
     /// \param proj The projection
