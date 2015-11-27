@@ -101,7 +101,8 @@ SOURCES += \
     ../src/io/analyzefileext.cpp \
     ../src/io/io_generic.cpp \
     ../src/filters/nonlocalmeans.cpp \
-    ../src/math/PoissonNoise.cpp
+    ../src/math/PoissonNoise.cpp \
+    ../src/filters/stddevfilter.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -288,7 +289,8 @@ HEADERS +=\
     ../include/generators/core/noiseimage.hpp \
     ../include/filters/nonlocalmeans.h \
     ../include/filters/core/nonlocalmeans.hpp \
-    ../include/math/PoissonNoise.h
+    ../include/math/PoissonNoise.h \
+    ../include/filters/stddevfilter.h
 
 
 
