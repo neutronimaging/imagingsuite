@@ -1,15 +1,16 @@
-#ifndef NNFORWARDPROJECTOR_H
-#define NNFORWARDPROJECTOR_H
+#ifndef LINEARFORWARDPROJECTOR_H
+#define LINEARFORWARDPROJECTOR_H
 
 #include "forwardprojectorbase.h"
-class NNForwardProjector : public ForwardProjectorBase
+
+class LinearForwardProjector : public ForwardProjectorBase
 {
 public:
-    NNForwardProjector();
-    ~NNForwardProjector();
+    LinearForwardProjector();
+    ~LinearForwardProjector();
 
     virtual int project(kipl::base::TImage<float,2> &slice, std::list<float> & angles, kipl::base::TImage<float,2> &proj);
     virtual int project(kipl::base::TImage<float,3> &slice, std::list<float> & angles, kipl::base::TImage<float,3> &proj);
 };
 
-#endif // NNFORWARDPROJECTOR_H
+#endif // LINEARFORWARDPROJECTOR_H

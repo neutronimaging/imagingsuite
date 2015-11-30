@@ -52,7 +52,8 @@ SOURCES += reconalgorithms.cpp \
     backprojectorbase.cpp \
     basicbackprojector.cpp \
     nnforwardprojector.cpp \
-    reconalgorithmexception.cpp
+    reconalgorithmexception.cpp \
+    linearforwardprojector.cpp
 
 HEADERS += reconalgorithms.h\
         reconalgorithms_global.h \
@@ -61,7 +62,8 @@ HEADERS += reconalgorithms.h\
     backprojectorbase.h \
     basicbackprojector.h \
     nnforwardprojector.h \
-    reconalgorithmexception.h
+    reconalgorithmexception.h \
+    linearforwardprojector.h
 
 unix {
     target.path = /usr/lib

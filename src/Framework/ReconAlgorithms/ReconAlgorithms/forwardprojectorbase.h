@@ -17,6 +17,7 @@ public:
     ForwardProjectorBase(std::string name = "ForwardProjectorBase");
 
     virtual int project(kipl::base::TImage<float,2> &slice, std::list<float> & angles, kipl::base::TImage<float,2> &proj) = 0;
+    virtual int project(kipl::base::TImage<float,3> &slice, std::list<float> & angles, kipl::base::TImage<float,3> &proj) = 0;
 
 protected:
     int buildMask(const size_t *dims);
