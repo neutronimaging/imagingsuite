@@ -12,6 +12,7 @@
 #ifndef TIMAGE_HPP_
 #define TIMAGE_HPP_
 #include "imagearithmetics.h"
+#include "../KiplException.h"
 #include <cstring>
 #include <typeinfo>
 #include <iomanip>
@@ -94,6 +95,20 @@ size_t TImage<T,N>::_ComputeNElements(size_t const * const dims)
 		NData*=dims[i];
 	
 	return NData;
+}
+
+template<typename T, size_t N>
+T & TImage<T,N>::operator()(size_t x, size_t y, size_t z)
+{
+    switch (N) {
+        case 0: throw base::KiplException("TImage: Zero dimension images does not have any axes.",__FILE__,__LINE__); break;
+        case 1: return m_buffer.GetDataPtr()[x]; break;
+        case 2: return m_buffer.GetDataPtr()[x + y*m_Dims[0]]; break;
+        case 3: return m_buffer.GetDataPtr()[x + y*m_Dims[0] + z*m_Dims[0]*m_Dims[1]]; break;
+    default: throw base::KiplException("TImage: Image dimensions greater than 3 cannot be accessed with coordinates",__FILE__,__LINE__);
+    }
+
+    return *m_buffer.GetDataPtr();
 }
 
 template<typename T, size_t N>

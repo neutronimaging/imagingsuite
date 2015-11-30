@@ -70,6 +70,12 @@ public:
 	/// \test The operator is tested by a unit test
 	T & operator[](const size_t index) {return m_buffer[index];}
 	T operator[](const size_t index) const {return m_buffer[index];}
+
+    /// \brief Coordinate access of a pixel
+    /// \param x x-coordinate
+    /// \param y y-coordinate
+    /// \param z z-coordinate
+    T & operator()(size_t x=0, size_t y=0, size_t z=0);
 	
 	/// \brief Gives the number of references to the current memory block
 	/// \test The method is tested with unit test
