@@ -6,9 +6,11 @@ cd %DEST%
 
 copy %REPOS%\qni\trunk\src\ImagingAlgorithms\build-ImagingAlgorithms-Qt5-Release\release\ImagingAlgorithms.dll .
 copy %REPOS%\modules\trunk\ModuleConfig\build-ModuleConfig-Qt5-Release\release\ModuleConfig.dll .
+copy %REPOS%\modules\trunk\build-ReaderGUI-Qt5-Release\release\ReaderGUI.dll .
+copy %REPOS%\modules\trunk\build-ReaderConfig-Qt5-Release\release\ReaderConfig.dll .
 copy %REPOS%\gui\trunk\qt\build-QtAddons-Qt5-Release\release\QtAddons.dll .
 copy %REPOS%\kipl\trunk\kipl\build-kipl-Qt5-Release\release\kipl.dll .
-copy %REPOS%\src\libs\recon2\trunk\ReconFramework\build-ReconFramework-Qt5-Release\release\ReconFramework.dll .
+copy %REPOS%\tomography\trunk\src\build-ReconFramework-Qt5-Release\release\ReconFramework.dll .
 
 copy %REPOS%\external\lib64\libtiff.dll .
 copy %REPOS%\external\lib64\libjpeg-62.dll .
