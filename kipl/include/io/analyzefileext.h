@@ -2,6 +2,7 @@
 #define ANALYZEFILEEXT_H
 #include <iostream>
 #include <string>
+#include "../kipl_global.h"
 
 namespace kipl { namespace io {
 
@@ -18,13 +19,13 @@ enum eExtensionTypes {
     ExtensionHDF
 };
 
-eExtensionTypes GetExtensionType(std::string ext);
+eExtensionTypes KIPLSHARED_EXPORT GetExtensionType(std::string ext);
 
-eExtensionTypes GetFileExtensionType(std::string fname);
+eExtensionTypes  KIPLSHARED_EXPORT GetFileExtensionType(std::string fname);
 
 }}
 
-std::ostream & operator<<(std::ostream &s, kipl::io::eExtensionTypes etype);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eExtensionTypes etype);
 
 #endif // ANALYZEFILEEXT_H
 
