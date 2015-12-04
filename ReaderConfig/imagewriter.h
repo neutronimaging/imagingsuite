@@ -4,8 +4,9 @@
 #include <string>
 
 #include <base/timage.h>
+#include "readerconfig_global.h"
 
-class ImageWriter
+class READERCONFIGSHARED_EXPORT ImageWriter
 {
 public:
     ImageWriter();

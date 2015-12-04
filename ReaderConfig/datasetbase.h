@@ -7,7 +7,9 @@
 #include <base/kiplenums.h>
 #include <base/timage.h>
 
-class ImageLoader
+#include "readerconfig_global.h"
+
+class READERCONFIGSHARED_EXPORT ImageLoader
 {
 public:
     ImageLoader();

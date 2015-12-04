@@ -10,7 +10,9 @@
 #include <logging/logger.h>
 #include <datasetbase.h>
 
-class ReaderConfigListWidget : public QWidget
+#include "readergui_global.h"
+
+class READERGUISHARED_EXPORT ReaderConfigListWidget : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;
