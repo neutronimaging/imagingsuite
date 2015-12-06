@@ -197,10 +197,10 @@ void FindSkipListDialog::GetROI()
 {
     QRect ROI = ui->skip_imageviewer->get_marked_roi();
 
-    ui->skip_spin_x0->setValue(ROI.x());
-    ui->skip_spin_y0->setValue(ROI.y());
-    ui->skip_spin_x1->setValue(ROI.x()+ROI.width());
-    ui->skip_spin_y1->setValue(ROI.y()+ROI.height());
+    ui->skip_spin_x0->setValue(ROI.left());
+    ui->skip_spin_y0->setValue(ROI.top());
+    ui->skip_spin_x1->setValue(ROI.right());
+    ui->skip_spin_y1->setValue(ROI.bottom());
 
     ui->skip_imageviewer->set_rectangle(ROI,QColor(Qt::yellow),0);
 }
