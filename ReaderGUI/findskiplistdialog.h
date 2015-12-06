@@ -39,11 +39,18 @@ public:
 protected slots:
     void ChangedNumberOfProjections(int x);
     void GetROI();
-    void ChangedROI(int x);
     void LoadDoseList();
 
 private slots:
     void on_skip_button_getdoselist_clicked();
+
+    void on_skip_spin_x0_valueChanged(int arg1);
+
+    void on_skip_spin_y0_valueChanged(int arg1);
+
+    void on_skip_spin_x1_valueChanged(int arg1);
+
+    void on_skip_spin_y1_valueChanged(int arg1);
 
 private:
     Ui::FindSkipListDialog *ui;
@@ -56,6 +63,7 @@ private:
 //    int m_nLast;
     int m_nMaxNumberProjections;
     size_t m_nROI[4];
+    QRect m_DoseROI;
     QVector<QPointF> m_DoseData;
     std::multimap<float,int > m_SortedDoses;
     std::set<int> m_sortedSkip;

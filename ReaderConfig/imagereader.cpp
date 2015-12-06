@@ -219,9 +219,6 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
             pCrop[i]*=binning;
     }
 
-
-
-
     std::map<std::string, size_t> extensions;
     extensions[".mat"]=0;
     extensions[".fits"]=1;

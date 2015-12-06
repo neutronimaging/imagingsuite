@@ -40,10 +40,6 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
     ui->skip_spin_y1->setValue(10);
 
     connect(ui->skip_spin_expnumproj,SIGNAL(valueChanged(int)),SLOT(ChangedNumberOfProjections(int)));
-    connect(ui->skip_spin_x0, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
-    connect(ui->skip_spin_y0, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
-    connect(ui->skip_spin_x1, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
-    connect(ui->skip_spin_y1, SIGNAL(valueChanged(int)),SLOT(ChangedROI(int)));
  //   connect(ui->skip_button_getdoselist,SIGNAL(clicked()),SLOT(LoadDoseList()));
     connect(ui->skip_button_getroi,SIGNAL(clicked()),SLOT(GetROI()));
 
@@ -66,13 +62,26 @@ int FindSkipListDialog::exec(std::list<std::string> &filelist)
 
     if (QFile::exists(QString::fromStdString(fname))) {
         kipl::base::TImage<float,2> img;
-        kipl::io::ReadFITS(img,fname.c_str(),NULL);
+        ImageReader reader;
+
+        img=reader.Read(fname,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
+        //kipl::io::ReadFITS(img,fname.c_str(),NULL);
         ui->skip_imageviewer->set_image(img.GetDataPtr(),img.Dims());
+        ui->skip_spin_x0->setMaximum(img.Size(0)-1);
+        ui->skip_spin_x1->setMaximum(img.Size(0)-1);
+        ui->skip_spin_y0->setMaximum(img.Size(1)-1);
+        ui->skip_spin_y1->setMaximum(img.Size(1)-1);
     }
     else {
         msg.str("");
         msg<<"File does not exist ("<<fname<<")";
+        QMessageBox msgdlg;
+
+        msgdlg.setText(QString::fromStdString(msg.str()));
         logger(kipl::logging::Logger::LogWarning,msg.str());
+        msgdlg.exec();
+
+        return QDialog::Rejected;
     }
 
     return QDialog::exec();
@@ -80,13 +89,10 @@ int FindSkipListDialog::exec(std::list<std::string> &filelist)
 
 int FindSkipListDialog::exec(std::string path, std::string fmask, int first, int last)
 {
-//    m_nFirst    = first;
-//    m_nLast     = last;
-//    m_sFileMask = fmask;
-//    m_sPath     = path;
-
     ImageLoader il;
-    il.m_sFilemask=path+fmask;
+    il.m_sFilemask=path;
+    kipl::strings::filenames::CheckPathSlashes(il.m_sFilemask,true);
+    il.m_sFilemask+=fmask;
     il.m_nFirst=first;
     il.m_nLast=last;
     il.m_nStep=1;
@@ -164,6 +170,7 @@ void FindSkipListDialog::ChangedNumberOfProjections(int x)
     ui->skip_plot->clearAllPlotCursors();
     std::multimap<float,int>::iterator it=m_SortedDoses.begin();
 
+    m_sortedSkip.clear();
 
     for (int i=0; i<nSkipCnt; i++, it++) {
         m_sortedSkip.insert(it->second);
@@ -195,20 +202,14 @@ QString FindSkipListDialog::getSkipListString()
 
 void FindSkipListDialog::GetROI()
 {
-    QRect ROI = ui->skip_imageviewer->get_marked_roi();
+    m_DoseROI = ui->skip_imageviewer->get_marked_roi();
 
-    ui->skip_spin_x0->setValue(ROI.left());
-    ui->skip_spin_y0->setValue(ROI.top());
-    ui->skip_spin_x1->setValue(ROI.right());
-    ui->skip_spin_y1->setValue(ROI.bottom());
+    ui->skip_spin_x0->setValue(m_DoseROI.left());
+    ui->skip_spin_y0->setValue(m_DoseROI.bottom());
+    ui->skip_spin_x1->setValue(m_DoseROI.right());
+    ui->skip_spin_y1->setValue(m_DoseROI.top());
 
-    ui->skip_imageviewer->set_rectangle(ROI,QColor(Qt::yellow),0);
-}
-
-void FindSkipListDialog::ChangedROI(int x)
-{
-
-
+    ui->skip_imageviewer->set_rectangle(m_DoseROI,QColor(Qt::yellow),0);
 }
 
 void FindSkipListDialog::UpdateParameters()
@@ -219,10 +220,32 @@ void FindSkipListDialog::UpdateParameters()
     m_nROI[3]=ui->skip_spin_y1->value();
 }
 
-
-
-
 void FindSkipListDialog::on_skip_button_getdoselist_clicked()
 {
+    UpdateParameters();
     LoadDoseList();
+}
+
+void FindSkipListDialog::on_skip_spin_x0_valueChanged(int arg1)
+{
+    m_DoseROI.setLeft(arg1);
+    ui->skip_imageviewer->set_rectangle(m_DoseROI,QColor(Qt::yellow),0);
+}
+
+void FindSkipListDialog::on_skip_spin_y0_valueChanged(int arg1)
+{
+    m_DoseROI.setBottom(arg1);
+    ui->skip_imageviewer->set_rectangle(m_DoseROI,QColor(Qt::yellow),0);
+}
+
+void FindSkipListDialog::on_skip_spin_x1_valueChanged(int arg1)
+{
+    m_DoseROI.setRight(arg1);
+    ui->skip_imageviewer->set_rectangle(m_DoseROI,QColor(Qt::yellow),0);
+}
+
+void FindSkipListDialog::on_skip_spin_y1_valueChanged(int arg1)
+{
+    m_DoseROI.setTop(arg1);
+    ui->skip_imageviewer->set_rectangle(m_DoseROI,QColor(Qt::yellow),0);
 }
