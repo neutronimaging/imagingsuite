@@ -72,6 +72,7 @@ void MergeVolumesDialog::UpdateConfig()
         m_merger.m_sPathA = ui->lineEdit_pathA->text().toStdString();
         m_merger.m_sPathB = ui->lineEdit_pathB->text().toStdString();
         m_merger.m_sPathOut = ui->lineEdit_pathout->text().toStdString();
+        m_merger.m_sMaskOut = ui->lineEdit_OutMask->text().toStdString();
 
         m_merger.m_nStartOverlapA = ui->spinBox_mixstart->value();
         m_merger.m_nOverlapLength = ui->spinBox_mixlength->value();
@@ -209,24 +210,25 @@ void MergeVolumesDialog::on_checkBox_crop_toggled(bool checked)
 
 void MergeVolumesDialog::on_pushButton_browseout_clicked()
 {
-    QString projdir=QFileDialog::getOpenFileName(this,
+    QString projdir=QFileDialog::getExistingDirectory(this,
                                       "Select location of date set B",
                                       ui->lineEdit_pathout->text());
     if (!projdir.isEmpty()) {
         std::string pdir=projdir.toStdString();
+        kipl::strings::filenames::CheckPathSlashes(pdir,true);
 
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
+//        #ifdef _MSC_VER
+//        const char slash='\\';
+//        #else
+//        const char slash='/';
+//        #endif
+//        ptrdiff_t pos=pdir.find_last_of(slash);
 
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
+//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+//        kipl::io::DirAnalyzer da;
+//        kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        ui->lineEdit_pathout->setText(QString::fromStdString(fi.m_sMask));
+        ui->lineEdit_pathout->setText(QString::fromStdString(pdir));
     }
 }
 

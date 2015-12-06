@@ -25,6 +25,7 @@ public:
     std::string m_sPathA;
     std::string m_sPathB;
     std::string m_sPathOut;
+    std::string m_sMaskOut;
 
     int m_nFirstA;
     int m_nLastA;

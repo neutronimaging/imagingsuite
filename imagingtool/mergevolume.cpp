@@ -19,7 +19,8 @@ MergeVolume::MergeVolume() :
     logger("MergeVolume"),
     m_sPathA("/data/sliceA_####.tif"),
     m_sPathB("/data/sliceB_####.tif"),
-    m_sPathOut("/data/sliceOut_####.tif"),
+    m_sPathOut("/data"),
+    m_sMaskOut("NewVolume_####.tif"),
     m_nFirstA(0),
     m_nLastA(100),
     m_nStartOverlapA(90),
@@ -65,6 +66,8 @@ void MergeVolume::CopyMerge()
 
     std::string src_maskA = m_sPathA;
     std::string dst_mask = m_sPathOut;
+    kipl::strings::filenames::CheckPathSlashes(dst_mask,true);
+    dst_mask+=m_sMaskOut;
 
     std::ostringstream cmd,msg;
     int cnt=m_nFirstDest;
@@ -79,7 +82,7 @@ void MergeVolume::CopyMerge()
         kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
         cmd.str("");
         cmd<<copystring<<" \""<<src_fname<<"\" \""<<dst_fname<<"\"";
-        std::cout<<cmd.str()<<std::endl;
+        logger(logger.LogMessage,cmd.str());
         res=system(cmd.str().c_str());
         if (res!=0) {
             msg.str("");
@@ -143,7 +146,7 @@ void MergeVolume::CopyMerge()
         kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
         cmd.str("");
         cmd<<copystring<<" \""<<src_fname<<"\" \""<<dst_fname<<"\"";
-        cout<<cmd.str()<<endl;
+        logger(logger.LogMessage,cmd.str());
         res=system(cmd.str().c_str());
         if (res!=0) {
             msg.str("");
@@ -164,6 +167,8 @@ void MergeVolume::CropMerge() {
 
     std::string src_maskA = m_sPathA;
     std::string dst_mask = m_sPathOut;
+    kipl::strings::filenames::CheckPathSlashes(dst_mask,true);
+    dst_mask+=m_sMaskOut;
 
     std::ostringstream cmd,msg;
     size_t cnt=m_nFirstDest;
@@ -174,7 +179,12 @@ void MergeVolume::CropMerge() {
 
     kipl::base::TImage<float,2> a,b;
 
-    size_t crop[4]={static_cast<size_t>(m_nCrop[0]+m_nCropOffset[0]),
+    size_t cropA[4]={static_cast<size_t>(m_nCrop[0]),
+            static_cast<size_t>(m_nCrop[1]),
+            static_cast<size_t>(m_nCrop[2]),
+            static_cast<size_t>(m_nCrop[3])};
+
+    size_t cropB[4]={static_cast<size_t>(m_nCrop[0]+m_nCropOffset[0]),
             static_cast<size_t>(m_nCrop[1]+m_nCropOffset[1]),
             static_cast<size_t>(m_nCrop[2]+m_nCropOffset[0]),
             static_cast<size_t>(m_nCrop[3]+m_nCropOffset[1])};
@@ -185,7 +195,7 @@ void MergeVolume::CropMerge() {
         kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
         kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
 
-        bps=kipl::io::ReadTIFF(a,src_fname.c_str(),crop);
+        bps=kipl::io::ReadTIFF(a,src_fname.c_str(),cropA);
         switch (bps) {
         case 8:
         case 16: kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f,65535.0f); break;
@@ -200,14 +210,14 @@ void MergeVolume::CropMerge() {
 
     float *pA, *pB;
     float scale=1.0f/m_nOverlapLength;
-
+    logger(logger.LogMessage,"Copying data B");
     try {
         for (k=0, j=m_nFirstB; k<m_nOverlapLength; i++,j++,k++, cnt++) {
             kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
-            kipl::io::ReadTIFF(a,src_fname.c_str(), crop);
+            kipl::io::ReadTIFF(a,src_fname.c_str(), cropA);
 
             kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
-            kipl::io::ReadTIFF(b,src_fname.c_str(),crop);
+            kipl::io::ReadTIFF(b,src_fname.c_str(),cropB);
             pA=a.GetDataPtr();
             pB=b.GetDataPtr();
 
@@ -247,7 +257,7 @@ void MergeVolume::CropMerge() {
     for ( ; j<=m_nLastB; j++, cnt++) {
         kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
         kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
-        bps=kipl::io::ReadTIFF(a,src_fname.c_str(),crop);
+        bps=kipl::io::ReadTIFF(a,src_fname.c_str(),cropB);
         switch (bps) {
         case 8:
         case 16: kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f,65535.0f); break;

@@ -29,6 +29,7 @@ public:
 
     std::string m_sSourceMask;
     std::string m_sDestinationPath;
+    std::string m_sDestinationMask;
 
     int m_nFirst;
     int m_nLast;

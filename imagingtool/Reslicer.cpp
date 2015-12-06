@@ -24,8 +24,9 @@
 
 TIFFReslicer::TIFFReslicer() :
     logger("TIFFReslicer"),
-    m_sSourceMask(),
-    m_sDestinationPath(),
+    m_sSourceMask("/data/slices_####.tif"),
+    m_sDestinationPath("/data"),
+    m_sDestinationMask("verticalslices_####.tif"),
 
     m_nFirst(0),
     m_nLast(100),
@@ -85,24 +86,24 @@ std::string TIFFReslicer::WriteXML(size_t indent)
 //}
 int TIFFReslicer::process()
 {
-//    std::string a,b;
-//    size_t pos=sDstMask.find('#',0);
-//    if (pos==string::npos) {
-//        QMessageBox dlg;
-
-//        dlg.setText("Failed to create destination filename.\n There are no # in the file mask.");
-//        dlg.exec();
-//        return;
-//    }
-//    a=sDstMask.substr(0,pos);
-//    b=sDstMask.substr(pos);
+    std::string fmask=m_sDestinationPath;
+    kipl::strings::filenames::CheckPathSlashes(fmask,true);
+    fmask+=m_sDestinationMask;
+    std::string a,b;
+    size_t pos=fmask.find('#',0);
+    if (pos==std::string::npos) {
+        throw kipl::base::KiplException("Failed to create destination filename.\n There are no # in the file mask.",__FILE__,__LINE__);
+    }
+    a=fmask.substr(0,pos);
+    b=fmask.substr(pos);
 
     std::ostringstream msg;
+
     if (m_bResliceXZ){
-//        sDstMask=a+"XZ"+b;
-//        logger(kipl::logging::Logger::LogMessage,sDstMask);
+        fmask=a+"XZ_"+b;
+        logger(kipl::logging::Logger::LogMessage,fmask);
         try {
-            process(m_sSourceMask,m_nFirst,m_nLast,m_sDestinationPath,kipl::base::ImagePlaneXZ);
+            process(m_sSourceMask,m_nFirst,m_nLast,fmask,kipl::base::ImagePlaneXZ);
         }
         catch (kipl::base::KiplException &E) {
             msg.str("");
@@ -116,8 +117,10 @@ int TIFFReslicer::process()
     }
 
     if (m_bResliceYZ) {
+        fmask=a+"YZ_"+b;
+        logger(kipl::logging::Logger::LogMessage,fmask);
         try {
-            process(m_sSourceMask,m_nFirst,m_nLast,m_sDestinationPath,kipl::base::ImagePlaneXZ);
+            process(m_sSourceMask,m_nFirst,m_nLast,fmask,kipl::base::ImagePlaneYZ);
         }
         catch (kipl::base::KiplException &E) {
             msg.str("");
