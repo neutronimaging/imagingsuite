@@ -14,12 +14,14 @@ DEFINES += ITERATIVEBACKPROJ_LIBRARY
 
 SOURCES += ../../src/iterativebackproj.cpp \
     ../../src/genericbp.cpp \
-    ../../src/sirtbp.cpp
+    ../../src/sirtbp.cpp \
+    ../../src/iterativereconbase.cpp
 
 HEADERS += ../../src/iterativebackproj.h\
         ../../src/iterativebackproj_global.h \
     ../../src/genericbp.h \
-    ../../src/sirtbp.h
+    ../../src/sirtbp.h \
+    ../../src/iterativereconbase.h
 
 unix:!symbian {
     maemo5 {
@@ -83,3 +85,11 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../mod
 
 INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/src
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/release/ -lReconAlgorithms
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/debug/ -lReconAlgorithms
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/ -lReconAlgorithms
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Debug/ -lReconAlgorithms
+
+INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
+DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms

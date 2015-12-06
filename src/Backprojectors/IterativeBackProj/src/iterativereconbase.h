@@ -1,15 +1,24 @@
-#ifndef SIRTBP_H
-#define SIRTBP_H
+#ifndef ITERATIVERECONBASE_H
+#define ITERATIVERECONBASE_H
 
-#include "iterativebackproj_global.h"
-#include "iterativereconbase.h"
+#include <BackProjectorModuleBase.h>
 #include <ParameterHandling.h>
+#include <forwardprojectorbase.h>
+#include <backprojectorbase.h>
 
-class SIRTbp : public IterativeReconBase
+class IterativeReconBase : public BackProjectorModuleBase
 {
 public:
-    SIRTbp(InteractionBase *interactor=nullptr);
-    ~SIRTbp();
+    IterativeReconBase(std::string application, std::string name, eMatrixAlignment alignment, InteractionBase *interactor=nullptr);
+    ~IterativeReconBase();
+
+    /// Sets up the back-projector with new parameters
+    /// \param config Reconstruction parameter set
+    /// \param parameters Additional set of configuration parameters
+    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
+
+    /// Initializing the reconstructor
+    virtual int Initialize();
 
     /// Add one projection to the back-projection stack
     /// \param proj The projection
@@ -23,13 +32,6 @@ public:
     /// \param parameters A list of parameters, the list shall contain at least the parameters angles and weights each containing a space separated list with as many values as projections
     virtual size_t Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters);
 
-    /// Sets up the back-projector with new parameters
-    /// \param config Reconstruction parameter set
-    /// \param parameters Additional set of configuration parameters
-    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-
-    /// Initializing the back-projector
-    virtual int Initialize();
 
     /// Gets a list parameters required by the module.
     /// \returns The parameter list
@@ -39,15 +41,13 @@ public:
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
     virtual void SetROI(size_t *roi);
 
-    /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
-    /// \param x the bin values of the x axis
-    /// \param y the histogram bins
-    /// \param N number of bins
-    virtual void GetHistogram(float *x, size_t *y, size_t N);
-
 protected:
+    virtual size_t reconstruct(kipl::base::TImage<float,3> proj,std::list<float> & angles) = 0;
 
-    float m_fAlpha;
+    ForwardProjectorBase *m_fp;
+    BackProjectorBase    *m_bp;
+
+    int   m_nIterations;
 };
 
-#endif // SIRTBP_H
+#endif // ITERATIVERECONBASE_H
