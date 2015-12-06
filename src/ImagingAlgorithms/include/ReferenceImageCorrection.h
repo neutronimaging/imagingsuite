@@ -33,6 +33,12 @@ public:
 			size_t *doseroi,
 			size_t *bbroi);
 
+    void SetReferenceImages(kipl::base::TImage<float,3> *ob,
+            kipl::base::TImage<float,3> *dc,
+            kipl::base::TImage<float,3> *bb,
+            size_t *doseroi,
+            size_t *bbroi);
+
 	void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;}
 
 	void Process(kipl::base::TImage<float,2> &img, float dose);
