@@ -2,11 +2,13 @@
 #include <string>
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QFile>
 
 #include <findskiplistdialog.h>
 #include <buildfilelist.h>
 #include <imagereader.h>
+#include <imagewriter.h>
 
 #include <strings/filenames.h>
 
@@ -19,6 +21,7 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     ui(new Ui::FileConversionDialog)
 {
     ui->setupUi(this);
+    on_checkBox_toggled(false);
 }
 
 FileConversionDialog::~FileConversionDialog()
@@ -170,7 +173,7 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     msg.str("");
     msg<<"The input data has ext="<<ext1<<", and will be saved as ext="<<ext2;
     logger(logger.LogMessage,msg.str());
-    if (ext2==ext1)
+    if ((ext2==ext1) && (ui->checkBox->checkState() == Qt::Unchecked))
     {
         CopyImages(flist);
     }
@@ -203,6 +206,7 @@ void FileConversionDialog::ConvertImages(std::list<std::string> &flist)
     logger(logger.LogMessage,"Will convert the files in a common sequence.");
 
     ImageReader imgreader;
+    ImageWriter imgwriter;
     std::string destmask=ui->lineEdit_DestinationPath->text().toStdString();
     std::string ext_out=kipl::strings::filenames::GetFileExtension(destmask);
 
@@ -212,13 +216,79 @@ void FileConversionDialog::ConvertImages(std::list<std::string> &flist)
     int destcnt=ui->spinBox_FirstDestinationIndex->value();
 
     kipl::base::TImage<float,2> img;
+    QMessageBox dlg;
+    std::ostringstream msg;
+
+    size_t roi[4]={static_cast<size_t>(ui->spinBox_x0->value()),
+                  static_cast<size_t>(ui->spinBox_y0->value()),
+                  static_cast<size_t>(ui->spinBox_x1->value()),
+                  static_cast<size_t>(ui->spinBox_y1->value())};
+    size_t *crop=nullptr;
+    if (ui->checkBox->checkState()==Qt::Checked) {
+        crop=roi;
+    }
+
 
     for (auto it=flist.begin(); it!=flist.end(); it++) {
-        img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,NULL);
+        try {
+            img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
+        }
+        catch (kipl::base::KiplException &e) {
+            msg.str("");
+            msg<<"Failed to read "<<*it;
+            dlg.setText(QString::fromStdString(msg.str()));
+            dlg.setDetailedText(QString::fromStdString(e.what()));
+        }
+        catch (std::exception &e) {
+            msg.str("");
+            msg<<"Failed to read "<<*it;
+            dlg.setText(QString::fromStdString(msg.str()));
+            dlg.setDetailedText(QString::fromStdString(e.what()));
+        }
+        catch (...) {
+            msg.str("");
+            msg<<"Failed to read "<<*it;
+            dlg.setText(QString::fromStdString(msg.str()));
+            dlg.setDetailedText("Unhandled exception");
+        }
 
         kipl::strings::filenames::MakeFileName(destmask,destcnt,destname,ext,'#','0',false);
 
+        try {
+            imgwriter.write(img,destname);
+        }
+        catch (kipl::base::KiplException &e) {
+            msg.str("");
+            msg<<"Failed to read "<<*it;
+            dlg.setText(QString::fromStdString(msg.str()));
+            dlg.setDetailedText(QString::fromStdString(e.what()));
+        }
+        catch (std::exception &e) {
+            msg.str("");
+            msg<<"Failed to read "<<*it;
+            dlg.setText(QString::fromStdString(msg.str()));
+            dlg.setDetailedText(QString::fromStdString(e.what()));
+        }
+        catch (...) {
+            msg.str("");
+            msg<<"Failed to read "<<*it;
+            dlg.setText(QString::fromStdString(msg.str()));
+            dlg.setDetailedText("Unhandled exception");
+        }
 
         destcnt++;
     }
+}
+
+void FileConversionDialog::on_checkBox_toggled(bool checked)
+{
+    ui->label_x0->setVisible(checked);
+    ui->label_x1->setVisible(checked);
+    ui->label_y0->setVisible(checked);
+    ui->label_y1->setVisible(checked);
+
+    ui->spinBox_x0->setVisible(checked);
+    ui->spinBox_x1->setVisible(checked);
+    ui->spinBox_y0->setVisible(checked);
+    ui->spinBox_y1->setVisible(checked);
 }

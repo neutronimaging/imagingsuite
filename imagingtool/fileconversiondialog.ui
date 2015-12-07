@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>File conversion tool</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -76,7 +76,7 @@
         <item row="0" column="1">
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="2">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="label_y0">
             <property name="text">
              <string>y0</string>
             </property>
@@ -90,49 +90,49 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_x0">
             <property name="text">
              <string>x0</string>
             </property>
            </widget>
           </item>
           <item row="1" column="6">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="label_y1">
             <property name="text">
              <string>y1</string>
             </property>
            </widget>
           </item>
           <item row="1" column="4">
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="label_x1">
             <property name="text">
              <string>x1</string>
             </property>
            </widget>
           </item>
           <item row="1" column="5">
-           <widget class="QSpinBox" name="spinBox_4">
+           <widget class="QSpinBox" name="spinBox_x1">
             <property name="maximum">
              <number>9999</number>
             </property>
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="QSpinBox" name="spinBox_3">
+           <widget class="QSpinBox" name="spinBox_y0">
             <property name="maximum">
              <number>9999</number>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_2">
+           <widget class="QSpinBox" name="spinBox_x0">
             <property name="maximum">
              <number>9999</number>
             </property>
            </widget>
           </item>
           <item row="1" column="7">
-           <widget class="QSpinBox" name="spinBox_5">
+           <widget class="QSpinBox" name="spinBox_y1">
             <property name="maximum">
              <number>9999</number>
             </property>

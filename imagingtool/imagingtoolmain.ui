@@ -11,19 +11,29 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ImagingToolMain</string>
+   <string>Imaging tool</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>571</width>
-      <height>331</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>&lt;b&gt;Messages&lt;/b&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
+      <zorder>label</zorder>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

@@ -24,6 +24,8 @@ private slots:
 
     void on_pushButton_StartConversion_clicked();
 
+    void on_checkBox_toggled(bool checked);
+
 private:
     void CopyImages(std::list<std::string> &flist);
     void ConvertImages(std::list<std::string> &flist);
