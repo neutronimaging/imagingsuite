@@ -25,7 +25,7 @@
 #include <omp.h>
 #endif
 
-MultiProjectionBPparallel::MultiProjectionBPparallel(InteractionBase *interactor) :
+MultiProjectionBPparallel::MultiProjectionBPparallel(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP parallel",StdBackProjectorBase::MatrixZXY, interactor)
 {
 

@@ -22,7 +22,7 @@
 #include <emmintrin.h>
 #include <cmath>
 
-NearestNeighborBP::NearestNeighborBP(InteractionBase *interactor) :
+NearestNeighborBP::NearestNeighborBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Nearest Neighbor BP",StdBackProjectorBase::MatrixZXY, interactor)
 {
 

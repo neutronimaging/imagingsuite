@@ -8,7 +8,7 @@
 class SIRTbp : public IterativeReconBase
 {
 public:
-    SIRTbp(InteractionBase *interactor=nullptr);
+    SIRTbp(kipl::interactors::InteractionBase *interactor=nullptr);
     ~SIRTbp();
 
     /// Add one projection to the back-projection stack

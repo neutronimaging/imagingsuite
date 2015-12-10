@@ -13,7 +13,6 @@ CONFIG += c++11
 DEFINES += RECONFRAMEWORK_LIBRARY
 
 SOURCES += \
- #   ../../src/stdafx.cpp \
     ../../src/ReconHelpers.cpp \
     ../../src/ReconFramework.cpp \
     ../../src/ReconFactory.cpp \
@@ -23,13 +22,10 @@ SOURCES += \
     ../../src/ProjectionReader.cpp \
     ../../src/PreprocModuleBase.cpp \
     ../../src/ModuleItem.cpp \
-    ../../src/InteractionBase.cpp \
-#   ../../src/dllmain.cpp \
+#    ../../src/InteractionBase.cpp \
     ../../src/BackProjectorModuleBase.cpp
 
 HEADERS += \
-#    ../../include/targetver.h \
-#    ../../include/stdafx.h \
     ../../include/ReconHelpers.h \
     ../../include/ReconFramework.h \
     ../../include/ReconFactory.h \
@@ -39,8 +35,6 @@ HEADERS += \
     ../../include/ProjectionReader.h \
     ../../include/PreprocModuleBase.h \
     ../../include/ModuleItem.h \
-    ../../include/InteractionBase.h \
-#    ../../src/stdafx.h \
     ../../include/ReconFramework_global.h \
     ../../include/BackProjectorModuleBase.h
 

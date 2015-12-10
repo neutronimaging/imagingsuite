@@ -9,7 +9,7 @@
 class IterativeReconBase : public BackProjectorModuleBase
 {
 public:
-    IterativeReconBase(std::string application, std::string name, eMatrixAlignment alignment, InteractionBase *interactor=nullptr);
+    IterativeReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor=nullptr);
     ~IterativeReconBase();
 
     /// Sets up the back-projector with new parameters

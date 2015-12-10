@@ -17,10 +17,12 @@
 //#include "stdafx.h"
 
 #include <string>
-#include <logging/logger.h>
 
 #include <ModuleItemBase.h>
-#include "InteractionBase.h"
+
+#include <logging/logger.h>
+#include <interactors/interactionbase.h>
+
 #include "PreprocModuleBase.h"
 #include "BackProjectorModuleBase.h"
 
@@ -59,7 +61,7 @@ public:
     /// \param sharedobject filename of the library containing the module.
     /// \param modulename name of the module to load.
     /// \param interactor A reference to an interactor object to enhance the user experience.
-	BackProjItem(std::string application,std::string sharedobject, std::string modulename, InteractionBase *interactor=NULL);
+    BackProjItem(std::string application,std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Copy constructor
     /// \param The object to copy
@@ -81,7 +83,7 @@ public:
 protected:
     /// Loads the module from a shared object library.
     /// \param interactor A reference to an interactor object.
-	void LoadModuleObject(InteractionBase *interactor);
+    void LoadModuleObject(kipl::interactors::InteractionBase *interactor);
 
     /// Unloads the module.
 	void Destroy();

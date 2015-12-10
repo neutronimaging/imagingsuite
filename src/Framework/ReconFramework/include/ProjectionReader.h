@@ -23,7 +23,7 @@
 #include <profile/Timer.h>
 #include <base/kiplenums.h>
 #include "ReconConfig.h"
-#include "InteractionBase.h"
+#include <interactors/interactionbase.h>
 
 /// This class provides reading capabilities for the image data
 class RECONFRAMEWORKSHARED_EXPORT ProjectionReader
@@ -33,7 +33,7 @@ class RECONFRAMEWORKSHARED_EXPORT ProjectionReader
 public:
     /// Constructor to initialize the reader
     /// \param interactor Reference to the GUI interactor object
-	ProjectionReader(InteractionBase *interactor=NULL);
+    ProjectionReader(kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Cleaning up and closing files.
 	~ProjectionReader(void);
@@ -169,7 +169,7 @@ protected:
     bool Aborted();
 
     kipl::profile::Timer timer; ///< Timer to measure the execution time for the reading.
-    InteractionBase *m_Interactor;  ///< Reference to an interactor object.
+    kipl::interactors::InteractionBase *m_Interactor;  ///< Reference to an interactor object.
 };
 
 #endif

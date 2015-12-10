@@ -5,7 +5,7 @@
 class GenericBP : public BackProjectorModuleBase
 {
 public:
-    GenericBP(InteractionBase *interactor=NULL);
+    GenericBP(kipl::interactors::InteractionBase *interactor=nullptr);
     ~GenericBP();
 
     /// Add one projection to the back-projection stack

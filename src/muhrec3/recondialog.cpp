@@ -10,7 +10,7 @@
 #include <ModuleException.h>
 #include <base/KiplException.h>
 
-ReconDialog::ReconDialog(InteractionBase *interactor, QWidget *parent) :
+ReconDialog::ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent) :
     QDialog(parent),
     logger("ReconDialog"),
     ui(new Ui::ReconDialog),

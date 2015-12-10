@@ -20,7 +20,7 @@
 #include <base/timage.h>
 #include <logging/logger.h>
 #include <profile/Timer.h>
-#include "InteractionBase.h"
+#include <interactors/interactionbase.h>
 
 #include "ReconConfig.h"
 
@@ -43,7 +43,7 @@ public:
     /// \param name Specifies the name of the backprojector, is mainly used by the logger.
     /// \param alignment Specifies the memory alignment supported by the backprojector.
     /// \param interactor reference to an interactor object to report the backprojection progress etc.
-    BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment alignment, InteractionBase *interactor=NULL);
+    BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Add one projection to the back-projection stack
     /// \param proj The projection
@@ -126,7 +126,7 @@ protected:
     size_t MatrixDims[3];
 
     std::string m_sApplication;                  ///< The name of the application calling the module
-    InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
+    kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
 };
 
 #endif

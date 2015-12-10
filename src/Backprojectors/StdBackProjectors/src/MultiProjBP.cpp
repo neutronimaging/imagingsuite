@@ -22,7 +22,7 @@
 #include <emmintrin.h>
 #include <cmath>
 
-MultiProjectionBP::MultiProjectionBP(InteractionBase *interactor) :
+MultiProjectionBP::MultiProjectionBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP",StdBackProjectorBase::MatrixZXY, interactor)
 {
 

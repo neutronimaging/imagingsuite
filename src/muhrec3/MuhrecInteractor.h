@@ -8,10 +8,10 @@
 #ifndef MUHRECINTERACTOR_H_
 #define MUHRECINTERACTOR_H_
 
-#include <InteractionBase.h>
+#include <interactors/interactionbase.h>
 
 
-class MuhrecInteractor: public InteractionBase {
+class MuhrecInteractor: public kipl::interactors::InteractionBase {
 public:
 	MuhrecInteractor();
 	virtual ~MuhrecInteractor();

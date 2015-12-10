@@ -13,14 +13,15 @@
 #ifndef __RECONFACTORY_H
 #define __RECONFACTORY_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
+
+#include <list>
+#include <string>
+
 #include <logging/logger.h>
+#include <interactors/interactionbase.h>
 #include "ReconEngine.h"
 #include "PreprocModuleBase.h"
 #include "ReconConfig.h"
-#include "InteractionBase.h"
-#include <list>
-#include <string>
 
 class RECONFRAMEWORKSHARED_EXPORT ReconFactory
 {
@@ -28,8 +29,8 @@ private:
 	kipl::logging::Logger logger;
 public:
 	ReconFactory(void);
-	ReconEngine * BuildEngine(ReconConfig &config, InteractionBase *interactor=NULL);
-    void SetBackProjector(ReconConfig &config, ReconEngine * engine, InteractionBase *interactor=NULL);
+    ReconEngine * BuildEngine(ReconConfig &config, kipl::interactors::InteractionBase *interactor=nullptr);
+    void SetBackProjector(ReconConfig &config, ReconEngine * engine, kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~ReconFactory(void);
 
 private:

@@ -14,7 +14,6 @@
 #ifndef __RECONENGINE_H
 #define __RECONENGINE_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 
 #include <list>
 #include "PreprocModuleBase.h"
@@ -22,8 +21,8 @@
 #include "ProjectionReader.h"
 #include "ReconHelpers.h"
 #include "ModuleItem.h"
-#include "InteractionBase.h"
 
+#include <interactors/interactionbase.h>
 #include <logging/logger.h>
 #include <base/kiplenums.h>
 #include <string>
@@ -32,7 +31,11 @@ class RECONFRAMEWORKSHARED_EXPORT ProjectionBlock
 {
 public:
     ProjectionBlock();
-    ProjectionBlock(kipl::base::TImage<float,3> & projections, size_t *roi,std::map<std::string, std::string> parameters);
+    ProjectionBlock(kipl::base::TImage<float,3> & projections,
+                    size_t *roi,
+                    std::map<std::string,
+                    std::string> parameters);
+
     ProjectionBlock(const ProjectionBlock &b);
     ProjectionBlock & operator=(const ProjectionBlock &b);
     ~ProjectionBlock();
@@ -48,7 +51,8 @@ protected:
 	kipl::logging::Logger logger;
 
 public:
-	ReconEngine(std::string name="ReconEngine", InteractionBase *interactor=NULL);
+    ReconEngine(std::string name="ReconEngine",
+                kipl::interactors::InteractionBase *interactor=nullptr);
 
 	size_t AddPreProcModule(ModuleItem *module);
 	void SetBackProjector(BackProjItem *module);
@@ -100,7 +104,7 @@ protected:
 	size_t nTotalBlocks;							//!< The total number of blocks to process
 	bool m_bCancel;									//!< Cancel flag if true the reconstruction process will terminate
 	//eReconstructorStatus status;
-	InteractionBase *m_Interactor;
+    kipl::interactors::InteractionBase *m_Interactor;
 };
 
 #endif

@@ -18,7 +18,7 @@
 #include <base/timage.h>
 #include <ReconConfig.h>
 #include <BackProjectorModuleBase.h>
-#include <InteractionBase.h>
+#include <interactors/interactionbase.h>
 #include <logging/logger.h>
 
 class StdBackProjectorBase : public BackProjectorModuleBase
@@ -33,7 +33,7 @@ protected:
 		float weight;
 	};
 public:
-	StdBackProjectorBase(std::string name, eMatrixAlignment align, InteractionBase *interactor=NULL);
+    StdBackProjectorBase(std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~StdBackProjectorBase(void);
 	virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection);
 	virtual size_t Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters);

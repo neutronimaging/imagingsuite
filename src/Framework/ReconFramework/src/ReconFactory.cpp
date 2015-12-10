@@ -28,7 +28,7 @@ ReconFactory::~ReconFactory(void)
 
 }
 
-ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, InteractionBase *interactor)
+ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::InteractionBase *interactor)
 {
 	ReconEngine * engine=new ReconEngine("ReconEngine",interactor);
 
@@ -59,7 +59,7 @@ ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, InteractionBase *in
 
 }
 
-void ReconFactory::SetBackProjector(ReconConfig &config, ReconEngine * engine, InteractionBase *interactor)
+void ReconFactory::SetBackProjector(ReconConfig &config, ReconEngine * engine, kipl::interactors::InteractionBase *interactor)
 {
     if (config.backprojector.m_bActive==true) {
         BackProjItem *module=NULL;

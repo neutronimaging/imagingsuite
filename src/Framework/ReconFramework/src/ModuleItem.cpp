@@ -35,7 +35,7 @@ ModuleItem::~ModuleItem()
 
 ///-------------------------------------------------------
 
-BackProjItem::BackProjItem(std::string application, std::string sharedobject, std::string modulename, InteractionBase *interactor)	:
+BackProjItem::BackProjItem(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor)	:
 	logger("BackProjItem"),
 	hinstLib(NULL),
 	m_fnModuleFactory(NULL),
@@ -90,7 +90,7 @@ BackProjItem::~BackProjItem()
 	Destroy();
 }
 
-void BackProjItem::LoadModuleObject(InteractionBase *interactor)
+void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase *interactor)
 {
 	std::ostringstream msg;
 

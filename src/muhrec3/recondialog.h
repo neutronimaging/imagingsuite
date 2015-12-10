@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <ReconEngine.h>
 #include <logging/logger.h>
-#include <InteractionBase.h>
+#include <interactors/interactionbase.h>
 
 namespace Ui {
 class ReconDialog;
@@ -16,7 +16,7 @@ class ReconDialog : public QDialog
     kipl::logging::Logger logger;
 
 public:
-    explicit ReconDialog(InteractionBase *interactor, QWidget *parent = 0);
+    explicit ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent = 0);
     ~ReconDialog();
     void progress();
     void process();
@@ -36,7 +36,7 @@ protected:
     float fraction;
     bool finish;
     ReconEngine * m_Engine;
-    InteractionBase * m_Interactor;
+    kipl::interactors::InteractionBase * m_Interactor;
     bool m_bRerunBackproj;
 };
 

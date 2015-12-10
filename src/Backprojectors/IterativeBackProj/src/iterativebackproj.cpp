@@ -3,7 +3,7 @@
 #include <string>
 
 #include <BackProjectorModuleBase.h>
-#include <InteractionBase.h>
+#include <interactors/interactionbase.h>
 
 #include "genericbp.h"
 #include "iterativebackproj.h"
@@ -14,7 +14,7 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
     if (strcmp(application,"muhrecbp"))
         return NULL;
 
-    InteractionBase *interactor=reinterpret_cast<InteractionBase *>(vinteractor);
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
     if (name!=NULL) {
         std::string sName=name;
 

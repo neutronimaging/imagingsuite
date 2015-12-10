@@ -26,7 +26,7 @@
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
 
-ReconEngine::ReconEngine(std::string name, InteractionBase *interactor) :
+ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
 	m_FirstSlice(0),
     m_ProjectionMargin(2),

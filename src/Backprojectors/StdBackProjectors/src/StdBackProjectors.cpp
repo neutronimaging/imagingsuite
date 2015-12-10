@@ -13,7 +13,7 @@
 #include "../include/StdBackProjectors_global.h"
 #include "../include/StdBackProjectors.h"
 #include <BackProjectorModuleBase.h>
-#include <InteractionBase.h>
+#include <interactors/interactionbase.h>
 #include "../include/MultiProjBP.h"
 #include "../include/MultiProjBPparallel.h"
 #include "../include/NNMultiProjBP.h"
@@ -27,7 +27,7 @@ STDBACKPROJECTORS_EXPORT void * GetModule(const char *application, const char * 
     if (strcmp(application,"muhrecbp"))
 		return NULL;
 
-	InteractionBase *interactor=reinterpret_cast<InteractionBase *>(vinteractor);
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 	if (name!=NULL) {
 		std::string sName=name;
 

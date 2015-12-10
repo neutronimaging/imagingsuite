@@ -27,7 +27,7 @@
 #include "../include/ProjectionReader.h"
 #include "../include/ReconHelpers.h"
 
-ProjectionReader::ProjectionReader(InteractionBase *interactor) : 
+ProjectionReader::ProjectionReader(kipl::interactors::InteractionBase *interactor) :
 	logger("ProjectionReader"),
 		m_Interactor(interactor)
 {
