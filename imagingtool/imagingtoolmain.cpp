@@ -21,6 +21,7 @@
 #include "reslicerdialog.h"
 #include "mergevolumesdialog.h"
 #include "fileconversiondialog.h"
+#include "genericconversion.h"
 
 ImagingToolMain::ImagingToolMain(QWidget *parent) :
     QMainWindow(parent),
@@ -101,4 +102,12 @@ void ImagingToolMain::on_actionConvertFiles_triggered()
     logger(logger.LogMessage,"Opening file conversion dialog");
     dlg.exec();
 
+}
+
+void ImagingToolMain::on_actionGeneric_to_TIFF_triggered()
+{
+    GenericConversion dlg;
+    logger(logger.LogMessage,"Opening generic file conversion dialog");
+
+    dlg.exec();
 }

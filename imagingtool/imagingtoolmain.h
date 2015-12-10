@@ -28,6 +28,8 @@ private slots:
 
     void on_actionConvertFiles_triggered();
 
+    void on_actionGeneric_to_TIFF_triggered();
+
 private:
     Ui::ImagingToolMain *ui;
     ImagingToolConfig m_config;

@@ -29,9 +29,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
-      <zorder>label</zorder>
-     </widget>
+     <widget class="QtAddons::QtLogViewer" name="logviewer" native="true"/>
     </item>
    </layout>
   </widget>

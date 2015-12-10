@@ -11,6 +11,7 @@
 #include <imagewriter.h>
 
 #include <strings/filenames.h>
+#include <strings/string2array.h>
 
 #include "fileconversiondialog.h"
 #include "ui_fileconversiondialog.h"
@@ -167,7 +168,12 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
         }
     }
 
-    std::list<std::string> flist=BuildFileList(ll);
+    std::string skipstring=ui->lineEdit_SkipList->text().toStdString();
+    std::list<int> skiplist;
+
+    kipl::strings::String2List(skipstring,skiplist);
+
+    std::list<std::string> flist=BuildFileList(ll,skiplist);
 
     ext2=kipl::strings::filenames::GetFileExtension(ui->lineEdit_DestinationMask->text().toStdString());
     msg.str("");

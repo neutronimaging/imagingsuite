@@ -58,7 +58,8 @@ SOURCES += main.cpp\
     mergevolumesdialog.cpp \
     mergevolume.cpp \
     reslicerdialog.cpp \
-    fileconversiondialog.cpp
+    fileconversiondialog.cpp \
+    genericconversion.cpp
 
 HEADERS  += imagingtoolmain.h \
     ImagingToolConfig.h \
@@ -70,12 +71,14 @@ HEADERS  += imagingtoolmain.h \
     mergevolumesdialog.h \
     mergevolume.h \
     reslicerdialog.h \
-    fileconversiondialog.h
+    fileconversiondialog.h \
+    genericconversion.h
 
 FORMS    += imagingtoolmain.ui \
     mergevolumesdialog.ui \
     reslicerdialog.ui \
-    fileconversiondialog.ui
+    fileconversiondialog.ui \
+    genericconversion.ui
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
