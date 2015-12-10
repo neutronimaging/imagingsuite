@@ -102,7 +102,8 @@ SOURCES += \
     ../src/io/io_generic.cpp \
     ../src/filters/nonlocalmeans.cpp \
     ../src/math/PoissonNoise.cpp \
-    ../src/filters/stddevfilter.cpp
+    ../src/filters/stddevfilter.cpp \
+    ../src/interactors/interactionbase.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -290,7 +291,8 @@ HEADERS +=\
     ../include/filters/nonlocalmeans.h \
     ../include/filters/core/nonlocalmeans.hpp \
     ../include/math/PoissonNoise.h \
-    ../include/filters/stddevfilter.h
+    ../include/filters/stddevfilter.h \
+    ../include/interactors/interactionbase.h
 
 
 
