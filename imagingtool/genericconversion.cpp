@@ -32,6 +32,7 @@ GenericConversion::GenericConversion(QWidget *parent) :
     ui->setupUi(this);
     UpdateDialog();
     on_checkBox_DispLevels_toggled(m_customLevels);
+    on_comboBox_DataType_currentIndexChanged(3);
 }
 
 GenericConversion::~GenericConversion()
@@ -112,7 +113,8 @@ void GenericConversion::on_pushButton_Preview_clicked()
                          kipl::base::BigEndian,
                          nullptr);
 
-    kipl::base::TImage<float,2> img;
+
+    kipl::base::TImage<float,2> img=imgs.front();
 
     kipl::base::TRotate<float> rot;
     if (m_rotate) {
@@ -158,4 +160,12 @@ void GenericConversion::on_checkBox_DispLevels_toggled(bool checked)
     ui->spinBox_DispLo->setVisible(checked);
     ui->spinBox_DispHi->setVisible(checked);
 
+}
+
+void GenericConversion::on_comboBox_DataType_currentIndexChanged(int index)
+{
+    m_type=index;
+    m_sizeX=ui->spinBox_SizeX->value();
+    m_stride=static_cast<int>(m_sizeX*(m_type+1)/2);
+    ui->spinBox_Stride->setValue(m_stride);
 }

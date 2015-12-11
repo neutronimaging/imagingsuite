@@ -26,6 +26,8 @@ private slots:
 
     void on_checkBox_DispLevels_toggled(bool checked);
 
+    void on_comboBox_DataType_currentIndexChanged(int index);
+
 private:
     Ui::GenericConversion *ui;
     void UpdateDialog();
