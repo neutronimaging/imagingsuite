@@ -29,7 +29,7 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
 fi
 
 pushd .
-cd $DEST
+cd $DEST/Framework
 rm -f *.$EXT
 
 
@@ -54,12 +54,11 @@ for f in `ls *.so.1.0.0`; do
 done
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/imagingtool/trunk/imagingtool-build-desktop-Qt_4_8_1_in_PATH__System__Release/imagingtool .`
+`$CPCMD $REPOSPATH/imagingtool/trunk/build-imagingtool-Qt5-Release/imagingtool .`
 cd ..
 `$CPCMD $REPOSPATH/imagingtool/trunk/scripts/imagingtool .`
 chmod +x imagingtool
 
-#cp $REPOSPATH/tomography/trunk/src/muhrec3/resources/*.xml resources
 popd
 
 
