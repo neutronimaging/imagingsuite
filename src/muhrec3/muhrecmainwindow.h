@@ -97,6 +97,8 @@ private slots:
 
     void on_comboSlicePlane_activated(int index);
 
+    void on_actionPreferences_triggered();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

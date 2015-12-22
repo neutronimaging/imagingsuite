@@ -229,6 +229,11 @@ int ReconEngine::Process(size_t *roi)
 	std::stringstream msg;
 	m_bCancel=false;
 	//status=ReconStatusRunning;
+    size_t margin=0;
+    size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
+
+    extroi[1]  = margin<extroi[1] ? extroi[1] : extroi[1]-margin;
+    extroi[3] += margin;
 
 	std::list<ModuleItem *>::iterator it_Module;
 	msg<<"Processing ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
@@ -241,7 +246,7 @@ int ReconEngine::Process(size_t *roi)
 			msg.str("");
 			msg<<"Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
-			(*it_Module)->GetModule()->SetROI(roi);
+            (*it_Module)->GetModule()->SetROI(extroi);
 		}
 	}
 	catch (ReconException &e) {
@@ -294,7 +299,7 @@ int ReconEngine::Process(size_t *roi)
 				m_Config.ProjectionInfo.eFlip,
 				m_Config.ProjectionInfo.eRotate,
 				m_Config.ProjectionInfo.fBinning,
-				roi);
+                extroi);
 		parameters["dose"]=kipl::strings::value2string(
 				m_ProjectionReader.GetProjectionDose(it_Proj->second.name,
 						m_Config.ProjectionInfo.eFlip,
@@ -309,6 +314,7 @@ int ReconEngine::Process(size_t *roi)
 		for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); it_Module++) {
 			(*it_Module)->GetModule()->Process(projection,parameters);
 		}
+
 
 		m_BackProjector->GetModule()->Process(projection, fAngle, fWeight,m_ProjectionList.size()<(i+1));
 	}

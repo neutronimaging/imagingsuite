@@ -19,7 +19,11 @@ rm -f *.1.0.0.dylib
 
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.so.1.0.0 .`
 `$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/modules/trunk/build-ReaderConfig-Qt5-Release/libReaderConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/modules/trunk/build-ReaderGUI-Qt5-Release/libReaderGUI.so.1.0.0 .`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-Release/libReconFramework.so.1.0.0 .`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconAlgorithms-Qt5-Release/libReconAlgorithms.so.1.0.0 .`
+
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.so.1.0.0 .`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.so.1.0.0 .`

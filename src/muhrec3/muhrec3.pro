@@ -61,7 +61,8 @@ SOURCES += main.cpp\
     recondialog.cpp \
     PreProcModuleConfigurator.cpp \
     stdafx.cpp \
-    viewgeometrylistdialog.cpp
+    viewgeometrylistdialog.cpp \
+    preferencesdialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
@@ -70,13 +71,15 @@ HEADERS  += muhrecmainwindow.h \
     recondialog.h \
     PreProcModuleConfigurator.h \
     stdafx.h \
-    viewgeometrylistdialog.h
+    viewgeometrylistdialog.h \
+    preferencesdialog.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
     findskiplistdialog.ui \
     recondialog.ui \
-    viewgeometrylistdialog.ui
+    viewgeometrylistdialog.ui \
+    preferencesdialog.ui
 
 
 

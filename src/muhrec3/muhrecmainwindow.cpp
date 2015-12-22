@@ -8,6 +8,7 @@
 #include "findskiplistdialog.h"
 #include "recondialog.h"
 #include "viewgeometrylistdialog.h"
+#include "preferencesdialog.h"
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -1483,4 +1484,21 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
             m_nSliceSizeY=dims[2]-1;
         break;
     }
+}
+
+void MuhRecMainWindow::on_actionPreferences_triggered()
+{
+    PreferencesDialog dlg;
+    dlg.m_MemoryLimit = m_Config.System.nMemory;
+    dlg.m_LogLevel    = m_Config.System.eLogLevel;
+
+
+    int res=dlg.exec();
+
+    if (res==dlg.Accepted) {
+
+        m_Config.System.nMemory   = dlg.m_MemoryLimit;
+        m_Config.System.eLogLevel = dlg.m_LogLevel;
+    }
+
 }
