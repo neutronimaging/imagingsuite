@@ -1,9 +1,10 @@
 #include "genericbp.h"
 
 #include <ParameterHandling.h>
+#include <interactors/interactionbase.h>
 #include <strings/miscstring.h>
 
-GenericBP::GenericBP(InteractionBase *interactor) :
+GenericBP::GenericBP(kipl::interactors::InteractionBase *interactor) :
     BackProjectorModuleBase("muhrec","GenericBP",BackProjectorModuleBase::MatrixXYZ,interactor),
     m_sStringParameter("string"),
     m_fFloatParameter(1.23f),

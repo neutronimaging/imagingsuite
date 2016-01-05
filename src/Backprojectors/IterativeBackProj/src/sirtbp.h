@@ -46,7 +46,7 @@ public:
     virtual void GetHistogram(float *x, size_t *y, size_t N);
 
 protected:
-
+    virtual size_t reconstruct(kipl::base::TImage<float,3> proj,std::list<float> & angles);
     float m_fAlpha;
 };
 

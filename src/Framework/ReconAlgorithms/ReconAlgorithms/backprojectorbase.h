@@ -15,7 +15,7 @@ protected:
 
 public:
     BackProjectorBase(std::string name = "BackProjectorBase");
-    ~BackProjectorBase();
+    virtual ~BackProjectorBase();
 
     virtual int backproject(kipl::base::TImage<float,2> &proj, float center, std::list<float> & angles, kipl::base::TImage<float,2> &slice) = 0;
     virtual int backproject(kipl::base::TImage<float,3> &proj, float center, std::list<float> & angles, kipl::base::TImage<float,3> &slices) = 0;

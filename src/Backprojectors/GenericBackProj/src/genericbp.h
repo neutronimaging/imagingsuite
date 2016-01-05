@@ -2,12 +2,14 @@
 #define GENERICBP_H
 
 #include <map>
+#include <ReconConfig.h>
+#include <BackProjectorModuleBase.h>
+#include <interactors/interactionbase.h>
 
-#include <BackProjectorBase.h>
-class GenericBP : public BackProjectorBase
+class GenericBP : public BackProjectorModuleBase
 {
 public:
-    GenericBP(InteractionBase *interactor=NULL);
+    GenericBP(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~GenericBP();
 
     /// Add one projection to the back-projection stack

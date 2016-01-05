@@ -1,6 +1,6 @@
 #include "iterativereconbase.h"
 
-IterativeReconBase::IterativeReconBase(std::string application, std::string name, eMatrixAlignment alignment, InteractionBase *interactor) :
+IterativeReconBase::IterativeReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor) :
     BackProjectorModuleBase(application,name,alignment,interactor),
     m_fp(nullptr),
     m_bp(nullptr),

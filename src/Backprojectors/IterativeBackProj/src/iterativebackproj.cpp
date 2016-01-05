@@ -60,8 +60,8 @@ int GetModuleList(const char * application, void *listptr)
     GenericBP mpbp;
     modules["GenericBP"]=mpbp.GetParameters();
 
-    SIRTbp sirtbp;
-    modules["SIRTbp"]=sirtbp.GetParameters();
+//    SIRTbp sirtbp;
+//    modules["SIRTbp"]=sirtbp.GetParameters();
 
     return 0;
 }
