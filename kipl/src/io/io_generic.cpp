@@ -70,19 +70,22 @@ int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<unsigned sh
     }
 
     size_t file_offset=imageindex*size_y*stride+offset;
-    std::cout<<"Offset="<<file_offset<<std::endl;
+    std::cout<<"Offset="<<file_offset<<", stride="<<stride<<std::endl;
     file.seekg(file_offset);
 
     size_t dims[2]={size_x, size_y};
     img.Resize(dims);
+
+    img=(unsigned short)0;
     converter data[3];
 
     char * buffer = new char[stride];
+    std::cout<<dt<<std::endl;
 
     unsigned short *sbuffer= reinterpret_cast<unsigned short *>(buffer);
     for (size_t i=0; i<size_y; i++) {
-        for (size_t j=0; j<stride; j++)
-            file.get(buffer[j]);
+        //for (size_t j=0; j<stride; j++)
+        file.get(buffer,stride);
         unsigned short * pLine = img.GetLinePtr(i);
         switch (dt) {
         case kipl::base::UInt4 :
@@ -109,15 +112,17 @@ int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<unsigned sh
             }
             break;
         case kipl::base::UInt16 :
+            memcpy(pLine,buffer,stride);
+//            for (size_t j=0; j<size_x; j++) {
+//                  pLine[j]   = static_cast<unsigned short>(sbuffer[j]);
 
-            for (size_t j=0; j<size_x; j++) {
-                  pLine[j]   = static_cast<unsigned short>(sbuffer[j]);
-
-            }
+            //}
             break;
         }
     }
 
+    delete [] buffer;
+    file.close();
     return 0;
 }
 }}
