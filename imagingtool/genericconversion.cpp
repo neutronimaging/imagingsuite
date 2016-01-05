@@ -1,6 +1,7 @@
 #include <string>
 
 #include <QString>
+#include <QMessageBox>
 #include <QFileDialog>
 
 #include <base/timage.h>
@@ -15,6 +16,7 @@
 
 GenericConversion::GenericConversion(QWidget *parent) :
     QDialog(parent),
+    logger("GenericConversion"),
     ui(new Ui::GenericConversion),
     m_fname("/data/img_####.bin"),
     m_destPath("/data/"),
@@ -64,6 +66,7 @@ void GenericConversion::UpdateConfig()
     m_destMask     = ui->lineEdit_DestMask->text().toStdString();
     m_sizeX        = ui->spinBox_SizeX->value();
     m_sizeY        = ui->spinBox_SizeY->value();
+    m_offset       = ui->spinBox_Offset->value();
     m_stride       = ui->spinBox_Stride->value();
     m_customStride = ui->checkBox_Stride->isChecked();
     m_rotate       = ui->checkBox_Transpose->isChecked();
@@ -71,6 +74,8 @@ void GenericConversion::UpdateConfig()
     m_type         = ui->comboBox_DataType->currentIndex();
     m_levelLo      = ui->spinBox_DispLo->value();
     m_levelHi      = ui->spinBox_DispHi->value();
+    m_firstImg     = ui->spinBox_FirsFile->value();
+    m_lastImg      = ui->spinBox_LastFile->value();
 }
 
 void GenericConversion::on_pushButton_BrowseFileMask_clicked()
@@ -98,30 +103,57 @@ void GenericConversion::on_pushButton_BrowseFileMask_clicked()
 
 void GenericConversion::on_pushButton_Preview_clicked()
 {
+    UpdateConfig();
     std::list<kipl::base::TImage<float,2> > imgs;
 
     if (!m_customStride) {
         m_stride=static_cast<int>(m_sizeX*(m_type+1)/2);
         ui->spinBox_Stride->setValue(m_stride);
     }
+//    template <typename ImgType>
+//    int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
+//                    char const * const fname,
+//                    size_t size_x,
+//                    size_t size_y,
+//                    size_t offset,
+//                    size_t stride,
+//                    size_t imagesperfile,
+//                    kipl::base::eDataType dt,
+//                    kipl::base::eEndians endian,
+//                    size_t const * const nCrop=NULL);
 
-    kipl::io::ReadGeneric(imgs,m_fname.c_str(),
+
+    try {
+        std::string fname, ext;
+        kipl::strings::filenames::MakeFileName(m_fname,m_firstImg,fname,ext,'#','0',false);
+        kipl::io::ReadGeneric(imgs ,fname.c_str(),
                          m_sizeX,m_sizeY,
-                         0,m_stride,
+                         m_offset,m_stride,
                          1,
                          static_cast<kipl::base::eDataType>(m_type),
                          kipl::base::BigEndian,
                          nullptr);
-
+    }
+    catch (kipl::base::KiplException &e) {
+        std::ostringstream errmsg;
+        errmsg<<"Reading image failed."<<std::endl<<e.what();
+        logger(logger.LogError,errmsg.str());
+        QMessageBox msg;
+        msg.setDetailedText(QString::fromStdString(errmsg.str()));
+        msg.setText("Failed to read image");
+        msg.exec();
+        return;
+    }
 
     kipl::base::TImage<float,2> img=imgs.front();
 
+    std::cout<<img<<std::endl;
     kipl::base::TRotate<float> rot;
     if (m_rotate) {
-        img=rot.Rotate90(*imgs.begin());
+        img=rot.Rotate90(imgs.front());
     }
     else {
-        img=*imgs.begin();
+        img=imgs.front();
     }
 
     if (m_customLevels)
@@ -131,7 +163,7 @@ void GenericConversion::on_pushButton_Preview_clicked()
 
     std::ostringstream text;
 
-    text<<(m_stride*m_sizeY);
+    text<<(m_stride*m_sizeY)<<" bytes";
     ui->label_FileSize->setText(QString::fromStdString(text.str()));
 }
 
