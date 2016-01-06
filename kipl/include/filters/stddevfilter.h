@@ -1,10 +1,11 @@
 #ifndef STDDEVFILTER_H
 #define STDDEVFILTER_H
 
+#include "../kipl_global.h"
 #include "../base/timage.h"
 #include "filterbase.h"
 namespace kipl { namespace filters {
-class StdDevFilter
+class KIPLSHARED_EXPORT StdDevFilter
 {
 public:
     enum VarianceType {
