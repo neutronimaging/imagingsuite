@@ -29,15 +29,19 @@ private:
     QVBoxLayout m_vbox_main;
     QHBoxLayout m_hbox_filter;
     QHBoxLayout m_hbox_cutoff;
+    QHBoxLayout m_hbox_bias;
     QCheckBox m_checkbox_usebias;
     QDoubleSpinBox m_spin_cutoff;
+    QDoubleSpinBox m_spin_biasweight;
     QComboBox m_combo_filtertype;
     QLabel m_label_filter;
     QLabel m_label_cutoff;
+    QLabel m_label_biasweight;
 
     bool m_bUseBias;
     float m_fCutOff;
     float m_fOrder;
+    float m_fBiasWeight;
     ProjectionFilterBase::FilterType m_eFilterType;
 
     ReconConfig *m_Config;

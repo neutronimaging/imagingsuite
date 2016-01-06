@@ -77,7 +77,8 @@ ProjectionFilterBase::ProjectionFilterBase(std::string name) :
     m_FilterType(FilterHamming),
     m_fCutOff(0.5f),
     m_fOrder(1),
-	m_bUseBias(false)
+    m_bUseBias(true),
+    m_fBiasWeight(0.1f)
 {
 }
 
@@ -88,6 +89,7 @@ int ProjectionFilterBase::Configure(ReconConfig config, std::map<std::string, st
 	m_fCutOff=GetFloatParameter(parameters,"cutoff");
 	m_fOrder=GetFloatParameter(parameters,"order");
 	m_bUseBias=kipl::strings::string2bool(GetStringParameter(parameters,"usebias"));
+    m_fOrder=GetFloatParameter(parameters,"biasweight");
     nImageSize=N;
 	BuildFilter(ComputeFilterSize(N));
 
@@ -135,6 +137,7 @@ std::map<std::string, std::string> ProjectionFilterBase::GetParameters()
     parameters["cutoff"]=kipl::strings::value2string(m_fCutOff);
     parameters["order"]=kipl::strings::value2string(m_fOrder);
     parameters["usebias"]=m_bUseBias ? "true" : "false";
+    parameters["biasweight"]=kipl::strings::value2string(m_fBiasWeight);
 
 	return parameters;
 
@@ -190,7 +193,9 @@ void ProjectionFilter::BuildFilter(const size_t N)
 	}
 	memset(mFilter.GetDataPtr()+cN2cutoff,0, sizeof(double)*(N2-cN2cutoff));
 	if (m_bUseBias==true)
-		mFilter[0]=0.25/N2;
+    //	mFilter[0]=m_fBiasWeight/N2;
+            mFilter[0]=m_fBiasWeight*mFilter[1];
+
 	if (fft!=NULL)
 		delete fft;
 
@@ -285,7 +290,8 @@ void ProjectionFilterSingle::BuildFilter(const size_t N)
 	}
 	memset(mFilter.GetDataPtr()+cN2cutoff,0, sizeof(float)*(N2-cN2cutoff));
 	if (m_bUseBias==true)
-		mFilter[0]=0.1f*mFilter[1];
+        mFilter[0]=m_fBiasWeight*mFilter[1];
+
 	if (fft!=NULL)
 		delete fft;
 

@@ -55,6 +55,7 @@ protected:
 	size_t nImageSize;
 
 	bool m_bUseBias;
+    float m_fBiasWeight;
 	size_t ComputeFilterSize(size_t len);
 };
 

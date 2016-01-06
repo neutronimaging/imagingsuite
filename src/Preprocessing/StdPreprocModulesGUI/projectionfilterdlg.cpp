@@ -7,7 +7,8 @@ ProjectionFilterDlg::ProjectionFilterDlg(QWidget * parent) :
     ConfiguratorDialogBase("ProjectionFilterDlg",false,false,false,parent),
     m_checkbox_usebias("Use DC bias"),
     m_label_filter("Filter window"),
-    m_label_cutoff("Cut-of frequency")
+    m_label_cutoff("Cut-of frequency"),
+    m_label_biasweight("DC component weight")
 {
     m_combo_filtertype.addItem(QString::fromStdString(enum2string(ProjectionFilterBase::FilterRamLak)));
     m_combo_filtertype.addItem(QString::fromStdString(enum2string(ProjectionFilterBase::FilterSheppLogan)));
@@ -21,11 +22,20 @@ ProjectionFilterDlg::ProjectionFilterDlg(QWidget * parent) :
     m_hbox_filter.addWidget(&m_label_cutoff);
     m_hbox_filter.addWidget(&m_spin_cutoff);
     m_vbox_main.addLayout(&m_hbox_cutoff);
-    m_vbox_main.addWidget(&m_checkbox_usebias);
+
+    m_hbox_bias.addWidget(&m_checkbox_usebias);
+    m_hbox_bias.addWidget(&m_label_biasweight);
+    m_hbox_bias.addWidget(&m_spin_biasweight);
+    m_vbox_main.addLayout(&m_hbox_bias);
+
     m_FrameMain.setLayout(&m_vbox_main);
 
     m_spin_cutoff.setRange(0.0,1.5);
     m_spin_cutoff.setSingleStep(0.05);
+
+    m_spin_biasweight.setRange(0.0,1.5);
+    m_spin_biasweight.setSingleStep(0.05);
+
     setWindowTitle("Configure the reconstruction filter");
     UpdateDialog();
 
@@ -84,6 +94,7 @@ void ProjectionFilterDlg::UpdateDialog()
     m_combo_filtertype.setCurrentIndex(static_cast<int>(m_eFilterType));
     m_spin_cutoff.setValue(m_fCutOff);
     m_checkbox_usebias.setChecked(m_bUseBias);
+    m_spin_biasweight.setValue(m_fBiasWeight);
 
 }
 
@@ -93,6 +104,7 @@ void ProjectionFilterDlg::UpdateParameters()
     m_fCutOff     = m_spin_cutoff.value();
    // m_fOrder      = m_spin ;
     m_bUseBias    = m_checkbox_usebias.checkState();
+    m_fBiasWeight = m_spin_biasweight.value();
 }
 
 void ProjectionFilterDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -101,6 +113,7 @@ void ProjectionFilterDlg::UpdateParameterList(std::map<std::string, std::string>
     parameters["cutoff"]=kipl::strings::value2string(m_fCutOff);
     parameters["order"]=kipl::strings::value2string(m_fOrder);
     parameters["usebias"]=kipl::strings::bool2string(m_bUseBias);
+    parameters["biasweight"]=kipl::strings::value2string(m_fBiasWeight);
 }
 
 void ProjectionFilterDlg::UpdateDialogFromParameterList(std::map<std::string, std::string> & parameters)
