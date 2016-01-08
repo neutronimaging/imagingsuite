@@ -56,6 +56,7 @@ protected:
 
 	bool m_bUseBias;
     float m_fBiasWeight;
+    size_t m_nPaddingDoubler;
 	size_t ComputeFilterSize(size_t len);
 };
 

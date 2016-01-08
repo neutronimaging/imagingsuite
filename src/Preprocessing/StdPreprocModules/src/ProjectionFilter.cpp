@@ -78,7 +78,8 @@ ProjectionFilterBase::ProjectionFilterBase(std::string name) :
     m_fCutOff(0.5f),
     m_fOrder(1),
     m_bUseBias(true),
-    m_fBiasWeight(0.1f)
+    m_fBiasWeight(0.1f),
+    m_nPaddingDoubler(2)
 {
 }
 
@@ -90,8 +91,10 @@ int ProjectionFilterBase::Configure(ReconConfig config, std::map<std::string, st
 	m_fOrder=GetFloatParameter(parameters,"order");
 	m_bUseBias=kipl::strings::string2bool(GetStringParameter(parameters,"usebias"));
     m_fBiasWeight=GetFloatParameter(parameters,"biasweight");
+    m_nPaddingDoubler=GetIntParameter(parameters,"paddingdoubler");
+
     nImageSize=N;
-	BuildFilter(ComputeFilterSize(N));
+    BuildFilter(N);
 
 	return 0;
 }
@@ -125,7 +128,7 @@ size_t ProjectionFilterBase::ComputeFilterSize(size_t len)
 {
 	double e=log(static_cast<double>(len))/log(2.0);
 
-    return static_cast<size_t>(1)<<(static_cast<size_t>(ceil(e))+1L); // Double the padding
+    return static_cast<size_t>(1)<<(static_cast<size_t>(ceil(e))+m_nPaddingDoubler); // Double the padding
 }
 
 std::map<std::string, std::string> ProjectionFilterBase::GetParameters()
@@ -138,6 +141,7 @@ std::map<std::string, std::string> ProjectionFilterBase::GetParameters()
     parameters["order"]=kipl::strings::value2string(m_fOrder);
     parameters["usebias"]=m_bUseBias ? "true" : "false";
     parameters["biasweight"]=kipl::strings::value2string(m_fBiasWeight);
+    parameters["paddingdoubler"]=kipl::strings::value2string(m_nPaddingDoubler);
 
 	return parameters;
 
@@ -199,7 +203,7 @@ void ProjectionFilter::BuildFilter(const size_t N)
 	if (fft!=NULL)
 		delete fft;
 
-	fft=new kipl::math::fft::FFTBase(&N,1);
+    fft=new kipl::math::fft::FFTBase(&nFFTsize,1);
 	logger(kipl::logging::Logger::LogVerbose,"Filter init done");
 }
 
@@ -295,7 +299,7 @@ void ProjectionFilterSingle::BuildFilter(const size_t N)
 	if (fft!=NULL)
 		delete fft;
 
-	fft=new kipl::math::fft::FFTBaseFloat(&N,1);
+    fft=new kipl::math::fft::FFTBaseFloat(&nFFTsize,1);
 	
 	PreparePadding(nImageSize,nFFTsize);
 	logger(kipl::logging::Logger::LogVerbose,"Filter init done");

@@ -20,6 +20,6 @@ for i in range(firstframe,lastframe) :
 	matrixname="matrix:matrixname=frame_"+("%04d" % i)+"-slice_####.tif"
 	# adjust the reconstruction angles to alternating between 0-180 and 180-360
 	angle=fmod(i,2)*180 
-	scanarc="projections:scanarc="+str(angle)+" "+str(angle+180)
+	scanarc="'projections:scanarc="+str(angle)+" "+str(angle+180)+"'"
 	# call the reconstruction
 	call([muhrec, "-f", cfgpath, firstindex, lastindex, matrixname, scanarc])
