@@ -89,7 +89,7 @@ int ProjectionFilterBase::Configure(ReconConfig config, std::map<std::string, st
 	m_fCutOff=GetFloatParameter(parameters,"cutoff");
 	m_fOrder=GetFloatParameter(parameters,"order");
 	m_bUseBias=kipl::strings::string2bool(GetStringParameter(parameters,"usebias"));
-    m_fOrder=GetFloatParameter(parameters,"biasweight");
+    m_fBiasWeight=GetFloatParameter(parameters,"biasweight");
     nImageSize=N;
 	BuildFilter(ComputeFilterSize(N));
 
@@ -125,7 +125,7 @@ size_t ProjectionFilterBase::ComputeFilterSize(size_t len)
 {
 	double e=log(static_cast<double>(len))/log(2.0);
 
-	return static_cast<size_t>(1)<<static_cast<size_t>(ceil(e));
+    return static_cast<size_t>(1)<<(static_cast<size_t>(ceil(e))+1L); // Double the padding
 }
 
 std::map<std::string, std::string> ProjectionFilterBase::GetParameters()

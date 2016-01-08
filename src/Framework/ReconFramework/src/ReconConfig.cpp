@@ -161,6 +161,8 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="roi") kipl::strings::String2Array(value,ProjectionInfo.roi,4);
             if (var=="doseroi") kipl::strings::String2Array(value,ProjectionInfo.dose_roi,4);
             if (var=="scanarc") kipl::strings::String2Array(value,ProjectionInfo.fScanArc,2);
+            if (var=="scanarc0") ProjectionInfo.fScanArc[0]=atof(value.c_str());
+            if (var=="scanarc1") ProjectionInfo.fScanArc[1]=atof(value.c_str());
             if (var=="rotate") string2enum(value,ProjectionInfo.eRotate);
             if (var=="flip") string2enum(value,ProjectionInfo.eFlip);
         }
