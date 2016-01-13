@@ -1,31 +1,54 @@
 #include "../../include/filters/nonlocalmeans.h"
 #include "../../include/filters/filter.h"
+#include "../../include/base/thistogram.h"
+#include "../../include/io/io_tiff.h"
 #include <cmath>
+#include <fstream>
 
 namespace akipl {
-NonLocalMeans::NonLocalMeans(int k, double h) :
+NonLocalMeans::NonLocalMeans(int k, double h, size_t nBins) :
     m_fWidth(1.0f/(h*h)),
     m_fWidthLimit(2.65f*h),
-    m_nBoxSize(k)
-{}
+    m_nBoxSize(k),
+    m_nHistSize(nBins),
+    m_nHistogram(nullptr),
+    m_fHistBins(nullptr)
+{
+    m_nHistogram = new size_t[m_nHistSize];
+    m_fHistBins  = new float[m_nHistSize];
+}
+
+NonLocalMeans::~NonLocalMeans()
+{
+    delete [] m_nHistogram;
+    delete [] m_fHistBins;
+
+}
 
 void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImage<float,2> &g)
 {
     g.Resize(f.Dims());
     g=0.0f;
 
+    kipl::io::WriteTIFF(f,"original.tif");
     // Box filter
     kipl::base::TImage<float,2> ff(f.Dims());
     size_t fdims[2]={static_cast<size_t>(m_nBoxSize), static_cast<size_t>(m_nBoxSize)};
 
     size_t nfilt=m_nBoxSize*m_nBoxSize;
     float *kernel=new float[nfilt];
+    for (size_t i=0; i<nfilt; i++)
+        kernel[i]=1.0f/static_cast<float>(nfilt);
+
     kipl::filters::TFilter<float,2> box(kernel,fdims);
     ff=box(f,kipl::filters::FilterBase::EdgeMirror);
     delete [] kernel;
 
+    kipl::io::WriteTIFF(ff,"smooth.tif");
+
     // NL loops
-    nlm_core(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size());
+   // nlm_core(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size());
+     nlm_core_hist(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size());
 }
 
 void NonLocalMeans::operator()(kipl::base::TImage<float,3> &f, kipl::base::TImage<float,3> &g)
@@ -71,6 +94,40 @@ void NonLocalMeans::nlm_core(float *f, float *ff, float *g, size_t N)
          g[i]=gg/wi;
     }
     delete [] w;
+}
+
+vector<pair<float, size_t>> NonLocalMeans::ComputeHistogram(float *data, size_t N)
+{
+    memset(m_nHistogram,0, m_nHistSize*sizeof(size_t));
+    memset(m_fHistBins,0, m_nHistSize*sizeof(float));
+
+    kipl::base::Histogram(data,N,m_nHistogram,m_nHistSize,0.0f,65535.0f,m_fHistBins);
+
+    vector<pair<float, size_t>> hist;
+
+    for (size_t i=0; i<m_fHistBins; i++) {
+        if (m_nHistogram[i]!=0)
+            hist.push_back(make_pair(m_fHistBins[i],m_nHistogram[i]));
+    }
+}
+
+void NonLocalMeans::nlm_core_hist(float *f, float *ff, float *g, size_t N)
+{
+    vector<pair<float, size_t>> hist=ComputeHistogram(ff,N);
+
+    float q;
+    for (size_t i=0; i<N; i++) {
+        float wi=0;
+        float gg=0;
+
+        for (size_t j=0; j<m_nHistSize; j++) {
+            q   = weight(ff[i],m_fHistBins[j]) * static_cast<float>(m_nHistogram[j]);
+            gg += q*m_fHistBins[j];
+            wi += q;
+         }
+         g[i]=gg/wi;
+    }
+
 }
 
 float NonLocalMeans::weight(float a, float b)
