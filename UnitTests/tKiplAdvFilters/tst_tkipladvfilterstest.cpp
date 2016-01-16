@@ -24,7 +24,7 @@ void TKiplAdvFiltersTest::NLMeans_process()
     kipl::base::TImage<float,2> img, res;
     kipl::io::ReadTIFF(img,"../data/scroll.tif");
 
-    akipl::NonLocalMeans nlfilter(3,5,8192);
+    akipl::NonLocalMeans nlfilter(11,1.5,8192);
 
     nlfilter(img,res);
 

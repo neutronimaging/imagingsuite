@@ -2,10 +2,13 @@
 #define NONLOCALMEANS_H
 
 #include "../base/timage.h"
+#include "../logging/logger.h"
 
 namespace akipl {
 
 class NonLocalMeans {
+protected:
+    kipl::logging::Logger logger;
     public:
         /// \brief C'tor
         /// \param k Size of the box filter
