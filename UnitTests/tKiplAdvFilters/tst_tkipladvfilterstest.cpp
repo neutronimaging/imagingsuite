@@ -1,8 +1,10 @@
+#include <iostream>
 #include <QString>
 #include <QtTest>
 #include <base/timage.h>
 #include <io/io_tiff.h>
 #include <filters/nonlocalmeans.h>
+
 
 class TKiplAdvFiltersTest : public QObject
 {
@@ -23,10 +25,14 @@ void TKiplAdvFiltersTest::NLMeans_process()
 {
     kipl::base::TImage<float,2> img, res;
     kipl::io::ReadTIFF(img,"../data/scroll.tif");
+    kipl::io::WriteTIFF(img,"orig_scroll.tif");
+
 
     akipl::NonLocalMeans nlfilter(11,1.5,8192);
 
-    nlfilter(img,res);
+    QBENCHMARK {
+        nlfilter(img,res);
+    }
 
     kipl::io::WriteTIFF(res,"nl_scroll.tif");
 
