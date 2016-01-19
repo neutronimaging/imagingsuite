@@ -24,7 +24,7 @@ TKiplAdvFiltersTest::TKiplAdvFiltersTest()
 void TKiplAdvFiltersTest::NLMeans_process()
 {
     kipl::base::TImage<float,2> img, res;
-    kipl::io::ReadTIFF(img,"../data/scroll.tif");
+    kipl::io::ReadTIFF(img,"../data/scroll_256.tif");
     kipl::io::WriteTIFF(img,"orig_scroll.tif");
 
 

@@ -19,13 +19,14 @@ protected:
             NLM_Naive,              // Reference code to original algorithm
             NLM_HistogramOriginal,  // Reference code to histgram based algorithm
             NLM_ReducedHistogram,   // Version with tuned histogram (zero bins are removed)
-            NLM_HistogramParallel   // c++11 threaded version of NLM_ReducedHistogram, speedup close to N threads
+            NLM_HistogramParallel,   // c++11 threaded version of NLM_ReducedHistogram, speedup close to N threads
+            NLM_HistogramSum
         };
         /// \brief C'tor
         /// \param k Size of the box filter
         /// \param h width of the weighting function
         /// \param nBin number of histogram bins
-        NonLocalMeans(int k, double h, size_t nBins=2048, NLMalgorithms algorithm=NLM_HistogramParallel);
+        NonLocalMeans(int k, double h, size_t nBins=2048, NLMalgorithms algorithm=NLM_HistogramSum);
         ~NonLocalMeans();
 
         void operator()(kipl::base::TImage<float,2> &f, kipl::base::TImage<float,2> &g);
@@ -39,6 +40,7 @@ protected:
 
         /// \brief Computes a new histogram
         vector<pair<float, size_t> > ComputeHistogram(float *data, size_t N);
+        void ComputeHistogramSum(float *data, size_t N);
 
         /// \brief Naive implementation of the non-local means algorithm. Very slow due to N^2 complexity.
         /// \param f pointer to the original image
@@ -61,6 +63,13 @@ protected:
         /// \param N number of pixels
         void nlm_hist_single(float *f, float *ff, float *g, size_t N);
 
+        /// \brief Implementation with histogram patching
+        /// \param f pointer to the original image
+        /// \param ff pointer to the filtered image
+        /// \param g pointer to the result image
+        /// \param N number of pixels
+        void nlm_hist_sum_single(float *f, float *ff, float *g, size_t N);
+
         /// \brief Implementation with histogram patching parallelized by c++11 threads
         /// \param f pointer to the original image
         /// \param ff pointer to the filtered image
@@ -75,6 +84,13 @@ protected:
         /// \param N number of pixels
         void nlm_core_hist(float *f, float *ff, float *g, size_t N);
 
+        /// \brief Implementation with histogram patching, core algorithm
+        /// \param f pointer to the original image
+        /// \param ff pointer to the filtered image
+        /// \param g pointer to the result image
+        /// \param N number of pixels
+        void nlm_core_hist_sum(float *f, float *ff, float *g, size_t N);
+
 
         float m_fWidth;
         float m_fWidthLimit;
@@ -84,6 +100,7 @@ protected:
         NLMalgorithms m_eAlgorithm;
         size_t *m_nHistogram;
         float *m_fHistBins;
+        float *m_fSums;
         std::vector<pair<float, size_t> > m_hist;
 };
 
@@ -91,7 +108,7 @@ protected:
 
 std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMalgorithms a);
 std::string enum2string(akipl::NonLocalMeans::NLMalgorithms a);
-void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms a);
+void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a);
 
 //#include "core/nonlocalmeans.hpp"
 #endif // NONLOCALMEANS_H
