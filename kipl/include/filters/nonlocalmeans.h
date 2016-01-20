@@ -39,7 +39,7 @@ protected:
         float weight(float a,float b);
 
         /// \brief Computes a new histogram
-        vector<pair<float, size_t> > ComputeHistogram(float *data, size_t N);
+        vector<pair<double, size_t> > ComputeHistogram(float *data, size_t N);
         void ComputeHistogramSum(float *data, size_t N);
 
         /// \brief Naive implementation of the non-local means algorithm. Very slow due to N^2 complexity.
@@ -99,9 +99,9 @@ protected:
         size_t m_nHistSize;
         NLMalgorithms m_eAlgorithm;
         size_t *m_nHistogram;
-        float *m_fHistBins;
-        float *m_fSums;
-        std::vector<pair<float, size_t> > m_hist;
+        double *m_fHistBins;
+        double *m_fSums;
+        std::vector<pair<double, size_t> > m_hist;
 };
 
 }

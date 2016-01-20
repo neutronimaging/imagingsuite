@@ -20,11 +20,12 @@ NonLocalMeans::NonLocalMeans(int k, double h, size_t nBins, NLMalgorithms algori
     m_nHistSize(nBins),
     m_eAlgorithm(algorithm),
     m_nHistogram(nullptr),
-    m_fHistBins(nullptr)
+    m_fHistBins(nullptr),
+    m_fSums(nullptr)
 {
     m_nHistogram = new size_t[m_nHistSize];
-    m_fHistBins  = new float[m_nHistSize];
-    m_fSums      = new float[m_nHistSize];
+    m_fHistBins  = new double[m_nHistSize];
+    m_fSums      = new double[m_nHistSize];
 }
 
 NonLocalMeans::~NonLocalMeans()
@@ -41,6 +42,10 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
 
     // Box filter
     kipl::base::TImage<float,2> ff(f.Dims());
+
+    for (size_t i=0; i<ff.Size(); i++) {
+        ff[i]=f[i]*f[i];
+    }
     size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
     size_t fdims_y[2]={1, static_cast<size_t>(m_nBoxSize)};
 
@@ -51,7 +56,7 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
 
     kipl::filters::TFilter<float,2> box_x(kernel,fdims_x);
     kipl::filters::TFilter<float,2> box_y(kernel,fdims_y);
-    g=box_x(f,kipl::filters::FilterBase::EdgeMirror);
+    g=box_x(ff,kipl::filters::FilterBase::EdgeMirror);
     ff=box_y(g,kipl::filters::FilterBase::EdgeMirror);
     delete [] kernel;
 
@@ -118,14 +123,20 @@ void NonLocalMeans::nlm_naive(float *f, float *ff, float *g, size_t N)
     delete [] w;
 }
 
-vector<pair<float, size_t> > NonLocalMeans::ComputeHistogram(float *data, size_t N)
+vector<pair<double, size_t> > NonLocalMeans::ComputeHistogram(float *data, size_t N)
 {
     memset(m_nHistogram,0, m_nHistSize*sizeof(size_t));
-    memset(m_fHistBins,0, m_nHistSize*sizeof(float));
+    memset(m_fHistBins,0, m_nHistSize*sizeof(double));
 
-    kipl::base::Histogram(data,N,m_nHistogram,m_nHistSize,0.0f,0.0f,m_fHistBins);
+    float *hb=new float[m_nHistSize];
 
-    vector<pair<float, size_t> > hist;
+    kipl::base::Histogram(data,N,m_nHistogram,m_nHistSize,0.0f,0.0f,hb);
+
+    for (size_t i=0; i<m_nHistSize; i++) {
+        m_fHistBins[i]=static_cast<double>(hb[i]);
+    }
+
+    vector<pair<double, size_t> > hist;
 
     // Reduce the histogram length by removing zero bins
     for (size_t i=0; i<m_nHistSize; i++) {
@@ -139,23 +150,24 @@ vector<pair<float, size_t> > NonLocalMeans::ComputeHistogram(float *data, size_t
 void NonLocalMeans::ComputeHistogramSum(float *data, size_t N)
 {
     memset(m_nHistogram,0, m_nHistSize*sizeof(size_t));
-    memset(m_fHistBins,0, m_nHistSize*sizeof(float));
-    memset(m_fSums,0, m_nHistSize*sizeof(float));
+    memset(m_fHistBins,0, m_nHistSize*sizeof(double));
+    memset(m_fSums,0, m_nHistSize*sizeof(double));
 
-    float start = *std::min_element(data,data+N);
-    float stop  = *std::max_element(data,data+N);
-    float scale=(m_nHistSize)/(stop-start);
+    double start = *std::min_element(data,data+N);
+    double stop  = *std::max_element(data,data+N);
+    double scale=(m_nHistSize)/(stop-start);
     size_t idx=0;
     for (size_t i=0; i<N; i++) {
         idx=static_cast<size_t>((data[i]-start)*scale);
         m_nHistogram[idx]++;
         m_fSums[idx]+=data[i];
-    //    m_fSums[idx]*=0.5f;
+        m_fSums[idx]*=0.5;
     }
 
-    m_fHistBins[0]=start+scale/2;
+    double iScale=1.0/scale;
+    m_fHistBins[0]=start+iScale/2.0;
     for (size_t i=1; i<m_nHistSize; i++)
-        m_fHistBins[i]=m_fHistBins[i-1]+scale;
+        m_fHistBins[i]=m_fHistBins[i-1]+iScale;
 
 }
 
@@ -168,7 +180,7 @@ void NonLocalMeans::nlm_hist_original(float *f, float *ff, float *g, size_t N)
 {
     std::ostringstream msg;
 
-    std::vector<pair<float, size_t> > hist=ComputeHistogram(ff,N);
+    std::vector<pair<double, size_t> > hist=ComputeHistogram(ff,N);
 
     float q;
     for (size_t i=0; i<N; i++) {
@@ -204,6 +216,7 @@ void NonLocalMeans::nlm_hist_single(float *f, float *ff, float *g, size_t N)
 void NonLocalMeans::nlm_hist_sum_single(float *f, float *ff, float *g, size_t N)
 {
     ComputeHistogramSum(ff,N);
+    std::cout<<"histogram interval ["<<m_fHistBins[0]<<", "<<m_fHistBins[m_nHistSize-1]<<"] step="<<m_fHistBins[1]-m_fHistBins[0]<<std::endl;
 
     nlm_core_hist_sum(f, ff, g, N);
 }
@@ -235,7 +248,7 @@ void NonLocalMeans::nlm_hist_threaded(float *f, float *ff, float *g, size_t N)
 
     // call join() on each thread in turn
     for_each(threads.begin(), threads.end(),
-                        std::mem_fn(&std::thread::join));
+        std::mem_fn(&std::thread::join));
 
 }
 
@@ -266,9 +279,9 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *g, size_t N)
         float gg=0;
 
         for (size_t j=0; j<m_nHistSize; j++) {
-            q   = weight(ff[i],m_fHistBins[j]); // Using distance from local average
+            q   = weight(ff[i],m_fHistBins[j])* m_nHistogram[j]; // Using distance from local average
             gg += q * m_fSums[j];
-            wi += q * m_nHistogram[j];
+            wi += q ;
          }
          g[i]=gg/wi;
     }
@@ -277,9 +290,9 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *g, size_t N)
 
 float NonLocalMeans::weight(float a, float b)
 {
-    float diff=a-b;
+    float diff=a+b-sqrt(a*b);
 
-    return (diff<m_fWidthLimit) ? exp(-diff*diff*m_fWidth) : 0.0f;
+    return (diff<m_fWidthLimit) ? exp(-diff*m_fWidth) : 0.0f;
 }
 
 }

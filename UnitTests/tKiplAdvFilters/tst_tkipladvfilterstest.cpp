@@ -28,7 +28,7 @@ void TKiplAdvFiltersTest::NLMeans_process()
     kipl::io::WriteTIFF(img,"orig_scroll.tif");
 
 
-    akipl::NonLocalMeans nlfilter(11,1.5,8192);
+    akipl::NonLocalMeans nlfilter(11,650.0,8192);
 
     QBENCHMARK {
         nlfilter(img,res);
