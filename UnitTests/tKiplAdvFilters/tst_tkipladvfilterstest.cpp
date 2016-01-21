@@ -28,13 +28,13 @@ void TKiplAdvFiltersTest::NLMeans_process()
     kipl::io::WriteTIFF(img,"orig_scroll.tif");
 
 
-    akipl::NonLocalMeans nlfilter(11,650.0,8192);
+    akipl::NonLocalMeans nlfilter(11,50000.0f,8192,akipl::NonLocalMeans::NLM_HistogramSumParallel);
 
     QBENCHMARK {
         nlfilter(img,res);
     }
 
-    kipl::io::WriteTIFF(res,"nl_scroll.tif");
+    kipl::io::WriteTIFF32(res,"nl_scroll.tif");
 
 }
 

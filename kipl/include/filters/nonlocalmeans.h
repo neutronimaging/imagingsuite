@@ -20,7 +20,8 @@ protected:
             NLM_HistogramOriginal,  // Reference code to histgram based algorithm
             NLM_ReducedHistogram,   // Version with tuned histogram (zero bins are removed)
             NLM_HistogramParallel,   // c++11 threaded version of NLM_ReducedHistogram, speedup close to N threads
-            NLM_HistogramSum
+            NLM_HistogramSum,
+            NLM_HistogramSumParallel // c++11 threaded version of NLM_HistogramSum, speedup close to N threads
         };
         /// \brief C'tor
         /// \param k Size of the box filter
@@ -40,7 +41,12 @@ protected:
 
         /// \brief Computes a new histogram
         vector<pair<double, size_t> > ComputeHistogram(float *data, size_t N);
-        void ComputeHistogramSum(float *data, size_t N);
+
+        /// \brief Computes a histogram and the average intensity in each bin
+        /// \param f Original image
+        /// \param f2 mean squared image
+        /// \param N number of pixels
+        void ComputeHistogramSum(float *f, float *f2, size_t N);
 
         /// \brief Naive implementation of the non-local means algorithm. Very slow due to N^2 complexity.
         /// \param f pointer to the original image
@@ -70,6 +76,13 @@ protected:
         /// \param N number of pixels
         void nlm_hist_sum_single(float *f, float *ff, float *g, size_t N);
 
+        /// \brief Implementation with histogram patching summing a contributions per bin parallelized by c++11 threads
+        /// \param f pointer to the original image
+        /// \param ff pointer to the filtered image
+        /// \param g pointer to the result image
+        /// \param N number of pixels
+        void nlm_hist_sum_threaded(float *f, float *ff, float *g, size_t N);
+
         /// \brief Implementation with histogram patching parallelized by c++11 threads
         /// \param f pointer to the original image
         /// \param ff pointer to the filtered image
@@ -90,6 +103,8 @@ protected:
         /// \param g pointer to the result image
         /// \param N number of pixels
         void nlm_core_hist_sum(float *f, float *ff, float *g, size_t N);
+
+
 
 
         float m_fWidth;

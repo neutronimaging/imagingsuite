@@ -10,6 +10,7 @@
 
 namespace kipl { namespace math {
 double KIPLSHARED_EXPORT sum(float const * const data, const size_t N);
+
 size_t KIPLSHARED_EXPORT  sum(size_t const * const data, const size_t N);
 
 double KIPLSHARED_EXPORT  sum2(float const * const data, const size_t N);

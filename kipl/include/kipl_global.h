@@ -1,12 +1,18 @@
 #ifndef KIPL_GLOBAL_H
 #define KIPL_GLOBAL_H
 
+
+
+#if !defined(NO_QT)
 #include <QtCore/qglobal.h>
 
 #if defined(KIPL_LIBRARY)
 #  define KIPLSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define KIPLSHARED_EXPORT Q_DECL_IMPORT
+#endif
+#else
+#define KIPLSHARED_EXPORT
 #endif
 
 #ifdef __GNUC__
