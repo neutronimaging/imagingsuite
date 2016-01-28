@@ -44,9 +44,24 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
     // Box filter
     kipl::base::TImage<float,2> ff(f.Dims());
 
-    for (size_t i=0; i<ff.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
-        ff[i]=f[i]*f[i];
+    double sum=0.0;
+    double sum2=0.0;
+
+    const size_t N=f.Size();
+    for (size_t i=0; i<N; i++) { // Compute the squared pixel values of f as preparation for the L2 norm
+        sum+=f[i];
+        sum2+=f[i]*f[i];
     }
+
+    double m=sum/static_cast<double>(N);
+    double s=sqrt(1.0/(N-1.0)*(sum2-sum*sum/static_cast<double>(N)));
+
+    for (size_t i=0; i<ff.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
+        double v=(f[i]-m)/s;
+        ff[i]=v*v;
+    }
+
+
 
     // Preparing filter kernels
     size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
