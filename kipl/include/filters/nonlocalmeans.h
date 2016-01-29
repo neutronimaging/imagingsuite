@@ -11,6 +11,18 @@
 
 namespace akipl {
 
+class HistogramBin {
+public:
+    HistogramBin();
+    HistogramBin(const HistogramBin &h);
+    HistogramBin & operator=(const HistogramBin &h);
+
+    size_t cnt;
+    double sum;
+    double local_avg;
+    double bin;
+};
+
 class NonLocalMeans {
 protected:
     kipl::logging::Logger logger;
@@ -36,6 +48,10 @@ protected:
     protected:
         /// \brief Computes distance weight between a and b
         /// \param first value
+        float weight(float a);
+
+        /// \brief Computes distance weight between a and b
+        /// \param first value
         /// \param second value
         float weight(float a,float b);
 
@@ -44,9 +60,17 @@ protected:
 
         /// \brief Computes a histogram and the average intensity in each bin
         /// \param f Original image
-        /// \param f2 mean squared image
+        /// \param ff mean image
+        /// \param ff2 mean squared image
         /// \param N number of pixels
-        void ComputeHistogramSum(float *f, float *f2, size_t N);
+        void ComputeHistogramSum(float *f, float *ff, float *ff2, size_t N);
+
+        /// \brief Computes a histogram and the average intensity in each bin using stl vector and HistogramBin
+        /// \param f Original image
+        /// \param ff mean image
+        /// \param ff2 mean squared image
+        /// \param N number of pixels
+        void ComputeHistogramSum2(float *f, float *ff, float *ff2, size_t N);
 
         /// \brief Naive implementation of the non-local means algorithm. Very slow due to N^2 complexity.
         /// \param f pointer to the original image
@@ -74,14 +98,14 @@ protected:
         /// \param ff pointer to the filtered image
         /// \param g pointer to the result image
         /// \param N number of pixels
-        void nlm_hist_sum_single(float *f, float *ff, float *g, size_t N);
+        void nlm_hist_sum_single(float *f, float *ff, float *ff2, float *g, size_t N);
 
         /// \brief Implementation with histogram patching summing a contributions per bin parallelized by c++11 threads
         /// \param f pointer to the original image
         /// \param ff pointer to the filtered image
         /// \param g pointer to the result image
         /// \param N number of pixels
-        void nlm_hist_sum_threaded(float *f, float *ff, float *g, size_t N);
+        void nlm_hist_sum_threaded(float *f, float *ff, float *ff2, float *g, size_t N);
 
         /// \brief Implementation with histogram patching parallelized by c++11 threads
         /// \param f pointer to the original image
@@ -102,10 +126,12 @@ protected:
         /// \param ff pointer to the filtered image
         /// \param g pointer to the result image
         /// \param N number of pixels
-        void nlm_core_hist_sum(float *f, float *ff, float *g, size_t N);
+        void nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g, size_t N);
 
+        void SaveCurrentHistogram();
+        void SaveDebugImage(kipl::base::TImage<float,2> &img, std::string fname);
 
-
+        bool m_bSaveDebugData;
 
         float m_fWidth;
         float m_fWidthLimit;
@@ -117,6 +143,7 @@ protected:
         double *m_fHistBins;
         double *m_fSums;
         std::vector<pair<double, size_t> > m_hist;
+        std::vector<HistogramBin> m_Histogram;
 };
 
 }

@@ -9,11 +9,39 @@
 #include "../../include/filters/nonlocalmeans.h"
 #include "../../include/filters/filter.h"
 #include "../../include/base/thistogram.h"
-//#include "../../include/io/io_tiff.h"
+#include "../../include/io/io_tiff.h"
 
 namespace akipl {
+//===========================================================
+// Implementation of helper class Histogram bin
+HistogramBin::HistogramBin() :
+    cnt(0L),
+    sum(0.0),
+    bin(0.0)
+{
+
+}
+
+HistogramBin::HistogramBin(const HistogramBin &h) :
+    cnt(h.cnt),
+    sum(h.sum),
+    bin(h.bin)
+{
+
+}
+
+HistogramBin & HistogramBin::operator=(const HistogramBin &h)
+{
+    cnt=h.cnt;
+    sum=h.sum;
+    bin=h.bin;
+}
+
+//===========================================================
+// Implementation of Non local means filter
 NonLocalMeans::NonLocalMeans(int k, double h, size_t nBins, NLMalgorithms algorithm) :
     logger("NonLocalMeans"),
+    m_bSaveDebugData(true),
     m_fWidth(1.0f/(h*h)),
     m_fWidthLimit(2.65f*h),
     m_nBoxSize(k),
@@ -35,6 +63,26 @@ NonLocalMeans::~NonLocalMeans()
     delete [] m_fSums;
 }
 
+void NonLocalMeans::SaveCurrentHistogram()
+{
+    if (m_bSaveDebugData) {
+        std::ofstream histfile("histogram.csv");
+
+        for (size_t i=0; i<m_nHistSize; i++) {
+            histfile<<m_fHistBins[i]<<", ";
+            histfile<<m_nHistogram[i]<<", ";
+            histfile<<m_fSums[i]<<std::endl;
+        }
+    }
+}
+
+void NonLocalMeans::SaveDebugImage(kipl::base::TImage<float,2> & img, std::string fname)
+{
+    if (m_bSaveDebugData) {
+        kipl::io::WriteTIFF32(img,fname.c_str());
+    }
+}
+
 void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImage<float,2> &g)
 {
     // Initialize result image
@@ -43,6 +91,7 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
 
     // Box filter
     kipl::base::TImage<float,2> ff(f.Dims());
+    kipl::base::TImage<float,2> ff2(f.Dims());
 
     double sum=0.0;
     double sum2=0.0;
@@ -63,8 +112,11 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
     }
 
     for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
-        ff[i]=ff[i]*ff[i];
+        double v=ff[i];
+        ff2[i]=v*v;
     }
+
+    SaveDebugImage(ff2,"normed_sq.tif");
 
     // Preparing filter kernels
     size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
@@ -78,19 +130,25 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
     kipl::filters::TFilter<float,2> box_y(kernel,fdims_y);
 
     // Filter the f^2 image in two steps using g as intermediate storage
-    g=box_x(ff,kipl::filters::FilterBase::EdgeMirror);
+    g=box_x(f,kipl::filters::FilterBase::EdgeMirror);
     ff=box_y(g,kipl::filters::FilterBase::EdgeMirror);
+
+    // Filter the f^2 image in two steps using g as intermediate storage
+    g=box_x(ff2,kipl::filters::FilterBase::EdgeMirror);
+    ff2=box_y(g,kipl::filters::FilterBase::EdgeMirror);
+
+    SaveDebugImage(ff,"normed_sq_filtered.tif");
     delete [] kernel;
     g=0.0f;
 
     // Select non-local means algorithm, most are development versions
     switch (m_eAlgorithm) {
-        case NLM_Naive                  : nlm_naive(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-        case NLM_HistogramOriginal      : nlm_hist_original(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-        case NLM_ReducedHistogram       : nlm_hist_single(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-        case NLM_HistogramParallel      : nlm_hist_threaded(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-        case NLM_HistogramSum           : nlm_hist_sum_single(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-        case NLM_HistogramSumParallel   : nlm_hist_sum_threaded(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+        case NLM_Naive                  : nlm_naive(f.GetDataPtr(),ff2.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+        case NLM_HistogramOriginal      : nlm_hist_original(f.GetDataPtr(),ff2.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+        case NLM_ReducedHistogram       : nlm_hist_single(f.GetDataPtr(),ff2.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+        case NLM_HistogramParallel      : nlm_hist_threaded(f.GetDataPtr(),ff2.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+        case NLM_HistogramSum           : nlm_hist_sum_single(f.GetDataPtr(),ff.GetDataPtr(), ff2.GetDataPtr(), g.GetDataPtr(),f.Size()); break;
+        case NLM_HistogramSumParallel   : nlm_hist_sum_threaded(f.GetDataPtr(),ff.GetDataPtr(),ff2.GetDataPtr(), g.GetDataPtr(),f.Size()); break;
     }
 
 }
@@ -121,8 +179,8 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,3> &f, kipl::base::TImag
         case NLM_HistogramOriginal  : nlm_hist_original(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
         case NLM_ReducedHistogram   : nlm_hist_single(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
         case NLM_HistogramParallel  : nlm_hist_threaded(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-        case NLM_HistogramSum       : nlm_hist_sum_single(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
-    case NLM_HistogramSumParallel : nlm_hist_sum_threaded(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+   //     case NLM_HistogramSum       : nlm_hist_sum_single(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
+   // case NLM_HistogramSumParallel : nlm_hist_sum_threaded(f.GetDataPtr(),ff.GetDataPtr(),g.GetDataPtr(),f.Size()); break;
     }
 }
 
@@ -263,20 +321,20 @@ void NonLocalMeans::nlm_core_hist(float *f, float *ff, float *g, size_t N)
 // ------------------------------------------------------------------------
 // Second version using the sum of all pixels contributing to a bin
 
-void NonLocalMeans::ComputeHistogramSum(float *f, float *f2, size_t N)
+void NonLocalMeans::ComputeHistogramSum(float *f, float *ff, float *ff2, size_t N)
 {
     // Reset histogram arrays
     memset(m_nHistogram,0, m_nHistSize*sizeof(size_t));
     memset(m_fHistBins,0, m_nHistSize*sizeof(double));
     memset(m_fSums,0, m_nHistSize*sizeof(double));
 
-    double start = *std::min_element(f2,f2+N);
-    double stop  = *std::max_element(f2,f2+N);
+    double start = *std::min_element(ff2,ff2+N);
+    double stop  = *std::max_element(ff2,ff2+N);
     double scale=(m_nHistSize)/(stop-start);
     size_t idx=0;
 
     for (size_t i=0; i<N; i++) { // Compute histogram and average value in each bin
-        idx=static_cast<size_t>((f2[i]-start)*scale);
+        idx=static_cast<size_t>((ff2[i]-start)*scale);
         if (idx<m_nHistSize) {
             m_nHistogram[idx]++;
             m_fSums[idx]+=f[i];
@@ -287,20 +345,52 @@ void NonLocalMeans::ComputeHistogramSum(float *f, float *f2, size_t N)
     m_fHistBins[0]=start+iScale/2.0;
     for (size_t i=1; i<m_nHistSize; i++) // Compute the bin values
         m_fHistBins[i]=m_fHistBins[i-1]+iScale;
+
+    SaveCurrentHistogram();
 }
 
+void NonLocalMeans::ComputeHistogramSum2(float *f, float *ff, float *ff2, size_t N)
+{
+    // Reset histogram arrays
+    m_Histogram.clear();
+    HistogramBin bin;
+    m_Histogram.resize(m_nHistSize,bin);
+
+    double start = *std::min_element(ff2,ff2+N);
+    double stop  = *std::max_element(ff2,ff2+N);
+    double scale=(m_nHistSize)/(stop-start);
+    size_t idx=0;
+
+    for (size_t i=0; i<N; i++) { // Compute histogram and average value in each bin
+        idx=static_cast<size_t>((ff2[i]-start)*scale);
+        if (idx<m_nHistSize) {
+            m_Histogram[idx].cnt++;
+            m_Histogram[idx].sum+=f[i];
+            m_Histogram[idx].local_avg+=ff[i];
+        }
+    }
+
+    double iScale=1.0/scale;
+    m_Histogram[0].bin=start+iScale/2.0;
+    for (size_t i=1; i<m_nHistSize; i++) {// Compute the bin values
+        m_Histogram[i].bin=m_Histogram[i-1].bin+iScale;
+        m_Histogram[i].local_avg=m_Histogram[i].local_avg/m_Histogram[i].cnt;
+    }
+
+    SaveCurrentHistogram();
+}
 /// \brief Implementation with histogram patching
 /// \param f pointer to the original image
 /// \param ff pointer to the filtered image
 /// \param g pointer to the result image
 /// \param N number of pixels
-void NonLocalMeans::nlm_hist_sum_single(float *f, float *ff, float *g, size_t N)
+void NonLocalMeans::nlm_hist_sum_single(float *f, float *ff, float *ff2, float *g, size_t N)
 {
-    ComputeHistogramSum(f,ff,N);
+    ComputeHistogramSum(f,ff,ff2,N);
   //  std::cout<<"histogram interval ["<<m_fHistBins[0]<<", "<<m_fHistBins[m_nHistSize-1]<<"] step="<<m_fHistBins[1]-m_fHistBins[0]<<std::endl;
 
     try {
-        nlm_core_hist_sum(f, ff, g, N);
+        nlm_core_hist_sum(f, ff, ff2, g, N);
     }
     catch (kipl::base::KiplException & e) {
         std::cout<<e.what()<<std::endl;
@@ -312,11 +402,11 @@ void NonLocalMeans::nlm_hist_sum_single(float *f, float *ff, float *g, size_t N)
 /// \param ff pointer to the filtered image
 /// \param g pointer to the result image
 /// \param N number of pixels
-void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *g, size_t N)
+void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *ff2, float *g, size_t N)
 {
     std::ostringstream msg;
 
-    ComputeHistogramSum(f,ff,N);
+    ComputeHistogramSum(f,ff,ff2,N);
 
     const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
     msg.str("");
@@ -329,16 +419,15 @@ void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *g, size_t 
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
         // spawn threads
-        threads.push_back(std::thread([=] {nlm_core_hist_sum(f+i*M,ff+i*M,g+i*M,M + (i==concurentThreadsSupported-1)*(N % concurentThreadsSupported)); }));
+        threads.push_back(std::thread([=] {nlm_core_hist_sum(f+i*M,ff+i*M,ff2+i*M,g+i*M,M + (i==concurentThreadsSupported-1)*(N % concurentThreadsSupported)); }));
     }
 
     // call join() on each thread in turn
     for_each(threads.begin(), threads.end(),
         std::mem_fn(&std::thread::join));
-
 }
 
-void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *g, size_t N)
+void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g, size_t N)
 {
     std::ostringstream msg;
 
@@ -349,10 +438,10 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *g, size_t N)
         double gg=0.0f;
 
         for (size_t j=0; j<m_nHistSize; j++) {
-            if (m_nHistogram[j]) {
-                q   = weight(ff[i],m_fHistBins[j]); // Using distance from local average
-                gg += q * m_fSums[j];
-                wi += q * m_nHistogram[j] ;
+            if (m_Histogram[j].bin) {
+                q   = weight(ff2[i]-2*ff[i]*m_Histogram[j].local_avg+m_Histogram[j].bin); // Using distance from local average
+                gg += q * m_Histogram[j].sum;
+                wi += q * m_Histogram[j].cnt ;
              }
         }
 
@@ -362,10 +451,14 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *g, size_t N)
             throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
         }
     }
-
 }
 
-float NonLocalMeans::weight(float a, float b)
+inline float NonLocalMeans::weight(float a)
+{
+    return exp(-a*m_fWidth); // m_fWidth is precalculated as the reciprocal
+}
+
+inline float NonLocalMeans::weight(float a, float b)
 {
     float diff=a+b-2*sqrt(a*b); // corresponds to L2 norm sum((x-y)^2)=sum(x^2)+sum(y^2)-2*sum(x*y)
                               // The cross correlation term is approximated by 2*sum(x*y)
