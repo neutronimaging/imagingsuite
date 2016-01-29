@@ -55,13 +55,16 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
 
     double m=sum/static_cast<double>(N);
     double s=sqrt(1.0/(N-1.0)*(sum2-sum*sum/static_cast<double>(N)));
-
-    for (size_t i=0; i<ff.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
+    double datamin=std::numeric_limits<double>::max();
+    for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
         double v=(f[i]-m)/s;
-        ff[i]=v*v;
+        ff[i]=v;
+        datamin= ff[i]<datamin ? ff[i] : datamin;
     }
 
-
+    for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
+        ff[i]=ff[i]*ff[i];
+    }
 
     // Preparing filter kernels
     size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
