@@ -27,25 +27,37 @@ class NonLocalMeans {
 protected:
     kipl::logging::Logger logger;
     public:
-        enum NLMalgorithms {
+        enum class NLMalgorithms {
             NLM_Naive,              // Reference code to original algorithm
             NLM_HistogramOriginal,  // Reference code to histgram based algorithm
-            NLM_ReducedHistogram,   // Version with tuned histogram (zero bins are removed)
-            NLM_HistogramParallel,   // c++11 threaded version of NLM_ReducedHistogram, speedup close to N threads
             NLM_HistogramSum,
             NLM_HistogramSumParallel // c++11 threaded version of NLM_HistogramSum, speedup close to N threads
+        };
+
+        enum class NLMwindows {
+            NLM_window_sum,
+            NLM_window_avg,
+            NLM_window_gauss
         };
         /// \brief C'tor
         /// \param k Size of the box filter
         /// \param h width of the weighting function
         /// \param nBin number of histogram bins
-        NonLocalMeans(int k, double h, size_t nBins=2048, NLMalgorithms algorithm=NLM_HistogramSum);
+        NonLocalMeans(int k, double h, size_t nBins=2048, NLMwindows window=NonLocalMeans::NLMwindows::NLM_window_sum,NLMalgorithms algorithm=NonLocalMeans::NLMalgorithms::NLM_HistogramSum);
         ~NonLocalMeans();
 
         void operator()(kipl::base::TImage<float,2> &f, kipl::base::TImage<float,2> &g);
         void operator()(kipl::base::TImage<float,3> &f, kipl::base::TImage<float,3> &g);
 
     protected:
+        void NeighborhoodSums(kipl::base::TImage<float,2> &f,
+                              kipl::base::TImage<float,2> &ff,
+                              kipl::base::TImage<float,2> &ff2);
+
+        size_t GetNeighborhood(float *img, float *pNeighborhood, ptrdiff_t pos, ptrdiff_t nLine, ptrdiff_t N);
+
+        float L2Norm(float *a, float *b, size_t N);
+
         /// \brief Computes distance weight between a and b
         /// \param first value
         float weight(float a);
@@ -65,19 +77,12 @@ protected:
         /// \param N number of pixels
         void ComputeHistogramSum(float *f, float *ff, float *ff2, size_t N);
 
-        /// \brief Computes a histogram and the average intensity in each bin using stl vector and HistogramBin
-        /// \param f Original image
-        /// \param ff mean image
-        /// \param ff2 mean squared image
-        /// \param N number of pixels
-        void ComputeHistogramSum2(float *f, float *ff, float *ff2, size_t N);
-
         /// \brief Naive implementation of the non-local means algorithm. Very slow due to N^2 complexity.
         /// \param f pointer to the original image
         /// \param ff pointer to the filtered image
         /// \param g pointer to the result image
         /// \param N number of pixels
-        void nlm_naive(float *f, float *ff, float *g, size_t N);
+        void nlm_naive(float *f, float *g, size_t nLine, size_t N);
 
         /// \brief Implementation with histogram patching
         /// \param f pointer to the original image
@@ -129,6 +134,7 @@ protected:
         void nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g, size_t N);
 
         void SaveCurrentHistogram();
+        void SaveCurrentHistogram2();
         void SaveDebugImage(kipl::base::TImage<float,2> &img, std::string fname);
 
         bool m_bSaveDebugData;
@@ -139,6 +145,7 @@ protected:
 
         size_t m_nHistSize;
         NLMalgorithms m_eAlgorithm;
+        NLMwindows m_eWindow;
         size_t *m_nHistogram;
         double *m_fHistBins;
         double *m_fSums;
@@ -151,6 +158,10 @@ protected:
 std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMalgorithms a);
 std::string enum2string(akipl::NonLocalMeans::NLMalgorithms a);
 void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a);
+
+std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMwindows w);
+std::string enum2string(akipl::NonLocalMeans::NLMwindows w);
+void string2enum(std::string s, akipl::NonLocalMeans::NLMwindows &w);
 
 //#include "core/nonlocalmeans.hpp"
 #endif // NONLOCALMEANS_H

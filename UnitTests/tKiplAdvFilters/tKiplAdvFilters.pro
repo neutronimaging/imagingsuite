@@ -38,9 +38,6 @@ else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -l
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
 
-
-
-
 SOURCES += tst_tkipladvfilterstest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
