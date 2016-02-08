@@ -7,6 +7,7 @@
 #include <base/timage.h>
 #include <io/io_tiff.h>
 #include <filters/nonlocalmeans.h>
+#include <base/KiplException.h>
 
 
 class TKiplAdvFiltersTest : public QObject
@@ -19,6 +20,8 @@ public:
 private Q_SLOTS:
     void HistogramBin_ctor();
     void HistogramBin_container();
+    void NLMeans_WindowEnum();
+    void NLMeans_AlgorithmEnum();
     void NLMeans_process();
 
 };
@@ -87,6 +90,19 @@ void TKiplAdvFiltersTest::HistogramBin_container()
     QCOMPARE(vec[1].bin,vec2[1].bin);
 }
 
+void TKiplAdvFiltersTest::NLMeans_WindowEnum()
+{
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMwindows::NLM_window_sum),std::string("NLM_window_sum"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMwindows::NLM_window_avg),std::string("NLM_window_avg"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMwindows::NLM_window_gauss),std::string("NLM_window_gauss"));
+    QVERIFY_EXCEPTION_THROWN(enum2string(static_cast<akipl::NonLocalMeans::NLMwindows>(100000)),kipl::base::KiplException);
+}
+
+void TKiplAdvFiltersTest::NLMeans_AlgorithmEnum()
+{
+
+}
+
 void TKiplAdvFiltersTest::NLMeans_process()
 {
     kipl::base::TImage<float,2> img, res;
@@ -97,8 +113,8 @@ void TKiplAdvFiltersTest::NLMeans_process()
     akipl::NonLocalMeans nlfilter(11,
                                   5000.0f,
                                   8192,
-                                  akipl::NonLocalMeans::NLM_window_gauss,
-                                  akipl::NonLocalMeans::NLM_HistogramSumParallel);
+                                  akipl::NonLocalMeans::NLMwindows::NLM_window_gauss,
+                                  akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel);
 
     QBENCHMARK {
         nlfilter(img,res);
@@ -107,6 +123,7 @@ void TKiplAdvFiltersTest::NLMeans_process()
     kipl::io::WriteTIFF32(res,"nl_scroll.tif");
 
 }
+
 
 QTEST_APPLESS_MAIN(TKiplAdvFiltersTest)
 
