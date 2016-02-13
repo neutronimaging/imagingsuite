@@ -4,6 +4,7 @@
 #include "filterbase.h"
 
 namespace kipl { namespace filters {
+
 template <typename T, size_t nDims>
 class TFilter : public kipl::filters::TFilterBase<T,nDims>
 {

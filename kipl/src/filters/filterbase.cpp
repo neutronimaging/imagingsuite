@@ -46,3 +46,24 @@ std::ostream & operator<<(std::ostream &str, FilterBase::EdgeProcessingStyle eps
 	return str;
 }
 }}
+
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &str, kipl::filters::KernelType kt)
+{
+    switch (kt) {
+        case kipl::filters::KernelType::Full : str<<"Full"; break;
+        case kipl::filters::KernelType::Separable : str<<"Separable"; break;
+    }
+
+    return str;
+}
+
+std::ostream & operator<<(std::ostream &str, kipl::filters::FilterBase::EdgeProcessingStyle eps)
+{
+    switch(eps) {
+        case kipl::filters::FilterBase::EdgeZero   : str<<"EdgeZero";   break;
+        case kipl::filters::FilterBase::EdgeSame   : str<<"EdgeSame";   break;
+        case kipl::filters::FilterBase::EdgeMirror : str<<"EdgeMirror"; break;
+        case kipl::filters::FilterBase::EdgeValid  : str<<"EdgeValid";  break;
+    }
+    return str;
+}

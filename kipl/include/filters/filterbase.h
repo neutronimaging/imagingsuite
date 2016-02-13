@@ -10,6 +10,11 @@ class testFilterBase;
 
 namespace kipl { namespace filters {
 
+enum class KernelType {
+    Full,
+    Separable
+};
+
 class KIPLSHARED_EXPORT FilterBase {
 public:
 	enum EdgeProcessingStyle {
@@ -72,9 +77,9 @@ protected:
 	
 };
 
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &str, FilterBase::EdgeProcessingStyle eps);
 }}
 
 #include "core/filterbase.hpp"
-
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &str, kipl::filters::FilterBase::EdgeProcessingStyle eps);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &str, kipl::filters::KernelType kt);
 #endif

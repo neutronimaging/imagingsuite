@@ -7,6 +7,7 @@
 
 #include "../base/timage.h"
 #include "../logging/logger.h"
+#include "filterbase.h"
 
 
 namespace akipl {
@@ -20,6 +21,7 @@ public:
     size_t cnt;
     double sum;
     double local_avg;
+    double local_avg2;
     double bin;
 };
 
@@ -37,7 +39,8 @@ protected:
         enum class NLMwindows {
             NLM_window_sum,
             NLM_window_avg,
-            NLM_window_gauss
+            NLM_window_gauss,
+            NLM_window_buades
         };
         /// \brief C'tor
         /// \param k Size of the box filter
@@ -146,6 +149,7 @@ protected:
         size_t m_nHistSize;
         NLMalgorithms m_eAlgorithm;
         NLMwindows m_eWindow;
+        kipl::filters::KernelType m_Kerneltype;
         size_t *m_nHistogram;
         double *m_fHistBins;
         double *m_fSums;

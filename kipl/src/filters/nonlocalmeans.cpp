@@ -19,7 +19,8 @@ HistogramBin::HistogramBin() :
     cnt(0L),
     sum(0.0),
     bin(0.0),
-    local_avg(0.0)
+    local_avg(0.0),
+    local_avg2(0.0)
 {
 
 }
@@ -28,7 +29,8 @@ HistogramBin::HistogramBin(const HistogramBin &h) :
     cnt(h.cnt),
     sum(h.sum),
     bin(h.bin),
-    local_avg(h.local_avg)
+    local_avg(h.local_avg),
+    local_avg2(h.local_avg2)
 {
 
 }
@@ -39,6 +41,7 @@ HistogramBin & HistogramBin::operator=(const HistogramBin &h)
     sum=h.sum;
     bin=h.bin;
     local_avg=h.local_avg;
+    local_avg2=h.local_avg2;
 
     return *this;
 }
@@ -54,6 +57,7 @@ NonLocalMeans::NonLocalMeans(int k, double h, size_t nBins, NLMwindows window, N
     m_nHistSize(nBins),
     m_eAlgorithm(algorithm),
     m_eWindow(window),
+    m_Kerneltype(kipl::filters::KernelType::Full),
     m_nHistogram(nullptr),
     m_fHistBins(nullptr),
     m_fSums(nullptr)
@@ -144,58 +148,106 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
                                      kipl::base::TImage<float,2> &ff,
                                      kipl::base::TImage<float,2> &ff2)
 {
+    std::ostringstream msg;
     // Box filter
     ff.Resize(f.Dims());
     ff2.Resize(f.Dims());
     kipl::base::TImage<float,2> g;
 
     for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
-        ff[i]=f[i];
-    }
-
-    for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
-        ff2[i]=ff[i]*ff[i];
+        ff2[i]=f[i]*f[i];
     }
 
     // Preparing filter kernels
     size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
     size_t fdims_y[2]={1, static_cast<size_t>(m_nBoxSize)};
 
-    float *kernel=new float[m_nBoxSize+1];
+    float *kernel=nullptr;
     switch (m_eWindow) {
     case NonLocalMeans::NLMwindows::NLM_window_sum :
+        m_Kerneltype=kipl::filters::KernelType::Separable;
+        kernel=new float[m_nBoxSize+1];
         for (int i=0; i<m_nBoxSize; i++)
              kernel[i]=1.0f;
         break;
     case NonLocalMeans::NLMwindows::NLM_window_avg :
+        m_Kerneltype=kipl::filters::KernelType::Separable;
+        kernel=new float[m_nBoxSize+1];
+
         for (int i=0; i<m_nBoxSize; i++)
              kernel[i]=1.0f/static_cast<float>(m_nBoxSize);
         break;
     case NonLocalMeans::NLMwindows::NLM_window_gauss: {
+        m_Kerneltype=kipl::filters::KernelType::Separable;
+        kernel=new float[m_nBoxSize+1];
+
         int mid=m_nBoxSize/2;
         const float sfactor=sqrt(-log(0.05));
         float sigma=mid/sfactor;
+
         float sum=0.0f;
         for (int i=0; i<=mid; i++) {
-             kernel[mid+i]=exp(-i*i/sigma);
+             kernel[mid+i]=exp(-i*i/(2*sigma*sigma));
              sum+=2*kernel[mid+i];
         }
         for (int i=0; i<=mid; i++)
              kernel[mid-i]=kernel[mid+i]=kernel[mid+i]/sum;
-        } break;
+        }
+        break;
+    case NonLocalMeans::NLMwindows::NLM_window_buades : {
+            fdims_x[0]=fdims_x[1]=static_cast<size_t>(2*m_nBoxSize+1);
+            size_t N=fdims_x[0]*fdims_x[1];
+            kernel=new float[N+1];
+
+            int mid=m_nBoxSize;
+
+            float sum=0.0f;
+            int idx=0;
+            for (int i=-mid; i<=mid; i++) {
+                for (int j=-mid; j<=mid; j++, idx++) {
+                 if (!j && !i)
+                     kernel[idx]=kernel[idx-1];
+                 else
+                    kernel[idx]=min(mid-abs(i),mid-abs(j));
+
+                 sum+=kernel[idx];
+                }
+            }
+            for (size_t i=0; i<N; i++)
+                 kernel[i]/=sum;
+
+            m_Kerneltype=kipl::filters::KernelType::Full;
+        }
+        break;
     }
-    kipl::filters::TFilter<float,2> box_x(kernel,fdims_x);
-    kipl::filters::TFilter<float,2> box_y(kernel,fdims_y);
 
-    // Filter the f^2 image in two steps using g as intermediate storage
-    g=box_x(ff,kipl::filters::FilterBase::EdgeMirror);
-    ff=box_y(g,kipl::filters::FilterBase::EdgeMirror);
+//    msg<<"Filter="<<m_eWindow<<", KernelType="<<m_Kerneltype;
+//    logger(logger.LogMessage,msg.str());
+    if (m_Kerneltype==kipl::filters::KernelType::Full) {
+        kipl::filters::TFilter<float,2> filt(kernel,fdims_x);
 
-    // Filter the f^2 image in two steps using g as intermediate storage
-    g=box_x(ff2,kipl::filters::FilterBase::EdgeMirror);
-    ff2=box_y(g,kipl::filters::FilterBase::EdgeMirror);
+        // Filter the f image in two steps using g as intermediate storage
+       ff=filt(f,kipl::filters::FilterBase::EdgeMirror);
 
-  //  SaveDebugImage(ff,"normed_sq_filtered.tif");
+        // Filter the f^2 image in two steps using g as intermediate storage
+        g=filt(ff2,kipl::filters::FilterBase::EdgeMirror);
+        ff2=g;
+    }
+    else {
+        kipl::filters::TFilter<float,2> box_x(kernel,fdims_x);
+        kipl::filters::TFilter<float,2> box_y(kernel,fdims_y);
+
+        // Filter the f^2 image in two steps using g as intermediate storage
+        g=box_x(f,kipl::filters::FilterBase::EdgeMirror);
+        ff=box_y(g,kipl::filters::FilterBase::EdgeMirror);
+
+        // Filter the f^2 image in two steps using g as intermediate storage
+        g=box_x(ff2,kipl::filters::FilterBase::EdgeMirror);
+        ff2=box_y(g,kipl::filters::FilterBase::EdgeMirror);
+    }
+
+    SaveDebugImage(ff,"ff.tif");
+    SaveDebugImage(ff2,"ff2.tif");
     delete [] kernel;
 }
 
@@ -336,17 +388,25 @@ void NonLocalMeans::ComputeHistogramSum(float *f, float *ff, float *ff2, size_t 
             m_Histogram[idx].cnt++;
             m_Histogram[idx].sum+=f[i];
             m_Histogram[idx].local_avg+=ff[i];
+            m_Histogram[idx].local_avg2+=ff2[i];
         }
     }
 
     double iScale=1.0/scale;
     m_Histogram[0].bin=start+iScale/2.0;
     m_Histogram[0].local_avg=m_Histogram[0].local_avg/m_Histogram[0].cnt;
+    m_Histogram[0].local_avg2=m_Histogram[0].local_avg2/m_Histogram[0].cnt;
 
     for (size_t i=1; i<m_nHistSize; i++) {// Compute the bin values
         m_Histogram[i].bin=m_Histogram[i-1].bin+iScale;
-        if (m_Histogram[i].cnt!=0)
+        if (m_Histogram[i].cnt!=0) {
             m_Histogram[i].local_avg=m_Histogram[i].local_avg/m_Histogram[i].cnt;
+            m_Histogram[i].local_avg2=m_Histogram[i].local_avg2/m_Histogram[i].cnt;
+        }
+        else {
+            m_Histogram[i].local_avg=0.0;
+            m_Histogram[i].local_avg2=0.0;
+        }
     }
 
 }
@@ -408,25 +468,29 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g,
     std::ostringstream msg;
 
     float q;
-
+    float qMax=0.0;
     for (size_t i=0; i<N; i++) {
         double wi=0.0f;
         double gg=0.0f;
-
+        qMax=0.0;
         for (size_t j=0; j<m_nHistSize; j++) {
             if (m_Histogram[j].cnt) {
-                q   = weight(ff2[i]-2*ff[i]*m_Histogram[j].local_avg+m_Histogram[j].bin); // Using distance from local average
+                q   = weight(ff2[i]-2*ff[i]*m_Histogram[j].local_avg+m_Histogram[j].local_avg2); // Using distance from local average
                 gg += q * m_Histogram[j].sum;
                 wi += q * m_Histogram[j].cnt ;
+
+                if (qMax<q) {
+                    qMax=q;
+                }
              }
         }
+        gg+=f[i]*qMax;
+        wi+=qMax;
+        if (wi!=0.0)
+            g[i]=static_cast<float>(gg/wi);
+        else
+            g[i]=f[i];
 
-        g[i]=static_cast<float>(gg/wi);
-        if (isnan(g[i])) {
-            g[i]=-1.0;
-            msg.str(""); msg<<"g[i] is NaN at i="<<i<<" gg="<<gg<<", wi="<<wi;
-        //    throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
-        }
     }
 }
 
@@ -501,6 +565,7 @@ std::string enum2string(akipl::NonLocalMeans::NLMwindows w)
     case akipl::NonLocalMeans::NLMwindows::NLM_window_sum           : s="NLM_window_sum"; break;
     case akipl::NonLocalMeans::NLMwindows::NLM_window_avg           : s="NLM_window_avg"; break;
     case akipl::NonLocalMeans::NLMwindows::NLM_window_gauss         : s="NLM_window_gauss"; break;
+    case akipl::NonLocalMeans::NLMwindows::NLM_window_buades        : s="NLM_window_buades"; break;
 
     default: throw kipl::base::KiplException("Failed to convert NLMwindows enum value to string.", __FILE__, __LINE__);
     }
@@ -513,6 +578,7 @@ void string2enum(std::string s, akipl::NonLocalMeans::NLMwindows &w)
     values["NLM_window_sum"]    = akipl::NonLocalMeans::NLMwindows::NLM_window_sum;
     values["NLM_window_avg"]    = akipl::NonLocalMeans::NLMwindows::NLM_window_avg;
     values["NLM_window_gauss"]  = akipl::NonLocalMeans::NLMwindows::NLM_window_gauss;
+    values["NLM_window_buades"]  = akipl::NonLocalMeans::NLMwindows::NLM_window_buades;
 
     auto it=values.find(s);
 
