@@ -11,17 +11,21 @@ class AverageImage
 {
 public:
     enum eAverageMethod {
-        ImageSum,
-        ImageAverage,
-        ImageMedian,
-        ImageWeightedAverage,
-        ImageMin,
-        ImageMax
+        ImageSum,               ///< Compute the sum of the XY-images
+        ImageAverage,           ///< Compute the average of the XY-images
+        ImageMedian,            ///< Compute the median of the XY-images
+        ImageWeightedAverage,   ///< Compute the weighted average of the images
+        ImageMin,               ///< Compute the minimum pixel value of the images
+        ImageMax                ///< Compute the maximum pixel value of the images
     };
     AverageImage();
 
     ~AverageImage();
     int WindowSize;
+    /// \brief Computes a 2D image from a set of images
+    /// \param img A 3D image with the input 2D images in the XY-plane.
+    /// \param method Method selector
+    /// \param weights Additional weights per slice, can be used for dose correction
     kipl::base::TImage<float,2> operator()(kipl::base::TImage<float,3> &img, eAverageMethod method, float *weights=nullptr);
 protected:
     kipl::base::TImage<float,3> WeightImages(kipl::base::TImage<float,3> &img, float *weights);
