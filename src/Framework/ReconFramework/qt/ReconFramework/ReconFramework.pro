@@ -22,7 +22,6 @@ SOURCES += \
     ../../src/ProjectionReader.cpp \
     ../../src/PreprocModuleBase.cpp \
     ../../src/ModuleItem.cpp \
-#    ../../src/InteractionBase.cpp \
     ../../src/BackProjectorModuleBase.cpp
 
 HEADERS += \

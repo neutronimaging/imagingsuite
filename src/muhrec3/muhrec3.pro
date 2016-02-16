@@ -101,8 +101,8 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt
 INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Release/release/ -lReconFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
 else:symbian: LIBS += -lReconFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Release/ -lReconFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Debug/ -lReconFramework
