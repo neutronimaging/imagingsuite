@@ -25,6 +25,7 @@ fi
 `$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-Release/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconAlgorithms-Qt5-Release/libReconAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`

@@ -1,6 +1,6 @@
 CPCMD="ln -s "
 %CPCMD="cp "
-DEST="build-muhrec3-Qt5-Debug/muhrec3.app/Contents/MacOS"
+DEST="build-muhrec3-Qt5-Release/muhrec3.app/Contents/MacOS"
 pushd .
 cd $DEST
 rm -f *.1.0.0.dylib
