@@ -8,6 +8,7 @@ QT       -= gui
 
 TARGET = ProcessFramework
 TEMPLATE = lib
+CONFIG += c++11
 
 unix:!symbian {
     maemo5 {
