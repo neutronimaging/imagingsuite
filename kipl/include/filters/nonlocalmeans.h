@@ -12,7 +12,7 @@
 
 namespace akipl {
 
-class HistogramBin {
+class KIPLSHARED_EXPORT HistogramBin {
 public:
     HistogramBin();
     HistogramBin(const HistogramBin &h);
@@ -25,7 +25,7 @@ public:
     double bin;
 };
 
-class NonLocalMeans {
+class KIPLSHARED_EXPORT NonLocalMeans {
 protected:
     kipl::logging::Logger logger;
     public:
@@ -159,13 +159,13 @@ protected:
 
 }
 
-std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMalgorithms a);
-std::string enum2string(akipl::NonLocalMeans::NLMalgorithms a);
-void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMalgorithms a);
+std::string  KIPLSHARED_EXPORT enum2string(akipl::NonLocalMeans::NLMalgorithms a);
+void  KIPLSHARED_EXPORT string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a);
 
-std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMwindows w);
-std::string enum2string(akipl::NonLocalMeans::NLMwindows w);
-void string2enum(std::string s, akipl::NonLocalMeans::NLMwindows &w);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMwindows w);
+std::string  KIPLSHARED_EXPORT enum2string(akipl::NonLocalMeans::NLMwindows w);
+void  KIPLSHARED_EXPORT string2enum(std::string s, akipl::NonLocalMeans::NLMwindows &w);
 
 //#include "core/nonlocalmeans.hpp"
 #endif // NONLOCALMEANS_H
