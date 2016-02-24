@@ -7,6 +7,7 @@ QT       += core
 
 TARGET = AdvancedFilterModules
 TEMPLATE = lib
+CONFIG += c++11
 
 DEFINES += ADVANCEDFILTERMODULES_LIBRARY
 
@@ -73,8 +74,8 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Debug/debug/ -lProcessFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Debug/debug/ -lProcessFramework
 else:symbian: LIBS += -lProcessFramework
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Release/ -lProcessFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
@@ -82,7 +83,7 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramewor
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/ trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
 else:symbian: LIBS += -lModuleConfig
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/ -lModuleConfig

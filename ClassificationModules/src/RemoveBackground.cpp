@@ -38,7 +38,7 @@ int RemoveBackground::Configure(std::map<std::string, std::string> parameters)
 	return 0;
 }
 
-std::map<std::string, std::string> RemoveBackground::RemoveBackground::GetParameters()
+std::map<std::string, std::string> RemoveBackground::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
 

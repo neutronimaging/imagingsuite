@@ -20,6 +20,8 @@ int NonLocalMeansModule::Configure(std::map<std::string, std::string> parameters
 {
     m_fSensitivity  = GetFloatParameter(parameters,"sensitivity");
     m_nWidth        = GetIntParameter(parameters,"width");
+
+    return 0;
 }
 
 std::map<std::string, std::string> NonLocalMeansModule::GetParameters()
