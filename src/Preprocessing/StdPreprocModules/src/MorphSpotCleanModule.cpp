@@ -70,12 +70,9 @@ bool MorphSpotCleanModule::SetROI(size_t * UNUSED(roi))
 int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
     clog<<"ProcessCore"<<endl;
-#ifdef __APPLE__
-    return ProcessSingle(img);
-#else
-    return ProcessSingle(img);
-    //return ProcessParallel(img);
-#endif
+
+   // return ProcessSingle(img);
+    return ProcessParallelStd(img);
 
     return 0;
 }
@@ -181,14 +178,17 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 {
     std::ostringstream msg;
     const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
-    msg.str("");
-    msg<<"Number of threads: "<<concurentThreadsSupported;
-    logger(logger.LogMessage,msg.str());
+
 
     std::vector<std::thread> threads;
     const int N = static_cast<int>(img.Size(2));
 
     size_t M=N/concurentThreadsSupported;
+
+    msg.str("");
+    msg<<N<<" slices on "<<concurentThreadsSupported<<" threads, "<<M<<" slices per thread";
+    logger(logger.LogMessage,msg.str());
+
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
         // spawn threads
