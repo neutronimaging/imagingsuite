@@ -1,14 +1,10 @@
+#include <set>
 #include <sstream>
+#include <string>
+#include <iomanip>
 
 #include <QFileDialog>
 #include <QMessageBox>
-#include "muhrecmainwindow.h"
-#include "ui_muhrecmainwindow.h"
-#include "configuregeometrydialog.h"
-#include "findskiplistdialog.h"
-#include "recondialog.h"
-#include "viewgeometrylistdialog.h"
-#include "preferencesdialog.h"
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -25,9 +21,14 @@
 #include <ModuleException.h>
 #include <ParameterHandling.h>
 
-#include <set>
-#include <sstream>
-#include <string>
+#include "muhrecmainwindow.h"
+#include "ui_muhrecmainwindow.h"
+#include "configuregeometrydialog.h"
+#include "findskiplistdialog.h"
+#include "recondialog.h"
+#include "viewgeometrylistdialog.h"
+#include "preferencesdialog.h"
+
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -296,7 +297,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
             }
             msg.str("");
-            msg<<sliderval<<" ("<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
+            msg<<sliderval<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
                  (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
 
             ui->label_projindex->setText(QString::fromStdString(msg.str()));

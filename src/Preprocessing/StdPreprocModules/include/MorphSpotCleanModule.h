@@ -22,6 +22,8 @@ protected:
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
     int ProcessSingle(kipl::base::TImage<float,3> & img);
     int ProcessParallel(kipl::base::TImage<float,3> & img);
+    int ProcessParallelStd(kipl::base::TImage<float,3> & img);
+    int ProcessParallelStd(size_t tid, float *pImg, const size_t *dims, size_t N);
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;

@@ -1,4 +1,6 @@
 //#include "stdafx.h"
+#include <thread>
+#include <cstdlib>
 #include "../include/StdPreprocModules_global.h"
 #include "../include/MorphSpotCleanModule.h"
 #include <ParameterHandling.h>
@@ -170,6 +172,61 @@ int MorphSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & img)
             cleaner.Process(proj,m_fThreshold,m_fSigma);
             memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
         }
+    }
+
+    return 0;
+}
+
+int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
+{
+    std::ostringstream msg;
+    const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
+    msg.str("");
+    msg<<"Number of threads: "<<concurentThreadsSupported;
+    logger(logger.LogMessage,msg.str());
+
+    std::vector<std::thread> threads;
+    const int N = static_cast<int>(img.Size(2));
+
+    size_t M=N/concurentThreadsSupported;
+    for(size_t i = 0; i < concurentThreadsSupported; ++i)
+    {
+        // spawn threads
+        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported);
+        float *pImg=img.GetLinePtr(0,i*M);
+        threads.push_back(std::thread([=] { ProcessParallelStd(i,pImg,img.Dims(),M+rest); }));
+    }
+
+    // call join() on each thread in turn
+    for_each(threads.begin(), threads.end(),
+        std::mem_fn(&std::thread::join));
+
+
+
+    return 0;
+}
+
+int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const size_t *dims, size_t N)
+{
+    std::ostringstream msg;
+    size_t i;
+    size_t size=dims[0]*dims[1];
+
+    std::clog<<"Starting morphclean thread id="<<tid<<std::endl;
+    try {
+        kipl::base::TImage<float,2> proj(dims);
+        ImagingAlgorithms::MorphSpotClean cleaner;
+        cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
+        cleaner.setConnectivity(m_eConnectivity);
+
+        for (i=0; i<N; i++) {
+            memcpy(proj.GetDataPtr(),pImg+i*size, size*sizeof(float));
+            cleaner.Process(proj,m_fThreshold,m_fSigma);
+            memcpy(pImg+i*size,proj.GetDataPtr(), size*sizeof(float));
+        }
+    } catch (...) {
+        msg<<"Thread tid="<<tid<<" failed with an exception.";
+        logger(logger.LogMessage,msg.str());
     }
 
     return 0;
