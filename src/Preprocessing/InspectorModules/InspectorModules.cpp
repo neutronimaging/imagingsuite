@@ -14,6 +14,7 @@
 #include "ProjectionInspector.h"
 #include "SaveProjections.h"
 #include "CountNANs.h"
+#include "getimagesize.h"
 
 #include <cstdlib>
 #include <string>
@@ -35,6 +36,9 @@ INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const ch
 
 		if (sName=="CountNANs")
 			return new CountNANs;
+
+        if (sName=="GetImageSize")
+            return new GetImageSize;
 	}
 
 	return NULL;
@@ -71,6 +75,9 @@ INSPECTORMODULESSHARED_EXPORT int GetModuleList(const char *application, void *l
 
 	CountNANs cn;
 	modulelist->operator []("CountNANs")=cn.GetParameters();
+
+    GetImageSize gis;
+    modulelist->operator []("GetImageSize")=gis.GetParameters();
 
 	return 0;
 }

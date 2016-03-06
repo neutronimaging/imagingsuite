@@ -22,7 +22,8 @@ MorphSpotCleanModule::MorphSpotCleanModule() :
     m_nEdgeSmoothLength(5),
     m_nMaxArea(30),
     m_fMinLevel(-0.1),
-    m_fMaxLevel(12)
+    m_fMaxLevel(12),
+    m_bThreading(false)
 {
 }
 
@@ -41,6 +42,7 @@ int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::st
     m_nMaxArea          = GetIntParameter(parameters,"maxarea");
     m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
     m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
+    m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
 
     return 0;
 }
@@ -58,6 +60,7 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
+    parameters["threading"]    = kipl::strings::bool2string(m_bThreading);
 
     return parameters;
 }
@@ -69,10 +72,12 @@ bool MorphSpotCleanModule::SetROI(size_t * UNUSED(roi))
 
 int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-    clog<<"ProcessCore"<<endl;
+    logger(logger.LogMessage,"ProcessCore");
 
-   // return ProcessSingle(img);
-    return ProcessParallelStd(img);
+    if (m_bThreading)
+        return ProcessParallelStd(img);
+    else
+        return ProcessSingle(img);
 
     return 0;
 }
@@ -86,8 +91,7 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
     cleaner.setConnectivity(m_eConnectivity);
 
     try {
-    cleaner.Process(img,m_fThreshold, m_fSigma);
-
+        cleaner.Process(img,m_fThreshold, m_fSigma);
     }
     catch (ImagingException & e) {
         msg.str();
@@ -109,8 +113,6 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
 
     }
 
-//    msg.str(""); msg<<"Processed image"<<img;
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
     return 0;
 }
 
@@ -128,11 +130,11 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
 
     msg.str("");
     try {
-    for (i=0; i<N; i++) {
-        memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
-        cleaner.Process(proj,m_fThreshold,m_fSigma);
-        memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
-    }
+        for (i=0; i<N; i++) {
+            memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
+            cleaner.Process(proj,m_fThreshold,m_fSigma);
+            memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
+        }
     }
     catch (ImagingException & e) {
         msg<<"Imaging exception while processing projection "<<i<<"("<<N<<") "<<std::endl<<e.what();
@@ -192,7 +194,7 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
         // spawn threads
-        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported);
+        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
         float *pImg=img.GetLinePtr(0,i*M);
         threads.push_back(std::thread([=] { ProcessParallelStd(i,pImg,img.Dims(),M+rest); }));
     }
@@ -224,7 +226,8 @@ int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const siz
             cleaner.Process(proj,m_fThreshold,m_fSigma);
             memcpy(pImg+i*size,proj.GetDataPtr(), size*sizeof(float));
         }
-    } catch (...) {
+    }
+    catch (...) {
         msg<<"Thread tid="<<tid<<" failed with an exception.";
         logger(logger.LogMessage,msg.str());
     }

@@ -16,14 +16,16 @@ SOURCES += \
     CountNANs.cpp \
     InspectorModules.cpp \
     ProjectionInspector.cpp \
-    SaveProjections.cpp
+    SaveProjections.cpp \
+    getimagesize.cpp
 
 HEADERS +=\
         inspectormodules_global.h \
     CountNANs.h \
     InspectorModules.h \
     ProjectionInspector.h \
-    SaveProjections.h
+    SaveProjections.h \
+    getimagesize.h
 
 unix:!symbian {
     maemo5 {

@@ -33,6 +33,7 @@ protected:
     int m_nMaxArea;
     float m_fMinLevel;
     float m_fMaxLevel;
+    bool m_bThreading;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H

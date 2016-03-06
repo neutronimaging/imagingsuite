@@ -52,7 +52,7 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 ReconEngine::~ReconEngine(void)
 {
 	std::ostringstream msg;
-	logger(kipl::logging::Logger::LogMessage,"Enter destructor");
+    logger(logger.LogVerbose,"Enter destructor");
 	while (!m_PreprocList.empty()) {
 		msg.str("");
 		msg<<"Removing "<<m_PreprocList.front()->GetModule()->ModuleName()<<" from the module list ("<<m_PreprocList.size()<<")";
@@ -62,7 +62,7 @@ ReconEngine::~ReconEngine(void)
 		}
 		msg.str("");
 		msg<<"Removed the module ("<<m_PreprocList.size()<<")";
-		logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger(logger.LogVerbose,msg.str());
 
 		m_PreprocList.pop_front();
 	}
@@ -138,7 +138,7 @@ int ReconEngine::Run()
 	m_Volume.Resize(m_Config.MatrixInfo.nDims);
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-	logger(kipl::logging::Logger::LogVerbose,msg.str());
+    logger(kipl::logging::Logger::LogVerbose,msg);
 	m_FirstSlice=roi[1];
 	kipl::profile::Timer totalTimer;
 
@@ -526,7 +526,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
     std::stringstream msg;
 
     int res=0;
-    msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
+    msg<<__func__<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if ((bRerunBackproj) && (m_ProjectionBlocks.empty()==false))
@@ -587,7 +587,7 @@ int ReconEngine::Run3DFull()
 	}
 
 	msg.str("");
-	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
+    msg<<__func__<<": ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
 	m_FirstSlice=roi[1];
@@ -600,7 +600,7 @@ int ReconEngine::Run3DFull()
 	nTotalBlocks=totalSlices/nSliceBlock;
 
 	msg.str("");
-	msg<<"Interval "<<totalSlices
+    msg<<__func__<<": Interval "<<totalSlices
 			<<" is divided into "<<nTotalBlocks
 			<<" blocks ("<<(totalSlices)
 			<<"/"<<nSliceBlock<<")";
@@ -614,7 +614,7 @@ int ReconEngine::Run3DFull()
 			m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
 			msg.str("");
-			msg<<"Processing block "<<nProcessedBlocks<<" ["
+            msg<<__func__<<": Processing block "<<nProcessedBlocks<<" ["
 				<<m_Config.ProjectionInfo.roi[1]<<", "
 				<<m_Config.ProjectionInfo.roi[3]<<"]";
 			logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -627,7 +627,7 @@ int ReconEngine::Run3DFull()
 			nProcessedProjections=0;
 			m_Config.ProjectionInfo.roi[3]=roi[3];
 			msg.str("");
-			msg<<"Processing block "<<nProcessedBlocks<<" ["
+            msg<<__func__<<": Processing block "<<nProcessedBlocks<<" ["
 				<<m_Config.ProjectionInfo.roi[1]<<", "
 				<<m_Config.ProjectionInfo.roi[3]<<"]";
 			logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -659,7 +659,7 @@ int ReconEngine::Run3DFull()
 	if (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Finished")) {
 		totalTimer.Toc();
 		msg.str("");
-		msg<<"Totals for "<<totalSlices<<" slices"<<endl
+        msg<<__func__<<": Totals for "<<totalSlices<<" slices"<<endl
 			<<totalTimer<<" ("<<totalTimer.ElapsedSeconds()/static_cast<double>(totalSlices)<<" s/slice)";
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -801,7 +801,7 @@ int ReconEngine::Process3D(size_t *roi)
 	m_bCancel=false;
 
 	std::list<ModuleItem *>::iterator it_Module;
-	msg<<"Processing ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
+    msg<<__func__<<": Processing ROI in 3D mode ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogMessage,msg.str());
     size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
 
@@ -811,19 +811,19 @@ int ReconEngine::Process3D(size_t *roi)
     extroi[3]+=m_ProjectionMargin;
 
     msg.str("");
-    msg<<"Processing ext ROI ["<<extroi[0]<<", "<<extroi[1]<<", "<<extroi[2]<<", "<<extroi[3]<<"]";
+    msg<<__func__<<": Processing ext ROI ["<<extroi[0]<<", "<<extroi[1]<<", "<<extroi[2]<<", "<<extroi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
 	// Initialize the plug-ins with the current ROI
 	try {
 		msg.str("");
-		msg<<"Number of pre proc modules:"<<m_PreprocList.size();
+        msg<<__func__<<": Number of pre proc modules:"<<m_PreprocList.size();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 		for (it_Module=m_PreprocList.begin();
 			it_Module!=m_PreprocList.end(); it_Module++)
 		{
 			msg.str("");
-			msg<<"Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<__func__<<": Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
             (*it_Module)->GetModule()->SetROI(extroi);
 			logger(kipl::logging::Logger::LogMessage,"ROI set");
@@ -866,7 +866,7 @@ int ReconEngine::Process3D(size_t *roi)
 	// Start processing
 	kipl::profile::Timer timer;
 
-	msg<<"Allocated preprocessors "<<m_PreprocList.size()<<" using "<<m_BackProjector->GetModule()->Name()<<"\n"
+    msg<<__func__<<": Allocated preprocessors "<<m_PreprocList.size()<<" using "<<m_BackProjector->GetModule()->Name()<<"\n"
 		<<"Arc=["<<m_Config.ProjectionInfo.fScanArc[0]<<", "<<m_Config.ProjectionInfo.fScanArc[1]<<"]"<<"\n"
 		<<"Target matrix "<<m_BackProjector->GetModule()->GetVolume();
 
@@ -876,8 +876,9 @@ int ReconEngine::Process3D(size_t *roi)
 	timer.Tic();
 
     kipl::base::TImage<float,3> ext_projections;
-
-	logger(kipl::logging::Logger::LogVerbose,"Reading Projections.");
+    msg.str("");
+    msg<<__func__<<": Reading Projections. ROI=["<<extroi[0]<<", "<<extroi[1]<<", "<<extroi[2]<<", "<<extroi[3]<<"]";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
 	msg.str("");
 
@@ -896,6 +897,9 @@ int ReconEngine::Process3D(size_t *roi)
 		msg<<"Reading projections failed with a STL exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
+    msg.str("");
+    msg<<__func__<<": Size of read projections using ext roi: "<<ext_projections;
+    logger(logger.LogMessage,msg.str());
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 	try {
@@ -960,7 +964,7 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); it++, i++)
     {
         msg.str("");
-        msg<<"Back-projecting projection block "<<i+1;
+        msg<<__func__<<"Back-projecting projection block "<<i+1;
         logger(kipl::logging::Logger::LogMessage,msg.str());
         m_BackProjector->GetModule()->SetROI(it->roi);
 
@@ -974,7 +978,7 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
 {
     std::stringstream msg;
 
-    msg<<"Got projections:"<<projections<<" with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
+    msg<<__func__<<"Got projections:"<<projections<<" with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
     msg.str("");
     m_BackProjector->GetModule()->SetROI(roi);
