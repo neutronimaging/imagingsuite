@@ -13,8 +13,10 @@
 #include "../kipl_global.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <list>
+#include <mutex>
 
 namespace kipl { namespace logging {
 class KIPLSHARED_EXPORT LogWriter {
@@ -63,6 +65,11 @@ public:
 	/// \param severity The log level of the current log message
 	/// \param message A string containing the message
 	void operator()(LogLevel severity, std::string message);
+
+    /// \brief Log a message
+    /// \param severity The log level of the current log message
+    /// \param message A string containing the message
+    void operator()(LogLevel severity, std::stringstream & message);
 protected:
 
 	/// \brief Back-end of the log writer
@@ -75,6 +82,7 @@ protected:
     static LogWriter * LogTarget;   //!< Refence to the global log target
 #endif
     static LogLevel CurrentLogLevel; //!< The current global log level
+    static std::mutex m_LoggerMutex;
 
 	std::string sLogOrigin; //!< The name of the current log space
 };

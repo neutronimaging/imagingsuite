@@ -27,6 +27,8 @@ LogWriter ConsoleLogger;
 LogWriter * Logger::LogTarget = &ConsoleLogger;
 #endif
 
+std::mutex Logger::m_LoggerMutex;
+
 size_t LogWriter::Write(std::string str){
 	std::cout<<str;
 	
@@ -91,8 +93,18 @@ void Logger::operator()(LogLevel severity, std::string message)
 	
 }
 
+/// \brief Log a message
+/// \param severity The log level of the current log message
+/// \param message A string containing the message
+void Logger::operator()(LogLevel severity, std::stringstream & message)
+{
+    operator ()(severity,message.str());
+}
+
 void Logger::WriteMessage(LogLevel s, std::string message)
 {
+    std::lock_guard<std::mutex> lock(m_LoggerMutex);
+
 	if (s<=CurrentLogLevel) {
 		stringstream msg;
 		msg<<"["<<s<<"] "<<message<<std::endl;
