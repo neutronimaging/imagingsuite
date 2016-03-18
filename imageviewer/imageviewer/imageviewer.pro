@@ -1,0 +1,77 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2016-03-18T15:42:46
+#
+#-------------------------------------------------
+
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+TARGET = imageviewer
+TEMPLATE = app
+
+CONFIG += c++11
+
+unix:!symbian {
+    maemo5 {
+        target.path = /opt/usr/lib
+    } else {
+        target.path = /usr/lib
+    }
+    INSTALLS += target
+
+    unix:macx {
+        QMAKE_MAC_SDK = macosx10.11
+        QMAKE_CXXFLAGS += -fPIC -O2
+        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include/libxml2
+        QMAKE_LIBDIR += /opt/local/lib
+ #       QMAKE_INFO_PLIST = Info.plist
+  #      ICON = muhrec3.icns
+    }
+    else {
+        QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
+    }
+
+    LIBS += -ltiff -lxml2 -lcfitsio
+
+}
+
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
+
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
+SOURCES += main.cpp\
+        viewermainwindow.cpp
+
+HEADERS  += viewermainwindow.h
+
+FORMS    += viewermainwindow.ui
+
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+
+INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
+DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
+
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/debug/ -lQtAddons
+else:symbian: LIBS += -lQtAddons
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/ -lQtAddons
+
+INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
