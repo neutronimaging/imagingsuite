@@ -25,6 +25,8 @@ eExtensionTypes GetExtensionType(std::string ext)
     extmap["fts"]  = ExtensionFITS;
     extmap["fits"] = ExtensionFITS;
     extmap["png"]  = ExtensionPNG;
+    extmap["jpg"]  = ExtensionJPG;
+    extmap["jpeg"]  = ExtensionJPG;
     extmap["tif"]  = ExtensionTIFF;
     extmap["tiff"] = ExtensionTIFF;
     extmap["mat"]  = ExtensionMAT;

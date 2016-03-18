@@ -15,6 +15,7 @@ enum eExtensionTypes {
     ExtensionFITS,
     ExtensionTIFF,
     ExtensionPNG,
+    ExtensionJPG,
     ExtensionMAT,
     ExtensionHDF
 };
