@@ -53,6 +53,15 @@ namespace math {
         /// Add a new item to the variable
 
         template<typename T>
+        size_t put(T *_x, size_t N) {
+            for (size_t i=0;i<N; i++) {
+                put(_x[i]);
+            }
+
+            return N;
+        }
+
+        template<typename T>
         size_t put(T _x)
         {
 			double x=static_cast<long double>(_x);

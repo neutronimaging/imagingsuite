@@ -12,6 +12,9 @@
 #ifndef TSUBIMAGE_HPP_
 #define TSUBIMAGE_HPP_
 
+#include "../timage.h"
+#include "../KiplException.h"
+
 namespace kipl { namespace base {
 
 template <typename T, size_t NDims>
@@ -62,6 +65,50 @@ TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const 
 	}
 			
 	return img;
+}
+
+template <typename T, size_t NDims>
+TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const * const roi)
+{
+    size_t dims[NDims];
+
+    switch (NDims){
+    case 1 :
+        dims[0]={roi[1]-roi[0]+1}; break;
+    case 2 :
+        dims[0]={roi[2]-roi[0]+1};
+        dims[1]={roi[3]-roi[1]+1};
+        break;
+    case 3 :
+        dims[0]={roi[3]-roi[0]+1};
+        dims[1]={roi[4]-roi[1]+1};
+        dims[1]={roi[5]-roi[2]+1};
+        break;
+    default:
+        throw kipl::base::KiplException("nDim greater than 3 is not supported.",__FILE__,__LINE__);
+        break;
+    }
+
+    kipl::base::TImage<T,NDims> img(dims);
+
+    switch (NDims){
+    case 1 :
+        memcpy(img.GetDataPtr(),src.GetDataPtr()+roi[0],dims[0]*sizeof(T)); break;
+    case 2 :
+        for (size_t i=0; i<img.Size(1); i++ )
+            memcpy(img.GetLinePtr(i),src.GetLinePtr(i+roi[1])+roi[0],sizeof(T)*img.Size(0));
+        break;
+    case 3 :
+        for (size_t i=0; i<img.Size(2); i++ )
+            for (size_t j=0; j<img.Size(1); j++ )
+                memcpy(img.GetLinePtr(j,i),src.GetLinePtr(i+roi[1],j+roi[2])+roi[0],sizeof(T)*img.Size(0));
+        break;
+    default:
+        throw kipl::base::KiplException("nDim greater than 3 is not supported.",__FILE__,__LINE__);
+        break;
+    }
+
+    return img;
 }
 
 template <typename T, size_t NDims>

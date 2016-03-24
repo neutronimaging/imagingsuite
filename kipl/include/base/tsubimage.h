@@ -20,6 +20,7 @@ template <typename T, size_t NDims>
 class TSubImage {
 public:
 	static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const *const nStart, size_t const *const nLength);
+    static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const * const roi);
 
 	static void Put(const TImage<T,NDims> src, TImage<T, NDims> dest, size_t const *const nStart);
 };
