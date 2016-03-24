@@ -68,9 +68,9 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
         size_t skip=0;
 		switch (config->ProjectionInfo.scantype) {
 			case ReconConfig::cProjections::SequentialScan : {
-					//const float fAngleStep=(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])/(config->ProjectionInfo.nLastIndex-config->ProjectionInfo.nFirstIndex+1);
 					const float fAngleStep=(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])/
 							static_cast<float>(config->ProjectionInfo.nLastIndex-config->ProjectionInfo.nFirstIndex+1);
+
 					for (size_t i=config->ProjectionInfo.nFirstIndex;
 						(i<=config->ProjectionInfo.nLastIndex);
 						i+=config->ProjectionInfo.nProjectionStep)
@@ -134,6 +134,10 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 				throw ReconException("Unknown scan type in BuildFileList",__FILE__,__LINE__);
 		}
 	}
+
+    msg.str(""); msg<<"proj list size="<<ProjectionList->size();
+    logger(logger.LogMessage,msg.str());
+
 #ifdef EQUIDISTANT_WEIGHTS
 	std::map<float, ProjectionInfo>::iterator q0;
 	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
@@ -157,7 +161,6 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 		// Compute last weight
 		q2=ProjectionList->begin();
 	//	q1->second.weight=((180.0f-q1->first)+(q1->first-q0->first))/(2*360.0f);
-	//	std::cout<<"Last: q2->first= "<<q2->first<<", q0->first= "<<q0->first<<std::endl;
 		q1->second.weight=((q2->first+180)-(q0->first))/360.0f;
 		// Compute first weight
 		q0=q1;
@@ -172,36 +175,14 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 		q0->second.weight=q2->second.weight;
 		q1->second.weight=q2->second.weight;;
 	}
-
-
 #endif
 
 	std::map<float, ProjectionInfo> ProjectionList2;
-
-//	std::ofstream listfile1("projlist_unsorted.csv");
-
-//	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
-//		listfile1<< q0->first
-//				<<"\t"<< q0->second.angle
-//				<<"\t"<< q0->second.weight
-//				<<"\t"<< q0->second.name<<"\n";
-//
-//	}
 
 	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++)
 		ProjectionList2[q0->second.angle]=q0->second;
 
 	*ProjectionList=ProjectionList2;
-
-//	std::ofstream listfile2("projlist_sorted.csv");
-
-//	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
-//		listfile2<< q0->first
-//				<<"\t"<< q0->second.angle
-//				<<"\t"<< q0->second.weight
-//				<<"\t"<< q0->second.name<<"\n";
-
-//	}
 
 	return sequence;
 }

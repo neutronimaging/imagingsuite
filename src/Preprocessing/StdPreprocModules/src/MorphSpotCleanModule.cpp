@@ -188,7 +188,7 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     size_t M=N/concurentThreadsSupported;
 
     msg.str("");
-    msg<<N<<" slices on "<<concurentThreadsSupported<<" threads, "<<M<<" slices per thread";
+    msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
     logger(logger.LogMessage,msg.str());
 
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
@@ -214,7 +214,9 @@ int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const siz
     size_t i;
     size_t size=dims[0]*dims[1];
 
-    std::clog<<"Starting morphclean thread id="<<tid<<std::endl;
+    msg<<"Starting morphclean thread id="<<tid<<" N="<<N;
+    logger(logger.LogMessage,msg.str());
+
     try {
         kipl::base::TImage<float,2> proj(dims);
         ImagingAlgorithms::MorphSpotClean cleaner;

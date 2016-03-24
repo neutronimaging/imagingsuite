@@ -398,16 +398,21 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 													std::map<std::string,std::string> &parameters)
 {
 // todo handle rotations
+    std::ostringstream msg;
 	kipl::base::TImage<float,2> proj;
 
 	std::map<float, ProjectionInfo> ProjectionList;
 	BuildFileList( &config, &ProjectionList);
 
+
 	size_t dims[3]={nCrop[2]-nCrop[0],nCrop[3]-nCrop[1],ProjectionList.size()};
+
     dims[1]=config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram ? nCrop[3] : dims[1];
 	kipl::base::TImage<float,3> img(dims);
 //	size_t roi[4]; memcpy(roi,config.ProjectionInfo.roi,4*sizeof(size_t));
     size_t roi[4]; memcpy(roi,nCrop,4*sizeof(size_t));
+    msg.str(""); msg<<__func__<<"ProjectionList="<<ProjectionList.size()<<", dims={"<<dims[0]<<", "<<dims[1]<<","<<dims[2]<<"}";
+    logger(logger.LogMessage,msg.str());
 
 	std::ostringstream dose;
 	std::ostringstream angle;
