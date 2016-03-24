@@ -1,14 +1,13 @@
 #ifndef IMAGEVIEWERWIDGET_H
 #define IMAGEVIEWERWIDGET_H
+
 #include "QtAddons_global.h"
+
 #include <QRect>
 #include <QColor>
 #include <QWidget>
 #include <QRubberBand>
 #include <QResizeEvent>
-#include "imagepainter.h"
-#include <logging/logger.h>
-#include "plotter.h"
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QDialog>
@@ -17,6 +16,12 @@
 #include <QPushButton>
 #include <QList>
 #include <QSet>
+
+#include <logging/logger.h>
+
+#include "imagepainter.h"
+#include "plotter.h"
+#include "imageviewerinfodialog.h"
 
 namespace QtAddons {
 
@@ -40,7 +45,8 @@ public:
     {
         RubberBandHide=0,
         RubberBandFreeze=1,
-        RubberBandDrag=2
+        RubberBandDrag=2,
+        RubberBandMove=3
     };
 
    // explicit ImageViewerWidget(QWidget *parent = 0);
@@ -105,6 +111,7 @@ protected:
     QSize widgetSize;
     QSet<ImageViewerWidget *> m_LinkedViewers;
     enum { Margin = 5 };
+    ImageViewerInfoDialog m_infoDialog;
 };
 
 class SetGrayLevelsDialog : public QDialog

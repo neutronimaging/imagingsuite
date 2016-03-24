@@ -88,6 +88,21 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
     }
 }
 
+void ImagePainter::set_image(kipl::base::TImage<float, 2> &img)
+{
+    set_image(img.GetDataPtr(),img.Dims());
+}
+
+kipl::base::TImage<float,2> ImagePainter::get_image()
+{
+    size_t dims[2]={static_cast<size_t>(m_dims[0]), static_cast<size_t>(m_dims[1])};
+    m_image.Resize(dims);
+
+    memcpy(m_image.GetDataPtr(),m_data,m_image.Size()*sizeof(float));
+
+    return m_image;
+}
+
 void ImagePainter::set_image(float const * const data, size_t const * const dims)
 {
     float mi,ma;

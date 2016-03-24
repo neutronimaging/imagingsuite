@@ -41,7 +41,8 @@ SOURCES += qtlogviewer.cpp \
     qglyphs.cpp \
     plotpainter.cpp \
     plotwidget.cpp \
-    reportgeneratorbase.cpp
+    reportgeneratorbase.cpp \
+    imageviewerinfodialog.cpp
 
 
 
@@ -53,7 +54,8 @@ HEADERS += qtlogviewer.h\
     qglyphs.h \
     plotpainter.h \
     plotwidget.h \
-    reportgeneratorbase.h
+    reportgeneratorbase.h \
+    imageviewerinfodialog.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -81,3 +83,6 @@ else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../kipl/trunk
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
+
+FORMS += \
+    imageviewerinfodialog.ui

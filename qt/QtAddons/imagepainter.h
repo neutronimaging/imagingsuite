@@ -1,15 +1,19 @@
 #ifndef IMAGEPAINTER_H
 #define IMAGEPAINTER_H
 #include "QtAddons_global.h"
+
 #include <cstdlib>
+#include <map>
+
 #include <QPixmap>
 #include <QWidget>
 #include <QMap>
 #include <QColor>
 #include <QRect>
 #include <QPainter>
-#include <map>
+
 #include <logging/logger.h>
+#include <base/timage.h>
 
 class QPainter;
 
@@ -25,6 +29,8 @@ public:
     ~ImagePainter();
     void Render(QPainter &painter, int x, int y, int w, int h);
 
+    void set_image(kipl::base::TImage<float,2> &img);
+    kipl::base::TImage<float,2> get_image();
     void set_image(float const * const data, size_t const * const dims);
     void set_image(float const * const data, size_t const * const dims, const float low, const float high);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
@@ -65,8 +71,8 @@ protected:
     float m_fScale;
     bool m_bHold_annotations;
 
-    //Gdk::InterpType m_Interpolation;
     float * m_data;  //<! float pixel buffer
+    kipl::base::TImage<float,2> m_image;
     uchar * m_cdata;   //<! RGB Pixel buffer
 
     QMap<int,QPair<QRect, QColor> > m_BoxList;
