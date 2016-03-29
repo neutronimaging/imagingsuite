@@ -43,7 +43,7 @@ public:
     void set_levels(const float level_low, const float level_high);
     void get_levels(float *level_low, float *level_high);
     void get_image_minmax(float *level_low, float *level_high);
-    const QVector<QPointF> &get_image_histogram();
+    const QVector<QPointF> &getImageHistogram();
     int const * get_image_dims() {return m_dims;}
     void show_clamped(bool show);
     float get_scale() {return m_fScale;}

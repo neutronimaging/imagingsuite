@@ -136,7 +136,6 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     for (size_t i=0; i<nHistSize; i++) {
         m_Histogram.append(QPointF(haxis[i],static_cast<float>(hist[i])));
     }
-    ostringstream msg;
 
     if (!m_bHold_annotations) {
         m_BoxList.clear();
@@ -291,7 +290,7 @@ void ImagePainter::prepare_pixbuf()
 
 }
 
-const QVector<QPointF> & ImagePainter::get_image_histogram()
+const QVector<QPointF> & ImagePainter::getImageHistogram()
 {
     return m_Histogram;
 }

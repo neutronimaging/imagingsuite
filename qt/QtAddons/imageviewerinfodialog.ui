@@ -32,10 +32,10 @@
         </widget>
        </item>
        <item>
-        <widget class="QtAddons::Plotter" name="widget" native="true"/>
+        <widget class="QtAddons::Plotter" name="histogramplot" native="true"/>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="check_showglobal">
          <property name="text">
           <string>Show global histogram</string>
          </property>

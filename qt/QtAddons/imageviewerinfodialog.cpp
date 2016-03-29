@@ -5,6 +5,7 @@
 
 #include <base/tsubimage.h>
 #include <math/statistics.h>
+#include <base/thistogram.h>
 
 #include "imageviewerinfodialog.h"
 #include "ui_imageviewerinfodialog.h"
@@ -12,6 +13,7 @@
 
 ImageViewerInfoDialog::ImageViewerInfoDialog(QWidget *parent) :
     QDialog(parent),
+    logger("ImageViewerInfoDialog"),
     ui(new Ui::ImageViewerInfoDialog)
 {
     ui->setupUi(this);
@@ -22,7 +24,7 @@ ImageViewerInfoDialog::~ImageViewerInfoDialog()
     delete ui;
 }
 
-void ImageViewerInfoDialog::UpdateInfo(kipl::base::TImage<float,2> img, QRect roi)
+void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect roi)
 {
     size_t nroi[4]={static_cast<size_t>(roi.x()),
                     static_cast<size_t>(roi.y()),
@@ -60,4 +62,47 @@ void ImageViewerInfoDialog::UpdateInfo(kipl::base::TImage<float,2> img, QRect ro
 
     text.str(""); text<<maxval;
     ui->label_Max->setText(QString::fromStdString(text.str()));
+
+    const size_t nHist=256;
+    float axis[nHist];
+    size_t hist[nHist];
+
+    memset(hist,0,nHist*sizeof(size_t));
+    kipl::base::Histogram(m_roiImage.GetDataPtr(),m_roiImage.Size(),hist,nHist,0.0f,0.0f,axis);
+
+    auto maxit=std::max_element(hist,hist+nHist);
+    maxval=static_cast<float>(*maxit);
+
+    m_LocalHistogram.clear();
+    for (size_t i=0; i<nHist; i++) {
+        m_LocalHistogram.append(QPointF(axis[i],static_cast<float>(hist[i])/(maxval)));
+    }
+
+    on_check_showglobal_toggled(ui->check_showglobal->isChecked());
+}
+
+
+void ImageViewerInfoDialog::setHistogram(const QVector<QPointF> &hist)
+{
+    float maxval=0.0;
+    for (auto it=hist.begin(); it!=hist.end(); it++) {
+        maxval=maxval<it->y() ? it->y(): maxval;
+    }
+
+    m_GlobalHistogram.clear();
+    for (auto it=hist.begin(); it!=hist.end(); it++) {
+        m_GlobalHistogram.append(QPointF(it->x(),it->y()/maxval));
+    }
+}
+
+void ImageViewerInfoDialog::on_check_showglobal_toggled(bool checked)
+{
+    if (checked) {
+        ui->histogramplot->setCurveData(1,m_GlobalHistogram,QColor("lightgreen"));
+    }
+    else {
+        ui->histogramplot->clearCurve(1);
+    }
+
+    ui->histogramplot->setCurveData(0,m_LocalHistogram,QColor("red"));
 }

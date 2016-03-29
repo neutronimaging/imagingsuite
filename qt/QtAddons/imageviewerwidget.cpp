@@ -311,7 +311,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
             m_RubberBandStatus = RubberBandFreeze;
 
-            m_infoDialog.UpdateInfo(m_ImagePainter.get_image(), roiRect);
+            m_infoDialog.updateInfo(m_ImagePainter.get_image(), roiRect);
         }
         if (m_MouseMode==ViewerProfile) {
             m_rubberBandLine.hide();
@@ -362,6 +362,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 {
     std::ostringstream msg;
     m_ImagePainter.set_image(data,dims);
+    m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
     float mi,ma;
     m_ImagePainter.get_image_minmax(&mi,&ma);
 }
@@ -376,6 +377,9 @@ QRect ImageViewerWidget::get_marked_roi()
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)
 {
     m_ImagePainter.set_image(data,dims,low,high);
+
+    m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
+
 }
 
 void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
@@ -433,7 +437,7 @@ void ImageViewerWidget::show_clamped(bool show)
 
 const QVector<QPointF> & ImageViewerWidget::get_histogram()
 {
-    return m_ImagePainter.get_image_histogram();
+    return m_ImagePainter.getImageHistogram();
 }
 
 void ImageViewerWidget::LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect)
