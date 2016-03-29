@@ -5,8 +5,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
- //   ImagingToolMain w;
-    GenericConversion w;
+    ImagingToolMain w;
+ //   GenericConversion w;
 
     w.show();
     
