@@ -50,9 +50,14 @@ public:
     int get_offsetX() {return offset_x;}
     int get_offsetY() {return offset_y;}
     float getValue(int x, int y);
+    int zoomIn(QRect *zoomROI=nullptr);
+    int zoomOut();
+    int panImage(int dx, int dy);
+    QRect getCurrentZoomROI();
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
 protected:
     void prepare_pixbuf();
+    void createZoomImage(QRect roi);
 
     int m_dims[2];
     int m_NData;
@@ -72,12 +77,14 @@ protected:
     bool m_bHold_annotations;
 
     float * m_data;  //<! float pixel buffer
-    kipl::base::TImage<float,2> m_image;
+    kipl::base::TImage<float,2> m_OriginalImage;
+    kipl::base::TImage<float,2> m_ZoomedImage;
     uchar * m_cdata;   //<! RGB Pixel buffer
 
-    QMap<int,QPair<QRect, QColor> > m_BoxList;
-    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList;
-    QVector<QPointF> m_Histogram;
+    QVector<QRect> m_ZoomList; //<! Stack of zoom ROIs
+    QMap<int,QPair<QRect, QColor> > m_BoxList; //<! List of Rectangles to draw on the image
+    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList; //<! List of plot data to draw on the image
+    QVector<QPointF> m_Histogram; //<! Histogram of the full image
 
     QPixmap m_pixmap_full;
 };

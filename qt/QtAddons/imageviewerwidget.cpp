@@ -1,10 +1,12 @@
 #include "imageviewerwidget.h"
-#include <QStylePainter>
+
+#include <iostream>
 #include <sstream>
 #include <cmath>
+
 #include <QMenu>
 #include <QToolTip>
-
+#include <QStylePainter>
 
 namespace QtAddons {
 
@@ -122,6 +124,13 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
         return;
     char keyvalue=event->key();
 
+    ostringstream msg;
+
+    msg<<"Got key "<<keyvalue;
+    std::cout<<msg.str()<<std::endl;
+
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
     switch (keyvalue) {
     case 'm':
     case 'M':
@@ -163,10 +172,10 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
         m_MouseMode=ViewerROI;
         break;
     case '+':
-        //m_ImagePainter.ZoomIn();
+        m_ImagePainter.zoomIn(nullptr);
         break;
     case '-':
-        //m_ImagePainter.ZoomOut();
+        m_ImagePainter.zoomOut();
         break;
     }
 }
@@ -240,6 +249,10 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     if (m_MouseMode==ViewerProfile)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
+    if (m_MouseMode==ViewerPan) {
+        m_ImagePainter.panImage(event->pos().rx()-ImagePainter.get_offsetX(),event->pos.ry());
+    }
+
 
     QPoint tooltipOffset(0,0);
     if (m_PressedButton == Qt::RightButton) {
@@ -264,7 +277,6 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
         msg<<"W="<<fWindow<<", L="<<fLevel;
 
-        //showToolTip(event->pos()+this->pos(),QString::fromStdString(msg.str()));
         showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
@@ -274,8 +286,11 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         int xpos=static_cast<int>((event->pos().x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale());
         int ypos=static_cast<int>((event->pos().y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale());
 
-        if ((0<=xpos) && (0<=ypos) && (xpos<dims[0]) && (ypos<dims[1])) {
+        QRect roi=m_ImagePainter.getCurrentZoomROI();
+
+        if ((roi.x()<=xpos) && (roi.y()<=ypos) && (xpos<roi.x()+roi.width()) && (ypos<roi.y()+roi.height())) {
             msg.str("");
+
             msg<<m_ImagePainter.getValue(xpos,ypos)<<" @ ("<<xpos<<", "<<ypos<<")";
 
             showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));

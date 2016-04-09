@@ -95,12 +95,7 @@ void ImagePainter::set_image(kipl::base::TImage<float, 2> &img)
 
 kipl::base::TImage<float,2> ImagePainter::get_image()
 {
-    size_t dims[2]={static_cast<size_t>(m_dims[0]), static_cast<size_t>(m_dims[1])};
-    m_image.Resize(dims);
-
-    memcpy(m_image.GetDataPtr(),m_data,m_image.Size()*sizeof(float));
-
-    return m_image;
+    return m_OriginalImage;
 }
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims)
@@ -114,23 +109,20 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
 {
     m_dims[0]=static_cast<int>(dims[0]);
     m_dims[1]=static_cast<int>(dims[1]);
-    m_NData=m_dims[0]*m_dims[1];
-    if (m_data!=NULL) {
-        delete [] m_data;
-        m_data = NULL;
-    }
 
-    m_data=new float[m_NData];
+    m_OriginalImage.Resize(dims);
+    memcpy(m_OriginalImage.GetDataPtr(),data,m_OriginalImage.Size()*sizeof(float));
+    QRect roi(0,0,dims[0],dims[1]);
 
-    memcpy(m_data,data,sizeof(float)*m_NData);
-    kipl::math::minmax(m_data,m_NData,&m_ImageMin, &m_ImageMax);
     m_MinVal=low;
     m_MaxVal=high;
 
     const size_t nHistSize=1024;
     float haxis[nHistSize];
     size_t hist[nHistSize];
-    kipl::base::Histogram(m_data,static_cast<size_t>(m_NData),hist,nHistSize,m_ImageMin, m_ImageMax, haxis);
+    kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),hist,nHistSize,m_ImageMin, m_ImageMax, haxis);
+
+    m_ZoomList.clear();
 
     m_Histogram.clear();
     for (size_t i=0; i<nHistSize; i++) {
@@ -142,7 +134,7 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
         m_PlotList.clear();
     }
 
-    prepare_pixbuf();
+    createZoomImage(roi);
 }
 
 void ImagePainter::set_plot(QVector<QPointF> data, QColor color, int idx)
@@ -223,7 +215,7 @@ void ImagePainter::set_levels(const float level_low, const float level_high)
 
 float ImagePainter::getValue(int x, int y)
 {
-    return m_data[x+m_dims[0]*y];
+    return m_OriginalImage[x+m_dims[0]*y];
 }
 
 void ImagePainter::get_levels(float *level_low, float *level_high)
@@ -249,6 +241,7 @@ void ImagePainter::prepare_pixbuf()
     if (m_cdata!=NULL)
         delete [] m_cdata;
 
+    m_NData=m_ZoomedImage.Size();
     m_cdata=new uchar[m_NData*3];
     memset(m_cdata,0,3*sizeof(uchar)*m_NData);
 
@@ -257,8 +250,8 @@ void ImagePainter::prepare_pixbuf()
     int idx=0;
     for (int i=0; i<m_NData; i++) {
         idx=3*i;
-        if (m_data[i]==m_data[i]) {
-            val=(m_data[i]-m_MinVal)*scale;
+        if (m_ZoomedImage[i]==m_ZoomedImage[i]) {
+            val=(m_ZoomedImage[i]-m_MinVal)*scale;
             if (255.0f<val)
                 m_cdata[idx]=255;
             else if (val<0.0f)
@@ -275,7 +268,12 @@ void ImagePainter::prepare_pixbuf()
         }
     }
 
-    QImage qimg(m_cdata,m_dims[0],m_dims[1],3*m_dims[0],QImage::Format_RGB888);
+    QImage qimg(m_cdata,
+                m_ZoomedImage.Size(0),
+                m_ZoomedImage.Size(1),
+                3*m_ZoomedImage.Size(0),
+                QImage::Format_RGB888);
+
     QSize imgdims=qimg.size();
 
     m_pixmap_full=QPixmap::fromImage(qimg);
@@ -294,4 +292,96 @@ const QVector<QPointF> & ImagePainter::getImageHistogram()
 {
     return m_Histogram;
 }
+
+void ImagePainter::createZoomImage(QRect roi)
+{
+    size_t dims[2]={static_cast<size_t>(roi.width()),static_cast<size_t>(roi.height())};
+    m_ZoomedImage.Resize(dims);
+
+    for (int y=0; y<m_ZoomedImage.Size(1); y++) {
+        memcpy(m_ZoomedImage.GetLinePtr(y),m_OriginalImage.GetLinePtr(y+roi.y())+roi.x(), m_ZoomedImage.Size(0)*sizeof(float));
+    }
+    prepare_pixbuf();
+}
+
+int ImagePainter::zoomIn(QRect *zoomROI)
+{
+    int x=0;
+    int y=0;
+    int w=0;
+    int h=0;
+
+    QRect roi;
+    if (zoomROI==nullptr) {
+       if (m_ZoomList.empty()) {
+           x=m_OriginalImage.Size(0)/4;
+           y=m_OriginalImage.Size(1)/4;
+           w=m_OriginalImage.Size(0)/2;
+           h=m_OriginalImage.Size(1)/2;
+       }
+       else {
+           QRect currentROI=m_ZoomList.last();
+
+           x=currentROI.x()+currentROI.width()/4;
+           y=currentROI.y()+currentROI.height()/4;
+           w=currentROI.width()/2;
+           h=currentROI.height()/2;
+       }
+
+       roi.setRect(x,y,w,h);
+    }
+    else {
+        roi=*zoomROI;
+    }
+
+    m_ZoomList.push_back(roi);
+    createZoomImage(roi);
+    std::ostringstream msg;
+
+    msg<<__func__<<": zoomed image: "<<m_ZoomedImage<<", zoom stack size="<<m_ZoomList.size();
+    logger(kipl::logging::Logger::LogMessage, msg.str());
+
+    return m_ZoomList.size();
+}
+
+int ImagePainter::zoomOut()
+{
+    QRect roi;
+    if (!m_ZoomList.empty()) {
+        roi=m_ZoomList.last();
+        m_ZoomList.pop_back();
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"Zoom list is empty");
+        roi.setRect(0,0,m_OriginalImage.Size(0),m_OriginalImage.Size(1));
+
+        m_ZoomedImage=m_OriginalImage;
+    }
+
+    createZoomImage(roi);
+
+    std::ostringstream msg;
+
+    msg<<__func__<<": zoomed image: "<<m_ZoomedImage<<", zoom stack size="<<m_ZoomList.size();
+    logger(kipl::logging::Logger::LogMessage, msg.str());
+
+    return m_ZoomList.size();
+}
+
+QRect ImagePainter::getCurrentZoomROI()
+{
+    if (m_ZoomList.empty())
+        return QRect(0,0,static_cast<int>(m_dims[0]),static_cast<int>(m_dims[1]));
+    else
+        return m_ZoomList.last();
+
+    return QRect(0,0,0,0);
+}
+
+int ImagePainter::panImage(int dx, int dy)
+{
+    if (m_ZoomList.empty())
+        return 0;
+}
+
 }
