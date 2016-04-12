@@ -50,6 +50,7 @@ void SingleModuleConfiguratorWidget::Configure(std::string sApplicationName, std
     m_sApplication         = sApplicationName;
     m_sApplicationPath     = sApplicationPath;
     m_sDefaultModuleSource = sDefaultModuleSource;
+    m_ModuleConfig.m_sSharedObject = sDefaultModuleSource;
 }
 
 void SingleModuleConfiguratorWidget::setDescriptionLabel(QString lbl)

@@ -27,7 +27,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../../external/include
+    INCLUDEPATH += ../../../../../external/include .
     LIBPATH += ../../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }

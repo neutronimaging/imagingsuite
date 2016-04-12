@@ -250,7 +250,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
     if (m_MouseMode==ViewerPan) {
-        m_ImagePainter.panImage(event->pos().rx()-ImagePainter.get_offsetX(),event->pos.ry());
+       // m_ImagePainter.panImage(event->pos().rx()-ImagePainter.get_offsetX(),event->pos.ry());
     }
 
 

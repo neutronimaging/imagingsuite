@@ -338,7 +338,7 @@ int ImagePainter::zoomIn(QRect *zoomROI)
     createZoomImage(roi);
     std::ostringstream msg;
 
-    msg<<__func__<<": zoomed image: "<<m_ZoomedImage<<", zoom stack size="<<m_ZoomList.size();
+    msg<<": zoomed image: "<<m_ZoomedImage<<", zoom stack size="<<m_ZoomList.size();
     logger(kipl::logging::Logger::LogMessage, msg.str());
 
     return m_ZoomList.size();
@@ -362,7 +362,7 @@ int ImagePainter::zoomOut()
 
     std::ostringstream msg;
 
-    msg<<__func__<<": zoomed image: "<<m_ZoomedImage<<", zoom stack size="<<m_ZoomList.size();
+    msg<<": zoomed image: "<<m_ZoomedImage<<", zoom stack size="<<m_ZoomList.size();
     logger(kipl::logging::Logger::LogMessage, msg.str());
 
     return m_ZoomList.size();
