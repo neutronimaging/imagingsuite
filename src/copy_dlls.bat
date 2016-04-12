@@ -3,6 +3,7 @@ set REPOS=C:\Users\kaestner\repos
 set DEST=C:\Users\kaestner\repos\tomography\trunk\src\build-muhrec3-Qt5-Release\release
 pushd .
 cd %DEST%
+mkdir resources
 
 copy %REPOS%\qni\trunk\src\ImagingAlgorithms\build-ImagingAlgorithms-Qt5-Release\release\ImagingAlgorithms.dll .
 copy %REPOS%\modules\trunk\ModuleConfig\build-ModuleConfig-Qt5-Release\release\ModuleConfig.dll .
@@ -23,6 +24,8 @@ copy %REPOS%\external\lib64\libfftw3-3.dll .
 copy %REPOS%\external\lib64\libfftw3f-3.dll .
 copy %REPOS%\external\lib64\libxml2-2.dll .
 copy %REPOS%\external\lib64\libiconv.dll .
+
+copy %REPOS%\tomography\trunk\src\muhrec3\resources resources
 
 cd C:\Qt\Qt5.2.1\5.2.1\msvc2012_64_opengl\bin
 windeployqt %DEST%\muhrec3.exe

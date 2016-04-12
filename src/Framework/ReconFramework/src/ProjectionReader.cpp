@@ -411,7 +411,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 	kipl::base::TImage<float,3> img(dims);
 //	size_t roi[4]; memcpy(roi,config.ProjectionInfo.roi,4*sizeof(size_t));
     size_t roi[4]; memcpy(roi,nCrop,4*sizeof(size_t));
-    msg.str(""); msg<<__func__<<"ProjectionList="<<ProjectionList.size()<<", dims={"<<dims[0]<<", "<<dims[1]<<","<<dims[2]<<"}";
+    msg.str(""); msg<<"ProjectionList="<<ProjectionList.size()<<", dims={"<<dims[0]<<", "<<dims[1]<<","<<dims[2]<<"}";
     logger(logger.LogMessage,msg.str());
 
 	std::ostringstream dose;

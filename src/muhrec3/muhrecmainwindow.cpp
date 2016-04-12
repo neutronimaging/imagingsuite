@@ -71,7 +71,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->projectionViewer->hold_annotations(true);
     std::string defaultmodules;
 #ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"StdBackProjectors.dll";
+        defaultmodules=m_sApplicationPath+"\\StdBackProjectors.dll";
 #else
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
@@ -82,7 +82,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
 
 #ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"StdPreprocModules.dll";
+        defaultmodules=m_sApplicationPath+"\\StdPreprocModules.dll";
 #else
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
@@ -99,7 +99,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     UpdateDialog();
     ProjectionIndexChanged(0);
     ReconROIChanged(0);
-        SetupCallBacks();
+    SetupCallBacks();
 
 }
 
@@ -1102,7 +1102,7 @@ void MuhRecMainWindow::LoadDefaults()
     }
     else {
     #ifdef Q_OS_WIN32
-         defaultsname="resources/defaults_windows.xml";
+         defaultsname=m_sApplicationPath+"/resources/defaults_windows.xml";
     #else
         #ifdef Q_OS_LINUX
             defaultsname=m_sApplicationPath+"resources/defaults_linux.xml";
@@ -1115,8 +1115,11 @@ void MuhRecMainWindow::LoadDefaults()
         bUseDefaults=true;
     }
     std::ostringstream msg;
+    msg<<"Looking for defaults at "<<defaultsname;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
+    msg.str("");
     try {
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
 

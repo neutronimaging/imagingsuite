@@ -36,83 +36,15 @@ int main(int argc, char *argv[])
     std::string application_path=app.applicationDirPath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
-    kipl::utilities::NodeLocker license(homedir);
 
-#ifdef USE_NODE_LOCK
-    bool licensefail=false;
-    int res=0;
-    std::string errormsg;
-    do {
-        std::list<std::string> liclist;
-        liclist.push_back(homedir+".imagingtools/license_muhrec.dat");
-        liclist.push_back(application_path+"license_muhrec.dat");
-        liclist.push_back(application_path+"license.dat");
-        liclist.push_back(homedir+"license_muhrec.dat");
-        licensefail=false;
-        try {
-            license.Initialize(liclist,"muhrec");
-        }
-        catch (kipl::base::KiplException &e) {
-            errormsg=e.what();
-            licensefail=true;
-        }
-
-        if (licensefail || !license.AccessGranted()) {
-            msg.str("");
-            if (licensefail)
-                msg<<"Could not locate the license file\n"<<errormsg<<"\n";
-            else
-                msg<<"MuhRec is not registered on this computer\n";
-
-            msg<<"\nPlease press register to request an activation key for MuhRec.\n";
-            msg<<"\nActivation code: "<<*license.GetNodeString().begin()<<std::endl;
-            msg<<"On computers with many network adapters, please deactivate the wifi and restart the application.\n";
-            msg<<"When you obtained the email containing the key, press the save button and select the file containing the key.";
-
-            logger(kipl::logging::Logger::LogError,msg.str());
-            QMessageBox mbox;
-
-            QPushButton *registerbutton=mbox.addButton("Register",QMessageBox::AcceptRole);
-            mbox.addButton(QMessageBox::Save);
-            mbox.addButton(QMessageBox::Abort);
-            mbox.setText(QString::fromStdString(msg.str()));
-            mbox.setWindowTitle("License error");
-            mbox.setDetailedText(QString::fromStdString(license.GetLockerMessage()));
-            res=mbox.exec();
-            std::cout<<"Res ="<<res<<std::endl;
-            if (res==QMessageBox::Save) {
-                QDir dir;
-                QString fname=QFileDialog::getOpenFileName(&mbox,"Select the license file",dir.homePath(),"*.dat");
-
-                if (!fname.isEmpty()) {
-                    if (!dir.exists(dir.homePath()+"/.imagingtools")) {
-                        dir.mkdir(QDir::homePath()+"/.imagingtools");
-                    }
-                    std::cout<<(dir.homePath()+"/.imagingtools/license_muhrec.dat").toStdString()<<std::endl;
-                    QFile::copy(fname,dir.homePath()+"/.imagingtools/license_muhrec.dat");
-                }
-            }
-            if (mbox.clickedButton() == registerbutton) {
-                logger(kipl::logging::Logger::LogMessage,"Opening default web browser.");
-                QDesktopServices::openUrl(QUrl("http://www.imagingscience.ch/usermanager/index.php?nodekey="+QString::fromStdString(*license.GetNodeString().begin())));
-            }
-        }
-    } while (!license.AccessGranted() && res!=QMessageBox::Abort);
-
-    std::cout<<"License status "<<kipl::strings::bool2string(license.AccessGranted())<<std::endl;
-    if (license.AccessGranted()) {
-#endif
-        if (app.arguments().size()==1) {
-            std::cout<<"Running MuhRec in GUI mode."<<std::endl;
-            return RunGUI(&app);
-        }
-        else {
-            std::cout<<"Running MuhRec in CLI mode."<<std::endl;
-            return RunOffline(&app);
-        }
-#ifdef USE_NODE_LOCK
+    if (app.arguments().size()==1) {
+        std::cout<<"Running MuhRec in GUI mode."<<std::endl;
+        return RunGUI(&app);
     }
-#endif
+    else {
+        std::cout<<"Running MuhRec in CLI mode."<<std::endl;
+        return RunOffline(&app);
+    }
 
     return 0;
 }
