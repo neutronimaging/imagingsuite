@@ -74,15 +74,15 @@ TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const 
 
     switch (NDims){
     case 1 :
-        dims[0]={roi[1]-roi[0]+1}; break;
+        dims[0]=roi[1]-roi[0]+1; break;
     case 2 :
-        dims[0]={roi[2]-roi[0]+1};
-        dims[1]={roi[3]-roi[1]+1};
+        dims[0]=roi[2]-roi[0]+1;
+        dims[1]=roi[3]-roi[1]+1;
         break;
     case 3 :
-        dims[0]={roi[3]-roi[0]+1};
-        dims[1]={roi[4]-roi[1]+1};
-        dims[1]={roi[5]-roi[2]+1};
+        dims[0]=roi[3]-roi[0]+1;
+        dims[1]=roi[4]-roi[1]+1;
+        dims[1]=roi[5]-roi[2]+1;
         break;
     default:
         throw kipl::base::KiplException("nDim greater than 3 is not supported.",__FILE__,__LINE__);
