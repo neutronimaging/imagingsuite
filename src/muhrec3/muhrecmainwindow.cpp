@@ -1114,6 +1114,7 @@ void MuhRecMainWindow::LoadDefaults()
     #endif
         bUseDefaults=true;
     }
+
     std::ostringstream msg;
     msg<<"Looking for defaults at "<<defaultsname;
     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1154,6 +1155,11 @@ void MuhRecMainWindow::LoadDefaults()
                 it->m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
             logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
         }
+        pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
+        logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
+        if (pos!=std::string::npos)
+            m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+        logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
     }
 
     UpdateDialog();

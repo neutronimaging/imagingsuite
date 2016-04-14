@@ -99,6 +99,8 @@ void ReconConfig::ParseConfig(xmlTextReaderPtr reader, std::string sName)
 	if (sName=="matrix")
 		ParseMatrix(reader);
 
+
+
 }
 				
 void ReconConfig::ParseArgv(std::vector<std::string> &args)
