@@ -81,7 +81,7 @@ public:
 	/// \test The method is tested with unit test
 	int References() {return m_buffer.References();}
 	// Arithmetic operators
-	TImage<T,N> & operator+=(TImage<T,N> &img);
+	TImage<T,N> & operator+=(TImage<T,N> &img); //< Operator to add two images
 	TImage<T,N> & operator-=(TImage<T,N> &img);
 	TImage<T,N> & operator*=(TImage<T,N> &img);
 	TImage<T,N> & operator/=(TImage<T,N> &img);
