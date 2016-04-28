@@ -356,6 +356,7 @@ int ImagePainter::zoomOut()
         roi.setRect(0,0,m_OriginalImage.Size(0),m_OriginalImage.Size(1));
 
         m_ZoomedImage=m_OriginalImage;
+        m_ZoomedImage.Clone();
     }
 
     createZoomImage(roi);
@@ -380,8 +381,25 @@ QRect ImagePainter::getCurrentZoomROI()
 
 int ImagePainter::panImage(int dx, int dy)
 {
-    if (m_ZoomList.empty())
-        return 0;
+
+    if (!m_ZoomList.empty()) {
+        std::ostringstream msg;
+        QRect roi=m_ZoomList.last();
+
+        roi.translate(dx,dy);
+        roi.normalized();
+
+        if (((roi.x()+roi.width())<m_OriginalImage.Size(0)) &&
+                (0<=roi.x()) &&
+                ((roi.y()+roi.height())<m_OriginalImage.Size(1)) &&
+                (0<=roi.y())) {
+            createZoomImage(roi);
+            m_ZoomList.last()=roi;
+        }
+
+    }
+
+    return 0;
 }
 
 }

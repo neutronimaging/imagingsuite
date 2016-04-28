@@ -218,6 +218,9 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
                 m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, QSize()));
                 m_rubberBandLine.show();
         }
+        if (m_MouseMode==ViewerPan) {
+
+        }
     }
     if (event->button() == Qt::RightButton) {
         m_PressedButton=event->button();
@@ -232,6 +235,9 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 {
     std::ostringstream msg;
 
+    int dx=static_cast<int>(event->pos().x() - m_LastMotionPosition.x());
+    int dy=static_cast<int>(event->pos().y() - m_LastMotionPosition.y());
+
     if (m_RubberBandStatus == RubberBandDrag) {
         updateRubberBandRegion();
         rubberBandRect.setBottomRight(event->pos());
@@ -239,8 +245,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     }
     else if (m_RubberBandStatus == RubberBandMove) {
         updateRubberBandRegion();
-        rubberBandRect.setRect(rubberBandRect.x()+(event->pos().x()-m_LastMotionPosition.x()),
-                               rubberBandRect.y()+(event->pos().y()-m_LastMotionPosition.y()),
+        rubberBandRect.setRect(rubberBandRect.x()+dx,
+                               rubberBandRect.y()+dy,
                                rubberBandRect.width(),
                                rubberBandRect.height());
         updateRubberBandRegion();
@@ -250,7 +256,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
     if (m_MouseMode==ViewerPan) {
-       // m_ImagePainter.panImage(event->pos().rx()-ImagePainter.get_offsetX(),event->pos.ry());
+        m_ImagePainter.panImage(dx/m_ImagePainter.get_scale(),dy/m_ImagePainter.get_scale());
     }
 
 
@@ -266,9 +272,6 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         float fLevelStep  = fWindow/1000.0f;
         float fWindowStep = fWindow/1000.0f;
         msg.str("");
-
-        int dx=static_cast<int>(event->pos().x() - m_LastMotionPosition.x());
-        int dy=static_cast<int>(event->pos().y() - m_LastMotionPosition.y());
 
         if (abs(dx)<abs(dy))
             fLevel+=dy*fLevelStep;
