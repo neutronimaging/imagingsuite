@@ -29,14 +29,14 @@ class KIPLSHARED_EXPORT NonLocalMeans {
 protected:
     kipl::logging::Logger logger;
     public:
-        enum class NLMalgorithms {
+        enum NLMalgorithms {
             NLM_Naive,              // Reference code to original algorithm
             NLM_HistogramOriginal,  // Reference code to histgram based algorithm
             NLM_HistogramSum,
             NLM_HistogramSumParallel // c++11 threaded version of NLM_HistogramSum, speedup close to N threads
         };
 
-        enum class NLMwindows {
+        enum NLMwindows {
             NLM_window_sum,
             NLM_window_avg,
             NLM_window_gauss,
