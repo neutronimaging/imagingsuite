@@ -44,7 +44,7 @@ void TKiplAdvFiltersTest::HistogramBin_ctor()
     bin.local_avg=11.0;
 
     akipl::HistogramBin bin2(bin);
-    QCOMPARE(bin2.cnt,bin.cnt);
+    QCOMPARE(bin2.cnt,bin.cnt+1);
     QCOMPARE(bin2.sum,bin.sum);
     QCOMPARE(bin2.bin,bin.bin);
     QCOMPARE(bin2.local_avg,bin.local_avg);
