@@ -62,7 +62,8 @@ SOURCES += main.cpp\
     PreProcModuleConfigurator.cpp \
     stdafx.cpp \
     viewgeometrylistdialog.cpp \
-    preferencesdialog.cpp
+    preferencesdialog.cpp \
+    dialogtoobig.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
@@ -72,14 +73,16 @@ HEADERS  += muhrecmainwindow.h \
     PreProcModuleConfigurator.h \
     stdafx.h \
     viewgeometrylistdialog.h \
-    preferencesdialog.h
+    preferencesdialog.h \
+    dialogtoobig.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
     findskiplistdialog.ui \
     recondialog.ui \
     viewgeometrylistdialog.ui \
-    preferencesdialog.ui
+    preferencesdialog.ui \
+    dialogtoobig.ui
 
 
 

@@ -28,6 +28,7 @@
 #include "recondialog.h"
 #include "viewgeometrylistdialog.h"
 #include "preferencesdialog.h"
+#include "dialogtoobig.h"
 
 
 
@@ -822,7 +823,6 @@ void MuhRecMainWindow::MenuHelpAbout()
 
 void MuhRecMainWindow::MenuReconstructStart()
 {
-
     ui->tabMainControl->setCurrentIndex(4);
     ReconDialog dlg(&m_Interactor);
     bool bBuildFailure=false;
@@ -871,23 +871,38 @@ void MuhRecMainWindow::MenuReconstructStart()
 
     m_Config.MatrixInfo.bAutomaticSerialize=false;
     if (m_Config.System.nMemory<m_nRequiredMemory) {
-        msg.str("");
-        msg<<"The requested matrix is larger ("<<m_nRequiredMemory<<"Mb) than the memorylimit ("
-            <<m_Config.System.nMemory<<"Mb)\n\n"
-            <<"Do you want to continue with reconstruction direct to disk?\n"
-           <<"Current location is:\n"
-          <<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
-        QMessageBox largesize_dlg(this);
-        largesize_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
-        largesize_dlg.setDefaultButton(QMessageBox::Ok);
-        largesize_dlg.setText(QString::fromStdString(msg.str()));
-        largesize_dlg.setWindowTitle("Matrix size warning");
+//        msg.str("");
+//        msg<<"The requested matrix is larger ("<<m_nRequiredMemory<<"Mb) than the memorylimit ("
+//            <<m_Config.System.nMemory<<"Mb)\n\n"
+//            <<"Do you want to continue with reconstruction direct to disk?\n"
+//           <<"Current location is:\n"
+//          <<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
+//        QMessageBox largesize_dlg(this);
+//        largesize_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+//        largesize_dlg.setDefaultButton(QMessageBox::Ok);
+//        largesize_dlg.setText(QString::fromStdString(msg.str()));
+//        largesize_dlg.setWindowTitle("Matrix size warning");
 
+        DialogTooBig largesize_dlg;
+
+        largesize_dlg.SetFields(ui->editDestPath->text(),ui->editSliceMask->text());
         int res=largesize_dlg.exec();
 
-        if (res!=QMessageBox::Ok) {
+        if (res!=QDialog::Accepted) {
+            logger(logger.LogMessage,"Reconstruction was aborted");
             return;
         }
+        m_Config.MatrixInfo.sDestinationPath = largesize_dlg.GetPath().toStdString();
+        kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
+        m_Config.MatrixInfo.sFileMask        = largesize_dlg.GetMask().toStdString();
+        ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
+        ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
+
+        msg.str("");
+        msg<<"Reconstructing direct to folder "<<m_Config.MatrixInfo.sDestinationPath
+          <<" using the mask "<< m_Config.MatrixInfo.sFileMask;
+        logger(logger.LogMessage,msg.str());
+
         m_Config.MatrixInfo.bAutomaticSerialize=true;
     }
     else
