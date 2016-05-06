@@ -689,8 +689,10 @@ void MuhRecMainWindow::UseMatrixROI(int x)
 void MuhRecMainWindow::MenuFileNew()
 {
     std::string defaultsname;
+        std::string sModulePath=m_QtApp->applicationDirPath().toStdString() ;
     #ifdef Q_OS_DARWIN
         defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
+        sModulePath+="/..";
     #endif
 
     #ifdef Q_OS_WIN
@@ -698,6 +700,7 @@ void MuhRecMainWindow::MenuFileNew()
     #endif
     #ifdef Q_OS_LINUX
         defaultsname=m_sApplicationPath+"../resources/defaults_linux.xml";
+        sModulePath+="/..";
     #endif
 
     std::ostringstream msg;
@@ -720,19 +723,30 @@ void MuhRecMainWindow::MenuFileNew()
         logger(kipl::logging::Logger::LogError,msg.str());
     }
 
-    m_Config.ProjectionInfo.sPath              = QDir::homePath().toStdString();
-    m_Config.ProjectionInfo.sReferencePath     = QDir::homePath().toStdString();
-    m_Config.MatrixInfo.sDestinationPath       = QDir::homePath().toStdString();
+    m_Config.ProjectionInfo.sPath              = m_sHomePath;
+    m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
+    m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
 
-//    size_t pos = 0;
-//    std::string oldstr="@executable_path";
-//    while((pos = m_Config.backprojector.m_sSharedObject.find(oldstr, pos)) != std::string::npos)
-//    {
-//       m_Config.backprojector.m_sSharedObject.replace(pos, oldstr.length(), m_sApplicationPath);
-//       pos += m_sApplicationPath.length();
-//    }
+    std::list<ModuleConfig>::iterator it;
+
+    std::string sSearchStr = "@executable_path";
+
+    size_t pos=0;
+    for (it=m_Config.modules.begin(); it!=m_Config.modules.end(); it++) {
+        pos=it->m_sSharedObject.find(sSearchStr);
+        logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
+        if (pos!=std::string::npos)
+            it->m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+        logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
+    }
+    pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
+    logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
+
+    if (pos!=std::string::npos)
+        m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
 
     logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
+
     UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename="noname.xml";

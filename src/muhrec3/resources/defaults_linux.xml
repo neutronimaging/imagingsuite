@@ -1,11 +1,11 @@
 <reconstructor>
     <userinformation>
-        <operator>unknown</operator>
-        <instrument>beamline</instrument>
-        <projectnumber>P11xxxx</projectnumber>
-        <sample>Test bodies</sample>
+        <operator>Anders Kaestner</operator>
+        <instrument>ICON</instrument>
+        <projectnumber>P11001</projectnumber>
+        <sample>Unknown item</sample>
         <comment>No comment</comment>
-	<date>20131120</date>
+	    <date>20131120</date>
     </userinformation>
     <system>
         <memory>6000</memory>
@@ -14,39 +14,43 @@
     <projections>
         <dims>2048 2048</dims>
         <resolution>0.1 0.1</resolution>
+        <binning>1</binning>
+        <margin>2</margin>
         <firstindex>1</firstindex>
-        <lastindex>625</lastindex>
+        <lastindex>100</lastindex>
         <projectionstep>1</projectionstep>
         <repeatline>false</repeatline>
         <scantype>sequential</scantype>
         <imagetype>projections</imagetype>
-        <center>512</center>
+        <center>50</center>
         <translation>false</translation>
         <tiltangle>0</tiltangle>
         <tiltpivot>0</tiltpivot>
         <correcttilt>false</correcttilt>
         <filemask>proj_####.fits</filemask>
-        <path>/home/data/projections</path>
-        <referencepath>/home/data/projections</referencepath>
+        <path></path>
+        <referencepath></referencepath>
         <obfilemask>ob_####.fits</obfilemask>
         <obfirstindex>1</obfirstindex>
         <obcount>5</obcount>
         <dcfilemask>dc_####.fits</dcfilemask>
         <dcfirstindex>1</dcfirstindex>
         <dccount>5</dccount>
-        <roi>0 0 1024 1024</roi>
-        <doseroi>50 50 150 250</doseroi>
+        <roi>0 0 100 100</roi>
+        <doseroi>0 0 10 10</doseroi>
         <scanarc>0 360</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipnone</flip>
     </projections>
     <matrix>
-        <dims>999 999 16</dims>
-        <rotation>32</rotation>
+        <dims>0 0 0</dims>
+        <rotation>0</rotation>
         <serialize>false</serialize>
-        <path>/home/data/recon/</path>
-        <matrixname>objects_####.tif</matrixname>
+        <path>/</path>
+        <matrixname>slice_####.tif</matrixname>
         <filetype>TIFF16bits</filetype>
         <firstindex>0</firstindex>
-        <grayinterval>-0.0553 0.155324</grayinterval>
+        <grayinterval>0 5</grayinterval>
         <useroi>false</useroi>
         <roi>0 0 100 100 </roi>
     </matrix>
@@ -54,43 +58,52 @@
         <preprocessing>
             <module>
                 <modulename>FullLogNorm</modulename>
-                <sharedobject>Framework/libStdPreprocModules.so</sharedobject>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>true</active>
                 <parameters>
-                    <uselut>true</uselut>
+                    <uselut>false</uselut>
                     <usenormregion>true</usenormregion>
                 </parameters>
             </module>
             <module>
-                <modulename>SpotClean2</modulename>
-                <sharedobject>Framework/libStdPreprocModules.so</sharedobject>
+                <modulename>MorphSpotClean</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>false</active>
                 <parameters>
-                    <gamma>0.01</gamma>
-                    <iterations>1</iterations>
-                    <maxarea>100</maxarea>
+                    <cleanmethod>morphcleanreplace</cleanmethod>
+                    <connectivity>conn4</connectivity>
+                    <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <edgesmooth>5</edgesmooth>
+                    <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
-                    <sigma>0.001</sigma>
+                    <sigma>0.01</sigma>
+                    <threading>false</threading>
+                    <threshold>0.1</threshold>
                 </parameters>
             </module>
             <module>
-                <modulename>MedianMixRingClean</modulename>
-                <sharedobject>Framework/libStdPreprocModules.so</sharedobject>
+                <modulename>WaveletRingClean</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>false</active>
                 <parameters>
-                    <threshold>0.025</threshold>
-                    <width>0.0025</width>
+                    <decnum>4</decnum>
+                    <method>verticalfft</method>
+                    <parallel>false</parallel>
+                    <sigma>0.1</sigma>
+                    <wname>daub25</wname>
                 </parameters>
             </module>
             <module>
                 <modulename>ProjectionFilterSingle</modulename>
-                <sharedobject>Framework/libStdPreprocModules.so</sharedobject>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>true</active>
                 <parameters>
+                    <biasweight>0.1</biasweight>
                     <cutoff>0.5</cutoff>
-                    <filtertype>hamming</filtertype>
-                    <order>0</order>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
                     <usebias>true</usebias>
                 </parameters>
             </module>
@@ -98,12 +111,12 @@
         <backprojector>
             <module>
                 <modulename>MultiProjBPparallel</modulename>
-                <sharedobject>Framework/libStdBackProjectors.so</sharedobject>
+                <sharedobject>@executable_path/Frameworks/libStdBackProjectors.so</sharedobject>
                 <active>true</active>
                 <parameters>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
-                    <SliceBlock>64</SliceBlock>
-                    <SubVolume>1</SubVolume>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1 1</SubVolume>
                 </parameters>
             </module>
         </backprojector>

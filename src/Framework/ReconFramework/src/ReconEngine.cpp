@@ -138,7 +138,7 @@ int ReconEngine::Run()
 	m_Volume.Resize(m_Config.MatrixInfo.nDims);
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-    logger(kipl::logging::Logger::LogVerbose,msg);
+    logger(kipl::logging::Logger::LogVerbose,msg.str());
 	m_FirstSlice=roi[1];
 	kipl::profile::Timer totalTimer;
 
