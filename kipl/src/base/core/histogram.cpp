@@ -146,6 +146,13 @@ BivariateHistogram::~BivariateHistogram()
 
 }
 
+/// \brief Initialize the histogram using limits
+/// \param loA smallest accepted value for data set A
+/// \param hiA greatest accepted value for data set A
+/// \param binsA number of bins for data set A
+/// \param loB smallest accepted value for data set B
+/// \param hiB greatest accepted value for data set B
+/// \param binsB number of bins for data set B
 void BivariateHistogram::Initialize(float loA, float hiA, size_t binsA,
                 float loB, float hiB, size_t binsB)
 {
@@ -153,21 +160,27 @@ void BivariateHistogram::Initialize(float loA, float hiA, size_t binsA,
     m_limitsA.second  = max(loA,hiA);
 
     m_limitsB.first   = min(loB,hiB);
-    m_limitsB.second  = min(loB,hiB);
+    m_limitsB.second  = max(loB,hiB);
 
     m_nbins.first     = binsA;
     m_nbins.second    = binsB;
 
-    m_scalingA.first  = m_nbins.first / (m_limitsA.second-m_limitsA.first);
+    m_scalingA.first  = static_cast<float>(m_nbins.first) / (m_limitsA.second-m_limitsA.first);
     m_scalingA.second = m_limitsA.first;
 
-    m_scalingB.first  = m_nbins.second / (m_limitsB.second-m_limitsB.first);
+    m_scalingB.first  = static_cast<float>(m_nbins.second) / (m_limitsB.second-m_limitsB.first);
     m_scalingB.second = m_limitsB.first;
 
     size_t dims[2]={m_nbins.first,m_nbins.second};
     m_bins.Resize(dims);
 }
 
+/// \brief Initialize the histogram using data
+/// \param pA reference to data set A
+/// \param binsA number of bins for data set A
+/// \param pB reference to data set B
+/// \param binsB number of bins for data set B
+/// \param N number of data elements in the data sets
 void BivariateHistogram::Initialize(float *pA, size_t binsA, float *pB, size_t binsB, size_t N)
 {
     m_limitsA.first = *std::min_element(pA,pA+N);
@@ -185,7 +198,8 @@ void BivariateHistogram::Initialize(float *pA, size_t binsA, float *pB, size_t b
 /// \param b value from data set B
 void BivariateHistogram::AddData(float a, float b)
 {
-
+    m_bins(ComputePos(a,m_scalingA,m_limitsA,m_nbins.first),
+           ComputePos(b,m_scalingB,m_limitsB,m_nbins.second))++;
 }
 
 /// \brief Add single data pair to the histogram
@@ -194,16 +208,25 @@ void BivariateHistogram::AddData(float a, float b)
 /// \param N number of data points
 void BivariateHistogram::AddData(float *a, float *b, size_t N)
 {
-
+    for (size_t i=0; i<N; i++) {
+        m_bins(ComputePos(a[i],m_scalingA,m_limitsA,m_nbins.first),
+               ComputePos(b[i],m_scalingB,m_limitsB,m_nbins.second))++;
+    }
 }
 
 /// \brief Get counts at the bin closest to the coordinates
 /// \param a Coordinate in data set A
 /// \param b Coordinate in data set B
-size_t BivariateHistogram::GetBin(float a, float b)
+BivariateHistogram::BinInfo BivariateHistogram::GetBin(float a, float b)
 {
-    return m_bins(ComputePos(a,m_scalingA,m_limitsA,m_nbins.first),
-                  ComputePos(b,m_scalingB,m_limitsB,m_nbins.second));
+    int posA=ComputePos(a,m_scalingA,m_limitsA,m_nbins.first);
+    int posB=ComputePos(b,m_scalingB,m_limitsB,m_nbins.second);
+
+
+    return BinInfo(m_bins(posA,posB),
+                   posA/m_scalingA.first+m_scalingA.second+m_scalingA.first*0.5f,
+                   posA/m_scalingB.first+m_scalingB.second+m_scalingB.first*0.5f);
+
 }
 
 /// \brief Get axis ticks for data set A
@@ -230,19 +253,31 @@ size_t const *   BivariateHistogram::Dims()
     return m_bins.Dims();
 }
 
-
+/// \brief Compute index to a histogram bin. This is the generic version.
+/// \param x
+/// \param scaling
+/// \param limits
+/// \param nBins
 inline int BivariateHistogram::ComputePos(float x, std::pair<float, float> &scaling, std::pair<float, float> &limits, size_t nBins)
 {
-    int selector=(x<limits.first)+2*(limits.second<x);
+    int selector=(x<limits.first)+2*(limits.second<=x);
 
     switch (selector) {
-        case 0: return static_cast<int>(x*scaling.first+scaling.second); break;
-    case 1: return 0;
-    case 2: return nBins-1;
-    default: logger(logger.LogWarning, "Strange selector value in ComputePos"); break;
+        case 0: return static_cast<int>((x-scaling.second)*scaling.first); break;
+        case 1: return 0;
+        case 2: return nBins-1;
+        sdefault: logger(logger.LogWarning, "Strange selector value in ComputePos"); break;
     }
 
     return 0;
+}
+
+std::pair<float,float> BivariateHistogram::GetLimits(int n)
+{
+    switch (n) {
+    case 0: return m_limitsA; break;
+    case 1: return m_limitsB; break;
+    }
 }
 
 }}

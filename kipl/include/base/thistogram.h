@@ -11,12 +11,6 @@ namespace kipl { namespace base {
 //int KIPLSHARED_EXPORT Histogram(float const * const data, size_t Ndata, size_t  * const hist, const size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
 int KIPLSHARED_EXPORT Histogram(float * data, size_t Ndata, size_t  * hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * pAxis=NULL);
 
-int KIPLSHARED_EXPORT BivariateHistogram(float * dataA, float *dataB , size_t Ndata,
-                                         size_t  * hist, size_t nBins,
-                                         float loA=0.0f, float hiA=0.0f,
-                                         float loB=0.0f, float hiB=0.0f,
-                                         float  * pAxisA=NULL, float  * pAxisB=NULL);
-
 std::map<float, size_t> KIPLSHARED_EXPORT ExactHistogram(float const * const data, size_t Ndata);
 
 int KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi);
@@ -75,16 +69,37 @@ private:
 };
 
 
-class BivariateHistogram
+class KIPLSHARED_EXPORT BivariateHistogram
 {
     kipl::logging::Logger logger;
 public:
+    struct BinInfo {
+        BinInfo(size_t c, float a, float b) :
+            count(c), binA(a), binB(b) {}
+        size_t count;
+        float binA;
+        float binB;
+    };
     BivariateHistogram();
     ~BivariateHistogram();
 
+    /// \brief Initialize the histogram using limits
+    /// \param loA smallest accepted value for data set A
+    /// \param hiA greatest accepted value for data set A
+    /// \param binsA number of bins for data set A
+    /// \param loB smallest accepted value for data set B
+    /// \param hiB greatest accepted value for data set B
+    /// \param binsB number of bins for data set B
+    /// \test through a unit test
     void Initialize(float loA, float hiA, size_t binsA,
                     float loB, float hiB, size_t binsB);
 
+    /// \brief Initialize the histogram using data
+    /// \param pA reference to data set A
+    /// \param binsA number of bins for data set A
+    /// \param pB reference to data set B
+    /// \param binsB number of bins for data set B
+    /// \param N number of data elements in the data sets
     void Initialize(float *pA, size_t binsA,
                     float *pB, size_t binsB, size_t N);
 
@@ -102,7 +117,8 @@ public:
     /// \brief Get counts at the bin closest to the coordinates
     /// \param a Coordinate in data set A
     /// \param b Coordinate in data set B
-    size_t GetBin(float a, float b);
+    /// \test Through a unit test
+    BivariateHistogram::BinInfo GetBin(float a, float b);
 
     /// \brief Get axis ticks for data set A
     /// \returns the pointer to the axis ticks
@@ -112,10 +128,26 @@ public:
     /// \returns the pointer to the axis ticks
     float const *  GetAxisB();
 
+    /// \brief An image reference to the histgram bins
+    /// \note This a non-constant reference, i.e. the data can be modified. Be careful.
+    /// \test Used during the GetBin tests
     kipl::base::TImage<size_t,2> & Bins();
 
+    /// \brief The number of bins for each class in an array
+    /// \test Tested in the initialization tests.
     const size_t *Dims();
+
+    /// \brief Provides the limits for each class
+    /// \param n Selects data set A or B using 0 or 1
+    std::pair<float,float> GetLimits(int n);
+
 protected:
+    /// \brief Computes the index of the bin closest to a given value
+    /// \param x the value
+    /// \param scaling the scaling parameters needed to compute the index
+    /// \param limits limits of the histogram used for boundary check
+    /// \param nBins number of bins for the specified data set
+    /// \test Indirectly tested through GetBin(a,b)
     int ComputePos(float x, std::pair<float,float> &scaling, std::pair<float,float> &limits, size_t nBins);
     kipl::base::TImage<size_t,2> m_bins;
     std::pair<float,float> m_limitsA;
