@@ -5,10 +5,17 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include "../logging/logger.h"
 
 namespace kipl { namespace base {
 //int KIPLSHARED_EXPORT Histogram(float const * const data, size_t Ndata, size_t  * const hist, const size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
 int KIPLSHARED_EXPORT Histogram(float * data, size_t Ndata, size_t  * hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * pAxis=NULL);
+
+int KIPLSHARED_EXPORT BivariateHistogram(float * dataA, float *dataB , size_t Ndata,
+                                         size_t  * hist, size_t nBins,
+                                         float loA=0.0f, float hiA=0.0f,
+                                         float loB=0.0f, float hiB=0.0f,
+                                         float  * pAxisA=NULL, float  * pAxisB=NULL);
 
 std::map<float, size_t> KIPLSHARED_EXPORT ExactHistogram(float const * const data, size_t Ndata);
 
@@ -67,6 +74,57 @@ private:
     T      m_HighValue;
 };
 
+
+class BivariateHistogram
+{
+    kipl::logging::Logger logger;
+public:
+    BivariateHistogram();
+    ~BivariateHistogram();
+
+    void Initialize(float loA, float hiA, size_t binsA,
+                    float loB, float hiB, size_t binsB);
+
+    void Initialize(float *pA, size_t binsA,
+                    float *pB, size_t binsB, size_t N);
+
+    /// \brief Add single data pair to the histogram
+    /// \param a value from data set A
+    /// \param b value from data set B
+    void AddData(float a, float b);
+
+    /// \brief Add single data pair to the histogram
+    /// \param a pointer to data set A
+    /// \param b pointer to data set B
+    /// \param N number of data points
+    void AddData(float *a, float *b, size_t N);
+
+    /// \brief Get counts at the bin closest to the coordinates
+    /// \param a Coordinate in data set A
+    /// \param b Coordinate in data set B
+    size_t GetBin(float a, float b);
+
+    /// \brief Get axis ticks for data set A
+    /// \returns the pointer to the axis ticks
+    float const *  GetAxisA();
+
+    /// \brief Get axis ticks for data set B
+    /// \returns the pointer to the axis ticks
+    float const *  GetAxisB();
+
+    kipl::base::TImage<size_t,2> & Bins();
+
+    const size_t *Dims();
+protected:
+    int ComputePos(float x, std::pair<float,float> &scaling, std::pair<float,float> &limits, size_t nBins);
+    kipl::base::TImage<size_t,2> m_bins;
+    std::pair<float,float> m_limitsA;
+    std::pair<float,float> m_limitsB;
+    std::pair<float,float> m_scalingA;
+    std::pair<float,float> m_scalingB;
+    std::pair<size_t,size_t> m_nbins;
+
+};
 }} // Namespaces
 
 #include "core/thistogram.hpp"
