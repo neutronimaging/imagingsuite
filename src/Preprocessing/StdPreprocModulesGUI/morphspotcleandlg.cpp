@@ -15,7 +15,8 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_eConnectivity(kipl::morphology::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
-    m_fThreshold(0.05f)
+    m_fThreshold(0.05f),
+    m_bThreading(false)
 {
     ui->setupUi(this);
     float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
@@ -120,6 +121,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
         m_nMaxArea          = GetIntParameter(parameters,"maxarea");
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
+        m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
     }
     catch (ModuleException &e) {
         msg<<"Module exception: Failed to get parameters: "<<e.what();
@@ -171,28 +173,29 @@ void MorphSpotCleanDlg::UpdateDialog()
 
 void MorphSpotCleanDlg::UpdateParameters()
 {
-    m_eCleanMethod = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
-    m_eDetectionMethod = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
-    m_eConnectivity = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
-    m_fThreshold = ui->spinThreshold->value();
-    m_fSigma     = ui->spinSigma->value();
-    m_fMinLevel = ui->spinMinValue->value();
-    m_fMaxLevel = ui->spinMaxValue->value();
-    m_nMaxArea  = ui->spinArea->value();
+    m_eCleanMethod      = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
+    m_eDetectionMethod  = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
+    m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
+    m_fThreshold        = ui->spinThreshold->value();
+    m_fSigma            = ui->spinSigma->value();
+    m_fMinLevel         = ui->spinMinValue->value();
+    m_fMaxLevel         = ui->spinMaxValue->value();
+    m_nMaxArea          = ui->spinArea->value();
     m_nEdgeSmoothLength = ui->spinEdgeLenght->value();
 }
 
 void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {    
-    parameters["connectivity"] = enum2string(m_eConnectivity);
-    parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
+    parameters["connectivity"]    = enum2string(m_eConnectivity);
+    parameters["cleanmethod"]     = enum2string(m_eCleanMethod);
     parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
-    parameters["threshold"]    = kipl::strings::value2string(m_fThreshold);
-    parameters["sigma"]        = kipl::strings::value2string(m_fSigma);
-    parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
-    parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
-    parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
-    parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
+    parameters["threshold"]       = kipl::strings::value2string(m_fThreshold);
+    parameters["sigma"]           = kipl::strings::value2string(m_fSigma);
+    parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
+    parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
+    parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
+    parameters["threading"]       = kipl::strings::bool2string(m_bThreading);
 }
 
 

@@ -59,6 +59,7 @@ private:
     int   m_nMaxArea;
     float m_fMinLevel;
     float m_fMaxLevel;
+    float m_bThreading;
 };
 
 #endif // MORPHSPOTCLEANDLG_H
