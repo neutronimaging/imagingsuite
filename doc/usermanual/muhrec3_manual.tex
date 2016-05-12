@@ -257,19 +257,25 @@ Typical value: 1
 
 Object file: libStdPreprocModules.so
 
-\subsection{MedianMixRingClean}
-Ring artifacts are with line artifacts the most common artifact in a CT slice. This is a basic method for correcting ring artifacts. It identifies outliers in the average sinogram and corrects them by the local median.
+\subsection{MorphSpotClean}
+Morph spot clean uses a gray scale morphological algorithm to find spots. It has the characteristic that also low intensity and wide spots can be corrected. I mostly run this module after normalization but it can also be used on the raw data.
+This is a snap shot of an algorithm under development that already performs well. It is rather slow, so it not recommended to use it during geometry tuning. 
 \begin{description}
- \item[threshold] Sets a threshold on the local variance that identifies an outlier that would cause a ring. \\ Default value: 0.01
-\item[width] Sets a smooth weighting interval for the replacement. Typically this value is about 10\% of the threshold. \\ Default value: 0.001
+\item[cleanmethod] There are different ways to replace the outliers. The default morphcleanreplace replaces with the value from a smoothed projection. 
+\item[connectivity] The morphological processing operates on pixel neighborhoods. The default value is conn4.
+\item[threshold] The threshold is used to discriminate the outliers from real image data. In the dialog a cumulative histogram helps you to find a suitable threshold 0.006
+\item[detectionmethod] You can select to clean positive, negative, or both types of outliers. Negative (holes) are mostly caused by outliers in the projections while positive (peaks) origniate in the reference data.
+\item[edgesmooth] An initialization parameter for the edge processing. It can be left at the default value 5
+\item[maxarea] Regions with more pixels than this value will be rejected from the spot list. Default value 30.
+\item[maxlevel] Data clamping for gray levels greater than this value. Default value is 12
+\item[minlevel]-0.1
+\item[sigma]0.01
+\item[threading] This is a experimental switch to activate multithreaded processing. Currently , this a slower processing than single threaded. Default value: false
 \end{description}
-\begin{figure}[ht!]
-\centering
-\includegraphics[scale=0.5]{figures/ConfMedMixRing.png}
-\caption{The median mix ring clean configuration dialog.}
+\begin{figure}
+\includegraphics[width=\textwidth]{figures3/Dialog_MorphSpotClean.png}
+\caption{The configuration dialog for MorphSpotClean}
 \end{figure}
-
-Object file: libStdPreprocModules.so
 
 \subsection{ProjectionFilterSingle}
 This is a central module for the filtered back-projection algorithm. It applies a ramp filter combined with a apodization window line-wise on the projection data.
@@ -320,9 +326,7 @@ Object file: libStdPreprocModules.so
 \end{description}
 Object file: libStdPreprocModules.so
 
-\subsection{BasicRingClean}
-The basic ring clean subtracts a high-pass filtered average sinogram from all sinogram. This a rather crude way of ring correction but it will cancel some of the rings.\\
-Object file: libStdPreprocModules.so
+
 
 \subsection{DataScaler}
 The data scaler makes a linear scaling of the data $k\,x+m$. This can be useful if have preprocessed images that are save in a 16-bit data format.
@@ -354,6 +358,38 @@ Object file: libStdPreprocModules.so
 \caption{The projection filter configuration dialog.}
 \end{figure}
 
+\subsection{BasicRingClean}
+The basic ring clean subtracts a high-pass filtered average sinogram from all sinogram. This a rather crude way of ring correction but it will cancel some of the rings.\\
+Object file: libStdPreprocModules.so
+
+\subsection{MedianMixRingClean}
+Ring artifacts are with line artifacts the most common artifact in a CT slice. This is a basic method for correcting ring artifacts. It identifies outliers in the average sinogram and corrects them by the local median.
+\begin{description}
+ \item[threshold] Sets a threshold on the local variance that identifies an outlier that would cause a ring. \\ Default value: 0.01
+\item[width] Sets a smooth weighting interval for the replacement. Typically this value is about 10\% of the threshold. \\ Default value: 0.001
+\end{description}
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.5]{figures/ConfMedMixRing.png}
+\caption{The median mix ring clean configuration dialog.}
+\end{figure}
+
+Object file: libStdPreprocModules.so
+
+\subsection{WaveletRingClean}
+This ring cleaning module works in the sinogram domain. It does the cleaning using a combination of wavelet and fourier transforms\cite{muench2009_stripefilter}. My experience is that shorter wavelets produce better results and mostly three or less levels. Typical effects of over filtering are wide ripples (rings). If you have very wide rings it cn be beneficial to increase the number of levels. 
+
+\noindent Object file: libStdPreprocModules.so
+\begin{description}
+ \item[decnum] Number of decomposition levels. \\Default value: 5
+ \item[sigma] Width of the Gaussian that forms the stop band. \\ Default value 0.1
+ \item[wname]The name of the wavelet base. \\Default value: daub25
+\end{description}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.75\textwidth]{figures3/WaveletRingCleanDlg.png}
+\caption{Dialog to tune the ring correction using wavelet ringclean. Left panel is original, mid shows the processed sinogram, and the panel to the right shows the difference.}
+\end{figure}
 
 \subsection{SpotRingClean}
 [There are better choices...] Ring cleaning by spot cleaning is an experimental module that is not finished. It cleans some of the rings but the performance is still not satisfying.
@@ -373,21 +409,6 @@ Object file: libStdPreprocModules.so
  \item[weightfunction] sigmoid
  \item[width] 5
 \end{description}
-
-\subsection{WaveletRingClean}
-This ring cleaning module works in the sinogram domain. It does the cleaning using a combination of wavelet and fourier transforms\cite{muench2009_stripefilter}. My experience is that shorter wavelets produce better results and mostly three or less levels. Typical effects of over filtering are wide ripples (rings). If you have very wide rings it cn be beneficial to increase the number of levels. 
-
-\noindent Object file: libStdPreprocModules.so
-\begin{description}
- \item[decnum] Number of decomposition levels. \\Default value: 5
- \item[sigma] Width of the Gaussian that forms the stop band. \\ Default value 0.1
- \item[wname]The name of the wavelet base. \\Default value: daub25
-\end{description}
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=0.75\textwidth]{figures3/WaveletRingCleanDlg.png}
-\caption{Dialog to tune the ring correction using wavelet ringclean. Left panel is original, mid shows the processed sinogram, and the panel to the right shows the difference.}
-\end{figure}
 
 \subsection{CountNANs}
 This module is mainly for debugging use. It counts the number of pixels set to NaN. This can be helpful to identify which module causes the numeric errors in your processing chain.
