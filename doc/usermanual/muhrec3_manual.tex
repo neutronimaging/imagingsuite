@@ -8,6 +8,7 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{fancyhdr}
 \usepackage{geometry}
+\usepackage{hyperref}
 \geometry{hmargin=2.5cm,vmargin=2.5cm}
 
 
@@ -40,13 +41,36 @@ MuhRec is a reconstructor software for computed tomography. It currently reconst
 \item Various options for normalization.
 \end{itemize}
 
-MuhRec3 is the next step of my reconstruction tool development. It provides more flexibility in terms of configuration. The user can configure the order in which the preprocessing modules are executed. The design of the reconstruction engine provides an open API that makes it possible for users to add their own processing and back projection modules. Due to major changes in the architecture of the software it has not been possible to maintain backwards compatibility with the configuration files from
-earlier versions of MuhRec. IN each
+MuhRec3 is the next step of my reconstruction tool development. It provides more flexibility in terms of configuration. The user can configure the order in which the preprocessing modules are executed. The design of the reconstruction engine provides an open API that makes it possible for users to add their own processing and back projection modules. Due to major changes in the architecture of the software it has not been possible to maintain backwards compatibility with the configuration files from earlier versions of MuhRec. 
 
 \section{Some words about the name}
 The name MuhRec is derived from the sound of the cow (in German 'Muh') and Reconstructor. There are two reasons for the Muh. Firstly, the author lives in the Swiss village Muhen (which by the way has nothing to do with cows). The software was to large extent developed on the train commuting between Muhen and Paul Scherrer Institut. The development distance can hence be determined to be about 20000~km. The second reason is that the cow is the national proudness of Switzerland \ldots and the cow says 'Muh'. The third reason is that there are many cows surrounding PSI.
 
 \chapter{A First Reconstruction}
+
+\section{Installation}
+The installation process of MuhRec are very limited. There is currently no installer that helps you so it requires a few manual steps to get running.
+\begin{itemize}
+\item Download the latest binaries (the date is part of the file name) for your OS from \href{http://www.imagingscience.ch/downloads.php}{www.imagingscience.ch}
+\item Unpack the file
+\item Copy (and rename) it to the location of your preference.
+\item Locate the executable
+\begin{description}
+\item[Windows] \verb+<Muhrec folder>/muhrec3.exe+
+\item[MacOS] The \verb+muhrec3.app+ is the executable
+\item[Linux] \verb+<Muhrec folder>/muhrec3+ is a script setting environment variables and call the application. 
+\end{description}
+\item There could be new parameters added to the configuration of each release, therefore it is recommended to start with a new project (file$\rightarrow$new) when you update.
+\item If start up problems persist you have to take the long trip:
+\begin{itemize}
+\item Delete the file CurrentRecon.xml from the folder \verb+<home path>/.imagingtools+
+\item Start muhrec
+\item Delete all processing modules and add them again. Browse for the dynamic library with preprocessing modules (mostly stdpreprocmodules etc., don't take the file with GUI in the filename)
+\item Press configure on the back projector and browse for the file stdbackproj.
+\item Select a back projector from the list.
+\item This should do the trick.
+\end{itemize}
+\end{itemize}
 
 \section{Set projection information and geometry}
 The first view you see when MuhRec starts is the place where you can enter information about the projection data (Figure \ref{fig_ProjectionGeometry}). The upper part of the view is used to specify paths and filenames. The lower part describes the projection geometry.  
@@ -146,7 +170,12 @@ A slider can be used to browse through the slices. By sliding through the slices
 
 Once you are satisfied with the image settings and reconstruction quality you can save the slices. To do this you have to select the destination folder and enter the file mask for the slices. The mask has the same format as the projection data i.e. \verb+base####.ext+. The extension must be entered manually as it is not adapted to the selected file type. The last selection to make is the file format which can be either tiff with different bit depths or matlab binary.
 
-When you do the final reconstruction it is likely that you have to stream direct to disk and lose the interaction feature.
+When you do the final reconstruction it is likely that you have to stream direct to disk and lose the interaction feature. A dialog asking for the destination will appear if this is needed \ref{fig_bigdata}. The memory size limit can be set in the parameter file. 
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{figures3/Dialog_BigDataSet.png}
+\caption{This dialog appears when the specified data set is to big to handle in primary memory.}\label{fig_bigdata}
+\end{figure}
 
 \section{The geometry list}
 It is possible to store the current configuration in the geometry list using the application menu item Geometry. This can be used to test the effect of different settings without losing the original settings. Each parameter set will be stored with the central slice to make comparison easier. If you have reconstructed several slices on different places you can use the entries of the list to calculate the axis tilt. 
@@ -155,6 +184,7 @@ It is possible to store the current configuration in the geometry list using the
 \includegraphics[scale=0.4]{figures3/GeometryListDlg.png}
 \caption{The Geometry list dialog.}
 \end{figure}
+Please note that compute ROI is not implemented. It is just a place holder to remind me to implement it.
 
 
 \chapter{Detailed descriptions}
@@ -326,7 +356,7 @@ Object file: libStdPreprocModules.so
 
 
 \subsection{SpotRingClean}
-Ring cleaning by spot cleaning is an experimental module that is not finished. It cleans some of the rings but the performance is still not satisfying.
+[There are better choices...] Ring cleaning by spot cleaning is an experimental module that is not finished. It cleans some of the rings but the performance is still not satisfying.
 
 Object file: libStdPreprocModules.so
 \begin{description}
@@ -345,7 +375,7 @@ Object file: libStdPreprocModules.so
 \end{description}
 
 \subsection{WaveletRingClean}
-This ring cleaning module works in the sinogram domain. It does the cleaning using a combination of wavelet and fourier transforms\cite{muench2009_stripefilter}. My experience is that shorter wavelets produce better results and mostly three or less levels. Typical effects of over filtering are wide ripples (rings).
+This ring cleaning module works in the sinogram domain. It does the cleaning using a combination of wavelet and fourier transforms\cite{muench2009_stripefilter}. My experience is that shorter wavelets produce better results and mostly three or less levels. Typical effects of over filtering are wide ripples (rings). If you have very wide rings it cn be beneficial to increase the number of levels. 
 
 \noindent Object file: libStdPreprocModules.so
 \begin{description}
@@ -392,6 +422,18 @@ The contrast and brightness can be adjusted by dragging using the right mouse bu
 
 A level dialog appear if you press "l' when the viewer is active. You can also mark regions in the viewer and press the Get ROI button related to the viewer.  
 
+You can also obtain region statistics and histogram from a ROI if you press i, see fig \ref{fig_infodlg}.
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{figures3/Viewer_InfoDialog.png}
+\caption{The local information dialog of the viewer.}\label{fig_infodlg}
+\end{figure}
+I have started to implement zoom (+ and -) and pan (press p). To return from the pan mode press r. This is still under development and the ROIs do not appear as expected.
+
+
+
+
+
 
 \section{The projection data}
 MuhRec supports input projection data in the formats: TIFF, FITS, and Matlab
@@ -431,7 +473,7 @@ Once you have entered all projection information you can press the
 displayed projection is the raw projection.
 
 \section{Spatio-temporal tomography}
-For samples which change over time it is not possible to 
+When the sample change shape or composition during the acquisition, the reconstructed data will suffer from motion artefacts. The impact of these artefacts can be reduced by using an alternative acqiusition scheme based on the angles computed using the Golden ratio. MuhRec supports projection data acquired using this scheme. You can tell the reconstructor that the projections are acquired using this scheme by selecting mode (Sequential/Golden ratio) in the Geometry field. With the Golden ratio it also possible to select number of projections after the acquisition. This an advantage when you don't know how fast the observed process is\cite{kaestner2011_golden}. 
 
 
 \section{Tilt correction}
@@ -477,7 +519,7 @@ muhrec3 -f parameters.xml "projections:roi=10 10 100 100"
 Muhrec use less memory when it is operated in CLI mode. 
 
 \subsubsection{Invoking Muhrec from a script}
-Sometimes it is convenient to use a script to run muhrec. Here is an example using python
+Sometimes it is convenient to use a script to run muhrec. Here is an example using python. The example uses the CLI interface, which may not be the best way but at least it solves the problem.
 \begin{verbatim}
 #!/usr/bin/env python
 
@@ -509,18 +551,12 @@ for i in range(firstframe,lastframe) :
 This script assumes that you have a well configured Recon.xml file and that the data is acquired as a long sequence, e.g. a time series of CTs.
 
 \chapter{Continued development}
-MuhRec is continuously developing to adapt to new challenges at the neutron
-imaging beamlines at Paul Scherrer Institut. Unfortunately, it is not only new
-development but also bug fixing. To fix bug the input from users is important,
-so I kindly ask you to report problems when the software misbehaves.
+MuhRec is continuously developing to adapt to new challenges at the neutron imaging beamlines at Paul Scherrer Institut. Unfortunately, it is not only new development but also bug fixing. To fix bug the input from users is important, so I kindly ask you to report problems when the software misbehaves.
 
-For the continued development it also important with feedback regarding
-improvements of existing and new features. So, if you have any comments that you
-would like to share I appreciate if you send them to me. I cannot promise that I
-will implement everything but I will at least consider it.
+For the continued development it also important with feedback regarding improvements of existing and new features. So, if you have any comments that you would like to share I appreciate if you send them to me. I cannot promise that I will implement everything but I will at least consider it.
 
 \bibliographystyle{plain}
-\bibliography{../../../../../../../doc/doc/references}
+\bibliography{../../../../doc/references}
 \appendix
 \chapter{License}
 Definitions: The software refers to any revision of MuhRec. The author Anders
