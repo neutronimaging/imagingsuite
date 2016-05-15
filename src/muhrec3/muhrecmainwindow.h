@@ -85,7 +85,7 @@ protected:
     void UpdateMemoryUsage(size_t *roi);
     void SetImageSizeToAdjustment();
 
-    void LoadDefaults();
+    void LoadDefaults(bool checkCurrent);
     void LoadReconSettings();
 
 private slots:
