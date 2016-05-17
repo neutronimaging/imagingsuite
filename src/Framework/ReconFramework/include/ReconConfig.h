@@ -105,6 +105,7 @@ public:
         size_t nDCCount;            ///< Number of dark image.
 
         size_t roi[4];              ///< Region of interest to reconstruct (x0,y0,x1,y1).
+        size_t projection_roi[4];   ///< Region of interest for the entire sample (x0,y0,x1,y1).
         size_t dose_roi[4];         ///< Region of interest to calculate the projection dose (x0,y0,x1,y1).
         float fScanArc[2];          ///< Provides the first and last scan angles
         kipl::base::eImageFlip eFlip;   ///< Projection flip operation (horizontal, vertical, both).

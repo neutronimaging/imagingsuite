@@ -161,6 +161,7 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="dcfirstindex") ProjectionInfo.nDCFirstIndex=atoi(value.c_str());
             if (var=="dccount") ProjectionInfo.nDCCount=atoi(value.c_str());
             if (var=="roi") kipl::strings::String2Array(value,ProjectionInfo.roi,4);
+            if (var=="projroi") kipl::strings::String2Array(value,ProjectionInfo.projection_roi,4);
             if (var=="doseroi") kipl::strings::String2Array(value,ProjectionInfo.dose_roi,4);
             if (var=="scanarc") kipl::strings::String2Array(value,ProjectionInfo.fScanArc,2);
             if (var=="scanarc0") ProjectionInfo.fScanArc[0]=atof(value.c_str());
@@ -658,6 +659,7 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	str<<setw(indent+4)  <<" "<<"<dcfirstindex>"<<nDCFirstIndex<<"</dcfirstindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<dccount>"<<nDCCount<<"</dccount>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<roi>"<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"</roi>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<projroi>"<<projection_roi[0]<<" "<<projection_roi[1]<<" "<<projection_roi[2]<<" "<<projection_roi[3]<<"</projroi>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<doseroi>"<<dose_roi[0]<<" "<<dose_roi[1]<<" "<<dose_roi[2]<<" "<<dose_roi[3]<<"</doseroi>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<scanarc>"<<fScanArc[0]<<" "<<fScanArc[1]<<"</scanarc>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<rotate>"<<eRotate<<"</rotate>"<<std::endl;
