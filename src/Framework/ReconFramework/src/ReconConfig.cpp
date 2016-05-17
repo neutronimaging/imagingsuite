@@ -288,6 +288,9 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 	    	if (sName=="dccount")  ProjectionInfo.nDCCount=atoi(sValue.c_str());
 	        if (sName=="roi")
 	        	kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
+            if (sName=="projroi")
+                kipl::strings::String2Array(sValue,ProjectionInfo.projection_roi,4);
+
 			if (sName=="doseroi")
 	        	kipl::strings::String2Array(sValue,ProjectionInfo.dose_roi,4);
 			if (sName=="scanarc") {
@@ -537,6 +540,11 @@ fScanArc[0]=0; fScanArc[1]=360;
 	dose_roi[1] = 0;
 	dose_roi[2] = 10;
 	dose_roi[3] = 10;
+
+    projection_roi[0] = 0;
+    projection_roi[1] = 2047;
+    projection_roi[2] = 0;
+    projection_roi[3] = 2047;
 }
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
@@ -571,6 +579,11 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	roi[0]=a.roi[0]; roi[2]=a.roi[2];
 	roi[1]=a.roi[1]; roi[3]=a.roi[3];
 	fScanArc[0]=a.fScanArc[0]; fScanArc[1]=a.fScanArc[1];
+
+    projection_roi[0] = a.projection_roi[0];
+    projection_roi[1] = a.projection_roi[1];
+    projection_roi[2] = a.projection_roi[2];
+    projection_roi[3] = a.projection_roi[3];
 	
 	dose_roi[0] = a.dose_roi[0];
 	dose_roi[1] = a.dose_roi[1];
@@ -612,6 +625,11 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	roi[1]=a.roi[1]; roi[3]=a.roi[3];
 	fScanArc[0]     = a.fScanArc[0];
 	fScanArc[1]     = a.fScanArc[1];
+
+    projection_roi[0] = a.projection_roi[0];
+    projection_roi[1] = a.projection_roi[1];
+    projection_roi[2] = a.projection_roi[2];
+    projection_roi[3] = a.projection_roi[3];
 
 	dose_roi[0] = a.dose_roi[0];
 	dose_roi[1] = a.dose_roi[1];

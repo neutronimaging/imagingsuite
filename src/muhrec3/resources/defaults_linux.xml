@@ -37,6 +37,7 @@
         <dcfirstindex>1</dcfirstindex>
         <dccount>5</dccount>
         <roi>0 0 100 100</roi>
+        <projroi>0 0 99 99</projroi>
         <doseroi>0 0 10 10</doseroi>
         <scanarc>0 360</scanarc>
         <rotate>imagerotatenone</rotate>

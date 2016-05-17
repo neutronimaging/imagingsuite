@@ -7,7 +7,7 @@
         <comment>No comment</comment>
     </userinformation>
     <system>
-        <memory>4000</memory>
+        <memory>6000</memory>
         <loglevel>message</loglevel>
     </system>
     <projections>
@@ -36,6 +36,7 @@
         <dcfirstindex>1</dcfirstindex>
         <dccount>5</dccount>
         <roi>30 62 0 99 </roi>
+        <projroi>0 0 99 99</projroi>
         <doseroi>0 0 10 10</doseroi>
         <scanarc>0 360</scanarc>
         <rotate>imagerotatenone</rotate>

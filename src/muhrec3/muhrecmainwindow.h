@@ -33,6 +33,8 @@ private:
     Ui::MuhRecMainWindow *ui;
     QApplication *m_QtApp;
     void SetApplicationPath(std::string path) {m_sApplicationPath=path;}
+    void SlicesChanged(int x);
+
 
     // Collection of call-backs
 protected slots:
@@ -47,7 +49,7 @@ protected slots:
     void FlipChanged();
     void RotateChanged();
     void DoseROIChanged(int x);
-    void ReconROIChanged(int x);
+    void ProjROIChanged(int x);
     void CenterOfRotationChanged(int x);
     void CenterOfRotationChanged(double x);
     void ConfigureGeometry();
@@ -98,6 +100,12 @@ private slots:
     void on_comboSlicePlane_activated(int index);
 
     void on_actionPreferences_triggered();
+
+    void on_actionReconstruct_to_disk_triggered();
+
+    void on_spinSlicesFirst_valueChanged(int arg1);
+
+    void on_spinSlicesLast_valueChanged(int arg1);
 
 private:
     // Data members
