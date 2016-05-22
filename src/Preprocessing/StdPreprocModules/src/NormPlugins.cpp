@@ -26,15 +26,18 @@
 #include "../include/NormPlugins.h"
 
 NormBase::NormBase(std::string name) :
-PreprocModuleBase(name),
-nOBCount(0),
-nOBFirstIndex(1),
-nDCCount(0),
-nDCFirstIndex(1),
-fFlatDose(1.0f),
-bUseNormROI(true),
-bUseLUT(false),
-bUseWeightedMean(false)
+    PreprocModuleBase(name),
+    nOBCount(0),
+    nOBFirstIndex(1),
+    nDCCount(0),
+    nDCFirstIndex(1),
+    nBBCount(0),
+    nBBFirstIndex(1),
+    fFlatDose(1.0f),
+    fBlackDose(1.0f),
+    bUseNormROI(true),
+    bUseLUT(false),
+    bUseWeightedMean(false)
 {
 	memset(nNormRegion, 0, sizeof(size_t)*4);
 	memset(nOriginalNormRegion, 0, sizeof(size_t)*4);

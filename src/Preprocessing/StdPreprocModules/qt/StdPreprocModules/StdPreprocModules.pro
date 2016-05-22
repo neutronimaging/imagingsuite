@@ -35,7 +35,8 @@ SOURCES += \
     ../../src/TranslateProjectionsModule.cpp \
     ../../src/MorphSpotCleanModule.cpp \
     ../../src/GammaSpotCleanModule.cpp \
-    ../../src/CameraStripeClean.cpp
+    ../../src/CameraStripeClean.cpp \
+    ../../src/robustlognorm.cpp
 
 HEADERS += \
     ../../include/WaveletRingClean.h \
@@ -60,7 +61,8 @@ HEADERS += \
     ../../include/MorphSpotCleanModule.h \
     ../../include/GammaSpotCleanModule.h \
     ../../include/StdPreprocModules_global.h \
-    ../../include/CameraStripeClean.h
+    ../../include/CameraStripeClean.h \
+    ../../include/robustlognorm.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

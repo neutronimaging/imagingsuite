@@ -41,18 +41,25 @@ protected:
 	std::string path;
 	std::string flatname;
 	std::string darkname;
+    std::string blackbodyname;
 
 	size_t nOBCount;
 	size_t nOBFirstIndex;
 	size_t nDCCount;
 	size_t nDCFirstIndex;
+    size_t nBBCount;
+    size_t nBBFirstIndex;
 
 
 	kipl::base::TImage<float,2> mFlatField;
 	kipl::base::TImage<float,2> mDark;
+    kipl::base::TImage<float,2> mBlack;
+
 	eNormFunctionType mNormFunction;
 	float fFlatDose; 
 	float fDarkDose;
+    float fBlackDose;
+
 	bool bUseNormROI;
 	bool bUseLUT;
     bool bUseWeightedMean;
