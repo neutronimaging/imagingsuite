@@ -12,6 +12,9 @@
 //#include "stdafx.h"
 #include <base/timage.h>
 #include <logging/logger.h>
+
+#include "../include/averageimage.h"
+
 namespace ImagingAlgorithms {
 
 class IMAGINGALGORITHMSSHARED_EXPORT ReferenceImageCorrection {
@@ -21,11 +24,12 @@ public:
 	ReferenceImageCorrection();
 	virtual ~ReferenceImageCorrection();
 
-	void LoadReferenceImages(std::string obname, size_t obcnt,
-			std::string dcname, size_t dccnt,
-			std::string bbname, size_t bbcnt,
-			size_t *doseroi,
-			size_t *bbroi);
+    void LoadReferenceImages(std::string obname, size_t firstob, size_t obcnt,
+            std::string dcname, size_t firstdc, size_t dccnt,
+            std::string bbname, size_t firstbb, size_t bbcnt,
+            size_t *roi,
+            size_t *doseroi,
+            size_t *bbroi);
 
 	void SetReferenceImages(kipl::base::TImage<float,2> *ob,
 			kipl::base::TImage<float,2> *dc,
@@ -64,6 +68,8 @@ protected:
 	float m_fOpenBeamDose;
 	bool m_bHaveDoseROI;
 	bool m_bHaveBlackBodyROI;
+
+    ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod;
 
 	size_t m_nDoseROI[4];
 	size_t m_nBlackBodyROI[4];
