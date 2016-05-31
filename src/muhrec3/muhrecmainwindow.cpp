@@ -493,7 +493,10 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
                    dims[2]=ui->spinProjROIx1->value(),
                    dims[3]=ui->spinProjROIy1->value());
 
+    rect.normalized();
+
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
+    SlicesChanged(0);
     CenterOfRotationChanged();
     UpdateMemoryUsage(dims);
 }
@@ -1379,6 +1382,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->ConfiguratorBackProj->SetModule(m_Config.backprojector);
 
     ProjROIChanged(0);
+    SlicesChanged(0);
     UpdateDoseROI();
 }
 

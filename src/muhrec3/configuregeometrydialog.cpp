@@ -14,6 +14,7 @@
 #include <morphology/morphfilters.h>
 
 #include <exception>
+#include <numeric>
 
 
 ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
@@ -24,10 +25,6 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
     connect(ui->checkUseTilt,SIGNAL(toggled(bool)),SLOT(UseTilt(bool)));
-    connect(ui->buttonGetROI,SIGNAL(clicked()),SLOT(onROIButtonClicked()));
-
-    connect(ui->spinMarginLeft,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
-    connect(ui->spinMarginRight,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
 }
@@ -46,10 +43,12 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
         return QDialog::Rejected;
 
     ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims());
-    ui->spinMarginLeft->setRange(0,m_Proj0Deg.Size(0));
-    ui->spinMarginRight->setRange(0,m_Proj0Deg.Size(0));
-    ui->spinSliceFirst->setRange(0,m_Proj0Deg.Size(1));
-    ui->spinSliceLast->setRange(0,m_Proj0Deg.Size(1));
+    ui->spinSliceFirst->blockSignals(true);
+    ui->spinSliceLast->blockSignals(true);
+    ui->spinSliceFirst->setRange(m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+    ui->spinSliceLast->setRange(m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+    ui->spinSliceFirst->blockSignals(false);
+    ui->spinSliceLast->blockSignals(false);
 
     UpdateDialog();
 
@@ -68,19 +67,13 @@ void ConfigureGeometryDialog::onROIButtonClicked()
 
     if (rect.width()*rect.height()!=0)
     {
-        ui->spinMarginLeft->blockSignals(true);
-        ui->spinMarginRight->blockSignals(true);
         ui->spinSliceFirst->blockSignals(true);
         ui->spinSliceLast->blockSignals(true);
-        ui->spinMarginLeft->setValue(rect.x());
         ui->spinSliceFirst->setValue(rect.y());
-        ui->spinMarginRight->setValue(rect.x()+rect.width());
         ui->spinSliceLast->setValue(rect.y()+rect.height());
-        ui->spinMarginLeft->blockSignals(false);
-        ui->spinMarginRight->blockSignals(false);
         ui->spinSliceFirst->blockSignals(false);
         ui->spinSliceLast->blockSignals(false);
-        ROIChanged(0);
+        ROIChanged(-1);
     }
 }
 
@@ -89,23 +82,22 @@ void ConfigureGeometryDialog::ROIChanged(int x)
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
     if (0<=x) {
-        dims[0]=ui->spinMarginLeft->value();
         dims[1]=ui->spinSliceFirst->value();
-        dims[2]=ui->spinMarginRight->value();
         dims[3]=ui->spinSliceLast->value();
     }
     rect.setCoords(dims[0], dims[1], dims[2], dims[3]);
 
-    ui->viewerProjection->set_rectangle(rect,QColor("yellow"),1);
+    on_comboROISelection_currentIndexChanged(ui->comboROISelection->currentIndex());
 }
 
 void ConfigureGeometryDialog::FindCenter()
 {
     ostringstream msg;
     UpdateConfig();
-    size_t *roi=m_Config.ProjectionInfo.roi;
+
+    size_t *roi=ui->comboROISelection->currentIndex() == 0 ? m_Config.ProjectionInfo.projection_roi : m_Config.ProjectionInfo.roi;
     msg.str("");
-    msg<<"Find center: Current ROI ["<<roi[0]<<", "<<roi[2]<<"]";
+    msg<<"Find center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     float fMin,fMax;
@@ -115,38 +107,51 @@ void ConfigureGeometryDialog::FindCenter()
     m_vCoG.clear();
     switch (ui->comboEstimatationMethod->currentIndex()) {
         case 0:
-            LeastSquareCenter(m_Proj0Deg,m_Proj180Deg);
+            LeastSquareCenter(m_Proj0Deg,m_Proj180Deg,roi);
             break;
         case 1:
-            CorrelationCenter(m_Proj0Deg,m_Proj180Deg);
+            CorrelationCenter(m_Proj0Deg,m_Proj180Deg,roi);
             break;
         default:
-            CorrelationCenter(m_Proj0Deg,m_Proj180Deg);
+            CorrelationCenter(m_Proj0Deg,m_Proj180Deg,roi);
             break;
     }
 
-    float k=0.0f,m=0.0f;
-    LSQ_fit1(m_vCoG,&k,&m);
-    m_Config.ProjectionInfo.fTiltAngle=atan(k)*180.0f/fPi;
+    QVector<QPointF> plot_data;
 
-    m_Config.ProjectionInfo.fCenter=k*(0.5f* m_Config.ProjectionInfo.nDims[1])+m;
+    if (ui->checkUseTilt->isChecked()) {
+        float k=0.0f,m=0.0f;
+        LSQ_fit1(m_vCoG,&k,&m);
+        m_Config.ProjectionInfo.fTiltAngle=atan(k)*180.0f/fPi;
+
+        m_Config.ProjectionInfo.fCenter=k*(0.5f* m_Config.ProjectionInfo.nDims[1])+m;
+        msg.str("");
+        msg<<"Estimated center="<<m<<", tilt="<<k<<endl;
+        logger(kipl::logging::Logger::LogVerbose,msg.str());
+        plot_data.clear();
+        plot_data.append(QPointF(k*roi[1]+m+roi[0],0.0f));
+        plot_data.append(QPointF(k*roi[3]+m+roi[0],m_Proj0Deg.Size(1)-1.0f));
+    }
+    else {
+        m_Config.ProjectionInfo.fCenter=std::accumulate(m_vCoG.begin(),m_vCoG.end(),0.0f)/m_vCoG.size();
+        plot_data.clear();
+        plot_data.append(QPointF(m_Config.ProjectionInfo.fCenter+roi[0],0.0f));
+        plot_data.append(QPointF(m_Config.ProjectionInfo.fCenter+roi[0],m_Proj0Deg.Size(1)-1.0f));
+    }
+    ui->viewerProjection->set_plot(plot_data,QColor("lightblue"),1);
     UpdateDialog();
 
-    QVector<QPointF> plot_data;
+    plot_data.clear();
     for (size_t i=0; i<m_vCoG.size(); i++) {
         plot_data.append(QPointF(m_vCoG[i]+roi[0],static_cast<float>(i+roi[1])));
     }
 
     ui->viewerProjection->set_plot(plot_data,QColor("red"),0);
 
-    msg.str("");
-    msg<<"Estimated center="<<m<<", tilt="<<k<<endl;
-    logger(kipl::logging::Logger::LogVerbose,msg.str());
-    plot_data.clear();
-    plot_data.append(QPointF(k*roi[1]+m+roi[0],0.0f));
-    plot_data.append(QPointF(k*roi[3]+m+roi[0],m_Proj0Deg.Size(1)-1.0f));
 
-    ui->viewerProjection->set_plot(plot_data,QColor("yellow"),1);
+
+
+
 }
 
 void ConfigureGeometryDialog::LSQ_fit1(std::vector<float> &v, float *k, float *m)
@@ -187,11 +192,15 @@ kipl::base::TImage<float,2> ConfigureGeometryDialog::ThresholdProjection(const k
 }
 
 float ConfigureGeometryDialog::CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
-                                                    kipl::base::TImage<float,2> proj_180)
+                                                    kipl::base::TImage<float,2> proj_180,
+                                                    size_t *roi)
 {
+    std::ostringstream msg;
     logger(kipl::logging::Logger::LogMessage,"Center estimation using correlation");
 
-    size_t *roi = m_Config.ProjectionInfo.roi;
+ //   size_t *roi = m_Config.ProjectionInfo.roi;
+    msg<<"Corr center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     std::ofstream cogfile("cog_corr.txt");
 
@@ -231,17 +240,20 @@ float ConfigureGeometryDialog::CorrelationCenter(	kipl::base::TImage<float,2> pr
 }
 
 float ConfigureGeometryDialog::LeastSquareCenter(	kipl::base::TImage<float,2> proj_0,
-                                                    kipl::base::TImage<float,2> proj_180)
+                                                    kipl::base::TImage<float,2> proj_180, size_t *roi)
 {
+    std::ostringstream msg;
     logger(kipl::logging::Logger::LogMessage,"Center estimation using least squared error");
 
-    size_t *roi = m_Config.ProjectionInfo.roi;
+  //  size_t *roi = m_Config.ProjectionInfo.roi;
+    msg<<"LS center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
     kipl::base::TImage<float,2> limg0,limg180;
     size_t start[2]={roi[0],roi[1]};
     size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
     kipl::base::TSubImage<float,2> cropper;
-    std::ostringstream msg;
 
+    msg.str("");
     msg<<"x ["<<start[0]<<", "<<length[0]<<"], y ["<<start[1]<<", "<<length[1]<<"]";
 
     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -363,18 +375,7 @@ pair<size_t, size_t> ConfigureGeometryDialog::FindMaxBoundary()
 
 void ConfigureGeometryDialog::UseTilt(bool x)
 {
-    if (x) {
-        ui->dspinTiltAngle->show();
-        ui->dspinTiltPivot->show();
-        ui->labelTiltAngle->show();
-        ui->labelTiltPivot->show();
-    }
-    else {
-        ui->dspinTiltAngle->hide();
-        ui->dspinTiltPivot->hide();
-        ui->labelTiltAngle->hide();
-        ui->labelTiltPivot->hide();
-    }
+
 }
 
 int ConfigureGeometryDialog::LoadImages()
@@ -572,29 +573,40 @@ int ConfigureGeometryDialog::LoadImages()
 
 void ConfigureGeometryDialog::UpdateConfig()
 {
-    m_Config.ProjectionInfo.bCorrectTilt = ui->checkUseTilt->isChecked();
-    m_Config.ProjectionInfo.roi[0]       = ui->spinMarginLeft->value();
     m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
-    m_Config.ProjectionInfo.roi[2]       = ui->spinMarginRight->value();
     m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
-    m_Config.ProjectionInfo.fTiltAngle   = ui->dspinTiltAngle->value();
-    m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
+    m_Config.ProjectionInfo.bCorrectTilt = ui->checkUseTilt->isChecked();
+    if (ui->checkUseTilt->isChecked()) {
+        m_Config.ProjectionInfo.fTiltAngle   = ui->dspinTiltAngle->value();
+        m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
+    }
 
 }
 
 void ConfigureGeometryDialog::UpdateDialog()
 {
-    ui->spinMarginLeft->blockSignals(true);
-    ui->spinMarginRight->blockSignals(true);
+    std::ostringstream msg;
+
+    msg<<"["<<m_Config.ProjectionInfo.projection_roi[0]<<", "
+         <<m_Config.ProjectionInfo.projection_roi[1]<<", "
+         <<m_Config.ProjectionInfo.projection_roi[2]<<", "
+         <<m_Config.ProjectionInfo.projection_roi[3]<<"]";
+
+    msg<<" ROI=["<<m_Config.ProjectionInfo.roi[0]<<", "
+         <<m_Config.ProjectionInfo.roi[1]<<", "
+         <<m_Config.ProjectionInfo.roi[2]<<", "
+         <<m_Config.ProjectionInfo.roi[3]<<"]";
+
+
+    ui->label_ProjROI->setText(QString::fromStdString(msg.str()));
+
     ui->spinSliceFirst->blockSignals(true);
     ui->spinSliceLast->blockSignals(true);
     ui->checkUseTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
-    ui->spinMarginLeft->setValue(m_Config.ProjectionInfo.roi[0]);
     ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
-    ui->spinMarginRight->setValue(m_Config.ProjectionInfo.roi[2]);
     ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
     ui->dspinAngleFirst->setValue(m_Config.ProjectionInfo.fScanArc[0]);
     ui->dspinAngleLast->setValue(m_Config.ProjectionInfo.fScanArc[1]);
@@ -603,9 +615,52 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
 
     ROIChanged(-1);
-    ui->spinMarginLeft->blockSignals(false);
-    ui->spinMarginRight->blockSignals(false);
+    UseTilt(m_Config.ProjectionInfo.bCorrectTilt);
     ui->spinSliceFirst->blockSignals(false);
     ui->spinSliceLast->blockSignals(false);
 }
 
+
+void ConfigureGeometryDialog::on_checkUseTilt_toggled(bool checked)
+{
+    ui->gridTilt->setEnabled(checked);
+    if (checked) {
+        ui->dspinTiltAngle->show();
+        ui->dspinTiltPivot->show();
+        ui->labelTiltAngle->show();
+        ui->labelTiltPivot->show();
+        ui->checkBox_ManualTiltPivotEntry->show();
+    }
+    else {
+        ui->dspinTiltAngle->hide();
+        ui->dspinTiltPivot->hide();
+        ui->labelTiltAngle->hide();
+        ui->labelTiltPivot->hide();
+        ui->checkBox_ManualTiltPivotEntry->hide();
+    }
+}
+
+void ConfigureGeometryDialog::on_dspinCenterRotation_valueChanged(double arg1)
+{
+
+}
+
+void ConfigureGeometryDialog::on_comboROISelection_currentIndexChanged(int index)
+{
+    QRect rect;
+    switch (index)
+    {
+       case 0 : rect.setCoords(m_Config.ProjectionInfo.projection_roi[0],
+                m_Config.ProjectionInfo.projection_roi[1],
+                m_Config.ProjectionInfo.projection_roi[2],
+                m_Config.ProjectionInfo.projection_roi[3]);
+                break;
+       case 1: rect.setCoords(m_Config.ProjectionInfo.projection_roi[0],
+                m_Config.ProjectionInfo.roi[1],
+                m_Config.ProjectionInfo.projection_roi[2],
+                m_Config.ProjectionInfo.roi[3]);
+                break;
+    }
+
+    ui->viewerProjection->set_rectangle(rect,QColor("yellow"),1);
+}

@@ -33,14 +33,24 @@ private slots:
     void onROIButtonClicked();
     void ROIChanged(int x);
 
+    void on_checkUseTilt_toggled(bool checked);
+
+    void on_dspinCenterRotation_valueChanged(double arg1);
+
+    void on_comboROISelection_currentIndexChanged(int index);
+
 private:
 
     void LSQ_fit1(vector<float> &v, float *k, float *m);
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
     float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
-                                                        kipl::base::TImage<float,2> proj_180);
-    float LeastSquareCenter(	kipl::base::TImage<float,2> proj_0,
-                                                        kipl::base::TImage<float,2> proj_180);
+                                kipl::base::TImage<float,2> proj_180,
+                                size_t *roi);
+
+    float LeastSquareCenter(kipl::base::TImage<float,2> proj_0,
+                            kipl::base::TImage<float,2> proj_180,
+                            size_t *roi);
+
     float CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end);
     void CumulateProjection(const kipl::base::TImage<float,2> img, const kipl::base::TImage<float,2> biimg);
     pair<size_t, size_t> FindBoundary(const kipl::base::TImage<float,2> img, float level);
