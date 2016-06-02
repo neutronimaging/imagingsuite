@@ -19,7 +19,7 @@ This is a temporary script file.
 import matplotlib.pyplot as plt
 import numpy as np
 import skimage.io as io
-import skimage.filters as filter
+from skimage import filter
 from scipy.signal import argrelextrema
 from scipy.signal import medfilt
 
@@ -27,12 +27,12 @@ from scipy.signal import medfilt
 #img=io.imread('../../data/cbct/fp200_x70_3s_5fps_60kV_150uA_00001.tif')
 img=io.imread('../../data/cbct/fp150_x350_3s_5fps_60kV_150uA_00001.tif')
 
-plt.figure(figsize=(10,2/3*10))
+#plt.figure(figsize=(10,2/3*10))
 
 plt.subplot(321)
 plt.imshow(img)
 # Prepare
-res=np.abs(filter.gaussian(filter.sobel_h(img),5));
+res=np.abs(filter.gaussian_filter(filter.hsobel(img),5));
 res=np.clip(res,0.0,0.2)
 plt.subplot(322)
 plt.imshow(res)
@@ -66,4 +66,6 @@ plt.subplot(324)
 res=res[:,(p1+pd3):(p2-pd3)]
 plt.plot(np.sum(res,1))
 
+plt.subplot(325)
+plt.imshow(res)
 plt.show()
