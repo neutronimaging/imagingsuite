@@ -8,6 +8,7 @@ QT       -= gui
 
 TARGET = StatisticsModules
 TEMPLATE = lib
+CONFIG += c++11
 
 DEFINES += STATISTICSMODULES_LIBRARY
 
