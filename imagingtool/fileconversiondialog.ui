@@ -62,6 +62,52 @@
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Scan order</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_ScanOrder">
+              <item>
+               <property name="text">
+                <string>Sequence</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Golden ratio</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Scan length</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_ScanLength">
+              <item>
+               <property name="text">
+                <string>180</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>360</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </item>
        </layout>

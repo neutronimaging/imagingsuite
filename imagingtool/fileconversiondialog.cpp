@@ -1,4 +1,5 @@
 #include <list>
+#include <map>
 #include <string>
 
 #include <QFileDialog>
@@ -173,7 +174,11 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 
     kipl::strings::String2List(skipstring,skiplist);
 
-    std::list<std::string> flist=BuildFileList(ll,skiplist);
+    std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,ui->comboBox_ScanOrder->currentIndex(),ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
+
+    std::list<std::string> flist;
+    for (auto it=plist.begin(); it!=plist.end(); it++)
+        flist.push_back(it->second);
 
     ext2=kipl::strings::filenames::GetFileExtension(ui->lineEdit_DestinationMask->text().toStdString());
     msg.str("");
