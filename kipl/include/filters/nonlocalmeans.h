@@ -8,6 +8,7 @@
 #include "../base/timage.h"
 #include "../logging/logger.h"
 #include "filterbase.h"
+#include "../base/thistogram.h"
 
 
 namespace akipl {
@@ -33,7 +34,9 @@ protected:
             NLM_Naive,              // Reference code to original algorithm
             NLM_HistogramOriginal,  // Reference code to histgram based algorithm
             NLM_HistogramSum,
-            NLM_HistogramSumParallel // c++11 threaded version of NLM_HistogramSum, speedup close to N threads
+            NLM_HistogramSumParallel, // c++11 threaded version of NLM_HistogramSum, speedup close to N threads
+            NLM_Bivariate,
+            NLM_BivariateParallel   // c++11 threaded version of NLM_HistogramSum, speedup close to N threads
         };
 
         enum NLMwindows {
@@ -108,6 +111,13 @@ protected:
         /// \param N number of pixels
         void nlm_hist_sum_single(float *f, float *ff, float *ff2, float *g, size_t N);
 
+        /// \brief Implementation with bivariate histogram patching
+        /// \param f pointer to the original image
+        /// \param ff pointer to the filtered image
+        /// \param g pointer to the result image
+        /// \param N number of pixels
+        void nlm_bivariate(float *f, float *ff, float *ff2, float *g, size_t N);
+
         /// \brief Implementation with histogram patching summing a contributions per bin parallelized by c++11 threads
         /// \param f pointer to the original image
         /// \param ff pointer to the filtered image
@@ -122,6 +132,13 @@ protected:
         /// \param N number of pixels
         void nlm_hist_threaded(float *f, float *ff, float *g, size_t N);
 
+        /// \brief Implementation with bivariate histogram patching parallelized by c++11 threads
+        /// \param f pointer to the original image
+        /// \param ff pointer to the filtered image
+        /// \param g pointer to the result image
+        /// \param N number of pixels
+        void nlm_bivariate_threaded(float *f, float *ff, float *ff2, float *g, size_t N);
+
         /// \brief Implementation with histogram patching, core algorithm
         /// \param f pointer to the original image
         /// \param ff pointer to the filtered image
@@ -135,6 +152,13 @@ protected:
         /// \param g pointer to the result image
         /// \param N number of pixels
         void nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g, size_t N);
+
+        /// \brief Implementation with histogram patching, core algorithm
+        /// \param f pointer to the original image
+        /// \param ff pointer to the filtered image
+        /// \param g pointer to the result image
+        /// \param N number of pixels
+        void nlm_core_bivariate(float *f, float *ff, float *ff2, float *g, size_t N);
 
         void SaveCurrentHistogram();
         void SaveCurrentHistogram2();
@@ -155,6 +179,7 @@ protected:
         double *m_fSums;
         std::vector<pair<double, size_t> > m_hist;
         std::vector<HistogramBin> m_Histogram;
+        kipl::base::BivariateHistogram m_BivariateHistogram;
 };
 
 }

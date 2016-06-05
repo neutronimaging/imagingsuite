@@ -134,6 +134,12 @@ void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImag
         case NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel   :
             nlm_hist_sum_threaded(f.GetDataPtr(),ff.GetDataPtr(),ff2.GetDataPtr(), g.GetDataPtr(),f.Size());
             break;
+        case NonLocalMeans::NLMalgorithms::NLM_Bivariate :
+            nlm_bivariate(f.GetDataPtr(),ff.GetDataPtr(),ff2.GetDataPtr(),g.GetDataPtr(),f.Size());
+            break;
+        case NonLocalMeans::NLMalgorithms::NLM_BivariateParallel :
+            nlm_bivariate_threaded(f.GetDataPtr(),ff.GetDataPtr(),ff2.GetDataPtr(),g.GetDataPtr(),f.Size());
+            break;
     }
 
 }
@@ -494,6 +500,63 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g,
     }
 }
 
+/// \brief Implementation with histogram patching parallelized by c++11 threads
+/// \param f pointer to the original image
+/// \param ff pointer to the filtered image
+/// \param g pointer to the result image
+/// \param N number of pixels
+void NonLocalMeans::nlm_bivariate(float *f, float *ff, float *ff2, float *g, size_t N)
+{
+    throw kipl::base::KiplException("The algorithm NLM-bivariate is not implemented");
+    m_BivariateHistogram.Initialize();
+}
+
+/// \brief Implementation with histogram patching parallelized by c++11 threads
+/// \param f pointer to the original image
+/// \param ff pointer to the filtered image
+/// \param g pointer to the result image
+/// \param N number of pixels
+void NonLocalMeans::nlm_bivariate_threaded(float *f, float *ff, float *ff2, float *g, size_t N)
+{
+    throw kipl::base::KiplException("The threaded algorithm NLM-bivariate is not implemented");
+}
+
+/// \brief Implementation with histogram patching, core algorithm
+/// \param f pointer to the original image
+/// \param ff pointer to the filtered image
+/// \param g pointer to the result image
+/// \param N number of pixels
+void NonLocalMeans::nlm_core_bivariate(float *f, float *ff, float *ff2, float *g, size_t N)
+{
+    std::ostringstream msg;
+
+    float q;
+    float qMax=0.0;
+    for (size_t i=0; i<N; i++) {
+        double wi=0.0f;
+        double gg=0.0f;
+        qMax=0.0;
+        for (size_t j=0; j<m_nHistSize; j++) {
+            if (m_Histogram[j].cnt) {
+                q   = weight(ff2[i]-2*ff[i]*m_Histogram[j].local_avg+m_Histogram[j].local_avg2); // Using distance from local average
+                gg += q * m_Histogram[j].sum;
+                wi += q * m_Histogram[j].cnt ;
+
+                if (qMax<q) {
+                    qMax=q;
+                }
+             }
+        }
+        gg+=f[i]*qMax;
+        wi+=qMax;
+        if (wi!=0.0)
+            g[i]=static_cast<float>(gg/wi);
+        else
+            g[i]=f[i];
+
+    }
+}
+
 inline float NonLocalMeans::weight(float a)
 {
     return exp(-a*m_fWidth); // m_fWidth is precalculated as the reciprocal
@@ -527,7 +590,9 @@ std::string enum2string(akipl::NonLocalMeans::NLMalgorithms a)
     case akipl::NonLocalMeans::NLMalgorithms::NLM_Naive                : s="NLM_Naive"; break;
     case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal    : s="NLM_HistogramOriginal"; break;
     case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSum         : s="NLM_HistogramSum"; break;
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel : s="NLM_HistogramSum"; break;
+    case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel : s="NLM_HistogramSumParallel"; break;
+    case akipl::NonLocalMeans::NLMalgorithms::NLM_Bivariate            : s="NLM_Bivariate"; break;
+    case akipl::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel    : s="NLM_BivariateParallel"; break;
     default: throw kipl::base::KiplException("Failed to convert NLMalgorithm enum value to string.", __FILE__, __LINE__);
     }
     return s;
@@ -540,6 +605,8 @@ void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a)
     values["NLM_HistogramOriginal"]         = akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal;
     values["NLM_HistogramSum"]              = akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSum;
     values["NLM_HistogramSumParallel"]      = akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel;
+    values["NLM_Bivariate"]              = akipl::NonLocalMeans::NLMalgorithms::NLM_Bivariate;
+    values["NLM_BivariateParallel"]              = akipl::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel;
 
     auto it=values.find(s);
 
