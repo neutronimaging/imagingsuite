@@ -1,8 +1,7 @@
-#ifndef SPOTCLEAN2DLG_H
-#define SPOTCLEAN2DLG_H
+#ifndef MEDIANMIXRINGCLEAN_H
+#define MEDIANMIXRINGCLEAN_H
 
 #include <QDialog>
-
 #include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>
@@ -10,26 +9,25 @@
 #include <ConfigBase.h>
 #include <imageviewerwidget.h>
 #include <plotter.h>
-#include <SpotClean2.h>
+
+#include <MedianMixRingClean.h>
 
 namespace Ui {
-class SpotClean2Dlg;
+class MedianMixRingClean;
 }
 
-class SpotClean2Dlg : public ConfiguratorDialogBase
+class MedianMixRingCleanDlg : public ConfiguratorDialogBase
 {
     Q_OBJECT
 
 public:
-    explicit SpotClean2Dlg(QWidget *parent = 0);
-    ~SpotClean2Dlg();
+    explicit MedianMixRingCleanDlg(QWidget *parent = 0);
+    ~MedianMixRingCleanDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
-
 private:
-    Ui::SpotClean2Dlg *ui;
+    Ui::MedianMixRingClean *ui;
 
-protected:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();
@@ -37,26 +35,16 @@ protected:
 
     ReconConfig *m_Config;
 
-    SpotClean2 m_Cleaner;
+    MedianMixRingClean m_Cleaner;
 
     kipl::base::TImage<float,3> m_Projections;
 
     kipl::base::TImage<float,2> m_OriginalImage;
     kipl::base::TImage<float,2> m_ProcessedImage;
-    kipl::base::TImage<float,2> m_DetectionImage;
+    kipl::base::TImage<float,2> m_DifferenceImage;
 
-    ImagingAlgorithms::DetectionMethod m_eDetectionMethod;
-
-    float m_fGamma;
     float m_fSigma;
-    int   m_nIterations;
-    float m_fMaxLevel;
-    float m_fMinLevel;
-    size_t m_nMaxArea;
-private slots:
-    void on_combo_detection_display_currentIndexChanged(int index);
-    void on_buttonBox_clicked(QAbstractButton *button);
-    void on_button_apply_clicked();
+    float m_fLambda;
 };
 
-#endif // SPOTCLEAN2DLG_H
+#endif // MEDIANMIXRINGCLEAN_H

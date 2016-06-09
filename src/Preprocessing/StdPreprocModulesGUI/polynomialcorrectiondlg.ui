@@ -19,17 +19,20 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QtAddons::ImageViewerWidget" name="viewerOriginal" native="true"/>
-       </item>
-       <item>
-        <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true">
-         <zorder>horizontalLayoutWidget_2</zorder>
+        <widget class="QtAddons::ImageViewerWidget" name="viewerOriginal" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>256</height>
+          </size>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QtAddons::ImageViewerWidget" name="viewerDifference" native="true">
-         <zorder>horizontalLayoutWidget_2</zorder>
-        </widget>
+        <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true"/>
+       </item>
+       <item>
+        <widget class="QtAddons::ImageViewerWidget" name="viewerDifference" native="true"/>
        </item>
       </layout>
      </item>
@@ -170,14 +173,31 @@
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="button_apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

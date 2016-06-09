@@ -168,9 +168,7 @@ void PolynomialCorrectionDlg::on_spinOrder_valueChanged(int arg1)
 
 }
 
-void PolynomialCorrectionDlg::on_buttonBox_clicked(QAbstractButton *button)
+void PolynomialCorrectionDlg::on_button_apply_clicked()
 {
-    if (button->text()=="Apply") {
-        ApplyParameters();
-    }
+    ApplyParameters();
 }

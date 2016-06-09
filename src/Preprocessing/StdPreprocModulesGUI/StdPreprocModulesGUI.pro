@@ -14,7 +14,6 @@ DEFINES += STDPREPROCMODULESGUI_LIBRARY
 
 SOURCES += stdpreprocmodulesgui.cpp \
     stdafx.cpp \
-    SpotClean2Dlg.cpp \
     dllmain.cpp \
     FullLogNormDlg.cpp \
     WaveletRingCleanDlg.cpp \
@@ -22,19 +21,22 @@ SOURCES += stdpreprocmodulesgui.cpp \
     morphspotcleandlg.cpp \
     polynomialcorrectiondlg.cpp \
     datascalerdlg.cpp \
-    adaptivefilterdlg.cpp
+    adaptivefilterdlg.cpp \
+    SpotClean2Dlg.cpp \
+    medianmixringcleandlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
     stdafx.h \
-    SpotClean2Dlg.h \
     FullLogNormDlg.h \
     WaveletRingCleanDlg.h \
     projectionfilterdlg.h \
     morphspotcleandlg.h \
     polynomialcorrectiondlg.h \
     datascalerdlg.h \
-    adaptivefilterdlg.h
+    adaptivefilterdlg.h \
+    SpotClean2Dlg.h \
+    medianmixringcleandlg.h
 
 
 symbian {
@@ -153,4 +155,6 @@ FORMS += \
     polynomialcorrectiondlg.ui \
     datascalerdlg.ui \
     adaptivefilterdlg.ui \
-    morphspotcleandlg.ui
+    morphspotcleandlg.ui \
+    SpotClean2Dlg.ui \
+    medianmixringclean.ui

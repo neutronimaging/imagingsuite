@@ -24,7 +24,7 @@ public:
 private slots:
     void on_spinOrder_valueChanged(int arg1);
 
-    void on_buttonBox_clicked(QAbstractButton *button);
+    void on_button_apply_clicked();
 
 private:
     virtual void ApplyParameters();

@@ -37,8 +37,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 		//if (sName=="SpotClean")
 		//	return new SpotClean;
 
-//		if (sName=="SpotClean2")
-//			return new SpotClean2Dlg;
+        if (sName=="SpotClean2")
+            return new SpotClean2Dlg;
 
 		//if (sName=="GeneralFilter")
 		//	return new GeneralFilter;
