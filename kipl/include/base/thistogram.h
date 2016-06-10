@@ -73,12 +73,24 @@ class KIPLSHARED_EXPORT BivariateHistogram
 {
     kipl::logging::Logger logger;
 public:
-    struct BinInfo {
-        BinInfo(size_t c, float a, float b) :
-            count(c), binA(a), binB(b) {}
+    struct KIPLSHARED_EXPORT BinInfo {
+        BinInfo() : count(0L), binA(0.0f), binB(0.0f), idxA(0), idxB(0) {}
+        BinInfo(size_t c, float a, float b, int ia, int ib) :
+            count(c), binA(a), binB(b), idxA(ia), idxB(ib) {}
+        const BinInfo & operator=(BinInfo const &bi) {
+            count=bi.count;
+            binA=bi.binA;
+            binB=bi.binB;
+            idxA=bi.idxA;
+            idxB=bi.idxB;
+
+            return *this;
+        }
         size_t count;
         float binA;
         float binB;
+        int idxA;
+        int idxB;
     };
     BivariateHistogram();
     ~BivariateHistogram();
@@ -120,6 +132,12 @@ public:
     /// \test Through a unit test
     BivariateHistogram::BinInfo GetBin(float a, float b);
 
+    /// \brief Get counts at the bin defined by the indices
+    /// \param posA Coordinate in data set A
+    /// \param posB Coordinate in data set B
+    /// \test Through a unit test (not implemented)
+    BivariateHistogram::BinInfo GetBin(int posA, int posB);
+
     /// \brief Get axis ticks for data set A
     /// \returns the pointer to the axis ticks
     float const *  GetAxisA();
@@ -140,6 +158,10 @@ public:
     /// \brief Provides the limits for each class
     /// \param n Selects data set A or B using 0 or 1
     std::pair<float,float> GetLimits(int n);
+
+    /// \brief Writes the histogram as normalized image
+    /// \param fname File name of the destination tiff file
+    void Write(std::string fname);
 
 protected:
     /// \brief Computes the index of the bin closest to a given value

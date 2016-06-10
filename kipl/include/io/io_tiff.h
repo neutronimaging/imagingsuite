@@ -15,7 +15,6 @@
 #include "../base/timage.h"
 #include "../base/imageinfo.h"
 #include "../strings/filenames.h"
-#include "io_matlab.h"
 #include "../base/kiplenums.h"
 #include <tiffio.h>
 #include <iostream>

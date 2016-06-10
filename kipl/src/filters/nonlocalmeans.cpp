@@ -507,8 +507,11 @@ void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g,
 /// \param N number of pixels
 void NonLocalMeans::nlm_bivariate(float *f, float *ff, float *ff2, float *g, size_t N)
 {
-    throw kipl::base::KiplException("The algorithm NLM-bivariate is not implemented");
-    m_BivariateHistogram.Initialize();
+
+    m_BivariateHistogram.Initialize(ff,m_nHistSize,ff2,m_nHistSize,N);
+    m_BivariateHistogram.AddData(ff,ff2,N);
+    m_BivariateHistogram.Write("nl_bivarhist.tif");
+    nlm_core_bivariate(f,ff,ff2,g,N);
 }
 
 /// \brief Implementation with histogram patching parallelized by c++11 threads
@@ -532,20 +535,28 @@ void NonLocalMeans::nlm_core_bivariate(float *f, float *ff, float *ff2, float *g
 
     float q;
     float qMax=0.0;
+    kipl::base::BivariateHistogram::BinInfo bi,bi_lower,bi_upper;
+
     for (size_t i=0; i<N; i++) {
         double wi=0.0f;
         double gg=0.0f;
         qMax=0.0;
-        for (size_t j=0; j<m_nHistSize; j++) {
-            if (m_Histogram[j].cnt) {
-                q   = weight(ff2[i]-2*ff[i]*m_Histogram[j].local_avg+m_Histogram[j].local_avg2); // Using distance from local average
-                gg += q * m_Histogram[j].sum;
-                wi += q * m_Histogram[j].cnt ;
+        bi_lower=m_BivariateHistogram.GetBin(ff[i]-m_fWidthLimit,ff2[i]-m_fWidthLimit*m_fWidthLimit);
+        bi_upper=m_BivariateHistogram.GetBin(ff[i]+m_fWidthLimit,ff2[i]+m_fWidthLimit*m_fWidthLimit);
 
-                if (qMax<q) {
-                    qMax=q;
+        for (int j=0; j<static_cast<int>(m_nHistSize); j++) { // scan the histogram
+            for (int k=bi_lower.idxA; k<bi_upper.idxA; k++) {
+                bi=m_BivariateHistogram.GetBin(k,j); // get each hist bin
+                if (bi.count!=0L) {
+                    q   = weight(ff2[i]-2*ff[i]*bi.binA+bi.binB); // Using distance from local average
+                    gg += q * bi.count*bi.binA; // This should be the sum for the bin
+                    wi += q * bi.count;
+
+                    if (qMax<q) {
+                        qMax=q;
+                    }
                 }
-             }
+            }
         }
         gg+=f[i]*qMax;
         wi+=qMax;

@@ -8,6 +8,9 @@
 #include <map>
 #include "../../../include/math/sums.h"
 #include "../../../include/base/thistogram.h"
+#ifndef NO_TIFF
+#include "../../../include/io/io_tiff.h"
+#endif
 
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
@@ -225,8 +228,20 @@ BivariateHistogram::BinInfo BivariateHistogram::GetBin(float a, float b)
 
     return BinInfo(m_bins(posA,posB),
                    posA/m_scalingA.first+m_scalingA.second+m_scalingA.first*0.5f,
-                   posA/m_scalingB.first+m_scalingB.second+m_scalingB.first*0.5f);
+                   posB/m_scalingB.first+m_scalingB.second+m_scalingB.first*0.5f,
+                   posA,posB);
 
+}
+
+/// \brief Get counts at the bin closest to the coordinates
+/// \param a Coordinate in data set A
+/// \param b Coordinate in data set B
+BivariateHistogram::BinInfo BivariateHistogram::GetBin(int posA, int posB)
+{
+    return BinInfo(m_bins(posA,posB),
+                   posA/m_scalingA.first+m_scalingA.second+m_scalingA.first*0.5f,
+                   posB/m_scalingB.first+m_scalingB.second+m_scalingB.first*0.5f,
+                   posA,posB);
 }
 
 /// \brief Get axis ticks for data set A
@@ -277,7 +292,25 @@ std::pair<float,float> BivariateHistogram::GetLimits(int n)
     switch (n) {
     case 0: return m_limitsA; break;
     case 1: return m_limitsB; break;
+    default : throw kipl::base::KiplException("No existing axis selected in GetLimits",__FILE__,__LINE__);
     }
+
+    return m_limitsA;
+}
+
+void BivariateHistogram::Write(string fname)
+{
+#ifndef NO_TIFF
+    kipl::base::TImage<float,2> img(m_bins.Dims());
+
+    float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
+
+    for (size_t i=0; i<m_bins.Size(); i++) {
+        img[i]=static_cast<float>(m_bins[i]);
+    }
+
+    kipl::io::WriteTIFF32(img,fname.c_str());
+#endif
 }
 
 }}
