@@ -7,7 +7,7 @@
 #include "SpotClean2Dlg.h"
 //#include "ISSfilterDlg.h"
 #include "FullLogNormDlg.h"
-#include "MedianMixRingCleanDlg.h"
+#include "medianmixringcleandlg.h"
 #include "projectionfilterdlg.h"
 #include "polynomialcorrectiondlg.h"
 #include "WaveletRingCleanDlg.h"

@@ -132,7 +132,7 @@ void WaveletRingCleanDlg::ApplyParameters()
 
 void WaveletRingCleanDlg::UpdateDialog()
 {
-    m_entry_levels.setValue(m_nLevels);
+    ui->entry_levels->setValue(m_nLevels);
     m_entry_sigma.setValue(m_fSigma);
     int default_wavelet, idx;
 
