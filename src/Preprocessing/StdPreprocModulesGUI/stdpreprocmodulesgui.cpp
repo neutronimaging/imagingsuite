@@ -7,7 +7,7 @@
 #include "SpotClean2Dlg.h"
 //#include "ISSfilterDlg.h"
 #include "FullLogNormDlg.h"
-//#include "MedianMixRingCleanDlg.h"
+#include "MedianMixRingCleanDlg.h"
 #include "projectionfilterdlg.h"
 #include "polynomialcorrectiondlg.h"
 #include "WaveletRingCleanDlg.h"
@@ -49,8 +49,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 		//if (sName=="BasicRingClean")
 		//	return new BasicRingClean;
 
-//        if (sName=="MedianMixRingClean")
-//            return new MedianMixRingCleanDlg;
+        if (sName=="MedianMixRingClean")
+            return new MedianMixRingCleanDlg;
 
         if (sName=="DataScaler")
             return new DataScalerDlg;

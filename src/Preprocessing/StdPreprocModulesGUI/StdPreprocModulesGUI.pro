@@ -157,4 +157,6 @@ FORMS += \
     adaptivefilterdlg.ui \
     morphspotcleandlg.ui \
     SpotClean2Dlg.ui \
-    medianmixringclean.ui
+    medianmixringclean.ui \
+    projectionfilterdlg.ui \
+    WaveletRingCleanDlg.ui

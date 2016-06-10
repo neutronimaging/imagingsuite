@@ -1,8 +1,10 @@
 #ifndef MORPHSPOTCLEANDLG_H
 #define MORPHSPOTCLEANDLG_H
+#include "StdPreprocModulesGUI_global.h"
+
+#include "ui_morphspotcleandlg.h"
 
 #include <ConfiguratorDialogBase.h>
-#include "ui_morphspotcleandlg.h"
 #include <base/timage.h>
 #include <morphology/morphology.h>
 

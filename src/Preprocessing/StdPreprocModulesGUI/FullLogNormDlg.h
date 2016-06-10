@@ -7,6 +7,7 @@
 
 #ifndef FULLLOGNORMDLG_H_
 #define FULLLOGNORMDLG_H_
+#include "StdPreprocModulesGUI_global.h"
 
 #include <ConfiguratorDialogBase.h>
 #include <QVBoxLayout>

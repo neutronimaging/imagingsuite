@@ -1,5 +1,6 @@
 #ifndef DATASCALERDLG_H
 #define DATASCALERDLG_H
+#include "StdPreprocModulesGUI_global.h"
 
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>

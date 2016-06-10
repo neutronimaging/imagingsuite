@@ -1,5 +1,6 @@
 #ifndef SPOTCLEAN2DLG_H
 #define SPOTCLEAN2DLG_H
+#include "StdPreprocModulesGUI_global.h"
 
 #include <QDialog>
 

@@ -1,50 +1,47 @@
 #ifndef PROJECTIONFILTERDLG_H
 #define PROJECTIONFILTERDLG_H
-#include <ConfiguratorDialogBase.h>
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QCheckBox>
-#include <QDoubleSpinBox>
-#include <QComboBox>
-#include <QLabel>
+#include "StdPreprocModulesGUI_global.h"
+
+#include <ConfiguratorDialogBase.h>
+#include <ConfigBase.h>
+#include <ReconConfig.h>
+#include <QDialog>
+
 
 #include <ProjectionFilter.h>
 #include <ReconConfig.h>
 
+namespace Ui {
+class ProjectionFilterDlg;
+}
+
 class ProjectionFilterDlg : public ConfiguratorDialogBase
 {
+    Q_OBJECT
+
 public:
-    ProjectionFilterDlg(QWidget * parent = NULL);
-    virtual ~ProjectionFilterDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img);
+    explicit ProjectionFilterDlg(QWidget *parent = 0);
+    ~ProjectionFilterDlg();
+
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
+
 private:
-    virtual int exec() {return QDialog::exec();}
+    Ui::ProjectionFilterDlg *ui;
+
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
-    void UpdateDialogFromParameterList(std::map<std::string, std::string> &parameters);
 
-    QVBoxLayout m_vbox_main;
-    QHBoxLayout m_hbox_filter;
-    QHBoxLayout m_hbox_cutoff;
-    QHBoxLayout m_hbox_bias;
-    QCheckBox m_checkbox_usebias;
-    QDoubleSpinBox m_spin_cutoff;
-    QDoubleSpinBox m_spin_biasweight;
-    QComboBox m_combo_filtertype;
-    QLabel m_label_filter;
-    QLabel m_label_cutoff;
-    QLabel m_label_biasweight;
+    ReconConfig m_Config;
 
-    bool m_bUseBias;
+    ProjectionFilterBase::FilterType m_eFilterType;
     float m_fCutOff;
     float m_fOrder;
+    bool m_bUseBias;
     float m_fBiasWeight;
-    ProjectionFilterBase::FilterType m_eFilterType;
-
-    ReconConfig *m_Config;
+    float m_fPadding;
 };
 
 #endif // PROJECTIONFILTERDLG_H

@@ -1,5 +1,6 @@
 #ifndef POLYNOMIALCORRECTIONDLG_H
 #define POLYNOMIALCORRECTIONDLG_H
+#include "StdPreprocModulesGUI_global.h"
 
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
