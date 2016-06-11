@@ -1,5 +1,6 @@
 #include "WaveletRingCleanDlg.h"
 #include "ui_WaveletRingCleanDlg.h"
+
 #include <list>
 
 #include <strings/miscstring.h>
@@ -18,8 +19,8 @@
 WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("WaveletRingCleanDlg",true,true,true,parent),
     ui(new Ui::WaveletRingCleanDlg),
-    m_sWaveletName("daub15"),
     m_nLevels(3),
+    m_sWaveletName("daub15"),
     m_fSigma(0.05f),
     m_eCleaningMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
@@ -133,7 +134,7 @@ void WaveletRingCleanDlg::ApplyParameters()
 void WaveletRingCleanDlg::UpdateDialog()
 {
     ui->entry_levels->setValue(m_nLevels);
-    m_entry_sigma.setValue(m_fSigma);
+    ui->entry_cutoff->setValue(m_fSigma);
     int default_wavelet, idx;
 
     kipl::wavelets::WaveletKernel<float> wk("daub4");
@@ -152,12 +153,11 @@ void WaveletRingCleanDlg::UpdateDialog()
 
 void WaveletRingCleanDlg::UpdateParameters()
 {
-    m_sWaveletName    = m_combobox_wavelets.currentText().toStdString();
-    m_nLevels         = m_entry_levels.value();
-    m_fSigma          = m_entry_sigma.value();
+    m_sWaveletName    = ui->combo_wavelets->currentText().toStdString();
+    m_nLevels         = ui->entry_levels->value();
+    m_fSigma          = ui->entry_cutoff->value();
     m_bParallel       = false;
-    string2enum(m_combobox_method.currentText().toStdString(), m_eCleaningMethod);
-
+    string2enum(ui->combo_filtertype->currentText().toStdString(), m_eCleaningMethod);
 }
 
 void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)

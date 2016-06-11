@@ -8,6 +8,7 @@
 #include <morphology/morphology.h>
 
 #include <ConfigBase.h>
+#include <ReconConfig.h>
 #include <imageviewerwidget.h>
 #include <plotter.h>
 
