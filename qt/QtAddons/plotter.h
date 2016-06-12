@@ -59,7 +59,7 @@ private:
     void drawCurves(QPainter *painter);
     void drawCursors(QPainter *painter);
 
-    enum { Margin = 30 };
+    enum { Margin = 15 };
     enum { GlyphSize = 10};
 
     QToolButton *zoomInButton;
@@ -71,6 +71,7 @@ private:
     bool rubberBandIsShown;
     QRect rubberBandRect;
     QPixmap pixmap;
+    int leftMargin;
 };
 
 

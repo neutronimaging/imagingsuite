@@ -83,6 +83,9 @@ kipl::base::TImage<float,2> ConfiguratorDialogBase::GetSinogram(kipl::base::TIma
 	size_t dims[2]={img.Size(0),img.Size(2)};
 	kipl::base::TImage<float,2> sino(dims);
 
+    if (n<=img.Size(1))
+        throw kipl::base::KiplException("sinogram number out of bounds");
+
 	for (size_t i=0; i<img.Size(2); i++)
 		memcpy(sino.GetLinePtr(i),img.GetLinePtr(n,i),sizeof(float)*img.Size(0));
 

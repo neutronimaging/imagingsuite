@@ -113,24 +113,7 @@ void Plotter::refreshBounds()
         settings.minY=std::min(settings.minY,it.value().minY);
         settings.maxY=std::max(settings.maxY,it.value().maxY);
     }
-/*
-    QMapIterator<int, PlotData> i(curveMap);
-    i.toFront();
 
-    settings.minX=i.value().minX;
-    settings.maxX=i.value().maxX;
-    settings.minY=i.value().minY;
-    settings.maxY=i.value().maxY;
-
-   while (i.hasNext()) {
-        i.next();
-
-        settings.minX=std::min(settings.minX,i.value().minX);
-        settings.maxX=std::max(settings.maxX,i.value().maxX);
-        settings.minY=std::min(settings.minY,i.value().minY);
-        settings.maxY=std::max(settings.maxY,i.value().maxY);
-    }
-*/
     if (!zoomStack.empty())
         zoomStack.clear();
     zoomStack.append(settings);
@@ -174,7 +157,7 @@ void Plotter::clearAllPlotCursors()
 
 QSize Plotter::minimumSizeHint() const
 {
-    return QSize(6 * Margin, 4 * Margin);
+    return QSize(12 * Margin, 8 * Margin);
 }
 
 QSize Plotter::sizeHint() const
@@ -321,7 +304,13 @@ void Plotter::refreshPixmap()
     pixmap.fill(Qt::darkGray);
 
     QPainter painter(&pixmap);
+
     painter.initFrom(this);
+
+    QFontMetrics fm = painter.fontMetrics();
+
+    leftMargin = fm.width("-0.0000")+Margin-10;
+
     drawGrid(&painter);
     drawCurves(&painter);
     drawCursors(&painter);
@@ -330,44 +319,52 @@ void Plotter::refreshPixmap()
 
 void Plotter::drawGrid(QPainter *painter)
 {
-    QRect rect(Margin, Margin,
-               width() - 2 * Margin, height() - 2 * Margin);
+    QRect rect(leftMargin, Margin,
+               width() - Margin - leftMargin, height() - 2*Margin );
+
     if (!rect.isValid())
         return;
 
     PlotSettings settings = zoomStack[curZoom];
     QPen quiteDark = palette().dark().color().light();
     QPen light = palette().light().color();
-
+    QString labelstr;
+    // Draw the x-ticks
     for (int i = 0; i <= settings.numXTicks; ++i) {
         int x = rect.left() + (i * (rect.width() - 1)
                                  / settings.numXTicks);
         double label = settings.minX + (i * settings.spanX()
                                           / settings.numXTicks);
         if (ShowGrid) {
-        painter->setPen(quiteDark);
-        painter->drawLine(x, rect.top(), x, rect.bottom());
+            painter->setPen(quiteDark);
+            painter->drawLine(x, rect.top(), x, rect.bottom());
         }
         painter->setPen(light);
         painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
+        labelstr.clear();
+        labelstr.setNum(label,'g',3);
         painter->drawText(x - 50, rect.bottom() + 5, 100, 20,
                           Qt::AlignHCenter | Qt::AlignTop,
-                          QString::number(label,'g',2));
+                          labelstr);
     }
+
+    // Draw the y-ticks
     for (int j = 0; j <= settings.numYTicks; ++j) {
         int y = rect.bottom() - (j * (rect.height() - 1)
                                    / settings.numYTicks);
         double label = settings.minY + (j * settings.spanY()
                                           / settings.numYTicks);
         if (ShowGrid) {
-        painter->setPen(quiteDark);
-        painter->drawLine(rect.left(), y, rect.right(), y);
+            painter->setPen(quiteDark);
+            painter->drawLine(rect.left(), y, rect.right(), y);
         }
         painter->setPen(light);
         painter->drawLine(rect.left() - 5, y, rect.left(), y);
-        painter->drawText(rect.left() - Margin, y - 10, Margin - 5, 20,
+        labelstr.clear();
+        labelstr.setNum(label,'g',3);
+        painter->drawText(rect.left() - leftMargin, y - 10, leftMargin - 5, 20,
                           Qt::AlignRight | Qt::AlignVCenter,
-                          QString::number(label));
+                          labelstr);
     }
     painter->drawRect(rect.adjusted(0, 0, -1, -1));
 }
@@ -375,8 +372,8 @@ void Plotter::drawGrid(QPainter *painter)
 void Plotter::drawCurves(QPainter *painter)
 {
     PlotSettings settings = zoomStack[curZoom];
-    QRect rect(Margin, Margin,
-               width() - 2 * Margin, height() - 2 * Margin);
+    QRect rect(leftMargin, Margin,
+               width() - Margin - leftMargin, height() - 2 * Margin);
     if (!rect.isValid())
         return;
 
@@ -391,7 +388,6 @@ void Plotter::drawCurves(QPainter *painter)
         QVector<QPointF> data = i.value().m_data;
 
         QPolygonF polyline(data.count());
-       // painter->setPen(colorForIds[uint(id) % 6]);
         painter->setPen(i.value().color);
         int nGlyphSize = static_cast<int>(this->font().pointSize()*0.75);
 
@@ -434,8 +430,8 @@ void Plotter::drawCursors(QPainter *painter)
 
     if (!cursorMap.empty()) {
         PlotSettings settings = zoomStack[curZoom];
-        QRect rect(Margin, Margin,
-                   width() - 2 * Margin, height() - 2 * Margin);
+        QRect rect(leftMargin, Margin,
+                   width() - Margin - leftMargin, height() - 2 * Margin);
         if (!rect.isValid())
             return;
 
