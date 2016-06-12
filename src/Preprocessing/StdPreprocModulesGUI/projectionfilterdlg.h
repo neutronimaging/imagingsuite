@@ -34,7 +34,7 @@ private:
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
-    ReconConfig m_Config;
+    ReconConfig *m_Config;
 
     ProjectionFilterBase::FilterType m_eFilterType;
     float m_fCutOff;

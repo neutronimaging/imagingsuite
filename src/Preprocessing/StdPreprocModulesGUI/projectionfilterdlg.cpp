@@ -1,11 +1,14 @@
 #include "projectionfilterdlg.h"
 #include "ui_projectionfilterdlg.h"
 
+#include <QMessageBox>
+
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
 
+
 ProjectionFilterDlg::ProjectionFilterDlg(QWidget *parent) :
-    QDialog(parent),
+    ConfiguratorDialogBase("ProjectionFilterDlg", true,false, false, parent),
     ui(new Ui::ProjectionFilterDlg)
 {
     ui->setupUi(this);
@@ -26,7 +29,8 @@ int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::st
         m_fCutOff = GetFloatParameter(parameters,"cutoff");
         m_fOrder = GetFloatParameter(parameters,"order");
         m_bUseBias = kipl::strings::string2bool(GetStringParameter(parameters,"usebias"));
-        m_fPadding = GetFloatParameter(parameters,"padding");
+        m_fBiasWeight = GetFloatParameter(parameters,"biasweight");
+        m_fPadding = GetFloatParameter(parameters,"paddingdoubler");
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox msgbox;
@@ -73,8 +77,8 @@ void ProjectionFilterDlg::UpdateParameters()
 {
     m_eFilterType = static_cast<ProjectionFilterBase::FilterType>(ui->combo_filterwindow->currentIndex());
     m_fCutOff       = ui->entry_cutoff->value();
-    m_fBiasWeight   = ui->entry_biasfactor;
-    m_fPadding      = ui->entry_padding;
+    m_fBiasWeight   = ui->entry_biasfactor->value();
+    m_fPadding      = ui->entry_padding->value();
     m_bUseBias      = ui->check_bias->isChecked();
 }
 
@@ -85,5 +89,5 @@ void ProjectionFilterDlg::UpdateParameterList(std::map<std::string, std::string>
     parameters["order"]=kipl::strings::value2string(m_fOrder);
     parameters["usebias"]=kipl::strings::bool2string(m_bUseBias);
     parameters["biasweight"]=kipl::strings::value2string(m_fBiasWeight);
-    parameters["padding"]=kipl::strings::bool2string(m_fPadding);
+    parameters["paddingdoubler"]=kipl::strings::bool2string(m_fPadding);
 }
