@@ -163,12 +163,15 @@ std::string enum2string(ImagingAlgorithms::StripeFilterOperation op)
 
 void string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op)
 {
-		if (str=="verticalzero")
-			op=ImagingAlgorithms::VerticalComponentZero;
-		else if (str=="verticalfft")
-			op=ImagingAlgorithms::VerticalComponentFFT;
-		else
-			throw ImagingException("Could not translate string to stripe filter operation", __FILE__, __LINE__);
+    std::ostringstream msg;
+    if (str=="verticalzero")
+        op=ImagingAlgorithms::VerticalComponentZero;
+    else if (str=="verticalfft")
+        op=ImagingAlgorithms::VerticalComponentFFT;
+    else {
+        msg<<"Could not translate string ("<<str<<") to stripe filter operation",
+        throw ImagingException(msg.str(), __FILE__, __LINE__);
+    }
 }
 
 std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::StripeFilterOperation op)
