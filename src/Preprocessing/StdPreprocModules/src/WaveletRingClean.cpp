@@ -18,9 +18,9 @@
 
 WaveletRingClean::WaveletRingClean() :
 	PreprocModuleBase("WaveletRingClean"),
-	m_sWName("daub25"),
-	m_fSigma(0.1f),
-	m_nDecNum(4),
+    m_sWName("daub15"),
+    m_fSigma(0.05f),
+    m_nDecNum(2),
 	m_bParallelProcessing(false),
 	m_eCleanMethod(ImagingAlgorithms::VerticalComponentFFT)
 {

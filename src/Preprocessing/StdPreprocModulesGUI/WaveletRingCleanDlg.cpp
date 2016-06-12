@@ -129,6 +129,14 @@ void WaveletRingCleanDlg::ApplyParameters()
     kipl::base::Histogram(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
     ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Dims());
+    double sum2=0.0;
+    float *pDiff=m_DifferenceSino.GetDataPtr();
+    for (size_t i=0; i<m_DifferenceSino.Size(); i++)
+        sum2+=pDiff[i]*pDiff[i];
+
+    std::ostringstream msg;
+    msg<<"(MSE = "<<sum2/m_DifferenceSino.Size();
+    ui->label_mse->setText(QString::fromStdString(msg.str()));
 }
 
 void WaveletRingCleanDlg::UpdateDialog()
@@ -148,7 +156,7 @@ void WaveletRingCleanDlg::UpdateDialog()
     }
 
     ui->combo_wavelets->setCurrentIndex(default_wavelet);
-    ui->combo_filtertype->setCurrentIndex(1);
+    ui->combo_filtertype->setCurrentIndex(static_cast<int>(m_eCleaningMethod));
 }
 
 void WaveletRingCleanDlg::UpdateParameters()
@@ -157,7 +165,7 @@ void WaveletRingCleanDlg::UpdateParameters()
     m_nLevels         = ui->entry_levels->value();
     m_fSigma          = ui->entry_cutoff->value();
     m_bParallel       = false;
-    string2enum(ui->combo_filtertype->currentText().toStdString(), m_eCleaningMethod);
+    m_eCleaningMethod = static_cast<ImagingAlgorithms::StripeFilterOperation>(ui->combo_filtertype->currentIndex());
 }
 
 void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -188,4 +196,9 @@ void WaveletRingCleanDlg::PrepareWaveletComboBox()
     }
 
     ui->combo_wavelets->setCurrentIndex(default_wavelet);
+}
+
+void WaveletRingCleanDlg::on_button_apply_clicked()
+{
+    ApplyParameters();
 }

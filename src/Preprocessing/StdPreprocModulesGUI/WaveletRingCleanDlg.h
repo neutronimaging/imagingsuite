@@ -28,6 +28,9 @@ public:
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
+private slots:
+    void on_button_apply_clicked();
+
 private:
     Ui::WaveletRingCleanDlg *ui;
 
@@ -53,7 +56,6 @@ private:
     std::string m_sWaveletName;
     bool        m_bParallel;
     ImagingAlgorithms::StripeFilterOperation m_eCleaningMethod;
-
 };
 
 #endif // WAVELETRINGCLEANDLG_H
