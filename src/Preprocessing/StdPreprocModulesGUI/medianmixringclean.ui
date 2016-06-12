@@ -152,14 +152,25 @@
       </layout>
      </item>
      <item>
-      <widget class="QtAddons::Plotter" name="plot_decision" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>200</height>
-        </size>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Detection plot, mix band between green (original) and red (median)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QtAddons::Plotter" name="plot_decision" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>200</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

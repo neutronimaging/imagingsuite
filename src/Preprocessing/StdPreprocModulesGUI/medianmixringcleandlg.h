@@ -26,6 +26,13 @@ public:
     ~MedianMixRingCleanDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
+private slots:
+    void on_entry_lambda_valueChanged(double arg1);
+
+    void on_entry_sigma_valueChanged(double arg1);
+
+    void on_button_apply_clicked();
+
 private:
     Ui::MedianMixRingClean *ui;
 
@@ -33,6 +40,7 @@ private:
     virtual void UpdateDialog();
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
+    void DrawCursors(float lambda, float sigma);
 
     ReconConfig *m_Config;
 
