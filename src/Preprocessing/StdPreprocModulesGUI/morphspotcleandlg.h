@@ -2,8 +2,6 @@
 #define MORPHSPOTCLEANDLG_H
 #include "StdPreprocModulesGUI_global.h"
 
-#include "ui_morphspotcleandlg.h"
-
 #include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>
@@ -33,7 +31,7 @@ private slots:
 
     void on_buttonApply_clicked();
 
-    void on_comboDectionDisplay_currentIndexChanged(int index);
+    void on_comboDetectionDisplay_currentIndexChanged(int index);
 
 private:
     Ui::MorphSpotCleanDlg *ui;

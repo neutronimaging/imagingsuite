@@ -1,6 +1,7 @@
 #include "medianmixringcleandlg.h"
+#undef None
 #include "ui_medianmixringclean.h"
-
+#define None 0L
 #include <QMessageBox>
 
 #include <strings/miscstring.h>

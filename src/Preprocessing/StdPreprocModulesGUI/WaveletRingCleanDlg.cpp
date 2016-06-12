@@ -1,5 +1,8 @@
 #include "WaveletRingCleanDlg.h"
+#undef None
 #include "ui_WaveletRingCleanDlg.h"
+#define None 0L
+#include <QMessageBox>
 
 #include <list>
 
@@ -14,14 +17,12 @@
 
 #include <StripeFilter.h>
 
-#include <QMessageBox>
-
 WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("WaveletRingCleanDlg",true,true,true,parent),
     ui(new Ui::WaveletRingCleanDlg),
     m_nLevels(3),
-    m_sWaveletName("daub15"),
     m_fSigma(0.05f),
+    m_sWaveletName("daub15"),
     m_eCleaningMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
     ui->setupUi(this);

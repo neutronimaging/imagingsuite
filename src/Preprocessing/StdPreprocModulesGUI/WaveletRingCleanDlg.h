@@ -2,7 +2,6 @@
 #define WAVELETRINGCLEANDLG_H
 #include "StdPreprocModulesGUI_global.h"
 
-#include <QDialog>
 #include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>

@@ -13,8 +13,6 @@ CONFIG += c++11
 DEFINES += STDPREPROCMODULESGUI_LIBRARY
 
 SOURCES += stdpreprocmodulesgui.cpp \
-    stdafx.cpp \
-    dllmain.cpp \
     FullLogNormDlg.cpp \
     WaveletRingCleanDlg.cpp \
     projectionfilterdlg.cpp \
@@ -27,7 +25,6 @@ SOURCES += stdpreprocmodulesgui.cpp \
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
-    stdafx.h \
     FullLogNormDlg.h \
     WaveletRingCleanDlg.h \
     projectionfilterdlg.h \

@@ -1,6 +1,7 @@
 #include "SpotClean2Dlg.h"
+#undef None
 #include "ui_SpotClean2Dlg.h"
-
+#define None 0L
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
 #include <base/thistogram.h>

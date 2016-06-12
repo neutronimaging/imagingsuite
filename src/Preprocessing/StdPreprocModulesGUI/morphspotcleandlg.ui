@@ -87,7 +87,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QComboBox" name="comboDectionDisplay">
+        <widget class="QComboBox" name="comboDetectionDisplay">
          <item>
           <property name="text">
            <string>Difference</string>
@@ -95,7 +95,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Difference (percentage)</string>
+           <string>Differnce (Percentage)</string>
           </property>
          </item>
          <item>
@@ -119,44 +119,73 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="4" column="2">
-      <widget class="QLabel" name="label_10">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_5">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
-        <string>Edge length</string>
+        <string>Detection method</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="3">
-      <widget class="QComboBox" name="comboConnectivity">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Sigma</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QSpinBox" name="spinArea">
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QComboBox" name="comboCleanMethod">
        <item>
         <property name="text">
-         <string>4-connectivity</string>
+         <string>Replace</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>8-connectivity</string>
+         <string>Fill (Experimental)</string>
         </property>
        </item>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QComboBox" name="comboDetectionMethod">
-       <item>
-        <property name="text">
-         <string>Holes</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Peaks</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Both</string>
-        </property>
-       </item>
+     <item row="3" column="2">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Max value</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Max area</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="spinSigma">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="4">
+      <widget class="QPushButton" name="buttonApply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
       </widget>
      </item>
      <item row="3" column="3">
@@ -179,57 +208,46 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_5">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Detection method</string>
-       </property>
+     <item row="0" column="3">
+      <widget class="QComboBox" name="comboDetectionMethod">
+       <item>
+        <property name="text">
+         <string>Holes</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Peaks</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Both</string>
+        </property>
+       </item>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="spinSigma">
-       <property name="decimals">
+     <item row="4" column="3">
+      <widget class="QSpinBox" name="spinEdgeLenght">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="value">
         <number>5</number>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="spinArea">
-       <property name="maximum">
-        <number>1000</number>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Min value</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_12">
+     <item row="4" column="2">
+      <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Sigma</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Max value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="label_6">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Connectivity</string>
+        <string>Edge length</string>
        </property>
       </widget>
      </item>
@@ -246,51 +264,6 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Max area</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Min value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="3">
-      <widget class="QSpinBox" name="spinEdgeLenght">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>5</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="label_13">
-       <property name="text">
-        <string>Clean method</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QComboBox" name="comboCleanMethod">
-       <item>
-        <property name="text">
-         <string>Replace</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Fill (Experimental)</string>
-        </property>
-       </item>
-      </widget>
-     </item>
      <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="spinMinValue">
        <property name="decimals">
@@ -304,11 +277,38 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="4">
-      <widget class="QPushButton" name="buttonApply">
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_13">
        <property name="text">
-        <string>Apply</string>
+        <string>Clean method</string>
        </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="label_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Connectivity</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QComboBox" name="comboConnectivity">
+       <item>
+        <property name="text">
+         <string>4-connectivity</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8-connectivity</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>

@@ -1,5 +1,7 @@
-
 #include "morphspotcleandlg.h"
+#undef None
+#include "ui_morphspotcleandlg.h"
+#define None 0L
 
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
@@ -97,7 +99,7 @@ void MorphSpotCleanDlg::ApplyParameters()
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
     ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
 
-    on_comboDectionDisplay_currentIndexChanged(ui->comboDectionDisplay->currentIndex());
+    on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
@@ -205,7 +207,7 @@ void MorphSpotCleanDlg::on_buttonApply_clicked()
 }
 
 
-void MorphSpotCleanDlg::on_comboDectionDisplay_currentIndexChanged(int index)
+void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
 {
     std::ostringstream msg;
 

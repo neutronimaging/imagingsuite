@@ -2,7 +2,7 @@
 #define MEDIANMIXRINGCLEAN_H
 #include "StdPreprocModulesGUI_global.h"
 
-#include <QDialog>
+//#include <QDialog>
 #include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>
