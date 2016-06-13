@@ -5,8 +5,11 @@
  *      Author: kaestner
  */
 //#include "stdafx.h"
+#include <sstream>
+
 #include "../include/DataScaler.h"
 #include <ParameterHandling.h>
+#include <ModuleException.h>
 
 DataScaler::DataScaler() :
 PreprocModuleBase("DataScaler"),
@@ -22,9 +25,27 @@ DataScaler::~DataScaler() {
 
 int DataScaler::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
-	fOffset = GetFloatParameter(parameters,"offset");
-	fSlope = GetFloatParameter(parameters,"slope");
+    std::ostringstream msg;
 
+    try {
+        fOffset = GetFloatParameter(parameters,"offset");
+    }
+    catch (ModuleException & e) {
+        fOffset = 0.0f;
+        msg.str("");
+        msg<<"No offset found setting default =0 (exception message:"<<e.what()<<")";
+        logger(logger.LogWarning,msg.str());
+    }
+
+    try {
+        fSlope = GetFloatParameter(parameters,"slope");
+    }
+    catch (ModuleException & e) {
+        fSlope = 1.0f;
+        msg.str("");
+        msg<<"No slope found setting default =0 (exception message:"<<e.what()<<")";
+        logger(logger.LogWarning,msg.str());
+    }
 	return 0;
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
-    <height>499</height>
+    <width>853</width>
+    <height>670</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,7 +40,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::ImageViewerWidget" name="viewerOriginal" native="true"/>
+          <widget class="QtAddons::ImageViewerWidget" name="viewerOriginal" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>256</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -60,7 +67,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
+          <widget class="QtAddons::Plotter" name="plotHistogram" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>256</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -84,7 +98,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true"/>
+          <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>256</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -105,7 +126,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::ImageViewerWidget" name="viewerDifference" native="true"/>
+          <widget class="QtAddons::ImageViewerWidget" name="viewerDifference" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>256</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

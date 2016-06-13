@@ -24,8 +24,8 @@ from scipy.signal import argrelextrema
 from scipy.signal import medfilt
 
 
-#img=io.imread('../../data/cbct/fp200_x70_3s_5fps_60kV_150uA_00001.tif')
-img=io.imread('../../data/cbct/fp150_x350_3s_5fps_60kV_150uA_00001.tif')
+img=io.imread('../../data/cbct/fp200_x70_3s_5fps_60kV_150uA_00001.tif')
+#img=io.imread('../../data/cbct/fp150_x350_3s_5fps_60kV_150uA_00001.tif')
 
 #plt.figure(figsize=(10,2/3*10))
 
