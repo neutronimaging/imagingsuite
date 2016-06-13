@@ -3,8 +3,8 @@
 # Project created by QtCreator 2016-06-13T17:53:09
 #
 #-------------------------------------------------
-
-QT       -= core gui
+QT += core
+QT       -= gui
 
 TARGET = GenericPreProc
 TEMPLATE = lib
