@@ -130,3 +130,46 @@ std::ostream &operator<<(std::ostream & s, kipl::base::eEndians endian)
 
     return s;
 }
+
+// --------------------
+
+std::string enum2string(kipl::base::eAxisPermutations perm)
+{
+    std::string s;
+    switch (endian) {
+        case kipl::base::PermuteXYZ :perm="PermuteXYZ"; break;
+        case kipl::base::PermuteXZY :perm="PermuteXZY"; break;
+        case kipl::base::PermuteYXZ :perm="PermuteYXZ"; break;
+        case kipl::base::PermuteYZX :perm="PermuteYZX"; break;
+        case kipl::base::PermuteZXY :perm="PermuteZXY"; break;
+        case kipl::base::PermuteZYX :perm="PermuteZYX"; break;
+        default : kipl::base::KiplException("Could not transform axis permutation enum to a string", __FILE__, __LINE__); break;
+    }
+
+    return s;
+}
+
+void  string2enum(std::string str, kipl::base::eAxisPermutations &perm)
+{
+    std::map<std::string, kipl::base::eAxisPermutations> values;
+    values["PermuteXYZ"] = kipl::base::PermuteXYZ;
+    values["PermuteXZY"] = kipl::base::PermuteXZY;
+    values["PermuteYXZ"] = kipl::base::PermuteYXZ;
+    values["PermuteYZX"] = kipl::base::PermuteYZX;
+    values["PermuteZXY"] = kipl::base::PermuteZXY;
+    values["PermuteZXY"] = kipl::base::PermuteZYX;
+
+    auto it=values.find(s);
+
+    if (it!=values.end())
+        perm=it->second;
+    else
+        throw kipl::base::KiplException("Could not transform string to axis permutation enum", __FILE__, __LINE__);
+}
+
+std::ostream &operator<<(std::ostream & s, kipl::base::eAxisPermutations perm)
+{
+    s<<enum2string(perm);
+
+    return s;
+}

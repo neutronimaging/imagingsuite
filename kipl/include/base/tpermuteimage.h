@@ -14,8 +14,9 @@
 
 #include "timage.h"
 #include "kiplenums.h"
+
 namespace kipl { namespace base {
- 
+
 template <typename T, size_t N>
 TImage<T,N> Mirror(TImage<T,N> img, eImageAxes axis);
 
@@ -37,15 +38,6 @@ protected:
 
   void TransposeRef(T const * const fSrc, T *fDest, size_t const * const nDims);
 
-};
-
-enum eAxisPermutations {
-		PermuteXYZ,
-		PermuteXZY,
-		PermuteYXZ,
-		PermuteYZX,
-		PermuteZXY,
-		PermuteZYX
 };
 
 template <typename T>

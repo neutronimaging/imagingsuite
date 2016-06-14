@@ -49,6 +49,16 @@ enum eImageFlip {
     ImageFlipHorizontalVertical ///> Flip both horizontal and vertial
 };
 
+/// \brief Image axis permutation selector
+enum eAxisPermutations {
+        PermuteXYZ,
+        PermuteXZY,
+        PermuteYXZ,
+        PermuteYZX,
+        PermuteZXY,
+        PermuteZYX
+};
+
 /// \brief Image rotation selector
 enum eImageRotate {
     ImageRotateNone=0,  ///> No rotation
@@ -146,4 +156,22 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eEndians &endia
 /// \param endian the value to send to the stream
 /// \returns a reference to the stream
 KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eEndians endian);
+
+/// \brief Converts a permutation enum to a string
+/// \param perm the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the permutation type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eAxisPermutations perm);
+
+/// \brief Converts a string to a permutation enum
+/// \param str a string containing the name to convert
+/// \param perm the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eAxisPermutations &perm);
+
+/// \brief Stream output operator for eImagePermutation
+/// \param s the stream that handles the enum
+/// \param perm the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eAxisPermutations perm);
+
 #endif /*KIPLENUMS_H_*/
