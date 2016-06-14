@@ -9,21 +9,61 @@
 
 namespace kipl { namespace base {
 //int KIPLSHARED_EXPORT Histogram(float const * const data, size_t Ndata, size_t  * const hist, const size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
+
+/// \brief Computes a histogram from the data present in an array
+/// \param data The data array
+/// \param Ndata number of data points in the array
+/// \param hist the histogram counts
+/// \param nBins Number of bins in the histogram
+/// \param lo Lower bound of the bins. Values less than this bound are counted in the first bin
+/// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
+/// \note If lo==hi the histogram will be using min and max intensity as interval.
+/// \param pAxis optional bin axis value array. Not considered if NULL
+/// \returns Always 0
 int KIPLSHARED_EXPORT Histogram(float * data, size_t Ndata, size_t  * hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * pAxis=NULL);
 
+/// \brief Computes an exact histogram from the data present in an array
+/// \param data The data array
+/// \param Ndata number of data points in the array
 std::map<float, size_t> KIPLSHARED_EXPORT ExactHistogram(float const * const data, size_t Ndata);
 
+/// \brief Identifies an intensity interval using a histogram based on the percentage of pixels
+/// \param hist The histogram
+/// \param N number of bins in the histogram
+/// \param percentage the percentage of the quantile to consider.
+/// \param lo resulting lower bound
+/// \param hi resulting upper bound
 int KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi);
 
+/// \brief Computes the entropy of the histogram
+/// \param hist The histogram
+/// \param N number of bins in the histogram
+/// \returns the entropy value
 double KIPLSHARED_EXPORT Entropy(size_t const * const hist, size_t N);
 
+/// \brief A generic implementation of a histogram. The next generation of the histogram handling
 template<typename T>
 class THistogram
 {
 public:
-    THistogram(size_t nbins, T low=static_cast<T>(0), T high=static_cast<T>(0));
+    /// \brief Initializes the histogram
+    /// \param nbin Number of bins
+    /// \param low Lower bound of the histogram
+    /// \param high Upper bound of the histogram
+    /// \note If lo==hi the histogram will be using min and max intensity as interval.
+    THistogram(size_t nbins=256L, T low=static_cast<T>(0), T high=static_cast<T>(0));
     ~THistogram();
+
+    /// \brief Change the interval and number of bins of the histogram
+    /// \param length Number of bins
+    /// \param low Lower bound of the histogram
+    /// \param high Upper bound of the histogram
+    /// \note If lo==hi the histogram will be using min and max intensity as interval.
     void SetInterval(size_t length, T low=0, T high=0);
+
+    /// \brief Computes a histogram of an image
+    /// \param img The image with te data
+    /// \return a vector with bin value and count pairs
 	template<size_t N>
     std::vector<pair<float,size_t> > operator()(TImage<T,N> &img) {
         ComputeHistogram(img.GetDataPtr(), img.Size());
@@ -35,6 +75,10 @@ public:
         return hist;
     }
 
+    /// \brief Computes a cumulative histogram of an image
+    /// \param img The image with the data
+    /// \param bNorm Selects if the cumulative histogram is normalized to one for the last bin
+    /// \return a vector with bin value and sum/fraction pairs
     template<size_t N>
     std::vector<pair<float,float> > cumHist(TImage<T,N> &img, bool bNorm=false) {
         ComputeHistogram(img.GetDataPtr(),img.Size());
@@ -68,15 +112,27 @@ private:
     T      m_HighValue;
 };
 
-
+/// \brief Computes a bivariate histogram from two data sets and provides access methods
 class KIPLSHARED_EXPORT BivariateHistogram
 {
     kipl::logging::Logger logger;
 public:
+    /// \brief Bin information struct
     struct KIPLSHARED_EXPORT BinInfo {
+        /// \brief Basic initialization
         BinInfo() : count(0L), binA(0.0f), binB(0.0f), idxA(0), idxB(0) {}
+
+        /// \brief Initialization
+        /// \param c Bin count
+        /// \param a bin axis position on data set A
+        /// \param b bin axis position on data set B
+        /// \param ia index for bin A
+        /// \param ib index for bin B
         BinInfo(size_t c, float a, float b, int ia, int ib) :
             count(c), binA(a), binB(b), idxA(ia), idxB(ib) {}
+
+        /// \brief Assignment operator
+        /// \param bi the info to copy
         const BinInfo & operator=(BinInfo const &bi) {
             count=bi.count;
             binA=bi.binA;

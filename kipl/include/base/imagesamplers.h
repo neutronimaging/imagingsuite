@@ -15,7 +15,7 @@
 #include "timage.h"
 
 namespace kipl { namespace base {
-
+// \todo Implement... but what is it used for?
 KIPLSHARED_EXPORT void BinDimensions(size_t const * const origdims, size_t nDims, size_t const * const nbin,size_t const * const resultdims);
 
 /// \brief Downsizes an image by bining pixels

@@ -136,24 +136,51 @@ private:
 	size_t m_NData;
 	
 	/// \brief Buffer constaining the image data
-	//core::buffer<T> m_buffer;
 	kipl::base::core::buffer<T> m_buffer;
+
 	/// \brief Dimension array
 	size_t m_Dims[N];
 };
 
+/// \brief Computes the pixelwise sum between two images
+/// \param imgA The first term
+/// \param imgB The second term
+/// \returns The pixewise sum
 template<typename T, size_t N>
 TImage<T,N> operator+(TImage<T,N> &imgA, TImage<T,N> &imgB);
+
+/// \brief Computes the pixelwise difference between two images
+/// \param imgA The first term
+/// \param imgB The second term
+/// \returns The pixewise difference
 template<typename T, size_t N>
 TImage<T,N> operator-(TImage<T,N> &imgA, TImage<T,N> &imgB);
+
+/// \brief Computes the pixelwise product between two images
+/// \param imgA The first factor
+/// \param imgB The second factor
+/// \returns The pixewise sum
 template<typename T, size_t N>
 TImage<T,N> operator*(TImage<T,N> &imgA, TImage<T,N> &imgB);
+
+/// \brief Computes the pixelwise division between two images
+/// \param imgA The numerator
+/// \param imgB The denominator
+/// \returns The pixewise sum
 template<typename T, size_t N>
 TImage<T,N> operator/(TImage<T,N> &imgA, TImage<T,N> &imgB);
 
+/// \brief Send information about the image to a stream
+/// \param s target stream
+/// \param img the image
+/// \returns A reference to the stream
 template<typename T, size_t N>
 std::ostream & operator<<(std::ostream &s, const TImage<T,N> &img);
 
+/// \brief Compares if two images have the same size
+/// \param img1 the first image
+/// \param img2 the second image
+/// \returns true if the images have the same dimensions
 template<typename T, size_t N>
 bool CheckEqualSize(TImage<T,N> &img1, TImage<T,N> &img2);
 }}

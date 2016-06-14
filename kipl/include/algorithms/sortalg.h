@@ -7,6 +7,9 @@
 #ifndef __sortalg_h
 #define __sortalg_h
 
+/// \brief Sort an array using the heap sort algorithm the operation is inplace
+/// \param ra The array to sort
+/// \param n number of elements
 template <class T>
 void heapsort(T * ra, int n)
 {
