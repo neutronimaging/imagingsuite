@@ -26,6 +26,8 @@
 #include <sstream>
 #include <map>
 
+#include "PreprocModule.h"
+
 void * GetModule(const char *application, const char * name)
 {
     if (strcmp(application,"muhrec")!=0)
@@ -34,8 +36,8 @@ void * GetModule(const char *application, const char * name)
     if (name!=NULL) {
         std::string sName=name;
 
-        if (sName=="FullLogNorm")
-            return new FullLogNorm;
+        if (sName=="PreprocModule")
+            return new PreprocModule;
 
 
     }
@@ -100,8 +102,8 @@ int GetModuleList(const char *application, void *listptr)
 
     std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-    FullLogNorm norm;
-    modulelist->operator []("FullLogNorm")=norm.GetParameters();
+    PreprocModule pm;
+    modulelist->operator []("PreprocModule")=pm.GetParameters();
 
     return 0;
 }
