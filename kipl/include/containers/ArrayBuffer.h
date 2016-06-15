@@ -4,6 +4,8 @@
 #include "../base/core/sharedbuffer.h"
 
 namespace kipl { namespace containers {
+/// \brief A fixed sized array buffer with push-back insertion
+/// \note can this be replaced by an STL container?
 template <class T>
 class ArrayBuffer
 {
@@ -35,6 +37,8 @@ public:
 	}
 
 	/// \returns if the buffer is empty.
+ /// \retval true if the buffer is empty
+ /// \retval false otherwise
 	bool empty() {return cnt==0;}
 protected:
 	kipl::base::core::buffer<T> data;

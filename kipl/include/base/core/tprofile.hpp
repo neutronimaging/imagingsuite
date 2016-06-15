@@ -4,7 +4,7 @@
 namespace kipl { namespace base {
 
 template <typename T, typename S>
-void verticalprofile2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProfile)
+void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection)
 {
 
     memset(pProfile,0,dims[1]*sizeof(S));
@@ -15,14 +15,14 @@ void verticalprofile2D(const T *pData, const size_t *dims, S *pProfile, bool bMe
         }
     }
 
-    if (bMeanProfile) {
+    if (bMeanProjection) {
         for (size_t y=0; y<dims[1]; y++)
         pProfile[y]=pProfile[y]/dims[0];
     }
 }
 
 template <typename T, typename S>
-void horizontalprofile2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProfile)
+void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection)
 {
     memset(pProfile,0,dims[0]*sizeof(S));
     for (size_t y=0; y<dims[1]; y++) {

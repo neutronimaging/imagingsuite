@@ -13,8 +13,10 @@
 namespace kipl { namespace base {
 
 /// \brief Checks if an image has NaN valued pixels
-/// \param img
-/// \returns true on the occurance of a NaN otherwise false
+/// \param img The image to test
+/// \returns reports the presence of nans in the image
+/// \retval true if a NaN is found in the image
+/// \retval false otherwise
 template <typename T, size_t N>
 bool hasNan(TImage<T,N> &img)
 {
