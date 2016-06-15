@@ -116,7 +116,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     }
 
     float *profile=new float[img.Size(1)];
-    kipl::base::verticalprofile2D(img.GetDataPtr(),img.Dims(),profile,true);
+    kipl::base::VerticalProjection2D(img.GetDataPtr(),img.Dims(),profile,true);
 
     float *pImg    = img.GetDataPtr();
     float *pSmooth = smoothx.GetDataPtr();

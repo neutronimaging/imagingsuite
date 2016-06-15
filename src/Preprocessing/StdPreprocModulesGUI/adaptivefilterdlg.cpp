@@ -65,7 +65,7 @@ void AdaptiveFilterDlg::ApplyParameters()
     ui->viewerOriginal->set_image(m_Sino.GetDataPtr(),m_Sino.Dims(),axis[nLo],axis[nHi]);
 
     float *sinoprofile=new float[m_Sino.Size(1)];
-    kipl::base::verticalprofile2D(m_Sino.GetDataPtr(),m_Sino.Dims(),sinoprofile,true);
+    kipl::base::VerticalProjection2D(m_Sino.GetDataPtr(),m_Sino.Dims(),sinoprofile,true);
     float maxprof=*std::max_element(sinoprofile,sinoprofile+m_Sino.Size(1));
     float minprof=*std::min_element(sinoprofile,sinoprofile+m_Sino.Size(1));
 
