@@ -34,19 +34,19 @@ enum eImageAxes {
 
 /// \brief Filter edge processing method selector
 enum ePadType {
-    PadMirror=0,    ///> Mirrors the edge information
-    PadPeriodic,    ///> Repeats the images at the edge
-    PadZero,        ///> Pads the edge by zeros
-    PadSP0,         ///> Edge Padding for the wavelet transform
-    PadSP1          ///> Edge Padding for the wavelet transform
+    PadMirror=0,    ///< Mirrors the edge information
+    PadPeriodic,    ///< Repeats the images at the edge
+    PadZero,        ///< Pads the edge by zeros
+    PadSP0,         ///< Edge Padding for the wavelet transform
+    PadSP1          ///< Edge Padding for the wavelet transform
 };
 
 /// \brief Image flip selector
 enum eImageFlip {
-    ImageFlipNone=0,            ///> No flipping
-    ImageFlipHorizontal,        ///> Flip about the vertical axis
-    ImageFlipVertical,          ///> Flip about the horizontal axis
-    ImageFlipHorizontalVertical ///> Flip both horizontal and vertial
+    ImageFlipNone=0,            ///< No flipping
+    ImageFlipHorizontal,        ///< Flip about the vertical axis
+    ImageFlipVertical,          ///< Flip about the horizontal axis
+    ImageFlipHorizontalVertical ///< Flip both horizontal and vertial
 };
 
 /// \brief Image axis permutation selector
@@ -61,24 +61,24 @@ enum eAxisPermutations {
 
 /// \brief Image rotation selector
 enum eImageRotate {
-    ImageRotateNone=0,  ///> No rotation
-    ImageRotate90,      ///> Rotate 90 degrees clockwise
-    ImageRotate180,     ///> Rotate 180 degrees clockwise
-    ImageRotate270      ///> Rotate 270 degrees clockwise
+    ImageRotateNone=0,  ///< No rotation
+    ImageRotate90,      ///< Rotate 90 degrees clockwise
+    ImageRotate180,     ///< Rotate 180 degrees clockwise
+    ImageRotate270      ///< Rotate 270 degrees clockwise
 };
 
 /// \brief Unsigned integer data type selector
 enum eDataType {
-    UInt4,      ///> 4bits unsigned integer
-    UInt8,      ///> 8bits unsigned integer
-    UInt12,     ///> 12bits unsigned integer
-    UInt16      ///> 16bits unsigned integer
+    UInt4,      ///< 4bits unsigned integer
+    UInt8,      ///< 8bits unsigned integer
+    UInt12,     ///< 12bits unsigned integer
+    UInt16      ///< 16bits unsigned integer
 };
 
 /// \brief Endian selector
 enum eEndians {
-    SmallEndian,    ///> Use small endian, ie first bit is least significant
-    BigEndian       ///> Use big endian, ie first bit is most significant
+    SmallEndian,    ///< Use small endian, ie first bit is least significant
+    BigEndian       ///< Use big endian, ie first bit is most significant
 };
 
 }}

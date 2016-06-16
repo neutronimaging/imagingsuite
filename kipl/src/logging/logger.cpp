@@ -119,34 +119,43 @@ void Logger::WriteMessage(LogLevel s, std::string message)
 	}
 }
 	
+}}
 
 std::ostream & operator<<(std::ostream &os, kipl::logging::Logger::LogLevel level)
 {
-	switch (level) {
-	case Logger::LogError   : os<<"error"   ; break;
-	case Logger::LogWarning : os<<"warning" ; break;
-	case Logger::LogMessage : os<<"message" ; break;
-	case Logger::LogDebug   : os<<"debug"   ; break;
-	case Logger::LogVerbose : os<<"verbose" ; break;
-	}
-	
-	return os;
+    os<<enum2string(level);
+
+    return os;
 }
 
 void string2enum(std::string s, kipl::logging::Logger::LogLevel &level)
 {
-	if (s=="error")
-		level=kipl::logging::Logger::LogError;
-	else if (s=="warning")
-		level=kipl::logging::Logger::LogWarning;
-	else if (s=="message")
-		level=kipl::logging::Logger::LogMessage;
-	else if (s=="debug")
-		level=kipl::logging::Logger::LogDebug;
-	else if (s=="verbose")
-		level=kipl::logging::Logger::LogVerbose;
-	else
-		throw kipl::base::KiplException("Unknown log-level",__FILE__,__LINE__);
+    if (s=="error")
+        level=kipl::logging::Logger::LogError;
+    else if (s=="warning")
+        level=kipl::logging::Logger::LogWarning;
+    else if (s=="message")
+        level=kipl::logging::Logger::LogMessage;
+    else if (s=="debug")
+        level=kipl::logging::Logger::LogDebug;
+    else if (s=="verbose")
+        level=kipl::logging::Logger::LogVerbose;
+    else
+        throw kipl::base::KiplException("Unknown log-level",__FILE__,__LINE__);
 
 }
-}}
+
+std::string enum2string(kipl::logging::Logger::LogLevel &level)
+{
+    switch (level) {
+    case kipl::logging::Logger::LogError   : return "error"   ; break;
+    case kipl::logging::Logger::LogWarning : return "warning" ; break;
+    case kipl::logging::Logger::LogMessage : return "message" ; break;
+    case kipl::logging::Logger::LogDebug   : return "debug"   ; break;
+    case kipl::logging::Logger::LogVerbose : return "verbose" ; break;
+    default :
+        throw kipl::base::KiplException("Unknown log-level",__FILE__,__LINE__); break;
+    }
+
+    return "bad level";
+}

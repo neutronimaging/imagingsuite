@@ -18,23 +18,34 @@
 #include <list>
 #include <mutex>
 
-namespace kipl { namespace logging {
+namespace kipl {
+/// \brief This namespace collects classes related to the handling of log messages.
+namespace logging {
+
+/// \brief Base class to redirect the log messages to different targets. Instances of this class write to the standard stream.
 class KIPLSHARED_EXPORT LogWriter {
 public:
+    /// \brief Writes a message string using cout
 	virtual size_t Write(std::string str);
 	virtual ~LogWriter() {}
 }; 
 
+/// \brief A writer class that streams the messages to a file
 class KIPLSHARED_EXPORT LogStreamWriter : public LogWriter
 {
 public:
+    /// \brief C'tor that open a file for message streaming.
+    /// \param fname File name of the destination file.
     LogStreamWriter(std::string fname);
+    /// \brief Writes a message to the stream
+    /// \param str The message to write
     virtual size_t Write(std::string str);
     virtual ~LogStreamWriter();
 protected:
     std::ofstream fout;
 };
 
+/// \brief A basic logging class that can take log messages from different origins and write then to the same destination.
 class KIPLSHARED_EXPORT Logger {
 public:
 
@@ -77,15 +88,20 @@ protected:
 	/// \param message A string containing the message
 	static void WriteMessage(LogLevel s, std::string message);
 #ifdef MULTITARGETS
-    static std::list<LogWriter *> LogTargets;   //!< Refence to the global log target
+    /// \brief
+    static std::list<LogWriter *> LogTargets;   //!< Refence to the global log target. Experimental approach to allow several log targets. It is still not stable
 #else
-    static LogWriter * LogTarget;   //!< Refence to the global log target
+    static LogWriter * LogTarget;   //!< Refence to the global log target single log target case
 #endif
     static LogLevel CurrentLogLevel; //!< The current global log level
-    static std::mutex m_LoggerMutex;
+    static std::mutex m_LoggerMutex; ///< A mutex to protect against simultaneous writing from several threrads.
 
-	std::string sLogOrigin; //!< The name of the current log space
+    std::string sLogOrigin; //!< The name of the current log space. Every class that use a logger instance should tell what their name is to improve the quality of the message.
 };
+
+
+
+}}
 
 /// \brief Interface for log enums to the stream class
 /// \param os The target stream
@@ -97,6 +113,12 @@ std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &os, kipl::logging::Log
 /// \param level The translated enum value for the entered string
 /// \throws ReconException if the string translation failed
 void KIPLSHARED_EXPORT string2enum(std::string s, kipl::logging::Logger::LogLevel &level);
-}}
+
+
+/// \brief Enum to String converter
+/// \param level The translated enum value for the entered string
+/// \returns The enum name
+/// \throws ReconException if the string translation failed
+std::string  KIPLSHARED_EXPORT enum2string(kipl::logging::Logger::LogLevel &level);
 
 #endif /*LOGGER_H_*/

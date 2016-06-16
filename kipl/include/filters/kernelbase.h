@@ -2,6 +2,10 @@
 #define __KERNELBASE_H_
 
 namespace kipl { namespace filters {
+
+/// \brief A class to define and handle convolution kernels.
+///
+/// It was implemented with the intention to improve the user experience, but i was not able to complete this concept.
 template <typename T, size_t nDims>
 class KernelBase {
 public:

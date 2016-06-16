@@ -22,12 +22,12 @@ namespace kipl {
 namespace drawing {
 /// \brief This enum selects how drawing items are inserted into the target image
 enum ePaintMethod {
-    PaintInsert,        ///> Plainly overwrites the pixels with the drawing item
-    PaintMix,           ///> Mix ?
-    PaintMin,           ///> Draws the min value of the current pixel and the draw item
-    PaintMax,           ///> Draws the max value of the current pixel and the draw item
-    PaintAdd,           ///> Adds the item value to the current pixel value
-    PaintSubtract,      ///> Subracts the item value from the current pixel value
+    PaintInsert,        ///< Plainly overwrites the pixels with the drawing item
+    PaintMix,           ///< Mix ?
+    PaintMin,           ///< Draws the min value of the current pixel and the draw item
+    PaintMax,           ///< Draws the max value of the current pixel and the draw item
+    PaintAdd,           ///< Adds the item value to the current pixel value
+    PaintSubtract,      ///< Subracts the item value from the current pixel value
 };
 
 enum eDrawOrientation {

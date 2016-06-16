@@ -292,7 +292,8 @@ HEADERS +=\
     ../include/filters/core/nonlocalmeans.hpp \
     ../include/math/PoissonNoise.h \
     ../include/filters/stddevfilter.h \
-    ../include/interactors/interactionbase.h
+    ../include/interactors/interactionbase.h \
+    ../include/containers/ringbuffer.h
 
 
 

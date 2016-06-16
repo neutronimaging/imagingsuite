@@ -1,6 +1,7 @@
 #include "../../../include/base/kiplenums.h"
 #include "../../../include/base/KiplException.h"
 #include <iostream>
+#include <map>
 
 std::string enum2string(kipl::base::eImagePlanes plane) {
 	std::string s;
@@ -136,13 +137,13 @@ std::ostream &operator<<(std::ostream & s, kipl::base::eEndians endian)
 std::string enum2string(kipl::base::eAxisPermutations perm)
 {
     std::string s;
-    switch (endian) {
-        case kipl::base::PermuteXYZ :perm="PermuteXYZ"; break;
-        case kipl::base::PermuteXZY :perm="PermuteXZY"; break;
-        case kipl::base::PermuteYXZ :perm="PermuteYXZ"; break;
-        case kipl::base::PermuteYZX :perm="PermuteYZX"; break;
-        case kipl::base::PermuteZXY :perm="PermuteZXY"; break;
-        case kipl::base::PermuteZYX :perm="PermuteZYX"; break;
+    switch (perm) {
+        case kipl::base::PermuteXYZ : s="PermuteXYZ"; break;
+        case kipl::base::PermuteXZY : s="PermuteXZY"; break;
+        case kipl::base::PermuteYXZ : s="PermuteYXZ"; break;
+        case kipl::base::PermuteYZX : s="PermuteYZX"; break;
+        case kipl::base::PermuteZXY : s="PermuteZXY"; break;
+        case kipl::base::PermuteZYX : s="PermuteZYX"; break;
         default : kipl::base::KiplException("Could not transform axis permutation enum to a string", __FILE__, __LINE__); break;
     }
 
@@ -159,7 +160,7 @@ void  string2enum(std::string str, kipl::base::eAxisPermutations &perm)
     values["PermuteZXY"] = kipl::base::PermuteZXY;
     values["PermuteZXY"] = kipl::base::PermuteZYX;
 
-    auto it=values.find(s);
+    auto it=values.find(str);
 
     if (it!=values.end())
         perm=it->second;

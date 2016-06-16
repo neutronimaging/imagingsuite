@@ -14,8 +14,8 @@ namespace kipl { namespace math { namespace fft {
 
 /// \brief Enum to select the type of zero padding
 enum ePaddingPosition {
-    PadCorner,  ///> One sided padding on the right and bottom sides of the image.
-    PadCenter   ///> Pads on all sides of the image, placing it in the center of the padded image.
+    PadCorner,  ///< One sided padding on the right and bottom sides of the image.
+    PadCenter   ///< Pads on all sides of the image, placing it in the center of the padded image.
 };
 
 /// \brief Determines the next greater number in the power of 2 series

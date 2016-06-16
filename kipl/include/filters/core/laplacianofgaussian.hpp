@@ -1,5 +1,5 @@
-#ifndef LAPLACIANOFGRADIENTS_HPP
-#define LAPLACIANOFGRADIENTS_HPP
+#ifndef LAPLACIANOFGAUSSIAN_HPP
+#define LAPLACIANOFGAUSSIAN_HPP
 
 #include "../filter.h"
 #include "../filterbase.h"
@@ -46,4 +46,4 @@ kipl::base::TImage<float,2> LaplacianOfGaussian(kipl::base::TImage<T,2> & img, f
 }
 
 }}
-#endif // LAPLACIANOFGRADIENTS_HPP
+#endif // LAPLACIANOFGAUSSIAN_HPP

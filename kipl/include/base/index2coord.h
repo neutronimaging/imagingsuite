@@ -27,10 +27,10 @@ namespace kipl { namespace base {
 			return *this;
 		}
 
-        short x; ///> The x coordinate
-        short y; ///> The y coordinate
-        short z; ///> The z coordinate
-        short reserved; ///> Bit filling for optimal access
+        short x; ///< The x coordinate
+        short y; ///< The y coordinate
+        short z; ///< The z coordinate
+        short reserved; ///< Bit filling for optimal access
 
         /// \brief Equality test
         /// \param c the instance to compare

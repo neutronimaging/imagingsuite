@@ -3,7 +3,9 @@
 
 #include "../base/core/sharedbuffer.h"
 
-namespace kipl { namespace containers {
+namespace kipl {
+/// \brief The name space contains different types of specialized buffers that are useful for image processing algorithms
+namespace containers {
 /// \brief A fixed sized array buffer with push-back insertion
 /// \note can this be replaced by an STL container?
 template <class T>

@@ -98,12 +98,12 @@ namespace kipl { namespace base {
         /// \return the number of pixels per inch
 		float GetDPIY() {return 25.4f/fResolutionY;}
 		
-        std::string sSoftware;    ///> TIFF tag 305
-        std::string sArtist;	  ///> TIFF tag 315
-        std::string sCopyright;   ///> TIFF tag 33432
-        std::string sDescription; ///> TIFF tag 270
-        unsigned short nBitsPerSample;  ///> Number of bits per sample as read from the image file
-        unsigned short nSamplesPerPixel; ///> Number of samples per pixel in the image file. Mainly applies to color images
+        std::string sSoftware;    ///< TIFF tag 305
+        std::string sArtist;	  ///< TIFF tag 315
+        std::string sCopyright;   ///< TIFF tag 33432
+        std::string sDescription; ///< TIFF tag 270
+        unsigned short nBitsPerSample;  ///< Number of bits per sample as read from the image file
+        unsigned short nSamplesPerPixel; ///< Number of samples per pixel in the image file. Mainly applies to color images
         unsigned short nSampleFormat;
 
 

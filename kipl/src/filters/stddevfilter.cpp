@@ -8,9 +8,9 @@
 namespace kipl { namespace filters {
 
 
-StdDevFilter::StdDevFilter() :
-    m_FilterSize(5),
-    m_eEdgeProcessingStyle(FilterBase::EdgeMirror)
+StdDevFilter::StdDevFilter(size_t size, FilterBase::EdgeProcessingStyle eps) :
+    m_FilterSize(size),
+    m_eEdgeProcessingStyle(eps)
 {
 
 }

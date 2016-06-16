@@ -70,6 +70,9 @@ namespace kipl { namespace filters {
 		int nHalfKernel[nDims];
 	};
 
+    /// \brief Implements a weighted median filter.
+    ///
+    /// The filter repeats the neigborhood pixels the number of times the filter weight indicates. This Filter can be used as a outlier suppression filter.
 	template <typename T, size_t N>
 	class TWeightedMedianFilter : public TMedianFilter<T,N>
 	{
@@ -86,31 +89,8 @@ namespace kipl { namespace filters {
 		int m_nBufferLength;
 	};
 
-	template <typename T>
-	class RingBuffer
-	{
-	public:
-		RingBuffer(size_t len) : L(len), index(0), isFull(false),buffer(NULL) {buffer=new T[L];}
-		~RingBuffer() {delete [] buffer;}
-		void Reset() {index=0; isFull=false;}
-		T const * const DataPtr() {return buffer;}
-		size_t Push(T val) {
-			buffer[index]=val;
-			index++;
-			if (L<=index) {
-				index=0; 
-				isFull=true;
-			}
-			return index;
-		}
-		bool IsFull() {return isFull;}
-		size_t Size() {return L;}
-	private:
-		const size_t L;
-		size_t index;
-		bool isFull;
-		T *buffer;
-	};
+
+
 }}
 
 #include "core/medianfilter.hpp"
