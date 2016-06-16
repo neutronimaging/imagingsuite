@@ -16,7 +16,11 @@
 
 #include "../logging/logger.h"
 
-namespace kipl { namespace math { namespace fft {
+namespace kipl {
+/// \brief The math name space collects mathematical functions
+namespace math {
+/// \brief The FFT namespace collects classes related to the fft
+namespace fft {
 
 /// \brief Base class to provide an efficient interface to libFFTW
 ///

@@ -15,7 +15,9 @@
 #include "core/sharedbuffer.h"
 #include "imageinfo.h"
 #include <complex>
-namespace kipl { namespace base {
+namespace kipl {
+/// \brief The namespace contains classes for basic image handling
+namespace base {
 
 /// \brief Container class that represents an image
 /// The class manages the internal buffer with refenece counting to save time and memory.

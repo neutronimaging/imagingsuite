@@ -21,4 +21,6 @@
 #define UNUSED(x) UNUSED_ ## x
 #endif
 
+/// \brief The kipl namespace contains the core library for most applications
+namespace kipl {}
 #endif // KIPL_GLOBAL_H

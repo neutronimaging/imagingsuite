@@ -12,15 +12,36 @@
 #include <vector>
 #include <cstdlib>
 
-/// Support functions to parse parameter files
-namespace kipl { namespace strings { namespace parenc {
+#include "../base/KiplException.h"
 
-class parenc_exception {
-	std::string message;
+
+namespace kipl { namespace strings {
+/// \brief Support functions to parse parameter files.
+///
+/// These functions are probably deprecated by the ones in module config and should not be used in new code
+namespace parenc {
+
+/// \brief Exception to be thrown when a parameter could not be handled correctly.
+class parenc_exception : public kipl::base::KiplException {
 public:
-	parenc_exception(const std::string & msg) {message=msg;}
-	virtual const std::string & what() const {return message;}
-	virtual ~parenc_exception() {}
+    /// \brief C'tor for simple exception, not recommended to use.
+    parenc_exception() : KiplException("parenc_exception") {}
+
+    /// \brief Basic exception C'tor. Only creates a message.
+    /// \param message The error message that is carried by the exception
+    /// \param exname Name of the exception. This is to be assigned by the C'tor of the deriving class
+    parenc_exception(std::string message) : KiplException(message, "parenc_exception")
+    {}
+
+    /// \brief Exception C'tor with full information.
+    /// \param message The error message that is carried by the exception
+    /// \param filename Name of the file that throws the exception (provided by __FILE__)
+    /// \param linenumber line number of the location where the exception was thrown.
+    /// \param exname Name of the exception. This is to be assigned by the C'tor of the deriving class
+    parenc_exception(std::string message,
+            std::string filename,
+            const size_t linenumber) : KiplException(message,filename, linenumber, "parenc_exception")
+    {}
 };
 
 /// \brief Finds a parameter key and returns an STL string associated with it
