@@ -33,7 +33,7 @@ void AddTexturedNoise(kipl::base::TImage<float,2> &img, float variance, size_t w
 	}
 }
 
-void AddTexturedNoise(kipl::base::TImage<float,3> *img, float variance, size_t width)
+void AddTexturedNoise(kipl::base::TImage<float,3> &img, float variance, size_t width)
 {
 	size_t const * const dims=img->Dims();
 	kipl::base::TImage<float,2> noise(dims);

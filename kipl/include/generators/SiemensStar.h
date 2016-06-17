@@ -6,13 +6,18 @@
 
 namespace kipl { namespace generators {
 
+/// \brief Produces a Siemens star test pattern
+/// \param N Size of the image will be NxN.
+/// \param Spokes number of spokes to generate in the image
+/// \param img The resulting image
+/// \param centered if true the pattern will be centered in the middle of the central pixel.
 template<typename T>
-void SiemensStar(size_t N, size_t Spokes, kipl::base::TImage<T,2> *img, bool centered=true)
+void SiemensStar(size_t N, size_t Spokes, kipl::base::TImage<T,2> &img, bool centered=true)
 {
 	size_t dims[2]={N,N};
 
-	img->Resize(dims);
-	T *pImg=img->GetDataPtr();
+    img.Resize(dims);
+    T *pImg=img.GetDataPtr();
 
 	const double N2=static_cast<float>(N/2);
 	double R=N2*N2*0.95f;
