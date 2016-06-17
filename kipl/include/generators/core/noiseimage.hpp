@@ -4,38 +4,44 @@
 #include "../../base/timage.h"
 #include "../../math/GaussianNoise.h"
 #include "../../math/PoissonNoise.h"
+#include "../NoiseImage.h"
 
 namespace kipl { namespace generators {
+
+template <typename T, size_t N>
+NoiseGenerator<T,N>::NoiseGenerator() {}
+
+template <typename T, size_t N>
+NoiseGenerator<T,N>::~NoiseGenerator() {}
+
+template <typename T, size_t N>
+kipl::base::TImage<T,N> NoiseGenerator<T,N>::MakeNoise() {
+    kipl::base::TImage<T,N> img;
+    return img;
+}
+
+template <typename T, size_t N>
+void NoiseGenerator<T,N>::AddNoise(kipl::base::TImage<T,N> &img)
+{
+
+}
+
 template <typename T, size_t N>
 void NoiseGenerator<T,N>::Gauss(kipl::base::TImage<T,N> &img, float m, float s)
 {
-#if __cplusplus > 199711L
-    std::normal_distribution<T> distr(m,s);
-    T * pImg=img.GetDataPtr();
-    for (size_t i=0; i<img.Size(); i++) {
-        pImg[i]+=distr(m_Generator);
-    }
-#endif
 }
 
 template <typename T, size_t N>
 void NoiseGenerator<T,N>::Poisson(kipl::base::TImage<T,N> &img, float lambda)
-{
-#if __cplusplus > 199711L
-    std::poisson_distribution<T> distr(lambda);
-    T * pImg=img.GetDataPtr();
-    for (size_t i=0; i<img.Size(); i++) {
-        pImg[i]+=distr(m_Generator);
-    }
-#else
-    kipl::base::TImage<size_t,N> tmp(img.Dims());
-    kipl::math::PoissonNoise(tmp.GetDataPtr(),tmp.Size(),lambda);
-    for (size_t i=0; i<img.Size(); i++) {
-        img[i]=static_cast<T>(tmp[i]);
-    }
-#endif
-}
+{}
 
+template <typename T, size_t N>
+void NoiseGenerator<T,N>::AddTexturedNoise(kipl::base::TImage<float,2> &img, float variance, size_t width)
+{}
+
+template <typename T, size_t N>
+void NoiseGenerator<T,N>::AddTexturedNoise(kipl::base::TImage<float,3> &img, float variance, size_t width)
+{}
 
 }}
 
