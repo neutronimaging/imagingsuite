@@ -49,16 +49,15 @@ public:
                               InsertMethods ins=InsertReplace);
 
 
-    void SetBackground(BackgroundTypes bg=BackgroundFlat,
-                       kipl::generators::NoiseGenerator &ng);
+    void SetBackground(kipl::generators::NoiseGenerator<float,2> &ng,BackgroundTypes bg=BackgroundFlat);
 private:
     kipl::base::TImage<float,2> m_Img;
     BackgroundTypes m_Background;
-    kipl::generators::NoiseGenerator n_NoiseGenerator;
+    kipl::generators::NoiseGenerator<float,2> n_NoiseGenerator;
 
     void InsertByReplace(kipl::base::TImage<float,2> &spot, int x, int y);
     void InsertByAdd(kipl::base::TImage<float,2> &spot, int x, int y);
     void InsertByMultiply(kipl::base::TImage<float,2> &spot, int x, int y);
 };
-
+ }}
 #endif // SPOTGENERATOR_H
