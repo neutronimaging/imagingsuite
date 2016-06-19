@@ -37,14 +37,15 @@ enum eFileType {
 std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
 void KIPLSHARED_EXPORT string2enum(const std::string str, kipl::io::eFileType &ft);
 std::string KIPLSHARED_EXPORT enum2string(kipl::io::eFileType ft);
+
 /// \brief Read a series of tiff image and stores as a 3D image
 /// \brief img target image
 /// \brief fname file name mask of the image sequence, must contain a *
 /// \brief start first file number
 /// \brief n number of files to read
 /// \brief nstep file number increment
-/// \brief crop coordinates for a crop region
-
+/// \brief crop coordinates for a crop region. The entire image is read if the crop is NULL
+/// \returns bit per pixel
 template<class ImgType>
 int ReadImageStack(kipl::base::TImage<ImgType,3> & img, 
 				  const std::string filemask,

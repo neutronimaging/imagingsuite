@@ -1,65 +1,96 @@
 #include "../../include/io/analyzefileext.h"
 #include "../../include/strings/filenames.h"
+#include "../../include/base/KiplException.h"
 
 #include <string>
 #include <map>
 #include <algorithm>
 
-namespace kipl { namespace io {
+namespace kipl {
 
-eExtensionTypes GetExtensionType(std::string ext)
+namespace io {
+
+eExtensionTypes GetFileExtensionType(std::string fname)
+{
+    std::string ext=kipl::strings::filenames::GetFileExtension(fname);
+
+    eExtensionTypes et;
+    string2enum(ext,et);
+    return et;
+}
+
+}}
+
+/// \brief Translates the value of an extension enum to a string
+/// \param et The enum value to translate
+/// \returns A string with the value
+std::string KIPLSHARED_EXPORT enum2string(kipl::io::eExtensionTypes et)
+{
+    std::string ext;
+
+    switch (et) {
+    case kipl::io::ExtensionTXT:  ext="txt"; break;
+    case kipl::io::ExtensionDMP:  ext="dmp"; break;
+    case kipl::io::ExtensionDAT:  ext="dat"; break;
+    case kipl::io::ExtensionXML:  ext="xml"; break;
+    case kipl::io::ExtensionRAW:  ext="raw";  break;
+    case kipl::io::ExtensionFITS: ext="fits"; break;
+    case kipl::io::ExtensionPNG:  ext="png"; break;
+    case kipl::io::ExtensionJPG:  ext="jpg"; break;
+    case kipl::io::ExtensionTIFF: ext="tif"; break;
+    case kipl::io::ExtensionMAT:  ext="mat"; break;
+    case kipl::io::ExtensionHDF4:  ext="hd4"; break;
+    case kipl::io::ExtensionHDF5:  ext="hd5"; break;
+    case kipl::io::ExtensionHDF:  ext="hdf"; break;
+
+    default: throw kipl::base::KiplException("Unable to translate the extension enum to a string",__FILE__, __LINE__);
+    }
+
+    return ext;
+}
+
+/// \brief Translates a string to an extension enum
+/// \param ext a string containing a file extension
+/// \param et target enum variable
+void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &et)
 {
     std::string e=ext;
     std::transform(e.begin(),e.begin(),e.end(),tolower);
     if (e[0]=='.')
         e=e.substr(1);
 
-    std::map<std::string,eExtensionTypes> extmap;
+    std::map<std::string,kipl::io::eExtensionTypes> extmap;
 
-    extmap["txt"]  = ExtensionTXT;
-    extmap["dmp"]  = ExtensionDMP;
-    extmap["dat"]  = ExtensionDAT;
-    extmap["xml"]  = ExtensionXML;
-    extmap["raw"]  = ExtensionRAW;
-    extmap["fit"]  = ExtensionFITS;
-    extmap["fts"]  = ExtensionFITS;
-    extmap["fits"] = ExtensionFITS;
-    extmap["png"]  = ExtensionPNG;
-    extmap["jpg"]  = ExtensionJPG;
-    extmap["jpeg"]  = ExtensionJPG;
-    extmap["tif"]  = ExtensionTIFF;
-    extmap["tiff"] = ExtensionTIFF;
-    extmap["mat"]  = ExtensionMAT;
-    extmap["hd4"]  = ExtensionHDF;
-    extmap["hd5"]  = ExtensionHDF;
-    extmap["hdf"]  = ExtensionHDF;
+    extmap["txt"]   = kipl::io::ExtensionTXT;
+    extmap["dmp"]   = kipl::io::ExtensionDMP;
+    extmap["dat"]   = kipl::io::ExtensionDAT;
+    extmap["xml"]   = kipl::io::ExtensionXML;
+    extmap["raw"]   = kipl::io::ExtensionRAW;
+    extmap["fit"]   = kipl::io::ExtensionFITS;
+    extmap["fts"]   = kipl::io::ExtensionFITS;
+    extmap["fits"]  = kipl::io::ExtensionFITS;
+    extmap["png"]   = kipl::io::ExtensionPNG;
+    extmap["jpg"]   = kipl::io::ExtensionJPG;
+    extmap["jpeg"]  = kipl::io::ExtensionJPG;
+    extmap["tif"]   = kipl::io::ExtensionTIFF;
+    extmap["tiff"]  = kipl::io::ExtensionTIFF;
+    extmap["mat"]   = kipl::io::ExtensionMAT;
+    extmap["hd4"]   = kipl::io::ExtensionHDF4;
+    extmap["hd5"]   = kipl::io::ExtensionHDF5;
+    extmap["hdf"]   = kipl::io::ExtensionHDF;
 
-    return extmap[e];
+    auto it=extmap.find(ext);
+
+    if (it!=extmap.end())
+        et=it->second;
+    else {
+        throw kipl::base::KiplException("Unknown file extension",__FILE__,__LINE__);
+    }
 }
-
-eExtensionTypes GetFileExtensionType(std::string fname)
-{
-    std::string ext=kipl::strings::filenames::GetFileExtension(fname);
-
-    return GetExtensionType(ext);
-}
-
-}}
 
 std::ostream & operator<<(std::ostream &s, kipl::io::eExtensionTypes etype)
 {
-    switch (etype) {
-    case kipl::io::ExtensionTXT : s<<"ExtensionTXT";  break;
-    case kipl::io::ExtensionDMP : s<<"ExtensionDMP";  break;
-    case kipl::io::ExtensionDAT : s<<"ExtensionDAT";  break;
-    case kipl::io::ExtensionXML : s<<"ExtensionXML";  break;
-    case kipl::io::ExtensionRAW : s<<"ExtensionRAW";  break;
-    case kipl::io::ExtensionFITS: s<<"ExtensionFITS"; break;
-    case kipl::io::ExtensionTIFF: s<<"ExtensionTIFF"; break;
-    case kipl::io::ExtensionPNG : s<<"ExtensionPNG";  break;
-    case kipl::io::ExtensionMAT : s<<"ExtensionMAT";  break;
-    case kipl::io::ExtensionHDF : s<<"ExtensionHDF";  break;
-    }
+    s<<enum2string(etype);
 
     return s;
 }

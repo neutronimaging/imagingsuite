@@ -19,14 +19,14 @@
 
 #include "../logging/logger.h"
 
-/// The class provides a link between processing modules and a GUI. The base class shall be free of GUI code.
-/// The interactor shall be thread safe.
+
 
 namespace kipl {
 /// \brief Provides interaction functionality between a user interface and processing components
 namespace interactors {
 
-/// \brief Base class to provide the basic interactor interface
+/// The class provides a link between processing modules and a GUI. The base class shall be free of GUI code.
+/// The interactor shall be implemented to be thread safe.
 class KIPLSHARED_EXPORT InteractionBase
 {
     kipl::logging::Logger logger; ///< The logger for messages from the interactor

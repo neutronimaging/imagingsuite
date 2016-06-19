@@ -7,7 +7,7 @@
 namespace kipl { namespace generators {
 /// \brief A class to generate spot patterns with different amplitude and width
 ///
-/// The class is still under construction
+/// \todo The spot pattern genration class is still under construction. It should possibly be moved to the evaluation framework.
 class SpotGenerator
 {
 public:
@@ -48,16 +48,39 @@ public:
                               SpotShapes ss=SpotSquare,
                               InsertMethods ins=InsertReplace);
 
+    /// \brief Sets the noise source for the generated stop image
+    /// \param ng A noise generator object that will be used to generate the noise on the spot image
+    void SetNoise(kipl::generators::NoiseGenerator<float,2> ng);
 
-    void SetBackground(kipl::generators::NoiseGenerator<float,2> &ng,BackgroundTypes bg=BackgroundFlat);
+    /// \brief Sets how the background is to be generated
+    /// \param bg Selects the background type
+    void SetBackground(BackgroundTypes bg=BackgroundFlat);
+
 private:
-    kipl::base::TImage<float,2> m_Img;
-    BackgroundTypes m_Background;
-    kipl::generators::NoiseGenerator<float,2> n_NoiseGenerator;
 
+    kipl::base::TImage<float,2> m_Img;  ///< The image that is generated
+
+    BackgroundTypes m_Background;       ///< Selected background type
+    kipl::generators::NoiseGenerator<float,2> n_NoiseGenerator; ///< The noise generator that adds noise to the spot image
+
+    /// \brief Inserts a spot at the given position using replacement as insertion operation
+    /// \param spot subimage with the spot
+    /// \param x the center position on the x-axis
+    /// \param y the center position on the y-axis
     void InsertByReplace(kipl::base::TImage<float,2> &spot, int x, int y);
+
+    /// \brief Inserts a spot at the given position using addition as insertion operation
+    /// \param spot subimage with the spot
+    /// \param x the center position on the x-axis
+    /// \param y the center position on the y-axis
     void InsertByAdd(kipl::base::TImage<float,2> &spot, int x, int y);
+
+    /// \brief Inserts a spot at the given position using multiplication as insertion operation
+    /// \param spot subimage with the spot
+    /// \param x the center position on the x-axis
+    /// \param y the center position on the y-axis
     void InsertByMultiply(kipl::base::TImage<float,2> &spot, int x, int y);
 };
- }}
+
+}}
 #endif // SPOTGENERATOR_H

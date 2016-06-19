@@ -25,6 +25,16 @@
 
 namespace kipl { namespace io {
 
+/// \brief Parses a string to find slope and offset.
+///
+/// This string could come the comment field in a tiff file created by the Octopus CT recontruction software.
+/// It is intended to rescale the intensity of the graylevels in a tiff image.
+/// \param msg The string to parse
+/// \param slope the slope value extracted from the comment string
+/// \param offset the offset
+/// \returns If scaling information was found
+/// \retval True if both parameters were found
+/// \retval False if at least one parameter was missing.
 bool GetSlopeOffset(std::string msg, float &slope, float &offset);
 
 /// \brief Writes an uncompressed TIFF image from any image data type (grayscale)

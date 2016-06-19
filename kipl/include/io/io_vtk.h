@@ -25,19 +25,52 @@
 #endif
 namespace kipl { namespace io {
 
-
+/// \brief Creates a VTK data type descriptor string for float
+/// \param x A dummy float value to determine the data type
 std::string VTK_datatype_string(float x) {return "float";}
+
+/// \brief Creates a VTK data type descriptor string for double
+/// \param x A dummy double value to determine the data type
 std::string VTK_datatype_string(double x) {return "double";}
+
+/// \brief Creates a VTK data type descriptor string for char
+/// \param x A dummy char value to determine the data type
 std::string VTK_datatype_string(int8_t x) {return "char";}
+
+/// \brief Creates a VTK data type descriptor string for unsigned char
+/// \param x A dummy float value to determine the data type
 std::string VTK_datatype_string(uint8_t x) {return "unsigned_char";}
+
+/// \brief Creates a VTK data type descriptor string for short
+/// \param x A dummy short value to determine the data type
 std::string VTK_datatype_string(int16_t x) {return "short";}
+
+/// \brief Creates a VTK data type descriptor string for unsiged short
+/// \param x A dummy short value to determine the data type
 std::string VTK_datatype_string(uint16_t x) {return "unsigned_short";}
+
+/// \brief Creates a VTK data type descriptor string for int
+/// \param x A dummy int value to determine the data type
 std::string VTK_datatype_string(int32_t x) {return "int";}
+
+/// \brief Creates a VTK data type descriptor string for unsigned int
+/// \param x A dummy unsigned int value to determine the data type
 std::string VTK_datatype_string(uint32_t x) {return "unsigned_int";}
+
+/// \brief Creates a VTK data type descriptor string for long
+/// \param x A dummy long value to determine the data type
 std::string VTK_datatype_string(int64_t x) {return "long";}
+
+/// \brief Creates a VTK data type descriptor string for unsigned long
+/// \param x A dummy unsigned long value to determine the data type
 std::string VTK_datatype_string(uint64_t x) {return "unsigned_long";}
 
-
+/// \brief Builds a file header string for a VTK data file to be saved in a file
+/// \param dims Image dimensions
+/// \param ndims number of image dimensions
+/// \param res resolution array per axis
+/// \param datatype string to describe the data type to be saved
+/// \param dataname Name of the data set
 std::string BuildVTKheader(size_t const * const dims, size_t ndims, float const * const res, std::string datatype, std::string dataname)
 {
 	std::ostringstream header;
@@ -76,7 +109,10 @@ std::string BuildVTKheader(size_t const * const dims, size_t ndims, float const 
 	return header.str();
 }
 
-
+/// \brief Write a kipl image to a vtk data file
+/// \param src the image to write
+/// \param fname name of the image file
+/// \param dataname vtk name of the image
 template <class T, size_t N>
 int WriteVTK(kipl::base::TImage<T,N> src,std::string fname, std::string dataname="volume") {
 	float res[]={src.info.GetMetricX(),src.info.GetMetricX(),src.info.GetMetricX(), src.info.GetMetricX(),src.info.GetMetricX()};

@@ -32,7 +32,7 @@ void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, boo
         }
     }
 
-    if (bMeanProfile) {
+    if (bMeanProjection) {
         for (size_t x=0; x<dims[0]; x++)
         pProfile[x]=pProfile[x]/dims[1];
     }
