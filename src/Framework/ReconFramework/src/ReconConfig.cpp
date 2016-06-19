@@ -215,7 +215,7 @@ void ReconConfig::ParseSystem(xmlTextReaderPtr reader)
 	        }
 
 	        if (sName=="loglevel") 
-				kipl::logging::string2enum(sValue,System.eLogLevel);
+                string2enum(sValue,System.eLogLevel);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
