@@ -20,6 +20,9 @@ class QPainter;
 
 namespace QtAddons {
 
+/// \brief Back-end class that manages the painting of images onto a widget.
+///
+/// Instances of this class are usually not used directly but are embedded into a widget class.
 class QTADDONSSHARED_EXPORT ImagePainter
 {
     QWidget * m_pParent;
