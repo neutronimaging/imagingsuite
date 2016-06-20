@@ -32,8 +32,8 @@ protected:
 public:
     /// Enum to select data alignment strategy in memory, ZXY is mostly more efficient than XYZ
 	enum eMatrixAlignment {
-		MatrixXYZ,
-		MatrixZXY
+        MatrixXYZ,      ///< The data is arranged such that the adjacent elements are following the x-axis. The largest distances are on z-axis.
+        MatrixZXY       ///< The data is arranged such that the adjacent elements are following the z-axis. The largest distances are on y-axis.
 	};
     /// The alignment type is algorithm dependent and should only be set once for a class
 	const eMatrixAlignment MatrixAlignment;
@@ -108,7 +108,10 @@ public:
 	double ExecTime() {return timer.ElapsedSeconds(); }
 
 protected:
+    /// \brief Clears circle mask and matrix dimensions
     virtual void ClearAll();
+
+    /// \brief Builds a circle mask based on the defined reconstruction geometry. A list containing start-stop pairs per line is built.
     void BuildCircleMask();
 
 
