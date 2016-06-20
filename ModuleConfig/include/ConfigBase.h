@@ -35,8 +35,8 @@ class MODULECONFIGSHARED_EXPORT ConfigBase
 {
     friend class ConfigBaseTest;
 protected:
-	kipl::logging::Logger logger;
-    std::string m_sName; ///< Name of the application
+    kipl::logging::Logger logger;   ///< The logger instance for the config objects
+    std::string m_sName;            ///< Name of the application
     std::string m_sApplicationPath; ///< Path to the application binary
                                     ///< Can be used to set default paths
 
@@ -45,8 +45,15 @@ public:
     /// This information is mainly for documentation purposes.
     /// Some fields will be put in the resulting data file headers others can be used in the report generation.
     struct MODULECONFIGSHARED_EXPORT cUserInformation {
+        /// \brief Initializes the information to defaults
 		cUserInformation() ;
+        /// \brief Copy C'tor
+        /// \param info the info item to copy
 		cUserInformation(const cUserInformation &info);
+
+        /// \brief Assignment operator to copy the contents of another info object
+        /// \param info the info object to copy
+        /// \return a reference to itself.
 		cUserInformation & operator=(const cUserInformation & info);
 		std::string WriteXML(size_t indent=0);
 
@@ -82,9 +89,20 @@ public:
     /// \param ProjectName Name to identify of the application to avoid loading the wrong configuration for the current application.
     void LoadConfigFile(std::string configfile, std::string ProjectName);
 
+    /// \brief Compares if there are differences between the current config and a second one
+    ///
+    /// The comparision is done using the xml formatted strings
+    /// \param freelist a list of parameters to exclude from the comparison
     bool ConfigChanged(ConfigBase & config, std::list<std::string> freelist);
 
+    /// \brief Adopts the config using parameters provided form the CLI using the main function argument style
+    /// This is a convenience function that calls GetCommandLinePars(std::vector<std::string> &args)
+    /// \param argc Number of arguments in the list
+    /// \param argv list of argument strings. The list starts at item 1 since 0 is taken by the application name.
     void GetCommandLinePars(int argc, char *argv[]);
+
+    /// \brief Adopts the config using parameters provided form the CLI using an STL vector. This is used in combination with the QApplication object.
+    /// \param args Number of arguments in the list
     void GetCommandLinePars(std::vector<std::string> &args);
 protected:
     /// Parser for an opened XML formatted input file.
@@ -92,6 +110,8 @@ protected:
     /// \param sName Name of the config block to parse.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName)=0;
 
+    /// Parse a list of arguments as they come from the CLI
+    /// \param args The argument list
     virtual void ParseArgv(std::vector<std::string> &args);
 
     void EvalArg(std::string arg, std::string &group, std::string &var, std::string &value);
