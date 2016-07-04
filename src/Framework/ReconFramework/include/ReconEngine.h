@@ -88,7 +88,12 @@ public:
     /// \param config The configuration data
 	void SetConfig(ReconConfig & config) ;
 
+    /// \brief Writes the reconstructed image to the location specified by the matrix config
+    /// \param matrixconfig Configuration struct for the matrix
 	bool Serialize(ReconConfig::cMatrix *matrixconfig);
+
+    /// \brief Writes the reconstructed image to disk. If the filename contains any # a sequence of slices will be written, otherwise the data will be written as a single matlab mat file (outdated format).
+    /// \param dims The stored image dimensions will be copied to this argument if it is non-NULL.
 	bool Serialize(size_t *dims);
 
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);

@@ -50,7 +50,9 @@ public:
 private:
 };
 
-/// the class manages the hanlding of back projector modules. It is very similar to the ModuleItem but handles BackProjectorBases.
+/// The class manages the handling of back projector modules. It is very similar to the PreprocModuleItem but handles BackProjectorBases.
+///
+/// For some reason this class is not derived from the ModuleItemBase. I have to check in the code...
 class RECONFRAMEWORKSHARED_EXPORT BackProjItem
 {
 protected:
@@ -81,8 +83,8 @@ public:
     /// Unloads the back-projection module
 	virtual ~BackProjItem();
 protected:
-    /// Loads the module from a shared object library.
-    /// \param interactor A reference to an interactor object.
+    /// Dynamicly Loading the module from a shared object library.
+    /// \param interactor A reference to an interactor object that can be used to communicate with the main application.
     void LoadModuleObject(kipl::interactors::InteractionBase *interactor);
 
     /// Unloads the module.

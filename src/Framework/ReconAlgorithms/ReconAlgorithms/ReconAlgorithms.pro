@@ -10,9 +10,12 @@ QT       += core
 TARGET = ReconAlgorithms
 TEMPLATE = lib
 
-DEFINES += RECONALGORITHMS_LIBRARY
-
 CONFIG += c++11
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
+
+DEFINES += RECONALGORITHMS_LIBRARY
 
 unix {
     INCLUDEPATH += "../../../../external/src/linalg"
@@ -70,12 +73,10 @@ unix {
     INSTALLS += target
 }
 
-
-
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/ -lkipl
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/include

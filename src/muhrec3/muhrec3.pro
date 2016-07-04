@@ -10,6 +10,9 @@ TARGET = muhrec3
 TEMPLATE = app
 CONFIG += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -26,7 +29,7 @@ unix:!symbian {
 
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        ICON = muhrec3.icns
+
 #        QMAKE_INFO_PLIST = Info.plist
 
     }
@@ -52,6 +55,7 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+ICON = muhrec3.icns
 
 SOURCES += main.cpp\
         muhrecmainwindow.cpp \
@@ -88,45 +92,32 @@ FORMS    += muhrecmainwindow.ui \
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/release/ -lQtModuleConfigure
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Debug/debug/ -lQtModuleConfigure
-else:symbian: LIBS += -lQtModuleConfigure
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/ -lQtModuleConfigure
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Debug/ -lQtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtModuleConfigure
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/debug/ -lQtAddons
-else:symbian: LIBS += -lQtAddons
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Release/release/ -lReconFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
-else:symbian: LIBS += -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Release/ -lReconFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-ReconFramework-Qt5-Debug/ -lReconFramework
 
 INCLUDEPATH += $$PWD/../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../Framework/ReconFramework/src
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
-else:symbian: LIBS += -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/ -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
