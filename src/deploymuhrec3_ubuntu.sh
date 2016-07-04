@@ -12,26 +12,26 @@ pushd .
 cd $DEST/Frameworks
 rm -f *.1.0.0.dylib
 
-`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.so.1.0.0 .`
-`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libQtAddons.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libQtModuleConfigure.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libImagingAlgorithms.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.so.1.0.0 .`
-`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.so.1.0.0 .`
-`$CPCMD $REPOSPATH/modules/trunk/build-ReaderConfig-Qt5-Release/libReaderConfig.so.1.0.0 .`
-`$CPCMD $REPOSPATH/modules/trunk/build-ReaderGUI-Qt5-Release/libReaderGUI.so.1.0.0 .`
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-Release/libReconFramework.so.1.0.0 .`
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconAlgorithms-Qt5-Release/libReconAlgorithms.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libkipl.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libModuleConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libReaderConfig.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libReaderGUI.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libReconFramework.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libReconAlgorithms.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdBackProjectors-Qt5-Release/libStdBackProjectors.so.1.0.0 .`
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModules-Qt5-Release/libStdPreprocModules.so.1.0.0 .`
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-StdPreprocModulesGUI-Qt5-Release/libStdPreprocModulesGUI.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libStdBackProjectors.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libStdPreprocModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libStdPreprocModulesGUI.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModules-Qt5-Release/libInspectorModules.so.1.0.0 .`
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-InspectorModulesGUI-Qt5-Release/libInspectorModulesGUI.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libInspectorModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libInspectorModulesGUI.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-IterativeBackProj-Qt5-Release .`
+`$CPCMD $REPOSPATH/lib/build-IterativeBackProj-Qt5-Release .`
 
 rm -f *.so
 rm -f *.so.1
@@ -46,7 +46,7 @@ for f in `ls *.so.1.0.0`; do
 done
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/tomography/trunk/build-muhrec3-Qt5-Release/muhrec3 .`
+`$CPCMD $REPOSPATH/Applications/muhrec3 .`
 cd ..
 `$CPCMD $REPOSPATH/tomography/trunk/src/scripts/muhrec3 .`
 chmod +x muhrec3
