@@ -35,7 +35,7 @@ public:
 	virtual ~KiplProcessModuleBase(void);
 	virtual int Configure(std::map<std::string, std::string> parameters)=0;
 	bool HavePlots() { return !m_PlotList.empty(); }
-	std::map<std::string, kipl::containers::PlotData<float,float> > & Plots() { return m_PlotList; }
+    std::map<std::string, kipl::containers::PlotData<float,float> > & Plots() { return m_PlotList; }
 	bool HaveHistogram() { return (m_bComputeHistogram && (m_Histogram.Size()!=0)); }
 	kipl::containers::PlotData<float,size_t> & Histogram() { return m_Histogram; }
 protected:

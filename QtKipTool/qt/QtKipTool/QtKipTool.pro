@@ -8,6 +8,10 @@ QT       += core widgets printsupport
 
 TARGET = QtKipTool
 TEMPLATE = app
+CONFIG += c++11
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../Applications
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../Applications/debug
 
 unix:!symbian {
     maemo5 {
@@ -62,45 +66,33 @@ FORMS    += ../../src/kiptoolmainwindow.ui \
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/debug/ -lProcessFramework
-else:symbian: LIBS += -lProcessFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Release/ -lProcessFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/build-ProcessFramework-Qt5-Debug/ -lProcessFramework
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/debug/ -lQtAddons
-else:symbian: LIBS += -lQtAddons
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/ -lQtAddons
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/release/ -lQtModuleConfigure
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt5-Debug/debug/ -lQtModuleConfigure
-else:symbian: LIBS += -lQtModuleConfigure
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/ -lQtModuleConfigure
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Debug/ -lQtModuleConfigure
+
 
 INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt_4_8_1_for_GCC__Qt_SDK__Release
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
-else:symbian: LIBS += -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/ -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include

@@ -213,7 +213,7 @@ std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,flo
 		msg<<"Module "<<sName<<" has "<<N<<" plots";
 		logger(kipl::logging::Logger::LogVerbose,msg.str());
 		if (N!=0) {
-			plotlist[sName]=module->Plots();			
+            plotlist[sName]=module->Plots();
 		}
 	}
 

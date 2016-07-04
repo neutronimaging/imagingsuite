@@ -172,7 +172,7 @@ void KiplProcessConfig::cSystemInformation::ParseXML(xmlTextReaderPtr reader)
 	        }
 
 	        if (sName=="loglevel") 
-				kipl::logging::string2enum(sValue,eLogLevel);
+                string2enum(sValue,eLogLevel);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)

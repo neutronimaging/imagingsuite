@@ -10,6 +10,9 @@ TARGET = ProcessFramework
 TEMPLATE = lib
 CONFIG += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -92,18 +95,16 @@ unix:!symbian {
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
-else:symbian: LIBS += -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/ -lModuleConfig
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+
+INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include

@@ -1,12 +1,13 @@
 DIRECTORY="/Users/kaestner/Applications"
 REPOSPATH="/Users/kaestner/repos"
-QTPATH="/Applications/Qt54/5.4/clang_64/"
+#QTPATH="/Applications/Qt54/5.4/clang_64/"
+QTPATH="/Applications/Qt56/5.6/clang_64/"
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi
 
-cp -r $REPOSPATH/kiptool/trunk/QtKipTool/qt/build-QtKipTool-Qt5-Release/QtKipTool.app $DIRECTORY
+cp -r $REPOSPATH/Applications/QtKipTool.app $DIRECTORY
 
 pushd .
 CPCMD="cp"
@@ -17,14 +18,17 @@ if [ ! -d "./Frameworks" ]; then
  mkdir ./Frameworks
 fi
 
-`$CPCMD $REPOSPATH/kiptool/trunk/ProcessFramework/build-ProcessFramework-Qt5-Release/libProcessFramework.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/kiptool/trunk/AdvancedFilterModules/qt/build-AdvancedFilterModules-Qt5-Release/libAdvancedFilterModules.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/kiptool/trunk/PCAModules/qt/build-PCAModules-Qt5-Release/libPCAModules.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libProcessFramework.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libAdvancedFilterModules.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libStatisticsModules.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libPorespaceModules.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libPCAModules.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libImagingModules.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib//libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
 
 rm -f ./MacOS/*.dylib
 
@@ -74,3 +78,30 @@ popd
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 
 $QTPATH/bin/macdeployqt $DEST
+
+cd $DEST/Contents/MacOS
+# QtnGITool
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib QtKipTool
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib QtKipTool
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib QtKipTool
+install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib QtKipTool
+install_name_tool -change libProcessFramework.1.dylib @executable_path/../Frameworks/libProcessFramework.1.dylib QtKipTool
+
+cd ../Frameworks
+
+# ModuleConfig
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libModuleConfig.1.0.0.dylib
+
+# QtAddons
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtAddons.1.0.0.dylib
+
+# QtModuleConfigure
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtModuleConfigure.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libQtModuleConfigure.1.0.0.dylib
+
+# ProcessFramework
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libProcessFramework.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libProcessFramework.1.0.0.dylib
+
+# ImagingAlgorithms
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libImagingAlgorithms.1.0.0.dylib
