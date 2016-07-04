@@ -106,7 +106,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
     int NC=this->nClasses;
     ptrdiff_t Nimg=img.Size();
 	
-	size_t dimsU[]={img.Size(),NC};
+    size_t dimsU[]={static_cast<size_t>(img.Size()),static_cast<size_t>(NC)};
 	// Todo: Make the likelihood images into 8bit to save memory
 	kipl::base::TImage<float,2> U(dimsU), oldU(dimsU);
 	
@@ -286,7 +286,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType
     int NC=this->nClasses;
     ptrdiff_t Nimg=img.Size();
 	
-	size_t dimsU[]={img.Size(),NC};
+    size_t dimsU[]={img.Size(),static_cast<size_t>(NC)};
 	kipl::base::TImage<float,2> U(dimsU), oldU(dimsU);
 	
 	initU(U);

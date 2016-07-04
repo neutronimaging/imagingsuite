@@ -25,7 +25,7 @@ using namespace std;
 template<class T>
 int MedianFilter(vector<T> & data,vector<T> &out, size_t len)
 {
-	int len2=len/2;
+    int len2=static_cast<int>(len)/2;
 	int l=0;
 	T *base=new T[len];
 	out.resize(data.size());
@@ -35,7 +35,7 @@ int MedianFilter(vector<T> & data,vector<T> &out, size_t len)
 
     for (int i=0; i<sd; i++) {
 		l=0;
-        for (size_t j=-len2; j<len2e; j++) {
+        for (ptrdiff_t j=-len2; j<len2e; j++) {
             if ((j+i>=0) && (j+i)<sd) {
 				base[l++]=data[i+j];
 			}

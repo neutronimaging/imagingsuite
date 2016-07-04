@@ -34,7 +34,7 @@ public:
     /// \brief Assignment operator
     /// \param pd the instance to copy
     /// \returns a reference to itself
-	PlotData & operator=(PlotData<Tx,Ty> & pd)
+    const PlotData & operator=(const PlotData<Tx,Ty> & pd)
 	{
 		if (m_nNdata!=pd.m_nNdata) {
 			if (m_tAxisX) 

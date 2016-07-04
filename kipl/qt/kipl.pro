@@ -11,6 +11,9 @@ TARGET = kipl
 TEMPLATE = lib
 CONFIG += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+
 unix {
     INCLUDEPATH += "../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
@@ -40,7 +43,7 @@ win32 {
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
+else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 
 DEFINES += KIPL_LIBRARY
 

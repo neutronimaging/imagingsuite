@@ -25,7 +25,7 @@ enum eExtensionTypes {
     ExtensionHDF5    ///< Images are stored using a HDF5 format
 };
 
-
+eExtensionTypes GetFileExtensionType(std::string fname);
 }}
 
 /// \brief Sends the name of the enum value to a stream

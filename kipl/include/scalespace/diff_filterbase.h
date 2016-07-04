@@ -625,9 +625,10 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		int front, back;
 		
 		f=img;
-		int xlimits[3][2]={{NGauss2,dims[0]-NGauss2},{0,dims[0]},{0,dims[0]}};
-		int ylimits[3][2]={{0,dims[1]},{NGauss2,dims[1]-NGauss2},{0,dims[1]}};
-		int zlimits[3][2]={{0,dims[2]},{0,dims[2]},{NGauss2,dims[2]-NGauss2}};
+        int d0=dims[0]-NGauss2;
+        int xlimits[3][2]={{NGauss2,d0},{0,static_cast<int>(dims[0])},{0,static_cast<int>(dims[0])}};
+        int ylimits[3][2]={{0,static_cast<int>(dims[1])},{NGauss2,static_cast<int>(dims[1]-NGauss2)},{0,static_cast<int>(dims[1])}};
+        int zlimits[3][2]={{0,static_cast<int>(dims[2])},{0,static_cast<int>(dims[2])},{NGauss2,static_cast<int>(dims[2]-NGauss2)}};
 
 		if (NDim!=3) {
 			zlimits[0][0]=0; zlimits[0][1]=1;
