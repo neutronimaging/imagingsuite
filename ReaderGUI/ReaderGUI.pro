@@ -6,9 +6,12 @@
 
 QT       += widgets
 
-CONFIG += c++11
 TARGET = ReaderGUI
 TEMPLATE = lib
+CONFIG += c++11
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../lib/debug
 
 DEFINES += READERGUI_LIBRARY
 
@@ -56,30 +59,29 @@ win32 {
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ReaderConfig-Qt5-Release/release/ -lReaderConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-ReaderConfig-Qt5-Release/debug/ -lReaderConfig
-else:unix: LIBS += -L$$PWD/../build-ReaderConfig-Qt5-Release/ -lReaderConfig
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../lib -lkipl -lReaderConfig -lQtAddons
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../lib/debug -lkipl -lReaderConfig -lQtAddons
 
 INCLUDEPATH += $$PWD/../ReaderConfig
 DEPENDPATH += $$PWD/../ReaderConfig
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix: LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
+
 
 INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
 
-FORMS += \
-    addloaderdialog.ui \
-    findskiplistdialog.ui
-
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Release/debug/ -lQtAddons
-else:unix: LIBS += -L$$PWD/../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../gui/trunk/qt/QtAddons
+
+FORMS += \
+    addloaderdialog.ui \
+    findskiplistdialog.ui

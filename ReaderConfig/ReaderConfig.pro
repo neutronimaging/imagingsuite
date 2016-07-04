@@ -8,6 +8,9 @@ QT       -= gui
 
 CONFIG += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../lib/debug
+
 TARGET = ReaderConfig
 TEMPLATE = lib
 
@@ -44,7 +47,7 @@ unix {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
+   #     QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -61,20 +64,16 @@ win32 {
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lcfitsio
 
 win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
-else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../lib/ -lkipl
+else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../lib/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix: LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
