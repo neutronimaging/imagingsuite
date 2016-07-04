@@ -90,6 +90,8 @@ protected:
     QVector<QPointF> m_Histogram; //<! Histogram of the full image
 
     QPixmap m_pixmap_full;
+    QRect m_currentROI;
+    QRect m_globalROI;
 };
 
 }

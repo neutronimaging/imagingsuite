@@ -1,7 +1,12 @@
-#include "imagepainter.h"
-#include <math/image_statistics.h>
 #include <sstream>
+
+#include <QLine>
+
+#include <math/image_statistics.h>
 #include <base/thistogram.h>
+
+#include "imagepainter.h"
+
 
 namespace QtAddons {
 
@@ -14,7 +19,8 @@ ImagePainter::ImagePainter(QWidget * parent) :
     m_MaxVal(1.0f),
     m_bHold_annotations(false),
     m_data(NULL),
-    m_cdata(NULL)
+    m_cdata(NULL),
+    m_currentROI(0,0,0,0)
 {
       const int N=16;
       size_t dims[2]={N,N};
@@ -64,9 +70,21 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
             for (it=m_BoxList.begin(); it!=m_BoxList.end(); it++) {
                 QRect rect=it->first;
+                QRect drawrect=rect.intersected(m_currentROI);
+                //QRect drawrect=rect.translated(-m_currentROI.topLeft());
 
-                painter.setPen(QPen(it->second));
-                painter.drawRect(offset_x+rect.x()*m_fScale,offset_y+rect.y()*m_fScale,rect.width()*m_fScale,rect.height()*m_fScale);
+                if (drawrect.isEmpty()==false) {
+                    drawrect.translate(-m_currentROI.topLeft());
+                    rect.setRect(drawrect.x()*m_fScale,
+                                 drawrect.y()*m_fScale,
+                                 drawrect.width()*m_fScale,
+                                 drawrect.height()*m_fScale);
+                    rect=rect.normalized();
+                    rect.translate(offset_x,offset_y);
+
+                    painter.setPen(QPen(it->second));
+                    painter.drawRect(rect);
+                }
             }
         }
 
@@ -77,9 +95,15 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
                 painter.setPen(QPen(it->second));
                 QPoint offset(offset_x,offset_y);
-
+                QPointF pointA, pointB;
+                QLine line;
                 for (int i=1; i<it->first.size(); i++) {
-                    painter.drawLine(offset+m_fScale*it->first[i-1],offset+m_fScale*it->first[i]);
+                    pointA=offset+m_fScale*it->first[i-1];
+                    pointB=offset+m_fScale*it->first[i];
+
+                    painter.drawLine(pointA,pointB);
+                    //line.setPoints(pointA.toPoint(),pointB.toPoint());
+                    //
                 }
             }
         }
@@ -100,29 +124,38 @@ kipl::base::TImage<float,2> ImagePainter::get_image()
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims)
 {
-    float mi,ma;
-    kipl::math::minmax(data,dims[0]*dims[1],&mi, &ma);
-    set_image(data,dims,mi,ma);
+    set_image(data,dims,0.0f,0.0f);
 }
 
 void ImagePainter::set_image(float const * const data, size_t const * const dims, const float low, const float high)
 {
     m_dims[0]=static_cast<int>(dims[0]);
     m_dims[1]=static_cast<int>(dims[1]);
+    m_globalROI.setRect(0,0,dims[0],dims[1]);
 
     m_OriginalImage.Resize(dims);
     memcpy(m_OriginalImage.GetDataPtr(),data,m_OriginalImage.Size()*sizeof(float));
-    QRect roi(0,0,dims[0],dims[1]);
 
-    m_MinVal=low;
-    m_MaxVal=high;
+    kipl::math::minmax(data,dims[0]*dims[1],&m_ImageMin, &m_ImageMax);
+    if (low==high) {
+        m_MinVal=m_ImageMin;
+        m_MaxVal=m_ImageMax;
+    }
+    else {
+        m_MinVal=low;
+        m_MaxVal=high;
+    }
 
     const size_t nHistSize=1024;
     float haxis[nHistSize];
     size_t hist[nHistSize];
-    kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),hist,nHistSize,m_ImageMin, m_ImageMax, haxis);
-
-    m_ZoomList.clear();
+    kipl::base::Histogram(m_OriginalImage.GetDataPtr(),
+                          m_OriginalImage.Size(),
+                          hist,
+                          nHistSize,
+                          m_ImageMin,
+                          m_ImageMax,
+                          haxis);
 
     m_Histogram.clear();
     for (size_t i=0; i<nHistSize; i++) {
@@ -134,7 +167,8 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
         m_PlotList.clear();
     }
 
-    createZoomImage(roi);
+    m_ZoomList.clear();
+    createZoomImage(m_globalROI);
 }
 
 void ImagePainter::set_plot(QVector<QPointF> data, QColor color, int idx)
@@ -297,6 +331,7 @@ void ImagePainter::createZoomImage(QRect roi)
 {
     size_t dims[2]={static_cast<size_t>(roi.width()),static_cast<size_t>(roi.height())};
     m_ZoomedImage.Resize(dims);
+    m_currentROI=roi;
 
     for (int y=0; y<m_ZoomedImage.Size(1); y++) {
         memcpy(m_ZoomedImage.GetLinePtr(y),m_OriginalImage.GetLinePtr(y+roi.y())+roi.x(), m_ZoomedImage.Size(0)*sizeof(float));
@@ -320,12 +355,12 @@ int ImagePainter::zoomIn(QRect *zoomROI)
            h=m_OriginalImage.Size(1)/2;
        }
        else {
-           QRect currentROI=m_ZoomList.last();
+           //QRect currentROI=m_ZoomList.last();
 
-           x=currentROI.x()+currentROI.width()/4;
-           y=currentROI.y()+currentROI.height()/4;
-           w=currentROI.width()/2;
-           h=currentROI.height()/2;
+           x=m_currentROI.x()+m_currentROI.width()/4;
+           y=m_currentROI.y()+m_currentROI.height()/4;
+           w=m_currentROI.width()/2;
+           h=m_currentROI.height()/2;
        }
 
        roi.setRect(x,y,w,h);
@@ -371,12 +406,7 @@ int ImagePainter::zoomOut()
 
 QRect ImagePainter::getCurrentZoomROI()
 {
-    if (m_ZoomList.empty())
-        return QRect(0,0,static_cast<int>(m_dims[0]),static_cast<int>(m_dims[1]));
-    else
-        return m_ZoomList.last();
-
-    return QRect(0,0,0,0);
+    return m_currentROI;
 }
 
 int ImagePainter::panImage(int dx, int dy)
@@ -387,16 +417,15 @@ int ImagePainter::panImage(int dx, int dy)
         QRect roi=m_ZoomList.last();
 
         roi.translate(dx,dy);
-        roi.normalized();
+        roi=roi.normalized();
 
-        if (((roi.x()+roi.width())<m_OriginalImage.Size(0)) &&
+        if (((roi.x()+roi.width())<m_globalROI.width()) &&
                 (0<=roi.x()) &&
-                ((roi.y()+roi.height())<m_OriginalImage.Size(1)) &&
+                ((roi.y()+roi.height())<m_globalROI.height()) &&
                 (0<=roi.y())) {
             createZoomImage(roi);
             m_ZoomList.last()=roi;
         }
-
     }
 
     return 0;

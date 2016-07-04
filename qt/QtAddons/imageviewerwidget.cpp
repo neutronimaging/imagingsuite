@@ -239,16 +239,18 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     int dy=static_cast<int>(event->pos().y() - m_LastMotionPosition.y());
 
     if (m_RubberBandStatus == RubberBandDrag) {
+
         updateRubberBandRegion();
         rubberBandRect.setBottomRight(event->pos());
         updateRubberBandRegion();
     }
     else if (m_RubberBandStatus == RubberBandMove) {
         updateRubberBandRegion();
-        rubberBandRect.setRect(rubberBandRect.x()+dx,
-                               rubberBandRect.y()+dy,
-                               rubberBandRect.width(),
-                               rubberBandRect.height());
+        rubberBandRect.translate(dx,dy);
+//        rubberBandRect.setRect(rubberBandRect.x()+dx,
+//                               rubberBandRect.y()+dy,
+//                               rubberBandRect.width(),
+//                               rubberBandRect.height());
         updateRubberBandRegion();
     }
 
@@ -284,17 +286,17 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
     else {
-        int const * const dims=m_ImagePainter.get_image_dims();
-
-        int xpos=static_cast<int>((event->pos().x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale());
-        int ypos=static_cast<int>((event->pos().y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale());
-
         QRect roi=m_ImagePainter.getCurrentZoomROI();
 
-        if ((roi.x()<=xpos) && (roi.y()<=ypos) && (xpos<roi.x()+roi.width()) && (ypos<roi.y()+roi.height())) {
+        QPoint pos(static_cast<int>((event->pos().x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale()),
+                   static_cast<int>((event->pos().y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale()));
+
+        pos+=roi.topLeft();
+
+        if(roi.contains(pos)==true) {
             msg.str("");
 
-            msg<<m_ImagePainter.getValue(xpos,ypos)<<" @ ("<<xpos<<", "<<ypos<<")";
+            msg<<m_ImagePainter.getValue(pos.x(),pos.y())<<" @ ("<<pos.x()<<", "<<pos.y()<<")";
 
             showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
         }
@@ -334,7 +336,11 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
         if (m_MouseMode==ViewerProfile) {
             m_rubberBandLine.hide();
         }
+        if (m_MouseMode==ViewerPan) {
+            m_MouseMode==ViewerROI;
+        }
     }
+
 
     if (event->button() == Qt::RightButton )
         m_PressedButton = Qt::NoButton;
@@ -389,15 +395,16 @@ QRect ImageViewerWidget::get_marked_roi()
 {
     m_RubberBandStatus = RubberBandHide;
     updateRubberBandRegion();
+
     return roiRect;
 }
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)
 {
     m_ImagePainter.set_image(data,dims,low,high);
+    roiRect.setRect(0,0,1,1);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
-
 }
 
 void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)

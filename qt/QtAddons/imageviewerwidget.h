@@ -16,6 +16,7 @@
 #include <QPushButton>
 #include <QList>
 #include <QSet>
+#include <QMutex>
 
 #include <logging/logger.h>
 
@@ -112,6 +113,7 @@ protected:
     QSet<ImageViewerWidget *> m_LinkedViewers;
     enum { Margin = 5 };
     ImageViewerInfoDialog m_infoDialog;
+    QMutex m_MouseMoveMutex;
 };
 
 class SetGrayLevelsDialog : public QDialog
