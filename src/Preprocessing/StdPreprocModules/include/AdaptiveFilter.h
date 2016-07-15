@@ -30,13 +30,16 @@ public:
 	//virtual int Process(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
 
 	virtual std::map<std::string, std::string> GetParameters();
+    int ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters); // moved here by Chiara
+
 protected:
-	int ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
 	int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
     int SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
     void MaxProfile(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,2> &profile);
+    void MinProfile(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,2> &profile);
     void MinMaxProfile(kipl::base::TImage<float,2> &img, std::vector<float> &minprofile, std::vector<float> &maxprofile);
     void Eccentricity(std::vector<float> &minprofile, std::vector<float> &maxprofile, std::vector<float> &eprofile);
+    void GetColumn(kipl::base::TImage<float,2> &img, size_t idx, float *data);
 	ReconConfig mConfig;
 	kipl::math::SigmoidLUT *pLUT;
 
