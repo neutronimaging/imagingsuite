@@ -28,12 +28,12 @@ AdaptiveFilter::AdaptiveFilter() :
 	PreprocModuleBase("AdaptiveFilter"),
 	pLUT(NULL),
     m_nFilterSize(7),
-	m_fLambda(0.1f),
-    m_fSigma(0.01f), // doesn't seem to change very much from one to another value.. 0.01-0.05
+//	m_fLambda(0.1f),
+//    m_fSigma(0.01f), // doesn't seem to change very much from one to another value.. 0.01-0.05
     m_fEccentricityMin(0.3f),
     m_fEccentricityMax(0.7f), // original value 0.7
-    m_fFilterStrength(0.5f),
-    m_fFmax(0.03f)
+    m_fFilterStrength(1.0f),
+    m_fFmax(0.10f)
 {}
 
 AdaptiveFilter::~AdaptiveFilter()
@@ -45,24 +45,24 @@ AdaptiveFilter::~AdaptiveFilter()
 int AdaptiveFilter::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
 	mConfig=config;
-    m_fLambda          = GetFloatParameter(parameters,"lambda");
-    m_fSigma           = GetFloatParameter(parameters,"sigma");
+//    m_fLambda          = GetFloatParameter(parameters,"lambda");
+//    m_fSigma           = GetFloatParameter(parameters,"sigma");
     m_nFilterSize      = GetIntParameter(parameters,"filtersize");
-//    m_fFilterStrength  = GetFloatParameter(parameters,"filterstrength");
-//    m_fFmax            = GetFloatParameter(parameters,"fmax");
+    m_fFilterStrength  = GetFloatParameter(parameters,"filterstrength");
+    m_fFmax            = GetFloatParameter(parameters,"fmax");
 //    m_fEccentricityMin = GetFloatParameter(parameters,"eccentricitymin");
 //    m_fEccentricityMax = GetFloatParameter(parameters,"eccentricitymax");
 
     // mConfig.ProjectionInfo.fScanArc // gives me the first and last projections angles
 
 
-	if (pLUT!=NULL)
-		delete pLUT;
-    pLUT=new kipl::math::SigmoidLUT(1024, m_fLambda, m_fSigma); // compute sigmoid function
-    std::cout << pLUT[0] << std::endl;
-    std::cout<< m_fLambda << std::endl;
-    std::cout << m_fSigma << std::endl;
-    std::cout << m_nFilterSize << std::endl;
+//	if (pLUT!=NULL)
+//		delete pLUT;
+//    pLUT=new kipl::math::SigmoidLUT(1024, m_fLambda, m_fSigma); // compute sigmoid function
+//    std::cout << pLUT[0] << std::endl;
+//    std::cout<< m_fLambda << std::endl;
+//    std::cout << m_fSigma << std::endl;
+//    std::cout << m_nFilterSize << std::endl;
 
 	return 1;
 }
@@ -71,11 +71,11 @@ std::map<std::string, std::string> AdaptiveFilter::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
-    parameters["lambda"] = kipl::strings::value2string(m_fLambda);
-    parameters["sigma"]  = kipl::strings::value2string(m_fSigma);
+//    parameters["lambda"] = kipl::strings::value2string(m_fLambda);
+//    parameters["sigma"]  = kipl::strings::value2string(m_fSigma);
     parameters["filtersize"] = kipl::strings::value2string(m_nFilterSize);
-//    parameters["filterstrength"]  = kipl::strings::value2string(m_fFilterStrength);
-//    parameters["fmax"]            = kipl::strings::value2string(m_fFmax);
+    parameters["filterstrength"]  = kipl::strings::value2string(m_fFilterStrength);
+    parameters["fmax"]            = kipl::strings::value2string(m_fFmax);
 //    parameters["eccentricitymin"] = kipl::strings::value2string(m_fEccentricityMin);
 //    parameters["eccentricitymax"] = kipl::strings::value2string(m_fEccentricityMax);
 
@@ -84,18 +84,27 @@ std::map<std::string, std::string> AdaptiveFilter::GetParameters()
 
 int AdaptiveFilter::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
 {
-	kipl::base::TImage<float,2> slice(img.Dims());
+//	kipl::base::TImage<float,2> slice(img.Dims());
 
-	for (size_t i=0; i<img.Size(2); i++) {
-		memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i),slice.Size()*sizeof(float));
-		ProcessCore(slice,parameters);
-		memcpy(img.GetLinePtr(0,i),slice.GetDataPtr(),slice.Size()*sizeof(float));
-	}
+//	for (size_t i=0; i<img.Size(2); i++) {
+//		memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i),slice.Size()*sizeof(float));
+//		ProcessCore(slice,parameters);
+//		memcpy(img.GetLinePtr(0,i),slice.GetDataPtr(),slice.Size()*sizeof(float));
+//	}
+
+    kipl::base::TImage<float,2> sinogram;
+
+    for (size_t i=0; i<img.Size(1); i++) {
+        std::cout<<"Processing sinogram "<<i<<std::endl;
+        ExtractSinogram(img,sinogram,i);
+        ProcessSingle(sinogram, parameters);
+        InsertSinogram(sinogram,img,i);
+    }
 
 	return 0;
 }
 
-int AdaptiveFilter::ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
+int AdaptiveFilter::ProcessSingle(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
 {
     return SimpleFilter(img,parameters);
 }
@@ -107,7 +116,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     // find min and translate all values
 
     float mymin = *std::min_element(img.GetLinePtr(0),img.GetLinePtr(0)+img.Size());
-    std::cout << "mymin: " << mymin << std::endl;
+//    std::cout << "mymin: " << mymin << std::endl;
 
     if (mymin<0) {
         for (size_t x=0; x<img.Size(); x++){
@@ -123,11 +132,10 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
         k[i]=w; // it creates a mean filter with size m_nFilterSize and weights 1/m_nFilterSize
 
     size_t dimx[2]={static_cast<size_t>(m_nFilterSize), 1UL};
+//    size_t dimx[2]={static_cast<size_t>(m_nFilterSize)/2, static_cast<size_t>(m_nFilterSize)/2};
 
     kipl::filters::TFilter<float,2> filterx(k,dimx);
-    std::cout << "dimx: "<< dimx[0] << " " << dimx[1] << endl;
-
-//    return 0;
+//    std::cout << "dimx: "<< dimx[0] << " " << dimx[1] << endl;
 
 
     kipl::base::TImage<float,2> smoothx;
@@ -176,12 +184,22 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 //    }
     // ------------ Anders' version end
 
-    // now do work on sinograms..
-    // 1. compute smoothed max projection p(alfa) on sinograms, in pi/10 neighborhood-> this is for now my threshold I would say
+
+
+    // 1. compute smoothed max projection p(alfa) on sinograms, in pi/10 neighborhood-> that is not used later..
     // pi/10 of the neighborhood means 626 columns, each column is 0.58 degree, i want to threshold it on 18 degree, about 31 columns
 
 
-    std::cout << img.Size(0) << " " << img.Size(1) << endl; // image size are now correct
+//    std::cout << img.Size(0) << " " << img.Size(1) << endl; // image size are now correct
+
+    std::cout << mConfig.ProjectionInfo.fScanArc[0] << " " << mConfig.ProjectionInfo.fScanArc[1] << std::endl;
+    std::cout << mConfig.ProjectionInfo.fResolution[0] << " " << mConfig.ProjectionInfo.fResolution[1] << std::endl;
+    std::cout << mConfig.ProjectionInfo.nFirstIndex << " " << mConfig.ProjectionInfo.nLastIndex << std::endl;
+//    std::cout << mConfig.ProjectionInfo.nlSkipList. << std::endl;
+    std::cout << mConfig.ProjectionInfo.nDims[0] << std::endl;// number of pixel
+    std::cout << img.Size(0) << " " << img.Size(1) << std::endl;
+
+
 
     float *pm = new float[img.Size(1)];
     float *av_pm = new float[img.Size(1)];
@@ -193,7 +211,9 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     }
 
     // then compute average on a window of pi/10 (or else..)
-    int win = 15; // window of 31 samples -> try with this
+//    int win = 15; // window of 31 samples -> try with this
+    int win = floor(img.Size(1)*18/mConfig.ProjectionInfo.fScanArc[1]/2);
+//    std::cout << "win: " << win << std::endl;
     float sum;
 //    int ind;
 
@@ -204,7 +224,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     std::copy(pm, pm+img.Size(1), pad_pm+win);
     std::copy(pm, pm+win, pad_pm+win+img.Size(1));
 
-    std::cout << "padding done" << endl;
+//    std::cout << "padding done" << endl;
 //    std::cout << pad_pm[0] << " " << pm[img.Size(1)-win] << endl;
 //    std::cout << pad_pm[1] << " " << pm[img.Size(1)-win+1] << endl;
 //    std::cout << pad_pm[win] << " " << pm[0] << endl;
@@ -221,50 +241,38 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
         for(int j=-win; j<=win; j++)
         {
-//            if (j<0){
-//                ind = img.Size(1)+1-j;
-//                sum+=pm[ind];
-//            }
-//            else if (j>img.Size(1)){
-//                ind = j-img.Size(1);
-//                sum+=pm[ind];
-//            }
-//            else
-                sum+=pad_pm[i+j+win];
-//            sum+=padd_array.at(i+win+j);
+              sum+=pad_pm[i+j+win];
         }
            sum/=(2*win+1);
-           av_pm[i]=sum; // for now this is my threshold computation
+           av_pm[i]=sum;
 //           std::cout << pm[i] << " " << av_pm[i] << endl;
     }
 
 
-    std::cout << "after convolution" << endl;
+//    std::cout << "after convolution" << endl;
+
 
 
 
     // 2. compute p+(alfa) and p-(alfa) in +-pi/2 neighborhood, compute this time local minima and local maxima of p(alfa)
     // pi/2 on 625 projections are about 156 sample
 
-    // second try without transpose but get column. ! go on from here after lunch..!!!! come onnnnn
+    // second try without transpose but get column
 
+    // third try: compute p +(alfa) and p-(alfa) from pad images
 
-// --------------------- new version BEGIN
-//    size_t tdims[2]={img.Size(1), img.Size(0)}; // compute also transposed max and min? i would say yes
-    size_t dims[2] = {img.Size(0), img.Size(1)};
-    kipl::base::TImage <float,2> tlMIN(dims);
-    kipl::base::TImage <float,2> tlMAX(dims);
+    // third try BEGIN
 
-    std::cout << img.Size(0) << " " << img.Size(1) << endl;
-//    kipl::base::TImage <float,2> timg (kipl::base::Transpose<float,2>()(img)); // probably not the smart way..
-//    std::cout << timg.Size(0) << " " << timg.Size(1) << endl;
+    float *pMax = new float[img.Size(1)];
+    float *pMin = new float[img.Size(1)];
+    float *ecc = new float[img.Size(1)];
 
-    // pad array
-    int win90 = 156;
-//    float *padImg = new float[timg.Size(0)*(timg.Size(1)+2*win90)]; // or better to construct as an image?
+    // padding
+//    int win90 = 156;
+    int win90 = floor(img.Size(1)*180/mConfig.ProjectionInfo.fScanArc[1]/2);
+//    std::cout << "win90: " << win90 << std::endl;
     size_t pad_dims[2] = {img.Size(0),(img.Size(1)+2*win90)};
     kipl::base::TImage<float,2> padImg(pad_dims);
-
 
     // do pad
 
@@ -273,49 +281,37 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     std::copy(img.GetLinePtr(0), img.GetLinePtr(win90-1)+img.Size(0), padImg.GetLinePtr(win90+img.Size(1)));
 
 
-    std::cout << padImg[0] << " " << padImg[1] << endl; // seems correct compared to Matlab
+    // compute pmax and pmin
 
-    // transpose padded: to then compute min and max values in lines and not in column.. understand if there is a better way!!
+    for (size_t i=0; i<img.Size(1); i++) {
 
-//    kipl::base::TImage <float,2> timg (kipl::base::Transpose<float,2>()(padImg));
-// instead of padding i could create a getcolumn method like in imagingalgorithm::averageimage.. makes more sense!
+            pMax[i] = *std::max_element(padImg.GetLinePtr(i), padImg.GetLinePtr(i)+padImg.Size(0)*2*win90);
+            pMin[i] = *std::min_element(padImg.GetLinePtr(i), padImg.GetLinePtr(i)+padImg.Size(0)*2*win90);
+            ecc[i] = 1-pMin[i]/pMax[i];
 
-    std::cout << tlMIN.Size(0)<< " " << tlMIN.Size(1) << endl;
-    std::cout << padImg.Size(0)<< " " << padImg.Size(1) << endl;
+//            std::cout << pMax[i] << " " << pMin[i] << " ";
+//            std::cout << ecc[i] << std::endl;
+            ecc[i] = (ecc[i]-m_fEccentricityMin)/(m_fEccentricityMax-m_fEccentricityMin); // truncated eccentricity
+            if (ecc[i]<0) { ecc[i]=0; }
+            if (ecc[i]>1) { ecc[i]=1; }
 
-    float *mycolumn = new float[padImg.Size(1)];
-
-// compute local min and max, and i have to do it from one row to another, so column wise ! reuse the transpose card again?
-    for (size_t x=0; x<tlMIN.Size(0); x++) { // columns // x
-
-        GetColumn(padImg,x,mycolumn);
-        float *pMin = tlMIN.GetDataPtr()+x; // pointer to the first element of the column
-        float *pMax = tlMAX.GetDataPtr()+x;
-
-        for (size_t y=0; y<tlMIN.Size(1); y++){ //row, y -> iterate to each elemen of the line.. i think that is the correct way of doing it..
-
-            // compute max and min values in -pi/2 - pi/2 neighborhood on Pimg, then copy value in pMin and pMax
-                pMax[y*tlMIN.Size(0)] = *std::max_element(mycolumn+y, mycolumn+y+2*win90);
-                pMin[y*tlMIN.Size(0)] = *std::min_element(mycolumn+y, mycolumn+y+2*win90);
-
-
-        }
+//            std::cout << ecc[i] << std::endl;
     }
 
-    delete [] mycolumn;
-    std::cout << tlMIN[0] << " " << tlMIN[1] << endl;
-    std::cout << tlMAX[0] << " " << tlMAX[1] << endl;
-    std::cout << tlMIN[200] << " " << tlMIN[201] << endl;
-    std::cout << tlMAX[200] << " " << tlMAX[201] << endl;
-    // ---------------- new version END
+
+
+    // third try END
 
 
 
-// ----- version with TRANSPOSED SINO BEGIN
-//    size_t tdims[2]={img.Size(1), img.Size(0)}; // compute also transposed max and min? i would say yes
-//    size_t dims[2] = {img.Size(0), img.Size(1)};
-//    kipl::base::TImage <float,2> localMIN(tdims);
-//    kipl::base::TImage <float,2> localMAX(tdims);
+
+
+
+//// --------------------- second try BEGIN
+////    size_t tdims[2]={img.Size(1), img.Size(0)}; // compute also transposed max and min? i would say yes
+    size_t dims[2] = {img.Size(0), img.Size(1)};
+//    kipl::base::TImage <float,2> tlMIN(dims);
+//    kipl::base::TImage <float,2> tlMAX(dims);
 
 //    std::cout << img.Size(0) << " " << img.Size(1) << endl;
 ////    kipl::base::TImage <float,2> timg (kipl::base::Transpose<float,2>()(img)); // probably not the smart way..
@@ -339,81 +335,83 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
 //    // transpose padded: to then compute min and max values in lines and not in column.. understand if there is a better way!!
 
-//    kipl::base::TImage <float,2> timg (kipl::base::Transpose<float,2>()(padImg));
+////    kipl::base::TImage <float,2> timg (kipl::base::Transpose<float,2>()(padImg));
 //// instead of padding i could create a getcolumn method like in imagingalgorithm::averageimage.. makes more sense!
 
-//    std::cout << localMIN.Size(0)<< " " << localMIN.Size(1) << endl;
+//    std::cout << tlMIN.Size(0)<< " " << tlMIN.Size(1) << endl;
+//    std::cout << padImg.Size(0)<< " " << padImg.Size(1) << endl;
 
-//// compute local min and max, and i have to do it from one row to another, so column wise ! reuse the transpose card again?
-//    for (size_t y=0; y<localMIN.Size(1); y++) { // row // y
+//    float *mycolumn = new float[padImg.Size(1)];
 
-////        float *padImg = img.GetLinePtr(y); // get pointers to the line of each image and iterate
-//        float *pMin = localMIN.GetLinePtr(y);
-//        float *pMax = localMAX.GetLinePtr(y);
+//// compute local min and max, and i have to do it from one row to another, so column wise
+//    for (size_t x=0; x<tlMIN.Size(0); x++) { // columns // x
 
-//        for (size_t x=0; x<localMIN.Size(0); x++){ //columns, x -> iterate to each elemen of the line.. i think that is the correct way of doing it..
+//        GetColumn(padImg,x,mycolumn);
+//        float *pMin = tlMIN.GetDataPtr()+x; // pointer to the first element of the column
+//        float *pMax = tlMAX.GetDataPtr()+x;
+
+//        for (size_t y=0; y<tlMIN.Size(1); y++){ //row, y -> iterate to each elemen of the line.. i think that is the correct way of doing it..
 
 //            // compute max and min values in -pi/2 - pi/2 neighborhood on Pimg, then copy value in pMin and pMax
-//                pMax[x] = *std::max_element(timg.GetLinePtr(y)+x, timg.GetLinePtr(y)+x+2*win90);
-//                pMin[x] = *std::min_element(timg.GetLinePtr(y)+x, timg.GetLinePtr(y)+x+2*win90);
+//                pMax[y*tlMIN.Size(0)] = *std::max_element(mycolumn+y, mycolumn+y+2*win90);
+//                pMin[y*tlMIN.Size(0)] = *std::min_element(mycolumn+y, mycolumn+y+2*win90);
 
 
 //        }
 //    }
 
-//    std::cout << localMIN[0] << " " << localMIN[1] << endl;
-//    std::cout << localMAX[0] << " " << localMAX[1] << endl;
-//    std::cout << localMIN[200] << " " << localMIN[201] << endl;
-//    std::cout << localMAX[200] << " " << localMAX[201] << endl;
-
-//    // transpose back local min and local max, and copute eccentricity
-
-//    kipl::base::TImage <float,2> tlMIN (kipl::base::Transpose<float,2>()(localMIN));
-//    kipl::base::TImage <float,2> tlMAX (kipl::base::Transpose<float,2>()(localMAX));
-    // ------- version with TRANSPOSED SINO end
-
-
-    kipl::base::TImage <float,2> eImg(dims);
-
-    std::cout << eImg.Size(0) << " " << eImg.Size(1) << std::endl;
-
-    float mine, maxe;
-
-    for (size_t y=0; y<dims[1]; y++) {
-
-        float *ptlMIN = tlMIN.GetLinePtr(y);
-        float *ptlMAX = tlMAX.GetLinePtr(y);
-        float *peImg = eImg.GetLinePtr(y);
-
-        for (size_t x=0; x<dims[0]; x++){
-
-            peImg[x] = 1-ptlMIN[x]/ptlMAX[x];
-            peImg[x] = (peImg[x]-m_fEccentricityMin)/(m_fEccentricityMax-m_fEccentricityMin); // truncated eccentricity
-
-            if (peImg[x]<0) { peImg[x]=0; }
-            if (peImg[x]>1) { peImg[x]=1; }
-
-        }
-
-    }
+//    delete [] mycolumn;
+//    std::cout << tlMIN[0] << " " << tlMIN[1] << endl;
+//    std::cout << tlMAX[0] << " " << tlMAX[1] << endl;
+//    std::cout << tlMIN[200] << " " << tlMIN[201] << endl;
+//    std::cout << tlMAX[200] << " " << tlMAX[201] << endl;
+//    // ---------------- second try END
 
 
 
 
-    mine = *std::min_element(eImg.GetDataPtr(), eImg.GetDataPtr()+eImg.Size());
-    maxe = *std::max_element(eImg.GetDataPtr(), eImg.GetDataPtr()+eImg.Size());
+//    kipl::base::TImage <float,2> eImg(dims);
 
-    std::cout << "----- min and max Eccentricity -----" << std::endl;
-    std::cout << mine << " "<< maxe << std::endl;
+//    std::cout << eImg.Size(0) << " " << eImg.Size(1) << std::endl;
+
+//    float mine, maxe;
+
+//    for (size_t y=0; y<dims[1]; y++) {
+
+//        float *ptlMIN = tlMIN.GetLinePtr(y);
+//        float *ptlMAX = tlMAX.GetLinePtr(y);
+//        float *peImg = eImg.GetLinePtr(y);
+
+//        for (size_t x=0; x<dims[0]; x++){
+
+//            peImg[x] = 1-ptlMIN[x]/ptlMAX[x];
+//            peImg[x] = (peImg[x]-m_fEccentricityMin)/(m_fEccentricityMax-m_fEccentricityMin); // truncated eccentricity
+
+//            if (peImg[x]<0) { peImg[x]=0; }
+//            if (peImg[x]>1) { peImg[x]=1; }
+
+//        }
+
+//    }
 
 
-        std::cout << eImg[90] << " " << eImg[0]<< " " << eImg[200] << std::endl;
 
 
-    // 3. apply threshold
+//    mine = *std::min_element(eImg.GetDataPtr(), eImg.GetDataPtr()+eImg.Size());
+//    maxe = *std::max_element(eImg.GetDataPtr(), eImg.GetDataPtr()+eImg.Size());
 
-    // my first version
+//    std::cout << "----- min and max Eccentricity -----" << std::endl;
+//    std::cout << mine << " "<< maxe << std::endl;
 
+
+//        std::cout << eImg[90] << " " << eImg[0]<< " " << eImg[200] << std::endl;
+
+//        // second try END
+
+
+
+
+    // ------------------ 3. apply threshold ---------------------------
 
 //    float kernel[]={1.0/9.0,1.0/9.0,1.0/9.0, 1.0/9.0,1.0/9.0,1.0/9.0, 1.0/9.0,1.0/9.0,1.0/9.0};
 //    size_t fdims[]={9,1}; // seems more correct like this, filter lines in the sinograms, so values for the same angle value.
@@ -421,101 +419,175 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 //    kipl::base::TImage <float, 2> smoothx;
 //    smoothx =  box(img, kipl::filters::FilterBase::EdgeMirror);
 
-    int counts = 0;
-    float ws,wo;
+//        // first threshold computation BEGIN
 
-    for (size_t y=0; y<dims[1]; y++) {
+//    int counts = 0;
+//    float ws,wo;
 
-        float *peImg = eImg.GetLinePtr(y);
-        float *pImg = img.GetLinePtr(y);
-        float *pFilt = smoothx.GetLinePtr(y);
+//    for (size_t y=0; y<dims[1]; y++) {
 
-        for (size_t x=0; x<dims[0]; x++){
+//        float *peImg = eImg.GetLinePtr(y);
+//        float *pImg = img.GetLinePtr(y);
+//        float *pFilt = smoothx.GetLinePtr(y);
 
-            if (pImg[x]>=av_pm[y]){ // not sure that has to be done.. to understand it better
+//        for (size_t x=0; x<dims[0]; x++){
 
-                if (peImg[x]>=0.4) { // this should be replaced with some adaptive searching of the threshold value.
-                    wo = 0;
-                    ws = 1;
-                    counts++;
+//            if (pImg[x]>=av_pm[y]){ // not sure that has to be done.. to understand it better
 
-                } else {
-                    wo = 1;
-                    ws = 0;
+//                if (peImg[x]>=0.4) { // this should be replaced with some adaptive searching of the threshold value.
+//                    wo = 0;
+//                    ws = 1;
+//                    counts++;
 
-                }
-                pImg[x] = wo*pImg[x]+ws*pFilt[x];
-//                pImg[x] = pImg[x];
-            }
+//                } else {
+//                    wo = 1;
+//                    ws = 0;
 
-        }
-    }
-
-    std::cout << counts << std::endl;
-    std::cout << img.Size() << std::endl;
-
-    if (mymin<0) {
-        for (size_t x=0; x<img.Size(); x++){
-            img[x] = img[x]+mymin;
-        }
-    }
-
-        // MY FIRST ATTEMPT IN UNDERSTANDING STUFF.. BUT NOW DO THE RIGHT STUFF..!
-//        // dentro il ciclo non hanno molto senso..
-//        MinMaxProfile(img,minprofile,maxprofile);
-//        Eccentricity(minprofile, maxprofile, eprofile);
-
-//        cout << eprofile.size() << endl; // 256.. è una linea.. in qst momento lo sto facendo linea per linea..
-//        cout << eprofile.at(0) << " " << eprofile.at(1) << endl;
-
-
-//    for (size_t y=0; y<img.Size(1); y++) {
-//        float *pImg    = img.GetLinePtr(y);
-//        float *pSmooth = smoothx.GetLinePtr(y);
-
-
-
-//        float ws=kipl::math::Sigmoid(profile[y],m_fLambda,m_fSigma); // lambda is level and sigma is width of the sigmoid function
-//        float wo=1.0f-ws;
-
-
-//        int count = 0;
-
-//        for (size_t x=0; x<img.Size(0); x++) {
-
-
-//            // if the projection value is too low, then the filter width is set to zero-> ws=0 (=no filtering and no modfication
-//            // of the data. if the attenuation exceeds the threshold, the filter width is set to a maximum value
-//            // for now i keep the width fixed? which is 7 given at the initialization i think
-//            std::cout << ws << " " << wo << " "<< endl;
-
-//            //automatic definition of the threshold:
-//            if (eprofile[x]>=0.7)
-//               {
-//                std::cout << eprofile[x] << std::endl;
-//                    ws = 1; }
-//            else    ws = 0;
-
-//            wo = 1.0f-ws;
-
-//            if (ws!=1)
-//                count ++;
-
-
-
-
-//            pImg[x]=wo*pImg[x]+ws*pSmooth[x]; // here I really take only the smoothed image since ws is always = 1 !
-
-
-//               std::cout << count << std::endl;
+//                }
+//                pImg[x] = wo*pImg[x]+ws*pFilt[x];
+////                pImg[x] = pImg[x];
+//            }
 
 //        }
 //    }
 
+//    std::cout << counts << std::endl;
+//    std::cout << img.Size() << std::endl;
+
+//    if (mymin<0) {
+//        for (size_t x=0; x<img.Size(); x++){
+//            img[x] = img[x]+mymin;
+//        }
+//    }
+//    // first threshold computation END
+
+    // second try BEGIN with adaptive computation of the threshold
+
+
+        float ws, wo;
+        float high, low, mid;
+        float *f_alfa = new float[img.Size(1)]; // fraction of modified projections
+        int counts = 0;
+
+
+        for (size_t y=0; y<dims[1]; y++){ //for each projection angle
+
+            high = pMax[y];
+            low = pMin[y];
+            float *pImg = img.GetLinePtr(y);
+            float *pFilt = smoothx.GetLinePtr(y);
+            f_alfa[y] = m_fFmax*ecc[y]*m_fFilterStrength;
+
+//            std:: cout << "searching in line ................................" << y << std::endl;
+
+
+            bool search = 1;
+
+            while (search) {
+
+//                std::cout <<"--- high value ---  " << high << std::endl;
+//                std::cout <<"--- low value ----  " << low << std::endl;
+
+                mid = low + (high-low)/2; // threshold binary search
+
+
+//                std::cout<< "----mid value------" << mid << std::endl;
+
+
+                for (size_t x=0; x<dims[0]; x++) {
+                    if (pImg[x]>=mid) {
+                        counts++;
+                    }
+                }
+//                std::cout << counts << std::endl;
+//                                return 0;
+
+//                std::cout << "fraction of modified pixels: " << static_cast< float >(counts)/img.Size(0) << std::endl;
+//                std::cout << "f_alfa: " << f_alfa[y] << std::endl;
+
+
+                if ( (static_cast< float >(counts)/img.Size(0))<=f_alfa[y]+0.005 && (static_cast< float >(counts)/img.Size(0))>=f_alfa[y]-0.005) // se soddisfo la condizione
+                {
+                    for (size_t x=0; x<dims[0]; x++){
+                        if (pImg[x]>=mid) {
+                            wo = 0;
+                            ws = 1;
+                        }
+                        else{
+                            wo = 1;
+                            ws = 0;
+                        }
+                        pImg[x] = wo*pImg[x]+ws*pFilt[x];
+                    }
+
+//                    std::cout << "---------IF-------" << std::endl;
+//                    std::cout <<"--- high value ---  " << high << std::endl;
+//                    std::cout <<"--- low value ----  " << low << std::endl;
+
+                    search = 0;
+                }
+                else
+                {
+//                    std::cout << "---------ELSE-------" << std::endl;
+
+                    if (static_cast< float >(counts)/img.Size(0)>f_alfa[y]+0.005) // devo alzare la soglia
+                    {
+                        low = mid;}
+
+                    if (static_cast< float >(counts)/img.Size(0)<f_alfa[y]-0.005) // devo abbassare la soglia
+                       {
+                          high = mid;
+                       }
+
+//                    std::cout <<"--- high value ---  " << high << std::endl;
+//                    std::cout <<"--- low value ----  " << low << std::endl;
+
+                    if (high<=low+0.005) // con una certa tolleranza?
+                    {
+                        // se ho finito di cercare e cmq la mia frazione di pixel modificati è minore di quanto aspettato, applica il filtro
+                        if ( (static_cast< float >(counts)/img.Size(0)) <= (f_alfa[y]+0.005) ){
+//                            std::cout << "------------ filter --------------" << std::endl;
+
+                            for (size_t x=0; x<dims[0]; x++){
+                                if (pImg[x]>=mid) {
+                                    wo = 0;
+                                    ws = 1;
+                                }
+                                else{
+                                    wo = 1;
+                                    ws = 0;
+                                }
+                                pImg[x] = wo*pImg[x]+ws*pFilt[x];
+                            }
+
+                        }
+                        search = 0;
+
+                    }
+
+
+                    counts = 0;
+
+                }
 
 
 
-//    delete [] profile;
+            }
+
+                }
+
+
+//        std::cout << img.Size() << std::endl;
+
+        // after everything, rescale all values back to the original ones
+
+            if (mymin<0) {
+                for (size_t x=0; x<img.Size(); x++){
+                    img[x] = img[x]+mymin;
+                }
+            }
+
+
 
 	return 0;
 }

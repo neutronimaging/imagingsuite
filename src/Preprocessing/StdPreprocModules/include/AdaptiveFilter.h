@@ -30,10 +30,10 @@ public:
 	//virtual int Process(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
 
 	virtual std::map<std::string, std::string> GetParameters();
-    int ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters); // moved here by Chiara
+    int ProcessSingle(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters); // moved here by Chiara
+    int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
 
 protected:
-	int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
     int SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
     void MaxProfile(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,2> &profile);
     void MinProfile(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,2> &profile);
@@ -44,8 +44,8 @@ protected:
 	kipl::math::SigmoidLUT *pLUT;
 
     int m_nFilterSize;
-	float m_fLambda;
-	float m_fSigma;
+//	float m_fLambda;
+//	float m_fSigma;
     float m_fEccentricityMin;
     float m_fEccentricityMax;
 
