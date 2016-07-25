@@ -2,7 +2,6 @@
 #include "ui_adaptivefilterdlg.h"
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
-#include <AdaptiveFilter.h>
 #include <math/mathfunctions.h>
 #include <base/thistogram.h>
 #include <base/tprofile.h>
@@ -10,11 +9,25 @@
 #include <map>
 #include <string>
 
+#include <ParameterHandling.h>
+#include <ModuleException.h>
+
 AdaptiveFilterDlg::AdaptiveFilterDlg(QWidget *parent) :
     ConfiguratorDialogBase("AdaptiveFilter",true,false,true,parent),
-    ui(new Ui::AdaptiveFilterDlg)
+    ui(new Ui::AdaptiveFilterDlg),
+    m_nFilterSize(7),
+    m_fFilterStrenght(1.0f),
+    m_fFmax(0.10f)
 {
-    ui->setupUi(this);
+    try {
+        ui->setupUi(this);
+//        std::cout << "setup UI adaptive filter dlg" << std::endl;
+    }
+    catch (ModuleException & e)
+    {
+        logger(kipl::logging::Logger::LogWarning,e.what());
+    }
+
 }
 
 AdaptiveFilterDlg::~AdaptiveFilterDlg()
@@ -24,15 +37,38 @@ AdaptiveFilterDlg::~AdaptiveFilterDlg()
 
 int AdaptiveFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img)
 {
+
     m_Projections=img;
 
-    m_Config=config;
-    m_fLambda     = GetFloatParameter(parameters,"lambda");
-    m_fSigma      = GetFloatParameter(parameters,"sigma");
-    m_nFilterSize = GetIntParameter(parameters,"filtersize");
+    m_Config=dynamic_cast<ReconConfig *>(config);
+
+//    m_fLambda     = GetFloatParameter(parameters,"lambda");
+//    m_fSigma      = GetFloatParameter(parameters,"sigma");
+
+
+    try {
+        m_nFilterSize = GetIntParameter(parameters,"filtersize");
+        m_fFilterStrenght = GetFloatParameter(parameters,"filterstrength");
+        m_fFmax = GetFloatParameter(parameters, "fmax");
+    }
+    catch (ModuleException & e)
+    {
+        logger(kipl::logging::Logger::LogWarning,e.what());
+        return false;
+    }
+
+
 
     UpdateDialog();
-    ApplyParameters();
+    UpdateParameters();
+
+    try {
+        ApplyParameters();
+    }
+    catch (kipl::base::KiplException &e) {
+        logger(kipl::logging::Logger::LogError,e.what());
+        return false;
+    }
 
     int res=QDialog::exec();
 
@@ -51,10 +87,12 @@ int AdaptiveFilterDlg::exec(ConfigBase * config, std::map<std::string, std::stri
 
 void AdaptiveFilterDlg::ApplyParameters()
 {
+
     kipl::base::TImage<float,3> img=m_Projections;
     img.Clone();
 
     m_Sino=GetSinogram(img,img.Size(1)/2);
+    m_ProcessedSino = GetSinogram(img,img.Size(1)/2);
 
     const size_t N=512;
     size_t hist[N];
@@ -77,11 +115,11 @@ void AdaptiveFilterDlg::ApplyParameters()
     float wscale=maxprof-minprof;
     for (size_t i=0; i<m_Sino.Size(1); i++) {
         sinoangles[i]=rc->ProjectionInfo.fScanArc[0]+i*da;
-        weightprofile[i]=minprof+0.1*wscale+0.8*wscale*kipl::math::Sigmoid(static_cast<float>(i),m_fLambda,m_fSigma);
+//        weightprofile[i]=minprof+0.1*wscale+0.8*wscale*kipl::math::Sigmoid(static_cast<float>(i),m_fLambda,m_fSigma);
     }
 
     ui->plotHistogram->setCurveData(0,sinoprofile,sinoangles,m_Sino.Size(1),Qt::blue);
-    ui->plotHistogram->setCurveData(1,weightprofile,sinoangles,m_Sino.Size(1),Qt::red);
+//    ui->plotHistogram->setCurveData(1,weightprofile,sinoangles,m_Sino.Size(1),Qt::red);
 
     AdaptiveFilter module;
 
@@ -90,9 +128,9 @@ void AdaptiveFilterDlg::ApplyParameters()
     UpdateParameterList(parameters);
 
     module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-    module.Process(img,parameters);
+    module.ProcessSingle(m_ProcessedSino,parameters);
 
-    m_ProcessedSino=GetSinogram(img,img.Size(1)/2);
+//    m_ProcessedSino=GetSinogram(img,img.Size(1)/2);
 
     kipl::base::Histogram(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
@@ -107,29 +145,44 @@ void AdaptiveFilterDlg::ApplyParameters()
 
 void AdaptiveFilterDlg::UpdateDialog()
 {
-    ui->spinLambda->setValue(m_fLambda);
-    ui->spinSigma->setValue(m_fSigma);
-    ui->spinSize->setValue(m_nFilterSize);
+    ui->spinFilterSize->setValue(m_nFilterSize);
+    ui->spinFilterStrength->setValue(m_fFilterStrenght);
+    ui->spinModifiedFraction->setValue(m_fFmax);
 }
 
 void AdaptiveFilterDlg::UpdateParameters()
 {
-    m_fLambda     = ui->spinLambda->value();
-    m_fSigma      = ui->spinSigma->value();
-    m_nFilterSize = ui->spinSize->value();
+    m_nFilterSize     = ui->spinFilterSize->value();
+    m_fFilterStrenght = ui->spinFilterStrength->value();
+    m_fFmax           = ui->spinModifiedFraction->value();
 }
 
 void AdaptiveFilterDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {
-    parameters["lambda"] = kipl::strings::value2string(m_fLambda);
-    parameters["sigma"]  = kipl::strings::value2string(m_fSigma);
+//    parameters["lambda"] = kipl::strings::value2string(m_fLambda);
+//    parameters["sigma"]  = kipl::strings::value2string(m_fSigma);
     parameters["filtersize"]   = kipl::strings::value2string(m_nFilterSize);
+    parameters["filterstrength"] = kipl::strings::value2string(m_fFilterStrenght);
+    parameters["fmax"] = kipl::strings::value2string(m_fFmax);
 }
 
 void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
 {
-    if (button->text()=="Apply")
-        ApplyParameters();
+
+//    if (button->text().toLatin1()=="Apply"){
+//        ApplyParameters();
+//        std::cout << "apply parameters button" << std::endl;
+//    }
+//    else{
+//        std::cout << "sono nell'else" << std::endl;
+//    }
+
+}
+
+void AdaptiveFilterDlg::on_button_apply_clicked()
+{
+
+    ApplyParameters();
 }
 
 void AdaptiveFilterDlg::on_comboCompare_currentIndexChanged(int index)

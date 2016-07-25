@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>AdaptiveFilterDlg</class>
  <widget class="QDialog" name="AdaptiveFilterDlg">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>853</width>
-    <height>670</height>
+    <width>851</width>
+    <height>672</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -150,12 +153,12 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Threshold</string>
+          <string>Filter strength</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinLambda">
+        <widget class="QDoubleSpinBox" name="spinFilterStrength">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -179,19 +182,12 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Mix width</string>
+          <string>Filter size</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinSigma">
-         <property name="decimals">
-          <number>4</number>
-         </property>
-         <property name="minimum">
-          <double>-100.000000000000000</double>
-         </property>
-        </widget>
+        <widget class="QSpinBox" name="spinFilterSize"/>
        </item>
        <item>
         <widget class="QLabel" name="label_7">
@@ -202,33 +198,40 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Smooth</string>
+          <string>Modified fraction</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinSize">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="value">
-          <number>5</number>
-         </property>
-        </widget>
+        <widget class="QDoubleSpinBox" name="spinModifiedFraction"/>
        </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="button_apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
