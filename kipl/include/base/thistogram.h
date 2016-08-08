@@ -6,6 +6,7 @@
 #include <map>
 #include <fstream>
 #include "../logging/logger.h"
+#include "kiplenums.h"
 
 namespace kipl { namespace base {
 //int KIPLSHARED_EXPORT Histogram(float const * const data, size_t Ndata, size_t  * const hist, const size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
@@ -214,6 +215,14 @@ public:
     /// \brief Provides the limits for each class
     /// \param n Selects data set A or B using 0 or 1
     std::pair<float,float> GetLimits(int n);
+
+    /// \brief Makes a list of all non-zero bins in the histogram
+    ///
+    /// \param axis Selects the dominant axis in the list
+    /// \param threshold selects the smallest count to include in the list
+    ///
+    /// \returns A list of all bins and their counts
+    std::map<float, std::map<float,size_t> > CompressedHistogram(kipl::base::eImageAxes mainaxis, size_t threshold=1);
 
     /// \brief Writes the histogram as normalized image
     /// \param fname File name of the destination tiff file

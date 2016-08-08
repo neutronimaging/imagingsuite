@@ -86,23 +86,23 @@ void TkiplbasetestTest::testBivariateHistogram()
             for (size_t x=0; x<dims[0]; x++)
                 img(x,y)=x+y*dims[0];
 
-        kipl::base::BivariateHistogram::BinInfo info=bihi.GetBin(0.0,0.0);
+        kipl::base::BivariateHistogram::BinInfo info=bihi.GetBin(0.0f,0.0f);
 
         QCOMPARE(img(0,0),info.count);
 
-        info=bihi.GetBin(-1.0,0.0);
+        info=bihi.GetBin(-1.0f,0.0f);
         QCOMPARE(img(0,0),info.count);
 
-        info=bihi.GetBin(1.0,-1.0);
+        info=bihi.GetBin(1.0f,-1.0f);
         QCOMPARE(img(1,0),info.count);
 
-        info=bihi.GetBin(10.0,0.0);
+        info=bihi.GetBin(10.0f,0.0f);
         QCOMPARE(img(9,0),info.count);
 
-        info=bihi.GetBin(5.0,10.0);
+        info=bihi.GetBin(5.0f,10.0f);
         QCOMPARE(img(5,10),info.count);
 
-        info=bihi.GetBin(10.0,20.0);
+        info=bihi.GetBin(10.0f,20.0f);
         QCOMPARE(img(9,19),info.count);
 
 }

@@ -298,6 +298,37 @@ std::pair<float,float> BivariateHistogram::GetLimits(int n)
     return m_limitsA;
 }
 
+std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl::base::eImageAxes mainaxis, size_t threshold)
+{
+    std::map<float, std::map<float,size_t> > hist;
+
+    size_t *pLine;
+    switch (mainaxis) {
+    case kipl::base::ImageAxisX:
+        for (size_t i=0; i<m_bins.Size(1); i++) {
+            pLine=m_bins.GetLinePtr(i);
+            std::map<float,size_t> listline;
+            for (size_t j=0; j<m_Bins.Size(0); j++)
+            {
+                if (threshold<=pLine[j])
+                {
+                 //   listline.insert(make_pair())
+                }
+            }
+            hist.insert(make_pair(binval,listline));
+        }
+
+        break;
+    case kipl::base::ImageAxisY:
+    case kipl::base::ImageAxisZ:
+    default:
+        throw kipl::base::KiplException("Unsupported axis was selected in compressedhistogram.",__FILE__,__LINE__);
+        break;
+    }
+
+    return hist;
+}
+
 void BivariateHistogram::Write(string fname)
 {
 #ifndef NO_TIFF
