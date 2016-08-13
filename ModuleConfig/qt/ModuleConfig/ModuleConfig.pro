@@ -41,7 +41,7 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += ../../../../../external/include
-    LIBPATH += ../../../../../external/lib64
+    LIBPATH += ../../../../external/lib64
     LIBS += -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
 }
@@ -90,8 +90,8 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
+win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl
 else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../lib/ -lkipl
 else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl
 
