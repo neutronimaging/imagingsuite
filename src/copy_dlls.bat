@@ -1,21 +1,24 @@
 ﻿@echo ----------------- Deploy copy --------------
-set REPOS=C:\Users\kaestner\repos
-set DEST=C:\Users\kaestner\repos\tomography\trunk\src\build-muhrec3-Qt5-Release\release
+set REPOS=C:\%HOMEPATH%\repos
+set DEST=C:\%HOMEPATH%\imagingscience
+
+if not exist %DEST% mkdir %DEST%
+
 pushd .
 cd %DEST%
 mkdir resources
 
-copy %REPOS%\qni\trunk\src\ImagingAlgorithms\build-ImagingAlgorithms-Qt5-Release\release\ImagingAlgorithms.dll .
-copy %REPOS%\modules\trunk\ModuleConfig\build-ModuleConfig-Qt5-Release\release\ModuleConfig.dll .
-copy %REPOS%\gui\trunk\qt\build-QtAddons-Qt5-Release\release\QtAddons.dll .
-copy %REPOS%\gui\trunk\qt\build-QtModuleConfigure-Qt5-Release\release\QtModuleConfigure.dll .
-copy %REPOS%\kipl\trunk\kipl\build-kipl-Qt5-Release\release\kipl.dll .
-copy %REPOS%\tomography\trunk\src\build-ReconFramework-Qt5-Release\release\ReconFramework.dll .
-copy %REPOS%\tomography\trunk\src\build-StdBackProjectors-Qt5-Release\release\StdBackProjectors.dll .
-copy %REPOS%\tomography\trunk\src\build-StdPreprocModules-Qt5-Release\release\StdPreprocModules.dll .
-copy %REPOS%\tomography\trunk\src\build-StdPreprocModulesGUI-Qt5-Release\release\StdPreprocModulesGUI.dll .
-copy %REPOS%\tomography\trunk\src\build-InspectorModulesGUI-Qt5-Release\release\InspectorModulesGUI.dll .
-copy %REPOS%\tomography\trunk\src\build-InspectorModules-Qt5-Release\release\InspectorModules.dll .
+copy %REPOS%\lib\ImagingAlgorithms.dll .
+copy %REPOS%\lib\ModuleConfig.dll .
+copy %REPOS%\lib\QtAddons.dll .
+copy %REPOS%\lib\QtModuleConfigure.dll .
+copy %REPOS%\lib\kipl.dll .
+copy %REPOS%\lib\ReconFramework.dll .
+copy %REPOS%\lib\StdBackProjectors.dll .
+copy %REPOS%\lib\StdPreprocModules.dll .
+copy %REPOS%\lib\StdPreprocModulesGUI.dll .
+copy %REPOS%\lib\InspectorModulesGUI.dll .
+copy %REPOS%\lib\InspectorModules.dll .
 
 copy %REPOS%\external\lib64\libtiff.dll .
 copy %REPOS%\external\lib64\libjpeg-62.dll .
@@ -24,6 +27,8 @@ copy %REPOS%\external\lib64\libfftw3-3.dll .
 copy %REPOS%\external\lib64\libfftw3f-3.dll .
 copy %REPOS%\external\lib64\libxml2-2.dll .
 copy %REPOS%\external\lib64\libiconv.dll .
+
+copy %REPOS%\Applications\muhrec3.exe .
 
 copy %REPOS%\tomography\trunk\src\muhrec3\resources resources
 

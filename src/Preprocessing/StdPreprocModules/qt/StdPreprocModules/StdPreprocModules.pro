@@ -117,21 +117,11 @@ win32 {
     DEFINES += NOMINMAX
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconFramework-Qt5-Debug/debug/ -lReconFramework
-else:symbian: LIBS += -lReconFramework
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
-
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/release/ -lImagingAlgorithms
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../../../../qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Debug/debug/ -lImagingAlgorithms
-
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
-
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
