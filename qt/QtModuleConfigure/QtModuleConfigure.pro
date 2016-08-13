@@ -84,15 +84,13 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../lib -lkipl -lModuleConfig
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig
 else:symbian: LIBS += -lkipl
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig
 else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig
 
-# To adjust when I'm on a windows compiler
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release -lModuleConfig
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug -lModuleConfig
+
 
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
