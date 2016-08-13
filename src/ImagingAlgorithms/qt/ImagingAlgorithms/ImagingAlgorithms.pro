@@ -102,8 +102,8 @@ else {
     INCLUDEPATH += /usr/include/libxml2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug -lkipl
 else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../../lib -lkipl
 else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
 

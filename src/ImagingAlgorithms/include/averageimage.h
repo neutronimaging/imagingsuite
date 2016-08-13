@@ -1,13 +1,13 @@
 #ifndef AVERAGEPROJECTION_H
 #define AVERAGEPROJECTION_H
-
+#include "ImagingAlgorithms_global.h"
 #include <string>
 
 #include <base/timage.h>
 
 namespace ImagingAlgorithms {
 
-class AverageImage
+class IMAGINGALGORITHMSSHARED_EXPORT AverageImage
 {
 public:
     enum eAverageMethod {
@@ -41,8 +41,8 @@ protected:
 
 }
 
-void string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMethod &eam);
-std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod &eam);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMethod &eam);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::AverageImage::eAverageMethod &eam);
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod eam);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod eam);
 #endif // AVERAGEPROJECTION_H
