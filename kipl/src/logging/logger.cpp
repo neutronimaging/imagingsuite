@@ -8,6 +8,7 @@
 // $Date$
 // $Rev$
 //
+#include "../../include/kipl_global.h"
 #include "../../include/logging/logger.h"
 #include "../../include/base/KiplException.h"
 
@@ -121,14 +122,14 @@ void Logger::WriteMessage(LogLevel s, std::string message)
 	
 }}
 
-std::ostream & operator<<(std::ostream &os, kipl::logging::Logger::LogLevel level)
+std::ostream  KIPLSHARED_EXPORT & operator<<(std::ostream &os, kipl::logging::Logger::LogLevel level)
 {
     os<<enum2string(level);
 
     return os;
 }
 
-void string2enum(std::string s, kipl::logging::Logger::LogLevel &level)
+void  KIPLSHARED_EXPORT string2enum(std::string s, kipl::logging::Logger::LogLevel &level)
 {
     if (s=="error")
         level=kipl::logging::Logger::LogError;
@@ -145,7 +146,7 @@ void string2enum(std::string s, kipl::logging::Logger::LogLevel &level)
 
 }
 
-std::string enum2string(kipl::logging::Logger::LogLevel &level)
+std::string  KIPLSHARED_EXPORT enum2string(kipl::logging::Logger::LogLevel level)
 {
     switch (level) {
     case kipl::logging::Logger::LogError   : return "error"   ; break;

@@ -1,9 +1,9 @@
 #ifndef __NOISEIMAGE_H
 #define __NOISEIMAGE_H
 
-#if __cplusplus > 199711L
+//#if __cplusplus > 199711L
 #include <random>
-#endif
+//#endif
 #include "../base/timage.h"
 #include "../math/GaussianNoise.h"
 

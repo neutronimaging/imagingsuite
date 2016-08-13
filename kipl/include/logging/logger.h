@@ -70,7 +70,7 @@ public:
 
 	/// \brief Set the global log level
 	static void SetLogLevel(LogLevel level);
-	static LogLevel GetLogLevel() { return CurrentLogLevel; }
+    static kipl::logging::Logger::LogLevel GetLogLevel() { return CurrentLogLevel; }
 	
 	/// \brief Log a message
 	/// \param severity The log level of the current log message
@@ -119,6 +119,6 @@ void KIPLSHARED_EXPORT string2enum(std::string s, kipl::logging::Logger::LogLeve
 /// \param level The translated enum value for the entered string
 /// \returns The enum name
 /// \throws ReconException if the string translation failed
-std::string  KIPLSHARED_EXPORT enum2string(kipl::logging::Logger::LogLevel &level);
+std::string  KIPLSHARED_EXPORT enum2string(kipl::logging::Logger::LogLevel level);
 
 #endif /*LOGGER_H_*/
