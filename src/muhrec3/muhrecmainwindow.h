@@ -89,6 +89,9 @@ protected:
 
     void LoadDefaults(bool checkCurrent);
     void LoadReconSettings();
+    void ExecuteReconstruction();
+    bool reconstructToDisk();
+    void saveCurrentRecon();
 
 private slots:
     void on_buttonBrowseReference_clicked();
@@ -106,6 +109,8 @@ private slots:
     void on_spinSlicesFirst_valueChanged(int arg1);
 
     void on_spinSlicesLast_valueChanged(int arg1);
+
+    void on_actionRemove_CurrentRecon_xml_triggered();
 
 private:
     // Data members

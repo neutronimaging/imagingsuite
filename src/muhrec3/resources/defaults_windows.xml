@@ -7,7 +7,7 @@
         <comment>No comment</comment>
     </userinformation>
     <system>
-        <memory>6000</memory>
+        <memory>8000</memory>
         <loglevel>message</loglevel>
     </system>
     <projections>
@@ -65,32 +65,27 @@
                     <usenormregion>true</usenormregion>
                 </parameters>
             </module>
-            <module>
-                <modulename>MorphSpotClean</modulename>
+              <module>
+                <modulename>SpotClean2</modulename>
                 <sharedobject>@executable_path\StdPreprocModules.dll</sharedobject>
                 <active>false</active>
                 <parameters>
-                    <cleanmethod>morphcleanreplace</cleanmethod>
-                    <connectivity>conn4</connectivity>
-                    <detectionmethod>morphdetectholes</detectionmethod>
-                    <edgesmooth>5</edgesmooth>
-                    <maxarea>30</maxarea>
-                    <maxlevel>12</maxlevel>
-                    <minlevel>-0.1</minlevel>
-                    <sigma>0.01</sigma>
-                    <threshold>0.017</threshold>
+                    <detectionmethod>ring</detectionmethod>
+                    <gamma>0.017</gamma>
+                    <iterations>1</iterations>
+                    <maxarea>20</maxarea>
+                    <maxlevel>5</maxlevel>
+                    <minlevel>0</minlevel>
+                    <sigma>0.0005</sigma>
                 </parameters>
             </module>
             <module>
-                <modulename>WaveletRingClean</modulename>
+                <modulename>MedianMixRingClean</modulename>
                 <sharedobject>@executable_path\StdPreprocModules.dll</sharedobject>
                 <active>false</active>
                 <parameters>
-                    <decnum>3</decnum>
-                    <method>verticalfft</method>
-                    <parallel>false</parallel>
-                    <sigma>0.01</sigma>
-                    <wname>daub16</wname>
+                    <threshold>0.007</threshold>
+                    <width>0.0005</width>
                 </parameters>
             </module>
             <module>

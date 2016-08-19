@@ -791,6 +791,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="buttonGetReconROI">
+                  <property name="toolTip">
+                   <string>Mark the entire area of the sample. This ROI is also used to calculate center of rotation. </string>
+                  </property>
                   <property name="text">
                    <string>Get ROI</string>
                   </property>
@@ -821,6 +824,9 @@
                   </item>
                   <item>
                    <widget class="QSpinBox" name="spinSlicesFirst">
+                    <property name="toolTip">
+                     <string>This is the first slice to reconstruct</string>
+                    </property>
                     <property name="maximum">
                      <number>10000</number>
                     </property>
@@ -838,6 +844,9 @@
                   </item>
                   <item>
                    <widget class="QSpinBox" name="spinSlicesLast">
+                    <property name="toolTip">
+                     <string>This is the last slice to reconstruct.</string>
+                    </property>
                     <property name="maximum">
                      <number>10000</number>
                     </property>
@@ -883,6 +892,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="dspinAngleStart">
+                    <property name="toolTip">
+                     <string>First acquisition angle</string>
+                    </property>
                     <property name="minimum">
                      <double>-1000.000000000000000</double>
                     </property>
@@ -903,6 +915,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="dspinAngleStop">
+                    <property name="toolTip">
+                     <string>Last acquisition angle</string>
+                    </property>
                     <property name="minimum">
                      <double>-1000.000000000000000</double>
                     </property>
@@ -962,6 +977,9 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="dspinRotationCenter">
+                  <property name="toolTip">
+                   <string>The acquisition center of rotation on the projection. Postion is given in pixels relative to projection ROI x0. Subpixel values are recommended.</string>
+                  </property>
                   <property name="decimals">
                    <number>4</number>
                   </property>
@@ -1018,6 +1036,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Activates axis tilt</string>
+                  </property>
                   <property name="text">
                    <string>Correct axis tilt</string>
                   </property>
@@ -1037,6 +1058,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="dspinTiltAngle">
+                    <property name="toolTip">
+                     <string>Tilt angle of the acquistion axis. Can be found using store geometry.</string>
+                    </property>
                     <property name="decimals">
                      <number>4</number>
                     </property>
@@ -1063,6 +1087,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="dspinTiltPivot">
+                    <property name="toolTip">
+                     <string>This is the slice where the center of rotation is exact.</string>
+                    </property>
                     <property name="minimum">
                      <double>-10000.000000000000000</double>
                     </property>
@@ -1107,6 +1134,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
                   </property>
                   <property name="decimals">
                    <number>5</number>
@@ -1613,6 +1643,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QSlider" name="sliderProjections">
+              <property name="toolTip">
+               <string>Slide to browse through the projections.</string>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -1735,7 +1768,7 @@
      <x>0</x>
      <y>0</y>
      <width>1268</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1770,9 +1803,17 @@
     <addaction name="actionView_geometry_list"/>
     <addaction name="actionClear_list"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionRemove_CurrentRecon_xml"/>
+    <addaction name="actionSettings"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReconstruct"/>
    <addaction name="menuGeometry"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1833,8 +1874,11 @@
    <property name="text">
     <string>Start reconstruction</string>
    </property>
+   <property name="toolTip">
+    <string>Starts a reconstruction using the settings. The results can be observed in the viewers. Recommended for small data sets. </string>
+   </property>
    <property name="shortcut">
-    <string>Meta+R</string>
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionPreferences">
@@ -1866,6 +1910,25 @@
   <action name="actionReconstruct_to_disk">
    <property name="text">
     <string>Reconstruct to disk</string>
+   </property>
+   <property name="toolTip">
+    <string>Reconstructs the data directly to disk. This option is recommended for the final reconstruction.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionRemove_CurrentRecon_xml">
+   <property name="text">
+    <string>Remove CurrentRecon.xml</string>
+   </property>
+   <property name="toolTip">
+    <string>In case you have start up problems when upgrading to a new version, this mostly relates to new parameterization. Removing the old current recon and selecting [File]-&gt;[New] should solve this problem.</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

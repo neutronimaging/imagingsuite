@@ -5,6 +5,9 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDir>
+#include <QDate>
+#include <QFile>
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -886,14 +889,10 @@ void MuhRecMainWindow::MenuHelpAbout()
     dlg.exec();
 }
 
-void MuhRecMainWindow::MenuReconstructStart()
+void MuhRecMainWindow::saveCurrentRecon()
 {
-    ui->tabMainControl->setCurrentIndex(4);
-    ReconDialog dlg(&m_Interactor);
-    bool bBuildFailure=false;
-
-    ostringstream msg;
     ostringstream confpath;
+    ostringstream msg;
     // Save current recon settings
     QDir dir;
 
@@ -934,23 +933,26 @@ void MuhRecMainWindow::MenuReconstructStart()
         return;
     }
 
+
+}
+
+void MuhRecMainWindow::MenuReconstructStart()
+{
+    ui->tabMainControl->setCurrentIndex(4);
+
+    bool bBuildFailure=false;
+
+    ostringstream msg;
     m_Config.MatrixInfo.bAutomaticSerialize=false;
     if (m_Config.System.nMemory<m_nRequiredMemory) {
-//        msg.str("");
-//        msg<<"The requested matrix is larger ("<<m_nRequiredMemory<<"Mb) than the memorylimit ("
-//            <<m_Config.System.nMemory<<"Mb)\n\n"
-//            <<"Do you want to continue with reconstruction direct to disk?\n"
-//           <<"Current location is:\n"
-//          <<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
-//        QMessageBox largesize_dlg(this);
-//        largesize_dlg.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
-//        largesize_dlg.setDefaultButton(QMessageBox::Ok);
-//        largesize_dlg.setText(QString::fromStdString(msg.str()));
-//        largesize_dlg.setWindowTitle("Matrix size warning");
 
         DialogTooBig largesize_dlg;
 
-        largesize_dlg.SetFields(ui->editDestPath->text(),ui->editSliceMask->text());
+        largesize_dlg.SetFields(ui->editDestPath->text(),
+                                ui->editSliceMask->text(),
+                                false,
+                                ui->spinSlicesFirst->value(), ui->spinSlicesLast->value(),
+                                ui->spinProjROIy0->value(),ui->spinProjROIy1->value());
         int res=largesize_dlg.exec();
 
         if (res!=QDialog::Accepted) {
@@ -973,7 +975,16 @@ void MuhRecMainWindow::MenuReconstructStart()
     else
         m_Config.MatrixInfo.bAutomaticSerialize=false;
 
+    saveCurrentRecon();
+
+    ExecuteReconstruction();
+}
+
+void MuhRecMainWindow::ExecuteReconstruction()
+{
+    std::ostringstream msg;
     std::list<string> freelist;
+    bool bBuildFailure=false;
 
     freelist.push_back("grayinterval");
     freelist.push_back("center");
@@ -986,9 +997,9 @@ void MuhRecMainWindow::MenuReconstructStart()
     freelist.push_back("tiltangle");
     freelist.push_back("tiltpivot");
     freelist.push_back("correcttilt");
-    freelist.push_back("tiltpivot");
-    //freelist.push_back("usematrixroi");
-    //freelist.push_back("matrixroi");
+
+    freelist.push_back("usematrixroi");
+    freelist.push_back("matrixroi");
 
     bool bRerunBackproj=!m_Config.ConfigChanged(m_LastReconConfig,freelist);
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
@@ -1053,7 +1064,10 @@ void MuhRecMainWindow::MenuReconstructStart()
         bRerunBackproj=true;
     }
 
+    int res;
     msg.str("");
+
+    ReconDialog dlg(&m_Interactor);
     bool bRunFailure=false;
     try {
         if (m_pEngine!=NULL) {
@@ -1521,7 +1535,7 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
 void MuhRecMainWindow::on_actionPreferences_triggered()
 {
     PreferencesDialog dlg;
-    dlg.m_MemoryLimit = m_Config.System.nMemory;
+    dlg.m_MemoryLimit = static_cast<int>(m_Config.System.nMemory);
     dlg.m_LogLevel    = m_Config.System.eLogLevel;
 
 
@@ -1537,7 +1551,52 @@ void MuhRecMainWindow::on_actionPreferences_triggered()
 
 void MuhRecMainWindow::on_actionReconstruct_to_disk_triggered()
 {
+    if (reconstructToDisk()) {
+      saveCurrentRecon();
+      ExecuteReconstruction();
+    }
+}
 
+bool MuhRecMainWindow::reconstructToDisk()
+{
+    std::ostringstream msg;
+    logger(logger.LogMessage,"Starting reconstruct to disk");
+
+    DialogTooBig largesize_dlg;
+    UpdateConfig();
+
+    logger(logger.LogMessage,msg.str());
+    largesize_dlg.SetFields(ui->editDestPath->text(),
+                            ui->editSliceMask->text(),
+                            false,
+                            m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
+                            m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+
+    int res=largesize_dlg.exec();
+
+    if (res!=QDialog::Accepted) {
+        logger(logger.LogMessage,"Reconstruction was aborted");
+        return false;
+    }
+
+    m_Config.MatrixInfo.sDestinationPath = largesize_dlg.GetPath().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
+    m_Config.MatrixInfo.sFileMask        = largesize_dlg.GetMask().toStdString();
+    ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
+    ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
+    ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
+    ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
+
+    UpdateConfig();
+
+    msg.str("");
+    msg<<"Reconstructing slices "<<m_Config.ProjectionInfo.roi[1]<<" to "<<m_Config.ProjectionInfo.roi[3]<<"direct to folder "<<m_Config.MatrixInfo.sDestinationPath
+      <<" using the mask "<< m_Config.MatrixInfo.sFileMask;
+    logger(logger.LogMessage,msg.str());
+
+    m_Config.MatrixInfo.bAutomaticSerialize=true;
+
+    return true;
 }
 
 void MuhRecMainWindow::on_spinSlicesFirst_valueChanged(int arg1)
@@ -1564,4 +1623,33 @@ void MuhRecMainWindow::SlicesChanged(int arg1)
     ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
 
     UpdateMemoryUsage(dims);
+}
+
+void MuhRecMainWindow::on_actionRemove_CurrentRecon_xml_triggered()
+{
+    ostringstream confpath;
+    ostringstream msg;
+    // Save current recon settings
+
+    QDir dir;
+    QString filename=dir.homePath()+"/.imagingtools/CurrentRecon.xml";
+
+    std::string name=filename.toStdString();
+    kipl::strings::filenames::CheckPathSlashes(name,false);
+    filename=QString::fromStdString(name);
+
+    if (dir.exists(filename)) {
+        QDate date=QDate::currentDate();
+        QString destname=filename+"."+date.toString("yyyyMMdd");
+        dir.rename(filename,destname);
+        msg.str("");
+        msg<<"Moved "<<filename.toStdString()<<" to "<<destname.toStdString();
+        logger(logger.LogMessage,msg.str());
+    }
+    else {
+        msg.str("");
+        msg<<"Couldn't find "<<filename.toStdString();
+        logger(logger.LogMessage,msg.str());
+    }
+
 }
