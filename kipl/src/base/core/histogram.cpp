@@ -307,15 +307,16 @@ std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl
     case kipl::base::ImageAxisX:
         for (size_t i=0; i<m_bins.Size(1); i++) {
             pLine=m_bins.GetLinePtr(i);
-            std::map<float,size_t> listline;
-            for (size_t j=0; j<m_Bins.Size(0); j++)
-            {
-                if (threshold<=pLine[j])
-                {
-                 //   listline.insert(make_pair())
-                }
-            }
-            hist.insert(make_pair(binval,listline));
+            // todo: fix the code
+//            std::map<float,size_t> listline;
+//            for (size_t j=0; j<m_Bins.Size(0); j++)
+//            {
+//                if (threshold<=pLine[j])
+//                {
+//                 //   listline.insert(make_pair())
+//                }
+//            }
+//            hist.insert(make_pair(binval,listline));
         }
 
         break;
