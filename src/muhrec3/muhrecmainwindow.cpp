@@ -496,7 +496,7 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
                    dims[2]=ui->spinProjROIx1->value(),
                    dims[3]=ui->spinProjROIy1->value());
 
-    rect.normalized();
+    rect=rect.normalized();
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
     SlicesChanged(0);
@@ -1064,7 +1064,6 @@ void MuhRecMainWindow::ExecuteReconstruction()
         bRerunBackproj=true;
     }
 
-    int res;
     msg.str("");
 
     ReconDialog dlg(&m_Interactor);

@@ -28,7 +28,7 @@ protected slots:
 private:
     Ui::ReconDialog *ui;
 
-    virtual int exec() { return this->exec(); }
+    virtual int exec() { return QDialog::exec(); }
 protected:
     void Abort();
     bool Finished();

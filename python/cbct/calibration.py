@@ -4,7 +4,7 @@ Spyder Editor
 
 This is a temporary script file.
 """
-
+##
 #from astropy.io import fits
 #
 #dcfile = fits.open('../../data/cbct/dc_3s_5fps_00001.fits')
@@ -31,6 +31,7 @@ img=io.imread('../../data/cbct/fp200_x70_3s_5fps_60kV_150uA_00001.tif')
 
 plt.subplot(321)
 plt.imshow(img)
+##
 # Prepare
 res=np.abs(filter.gaussian_filter(filter.hsobel(img),5));
 res=np.clip(res,0.0,0.2)
