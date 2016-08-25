@@ -35,6 +35,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     m_sViewerName = QString("ImageViewer ")+QString::number(m_nViewerCounter);
     s_ViewerList.push_back(this);
     m_infoDialog.setModal(false);
+
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));
@@ -337,7 +338,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
             m_rubberBandLine.hide();
         }
         if (m_MouseMode==ViewerPan) {
-            m_MouseMode==ViewerROI;
+            m_MouseMode=ViewerROI;
         }
     }
 

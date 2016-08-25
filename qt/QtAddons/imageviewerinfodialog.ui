@@ -15,11 +15,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_all">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_histogram">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_histogram">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
            <horstretch>0</horstretch>
@@ -44,11 +44,11 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_info">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="horizontalLayout_roi">
          <item>
-          <widget class="QLabel" name="label_5">
+          <widget class="QLabel" name="label_roi">
            <property name="text">
             <string>Current ROI</string>
            </property>
@@ -64,9 +64,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <layout class="QHBoxLayout" name="horizontalLayout_area">
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="label_area">
            <property name="text">
             <string>Area</string>
            </property>
@@ -82,9 +82,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_mean">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="label_mean">
            <property name="text">
             <string>Mean</string>
            </property>
@@ -100,9 +100,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="horizontalLayout_stddev">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="label_stddev">
            <property name="text">
             <string>Std Dev</string>
            </property>
@@ -118,9 +118,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="horizontalLayout_min">
          <item>
-          <widget class="QLabel" name="label_10">
+          <widget class="QLabel" name="label_min">
            <property name="text">
             <string>Min</string>
            </property>
@@ -136,9 +136,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_max">
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="label_max">
            <property name="text">
             <string>Max</string>
            </property>
@@ -154,7 +154,7 @@
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer name="verticalSpacer_info">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -176,7 +176,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

@@ -384,7 +384,7 @@ void Plotter::drawCurves(QPainter *painter)
     while (i.hasNext()) {
         i.next();
 
-        int id = i.key();
+        //int id = i.key();
         QVector<QPointF> data = i.value().m_data;
 
         QPolygonF polyline(data.count());

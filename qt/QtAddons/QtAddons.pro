@@ -82,7 +82,7 @@ unix:!symbian {
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../lib/ -lkipl
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../lib/debug/ -lkipl
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../debug -lkipl
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include

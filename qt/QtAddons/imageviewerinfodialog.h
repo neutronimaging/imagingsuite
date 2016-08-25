@@ -1,6 +1,7 @@
 #ifndef IMAGEVIEWERINFODIALOG_H
 #define IMAGEVIEWERINFODIALOG_H
 
+#include <QtAddons_global.h>
 #include <QDialog>
 #include <QRect>
 #include <QPoint>
@@ -13,12 +14,12 @@ namespace Ui {
 class ImageViewerInfoDialog;
 }
 
-class ImageViewerInfoDialog : public QDialog
+class QTADDONSSHARED_EXPORT ImageViewerInfoDialog : public QDialog
 {
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit ImageViewerInfoDialog(QWidget *parent = 0);
+    explicit ImageViewerInfoDialog(QWidget *parent = nullptr);
     ~ImageViewerInfoDialog();
     void updateInfo(kipl::base::TImage<float, 2> img, QRect roi);
 
