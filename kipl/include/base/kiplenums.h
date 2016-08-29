@@ -67,6 +67,11 @@ enum eImageRotate {
     ImageRotate270      ///< Rotate 270 degrees clockwise
 };
 
+enum eRotationDirection {
+    RotationDirCW = 0,  ///< Rotation clock wise
+    RotationDirCCW      ///< Rotation counter clock wise
+};
+
 /// \brief Unsigned integer data type selector
 enum eDataType {
     UInt4,      ///< 4bits unsigned integer
@@ -173,5 +178,23 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eAxisPermutatio
 /// \param perm the value to send to the stream
 /// \returns a reference to the stream
 KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eAxisPermutations perm);
+
+/// \brief Converts a rotation direction enum to a string
+/// \param rotdir the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the permutation type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eRotationDirection rotdir);
+
+/// \brief Converts a string to a rotation direction enum
+/// \param str a string containing the name to convert
+/// \param perm the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eRotationDirection &rotdir);
+
+/// \brief Stream output operator for eRotationDirection
+/// \param s the stream that handles the enum
+/// \param rotdir the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eRotationDirection rotdir);
+
 
 #endif /*KIPLENUMS_H_*/

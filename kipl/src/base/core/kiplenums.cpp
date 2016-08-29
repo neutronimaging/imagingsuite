@@ -144,7 +144,7 @@ std::string enum2string(kipl::base::eAxisPermutations perm)
         case kipl::base::PermuteYZX : s="PermuteYZX"; break;
         case kipl::base::PermuteZXY : s="PermuteZXY"; break;
         case kipl::base::PermuteZYX : s="PermuteZYX"; break;
-        default : kipl::base::KiplException("Could not transform axis permutation enum to a string", __FILE__, __LINE__); break;
+        default : throw kipl::base::KiplException("Could not transform axis permutation enum to a string", __FILE__, __LINE__); break;
     }
 
     return s;
@@ -174,3 +174,48 @@ std::ostream &operator<<(std::ostream & s, kipl::base::eAxisPermutations perm)
 
     return s;
 }
+
+/// \brief Converts a rotation direction enum to a string
+/// \param rotdir the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the permutation type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eRotationDirection rotdir)
+{
+    std::string str;
+    switch (rotdir) {
+    case kipl::base::RotationDirCW:     str="RotationDirCW"; break;
+    case kipl::base::RotationDirCCW:    str="RotationDirCCW"; break;
+    default:                            throw kipl::base::KiplException("Could not transform rotation direction enum to a string", __FILE__, __LINE__); break;
+    }
+
+    return str;
+}
+
+/// \brief Converts a string to a rotation direction enum
+/// \param str a string containing the name to convert
+/// \param perm the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eRotationDirection &rotdir)
+{
+    std::map<std::string, kipl::base::eRotationDirection> values;
+    values["RotationDirCW"]  = kipl::base::RotationDirCW;
+    values["RotationDirCCW"] = kipl::base::RotationDirCCW;
+
+    auto it=values.find(str);
+
+    if (it!=values.end())
+        rotdir=it->second;
+    else
+        throw kipl::base::KiplException("Could not transform string to rotation dir enum", __FILE__, __LINE__);
+}
+
+/// \brief Stream output operator for eRotationDirection
+/// \param s the stream that handles the enum
+/// \param rotdir the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eRotationDirection rotdir)
+{
+    s<<enum2string(rotdir);
+
+    return s;
+}
+
