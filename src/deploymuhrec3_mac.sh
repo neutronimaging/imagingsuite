@@ -9,7 +9,7 @@ if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi
 
-cp -r ~/repos/tomography/trunk/src/build-muhrec3-Qt5-Release/muhrec3.app $DIRECTORY
+cp -r ~/repos/Applications/muhrec3.app $DIRECTORY
 
 pushd .
 CPCMD="cp"
