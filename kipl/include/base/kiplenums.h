@@ -67,6 +67,7 @@ enum eImageRotate {
     ImageRotate270      ///< Rotate 270 degrees clockwise
 };
 
+///< Selector for the rotation direction
 enum eRotationDirection {
     RotationDirCW = 0,  ///< Rotation clock wise
     RotationDirCCW      ///< Rotation counter clock wise
