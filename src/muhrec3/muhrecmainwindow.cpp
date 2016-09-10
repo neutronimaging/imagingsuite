@@ -8,6 +8,8 @@
 #include <QDir>
 #include <QDate>
 #include <QFile>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include <base/timage.h>
 #include <math/mathfunctions.h>
@@ -1464,8 +1466,21 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.roi[3] = ui->spinMatrixROI3->value();
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
-    m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
+
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+2);
+    m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
+    // Validity test of the slice file mask
+    if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
+        logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
+        m_Config.MatrixInfo.sFileMask.append(".tif");
+    }
+
+    ptrdiff_t pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
+    if (m_Config.MatrixInfo.sFileMask.find('#')==std::string::npos) {
+        logger(logger.LogWarning,"Destination file mask is missing an index mask. Adding '_####'' before file extension");
+        m_Config.MatrixInfo.sFileMask.insert(pos,"_####");
+    }
+    ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
     // +2 to skip the matlab file types
 
     m_Config.UserInformation.sProjectNumber = ui->editProjectName->text().toStdString();
@@ -1651,4 +1666,12 @@ void MuhRecMainWindow::on_actionRemove_CurrentRecon_xml_triggered()
         logger(logger.LogMessage,msg.str());
     }
 
+}
+
+void MuhRecMainWindow::on_actionReport_a_bug_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/tools/issues");
+    if (!QDesktopServices::openUrl(url)) {
+ //       QMessageBox dlg("Could not open repository","MuhRec could not open your web browser with the link https://github.com/neutronimaging/tools/issues");
+    }
 }

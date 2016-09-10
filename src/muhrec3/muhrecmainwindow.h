@@ -112,6 +112,8 @@ private slots:
 
     void on_actionRemove_CurrentRecon_xml_triggered();
 
+    void on_actionReport_a_bug_triggered();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
