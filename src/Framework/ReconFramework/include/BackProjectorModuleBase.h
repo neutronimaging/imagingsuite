@@ -100,6 +100,9 @@ public:
     /// \param N number of bins
 	virtual void GetHistogram(float *x, size_t *y, size_t N)=0;
 
+    /// \brief Returns the reconstructed voxel size. Default value is the projection pixel size, this must be adjusted by the magnification for cone beam.
+   virtual float GetVoxelSize() {return mConfig.ProjectionInfo.fResolution[0];}
+
     /// Destructor to clean up allocated memory.
     virtual ~BackProjectorModuleBase(void);
 
