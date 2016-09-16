@@ -16,12 +16,14 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 DEFINES += IMAGINGMODULES_LIBRARY
 
 SOURCES += ../../src/imagingmodules.cpp \
-    ../../src/translateprojectionmodule.cpp
+    ../../src/translateprojectionmodule.cpp \
+    ../../src/stripefiltermodule.cpp
 
 HEADERS += ../../src/imagingmodules.h\
         ../../src/ImagingModules_global.h \
     ../../src/translateprojectionmodule.h \
-    ../../src/ImagingModules_global.h
+    ../../src/ImagingModules_global.h \
+    ../../src/stripefiltermodule.h
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
@@ -30,6 +32,7 @@ unix:!macx {
 }
 
 unix:macx {
+    QMAKE_MAC_SDK = macosx10.12
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib
