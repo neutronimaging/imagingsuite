@@ -37,8 +37,8 @@ std::map<std::string, std::string> StripeFilterModule::GetParameters()
     std::map<std::string, std::string> parameters;
 
     parameters["waveletname"]=wname;
-    parameters["scale"]=scale;
-    parameters["sigma"]=sigma;
+    parameters["scale"]=kipl::strings::value2string(scale);
+    parameters["sigma"]=kipl::strings::value2string(sigma);
     parameters["filtertype"]=enum2string(op);
     parameters["plane"]=enum2string(plane);
 
