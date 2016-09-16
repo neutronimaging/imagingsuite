@@ -23,7 +23,7 @@ unix:!macx {
     INCLUDEPATH += /usr/include/libxml2
 }
 unix:macx {
-    QMAKE_MAC_SDK = macosx10.11
+    QMAKE_MAC_SDK = macosx10.12
     QMAKE_CXXFLAGS += -O2 -fPIC
     INCLUDEPATH += /opt/local/include/libxml2
     INCLUDEPATH += /opt/local/include

@@ -25,6 +25,10 @@ unix {
     INCLUDEPATH += /usr/include/libxml2
 }
 
+unix:macx {
+    QMAKE_MAC_SDK = macosx10.12
+}
+
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lgomp
