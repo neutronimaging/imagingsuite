@@ -13,7 +13,7 @@
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>
 
-TranslateProjectionModule::TranslateProjectionModule() :
+TranslateProjectionModule::TranslateProjectionModule() : KiplProcessModuleBase("TranslateProjectionModule",false),
     m_fSlope(1.0f),
     m_fIntercept(0.0f),
     m_eSampler(ImagingAlgorithms::TranslateLinear),

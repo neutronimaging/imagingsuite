@@ -8,9 +8,11 @@
 #ifndef SCALEDATA_H_
 #define SCALEDATA_H_
 
+#include "BaseModules_global.h"
+
 #include <KiplProcessModuleBase.h>
 
-class ScaleData: public KiplProcessModuleBase {
+class BASEMODULES_EXPORT ScaleData: public KiplProcessModuleBase {
 public:
 	ScaleData();
 	virtual ~ScaleData();

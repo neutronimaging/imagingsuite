@@ -55,15 +55,12 @@ SOURCES += \
     ../../src/stdafx.cpp \
     ../../src/ScaleData.cpp \
     ../../src/DoseCorrection.cpp \
-    ../../src/dllmain.cpp \
     ../../src/ClampData.cpp \
     ../../src/BuildScene.cpp \
     ../../src/BaseModules.cpp
 
 HEADERS += \
     ../../src/VolumeProject.h \
-    ../../src/targetver.h \
-    ../../src/stdafx.h \
     ../../src/ScaleData.h \
     ../../src/DoseCorrection.h \
     ../../src/ClampData.h \
@@ -81,22 +78,16 @@ symbian {
     DEPLOYMENT += addFiles
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Debug/debug/ -lProcessFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lProcessFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+
+LIBS += -lkipl -lModuleConfig -lProcessFramework
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
-
 INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kiplQt5-Release/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include

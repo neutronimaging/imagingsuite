@@ -15,15 +15,15 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 DEFINES += IMAGINGMODULES_LIBRARY
 
-SOURCES += ../../src/imagingmodules.cpp \
-    ../../src/translateprojectionmodule.cpp \
-    ../../src/stripefiltermodule.cpp
+SOURCES +=  ../../src/imagingmodules.cpp \
+            ../../src/translateprojectionmodule.cpp \
+            ../../src/stripefiltermodule.cpp
 
-HEADERS += ../../src/imagingmodules.h\
-        ../../src/ImagingModules_global.h \
-    ../../src/translateprojectionmodule.h \
-    ../../src/ImagingModules_global.h \
-    ../../src/stripefiltermodule.h
+HEADERS +=  ../../src/ImagingModules_global.h \
+            ../../src/imagingmodules.h\
+            ../../src/ImagingModules_global.h \
+            ../../src/translateprojectionmodule.h \
+            ../../src/stripefiltermodule.h
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
@@ -57,29 +57,30 @@ unix:!symbian {
     INSTALLS += target
 }
 
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio $$PWD/../../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/release/ -lProcessFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/debug/ -lProcessFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
+}
+
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
+
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms
-
 INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/src
 
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/ModuleConfig-build-Qt_4_8_1_Release/debug/ -lModuleConfig
 INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/kipl-build-Qt_4_8_1_Release/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include

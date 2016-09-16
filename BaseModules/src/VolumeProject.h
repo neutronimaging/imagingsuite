@@ -8,6 +8,8 @@
 #ifndef VOLUMEPROJECT_H_
 #define VOLUMEPROJECT_H_
 
+#include "BaseModules_global.h"
+
 #include <KiplProcessModuleBase.h>
 #include <base/kiplenums.h>
 
@@ -18,7 +20,7 @@ enum eProjectionMethod {
 	ProjectMax
 };
 
-class VolumeProject: public KiplProcessModuleBase {
+class BASEMODULES_EXPORT VolumeProject: public KiplProcessModuleBase {
 public:
 	VolumeProject();
 	virtual ~VolumeProject();

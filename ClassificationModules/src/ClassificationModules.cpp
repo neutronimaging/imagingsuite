@@ -14,8 +14,12 @@
 //
 
 #include "ClassificationModules_global.h"
-#include "ClassificationModules.h"
+#include <cstdlib>
+#include <map>
+#include <list>
+#include <string>
 
+#include "ClassificationModules.h"
 
 #include "BasicThreshold.h"
 #include "DoubleThreshold.h"
@@ -25,10 +29,7 @@
 
 #include "../include/KiplProcessModuleBase.h"
 
-#include <cstdlib>
-#include <map>
-#include <list>
-#include <string>
+
 
 
 void * GetModule(const char * application, const char * name)

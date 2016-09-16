@@ -9,19 +9,23 @@
 // $Rev: 1481 $
 //
 
-#include "stdafx.h"
-#include <KiplProcessModuleBase.h>
-
-#include "imagingmodules.h"
-#include "translateprojectionmodule.h"
+#include "ImagingModules_global.h"
 
 #include <cstring>
 #include <string>
 #include <sstream>
+
 #include <logging/logger.h>
 
+#include <KiplProcessModuleBase.h>
 
-DLL_EXPORT void * GetModule(const char *application, const char * name)
+#include "imagingmodules.h"
+#include "translateprojectionmodule.h"
+#include "stripefiltermodule.h"
+
+
+
+void * GetModule(const char *application, const char * name)
 {
     if (strcmp(application,"kiptool")!=0)
         return NULL;
@@ -31,18 +35,21 @@ DLL_EXPORT void * GetModule(const char *application, const char * name)
 
         if (sName=="TranslateProjections")
             return new TranslateProjectionModule;
+
+        if (sName=="StripeFilter")
+            return new StripeFilterModule;
     }
 
     return NULL;
 }
 
-DLL_EXPORT int Destroy(const char *application, void *obj)
+int Destroy(const char *application, void *obj)
 {
 
     if (strcmp(application,"kiptool")!=0)
         return -1;
 
-    kipl::logging::Logger logger("AdvancedFilterModules destroy");
+    kipl::logging::Logger logger("ImagingModules destroy");
     std::ostringstream msg;
 
     if (obj!=NULL) {
@@ -56,12 +63,12 @@ DLL_EXPORT int Destroy(const char *application, void *obj)
     return 0;
 }
 
-DLL_EXPORT int LibVersion()
+int LibVersion()
 {
     return -1;
 }
 
-DLL_EXPORT int GetModuleList(const char *application, void *listptr)
+int GetModuleList(const char *application, void *listptr)
 {
     if (strcmp(application,"kiptool")!=0)
         return -1;
@@ -70,6 +77,10 @@ DLL_EXPORT int GetModuleList(const char *application, void *listptr)
 
     TranslateProjectionModule tpm;
     modulelist->operator []("TranslateProjections")=tpm.GetParameters();
+
+    StripeFilterModule sfm;
+
+    modulelist->operator []("StripeFilter")=sfm.GetParameters();
 
     return 0;
 }

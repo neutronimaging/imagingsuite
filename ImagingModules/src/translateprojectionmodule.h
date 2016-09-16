@@ -12,11 +12,11 @@
 #ifndef TRANSLATEPROJECTIONMODULE_H
 #define TRANSLATEPROJECTIONMODULE_H
 
-#include "ImagingAlgorithms_global.h"
+#include "ImagingModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <TranslateProjections.h>
 
-class IMAGINGALGORITHMSSHARED_EXPORT TranslateProjectionModule: public KiplProcessModuleBase {
+class IMAGINGMODULESSHARED_EXPORT TranslateProjectionModule: public KiplProcessModuleBase {
 public:
     TranslateProjectionModule();
     virtual ~TranslateProjectionModule();

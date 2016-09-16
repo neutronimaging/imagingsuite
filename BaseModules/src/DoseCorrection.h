@@ -8,9 +8,10 @@
 #ifndef DOSECORRECTION_H_
 #define DOSECORRECTION_H_
 
+#include "BaseModules_global.h"
 #include <KiplProcessModuleBase.h>
 
-class DoseCorrection: public KiplProcessModuleBase {
+class BASEMODULES_EXPORT DoseCorrection: public KiplProcessModuleBase {
 public:
 	DoseCorrection();
 	virtual ~DoseCorrection();

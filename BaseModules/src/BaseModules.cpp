@@ -1,7 +1,12 @@
 // BaseModules.cpp : Defines the exported functions for the DLL application.
 //
 
-#include "stdafx.h"
+#include "BaseModules_global.h"
+#include <cstdlib>
+#include <map>
+#include <list>
+#include <string>
+
 #include "BaseModules.h"
 #include "ScaleData.h"
 #include "DoseCorrection.h"
@@ -10,13 +15,10 @@
 
 #include <KiplProcessModuleBase.h>
 
-#include <cstdlib>
-#include <map>
-#include <list>
-#include <string>
 
 
-DLL_EXPORT void * GetModule(const char *application, const char * name)
+
+BASEMODULES_EXPORT void * GetModule(const char *application, const char * name)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return NULL;
@@ -37,7 +39,7 @@ DLL_EXPORT void * GetModule(const char *application, const char * name)
 	return NULL;
 }
 
-DLL_EXPORT int Destroy(const char *application, void *obj)
+BASEMODULES_EXPORT int Destroy(const char *application, void *obj)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return -1;
@@ -46,12 +48,12 @@ DLL_EXPORT int Destroy(const char *application, void *obj)
 	return 0;
 }
 
-DLL_EXPORT int LibVersion()
+BASEMODULES_EXPORT int LibVersion()
 {
 	return -1;
 }
 
-DLL_EXPORT int GetModuleList(const char *application, void *listptr)
+BASEMODULES_EXPORT int GetModuleList(const char *application, void *listptr)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return -1;

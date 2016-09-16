@@ -11,13 +11,15 @@
 #ifndef IMAGINGMODULES_H
 #define IMAGINGMODULES_H
 
-#include "ImagingAlgorithms_global.h"
+#include "ImagingModules_global.h"
+
 
 extern "C" {
-IMAGINGALGORITHMSSHARED_EXPORT void * GetModule(const char *application, const char * name);
-IMAGINGALGORITHMSSHARED_EXPORT int Destroy(const char *application, void *obj);
-IMAGINGALGORITHMSSHARED_EXPORT int LibVersion();
-IMAGINGALGORITHMSSHARED_EXPORT int GetModuleList(const char *application, void *listptr);
+IMAGINGMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name);
+IMAGINGMODULESSHARED_EXPORT int Destroy(const char *application, void *obj);
+IMAGINGMODULESSHARED_EXPORT int LibVersion();
+IMAGINGMODULESSHARED_EXPORT int GetModuleList(const char *application, void *listptr);
+
 }
 
 #endif

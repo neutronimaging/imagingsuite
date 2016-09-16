@@ -4,7 +4,7 @@
  *  Created on: Jun 22, 2011
  *      Author: kaestner
  */
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "KernelFuzzyCMeans.h"
 #include <segmentation/kernelfuzzykmeans.h>
 #include <strings/miscstring.h>

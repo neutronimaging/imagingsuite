@@ -93,16 +93,12 @@ unix:!symbian {
     INSTALLS += target
 }
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig
-
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-
+LIBS+= -lkipl -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include

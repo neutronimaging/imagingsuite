@@ -1,7 +1,7 @@
 #ifndef STRIPEFILTERMODULE_H
 #define STRIPEFILTERMODULE_H
 
-#include "ImagingAlgorithms_global.h"
+#include "ImagingModules_global.h"
 #include <string>
 #include <map>
 
@@ -12,7 +12,7 @@
 
 #include <StripeFilter.h>
 
-class IMAGINGALGORITHMSSHARED_EXPORT StripeFilterModule: public KiplProcessModuleBase {
+class IMAGINGMODULESSHARED_EXPORT StripeFilterModule: public KiplProcessModuleBase {
 public:
     StripeFilterModule();
     virtual ~StripeFilterModule();

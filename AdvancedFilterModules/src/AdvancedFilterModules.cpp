@@ -12,7 +12,7 @@
 // AdvancedFilterModules.cpp : Defines the exported functions for the DLL application.
 //
 
-#include "stdafx.h"
+#include "AdvancedFilterModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include "AdvancedFilterModules.h"
 #include <string>
@@ -23,7 +23,7 @@
 #include <logging/logger.h>
 
 
-DLL_EXPORT void * GetModule(const char *application, const char * name)
+ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const char * name)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return NULL;
@@ -45,7 +45,7 @@ DLL_EXPORT void * GetModule(const char *application, const char * name)
 	return NULL;
 }
 
-DLL_EXPORT int Destroy(const char *application, void *obj)
+ADVANCEDFILTERMODULES_EXPORT int Destroy(const char *application, void *obj)
 {
 
 	if (strcmp(application,"kiptool")!=0)
@@ -65,12 +65,12 @@ DLL_EXPORT int Destroy(const char *application, void *obj)
 	return 0;
 }
 
-DLL_EXPORT int LibVersion()
+ADVANCEDFILTERMODULES_EXPORT int LibVersion()
 {
 	return -1;
 }
 
-DLL_EXPORT int GetModuleList(const char *application, void *listptr)
+ADVANCEDFILTERMODULES_EXPORT int GetModuleList(const char *application, void *listptr)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return -1;
