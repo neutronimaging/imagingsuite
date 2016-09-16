@@ -84,7 +84,7 @@ int AddModuleDialog::exec()
 {
     std::ostringstream msg;
 
-    QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
+    QString appPath = QCoreApplication::applicationDirPath();
 
     msg<<"appPath "<<appPath.toStdString();
     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -98,6 +98,7 @@ int AddModuleDialog::exec()
         #ifdef Q_OS_WIN
             fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
         #else
+            appPath += +"/../Frameworks";
             fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
         #endif
     }
@@ -232,13 +233,14 @@ void AddModuleDialog::on_change_objectfile()
 {
     std::ostringstream msg;
 
-    QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
+    QString appPath = QCoreApplication::applicationDirPath();
 
     QString fileName;
 
     #ifdef Q_OS_WIN
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
     #else
+        appPath+="/../Frameworks";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
     #endif
 
