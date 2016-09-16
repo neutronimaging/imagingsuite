@@ -50,50 +50,33 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-SOURCES += ../../src/main.cpp\
-        ../../src/kiptoolmainwindow.cpp \
-    ../../src/ImageIO.cpp \
-    ../../src/stdafx.cpp \
-    ../../src/confighistorydialog.cpp
+SOURCES +=  ../../src/main.cpp\
+            ../../src/kiptoolmainwindow.cpp \
+            ../../src/ImageIO.cpp \
+            ../../src/confighistorydialog.cpp
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
-    ../../src/ImageIO.h \
-    ../../src/targetver.h \
-    ../../src/stdafx.h \
-    ../../src/confighistorydialog.h
+            ../../src/ImageIO.h \
+            ../../src/confighistorydialog.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
-    ../../src/confighistorydialog.ui
+            ../../src/confighistorydialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/release/ -lProcessFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../ProcessFramework/qt/build-ProcessFramework-Qt5-Release/debug/ -lProcessFramework
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/debug/ -lQtAddons
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure
-
 INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/release/ -lQtModuleConfigure
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gui/trunk/qt/QtModuleConfigure-build-Qt5-Debug/debug/ -lQtModuleConfigure
-
-
 INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
 
 INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include

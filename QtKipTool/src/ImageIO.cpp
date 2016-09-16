@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <KiplProcessConfig.h>
 #include <KiplFrameworkException.h>
 #include <base/KiplException.h>
