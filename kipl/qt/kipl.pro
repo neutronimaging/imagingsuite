@@ -25,7 +25,7 @@ unix {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
+#        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -106,7 +106,8 @@ SOURCES += \
     ../src/filters/nonlocalmeans.cpp \
     ../src/math/PoissonNoise.cpp \
     ../src/filters/stddevfilter.cpp \
-    ../src/interactors/interactionbase.cpp
+    ../src/interactors/interactionbase.cpp \
+    ../src/segmentation/multivariateclassifyerbase.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -296,7 +297,8 @@ HEADERS +=\
     ../include/math/PoissonNoise.h \
     ../include/filters/stddevfilter.h \
     ../include/interactors/interactionbase.h \
-    ../include/containers/ringbuffer.h
+    ../include/containers/ringbuffer.h \
+    ../include/segmentation/multivariateclassifyerbase.h
 
 
 
