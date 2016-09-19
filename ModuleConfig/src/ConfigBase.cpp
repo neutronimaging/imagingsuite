@@ -36,6 +36,7 @@ ConfigBase::ConfigBase(const ConfigBase &config) :
 	logger(config.m_sName),
 	m_sName(config.m_sName),
     m_sApplicationPath(config.m_sApplicationPath),
+    UserInformation(config.UserInformation),
     modules(config.modules)
 {
 
@@ -47,6 +48,7 @@ const ConfigBase & ConfigBase::operator=(const ConfigBase &config)
 	m_sName=config.m_sName;
     m_sApplicationPath=config.m_sApplicationPath;
 	modules=config.modules;
+    UserInformation=config.UserInformation;
 
 	return *this;
 }
