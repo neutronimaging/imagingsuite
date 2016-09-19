@@ -3,6 +3,7 @@
 
 #include <base/thistogram.h>
 #include <base/timage.h>
+#include <base/imageinfo.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -17,6 +18,10 @@ private Q_SLOTS:
 
     // Tests for TImage
     void testTImageInitialization();
+
+    // Tests for ImageInformation
+    void testImageInfoCtor();
+    void testImageInfoResolutions();
 
     // Tests for BivariateHistogram
     void testBivariateHistogramInitialize();
@@ -39,6 +44,75 @@ void TkiplbasetestTest::cleanupTestCase()
 void TkiplbasetestTest::testTImageInitialization()
 {
     QVERIFY2(true, "Failure");
+}
+
+void TkiplbasetestTest::testImageInfoCtor()
+{
+    kipl::base::ImageInfo infoA;
+
+    QVERIFY(infoA.sSoftware=="KIPL image processing library");        ///< TIFF tag 305
+    QVERIFY(infoA.sArtist=="Anders Kaestner");	         ///< TIFF tag 315
+    QVERIFY(infoA.sCopyright=="Anders Kaestner");       ///< TIFF tag 33432
+    QVERIFY(infoA.sDescription=="");     ///< TIFF tag 270
+    QVERIFY(infoA.nBitsPerSample==16);   ///< Number of bits per sample as read from the image file
+    QVERIFY(infoA.nSamplesPerPixel==1); ///< Number of samples per pixel in the image file. Mainly applies to color images
+    QVERIFY(infoA.nSampleFormat==0);
+
+    QVERIFY(infoA.GetMetricX()==1.0f);
+    QVERIFY(infoA.GetMetricY()==1.0f);
+
+    infoA.sArtist="Pelle";
+    infoA.sCopyright="Somebody";
+    infoA.sDescription="Hepp";
+    infoA.nBitsPerSample=8;
+    infoA.nSampleFormat=2;
+    infoA.nSamplesPerPixel=3;
+    infoA.SetMetricX(10.0f);
+    infoA.SetMetricY(20.0f);
+
+    kipl::base::ImageInfo infoB(infoA);
+
+    QVERIFY(infoA.sSoftware         == infoB.sSoftware);        ///< TIFF tag 305
+    QVERIFY(infoA.sArtist           == infoB.sArtist);	         ///< TIFF tag 315
+    QVERIFY(infoA.sCopyright        == infoB.sCopyright);       ///< TIFF tag 33432
+    QVERIFY(infoA.sDescription      == infoB.sDescription);     ///< TIFF tag 270
+    QVERIFY(infoA.nBitsPerSample    == infoB.nBitsPerSample);   ///< Number of bits per sample as read from the image file
+    QVERIFY(infoA.nSamplesPerPixel  == infoB.nSamplesPerPixel); ///< Number of samples per pixel in the image file. Mainly applies to color images
+    QVERIFY(infoA.nSampleFormat     == infoB.nSampleFormat);
+
+    QVERIFY(infoA.GetMetricX()==infoB.GetMetricX());
+    QVERIFY(infoA.GetMetricY()==infoB.GetMetricY());
+
+    kipl::base::ImageInfo infoC;
+    infoC=infoA;
+
+    QVERIFY(infoA.sSoftware         == infoC.sSoftware);        ///< TIFF tag 305
+    QVERIFY(infoA.sArtist           == infoC.sArtist);	         ///< TIFF tag 315
+    QVERIFY(infoA.sCopyright        == infoC.sCopyright);       ///< TIFF tag 33432
+    QVERIFY(infoA.sDescription      == infoC.sDescription);     ///< TIFF tag 270
+    QVERIFY(infoA.nBitsPerSample    == infoC.nBitsPerSample);   ///< Number of bits per sample as read from the image file
+    QVERIFY(infoA.nSamplesPerPixel  == infoC.nSamplesPerPixel); ///< Number of samples per pixel in the image file. Mainly applies to color images
+    QVERIFY(infoA.nSampleFormat     == infoC.nSampleFormat);
+
+    QVERIFY(infoA.GetMetricX()==infoC.GetMetricX());
+    QVERIFY(infoA.GetMetricY()==infoC.GetMetricY());
+}
+
+void TkiplbasetestTest::testImageInfoResolutions()
+{
+    kipl::base::ImageInfo infoA;
+
+    infoA.SetMetricX(10.0f);
+    QVERIFY(infoA.GetDPCMX() == 1.0f);
+    QVERIFY(infoA.GetDPIX()  == 25.4f/10.0f);
+
+    infoA.SetMetricY(20.0f);
+    QVERIFY(infoA.GetDPCMY() == 10.0f/20.0f);
+    QVERIFY(infoA.GetDPIY()  == 25.4f/20.0f);
+
+    infoA.SetDPCMX(10.0f);
+    QVERIFY(infoA.GetMetricX()  == 1.0f);
+
 }
 
 void TkiplbasetestTest::testBivariateHistogramInitialize()

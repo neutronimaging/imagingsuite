@@ -63,31 +63,33 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname)
 		msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
-	
+
 	// We need to set some values for basic tags before we can add any data
-	TIFFSetField(image, TIFFTAG_IMAGEWIDTH, static_cast<int>(src.Size(0)));
-	TIFFSetField(image, TIFFTAG_IMAGELENGTH, static_cast<int>(src.Size(1)));
-	TIFFSetField(image, TIFFTAG_BITSPERSAMPLE, 16);
-	TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL, 1);
-	TIFFSetField(image, TIFFTAG_SAMPLEFORMAT, 1);
-	TIFFSetField(image, TIFFTAG_ROWSPERSTRIP, src.Size(1));
+    TIFFSetField(image, TIFFTAG_IMAGEWIDTH,         static_cast<int>(src.Size(0)));
+    TIFFSetField(image, TIFFTAG_IMAGELENGTH,        static_cast<int>(src.Size(1)));
+    TIFFSetField(image, TIFFTAG_BITSPERSAMPLE,      16);
+    TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL,    1);
+    TIFFSetField(image, TIFFTAG_SAMPLEFORMAT,       1);
+    TIFFSetField(image, TIFFTAG_ROWSPERSTRIP,       src.Size(1));
 	
-	TIFFSetField(image, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
-	TIFFSetField(image, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
-	TIFFSetField(image, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
-	TIFFSetField(image, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+    TIFFSetField(image, TIFFTAG_COMPRESSION,        COMPRESSION_NONE);
+    TIFFSetField(image, TIFFTAG_PHOTOMETRIC,        PHOTOMETRIC_MINISBLACK);
+    TIFFSetField(image, TIFFTAG_FILLORDER,          FILLORDER_MSB2LSB);
+    TIFFSetField(image, TIFFTAG_PLANARCONFIG,       PLANARCONFIG_CONTIG);
 	
-	TIFFSetField(image, TIFFTAG_XRESOLUTION, src.info.GetDPCMX());
-	TIFFSetField(image, TIFFTAG_YRESOLUTION, src.info.GetDPCMY());
-	TIFFSetField(image, TIFFTAG_RESOLUTIONUNIT, RESUNIT_CENTIMETER);
-	TIFFSetField(image, TIFFTAG_COPYRIGHT,src.info.sCopyright.c_str());
-	TIFFSetField(image, TIFFTAG_ARTIST,src.info.sArtist.c_str());
-	TIFFSetField(image, TIFFTAG_SOFTWARE,src.info.sSoftware.c_str());
+    TIFFSetField(image, TIFFTAG_RESOLUTIONUNIT,     RESUNIT_CENTIMETER);
+    TIFFSetField(image, TIFFTAG_XRESOLUTION,        src.info.GetDPCMX());
+    TIFFSetField(image, TIFFTAG_YRESOLUTION,        src.info.GetDPCMY());
+
+    TIFFSetField(image, TIFFTAG_COPYRIGHT,          src.info.sCopyright.c_str());
+    TIFFSetField(image, TIFFTAG_ARTIST,             src.info.sArtist.c_str());
+    TIFFSetField(image, TIFFTAG_SOFTWARE,           src.info.sSoftware.c_str());
 	if (src.info.sDescription.empty()) {
-		TIFFSetField(image, 270, "slope = 1.0 offset = 0.0 ");
+
+        TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, "slope = 1.0E0\noffset = 0.0E0");
 	}
 	else
-		TIFFSetField(image, 270, src.info.sDescription.c_str());
+        TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, src.info.sDescription.c_str());
 	
 	// Write the information to the file
     TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), src.Size()*sizeof(unsigned short));
@@ -110,7 +112,7 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname, ImgType lo, I
 			float slope = (static_cast<float>(hi)-static_cast<float>(lo))/std::numeric_limits<unsigned short>::max();
 
 			msg.precision(5);
-			msg<<"slope = "<<scientific<<slope<<" offset = "<<lo;
+            msg<<"slope = "<<scientific<<slope<<"\noffset = "<<scientific<<lo;
 			src.info.sDescription=msg.str();
 		}
 	}
@@ -251,7 +253,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname)
 	TIFFGetField(image, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	float resX,resY;
 	TIFFGetField(image,TIFFTAG_XRESOLUTION,&resX);
-	TIFFGetField(image,TIFFTAG_XRESOLUTION,&resY);
+    TIFFGetField(image,TIFFTAG_YRESOLUTION,&resY);
 
 	switch (resunit) {
 		case RESUNIT_NONE :
@@ -373,7 +375,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 
 	bufferSize = TIFFScanlineSize(image);
 	try {
-		if((buffer = new unsigned char[bufferSize]) == NULL){
+        if((buffer = new unsigned char[bufferSize]) == NULL) {
 			msg.str("");
 			msg<<"Could not allocate"<<bufferSize<<" bytes for the uncompressed image";
 			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -486,7 +488,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 	TIFFGetField(image, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	float resX,resY;
 	TIFFGetField(image,TIFFTAG_XRESOLUTION,&resX);
-	TIFFGetField(image,TIFFTAG_XRESOLUTION,&resY);
+    TIFFGetField(image,TIFFTAG_YRESOLUTION,&resY);
 
 	switch (resunit) {
 		case RESUNIT_NONE :

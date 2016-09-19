@@ -17,6 +17,7 @@ namespace kipl { namespace base {
 			sDescription(""),
 			nBitsPerSample(16),
 			nSamplesPerPixel(1),
+            nSampleFormat(0),
 			fResolutionX(1.0f),
 			fResolutionY(1.0f)
 		{}
@@ -30,6 +31,7 @@ namespace kipl { namespace base {
 					sDescription(info.sDescription),
 					nBitsPerSample(info.nBitsPerSample),
 					nSamplesPerPixel(info.nSamplesPerPixel),
+                    nSampleFormat(info.nSampleFormat),
 					fResolutionX(info.fResolutionX),
 					fResolutionY(info.fResolutionY)
 				{}
@@ -38,14 +40,15 @@ namespace kipl { namespace base {
         /// \param info The instance to copy
 		const ImageInfo & operator=(const ImageInfo & info)
 		{
-			sSoftware=info.sSoftware;
-			sArtist=info.sArtist;
-			sCopyright=info.sCopyright;
-			sDescription=info.sDescription;
-			nBitsPerSample=info.nBitsPerSample;
-			nSamplesPerPixel=info.nSamplesPerPixel;
-			fResolutionX=info.fResolutionX;
-			fResolutionY=info.fResolutionY;
+            sSoftware        = info.sSoftware;
+            sArtist          = info.sArtist;
+            sCopyright       = info.sCopyright;
+            sDescription     = info.sDescription;
+            nBitsPerSample   = info.nBitsPerSample;
+            nSamplesPerPixel = info.nSamplesPerPixel;
+            nSampleFormat    = info.nSampleFormat;
+            fResolutionX     = info.fResolutionX;
+            fResolutionY     = info.fResolutionY;
 
 			return *this;
 		}
@@ -98,19 +101,17 @@ namespace kipl { namespace base {
         /// \return the number of pixels per inch
 		float GetDPIY() {return 25.4f/fResolutionY;}
 		
-        std::string sSoftware;    ///< TIFF tag 305
-        std::string sArtist;	  ///< TIFF tag 315
-        std::string sCopyright;   ///< TIFF tag 33432
-        std::string sDescription; ///< TIFF tag 270
-        unsigned short nBitsPerSample;  ///< Number of bits per sample as read from the image file
+        std::string    sSoftware;        ///< TIFF tag 305
+        std::string    sArtist;	         ///< TIFF tag 315
+        std::string    sCopyright;       ///< TIFF tag 33432
+        std::string    sDescription;     ///< TIFF tag 270
+        unsigned short nBitsPerSample;   ///< Number of bits per sample as read from the image file
         unsigned short nSamplesPerPixel; ///< Number of samples per pixel in the image file. Mainly applies to color images
         unsigned short nSampleFormat;
 
-
 	private:
-		float fResolutionX; // unit mm/pixel
-		float fResolutionY; // unit mm/pixel
-
+        float          fResolutionX;     ///< unit mm/pixel
+        float          fResolutionY;     ///< unit mm/pixel
 	};
 
 }}
