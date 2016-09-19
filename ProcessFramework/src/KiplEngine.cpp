@@ -153,6 +153,10 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 		m_ResultImage.info.sSoftware="Kipl Processing Framework";
         m_ResultImage.info.sDescription=m_Config.UserInformation.sSample;
 
+        msg.str("");
+        msg<<"Saving image with the following information header:"<<std::endl<<m_ResultImage.info;
+        logger(logger.LogMessage,msg.str());
+
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
 		msg.str("");
 		msg<<"Serializing results to "<<fname
