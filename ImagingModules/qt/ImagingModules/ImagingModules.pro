@@ -17,13 +17,15 @@ DEFINES += IMAGINGMODULES_LIBRARY
 
 SOURCES +=  ../../src/imagingmodules.cpp \
             ../../src/translateprojectionmodule.cpp \
-            ../../src/stripefiltermodule.cpp
+            ../../src/stripefiltermodule.cpp \
+            ../../src/ringcleanmodule.cpp
 
 HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/imagingmodules.h\
             ../../src/ImagingModules_global.h \
             ../../src/translateprojectionmodule.h \
-            ../../src/stripefiltermodule.h
+            ../../src/stripefiltermodule.h \
+            ../../src/ringcleanmodule.h
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
