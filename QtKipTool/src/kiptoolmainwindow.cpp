@@ -1,3 +1,14 @@
+//
+// This file is part of the i KIPL image processing tool by Anders Kaestner
+// (c) 2008 Anders Kaestner
+// Distribution is only allowed with the permission of the author.
+//
+// Revision information
+// $Author$
+// $Date$
+// $Rev$
+//
+
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -113,6 +124,7 @@ void KipToolMainWindow::UpdateDialog()
 
     ui->combo_FileType->setCurrentIndex(idx);
     ui->widget_moduleconfigurator->SetModules(m_config.modules);
+    ui->text_description->setText(QString(m_config.UserInformation.sComment.c_str()));
 }
 
 void KipToolMainWindow::UpdateConfig()
@@ -149,6 +161,11 @@ void KipToolMainWindow::UpdateConfig()
         case 2: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
         case 3: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat; break;
     }
+
+    m_config.UserInformation.sComment       = ui->text_description->toPlainText().toStdString();
+    m_config.UserInformation.sInstrument    = ui->edit_instrument->text().toStdString();
+    m_config.UserInformation.sOperator      = ui->edit_username->text().toStdString();
+    m_config.UserInformation.sVersion       = $
 }
 
 void KipToolMainWindow::SetupCallbacks()
