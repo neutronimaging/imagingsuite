@@ -165,7 +165,8 @@ void KipToolMainWindow::UpdateConfig()
     m_config.UserInformation.sComment       = ui->text_description->toPlainText().toStdString();
     m_config.UserInformation.sInstrument    = ui->edit_instrument->text().toStdString();
     m_config.UserInformation.sOperator      = ui->edit_username->text().toStdString();
-    m_config.UserInformation.sVersion       = $
+    m_config.UserInformation.sVersion       = "$Rev$";
+
 }
 
 void KipToolMainWindow::SetupCallbacks()
