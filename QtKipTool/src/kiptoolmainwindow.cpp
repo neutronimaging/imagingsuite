@@ -105,15 +105,15 @@ void KipToolMainWindow::UpdateDialog()
     ui->edit_destinationpath->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationPath));
     ui->edit_destinationmask->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationFileMask));
 
-    ui->spin_idxfirst->setValue(m_config.mImageInformation.nFirstFileIndex);
-    ui->spin_idxlast->setValue(m_config.mImageInformation.nLastFileIndex);
-    ui->spin_idxstep->setValue(m_config.mImageInformation.nStepFileIndex);
+    ui->spin_idxfirst->setValue(static_cast<int>(m_config.mImageInformation.nFirstFileIndex));
+    ui->spin_idxlast->setValue(static_cast<int>(m_config.mImageInformation.nLastFileIndex));
+    ui->spin_idxstep->setValue(static_cast<int>(m_config.mImageInformation.nStepFileIndex));
 
     ui->check_crop->setChecked(m_config.mImageInformation.bUseROI);
-    ui->spin_crop0->setValue(m_config.mImageInformation.nROI[0]);
-    ui->spin_crop1->setValue(m_config.mImageInformation.nROI[1]);
-    ui->spin_crop2->setValue(m_config.mImageInformation.nROI[2]);
-    ui->spin_crop3->setValue(m_config.mImageInformation.nROI[3]);
+    ui->spin_crop0->setValue(static_cast<int>(m_config.mImageInformation.nROI[0]));
+    ui->spin_crop1->setValue(static_cast<int>(m_config.mImageInformation.nROI[1]));
+    ui->spin_crop2->setValue(static_cast<int>(m_config.mImageInformation.nROI[2]));
+    ui->spin_crop3->setValue(static_cast<int>(m_config.mImageInformation.nROI[3]));
     int idx=0;
     switch (m_config.mOutImageInformation.eResultImageType) {
         case kipl::io::TIFF8bits  : idx=1; break;
@@ -125,6 +125,11 @@ void KipToolMainWindow::UpdateDialog()
     ui->combo_FileType->setCurrentIndex(idx);
     ui->widget_moduleconfigurator->SetModules(m_config.modules);
     ui->text_description->setText(QString(m_config.UserInformation.sComment.c_str()));
+
+    ui->edit_samplename->setText(m_config.UserInformation.sSample.c_str());
+    ui->edit_username->setText(m_config.UserInformation.sOperator.c_str());
+    ui->edit_projectname->setText(m_config.UserInformation.sProjectNumber.c_str());
+    ui->edit_instrument->setText(m_config.UserInformation.sInstrument.c_str());
 }
 
 void KipToolMainWindow::UpdateConfig()
@@ -165,8 +170,8 @@ void KipToolMainWindow::UpdateConfig()
     m_config.UserInformation.sComment       = ui->text_description->toPlainText().toStdString();
     m_config.UserInformation.sInstrument    = ui->edit_instrument->text().toStdString();
     m_config.UserInformation.sOperator      = ui->edit_username->text().toStdString();
-    m_config.UserInformation.sVersion       = "$Rev$";
-
+    m_config.UserInformation.sVersion       = kipl::strings::value2string(kipl::strings::VersionNumber("$Rev$"));
+    m_config.UserInformation.sSample        = ui->edit_samplename->text().toStdString();
 }
 
 void KipToolMainWindow::SetupCallbacks()
