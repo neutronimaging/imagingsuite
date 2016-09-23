@@ -168,6 +168,7 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="scanarc1") ProjectionInfo.fScanArc[1]=atof(value.c_str());
             if (var=="rotate") string2enum(value,ProjectionInfo.eRotate);
             if (var=="flip") string2enum(value,ProjectionInfo.eFlip);
+            if (var=="direction") string2enum(value, ProjectionInfo.eDirection);
         }
 
         if (group=="matrix") {
@@ -231,7 +232,7 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
     std::string sName, sValue;
     int depth=xmlTextReaderDepth(reader);
 	ProjectionInfo.fScanArc[0]=0.0f;
-	ProjectionInfo.fScanArc[1]=180.0f;
+    ProjectionInfo.fScanArc[1]=180.0f;
 
     while (ret == 1) {
     	if (xmlTextReaderNodeType(reader)==1) {
@@ -250,6 +251,9 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 
 	        if (sName=="dims")
 	        	kipl::strings::String2Array(sValue,ProjectionInfo.nDims,2);
+            if (sName=="beamgeometry")
+                string2enum(sValue,ProjectionInfo.beamgeometry);
+
 	        if (sName=="resolution")
 	        	kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
 	        if (sName=="binning")
@@ -268,7 +272,9 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 			if (sName=="scantype")		  string2enum(sValue,ProjectionInfo.scantype);
 			if (sName=="imagetype")		  string2enum(sValue,ProjectionInfo.imagetype);
 	        if (sName=="center")          ProjectionInfo.fCenter         = static_cast<float>(atof(sValue.c_str()));
-	        if (sName=="translation")     ProjectionInfo.bTranslate = kipl::strings::string2bool(sValue);
+            if (sName=="sod")             ProjectionInfo.fSOD            = static_cast<float>(atof(sValue.c_str()));
+            if (sName=="sdd")             ProjectionInfo.fSDD            = static_cast<float>(atof(sValue.c_str()));
+            if (sName=="translation")     ProjectionInfo.bTranslate = kipl::strings::string2bool(sValue);
 			if (sName=="tiltangle")
 				ProjectionInfo.fTiltAngle = static_cast<float>(atof(sValue.c_str()));
 			if (sName=="tiltpivot")
@@ -302,6 +308,7 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 			}
 			if (sName=="rotate") string2enum(sValue,ProjectionInfo.eRotate);
 			if (sName=="flip") string2enum(sValue,ProjectionInfo.eFlip);
+            if (sName=="direction") string2enum(sValue,ProjectionInfo.eDirection);
     	}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -506,15 +513,19 @@ std::string ReconConfig::cSystem::WriteXML(size_t indent)
 
 //---------
 ReconConfig::cProjections::cProjections() :
+beamgeometry(BeamGeometry_Cone),
 fBinning(1),
-nMargin(2),
+nMargin(2), // modify to 0
 nFirstIndex(1),
 nLastIndex(625),
 nProjectionStep(1),
 bRepeatLine(false),
 scantype(SequentialScan),
 imagetype(ImageType_Projections),
-fCenter(1024),
+fCenter(1024.0f),
+fSOD(100.0f),
+fSDD(100.0f),
+eDirection(kipl::base::RotationDirCW), // default clockwise
 bTranslate(false),
 fTiltAngle(0.0f),
 fTiltPivotPosition(0.0f),
@@ -530,8 +541,10 @@ nDCFirstIndex(1),
 nDCCount(5),
 eFlip(kipl::base::ImageFlipNone),
 eRotate(kipl::base::ImageRotateNone)
+
 {
 nDims[0]=2048; nDims[1]=2048;
+fpPoint[0]= 500.0f; fpPoint[1]= 500.0f; // initialize pPoint
 fResolution[0]=0.01f; fResolution[1]=0.01f;
 roi[0]=0; roi[2]=2047;
 roi[1]=0; roi[3]=2047;
@@ -548,6 +561,7 @@ fScanArc[0]=0; fScanArc[1]=360;
 }
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
+    beamgeometry(a.beamgeometry),
 	fBinning(a.fBinning),
     nMargin(a.nMargin),
 	nFirstIndex(a.nFirstIndex),
@@ -558,6 +572,9 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	scantype(a.scantype),
 	imagetype(a.imagetype),
 	fCenter(a.fCenter),
+    fSOD(a.fSOD),
+    fSDD(a.fSDD),
+    eDirection(a.eDirection),
 	bTranslate(a.bTranslate),
 	fTiltAngle(a.fTiltAngle),
 	fTiltPivotPosition(a.fTiltPivotPosition),
@@ -572,13 +589,16 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	nDCFirstIndex(a.nDCFirstIndex),
 	nDCCount(a.nDCCount),
 	eFlip(a.eFlip),
-	eRotate(a.eRotate)
+    eRotate(a.eRotate)
+
 {
 	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
 	fResolution[0]=a.fResolution[0]; fResolution[1]=a.fResolution[1];
 	roi[0]=a.roi[0]; roi[2]=a.roi[2];
 	roi[1]=a.roi[1]; roi[3]=a.roi[3];
 	fScanArc[0]=a.fScanArc[0]; fScanArc[1]=a.fScanArc[1];
+
+    fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
 
     projection_roi[0] = a.projection_roi[0];
     projection_roi[1] = a.projection_roi[1];
@@ -593,6 +613,7 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 
 ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjections &a)
 {
+    beamgeometry    = a.beamgeometry;
 	fBinning        = a.fBinning;
     nMargin         = a.nMargin;
 	nFirstIndex     = a.nFirstIndex;
@@ -603,6 +624,8 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nLastIndex		= a.nLastIndex;
 	nlSkipList		= a.nlSkipList;
 	fCenter         = a.fCenter;
+    fSOD            = a.fSOD;
+    fSDD            = a.fSDD;
 	bTranslate      = a.bTranslate;
 	fTiltAngle      = a.fTiltAngle;
 	fTiltPivotPosition = a.fTiltPivotPosition;
@@ -626,6 +649,8 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	fScanArc[0]     = a.fScanArc[0];
 	fScanArc[1]     = a.fScanArc[1];
 
+    fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
+
     projection_roi[0] = a.projection_roi[0];
     projection_roi[1] = a.projection_roi[1];
     projection_roi[2] = a.projection_roi[2];
@@ -638,6 +663,7 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 
 	eFlip = a.eFlip;
 	eRotate = a.eRotate;
+    eDirection = a.eDirection;
 
 	return *this;
 }
@@ -648,6 +674,7 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	ostringstream str;
 	str<<setw(indent)  <<" "<<"<projections>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<dims>"<<nDims[0]<<" "<<nDims[1]<<"</dims>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<beamgeometry>"<<beamgeometry<<"</beamgeometry>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<resolution>"<<fResolution[0]<<" "<<fResolution[1]<<"</resolution>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<binning>"<<fBinning<<"</binning>\n";
     str<<setw(indent+4)  <<" "<<"<margin>"<<nMargin<<"</margin>\n";
@@ -661,6 +688,10 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	str<<setw(indent+4)  <<" "<<"<scantype>"<<scantype<<"</scantype>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<imagetype>"<<enum2string(imagetype)<<"</imagetype>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<center>"<<fCenter<<"</center>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<sod>"<<fSOD<<"</sod>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<sdd>"<<fSDD<<"</sdd>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<direction>"<<eDirection<<"</direction>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<pPoint>"<<fpPoint[0]<<" "<<fpPoint[1]<<"</pPoint>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<translation>"<<(bTranslate==true ? "true" : "false")<<"</translation>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<tiltangle>"<<fTiltAngle<<"</tiltangle>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<tiltpivot>"<<fTiltPivotPosition<<"</tiltpivot>"<<std::endl;
@@ -681,7 +712,7 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	str<<setw(indent+4)  <<" "<<"<doseroi>"<<dose_roi[0]<<" "<<dose_roi[1]<<" "<<dose_roi[2]<<" "<<dose_roi[3]<<"</doseroi>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<scanarc>"<<fScanArc[0]<<" "<<fScanArc[1]<<"</scanarc>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<rotate>"<<eRotate<<"</rotate>"<<std::endl;
-			str<<setw(indent+4)  <<" "<<"<flip>"<<eFlip<<"</flip>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<flip>"<<eFlip<<"</flip>"<<std::endl;
 	str<<setw(indent)  <<" "<<"</projections>"<<std::endl;
 	return str.str();
 }
@@ -836,3 +867,49 @@ DLL_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it)
 	return str;
 }
 
+/// Converts a string to a beam geometry enum
+/// \param str The string to convert
+/// \param st an image type variable
+void string2enum(const std::string str, ReconConfig::cProjections::eBeamGeometry &bg)
+{
+    std::map<std::string,ReconConfig::cProjections::eBeamGeometry> nameconv;
+
+    nameconv["parallel"] = ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Parallel;
+    nameconv["cone"]     = ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Cone;
+    nameconv["helix"]    = ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Helix;
+
+    std::string tmpstr=kipl::strings::toLower(str);
+
+    if (nameconv.count(tmpstr)==0)
+        throw ReconException("The key string does not exist for eBeamGeometry",__FILE__,__LINE__);
+
+    bg=nameconv[tmpstr];
+}
+
+/// Converts a beam geometry enum to a string
+/// \param str an image type variable
+/// \returns The converted string
+std::string enum2string(ReconConfig::cProjections::eBeamGeometry &bg)
+{
+    std::string str;
+
+    switch (bg) {
+    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Parallel : str="Parallel"; break;
+    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Cone     : str="Cone"; break;
+    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Helix    : str="Helix"; break;
+    default                    : throw ReconException("Could not convert the beam geometry enum value to a string", __FILE__,__LINE__);
+    }
+
+    return str;
+}
+
+/// Writes the enum to a stream
+/// \param s the target stream
+/// \param st a scan type variable
+/// \returns The updated stream
+std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eBeamGeometry bg)
+{
+    s<<enum2string(bg);
+
+    return s;
+}

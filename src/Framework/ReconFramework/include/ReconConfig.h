@@ -65,6 +65,12 @@ public:
             ImageType_Proj_RepeatSinogram               ///< Repeat a single slice, the input is projections. Indended use; find center of rotation.
 		};
 
+        enum eBeamGeometry {
+            BeamGeometry_Parallel=0,
+            BeamGeometry_Cone,
+            BeamGeometry_Helix
+        };
+
         /// Base constructor, initialize default values.
 		cProjections();
 
@@ -77,6 +83,7 @@ public:
 		cProjections & operator=(const cProjections &a);
 
         size_t nDims[2];            ///< Dimensions of the projections.
+        eBeamGeometry beamgeometry; ///< Selects beam geometry for the data
         float fResolution[2];       ///< Resolution of the projections in mm/pixel.
         float fBinning;             ///< Binning factor, currently only integers are valid.
         size_t nMargin;             ///< Width of the image margin to relax the boundary processing criteria
@@ -88,6 +95,9 @@ public:
         eScanType scantype;         ///< Indicates how the data was acquired
         eImageType imagetype;       ///< Indicates how the data is arranged in the images.
         float fCenter;              ///< Center of rotation
+        float fSOD;                 ///< Source object distance, relevant for divergent beam only
+        float fSDD;                 ///< Source detector distance, relevant for divergent beam only
+        float fpPoint[2];           ///< Piercing point, relevant for divergent beam only
         bool bTranslate;            ///< Indicates if the center of rotation is shifted to the margin.
         float fTiltAngle;           ///< Axis tilt angle
         float fTiltPivotPosition;   ///< Pivot point of the axis tilt. This is the slice were the center of rotation is correct.
@@ -110,6 +120,8 @@ public:
         float fScanArc[2];          ///< Provides the first and last scan angles
         kipl::base::eImageFlip eFlip;   ///< Projection flip operation (horizontal, vertical, both).
         kipl::base::eImageRotate eRotate; ///< Projection rotation operation (90 cw,90 ccw, 180).
+
+        kipl::base::eRotationDirection eDirection; ///< Direction of rotation (clockwise, counterclockwise)
 
         /// Writes the configuration to a string with XML formatting.
         /// \param indent Indent the XML block by N characters.
@@ -213,6 +225,22 @@ RECONFRAMEWORKSHARED_EXPORT void string2enum(const std::string str, ReconConfig:
 /// \returns The converted string
 RECONFRAMEWORKSHARED_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it);
 
+/// Converts a string to a beam geometry enum
+/// \param str The string to convert
+/// \param st an image type variable
+RECONFRAMEWORKSHARED_EXPORT void string2enum(const std::string str, ReconConfig::cProjections::eBeamGeometry &bg);
+
+/// Converts an beam geometry enum to a string
+/// \param st a image type variable
+/// \returns The converted string
+RECONFRAMEWORKSHARED_EXPORT std::string enum2string(ReconConfig::cProjections::eBeamGeometry &bg);
+
+/// Writes the enum to a stream
+/// \param s the target stream
+/// \param st a scan type variable
+/// \returns The updated stream
+RECONFRAMEWORKSHARED_EXPORT std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eBeamGeometry bg);
+
 /// Writes the enum to a stream
 /// \param s the target stream
 /// \param st a scan type variable
@@ -224,5 +252,7 @@ RECONFRAMEWORKSHARED_EXPORT std::ostream & operator<<(std::ostream &s, ReconConf
 /// \param st a scan type variable
 /// \returns The updated stream
 /// RECONFRAMEWORKSHARED_EXPORT std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eImageType it);
+
+
 
 #endif
