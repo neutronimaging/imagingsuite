@@ -11,11 +11,12 @@
         <memory>6000</memory>
         <loglevel>message</loglevel>
     </system>
-    <projections>
+    <projections>	
         <dims>2048 2048</dims>
+	<beamgeometry>parallel</beamgeometry>
         <resolution>0.1 0.1</resolution>
         <binning>1</binning>
-        <margin>2</margin>
+        <margin>0</margin>
         <firstindex>1</firstindex>
         <lastindex>100</lastindex>
         <projectionstep>1</projectionstep>
@@ -23,6 +24,10 @@
         <scantype>sequential</scantype>
         <imagetype>projections</imagetype>
         <center>50</center>
+	<sod>100</sod>
+	<sdd>100</sdd>
+	<direction>rotationdircw</direction>
+	<ppoint>500.0 500.0 </ppoint>
         <translation>false</translation>
         <tiltangle>0</tiltangle>
         <tiltpivot>0</tiltpivot>
@@ -64,6 +69,8 @@
                 <parameters>
                     <uselut>false</uselut>
                     <usenormregion>true</usenormregion>
+		    <useBS>false</useBS>
+		    <BS>0</BS>
                 </parameters>
             </module>
             <module>
