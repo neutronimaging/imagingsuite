@@ -72,10 +72,10 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
 //    mConfig.ProjectionInfo.fpPoint[0] = 132.3; // x in pixel coordinate
 //    mConfig.ProjectionInfo.fpPoint[1] = 154.0; // y in pixel coordinate
 
-    mConfig.ProjectionInfo.fSDD = GetFloatParameter(parameters,"SDD");
-    mConfig.ProjectionInfo.fSOD = GetFloatParameter(parameters,"SOD");
-    mConfig.ProjectionInfo.fpPoint[0] = GetFloatParameter(parameters, "HorizontalCenter");
-    mConfig.ProjectionInfo.fpPoint[1] = GetFloatParameter(parameters, "VerticalCenter");
+//    mConfig.ProjectionInfo.fSDD = GetFloatParameter(parameters,"SDD");
+//    mConfig.ProjectionInfo.fSOD = GetFloatParameter(parameters,"SOD");
+//    mConfig.ProjectionInfo.fpPoint[0] = GetFloatParameter(parameters, "HorizontalCenter");
+//    mConfig.ProjectionInfo.fpPoint[1] = GetFloatParameter(parameters, "VerticalCenter");
     GetUIntParameterVector(parameters,"volumeSize",volume_size,3);
     GetFloatParameterVector(parameters,"volumeSpacing",spacing,3);
 
