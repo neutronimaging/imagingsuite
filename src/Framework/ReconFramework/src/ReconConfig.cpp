@@ -274,6 +274,8 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 	        if (sName=="center")          ProjectionInfo.fCenter         = static_cast<float>(atof(sValue.c_str()));
             if (sName=="sod")             ProjectionInfo.fSOD            = static_cast<float>(atof(sValue.c_str()));
             if (sName=="sdd")             ProjectionInfo.fSDD            = static_cast<float>(atof(sValue.c_str()));
+            if (sName=="pPoint")
+                kipl::strings::String2Array(sValue,ProjectionInfo.fpPoint,2);
             if (sName=="translation")     ProjectionInfo.bTranslate = kipl::strings::string2bool(sValue);
 			if (sName=="tiltangle")
 				ProjectionInfo.fTiltAngle = static_cast<float>(atof(sValue.c_str()));
@@ -362,6 +364,7 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 			if (sName=="rotation")			MatrixInfo.fRotation           = static_cast<float>(atof(sValue.c_str()));
 			if (sName=="useroi")			MatrixInfo.bUseROI = kipl::strings::string2bool(sValue);
 			if (sName=="roi")				kipl::strings::String2Array(sValue,MatrixInfo.roi,4);
+            if (sName=="voxelsize")         kipl::strings::String2Array(sValue,MatrixInfo.fVoxelSize,3);
     	}
         ret = xmlTextReaderRead(reader);
     
@@ -513,7 +516,7 @@ std::string ReconConfig::cSystem::WriteXML(size_t indent)
 
 //---------
 ReconConfig::cProjections::cProjections() :
-beamgeometry(BeamGeometry_Cone),
+beamgeometry(BeamGeometry_Parallel),
 fBinning(1),
 nMargin(2), // modify to 0
 nFirstIndex(1),
@@ -558,6 +561,7 @@ fScanArc[0]=0; fScanArc[1]=360;
     projection_roi[1] = 2047;
     projection_roi[2] = 0;
     projection_roi[3] = 2047;
+
 }
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
@@ -776,6 +780,7 @@ ReconConfig::cMatrix::cMatrix() :
 	FileType(kipl::io::TIFF16bits)
 {
 	nDims[2]=nDims[1]=nDims[0]=0;
+    fVoxelSize[2]=fVoxelSize[1]=fVoxelSize[0]=0.0f;
 	fGrayInterval[0]=0;
 	fGrayInterval[1]=5;
 
@@ -804,6 +809,10 @@ ReconConfig::cMatrix::cMatrix(const cMatrix &a) :
 
 	fGrayInterval[0]    = a.fGrayInterval[0];
 	fGrayInterval[1]    = a.fGrayInterval[1];
+
+    fVoxelSize[0] = a.fVoxelSize[0];
+    fVoxelSize[1] = a.fVoxelSize[1];
+    fVoxelSize[2] = a.fVoxelSize[2];
 }
 
 ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a) 
@@ -827,6 +836,10 @@ ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a)
 	roi[2]= a.roi[2];
 	roi[3]= a.roi[3];
 
+    fVoxelSize[0] = a.fVoxelSize[0];
+    fVoxelSize[1] = a.fVoxelSize[1];
+    fVoxelSize[2] = a.fVoxelSize[2];
+
 	return *this;
 }
 
@@ -847,6 +860,7 @@ std::string ReconConfig::cMatrix::WriteXML(size_t indent)
 	str<<setw(indent+4)  <<" "<<"<grayinterval>"<<fGrayInterval[0]<<" "<<fGrayInterval[1]<<"</grayinterval>"<<endl;	
 	str<<setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(bUseROI)<<"</useroi>"<<endl;
 	str<<setw(indent+4)  <<" "<<"<roi>"<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<" "<<"</roi>"<<endl;
+    str<<setw(indent+4)  <<" "<<"<voxelsize>"<< fVoxelSize[0] << " "<< fVoxelSize[1] <<" " <<fVoxelSize[2] << " " << "</voxelsize>"<< endl;
 	str<<setw(indent)  <<" "<<"</matrix>"<<std::endl;
 
 	return str.str();

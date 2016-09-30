@@ -13,6 +13,7 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <string.h>
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -29,7 +30,7 @@
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
 	m_FirstSlice(0),
-    m_ProjectionMargin(2),
+    m_ProjectionMargin(0),
 	m_ProjectionReader(interactor),
     m_BackProjector(NULL),
     nProcessedBlocks(0),
@@ -114,25 +115,41 @@ int ReconEngine::Run()
 		m_Config.ProjectionInfo.roi[3]
 	};
 
-    if (m_Config.MatrixInfo.bUseROI) {
-        m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;;
-        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
-    }
-    else {
-        m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
-        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-    }
+//    if (m_Config.MatrixInfo.bUseROI) {
+//        m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;;
+//        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
+//    }
+//    else {
+//        m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
+//        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
+//    }
+
 
     size_t totalSlices=0;
 
-    if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-        m_Config.MatrixInfo.nDims[2] = roi[3];
-        totalSlices=roi[3];
+    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel) {
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+            m_Config.MatrixInfo.nDims[2] = roi[3];
+            totalSlices=roi[3];
+        }
+        else {
+            m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1]+1;
+            totalSlices=roi[3]-roi[1];
+        }
     }
-    else {
-        m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1]+1;
-        totalSlices=roi[3]-roi[1];
+
+   if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+      std::cout<< "sono nell'else CONE" << std::endl;
+        // now values are set from GUI
+//            m_Config.MatrixInfo.nDims[0] = 512;
+//            m_Config.MatrixInfo.nDims[1] = 512;
+//            m_Config.MatrixInfo.nDims[2] = 85; // values must be read from GUI
+            totalSlices = m_Config.MatrixInfo.nDims[2];
+
     }
+
+//    std::cout<< "total slices in ReconEngine::Run()"<< std::endl;
+//    std::cout << totalSlices << std::endl;
 
 
 	m_Volume.Resize(m_Config.MatrixInfo.nDims);
@@ -342,8 +359,20 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 {
 	bool bTransposed=false;
 
+
+
 	kipl::base::TImage<float,2> slice;
-    for (size_t i=0; i<(dims[3]-dims[1]); i++) {
+
+//    std::cout<< "Debug ReconEngine::TransferMatrix(size_t *dims)" << std::endl;
+//    std::cout << dims[3]-dims[1] << std::endl;
+//    std::cout << dims[0] << " " << dims[1] << " " << dims[2] << " " << dims[3] << std::endl;
+
+//    std::cout  << "Debug on mVolume: " << std::endl;
+//    std::cout << m_Volume.Size(0) << " " << m_Volume.Size(1) << " " << m_Volume.Size(2) << std::endl;
+
+
+//    for (size_t i=0; i<(dims[3]-dims[1]); i++) {
+    for (size_t i=0; i<m_Volume.Size(2); i++) {
 		slice=m_BackProjector->GetModule()->GetSlice(i);
 		float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
 		memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
@@ -550,24 +579,57 @@ int ReconEngine::Run3DFull()
 		m_Config.ProjectionInfo.roi[3]
 	};
 
-	if (m_Config.MatrixInfo.bUseROI) {
-		m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
-		m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
-	}
-	else {
-		m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
-		m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-	}
+    std::cout << "ebeam geometry: " << std::endl;
+    std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+
+
+    // GO ON FROM HERE.... SET EBEAM STUFF ..!!!
+    std::cout << "strcmp ebeamgeometry: " << (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+                 << std::endl;
+
+
+    std::cout << "prova SDD: " << m_Config.ProjectionInfo.fSDD << std::endl;
+    // strcmp ok?
 
     size_t totalSlices=0;
-    if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-        m_Config.MatrixInfo.nDims[2] = roi[3];
-        totalSlices=roi[3];
-    }
-    else {
-        m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1];
-        totalSlices=roi[3]-roi[1];
-    }
+
+    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel) {
+
+        if (m_Config.MatrixInfo.bUseROI) {
+            m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
+            m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
+        }
+        else {
+            m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
+            m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
+        }
+
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+            m_Config.MatrixInfo.nDims[2] = roi[3];
+            totalSlices=roi[3];
+        }
+        else {
+            m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1];
+        }
+//        totalSlices=m_Config.MatrixInfo.nDims[2];
+}
+
+    // now set from GUI
+//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+//        std::cout << "sono nell'else CONE" << std::endl;
+//        m_Config.MatrixInfo.nDims[0] = 512;
+//        m_Config.MatrixInfo.nDims[1] = 512;
+//        m_Config.MatrixInfo.nDims[2] = 85; // these values must be read from the GUI!
+////        totalSlices=85;
+////        std::cout  << totalSlices << std::endl;
+//    }
+
+
+    totalSlices=m_Config.MatrixInfo.nDims[2];
+
+    std::cout << "debug on totalslices: " << std::endl;
+    std::cout  << totalSlices << std::endl;
+    std::cout << m_Config.MatrixInfo.nDims[2] << std::endl;
 
 
 	msg.str("");

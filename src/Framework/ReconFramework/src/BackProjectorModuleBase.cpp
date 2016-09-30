@@ -61,6 +61,8 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::m
 
 kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 {
+
+    std::ostringstream msg;
 	size_t origin[2]={0,0};
 	size_t dims[2]={0,0};
 	if (mConfig.MatrixInfo.bUseROI) {
@@ -84,15 +86,25 @@ kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 	}
 
 	kipl::base::TImage<float,2> slice(dims);
-	size_t sxy=volume.Size(0)*volume.Size(1);
+
+//    std::cout << "slice dimensions: " << std::endl; // sono giuste
+//    std::cout << dims[0] << " " << dims[1] << std::endl;
+
+    size_t sxy=volume.Size(0)*volume.Size(1);
 	size_t sx=volume.Size(0);
+
+//    std::cout << "Volume size in BackProjectorModuleBase::GetSlice(size_t idx)" << std::endl;
+//    std::cout<< volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
 
     float *pVolume=volume.GetDataPtr()+idx;
 	float *pSlice=slice.GetDataPtr();
 	switch (MatrixAlignment) {
 		case MatrixXYZ : 
-			if (volume.Size(2)<=idx)
-				throw ReconException("Slice index greater than matrix size (XYZ matrix)",__FILE__,__LINE__);
+            if (volume.Size(2)<=idx){
+                msg<<"Slice index greater than matrix size (XYZ matrix). Slice index is "<<idx<<" and Matrix Sixe is: " << volume.Size(2);
+//				throw ReconException("Slice index greater than matrix size (XYZ matrix)",__FILE__,__LINE__);
+            throw ReconException(msg.str(),__FILE__,__LINE__);
+            }
 
 			for (size_t i=0; i<slice.Size(1); i++) {
 				memcpy(slice.GetLinePtr(i),volume.GetLinePtr(i+origin[1],idx)+origin[0],slice.Size(0)*sizeof(float));

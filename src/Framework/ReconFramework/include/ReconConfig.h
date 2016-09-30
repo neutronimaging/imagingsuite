@@ -151,6 +151,8 @@ public:
         bool bUseROI;                   ///< Reconsturct the data in the defined region of interest.
         size_t roi[4];                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1).
         kipl::io::eFileType FileType;   ///< File type of the reconstructed slices.
+        float fVoxelSize[3];            ///< Voxel size of the reconstructed volume, relevant for divergent beam only
+
 
         /// Writes the configuration to a string with XML formatting.
         /// \param indent Indent the XML block by N characters.
