@@ -31,7 +31,7 @@ rm -f *.1.0.0.dylib
 `$CPCMD $REPOSPATH/lib/libInspectorModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libInspectorModulesGUI.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/lib/build-IterativeBackProj-Qt5-Release .`
+`$CPCMD $REPOSPATH/lib/libFDKBackProjectors.so.1.0.0 .`
 
 rm -f *.so
 rm -f *.so.1
