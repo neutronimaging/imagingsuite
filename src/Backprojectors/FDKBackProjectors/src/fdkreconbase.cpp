@@ -76,19 +76,28 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
 //    mConfig.ProjectionInfo.fSOD = GetFloatParameter(parameters,"SOD");
 //    mConfig.ProjectionInfo.fpPoint[0] = GetFloatParameter(parameters, "HorizontalCenter");
 //    mConfig.ProjectionInfo.fpPoint[1] = GetFloatParameter(parameters, "VerticalCenter");
-    GetUIntParameterVector(parameters,"volumeSize",volume_size,3);
-    GetFloatParameterVector(parameters,"volumeSpacing",spacing,3);
+//    GetUIntParameterVector(parameters,"volumeSize",volume_size,3);
+//    GetFloatParameterVector(parameters,"volumeSpacing",spacing,3);
 
-    std::cout << "volume size: " << std::endl;
-    std::cout << volume_size[0] << " " << volume_size[1] << " " << volume_size[2]<< std::endl;
+    volume_size[0] = mConfig.MatrixInfo.nDims[0];
+    volume_size[1] = mConfig.MatrixInfo.nDims[1];
+    volume_size[2] = mConfig.MatrixInfo.nDims[2];
 
-    // set the output exten
-    mConfig.MatrixInfo.nDims[0] = volume_size[0];
-    mConfig.MatrixInfo.nDims[1] = volume_size[1];
-    mConfig.MatrixInfo.nDims[2] = volume_size[2];
+//    std::cout << "volume size: " << std::endl;
+//    std::cout << volume_size[0] << " " << volume_size[1] << " " << volume_size[2]<< std::endl;
+
+//    // set the output exten
+//    mConfig.MatrixInfo.nDims[0] = volume_size[0];
+//    mConfig.MatrixInfo.nDims[1] = volume_size[1];
+//    mConfig.MatrixInfo.nDims[2] = volume_size[2];
 
     volume.Resize(volume_size);
     volume = 0.0f;
+
+//    std::cout << "debug paramaters values: " << std::endl;
+//    std::cout << mConfig.ProjectionInfo.fSDD << std::endl;
+//    std::cout << mConfig.ProjectionInfo.fSOD << std::endl;
+//    std::cout << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
 
 
 
@@ -123,12 +132,12 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
     parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
     parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
     parameters["SubVolume"]=kipl::strings::value2string(nSubVolume[0])+" "+kipl::strings::value2string(nSubVolume[1]);
-    parameters["SDD"] = kipl::strings::value2string(mConfig.ProjectionInfo.fSDD);
-    parameters["SOD"] = kipl::strings::value2string(mConfig.ProjectionInfo.fSOD);
-    parameters["HorizontalCenter"] = kipl::strings::value2string(mConfig.ProjectionInfo.fpPoint[0]);
-    parameters["VerticalCenter"] = kipl::strings::value2string(mConfig.ProjectionInfo.fpPoint[1]);
-    parameters["volumeSize"] = kipl::strings::value2string(volume_size[0])+" " +kipl::strings::value2string(volume_size[1])+" " +kipl::strings::value2string(volume_size[2]);
-    parameters["volumeSpacing"] = kipl::strings::value2string(spacing[0])+" "+kipl::strings::value2string(spacing[1])+" "+kipl::strings::value2string(spacing[2]);
+//    parameters["SDD"] = kipl::strings::value2string(mConfig.ProjectionInfo.fSDD);
+//    parameters["SOD"] = kipl::strings::value2string(mConfig.ProjectionInfo.fSOD);
+//    parameters["HorizontalCenter"] = kipl::strings::value2string(mConfig.ProjectionInfo.fpPoint[0]);
+//    parameters["VerticalCenter"] = kipl::strings::value2string(mConfig.ProjectionInfo.fpPoint[1]);
+//    parameters["volumeSize"] = kipl::strings::value2string(volume_size[0])+" " +kipl::strings::value2string(volume_size[1])+" " +kipl::strings::value2string(volume_size[2]);
+//    parameters["volumeSpacing"] = kipl::strings::value2string(spacing[0])+" "+kipl::strings::value2string(spacing[1])+" "+kipl::strings::value2string(spacing[2]);
 
     return parameters;
 }
@@ -256,6 +265,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 
 //       std::cout << "nProjCounter " << nProjCounter << std::endl;
 
+
 //       return nProjCounter;
     return 0L;
 }
@@ -272,17 +282,17 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
            throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
 
-       std::cout << mConfig.ProjectionInfo.nDims[0] << " " << mConfig.ProjectionInfo.nDims[1] <<
-                                                       " " << mConfig.ProjectionInfo.nDims[2] << std::endl;
+//       std::cout << mConfig.ProjectionInfo.nDims[0] << " " << mConfig.ProjectionInfo.nDims[1]
+//                                                    << std::endl;
 
 
 
        kipl::base::TImage<float,2> img(projections.Dims());
 
-       // ---- projections dims is not a number
-       std::cout << "projections dimensions: " << std::endl;
-       std::cout << projections.Dims() << std::endl;
-       std::cout << projections.Size(0) << " " << projections.Size(1) << std::endl;
+//       // ---- projections dims is not a number
+//       std::cout << "projections dimensions: " << std::endl;
+//       std::cout << projections.Dims() << std::endl;
+//       std::cout << projections.Size(0) << " " << projections.Size(1) << std::endl;
 
        size_t nProj=projections.Size(2);
        std::cout<< "NProj:   "<<nProj << std::endl; // numero totale di proiezioni
