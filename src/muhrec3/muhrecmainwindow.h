@@ -114,6 +114,9 @@ private slots:
 
     void on_actionReport_a_bug_triggered();
 
+    void on_checkCBCT_clicked(bool checked);
+
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

@@ -58,6 +58,7 @@
         <grayinterval>0 1</grayinterval>
         <useroi>false</useroi>
         <roi>40 40 60 60</roi>
+	<voxelsize>0 0 0 </voxelsize>
     </matrix>
     <processchain>
         <preprocessing>

@@ -953,7 +953,8 @@ void MuhRecMainWindow::MenuReconstructStart()
         largesize_dlg.SetFields(ui->editDestPath->text(),
                                 ui->editSliceMask->text(),
                                 false,
-                                ui->spinSlicesFirst->value(), ui->spinSlicesLast->value(),
+                                ui->spinSlicesFirst->value(),
+                                ui->spinSlicesLast->value(),
                                 ui->spinProjROIy0->value(),ui->spinProjROIy1->value());
         int res=largesize_dlg.exec();
 
@@ -1389,12 +1390,35 @@ void MuhRecMainWindow::UpdateDialog()
     ui->editSampleDescription->setText(QString::fromStdString(m_Config.UserInformation.sSample));
     ui->editExperimentDescription->setText(QString::fromStdString(m_Config.UserInformation.sComment));
 
+
     str.str("");
     std::set<size_t>::iterator it;
     for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
         str<<*it<<" ";
     ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
     ui->ConfiguratorBackProj->SetModule(m_Config.backprojector);
+
+    ui->dspinSDD->setValue(m_Config.ProjectionInfo.fSDD);
+    ui->dspinSOD->setValue(m_Config.ProjectionInfo.fSOD);
+
+    ui->dspinPiercPointX->setValue(m_Config.ProjectionInfo.fpPoint[0]);
+    ui->dspinPiercPointY->setValue(m_Config.ProjectionInfo.fpPoint[1]);
+
+    ui->dspinVoxelSpacingX->setValue(m_Config.MatrixInfo.fVoxelSize[0]);
+    ui->dSpinVoxelSpacingY->setValue(m_Config.MatrixInfo.fVoxelSize[1]);
+    ui->dspinVoxelSpacingZ->setValue(m_Config.MatrixInfo.fVoxelSize[2]);
+
+    if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
+        ui->checkCBCT->setChecked(true);
+    }
+
+    if (ui->checkCBCT->checkState()) {
+        ui->spinVolumeSizeX->setValue(m_Config.MatrixInfo.nDims[0]);
+        ui->spinVolumeSizeY->setValue(m_Config.MatrixInfo.nDims[1]);
+        ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
+    }
+
+
 
     ProjROIChanged(0);
     SlicesChanged(0);
@@ -1455,6 +1479,27 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
     m_Config.ProjectionInfo.bCorrectTilt = ui->checkCorrectTilt->checkState();
     m_Config.ProjectionInfo.bTranslate = ui->check_stitchprojections->checkState();
+
+    m_Config.ProjectionInfo.fSDD = ui->dspinSDD->value();
+    m_Config.ProjectionInfo.fSOD = ui->dspinSOD->value();
+
+    m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
+    m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
+
+    if (ui->checkCBCT->checkState()) {
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+        m_Config.MatrixInfo.nDims[0] = ui->spinVolumeSizeX->value();
+        m_Config.MatrixInfo.nDims[1] = ui->spinVolumeSizeY->value();
+        m_Config.MatrixInfo.nDims[2] = ui->spinVolumeSizeZ->value();
+    }
+    else {
+        m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
+    }
+
+    m_Config.MatrixInfo.fVoxelSize[0] = ui->dspinVoxelSpacingX->value();
+    m_Config.MatrixInfo.fVoxelSize[1] = ui->dSpinVoxelSpacingY->value();
+    m_Config.MatrixInfo.fVoxelSize[2] = ui->dspinVoxelSpacingZ->value();
+
     m_Config.modules = ui->moduleconfigurator->GetModules();
     m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
     m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();
@@ -1489,6 +1534,11 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.UserInformation.sSample = ui->editSampleDescription->text().toStdString();
     m_Config.UserInformation.sComment = ui->editExperimentDescription->toPlainText().toStdString();
     m_Config.backprojector = ui->ConfiguratorBackProj->GetModule();
+
+    m_Config.ProjectionInfo.fSDD = ui->dspinSDD->value();
+    m_Config.ProjectionInfo.fSOD = ui->dspinSOD->value();
+    m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
+    m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
 }
 
 
@@ -1675,3 +1725,19 @@ void MuhRecMainWindow::on_actionReport_a_bug_triggered()
  //       QMessageBox dlg("Could not open repository","MuhRec could not open your web browser with the link https://github.com/neutronimaging/tools/issues");
     }
 }
+
+void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
+{
+//    std::cout << "CBCT checkbox clicked!" << std::endl;
+//    std::cout << checked << std::endl;
+
+    if (checked) {
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+//        std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+    } else {
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
+//        std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+    }
+}
+
+

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1268</width>
-    <height>865</height>
+    <height>872</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <item alignment="Qt::AlignTop">
+      <item>
        <widget class="QTabWidget" name="tabMainControl">
         <property name="enabled">
          <bool>true</bool>
@@ -142,7 +142,7 @@
             <x>0</x>
             <y>0</y>
             <width>746</width>
-            <height>700</height>
+            <height>741</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="layoutProjectionInformation">
@@ -463,16 +463,10 @@
               <string>Reference images</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="0">
-               <widget class="QPushButton" name="buttonTakePath">
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="editDarkMask">
                 <property name="toolTip">
-                 <string>Copy the projection data path to the reference data path</string>
-                </property>
-                <property name="whatsThis">
-                 <string/>
-                </property>
-                <property name="text">
-                 <string>Open beam</string>
+                 <string>File maskof the dark current image (Format: file_####.ext)</string>
                 </property>
                </widget>
               </item>
@@ -520,13 +514,6 @@
                 </item>
                </layout>
               </item>
-              <item row="3" column="1">
-               <widget class="QLineEdit" name="editDarkMask">
-                <property name="toolTip">
-                 <string>File maskof the dark current image (Format: file_####.ext)</string>
-                </property>
-               </widget>
-              </item>
               <item row="4" column="1">
                <layout class="QHBoxLayout" name="layoutDarkIndex">
                 <item>
@@ -564,6 +551,80 @@
                  </widget>
                 </item>
                </layout>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_18">
+                <property name="text">
+                 <string>Dose ROI</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="buttonGetPathDC">
+                <property name="text">
+                 <string>Dark current</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Open beam index</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="editOpenBeamMask">
+                <property name="toolTip">
+                 <string>Path to the reference data</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="2">
+               <widget class="QPushButton" name="buttonGetDoseROI">
+                <property name="text">
+                 <string>Get ROI</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QPushButton" name="buttonBrowseDC">
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QPushButton" name="buttonBrowseReference">
+                <property name="toolTip">
+                 <string>Browse for reference data</string>
+                </property>
+                <property name="whatsThis">
+                 <string>Browse for reference data path</string>
+                </property>
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="buttonTakePath">
+                <property name="toolTip">
+                 <string>Copy the projection data path to the reference data path</string>
+                </property>
+                <property name="whatsThis">
+                 <string/>
+                </property>
+                <property name="text">
+                 <string>Open beam</string>
+                </property>
+               </widget>
               </item>
               <item row="5" column="1">
                <layout class="QHBoxLayout" name="layoutDoseROI">
@@ -637,535 +698,845 @@
                 </item>
                </layout>
               </item>
-              <item row="0" column="2">
-               <widget class="QPushButton" name="buttonBrowseReference">
-                <property name="toolTip">
-                 <string>Browse for reference data</string>
-                </property>
-                <property name="whatsThis">
-                 <string>Browse for reference data path</string>
-                </property>
-                <property name="text">
-                 <string>Browse</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="2">
-               <widget class="QPushButton" name="buttonGetDoseROI">
-                <property name="text">
-                 <string>Get ROI</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_18">
-                <property name="text">
-                 <string>Dose ROI</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="editOpenBeamMask">
-                <property name="toolTip">
-                 <string>Path to the reference data</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_14">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Open beam index</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QPushButton" name="buttonBrowseDC">
-                <property name="text">
-                 <string>Browse</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QPushButton" name="buttonGetPathDC">
-                <property name="text">
-                 <string>Dark current</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </widget>
            </item>
            <item>
             <widget class="QGroupBox" name="groupGeometry">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="title">
               <string>Geometry</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
-                <item>
-                 <widget class="QLabel" name="label_25">
-                  <property name="text">
-                   <string>Projection ROI           </string>
+               <widget class="QTabWidget" name="TabGeometry">
+                <property name="currentIndex">
+                 <number>1</number>
+                </property>
+                <widget class="QWidget" name="tab_geometry">
+                 <attribute name="title">
+                  <string>Geometry</string>
+                 </attribute>
+                 <widget class="QWidget" name="layoutWidget_2">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>40</y>
+                    <width>711</width>
+                    <height>35</height>
+                   </rect>
                   </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_12">
+                   <item>
+                    <widget class="QLabel" name="label_30">
+                     <property name="text">
+                      <string>Slices to reconstruct</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_18">
+                     <item>
+                      <widget class="QLabel" name="label_50">
+                       <property name="text">
+                        <string>First</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinSlicesFirst">
+                       <property name="toolTip">
+                        <string>This is the first slice to reconstruct</string>
+                       </property>
+                       <property name="maximum">
+                        <number>10000</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_51">
+                       <property name="text">
+                        <string>Last</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinSlicesLast">
+                       <property name="toolTip">
+                        <string>This is the last slice to reconstruct.</string>
+                       </property>
+                       <property name="maximum">
+                        <number>10000</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_8">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_9">
-                  <item>
-                   <widget class="QLabel" name="label_7">
-                    <property name="text">
-                     <string>x0</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="spinProjROIx0">
-                    <property name="maximum">
-                     <number>9999</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_15">
-                    <property name="text">
-                     <string>y0</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="spinProjROIy0">
-                    <property name="maximum">
-                     <number>9999</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_44">
-                    <property name="text">
-                     <string>x1</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="spinProjROIx1">
-                    <property name="maximum">
-                     <number>9999</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_45">
-                    <property name="text">
-                     <string>y1</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="spinProjROIy1">
-                    <property name="maximum">
-                     <number>9999</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_7">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                 <widget class="QWidget" name="layoutWidget_3">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>80</y>
+                    <width>711</width>
+                    <height>35</height>
+                   </rect>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="buttonGetReconROI">
-                  <property name="toolTip">
-                   <string>Mark the entire area of the sample. This ROI is also used to calculate center of rotation. </string>
-                  </property>
-                  <property name="text">
-                   <string>Get ROI</string>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_19">
+                   <item>
+                    <widget class="QLabel" name="label_31">
+                     <property name="text">
+                      <string>Scan angles</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_20">
+                     <item>
+                      <widget class="QLabel" name="label_52">
+                       <property name="text">
+                        <string>Start</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinAngleStart">
+                       <property name="toolTip">
+                        <string>First acquisition angle</string>
+                       </property>
+                       <property name="minimum">
+                        <double>-1000.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>2000.000000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_53">
+                       <property name="text">
+                        <string>Stop</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinAngleStop">
+                       <property name="toolTip">
+                        <string>Last acquisition angle</string>
+                       </property>
+                       <property name="minimum">
+                        <double>-1000.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>2000.000000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_9">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="comboDataSequence">
+                     <item>
+                      <property name="text">
+                       <string>Sequence</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Golden ratio</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
-                <item>
-                 <widget class="QLabel" name="label_26">
-                  <property name="text">
-                   <string>Slices to reconstruct</string>
+                 <widget class="QWidget" name="layoutWidget_4">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>120</y>
+                    <width>711</width>
+                    <height>33</height>
+                   </rect>
                   </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_21">
+                   <item>
+                    <widget class="QLabel" name="label_32">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Center of rotation</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="dspinRotationCenter">
+                     <property name="toolTip">
+                      <string>The acquisition center of rotation on the projection. Postion is given in pixels relative to projection ROI x0. Subpixel values are recommended.</string>
+                     </property>
+                     <property name="decimals">
+                      <number>4</number>
+                     </property>
+                     <property name="maximum">
+                      <double>10000.000000000000000</double>
+                     </property>
+                     <property name="singleStep">
+                      <double>0.100000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_10">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="check_stitchprojections">
+                     <property name="text">
+                      <string>Stitch projections</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="buttonConfigGeometry">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Setup geometry</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_13">
-                  <item>
-                   <widget class="QLabel" name="label_31">
-                    <property name="text">
-                     <string>First</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>spinSlicesFirst</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="spinSlicesFirst">
-                    <property name="toolTip">
-                     <string>This is the first slice to reconstruct</string>
-                    </property>
-                    <property name="maximum">
-                     <number>10000</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_32">
-                    <property name="text">
-                     <string>Last</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>spinSlicesLast</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="spinSlicesLast">
-                    <property name="toolTip">
-                     <string>This is the last slice to reconstruct.</string>
-                    </property>
-                    <property name="maximum">
-                     <number>10000</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                 <widget class="QWidget" name="layoutWidget_5">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>160</y>
+                    <width>711</width>
+                    <height>35</height>
+                   </rect>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_14">
-                <item>
-                 <widget class="QLabel" name="label_27">
-                  <property name="text">
-                   <string>Scan angles</string>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <item>
+                    <widget class="QCheckBox" name="checkCorrectTilt">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>Activates axis tilt</string>
+                     </property>
+                     <property name="text">
+                      <string>Correct axis tilt</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="layoutTilt">
+                     <item>
+                      <widget class="QLabel" name="label_35">
+                       <property name="text">
+                        <string>Angle</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>dspinTiltAngle</cstring>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinTiltAngle">
+                       <property name="toolTip">
+                        <string>Tilt angle of the acquistion axis. Can be found using store geometry.</string>
+                       </property>
+                       <property name="decimals">
+                        <number>4</number>
+                       </property>
+                       <property name="minimum">
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep">
+                        <double>0.100000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_36">
+                       <property name="text">
+                        <string>Pivot</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>dspinTiltPivot</cstring>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinTiltPivot">
+                       <property name="toolTip">
+                        <string>This is the slice where the center of rotation is exact.</string>
+                       </property>
+                       <property name="minimum">
+                        <double>-10000.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>10000.000000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_15">
-                  <item>
-                   <widget class="QLabel" name="label_33">
-                    <property name="text">
-                     <string>Start</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>dspinAngleStart</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="dspinAngleStart">
-                    <property name="toolTip">
-                     <string>First acquisition angle</string>
-                    </property>
-                    <property name="minimum">
-                     <double>-1000.000000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>2000.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_34">
-                    <property name="text">
-                     <string>Stop</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>dspinAngleStop</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="dspinAngleStop">
-                    <property name="toolTip">
-                     <string>Last acquisition angle</string>
-                    </property>
-                    <property name="minimum">
-                     <double>-1000.000000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>2000.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_5">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                 <widget class="QWidget" name="layoutWidget_6">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>200</y>
+                    <width>711</width>
+                    <height>33</height>
+                   </rect>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="comboDataSequence">
-                  <item>
-                   <property name="text">
-                    <string>Sequence</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Golden ratio</string>
-                   </property>
-                  </item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <item>
+                    <widget class="QLabel" name="label_37">
+                     <property name="text">
+                      <string>Projection pixel size (mm)</string>
+                     </property>
+                     <property name="buddy">
+                      <cstring>dspinResolution</cstring>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="dspinResolution">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
+                     </property>
+                     <property name="decimals">
+                      <number>5</number>
+                     </property>
+                     <property name="maximum">
+                      <double>10.000000000000000</double>
+                     </property>
+                     <property name="singleStep">
+                      <double>0.010000000000000</double>
+                     </property>
+                     <property name="value">
+                      <double>0.100000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_4">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_16">
-                <item>
-                 <widget class="QLabel" name="label_28">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                 <widget class="QWidget" name="horizontalLayoutWidget">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>711</width>
+                    <height>35</height>
+                   </rect>
                   </property>
-                  <property name="text">
-                   <string>Center of rotation</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>dspinRotationCenter</cstring>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0">
+                   <item>
+                    <widget class="QLabel" name="label_7">
+                     <property name="text">
+                      <string>Projection ROI</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_9">
+                     <item>
+                      <widget class="QLabel" name="label_15">
+                       <property name="text">
+                        <string>x0</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinProjROIx0">
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="maximum">
+                        <number>10000</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_25">
+                       <property name="text">
+                        <string>x1</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinProjROIx1">
+                       <property name="maximum">
+                        <number>10000</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_26">
+                       <property name="text">
+                        <string>y0</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinProjROIy0">
+                       <property name="maximum">
+                        <number>10000</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_27">
+                       <property name="text">
+                        <string>y1</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinProjROIy1">
+                       <property name="maximum">
+                        <number>10000</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>10</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="buttonGetReconROI">
+                     <property name="text">
+                      <string>Get ROI</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspinRotationCenter">
-                  <property name="toolTip">
-                   <string>The acquisition center of rotation on the projection. Postion is given in pixels relative to projection ROI x0. Subpixel values are recommended.</string>
+                </widget>
+                <widget class="QWidget" name="tab_advanced_geometry">
+                 <attribute name="title">
+                  <string>Advanced geometry</string>
+                 </attribute>
+                 <widget class="QWidget" name="horizontalLayoutWidget_2">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>701</width>
+                    <height>33</height>
+                   </rect>
                   </property>
-                  <property name="decimals">
-                   <number>4</number>
-                  </property>
-                  <property name="maximum">
-                   <double>10000.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.100000000000000</double>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <item>
+                    <widget class="QCheckBox" name="checkCBCT">
+                     <property name="text">
+                      <string>Cone beam </string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_29">
+                     <property name="text">
+                      <string>SOD</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="dspinSOD">
+                     <property name="maximum">
+                      <double>9999.989999999999782</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_28">
+                     <property name="text">
+                      <string>SDD</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="dspinSDD">
+                     <property name="maximum">
+                      <double>9999.989999999999782</double>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_6">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                 <widget class="QWidget" name="horizontalLayoutWidget_5">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>40</y>
+                    <width>701</width>
+                    <height>35</height>
+                   </rect>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="check_stitchprojections">
-                  <property name="text">
-                   <string>Stitch projections</string>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_14">
+                   <item>
+                    <widget class="QLabel" name="label_33">
+                     <property name="text">
+                      <string>Volume Size</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_15">
+                     <item>
+                      <widget class="QLabel" name="label_34">
+                       <property name="text">
+                        <string>x</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinVolumeSizeX">
+                       <property name="maximum">
+                        <number>99999</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_44">
+                       <property name="text">
+                        <string>y</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinVolumeSizeY">
+                       <property name="maximum">
+                        <number>999999</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_45">
+                       <property name="text">
+                        <string>z</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="spinVolumeSizeZ">
+                       <property name="maximum">
+                        <number>999999</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_11">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="buttonConfigGeometry">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                 <widget class="QWidget" name="horizontalLayoutWidget_7">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>80</y>
+                    <width>701</width>
+                    <height>35</height>
+                   </rect>
                   </property>
-                  <property name="text">
-                   <string>Setup geometry</string>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_17">
+                   <item>
+                    <widget class="QLabel" name="label_46">
+                     <property name="text">
+                      <string>Voxel spacing</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_22">
+                     <item>
+                      <widget class="QLabel" name="label_47">
+                       <property name="text">
+                        <string>x</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinVoxelSpacingX">
+                       <property name="decimals">
+                        <number>4</number>
+                       </property>
+                       <property name="minimum">
+                        <double>0.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep">
+                        <double>0.010000000000000</double>
+                       </property>
+                       <property name="value">
+                        <double>0.000000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_54">
+                       <property name="text">
+                        <string>y</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dSpinVoxelSpacingY">
+                       <property name="decimals">
+                        <number>4</number>
+                       </property>
+                       <property name="minimum">
+                        <double>0.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep">
+                        <double>0.010000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_55">
+                       <property name="text">
+                        <string>z</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinVoxelSpacingZ">
+                       <property name="decimals">
+                        <number>4</number>
+                       </property>
+                       <property name="minimum">
+                        <double>0.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep">
+                        <double>0.010000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_12">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <widget class="QCheckBox" name="checkCorrectTilt">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                 <widget class="QWidget" name="horizontalLayoutWidget_6">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>120</y>
+                    <width>701</width>
+                    <height>35</height>
+                   </rect>
                   </property>
-                  <property name="toolTip">
-                   <string>Activates axis tilt</string>
-                  </property>
-                  <property name="text">
-                   <string>Correct axis tilt</string>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_16">
+                   <item>
+                    <widget class="QLabel" name="label_56">
+                     <property name="text">
+                      <string>Piercing point</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_23">
+                     <item>
+                      <widget class="QLabel" name="label_57">
+                       <property name="text">
+                        <string>x</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinPiercPointX">
+                       <property name="decimals">
+                        <number>2</number>
+                       </property>
+                       <property name="minimum">
+                        <double>-1000.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>9999.989999999999782</double>
+                       </property>
+                       <property name="singleStep">
+                        <double>1.000000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_58">
+                       <property name="text">
+                        <string>y</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="dspinPiercPointY">
+                       <property name="minimum">
+                        <double>-1000.000000000000000</double>
+                       </property>
+                       <property name="maximum">
+                        <double>9999.989999999999782</double>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_13">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="layoutTilt">
-                  <item>
-                   <widget class="QLabel" name="label_35">
-                    <property name="text">
-                     <string>Angle</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>dspinTiltAngle</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="dspinTiltAngle">
-                    <property name="toolTip">
-                     <string>Tilt angle of the acquistion axis. Can be found using store geometry.</string>
-                    </property>
-                    <property name="decimals">
-                     <number>4</number>
-                    </property>
-                    <property name="minimum">
-                     <double>-10.000000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>10.000000000000000</double>
-                    </property>
-                    <property name="singleStep">
-                     <double>0.100000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_36">
-                    <property name="text">
-                     <string>Pivot</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>dspinTiltPivot</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="dspinTiltPivot">
-                    <property name="toolTip">
-                     <string>This is the slice where the center of rotation is exact.</string>
-                    </property>
-                    <property name="minimum">
-                     <double>-10000.000000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>10000.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QLabel" name="label_37">
-                  <property name="text">
-                   <string>Projection pixel size (mm)</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>dspinResolution</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="dspinResolution">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
-                  </property>
-                  <property name="decimals">
-                   <number>5</number>
-                  </property>
-                  <property name="maximum">
-                   <double>10.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.010000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.100000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_4">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
+                </widget>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -1328,8 +1699,8 @@
             <rect>
              <x>150</x>
              <y>30</y>
-             <width>269</width>
-             <height>30</height>
+             <width>301</width>
+             <height>33</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="layoutGraylevels">
@@ -1386,8 +1757,8 @@
             <rect>
              <x>150</x>
              <y>80</y>
-             <width>420</width>
-             <height>27</height>
+             <width>463</width>
+             <height>33</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="layoutMatrixROI">
@@ -1768,7 +2139,7 @@
      <x>0</x>
      <y>0</y>
      <width>1268</width>
-     <height>22</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
