@@ -14,12 +14,12 @@ namespace kipl { namespace base {
 /// \brief Computes a histogram from the data present in an array
 /// \param data The data array
 /// \param Ndata number of data points in the array
-/// \param hist the histogram counts
+/// \param hist the histogram counts, array must be preallocated
 /// \param nBins Number of bins in the histogram
 /// \param lo Lower bound of the bins. Values less than this bound are counted in the first bin
 /// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
 /// \note If lo==hi the histogram will be using min and max intensity as interval.
-/// \param pAxis optional bin axis value array. Not considered if NULL
+/// \param pAxis optional bin axis value array, must be preallocated. Not considered if NULL
 /// \returns Always 0
 int KIPLSHARED_EXPORT Histogram(float * data, size_t Ndata, size_t  * hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * pAxis=NULL);
 
