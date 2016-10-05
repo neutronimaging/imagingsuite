@@ -346,6 +346,94 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
     return 0L;
 }
 
-void FdkReconBase::GetHistogram(float *x, size_t *y, size_t N) {
+void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
+    // in teoria andrebbe calcolato sulla Roi ma per iniziare lo calcolerei su tutto.. proviamo.
+    // sistemare perchè ho tutti NaN !!!
 
+
+//    std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
+//    std::cout << volume.GetLinePtr(85,3)<< std::endl;
+
+    float matrixMin=Min();
+
+    std::cout << "min: " << matrixMin << std::endl;
+
+    float matrixMax=Max();
+
+    std::cout << "max: " << matrixMax << std::endl;
+    ostringstream msg;
+
+    msg<<"Preparing histogram; #bins: "<<nBins<<", Min: "<<matrixMin<<", Max: "<<matrixMax;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    memset(axis,0,sizeof(float)*nBins);
+    memset(hist,0,sizeof(size_t)*nBins);
+    float scale=(matrixMax-matrixMin)/(nBins+1);
+    float invScale=1.0f/scale;
+    size_t index=0;
+    for (size_t z=0; z<volume.Size(2); z++) {
+        for (size_t y=0; y<volume.Size(1); y++) {
+            float *pLine=volume.GetLinePtr(y,z);
+            for (size_t x=0; x<volume.Size(0); x++) {
+                index=static_cast<size_t>(invScale*(pLine[x]-matrixMin));
+                if (pLine[x]<matrixMin)
+                    index=0;
+                else if (nBins<=index)
+                    index=nBins-1;
+                hist[index]++;
+            }
+        }
+    }
+
+    axis[0]=matrixMin+scale/2.0f;
+    for (size_t i=1; i<nBins; i++)
+        axis[i]=axis[i-1]+scale;
+
+}
+
+float FdkReconBase::Min()
+{
+    float minval=std::numeric_limits<float>::max();
+
+//    if (MatrixAlignment==FdkReconBase::MatrixXYZ) {
+//        logger(kipl::logging::Logger::LogWarning,"Min is not implemented for MatrixXYZ");
+//        throw ReconException("Min is not implemented for MatrixXYZ",__FILE__,__LINE__);
+//    }
+//    else {
+    // should be computed on mask not to have too many values of the background.. but I haven't computed the mask yet..
+        for (size_t z=0; z<volume.Size(2); z++) {
+            for (size_t y=0; y<volume.Size(1); y++) {
+                float *pLine=volume.GetLinePtr(y,z);
+                minval=min(minval,*min_element(pLine,pLine+volume.Size(0)));
+            }
+        }
+//    }
+//        float *pLine = volume.GetDataPtr();
+//        minval = min(minval, *min(pLine, pLine+volume.Size(0)*volume.Size(1)*volume.Size(2)));
+
+
+    return minval;
+}
+
+float FdkReconBase::Max()
+{
+    float maxval=-std::numeric_limits<float>::max();
+
+//    if (MatrixAlignment==FdkReconBase::MatrixXYZ) {
+//        logger(kipl::logging::Logger::LogWarning,"Max is not implemented for MatrixXYZ");
+//        throw ReconException("Max is not implemented for MatrixXYZ",__FILE__,__LINE__);
+//    }
+//    else {
+        for (size_t z=0; z<volume.Size(2); z++) {
+            for (size_t y=0; y<volume.Size(1); y++) {
+                float *pLine=volume.GetLinePtr(y,z);
+                maxval=max(maxval,*max_element(pLine,pLine+volume.Size(0)));
+            }
+        }
+//    }
+
+    //    float *pLine = volume.GetDataPtr();
+    //    maxval = max_element(volume.GetDataPtr(), volume.GetDataPtr()+volume.Size(0)*volume.Size(1)*volume.Size(2));
+
+    return maxval;
 }

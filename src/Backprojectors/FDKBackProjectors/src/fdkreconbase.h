@@ -53,7 +53,11 @@ public:
     /// \param x the bin values of the x axis
     /// \param y the histogram bins
     /// \param N number of bins
-    virtual void GetHistogram(float *x, size_t *y, size_t N);
+    virtual void GetHistogram(float *axis, size_t *hist,size_t nBins);
+
+    virtual float Min();
+
+    virtual float Max();
 
 
 
