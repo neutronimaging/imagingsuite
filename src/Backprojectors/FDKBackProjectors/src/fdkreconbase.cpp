@@ -79,9 +79,16 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
 //    GetUIntParameterVector(parameters,"volumeSize",volume_size,3);
 //    GetFloatParameterVector(parameters,"volumeSpacing",spacing,3);
 
-    volume_size[0] = mConfig.MatrixInfo.nDims[0];
-    volume_size[1] = mConfig.MatrixInfo.nDims[1];
-    volume_size[2] = mConfig.MatrixInfo.nDims[2];
+    if (mConfig.MatrixInfo.bUseVOI) {
+        volume_size[0] = mConfig.MatrixInfo.voi[1]-mConfig.MatrixInfo.voi[0];
+        volume_size[1] = mConfig.MatrixInfo.voi[3]-mConfig.MatrixInfo.voi[2];
+        volume_size[2] = mConfig.MatrixInfo.voi[5]-mConfig.MatrixInfo.voi[4];
+    }
+    else {
+        volume_size[0] = mConfig.MatrixInfo.nDims[0];
+        volume_size[1] = mConfig.MatrixInfo.nDims[1];
+        volume_size[2] = mConfig.MatrixInfo.nDims[2];
+    }
 
 //    std::cout << "volume size: " << std::endl;
 //    std::cout << volume_size[0] << " " << volume_size[1] << " " << volume_size[2]<< std::endl;
@@ -347,8 +354,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 }
 
 void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
-    // in teoria andrebbe calcolato sulla Roi ma per iniziare lo calcolerei su tutto.. proviamo.
-    // sistemare perchè ho tutti NaN !!!
 
 
 //    std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
@@ -356,11 +361,11 @@ void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
 
     float matrixMin=Min();
 
-    std::cout << "min: " << matrixMin << std::endl;
+//    std::cout << "min: " << matrixMin << std::endl;
 
     float matrixMax=Max();
 
-    std::cout << "max: " << matrixMax << std::endl;
+//    std::cout << "max: " << matrixMax << std::endl;
     ostringstream msg;
 
     msg<<"Preparing histogram; #bins: "<<nBins<<", Min: "<<matrixMin<<", Max: "<<matrixMax;

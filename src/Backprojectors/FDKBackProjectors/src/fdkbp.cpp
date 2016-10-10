@@ -357,18 +357,31 @@ void FDKbp::project_volume_onto_image_c(
         /// origin of the reconstructed volume. Volume isocenter is assumed in position (0,0,0)
 //        float origin[3] = {-24.9512f, -24.9512f, -42.00f};
         float origin[3];
-        origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-spacing[0]/2);
-        origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-spacing[1]/2);
-        origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-spacing[2]/2);
+
+        if (mConfig.MatrixInfo.bUseVOI) {
+
+            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
+            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
+            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
+
+//            std::cout << "origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+//            std::cout << "voi: " << mConfig.MatrixInfo.voi[0] << " " << mConfig.MatrixInfo.voi[1] << " " << mConfig.MatrixInfo.voi[2]  << " "
+//                          << mConfig.MatrixInfo.voi[3] << " " << mConfig.MatrixInfo.voi[4] << " " << mConfig.MatrixInfo.voi[5]
+//                      << std::endl;
+        }
+
+        else {
+            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-spacing[0]/2);
+            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-spacing[1]/2);
+            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-spacing[2]/2);
+        }
 
 //        std::cout << "debug origin: " << std::endl;
 //        std::cout << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
-        // to check formula
 
 
-        /// 2D coordinates, in pixel coordinates of the point on the image which is closest to the source: a pair of floating point number, in units of pixel
-        /// The first number is the column (x-coordinate) and the second number is the row  (y-coordinate)
-        /// The first pixel of the image is to be considered to be coordinate (0,0)
+
+
         double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
 //        std::cout << ic[0] << " " << ic[1] << std::endl;
 
@@ -560,7 +573,19 @@ void FDKbp::project_volume_onto_image_reference (
 
 
     float spacing[3] = {0.098f, 0.098f, 1.0f};
-    float origin[3] = {-12.475, -12.75, -24.975};
+    float origin[3]; /* = {-12.475, -12.75, -24.975};*/
+
+    if (mConfig.MatrixInfo.bUseVOI) {
+        origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
+        origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
+        origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
+    }
+
+    else {
+        origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-spacing[0]/2);
+        origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-spacing[1]/2);
+        origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-spacing[2]/2);
+    }
 
 
 
