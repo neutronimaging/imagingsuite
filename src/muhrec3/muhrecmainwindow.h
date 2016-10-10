@@ -116,6 +116,7 @@ private slots:
 
     void on_checkCBCT_clicked(bool checked);
 
+    void on_checkSubVolumeCBCT_clicked(bool checked);
 
 private:
     // Data members

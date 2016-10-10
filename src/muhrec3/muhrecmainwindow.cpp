@@ -1418,6 +1418,26 @@ void MuhRecMainWindow::UpdateDialog()
         ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
     }
 
+    if (m_Config.MatrixInfo.bUseVOI==true) {
+        ui->checkSubVolumeCBCT->setChecked(true);
+    }
+
+    if(ui->checkSubVolumeCBCT->checkState()){
+//        ui->spinSubVolumeSizeX0->setEnabled(true);
+//        ui->spinSubVolumeSizeX1->setEnabled(true);
+//        ui->spinSubVolumeSizeY0->setEnabled(true);
+//        ui->spinSubVolumeSizeY1->setEnabled(true);
+//        ui->spinSubVolumeSizeZ0->setEnabled(true);
+//        ui->spinSubVolumeSizeZ1->setEnabled(true);
+
+        ui->spinSubVolumeSizeX0->setValue(m_Config.MatrixInfo.voi[0]);
+        ui->spinSubVolumeSizeX1->setValue(m_Config.MatrixInfo.voi[1]);
+        ui->spinSubVolumeSizeY0->setValue(m_Config.MatrixInfo.voi[2]);
+        ui->spinSubVolumeSizeY1->setValue(m_Config.MatrixInfo.voi[3]);
+        ui->spinSubVolumeSizeZ0->setValue(m_Config.MatrixInfo.voi[4]);
+        ui->spinSubVolumeSizeZ1->setValue(m_Config.MatrixInfo.voi[5]);
+    }
+
 
 
     ProjROIChanged(0);
@@ -1488,12 +1508,26 @@ void MuhRecMainWindow::UpdateConfig()
 
     if (ui->checkCBCT->checkState()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+
         m_Config.MatrixInfo.nDims[0] = ui->spinVolumeSizeX->value();
         m_Config.MatrixInfo.nDims[1] = ui->spinVolumeSizeY->value();
         m_Config.MatrixInfo.nDims[2] = ui->spinVolumeSizeZ->value();
+
+
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
+    }
+
+    if (ui->checkSubVolumeCBCT->checkState()){ //maybe they should be in a different order
+
+        m_Config.MatrixInfo.bUseVOI = true;
+        m_Config.MatrixInfo.voi[0] = ui->spinSubVolumeSizeX0->value();
+        m_Config.MatrixInfo.voi[1] = ui->spinSubVolumeSizeX1->value();
+        m_Config.MatrixInfo.voi[2] = ui->spinSubVolumeSizeY0->value();
+        m_Config.MatrixInfo.voi[3] = ui->spinSubVolumeSizeY1->value();
+        m_Config.MatrixInfo.voi[4] = ui->spinSubVolumeSizeZ0->value();
+        m_Config.MatrixInfo.voi[5] = ui->spinSubVolumeSizeZ1->value();
     }
 
     m_Config.MatrixInfo.fVoxelSize[0] = ui->dspinVoxelSpacingX->value();
@@ -1741,3 +1775,26 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
 }
 
 
+
+void MuhRecMainWindow::on_checkSubVolumeCBCT_clicked(bool checked)
+{
+    if (checked) {
+        m_Config.MatrixInfo.bUseVOI = true;
+//        ui->spinSubVolumeSizeX0->setEnabled(true);
+//        ui->spinSubVolumeSizeX1->setEnabled(true);
+//        ui->spinSubVolumeSizeY0->setEnabled(true);
+//        ui->spinSubVolumeSizeY1->setEnabled(true);
+//        ui->spinSubVolumeSizeZ0->setEnabled(true);
+//        ui->spinSubVolumeSizeZ1->setEnabled(true);
+//        std::cout << "use voi checked: " << m_Config.MatrixInfo.bUseVOI << std::endl;
+    }
+    else{
+        m_Config.MatrixInfo.bUseVOI = false;
+//        ui->spinSubVolumeSizeX0->setEnabled(false);
+//        ui->spinSubVolumeSizeX1->setEnabled(false);
+//        ui->spinSubVolumeSizeY0->setEnabled(false);
+//        ui->spinSubVolumeSizeY1->setEnabled(false);
+//        ui->spinSubVolumeSizeZ0->setEnabled(false);
+//        ui->spinSubVolumeSizeZ1->setEnabled(false);
+    }
+}

@@ -59,6 +59,8 @@
         <useroi>false</useroi>
         <roi>0 0 100 100 </roi>
 	<voxelsize>0 0 0 </voxelsize>
+	<usevoi>false</usevoi>
+	<voi>0 0 0 0 0 0</voi>
     </matrix>
     <processchain>
         <preprocessing>
