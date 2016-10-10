@@ -59,7 +59,7 @@ public:
 
         /// Enumeration of input image types
 		enum eImageType {
-            ImageType_Projections=0,                      ///< Read projections as they were acquired
+            ImageType_Projections=0,                    ///< Read projections as they were acquired
             ImageType_Sinograms,                        ///< Read sinograms
             ImageType_Proj_RepeatProjection,            ///< Repeat a single projection, test mode that reconstructs a cylinder from a single projection
             ImageType_Proj_RepeatSinogram               ///< Repeat a single slice, the input is projections. Indended use; find center of rotation.
@@ -98,6 +98,9 @@ public:
         float fSOD;                 ///< Source object distance, relevant for divergent beam only
         float fSDD;                 ///< Source detector distance, relevant for divergent beam only
         float fpPoint[2];           ///< Piercing point, relevant for divergent beam only
+                                    ///< 2D coordinates, in pixel coordinates of the point on the image which is closest to the source: a pair of floating point number, in units of pixel
+                                    ///< The first number is the column (x-coordinate) and the second number is the row  (y-coordinate)
+                                    ///< The first pixel of the image is to be considered to be coordinate (0,0)
         bool bTranslate;            ///< Indicates if the center of rotation is shifted to the margin.
         float fTiltAngle;           ///< Axis tilt angle
         float fTiltPivotPosition;   ///< Pivot point of the axis tilt. This is the slice were the center of rotation is correct.
@@ -148,8 +151,10 @@ public:
         std::string sFileMask;          ///< File mask for the reconstructed slices. It should be formatted using #'s as place holders for the index number.
         size_t nFirstIndex;             ///< First index of the reconstructed slices, this is mostly set to the line index in the reconstructed projection.
         float fGrayInterval[2];         ///< Interval in which the graylevels are represented.
-        bool bUseROI;                   ///< Reconsturct the data in the defined region of interest.
-        size_t roi[4];                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1).
+        bool bUseROI;                   ///< Reconstruct the data in the defined region of interest.
+        size_t roi[4];                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1). Relevant for parallel beam
+        size_t voi[6];                  ///< Subvolume to reconstruct (volume coordinates x0, x1, y0, y1, z0, z1). Relevant for divergent beam
+        bool bUseVOI;                   ///< Reconstruct the data in the defined volume of interest. Relevant for divergent beam
         kipl::io::eFileType FileType;   ///< File type of the reconstructed slices.
         float fVoxelSize[3];            ///< Voxel size of the reconstructed volume, relevant for divergent beam only
 

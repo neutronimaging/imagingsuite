@@ -104,6 +104,8 @@ void ReconEngine::SetBackProjector(BackProjItem *module)
 
 int ReconEngine::Run()
 {
+
+    // i don't think this actually is called
 	std::stringstream msg;
 
 	BuildFileList(&m_Config,&m_ProjectionList);
@@ -113,7 +115,16 @@ int ReconEngine::Run()
 		m_Config.ProjectionInfo.roi[1],
 		m_Config.ProjectionInfo.roi[2],
 		m_Config.ProjectionInfo.roi[3]
-	};
+    };
+
+    size_t voi[6] = {
+        m_Config.MatrixInfo.voi[0],
+        m_Config.MatrixInfo.voi[1],
+        m_Config.MatrixInfo.voi[2],
+        m_Config.MatrixInfo.voi[3],
+        m_Config.MatrixInfo.voi[4],
+        m_Config.MatrixInfo.voi[5]
+    };
 
 //    if (m_Config.MatrixInfo.bUseROI) {
 //        m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;;
@@ -136,15 +147,28 @@ int ReconEngine::Run()
             m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1]+1;
             totalSlices=roi[3]-roi[1];
         }
+            m_Volume.Resize(m_Config.MatrixInfo.nDims);
     }
 
    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
-      std::cout<< "sono nell'else CONE" << std::endl;
-        // now values are set from GUI
-//            m_Config.MatrixInfo.nDims[0] = 512;
-//            m_Config.MatrixInfo.nDims[1] = 512;
-//            m_Config.MatrixInfo.nDims[2] = 85; // values must be read from GUI
+//      std::cout<< "sono nell'else CONE" << std::endl;
+
+
+      if (m_Config.MatrixInfo.bUseVOI) {
+            totalSlices = voi[5]-voi[4];
+
+            size_t voi_dims[3] = {
+                voi[1]-voi[0],
+                voi[3]-voi[2],
+                voi[5]-voi[4]
+
+            };
+            m_Volume.Resize(voi_dims);
+        }
+      else {
             totalSlices = m_Config.MatrixInfo.nDims[2];
+            m_Volume.Resize(m_Config.MatrixInfo.nDims);
+        }
 
     }
 
@@ -152,7 +176,7 @@ int ReconEngine::Run()
 //    std::cout << totalSlices << std::endl;
 
 
-	m_Volume.Resize(m_Config.MatrixInfo.nDims);
+//	m_Volume.Resize(m_Config.MatrixInfo.nDims);
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -360,6 +384,7 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 	bool bTransposed=false;
 
 
+    // the argument dims should be maybe changed before depending on parallel/cone beam
 
 	kipl::base::TImage<float,2> slice;
 
@@ -370,13 +395,25 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 //    std::cout  << "Debug on mVolume: " << std::endl;
 //    std::cout << m_Volume.Size(0) << " " << m_Volume.Size(1) << " " << m_Volume.Size(2) << std::endl;
 
+    if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
 
-//    for (size_t i=0; i<(dims[3]-dims[1]); i++) {
-    for (size_t i=0; i<m_Volume.Size(2); i++) {
-		slice=m_BackProjector->GetModule()->GetSlice(i);
-		float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
-		memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-	}
+            for (size_t i=0; i<(dims[3]-dims[1]); i++) {
+
+                slice=m_BackProjector->GetModule()->GetSlice(i);
+                float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
+                memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
+            }
+    }
+    else if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Cone ) {
+
+
+         for (size_t i=0; i<m_Volume.Size(2); i++) {
+                slice=m_BackProjector->GetModule()->GetSlice(i);
+                float *pVol=m_Volume.GetLinePtr(0,i); // changed from parallel beam case
+                memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
+            }
+
+    }
 
 	return bTransposed;
 }
@@ -579,17 +616,26 @@ int ReconEngine::Run3DFull()
 		m_Config.ProjectionInfo.roi[3]
 	};
 
-    std::cout << "ebeam geometry: " << std::endl;
-    std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+    size_t voi[6] = {
+        m_Config.MatrixInfo.voi[0],
+        m_Config.MatrixInfo.voi[1],
+        m_Config.MatrixInfo.voi[2],
+        m_Config.MatrixInfo.voi[3],
+        m_Config.MatrixInfo.voi[4],
+        m_Config.MatrixInfo.voi[5]
+    };
+
+//    std::cout << "ebeam geometry: " << std::endl;
+//    std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
 
 
-    // GO ON FROM HERE.... SET EBEAM STUFF ..!!!
-    std::cout << "strcmp ebeamgeometry: " << (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-                 << std::endl;
+
+//    std::cout << "strcmp ebeamgeometry: " << (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+//                 << std::endl;
 
 
-    std::cout << "prova SDD: " << m_Config.ProjectionInfo.fSDD << std::endl;
-    // strcmp ok?
+//    std::cout << "SDD: " << m_Config.ProjectionInfo.fSDD << std::endl;
+
 
     size_t totalSlices=0;
 
@@ -611,32 +657,56 @@ int ReconEngine::Run3DFull()
         else {
             m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1];
         }
-//        totalSlices=m_Config.MatrixInfo.nDims[2];
+
+        totalSlices=m_Config.MatrixInfo.nDims[2];
 }
+    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
 
-    // now set from GUI
-//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
-//        std::cout << "sono nell'else CONE" << std::endl;
-//        m_Config.MatrixInfo.nDims[0] = 512;
-//        m_Config.MatrixInfo.nDims[1] = 512;
-//        m_Config.MatrixInfo.nDims[2] = 85; // these values must be read from the GUI!
-////        totalSlices=85;
-////        std::cout  << totalSlices << std::endl;
-//    }
+        if (m_Config.MatrixInfo.bUseVOI) {
+              totalSlices = voi[5]-voi[4];
+              std::cout << "totalslice: " << totalSlices << std::endl;
+
+//              size_t voi_dims[3] = {
+//                  voi[1]-voi[0],
+//                  voi[3]-voi[2],
+//                  voi[5]-voi[4]
+
+//              };
+//              m_Volume.Resize(voi_dims); // wrong place? yes
+        }
+        else {
+            totalSlices=m_Config.MatrixInfo.nDims[2];
+        }
+
+    }
 
 
-    totalSlices=m_Config.MatrixInfo.nDims[2];
 
-    std::cout << "debug on totalslices: " << std::endl;
-    std::cout  << totalSlices << std::endl;
-    std::cout << m_Config.MatrixInfo.nDims[2] << std::endl;
+
+//    totalSlices=m_Config.MatrixInfo.nDims[2];
+
+//    std::cout << "debug on totalslices: " << std::endl;
+//    std::cout  << totalSlices << std::endl;
+//    std::cout << m_Config.MatrixInfo.nDims[2] << std::endl;
 
 
 	msg.str("");
 	if (!m_Config.MatrixInfo.bAutomaticSerialize) {
 		try {
-			m_Volume.Resize(m_Config.MatrixInfo.nDims);
-            m_Volume=0.0f;
+            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone && m_Config.MatrixInfo.bUseVOI) {
+
+                size_t voi_dims[3] = {
+                    voi[1]-voi[0],
+                    voi[3]-voi[2],
+                    voi[5]-voi[4]
+                };
+                m_Volume.Resize(voi_dims);
+                m_Volume = 0.0f;
+            }
+            else {
+                m_Volume.Resize(m_Config.MatrixInfo.nDims);
+                m_Volume=0.0f;
+            }
 		}
 		catch (kipl::base::KiplException &e) {
 			msg<<"Failed to allocate target matrix with dimensions "
