@@ -118,6 +118,8 @@ private slots:
 
     void on_checkSubVolumeCBCT_clicked(bool checked);
 
+    void on_buttonCompSize_clicked();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

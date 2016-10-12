@@ -1798,3 +1798,31 @@ void MuhRecMainWindow::on_checkSubVolumeCBCT_clicked(bool checked)
 //        ui->spinSubVolumeSizeZ1->setEnabled(false);
     }
 }
+
+void MuhRecMainWindow::on_buttonCompSize_clicked()
+{
+
+    // automatically computes size of volumes with isotropic resolution
+
+    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
+
+        float magn = m_Config.ProjectionInfo.fSDD/m_Config.ProjectionInfo.fSOD;
+
+        // compute voxel size
+        m_Config.MatrixInfo.fVoxelSize[0] = m_Config.MatrixInfo.fVoxelSize[1] = m_Config.MatrixInfo.fVoxelSize[2] = m_Config.ProjectionInfo.fResolution[0]/magn;
+        ui->dspinVoxelSpacingX->setValue(m_Config.MatrixInfo.fVoxelSize[0]);
+        ui->dSpinVoxelSpacingY->setValue(m_Config.MatrixInfo.fVoxelSize[1]);
+        ui->dspinVoxelSpacingZ->setValue(m_Config.MatrixInfo.fVoxelSize[2]);
+
+
+        // compute volume dimensions
+        m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
+        m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+        ui->spinVolumeSizeX->setValue(m_Config.MatrixInfo.nDims[0]);
+        ui->spinVolumeSizeY->setValue(m_Config.MatrixInfo.nDims[1]);
+        ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
+
+    }
+
+}
