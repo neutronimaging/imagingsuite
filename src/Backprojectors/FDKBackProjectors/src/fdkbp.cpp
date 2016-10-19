@@ -50,8 +50,9 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
     // missing things todo:
     // 1. timer
-    // 2. weights?
-    // 3. reconstruct ROI
+    // 2. weights - OK
+    // 3. reconstruct VOI- ok
+    // 4. reconstruct from projections ROI -
 
 
         int num_imgs = projections.Size(2);// num di proiezioni all'interno del subset
@@ -77,7 +78,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 //        std::cout<< projections.Dims()[0]<< " " << projections.Dims()[1] << " " << projections.Dims()[2] << std::endl;
 
 
-        float scale;
+//        float scale; // it is weigths that has already been taken into account in fdkreconbase i would say
         double filter_time = 0.0;
         double backproject_time = 0.0;
         double io_time = 0.0;
@@ -99,8 +100,40 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         double plt[3] = {0.0,0.0,0.0}; /* Detector orientation */  /* Panel left (toward first column) */
         double pup[3] = {0.0,0.0,0.0}; /* Panel up (toward top row) */
         double vup[3] = {0.0,0.0,1.0}; /* supposed to be hardcoded... */
-        double tgt[3] = {0.0,0.0,0.0}; /* isoscenter, center of rotation of the same in world coordinates */
+        double tgt[3] = {0.0,0.0,0.0}; /* isoscenter, center of rotation of the sample in world coordinates */
 
+        /* update VUP with the tilt angle.. 1st try. doesn't seem to have great impact */
+
+        if (mConfig.ProjectionInfo.bCorrectTilt) {
+
+            vup[1] = sin(M_PI/180*mConfig.ProjectionInfo.fTiltAngle); //
+            vup[2] = cos(M_PI/180*mConfig.ProjectionInfo.fTiltAngle);
+//            std::cout << "correct tilt: " << vup[0] <<" " << vup[1] << " " << vup[2] <<
+//                         std::endl;
+        }
+
+
+
+        if (mConfig.ProjectionInfo.fCenter!=mConfig.ProjectionInfo.fpPoint[0]) {
+
+            // correct values
+            sid = sqrt(sid*sid-(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0])*(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0]));
+            sad = mConfig.ProjectionInfo.fSOD *(sid/mConfig.ProjectionInfo.fSDD);
+
+            // and update
+//            mConfig.ProjectionInfo.fSOD = sad;
+//            mConfig.ProjectionInfo.fSDD = sid;
+
+            cam[0] = sad*cos(angles*M_PI/180);
+            cam[1] = -sad*sin(angles*M_PI/180); /* Location of camera */
+        }
+
+
+//        std::cout << "debug camera position: " << std::endl;
+//        std::cout << cam[0] << " " << cam[1] << " " << cam[2] << std::endl;
+//        std::cout << mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD*(ic[0]-mConfig.ProjectionInfo.fCenter)*mConfig.ProjectionInfo.fResolution[0] << std::endl;
+
+//        cam[1] += mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD*(ic[0]-mConfig.ProjectionInfo.fCenter)*mConfig.ProjectionInfo.fResolution[0];
         /* Compute imager coordinate sys (nrm,pup,plt)
            ---------------
            nrm = cam - tgt
@@ -109,9 +142,15 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
            ---------------
         */
 
-        nrm[0] = cos(-angles*M_PI/180);
-        nrm[1] = sin(-angles*M_PI/180);
-        nrm[2] = 0;
+        nrm[0] = cam[0]-tgt[0];
+        nrm[1] = cam[1]-tgt[1];
+        nrm[2] = cam[2]-tgt[2];
+
+        double norm_nrm = sqrt(nrm[0]*nrm[0]+nrm[1]*nrm[1]+nrm[2]*nrm[2]);
+
+        nrm[0] /= norm_nrm;
+        nrm[1] /= norm_nrm;
+        nrm[2] /= norm_nrm;
 
 //        std::cout << "piercing point: " << std::endl;
 //        std::cout << ic[0] << " " << ic[1] << std::endl;
@@ -252,7 +291,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         /* Arbitrary scale applied to each image */
 //        scale = (float) (sqrt(3.f) / (double) num_imgs);
 //        scale = scale * parms->scale;
-        scale = 1.0; // do i need this?
+//        scale = 1.0; // do i need this?
 
 //        for (i = 0; i < num_imgs; i++) {
 //            printf ("Processing image %d\n", i);
@@ -292,10 +331,10 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
 
 //        REFERENCE FDK IMPLEMENTATION:
-//        project_volume_onto_image_reference (proj, scale, &proj_matrix[0], &nrm[0]);
+//        project_volume_onto_image_reference (proj, &proj_matrix[0], &nrm[0]);
 
 //       DEFAULT FDK BACK PROJECTOR:
-        project_volume_onto_image_c (proj, scale, &proj_matrix[0], &nrm[0]);
+        project_volume_onto_image_c (proj, &proj_matrix[0], &nrm[0]);
 
 //            backproject_time += timer->report ();
 
@@ -319,7 +358,6 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
 void FDKbp::project_volume_onto_image_c(
     kipl::base::TImage<float, 2> &cbi,
-    float scale,
     double *proj_matrix,
     double *nrm
 )
@@ -347,6 +385,7 @@ void FDKbp::project_volume_onto_image_c(
 
 
         /// spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
+        /// magnification = SDD/SOD
 //        float spacing[3] = {0.098f, 0.098f, 1.0f};
 
         float spacing[3];
@@ -382,7 +421,8 @@ void FDKbp::project_volume_onto_image_c(
 
 
 
-        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
+//        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
+        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]};
 //        std::cout << ic[0] << " " << ic[1] << std::endl;
 
 
@@ -401,7 +441,7 @@ void FDKbp::project_volume_onto_image_c(
 
         for (i=0; i<cbi.Size(0)*cbi.Size(1); i++) {
             cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
-            cbi[i] *=scale; // User scaling
+//            cbi[i] *=scale; // User scaling
         }
 
 //        xip = (double*) malloc (3*vol->dim[0]*sizeof(double));
@@ -530,7 +570,6 @@ void FDKbp::project_volume_onto_image_c(
     also it is the slowest */
 void FDKbp::project_volume_onto_image_reference (
     kipl::base::TImage<float, 2> &cbi,
-    float scale,
     double *proj_matrix,
     double *nrm
 )
@@ -630,7 +669,7 @@ void FDKbp::project_volume_onto_image_reference (
 
 //            volume[p++] += scale * s * get_pixel_value_b (cbi, ip[1], ip[0]);
 
-            img[p++] += scale * s * get_pixel_value_b (cbi, ip[1], ip[0]);
+            img[p++] += s * get_pixel_value_b (cbi, ip[1], ip[0]);
         }
 
 
@@ -744,7 +783,6 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img){
 
     float *data = img.GetDataPtr();
 
-    // qua ci sono delle bazze coi margins -- CONTINUARE TOMORROW DA QUI !!!!!
     for (r = 0; r < MARGIN; ++r)
         memcpy (data + r * width, data + MARGIN * width,
         width * sizeof(float));
@@ -764,9 +802,9 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img){
     for (i = 0; i < N; ++i) {
         in[i][0] = (double)(data[i]);
         // comment from here
-        in[i][0] /= 65535;
-        in[i][0] = (in[i][0] == 0 ? 1 : in[i][0]);
-        in[i][0] = -log (in[i][0]);
+//        in[i][0] /= 65535;
+//        in[i][0] = (in[i][0] == 0 ? 1 : in[i][0]);
+//        in[i][0] = -log (in[i][0]);
         // to here, to erase -log operation on projections
         in[i][1] = 0.0;
     }

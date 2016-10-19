@@ -324,6 +324,9 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
         std::cout << "Processing projection with angle: " << std::endl;
 
+        kipl::profile::Timer fdkTimer;
+        fdkTimer.Tic();
+
          for (int i=0; (i<nProj); i++) {
 
            pProj=projections.GetLinePtr(0,i);
@@ -342,10 +345,16 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 //           }
 //           Process(img,angles[i],weights[i],i==(nProj-1));
 
-          this->reconstruct(img, angles[i]);
+           img *= weights[i];
+//           std::cout << "weigth: " << weights[i] << std::endl;
+
+          this->reconstruct(img, angles[i]); // i am not sure i am passing the image in the optimal way.
 
 
        }
+
+         fdkTimer.Toc();
+         std::cout << "fdkTimer: " << fdkTimer << std::endl;
 
        delete [] weights;
        delete [] angles;
