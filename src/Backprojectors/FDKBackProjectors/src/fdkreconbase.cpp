@@ -321,6 +321,13 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 //       std::cout << "ANGLES" << std::endl;
 //        std::cout<< angles[180] << " " << angles[181]  << " " << angles[182] << std::endl;
 
+       /* Update piercing point position in projection rois */
+
+       std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
+       std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
+       mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0];
+       mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
+
 
         std::cout << "Processing projection with angle: " << std::endl;
 
@@ -347,6 +354,9 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
            img *= weights[i];
 //           std::cout << "weigth: " << weights[i] << std::endl;
+
+//           std::cout << "size of projections:" << img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl;
+
 
           this->reconstruct(img, angles[i]); // i am not sure i am passing the image in the optimal way.
 

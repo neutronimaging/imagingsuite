@@ -49,13 +49,25 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 {
 
     // missing things todo:
-    // 1. timer
+    // 1. timer - OK. total timer
     // 2. weights - OK
     // 3. reconstruct VOI- ok
-    // 4. reconstruct from projections ROI -
+    // 4. reconstruct from projections ROI - OK
+    // 5. use circular mask
 
 
-        int num_imgs = projections.Size(2);// num di proiezioni all'interno del subset
+//        int num_imgs = projections.Size(2);// num di proiezioni all'interno del subset
+
+//        std:: cout << "debug projection size: " << projections.Size(0)<< " "<< projections.Size(1) << std::endl; // perchè zero?
+
+//        /* Update piercing point position in projection roi, qst prob lo posso fare in fdk recon base  */
+
+//        std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
+//        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
+//        mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0];
+//        mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
+
+//        std::cout << "corrected piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
 
 
 //                       std::cout << "projection 1: " << std::endl;
@@ -90,7 +102,9 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         /* compute geometry matrix */  // to be probably moved elsewhere
 
         double proj_matrix[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Projection matrix */
-        double extrinsic[16] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Extrinsic matrix */
+        double tilted_proj_matrix[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Tilted projection matrix */
+        double tilt_matrix[16] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Tilt matrix */
+        double extrinsic[16] =   {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Extrinsic matrix */
         double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Intrinsic matrix */
         double sad = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
         double sid = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
@@ -106,7 +120,8 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
         if (mConfig.ProjectionInfo.bCorrectTilt) {
 
-            vup[1] = sin(M_PI/180*mConfig.ProjectionInfo.fTiltAngle); //
+            // this would be rotation around X:, changing the index 1 to 0 would have the effect to rotate around Y, however I'm not sure which one should be used.
+            vup[0] = sin(M_PI/180*mConfig.ProjectionInfo.fTiltAngle); // positive: clockwise?. it has the same effect like the tilt_matrix at the end of the file. check the sign of the angle
             vup[2] = cos(M_PI/180*mConfig.ProjectionInfo.fTiltAngle);
 //            std::cout << "correct tilt: " << vup[0] <<" " << vup[1] << " " << vup[2] <<
 //                         std::endl;
@@ -114,19 +129,20 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
 
 
-        if (mConfig.ProjectionInfo.fCenter!=mConfig.ProjectionInfo.fpPoint[0]) {
+//        if (mConfig.ProjectionInfo.fCenter!=mConfig.ProjectionInfo.fpPoint[0]) {
 
-            // correct values
-            sid = sqrt(sid*sid-(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0])*(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0]));
-            sad = mConfig.ProjectionInfo.fSOD *(sid/mConfig.ProjectionInfo.fSDD);
+//            // correct values
+//            sid = sqrt(sid*sid+(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0])*(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0]));
+//            sad = mConfig.ProjectionInfo.fSOD *(sid/mConfig.ProjectionInfo.fSDD);
 
-            // and update
-//            mConfig.ProjectionInfo.fSOD = sad;
-//            mConfig.ProjectionInfo.fSDD = sid;
 
-            cam[0] = sad*cos(angles*M_PI/180);
-            cam[1] = -sad*sin(angles*M_PI/180); /* Location of camera */
-        }
+//            cam[0] = sad*cos(angles*M_PI/180);
+//            cam[1] = -sad*sin(angles*M_PI/180); /* Location of camera I'm not sure that is correct */
+
+//            // try to update the location of target and not the one of the camera:
+//           // float shift = sqrt(sad*sad-mConfig.ProjectionInfo.fSOD*mConfig.ProjectionInfo.fSOD);
+
+//        }
 
 
 //        std::cout << "debug camera position: " << std::endl;
@@ -145,6 +161,8 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         nrm[0] = cam[0]-tgt[0];
         nrm[1] = cam[1]-tgt[1];
         nrm[2] = cam[2]-tgt[2];
+
+
 
         double norm_nrm = sqrt(nrm[0]*nrm[0]+nrm[1]*nrm[1]+nrm[2]*nrm[2]);
 
@@ -230,7 +248,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
         extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2];
         extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
-        extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+sad;
+        extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+mConfig.ProjectionInfo.fSOD;
 
 
 //        printf ("EXTRINSIC\n%g %g %g %g\n%g %g %g %g\n"
@@ -253,7 +271,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 //        m_idx (pmat->intrinsic,cols,2,2) = 1 / sid;
         intrinsic[0] = 1/mConfig.ProjectionInfo.fResolution[0];
         intrinsic[5] = 1/mConfig.ProjectionInfo.fResolution[1];
-        intrinsic[10] = 1/sid;
+        intrinsic[10] = 1/mConfig.ProjectionInfo.fSDD;
 
 //        printf ("INTRINSIC\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
 //        intrinsic[0], intrinsic[1],
@@ -277,6 +295,87 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
                 m_idx(proj_matrix,4,i,j) = acc;
             }
        }
+
+
+//              printf ("GEOMETRY MATRIX\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
+//              proj_matrix[0], proj_matrix[1],
+//              proj_matrix[2], proj_matrix[3],
+//              proj_matrix[4], proj_matrix[5],
+//              proj_matrix[6], proj_matrix[7],
+//              proj_matrix[8], proj_matrix[9],
+//              proj_matrix[10], proj_matrix[11]);
+
+
+       /* Compensate for tilt  = tilt *proj_matrix*/
+       /* if correct it can be rewritten be including also the other titl angles: around x and y */
+
+
+//       if (mConfig.ProjectionInfo.bCorrectTilt)  {
+
+//           /*Build the tilt matrix: rotation around X */
+
+////           std::cout << "tilt angle: " << mConfig.ProjectionInfo.fTiltAngle << std::endl;
+
+
+//           tilt_matrix[0] = 1.0;
+//           tilt_matrix[1] = 0.0;
+//           tilt_matrix[2] = 0.0;
+//           tilt_matrix[3] = 0.0;
+
+//           tilt_matrix[5] = cos(mConfig.ProjectionInfo.fTiltAngle*M_PI/180);
+//           tilt_matrix[4] = 0.0;
+//           tilt_matrix[6] = sin(mConfig.ProjectionInfo.fTiltAngle*M_PI/180);
+//           tilt_matrix[7] = 0.0;
+
+//           tilt_matrix[9] = -sin(mConfig.ProjectionInfo.fTiltAngle*M_PI/180);
+//           tilt_matrix[8] = 0.0;
+//           tilt_matrix[10] = cos(mConfig.ProjectionInfo.fTiltAngle*M_PI/180);
+//           tilt_matrix[11] = 0.0;
+
+//           tilt_matrix[12] = 0.0;
+//           tilt_matrix[13] = 0.0;
+//           tilt_matrix[13] = 0.0;
+
+//           tilt_matrix[15] = 1.0;
+
+
+////           printf ("TILT MATRIX\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n %g %g %g %g\n",
+////                   tilt_matrix[0], tilt_matrix[1],
+////                   tilt_matrix[2], tilt_matrix[3],
+////                   tilt_matrix[4], tilt_matrix[5],
+////                   tilt_matrix[6], tilt_matrix[7],
+////                   tilt_matrix[8], tilt_matrix[9],
+////                   tilt_matrix[10], tilt_matrix[11],
+////                   tilt_matrix[12], tilt_matrix[13],
+////                   tilt_matrix[14], tilt_matrix[15]
+////                   );
+
+
+//           for (i=0; i<4; i++) {
+//               for (j=0; j<4; j++) {
+//                   float acc = 0.0;
+//                   for (k=0; k<4; k++) {
+//                       acc += m_idx(proj_matrix,4,i,k)*m_idx(tilt_matrix,4,k,j);
+//                   }
+//                   m_idx(tilted_proj_matrix,4,i,j) = acc;
+//               }
+//           }
+
+////           printf ("TILTED PROJECTION MATRIX\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
+////                   tilted_proj_matrix[0], tilted_proj_matrix[1],
+////                   tilted_proj_matrix[2], tilted_proj_matrix[3],
+////                   tilted_proj_matrix[4], tilted_proj_matrix[5],
+////                   tilted_proj_matrix[6], tilted_proj_matrix[7],
+////                   tilted_proj_matrix[8], tilted_proj_matrix[9],
+////                   tilted_proj_matrix[10], tilted_proj_matrix[11]
+////                   );
+
+//       }
+
+
+//       /* Matrix element m[i,j] for matrix with c columns */
+//       #define m_idx(m1,c,i,j) m1[i*c+j]
+
 
 
 //       printf ("GEOMETRY MATRIX\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
@@ -397,11 +496,12 @@ void FDKbp::project_volume_onto_image_c(
 //        float origin[3] = {-24.9512f, -24.9512f, -42.00f};
         float origin[3];
 
+
         if (mConfig.MatrixInfo.bUseVOI) {
 
-            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
-            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
-            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
+            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fCenter-1)*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
+            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-mConfig.ProjectionInfo.fCenter-1)*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
+            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fpPoint[1]-1)*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
 
 //            std::cout << "origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
 //            std::cout << "voi: " << mConfig.MatrixInfo.voi[0] << " " << mConfig.MatrixInfo.voi[1] << " " << mConfig.MatrixInfo.voi[2]  << " "
@@ -410,10 +510,19 @@ void FDKbp::project_volume_onto_image_c(
         }
 
         else {
-            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-spacing[0]/2);
-            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-spacing[1]/2);
-            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-spacing[2]/2);
+//            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-spacing[0]/2);
+//            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-spacing[1]/2);
+//            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-spacing[2]/2);
+
+            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fCenter-1)*spacing[0]-spacing[0]/2);
+            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-mConfig.ProjectionInfo.fCenter-1)*spacing[1]-spacing[1]/2);
+            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fpPoint[1]-1)*spacing[2]-spacing[2]/2);
         }
+
+//        std::cout << "un po' di debug su geometry:" << std::endl;
+//        std::cout << "matrix dims: " << mConfig.MatrixInfo.nDims[0] << " " << mConfig.MatrixInfo.nDims[1] << " " << mConfig.MatrixInfo.nDims[2] << std::endl;
+//        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
+//        std::cout << "center of rotation: " << mConfig.ProjectionInfo.fCenter << std::endl;
 
 //        std::cout << "debug origin: " << std::endl;
 //        std::cout << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
@@ -600,7 +709,8 @@ void FDKbp::project_volume_onto_image_reference (
 
 
 //    float spacing[3] = {mConfig.ProjectionInfo.fResolution[0], mConfig.ProjectionInfo.fResolution[0],mConfig.ProjectionInfo.fResolution[0]};
-    double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
+    // double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
+    double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]};
 
 //    std::cout << "Debug on projection cb:" << std::endl;
 //    std::cout << cbi.Size(0) << " " << cbi.Size(1) << std::endl;
@@ -611,7 +721,13 @@ void FDKbp::project_volume_onto_image_reference (
 //                                                  << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
 
 
-    float spacing[3] = {0.098f, 0.098f, 1.0f};
+  //  float spacing[3] = {0.098f, 0.098f, 1.0f};
+
+    float spacing[3];
+    spacing[0] = mConfig.MatrixInfo.fVoxelSize[0];
+    spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
+    spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
+
     float origin[3]; /* = {-12.475, -12.75, -24.975};*/
 
     if (mConfig.MatrixInfo.bUseVOI) {
