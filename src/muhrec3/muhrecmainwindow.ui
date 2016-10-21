@@ -716,7 +716,7 @@
               <item>
                <widget class="QTabWidget" name="TabGeometry">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab_geometry">
                  <attribute name="title">
@@ -1226,7 +1226,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>701</width>
-                    <height>33</height>
+                    <height>37</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1277,7 +1277,7 @@
                   <property name="geometry">
                    <rect>
                     <x>0</x>
-                    <y>40</y>
+                    <y>80</y>
                     <width>701</width>
                     <height>35</height>
                    </rect>
@@ -1362,7 +1362,7 @@
                   <property name="geometry">
                    <rect>
                     <x>0</x>
-                    <y>80</y>
+                    <y>120</y>
                     <width>701</width>
                     <height>35</height>
                    </rect>
@@ -1470,7 +1470,7 @@
                   <property name="geometry">
                    <rect>
                     <x>0</x>
-                    <y>120</y>
+                    <y>40</y>
                     <width>701</width>
                     <height>35</height>
                    </rect>

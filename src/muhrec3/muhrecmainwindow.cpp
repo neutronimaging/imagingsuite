@@ -1288,6 +1288,7 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
         nBufferMemory/=(1024*1024);
         text.str("");
         m_nRequiredMemory=static_cast<size_t>(nBufferMemory+nMatrixMemory);
+//        m_nRequiredMemory=static_cast<size_t>(nMatrixMemory);
         text<<"Memory usage: "<<m_nRequiredMemory
            <<"Mb (matrix: "<<ceil(nMatrixMemory)<<", buffers: "
            <<ceil(nBufferMemory)<<") system max "
@@ -1816,9 +1817,9 @@ void MuhRecMainWindow::on_buttonCompSize_clicked()
 
 
         // compute volume dimensions
-        m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+        m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
         m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-        m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+        m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
         ui->spinVolumeSizeX->setValue(m_Config.MatrixInfo.nDims[0]);
         ui->spinVolumeSizeY->setValue(m_Config.MatrixInfo.nDims[1]);
         ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
