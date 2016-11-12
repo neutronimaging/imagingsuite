@@ -219,3 +219,118 @@ KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eRotati
     return s;
 }
 
+/// \brief Converts connectivity enum value to a string
+/// \param conn the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the name of the connectivity type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eConnectivity conn)
+{
+    std::string str;
+    switch (conn) {
+    case kipl::base::conn4   : str = "conn4"; break;
+    case kipl::base::conn8  : str = "conn8"; break;
+    case kipl::base::conn6  : str = "conn6"; break;
+    case kipl::base::conn18 : str = "conn18"; break;
+    case kipl::base::conn26 : str = "conn26"; break;
+
+    default :
+        throw kipl::base::KiplException("Could not transform a Connectivity enum to a string", __FILE__, __LINE__);
+    };
+
+    return str;
+}
+
+/// \brief Converts a string to a connectivity enum
+/// \param str a string containing the name to convert
+/// \param conn the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eConnectivity & conn)
+{
+    std::map<std::string, kipl::base::eConnectivity> values;
+
+    values["conn4"] = kipl::base::conn4;
+    values["conn8"] = kipl::base::conn8;
+    values["conn6"] = kipl::base::conn6;
+    values["conn18"] = kipl::base::conn18;
+    values["conn26"] = kipl::base::conn26;
+
+    auto it=values.find(str);
+
+    if (it!=values.end())
+        conn=it->second;
+    else
+        throw kipl::base::KiplException("Could not transform string to an Connectivity enum", __FILE__, __LINE__);
+}
+
+/// \brief Stream output operator for eConnectivity
+/// \param s the stream that handles the enum
+/// \param rotdir the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eConnectivity conn)
+{
+    s<<enum2string(conn);
+    return s;
+
+}
+
+
+/// \brief Converts edge status enum value to a string
+/// \param conn the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the name of the edge type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eEdgeStatus edge)
+{
+    std::string str;
+
+    switch (edge) {
+        case kipl::base::edgeX0 : str="edgeX0"; break;
+        case kipl::base::edgeX1 : str="edgeX1"; break;
+        case kipl::base::edgeY0 : str="edgeY0"; break;
+        case kipl::base::edgeY1 : str="edgeY1"; break;
+        case kipl::base::edgeZ0 : str="edgeZ0"; break;
+        case kipl::base::edgeZ1 : str="edgeZ1"; break;
+        case kipl::base::cornerX0Y0 : str="cornerX0Y0"; break;
+        case kipl::base::cornerX1Y0 : str="cornerX1Y0"; break;
+        case kipl::base::cornerX0Y1 : str="cornerX0Y1"; break;
+        case kipl::base::cornerX1Y1 : str="cornerX1Y1"; break;
+    default :
+        throw kipl::base::KiplException("Could not transform a edge status enum to a string", __FILE__, __LINE__);
+    }
+    return str;
+}
+
+/// \brief Converts a string to a edge status enum
+/// \param str a string containing the name to convert
+/// \param edge the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eEdgeStatus & edge)
+{
+    std::map<std::string, kipl::base::eEdgeStatus> values;
+
+    values["edgeX0"] = kipl::base::edgeX0;
+    values["edgeX1"] = kipl::base::edgeX1;
+    values["edgeY0"] = kipl::base::edgeY0;
+    values["edgeY1"] = kipl::base::edgeY1;
+    values["edgeZ0"] = kipl::base::edgeZ0;
+    values["edgeZ1"] = kipl::base::edgeZ1;
+    values["cornerX0Y0"] = kipl::base::cornerX0Y0;
+    values["cornerX1Y0"] = kipl::base::cornerX1Y0;
+    values["cornerX0Y1"] = kipl::base::cornerX0Y1;
+    values["cornerX1Y1"] = kipl::base::cornerX1Y1;
+
+    auto it=values.find(str);
+
+    if (it!=values.end())
+        edge=it->second;
+    else
+        throw kipl::base::KiplException("Could not transform string to an edge status enum", __FILE__, __LINE__);
+}
+
+/// \brief Stream output operator for eEdgeStatus
+/// \param s the stream that handles the enum
+/// \param edge the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eEdgeStatus edge)
+{
+    s<<enum2string(edge);
+
+    return s;
+}

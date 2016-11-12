@@ -87,6 +87,30 @@ enum eEndians {
     BigEndian       ///< Use big endian, ie first bit is most significant
 };
 
+/// \brief selector for neighborhood connectivity
+enum eConnectivity {
+    conn4=4,
+    conn8=8,
+    conn6=6,
+    conn18=18,
+    conn26=26,
+    euclid=0
+};
+
+enum eEdgeStatus {
+    noEdge = 0,
+    edgeX0 = 1,
+    edgeX1 = 2,
+    edgeY0 = 4,
+    cornerX0Y0 = edgeX0+edgeY0,//1+4,
+    cornerX1Y0 = edgeX1+edgeY0,//2+4,
+    edgeY1 = 8,
+    cornerX0Y1 = edgeX0+edgeY1,//1+8,
+    cornerX1Y1 = edgeX1+edgeY1,//2+8,
+    edgeZ0 = 16,
+    edgeZ1 = 32
+};
+
 }}
 
 /// \brief Stream output operator for eImagePlanes
@@ -197,5 +221,38 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eRotationDirect
 /// \returns a reference to the stream
 KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eRotationDirection rotdir);
 
+/// \brief Converts connectivity enum value to a string
+/// \param conn the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the name of the connectivity type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eConnectivity conn);
 
+/// \brief Converts a string to a connectivity enum
+/// \param str a string containing the name to convert
+/// \param conn the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eConnectivity & conn);
+
+/// \brief Stream output operator for eConnectivity
+/// \param s the stream that handles the enum
+/// \param rotdir the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eConnectivity conn);
+
+
+/// \brief Converts edge status enum value to a string
+/// \param conn the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the name of the edge type
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eEdgeStatus edge);
+
+/// \brief Converts a string to a edge status enum
+/// \param str a string containing the name to convert
+/// \param edge the enum result
+KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eEdgeStatus & edge);
+
+/// \brief Stream output operator for eEdgeStatus
+/// \param s the stream that handles the enum
+/// \param edge the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eEdgeStatus edge);
 #endif /*KIPLENUMS_H_*/

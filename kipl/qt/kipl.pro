@@ -107,7 +107,8 @@ SOURCES += \
     ../src/math/PoissonNoise.cpp \
     ../src/filters/stddevfilter.cpp \
     ../src/interactors/interactionbase.cpp \
-    ../src/segmentation/multivariateclassifyerbase.cpp
+    ../src/segmentation/multivariateclassifyerbase.cpp \
+    ../src/morphology/pixeliterator.cpp
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -298,7 +299,8 @@ HEADERS +=\
     ../include/filters/stddevfilter.h \
     ../include/interactors/interactionbase.h \
     ../include/containers/ringbuffer.h \
-    ../include/segmentation/multivariateclassifyerbase.h
+    ../include/segmentation/multivariateclassifyerbase.h \
+    ../include/morphology/pixeliterator.h
 
 
 
