@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <fitsio.h>
+#include <stdint.h>
 
 namespace kipl { namespace io {
 /*
@@ -26,13 +27,16 @@ int KIPLSHARED_EXPORT FITSDataType(unsigned char x);
 int KIPLSHARED_EXPORT FITSDataType(char x);
 int KIPLSHARED_EXPORT FITSDataType(unsigned short x);
 int KIPLSHARED_EXPORT FITSDataType(short x);
-int KIPLSHARED_EXPORT FITSDataType(int x);
-int KIPLSHARED_EXPORT FITSDataType(unsigned int x);
-int KIPLSHARED_EXPORT FITSDataType(long x);
+int KIPLSHARED_EXPORT FITSDataType(int32_t x);
+int KIPLSHARED_EXPORT FITSDataType(uint32_t x);
+int KIPLSHARED_EXPORT FITSDataType(int64_t x);
 int KIPLSHARED_EXPORT FITSDataType(long long x);
-int KIPLSHARED_EXPORT FITSDataType(unsigned long x);
+int KIPLSHARED_EXPORT FITSDataType(int64_t x);
+int KIPLSHARED_EXPORT FITSDataType(uint64_t x);
 int KIPLSHARED_EXPORT FITSDataType(float x);
 int KIPLSHARED_EXPORT FITSDataType(double x);
+
+
 
 template <typename ImgType>
 int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop)
@@ -72,6 +76,16 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
 	}
 	else {
+        if ((naxes[0]<=nCrop[0]) ||
+                (naxes[0]<=nCrop[2]) ||
+                (naxes[1]<=nCrop[1]) ||
+                (naxes[1]<=nCrop[3]))
+        {
+            msg.str("");
+            msg<<"Cropping region ("<<nCrop[0]<<", "<<nCrop[1]<<", "<<nCrop[2]<<", "<<nCrop[3]<<") out of bounds ("<<naxes[0]<<", "<<naxes[1]<<") for file "<<fname;
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+        }
+
         if ((nCrop[2]<=nCrop[0]) || (nCrop[3]<=nCrop[1])) {
             msg.str("");
             msg<<"Invalid cropping region for file "<<fname<<" ("<<nCrop[0]<<", "<<nCrop[1]<<", "<<nCrop[2]<<", "<<nCrop[3]<<")";
@@ -114,9 +128,75 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 }
 
 template <typename ImgType>
-int WriteFITS(kipl::base::TImage<ImgType,2> & UNUSED(src),char const * const UNUSED(fname))
+int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 {
-	throw kipl::base::KiplException("WriteFITS is not implemented");
+
+    fitsfile *fptr;                  // pointer to the FITS file, defined in fitsio.h
+    int status, ii, jj;
+    long  fpixel, nelements, exposure;
+    ImgType *array[200];
+    char err_msg[128];
+
+    // initialize FITS image parameters
+    int bitpix   =  USHORT_IMG;     // 16-bit unsigned short pixel values
+    long naxis    =   2;            // 2-dimensional image
+    long naxes[2] ;
+    naxes[0]= static_cast<long>(src.Size(0)); // Set image dimensions
+    naxes[1]= static_cast<long>(src.Size(1)); // Set image dimensions
+
+    // initialize pointers to the start of each row of the image
+    for( ii=1; ii<naxes[1]; ii++ )
+      array[ii] = array[ii-1] + naxes[0];
+
+    remove(filename);                               // Delete old file if it already exists
+
+    status = 0;                                     // initialize status before calling fitsio routines
+
+    if (fits_create_file(&fptr, filename, &status)) // create new FITS file
+    {
+        fits_get_errstatus(status, err_msg);
+        throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
+    }
+
+//     write the required keywords for the primary array image.
+//     Since bitpix = USHORT_IMG, this will cause cfitsio to create
+//     a FITS image with BITPIX = 16 (signed short integers) with
+//     BSCALE = 1.0 and BZERO = 32768.  This is the convention that
+//     FITS uses to store unsigned integers.  Note that the BSCALE
+//     and BZERO keywords will be automatically written by cfitsio
+//     in this case.
+
+    if ( fits_create_img(fptr,  bitpix, naxis, naxes, &status) ) {
+        fits_get_errstatus(status, err_msg);
+        throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
+    }
+
+    fpixel = 1;                               // first pixel to write
+    nelements = naxes[0] * naxes[1];          // number of pixels to write
+
+    // write the array of unsigned integers to the FITS file
+    if ( fits_write_img(fptr, FITSDataType(src[0]), fpixel, nelements, src.GetDataPtr(), &status) ) {
+        fits_get_errstatus(status, err_msg);
+        throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
+    }
+
+    // write another optional keyword to the header
+    // Note that the ADDRESS of the value is passed in the routine
+    exposure = 1500;
+    if ( fits_update_key(fptr, TLONG, "EXPOSURE", &exposure,
+         "Total Exposure Time", &status) )
+    {
+        fits_get_errstatus(status, err_msg);
+        throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
+    }
+
+
+    if ( fits_close_file(fptr, &status) )                // close the file
+    {
+        fits_get_errstatus(status, err_msg);
+        throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
+    }
+
 	return 0;
 }
 

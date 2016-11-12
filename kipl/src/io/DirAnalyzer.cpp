@@ -7,7 +7,20 @@
 #include "../../include/base/KiplException.h"
 #include "../../include/io/DirAnalyzer.h"
 
+#ifdef _MSC_VER
+   #include <io.h>
+   #define access    _access_s
+#else
+   #include <unistd.h>
+#endif
+
+
 namespace kipl { namespace io {
+
+bool FileExists( const std::string &Filename )
+{
+    return access( Filename.c_str(), 0 ) == 0;
+}
 
 FileItem::FileItem() :
     m_sMask("noname_####.tif"),
