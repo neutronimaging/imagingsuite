@@ -30,8 +30,10 @@ public:
     /// \brief Gets a sub image using roi coordinates
     /// \param src The source image
     /// \param roi array containing coordinate tuples for the diagonal corners of the image
+    /// \param includeCoord include the end coordinate (e.g. x1-x0+1) on true or (x1-x0) on false
     /// \returns the extracted image
-    static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const * const roi);
+    /// \test Unit test is available
+    static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const * const roi, bool includeCoord=true);
 
     /// \brief Puts a sub image back into a larger image
     /// \param src The sub image to put

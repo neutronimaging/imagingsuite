@@ -1,9 +1,13 @@
+#include <sstream>
+#include <string>
+
 #include <QString>
 #include <QtTest>
 
 #include <base/thistogram.h>
 #include <base/timage.h>
 #include <base/imageinfo.h>
+#include <base/tsubimage.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -16,17 +20,20 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
-    // Tests for TImage
+    /// Tests for TImage
     void testTImageInitialization();
 
-    // Tests for ImageInformation
+    /// Tests for ImageInformation
     void testImageInfoCtor();
     void testImageInfoResolutions();
 
-    // Tests for BivariateHistogram
+    /// Tests for BivariateHistogram
     void testBivariateHistogramInitialize();
 
     void testBivariateHistogram();
+
+    /// Tests
+    void testSubImage();
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -179,6 +186,52 @@ void TkiplbasetestTest::testBivariateHistogram()
         info=bihi.GetBin(10.0f,20.0f);
         QCOMPARE(img(9,19),info.count);
 
+}
+
+void TkiplbasetestTest::testSubImage()
+{
+    std::ostringstream msg;
+
+    size_t dims[2]={10,12};
+    kipl::base::TImage<float,2> img(dims);
+    kipl::base::TImage<float,2> res;
+
+    kipl::base::TSubImage<float,2> cropper;
+    size_t crop[4]={2,3,7,6};
+    float val_img;
+    float val_res;
+    // Test get with crop coordinates
+    {
+        res=cropper.Get(img,crop,false);
+
+        QVERIFY2(res.Size(0)==crop[2]-crop[0],"Cropped size error x");
+        QVERIFY2(res.Size(1)==crop[3]-crop[1],"Cropped size error y");
+
+
+        for (size_t j=0; j<res.Size(1); ++j) {
+            for (size_t i=0; i<res.Size(0); ++i) {
+                val_img=img.GetLinePtr(crop[1]+j)[crop[0]+i];
+                val_res=res.GetLinePtr(j)[i];
+                msg.str(""); msg<<"Pos: "<<i<<", "<<j<<" orig="<<val_img<<", res="<<val_res;
+                QVERIFY2(val_img==val_res,msg.str().c_str());
+            }
+        }
+
+        res=cropper.Get(img,crop,true);
+
+        QVERIFY2(res.Size(0)==crop[2]-crop[0]+1,"Cropped size error x");
+        QVERIFY2(res.Size(1)==crop[3]-crop[1]+1,"Cropped size error y");
+        for (size_t j=0; j<res.Size(1); ++j) {
+            for (size_t i=0; i<res.Size(0); ++i) {
+                val_img=img.GetLinePtr(crop[1]+j)[crop[0]+i];
+                val_res=res.GetLinePtr(j)[i];
+                msg.str(""); msg<<"Pos: "<<i<<", "<<j<<" orig="<<val_img<<", res="<<val_res;
+                QVERIFY2(val_img==val_res,msg.str().c_str());
+            }
+        }
+    }
+
+    // Test get pos and sizes
 }
 
 QTEST_APPLESS_MAIN(TkiplbasetestTest)

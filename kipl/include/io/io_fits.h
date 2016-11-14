@@ -19,7 +19,6 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 /// \param src The image to write
 /// \param fname file name of the destination file.
 /// \returns 0
-/// \todo WriteFITS is not implemented
 template <typename ImgType>
 int WriteFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname);
 
