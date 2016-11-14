@@ -26,7 +26,7 @@ unix {
     }
     else
     {
-        QMAKE_MAC_SDK = macosx10.12
+  #      QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
