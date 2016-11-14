@@ -46,10 +46,10 @@ public:
     /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
 	kipl::base::TImage<float,2> Read(std::string filename,
-			kipl::base::eImageFlip flip,
-			kipl::base::eImageRotate rotate,
-			float binning,
-			size_t const * const nCrop);
+            kipl::base::eImageFlip flip = kipl::base::ImageFlipNone,
+            kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+            float binning=1.0f,
+            size_t const * const nCrop=nullptr);
 
     /// Reading a single file with file name given by a file mask and an index number.
     /// \param path Path to the location where the file is saved
