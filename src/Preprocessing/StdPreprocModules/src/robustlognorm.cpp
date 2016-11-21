@@ -61,6 +61,13 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
     bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
 
+    blackbodyname = GetStringParameter(parameters,"BB_OB_name");
+    nBBCount = GetIntParameter(parameters,"BB_counts");
+    nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
+
+    std::cout << blackbodyname << std::endl;
+    std::cout << nBBCount << " " << nBBFirstIndex << std::endl;
+
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
     return 1;
@@ -90,6 +97,9 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters()
     parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
     parameters["refmethod"] = enum2string(m_ReferenceMethod);
     parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
+    parameters["BB_OB_name"] = blackbodyname;
+    parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
+    parameters["BB_first_index"] = kipl::strings::value2string(nBBFirstIndex);
 //    parameters["corrector"] = enum2string(m_corrector);
 
     return parameters;
@@ -246,7 +256,57 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
     logger(kipl::logging::Logger::LogMessage,"Load reference done");
     SetReferenceImages(dark, flat);
-    m_corrector.SetReferenceImages(&flat, &dark, nullptr, fFlatDose, fDarkDose, NULL); // understand connections better
+
+    // now load OB image with BBs
+
+    if (nBBCount!=0) {
+         logger(kipl::logging::Logger::LogMessage,"Loading OB images with BBs");
+         kipl::strings::filenames::MakeFileName(blackbodyname,nOBFirstIndex,filename,ext,'#','0');
+         bb = reader.Read(filename,
+                          m_Config.ProjectionInfo.eFlip,
+                          m_Config.ProjectionInfo.eRotate,
+                          m_Config.ProjectionInfo.fBinning,
+                          roi);
+
+// not used for now but to take into account for the near future
+//         if (bUseNormROI) {
+//             fDarkDose=reader.GetProjectionDose(filename,
+//                     m_Config.ProjectionInfo.eFlip,
+//                     m_Config.ProjectionInfo.eRotate,
+//                     m_Config.ProjectionInfo.fBinning,
+//                     nOriginalNormRegion);
+//         }
+//         else {
+//             fDarkDose=0.0f;
+//         }
+
+         for (size_t i=1; i<nOBCount; i++) {
+             kipl::strings::filenames::MakeFileName(blackbodyname,i+nBBFirstIndex,filename,ext,'#','0');
+             img=reader.Read(filename,
+                     m_Config.ProjectionInfo.eFlip,
+                     m_Config.ProjectionInfo.eRotate,
+                     m_Config.ProjectionInfo.fBinning,
+                     roi);
+             bb+=img;
+//             if (bUseNormROI) {
+//                 fDarkDose+=reader.GetProjectionDose(filename,
+//                         m_Config.ProjectionInfo.eFlip,
+//                         m_Config.ProjectionInfo.eRotate,
+//                         m_Config.ProjectionInfo.fBinning,
+//                         nOriginalNormRegion);
+//             }
+//             else {
+//                 fDarkDose=0.0f;
+//             }
+         }
+
+         bb/=static_cast<float>(nOBCount);
+         // repeat sinograms? to see if to be added
+
+    }
+
+
+    m_corrector.SetReferenceImages(&flat, &dark, &bb, fFlatDose, fDarkDose, NULL); // understand connections better
 
 //    std::cout << "computed doses: " << std::endl;
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
