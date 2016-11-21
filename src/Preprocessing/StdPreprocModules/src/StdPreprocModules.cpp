@@ -31,6 +31,7 @@
 #include "../include/MorphSpotCleanModule.h"
 #include "../include/GammaSpotCleanModule.h"
 #include "../include/CameraStripeClean.h"
+#include "../include/robustlognorm.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>
@@ -54,8 +55,11 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 	if (name!=NULL) {
 		std::string sName=name;
 
-		if (sName=="FullLogNorm")
-			return new FullLogNorm;
+        if (sName=="FullLogNorm")
+            return new FullLogNorm;
+
+        if (sName=="RobustLogNorm")
+            return new RobustLogNorm;
 
 		if (sName=="LogProjection")
 			return new LogProjection;
@@ -177,6 +181,9 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
 	FullLogNorm norm;
 	modulelist->operator []("FullLogNorm")=norm.GetParameters();
+
+    RobustLogNorm robnorm;
+    modulelist->operator[]("RobustLogNorm")=robnorm.GetParameters();
 
 	LogProjection lproj;
 	modulelist->operator []("LogProjection")=lproj.GetParameters();
