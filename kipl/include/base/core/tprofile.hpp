@@ -26,7 +26,7 @@ void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, boo
 {
     memset(pProfile,0,dims[0]*sizeof(S));
     for (size_t y=0; y<dims[1]; y++) {
-        T* d=pData+y*dims[0];
+        const T* d=pData+y*dims[0];
         for (size_t x=0; x<dims[0]; x++) {
             pProfile[x]+=d[x];
         }
