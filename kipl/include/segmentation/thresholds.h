@@ -95,13 +95,13 @@ namespace kipl { namespace segmentation {
 	/// \param cmp Type of comparison (less or greater), complementary image selector
 	/// \param mask ROI mask, must have the same size as img or an xy slice of img
 	/// \param Nmask number mask elements 0=default -> Nmask = N
-	template <typename T0, typename T1, typename TM>
+    template <typename T0, typename T1>
 	int Threshold(T0 * data,
 			T1 *result,
 			size_t N,
 			const T0 th,
 			CmpType cmp=cmp_greater,
-			TM * mask = reinterpret_cast<TM *>(NULL),
+            T1 * mask = reinterpret_cast<T1 *>(NULL),
             size_t Nmask=size_t(0))
 	{
 		T1 cmptrue,cmpfalse;
