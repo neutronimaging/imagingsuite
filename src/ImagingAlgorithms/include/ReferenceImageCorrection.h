@@ -42,7 +42,7 @@ public:
             kipl::base::TImage<float,2> *bb,
             float dose_OB,
             float dose_DC,
-            float dose_BB);
+            float dose_BB, size_t *roi);
 
 //    void SetReferenceImages(kipl::base::TImage<float,3> *ob,
 //            kipl::base::TImage<float,3> *dc,
@@ -58,11 +58,14 @@ public:
 
 protected:
 	void PrepareReferences();
-	void PrepareBlackBody(float w=10);
+    kipl::base::TImage<float,2> PrepareBlackBodyOpenBeam();
+    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask);
+    void InterpolateBlackBody(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img);
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
 //    void GetDose(kipl::base::TImage<float,2> &img, size_t *roi);
+    int* repeat_matrix(int* source, int count, int expand);
 
 
 	bool m_bHaveOpenBeam;
@@ -74,6 +77,13 @@ protected:
 	kipl::base::TImage<float,2> m_OpenBeam;
 	kipl::base::TImage<float,2> m_DarkCurrent;
 	kipl::base::TImage<float,2> m_BlackBody;
+    kipl::base::TImage<float,2> m_OB_BB_Interpolated;
+
+
+    kipl::base::TImage<float,2> m_OpenBeam_all;
+    kipl::base::TImage<float,2> m_DarkCurrent_all;
+    kipl::base::TImage<float,2> m_BlackBody_all;
+    kipl::base::TImage<float,2> m_OB_BB_Interpolated_all;
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
