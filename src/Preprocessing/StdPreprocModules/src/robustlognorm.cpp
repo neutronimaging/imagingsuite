@@ -19,6 +19,8 @@ RobustLogNorm::RobustLogNorm() :
     nDCFirstIndex(1),
     nBBCount(0),
     nBBFirstIndex(1),
+    nBBSampleCount(0),
+    nBBSampleFirstIndex(0),
     fFlatDose(1.0f),
     fBlackDose(1.0f),
     bUseNormROI(true),
@@ -64,6 +66,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     blackbodyname = GetStringParameter(parameters,"BB_OB_name");
     nBBCount = GetIntParameter(parameters,"BB_counts");
     nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
+    blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
 
     std::cout << blackbodyname << std::endl;
     std::cout << nBBCount << " " << nBBFirstIndex << std::endl;
@@ -100,6 +103,8 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters()
     parameters["BB_OB_name"] = blackbodyname;
     parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
     parameters["BB_first_index"] = kipl::strings::value2string(nBBFirstIndex);
+    parameters["BB_samplename"] = blackbodysamplename;
+    parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
 //    parameters["corrector"] = enum2string(m_corrector);
 
     return parameters;
@@ -117,6 +122,11 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     std::cout << "flatname: " << flatname << std::endl;
     std::cout << "darkname: "<< darkname << std::endl;
     std::cout << "blackbody name: " <<blackbodyname << std::endl;
+    std::cout << "roi: " << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]  << std::endl;
+    std::cout << "projection roi: " << m_Config.ProjectionInfo.projection_roi[0] << " " <<
+                 m_Config.ProjectionInfo.projection_roi[1] << " " <<
+                 m_Config.ProjectionInfo.projection_roi[2] << " " <<
+                 m_Config.ProjectionInfo.projection_roi[3] << std::endl;
 
     //maybe path i do not need.
 //    m_corrector.LoadReferenceImages(path,flatname,nOBFirstIndex,nOBCount,
@@ -143,7 +153,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                roi);
+                m_Config.ProjectionInfo.projection_roi);
 
         if (bUseNormROI) {
             fFlatDose=reader.GetProjectionDose(filename,
@@ -167,7 +177,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    roi);
+                    m_Config.ProjectionInfo.projection_roi);
             memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
             if (bUseNormROI) {
                 fFlatDose+=reader.GetProjectionDose(filename,
@@ -212,7 +222,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                roi);
+                m_Config.ProjectionInfo.projection_roi);
         if (bUseNormROI) {
             fDarkDose=reader.GetProjectionDose(filename,
                     m_Config.ProjectionInfo.eFlip,
@@ -230,7 +240,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    roi);
+                    m_Config.ProjectionInfo.projection_roi);
             dark+=img;
             if (bUseNormROI) {
                 fDarkDose+=reader.GetProjectionDose(filename,
@@ -255,20 +265,30 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
         logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
 
     logger(kipl::logging::Logger::LogMessage,"Load reference done");
-    SetReferenceImages(dark, flat);
+//    SetReferenceImages(dark, flat); // that I don't think I need
 
     // now load OB image with BBs
 
+
     if (nBBCount!=0) {
-         logger(kipl::logging::Logger::LogMessage,"Loading OB images with BBs");
+
+//        size_t roi_bb[4] = m_Config.ProjectionInfo.projection_roi;
+//        std::cout << "big roi: " << std::endl;
+//        std::cout << m_Config.ProjectionInfo.projection_roi[0] << " " << m_Config.ProjectionInfo.projection_roi[1] << " "
+//                                                    << m_Config.ProjectionInfo.projection_roi[2] << " " << m_Config.ProjectionInfo.projection_roi[3] << std::endl;
+
+//        std::cout << "actual roi: " << std::endl;
+//        std::cout << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3] << std::endl;
+
+        logger(kipl::logging::Logger::LogMessage,"Loading OB images with BBs");
          kipl::strings::filenames::MakeFileName(blackbodyname,nOBFirstIndex,filename,ext,'#','0');
          bb = reader.Read(filename,
                           m_Config.ProjectionInfo.eFlip,
                           m_Config.ProjectionInfo.eRotate,
                           m_Config.ProjectionInfo.fBinning,
-                          roi);
+                          m_Config.ProjectionInfo.projection_roi);
 
-// not used for now but to take into account for the near future
+// not used for now but to take into account for the near future for the dose roi normalization
 //         if (bUseNormROI) {
 //             fDarkDose=reader.GetProjectionDose(filename,
 //                     m_Config.ProjectionInfo.eFlip,
@@ -286,7 +306,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                      m_Config.ProjectionInfo.eFlip,
                      m_Config.ProjectionInfo.eRotate,
                      m_Config.ProjectionInfo.fBinning,
-                     roi);
+                     m_Config.ProjectionInfo.projection_roi);
              bb+=img;
 //             if (bUseNormROI) {
 //                 fDarkDose+=reader.GetProjectionDose(filename,
@@ -305,8 +325,16 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
     }
 
+    // modify relatively the roi:
 
-    m_corrector.SetReferenceImages(&flat, &dark, &bb, fFlatDose, fDarkDose, NULL); // understand connections better
+//    roi[2] = roi[2]-roi[0];
+//    roi
+
+    size_t subroi[4] = {0,roi[1]-m_Config.ProjectionInfo.projection_roi[1], roi[2]-roi[0]-1, roi[3]-m_Config.ProjectionInfo.projection_roi[1]-1};
+    std::cout << subroi[0] << " " << subroi[1] << " " << subroi[2] << " " << subroi[3] << std::endl;
+
+
+    m_corrector.SetReferenceImages(&flat, &dark, &bb, fFlatDose, fDarkDose, NULL, subroi); // understand connections better
 
 //    std::cout << "computed doses: " << std::endl;
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;

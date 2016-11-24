@@ -40,6 +40,7 @@ protected:
     std::string flatname;
     std::string darkname;
     std::string blackbodyname;
+    std::string blackbodysamplename;
 
     size_t nOBCount;
     size_t nOBFirstIndex;
@@ -47,6 +48,8 @@ protected:
     size_t nDCFirstIndex;
     size_t nBBCount;
     size_t nBBFirstIndex;
+    size_t nBBSampleCount;
+    size_t nBBSampleFirstIndex;
 
     float fFlatDose;
     float fDarkDose;
@@ -55,6 +58,7 @@ protected:
     bool bUseNormROI;
     bool bUseLUT;
     bool bUseWeightedMean;
+    bool bUseBB; // when there are BB images
 
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
