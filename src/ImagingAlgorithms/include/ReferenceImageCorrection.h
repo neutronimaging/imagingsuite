@@ -34,15 +34,14 @@ public:
             std::string dcname, size_t firstdc, size_t dccnt,
             std::string bbname, size_t firstbb, size_t bbcnt,
             size_t *roi,
-            size_t *doseroi,
-            size_t *bbroi);
+            size_t *doseroi);
 
     void SetReferenceImages(kipl::base::TImage<float,2> *ob,
             kipl::base::TImage<float,2> *dc,
             kipl::base::TImage<float,2> *bb,
             float dose_OB,
             float dose_DC,
-            float dose_BB, size_t *roi);
+            float dose_BB);
 
 //    void SetReferenceImages(kipl::base::TImage<float,3> *ob,
 //            kipl::base::TImage<float,3> *dc,
@@ -55,10 +54,13 @@ public:
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose);
 	void Process(kipl::base::TImage<float,3> &img, float *dose);
 
+    kipl::base::TImage<float,2> PrepareBlackBodyOpenBeam(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
+
+
 
 protected:
 	void PrepareReferences();
-    kipl::base::TImage<float,2> PrepareBlackBodyOpenBeam();
+    kipl::base::TImage<float,2> PrepareBlackBodySample(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask);
     void InterpolateBlackBody(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img);
 

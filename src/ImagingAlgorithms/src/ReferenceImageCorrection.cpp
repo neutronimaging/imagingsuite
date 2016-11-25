@@ -62,8 +62,7 @@ ReferenceImageCorrection::~ReferenceImageCorrection()
 void ReferenceImageCorrection::LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
         std::string dcname, size_t firstdc, size_t dccnt,
         std::string bbname, size_t firstbb, size_t bbcnt, size_t *roi,
-        size_t *doseroi,
-        size_t *bbroi)
+        size_t *doseroi)
 {
 
     std::cout << "ciao process " << std::endl;
@@ -75,36 +74,35 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         kipl::base::TImage<float,2> *bb,
         float dose_OB,
         float dose_DC,
-        float dose_BB,
-        size_t *roi)
+        float dose_BB)
 {
 	m_bHaveOpenBeam=m_bHaveDarkCurrent=m_bHaveBlackBody=false;
 	m_bHaveDoseROI=m_bHaveBlackBodyROI=false;
 
 	if (ob!=NULL) {
 		m_bHaveOpenBeam=true;
-        m_OpenBeam_all=*ob;
-        m_OpenBeam =  kipl::base::TSubImage<float,2>::Get(m_OpenBeam_all, roi);
+        m_OpenBeam=*ob;
+//        m_OpenBeam =  kipl::base::TSubImage<float,2>::Get(m_OpenBeam_all, roi);
         kipl::io::WriteTIFF32(m_OpenBeam,"/home/carminati_c/repos/testdata/roi_ob.tif");
         std::cout << "have OB!" << std::endl;
 	}
 
 	if (dc!=NULL) {
 		m_bHaveDarkCurrent=true;
-        m_DarkCurrent_all=*dc;
-        m_DarkCurrent = kipl::base::TSubImage<float,2>::Get(m_DarkCurrent_all,roi);
+        m_DarkCurrent=*dc;
+//        m_DarkCurrent = kipl::base::TSubImage<float,2>::Get(m_DarkCurrent_all,roi);
         kipl::io::WriteTIFF32(m_DarkCurrent,"/home/carminati_c/repos/testdata/roi_dc.tif");
         std::cout << "have DC!" << std::endl;
 	}
 
 	if (bb!=NULL) {
 		m_bHaveBlackBody=true;
-        m_BlackBody_all=*bb;
+        m_BlackBody=*bb;
         std::cout << "have BB!" << std::endl;
-        m_OB_BB_Interpolated_all = PrepareBlackBodyOpenBeam(); // i need to be sure that those are not computed every time..
-        kipl::io::WriteTIFF32(m_OB_BB_Interpolated_all,"/home/carminati_c/repos/testdata/prova.tif");
-        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
-        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"/home/carminati_c/repos/testdata/roi.tif");
+//        m_OB_BB_Interpolated_all = PrepareBlackBodyOpenBeam(); // i need to be sure that those are not computed every time..
+//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated_all,"/home/carminati_c/repos/testdata/prova.tif");
+//        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
+//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"/home/carminati_c/repos/testdata/roi.tif");
 
 
 	}
@@ -199,21 +197,27 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
     //2.c threshold image
 
-    kipl::base::TImage<float,2> maskOtsu(m_BlackBody_all.Dims());
+    kipl::base::TImage<float,2> maskOtsu(mask.Dims());
 
  // now it works:
-    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
+//    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
 
-//    float *pImg = norm.GetDataPtr();
-//    float *res = maskOtsu.GetDataPtr();
-//    const int N=static_cast<int>(norm.Size());
-//    for (size_t i=0; i<N; i++){
-//        if (pImg[i]>=ot){
-//            res[i] = 1;
-//        }
-//        else {
-//            res[i] = 0;
-//        }
+    float *pImg = norm.GetDataPtr();
+    float *res = maskOtsu.GetDataPtr();
+    const int N=static_cast<int>(norm.Size());
+    for (size_t i=0; i<N; i++){
+        if (pImg[i]>=ot){
+            res[i] = 1;
+        }
+        else {
+            res[i] = 0;
+        }
+    }
+
+   // inverts values back
+//    for (size_t i=0; i<N; i++) {
+//        if (res[i]==0) res[1]=1;
+//        else res[i]=0;
 //    }
 
     kipl::io::WriteTIFF32(maskOtsu,"/home/carminati_c/repos/testdata/maskOtsu.tif");
@@ -411,6 +415,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img){
 
+    // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID
     std::map<std::pair<size_t,size_t>, float> values;
 
 
@@ -420,7 +425,7 @@ void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&
         for (size_t y=0; y<mask.Size(1); y++) {
             if (mask(x,y)==1){
                 std::pair<size_t, size_t> temp;
-                temp = std::make_pair(x,y);
+                temp = std::make_pair(x,y);// missing: compensate for eventual roi position.. to be set by appropriate GUI in the module
                 values.insert(std::make_pair(temp,img(x,y)));
 //                  std::cout << " " << x << " " << y << " " <<  BB_DC(x,y) << std::endl;
 
@@ -476,8 +481,8 @@ void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&
 
 
 
-    for (size_t x=0; x<m_BlackBody_all.Size(0); x++) {
-        for (size_t y=0; y<m_BlackBody_all.Size(1); y++){
+    for (size_t x=0; x<img.Size(0); x++) {
+        for (size_t y=0; y<img.Size(1); y++){
             interpolated_img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
            // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
 
@@ -498,32 +503,37 @@ void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&
 
 }
 
-kipl::base::TImage<float,2> ReferenceImageCorrection::PrepareBlackBodyOpenBeam()
+kipl::base::TImage<float,2> ReferenceImageCorrection::PrepareBlackBodyOpenBeam(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb)
 {
+
+//    m_BlackBody_all = bb;
+//    m_OpenBeam_all = flat;
+//    m_DarkCurrent_all = dark;
     // 1. normalize image
-    kipl::base::TImage<float, 2> mask(m_BlackBody_all.Dims());
+
+    kipl::base::TImage<float, 2> mask(bb.Dims());
     mask = 0.0f; // create mask and fill it with zero values.
 
 
-    kipl::base::TImage<float, 2> norm(m_BlackBody_all.Dims());
-    memcpy(norm.GetDataPtr(),m_BlackBody_all.GetDataPtr(), sizeof(float)*m_BlackBody_all.Size());
+    kipl::base::TImage<float, 2> norm(bb.Dims());
+    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
-    norm -=m_DarkCurrent_all;
-    norm /= (m_OpenBeam_all-=m_DarkCurrent_all);
+    norm -=dark;
+    norm /= (flat-=dark);
 
     kipl::io::WriteTIFF32(norm,"/home/carminati_c/repos/testdata/normBB.tif");
-    kipl::io::WriteTIFF32(m_BlackBody_all,"/home/carminati_c/repos/testdata/BB.tif");
-    kipl::io::WriteTIFF32(m_OpenBeam_all,"/home/carminati_c/repos/testdata/openBB.tif");
+    kipl::io::WriteTIFF32(bb,"/home/carminati_c/repos/testdata/BB.tif");
+    kipl::io::WriteTIFF32(flat,"/home/carminati_c/repos/testdata/openBB.tif");
 
     SegmentBlackBody(norm, mask);
 
     kipl::io::WriteTIFF32(mask,"/home/carminati_c/repos/testdata/mask.tif");
 
-    kipl::base::TImage<float,2> BB_DC(m_BlackBody_all.Dims());
-    memcpy(BB_DC.GetDataPtr(), m_BlackBody_all.GetDataPtr(), sizeof(float)*m_BlackBody_all.Size());
-    BB_DC-=m_DarkCurrent_all;
+    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+    BB_DC-=dark;
 
-    kipl::base::TImage<float, 2> interpolated_BB(m_BlackBody_all.Dims());
+    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
     interpolated_BB = 0.0f;
 
     InterpolateBlackBody(mask,BB_DC,interpolated_BB);
