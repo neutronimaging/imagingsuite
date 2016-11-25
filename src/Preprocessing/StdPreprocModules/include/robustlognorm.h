@@ -68,6 +68,8 @@ protected:
     kipl::base::TImage<float,2> mDark;
     kipl::base::TImage<float,2> mBlack;
 
+    void PrepareBBData(); /// read all data that I need and prepare them for the BB correction
+
 private:
     int m_nWindow;
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;

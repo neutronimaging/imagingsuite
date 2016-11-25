@@ -67,11 +67,16 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     nBBCount = GetIntParameter(parameters,"BB_counts");
     nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
     blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
+    nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
+    nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
 
     std::cout << blackbodyname << std::endl;
     std::cout << nBBCount << " " << nBBFirstIndex << std::endl;
 
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
+
+    // prepare BB data
+    PrepareBBData();
 
     return 1;
 }
@@ -105,6 +110,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters()
     parameters["BB_first_index"] = kipl::strings::value2string(nBBFirstIndex);
     parameters["BB_samplename"] = blackbodysamplename;
     parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
+    parameters["BB_sample_firstindex"] = kipl::strings::value2string(nBBSampleFirstIndex);
 //    parameters["corrector"] = enum2string(m_corrector);
 
     return parameters;
@@ -153,7 +159,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                m_Config.ProjectionInfo.projection_roi);
+                roi);
 
         if (bUseNormROI) {
             fFlatDose=reader.GetProjectionDose(filename,
@@ -177,7 +183,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    m_Config.ProjectionInfo.projection_roi);
+                    roi);
             memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
             if (bUseNormROI) {
                 fFlatDose+=reader.GetProjectionDose(filename,
@@ -222,7 +228,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                m_Config.ProjectionInfo.projection_roi);
+                roi);
         if (bUseNormROI) {
             fDarkDose=reader.GetProjectionDose(filename,
                     m_Config.ProjectionInfo.eFlip,
@@ -240,7 +246,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    m_Config.ProjectionInfo.projection_roi);
+                    roi);
             dark+=img;
             if (bUseNormROI) {
                 fDarkDose+=reader.GetProjectionDose(filename,
@@ -270,7 +276,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     // now load OB image with BBs
 
 
-    if (nBBCount!=0) {
+    if (nBBCount!=0) { //THIS ONE TO BE MODIFIED TO LOAD ONLY DESIRED ROI
 
 //        size_t roi_bb[4] = m_Config.ProjectionInfo.projection_roi;
 //        std::cout << "big roi: " << std::endl;
@@ -334,10 +340,192 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     std::cout << subroi[0] << " " << subroi[1] << " " << subroi[2] << " " << subroi[3] << std::endl;
 
 
-    m_corrector.SetReferenceImages(&flat, &dark, &bb, fFlatDose, fDarkDose, NULL, subroi); // understand connections better
+    m_corrector.SetReferenceImages(&flat, &dark, nullptr, fFlatDose, fDarkDose, NULL); // understand connections better
 
 //    std::cout << "computed doses: " << std::endl;
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
+
+}
+
+void RobustLogNorm::PrepareBBData(){
+
+    if (flatname.empty() && nOBCount!=0)
+        throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
+    if (darkname.empty() && nDCCount!=0)
+        throw ReconException("The dark current image mask is empty",__FILE__,__LINE__);
+
+    std::cout << "path: " << path << std::endl; // it is actually empty.. so i don't know if we need to use it..
+    std::cout << "flatname: " << flatname << std::endl;
+    std::cout << "darkname: "<< darkname << std::endl;
+    std::cout << "blackbody name: " <<blackbodyname << std::endl;
+//    std::cout << "roi: " << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]  << std::endl;
+    std::cout << "projection roi: " << m_Config.ProjectionInfo.projection_roi[0] << " " <<
+                 m_Config.ProjectionInfo.projection_roi[1] << " " <<
+                 m_Config.ProjectionInfo.projection_roi[2] << " " <<
+                 m_Config.ProjectionInfo.projection_roi[3] << std::endl;
+
+    //maybe path i do not need.
+//    m_corrector.LoadReferenceImages(path,flatname,nOBFirstIndex,nOBCount,
+//                                    darkname,nDCFirstIndex,nDCCount,
+//                                    blackbodyname,nBBFirstIndex,nBBCount,
+//                                    roi,nNormRegion,nullptr);
+
+    kipl::base::TImage<float,2> img, flat, dark, bb, samplebb, sample;
+
+
+
+    std::string flatmask=path+flatname;
+    std::string darkmask=path+darkname;
+    std::string filename,ext;
+    ProjectionReader reader;
+
+    fDarkDose=0.0f;
+    fFlatDose=1.0f;
+    if (nOBCount!=0) {
+        logger(kipl::logging::Logger::LogMessage,"Loading open beam images for BB preparations");
+
+        kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
+        img = reader.Read(filename,
+                m_Config.ProjectionInfo.eFlip,
+                m_Config.ProjectionInfo.eRotate,
+                m_Config.ProjectionInfo.fBinning,
+                m_Config.ProjectionInfo.projection_roi);
+
+
+        size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
+
+        kipl::base::TImage<float,3> flat3D(obdims);
+        memcpy(flat3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
+
+        for (size_t i=1; i<nOBCount; i++) {
+            kipl::strings::filenames::MakeFileName(flatmask,i+nOBFirstIndex,filename,ext,'#','0');
+            img=reader.Read(filename,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    m_Config.ProjectionInfo.projection_roi);
+            memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+        }
+
+
+        float *tempdata=new float[nOBCount];
+        flat.Resize(obdims);
+        float *pFlat3D=flat3D.GetDataPtr();
+        float *pFlat=flat.GetDataPtr();
+// do i need this?
+        for (size_t i=0; i<flat.Size(); i++) {
+            for (size_t j=0; j<nOBCount; j++) {
+                tempdata[j]=pFlat3D[i+j*flat.Size()];
+            }
+            kipl::math::median_quick_select(tempdata, nOBCount, pFlat+i);
+        }
+        delete [] tempdata;
+
+    }
+    else
+        logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
+
+
+    if (nDCCount!=0) {
+        logger(kipl::logging::Logger::LogMessage,"Loading dark images");
+        kipl::strings::filenames::MakeFileName(darkmask,nDCFirstIndex,filename,ext,'#','0');
+        dark = reader.Read(filename,
+                m_Config.ProjectionInfo.eFlip,
+                m_Config.ProjectionInfo.eRotate,
+                m_Config.ProjectionInfo.fBinning,
+                m_Config.ProjectionInfo.projection_roi);
+
+
+        for (size_t i=1; i<nDCCount; i++) {
+            kipl::strings::filenames::MakeFileName(darkmask,i+nDCFirstIndex,filename,ext,'#','0');
+            img=reader.Read(filename,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    m_Config.ProjectionInfo.projection_roi);
+            dark+=img;
+        }
+
+        dark/=static_cast<float>(nDCCount);
+
+    }
+    else
+        logger(kipl::logging::Logger::LogWarning,"Dark current image count is zero");
+
+
+
+    // now load OB image with BBs
+
+
+    if (nBBCount!=0) {
+
+        logger(kipl::logging::Logger::LogMessage,"Loading OB images with BBs");
+         kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
+         bb = reader.Read(filename,
+                          m_Config.ProjectionInfo.eFlip,
+                          m_Config.ProjectionInfo.eRotate,
+                          m_Config.ProjectionInfo.fBinning,
+                          m_Config.ProjectionInfo.projection_roi);
+
+
+         for (size_t i=1; i<nOBCount; i++) {
+             kipl::strings::filenames::MakeFileName(blackbodyname,i+nBBFirstIndex,filename,ext,'#','0');
+             img=reader.Read(filename,
+                     m_Config.ProjectionInfo.eFlip,
+                     m_Config.ProjectionInfo.eRotate,
+                     m_Config.ProjectionInfo.fBinning,
+                     m_Config.ProjectionInfo.projection_roi);
+             bb+=img;
+
+         }
+
+         bb/=static_cast<float>(nOBCount);
+
+    }
+
+    // load sample images with BBs and sample images  -- TO BE ADDED HERE !
+
+    if (nBBSampleCount!=0) {
+
+        logger(kipl::logging::Logger::LogMessage,"Loading sample images with BBs");
+        kipl::strings::filenames::MakeFileName(blackbodysamplename,nBBSampleFirstIndex,filename,ext,'#','0');
+        samplebb = reader.Read(filename,
+                               m_Config.ProjectionInfo.eFlip,
+                               m_Config.ProjectionInfo.eRotate,
+                               m_Config.ProjectionInfo.fBinning,
+                               m_Config.ProjectionInfo.projection_roi);
+
+        kipl::io::WriteTIFF32(samplebb,"/home/carminati_c/repos/testdata/samplebb.tif");
+
+        logger(kipl::logging::Logger::LogMessage,"Loading sample images");
+//        kipl::strings::filenames::MakeFileName(blackbodysamplename,nBBSampleFirstIndex,filename,ext,'#','0');
+
+        std::cout <<
+        m_Config.ProjectionInfo.sFileMask << " " <<
+                     m_Config.ProjectionInfo.nFirstIndex << " " <<
+                     m_Config.ProjectionInfo.nLastIndex << " " <<
+                     m_Config.ProjectionInfo.nlSkipList.size() << std::endl;
+
+        kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,filename,ext,'#','0');
+
+        sample = reader.Read(filename,
+                               m_Config.ProjectionInfo.eFlip,
+                               m_Config.ProjectionInfo.eRotate,
+                               m_Config.ProjectionInfo.fBinning,
+                               m_Config.ProjectionInfo.projection_roi);
+
+        kipl::io::WriteTIFF32(sample,"/home/carminati_c/repos/testdata/sample.tif");
+
+    }
+
+
+    logger(kipl::logging::Logger::LogMessage,"Load images for BB preparation done");
+
+//    kipl::base::TImage<float,2> interp_OBBB  = m_corrector.PrepareBlackBodyOpenBeam(flat, dark, bb);
+//    kipl::io::WriteTIFF32(interp_OBBB,"/home/carminati_c/repos/testdata/interp_OBBB.tif");
+
+    kipl::base::TImage<float,2> interp_BBsample  = m_corrector.PrepareBlackBodyOpenBeam(sample, dark, samplebb);
+    kipl::io::WriteTIFF32(interp_BBsample,"/home/carminati_c/repos/testdata/interp_BBsample.tif");
 
 }
 
@@ -379,7 +567,7 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
 
 void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat)
 {
-// to see if they are neededs
+// to see if they are needed
     mDark=dark;
     mFlatField=flat;
 //    m_corrector.SetReferenceImages();
