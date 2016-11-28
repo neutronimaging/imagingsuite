@@ -413,7 +413,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 }
 
-void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img){
+float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img){
 
     // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID
     std::map<std::pair<size_t,size_t>, float> values;
@@ -421,6 +421,8 @@ void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&
 
 //      std::cout << "VALUES TO INTERPOLATE: " << std::endl;
     // find values to interpolate
+
+    float mean_value = 0.0f;
     for (size_t x=0; x<mask.Size(0); x++) {
         for (size_t y=0; y<mask.Size(1); y++) {
             if (mask(x,y)==1){
@@ -428,12 +430,41 @@ void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&
                 temp = std::make_pair(x,y);// missing: compensate for eventual roi position.. to be set by appropriate GUI in the module
                 values.insert(std::make_pair(temp,img(x,y)));
 //                  std::cout << " " << x << " " << y << " " <<  BB_DC(x,y) << std::endl;
+                mean_value +=img(x,y);
 
             }
 
         }
 
     }
+
+    mean_value/=values.size();
+
+    // remove outliers if values to be interpolated are above mean +2std
+
+    float std_dev = 0.0f;
+
+    for (std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+                it != values.end(); ++it) {
+        std_dev += (it->second-mean_value)*(it->second-mean_value);
+    }
+
+    std_dev=sqrt(std_dev/values.size());
+
+
+    std::cout << "MEAN AND STD DEV: " << mean_value << " " << std_dev << std::endl;
+
+    for (std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+                it != values.end(); ++it) {
+
+        if(it->second >= (mean_value+2*std_dev)) {
+            std::cout << "found outlier value" << std::endl;
+            values.erase(it); // not sure it wont' cause problems
+        }
+
+    }
+
+
 
     // uncomment this to print out values from map
 
@@ -478,28 +509,70 @@ void ReferenceImageCorrection::InterpolateBlackBody(kipl::base::TImage<float,2>&
     std::cout << param.dim()<< std::endl;
     std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
 
+    float *myparam = new float[6];
+//    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
+    myparam[0] = static_cast<float>(param[0]);
+    myparam[1] = static_cast<float>(param[1]);
+    myparam[2] = static_cast<float>(param[2]);
+    myparam[3] = static_cast<float>(param[3]);
+    myparam[4] = static_cast<float>(param[4]);
+    myparam[5] = static_cast<float>(param[5]);
 
 
 
-    for (size_t x=0; x<img.Size(0); x++) {
-        for (size_t y=0; y<img.Size(1); y++){
-            interpolated_img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+
+//    for (size_t x=0; x<img.Size(0); x++) {
+//        for (size_t y=0; y<img.Size(1); y++){
+//            interpolated_img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+//           // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+
+//        }
+//    }
+
+
+//    float error = 0.0f;
+//  for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+//      it != values.end(); ++it)
+//  {
+//      error += ((interpolated_img(it->first.first,it->first.second)-it->second)/interpolated_img(it->first.first,it->first.second))*((interpolated_img(it->first.first,it->first.second)-it->second)/interpolated_img(it->first.first,it->first.second));
+//  }
+
+//          error = sqrt(1/float(values.size())*error);
+
+//          std::cout << "INTERPOLATION ERROR: " << error << std::endl;
+
+         return myparam;
+
+}
+
+void ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, kipl::base::TImage<float, 2> &interpolated_img) {
+
+    for (size_t x=0; x<interpolated_img.Size(0); x++) {
+        for (size_t y=0; y<interpolated_img.Size(1); y++){
+            interpolated_img(x,y) = parameters[0] + parameters[1]*static_cast<float>(x)+parameters[2]*static_cast<float>(x)*static_cast<float>(x)+parameters[3]*static_cast<float>(x)*static_cast<float>(y)+parameters[4]*static_cast<float>(y)+parameters[5]*static_cast<float>(y)*static_cast<float>(y);
            // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
 
         }
     }
 
+}
+
+float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img) {
 
     float error = 0.0f;
-  for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-      it != values.end(); ++it)
-  {
-      error += ((interpolated_img(it->first.first,it->first.second)-it->second)/interpolated_img(it->first.first,it->first.second))*((interpolated_img(it->first.first,it->first.second)-it->second)/interpolated_img(it->first.first,it->first.second));
-  }
+    int  nValues = 0;
 
-          error = sqrt(1/float(values.size())*error);
+      for(size_t ind=0; ind<static_cast<int>(img.Size()); ind++)
+          {
+              if (mask(ind)!=0) {
+                        error += ((interpolated_img(ind)-img(ind))/interpolated_img(ind))*((interpolated_img(ind)-img(ind))/interpolated_img(ind));
+                       nValues++;
+              }
+          }
 
-          std::cout << "INTERPOLATION ERROR: " << error << std::endl;
+  error = sqrt(1/float(nValues)*error);
+
+  return error;
 
 }
 
@@ -536,8 +609,15 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::PrepareBlackBodyOpenBeam(k
     kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
     interpolated_BB = 0.0f;
 
-    InterpolateBlackBody(mask,BB_DC,interpolated_BB);
+    float * param = new float[6];
+    param = ComputeInterpolationParameters(mask,BB_DC,interpolated_BB);
+    std::cout << "PARAMETERS: " << std::endl;
+    std::cout << param[0] << " " << param[1] << " " << param[2] << " " << param[3] << " " << param[4] << " " << param[5] << std::endl;
+    InterpolateBlackBodyImage(param, interpolated_BB);
     kipl::io::WriteTIFF32(interpolated_BB,"/home/carminati_c/repos/testdata/interpolated_BB.tif");
+    float error;
+    error = ComputeInterpolationError(interpolated_BB,mask,BB_DC);
+    std::cout << "ERROR: "<< error << std::endl;
     return interpolated_BB;
 
 }

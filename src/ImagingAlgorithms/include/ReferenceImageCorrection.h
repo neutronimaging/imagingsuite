@@ -62,7 +62,9 @@ protected:
 	void PrepareReferences();
     kipl::base::TImage<float,2> PrepareBlackBodySample(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask);
-    void InterpolateBlackBody(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img);
+    float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img); // remove interpolated_img at the end
+    void InterpolateBlackBodyImage(float *parameters, kipl::base::TImage<float,2> &interpolated_img);
+    float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img);
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
