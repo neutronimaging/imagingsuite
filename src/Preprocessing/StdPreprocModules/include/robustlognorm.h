@@ -55,6 +55,8 @@ protected:
     float fDarkDose; /// dose value in dark current images
     float fBlackDose; /// dose value in black body images
 
+    float tau; /// mean pattern transmission, default 0.99
+
     bool bUseNormROI; /// boolean value on the use of the norm roi
     bool bUseLUT; /// boolean value on the use of LUT (not used)
     bool bUseWeightedMean;
@@ -63,6 +65,8 @@ protected:
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
     size_t BBroi[4]; /// region of interest to be set for BB segmentation
+
+    size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
 
     //not sure i use all those things
     kipl::base::TImage<float,2> mFlatField;

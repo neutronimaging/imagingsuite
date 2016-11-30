@@ -28,6 +28,7 @@ RobustLogNorm::RobustLogNorm() :
     bUseWeightedMean(false),
     bUseBB(false),
     m_nWindow(5),
+    tau(0.99f),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm)
 {
@@ -70,6 +71,8 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
     nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
     nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
+    tau = GetFloatParameter(parameters, "tau");
+    radius = GetIntParameter(parameters, "radius");
 
     std::cout << blackbodyname << std::endl;
     std::cout << nBBCount << " " << nBBFirstIndex << std::endl;
@@ -112,6 +115,9 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters()
     parameters["BB_samplename"] = blackbodysamplename;
     parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
     parameters["BB_sample_firstindex"] = kipl::strings::value2string(nBBSampleFirstIndex);
+    parameters["tau"] = kipl::strings::value2string(tau);
+    parameters["radius"] = kipl::strings::value2string(radius);
+
 //    parameters["corrector"] = enum2string(m_corrector);
 
     return parameters;
@@ -274,8 +280,12 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     logger(kipl::logging::Logger::LogMessage,"Load reference done");
 //    SetReferenceImages(dark, flat); // that I don't think I need
 
-    size_t subroi[4] = {0,roi[1]-m_Config.ProjectionInfo.projection_roi[1], roi[2]-roi[0]-1, roi[3]-m_Config.ProjectionInfo.projection_roi[1]-1};
-    std::cout << subroi[0] << " " << subroi[1] << " " << subroi[2] << " " << subroi[3] << std::endl;
+//    size_t subroi[4] = {0,roi[1]-m_Config.ProjectionInfo.projection_roi[1], roi[2]-roi[0]-1, roi[3]-m_Config.ProjectionInfo.projection_roi[1]-1};
+//    std::cout << subroi[0] << " " << subroi[1] << " " << subroi[2] << " " << subroi[3] << std::endl;
+    if (bUseBB) {
+            size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+            m_corrector.SetBBInterpRoi(subroi);
+    }
 
 
     m_corrector.SetReferenceImages(&flat, &dark, bUseBB, fFlatDose, fDarkDose, NULL); // understand connections better
@@ -533,8 +543,8 @@ void RobustLogNorm::PrepareBBData(){
                                            m_Config.ProjectionInfo.roi[3] << " " << std::endl;
 
 
-        // I have deleted -1 from the last two elements
-        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+
+//        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
 
 
         if (nBBCount!=0 && nBBSampleCount!=0) {
@@ -549,7 +559,7 @@ void RobustLogNorm::PrepareBBData(){
             // it has to be more complicated than this. TO BE FIXED
 
              m_corrector.SetInterpParameters(bb_ob_param, bb_sample_parameters,nBBSampleCount, nProj);
-             m_corrector.SetBBInterpRoi(subroi);
+//             m_corrector.SetBBInterpRoi(subroi); // moved in load reference images if bUseBB
         }
 
 
