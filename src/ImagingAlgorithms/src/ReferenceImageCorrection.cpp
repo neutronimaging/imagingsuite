@@ -51,7 +51,9 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_nBlackBodyROI[1]=0;
     m_nBlackBodyROI[2]=0;
     m_nBlackBodyROI[3]=0;
-    std::cout << "ciao image corrector" << std::endl;
+
+
+
 }
 
 ReferenceImageCorrection::~ReferenceImageCorrection()
@@ -71,7 +73,7 @@ void ReferenceImageCorrection::LoadReferenceImages(std::string path, std::string
 
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
         kipl::base::TImage<float,2> *dc,
-        kipl::base::TImage<float,2> *bb,
+        bool useBB,
         float dose_OB,
         float dose_DC,
         float dose_BB)
@@ -95,14 +97,15 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         std::cout << "have DC!" << std::endl;
 	}
 
-	if (bb!=NULL) {
+    if (useBB) {
 		m_bHaveBlackBody=true;
-        m_BlackBody=*bb;
+//        m_BlackBody=*bb;
+        // try with the open beam first,, and then go on with the sample one
         std::cout << "have BB!" << std::endl;
-//        m_OB_BB_Interpolated_all = PrepareBlackBodyOpenBeam(); // i need to be sure that those are not computed every time..
-//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated_all,"/home/carminati_c/repos/testdata/prova.tif");
+        m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
+
 //        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
-//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"/home/carminati_c/repos/testdata/roi.tif");
+        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"/home/carminati_c/repos/testdata/roiBB.tif"); // CORRECT!!!
 
 
 	}
@@ -125,7 +128,9 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 //		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
 	}
 
+//    std::cout << "before prepare references " << std::endl;
 	PrepareReferences();
+//    std::cout << "after prepare references " << std::endl;
 
 }
 
@@ -145,8 +150,25 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *dose)
 {
 	kipl::base::TImage<float, 2> slice(img.Dims());
+    std::cout<< img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl;
 
 	for (size_t i=0; i<img.Size(2); i++) {
+
+        // HERE I HAVE TO ADD BB WITH SAMPLE STUFF.. ! COME ON WE ARE NOT SO FAR ..
+        if (m_bHaveBlackBody) {
+            // compute m_BB_sample_Interpolated just for the current slice
+            // here I have to know if it is to be interpolated between projections
+            //check how many parameters do i have?
+            if (i==0) {
+                std::cout << "number of BB images with sample: " <<  m_nBBimages <<std::endl;
+            }
+            // so i am expetcing that the parameters are m_nBBimages*6 size.. of course! go on from here after lunch!
+//            sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, img.Size());
+
+
+
+        }
+
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
         Process(slice,dose[i]);
         memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
@@ -394,14 +416,14 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
                   for (size_t x=0; x<roi.Size(0); x++) {
                       for (size_t y=0; y<roi.Size(1); y++) {
-                          if ((sqrt(round(x-x_com)*round(x-x_com)+round(y-y_com)*round(y-y_com)))<=2) {
+                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=2) {
 //                              roi(x,y)=1; // this one actually I don't need
                               mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
                           }
                       }
                   }
 
-                  roi(round(x_com), round(y_com))=2;
+                  roi(int(x_com+0.5), int(y_com+0.5))=2;
 //                  std::cout << roi(0,0)<< std::endl;
 //                  std::cout << x_com << " " << y_com << std::endl;
           }
@@ -413,7 +435,15 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 }
 
-float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img){
+void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
+
+    memcpy(m_nBlackBodyROI,roi,sizeof(size_t)*4);
+    std::cout << "black body roi: " <<std::endl;
+    std::cout << m_nBlackBodyROI[0] << " " << m_nBlackBodyROI[1] << " " << m_nBlackBodyROI[2] << " "
+                                       << m_nBlackBodyROI[3] << std::endl;
+}
+
+float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img){
 
     // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID
     std::map<std::pair<size_t,size_t>, float> values;
@@ -459,7 +489,7 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
         if(it->second >= (mean_value+2*std_dev)) {
             std::cout << "found outlier value" << std::endl;
-            values.erase(it); // not sure it wont' cause problems
+            values.erase(it); // not sure it won't cause problems
         }
 
     }
@@ -545,15 +575,35 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
 }
 
-void ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, kipl::base::TImage<float, 2> &interpolated_img) {
+kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, size_t *roi) {
 
-    for (size_t x=0; x<interpolated_img.Size(0); x++) {
-        for (size_t y=0; y<interpolated_img.Size(1); y++){
-            interpolated_img(x,y) = parameters[0] + parameters[1]*static_cast<float>(x)+parameters[2]*static_cast<float>(x)*static_cast<float>(x)+parameters[3]*static_cast<float>(x)*static_cast<float>(y)+parameters[4]*static_cast<float>(y)+parameters[5]*static_cast<float>(y)*static_cast<float>(y);
-           // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+//    std::cout << "roi in interpolated black body image" << std::endl;
+//    std::cout << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3] << std::endl;
 
+    size_t dimx = roi[2]-roi[0];
+    size_t dimy = roi[3]-roi[1];
+//    std::cout << "dimx and dimy in interpolateblackbodyimage" << std::endl;
+//    std::cout << dimx << " " << dimy << std::endl;
+
+//    std::cout << "parameters in interpolate blackbody image" << std::endl;
+//    std::cout << parameters[0] << " "
+//                                  <<  parameters[1] << " " <<
+//                                       parameters[2] << " " <<
+//                                       parameters[3] << " "<<
+//                                       parameters[4] << " " <<
+//                                       parameters[5] << " " << std::endl;
+    size_t dims[2] = {dimx,dimy};
+    kipl::base::TImage <float,2> interpolated_img(dims);
+    interpolated_img = 0.0f;
+    std::cout << interpolated_img.Size(0) << " " << interpolated_img.Size(1) << std::endl;
+
+    for (size_t x=0; x<dimx; x++) {
+        for (size_t y=0; y<dimy; y++){
+            interpolated_img(x,y) = parameters[0] + parameters[1]*static_cast<float>(x+roi[0])+parameters[2]*static_cast<float>(x+roi[0])*static_cast<float>(x+roi[0])+parameters[3]*static_cast<float>(x+roi[0])*static_cast<float>(y+roi[1])+parameters[4]*static_cast<float>(y+roi[1])+parameters[5]*static_cast<float>(y+roi[1])*static_cast<float>(y+roi[1]);
         }
     }
+
+    return interpolated_img;
 
 }
 
@@ -576,17 +626,13 @@ float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<flo
 
 }
 
-kipl::base::TImage<float,2> ReferenceImageCorrection::PrepareBlackBodyOpenBeam(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb)
+float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask)
 {
 
 //    m_BlackBody_all = bb;
 //    m_OpenBeam_all = flat;
 //    m_DarkCurrent_all = dark;
     // 1. normalize image
-
-    kipl::base::TImage<float, 2> mask(bb.Dims());
-    mask = 0.0f; // create mask and fill it with zero values.
-
 
     kipl::base::TImage<float, 2> norm(bb.Dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
@@ -606,19 +652,162 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::PrepareBlackBodyOpenBeam(k
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
 
-    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
-    interpolated_BB = 0.0f;
+//    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
+//    interpolated_BB = 0.0f;
 
     float * param = new float[6];
-    param = ComputeInterpolationParameters(mask,BB_DC,interpolated_BB);
+    param = ComputeInterpolationParameters(mask,BB_DC);
     std::cout << "PARAMETERS: " << std::endl;
     std::cout << param[0] << " " << param[1] << " " << param[2] << " " << param[3] << " " << param[4] << " " << param[5] << std::endl;
-    InterpolateBlackBodyImage(param, interpolated_BB);
-    kipl::io::WriteTIFF32(interpolated_BB,"/home/carminati_c/repos/testdata/interpolated_BB.tif");
-    float error;
-    error = ComputeInterpolationError(interpolated_BB,mask,BB_DC);
-    std::cout << "ERROR: "<< error << std::endl;
-    return interpolated_BB;
+//    InterpolateBlackBodyImage(param, interpolated_BB);
+//    kipl::io::WriteTIFF32(interpolated_BB,"/home/carminati_c/repos/testdata/interpolated_BB.tif");
+//    float error;
+//    error = ComputeInterpolationError(interpolated_BB,mask,BB_DC);
+//    std::cout << "ERROR: "<< error << std::endl;
+//    return interpolated_BB;
+    return param;
+
+}
+
+float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask){
+
+    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+    BB_DC-=dark;
+
+//    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
+//    interpolated_BB = 0.0f;
+
+    float * param = new float[6];
+    param = ComputeInterpolationParameters(mask,BB_DC);
+
+    return param;
+
+}
+
+void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj)
+{
+
+    // it seems to work.. roi is not used
+    std::cout << "ciao parameters " << std::endl;
+    std::cout << ob_parameter[0] << std::endl;
+    std::cout << sample_parameter[0] << std::endl;
+    std::cout << sample_parameter[10] << std::endl;
+
+
+//    std::cout << (sizeof(sample_parameter)/sizeof(float)) << std::endl;
+//    std::cout << (sizeof(ob_parameter)/sizeof(float)) << std::endl;
+
+    ob_bb_parameters = new float[6];
+    sample_bb_parameters = new float[6*nBBSampleCount];
+    m_nBBimages = nBBSampleCount; // store how many images with BB and sample i do have
+//    ob_bb_parameters = ob_parameter;
+//    sample_bb_parameters = sample_parameter;
+
+    memcpy(ob_bb_parameters, ob_parameter, sizeof(float)*6);
+    memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*nBBSampleCount);
+
+    if (nBBSampleCount<=nProj) {
+        // interpolate assuming the step is regular.. for now
+        size_t step = (nProj)/(nBBSampleCount);
+        std::cout << "STEP: "  << step<<  std::endl;
+        sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, nProj, step);
+
+    }
+    else {
+        memcpy(sample_bb_interp_parameters, sample_bb_parameters, sizeof(float)*6*nBBSampleCount);
+    }
+
+//    std::cout << (sizeof(sample_bb_parameters)/sizeof(*sample_bb_parameters)) << std::endl;
+//    std::cout << (sizeof(ob_bb_parameters)/sizeof(*ob_bb_parameters)) << std::endl;
+
+    std::cout << ob_bb_parameters[0] << std::endl;
+    std::cout << sample_bb_parameters[0] << std::endl;
+    std::cout << sample_bb_parameters[10] << std::endl;
+
+
+    // if the number of interpolated parameters is lower than excepted for all projections.. interpolate them
+
+
+
+}
+
+float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, size_t step){
+
+    float *interpolated_param = new float[6*(n+1)];
+//    float *int_param = new float[6*n];
+
+   // first copy the one that i already have
+    std::cout << "copy interpolated values" << std::endl;
+    size_t index = 0;
+    for (size_t i=0; i<6*n; i+=step*6){
+        std::cout << i << " ";
+        std::cout << index << std::endl;
+        memcpy(interpolated_param+i, param+index, sizeof(float)*6);
+        index +=6;
+
+    }
+
+    memcpy(interpolated_param+6*n, param, sizeof(float)*6); // copio i primi in coda
+
+
+    std::cout << "they should be the same: " << std::endl; //and they are
+    std::cout << interpolated_param[600] << " " << interpolated_param[601] << " "  << interpolated_param[602] << " "<< interpolated_param[603] << " "
+                                            << interpolated_param[604] << " "<< interpolated_param[605] << std::endl;
+    std::cout << param[24] << " " << param[25] << " "  << param[26] << " "<< param[27] << " "
+                                            << param[28] << " "<< param[29] << std::endl;
+
+
+
+    std::cout << "step: " << step << std::endl;
+    std::cout << "interpolate remaining: " << std::endl;
+
+    for (size_t i=0; i<6*n; i+=step*6){
+            index=i;
+//        std::cout << i << std::endl  ;
+
+//        std::cout  << interpolated_param[i] << " " << interpolated_param[i+1] << " "
+//                       << interpolated_param[i+2] << " "
+//                           << interpolated_param[i+3] << " "
+//                               << interpolated_param[i+4] << " "
+//                                   << interpolated_param[i+5] << std::endl;
+        for (size_t j=1; j<step; j++){
+            float *temp_param = new float[6];
+//            std::cout << "i and i+step*6 " <<i << " " << i+step*6<< std::endl;
+//            std::cout << "j: " <<j << std::endl;
+//            std::cout << interpolated_param[i] << " " << interpolated_param[i+step*6]<< std::endl;
+            for (size_t k=0; k<6; k++) {
+                   temp_param[k] = interpolated_param[i+k]+(j)*(interpolated_param[i+k+step*6]-interpolated_param[i+k])/(step);
+//                    std::cout << temp_param[k] <<  " " ;
+            }
+//            std::cout << std::endl
+//            std::cout << "i and i+step*6 " <<i << " " << i+step*6<<    std::endl;
+            index +=6;
+//            std::cout << "index: " << (index) << std::endl;
+            memcpy(interpolated_param+index,temp_param,sizeof(float)*6);
+            delete[] temp_param;
+
+
+        }
+    }
+
+//    std::cout <<" ---- END TEMP PARAMETER ----" << std::endl;
+//   std::cout << "INTERPOLATED PARAMETERS:" << std::endl;
+
+//   for (size_t i=0; i<=6*n; i+=6){
+
+//       for (size_t j=0; j<6; j++){
+//           std::cout << interpolated_param[i+j] << " ";
+//       }
+//       std::cout << std::endl;
+//   }
+
+
+
+
+    return interpolated_param;
+
+
 
 }
 

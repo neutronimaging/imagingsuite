@@ -38,33 +38,31 @@ public:
 
     void SetReferenceImages(kipl::base::TImage<float,2> *ob,
             kipl::base::TImage<float,2> *dc,
-            kipl::base::TImage<float,2> *bb,
+            bool useBB,
             float dose_OB,
             float dose_DC,
             float dose_BB);
 
-//    void SetReferenceImages(kipl::base::TImage<float,3> *ob,
-//            kipl::base::TImage<float,3> *dc,
-//            kipl::base::TImage<float,3> *bb,
-//            size_t *doseroi,
-//            size_t *bbroi);
+    void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj); /// set interpolation parameters to be used for BB image computation
+    void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values
 
 	void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;}
 
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose);
 	void Process(kipl::base::TImage<float,3> &img, float *dose);
 
-    kipl::base::TImage<float,2> PrepareBlackBodyOpenBeam(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
-
-
+    float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
+    float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
+    float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
 
 protected:
 	void PrepareReferences();
     kipl::base::TImage<float,2> PrepareBlackBodySample(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
-    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask);
-    float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, kipl::base::TImage<float,2>&interpolated_img); // remove interpolated_img at the end
-    void InterpolateBlackBodyImage(float *parameters, kipl::base::TImage<float,2> &interpolated_img);
-    float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img);
+    kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
+    float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original imae and mask that highlights the pixels to be considered
+    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
+
+    float *InterpolateParameters(float *param, size_t n, size_t step);
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
@@ -82,12 +80,14 @@ protected:
 	kipl::base::TImage<float,2> m_DarkCurrent;
 	kipl::base::TImage<float,2> m_BlackBody;
     kipl::base::TImage<float,2> m_OB_BB_Interpolated;
+    kipl::base::TImage<float,2> m_BB_sample_Interpolated; // computed in process 3d every time. but in the right way!
 
 
+    // do i need those here?
     kipl::base::TImage<float,2> m_OpenBeam_all;
     kipl::base::TImage<float,2> m_DarkCurrent_all;
     kipl::base::TImage<float,2> m_BlackBody_all;
-    kipl::base::TImage<float,2> m_OB_BB_Interpolated_all;
+//    kipl::base::TImage<float,2> m_OB_BB_Interpolated_all; // don't need this
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
@@ -95,11 +95,15 @@ protected:
 	bool m_bHaveDoseROI;
 	bool m_bHaveBlackBodyROI;
 
+    float *ob_bb_parameters;
+    float *sample_bb_parameters;
+    float *sample_bb_interp_parameters;
+
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod;
 
-    size_t m_nDoseROI[4]; // probably don't need this
-    size_t m_nBlackBodyROI[4]; // neither this
-
+    size_t m_nDoseROI[4]; // probably don't need this, because roi is computed in the pre-processing module..
+    size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
+    size_t m_nBBimages; /// number of images with BB sample that are available
 };
 
 }
