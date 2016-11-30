@@ -113,7 +113,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
         double plt[3] = {0.0,0.0,0.0}; /* Detector orientation */  /* Panel left (toward first column) */
         double pup[3] = {0.0,0.0,0.0}; /* Panel up (toward top row) */
-        double vup[3] = {0.0,0.0,1.0}; /* supposed to be hardcoded... */
+        double vup[3] = {0.0,0.0,1.0}; /* hardcoded for ideal panel orientationf */
         double tgt[3] = {0.0,0.0,0.0}; /* isoscenter, center of rotation of the sample in world coordinates */
 
         /* update VUP with the tilt angle.. 1st try. doesn't seem to have great impact */
@@ -129,20 +129,39 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 
 
 
-//        if (mConfig.ProjectionInfo.fCenter!=mConfig.ProjectionInfo.fpPoint[0]) {
+        if (mConfig.ProjectionInfo.fCenter!=mConfig.ProjectionInfo.fpPoint[0]) {
 
-//            // correct values
+            //those are not correct.. to fix!
+           // correct values
 //            sid = sqrt(sid*sid+(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0])*(mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0]));
 //            sad = mConfig.ProjectionInfo.fSOD *(sid/mConfig.ProjectionInfo.fSDD);
 
+//                        cam[0] = sad*cos(angles*M_PI/180);
+//                        cam[1] = -sad*sin(angles*M_PI/180); /* Location of camera I'm not sure that is correct */
 
-//            cam[0] = sad*cos(angles*M_PI/180);
-//            cam[1] = -sad*sin(angles*M_PI/180); /* Location of camera I'm not sure that is correct */
+//                        if (mConfig.ProjectionInfo.fCenter>mConfig.ProjectionInfo.fpPoint[0]) {
+//                            tgt[0] = -sqrt(sad*sad-mConfig.ProjectionInfo.fSOD*mConfig.ProjectionInfo.fSOD);
+//                        }
+//                        else {
+//                            tgt[0] = sqrt(sad*sad-mConfig.ProjectionInfo.fSOD*mConfig.ProjectionInfo.fSOD);
+//                        }
 
-//            // try to update the location of target and not the one of the camera:
-//           // float shift = sqrt(sad*sad-mConfig.ProjectionInfo.fSOD*mConfig.ProjectionInfo.fSOD);
 
-//        }
+
+//            mConfig.ProjectionInfo.fSOD = sad;
+//            mConfig.ProjectionInfo.fSDD = sid;
+
+
+
+
+//            std::cout << "sad:" << sad << std::endl;
+//            std::cout << "SAD: " << mConfig.ProjectionInfo.fSOD << std::endl;
+//            std::cout << "tgt: " << tgt[0] << " " << tgt[1] << " " << tgt[2] << std::endl;
+//            std::cout << "cor-ppx: " << mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0] << std::endl;
+
+            //updated location of camera and target.
+
+        }
 
 
 //        std::cout << "debug camera position: " << std::endl;
@@ -246,9 +265,14 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 //        pmat->extrinsic[7] = vec3_dot (pup, tgt);
 //        pmat->extrinsic[11] = vec3_dot (nrm, tgt) + pmat->sad;
 
-        extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2];
-        extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
-        extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+mConfig.ProjectionInfo.fSOD;
+//        extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2];
+//        extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
+//        extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+mConfig.ProjectionInfo.fSOD;
+
+        extrinsic[3] = 0;
+        extrinsic[7] = 0;
+        extrinsic[11] = 0+mConfig.ProjectionInfo.fSOD;
+
 
 
 //        printf ("EXTRINSIC\n%g %g %g %g\n%g %g %g %g\n"
