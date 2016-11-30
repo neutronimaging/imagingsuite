@@ -95,7 +95,7 @@ protected:
 	bool m_bHaveDoseROI;
 	bool m_bHaveBlackBodyROI;
 
-    float *ob_bb_parameters;
+    float *ob_bb_parameters; // they could be double ?
     float *sample_bb_parameters;
     float *sample_bb_interp_parameters;
 

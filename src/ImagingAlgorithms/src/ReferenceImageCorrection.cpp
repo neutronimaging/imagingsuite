@@ -151,10 +151,10 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 {
 	kipl::base::TImage<float, 2> slice(img.Dims());
     std::cout<< img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl;
+    float *current_param = new float[6];
 
 	for (size_t i=0; i<img.Size(2); i++) {
 
-        // HERE I HAVE TO ADD BB WITH SAMPLE STUFF.. ! COME ON WE ARE NOT SO FAR ..
         if (m_bHaveBlackBody) {
             // compute m_BB_sample_Interpolated just for the current slice
             // here I have to know if it is to be interpolated between projections
@@ -165,6 +165,19 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             // so i am expetcing that the parameters are m_nBBimages*6 size.. of course! go on from here after lunch!
 //            sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, img.Size());
 
+            memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
+            m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nBlackBodyROI);
+
+
+            if (i==10) // random numbers
+            {
+                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"/home/carminati_c/repos/testdata/samplebb10.tif");
+            }
+
+            if (i==300) // random numbers
+            {
+                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"/home/carminati_c/repos/testdata/samplebb300.tif");
+            }
 
 
         }
@@ -173,6 +186,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
         Process(slice,dose[i]);
         memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
 	}
+
+    delete[] current_param;
 }
 
 void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask){
@@ -595,7 +610,7 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(
     size_t dims[2] = {dimx,dimy};
     kipl::base::TImage <float,2> interpolated_img(dims);
     interpolated_img = 0.0f;
-    std::cout << interpolated_img.Size(0) << " " << interpolated_img.Size(1) << std::endl;
+//    std::cout << interpolated_img.Size(0) << " " << interpolated_img.Size(1) << std::endl;
 
     for (size_t x=0; x<dimx; x++) {
         for (size_t y=0; y<dimy; y++){
@@ -714,7 +729,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, nProj, step);
 
     }
-    else {
+    else { // I assume that the same number of images were loaded.
         memcpy(sample_bb_interp_parameters, sample_bb_parameters, sizeof(float)*6*nBBSampleCount);
     }
 
@@ -833,27 +848,58 @@ void ReferenceImageCorrection::PrepareReferences()
     float *pFlat=m_OpenBeam.GetDataPtr();
     float *pDark=m_DarkCurrent.GetDataPtr();
 
-    if (m_bHaveDarkCurrent) {
-        #pragma omp parallel for
-        for (int i=0; i<N; i++) {
-            float fProjPixel=pFlat[i]-pDark[i];
-            if (fProjPixel<=0)
-                pFlat[i]=0;
-            else
+    if (!m_bHaveBlackBody) {
 
-                pFlat[i]=log(fProjPixel*dose);
+            if (m_bHaveDarkCurrent) {
+                #pragma omp parallel for
+                for (int i=0; i<N; i++) {
+                    float fProjPixel=pFlat[i]-pDark[i];
+                    if (fProjPixel<=0)
+                        pFlat[i]=0;
+                    else
 
-        }
-    }
+                        pFlat[i]=log(fProjPixel*dose);
+
+                }
+            }
+            else {
+                #pragma omp parallel for
+                for (int i=0; i<N; i++) {
+                    float fProjPixel=pFlat[i];
+                    if (fProjPixel<=0)
+                        pFlat[i]=0;
+                    else
+                       pFlat[i]=log(fProjPixel*dose);
+                }
+            }
+            }
     else {
-        #pragma omp parallel for
-        for (int i=0; i<N; i++) {
-            float fProjPixel=pFlat[i];
-            if (fProjPixel<=0)
-                pFlat[i]=0;
-            else
-               pFlat[i]=log(fProjPixel*dose);
+
+        float *pFlatBB = m_OB_BB_Interpolated.GetDataPtr();
+        if (m_bHaveDarkCurrent) {
+            #pragma omp parallel for
+            for (int i=0; i<N; i++) {
+                float fProjPixel=pFlat[i]-pDark[i]-pFlatBB[i]; // dose parameter to be added in pFlatBB
+                if (fProjPixel<=0)
+                    pFlat[i]=0;
+                else
+                    pFlat[i]=log(fProjPixel*dose);
+
+            }
         }
+        else {
+                #pragma omp parallel for
+                for (int i=0; i<N; i++) {
+                    float fProjPixel=pFlat[i]-pFlatBB[i]; // dose parameter to be added here
+                    if (fProjPixel<=0)
+                        pFlat[i]=0;
+                    else
+                       pFlat[i]=log(fProjPixel*dose);
+                }
+
+        }
+
+
     }
 
 // let's assume for now that I do compute the logarithm
@@ -879,42 +925,85 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 //    std::cout << m_bHaveDarkCurrent << " " << m_bHaveOpenBeam << std::endl;
 //    std::cout << "number of pixels: " << N << std::endl;
 
-    if (m_bHaveDarkCurrent) {
-        if (m_bHaveOpenBeam) {
-//                #pragma omp parallel for firstprivate(pFlat,pDark)
+    if (!m_bHaveBlackBody) {
 
-                    float *pImg=img.GetDataPtr();
+                if (m_bHaveDarkCurrent) {
+                    if (m_bHaveOpenBeam) {
+            //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+                                float *pImg=img.GetDataPtr();
+
+                                #pragma omp parallel for
+                                for (int i=0; i<N; i++) {
+
+            //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
+
+                                    float fProjPixel=(pImg[i]-pDark[i]);
+                                    if (fProjPixel<=0)
+                                        pImg[i]=0;
+                                    else
+                                        pImg[i]=pFlat[i]-log(fProjPixel)+dose;
+
+                                }
+
+                    }
+                    else {
+            //            #pragma omp parallel for firstprivate(pDark)
+
+                          float *pImg=img.GetDataPtr();
+
+                            #pragma omp parallel for
+                            for (int i=0; i<N; i++) {
+                                float fProjPixel=(pImg[i]-pDark[i]);
+                                if (fProjPixel<=0)
+                                    pImg[i]=0;
+                                else
+                                   pImg[i]=-log(fProjPixel)+dose;
+                            }
+
+                    }
+                }
+        }
+     else {
+//        std::cout << "correct for BB as well" << std::endl;
+        //these cases are anyhow probably not used since without open beam we would not have segmented anyway the BBs
+        if (m_bHaveDarkCurrent) {
+            if (m_bHaveOpenBeam) {
+    //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+                        float *pImg=img.GetDataPtr();
+                        float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
+
+                        #pragma omp parallel for
+                        for (int i=0; i<N; i++) {
+                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB
+                            if (fProjPixel<=0)
+                                pImg[i]=0;
+                            else
+                                pImg[i]=pFlat[i]-log(fProjPixel)+dose;
+
+                        }
+
+            }
+            else {
+    //            #pragma omp parallel for firstprivate(pDark)
+
+                  float *pImg=img.GetDataPtr();
+                  float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
 
                     #pragma omp parallel for
                     for (int i=0; i<N; i++) {
-
-//                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
-
-                        float fProjPixel=(pImg[i]-pDark[i]);
+                        float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB
                         if (fProjPixel<=0)
                             pImg[i]=0;
                         else
-                            pImg[i]=pFlat[i]-log(fProjPixel)+dose;
-
+                           pImg[i]=-log(fProjPixel)+dose;
                     }
 
+            }
         }
-        else {
-//            #pragma omp parallel for firstprivate(pDark)
 
-              float *pImg=img.GetDataPtr();
-
-                #pragma omp parallel for
-                for (int i=0; i<N; i++) {
-                    float fProjPixel=(pImg[i]-pDark[i]);
-                    if (fProjPixel<=0)
-                        pImg[i]=0;
-                    else
-                       pImg[i]=-log(fProjPixel)+dose;
-                }
-
-        }
-    }
+       }
 
     return 1;
 }
