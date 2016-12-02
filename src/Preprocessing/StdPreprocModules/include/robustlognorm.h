@@ -25,7 +25,7 @@ public:
     RobustLogNorm();
     virtual ~RobustLogNorm();
 
-    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
+    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
     virtual bool SetROI(size_t *roi); /// set the current roi to be processed
@@ -42,18 +42,20 @@ protected:
     std::string blackbodyname;
     std::string blackbodysamplename;
 
-    size_t nOBCount;
-    size_t nOBFirstIndex;
-    size_t nDCCount;
-    size_t nDCFirstIndex;
-    size_t nBBCount;
-    size_t nBBFirstIndex;
-    size_t nBBSampleCount;
-    size_t nBBSampleFirstIndex;
+    size_t nOBCount; /// number of OB images
+    size_t nOBFirstIndex; /// first index in filename for OB images
+    size_t nDCCount; /// number of DC images
+    size_t nDCFirstIndex; /// first index in filename for DC images
+    size_t nBBCount; /// number of open beam images with BB
+    size_t nBBFirstIndex; /// first index in filename for OB images with BB
+    size_t nBBSampleCount; /// number of sample images with BB
+    size_t nBBSampleFirstIndex; /// first index in filename for sample images with BB
 
     float fFlatDose; /// dose value in open beam images
     float fDarkDose; /// dose value in dark current images
     float fBlackDose; /// dose value in black body images
+    float fBlackDoseSample; /// dose values in black body images with sample
+    float fdarkBBdose; /// dose value in dark current images within BB roi - not sure it has to be done..
 
     float tau; /// mean pattern transmission, default 0.99
 
@@ -61,10 +63,12 @@ protected:
     bool bUseLUT; /// boolean value on the use of LUT (not used)
     bool bUseWeightedMean;
     bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
+    bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
 
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
     size_t BBroi[4]; /// region of interest to be set for BB segmentation
+    size_t doseBBroi[4]; /// region of interest for dose computation in BB images
 
     size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
 
