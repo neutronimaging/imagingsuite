@@ -41,12 +41,18 @@ public:
             bool useBB,
             float dose_OB,
             float dose_DC,
-            float dose_BB);
+            bool normBB);
 
     void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj); /// set interpolation parameters to be used for BB image computation
     void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values
 
 	void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;}
+    void SetRadius(size_t x) {radius=x;}
+    void SetTau (float x) {tau=x;}
+    void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);}
+//    void setBBflatdose (float dose) {m_fBlackDose=dose;}
+//    void setBBsampledose (float *doselist) {m_fBlackDoselist=doselist;}
+
 
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose);
 	void Process(kipl::base::TImage<float,3> &img, float *dose);
@@ -73,7 +79,6 @@ protected:
 	bool m_bHaveOpenBeam;
 	bool m_bHaveDarkCurrent;
 	bool m_bHaveBlackBody;
-
 	bool m_bComputeLogarithm;
 
 	kipl::base::TImage<float,2> m_OpenBeam;
@@ -91,8 +96,10 @@ protected:
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
-    float m_fBlackDose;
+//    float m_fBlackDose;
+//    float *m_fBlackDoselist;
 	bool m_bHaveDoseROI;
+    bool m_bHaveBBDoseROI;
 	bool m_bHaveBlackBodyROI;
 
     float *ob_bb_parameters; // they could be double ?
@@ -103,7 +110,10 @@ protected:
 
     size_t m_nDoseROI[4]; // probably don't need this, because roi is computed in the pre-processing module..
     size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
+    int m_diffBBroi[4]; /// difference between BB roi and projection roi, important when computing interpolation parameters
     size_t m_nBBimages; /// number of images with BB sample that are available
+    size_t radius; /// radius value for BB mask creation
+    float tau; /// mean pattern transmission
 };
 
 }
