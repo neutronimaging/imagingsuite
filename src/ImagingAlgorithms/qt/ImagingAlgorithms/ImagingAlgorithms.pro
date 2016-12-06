@@ -16,6 +16,8 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
+    INCLUDEPATH += "../../../../../../external/src/linalg"
+
     unix:!macx {
 
         QMAKE_CXXFLAGS += -fopenmp
@@ -23,6 +25,7 @@ unix {
         LIBS += -lgomp
         LIBS += -L/usr/lib -lxml2
         INCLUDEPATH += /usr/include/libxml2
+
     }
     else
     {
@@ -30,6 +33,7 @@ unix {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
+
         LIBS += -L/opt/local/lib/ -lxml2
     }
 
