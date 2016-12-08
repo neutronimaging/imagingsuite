@@ -1,9 +1,10 @@
-DIRECTORY="/Users/kaestner/Applications"
+DIRECTORY=~/Applications
 #QTPATH="/Applications/Qt531/5.3/clang_64"
 #QTPATH="/Applications/Qt541/5.4/clang_64"
-QTPATH="/Applications/Qt56/5.6/clang_64"
+#QTPATH="/Applications/Qt56/5.6/clang_64"
+QTPATH=~/Qt5.7.0/5.7/clang_64
 DEST="$DIRECTORY/muhrec3.app"
-REPOSPATH="/Users/kaestner/repos"
+REPOSPATH=~/repos
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -55,7 +56,7 @@ cd ..
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
-cp /Users/kaestner/repos/tomography/trunk/src/muhrec3/resources/* ./Resources
+cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources
 
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 echo "copy plugins"
@@ -135,6 +136,8 @@ install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libStdPreprocModules.1.dylib @executable_path/../Frameworks/libStdPreprocModules.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 
 # stdbackprojectors
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdBackprojectors.1.0.0.dylib
