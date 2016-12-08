@@ -170,40 +170,32 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="OB_BB_widget" native="true">
+   <widget class="QtAddons::ImageViewerWidget" name="ob_bb_Viewer" native="true">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>140</y>
-      <width>261</width>
-      <height>241</height>
+      <x>110</x>
+      <y>120</y>
+      <width>398</width>
+      <height>256</height>
      </rect>
     </property>
-    <widget class="QLabel" name="label_ImageOBBB">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>110</y>
-       <width>111</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>imageLabel</string>
-     </property>
-    </widget>
+    <property name="minimumSize">
+     <size>
+      <width>256</width>
+      <height>256</height>
+     </size>
+    </property>
    </widget>
-   <zorder>label_OBBB</zorder>
-   <zorder>edit_OB_BB_mask</zorder>
-   <zorder>button_OBBBpath</zorder>
-   <zorder>spinFirstOBBB</zorder>
-   <zorder>horizontalLayoutWidget</zorder>
-   <zorder>OB_BB_widget</zorder>
   </widget>
-  <zorder>buttonBox</zorder>
-  <zorder>groupBox</zorder>
-  <zorder>label_2</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

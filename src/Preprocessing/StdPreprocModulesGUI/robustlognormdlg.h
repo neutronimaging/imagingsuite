@@ -50,6 +50,8 @@ private:
     size_t nBBFirstIndex; /// first index in filename for OB images with BB
     std::string blackbodyname;
 
+    kipl::base::TImage <float,2> m_Preview_OBBB;
+
 };
 
 #endif // ROBUSTLOGNORMDLG_H
