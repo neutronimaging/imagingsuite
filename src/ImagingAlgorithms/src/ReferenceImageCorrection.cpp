@@ -91,7 +91,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 		m_bHaveOpenBeam=true;
         m_OpenBeam=*ob;
 //        m_OpenBeam =  kipl::base::TSubImage<float,2>::Get(m_OpenBeam_all, roi);
-        kipl::io::WriteTIFF32(m_OpenBeam,"/home/carminati_c/repos/testdata/roi_ob.tif");
+//        kipl::io::WriteTIFF32(m_OpenBeam,"~/repos/testdata/roi_ob.tif");
         std::cout << "have OB!" << std::endl;
 	}
 
@@ -99,7 +99,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 		m_bHaveDarkCurrent=true;
         m_DarkCurrent=*dc;
 //        m_DarkCurrent = kipl::base::TSubImage<float,2>::Get(m_DarkCurrent_all,roi);
-        kipl::io::WriteTIFF32(m_DarkCurrent,"/home/carminati_c/repos/testdata/roi_dc.tif");
+//        kipl::io::WriteTIFF32(m_DarkCurrent,"~/repos/testdata/roi_dc.tif");
         std::cout << "have DC!" << std::endl;
 	}
 
@@ -111,7 +111,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
 
 //        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
-        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"/home/carminati_c/repos/testdata/roiBB.tif"); // CORRECT!!!
+//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"~/repos/testdata/roiBB.tif"); // CORRECT!!!
 
 
 	}
@@ -180,12 +180,12 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
             if (i==10) // random numbers
             {
-                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"/home/carminati_c/repos/testdata/samplebb10.tif");
+//                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"~/repos/testdata/samplebb10.tif");
             }
 
             if (i==300) // random numbers
             {
-                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"/home/carminati_c/repos/testdata/samplebb300.tif");
+//                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"~/repos/testdata/samplebb300.tif");
             }
 
 
@@ -266,7 +266,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 //        else res[i]=0;
 //    }
 
-    kipl::io::WriteTIFF32(maskOtsu,"/home/carminati_c/repos/testdata/maskOtsu.tif");
+//    kipl::io::WriteTIFF32(maskOtsu,"~/testdata/maskOtsu.tif");
 
 
     // 3. Compute mask within Otsu
@@ -407,7 +407,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
       for (size_t bb_index=0; bb_index<pos; bb_index++){
 
-          const size_t roi_dim[2] = { right_edges.at(bb_index).second-left_edges.at(bb_index).second, right_edges.at(bb_index).first-left_edges.at(bb_index).first}; // Dx and Dy
+          const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
 //          std::cout << "roi1 dimension: "<< roi_dim[0]<< " " << roi_dim[1]<< std::endl;
           kipl::base::TImage<float,2> roi(roi_dim);
 
@@ -664,13 +664,13 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     norm -=dark;
     norm /= (flat-=dark);
 
-    kipl::io::WriteTIFF32(norm,"/home/carminati_c/repos/testdata/normBB.tif");
-    kipl::io::WriteTIFF32(bb,"/home/carminati_c/repos/testdata/BB.tif");
-    kipl::io::WriteTIFF32(flat,"/home/carminati_c/repos/testdata/openBB.tif");
+//    kipl::io::WriteTIFF32(norm,"~/repos/testdata/normBB.tif");
+//    kipl::io::WriteTIFF32(bb,"~/testdata/BB.tif");
+//    kipl::io::WriteTIFF32(flat,"~/repos/testdata/openBB.tif");
 
     SegmentBlackBody(norm, mask);
 
-    kipl::io::WriteTIFF32(mask,"/home/carminati_c/repos/testdata/mask.tif");
+//    kipl::io::WriteTIFF32(mask,"~/testdata/mask.tif");
 
     kipl::base::TImage<float,2> BB_DC(bb.Dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
