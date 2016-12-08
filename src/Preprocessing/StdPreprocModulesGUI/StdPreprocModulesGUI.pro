@@ -24,7 +24,8 @@ SOURCES += stdpreprocmodulesgui.cpp \
     datascalerdlg.cpp \
     adaptivefilterdlg.cpp \
     SpotClean2Dlg.cpp \
-    medianmixringcleandlg.cpp
+    medianmixringcleandlg.cpp \
+    robustlognormdlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
@@ -36,7 +37,8 @@ HEADERS += stdpreprocmodulesgui.h\
     datascalerdlg.h \
     adaptivefilterdlg.h \
     SpotClean2Dlg.h \
-    medianmixringcleandlg.h
+    medianmixringcleandlg.h \
+    robustlognormdlg.h
 
 
 symbian {
@@ -123,4 +125,6 @@ FORMS += \
     SpotClean2Dlg.ui \
     medianmixringclean.ui \
     projectionfilterdlg.ui \
-    WaveletRingCleanDlg.ui
+    WaveletRingCleanDlg.ui \
+    robustlognormdlg.ui
+
