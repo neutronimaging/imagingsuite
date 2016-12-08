@@ -354,7 +354,7 @@ void RobustLogNorm::PrepareBBData(){
                  m_Config.ProjectionInfo.projection_roi[3] << std::endl;
 
     std::cout << "BBroi: " << BBroi[0] << " " << BBroi[1] << " " << BBroi[2] << " " << BBroi[3] << std::endl;
-    int diffroi[4] = {BBroi[0]-m_Config.ProjectionInfo.projection_roi[0], BBroi[1]-m_Config.ProjectionInfo.projection_roi[1], BBroi[2]-m_Config.ProjectionInfo.projection_roi[2], BBroi[3]-m_Config.ProjectionInfo.projection_roi[3]};
+    int diffroi[4] = {int(BBroi[0]-m_Config.ProjectionInfo.projection_roi[0]), int(BBroi[1]-m_Config.ProjectionInfo.projection_roi[1]), int(BBroi[2]-m_Config.ProjectionInfo.projection_roi[2]), int(BBroi[3]-m_Config.ProjectionInfo.projection_roi[3])};
 
     std::cout << "diff roi: " << diffroi[0] << " " << diffroi[1] << " " << diffroi[2] << " " << diffroi[3] << std::endl;
 
@@ -548,7 +548,7 @@ void RobustLogNorm::PrepareBBData(){
 
          std::cout << "blackdose: " << fBlackDose << std::endl;
 
-         kipl::io::WriteTIFF32(obmask,"/home/carminati_c/repos/testdata/maskOb.tif");
+//         kipl::io::WriteTIFF32(obmask,"/home/carminati_c/repos/testdata/maskOb.tif");
 
     }
 
@@ -604,7 +604,7 @@ void RobustLogNorm::PrepareBBData(){
             fBlackDoseSample-=fdarkBBdose;
 
 
-            if (i==5)  {kipl::io::WriteTIFF32(samplebb,"/home/carminati_c/repos/testdata/samplebb.tif");}
+//            if (i==5)  {kipl::io::WriteTIFF32(samplebb,"/home/carminati_c/repos/testdata/samplebb.tif");}
 
 
 
@@ -652,7 +652,7 @@ void RobustLogNorm::PrepareBBData(){
                 memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6); // copio i primi 6
 
 
-                kipl::io::WriteTIFF32(mask,"/home/carminati_c/repos/testdata/maskSample.tif");
+//                kipl::io::WriteTIFF32(mask,"/home/carminati_c/repos/testdata/maskSample.tif");
 
 
             }
