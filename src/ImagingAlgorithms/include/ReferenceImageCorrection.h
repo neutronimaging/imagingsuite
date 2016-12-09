@@ -41,7 +41,8 @@ public:
             bool useBB,
             float dose_OB,
             float dose_DC,
-            bool normBB);
+            bool normBB,
+            size_t *roi);
 
     void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj); /// set interpolation parameters to be used for BB image computation
     void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values
@@ -50,6 +51,7 @@ public:
     void SetRadius(size_t x) {radius=x;}
     void SetTau (float x) {tau=x;}
     void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);}
+    void SetPBvariante (bool x) {bPBvariante = x; }
 //    void setBBflatdose (float dose) {m_fBlackDose=dose;}
 //    void setBBsampledose (float *doselist) {m_fBlackDoselist=doselist;}
 
@@ -60,11 +62,13 @@ public:
     float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
     float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
+    kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
+
 
 protected:
 	void PrepareReferences();
     kipl::base::TImage<float,2> PrepareBlackBodySample(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
-    kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
+
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original imae and mask that highlights the pixels to be considered
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
 
@@ -74,6 +78,7 @@ protected:
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
 //    void GetDose(kipl::base::TImage<float,2> &img, size_t *roi);
     int* repeat_matrix(int* source, int count, int expand);
+    float computedose(kipl::base::TImage<float,2>&img); /// duplicate.. to move in timage probably or something like this
 
 
 	bool m_bHaveOpenBeam;
@@ -86,7 +91,8 @@ protected:
 	kipl::base::TImage<float,2> m_BlackBody;
     kipl::base::TImage<float,2> m_OB_BB_Interpolated;
     kipl::base::TImage<float,2> m_BB_sample_Interpolated; // computed in process 3d every time. but in the right way!
-
+    kipl::base::TImage<float,2> m_DoseBBsample_image;
+    kipl::base::TImage<float,2> m_DoseBBflat_image;
 
     // do i need those here?
     kipl::base::TImage<float,2> m_OpenBeam_all;
@@ -101,6 +107,7 @@ protected:
 	bool m_bHaveDoseROI;
     bool m_bHaveBBDoseROI;
 	bool m_bHaveBlackBodyROI;
+    bool bPBvariante;
 
     float *ob_bb_parameters; // they could be double ?
     float *sample_bb_parameters;
@@ -108,7 +115,7 @@ protected:
 
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod;
 
-    size_t m_nDoseROI[4]; // probably don't need this, because roi is computed in the pre-processing module..
+    size_t m_nDoseROI[4]; // i want to use it for the extented PB variante
     size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
     int m_diffBBroi[4]; /// difference between BB roi and projection roi, important when computing interpolation parameters
     size_t m_nBBimages; /// number of images with BB sample that are available

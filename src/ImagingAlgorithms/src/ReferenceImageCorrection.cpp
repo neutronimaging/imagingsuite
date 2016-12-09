@@ -82,7 +82,8 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         bool useBB,
         float dose_OB,
         float dose_DC,
-        bool normBB)
+        bool normBB,
+        size_t *roi)
 {
 	m_bHaveOpenBeam=m_bHaveDarkCurrent=m_bHaveBlackBody=false;
 	m_bHaveDoseROI=m_bHaveBlackBodyROI=false;
@@ -109,6 +110,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         // try with the open beam first,, and then go on with the sample one
         std::cout << "have BB!" << std::endl;
         m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
+        m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
 
 //        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
 //        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"~/repos/testdata/roiBB.tif"); // CORRECT!!!
@@ -136,6 +138,11 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         std::cout << "have dose roi for BBs!" << std::endl;
 //		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
 	}
+
+    if(roi!=NULL){
+
+        mempcpy(m_nDoseROI,roi, sizeof(size_t)*4);
+    }
 
 //    std::cout << "before prepare references " << std::endl;
 	PrepareReferences();
@@ -176,6 +183,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
             memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
             m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nBlackBodyROI);
+            m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
 
 
             if (i==10) // random numbers
@@ -851,6 +859,7 @@ int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand)
 void ReferenceImageCorrection::PrepareReferences()
 {
     float dose=1.0f/(m_fOpenBeamDose-m_fDarkDose);
+    float Pdose = 0.0f;
 //    if (dose!=dose)
 //        throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
 
@@ -888,6 +897,22 @@ void ReferenceImageCorrection::PrepareReferences()
 
         float *pFlatBB = m_OB_BB_Interpolated.GetDataPtr();
 
+        // set here the PB variante...
+        if(bPBvariante){
+
+//            kipl::base::TImage<float,2> imgDose;
+//            imgDose = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated, m_nDoseROI); // extract the roi
+            for (int i=0; i < static_cast<int>(m_DoseBBflat_image.Size(0)*m_DoseBBflat_image.Size(1)); i++){
+                m_DoseBBflat_image[i]*=(dose/tau);
+            }
+
+            Pdose = computedose(m_DoseBBflat_image);
+            dose = 1.0f/(m_fOpenBeamDose-m_fDarkDose-Pdose);
+            std::cout << "dose with PB variante: " << m_fOpenBeamDose-m_fDarkDose-Pdose << std::endl;
+
+        } // for now I assume I have all images.. other wise makes no much sense
+
+
         if (m_bHaveDarkCurrent) {
             #pragma omp parallel for
             for (int i=0; i<N; i++) {
@@ -899,7 +924,7 @@ void ReferenceImageCorrection::PrepareReferences()
                 if (fProjPixel<=0)
                     pFlat[i]=0;
                 else
-                    pFlat[i]=log(fProjPixel*dose);
+                    pFlat[i]=log(fProjPixel*(dose));
 
             }
         }
@@ -939,7 +964,11 @@ void ReferenceImageCorrection::PrepareReferences()
 int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose)
 {
     dose = dose - m_fDarkDose;
-    float logdose = log(dose<1 ? 1.0f : dose);
+    float Pdose = 0.0f;
+
+
+
+//    float logdose = log(dose<1 ? 1.0f : dose);
 
     int N=static_cast<int>(img.Size(0)*img.Size(1));
 
@@ -966,7 +995,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                                     if (fProjPixel<=0)
                                         pImg[i]=0;
                                     else
-                                        pImg[i]=pFlat[i]-log(fProjPixel)+logdose;
+                                        pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
 
                                 }
 
@@ -982,7 +1011,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                                 if (fProjPixel<=0)
                                     pImg[i]=0;
                                 else
-                                   pImg[i]=-log(fProjPixel)+logdose;
+                                   pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
                             }
 
                     }
@@ -1002,6 +1031,22 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                         float *pImg=img.GetDataPtr();
                         float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
 
+                        if(bPBvariante){
+
+//                            kipl::base::TImage<float,2> imgDose = InterpolateBlackBodyImage();
+//                            imgDose = kipl::base::TSubImage<float,2>::Get(m_BB_sample_Interpolated, m_nDoseROI); // extract the roi
+
+                            for (int i=0; i < static_cast<int>(m_DoseBBsample_image.Size(0)*m_DoseBBsample_image.Size(1)); i++){
+                                m_DoseBBsample_image[i]*=(dose/tau);
+                            }
+
+                            Pdose = computedose(m_DoseBBsample_image);
+                            std::cout << "pierre's dose in in BB sample interpolated" <<  Pdose << std::endl;
+
+                        } // for now I assume I have all images.. other wise makes no much sense
+
+
+
 
 
                         #pragma omp parallel for
@@ -1011,11 +1056,13 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                                  pImgBB[i] *=(dose/tau);
                             }
 
-                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB
+
+
+                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
                             if (fProjPixel<=0)
                                 pImg[i]=0;
                             else
-                                pImg[i]=pFlat[i]-log(fProjPixel)+logdose;
+                                pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose));
 
                         }
 
@@ -1038,7 +1085,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                         if (fProjPixel<=0)
                             pImg[i]=0;
                         else
-                           pImg[i]=-log(fProjPixel)+logdose; // yes but what is logdose if there is no open beam?
+                           pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose); // yes but what is logdose if there is no open beam?
                     }
 
             }
@@ -1055,7 +1102,27 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 }
 
 
+float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
+    float *pImg=img.GetDataPtr();
+    float *means=new float[img.Size(1)];
+    memset(means,0,img.Size(1)*sizeof(float));
+
+    for (size_t y=0; y<img.Size(1); y++) {
+        pImg=img.GetLinePtr(y);
+
+        for (size_t x=0; x<img.Size(0); x++) {
+            means[y]+=pImg[x];
+        }
+        means[y]=means[y]/static_cast<float>(img.Size(0));
+    }
+
+    float dose;
+    kipl::math::median(means,img.Size(1),&dose);
+    delete [] means;
+    return dose;
+
+}
 
 }
 
