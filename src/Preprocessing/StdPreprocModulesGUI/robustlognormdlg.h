@@ -35,6 +35,28 @@ private slots:
 
     void on_buttonPreviewOBBB_clicked();
 
+    void on_button_BBroi_clicked();
+
+    void on_spinx0BBroi_valueChanged();
+    void on_spiny0BBroi_valueChanged();
+    void on_spinx1BBroi_valueChanged();
+    void on_spiny1BBroi_valueChanged();
+
+    void on_button_sampleBBpath_clicked();
+
+    void on_buttonPreviewsampleBB_clicked();
+
+    void on_button_BBdose_clicked();
+
+    void on_spinx0BBdose_valueChanged();
+    void on_spinx1BBdose_valueChanged();
+    void on_spiny0BBdose_valueChanged();
+    void on_spiny1BBdose_valueChanged();
+
+
+
+    void on_errorButton_clicked();
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -42,6 +64,10 @@ private:
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     void BrowseOBBBPath();
+    void UpdateBBROI();
+
+    void BrowseSampleBBPath();
+    void UpdateDoseROI();
 
     Ui::RobustLogNormDlg *ui;
     ReconConfig *m_Config;
@@ -50,7 +76,38 @@ private:
     size_t nBBFirstIndex; /// first index in filename for OB images with BB
     std::string blackbodyname;
 
+    size_t nBBSampleCount; /// number of sample images with BB
+    size_t nBBSampleFirstIndex; /// first index in filename for sample images with BB
+    std::string blackbodysamplename;
+    size_t BBroi[4];
+    size_t doseBB[4];
+    size_t radius;
+
+
     kipl::base::TImage <float,2> m_Preview_OBBB;
+    kipl::base::TImage <float,2> m_Preview_sampleBB;
+
+    // provo aggiungendo tutti gli altri parametri:
+    size_t nDCCount;
+    size_t nDCFirstIndex;
+    size_t nOBCount;
+    size_t nOBFirstIndex;
+    float fFlatDose;
+    float fDarkDose;
+    float fBlackDose;
+    float fdarkBBdose;
+    bool bUseNormROI;
+    bool bUseLUT;
+    bool bUseWeightedMean;
+    bool bUseBB;
+    bool bUseNormROIBB;
+    int m_nWindow;
+    float tau;
+
+    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
+    ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
+    ImagingAlgorithms::ReferenceImageCorrection m_corrector;
+
 
 };
 
