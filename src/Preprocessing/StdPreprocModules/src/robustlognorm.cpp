@@ -15,12 +15,13 @@ RobustLogNorm::RobustLogNorm() :
     // to check which one do i need:
     nOBCount(0),
     nOBFirstIndex(1),
+    nBBSampleCount(0),
+    nBBSampleFirstIndex(1),
+    radius(2),
     nDCCount(0),
     nDCFirstIndex(1),
     nBBCount(0),
     nBBFirstIndex(1),
-    nBBSampleCount(0),
-    nBBSampleFirstIndex(1),
     fFlatDose(1.0f),
     fBlackDose(1.0f),
     fDarkDose(0.0f),
@@ -32,11 +33,14 @@ RobustLogNorm::RobustLogNorm() :
     bUseNormROIBB(false),
     m_nWindow(5),
     tau(0.99f),
+    bPBvariante(false),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm)
 {
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
+    blackbodyname = "somename";
+    blackbodysamplename = "somename";
 
 }
 
@@ -65,11 +69,17 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
 
 
+    std::cout << "ciao robust log norm" << std::endl;
 
     m_nWindow = GetIntParameter(parameters,"window");
     string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
     string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
     bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
+
+    bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
+
+
+    std::cout << "ciao robust log norm" << std::endl;
 
     blackbodyname = GetStringParameter(parameters,"BB_OB_name");
     nBBCount = GetIntParameter(parameters,"BB_counts");
@@ -83,6 +93,8 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
     bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
 
+    std::cout << "ciao robust log norm" << std::endl;
+
     std::cout << blackbodyname << std::endl;
     std::cout << nBBCount << " " << nBBFirstIndex << std::endl;
 
@@ -90,6 +102,8 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
 
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
+
+    std::cout << "ciao robust log norm" << std::endl;
 
     if (roi_bb_x>0 && roi_bb_y>0) {
         std::cout << "have roi for BB!" << std::endl;
@@ -149,6 +163,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters()
     parameters["BBroi"] = kipl::strings::value2string(BBroi[0])+" "+kipl::strings::value2string(BBroi[1])+" "+kipl::strings::value2string(BBroi[2])+" "+kipl::strings::value2string(BBroi[3]);
     parameters["doseBBroi"] = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
     parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
+    parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
 
 
 //    parameters["corrector"] = enum2string(m_corrector);
@@ -321,7 +336,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     }
 
 
-    m_corrector.SetReferenceImages(&flat, &dark, bUseBB, fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI)); // understand connections better
+    m_corrector.SetReferenceImages(&flat, &dark, bUseBB, fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
 
 //    std::cout << "computed doses: " << std::endl;
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
@@ -363,6 +378,7 @@ void RobustLogNorm::PrepareBBData(){
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
     m_corrector.SetTau(tau);
+    m_corrector.SetPBvariante(bPBvariante);
 
 
     kipl::base::TImage<float,2> img, flat, dark, bb, sample, samplebb;
@@ -534,11 +550,23 @@ void RobustLogNorm::PrepareBBData(){
 
          bb/=static_cast<float>(nBBCount);
          fBlackDose/=static_cast<float>(nBBCount);
-         fBlackDose-=fdarkBBdose;
+          fBlackDose-=fdarkBBdose;
 
 
          kipl::base::TImage<float,2> obmask(bb.Dims());
          bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask);
+
+
+         if (bPBvariante) {
+             kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(bb_ob_param,doseBBroi);
+             float mydose = computedose(mybb);
+             std::cout << "----------------before PB variante: " << fBlackDose << std::endl;
+             fBlackDose-= ((1/tau-1)*mydose);
+             std::cout << "black dose with PB variante: " << fBlackDose << std::endl;
+
+         }
+
+
          if(bUseNormROI && bUseNormROIBB){
              fBlackDose = fBlackDose<1 ? 1.0f : fBlackDose;
              for (size_t i=0; i<6; i++){
@@ -599,9 +627,10 @@ void RobustLogNorm::PrepareBBData(){
             }
 
 
-
-            std::cout << "fBlackDose sample at sample n. " << i << " " << fBlackDoseSample << std::endl;
             fBlackDoseSample-=fdarkBBdose;
+            std::cout << "fBlackDose sample at sample n. " << i << " without PB variante: " << fBlackDoseSample << std::endl;
+
+
 
 
 //            if (i==5)  {kipl::io::WriteTIFF32(samplebb,"/home/carminati_c/repos/testdata/samplebb.tif");}
@@ -638,10 +667,24 @@ void RobustLogNorm::PrepareBBData(){
                 std::cout << temp_parameters[0] << " " << temp_parameters[1] << " " <<temp_parameters[2] << " " <<temp_parameters[3] << " " <<temp_parameters[4] << " " <<temp_parameters[5] << std::endl;
                 if (bUseNormROIBB && bUseNormROI){
 //                     prenormalize interpolation parameters with dose
+
+
+                    if (bPBvariante) {
+
+                            kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
+                            float mydose = computedose(mybb);
+                            fBlackDoseSample-= ((1/tau-1)*mydose);
+                            std::cout << "black dose with PB variante: " << fBlackDoseSample << std::endl;
+
+                         }
+
+
                     fBlackDoseSample = fBlackDoseSample<1 ? 1.0f : fBlackDoseSample;
 
                     for(size_t j=0; j<6; j++) {
-                     temp_parameters[j]/=fBlackDoseSample;
+
+                              temp_parameters[j]/=fBlackDoseSample;
+
                     }
                 }
 
@@ -714,7 +757,9 @@ void RobustLogNorm::PrepareBBData(){
             std::cout << "dims of projections: " << m_Config.ProjectionInfo.nDims[0] << " " <<
                          m_Config.ProjectionInfo.nDims[1] << std::endl;
 
-            size_t nProj = m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1;
+//            size_t nProj = m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1;
+            double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+
             std::cout << "number of projections: " << nProj << std::endl;
             // it has to be more complicated than this. TO BE FIXED
 
@@ -738,6 +783,29 @@ void RobustLogNorm::PrepareBBData(){
     delete[] bb_sample_parameters;
 
 
+
+
+}
+
+float RobustLogNorm::computedose(kipl::base::TImage<float,2>&img){
+
+    float *pImg=img.GetDataPtr();
+    float *means=new float[img.Size(1)];
+    memset(means,0,img.Size(1)*sizeof(float));
+
+    for (size_t y=0; y<img.Size(1); y++) {
+        pImg=img.GetLinePtr(y);
+
+        for (size_t x=0; x<img.Size(0); x++) {
+            means[y]+=pImg[x];
+        }
+        means[y]=means[y]/static_cast<float>(img.Size(0));
+    }
+
+    float dose;
+    kipl::math::median(means,img.Size(1),&dose);
+    delete [] means;
+    return dose;
 
 
 }
@@ -766,7 +834,7 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
         GetFloatParameterVector(coeff,"dose",doselist,nDose);
         for (int i=0; i<nDose; i++) {
             doselist[i] = doselist[i]-fDarkDose;
-//            std::cout << doselist[i]<< std::endl; // seem correct
+//            std::cout << doselist[i]<< std::endl;
         }
     }
 
@@ -780,51 +848,5 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
 
 void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat)
 {
-// to see if they are needed
-//    mDark=dark;
-//    mFlatField=flat;
-////    m_corrector.SetReferenceImages();
-////    NormBase::SetReferenceImages(dark,flat);
-
-//    // not sure what it does. is it used? yes. it enters in here..
-
-//    std::cout << "SetReferenceImages dark 2d and flat 2d" << std::endl;
-
-//    float dose=1.0f/(fFlatDose-fDarkDose);
-//    if (dose!=dose)
-//        throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
-
-////    const int N=static_cast<int>(flat.Size());
-////    float *pFlat=flat.GetDataPtr();
-////    float *pDark=dark.GetDataPtr();
-
-////    if (nDCCount!=0) {
-////        #pragma omp parallel for
-////        for (int i=0; i<N; i++) {
-////            float fProjPixel=pFlat[i]-pDark[i];
-////            if (fProjPixel<=0)
-////                pFlat[i]=0;
-////            else
-////               pFlat[i]=log(fProjPixel*dose);
-
-////        }
-////    }
-////    else {
-////        #pragma omp parallel for
-////        for (int i=0; i<N; i++) {
-////            float fProjPixel=pFlat[i];
-////            if (fProjPixel<=0)
-////                pFlat[i]=0;
-////            else
-////                pFlat[i]=log(fProjPixel*dose);
-////        }
-////    }
-
-//    // che fine fanno qst pFlat? SECONDO ME SI USANO IN REALTÀ IN REFERENCEIMAGECORRECTION::PREPAREREFERENCES
-
-//    if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-//            for (int i=1; i<flat.Size(1); i++) {
-//                memcpy(flat.GetLinePtr(i),flat.GetLinePtr(0),sizeof(float)*flat.Size(0));			}
-//    }
 
 }

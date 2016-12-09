@@ -65,6 +65,8 @@ protected:
     bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
 
+    bool bPBvariante;
+
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
     size_t BBroi[4]; /// region of interest to be set for BB segmentation
@@ -80,6 +82,7 @@ protected:
     kipl::base::TImage<float,2> mMaskBB;
 
     void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is called in Configure
+    float computedose(kipl::base::TImage<float,2>&img);
 
 private:
     int m_nWindow;
