@@ -8,6 +8,7 @@
 #include <base/timage.h>
 #include <base/imageinfo.h>
 #include <base/tsubimage.h>
+#include <base/trotate.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -32,8 +33,11 @@ private Q_SLOTS:
 
     void testBivariateHistogram();
 
-    /// Tests
+    /// Tests cropping
     void testSubImage();
+
+    /// Tests rotations
+    void testRotateImage();
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -232,6 +236,125 @@ void TkiplbasetestTest::testSubImage()
     }
 
     // Test get pos and sizes
+}
+
+void TkiplbasetestTest::testRotateImage()
+{
+    std::ostringstream msg;
+
+    size_t dims[2]={4,5};
+    kipl::base::TImage<float,2> img(dims);
+    for (int i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+
+    // 0  1  2  3
+    // 4  5  6  7
+    // 8  9  10 11
+    // 12 13 14 15
+    // 16 17 18 19
+
+    kipl::base::TImage<float,2> res;
+
+    kipl::base::TRotate<float> rot;
+
+    // Test rotate with 90 deg
+    {
+        res=rot.Rotate90(img);
+        float rot90ref[]= {16, 12, 8,  4, 0,
+                     17, 13, 9,  5, 1,
+                     18, 14, 10, 6, 2,
+                     19, 15, 11, 7, 3};
+        QVERIFY2(res.Size(0)==img.Size(1),"Dim x error rot 90");
+        QVERIFY2(res.Size(1)==img.Size(0),"Dim y error rot 90");
+
+        for (int i=0; i<res.Size(); ++i) {
+            msg.str("");
+            msg<<"i="<<i;
+            QVERIFY2(res[i]==rot90ref[i], msg.str().c_str());
+        }
+    }
+
+    // Test rotate with 180 deg
+    {
+        res=rot.Rotate180(img);
+
+        // 0  1  2  3
+        // 4  5  6  7
+        // 8  9  10 11
+        // 12 13 14 15
+        // 16 17 18 19
+        float rot180ref[]= {  19, 18, 17, 16,
+                              15, 14, 13, 12,
+                              11, 10,  9,  8,
+                               7,  6,  5,  4,
+                               3,  2,  1,  0};
+
+        QVERIFY2(res.Size(0)==img.Size(0),"Dim x error rot 180");
+        QVERIFY2(res.Size(1)==img.Size(1),"Dim y error rot 180");
+
+        for (int i=0; i<res.Size(); ++i) {
+            msg.str("");
+            msg<<"i="<<i;
+            QVERIFY2(res[i]==rot180ref[i], msg.str().c_str());
+        }
+    }
+
+    // Test rotate with 270 deg
+    {
+        res=rot.Rotate270(img);
+        float rot270ref[]= {   3,  7, 11, 15, 19,
+                               2,  6, 10, 14, 18,
+                               1,  5,  9, 13, 17,
+                               0,  4,  8, 12, 16};
+
+        QVERIFY2(res.Size(0)==img.Size(1),"Dim x error rot 270");
+        QVERIFY2(res.Size(1)==img.Size(0),"Dim y error rot 270");
+
+        for (int i=0; i<res.Size(); ++i) {
+            msg.str("");
+            msg<<"i="<<i;
+            QVERIFY2(res[i]==rot270ref[i], msg.str().c_str());
+        }
+    }
+
+    // Test vertical mirror
+    {
+        res=rot.MirrorVertical(img);
+
+        float vertref[]= {   16, 17, 18, 19,
+                             12, 13, 14, 15,
+                              8,  9, 10, 11,
+                              4,  5,  6,  7,
+                              0,  1,  2,  3};
+        QVERIFY2(res.Size(0)==img.Size(0),"Dim x error vert mirror");
+        QVERIFY2(res.Size(1)==img.Size(1),"Dim y error vert mirror");
+
+        for (int i=0; i<res.Size(); ++i) {
+            msg.str("");
+            msg<<"i="<<i;
+            QVERIFY2(res[i]==vertref[i], msg.str().c_str());
+        }
+    }
+
+    // Test horizontal mirror
+    {
+        res=rot.MirrorHorizontal(img);
+
+        float horref[]={ 3,  2,  1,  0,
+                         7,  6,  5,  4,
+                        11, 10,  9,  8,
+                        15, 14, 13, 12,
+                        19, 18, 17, 16};
+
+        QVERIFY2(res.Size(0)==img.Size(0),"Dim x error hor mirror");
+        QVERIFY2(res.Size(1)==img.Size(1),"Dim y error hor mirror");
+
+        for (int i=0; i<res.Size(); ++i) {
+            msg.str("");
+            msg<<"i="<<i;
+            QVERIFY2(res[i]==horref[i], msg.str().c_str());
+        }
+    }
 }
 
 QTEST_APPLESS_MAIN(TkiplbasetestTest)

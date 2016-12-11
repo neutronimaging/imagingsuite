@@ -81,7 +81,7 @@ void kiplMorphologyTest::testPixelIteratorSetup()
     iteq=it4;
 
     QVERIFY2(iteq.neighborhoodSize()    == it4.neighborhoodSize(),"Neighborhood size miss match");
-    QVERIFY2(iteq.forwardSize() == it4.forwardSize(),"Neighborhood size miss match");
+    QVERIFY2(iteq.forwardSize()         == it4.forwardSize(),"Neighborhood size miss match");
     QVERIFY2(iteq.getConnectivity()     == it4.getConnectivity(),"Copy connectivity failed");
     QVERIFY2(iteq.getCurrentPosition()  == it4.getCurrentPosition(),"Copy position failed");
 
