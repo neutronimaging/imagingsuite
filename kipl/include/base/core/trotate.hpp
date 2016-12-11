@@ -160,7 +160,35 @@ kipl::base::TImage<T,2> & TRotate<T>::MirrorVertical  (kipl::base::TImage<T,2> &
 	return dst;
 }
 
+template <typename T>
+kipl::base::TImage<float,2> TRotate<T>::Rotate(kipl::base::TImage<float,2> & img,
+        kipl::base::eImageFlip flip,
+        kipl::base::eImageRotate rotate)
+{
 
+    kipl::base::TImage<float,2> res=img;
+
+    res.Clone();
+
+    switch (rotate) {
+        case kipl::base::ImageRotateNone : break;
+        case kipl::base::ImageRotate90   : res=Rotate90(img);break;
+        case kipl::base::ImageRotate180  : res=Rotate180(img);break;
+        case kipl::base::ImageRotate270  : res=Rotate270(img);break;
+    }
+
+    switch (flip) {
+        case kipl::base::ImageFlipNone                : break;
+        case kipl::base::ImageFlipHorizontal          : res=MirrorHorizontal(res); break;
+        case kipl::base::ImageFlipVertical            : res=MirrorVertical(res); break;
+        case kipl::base::ImageFlipHorizontalVertical  :
+            res=MirrorHorizontal(res);
+            res=MirrorVertical(res);
+            break;
+    }
+
+    return res;
+}
 }}
 
 #endif /* TROTATE_HPP_ */

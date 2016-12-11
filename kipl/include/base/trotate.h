@@ -9,12 +9,14 @@
 #define TROTATE_H_
 
 #include "timage.h"
+#include "kiplenums.h"
 #include "../math/mathconstants.h"
 
 namespace kipl{ namespace base {
 
 /// \brief Rotation and flipping class for 2D images
 /// \note This is almost the same as some functions in tpermute image - merge? This class is under development
+/// \test The class has a Unit test in tst_kiplbase.cpp, currently on orthogonal rotations tested.
 template <typename T>
 class TRotate {
 public :
@@ -53,6 +55,9 @@ public :
     /// \returns the mirrored image
     kipl::base::TImage<T,2> & MirrorVertical  (kipl::base::TImage<T,2> &img);
 
+    kipl::base::TImage<float,2> Rotate(kipl::base::TImage<float,2> & img,
+            kipl::base::eImageFlip flip,
+            kipl::base::eImageRotate rotate);
 protected:
 	T m_BlackValue;
     kipl::base::TImage<T,2> dst;
