@@ -12,7 +12,7 @@ class KIPLSHARED_EXPORT PixelIterator
 {
 public:
     /// \brief Initializes the iterator
-    PixelIterator(size_t *dims, kipl::base::eConnectivity conn=kipl::base::conn8);
+    PixelIterator(const size_t *dims, kipl::base::eConnectivity conn=kipl::base::conn8);
 
     /// \brief Copy constructor
     /// \param pi the iterator to copy

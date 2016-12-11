@@ -300,7 +300,9 @@ HEADERS +=\
     ../include/interactors/interactionbase.h \
     ../include/containers/ringbuffer.h \
     ../include/segmentation/multivariateclassifyerbase.h \
-    ../include/morphology/pixeliterator.h
+    ../include/morphology/pixeliterator.h \
+    ../include/segmentation/gradientguidedthreshold.h \
+    ../include/segmentation/core/gradientguidedthreshold.hpp
 
 
 

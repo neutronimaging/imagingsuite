@@ -11,18 +11,19 @@
 
 #ifndef SEGMENTATIONSEGMENTATIONBASE_H
 #define SEGMENTATIONSEGMENTATIONBASE_H
-
-#include <base/timage.h>
-#include <base/textractor.h>
 #include <string>
 #include <vector>
 #include <iostream>
+#include <map>
+
+#include <base/timage.h>
+#include <base/textractor.h>
 #include <strings/parenc.h>
 #include <io/io_matlab.h>
 #include <logging/logger.h>
 
 /// \brief Grouping classification and segmentation related classes
-namespace akipl { namespace segmentation {
+namespace kipl { namespace segmentation {
 
 /// \brief Provides an interface for classes that do classification tasks
 /// @author Anders Kaestner
@@ -41,7 +42,7 @@ public:
     
     /// \brief Sets the number of classes to find
     /// \param NC Number of the classes to find
-    int setClasses(int NC) {nClasses=NC; return 0;}
+    virtual int setClasses(int NC) {nClasses=NC; return 0;}
     
     /// Returns the number of classes supported by the segmenter
     int getClasses() {return nClasses; }
@@ -49,9 +50,12 @@ public:
     /// \brief Interface function that is intended to perform the segmentation
     ///	\param img Input graylevel image
     ///	\param seg Segmented output image
-    virtual int operator()(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg)=0;
+    virtual int operator()(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg)=0;
     /// Tells the name of the current class
     const string & getName() {return name;}
+
+    /// Set the parameters for the segmentation
+    virtual void setParameters(std::map<std::string,std::string> parameters) = 0;
     
     void saveProgressImages(const string name); 
     

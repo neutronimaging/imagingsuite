@@ -2,6 +2,7 @@
 #define __IMAGETHRES_H
 
 #include <vector>
+#include <set>
 #include <deque>
 #include <iostream>
 #include <sstream>
@@ -74,7 +75,7 @@ namespace kipl { namespace segmentation {
 		else {
 			
 			//#pragma omp parallel for default(none) shared(N,data,qlo,qhi)
-				for (ptrdiff_t i=0; i<N; i++) {					
+                for (size_t i=0; i<N; i++) {
 					if (data[i]<qlo) 
 						data[i]=qlo;
 					else 
@@ -99,7 +100,7 @@ namespace kipl { namespace segmentation {
 	int Threshold(T0 * data,
 			T1 *result,
 			size_t N,
-			const T0 th,
+            T0 th,
 			CmpType cmp=cmp_greater,
             T1 * mask = reinterpret_cast<T1 *>(NULL),
             size_t Nmask=size_t(0))
@@ -132,8 +133,6 @@ namespace kipl { namespace segmentation {
 
 	}
 
-/*
-
 	/// \brief Applies multiple thresholds to the image
 	///
 	/// \param img Input image
@@ -142,56 +141,30 @@ namespace kipl { namespace segmentation {
 	/// \param vals Assignment values for the intervals, if vals=NULL will automaticly 
 	/// increasing numbers be used
 	/// \param mask ROI mask
-	template <class ImgType,int NDim>
-		int MultiThreshold(CImage<ImgType,NDim> & img,CImage<char,NDim> & simg, vector<ImgType>  &th, vector<char> & vals=vector<char>(0), CImage<char,NDim> *mask=NULL)
+    template <typename T0, typename T1, size_t N>
+    int MultiThreshold(kipl::base::TImage<T0,N> & img,
+                       kipl::base::TImage<T1,N> & res,
+                       T0 *th, size_t Nthres)
 	{
-		simg(img.getDimsptr());
-		ImgType *imgdata=img.getDataptr();
-		char *tmpdata=simg.getDataptr(), *maskdata=NULL;
+        res.Resize(img.Dims());
+        T0 *imgdata=img.GetDataPtr();
+        T1 *resdata=res.GetDataPtr();
 
-		int n=th.size();
-		if ((mask) && (mask->N()==img.N())) {
-			maskdata=mask->getDataptr();
-			for (int i=0; i<img.N(); i++) 
-				if (maskdata[i])
-					for (char j=0; j<n; j++) {
-						if (imgdata[i]<th[j]) {
-							if (vals)
-								tmpdata[i]=vals[j];
-							else
-								tmpdata[i]=j;
-							break;
-						}
-						if (!vals.empty())
-							tmpdata[i]=vals[n];
-						else
-							tmpdata[i]=n;
-					}
-				else
-					tmpdata[i]=0;
-
-		}
-		else {
-			for (int i=0; i<img.N(); i++) {
-				for (char j=0; j<th.size(); j++) {
-					if (imgdata[i]<th[j]) {
-						if (!vals.empty())
-							tmpdata[i]=vals[j];
-						else
-							tmpdata[i]=j;
-						break;
-					}
-					if (!vals.empty())
-						tmpdata[i]=vals[n];
-					else
-						tmpdata[i]=n;
-				}
-			}
-		}
+        for (size_t i=0; i<img.Size(); ++i)
+        {
+            resdata[i]=Nthres;
+            for (size_t j=0; j<Nthres; ++j)
+            {
+                if ( imgdata[i] < th[j] ) {
+                        resdata[i]=static_cast<T1>(j);
+                        break;
+                }
+            }
+        }
 
 		return 0;
 	}
-*/
+
 /// \brief Applies a double threshold to the image
 ///
 ///		The method is based on region growing from small presegmented
@@ -247,7 +220,7 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 
 		char *pMask=mask->GetDataPtr();
 		for (i=0; i<bilevel.Size(); i++) {
-			if (cmp==cmp_greater) {
+            if (cmp==kipl::segmentation::cmp_greater) {
 				if ((pImg[i]>hi) && pMask[i % maskscope]) {
 					pTmp[i]=th_true;
 

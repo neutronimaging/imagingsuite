@@ -6,7 +6,7 @@
 namespace kipl {
 namespace base {
 
-PixelIterator::PixelIterator(size_t *dims, kipl::base::eConnectivity conn) :
+PixelIterator::PixelIterator(const size_t *dims, kipl::base::eConnectivity conn) :
     m_imageSize(dims[0]*dims[1]),
     m_connectivity(conn),
     m_currentPosition(0L),
@@ -316,7 +316,7 @@ kipl::base::eEdgeStatus PixelIterator::getEdgeStatus()
 
 kipl::base::eEdgeStatus PixelIterator::updateEdgeStatus() {
 
-    std::cout<<"Edge status: "<<m_currentPosition<<", "<<m_currentX<<", "<<m_currentY<<std::endl;
+  //  std::cout<<"Edge status: "<<m_currentPosition<<", "<<m_currentX<<", "<<m_currentY<<std::endl;
     m_edgeStatus= static_cast<kipl::base::eEdgeStatus>(
             (m_currentX==0)                +
             ((m_currentX==(m_dims[0]-1)) << 1) +
