@@ -28,7 +28,7 @@ unix {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
+    #    QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
