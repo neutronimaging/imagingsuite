@@ -168,6 +168,9 @@ protected:
     /// \returns True if there was a user abort request.
     bool Aborted();
 
+    void PrintCrop(std::string name, size_t *crop);
+    void PrintCrop(std::string name, int *crop);
+
     kipl::profile::Timer timer; ///< Timer to measure the execution time for the reading.
     kipl::interactors::InteractionBase *m_Interactor;  ///< Reference to an interactor object.
 };

@@ -98,94 +98,97 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
 		size_t *dims,
 		size_t *nCrop)
 {
-	if (nCrop!=NULL) {
-		switch (flip) {
-		case kipl::base::ImageFlipNone : break;
+    if (nCrop!=nullptr) {
+        bool doRotate=true;
+        bool doFlip=true;
+
+        int nCropOrig[4];
+        int nTmpCrop[4];
+        int nDims[2];
+
+        nDims[0]=static_cast<int>(dims[0]);
+        nDims[1]=static_cast<int>(dims[1]);
+
+        nTmpCrop[0]=nCropOrig[0]=nCrop[0];
+        nTmpCrop[1]=nCropOrig[1]=nCrop[1];
+        nTmpCrop[2]=nCropOrig[2]=nCrop[2];
+        nTmpCrop[3]=nCropOrig[3]=nCrop[3];
+
+        switch (flip) {
+        case kipl::base::ImageFlipNone : doFlip=false; break;
 		case kipl::base::ImageFlipHorizontal :
-			nCrop[0]=dims[0]-1-nCrop[0];
-			nCrop[2]=dims[0]-1-nCrop[2];
+            nTmpCrop[0]=nDims[0]-nCropOrig[2];
+            nTmpCrop[2]=nDims[0]-nCropOrig[0];
 			break;
 		case kipl::base::ImageFlipVertical :
-			nCrop[1]=dims[1]-1-nCrop[1];
-			nCrop[3]=dims[1]-1-nCrop[3];
+            nTmpCrop[1]=nDims[1]-nCropOrig[1];
+            nTmpCrop[3]=nDims[1]-nCropOrig[3];
 			break;
 		case kipl::base::ImageFlipHorizontalVertical :
-			nCrop[0]=dims[0]-1-nCrop[0];
-			nCrop[1]=dims[1]-1-nCrop[1];
-			nCrop[2]=dims[0]-1-nCrop[2];
-			nCrop[3]=dims[1]-1-nCrop[3];
+            nTmpCrop[0]=nDims[0]-nCropOrig[0];
+            nTmpCrop[1]=nDims[1]-nCropOrig[1];
+            nTmpCrop[2]=nDims[0]-nCropOrig[2];
+            nTmpCrop[3]=nDims[1]-nCropOrig[3];
 			break;
 		}
 
-		size_t nCropOrig[4];
-		memcpy(nCropOrig,nCrop,4*sizeof(size_t));
 		switch (rotate) {
-		case kipl::base::ImageRotateNone : break;
+        case kipl::base::ImageRotateNone :
+            doRotate = false;
+            break;
 		case kipl::base::ImageRotate90   :
-			nCrop[0]=nCropOrig[3];
-			nCrop[1]=nCropOrig[0];
-			nCrop[2]=nCropOrig[1];
-			nCrop[3]=nCropOrig[2];
+            nTmpCrop[0]=nCropOrig[1];
+            nTmpCrop[1]=nDims[1]-nCropOrig[2];
+            nTmpCrop[2]=nCropOrig[3];
+            nTmpCrop[3]=nDims[1]-nCropOrig[0];
 
-			swap(dims[0],dims[1]);
-			break;
+            break;
 		case kipl::base::ImageRotate180  :
-			nCrop[0]=dims[0]-1-nCrop[0];
-			nCrop[1]=dims[1]-1-nCrop[1];
-			nCrop[2]=dims[0]-1-nCrop[2];
-			nCrop[3]=dims[1]-1-nCrop[3];
+            nTmpCrop[0]=dims[0]-nCropOrig[2];
+            nTmpCrop[1]=dims[1]-nCropOrig[3];
+            nTmpCrop[2]=dims[0]-nCrop[0];
+            nTmpCrop[3]=dims[1]-nCrop[1];
 
 			break;
 		case kipl::base::ImageRotate270  :
-			nCrop[0]=nCropOrig[1];
-			nCrop[1]=nCropOrig[2];
-			nCrop[2]=nCropOrig[3];
-			nCrop[3]=nCropOrig[0];
+            nTmpCrop[0]=nDims[0]-nCropOrig[3];
+            nTmpCrop[1]=nCropOrig[2];
+            nTmpCrop[2]=nDims[0]-nCropOrig[1];
+            nTmpCrop[3]=nCropOrig[0];
 
 			swap(dims[0],dims[1]);
 			break;
 		}
-		if (nCrop[2]<nCrop[0]) swap(nCrop[0],nCrop[2]);
-		if (nCrop[3]<nCrop[1]) swap(nCrop[1],nCrop[3]);
+
+        if (doRotate && doFlip)
+            throw ReconException("Combined rotate and flip is currently not supported",__FILE__,__LINE__);
+
+
+        nCrop[0]=nTmpCrop[0];
+        nCrop[1]=nTmpCrop[1];
+        nCrop[2]=nTmpCrop[2];
+        nCrop[3]=nTmpCrop[3];
+
+
 	}
 
-
+    if (nCrop[2]<nCrop[0]) swap(nCrop[0],nCrop[2]);
+    if (nCrop[3]<nCrop[1]) swap(nCrop[1],nCrop[3]);
 }
 
-kipl::base::TImage<float,2> ProjectionReader::RotateProjection(kipl::base::TImage<float,2> img,
-		kipl::base::eImageFlip flip,
-		kipl::base::eImageRotate rotate)
-{
-
-	kipl::base::TImage<float,2> res;
-
-	kipl::base::TRotate<float> r;
-
-	switch (flip) {
-	case kipl::base::ImageFlipNone                : res=img; break;
-	case kipl::base::ImageFlipHorizontal          : res=r.MirrorHorizontal(img); break;
-	case kipl::base::ImageFlipVertical            : res=r.MirrorVertical(img); break;
-	case kipl::base::ImageFlipHorizontalVertical  : res=r.MirrorVertical(r.MirrorHorizontal(img));break;
-	}
-
-	switch (rotate) {
-	case kipl::base::ImageRotateNone : break;
-	case kipl::base::ImageRotate90   : res=r.Rotate90(res);break;
-	case kipl::base::ImageRotate180  : res=r.Rotate180(res);break;
-	case kipl::base::ImageRotate270  : res=r.Rotate270(res);break;
-	}
-
-	return res;
-}
-
-kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
+kipl::base::TImage<float,2> ProjectionReader::
+Read(std::string filename,
 		kipl::base::eImageFlip flip,
 		kipl::base::eImageRotate rotate,
 		float binning,
 		size_t const * const nCrop)
 {
-//	std::cout<<"Reading: "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning<<std::endl;
-	size_t dims[8];
+    std::ostringstream msg;
+
+    msg.str(""); msg<<"Reading: "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning<<std::endl;
+    logger(logger.LogDebug,msg.str());
+
+    size_t dims[8];
 	try {
 		GetImageSize(filename, binning,dims);
 	}
@@ -201,22 +204,27 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
 	catch (...) {
 		throw ReconException("Unhandled exception",__FILE__,__LINE__);
 	}
-	size_t local_crop[4];
-	size_t *pCrop=NULL;
-	if (nCrop!=NULL) {
+    size_t local_crop[4];
+
+    memset(local_crop,0,sizeof(size_t)*4);
+    size_t *pCrop=nullptr;
+    if (nCrop!=nullptr) {
 
 		local_crop[0]=nCrop[0];
 		local_crop[1]=nCrop[1];
 		local_crop[2]=nCrop[2];
 		local_crop[3]=nCrop[3];
 
+        // PrintCrop("local_crop pre-update",local_crop);
 		UpdateCrop(flip,rotate,dims,local_crop);
+
 		pCrop=local_crop;
 
 		for (size_t i=0; i<4; i++)
 			pCrop[i]*=binning;
 	}
 
+    // PrintCrop("local_crop to use",local_crop);
 	std::map<std::string, size_t> extensions;
 	extensions[".mat"]=0;
 	extensions[".fits"]=1;
@@ -227,8 +235,9 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
 	extensions[".TIF"]=2;
 	extensions[".png"]=3;
 	size_t extpos=filename.find_last_of(".");
-	std::ostringstream msg;
+
 	kipl::base::TImage<float,2> img;
+
 	if (extpos!=filename.npos) {
 		std::string ext=filename.substr(extpos);
 		try {
@@ -242,6 +251,7 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
 			}
 		}
 		catch (ReconException &e) {
+            msg.str("");
 			msg<<"Failed to read "<<filename<<" recon exception:\n"<<e.what();
 			throw ReconException(msg.str(),__FILE__,__LINE__);
 		}
@@ -257,6 +267,7 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
 	else {
 		throw ReconException("Unknown file type",__FILE__, __LINE__); 
 	}
+
     size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
 	kipl::base::TImage<float,2> binned;
 	msg.str("");
@@ -266,8 +277,8 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string filename,
 			kipl::base::ReBin(img,binned,bins);
 		else
 			binned=img;
-
-		img=RotateProjection(binned,flip,rotate);
+        kipl::base::TRotate<float> rotator;
+        img=rotator.Rotate(binned,flip,rotate);
 	}
 	catch (kipl::base::KiplException &e) {
 		msg<<"KiplException: \n"<<e.what();
@@ -524,4 +535,14 @@ bool ProjectionReader::Aborted()
 		return m_Interactor->Aborted();
 
 	return false;
+}
+
+void ProjectionReader::PrintCrop(std::string name, size_t *crop)
+{
+    std::cout<<name<<" "<<crop[0]<<", "<<crop[1]<<", "<<crop[2]<<", "<<crop[3]<<std::endl;
+}
+
+void ProjectionReader::PrintCrop(std::string name, int *crop)
+{
+    std::cout<<name<<" "<<crop[0]<<", "<<crop[1]<<", "<<crop[2]<<", "<<crop[3]<<std::endl;
 }

@@ -8,7 +8,7 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = tst_frameworktest
+TARGET = tst_framework
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -20,8 +20,8 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 unix {
     INCLUDEPATH += "../../../../../external/src/linalg"
