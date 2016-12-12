@@ -23,24 +23,7 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     nBBFirstIndex(1),
     nBBSampleCount(0),
     nBBSampleFirstIndex(1),
-    radius(2), // provo con tutti i parametri:
-    nDCCount(0),
-    nDCFirstIndex(1),
-    nOBCount(0),
-    nOBFirstIndex(1),
-    fFlatDose(1.0f),
-    fBlackDose(1.0f),
-    fDarkDose(0.0f),
-    fdarkBBdose(0.0f),
-    bUseNormROI(true),
-    bUseLUT(false),
-    bUseWeightedMean(false),
-    bUseBB(false),
-    bUseNormROIBB(false),
-    m_nWindow(5),
-    tau(0.99f),
-    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
-    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm)
+    radius(2)
 {
 
     blackbodyname = "somename";
