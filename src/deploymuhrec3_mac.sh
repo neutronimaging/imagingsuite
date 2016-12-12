@@ -1,8 +1,8 @@
 DIRECTORY=~/Applications
 #QTPATH="/Applications/Qt531/5.3/clang_64"
 #QTPATH="/Applications/Qt541/5.4/clang_64"
-#QTPATH="/Applications/Qt56/5.6/clang_64"
-QTPATH=~/Qt5.7.0/5.7/clang_64
+QTPATH=$QT_HOME
+#QTPATH=~/Qt5.7.0/5.7/clang_64
 DEST="$DIRECTORY/muhrec3.app"
 REPOSPATH=~/repos
 
