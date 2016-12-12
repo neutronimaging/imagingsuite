@@ -29,10 +29,6 @@ public:
 private slots:
     void on_button_OBBBpath_clicked();
 
-    void on_spinFirstOBBB_editingFinished();
-
-    void on_spinLastOBBB_editingFinished();
-
     void on_buttonPreviewOBBB_clicked();
 
     void on_button_BBroi_clicked();
@@ -61,7 +57,7 @@ private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();
-    void UpdateParameterList(std::map<std::string, std::string> &parameters);
+    virtual void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     void BrowseOBBBPath();
     void UpdateBBROI();
@@ -87,26 +83,6 @@ private:
     kipl::base::TImage <float,2> m_Preview_OBBB;
     kipl::base::TImage <float,2> m_Preview_sampleBB;
 
-    // provo aggiungendo tutti gli altri parametri:
-    size_t nDCCount;
-    size_t nDCFirstIndex;
-    size_t nOBCount;
-    size_t nOBFirstIndex;
-    float fFlatDose;
-    float fDarkDose;
-    float fBlackDose;
-    float fdarkBBdose;
-    bool bUseNormROI;
-    bool bUseLUT;
-    bool bUseWeightedMean;
-    bool bUseBB;
-    bool bUseNormROIBB;
-    int m_nWindow;
-    float tau;
-
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
-    ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
-    ImagingAlgorithms::ReferenceImageCorrection m_corrector;
 
 
 };
