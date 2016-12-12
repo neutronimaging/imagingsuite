@@ -118,7 +118,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 	}
 
-    if (dose_OB!=NULL) {
+    if (dose_OB!=0) {
 		m_bHaveDoseROI=true;
         m_fOpenBeamDose = dose_OB;
                 std::cout << " have dose roi!  " << std::endl;
@@ -127,7 +127,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 	}
 
-    if (dose_DC!=NULL){
+    if (dose_DC!=0){
        m_fDarkDose = dose_DC;
     }
 
@@ -139,9 +139,9 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 //		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
 	}
 
-    if(roi!=NULL){
+    if(roi!=nullptr){
 
-        mempcpy(m_nDoseROI,roi, sizeof(size_t)*4);
+        memcpy(m_nDoseROI,roi, sizeof(size_t)*4);
     }
 
 //    std::cout << "before prepare references " << std::endl;
