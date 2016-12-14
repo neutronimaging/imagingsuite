@@ -381,6 +381,7 @@ int ReconEngine::Process(size_t *roi)
 
 bool ReconEngine::TransferMatrix(size_t *dims)
 {
+    std::ostringstream msg;
 	bool bTransposed=false;
 
 
@@ -395,23 +396,46 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 //    std::cout  << "Debug on mVolume: " << std::endl;
 //    std::cout << m_Volume.Size(0) << " " << m_Volume.Size(1) << " " << m_Volume.Size(2) << std::endl;
 
-    if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
+    try {
+        if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
 
-            for (size_t i=0; i<(dims[3]-dims[1]); i++) {
+                for (size_t i=0; i<(dims[3]-dims[1]); i++) {
 
-                slice=m_BackProjector->GetModule()->GetSlice(i);
-                float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
-                memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-            }
+                    slice=m_BackProjector->GetModule()->GetSlice(i);
+                    float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
+                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
+                }
+        }
+        else if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Cone ) {
+
+
+             for (size_t i=0; i<m_Volume.Size(2); i++) {
+                    slice=m_BackProjector->GetModule()->GetSlice(i);
+                    float *pVol=m_Volume.GetLinePtr(0,i); // changed from parallel beam case
+                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
+                }
+
+        }
     }
-    else if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Cone ) {
+    catch (ReconException &e) {
+        msg.str("");
+        msg<<"Transfer matrix from backprojector failed with ReconException ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
 
-
-         for (size_t i=0; i<m_Volume.Size(2); i++) {
-                slice=m_BackProjector->GetModule()->GetSlice(i);
-                float *pVol=m_Volume.GetLinePtr(0,i); // changed from parallel beam case
-                memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-            }
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Transfer matrix from backprojector failed with KiplException ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Transfer matrix from backprojector failed stl exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg<<"Transfer matrix from backprojector failed with unhandled exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl;
+        throw ReconException(msg.str(),__FILE__,__LINE__);
 
     }
 
@@ -991,7 +1015,39 @@ int ReconEngine::Process3D(size_t *roi)
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 
-	m_BackProjector->GetModule()->SetROI(roi);
+    try {
+        m_BackProjector->GetModule()->SetROI(roi);
+    }
+    catch (ReconException &e) {
+        msg.str("");
+        msg<<"SetROI failed with a ReconException for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (ModuleException &e) {
+            msg.str("");
+            msg<<"SetROI failed with a ModuleException for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            throw ReconException(msg.str(),__FILE__,__LINE__);
+        }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"SetROI failed with a KiplException for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"SetROI failed with an STL-exception for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg.str("");
+        msg<<"SetROI failed with an unknown exception for "<<m_BackProjector->GetModule()->ModuleName();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
 
 	std::map<std::string, std::string> parameters;
 
@@ -1079,7 +1135,24 @@ int ReconEngine::Process3D(size_t *roi)
     if (m_Config.MatrixInfo.bAutomaticSerialize==false) // Don't store the projections for the reconstruction to disk case
         m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
 
-    int res=BackProject3D(projections,roi,parameters);
+    int res=0;
+
+    try {
+        BackProject3D(projections,roi,parameters);
+    }
+    catch (ReconException &e) {
+        msg<<"BackProject3D failed with a recon exception: "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"BackProject3D failed with a kipl exception: "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg<<"BackProject3D failed with an STL exception: "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
 
 	logger(kipl::logging::Logger::LogVerbose,"Done process 3D.");
 
@@ -1093,14 +1166,28 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     int i=0;
     int res=0;
 
-    for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); it++, i++)
-    {
-        msg.str("");
-        msg<<"Back-projecting projection block "<<i+1;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-        m_BackProjector->GetModule()->SetROI(it->roi);
+    try {
+        for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); it++, i++)
+        {
+            msg.str("");
+            msg<<"Back-projecting projection block "<<i+1;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+            m_BackProjector->GetModule()->SetROI(it->roi);
 
-        res=BackProject3D(it->projections,it->roi,it->parameters);
+            res=BackProject3D(it->projections,it->roi,it->parameters);
+        }
+    }
+    catch (ReconException &e) {
+        msg<<"BackProjection of preprocessed block "<<i<<" failed with a recon exception: "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"BackProjection of preprocessed block "<<i<<" failed with a kipl exception: "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg<<"BackProjection of preprocessed block "<<i<<" failed with an STL exception: "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
     return res;
