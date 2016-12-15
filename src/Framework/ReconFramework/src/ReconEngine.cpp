@@ -151,7 +151,6 @@ int ReconEngine::Run()
     }
 
    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
-//      std::cout<< "sono nell'else CONE" << std::endl;
 
 
       if (m_Config.MatrixInfo.bUseVOI) {
@@ -397,7 +396,7 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 //    std::cout << m_Volume.Size(0) << " " << m_Volume.Size(1) << " " << m_Volume.Size(2) << std::endl;
 
     try {
-        if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
+        if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
 
                 for (size_t i=0; i<(dims[3]-dims[1]); i++) {
 
@@ -406,7 +405,7 @@ bool ReconEngine::TransferMatrix(size_t *dims)
                     memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
                 }
         }
-        else if ( m_Config.ProjectionInfo.beamgeometry=m_Config.ProjectionInfo.BeamGeometry_Cone ) {
+        else if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone ) {
 
 
              for (size_t i=0; i<m_Volume.Size(2); i++) {
@@ -1020,31 +1019,31 @@ int ReconEngine::Process3D(size_t *roi)
     }
     catch (ReconException &e) {
         msg.str("");
-        msg<<"SetROI failed with a ReconException for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a ReconException for "<<m_BackProjector->GetModule()->Name()<<"\n"<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (ModuleException &e) {
             msg.str("");
-            msg<<"SetROI failed with a ModuleException for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+            msg<<"SetROI failed with a ModuleException for "<<m_BackProjector->GetModule()->Name()<<"\n"<<e.what();
             logger(kipl::logging::Logger::LogError,msg.str());
             throw ReconException(msg.str(),__FILE__,__LINE__);
         }
     catch (kipl::base::KiplException &e) {
         msg.str("");
-        msg<<"SetROI failed with a KiplException for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a KiplException for "<<m_BackProjector->GetModule()->Name()<<"\n"<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (std::exception &e) {
         msg.str("");
-        msg<<"SetROI failed with an STL-exception for "<<m_BackProjector->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with an STL-exception for "<<m_BackProjector->GetModule()->Name()<<"\n"<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (...) {
         msg.str("");
-        msg<<"SetROI failed with an unknown exception for "<<m_BackProjector->GetModule()->ModuleName();
+        msg<<"SetROI failed with an unknown exception for "<<m_BackProjector->GetModule()->Name();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
