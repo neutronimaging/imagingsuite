@@ -1409,14 +1409,18 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dSpinVoxelSpacingY->setValue(m_Config.MatrixInfo.fVoxelSize[1]);
     ui->dspinVoxelSpacingZ->setValue(m_Config.MatrixInfo.fVoxelSize[2]);
 
-    if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
-        ui->checkCBCT->setChecked(true);
-    }
+//    if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
+//        ui->checkCBCT->setChecked(true);
+//    }
 
-    if (ui->checkCBCT->checkState()) {
+    if (ui->checkCBCT->isChecked()) {
         ui->spinVolumeSizeX->setValue(m_Config.MatrixInfo.nDims[0]);
         ui->spinVolumeSizeY->setValue(m_Config.MatrixInfo.nDims[1]);
         ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+    }
+    else {
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
     }
 
     if (m_Config.MatrixInfo.bUseVOI==true) {
@@ -1507,9 +1511,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
 
-    if (ui->checkCBCT->checkState()) {
+    if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
-
         m_Config.MatrixInfo.nDims[0] = ui->spinVolumeSizeX->value();
         m_Config.MatrixInfo.nDims[1] = ui->spinVolumeSizeY->value();
         m_Config.MatrixInfo.nDims[2] = ui->spinVolumeSizeZ->value();
@@ -1520,7 +1523,7 @@ void MuhRecMainWindow::UpdateConfig()
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
     }
 
-    if (ui->checkSubVolumeCBCT->checkState()){ //maybe they should be in a different order
+    if (ui->checkSubVolumeCBCT->isChecked()){ //maybe they should be in a different order
 
         m_Config.MatrixInfo.bUseVOI = true;
         m_Config.MatrixInfo.voi[0] = ui->spinSubVolumeSizeX0->value();
@@ -1825,5 +1828,17 @@ void MuhRecMainWindow::on_buttonCompSize_clicked()
         ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
 
     }
+
+}
+
+void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
+{
+
+        if (ui->checkCBCT->isChecked()) { m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+//        std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+        }
+        else { m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
+//            std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+        }
 
 }

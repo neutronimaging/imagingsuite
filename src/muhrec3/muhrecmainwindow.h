@@ -120,6 +120,8 @@ private slots:
 
     void on_buttonCompSize_clicked();
 
+    void on_checkCBCT_stateChanged(int arg1);
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
