@@ -53,18 +53,13 @@ else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 SOURCES += tst_algorithmtestertest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../build-ReconAlgorithms-Qt5-Debug/release/ -lReconAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../build-ReconAlgorithms-Qt5-Debug/debug/ -lReconAlgorithms
-else:unix:CONFIG(release, debug|release):  LIBS += -L$$PWD/../../../build-ReconAlgorithms-Qt5-Release/ -lReconAlgorithms
-else:unix:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../build-ReconAlgorithms-Qt5-Debug/ -lReconAlgorithms
-
 INCLUDEPATH += $$PWD/../../../Framework/ReconAlgorithms/ReconAlgorithms
 DEPENDPATH += $$PWD/../../../Framework/ReconAlgorithms/ReconAlgorithms
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-else:unix:CONFIG(release, debug|release):  LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/
+
+LIBS += -lkipl -lReconAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/src
