@@ -23,12 +23,19 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     nBBFirstIndex(1),
     nBBSampleCount(0),
     nBBSampleFirstIndex(1),
-    radius(2)
+    radius(2),
+    bUseNormROI(true),
+    bUseNormROIBB(false),
+    tau(0.99f),
+    bPBvariante(false),
+    m_nWindow(5),
+    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm)
 {
 
     blackbodyname = "somename";
     blackbodysamplename = "somename";
-    doseBB[0] = doseBB[1] = doseBB[2] = doseBB[3] = 0;
+    doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3] = 0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
 
     try{
@@ -63,8 +70,14 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         nBBSampleCount = GetIntParameter(parameters, "BB_samplecounts");
         blackbodysamplename = GetStringParameter(parameters, "BB_samplename");
         GetUIntParameterVector(parameters,"BBroi",BBroi,4);
-        GetUIntParameterVector(parameters, "doseBBroi",doseBB,4);
+        GetUIntParameterVector(parameters, "doseBBroi",doseBBroi,4);
         radius = GetIntParameter(parameters,"radius");
+        bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
+        tau = GetFloatParameter(parameters, "tau");
+        bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
+        string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
+        string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
+        m_nWindow = GetIntParameter(parameters,"window");
 
     }
     catch(ModuleException &e){
@@ -123,10 +136,10 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->spinFirstsampleBB->setValue(nBBSampleFirstIndex);
     ui->spinCountsampleBB->setValue(nBBSampleCount);
     ui->edit_sample_BB_mask->setText(QString::fromStdString(blackbodysamplename));
-    ui->spinx0BBdose->setValue(doseBB[0]);
-    ui->spinx1BBdose->setValue(doseBB[2]);
-    ui->spiny0BBdose->setValue(doseBB[1]);
-    ui->spiny1BBdose->setValue(doseBB[3]);
+    ui->spinx0BBdose->setValue(doseBBroi[0]);
+    ui->spinx1BBdose->setValue(doseBBroi[2]);
+    ui->spiny0BBdose->setValue(doseBBroi[1]);
+    ui->spiny1BBdose->setValue(doseBBroi[3]);
 
     ui->spinRadius->setValue(radius);
 
@@ -148,10 +161,10 @@ void RobustLogNormDlg::UpdateParameters(){
     nBBSampleFirstIndex =ui->spinFirstsampleBB->value();
     nBBSampleCount = ui->spinCountsampleBB->value();
     blackbodysamplename = ui->edit_sample_BB_mask->text().toStdString();
-    doseBB[0] = ui->spinx0BBdose->value();
-    doseBB[1] = ui->spiny0BBdose->value();
-    doseBB[2] = ui->spinx1BBdose->value();
-    doseBB[3] = ui->spiny1BBdose->value();
+    doseBBroi[0] = ui->spinx0BBdose->value();
+    doseBBroi[1] = ui->spiny0BBdose->value();
+    doseBBroi[2] = ui->spinx1BBdose->value();
+    doseBBroi[3] = ui->spiny1BBdose->value();
 
     radius = ui->spinRadius->value();
 
@@ -177,9 +190,19 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["BB_samplename"] = blackbodysamplename;
     parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
     parameters["BB_sample_firstindex"] = kipl::strings::value2string(nBBSampleFirstIndex);
-    parameters["doseBBroi"] = kipl::strings::value2string(doseBB[0])+" "+kipl::strings::value2string(doseBB[1])+" "+kipl::strings::value2string(doseBB[2])+" "+kipl::strings::value2string(doseBB[3]);
+    parameters["doseBBroi"] = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
 
     parameters["radius"] = kipl::strings::value2string(radius);
+
+    parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
+    parameters["refmethod"] = enum2string(m_ReferenceMethod);
+    parameters["tau"] = kipl::strings::value2string(tau);
+    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
+    parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
+    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
+    parameters["window"] = kipl::strings::value2string(m_nWindow);
+
+
     std::cout << "update parameters list" << std::endl;
 
 }
@@ -440,18 +463,14 @@ void RobustLogNormDlg::on_spiny1BBdose_valueChanged()
 
 void RobustLogNormDlg::on_errorButton_clicked()
 {
-//    ApplyParameters();
 
     ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
     RobustLogNorm module;
     std::map<std::string, std::string> parameters;
     UpdateParameters();
     UpdateParameterList(parameters);
-//    module.Configure(*rc,parameters);
-
-
-//    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // this one does not work..TO FIX
-
     std::cout << "trying to compute error" << std::endl;
+    std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
+    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // this one does not work..TO FIX
 
 }

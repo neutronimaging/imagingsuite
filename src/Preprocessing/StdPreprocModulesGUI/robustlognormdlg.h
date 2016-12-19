@@ -76,8 +76,16 @@ private:
     size_t nBBSampleFirstIndex; /// first index in filename for sample images with BB
     std::string blackbodysamplename;
     size_t BBroi[4];
-    size_t doseBB[4];
+    size_t doseBBroi[4];
     size_t radius;
+
+    float tau;
+    bool bPBvariante;
+    bool bUseNormROI; /// boolean value on the use of the norm roi
+    bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
+    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
+    ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
+    int m_nWindow;
 
 
     kipl::base::TImage <float,2> m_Preview_OBBB;
