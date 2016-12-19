@@ -128,8 +128,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     return 1;
 }
 
-bool RobustLogNorm::SetROI(size_t *roi)
-{
+bool RobustLogNorm::SetROI(size_t *roi) {
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -143,8 +142,7 @@ bool RobustLogNorm::SetROI(size_t *roi)
 }
 
 
-std::map<std::string, std::string> RobustLogNorm::GetParameters()
-{
+std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     std::map<std::string, std::string> parameters;
 
 //    parameters=PreprocModuleBase::GetParameters();
@@ -171,8 +169,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters()
     return parameters;
 }
 
-void RobustLogNorm::LoadReferenceImages(size_t *roi)
-{
+void RobustLogNorm::LoadReferenceImages(size_t *roi) {
 
     if (flatname.empty() && nOBCount!=0)
         throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
