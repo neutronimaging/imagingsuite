@@ -234,6 +234,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
 
     // convolution filter
+    // todo: replace by TFilter => Much faster
 
     for (size_t i=0; i<img.Size(1); i++) {
 
@@ -292,6 +293,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 //            std::cout << pMax[i] << " " << pMin[i] << " ";
 //            std::cout << ecc[i] << std::endl;
             ecc[i] = (ecc[i]-m_fEccentricityMin)/(m_fEccentricityMax-m_fEccentricityMin); // truncated eccentricity
+                                                                                          // todo: replace by multiplication by precomputed reciprocal
             if (ecc[i]<0) { ecc[i]=0; }
             if (ecc[i]>1) { ecc[i]=1; }
 
@@ -467,7 +469,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
         float ws, wo;
         float high, low, mid;
         float *f_alfa = new float[img.Size(1)]; // fraction of modified projections
-        int counts = 0;
+        int counts = 0; // Todo: consider declare counts as float. You are anyway casting it several times
 
 
         for (size_t y=0; y<dims[1]; y++){ //for each projection angle
@@ -481,9 +483,9 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 //            std:: cout << "searching in line ................................" << y << std::endl;
 
 
-            bool search = 1;
+            bool search = 1; // todo: use true and false instead of 0 and 1
 
-            while (search) {
+            while (search) { // todo: as you always do at least one run the do {} while loop is the appropriate choice
 
 //                std::cout <<"--- high value ---  " << high << std::endl;
 //                std::cout <<"--- low value ----  " << low << std::endl;
@@ -507,8 +509,13 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
 
                 if ( (static_cast< float >(counts)/img.Size(0))<=f_alfa[y]+0.005 && (static_cast< float >(counts)/img.Size(0))>=f_alfa[y]-0.005) // se soddisfo la condizione
+                    // todo: Try abs(counts/size-f_alpha[y])<0.005
+                    // todo: "static_cast< float >(counts)/img.Size(0))" is used several times compute it once as a constant
                 {
                     for (size_t x=0; x<dims[0]; x++){
+                        // Todo: can be implemented without branch
+                        // ws=static_cast<float>(pImg[x]>=mid);
+                        // wo=1.0f-ws;
                         if (pImg[x]>=mid) {
                             wo = 0;
                             ws = 1;
@@ -549,6 +556,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 //                            std::cout << "------------ filter --------------" << std::endl;
 
                             for (size_t x=0; x<dims[0]; x++){
+                                // todo: again try with branchless implementation
                                 if (pImg[x]>=mid) {
                                     wo = 0;
                                     ws = 1;
