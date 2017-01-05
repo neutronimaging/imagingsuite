@@ -21,6 +21,7 @@
 #include <PreprocModuleBase.h>
 #include "PreprocEnums.h"
 #include <ReconConfig.h>
+#include <averageimage.h>
 
 class  STDPREPROCMODULESSHARED_EXPORT NormBase :
 	public PreprocModuleBase
@@ -50,6 +51,7 @@ protected:
     size_t nBBCount;
     size_t nBBFirstIndex;
 
+    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAvagerage;
 
 	kipl::base::TImage<float,2> mFlatField;
 	kipl::base::TImage<float,2> mDark;

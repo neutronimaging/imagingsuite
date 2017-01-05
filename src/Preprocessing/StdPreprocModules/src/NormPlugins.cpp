@@ -33,6 +33,7 @@ NormBase::NormBase(std::string name) :
     nDCFirstIndex(1),
     nBBCount(0),
     nBBFirstIndex(1),
+    m_ReferenceAvagerage(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     fFlatDose(1.0f),
     fBlackDose(1.0f),
     bUseNormROI(true),
@@ -75,7 +76,7 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
 	bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
 	bUseLUT     = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
 //    bUseWeightedMean = kipl::strings::string2bool(GetStringParameter(parameters,"useweighted"));
-
+    string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
 	memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
 	return 0;
@@ -101,7 +102,7 @@ std::map<std::string, std::string> NormBase::GetParameters()
     parameters["usenormregion"]=kipl::strings::bool2string(bUseNormROI);
     parameters["uselut"]=kipl::strings::bool2string(bUseLUT);
 //    parameters["useweighted"]=kipl::strings::bool2string(bUseWeightedMean);
-
+    parameters["referenceaverage"]=enum2string(m_ReferenceAvagerage);
 	return parameters;
 }
 
@@ -141,6 +142,9 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 	if (nOBCount!=0) {
 		logger(kipl::logging::Logger::LogMessage,"Loading open beam images");
 		
+        float *fFlatDoses=new float[nOBCount];
+        float dose=0.0f;
+
 		kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
 		img = reader.Read(filename,
 				m_Config.ProjectionInfo.eFlip,
@@ -148,21 +152,19 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 				m_Config.ProjectionInfo.fBinning,
 				roi);
 
-		if (bUseNormROI) {
-			fFlatDose=reader.GetProjectionDose(filename,
+        dose=bUseNormROI ? reader.GetProjectionDose(filename,
 					m_Config.ProjectionInfo.eFlip,
 					m_Config.ProjectionInfo.eRotate,
 					m_Config.ProjectionInfo.fBinning,
-					nOriginalNormRegion);
-		}
-		else {
-			fFlatDose=1.0f;
-		}
+                    nOriginalNormRegion) : 1.0f;
+
+        fFlatDose     = dose;
+        fFlatDoses[0] = dose;
 
 		size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
 
 		kipl::base::TImage<float,3> flat3D(obdims);
-		memcpy(flat3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
+		memcpy(flat3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));   
 
 		for (size_t i=1; i<nOBCount; i++) {
 			kipl::strings::filenames::MakeFileName(flatmask,i+nOBFirstIndex,filename,ext,'#','0');
@@ -172,31 +174,30 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 					m_Config.ProjectionInfo.fBinning,
 					roi);
 			memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
-			if (bUseNormROI) {
-				fFlatDose+=reader.GetProjectionDose(filename,
+            dose = bUseNormROI ? reader.GetProjectionDose(filename,
 						m_Config.ProjectionInfo.eFlip,
 						m_Config.ProjectionInfo.eRotate,
 						m_Config.ProjectionInfo.fBinning,
-						nOriginalNormRegion);
-			}
-			else {
-				fFlatDose+=1.0f;
-			}
+                        nOriginalNormRegion) : 1.0f;
+
+            fFlatDose    += dose;
+            fFlatDoses[i] = fFlatDoses[0]/dose;
 		}
+        fFlatDoses[0]=1.0f;
+
 		fFlatDose/=static_cast<float>(nOBCount);
 
 		float *tempdata=new float[nOBCount];
 		flat.Resize(obdims);
-		float *pFlat3D=flat3D.GetDataPtr();
+//		float *pFlat3D=flat3D.GetDataPtr();
 		float *pFlat=flat.GetDataPtr();
 
-		for (size_t i=0; i<flat.Size(); i++) {
-			for (size_t j=0; j<nOBCount; j++) {
-				tempdata[j]=pFlat3D[i+j*flat.Size()];
-			}
-			kipl::math::median_quick_select(tempdata, nOBCount, pFlat+i);
-		}
+        ImagingAlgorithms::AverageImage avg;
+
+        flat=avg(flat3D,m_ReferenceAvagerage,fFlatDoses);
+
 		delete [] tempdata;
+        delete [] fFlatDoses;
 
 		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
 			for (size_t i=1; i<flat.Size(1); i++) {
