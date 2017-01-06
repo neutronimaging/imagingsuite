@@ -206,6 +206,9 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi) {
     if (nOBCount!=0) {
         logger(kipl::logging::Logger::LogMessage,"Loading open beam images");
 
+        float *fFlatDoses=new float[nOBCount];
+        float dose=0.0f;
+
         kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
         img = reader.Read(filename,
                 m_Config.ProjectionInfo.eFlip,
@@ -213,16 +216,25 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi) {
                 m_Config.ProjectionInfo.fBinning,
                 roi);
 
-        if (bUseNormROI) {
-            fFlatDose=reader.GetProjectionDose(filename,
+        dose=bUseNormROI ? reader.GetProjectionDose(filename,
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    nOriginalNormRegion);
-        }
-        else {
-            fFlatDose=1.0f;
-        }
+                    nOriginalNormRegion) : 1.0f;
+
+        fFlatDose     = dose;
+        fFlatDoses[0] = dose;
+
+//        if (bUseNormROI) {
+//            fFlatDose=reader.GetProjectionDose(filename,
+//                    m_Config.ProjectionInfo.eFlip,
+//                    m_Config.ProjectionInfo.eRotate,
+//                    m_Config.ProjectionInfo.fBinning,
+//                    nOriginalNormRegion);
+//        }
+//        else {
+//            fFlatDose=1.0f;
+//        }
 
         size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
 
@@ -237,31 +249,48 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi) {
                     m_Config.ProjectionInfo.fBinning,
                     roi);
             memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
-            if (bUseNormROI) {
-                fFlatDose+=reader.GetProjectionDose(filename,
+
+            dose = bUseNormROI ? reader.GetProjectionDose(filename,
                         m_Config.ProjectionInfo.eFlip,
                         m_Config.ProjectionInfo.eRotate,
                         m_Config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion);
-            }
-            else {
-                fFlatDose+=1.0f;
-            }
+                        nOriginalNormRegion) : 1.0f;
+
+            fFlatDose    += dose;
+            fFlatDoses[i] = fFlatDoses[0]/dose;
+
+//            if (bUseNormROI) {
+//                fFlatDose+=reader.GetProjectionDose(filename,
+//                        m_Config.ProjectionInfo.eFlip,
+//                        m_Config.ProjectionInfo.eRotate,
+//                        m_Config.ProjectionInfo.fBinning,
+//                        nOriginalNormRegion);
+//            }
+//            else {
+//                fFlatDose+=1.0f;
+//            }
         }
+
+        fFlatDoses[0]=1.0f;
+
         fFlatDose/=static_cast<float>(nOBCount);
 
-        float *tempdata=new float[nOBCount];
+//        float *tempdata=new float[nOBCount];
         flat.Resize(obdims);
-        float *pFlat3D=flat3D.GetDataPtr();
+//        float *pFlat3D=flat3D.GetDataPtr();
         float *pFlat=flat.GetDataPtr();
 
-        for (size_t i=0; i<flat.Size(); i++) {
-            for (size_t j=0; j<nOBCount; j++) {
-                tempdata[j]=pFlat3D[i+j*flat.Size()];
-            }
-            kipl::math::median_quick_select(tempdata, nOBCount, pFlat+i);
-        }
-        delete [] tempdata;
+//        for (size_t i=0; i<flat.Size(); i++) {
+//            for (size_t j=0; j<nOBCount; j++) {
+//                tempdata[j]=pFlat3D[i+j*flat.Size()];
+//            }
+//            kipl::math::median_quick_select(tempdata, nOBCount, pFlat+i);
+//        }
+
+        ImagingAlgorithms::AverageImage avg;
+        flat = avg(flat3D, m_ReferenceAverageMethod, fFlatDoses);
+
+//        delete [] tempdata;
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
             for (size_t i=1; i<flat.Size(1); i++) {
