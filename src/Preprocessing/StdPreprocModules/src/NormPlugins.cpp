@@ -95,6 +95,94 @@ void NormBase::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::
 	//}
 }
 
+kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname, int firstIndex, int N, float initialDose, ReconConfig config)
+{
+    kipl::base::TImage<float,2> img, refimg;
+
+    if (fname.empty() && N!=0)
+        throw ReconException("The reference image file name mask is empty",__FILE__,__LINE__);
+
+    std::string fmask=path+flatname;
+
+    std::string filename,ext;
+    ProjectionReader reader;
+
+    fDose = initialDose;
+
+    if (N!=0) {
+        logger(kipl::logging::Logger::LogMessage,"Loading reference images");
+
+        float *fDoses=new float[N];
+        float dose=0.0f;
+
+        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+        img = reader.Read(filename,
+                m_Config.ProjectionInfo.eFlip,
+                m_Config.ProjectionInfo.eRotate,
+                m_Config.ProjectionInfo.fBinning,
+                roi);
+
+        dose=bUseNormROI ? reader.GetProjectionDose(filename,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    nOriginalNormRegion) : initialDose;
+
+        fDose     = dose;
+        fDoses[0] = dose;
+
+        size_t obdims[]={img.Size(0), img.Size(1),N};
+
+        kipl::base::TImage<float,3> img3D(obdims);
+        memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
+
+        for (int i=1; i<N; ++i) {
+            kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
+
+            img=reader.Read(filename,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    roi);
+            memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+            dose = bUseNormROI ? reader.GetProjectionDose(filename,
+                        m_Config.ProjectionInfo.eFlip,
+                        m_Config.ProjectionInfo.eRotate,
+                        m_Config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : 1.0f;
+
+            fFlatDose    += dose;
+            fFlatDoses[i] = fFlatDoses[0]/dose;
+        }
+        fFlatDoses[0]=1.0f;
+
+        fFlatDose/=static_cast<float>(N);
+
+        float *tempdata=new float[N];
+        flat.Resize(img.Dims());
+
+        float *pFlat=flat.GetDataPtr();
+
+        ImagingAlgorithms::AverageImage avg;
+
+        flat=avg(flat3D,m_ReferenceAvagerage,fFlatDoses);
+
+        delete [] tempdata;
+        delete [] fFlatDoses;
+
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+            for (size_t i=1; i<flat.Size(1); i++) {
+                memcpy(flat.GetLinePtr(i), pFlat, sizeof(float)*flat.Size(0));
+
+            }
+        }
+    }
+    else
+        logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
+
+}
+
 std::map<std::string, std::string> NormBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
