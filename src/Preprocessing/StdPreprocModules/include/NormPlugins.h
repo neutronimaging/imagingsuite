@@ -37,7 +37,7 @@ public:
 
 protected:
 	virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat);
-    virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname, int firstIndex, int N, float intialDose, ReconConfig config);
+    virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname, int firstIndex, int N, float initialDose, ReconConfig config);
 	ReconConfig m_Config;
 	std::string path;
 	std::string flatname;
