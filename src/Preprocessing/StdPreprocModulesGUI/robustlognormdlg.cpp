@@ -47,6 +47,8 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
         logger(kipl::logging::Logger::LogWarning,e.what());
     }
 
+    UpdateDoseROI();
+    UpdateBBROI();
 
 }
 
@@ -59,7 +61,6 @@ RobustLogNormDlg::~RobustLogNormDlg()
 int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
 
     m_Config=dynamic_cast<ReconConfig *>(config);
-    std::cout << "dopo m_Config" << std::endl;
 
 
     try{
@@ -142,6 +143,9 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->spiny1BBdose->setValue(doseBBroi[3]);
 
     ui->spinRadius->setValue(radius);
+    ui->combo_averagingMethod->setCurrentIndex(m_ReferenceAverageMethod);
+    ui->spinWindow->setValue(m_nWindow);
+
 
     std::cout << "update dialog" << std::endl;
 
@@ -167,6 +171,8 @@ void RobustLogNormDlg::UpdateParameters(){
     doseBBroi[3] = ui->spiny1BBdose->value();
 
     radius = ui->spinRadius->value();
+    m_ReferenceAverageMethod = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->combo_averagingMethod->currentIndex());
+    m_nWindow = ui->spinWindow->value();
 
     std::cout << "update parameters " << std::endl;
     std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
@@ -471,6 +477,9 @@ void RobustLogNormDlg::on_errorButton_clicked()
     UpdateParameterList(parameters);
     std::cout << "trying to compute error" << std::endl;
     std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
-    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // this one does not work..TO FIX
+    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
+    float error = module.GetInterpolationError();
+    std::cout << error << std::endl;
+    ui->errorBrowser->setText(QString::number(error));
 
 }

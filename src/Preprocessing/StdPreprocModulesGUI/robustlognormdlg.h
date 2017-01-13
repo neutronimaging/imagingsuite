@@ -59,6 +59,7 @@ private:
     virtual void UpdateParameters();
     virtual void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
+
     void BrowseOBBBPath();
     void UpdateBBROI();
 
@@ -86,6 +87,7 @@ private:
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
     int m_nWindow;
+
 
 
     kipl::base::TImage <float,2> m_Preview_OBBB;
