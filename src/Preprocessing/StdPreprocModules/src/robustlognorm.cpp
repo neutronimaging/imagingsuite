@@ -35,7 +35,8 @@ RobustLogNorm::RobustLogNorm() :
     tau(0.99f),
     bPBvariante(false),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
-    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm)
+    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
+    ferror(0.0f)
 {
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
@@ -349,7 +350,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi) {
         }
     }
     else
-        logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
+        logger(kipl::logging::Logger::LogWarning,"Dark current image count is zero");
 
     logger(kipl::logging::Logger::LogMessage,"Load reference done");
 //    SetReferenceImages(dark, flat); // that I don't think I need
@@ -424,12 +425,25 @@ void RobustLogNorm::PrepareBBData(){
     if (nOBCount!=0) {
         logger(kipl::logging::Logger::LogMessage,"Loading open beam images for BB preparations");
 
+        float *fFlatDoses=new float[nOBCount];
+        float dose=0.0f;
+
         kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
         img = reader.Read(filename,
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
                 BBroi);
+
+        dose=bUseNormROIBB ? reader.GetProjectionDose(filename,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    doseBBroi) : 1.0f;
+
+        fFlatDose     = dose;
+        fFlatDoses[0] = dose;
+
 
 
         size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
@@ -445,21 +459,42 @@ void RobustLogNorm::PrepareBBData(){
                     m_Config.ProjectionInfo.fBinning,
                     BBroi);
             memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+            dose = bUseNormROIBB ? reader.GetProjectionDose(filename,
+                        m_Config.ProjectionInfo.eFlip,
+                        m_Config.ProjectionInfo.eRotate,
+                        m_Config.ProjectionInfo.fBinning,
+                        doseBBroi) : 1.0f;
+
+            fFlatDose    += dose;
+            fFlatDoses[i] = fFlatDoses[0]/dose;
+
         }
 
 
-        float *tempdata=new float[nOBCount];
+//        float *tempdata=new float[nOBCount];
         flat.Resize(obdims);
-        float *pFlat3D=flat3D.GetDataPtr();
+//        float *pFlat3D=flat3D.GetDataPtr();
         float *pFlat=flat.GetDataPtr();
+
 // do i need this? I would say yes.
-        for (size_t i=0; i<flat.Size(); i++) {
-            for (size_t j=0; j<nOBCount; j++) {
-                tempdata[j]=pFlat3D[i+j*flat.Size()];
+//        for (size_t i=0; i<flat.Size(); i++) {
+//            for (size_t j=0; j<nOBCount; j++) {
+//                tempdata[j]=pFlat3D[i+j*flat.Size()];
+//            }
+//            kipl::math::median_quick_select(tempdata, nOBCount, pFlat+i);
+//        }
+//        delete [] tempdata;
+
+        ImagingAlgorithms::AverageImage avg;
+        flat = avg(flat3D, m_ReferenceAverageMethod, fFlatDoses); // non devo fare lo stesso anche per le DC?? VERIFICARE
+
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+            for (size_t i=1; i<flat.Size(1); i++) {
+                memcpy(flat.GetLinePtr(i), pFlat, sizeof(float)*flat.Size(0));
+
             }
-            kipl::math::median_quick_select(tempdata, nOBCount, pFlat+i);
         }
-        delete [] tempdata;
 
     }
     else
@@ -576,11 +611,25 @@ void RobustLogNorm::PrepareBBData(){
 
          bb/=static_cast<float>(nBBCount);
          fBlackDose/=static_cast<float>(nBBCount);
-          fBlackDose-=fdarkBBdose;
+         fBlackDose-=fdarkBBdose;
 
 
          kipl::base::TImage<float,2> obmask(bb.Dims());
          bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask);
+
+
+         // first try to display interpolation error
+
+         kipl::base::TImage<float,2> myint(bb.Dims());
+         myint = m_corrector.InterpolateBlackBodyImage(bb_ob_param, BBroi);
+         kipl::base::TImage<float,2> BB_DC(bb.Dims());
+         memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+//         BB_DC=bb;
+         BB_DC-=dark;
+         ferror = m_corrector.ComputeInterpolationError(myint, obmask, BB_DC);
+         std::cout << "FIRST COMPUTATION OF INTERPOLATION ERROR TO BE THEN PUT IN THE GUI: " << ferror << std::endl;
+
+
 
 
          if (bPBvariante) {
@@ -811,6 +860,11 @@ void RobustLogNorm::PrepareBBData(){
 
 
 
+}
+
+
+float RobustLogNorm::GetInterpolationError(){
+    return ferror;
 }
 
 float RobustLogNorm::computedose(kipl::base::TImage<float,2>&img){
