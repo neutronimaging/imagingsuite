@@ -25,6 +25,12 @@ public:
     RobustLogNorm();
     virtual ~RobustLogNorm();
 
+//    enum eBBOptions {
+//      Interpolate,
+//      Average,
+//      OneToOne
+//    };
+
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
@@ -34,6 +40,7 @@ public:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
     virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat); /// set references images
     virtual float GetInterpolationError();
+    virtual kipl::base::TImage<float, 2> GetMaskImage();
 
 protected:
     ReconConfig m_Config;
@@ -90,8 +97,11 @@ private:
     int m_nWindow;
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
+    ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
     ImagingAlgorithms::ReferenceImageCorrection m_corrector;
 
 };
+
+
 
 #endif // ROBUSTLOGNORM_H
