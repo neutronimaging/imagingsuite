@@ -67,6 +67,7 @@ ReferenceImageCorrection::~ReferenceImageCorrection()
 
 }
 
+//not used
 void ReferenceImageCorrection::LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
         std::string dcname, size_t firstdc, size_t dccnt,
         std::string bbname, size_t firstbb, size_t bbcnt, size_t *roi,
@@ -429,6 +430,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           float y_com= 0.0f;
           int size = 0;
 
+          // this one has to be changed with the weighted mean instead
           for (size_t x=0; x<roi.Size(0); x++) {
               for (size_t y=0; y<roi.Size(1); y++) {
                   if(roi(x,y)==0) {
@@ -471,8 +473,9 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
 
     memcpy(m_nBlackBodyROI,roi,sizeof(size_t)*4);
-    std::cout << "black body roi: " << m_nBlackBodyROI[0] << " " << m_nBlackBodyROI[1] << " " << m_nBlackBodyROI[2] << " "
-                                       << m_nBlackBodyROI[3] << std::endl;
+//    std::cout << "black body roi: " << m_nBlackBodyROI[0] << " " << m_nBlackBodyROI[1] << " " << m_nBlackBodyROI[2] << " "
+//                                       << m_nBlackBodyROI[3] << std::endl;
+
 }
 
 float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img){
@@ -489,7 +492,7 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
         for (size_t y=0; y<mask.Size(1); y++) {
             if (mask(x,y)==1){
                 std::pair<size_t, size_t> temp;
-                temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// missing: compensate for eventual roi position.. to be set by appropriate GUI in the module
+                temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images 
                 values.insert(std::make_pair(temp,img(x,y)));
 //                  std::cout << " " << x << " " << y << " " <<  BB_DC(x,y) << std::endl;
                 mean_value +=img(x,y);
@@ -1041,7 +1044,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                             }
 
                             Pdose = computedose(m_DoseBBsample_image);
-                            std::cout << "pierre's dose in in BB sample interpolated" <<  Pdose << std::endl;
+                            std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
 
                         } // for now I assume I have all images.. other wise makes no much sense
 
@@ -1081,7 +1084,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                              pImgBB[i] *=(dose/tau);
                         }
 
-                        float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB
+                        float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
                         if (fProjPixel<=0)
                             pImg[i]=0;
                         else
@@ -1163,6 +1166,44 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 
     return s;
 }
+
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions > bb_options;
+    bb_options["Interpolate"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Interpolate;
+    bb_options["Average"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Average;
+    bb_options["OneToOne"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::OneToOne;
+
+    if (bb_options.count(str)==0)
+        throw  ImagingException("The key string does not exist for eBBOptions",__FILE__,__LINE__);
+
+    ebo=bb_options[str];
+
+
+}
+
+std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
+{
+    std::string str;
+
+    switch (ebo) {
+        case ImagingAlgorithms::ReferenceImageCorrection::Interpolate: str="Interpolate"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::Average: str="Average"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::OneToOne: str="OneToOne"; break;
+        default                                     	: return "Undefined BB option"; break;
+    }
+    return  str;
+
+}
+
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo)
+{
+    s<<enum2string(ebo);
+
+    return s;
+}
+
+
 
 
 

@@ -27,6 +27,12 @@ public:
             ReferenceBBLogNorm // to be updated with more options, as we decided in the BB meeting
     };
 
+    enum eBBOptions {
+      Interpolate,
+      Average,
+      OneToOne
+    };
+
 	ReferenceImageCorrection();
 	virtual ~ReferenceImageCorrection();
 
@@ -130,5 +136,12 @@ void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorith
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm);
+
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
+
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */
