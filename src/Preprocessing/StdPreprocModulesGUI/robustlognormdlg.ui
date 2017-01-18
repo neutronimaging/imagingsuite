@@ -132,12 +132,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="combo_referencingmethod">
         <property name="editable">
          <bool>false</bool>
         </property>
         <property name="currentText">
-         <string>BBLogNorm</string>
+         <string>LogNorm</string>
         </property>
         <item>
          <property name="text">
@@ -171,7 +171,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="combo_BBoptions">
         <item>
          <property name="text">
           <string>Interpolate</string>
@@ -491,38 +491,6 @@
       </property>
      </widget>
     </widget>
-    <widget class="QtAddons::ImageViewerWidget" name="ob_bb_Viewer" native="true">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>490</y>
-       <width>341</width>
-       <height>311</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>256</width>
-       <height>256</height>
-      </size>
-     </property>
-    </widget>
-    <widget class="QtAddons::ImageViewerWidget" name="sample_bb_Viewer" native="true">
-     <property name="geometry">
-      <rect>
-       <x>430</x>
-       <y>490</y>
-       <width>351</width>
-       <height>311</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>256</width>
-       <height>256</height>
-      </size>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
@@ -759,21 +727,92 @@
       </property>
      </widget>
     </widget>
-    <widget class="QtAddons::ImageViewerWidget" name="mask_Viewer" native="true">
+    <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
-       <x>800</x>
-       <y>490</y>
-       <width>351</width>
-       <height>311</height>
+       <x>40</x>
+       <y>450</y>
+       <width>371</width>
+       <height>361</height>
       </rect>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>256</width>
-       <height>256</height>
-      </size>
+     <property name="title">
+      <string>Open beam with BBs</string>
      </property>
+     <widget class="QtAddons::ImageViewerWidget" name="ob_bb_Viewer" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>341</width>
+        <height>311</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>256</width>
+        <height>256</height>
+       </size>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>450</y>
+       <width>371</width>
+       <height>361</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Sample image with BBs</string>
+     </property>
+     <widget class="QtAddons::ImageViewerWidget" name="sample_bb_Viewer" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>341</width>
+        <height>311</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>256</width>
+        <height>256</height>
+       </size>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>780</x>
+       <y>450</y>
+       <width>371</width>
+       <height>361</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>BB mask</string>
+     </property>
+     <widget class="QtAddons::ImageViewerWidget" name="mask_Viewer" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>351</width>
+        <height>311</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>256</width>
+        <height>256</height>
+       </size>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

@@ -86,6 +86,7 @@ private:
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
+    ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
     int m_nWindow;
 
 

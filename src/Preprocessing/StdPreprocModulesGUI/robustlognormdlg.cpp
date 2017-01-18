@@ -30,7 +30,8 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     bPBvariante(false),
     m_nWindow(5),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
-    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm)
+    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
+    m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate)
 {
 
     blackbodyname = "somename";
@@ -78,6 +79,7 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
         string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
         string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
+        string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
         m_nWindow = GetIntParameter(parameters,"window");
 
     }
@@ -144,6 +146,9 @@ void RobustLogNormDlg::UpdateDialog(){
 
     ui->spinRadius->setValue(radius);
     ui->combo_averagingMethod->setCurrentIndex(m_ReferenceAverageMethod);
+    ui->combo_referencingmethod->setCurrentIndex(m_ReferenceMethod);
+    ui->combo_BBoptions->setCurrentIndex(m_BBOptions);
+//    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinWindow->setValue(m_nWindow);
 
 
@@ -170,8 +175,18 @@ void RobustLogNormDlg::UpdateParameters(){
     doseBBroi[2] = ui->spinx1BBdose->value();
     doseBBroi[3] = ui->spiny1BBdose->value();
 
+    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
+        bUseNormROIBB = true;
+        std::cout << "----------------" << bUseNormROIBB << std::endl;
+    } else {
+        bUseNormROIBB = false;
+        std::cout << "---------------------" << bUseNormROIBB << std::endl;
+    }
+
     radius = ui->spinRadius->value();
-    m_ReferenceAverageMethod = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->combo_averagingMethod->currentIndex());
+    string2enum(ui->combo_averagingMethod->currentText().toStdString(), m_ReferenceAverageMethod);
+    string2enum(ui->combo_referencingmethod->currentText().toStdString(), m_ReferenceMethod);
+    string2enum(ui->combo_BBoptions->currentText().toStdString(), m_BBOptions);
     m_nWindow = ui->spinWindow->value();
 
     std::cout << "update parameters " << std::endl;
@@ -202,6 +217,7 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
 
     parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
     parameters["refmethod"] = enum2string(m_ReferenceMethod);
+    parameters["BBOption"] = enum2string(m_BBOptions);
     parameters["tau"] = kipl::strings::value2string(tau);
     parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
@@ -299,18 +315,18 @@ void RobustLogNormDlg::on_button_BBroi_clicked()
 
     if (rect.width()*rect.height()!=0)
     {
-        ui->spinx0BBroi->blockSignals(true);
-        ui->spiny0BBroi->blockSignals(true);
-        ui->spinx1BBroi->blockSignals(true);
-        ui->spiny1BBroi->blockSignals(true);
+//        ui->spinx0BBroi->blockSignals(true);
+//        ui->spiny0BBroi->blockSignals(true);
+//        ui->spinx1BBroi->blockSignals(true);
+//        ui->spiny1BBroi->blockSignals(true);
         ui->spinx0BBroi->setValue(rect.x());
         ui->spiny0BBroi->setValue(rect.y());
         ui->spinx1BBroi->setValue(rect.x()+rect.width());
         ui->spiny1BBroi->setValue(rect.y()+rect.height());
-        ui->spinx0BBroi->blockSignals(false);
-        ui->spiny0BBroi->blockSignals(false);
-        ui->spinx1BBroi->blockSignals(false);
-        ui->spiny1BBroi->blockSignals(false);
+//        ui->spinx0BBroi->blockSignals(false);
+//        ui->spiny0BBroi->blockSignals(false);
+//        ui->spinx1BBroi->blockSignals(false);
+//        ui->spiny1BBroi->blockSignals(false);
         UpdateBBROI();
     }
 }
@@ -480,6 +496,22 @@ void RobustLogNormDlg::on_errorButton_clicked()
     module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
     float error = module.GetInterpolationError();
     std::cout << error << std::endl;
+
+    // display interpolation error
     ui->errorBrowser->setText(QString::number(error));
+
+    // display computed mask
+    kipl::base::TImage<float,2> mymask = module.GetMaskImage();
+    float lo,hi;
+    const size_t NHist=512;
+    size_t hist[NHist];
+    float axis[NHist];
+    size_t nLo=0;
+    size_t nHi=0;
+    kipl::base::Histogram(mymask.GetDataPtr(),mymask.Size(),hist,NHist,0.0f,0.0f,axis);
+    kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+    lo=axis[nLo];
+    hi=axis[nHi];
+    ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.Dims(), lo,hi);
 
 }
