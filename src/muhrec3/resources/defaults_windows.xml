@@ -69,6 +69,7 @@
                 <sharedobject>@executable_path\StdPreprocModules.dll</sharedobject>
                 <active>true</active>
                 <parameters>
+                    <referenceaverage>ImageWeightedAverage</referenceaverage>
                     <uselut>false</uselut>
                     <usenormregion>true</usenormregion>
                 </parameters>

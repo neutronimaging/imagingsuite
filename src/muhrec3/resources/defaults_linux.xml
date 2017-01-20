@@ -70,6 +70,7 @@
                 <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>true</active>
                 <parameters>
+                    <referenceaverage>ImageWeightedAverage</referenceaverage>
                     <uselut>false</uselut>
                     <usenormregion>true</usenormregion>
 		    <useBS>false</useBS>

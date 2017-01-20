@@ -86,13 +86,6 @@ void NormBase::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::
 {
 	mDark=dark;
 	mFlatField=flat;
-
-	//if (bUseNormROI) {
-	//	fFlatDose=static_cast<float>(kipl::math::RegionMean(flat,nNormRegion));
-	//}
-	//else {
-	//	fFlatDose=1.0f;
-	//}
 }
 
 kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
@@ -105,9 +98,6 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
     std::ostringstream msg;
 
     kipl::base::TImage<float,2> img, refimg;
-
-    msg.str(""); msg<<"ReferenceLoader got initialDose="<<initialDose<<", doseBias="<<doseBias;
-    logger(logger.LogMessage,msg.str());
 
     float tmpdose = 0.0f;
 
@@ -122,10 +112,10 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
     dose = initialDose; // A precaution in case no dose is calculated
 
     if (N!=0) {
-        logger(kipl::logging::Logger::LogMessage,"Loading reference images");
+        msg.str(""); msg<<"Loading "<<N<<" reference images";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
 
         float *fDoses=new float[N];
-        float dose=0.0f;
 
         kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
         img = reader.Read(filename,
@@ -140,8 +130,8 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                     config.ProjectionInfo.fBinning,
                     nOriginalNormRegion) : initialDose;
 
-        tmpdose = tmpdose - doseBias;
-        dose     = tmpdose;
+        tmpdose   = tmpdose - doseBias;
+        dose      = tmpdose;
         fDoses[0] = tmpdose;
 
         size_t obdims[]={img.Size(0), img.Size(1),static_cast<size_t>(N)};
@@ -165,12 +155,12 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                         config.ProjectionInfo.fBinning,
                         nOriginalNormRegion) : initialDose;
 
-            tmpdose = tmpdose - doseBias;
-            dose    += tmpdose;
+            tmpdose   = tmpdose - doseBias;
+            dose     += tmpdose;
             fDoses[i] = fDoses[0]/tmpdose;
 
-            msg.str(""); msg<<"fDose["<<i<<"]="<<fDoses[i];
-            logger(logger.LogMessage,msg.str());
+//            msg.str(""); msg<<"fDose["<<i<<"]="<<fDoses[i];
+//            logger(logger.LogMessage,msg.str());
         }
         fDoses[0]=1.0f;
 
@@ -183,7 +173,8 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
         ImagingAlgorithms::AverageImage avg;
 
-        refimg = avg(img3D,m_ReferenceAvagerage,fDoses);
+//        refimg = avg(img3D,m_ReferenceAvagerage,fDoses);
+        refimg = avg(img3D,m_ReferenceAvagerage,nullptr);
 
         delete [] tempdata;
         delete [] fDoses;
@@ -199,6 +190,8 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
     else
         logger(kipl::logging::Logger::LogWarning,"Reference image count is zero");
 
+    msg.str(""); msg<<"Loaded reference image (dose="<<dose<<")";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
     return refimg;
 }
 
@@ -231,6 +224,8 @@ int FullLogNorm::Configure(ReconConfig config, std::map<std::string, std::string
 
 void FullLogNorm::LoadReferenceImages(size_t *roi)
 {
+    std::ostringstream msg;
+
 	kipl::base::TImage<float,2> img, flat, dark;
 
 	if (flatname.empty() && nOBCount!=0)
@@ -370,7 +365,9 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 //		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
 
     }
-    logger(kipl::logging::Logger::LogMessage,"Loaded reference images");
+
+    msg.str(""); msg<<"Loaded reference images (flat dose="<<fFlatDose<<", dark dose="<<fDarkDose<<")";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 	SetReferenceImages(dark, flat);
 }
 
@@ -378,7 +375,7 @@ void FullLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::bas
 {
 	NormBase::SetReferenceImages(dark,flat);
 	
-	float dose=1.0f/(fFlatDose-fDarkDose);
+    float dose=1.0f/(fFlatDose);
 	if (dose!=dose)
 		throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
 
@@ -501,8 +498,6 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 	
 	int N=static_cast<int>(img.Size(0)*img.Size(1));
 
-	float *pFlat=mFlatField.GetDataPtr();
-	float *pDark=mDark.GetDataPtr();
 	if ((nDCCount!=0) && (static_cast<int>(mFlatField.Size())!=N)) {
 		msg.str("");
 		msg<<"Flat field ("<<mFlatField.Size(0)<<", "<<mFlatField.Size(1)<<"),"
@@ -510,6 +505,9 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			<<"(N flat="<<mFlatField.Size()<<", N proj="<<img.Size()<<")";
 		throw ReconException(msg.str(),__FILE__, __LINE__);
 	}
+
+    float *pFlat=mFlatField.GetDataPtr();
+    float *pDark=mDark.GetDataPtr();
 
 	if (bUseLUT) {
 		#pragma omp parallel for firstprivate(pDark, pFlat)
