@@ -52,7 +52,8 @@ SOURCES += \
     ../../src/MorphSpotClean.cpp \
     ../../src/pixelinfo.cpp \
     ../../src/gammaclean.cpp \
-    ../../src/averageimage.cpp
+    ../../src/averageimage.cpp \
+    ../../src/detectorlagcorrection.cpp
 
 HEADERS += \
  #   ../../include/targetver.h \
@@ -69,7 +70,8 @@ HEADERS += \
     ../../include/pixelinfo.h \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \
-    ../../include/averageimage.h
+    ../../include/averageimage.h \
+    ../../include/detectorlagcorrection.h
 
 
 symbian {
