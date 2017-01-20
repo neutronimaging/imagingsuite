@@ -75,7 +75,7 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
 
 	bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
 	bUseLUT     = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
-//    bUseWeightedMean = kipl::strings::string2bool(GetStringParameter(parameters,"useweighted"));
+
     string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
 	memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
@@ -95,19 +95,31 @@ void NormBase::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::
 	//}
 }
 
-kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname, int firstIndex, int N, float initialDose, ReconConfig config)
+kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
+                                                      int firstIndex, int N,
+                                                      float initialDose,
+                                                      float doseBias,
+                                                      ReconConfig &config,
+                                                      float &dose)
 {
+    std::ostringstream msg;
+
     kipl::base::TImage<float,2> img, refimg;
+
+    msg.str(""); msg<<"ReferenceLoader got initialDose="<<initialDose<<", doseBias="<<doseBias;
+    logger(logger.LogMessage,msg.str());
+
+    float tmpdose = 0.0f;
 
     if (fname.empty() && N!=0)
         throw ReconException("The reference image file name mask is empty",__FILE__,__LINE__);
 
-    std::string fmask=path+flatname;
+    std::string fmask=fname;
 
     std::string filename,ext;
     ProjectionReader reader;
 
-    fDose = initialDose;
+    dose = initialDose; // A precaution in case no dose is calculated
 
     if (N!=0) {
         logger(kipl::logging::Logger::LogMessage,"Loading reference images");
@@ -117,21 +129,22 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname, int fir
 
         kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
         img = reader.Read(filename,
-                m_Config.ProjectionInfo.eFlip,
-                m_Config.ProjectionInfo.eRotate,
-                m_Config.ProjectionInfo.fBinning,
-                roi);
+                config.ProjectionInfo.eFlip,
+                config.ProjectionInfo.eRotate,
+                config.ProjectionInfo.fBinning,
+                config.ProjectionInfo.roi);
 
-        dose=bUseNormROI ? reader.GetProjectionDose(filename,
-                    m_Config.ProjectionInfo.eFlip,
-                    m_Config.ProjectionInfo.eRotate,
-                    m_Config.ProjectionInfo.fBinning,
+        tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
                     nOriginalNormRegion) : initialDose;
 
-        fDose     = dose;
-        fDoses[0] = dose;
+        tmpdose = tmpdose - doseBias;
+        dose     = tmpdose;
+        fDoses[0] = tmpdose;
 
-        size_t obdims[]={img.Size(0), img.Size(1),N};
+        size_t obdims[]={img.Size(0), img.Size(1),static_cast<size_t>(N)};
 
         kipl::base::TImage<float,3> img3D(obdims);
         memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
@@ -143,44 +156,50 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname, int fir
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    roi);
+                    config.ProjectionInfo.roi);
             memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
 
-            dose = bUseNormROI ? reader.GetProjectionDose(filename,
-                        m_Config.ProjectionInfo.eFlip,
-                        m_Config.ProjectionInfo.eRotate,
-                        m_Config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion) : 1.0f;
+            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
 
-            fFlatDose    += dose;
-            fFlatDoses[i] = fFlatDoses[0]/dose;
+            tmpdose = tmpdose - doseBias;
+            dose    += tmpdose;
+            fDoses[i] = fDoses[0]/tmpdose;
+
+            msg.str(""); msg<<"fDose["<<i<<"]="<<fDoses[i];
+            logger(logger.LogMessage,msg.str());
         }
-        fFlatDoses[0]=1.0f;
+        fDoses[0]=1.0f;
 
-        fFlatDose/=static_cast<float>(N);
+        dose/=static_cast<float>(N);
+        msg.str(""); msg<<"Dose="<<dose;
+        logger(logger.LogMessage,msg.str());
 
         float *tempdata=new float[N];
-        flat.Resize(img.Dims());
-
-        float *pFlat=flat.GetDataPtr();
+        refimg.Resize(img.Dims());
 
         ImagingAlgorithms::AverageImage avg;
 
-        flat=avg(flat3D,m_ReferenceAvagerage,fFlatDoses);
+        refimg = avg(img3D,m_ReferenceAvagerage,fDoses);
 
         delete [] tempdata;
-        delete [] fFlatDoses;
+        delete [] fDoses;
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-            for (size_t i=1; i<flat.Size(1); i++) {
-                memcpy(flat.GetLinePtr(i), pFlat, sizeof(float)*flat.Size(0));
+             float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++) {
+                memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
 
             }
         }
     }
     else
-        logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
+        logger(kipl::logging::Logger::LogWarning,"Reference image count is zero");
 
+    return refimg;
 }
 
 std::map<std::string, std::string> NormBase::GetParameters()
@@ -189,7 +208,6 @@ std::map<std::string, std::string> NormBase::GetParameters()
 
     parameters["usenormregion"]=kipl::strings::bool2string(bUseNormROI);
     parameters["uselut"]=kipl::strings::bool2string(bUseLUT);
-//    parameters["useweighted"]=kipl::strings::bool2string(bUseWeightedMean);
     parameters["referenceaverage"]=enum2string(m_ReferenceAvagerage);
 	return parameters;
 }
@@ -227,126 +245,132 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 
 	fDarkDose=0.0f;
 	fFlatDose=1.0f;
-	if (nOBCount!=0) {
-		logger(kipl::logging::Logger::LogMessage,"Loading open beam images");
+
+    dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,0.0f,0.0f,m_Config,fDarkDose);
+    flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,fDarkDose,m_Config,fFlatDose);
+
+    { // old code
+//	if (nOBCount!=0) {
+//		logger(kipl::logging::Logger::LogMessage,"Loading open beam images");
 		
-        float *fFlatDoses=new float[nOBCount];
-        float dose=0.0f;
+//        float *fFlatDoses=new float[nOBCount];
+//        float dose=0.0f;
 
-		kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
-		img = reader.Read(filename,
-				m_Config.ProjectionInfo.eFlip,
-				m_Config.ProjectionInfo.eRotate,
-				m_Config.ProjectionInfo.fBinning,
-				roi);
+//		kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
+//		img = reader.Read(filename,
+//				m_Config.ProjectionInfo.eFlip,
+//				m_Config.ProjectionInfo.eRotate,
+//				m_Config.ProjectionInfo.fBinning,
+//				roi);
 
-        dose=bUseNormROI ? reader.GetProjectionDose(filename,
-					m_Config.ProjectionInfo.eFlip,
-					m_Config.ProjectionInfo.eRotate,
-					m_Config.ProjectionInfo.fBinning,
-                    nOriginalNormRegion) : 1.0f;
+//        dose=bUseNormROI ? reader.GetProjectionDose(filename,
+//					m_Config.ProjectionInfo.eFlip,
+//					m_Config.ProjectionInfo.eRotate,
+//					m_Config.ProjectionInfo.fBinning,
+//                    nOriginalNormRegion) : 1.0f;
 
-        fFlatDose     = dose;
-        fFlatDoses[0] = dose;
+//        fFlatDose     = dose;
+//        fFlatDoses[0] = dose;
 
-		size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
+//		size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
 
-		kipl::base::TImage<float,3> flat3D(obdims);
-		memcpy(flat3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));   
+//		kipl::base::TImage<float,3> flat3D(obdims);
+//		memcpy(flat3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
 
-		for (size_t i=1; i<nOBCount; i++) {
-			kipl::strings::filenames::MakeFileName(flatmask,i+nOBFirstIndex,filename,ext,'#','0');
-			img=reader.Read(filename,
-					m_Config.ProjectionInfo.eFlip,
-					m_Config.ProjectionInfo.eRotate,
-					m_Config.ProjectionInfo.fBinning,
-					roi);
-			memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
-            dose = bUseNormROI ? reader.GetProjectionDose(filename,
-						m_Config.ProjectionInfo.eFlip,
-						m_Config.ProjectionInfo.eRotate,
-						m_Config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion) : 1.0f;
+//		for (size_t i=1; i<nOBCount; i++) {
+//			kipl::strings::filenames::MakeFileName(flatmask,i+nOBFirstIndex,filename,ext,'#','0');
+//			img=reader.Read(filename,
+//					m_Config.ProjectionInfo.eFlip,
+//					m_Config.ProjectionInfo.eRotate,
+//					m_Config.ProjectionInfo.fBinning,
+//					roi);
+//			memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+//            dose = bUseNormROI ? reader.GetProjectionDose(filename,
+//						m_Config.ProjectionInfo.eFlip,
+//						m_Config.ProjectionInfo.eRotate,
+//						m_Config.ProjectionInfo.fBinning,
+//                        nOriginalNormRegion) : 1.0f;
 
-            fFlatDose    += dose;
-            fFlatDoses[i] = fFlatDoses[0]/dose;
-		}
-        fFlatDoses[0]=1.0f;
+//            fFlatDose    += dose;
+//            fFlatDoses[i] = fFlatDoses[0]/dose;
+//		}
+//        fFlatDoses[0]=1.0f;
 
-		fFlatDose/=static_cast<float>(nOBCount);
+//		fFlatDose/=static_cast<float>(nOBCount);
 
-		float *tempdata=new float[nOBCount];
-		flat.Resize(obdims);
-//		float *pFlat3D=flat3D.GetDataPtr();
-		float *pFlat=flat.GetDataPtr();
+//		float *tempdata=new float[nOBCount];
+//		flat.Resize(obdims);
+////		float *pFlat3D=flat3D.GetDataPtr();
+//		float *pFlat=flat.GetDataPtr();
 
-        ImagingAlgorithms::AverageImage avg;
+//        ImagingAlgorithms::AverageImage avg;
 
-        flat=avg(flat3D,m_ReferenceAvagerage,fFlatDoses);
+//        flat=avg(flat3D,m_ReferenceAvagerage,fFlatDoses);
 
-		delete [] tempdata;
-        delete [] fFlatDoses;
+//		delete [] tempdata;
+//        delete [] fFlatDoses;
 
-		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-			for (size_t i=1; i<flat.Size(1); i++) {
-				memcpy(flat.GetLinePtr(i), pFlat, sizeof(float)*flat.Size(0));
+//		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+//			for (size_t i=1; i<flat.Size(1); i++) {
+//				memcpy(flat.GetLinePtr(i), pFlat, sizeof(float)*flat.Size(0));
 
-			}
-		}
-	}
-	else
-		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
+//			}
+//		}
+//	}
+//	else
+//		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
 
-	if (nDCCount!=0) {
-		logger(kipl::logging::Logger::LogMessage,"Loading dark images");
-		kipl::strings::filenames::MakeFileName(darkmask,nDCFirstIndex,filename,ext,'#','0');
-		dark = reader.Read(filename,
-				m_Config.ProjectionInfo.eFlip,
-				m_Config.ProjectionInfo.eRotate,
-				m_Config.ProjectionInfo.fBinning,
-				roi);
-		if (bUseNormROI) {
-			fDarkDose=reader.GetProjectionDose(filename,
-					m_Config.ProjectionInfo.eFlip,
-					m_Config.ProjectionInfo.eRotate,
-					m_Config.ProjectionInfo.fBinning,
-					nOriginalNormRegion);
-		}
-		else {
-			fDarkDose=0.0f;
-		}
+//	if (nDCCount!=0) {
+//		logger(kipl::logging::Logger::LogMessage,"Loading dark images");
+//		kipl::strings::filenames::MakeFileName(darkmask,nDCFirstIndex,filename,ext,'#','0');
+//		dark = reader.Read(filename,
+//				m_Config.ProjectionInfo.eFlip,
+//				m_Config.ProjectionInfo.eRotate,
+//				m_Config.ProjectionInfo.fBinning,
+//				roi);
+//		if (bUseNormROI) {
+//			fDarkDose=reader.GetProjectionDose(filename,
+//					m_Config.ProjectionInfo.eFlip,
+//					m_Config.ProjectionInfo.eRotate,
+//					m_Config.ProjectionInfo.fBinning,
+//					nOriginalNormRegion);
+//		}
+//		else {
+//			fDarkDose=0.0f;
+//		}
 
-		for (size_t i=1; i<nDCCount; i++) {
-			kipl::strings::filenames::MakeFileName(darkmask,i+nDCFirstIndex,filename,ext,'#','0');
-			img=reader.Read(filename,
-					m_Config.ProjectionInfo.eFlip,
-					m_Config.ProjectionInfo.eRotate,
-					m_Config.ProjectionInfo.fBinning,
-					roi);
-			dark+=img;
-			if (bUseNormROI) {
-				fDarkDose+=reader.GetProjectionDose(filename,
-						m_Config.ProjectionInfo.eFlip,
-						m_Config.ProjectionInfo.eRotate,
-						m_Config.ProjectionInfo.fBinning,
-						nOriginalNormRegion);
-			}
-			else {
-				fDarkDose=0.0f;
-			}
-		}
-		fDarkDose/=static_cast<float>(nDCCount);
-		dark/=static_cast<float>(nDCCount);
-		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-			for (size_t i=1; i<dark.Size(1); i++) {
-				memcpy(dark.GetLinePtr(i), dark.GetLinePtr(0), sizeof(float)*dark.Size(0));
-			}
-		}
-	}
-	else
-		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
+//		for (size_t i=1; i<nDCCount; i++) {
+//			kipl::strings::filenames::MakeFileName(darkmask,i+nDCFirstIndex,filename,ext,'#','0');
+//			img=reader.Read(filename,
+//					m_Config.ProjectionInfo.eFlip,
+//					m_Config.ProjectionInfo.eRotate,
+//					m_Config.ProjectionInfo.fBinning,
+//					roi);
+//			dark+=img;
+//			if (bUseNormROI) {
+//				fDarkDose+=reader.GetProjectionDose(filename,
+//						m_Config.ProjectionInfo.eFlip,
+//						m_Config.ProjectionInfo.eRotate,
+//						m_Config.ProjectionInfo.fBinning,
+//						nOriginalNormRegion);
+//			}
+//			else {
+//				fDarkDose=0.0f;
+//			}
+//		}
+//		fDarkDose/=static_cast<float>(nDCCount);
+//		dark/=static_cast<float>(nDCCount);
+//		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+//			for (size_t i=1; i<dark.Size(1); i++) {
+//				memcpy(dark.GetLinePtr(i), dark.GetLinePtr(0), sizeof(float)*dark.Size(0));
+//			}
+//		}
+//	}
+//	else
+//		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
 
-	logger(kipl::logging::Logger::LogMessage,"Load reference done");
+    }
+    logger(kipl::logging::Logger::LogMessage,"Loaded reference images");
 	SetReferenceImages(dark, flat);
 }
 
@@ -384,7 +408,7 @@ void FullLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::bas
 	}
 
 	if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-			for (int i=1; i<flat.Size(1); i++) {
+            for (int i=1; i<static_cast<int>(flat.Size(1)); i++) {
 				memcpy(flat.GetLinePtr(i),flat.GetLinePtr(0),sizeof(float)*flat.Size(0));			}
 	}
 }
