@@ -1,7 +1,8 @@
 #include "unpublishedmodulesgui_global.h"
 #include "unpublishedmodulesgui.h"
+#include <string>
 
-#include "morphspotcleandlg.h"
+//#include "morphspotcleandlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -13,8 +14,8 @@ void UNPUBLISHEDMODULESGUISHARED_EXPORT * GetGUIModule(const char * application,
     if (name!=nullptr) {
         std::string sName=name;
 
-        if (sName=="MorphSpotClean")
-            return new MorphSpotCleanDlg;
+//        if (sName=="MorphSpotClean")
+//            return new MorphSpotCleanDlg;
     }
     return nullptr;
 }
