@@ -54,19 +54,20 @@ std::map<std::string, std::string> KernelFuzzyCMeans::GetParameters()
 
 int KernelFuzzyCMeans::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-	akipl::segmentation::KernelFuzzyKMeans<float,unsigned char,3> segmenter;
+//todo fix missing virtuals
+//    akipl::segmentation::KernelFuzzyKMeans<float,unsigned char,3> segmenter;
 
-	segmenter.set(m_nNClasses, m_fFuzziness, m_nMaxIt);
-	kipl::base::TImage<unsigned char,3> seg;
-	if (!m_bParallel) 
-		segmenter(img,seg);
-	else
-		segmenter.parallel(img,seg);
+//	segmenter.set(m_nNClasses, m_fFuzziness, m_nMaxIt);
+//	kipl::base::TImage<unsigned char,3> seg;
+//	if (!m_bParallel)
+//		segmenter(img,seg);
+//	else
+//		segmenter.parallel(img,seg);
 
-	float *pImg=img.GetDataPtr();
-	unsigned char *pSeg=seg.GetDataPtr();
-	for (size_t i=0; i<img.Size(); i++)
-		pImg[i]=static_cast<float>(pSeg[i]);
+//	float *pImg=img.GetDataPtr();
+//	unsigned char *pSeg=seg.GetDataPtr();
+//	for (size_t i=0; i<img.Size(); i++)
+//		pImg[i]=static_cast<float>(pSeg[i]);
 
 	return 0;
 }
