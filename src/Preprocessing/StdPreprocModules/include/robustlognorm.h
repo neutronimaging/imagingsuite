@@ -59,11 +59,12 @@ protected:
     size_t nBBSampleCount; /// number of sample images with BB
     size_t nBBSampleFirstIndex; /// first index in filename for sample images with BB
 
-    float fFlatDose; /// dose value in open beam images
-    float fDarkDose; /// dose value in dark current images
-    float fBlackDose; /// dose value in black body images
-    float fBlackDoseSample; /// dose values in black body images with sample
-    float fdarkBBdose; /// dose value in dark current images within BB roi - not sure it has to be done..
+    float fFlatDose; /// dose value in open beam images in dose roi
+    float fDarkDose; /// dose value in dark current images in dose roi
+    float fBlackDose; /// dose value in black body images in BB dose roi
+    float fBlackDoseSample; /// dose values in black body images with sample in BB dose roi
+    float fdarkBBdose; /// dose value in dark current images within BB dose roi
+    float fFlatBBdose; /// dose value in open beam image within BB dose roi
 
     float tau; /// mean pattern transmission, default 0.99
 
@@ -89,6 +90,21 @@ protected:
     kipl::base::TImage<float,2> mBlack;
 
     kipl::base::TImage<float,2> mMaskBB;
+
+    virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
+                                                        int firstIndex,
+                                                        int N,
+                                                        float initialDose,
+                                                        float doseBias,
+                                                        ReconConfig &config, float &dose);
+
+
+    virtual kipl::base::TImage<float,2> BBLoader(std::string fname,
+                                                        int firstIndex,
+                                                        int N,
+                                                        float initialDose,
+                                                        float doseBias,
+                                                        ReconConfig &config, float &dose);
 
     void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is called in Configure
     float computedose(kipl::base::TImage<float,2>&img);
