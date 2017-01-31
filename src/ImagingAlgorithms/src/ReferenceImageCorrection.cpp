@@ -92,7 +92,6 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 	if (ob!=NULL) {
 		m_bHaveOpenBeam=true;
         m_OpenBeam=*ob;
-//        m_OpenBeam =  kipl::base::TSubImage<float,2>::Get(m_OpenBeam_all, roi);
 //        kipl::io::WriteTIFF32(m_OpenBeam,"~/repos/testdata/roi_ob.tif");
         std::cout << "have OB!" << std::endl;
 	}
@@ -100,14 +99,12 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 	if (dc!=NULL) {
 		m_bHaveDarkCurrent=true;
         m_DarkCurrent=*dc;
-//        m_DarkCurrent = kipl::base::TSubImage<float,2>::Get(m_DarkCurrent_all,roi);
 //        kipl::io::WriteTIFF32(m_DarkCurrent,"~/repos/testdata/roi_dc.tif");
         std::cout << "have DC!" << std::endl;
 	}
 
     if (useBB) {
 		m_bHaveBlackBody=true;
-//        m_BlackBody=*bb;
         // try with the open beam first,, and then go on with the sample one
         std::cout << "have BB!" << std::endl;
         m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
@@ -412,7 +409,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           }
 
       }
-      // they seem OK
+
 
 //      std::cout << "pos: " << pos << std::endl; // it is the number of potential BBs that I have found:
 
@@ -421,10 +418,12 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
 //          std::cout << "roi1 dimension: "<< roi_dim[0]<< " " << roi_dim[1]<< std::endl;
           kipl::base::TImage<float,2> roi(roi_dim);
+          kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
           for (int i=0; i<roi_dim[1]; i++) {
                 memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
 //                std::cout << left_edges.at(bb_index).first+i << "  " << left_edges.at(bb_index).second << " " << right_edges.at(bb_index).second<< std::endl;
           }
 
@@ -432,7 +431,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           float y_com= 0.0f;
           int size = 0;
 
-          // this one has to be changed with the weighted mean instead
+          // old implementation with geometrical mean:
           for (size_t x=0; x<roi.Size(0); x++) {
               for (size_t y=0; y<roi.Size(1); y++) {
                   if(roi(x,y)==0) {
@@ -445,6 +444,26 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           }
           x_com /=size;
           y_com /=size;
+
+//          float sum_roi = 0.0f;
+
+//          // weighted center of mass:
+//          for (size_t x=0; x<roi.Size(0); x++) {
+//              for (size_t y=0; y<roi.Size(1); y++) {
+//                  if(roi(x,y)==0) {
+//                      x_com += (roi_im(x,y)*float(x));
+//                      y_com += (roi_im(x,y)*float(y));
+//                      sum_roi += roi_im(x,y);
+//                  }
+
+//              }
+//          }
+
+//          std::cout << "sum_roi:   " << sum_roi << std::endl;
+//          x_com /=sum_roi;
+//          y_com /=sum_roi;
+
+          std::cout << "x_com and y_com " << x_com << " " << y_com << std::endl;
 
           // draw the circle with radius 2
 
@@ -666,9 +685,7 @@ float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<flo
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask)
 {
 
-//    m_BlackBody_all = bb;
-//    m_OpenBeam_all = flat;
-//    m_DarkCurrent_all = dark;
+
     // 1. normalize image
 
     kipl::base::TImage<float, 2> norm(bb.Dims());
@@ -1004,7 +1021,8 @@ void ReferenceImageCorrection::PrepareReferencesBB() {
     }
     else {
         // throw Exception
-        throw ImagingException("Black Body error in PrepareReferencesBB",__FILE__,__LINE__);
+//        throw ImagingException("Black Body error in PrepareReferencesBB",__FILE__,__LINE__);
+        // not the right spot
 
     }
 

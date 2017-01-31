@@ -24,14 +24,14 @@ protected:
 public:
     enum eReferenceMethod {
             ReferenceLogNorm,
-            ReferenceBBLogNorm // to be updated with more options, as we decided in the BB meeting
-    };
+            ReferenceBBLogNorm
+    }; /// Options for Referencing method. not yet used
 
     enum eBBOptions {
       Interpolate,
       Average,
       OneToOne
-    };
+    }; /// Options for BB image handling
 
 	ReferenceImageCorrection();
 	virtual ~ReferenceImageCorrection();
@@ -53,17 +53,15 @@ public:
     void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo); /// set interpolation parameters to be used for BB image computation
     void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values
 
-	void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;}
-    void SetRadius(size_t x) {radius=x;}
-    void SetTau (float x) {tau=x;}
-    void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);}
-    void SetPBvariante (bool x) {bPBvariante = x; }
-//    void setBBflatdose (float dose) {m_fBlackDose=dose;}
-//    void setBBsampledose (float *doselist) {m_fBlackDoselist=doselist;}
+    void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;} /// set bool value for computing -logarithm
+    void SetRadius(size_t x) {radius=x;} /// set the radius used to define subset of segmented BBs
+    void SetTau (float x) {tau=x;} /// set value of tau
+    void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);} /// set diffroi, which is the difference between BBroi and the Projection roi
+    void SetPBvariante (bool x) {bPBvariante = x; } /// set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
 
 
-    kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose);
-	void Process(kipl::base::TImage<float,3> &img, float *dose);
+    kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); /// 2D process
+    void Process(kipl::base::TImage<float,3> &img, float *dose); /// 3D process
 
     float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
     float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
@@ -75,7 +73,6 @@ public:
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
     void PrepareReferencesBB(); /// prepare reference images in case of BB
-    kipl::base::TImage<float,2> PrepareBlackBodySample(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
 
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
 
@@ -84,8 +81,7 @@ protected:
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
-//    void GetDose(kipl::base::TImage<float,2> &img, size_t *roi);
-    int* repeat_matrix(int* source, int count, int expand);
+    int* repeat_matrix(int* source, int count, int expand); /// repeat matrix. not used.
     float computedose(kipl::base::TImage<float,2>&img); /// duplicate.. to move in timage probably or something like this
 
 
@@ -102,16 +98,10 @@ protected:
     kipl::base::TImage<float,2> m_DoseBBsample_image;
     kipl::base::TImage<float,2> m_DoseBBflat_image;
 
-    // do i need those here?
-    kipl::base::TImage<float,2> m_OpenBeam_all;
-    kipl::base::TImage<float,2> m_DarkCurrent_all;
-    kipl::base::TImage<float,2> m_BlackBody_all;
-//    kipl::base::TImage<float,2> m_OB_BB_Interpolated_all; // don't need this
+
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
-//    float m_fBlackDose;
-//    float *m_fBlackDoselist;
 	bool m_bHaveDoseROI;
     bool m_bHaveBBDoseROI;
 	bool m_bHaveBlackBodyROI;
