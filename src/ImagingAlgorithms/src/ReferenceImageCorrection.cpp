@@ -140,13 +140,15 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 //		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
 	}
 
+//    std::cout << "roi: " << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3] <<std::endl;
     if(roi!=nullptr){
 
         memcpy(m_nDoseROI,roi, sizeof(size_t)*4);
     }
 
 //    std::cout << "before prepare references " << std::endl;
-	PrepareReferences();
+    PrepareReferences();
+    PrepareReferencesBB();
 //    std::cout << "after prepare references " << std::endl;
 
 }
@@ -720,8 +722,10 @@ float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TIma
 
 }
 
-void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj)
+void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo)
 {
+
+
 
     // it seems to work.. roi is not used
 
@@ -734,24 +738,35 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 //    std::cout << (sizeof(sample_parameter)/sizeof(float)) << std::endl;
 //    std::cout << (sizeof(ob_parameter)/sizeof(float)) << std::endl;
 
+
+
     ob_bb_parameters = new float[6];
-    sample_bb_parameters = new float[6*nBBSampleCount];
+
     m_nBBimages = nBBSampleCount; // store how many images with BB and sample i do have
-//    ob_bb_parameters = ob_parameter;
-//    sample_bb_parameters = sample_parameter;
-
     memcpy(ob_bb_parameters, ob_parameter, sizeof(float)*6);
-    memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*nBBSampleCount);
 
-    if (nBBSampleCount<=nProj) {
-        // interpolate assuming the step is regular.. for now
+    switch(ebo) {
+    case(Interpolate) : {
+        std::cout << "I am in....." << enum2string(ebo) << std::endl;
         size_t step = (nProj)/(nBBSampleCount);
 //        std::cout << "STEP: "  << step<<  std::endl;
-        sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, nProj, step);
-
+        sample_bb_parameters = new float[6*m_nBBimages];
+        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
+        sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, nProj, step); // it assumes that BB sample image where acquired corresponding to the number of projections.. to be generalized
+        break;
     }
-    else { // I assume that the same number of images were loaded.
-        memcpy(sample_bb_interp_parameters, sample_bb_parameters, sizeof(float)*6*nBBSampleCount);
+    case(OneToOne) : {
+        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+        memcpy(sample_bb_interp_parameters, sample_bb_parameters, sizeof(float)*6*m_nBBimages);
+        break;
+    }
+    case(Average) : {
+        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+        sample_bb_parameters = new float[6];
+        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6);
+        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
+        break;
+    }
     }
 
 //    std::cout << (sizeof(sample_bb_parameters)/sizeof(*sample_bb_parameters)) << std::endl;
@@ -762,7 +777,6 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 //    std::cout << sample_bb_parameters[10] << std::endl;
 
 
-    // if the number of interpolated parameters is lower than excepted for all projections.. interpolate them
 
 
 
@@ -847,6 +861,29 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
 
 }
 
+
+float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n){
+    float *interpolated_param = new float[6*(n+1)];
+    int index=0;
+
+        for (int i=0; i<=n; i++){
+            memcpy(interpolated_param+index,param,sizeof(float)*6);
+            index+=6;
+        }
+
+//       std::cout << "Replicated PARAMETERS:" << std::endl;
+
+//       for (size_t i=0; i<=6*n; i+=6){
+
+//           for (size_t j=0; j<6; j++){
+//               std::cout << interpolated_param[i+j] << " ";
+//           }
+//           std::cout << std::endl;
+//       }
+
+    return interpolated_param;
+}
+
 // not used.
 int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand) {
     int i, j;
@@ -895,21 +932,35 @@ void ReferenceImageCorrection::PrepareReferences()
                 }
             }
             }
-    else {
 
+}
 
-        float *pFlatBB = m_OB_BB_Interpolated.GetDataPtr();
+void ReferenceImageCorrection::PrepareReferencesBB() {
+
+    if (m_bHaveBlackBody) {
+
+    const int N=static_cast<int>(m_OpenBeam.Size());
+    float *pFlat=m_OpenBeam.GetDataPtr();
+    float *pDark=m_DarkCurrent.GetDataPtr();
+
+    float dose=1.0f/(m_fOpenBeamDose-m_fDarkDose);
+    float Pdose = 0.0f;
+
+    float *pFlatBB = m_OB_BB_Interpolated.GetDataPtr();
 
         // set here the PB variante...
         if(bPBvariante){
 
 //            kipl::base::TImage<float,2> imgDose;
 //            imgDose = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated, m_nDoseROI); // extract the roi
-            for (int i=0; i < static_cast<int>(m_DoseBBflat_image.Size(0)*m_DoseBBflat_image.Size(1)); i++){
-                m_DoseBBflat_image[i]*=(dose/tau);
-            }
 
-            Pdose = computedose(m_DoseBBflat_image);
+
+// that is now done on the ob_bb_parameters in robustlognorm.cpp
+//            for (int i=0; i < static_cast<int>(m_DoseBBflat_image.Size(0)*m_DoseBBflat_image.Size(1)); i++){
+//                m_DoseBBflat_image[i]*=(dose/tau);
+//            }
+
+            Pdose = computedose(m_DoseBBflat_image); // this must be the biggest dose !
             dose = 1.0f/(m_fOpenBeamDose-m_fDarkDose-Pdose);
             std::cout << "dose with PB variante: " << m_fOpenBeamDose-m_fDarkDose-Pdose << std::endl;
 
@@ -923,7 +974,7 @@ void ReferenceImageCorrection::PrepareReferences()
                 if(m_bHaveBBDoseROI && m_bHaveDoseROI) {
                     pFlatBB[i]*=(dose/tau);
                 }
-                float fProjPixel=pFlat[i]-pDark[i]-pFlatBB[i]; // dose parameter to be added in pFlatBB
+                float fProjPixel=pFlat[i]-pDark[i]-pFlatBB[i];
                 if (fProjPixel<=0)
                     pFlat[i]=0;
                 else
@@ -938,11 +989,11 @@ void ReferenceImageCorrection::PrepareReferences()
                 #pragma omp parallel for
                 for (int i=0; i<N; i++) {
 
-                    if(m_bHaveBBDoseROI && m_bHaveDoseROI) {
-                        pFlatBB[i]*=(dose/tau);
-                    }
+//                    if(m_bHaveBBDoseROI && m_bHaveDoseROI) {
+//                        pFlatBB[i]*=(dose/tau);
+//                    }
 
-                    float fProjPixel=pFlat[i]-pFlatBB[i]; // dose parameter to be added here
+                    float fProjPixel=pFlat[i]-pFlatBB[i];
                     if (fProjPixel<=0)
                         pFlat[i]=0;
                     else
@@ -950,17 +1001,15 @@ void ReferenceImageCorrection::PrepareReferences()
                 }
 
         }
-
+    }
+    else {
+        // throw Exception
+        throw ImagingException("Black Body error in PrepareReferencesBB",__FILE__,__LINE__);
 
     }
 
-// let's assume for now that I do compute the logarithm
-//	if (m_bComputeLogarithm) {
 
-//	}
-//	else {
 
-//	}
 
 }
 
@@ -1039,9 +1088,9 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 //                            kipl::base::TImage<float,2> imgDose = InterpolateBlackBodyImage();
 //                            imgDose = kipl::base::TSubImage<float,2>::Get(m_BB_sample_Interpolated, m_nDoseROI); // extract the roi
 
-                            for (int i=0; i < static_cast<int>(m_DoseBBsample_image.Size(0)*m_DoseBBsample_image.Size(1)); i++){
-                                m_DoseBBsample_image[i]*=(dose/tau);
-                            }
+//                            for (int i=0; i < static_cast<int>(m_DoseBBsample_image.Size(0)*m_DoseBBsample_image.Size(1)); i++){
+//                                m_DoseBBsample_image[i]*=(dose/tau);
+//                            }
 
                             Pdose = computedose(m_DoseBBsample_image);
                             std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
@@ -1055,9 +1104,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                         #pragma omp parallel for
                         for (int i=0; i<N; i++) {
 
-                            if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
-                                 pImgBB[i] *=(dose/tau);
-                            }
+                            // now computed in prepareBBdata
+//                            if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
+//                                 pImgBB[i] *=(dose/tau); // this dose must be computed on another roi !
+//                            }
 
 
 
@@ -1080,9 +1130,9 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                     #pragma omp parallel for
                     for (int i=0; i<N; i++) {
 
-                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
-                             pImgBB[i] *=(dose/tau);
-                        }
+//                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
+//                             pImgBB[i] *=(dose/tau);
+//                        }
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
                         if (fProjPixel<=0)

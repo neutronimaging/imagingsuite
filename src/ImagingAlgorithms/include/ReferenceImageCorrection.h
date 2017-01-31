@@ -50,7 +50,7 @@ public:
             bool normBB,
             size_t *roi);
 
-    void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj); /// set interpolation parameters to be used for BB image computation
+    void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo); /// set interpolation parameters to be used for BB image computation
     void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values
 
 	void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;}
@@ -73,12 +73,14 @@ public:
 
 
 protected:
-	void PrepareReferences();
+    void PrepareReferences(); /// old version with references image preparation, without BB
+    void PrepareReferencesBB(); /// prepare reference images in case of BB
     kipl::base::TImage<float,2> PrepareBlackBodySample(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb);
 
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
 
-    float *InterpolateParameters(float *param, size_t n, size_t step);
+    float *InterpolateParameters(float *param, size_t n, size_t step); /// Interpolate parameters assuming the BB sample image are acquired uniformally with some step over the n Projection images
+    float *ReplicateParameters(float *param, size_t n); /// Replicate interpolation parameter, to be used for the Average method
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
