@@ -107,7 +107,8 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 		m_bHaveBlackBody=true;
         // try with the open beam first,, and then go on with the sample one
         std::cout << "have BB!" << std::endl;
-        m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
+        // to understand what is done here with these images... because it is unclear
+        m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI); // it is done in process it seems..
         m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
 
 //        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
@@ -431,44 +432,50 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           float y_com= 0.0f;
           int size = 0;
 
-          // old implementation with geometrical mean:
+//          // old implementation with geometrical mean:
+//          for (size_t x=0; x<roi.Size(0); x++) {
+//              for (size_t y=0; y<roi.Size(1); y++) {
+//                  if(roi(x,y)==0) {
+//                      x_com +=x;
+//                      y_com +=y;
+//                      size++;
+//                  }
+
+//              }
+//          }
+//          x_com /=size;
+//          y_com /=size;
+
+          float sum_roi = 0.0f;
+
+          // weighted center of mass:
           for (size_t x=0; x<roi.Size(0); x++) {
               for (size_t y=0; y<roi.Size(1); y++) {
                   if(roi(x,y)==0) {
-                      x_com +=x;
-                      y_com +=y;
+                      x_com += (roi_im(x,y)*float(x));
+                      y_com += (roi_im(x,y)*float(y));
+                      sum_roi += roi_im(x,y);
                       size++;
                   }
 
               }
           }
-          x_com /=size;
-          y_com /=size;
 
-//          float sum_roi = 0.0f;
 
-//          // weighted center of mass:
-//          for (size_t x=0; x<roi.Size(0); x++) {
-//              for (size_t y=0; y<roi.Size(1); y++) {
-//                  if(roi(x,y)==0) {
-//                      x_com += (roi_im(x,y)*float(x));
-//                      y_com += (roi_im(x,y)*float(y));
-//                      sum_roi += roi_im(x,y);
-//                  }
-
-//              }
-//          }
-
-//          std::cout << "sum_roi:   " << sum_roi << std::endl;
-//          x_com /=sum_roi;
-//          y_com /=sum_roi;
-
-          std::cout << "x_com and y_com " << x_com << " " << y_com << std::endl;
 
           // draw the circle with radius 2
 
           // check on BB dimensions:
-          if (size>=20) {
+          if (size>=20) { // to check if 20 is a meaningfull number
+
+
+              x_com /=sum_roi;
+              y_com /=sum_roi;
+
+              std::cout << "roi size: " << roi.Size(0) << " " << roi.Size(1) << std::endl;
+
+              std::cout << "x_com and y_com and sum_roi: " << x_com << " " << y_com << " " << sum_roi << std::endl; // i don't understand why sometimes I have nan... should not really happens
+
 
                   for (size_t x=0; x<roi.Size(0); x++) {
                       for (size_t y=0; y<roi.Size(1); y++) {
