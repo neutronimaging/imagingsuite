@@ -25,12 +25,6 @@ public:
     RobustLogNorm();
     virtual ~RobustLogNorm();
 
-//    enum eBBOptions {
-//      Interpolate,
-//      Average,
-//      OneToOne
-//    };
-
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
@@ -41,14 +35,15 @@ public:
     virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat); /// set references images
     virtual float GetInterpolationError();
     virtual kipl::base::TImage<float, 2> GetMaskImage();
+    virtual void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is now called in LoadReferenceImages
 
 protected:
     ReconConfig m_Config;
-    std::string path;
-    std::string flatname;
-    std::string darkname;
-    std::string blackbodyname;
-    std::string blackbodysamplename;
+    std::string path; /// path, maybe not used
+    std::string flatname; /// name mask for OB image
+    std::string darkname; /// name mask for DC image
+    std::string blackbodyname; /// name mask for OB image with BBs
+    std::string blackbodysamplename; /// name mask for sample image with BBs
 
     size_t nOBCount; /// number of OB images
     size_t nOBFirstIndex; /// first index in filename for OB images
@@ -84,10 +79,6 @@ protected:
     size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
     float ferror; /// interpolation error, computed on the open beam with BBs image
 
-    //not sure i use all those things
-    kipl::base::TImage<float,2> mFlatField;
-    kipl::base::TImage<float,2> mDark;
-    kipl::base::TImage<float,2> mBlack;
 
     kipl::base::TImage<float,2> mMaskBB;
 
@@ -96,7 +87,7 @@ protected:
                                                         int N,
                                                         float initialDose,
                                                         float doseBias,
-                                                        ReconConfig &config, float &dose);
+                                                        ReconConfig &config, float &dose); /// Loader function and dose computation for standard reference images (OB and DC)
 
 
     virtual kipl::base::TImage<float,2> BBLoader(std::string fname,
@@ -104,17 +95,17 @@ protected:
                                                         int N,
                                                         float initialDose,
                                                         float doseBias,
-                                                        ReconConfig &config, float &dose);
+                                                        ReconConfig &config, float &dose); /// Loader function and dose computation for BB reference images (OB with BB and sample with BB)
 
-    void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is called in Configure
+
     float computedose(kipl::base::TImage<float,2>&img);
 
 private:
-    int m_nWindow;
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
-    ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
-    ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
-    ImagingAlgorithms::ReferenceImageCorrection m_corrector;
+    int m_nWindow; /// apparentely not used
+    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
+    ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
+    ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)
+    ImagingAlgorithms::ReferenceImageCorrection m_corrector; /// instance of ReferenceImageCorrection
 
 };
 
