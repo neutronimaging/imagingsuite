@@ -64,8 +64,10 @@ public:
     void Process(kipl::base::TImage<float,3> &img, float *dose); /// 3D process
 
     float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
+    float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask, float &error); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter, finally computes interpolation error
     float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
+    float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, float &error); /// compute interpolation parameters from img and mask and give as output interpolation error
     kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
@@ -90,7 +92,7 @@ protected:
 	bool m_bHaveBlackBody;
 	bool m_bComputeLogarithm;
 
-	kipl::base::TImage<float,2> m_OpenBeam;
+    kipl::base::TImage<float,2> m_OpenBeam;
 	kipl::base::TImage<float,2> m_DarkCurrent;
 	kipl::base::TImage<float,2> m_BlackBody;
     kipl::base::TImage<float,2> m_OB_BB_Interpolated;
@@ -107,13 +109,13 @@ protected:
 	bool m_bHaveBlackBodyROI;
     bool bPBvariante;
 
-    float *ob_bb_parameters; // they could be double ?
-    float *sample_bb_parameters;
-    float *sample_bb_interp_parameters;
+    float *ob_bb_parameters; /// interpolation parameters for the OB BB image
+    float *sample_bb_parameters; /// interpolation parameters for the sample image with BB
+    float *sample_bb_interp_parameters; /// interpolation parameters for the sample image for each projection angle
 
-    ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod;
+    ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
-    size_t m_nDoseROI[4]; // i want to use it for the extented PB variante
+    size_t m_nDoseROI[4]; /// roi to be used for dose computation on BB images ("big roi" I would say..)
     size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
     int m_diffBBroi[4]; /// difference between BB roi and projection roi, important when computing interpolation parameters
     size_t m_nBBimages; /// number of images with BB sample that are available
