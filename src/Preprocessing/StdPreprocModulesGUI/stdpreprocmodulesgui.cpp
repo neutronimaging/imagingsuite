@@ -14,6 +14,7 @@
 #include "morphspotcleandlg.h"
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
+#include "robustlognormdlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -27,6 +28,9 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 
         if (sName=="FullLogNorm")
             return new FullLogNormDlg;
+
+        if (sName=="RobustLogNorm")
+            return new RobustLogNormDlg;
 
 //        if (sName=="LogProjection")
 //            return new LogProjection;
