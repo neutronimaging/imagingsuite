@@ -494,6 +494,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
     std::cout << "trying to compute error" << std::endl;
     std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
     module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
+    module.PrepareBBData();
     float error = module.GetInterpolationError();
     std::cout << error << std::endl;
 
