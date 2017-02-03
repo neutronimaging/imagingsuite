@@ -39,7 +39,7 @@ protected:
 	virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat);
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
-                                                        int N,
+                                                        int N, size_t *roi,
                                                         float initialDose,
                                                         float doseBias,
                                                         ReconConfig &config, float &dose);

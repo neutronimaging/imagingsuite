@@ -90,6 +90,7 @@ void NormBase::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::
 
 kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                                                       int firstIndex, int N,
+                                                      size_t *roi,
                                                       float initialDose,
                                                       float doseBias,
                                                       ReconConfig &config,
@@ -122,7 +123,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                 config.ProjectionInfo.eFlip,
                 config.ProjectionInfo.eRotate,
                 config.ProjectionInfo.fBinning,
-                config.ProjectionInfo.roi);
+                roi);
 
         tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
                     config.ProjectionInfo.eFlip,
@@ -146,7 +147,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    config.ProjectionInfo.roi);
+                    roi);
             memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
 
             tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
@@ -241,8 +242,8 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 	fDarkDose=0.0f;
 	fFlatDose=1.0f;
 
-    dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,0.0f,0.0f,m_Config,fDarkDose);
-    flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,fDarkDose,m_Config,fFlatDose);
+    dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,roi,0.0f,0.0f,m_Config,fDarkDose);
+    flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,fDarkDose,m_Config,fFlatDose);
 
     { // old code
 //	if (nOBCount!=0) {
@@ -503,6 +504,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		msg<<"Flat field ("<<mFlatField.Size(0)<<", "<<mFlatField.Size(1)<<"),"
 			<<" does not match projection ("<<img.Size(0)<<", "<<img.Size(1)<<")"
 			<<"(N flat="<<mFlatField.Size()<<", N proj="<<img.Size()<<")";
+        logger(logger.LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__, __LINE__);
 	}
 
