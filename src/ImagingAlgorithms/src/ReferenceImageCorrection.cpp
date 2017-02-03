@@ -43,7 +43,9 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_bHaveBBDoseROI(false),
     tau(1.0f),
     radius(0),
-    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage)
+    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_nProj(0),
+    m_nBBimages(0)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -59,6 +61,11 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_diffBBroi[0]=0;
     m_diffBBroi[0]=0;
     m_diffBBroi[0]=0;
+
+    angles[0] = 0.0f;
+    angles[1] = 0.0f;
+    angles[2] = 0.0f;
+    angles[3] = 0.0f;
 
 }
 
@@ -892,6 +899,24 @@ float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TIma
 
 }
 
+void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
+    angles[0] = ang[0];
+    angles[1] = ang[1];
+    angles[2] = ang[2];
+    angles[3] = ang[3];
+
+    m_nProj = nProj; // to set eventually around where it is used
+    m_nBBimages = nBB;
+
+    std::cout << "SetAngles" << std::endl;
+    std::cout << angles[0] << " " << angles[1] << " " << angles[2] << " " << angles[3] << std::endl;
+    std::cout << m_nProj << std::endl;
+    std::cout << m_nBBimages << std::endl;
+
+
+}
+
+
 void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo)
 {
 
@@ -922,6 +947,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 //        std::cout << "STEP: "  << step<<  std::endl;
         sample_bb_parameters = new float[6*m_nBBimages];
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
+        InterpolateParametersGeneric(sample_bb_parameters);
         sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, nProj, step); // it assumes that BB sample image where acquired corresponding to the number of projections.. to be generalized
         break;
     }
@@ -948,6 +974,94 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
 
 
+
+
+}
+
+void ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
+
+    // it is assumed that angles are in order
+    float *interpolated_param = new float[6*m_nProj];
+    float curr_angle;
+    float *small_a;
+    float *big_a;
+    float *bb_angles = new float[m_nBBimages];
+    float step;
+    int index_1;
+    int index_2;
+
+//    std::cout << "bb_angles:" << std::endl;
+    for (size_t i=0; i<m_nBBimages; i++){
+        bb_angles[i]= (angles[3]-angles[2])/m_nBBimages*i;
+//        std::cout << bb_angles[i] << " ";
+    }
+
+//    std::cout << std::endl;
+
+    for (size_t i=0; i<m_nProj; i++){
+    //1. compute current angle for projection
+        curr_angle = (angles[1]-angles[0])/m_nProj*i;
+//        std::cout << "curr angle: " << curr_angle << std::endl;
+    //2. find two closest projection in BB data
+        if (i==0){
+            small_a = &bb_angles[0];
+            big_a = &bb_angles[1]; // prendo i primi due.. assunzione corretta?
+            index_1=0;
+            index_2=6;
+        }
+
+        std::cout << "index 1 and index 2: " << index_1 << " " << index_2 << std::endl;
+
+        step = (curr_angle-*small_a)/(*big_a-*small_a);
+
+        float *temp_param = new float[6];
+        std::cout<< "interpolated parameters: " << std::endl;
+        for (size_t k=0; k<6;k++){
+            temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
+            std::cout << temp_param[k] << " ";
+        }
+        std::cout << std::endl;
+
+
+
+
+
+
+//        std::cout << bb_angles[m_nBBimages-1] << std::endl; // ultimo angolo disponibile
+        if (curr_angle>=*big_a){ // se esco dal range incremento di 1
+
+
+
+            if(curr_angle>=bb_angles[m_nBBimages-1]) {
+
+                small_a = &bb_angles[m_nBBimages-1];
+                big_a = &bb_angles[0];
+                step = (curr_angle-*small_a)/(360.0f-*small_a);
+
+                index_1=index_2; //this one is not ok, i have to compute the very last index and keep it fixed
+                index_2 =0;
+
+            }
+            else {
+
+                index_1=index_2;
+                index_2 +=6;
+
+                small_a++;
+                big_a++;
+            }
+        }
+
+
+
+
+        std::cout << "generic step: " << step << std::endl;
+
+//        std::cout << "angles: " <<*small_a << " " << *big_a << std::endl;
+
+
+
+    }
 
 
 }
@@ -998,8 +1112,11 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
 //            std::cout << interpolated_param[i] << " " << interpolated_param[i+step*6]<< std::endl;
             for (size_t k=0; k<6; k++) {
                    temp_param[k] = interpolated_param[i+k]+(j)*(interpolated_param[i+k+step*6]-interpolated_param[i+k])/(step);
+
 //                    std::cout << temp_param[k] <<  " " ;
             }
+
+//            std::cout << "j/step: " << float(j)/float(step) << std::endl;
 //            std::cout << std::endl
 //            std::cout << "i and i+step*6 " <<i << " " << i+step*6<<    std::endl;
             index +=6;

@@ -59,6 +59,7 @@ public:
     void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);} /// set diffroi, which is the difference between BBroi and the Projection roi
     void SetPBvariante (bool x) {bPBvariante = x; } /// set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
 
+    void SetAngles(float *ang, size_t nProj, size_t nBB); /// set angles and number of proj and images with BB, to be used for more general interpolation
 
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); /// 2D process
     void Process(kipl::base::TImage<float,3> &img, float *dose); /// 3D process
@@ -79,6 +80,7 @@ protected:
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
 
     float *InterpolateParameters(float *param, size_t n, size_t step); /// Interpolate parameters assuming the BB sample image are acquired uniformally with some step over the n Projection images
+    void InterpolateParametersGeneric(float *param); /// Interpolate parameters for generic configuration of number of BB sample images and projection data, it assumes first SetAngle is called
     float *ReplicateParameters(float *param, size_t n); /// Replicate interpolation parameter, to be used for the Average method
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
@@ -119,6 +121,8 @@ protected:
     size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
     int m_diffBBroi[4]; /// difference between BB roi and projection roi, important when computing interpolation parameters
     size_t m_nBBimages; /// number of images with BB sample that are available
+    size_t m_nProj; /// number of images that are needed after interpolation
+    float angles[4]; /// first and last angles of nProj and nBBImages, respectively
     size_t radius; /// radius value for BB mask creation
     float tau; /// mean pattern transmission
 };
