@@ -1,16 +1,19 @@
-DIRECTORY="/Users/kaestner/Applications"
-REPOSPATH="/Users/kaestner/repos"
-QTPATH="/Applications/Qt541/5.4/clang_64/"
+DIRECTORY=~/Applications
+REPOSPATH=~/repos
+QTPATH=$QT_HOME
+LIBDIR=~/repos/lib
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi
 
-cp -r ~/repos/imagingtool/trunk/build-imagingtool-Qt5-Release/imagingtool.app $DIRECTORY
+
+
+cp -r ~/repos/Applications/imagingtool.app $DIRECTORY
 
 pushd .
 CPCMD="cp"
-DEST="$DIRECTORY/imagingtool.app"
+DEST=$DIRECTORY/imagingtool.app
 cd $DEST/Contents
 pwd
 if [ ! -d "./Frameworks" ]; then
@@ -45,21 +48,23 @@ if [ ! -f "./PlugIns/accessible/libqtaccessiblewidgets.dylib" ]; then
 	cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
 fi
 
-`$CPCMD $REPOSPATH/kiptool/trunk/ProcessFramework/build-ProcessFramework-Qt5-Release/libProcessFramework.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/kipl/trunk/kipl/build-kipl-Qt5-Release/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/modules/trunk/build-ReaderConfig-Qt5-Release/libReaderConfig.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/modules/trunk/build-ReaderGUI-Qt5-Release/libReaderGUI.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtAddons-Qt5-Release/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/gui/trunk/qt/build-QtModuleConfigure-Qt5-Release/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/qni/trunk/src/ImagingAlgorithms/build-ImagingAlgorithms-Qt5-Release/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/tomography/trunk/src/build-ReconFramework-Qt5-Release/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libProcessFramework.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libReaderConfig.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libReaderGUI.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $LIBDIR/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
 
 rm -f ./MacOS/*.dylib
 
 for f in `ls ./Frameworks/*.1.0.0.dylib`; do
 	ln -s ../$f "./MacOS/`basename $f .1.0.0.dylib`.1.dylib"
 done
+
+pwd
 
 cd Frameworks
 rm -f *.1.0.dylib
@@ -80,5 +85,39 @@ popd
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 
 
-
 $QTPATH/bin/macdeployqt $DEST
+
+cd $DEST/Contents/MacOS
+
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib imagingtool
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib imagingtool
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib imagingtool
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib imagingtool
+install_name_tool -change libReaderGUI.1.dylib @executable_path/../Frameworks/libReaderGUI.1.dylib imagingtool
+install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib imagingtool
+install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib imagingtool
+install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib imagingtool
+
+cd ../Frameworks
+# ModuleConfig
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libModuleConfig.1.0.0.dylib
+
+# QtAddons
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtAddons.1.0.0.dylib
+
+# QtModuleConfigure
+# install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtModuleConfigure.1.0.0.dylib
+# install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libQtModuleConfigure.1.0.0.dylib
+
+# ReconFramework
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReconFramework.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libReconFramework.1.0.0.dylib
+ 
+# ImagingAlgorithms
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libImagingAlgorithms.1.0.0.dylib
+
+# Readers
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libReaderGUI.1.0.0.dylib
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReaderGUI.1.0.0.dylib
+

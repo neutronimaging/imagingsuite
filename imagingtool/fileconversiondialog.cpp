@@ -1,6 +1,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <iostream>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -159,7 +160,23 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     std::ostringstream msg;
     std::string ext1, ext2;
 
+    if (ui->lineEdit_DestinationPath->text().isEmpty()==true) {
+        logger(logger.LogWarning,"Empty destination path");
+        return;
+    }
+
+    if (ui->lineEdit_DestinationMask->text().isEmpty()==true) {
+        logger(logger.LogWarning,"Empty destination file mask");
+        return;
+    }
+
     std::list<ImageLoader> ll=ui->ImageLoaderConfig->GetList();
+
+    if (ll.empty()==true) {
+        logger(logger.LogWarning,"Empty image loader.");
+        return;
+    }
+
     ext1=kipl::strings::filenames::GetFileExtension(ll.front().m_sFilemask);
 
     for (auto it=ll.begin(); it!=ll.end(); it++) {
@@ -176,14 +193,22 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 
     std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,ui->comboBox_ScanOrder->currentIndex(),ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
 
+    msg.str("");
+    msg<<"Projection file list size="<<plist.size()<<" for loader list size="<<ll.size();
+    logger(logger.LogDebug,msg.str());
+
     std::list<std::string> flist;
     for (auto it=plist.begin(); it!=plist.end(); it++)
         flist.push_back(it->second);
 
+    msg.str("");
+    msg<<"File list size="<<plist.size();
+    logger(logger.LogMessage,msg.str());
+
     ext2=kipl::strings::filenames::GetFileExtension(ui->lineEdit_DestinationMask->text().toStdString());
     msg.str("");
     msg<<"The input data has ext="<<ext1<<", and will be saved as ext="<<ext2;
-    logger(logger.LogMessage,msg.str());
+    logger(logger.LogDebug,msg.str());
     if ((ext2==ext1) && (ui->checkBox->checkState() == Qt::Unchecked))
     {
         CopyImages(flist);
@@ -196,19 +221,31 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 
 void FileConversionDialog::CopyImages(std::list<std::string> &flist)
 {
-    logger(logger.LogMessage,"Will copy the files in a common sequence.");
+    std::ostringstream msg;
+
 
     std::string destmask=ui->lineEdit_DestinationPath->text().toStdString();
+
     std::string destname,ext;
     kipl::strings::filenames::CheckPathSlashes(destmask,true);
     destmask+=ui->lineEdit_DestinationMask->text().toStdString();
+
+    msg<<"Will copy "<<flist.size()<<" files into a common sequence at"<<destmask<<".";
+    logger(logger.LogMessage,msg.str());
+
     int destcnt=ui->spinBox_FirstDestinationIndex->value();
 
-    for (auto it=flist.begin(); it!=flist.end(); it++) {
+    for (auto it=flist.begin(); it!=flist.end(); ++it) {
         kipl::strings::filenames::MakeFileName(destmask,destcnt,destname,ext,'#','0',false);
+        std::cout<<*it<<" -> "<<destname<<std::endl;
 
-        QFile::copy(QString::fromStdString(*it),QString::fromStdString(destname));
-        destcnt++;
+        if (QFile::copy(QString::fromStdString(*it),QString::fromStdString(destname))==false)
+        {
+            msg.str("");
+            msg<<"Failed to copy "<<*it<<" -> "<<destname;
+            logger(logger.LogError,msg.str());
+        }
+        ++destcnt;
     }
 }
 
