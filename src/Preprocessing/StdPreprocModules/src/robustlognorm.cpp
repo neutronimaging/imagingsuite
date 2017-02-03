@@ -646,7 +646,42 @@ void RobustLogNorm::PrepareBBData(){
 }
 
 
-float RobustLogNorm::GetInterpolationError(){
+float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
+
+    std::cout << "GetInterpolationError begin.." << std::endl;
+    if (flatname.empty() && nOBCount!=0)
+        throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
+    if (darkname.empty() && nDCCount!=0)
+        throw ReconException("The dark current image mask is empty",__FILE__,__LINE__);
+
+    if (blackbodyname.empty() && nBBCount!=0)
+        throw ReconException("The open beam image with BBs image mask is empty",__FILE__,__LINE__);
+
+    kipl::base::TImage<float,2> flat, dark, bb;
+
+    std::string flatmask=path+flatname;
+    std::string darkmask=path+darkname;
+
+
+    fdarkBBdose=0.0f;
+    fFlatBBdose=1.0f;
+
+    // reload the OB and DC into the BBroi and doseBBroi
+    dark = BBLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,0.0f,0.0f,m_Config,fdarkBBdose);
+    flat = BBLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,0.0f,m_Config,fFlatBBdose); // to check if i have to use dosebias to remove the fdarkBBdose
+
+    // now load OB image with BBs
+
+    float *bb_ob_param = new float[6];
+
+    bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,fBlackDose);
+    m_corrector.SetRadius(radius);
+
+    kipl::base::TImage<float,2> obmask(bb.Dims());
+    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    mask = obmask;
+
+
     return ferror;
 }
 
