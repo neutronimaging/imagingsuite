@@ -494,15 +494,16 @@ void RobustLogNormDlg::on_errorButton_clicked()
     std::cout << "trying to compute error" << std::endl;
     std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
     module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
-    module.PrepareBBData();
-    float error = module.GetInterpolationError();
+//    module.PrepareBBData();
+    kipl::base::TImage<float,2> mymask;
+    float error = module.GetInterpolationError(mymask);
     std::cout << error << std::endl;
 
     // display interpolation error
     ui->errorBrowser->setText(QString::number(error));
 
     // display computed mask
-    kipl::base::TImage<float,2> mymask = module.GetMaskImage();
+//    kipl::base::TImage<float,2> mymask = module.GetMaskImage();
     float lo,hi;
     const size_t NHist=512;
     size_t hist[NHist];
