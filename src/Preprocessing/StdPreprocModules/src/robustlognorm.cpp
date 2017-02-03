@@ -344,6 +344,10 @@ void RobustLogNorm::PrepareBBData(){
 
                      logger(kipl::logging::Logger::LogMessage,"Loading sample images with BB");
 
+                     //     first I pass the neede parameters to ReferenceImageCorrection
+                     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+                     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+
                      for (size_t i=0; i<nBBSampleCount; i++) {
 
                          std::cout << i << std::endl;
