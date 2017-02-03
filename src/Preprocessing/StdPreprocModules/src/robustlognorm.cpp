@@ -34,11 +34,13 @@ RobustLogNorm::RobustLogNorm() :
     bUseNormROIBB(false),
     m_nWindow(5),
     tau(0.99f),
-    bPBvariante(false),
+    bPBvariante(true),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
-    ferror(0.0f)
+    ferror(0.0f),
+    ffirstAngle(0.0f),
+    flastAngle(360.0f)
 {
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
@@ -94,6 +96,8 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
     GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
     bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
+    ffirstAngle = GetFloatParameter(parameters, "firstAngle");
+    flastAngle = GetFloatParameter(parameters, "lastAngle");
 
 
 
@@ -157,6 +161,8 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
     parameters["BBOption"] = enum2string(m_BBOptions);
+    parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
+    parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
 
 
     return parameters;
@@ -663,26 +669,33 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     std::string darkmask=path+darkname;
 
 
-    fdarkBBdose=0.0f;
-    fFlatBBdose=1.0f;
+//    fdarkBBdose=0.0f;
+//    fFlatBBdose=1.0f;
+
+    float darkdose = 0.0f;
+    float flatdose = 1.0f;
+    float blackdose = 1.0f;
 
     // reload the OB and DC into the BBroi and doseBBroi
-    dark = BBLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,0.0f,0.0f,m_Config,fdarkBBdose);
-    flat = BBLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,0.0f,m_Config,fFlatBBdose); // to check if i have to use dosebias to remove the fdarkBBdose
+    dark = BBLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,0.0f,0.0f,m_Config,darkdose);
+    flat = BBLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,0.0f,m_Config,flatdose); // to check if i have to use dosebias to remove the fdarkBBdose
 
     // now load OB image with BBs
 
     float *bb_ob_param = new float[6];
 
-    bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,fBlackDose);
+    bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,blackdose);
     m_corrector.SetRadius(radius);
 
+    float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
     mask = obmask;
 
+    delete [] bb_ob_param;
 
-    return ferror;
+
+    return error;
 }
 
 kipl::base::TImage<float,2> RobustLogNorm::GetMaskImage(){

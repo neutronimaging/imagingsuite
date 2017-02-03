@@ -78,6 +78,8 @@ protected:
 
     size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
     float ferror; /// interpolation error, computed on the open beam with BBs image
+    float ffirstAngle; /// first angle for BB sample image, used for BB interpolation option
+    float flastAngle; /// last angle for BB sample image, used for BB interpolation option
 
 
     kipl::base::TImage<float,2> mMaskBB;
