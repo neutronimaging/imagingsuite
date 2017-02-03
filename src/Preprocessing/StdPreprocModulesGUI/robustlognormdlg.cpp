@@ -27,11 +27,13 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     bUseNormROI(true),
     bUseNormROIBB(false),
     tau(0.99f),
-    bPBvariante(false),
+    bPBvariante(true),
     m_nWindow(5),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
-    m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate)
+    m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
+    ffirstAngle(0.0f),
+    flastAngle(360.0f)
 {
 
     blackbodyname = "somename";
@@ -81,6 +83,8 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
         string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
         m_nWindow = GetIntParameter(parameters,"window");
+        ffirstAngle = GetFloatParameter(parameters,"firstAngle");
+        flastAngle = GetFloatParameter(parameters,"lastAngle");
 
     }
     catch(ModuleException &e){
@@ -150,6 +154,8 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->combo_BBoptions->setCurrentIndex(m_BBOptions);
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinWindow->setValue(m_nWindow);
+    ui->spinFirstAngle->setValue(ffirstAngle);
+    ui->spinLastAngle->setValue(flastAngle);
 
 
     std::cout << "update dialog" << std::endl;
@@ -188,6 +194,8 @@ void RobustLogNormDlg::UpdateParameters(){
     string2enum(ui->combo_referencingmethod->currentText().toStdString(), m_ReferenceMethod);
     string2enum(ui->combo_BBoptions->currentText().toStdString(), m_BBOptions);
     m_nWindow = ui->spinWindow->value();
+    ffirstAngle = ui->spinFirstAngle->value();
+    flastAngle = ui->spinLastAngle->value();
 
     std::cout << "update parameters " << std::endl;
     std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
@@ -223,6 +231,8 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
     parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
     parameters["window"] = kipl::strings::value2string(m_nWindow);
+    parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
+    parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
 
 
     std::cout << "update parameters list" << std::endl;

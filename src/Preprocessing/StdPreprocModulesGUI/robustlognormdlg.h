@@ -80,6 +80,9 @@ private:
     size_t doseBBroi[4];
     size_t radius;
 
+    float ffirstAngle;
+    float flastAngle;
+
     float tau;
     bool bPBvariante;
     bool bUseNormROI; /// boolean value on the use of the norm roi
