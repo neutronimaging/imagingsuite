@@ -352,11 +352,16 @@ void RobustLogNorm::PrepareBBData(){
 
                          std::cout << i << std::endl;
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
-                         std::cout << "fBlackDose sample at sample n. " << i << " without PB variante: " << fBlackDoseSample << std::endl;
+//                         std::cout << "fBlackDose sample at sample n. " << i << " without PB variante: " << fBlackDoseSample << std::endl;
                          float dosesample; // used for the correct dose roi computation (doseBBroi)
+                         int index;
 
-                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i*step, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
-                         std::cout << "reading image......" << m_Config.ProjectionInfo.sFileMask << " " <<m_Config.ProjectionInfo.nFirstIndex+i*step<< std::endl;
+                         index = GetnProjwithAngle((angles[2]+(angles[3]-angles[2])/(nBBSampleCount-1)*i));
+                         std::cout << "index: " << index << std::endl;
+
+//                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i*step, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // this is not generic for different multiple BB/projections..
+                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
+//                         std::cout << "reading image......" << m_Config.ProjectionInfo.sFileMask << " " << m_Config.ProjectionInfo.nFirstIndex+index<< std::endl;
 
                          // in the first case compute the mask again (should not be necessary in well acquired datasets
                          if (i==0) {
@@ -446,10 +451,13 @@ void RobustLogNorm::PrepareBBData(){
                      std::cout << "nBBsample count: " << nBBSampleCount << std::endl;
                      std::cout << "sample bb sizes: " << samplebb.Size(0) << " " << samplebb.Size(1)  <<  std::endl;
 
-                     float dosesample;
 
+                     float dosesample; // used for the correct dose roi computation (doseBBroi)
 
-                     sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,0.0f,m_Config, dosesample);
+                     int index;
+                     index = GetnProjwithAngle(ffirstAngle);
+                     std::cout << "index: " << index << std::endl;
+                     sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,0.0f,m_Config, dosesample); // load the projection with angle closest to the first BB sample data
 
                      std::cout << "sample  sizes: " << sample.Size(0) << " " << sample.Size(1) <<  std::endl;
                      std::cout << "dark sizes: " << dark.Size(0) << " " << dark.Size(1) <<  std::endl;
@@ -655,6 +663,29 @@ void RobustLogNorm::PrepareBBData(){
 
 }
 
+int RobustLogNorm::GetnProjwithAngle(float angle){
+
+    // range of projection angles
+    double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+
+    int index =0;
+    float curr_angle;
+
+    for (size_t i=0; i<nProj; i++){
+        curr_angle = m_Config.ProjectionInfo.fScanArc[0]+(m_Config.ProjectionInfo.fScanArc[1]-m_Config.ProjectionInfo.fScanArc[0])/(nProj-1)*i;
+
+
+        if (curr_angle<=angle+0.5f & curr_angle>=angle-0.5f) {
+            std::cout << "curr angle in GetnProjwithAngle: " << curr_angle << " " << angle << std::endl;
+            break;
+        }
+        else index++;
+
+    }
+
+
+    return index;
+}
 
 float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 

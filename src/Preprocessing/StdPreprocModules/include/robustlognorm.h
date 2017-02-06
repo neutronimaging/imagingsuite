@@ -81,6 +81,8 @@ protected:
     float ffirstAngle; /// first angle for BB sample image, used for BB interpolation option
     float flastAngle; /// last angle for BB sample image, used for BB interpolation option
 
+    int GetnProjwithAngle(float angle); /// compute the index of projection data at a given angle
+
 
     kipl::base::TImage<float,2> mMaskBB;
 
