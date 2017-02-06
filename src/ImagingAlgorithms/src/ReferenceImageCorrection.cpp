@@ -1097,8 +1097,6 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
     std::cout << "copy interpolated values" << std::endl;
     size_t index = 0;
     for (size_t i=0; i<6*n; i+=step*6){
-//        std::cout << i << " ";
-//        std::cout << index << std::endl;
         memcpy(interpolated_param+i, param+index, sizeof(float)*6);
         index +=6;
 
@@ -1107,42 +1105,17 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
     memcpy(interpolated_param+6*n, param, sizeof(float)*6); // copio i primi in coda
 
 
-//    std::cout << "they should be the same: " << std::endl; //and they are
-//    std::cout << interpolated_param[600] << " " << interpolated_param[601] << " "  << interpolated_param[602] << " "<< interpolated_param[603] << " "
-//                                            << interpolated_param[604] << " "<< interpolated_param[605] << std::endl;
-//    std::cout << param[24] << " " << param[25] << " "  << param[26] << " "<< param[27] << " "
-//                                            << param[28] << " "<< param[29] << std::endl;
-
-
-
-//    std::cout << "step: " << step << std::endl;
-//    std::cout << "interpolate remaining: " << std::endl;
-
     for (size_t i=0; i<6*n; i+=step*6){
             index=i;
-//        std::cout << i << std::endl  ;
 
-//        std::cout  << interpolated_param[i] << " " << interpolated_param[i+1] << " "
-//                       << interpolated_param[i+2] << " "
-//                           << interpolated_param[i+3] << " "
-//                               << interpolated_param[i+4] << " "
-//                                   << interpolated_param[i+5] << std::endl;
         for (size_t j=1; j<step; j++){
             float *temp_param = new float[6];
-//            std::cout << "i and i+step*6 " <<i << " " << i+step*6<< std::endl;
-//            std::cout << "j: " <<j << std::endl;
-//            std::cout << interpolated_param[i] << " " << interpolated_param[i+step*6]<< std::endl;
+
             for (size_t k=0; k<6; k++) {
                    temp_param[k] = interpolated_param[i+k]+(j)*(interpolated_param[i+k+step*6]-interpolated_param[i+k])/(step);
-
-//                    std::cout << temp_param[k] <<  " " ;
             }
 
-//            std::cout << "j/step: " << float(j)/float(step) << std::endl;
-//            std::cout << std::endl
-//            std::cout << "i and i+step*6 " <<i << " " << i+step*6<<    std::endl;
             index +=6;
-//            std::cout << "index: " << (index) << std::endl;
             memcpy(interpolated_param+index,temp_param,sizeof(float)*6);
             delete[] temp_param;
 
@@ -1555,6 +1528,41 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 }
 
 
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim)
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod > int_methods;
+    int_methods["Interpolate"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::SecondOrder;
+    int_methods["Average"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::FirstOrder;
+    int_methods["OneToOne"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::ZeroOrder;
+
+    if (int_methods.count(str)==0)
+        throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
+
+    eim=int_methods[str];
+
+
+}
+
+std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim)
+{
+    std::string str;
+
+    switch (eim) {
+        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder: str="SecondOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder: str="FirstOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder: str="ZeroOrder"; break;
+        default                                     	: return "Undefined Interpolation method"; break;
+    }
+    return  str;
+
+}
+
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eim)
+{
+    s<<enum2string(eim);
+
+    return s;
+}
 
 
 

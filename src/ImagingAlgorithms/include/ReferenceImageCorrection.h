@@ -33,6 +33,12 @@ public:
       OneToOne
     }; /// Options for BB image handling
 
+    enum eInterpMethod{
+        SecondOrder,
+        FirstOrder,
+        ZeroOrder
+    }; /// Options for BB mask interpolation
+
 	ReferenceImageCorrection();
 	virtual ~ReferenceImageCorrection();
 
@@ -140,6 +146,12 @@ void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorith
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
+
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim);
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim);
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eim);
 
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */
