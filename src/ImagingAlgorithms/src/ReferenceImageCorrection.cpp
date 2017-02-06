@@ -122,14 +122,12 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
         // to understand what is done here with these images... they are used to compute the dose in the PB variante
         // for some reason they must be declared at this point otherwise it chrashes
+
         m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI); // it is done in process it seems..
         m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
 
-        std::cout << "m_OB_BB_Interpolated image SIZEs: " << m_OB_BB_Interpolated.Size(0) << " " << m_OB_BB_Interpolated.Size(1) << std::endl;
-        std::cout << "m_DoseBBflat_image image SIZEs: " << m_DoseBBflat_image.Size(0) << " " << m_DoseBBflat_image.Size(1) << std::endl;
-
-//        m_OB_BB_Interpolated = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated_all, roi);
-//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"~/repos/testdata/roiBB.tif"); // CORRECT!!!
+//        std::cout << "m_OB_BB_Interpolated image SIZEs: " << m_OB_BB_Interpolated.Size(0) << " " << m_OB_BB_Interpolated.Size(1) << std::endl;
+//        std::cout << "m_DoseBBflat_image image SIZEs: " << m_DoseBBflat_image.Size(0) << " " << m_DoseBBflat_image.Size(1) << std::endl;
 
 
 	}
@@ -936,6 +934,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
 
     ob_bb_parameters = new float[6];
+    sample_bb_interp_parameters = new float[6*m_nProj];
 
     m_nBBimages = nBBSampleCount; // store how many images with BB and sample i do have
     memcpy(ob_bb_parameters, ob_parameter, sizeof(float)*6);
@@ -943,12 +942,20 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
     switch(ebo) {
     case(Interpolate) : {
         std::cout << "I am in....." << enum2string(ebo) << std::endl;
-        size_t step = (nProj)/(nBBSampleCount);
+//        size_t step = (nProj)/(nBBSampleCount);
 //        std::cout << "STEP: "  << step<<  std::endl;
         sample_bb_parameters = new float[6*m_nBBimages];
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
-        InterpolateParametersGeneric(sample_bb_parameters);
-        sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, nProj, step); // it assumes that BB sample image where acquired corresponding to the number of projections.. to be generalized
+//        float *int_par = new float[6*m_nProj];
+        sample_bb_interp_parameters = InterpolateParametersGeneric(sample_bb_parameters);
+
+//        std::cout << "prova InterpolateParametersGeneric" << std::endl;
+//        for (size_t i=0; i<m_nProj; i++){
+//            std::cout << sample_bb_interp_parameters[0+i*6] << " " << sample_bb_interp_parameters[1+i*6] << " " << sample_bb_interp_parameters[2+i*6] << " " <<sample_bb_interp_parameters[3+i*6] << " " <<sample_bb_interp_parameters[4+i*6] << " " << sample_bb_interp_parameters[5+i*6] << std::endl;
+//        }
+
+
+//        int_par = InterpolateParameters(sample_bb_parameters, nProj, step); // it assumes that BB sample image where acquired corresponding to the number of projections.. to be generalized
         break;
     }
     case(OneToOne) : {
@@ -978,7 +985,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
 }
 
-void ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
+float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
     // it is assumed that angles are in order
     float *interpolated_param = new float[6*m_nProj];
@@ -992,54 +999,67 @@ void ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
 //    std::cout << "bb_angles:" << std::endl;
     for (size_t i=0; i<m_nBBimages; i++){
-        bb_angles[i]= (angles[3]-angles[2])/m_nBBimages*i;
+        bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
 //        std::cout << bb_angles[i] << " ";
     }
 
 //    std::cout << std::endl;
 
+//    std::cout << "number of projections: " << m_nProj << std::endl;
+
     for (size_t i=0; i<m_nProj; i++){
     //1. compute current angle for projection
-        curr_angle = (angles[1]-angles[0])/m_nProj*i;
-//        std::cout << "curr angle: " << curr_angle << std::endl;
+
+        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
+//        std::cout << "curr angle: " << curr_angle << " ";
+//        std::cout << "curr proj: " << i << std::endl;
+
     //2. find two closest projection in BB data
         if (i==0){
             small_a = &bb_angles[0];
-            big_a = &bb_angles[1]; // prendo i primi due.. assunzione corretta?
+            big_a = &bb_angles[1];
             index_1=0;
             index_2=6;
         }
 
-        std::cout << "index 1 and index 2: " << index_1 << " " << index_2 << std::endl;
+        if(curr_angle<*small_a) {
+            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
+        }
+        else {
+            step = (curr_angle-*small_a)/(*big_a-*small_a);
+        }
 
-        step = (curr_angle-*small_a)/(*big_a-*small_a);
 
         float *temp_param = new float[6];
-        std::cout<< "interpolated parameters: " << std::endl;
+//        std::cout<< "interpolated parameters: " << std::endl;
         for (size_t k=0; k<6;k++){
             temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
-            std::cout << temp_param[k] << " ";
+//            std::cout << temp_param[k] << " ";
         }
-        std::cout << std::endl;
+//        std::cout << std::endl;
+
+        memcpy(interpolated_param+i*6,temp_param,sizeof(float)*6);
+        delete[] temp_param;
 
 
 
 
-
-
-//        std::cout << bb_angles[m_nBBimages-1] << std::endl; // ultimo angolo disponibile
         if (curr_angle>=*big_a){ // se esco dal range incremento di 1
 
 
 
             if(curr_angle>=bb_angles[m_nBBimages-1]) {
 
+                if (*big_a==bb_angles[m_nBBimages-1]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+                    index_1=index_2;
+                    index_2 =0;
+                }
+
                 small_a = &bb_angles[m_nBBimages-1];
                 big_a = &bb_angles[0];
                 step = (curr_angle-*small_a)/(360.0f-*small_a);
 
-                index_1=index_2; //this one is not ok, i have to compute the very last index and keep it fixed
-                index_2 =0;
+
 
             }
             else {
@@ -1055,13 +1075,15 @@ void ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
 
 
-        std::cout << "generic step: " << step << std::endl;
+//        std::cout << "generic step: " << step << std::endl;
 
 //        std::cout << "angles: " <<*small_a << " " << *big_a << std::endl;
 
 
 
     }
+
+    return interpolated_param;
 
 
 }
@@ -1238,20 +1260,11 @@ void ReferenceImageCorrection::PrepareReferencesBB() {
         // set here the PB variante...
         if(bPBvariante){
 
-//            kipl::base::TImage<float,2> imgDose;
-//            imgDose = kipl::base::TSubImage<float,2>::Get(m_OB_BB_Interpolated, m_nDoseROI); // extract the roi
-
-
-// that is now done on the ob_bb_parameters in robustlognorm.cpp
-//            for (int i=0; i < static_cast<int>(m_DoseBBflat_image.Size(0)*m_DoseBBflat_image.Size(1)); i++){
-//                m_DoseBBflat_image[i]*=(dose/tau);
-//            }
-
             Pdose = computedose(m_DoseBBflat_image); // this must be the biggest dose !
             dose = 1.0f/(m_fOpenBeamDose-m_fDarkDose-Pdose);
-            std::cout << "dose with PB variante: " << m_fOpenBeamDose-m_fDarkDose-Pdose << std::endl;
+//            std::cout << "dose with PB variante: " << m_fOpenBeamDose-m_fDarkDose-Pdose << std::endl;
 
-        } // for now I assume I have all images.. other wise makes no much sense
+        } // for now I assume I have all images.. otherwise makes no much sense
 
 
         if (m_bHaveDarkCurrent) {
@@ -1381,7 +1394,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 //                            }
 
                             Pdose = computedose(m_DoseBBsample_image);
-                            std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
+//                            std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
 
                         } // for now I assume I have all images.. other wise makes no much sense
 
