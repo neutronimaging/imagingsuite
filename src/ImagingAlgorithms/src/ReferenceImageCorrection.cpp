@@ -44,6 +44,8 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     tau(1.0f),
     radius(0),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_IntMeth_x(SecondOrder_x),
+    m_IntMeth_y(SecondOrder_y),
     m_nProj(0),
     m_nBBimages(0)
 {
@@ -66,6 +68,8 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     angles[1] = 0.0f;
     angles[2] = 0.0f;
     angles[3] = 0.0f;
+
+    a = b = c = d = e = f = 1;
 
 }
 
@@ -160,6 +164,66 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     PrepareReferences();
     PrepareReferencesBB();
 //    std::cout << "after prepare references " << std::endl;
+
+}
+
+void ReferenceImageCorrection::SetInterpolationOrderX(eInterpMethodX eim_x){
+    m_IntMeth_x = eim_x;
+    std::cout << enum2string(m_IntMeth_x)<< std::endl;
+
+    switch(eim_x){
+
+    case(SecondOrder_x):
+    {   b=1;
+        d=1;
+        e=1;
+        break;
+    }
+    case(FirstOrder_x): {
+        b=1;
+        d=1;
+        e=0;
+        break;
+    }
+    case(ZeroOrder_x): {
+        b=0;
+        d=0;
+        e=0;
+        break;
+    }
+
+    }
+
+    std::cout << "x order: " << b << " " << d << " " << e << std::endl;
+}
+
+void ReferenceImageCorrection::SetInterpolationOrderY(eInterpMethodY eim_y){
+    m_IntMeth_y = eim_y;
+    std::cout << enum2string(m_IntMeth_y)<< std::endl;
+
+    switch(eim_y){
+
+    case(SecondOrder_y):{
+        c=1;
+        a=1;
+        f=1;
+        break;
+    }
+    case(FirstOrder_y):{
+        c=1;
+        a=1;
+        f=0;
+        break;
+    }
+    case(ZeroOrder_y):{
+        c=0;
+        a=0;
+        f=0;
+    }
+
+    }
+
+    std::cout << "y order: " << c << " " << a << " " << f << std::endl;
 
 }
 
@@ -571,59 +635,63 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     }
 
+    float *myparam = new float[6];
+    float error;
+    myparam = SolveLinearEquation(values, error);
 
 
-    // uncomment this to print out values from map
+// OLD CODE
+//    // uncomment this to print out values from map
 
-//      std::cout << values.size() << std::endl;
+////      std::cout << values.size() << std::endl;
 
-//      std::cout << "FROM MAP: " << std::endl;
+////      std::cout << "FROM MAP: " << std::endl;
 
 
-//      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-//          it != values.end(); ++it)
-//      {
-//          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-//      } // giusto!!!
+////      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+////          it != values.end(); ++it)
+////      {
+////          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
+////      } // giusto!!!
 
-    // c_2D_2order_int:
+//    // c_2D_2order_int:
 
-    Array2D< double > my_matrix(values.size(),6, 0.0);
-    Array1D< double > I(values.size(), 0.0);
-    Array1D< double > param(6, 0.0);
-    std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+//    Array2D< double > my_matrix(values.size(),6, 0.0);
+//    Array1D< double > I(values.size(), 0.0);
+//    Array1D< double > param(6, 0.0);
+//    std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
 
-//    std::cout << "TNT STUFF: " << std::endl;
-//    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
-    for (int x=0; x<my_matrix.dim1(); x++) {
-              my_matrix[x][0] = 1;
-              my_matrix[x][1] = it->first.first;
-              my_matrix[x][2] = it->first.first*it->first.first;
-              my_matrix[x][3] = it->first.first*it->first.second;
-              my_matrix[x][4] = it->first.second;
-              my_matrix[x][5] = it->first.second*it->first.second;
+////    std::cout << "TNT STUFF: " << std::endl;
+////    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
+//    for (int x=0; x<my_matrix.dim1(); x++) {
+//              my_matrix[x][0] = 1;
+//              my_matrix[x][1] = it->first.first;
+//              my_matrix[x][2] = it->first.first*it->first.first;
+//              my_matrix[x][3] = it->first.first*it->first.second;
+//              my_matrix[x][4] = it->first.second;
+//              my_matrix[x][5] = it->first.second*it->first.second;
 
-              I[x] = static_cast<double>(it->second);
-//                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
+//              I[x] = static_cast<double>(it->second);
+////                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
 
-              it++;
+//              it++;
 
-    }
+//    }
 
-    JAMA::QR<double> qr(my_matrix);
-    param = qr.solve(I);
-//    std::cout << "paramters! " << std::endl;
-//    std::cout << param.dim()<< std::endl;
+//    JAMA::QR<double> qr(my_matrix);
+//    param = qr.solve(I);
+////    std::cout << "paramters! " << std::endl;
+////    std::cout << param.dim()<< std::endl;
 //    std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
 
-    float *myparam = new float[6];
-//    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
-    myparam[0] = static_cast<float>(param[0]);
-    myparam[1] = static_cast<float>(param[1]);
-    myparam[2] = static_cast<float>(param[2]);
-    myparam[3] = static_cast<float>(param[3]);
-    myparam[4] = static_cast<float>(param[4]);
-    myparam[5] = static_cast<float>(param[5]);
+//    float *myparam = new float[6];
+////    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
+//    myparam[0] = static_cast<float>(param[0]);
+//    myparam[1] = static_cast<float>(param[1]);
+//    myparam[2] = static_cast<float>(param[2]);
+//    myparam[3] = static_cast<float>(param[3]);
+//    myparam[4] = static_cast<float>(param[4]);
+//    myparam[5] = static_cast<float>(param[5]);
 
     return myparam;
 
@@ -683,36 +751,124 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     }
 
 
+    float *myparam = new float[6];
+//    float error;
+    float my_error = 0.0f;
+    myparam = SolveLinearEquation(values, my_error);
+    error = my_error;
 
-    // uncomment this to print out values from map
 
-//      std::cout << values.size() << std::endl;
+// old code..
+//    // uncomment this to print out values from map
 
-//      std::cout << "FROM MAP: " << std::endl;
+////      std::cout << values.size() << std::endl;
+
+////      std::cout << "FROM MAP: " << std::endl;
 
 
-//      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-//          it != values.end(); ++it)
-//      {
-//          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-//      } // giusto!!!
+////      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+////          it != values.end(); ++it)
+////      {
+////          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
+////      } // giusto!!!
 
-    // c_2D_2order_int:
+//    // c_2D_2order_int:
 
-    Array2D< double > my_matrix(values.size(),6, 0.0);
+//    Array2D< double > my_matrix(values.size(),6, 0.0);
+//    Array1D< double > I(values.size(), 0.0);
+//    Array1D< double > param(6, 0.0);
+//    std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+
+////    std::cout << "TNT STUFF: " << std::endl;
+////    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
+//    for (int x=0; x<my_matrix.dim1(); x++) {
+//              my_matrix[x][0] = 1;
+//              my_matrix[x][1] = it->first.first;
+//              my_matrix[x][2] = it->first.first*it->first.first;
+//              my_matrix[x][3] = it->first.first*it->first.second;
+//              my_matrix[x][4] = it->first.second;
+//              my_matrix[x][5] = it->first.second*it->first.second;
+
+//              I[x] = static_cast<double>(it->second);
+////                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
+
+//              it++;
+
+//    }
+
+//    JAMA::QR<double> qr(my_matrix);
+//    param = qr.solve(I);
+////    std::cout << "paramters! " << std::endl;
+////    std::cout << param.dim()<< std::endl;
+////    std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
+
+//    float *myparam = new float[6];
+////    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
+//    myparam[0] = static_cast<float>(param[0]);
+//    myparam[1] = static_cast<float>(param[1]);
+//    myparam[2] = static_cast<float>(param[2]);
+//    myparam[3] = static_cast<float>(param[3]);
+//    myparam[4] = static_cast<float>(param[4]);
+//    myparam[5] = static_cast<float>(param[5]);
+
+
+//    Array1D< double > I_int(values.size(), 0.0);
+
+
+//    it = values.begin();
+//  for (int i=0; i<values.size(); i++){
+//            I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
+//           // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+//            it++;
+//  }
+
+
+//  error = 0.0f;
+
+//  for (int i=0; i<values.size(); i++){
+//        error += (((I_int[i]-I[i])/I[i])*((I_int[i]-I[i])/I[i]));
+//  }
+
+//          error = sqrt(1/float(values.size())*error);
+
+////          std::cout << "INTERPOLATION ERROR: " << error << std::endl;
+
+         return myparam;
+
+}
+
+float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t, size_t>, float> &values, float &error){
+
+    int matrix_size = 1 + ((d && a)+b+c+f+e);
+    std::cout << "matrix_size: " << matrix_size << std::endl;
+
+    Array2D< double > my_matrix(values.size(),matrix_size, 0.0);
     Array1D< double > I(values.size(), 0.0);
-    Array1D< double > param(6, 0.0);
+    Array1D< double > param(matrix_size, 0.0);
     std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
 
 //    std::cout << "TNT STUFF: " << std::endl;
 //    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
     for (int x=0; x<my_matrix.dim1(); x++) {
+
+        if (a && b && c && d && e && f) { // second order X, second order Y
               my_matrix[x][0] = 1;
               my_matrix[x][1] = it->first.first;
               my_matrix[x][2] = it->first.first*it->first.first;
               my_matrix[x][3] = it->first.first*it->first.second;
               my_matrix[x][4] = it->first.second;
               my_matrix[x][5] = it->first.second*it->first.second;
+        }
+        if ((b && d && a && c) && (e==0) && (f==0)){ // first order X, first order Y
+            my_matrix[x][0] = 1;
+            my_matrix[x][1] = it->first.first;
+            my_matrix[x][2] = it->first.second;
+            my_matrix[x][3] = it->first.first*it->first.second;
+
+        }
+        if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0) { // zero order X, zero order Y
+            my_matrix[x][0] = 1;
+        }
 
               I[x] = static_cast<double>(it->second);
 //                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
@@ -727,14 +883,24 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 //    std::cout << param.dim()<< std::endl;
 //    std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
 
+//    float *myparam = new float[6];
+////    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
+//    myparam[0] = static_cast<float>(param[0]);
+//    myparam[1] = static_cast<float>(param[1]);
+//    myparam[2] = static_cast<float>(param[2]);
+//    myparam[3] = static_cast<float>(param[3]);
+//    myparam[4] = static_cast<float>(param[4]);
+//    myparam[5] = static_cast<float>(param[5]);
+
+
     float *myparam = new float[6];
 //    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
-    myparam[0] = static_cast<float>(param[0]);
-    myparam[1] = static_cast<float>(param[1]);
-    myparam[2] = static_cast<float>(param[2]);
-    myparam[3] = static_cast<float>(param[3]);
-    myparam[4] = static_cast<float>(param[4]);
-    myparam[5] = static_cast<float>(param[5]);
+
+    for (int i=0; i<6; i++) { // initialize them to zero:
+        myparam[i] = 0.0f;
+    }
+
+
 
 
     Array1D< double > I_int(values.size(), 0.0);
@@ -742,23 +908,53 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     it = values.begin();
   for (int i=0; i<values.size(); i++){
+
+      if (a && b && c && d && e && f) {
             I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
            // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+           // fill parameters in the right order:
+
+            myparam[0] = static_cast<float>(param[0]); // 0
+            myparam[1] = static_cast<float>(param[1]); // x
+            myparam[2] = static_cast<float>(param[2]); // x^2
+            myparam[3] = static_cast<float>(param[3]); // xy
+            myparam[4] = static_cast<float>(param[4]); // y
+            myparam[5] = static_cast<float>(param[5]); // y^2
+      }
+      if ((b && d && a && c) && (e==0) && (f==0)){
+          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.second)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second);
+
+          myparam[0] = static_cast<float>(param[0]); // 0
+          myparam[1] = static_cast<float>(param[1]); // x
+//          myparam[2] = static_cast<float>(param[2]); // x^2
+          myparam[3] = static_cast<float>(param[3]); // xy
+          myparam[4] = static_cast<float>(param[2]); // y
+//          myparam[5] = static_cast<float>(param[5]); // y^2
+      }
+      if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0) {
+          I_int[i] = static_cast<float>(param[0]);
+          myparam[0] = static_cast<float>(param[0]); // 0
+      }
+
             it++;
   }
 
 
-  error = 0.0f;
+    error = 0.0f;
 
-  for (int i=0; i<values.size(); i++){
-        error += (((I_int[i]-I[i])/I[i])*((I_int[i]-I[i])/I[i]));
-  }
+    for (int i=0; i<values.size(); i++){
+          error += (((I_int[i]-I[i])/I[i])*((I_int[i]-I[i])/I[i]));
+    }
 
-          error = sqrt(1/float(values.size())*error);
+            error = sqrt(1/float(values.size())*error);
 
-//          std::cout << "INTERPOLATION ERROR: " << error << std::endl;
+            std::cout << "error in solve linear equation: " << error << std::endl;
 
-         return myparam;
+    std::cout << myparam[0] << "\n" << myparam[1] << "\n" << myparam[2] << "\n" << myparam[3] << "\n" << myparam[4] << "\n" << myparam[5] << std::endl;
+
+
+    return myparam;
+
 
 }
 
@@ -906,10 +1102,10 @@ void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
     m_nProj = nProj; // to set eventually around where it is used
     m_nBBimages = nBB;
 
-    std::cout << "SetAngles" << std::endl;
-    std::cout << angles[0] << " " << angles[1] << " " << angles[2] << " " << angles[3] << std::endl;
-    std::cout << m_nProj << std::endl;
-    std::cout << m_nBBimages << std::endl;
+//    std::cout << "SetAngles" << std::endl;
+//    std::cout << angles[0] << " " << angles[1] << " " << angles[2] << " " << angles[3] << std::endl;
+//    std::cout << m_nProj << std::endl;
+//    std::cout << m_nBBimages << std::endl;
 
 
 }
@@ -1082,6 +1278,8 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
 
     }
+
+    delete [] bb_angles;
 
     return interpolated_param;
 
@@ -1528,38 +1726,74 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 }
 
 
-void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim)
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x)
 {
-    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod > int_methods;
-    int_methods["Interpolate"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::SecondOrder;
-    int_methods["Average"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::FirstOrder;
-    int_methods["OneToOne"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::ZeroOrder;
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX > int_methods;
+    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX::SecondOrder_x;
+    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX::FirstOrder_x;
+    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX::ZeroOrder_x;
 
     if (int_methods.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
 
-    eim=int_methods[str];
+    eim_x=int_methods[str];
 
 
 }
 
-std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim)
+std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x)
 {
     std::string str;
 
-    switch (eim) {
-        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder: str="SecondOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder: str="FirstOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder: str="ZeroOrder"; break;
+    switch (eim_x) {
+        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x: str="SecondOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_x: str="FirstOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_x: str="ZeroOrder"; break;
         default                                     	: return "Undefined Interpolation method"; break;
     }
     return  str;
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eim)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX eim_x)
 {
-    s<<enum2string(eim);
+    s<<enum2string(eim_x);
+
+    return s;
+}
+
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y)
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY > int_methods;
+    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY::SecondOrder_y;
+    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY::FirstOrder_y;
+    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY::ZeroOrder_y;
+
+    if (int_methods.count(str)==0)
+        throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
+
+    eim_y=int_methods[str];
+
+
+}
+
+std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y)
+{
+    std::string str;
+
+    switch (eim_y) {
+        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y: str="SecondOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_y: str="FirstOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_y: str="ZeroOrder"; break;
+        default                                     	: return "Undefined Interpolation method"; break;
+    }
+    return  str;
+
+}
+
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY eim_y)
+{
+    s<<enum2string(eim_y);
 
     return s;
 }

@@ -14,6 +14,7 @@
 #include <logging/logger.h>
 #include <string>
 #include "../include/averageimage.h"
+#include <map>
 
 
 namespace ImagingAlgorithms {
@@ -33,11 +34,19 @@ public:
       OneToOne
     }; /// Options for BB image handling
 
-    enum eInterpMethod{
-        SecondOrder,
-        FirstOrder,
-        ZeroOrder
-    }; /// Options for BB mask interpolation
+    enum eInterpMethodX{
+        SecondOrder_x,
+        FirstOrder_x,
+        ZeroOrder_x
+    }; /// Options for BB mask interpolation, x direction
+
+    enum eInterpMethodY{
+        SecondOrder_y,
+        FirstOrder_y,
+        ZeroOrder_y
+    }; /// Options for BB mask interpolation, y direction
+
+
 
 	ReferenceImageCorrection();
 	virtual ~ReferenceImageCorrection();
@@ -65,6 +74,9 @@ public:
     void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);} /// set diffroi, which is the difference between BBroi and the Projection roi
     void SetPBvariante (bool x) {bPBvariante = x; } /// set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
 
+    void SetInterpolationOrderX(eInterpMethodX eim_x);
+    void SetInterpolationOrderY(eInterpMethodY eim_y);
+
     void SetAngles(float *ang, size_t nProj, size_t nBB); /// set angles and number of proj and images with BB, to be used for more general interpolation
 
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); /// 2D process
@@ -82,6 +94,8 @@ public:
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
     void PrepareReferencesBB(); /// prepare reference images in case of BB
+
+    float *SolveLinearEquation(std::map<std::pair<size_t,size_t>, float> &values, float &error);
 
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
 
@@ -123,6 +137,12 @@ protected:
 
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
+    eInterpMethodX m_IntMeth_x;
+    eInterpMethodY m_IntMeth_y;
+
+
+    int a,b,c,d,e,f; /// weights for interpolation scheme, used to set different combined order
+
     size_t m_nDoseROI[4]; /// roi to be used for dose computation on BB images ("big roi" I would say..)
     size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
     int m_diffBBroi[4]; /// difference between BB roi and projection roi, important when computing interpolation parameters
@@ -147,11 +167,17 @@ std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::Refere
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eim);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x);
 
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eim);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX eim_x);
+
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y);
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y);
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY eim_y);
 
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */
