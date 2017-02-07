@@ -90,6 +90,8 @@ private:
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX m_xInterpOrder;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY m_yInterpOrder;
     int m_nWindow;
 
 

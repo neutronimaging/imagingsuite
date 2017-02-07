@@ -32,6 +32,8 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
+    m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
+    m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
     ffirstAngle(0.0f),
     flastAngle(360.0f)
 {
@@ -85,6 +87,8 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         m_nWindow = GetIntParameter(parameters,"window");
         ffirstAngle = GetFloatParameter(parameters,"firstAngle");
         flastAngle = GetFloatParameter(parameters,"lastAngle");
+        string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
+        string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
 
     }
     catch(ModuleException &e){
@@ -149,9 +153,12 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->spiny1BBdose->setValue(doseBBroi[3]);
 
     ui->spinRadius->setValue(radius);
-    ui->combo_averagingMethod->setCurrentIndex(m_ReferenceAverageMethod);
-    ui->combo_referencingmethod->setCurrentIndex(m_ReferenceMethod);
-    ui->combo_BBoptions->setCurrentIndex(m_BBOptions);
+    ui->combo_averagingMethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceAverageMethod)));
+    ui->combo_referencingmethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceMethod)));
+    ui->combo_BBoptions->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
+    ui->combo_IntMeth_X->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
+    ui->combo_IntMeth_Y->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
+
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinWindow->setValue(m_nWindow);
     ui->spinFirstAngle->setValue(ffirstAngle);
@@ -193,6 +200,9 @@ void RobustLogNormDlg::UpdateParameters(){
     string2enum(ui->combo_averagingMethod->currentText().toStdString(), m_ReferenceAverageMethod);
     string2enum(ui->combo_referencingmethod->currentText().toStdString(), m_ReferenceMethod);
     string2enum(ui->combo_BBoptions->currentText().toStdString(), m_BBOptions);
+    string2enum(ui->combo_IntMeth_X->currentText().toStdString(), m_xInterpOrder);
+    string2enum(ui->combo_IntMeth_Y->currentText().toStdString(), m_yInterpOrder);
+
     m_nWindow = ui->spinWindow->value();
     ffirstAngle = ui->spinFirstAngle->value();
     flastAngle = ui->spinLastAngle->value();
@@ -233,6 +243,9 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
+    parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
+    parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
+
 
 
     std::cout << "update parameters list" << std::endl;
@@ -506,6 +519,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
     module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
 //    module.PrepareBBData();
     kipl::base::TImage<float,2> mymask;
+
     float error = module.GetInterpolationError(mymask);
     std::cout << error << std::endl;
 
