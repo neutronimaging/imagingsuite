@@ -38,6 +38,8 @@ RobustLogNorm::RobustLogNorm() :
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
+    m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
+    m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
     ferror(0.0f),
     ffirstAngle(0.0f),
     flastAngle(360.0f)
@@ -80,6 +82,8 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
     string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
     string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
+    string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
+    string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
     bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
 
     bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
@@ -163,6 +167,8 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["BBOption"] = enum2string(m_BBOptions);
     parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
+    parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
+    parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
 
 
     return parameters;
@@ -253,6 +259,8 @@ void RobustLogNorm::PrepareBBData(){
     m_corrector.SetRadius(radius);
     m_corrector.SetTau(tau);
     m_corrector.SetPBvariante(bPBvariante);
+    m_corrector.SetInterpolationOrderX(m_xInterpOrder);
+    m_corrector.SetInterpolationOrderY(m_yInterpOrder);
 
 
     kipl::base::TImage<float,2> img, flat, dark, bb, sample, samplebb;
@@ -721,6 +729,8 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,blackdose);
     m_corrector.SetRadius(radius);
+    m_corrector.SetInterpolationOrderX(m_xInterpOrder);
+    m_corrector.SetInterpolationOrderY(m_yInterpOrder);
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());

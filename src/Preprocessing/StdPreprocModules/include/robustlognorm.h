@@ -110,6 +110,8 @@ private:
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)
     ImagingAlgorithms::ReferenceImageCorrection m_corrector; /// instance of ReferenceImageCorrection
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX m_xInterpOrder; /// order chosen for interpolation along the X direction
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY m_yInterpOrder; /// order chosen for interpolation along the Y direction
 
 };
 
