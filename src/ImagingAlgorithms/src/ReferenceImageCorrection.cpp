@@ -706,6 +706,8 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 //      std::cout << "VALUES TO INTERPOLATE: " << std::endl;
     // find values to interpolate
 
+    kipl::io::WriteTIFF32(mask, "mask.tif");
+
     float mean_value = 0.0f;
     for (size_t x=0; x<mask.Size(0); x++) {
         for (size_t y=0; y<mask.Size(1); y++) {
@@ -761,16 +763,16 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 // old code..
 //    // uncomment this to print out values from map
 
-////      std::cout << values.size() << std::endl;
+//      std::cout << values.size() << std::endl;
 
-////      std::cout << "FROM MAP: " << std::endl;
+//      std::cout << "FROM MAP inside ComputeInterpolationParameters: " << std::endl;
 
 
-////      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-////          it != values.end(); ++it)
-////      {
-////          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-////      } // giusto!!!
+//      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+//          it != values.end(); ++it)
+//      {
+//          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
+//      } // giusto!!! adesso sono diventati strani...
 
 //    // c_2D_2order_int:
 
@@ -839,8 +841,20 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
 float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t, size_t>, float> &values, float &error){
 
+
+//          std::cout << values.size() << std::endl;
+
+//          std::cout << "FROM MAP inside SolveLinearEquation: " << std::endl;
+
+
+//          for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
+//              it != values.end(); ++it)
+//          {
+//              std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
+//          } // giusto!!!
+
     int matrix_size = 1 + ((d && a)+b+c+f+e);
-    std::cout << "matrix_size: " << matrix_size << std::endl;
+//    std::cout << "matrix_size: " << matrix_size << std::endl;
 
     Array2D< double > my_matrix(values.size(),matrix_size, 0.0);
     Array1D< double > I(values.size(), 0.0);
@@ -870,6 +884,47 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t,
             my_matrix[x][0] = 1;
         }
 
+        if ((b && d && e && c && a) && f==0 ) { // second order X, first order Y
+            my_matrix[x][0] = 1;
+            my_matrix[x][1] = it->first.first;
+            my_matrix[x][2] = it->first.first*it->first.first;
+            my_matrix[x][3] = it->first.first*it->first.second;
+            my_matrix[x][4] = it->first.second;
+        }
+        if ((b && d && e) && c==0 && a==0 && f==0 ) { // second order X, zero order Y
+            my_matrix[x][0] = 1;
+            my_matrix[x][1] = it->first.first;
+            my_matrix[x][2] = it->first.first*it->first.first;
+        }
+
+        if ((b && c && d && a && f) && e==0){ // first order X, second order Y
+            my_matrix[x][0] = 1;
+            my_matrix[x][1] = it->first.first;
+            my_matrix[x][2] = it->first.first*it->first.second;
+            my_matrix[x][3] = it->first.second;
+            my_matrix[x][4] = it->first.second*it->first.second;
+        }
+
+        if( (b && d) && a==0 && c==0 &&  e==0 && f==0){ //first order X, zero order Y
+            my_matrix[x][0] = 1;
+            my_matrix[x][1] = it->first.first;
+        }
+
+        if (b==0 && d==0 && e==0 && (c && a && f)){ // zero order X, second order Y
+            my_matrix[x][0] = 1;
+//            my_matrix[x][1] = it->first.first;
+//            my_matrix[x][2] = it->first.first*it->first.first;
+//            my_matrix[x][3] = it->first.first*it->first.second;
+            my_matrix[x][1] = it->first.second;
+            my_matrix[x][2] = it->first.second*it->first.second;
+        }
+
+        if ((c && a) && b==0 && d==0 && e==0 && f==0){ // zero order X, first order Y
+            my_matrix[x][0] = 1;
+            my_matrix[x][1] = it->first.second;
+
+        }
+
               I[x] = static_cast<double>(it->second);
 //                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
 
@@ -879,18 +934,14 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t,
 
     JAMA::QR<double> qr(my_matrix);
     param = qr.solve(I);
-//    std::cout << "paramters! " << std::endl;
-//    std::cout << param.dim()<< std::endl;
-//    std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
 
-//    float *myparam = new float[6];
-////    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
-//    myparam[0] = static_cast<float>(param[0]);
-//    myparam[1] = static_cast<float>(param[1]);
-//    myparam[2] = static_cast<float>(param[2]);
-//    myparam[3] = static_cast<float>(param[3]);
-//    myparam[4] = static_cast<float>(param[4]);
-//    myparam[5] = static_cast<float>(param[5]);
+
+
+//    for (int i=0; i<matrix_size; i++) {
+//    std::cout << param[i] <<  " ";
+//    }
+//    std::cout << std::endl;
+
 
 
     float *myparam = new float[6];
@@ -905,12 +956,14 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t,
 
     Array1D< double > I_int(values.size(), 0.0);
 
+    // here my param must be in the same order...
+
 
     it = values.begin();
   for (int i=0; i<values.size(); i++){
 
       if (a && b && c && d && e && f) {
-            I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
+//            I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
            // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
            // fill parameters in the right order:
 
@@ -920,9 +973,11 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t,
             myparam[3] = static_cast<float>(param[3]); // xy
             myparam[4] = static_cast<float>(param[4]); // y
             myparam[5] = static_cast<float>(param[5]); // y^2
+
+//            I_int[i] = myparam[0] + myparam[1]*static_cast<float>(it->first.first)+myparam[2]*static_cast<float>(it->first.first*it->first.first)+myparam[3]*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+myparam[4]*static_cast<float>(it->first.second)+myparam[5]*static_cast<float>(it->first.second*it->first.second);
       }
       if ((b && d && a && c) && (e==0) && (f==0)){
-          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.second)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second);
+//          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.second)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second);
 
           myparam[0] = static_cast<float>(param[0]); // 0
           myparam[1] = static_cast<float>(param[1]); // x
@@ -932,11 +987,62 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t,
 //          myparam[5] = static_cast<float>(param[5]); // y^2
       }
       if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0) {
-          I_int[i] = static_cast<float>(param[0]);
+//          I_int[i] = static_cast<float>(param[0]);
           myparam[0] = static_cast<float>(param[0]); // 0
       }
+      if ((b && d && e && c && a) && f==0 ) {
+//          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second);
+          myparam[0] = static_cast<float>(param[0]); // 0
+          myparam[1] = static_cast<float>(param[1]); // x
+          myparam[2] = static_cast<float>(param[2]); // x^2
+          myparam[3] = static_cast<float>(param[3]); // xy
+          myparam[4] = static_cast<float>(param[4]); // y
+      }
+      if ((b && d && e) && c==0 && a==0 && f==0 ) {
+//          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first);
+          myparam[0] = static_cast<float>(param[0]); // 0
+          myparam[1] = static_cast<float>(param[1]); // x
+          myparam[2] = static_cast<float>(param[2]); // x^2
+      }
 
-            it++;
+      if((b && c && d && a && f) && e==0){
+//          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
+         // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
+         // fill parameters in the right order:
+
+          myparam[0] = static_cast<float>(param[0]); // 0
+          myparam[1] = static_cast<float>(param[1]); // x
+//          myparam[2] = static_cast<float>(param[2]); // x^2
+          myparam[3] = static_cast<float>(param[2]); // xy
+          myparam[4] = static_cast<float>(param[3]); // y
+          myparam[5] = static_cast<float>(param[4]); // y^2
+      }
+
+      if( (b && d) && a==0 && c==0 &&  e==0 && f==0){
+          myparam[0] = static_cast<float>(param[0]); // 0
+          myparam[1] = static_cast<float>(param[1]); // x
+      }
+
+      if (b==0 && d==0 && e==0 && (c && a && f)) {
+          myparam[0] = static_cast<float>(param[0]); // 0
+//          myparam[1] = static_cast<float>(param[1]); // x
+//          myparam[2] = static_cast<float>(param[2]); // x^2
+//          myparam[3] = static_cast<float>(param[2]); // xy
+          myparam[4] = static_cast<float>(param[1]); // y
+          myparam[5] = static_cast<float>(param[2]); // y^2
+
+      }
+
+      if ((c && a) && b==0 && d==0 && e==0 && f==0) {
+          myparam[0] = static_cast<float>(param[0]); // 0
+          myparam[4] = static_cast<float>(param[1]); // y
+
+      }
+
+
+
+      I_int[i] = myparam[0] + myparam[1]*static_cast<float>(it->first.first)+myparam[2]*static_cast<float>(it->first.first*it->first.first)+myparam[3]*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+myparam[4]*static_cast<float>(it->first.second)+myparam[5]*static_cast<float>(it->first.second*it->first.second);
+      it++;
   }
 
 
@@ -948,9 +1054,9 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<size_t,
 
             error = sqrt(1/float(values.size())*error);
 
-            std::cout << "error in solve linear equation: " << error << std::endl;
+//            std::cout << "error in solve linear equation: " << error << std::endl;
 
-    std::cout << myparam[0] << "\n" << myparam[1] << "\n" << myparam[2] << "\n" << myparam[3] << "\n" << myparam[4] << "\n" << myparam[5] << std::endl;
+    std::cout << myparam[0] << " " << myparam[1] << " " << myparam[2] << " " << myparam[3] << " " << myparam[4] << " " << myparam[5] << std::endl;
 
 
     return myparam;
