@@ -43,7 +43,7 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_bHaveBBDoseROI(false),
     tau(1.0f),
     radius(0),
-    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_IntMeth_x(SecondOrder_x),
     m_IntMeth_y(SecondOrder_y),
     m_nProj(0),
@@ -119,6 +119,28 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         memcpy(m_nDoseROI,roi, sizeof(size_t)*4);
     }
 
+    if (dose_OB!=0) {
+        m_bHaveDoseROI=true;
+        m_fOpenBeamDose = dose_OB;
+                std::cout << " have dose roi!  " << std::endl;
+        //        std::cout << dose_OB << std::endl;
+
+
+    }
+
+    if (dose_DC!=0){
+       m_fDarkDose = dose_DC;
+    }
+
+    if (normBB) {
+        m_bHaveBlackBodyROI = true;
+        m_bHaveBBDoseROI = true;
+
+        std::cout << "have dose roi for BBs!" << std::endl;
+//		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
+    }
+
+
     if (useBB) {
 		m_bHaveBlackBody=true;
         // try with the open beam first,, and then go on with the sample one
@@ -132,37 +154,21 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 //        std::cout << "m_OB_BB_Interpolated image SIZEs: " << m_OB_BB_Interpolated.Size(0) << " " << m_OB_BB_Interpolated.Size(1) << std::endl;
 //        std::cout << "m_DoseBBflat_image image SIZEs: " << m_DoseBBflat_image.Size(0) << " " << m_DoseBBflat_image.Size(1) << std::endl;
-
-
+        PrepareReferencesBB();
 	}
-
-    if (dose_OB!=0) {
-		m_bHaveDoseROI=true;
-        m_fOpenBeamDose = dose_OB;
-                std::cout << " have dose roi!  " << std::endl;
-        //        std::cout << dose_OB << std::endl;
-
-
-	}
-
-    if (dose_DC!=0){
-       m_fDarkDose = dose_DC;
+    else {
+        PrepareReferences();
     }
 
-    if (normBB) {
-        m_bHaveBlackBodyROI = true;
-        m_bHaveBBDoseROI = true;
 
-        std::cout << "have dose roi for BBs!" << std::endl;
-//		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
-	}
 
 //    std::cout << "roi: " << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3] <<std::endl;
 
 
 //    std::cout << "before prepare references " << std::endl;
-    PrepareReferences();
-    PrepareReferencesBB();
+
+
+
 //    std::cout << "after prepare references " << std::endl;
 
 }
@@ -1785,7 +1791,7 @@ void string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::e
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod> methods;
     methods["LogNorm"] = ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm;
-    methods["BBLogNorm"] = ImagingAlgorithms::ReferenceImageCorrection::ReferenceBBLogNorm; // to be updated with more options
+    methods["Norm"] = ImagingAlgorithms::ReferenceImageCorrection::ReferenceNorm; // to be updated with more options
 
     if (methods.count(str)==0)
         throw ImagingException("The key string does not exist for eReferenceMethod",__FILE__,__LINE__);
@@ -1801,7 +1807,7 @@ std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eReferenceM
 
     switch (erm) {
         case ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm: str="LogNorm"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ReferenceBBLogNorm: str="BBLogNorm"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ReferenceNorm: str="Norm"; break;
         default: throw ImagingException("Unknown reference method in enum2string for eReferenceMethod",__FILE__,__LINE__);
     }
     return  str;
@@ -1818,9 +1824,11 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions > bb_options;
+    bb_options["noBB"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::noBB;
     bb_options["Interpolate"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Interpolate;
     bb_options["Average"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Average;
     bb_options["OneToOne"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::OneToOne;
+    bb_options["ExternalBB"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::ExternalBB;
 
     if (bb_options.count(str)==0)
         throw  ImagingException("The key string does not exist for eBBOptions",__FILE__,__LINE__);
@@ -1835,9 +1843,11 @@ std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eBBOptions 
     std::string str;
 
     switch (ebo) {
+        case ImagingAlgorithms::ReferenceImageCorrection::noBB: str="noBB"; break;
         case ImagingAlgorithms::ReferenceImageCorrection::Interpolate: str="Interpolate"; break;
         case ImagingAlgorithms::ReferenceImageCorrection::Average: str="Average"; break;
         case ImagingAlgorithms::ReferenceImageCorrection::OneToOne: str="OneToOne"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ExternalBB: str="ExternalBB"; break;
         default                                     	: return "Undefined BB option"; break;
     }
     return  str;

@@ -25,13 +25,15 @@ protected:
 public:
     enum eReferenceMethod {
             ReferenceLogNorm,
-            ReferenceBBLogNorm
+            ReferenceNorm
     }; /// Options for Referencing method. not yet used
 
     enum eBBOptions {
+      noBB,
       Interpolate,
       Average,
-      OneToOne
+      OneToOne,
+      ExternalBB
     }; /// Options for BB image handling
 
     enum eInterpMethodX{
