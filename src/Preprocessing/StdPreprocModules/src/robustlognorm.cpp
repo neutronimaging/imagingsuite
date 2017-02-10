@@ -207,9 +207,13 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
 
     // prepare BB data
-    if (nBBCount!=0 && nBBSampleCount!=0) {
+    std::cout << enum2string(m_BBOptions)<< std::endl;
+    if (enum2string(m_BBOptions)!="noBB" && nBBCount!=0 && nBBSampleCount!=0) {
         PrepareBBData();
+        bUseBB = true;
     }
+
+
 
 
     if (bUseBB) {
@@ -609,6 +613,14 @@ void RobustLogNorm::PrepareBBData(){
                 break;
              }
 
+         case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+               throw ReconException("trying to switch to case ImagingAlgorithms::ReferenceImageCorrection::noBB in PrepareBBdata",__FILE__,__LINE__);
+               break;
+         }
+         case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB) : {
+             throw ReconException("trying to switch to case ImagingAlgorithms::ReferenceImageCorrection::ExternalBB in PrepareBBdata",__FILE__,__LINE__);
+         }
+
          }
 
 
@@ -638,7 +650,7 @@ void RobustLogNorm::PrepareBBData(){
 
         if (nBBCount!=0 && nBBSampleCount!=0) {
             // for now let's deal with the most common case
-             bUseBB = true;
+//             bUseBB = true;
 
 //             size_t doseroi_bb_x = doseBBroi[2]-doseBBroi[0];
 //             size_t doseroi_bb_y = doseBBroi[3]-doseBBroi[1];
