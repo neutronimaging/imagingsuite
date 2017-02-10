@@ -52,8 +52,7 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
         logger(kipl::logging::Logger::LogWarning,e.what());
     }
 
-    UpdateDoseROI();
-    UpdateBBROI();
+
 
 }
 
@@ -97,7 +96,12 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
     }
 
     UpdateDialog();
-    UpdateParameters();
+    ui->buttonPreviewOBBB->click();
+    ui->buttonPreviewsampleBB->click();
+    ui->errorButton->click();
+//    UpdateParameters();
+    UpdateDoseROI();
+    UpdateBBROI();
 
     try {
         ApplyParameters();
@@ -120,7 +124,7 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         logger(kipl::logging::Logger::LogMessage,"Discard settings");
     }
 
-    return false;
+    return res;
 
 
 }
@@ -135,6 +139,9 @@ std::cout << "apply parameters" << std::endl;
 }
 
 void RobustLogNormDlg::UpdateDialog(){
+
+    UpdateDoseROI();
+    UpdateBBROI();
 
     ui->spinFirstOBBB->setValue(nBBFirstIndex);
     ui->spinCountsOBBB->setValue(nBBCount);
@@ -290,12 +297,11 @@ void RobustLogNormDlg::on_buttonPreviewOBBB_clicked()
 
     UpdateParameters();
 
-    // does not work!!!
-    // try to read the first image and then display it!
+
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
-//    QImage image("/home/carminati_c/repos/testdata/BB.tif");
-//    ui->label_ImageOBBB->setPixmap(QPixmap::fromImage(image));
+
+    if (QFile::exists(QString::fromStdString(filename))) {
 
     ProjectionReader reader;
 
@@ -328,6 +334,8 @@ void RobustLogNormDlg::on_buttonPreviewOBBB_clicked()
 //        ui->projectionViewer->get_levels(&lo,&hi);
 //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
 //    }
+
+    }
 
 
 }
@@ -416,6 +424,7 @@ void RobustLogNormDlg::on_buttonPreviewsampleBB_clicked()
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodysamplename,nBBSampleFirstIndex,filename,ext,'#','0');
 
+    if (QFile::exists(QString::fromStdString(filename))) {
 
     ProjectionReader reader;
 
@@ -448,6 +457,8 @@ void RobustLogNormDlg::on_buttonPreviewsampleBB_clicked()
 //        ui->projectionViewer->get_levels(&lo,&hi);
 //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
 //    }
+    }
+
 }
 
 void RobustLogNormDlg::on_button_BBdose_clicked()
@@ -509,35 +520,43 @@ void RobustLogNormDlg::on_spiny1BBdose_valueChanged()
 void RobustLogNormDlg::on_errorButton_clicked()
 {
 
-    ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
-    RobustLogNorm module;
-    std::map<std::string, std::string> parameters;
-    UpdateParameters();
-    UpdateParameterList(parameters);
-    std::cout << "trying to compute error" << std::endl;
-    std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
-    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
-//    module.PrepareBBData();
-    kipl::base::TImage<float,2> mymask;
+    // has to run only if bb ob image and bb roi are loaded
 
-    float error = module.GetInterpolationError(mymask);
-    std::cout << error << std::endl;
+    QRect rect=ui->ob_bb_Viewer->get_marked_roi();
 
-    // display interpolation error
-    ui->errorBrowser->setText(QString::number(error));
 
-    // display computed mask
-//    kipl::base::TImage<float,2> mymask = module.GetMaskImage();
-    float lo,hi;
-    const size_t NHist=512;
-    size_t hist[NHist];
-    float axis[NHist];
-    size_t nLo=0;
-    size_t nHi=0;
-    kipl::base::Histogram(mymask.GetDataPtr(),mymask.Size(),hist,NHist,0.0f,0.0f,axis);
-    kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
-    lo=axis[nLo];
-    hi=axis[nHi];
-    ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.Dims(), lo,hi);
+    if (rect.width()*rect.height()!=0) {
+
+        ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
+        RobustLogNorm module;
+        std::map<std::string, std::string> parameters;
+        UpdateParameters();
+        UpdateParameterList(parameters);
+        std::cout << "trying to compute error" << std::endl;
+        std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
+        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
+    //    module.PrepareBBData();
+        kipl::base::TImage<float,2> mymask;
+
+        float error = module.GetInterpolationError(mymask);
+        std::cout << error << std::endl;
+
+        // display interpolation error
+        ui->errorBrowser->setText(QString::number(error));
+
+        // display computed mask
+    //    kipl::base::TImage<float,2> mymask = module.GetMaskImage();
+        float lo,hi;
+        const size_t NHist=512;
+        size_t hist[NHist];
+        float axis[NHist];
+        size_t nLo=0;
+        size_t nHi=0;
+        kipl::base::Histogram(mymask.GetDataPtr(),mymask.Size(),hist,NHist,0.0f,0.0f,axis);
+        kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+        lo=axis[nLo];
+        hi=axis[nHi];
+        ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.Dims(), lo,hi);
+    }
 
 }
