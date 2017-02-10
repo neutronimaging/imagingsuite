@@ -1216,6 +1216,18 @@ void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
 
 }
 
+void ReferenceImageCorrection::SetDoseList(float *doselist){
+
+    if (m_nProj!=0) {
+        dosesamplelist = new float[m_nProj];
+        memcpy(dosesamplelist, doselist, sizeof(float)*m_nProj);
+    }
+    else {
+        throw ImagingException("m_nProj was not set before calling ReferenceImageCorrection::SetDoseList",__FILE__,__LINE__);
+    }
+
+}
+
 
 void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo)
 {
@@ -1250,6 +1262,14 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
 //        float *int_par = new float[6*m_nProj];
         sample_bb_interp_parameters = InterpolateParametersGeneric(sample_bb_parameters);
+
+        // try to add here the doselist stuff
+
+        for (size_t i=0; i<m_nProj; i++){
+            for (size_t j=0; j<6; j++){
+                sample_bb_interp_parameters[j+i*6] *= (dosesamplelist[i]/tau);
+            }
+        }
 
 //        std::cout << "prova InterpolateParametersGeneric" << std::endl;
 //        for (size_t i=0; i<m_nProj; i++){

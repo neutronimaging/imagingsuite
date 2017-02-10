@@ -78,6 +78,7 @@ public:
     void SetInterpolationOrderY(eInterpMethodY eim_y);
 
     void SetAngles(float *ang, size_t nProj, size_t nBB); /// set angles and number of proj and images with BB, to be used for more general interpolation
+    void SetDoseList(float *doselist); /// set dose list for sample images in the BB dose roi, it has to be called after SetAngles for the right definition of m_nProj
 
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); /// 2D process
     void Process(kipl::base::TImage<float,3> &img, float *dose); /// 3D process
@@ -151,6 +152,7 @@ protected:
     float angles[4]; /// first and last angles of nProj and nBBImages, respectively
     size_t radius; /// radius value for BB mask creation
     float tau; /// mean pattern transmission
+    float *dosesamplelist; /// list of doses for sample images computed at dose BB roi, to be used in the Interpolate BBOption
 };
 
 }
