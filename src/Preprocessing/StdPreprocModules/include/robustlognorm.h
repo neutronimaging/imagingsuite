@@ -101,6 +101,12 @@ protected:
                                                         float doseBias,
                                                         ReconConfig &config, float &dose); /// Loader function and dose computation for BB reference images (OB with BB and sample with BB)
 
+    virtual float DoseBBLoader(std::string fname,
+                                 int firstIndex,
+                                 float initialDose,
+                                 float doseBias,
+                                 ReconConfig &config); /// Loader function that only compute Dose in the BB dose roi , whitout loading the entire image
+
 
     float computedose(kipl::base::TImage<float,2>&img);
 

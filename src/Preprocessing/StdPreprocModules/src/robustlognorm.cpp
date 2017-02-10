@@ -336,7 +336,7 @@ void RobustLogNorm::PrepareBBData(){
 
     float *temp_parameters;
     float *bb_sample_parameters;
-    double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+    size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
     size_t step = (nProj)/(nBBSampleCount);
 
 
@@ -356,6 +356,16 @@ void RobustLogNorm::PrepareBBData(){
                      float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
                      m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
+                     // with this it is much more slower.. I guess because I read every projection instead of only the one related to the sample....
+                     float *doselist = new float[nProj];
+                     for (size_t i=0; i<int(nProj); i++) {
+//                         img = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1, 1.0f,fdarkBBdose,m_Config, doselist[i]);
+                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config);
+                     }
+
+                     m_corrector.SetDoseList(doselist);
+                     delete [] doselist;
+
                      for (size_t i=0; i<nBBSampleCount; i++) {
 
                          std::cout << i << std::endl;
@@ -368,13 +378,14 @@ void RobustLogNorm::PrepareBBData(){
                          std::cout << "index: " << index << std::endl;
 
 //                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i*step, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // this is not generic for different multiple BB/projections..
-                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
+
 //                         std::cout << "reading image......" << m_Config.ProjectionInfo.sFileMask << " " << m_Config.ProjectionInfo.nFirstIndex+index<< std::endl;
 
-                         // in the first case compute the mask again (should not be necessary in well acquired datasets
+                         // in the first case compute the mask again (should not be necessary in well acquired datasets) however this requires that the first image (or at least one) of sample image with BB has the same angle of the sample image without BB
                          if (i==0) {
 
 
+                             sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // read again only for i==0
                              kipl::base::TImage<float,2> mask(sample.Dims());
                              mask = 0.0f;
 
@@ -405,8 +416,8 @@ void RobustLogNorm::PrepareBBData(){
 
                                  for(size_t j=0; j<6; j++) {
 
-                                           temp_parameters[j]/=fBlackDoseSample;
-                                           temp_parameters[j]*=(dosesample/tau); // not any more in referenceimagecorrection::computelognorm
+                                           temp_parameters[j]/=(fBlackDoseSample);
+//                                           temp_parameters[j]*=(dosesample/tau); // not any more in referenceimagecorrection::computelognorm
 
                                  }
                              }
@@ -428,8 +439,8 @@ void RobustLogNorm::PrepareBBData(){
                              temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
 
                              for(size_t j=0; j<6; j++) {
-                              temp_parameters[j]/=fBlackDoseSample;
-                              temp_parameters[j]*=(dosesample/tau);
+                              temp_parameters[j]/=(fBlackDoseSample);
+//                              temp_parameters[j]*=(dosesample/tau);
                              }
 
                              memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6); // copio gli altri mano mano
@@ -465,7 +476,7 @@ void RobustLogNorm::PrepareBBData(){
                      int index;
                      index = GetnProjwithAngle(ffirstAngle);
                      std::cout << "index: " << index << std::endl;
-                     sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,0.0f,m_Config, dosesample); // load the projection with angle closest to the first BB sample data
+                     sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // load the projection with angle closest to the first BB sample data
 
                      std::cout << "sample  sizes: " << sample.Size(0) << " " << sample.Size(1) <<  std::endl;
                      std::cout << "dark sizes: " << dark.Size(0) << " " << dark.Size(1) <<  std::endl;
@@ -1013,4 +1024,32 @@ kipl::base::TImage<float,2> RobustLogNorm::BBLoader(std::string fname,
     msg.str(""); msg<<"Loaded reference image (dose="<<dose<<")";
     logger(kipl::logging::Logger::LogMessage,msg.str());
     return refimg;
+}
+
+float RobustLogNorm::DoseBBLoader(std::string fname,
+                             int firstIndex,
+                             float initialDose,
+                             float doseBias,
+                             ReconConfig &config) {
+
+    std::string fmask=fname;
+    float tmpdose = 0.0f;
+    float dose;
+
+    std::string filename,ext;
+    ProjectionReader reader;
+
+    kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+
+    tmpdose=bUseNormROIBB ? reader.GetProjectionDose(filename,
+                config.ProjectionInfo.eFlip,
+                config.ProjectionInfo.eRotate,
+                config.ProjectionInfo.fBinning,
+                doseBBroi) : initialDose;
+
+    tmpdose   = tmpdose - doseBias;
+    dose      = tmpdose;
+
+    return dose;
+
 }
