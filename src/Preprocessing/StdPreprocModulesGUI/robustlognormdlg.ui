@@ -74,8 +74,13 @@
          <string>ImageWeightedAverage</string>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>0</number>
         </property>
+        <item>
+         <property name="text">
+          <string>ImageWeightedAverage</string>
+         </property>
+        </item>
         <item>
          <property name="text">
           <string>ImageAverage</string>
@@ -83,12 +88,12 @@
         </item>
         <item>
          <property name="text">
-          <string>ImageMax</string>
+          <string>ImageMedian</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>ImageMedian</string>
+          <string>ImageMax</string>
          </property>
         </item>
         <item>
@@ -99,11 +104,6 @@
         <item>
          <property name="text">
           <string>ImageSum</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>ImageWeightedAverage</string>
          </property>
         </item>
        </widget>
@@ -152,7 +152,7 @@
         </item>
         <item>
          <property name="text">
-          <string>BBLogNorm</string>
+          <string>Norm</string>
          </property>
         </item>
        </widget>
@@ -178,6 +178,17 @@
       </item>
       <item>
        <widget class="QComboBox" name="combo_BBoptions">
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+        <property name="currentText">
+         <string>Interpolate</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>noBB</string>
+         </property>
+        </item>
         <item>
          <property name="text">
           <string>Interpolate</string>
@@ -191,6 +202,11 @@
         <item>
          <property name="text">
           <string>OneToOne</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ExternalBB</string>
          </property>
         </item>
        </widget>

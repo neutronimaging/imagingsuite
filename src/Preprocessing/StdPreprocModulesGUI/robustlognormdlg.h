@@ -53,6 +53,8 @@ private slots:
 
     void on_errorButton_clicked();
 
+    void on_combo_BBoptions_activated(const QString &arg1);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -93,6 +95,8 @@ private:
     ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX m_xInterpOrder;
     ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY m_yInterpOrder;
     int m_nWindow;
+
+    RobustLogNorm module;
 
 
 

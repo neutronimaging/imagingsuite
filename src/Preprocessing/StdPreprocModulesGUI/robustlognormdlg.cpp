@@ -10,6 +10,7 @@
 
 #include <QFileDialog>
 #include <QImage>
+#include <QMessageBox>
 
 #include <ProjectionReader.h>
 #include <base/thistogram.h>
@@ -96,12 +97,6 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
     }
 
     UpdateDialog();
-    ui->buttonPreviewOBBB->click();
-    ui->buttonPreviewsampleBB->click();
-    ui->errorButton->click();
-//    UpdateParameters();
-    UpdateDoseROI();
-    UpdateBBROI();
 
     try {
         ApplyParameters();
@@ -110,6 +105,13 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         logger(kipl::logging::Logger::LogError,e.what());
         return false;
     }
+
+
+    if (enum2string(m_BBOptions)=="noBB" || enum2string(m_BBOptions)=="ExternalBB") {
+        ui->tabWidget->setTabEnabled(1, false);
+    } // not sure this is the right place
+
+
 
     int res=QDialog::exec();
 
@@ -132,6 +134,30 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
 void RobustLogNormDlg::ApplyParameters(){
 
 std::cout << "apply parameters" << std::endl;
+
+ui->buttonPreviewOBBB->click();
+ui->buttonPreviewsampleBB->click();
+ui->errorButton->click();
+//    UpdateParameters();
+UpdateDoseROI();
+UpdateBBROI();
+
+
+std::map<std::string, std::string> parameters;
+UpdateParameterList(parameters);
+
+try {
+    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+}
+
+catch (kipl::base::KiplException &e) {
+    QMessageBox errdlg(this);
+    errdlg.setText("Failed to configure RobustLogNorm module.");
+
+    logger(kipl::logging::Logger::LogWarning,e.what());
+    return ;
+
+}
 
 
 
@@ -165,6 +191,8 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->combo_BBoptions->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
     ui->combo_IntMeth_X->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
     ui->combo_IntMeth_Y->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
+
+
 
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinWindow->setValue(m_nWindow);
@@ -528,7 +556,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
     if (rect.width()*rect.height()!=0) {
 
         ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
-        RobustLogNorm module;
+
         std::map<std::string, std::string> parameters;
         UpdateParameters();
         UpdateParameterList(parameters);
@@ -559,4 +587,16 @@ void RobustLogNormDlg::on_errorButton_clicked()
         ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.Dims(), lo,hi);
     }
 
+}
+
+void RobustLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
+{
+
+    std::cout << "arg1: " << arg1.toStdString() << std::endl;
+    if (arg1.toStdString()=="noBB" || arg1.toStdString()=="ExternalBB"){
+        ui->tabWidget->setTabEnabled(1,false);
+    }
+    else {
+        ui->tabWidget->setTabEnabled(1,true);
+    }
 }
