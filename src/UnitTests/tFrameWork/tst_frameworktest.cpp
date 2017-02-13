@@ -8,6 +8,7 @@
 #include <io/io_tiff.h>
 
 #include <ProjectionReader.h>
+#include <ReconHelpers.h>
 #include <ReconException.h>
 
 
@@ -20,6 +21,8 @@ public:
 
 private Q_SLOTS:
     void testProjectionReader();
+    void testBuildFileList();
+    void testBuildFileList2();
 
 private:
     kipl::base::TImage<unsigned short,2> m_img;
@@ -560,6 +563,61 @@ void FrameWorkTest::testProjectionReader()
     }
 }
 
+void FrameWorkTest::testBuildFileList()
+{
+    // File list
+    std::ofstream listfile("listfile.txt");
+    std::ostringstream fname,msg;
+    size_t N=10;
+    size_t i=0;
+    for (i=0; i<N; ++i)
+    {
+        listfile<<18*i<<",file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
+    }
+
+    listfile<<18*i<<", file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
+    ++i;listfile<<18*i<<"\tfile_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
+    ++i;listfile<<18*i<<"\t  file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
+    //++i;listfile<<"file_"<<setfill('0') << setw(5) << i <<".fits,"<<18*i<<std::endl;
+
+    ReconConfig config;
+
+    config.ProjectionInfo.sFileMask="listfile.txt";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=13;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList);
+
+    QVERIFY(ProjectionList.size()==N+3);
+
+    i=0;
+    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); ++it,++i)
+    {
+        fname.str("");
+        msg.str("");
+        fname<<"file_"<<setfill('0') << setw(5) << i <<".fits";
+        msg<<fname.str()<<"!="<<it->second.name;
+        QVERIFY2(it->second.name==fname.str(),msg.str().c_str());
+        QVERIFY(it->second.angle==static_cast<float>(18*i));
+    }
+}
+
+void FrameWorkTest::testBuildFileList2()
+{
+    size_t N=50;
+    ReconConfig config;
+
+    config.ProjectionInfo.sFileMask="ct2.csv";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=N;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList,'\r');
+
+    QVERIFY(ProjectionList.size()==N);
+
+}
 QTEST_APPLESS_MAIN(FrameWorkTest)
 
 #include "tst_frameworktest.moc"

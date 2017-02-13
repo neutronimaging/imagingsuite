@@ -267,15 +267,28 @@ void MuhRecMainWindow::PreviewProjection(int x)
     }
 
     msg.str("");
+    std::cout<<"Preview"<<endl;
     try {
         std::string fmask=ui->editProjectionMask->text().toStdString();
 
         std::string name, ext;
-        kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
+//        kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
+        cout<<"prelist"<<endl;
+        std::map<float,ProjectionInfo> fileList;
+        BuildFileList(&m_Config,&fileList);
+        cout<<"postlist "<<fileList.size()<<endl;
+        int i=0;
+        auto it=fileList.begin();
+        for (it=fileList.begin(); it!=fileList.end(); ++it,++i) {
+           if (i==ui->sliderProjections->value())
+               break;
+        }
 
+        name=it->second.name;
+        std::cout<<name<<std::endl;
         if (QFile::exists(QString::fromStdString(name))) {
             int sliderval=ui->sliderProjections->value();
-            m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
+            m_PreviewImage=reader.Read(name,
                             static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                             static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                             static_cast<float>(ui->spinProjectionBinning->value()),NULL);
@@ -1428,13 +1441,6 @@ void MuhRecMainWindow::UpdateDialog()
     }
 
     if(ui->checkSubVolumeCBCT->checkState()){
-//        ui->spinSubVolumeSizeX0->setEnabled(true);
-//        ui->spinSubVolumeSizeX1->setEnabled(true);
-//        ui->spinSubVolumeSizeY0->setEnabled(true);
-//        ui->spinSubVolumeSizeY1->setEnabled(true);
-//        ui->spinSubVolumeSizeZ0->setEnabled(true);
-//        ui->spinSubVolumeSizeZ1->setEnabled(true);
-
         ui->spinSubVolumeSizeX0->setValue(m_Config.MatrixInfo.voi[0]);
         ui->spinSubVolumeSizeX1->setValue(m_Config.MatrixInfo.voi[1]);
         ui->spinSubVolumeSizeY0->setValue(m_Config.MatrixInfo.voi[2]);

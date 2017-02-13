@@ -32,8 +32,8 @@ struct RECONFRAMEWORKSHARED_EXPORT ProjectionInfo {
 	float weight;
 };
 
-bool RECONFRAMEWORKSHARED_EXPORT BuildFileList( ReconConfig const * const config,
-                   std::map<float, ProjectionInfo> * ProjectionList,bool ignore_skiplist=false);
+bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(ReconConfig const * const config,
+                   std::map<float, ProjectionInfo> * ProjectionList, bool ignore_skiplist=false, char eolchar='\n');
 
 bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(std::string sFileMask, std::string sPath,
                    int nFirstIndex, int nLastIndex, int nProjectionStep,
