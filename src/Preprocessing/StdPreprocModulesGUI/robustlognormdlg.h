@@ -55,6 +55,10 @@ private slots:
 
     void on_combo_BBoptions_activated(const QString &arg1);
 
+    void on_button_OB_BB_ext_clicked();
+
+    void on_button_BBexternal_path_clicked();
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();

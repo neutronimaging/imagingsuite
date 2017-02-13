@@ -352,7 +352,7 @@
         <widget class="QLineEdit" name="edit_OBBB_ext"/>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="button_OB_BB_ext">
          <property name="text">
           <string>Browse</string>
          </property>

@@ -39,7 +39,7 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     flastAngle(360.0f),
     nBBextCount(0),
     nBBextFirstIndex(0),
-    bUseExternalBB(false),
+    bUseExternalBB(false), //this two boolean most likely are unused here. to be set in the module depending on the BB Option
     bUseBB(false)
 {
 
@@ -209,6 +209,11 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->combo_IntMeth_X->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
     ui->combo_IntMeth_Y->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
 
+    ui->edit_OBBB_ext->setText(QString::fromStdString(blackbodyexternalname));
+    ui->edit_BB_external->setText(QString::fromStdString(blackbodysampleexternalname));
+    ui->spin_first_extBB->setValue(nBBextFirstIndex);
+    ui->spin_count_ext_BB->setValue(nBBextCount);
+
 
 
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
@@ -258,6 +263,11 @@ void RobustLogNormDlg::UpdateParameters(){
     m_nWindow = ui->spinWindow->value();
     ffirstAngle = ui->spinFirstAngle->value();
     flastAngle = ui->spinLastAngle->value();
+
+    blackbodyexternalname = ui->edit_OBBB_ext->text().toStdString();
+    blackbodysampleexternalname = ui->edit_BB_external->text().toStdString();
+    nBBextFirstIndex = ui->spin_first_extBB->value();
+    nBBextCount = ui->spin_count_ext_BB->value();
 
     std::cout << "update parameters " << std::endl;
     std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
@@ -623,4 +633,57 @@ void RobustLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
     else {
         ui->tabWidget->setTabEnabled(1,true);
     }
+}
+
+void RobustLogNormDlg::on_button_OB_BB_ext_clicked()
+{
+    QString ob_bb_ext_dir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the open beam images with BB",
+                                                   ui->edit_OBBB_ext->text());
+
+    if (!ob_bb_ext_dir.isEmpty()) {
+        std::string pdir=ob_bb_ext_dir.toStdString();
+
+//        #ifdef _MSC_VER
+//        const char slash='\\';
+//        #else
+//        const char slash='/';
+//        #endif
+//        ptrdiff_t pos=pdir.find_last_of(slash);
+
+//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+//        std::string fname=pdir.substr(pos+1);
+//        kipl::io::DirAnalyzer da;
+//        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+        ui->edit_OBBB_ext->setText(QString::fromStdString(pdir)); // I want the entire filename
+    }
+
+}
+
+void RobustLogNormDlg::on_button_BBexternal_path_clicked()
+{
+    QString sample_bb_ext_dir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the open beam images with BB",
+                                                   ui->edit_BB_external->text());
+
+    if (!sample_bb_ext_dir.isEmpty()) {
+        std::string pdir=sample_bb_ext_dir.toStdString();
+
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
+
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+        ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
+    }
+
+
 }
