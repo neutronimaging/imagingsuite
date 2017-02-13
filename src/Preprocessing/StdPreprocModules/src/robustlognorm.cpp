@@ -42,12 +42,17 @@ RobustLogNorm::RobustLogNorm() :
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
     ferror(0.0f),
     ffirstAngle(0.0f),
-    flastAngle(360.0f)
+    flastAngle(360.0f),
+    nBBextCount(0),
+    nBBextFirstIndex(0),
+    bUseExternalBB(false)
 {
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
     blackbodyname = "./";
     blackbodysamplename = "./";
+    blackbodyexternalname = "./";
+    blackbodysampleexternalname = "./";
 
 }
 
@@ -95,6 +100,15 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
     nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
     nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
+
+    blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
+    blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
+    nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
+    nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
+    bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB"));
+
+
+
     tau = GetFloatParameter(parameters, "tau");
     radius = GetIntParameter(parameters, "radius");
     GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
@@ -102,6 +116,8 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
     ffirstAngle = GetFloatParameter(parameters, "firstAngle");
     flastAngle = GetFloatParameter(parameters, "lastAngle");
+
+    bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB")); // it was not in the parameters list before/
 
 
 
@@ -124,6 +140,9 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     //check on dose BB roi size
     if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
         bUseNormROIBB=false;
+    }
+    else {
+        bUseNormROIBB = true;
     }
 
 
@@ -170,6 +189,12 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
     parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
 
+    parameters["BB_OB_ext_name"] = blackbodyexternalname;
+    parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
+    parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
+    parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
+    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 
     return parameters;
 }
@@ -207,8 +232,8 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
 
     // prepare BB data
-    std::cout << enum2string(m_BBOptions)<< std::endl;
-    if (enum2string(m_BBOptions)!="noBB" && nBBCount!=0 && nBBSampleCount!=0) {
+    std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
+    if (enum2string(m_BBOptions)!="noBB" && enum2string(m_BBOptions)!="ExternalBB" && nBBCount!=0 && nBBSampleCount!=0) {
         PrepareBBData();
         bUseBB = true;
     }

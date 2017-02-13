@@ -45,6 +45,12 @@ protected:
     std::string blackbodyname; /// name mask for OB image with BBs
     std::string blackbodysamplename; /// name mask for sample image with BBs
 
+    std::string blackbodyexternalname;
+    std::string blackbodysampleexternalname;
+
+    size_t nBBextCount; /// number of preprocessed BB images;
+    size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
+
     size_t nOBCount; /// number of OB images
     size_t nOBFirstIndex; /// first index in filename for OB images
     size_t nDCCount; /// number of DC images
@@ -67,6 +73,7 @@ protected:
     bool bUseLUT; /// boolean value on the use of LUT (not used)
     bool bUseWeightedMean;
     bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
+    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
 
     bool bPBvariante;
