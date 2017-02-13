@@ -196,8 +196,11 @@ void ViewGeometryListDialog::ComputeTilt()
             msg.str("");
             msg<<"Center="<<m_fCenter<<", k="<<m_fTilt<<", R2="<<R2;
             logger(kipl::logging::Logger::LogMessage, msg.str());
-            m_fPivot  = slice[minsliceidx];
-            m_fCenter += m_fPivot*m_fTilt;
+//            m_fPivot  = slice[minsliceidx];
+
+            ConfigListItem *item = dynamic_cast<ConfigListItem *>(ui->listWidget->item(0));
+            m_fPivot  = floor((item->config.ProjectionInfo.projection_roi[3]+item->config.ProjectionInfo.projection_roi[1])/2);
+            m_fCenter+= m_fPivot*m_fTilt;
             m_fTilt   = -180.0f / fPi *atan(m_fTilt);
 
             m_eChangeConfigFields = m_eChangeConfigFields | (int)ConfigField_Tilt;
