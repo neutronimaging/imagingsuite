@@ -36,6 +36,7 @@ public:
     virtual float GetInterpolationError(kipl::base::TImage<float,2> &mask); /// computes and returns interpolation error and mask on OB image with BBs
     virtual kipl::base::TImage<float, 2> GetMaskImage();
     virtual void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is now called in LoadReferenceImages
+    virtual void LoadExternalBBData(); /// load BB images pre-processed elsewhere
 
 protected:
     ReconConfig m_Config;

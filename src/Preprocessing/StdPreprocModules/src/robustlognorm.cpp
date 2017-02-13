@@ -129,6 +129,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
 
+    // do i need this here?
     if (roi_bb_x>0 && roi_bb_y>0) {
         std::cout << "have roi for BB!" << std::endl;
     }
@@ -144,6 +145,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     else {
         bUseNormROIBB = true;
     }
+
 
 
 
@@ -217,6 +219,10 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
                  m_Config.ProjectionInfo.projection_roi[2] << " " <<
                  m_Config.ProjectionInfo.projection_roi[3] << std::endl;
 
+
+
+
+
     // new code
     kipl::base::TImage<float,2> flat, dark;
 
@@ -231,25 +237,70 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 //    std::cout << "computed doses: " << std::endl;
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
 
+    switch (m_BBOptions){
+    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+        bUseBB = false;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+        bUseBB = false; // to evaluate
+        bUseExternalBB = true;
+        break;
+    }
+    default: throw ReconException("Unknown BBOption method in RobustLogNorm::Configure",__FILE__,__LINE__);
+
+    }
+
     // prepare BB data
     std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
-    if (enum2string(m_BBOptions)!="noBB" && enum2string(m_BBOptions)!="ExternalBB" && nBBCount!=0 && nBBSampleCount!=0) {
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
         PrepareBBData();
-        bUseBB = true;
+//        bUseBB = true;
+        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+        m_corrector.SetBBInterpRoi(subroi);
+    }
+
+    if (bUseExternalBB){
+        LoadExternalBBData();
     }
 
 
 
 
-    if (bUseBB) {
-            size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
-            m_corrector.SetBBInterpRoi(subroi);
-    }
+//    if (bUseBB) {
+////        if (nBBCount!=0 && nBBSampleCount!=0) {PrepareBBData();}
+//            size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+//            m_corrector.SetBBInterpRoi(subroi);
+//    }
 
-    m_corrector.SetReferenceImages(&flat, &dark, bUseBB, fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
+    m_corrector.SetReferenceImages(&flat, &dark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
 
 }
 
+void RobustLogNorm::LoadExternalBBData(){
+
+    std::cout << "LoadExternalBBData()" << std::endl;
+    if (blackbodyexternalname.empty())
+        throw ReconException("The pre-processed open beam with BB image mask is empty", __FILE__, __LINE__);
+    if (blackbodysampleexternalname.empty() || nBBextCount==0)
+        throw ReconException("The pre-processed sample with BB image mask is empty", __FILE__, __LINE__);
+}
 
 void RobustLogNorm::PrepareBBData(){
 
@@ -645,6 +696,8 @@ void RobustLogNorm::PrepareBBData(){
          case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB) : {
              throw ReconException("trying to switch to case ImagingAlgorithms::ReferenceImageCorrection::ExternalBB in PrepareBBdata",__FILE__,__LINE__);
          }
+
+         default: throw ReconException("trying to switch to unknown BBOption in PrepareBBdata",__FILE__,__LINE__);
 
          }
 
