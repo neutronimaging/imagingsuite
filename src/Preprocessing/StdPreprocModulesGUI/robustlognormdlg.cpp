@@ -36,13 +36,20 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
     ffirstAngle(0.0f),
-    flastAngle(360.0f)
+    flastAngle(360.0f),
+    nBBextCount(0),
+    nBBextFirstIndex(0),
+    bUseExternalBB(false),
+    bUseBB(false)
 {
 
     blackbodyname = "somename";
     blackbodysamplename = "somename";
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3] = 0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
+
+    blackbodyexternalname = "./";
+    blackbodysampleexternalname = "./";
 
     try{
             ui->setupUi(this);
@@ -89,6 +96,16 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         flastAngle = GetFloatParameter(parameters,"lastAngle");
         string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
         string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
+
+        blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
+        blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
+        nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
+        nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
+        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
+        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
+
+
+
 
     }
     catch(ModuleException &e){
@@ -280,6 +297,13 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
     parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
     parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
+
+    parameters["BB_OB_ext_name"] = blackbodyexternalname;
+    parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
+    parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
+    parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
+    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
 
 
 

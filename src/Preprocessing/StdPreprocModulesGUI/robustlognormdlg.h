@@ -85,10 +85,18 @@ private:
     float ffirstAngle;
     float flastAngle;
 
+    std::string blackbodyexternalname;
+    std::string blackbodysampleexternalname;
+
+    size_t nBBextCount; /// number of preprocessed BB images;
+    size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
+
     float tau;
     bool bPBvariante;
     bool bUseNormROI; /// boolean value on the use of the norm roi
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
+    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
+    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
