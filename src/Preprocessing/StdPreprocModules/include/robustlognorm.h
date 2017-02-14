@@ -115,6 +115,13 @@ protected:
                                  float doseBias,
                                  ReconConfig &config); /// Loader function that only compute Dose in the BB dose roi , whitout loading the entire image
 
+    virtual kipl::base::TImage<float,2> BBExternalLoader(std::string fname,
+                                                         ReconConfig &config); /// Loader function for externally created BB, open beam case (only 1 image)
+    virtual kipl::base::TImage<float,3> BBExternalLoader(std::string fname,
+                                                         int N,
+                                                       int firstIndex,
+                                                       ReconConfig &config); /// Loader function for externally created BB, sample image case (nProj images with filemask)
+
 
     float computedose(kipl::base::TImage<float,2>&img);
 

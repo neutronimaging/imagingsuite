@@ -276,7 +276,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
         m_corrector.SetBBInterpRoi(subroi);
     }
 
-    if (bUseExternalBB){
+    if (bUseExternalBB && nBBextCount!=0){
         LoadExternalBBData();
     }
 
@@ -300,6 +300,14 @@ void RobustLogNorm::LoadExternalBBData(){
         throw ReconException("The pre-processed open beam with BB image mask is empty", __FILE__, __LINE__);
     if (blackbodysampleexternalname.empty() || nBBextCount==0)
         throw ReconException("The pre-processed sample with BB image mask is empty", __FILE__, __LINE__);
+
+    kipl::base::TImage<float,2> bb_ext;
+    kipl::base::TImage<float,3> bb_sample_ext;
+    bb_ext = BBExternalLoader(blackbodyexternalname, m_Config);
+//    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
+    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, nBBextFirstIndex, m_Config);
+    m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext);
+
 }
 
 void RobustLogNorm::PrepareBBData(){
@@ -1143,3 +1151,67 @@ float RobustLogNorm::DoseBBLoader(std::string fname,
     return dose;
 
 }
+
+kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, ReconConfig &config){
+
+
+    kipl::base::TImage<float,2> img;
+
+    if (fname.empty())
+        throw ReconException("The reference image file name mask is empty",__FILE__,__LINE__);
+
+    ProjectionReader reader;
+
+        img = reader.Read(fname,
+                config.ProjectionInfo.eFlip,
+                config.ProjectionInfo.eRotate,
+                config.ProjectionInfo.fBinning,
+                config.ProjectionInfo.roi);
+
+        return img;
+
+}
+
+kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, int N, int firstIndex, ReconConfig &config){
+
+
+    kipl::base::TImage <float, 2> tempimg;
+    kipl::base::TImage<float, 3> img;
+
+
+
+    if (fname.empty() && N!=0)
+        throw ReconException("The reference image file name mask is empty",__FILE__,__LINE__);
+
+    std::string fmask=fname;
+
+    std::string filename,ext;
+    ProjectionReader reader;
+
+    if (N!=0) {
+
+
+        for (int i=0; i<N; ++i) {
+            kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
+            std::cout << filename << std::endl;
+
+            tempimg=reader.Read(filename,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                   config.ProjectionInfo.roi);
+            if (i==0){
+                size_t dims[]={tempimg.Size(0), tempimg.Size(1),static_cast<size_t>(N)};
+                img.Resize(dims);
+            }
+            memcpy(img.GetLinePtr(0,i),tempimg.GetDataPtr(),tempimg.Size()*sizeof(float));
+
+        }
+    }
+
+
+
+    return img;
+
+}
+
