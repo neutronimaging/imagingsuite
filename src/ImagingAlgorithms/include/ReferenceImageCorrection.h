@@ -93,6 +93,7 @@ public:
     kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
+    void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext);
 
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
@@ -124,6 +125,9 @@ protected:
     kipl::base::TImage<float,2> m_BB_sample_Interpolated; // computed in process 3d every time. but in the right way!
     kipl::base::TImage<float,2> m_DoseBBsample_image;
     kipl::base::TImage<float,2> m_DoseBBflat_image;
+
+    kipl::base::TImage<float,2> m_OB_BB_ext; /// externally computed OB image with BBs
+    kipl::base::TImage<float,3> m_BB_sample_ext; /// externally computed sample image with BBs
 
 
 

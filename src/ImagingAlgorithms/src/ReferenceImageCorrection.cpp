@@ -1781,6 +1781,26 @@ float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
 }
 
+void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext){
+
+    m_OB_BB_ext.Resize(bb_ext.Dims());
+    m_BB_sample_ext.Resize(bb_sample_ext.Dims());
+    memcpy(m_OB_BB_ext.GetDataPtr(), bb_ext.GetDataPtr(), sizeof(float)*bb_ext.Size());
+    memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
+//    m_OB_BB_ext = bb_ext;
+//    m_BB_sample_ext = bb_sample_ext;
+
+    std::cout << "SetExternalBBimages"<< std::endl;
+    kipl::io::WriteTIFF32(m_OB_BB_ext,"m_OB_BB_ext.tif");
+
+    kipl::base::TImage<float,2> slice(m_OB_BB_ext.Dims());
+    memcpy(slice.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,0), sizeof(float)*bb_ext.Size());
+    kipl::io::WriteTIFF32(slice,"slice.tif");
+
+
+
+}
+
 }
 
 
