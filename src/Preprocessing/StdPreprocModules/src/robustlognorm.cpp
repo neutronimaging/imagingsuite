@@ -289,7 +289,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 //            m_corrector.SetBBInterpRoi(subroi);
 //    }
 
-    m_corrector.SetReferenceImages(&flat, &dark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
+    m_corrector.SetReferenceImages(&flat, &dark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
 
 }
 
@@ -301,12 +301,22 @@ void RobustLogNorm::LoadExternalBBData(){
     if (blackbodysampleexternalname.empty() || nBBextCount==0)
         throw ReconException("The pre-processed sample with BB image mask is empty", __FILE__, __LINE__);
 
+    if (nBBextCount!=((m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex-1)/m_Config.ProjectionInfo.nProjectionStep)){
+        std::cout << nBBextCount << std::endl;
+        std::cout << ((m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex-1)/m_Config.ProjectionInfo.nProjectionStep)<< std::endl;
+
+//            throw ReconException("Number of externally processed BB images is not the same as the number of projections", __FILE__, __LINE__);
+}
+
     kipl::base::TImage<float,2> bb_ext;
     kipl::base::TImage<float,3> bb_sample_ext;
-    bb_ext = BBExternalLoader(blackbodyexternalname, m_Config);
+    float dose;
+    float *doselist = new float[nBBextCount];
+    bb_ext = BBExternalLoader(blackbodyexternalname, m_Config, dose);
 //    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
-    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, nBBextFirstIndex, m_Config);
-    m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext);
+    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, nBBextFirstIndex, m_Config, doselist);
+
+    m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
 
 }
 
@@ -1152,7 +1162,7 @@ float RobustLogNorm::DoseBBLoader(std::string fname,
 
 }
 
-kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, ReconConfig &config){
+kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, float &dose){
 
 
     kipl::base::TImage<float,2> img;
@@ -1168,11 +1178,19 @@ kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, 
                 config.ProjectionInfo.fBinning,
                 config.ProjectionInfo.roi);
 
+        dose = bUseNormROI ? reader.GetProjectionDose(fname,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    nOriginalNormRegion) : 0.0f;
+
+        std::cout << dose << std::endl;
+
         return img;
 
 }
 
-kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, int N, int firstIndex, ReconConfig &config){
+kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, int N, int firstIndex, ReconConfig &config, float *doselist){
 
 
     kipl::base::TImage <float, 2> tempimg;
@@ -1182,6 +1200,8 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
 
     if (fname.empty() && N!=0)
         throw ReconException("The reference image file name mask is empty",__FILE__,__LINE__);
+
+    float *mylist = new float[N];
 
     std::string fmask=fname;
 
@@ -1193,7 +1213,7 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
 
         for (int i=0; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
-            std::cout << filename << std::endl;
+//            std::cout << filename << std::endl;
 
             tempimg=reader.Read(filename,
                     config.ProjectionInfo.eFlip,
@@ -1204,11 +1224,23 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
                 size_t dims[]={tempimg.Size(0), tempimg.Size(1),static_cast<size_t>(N)};
                 img.Resize(dims);
             }
+
+            mylist[i] = bUseNormROIBB ? reader.GetProjectionDose(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : 0.0f;
+
+
             memcpy(img.GetLinePtr(0,i),tempimg.GetDataPtr(),tempimg.Size()*sizeof(float));
 
         }
+        memcpy(doselist, mylist, sizeof(float)*N);
+
+
     }
 
+     delete [] mylist;
 
 
     return img;
