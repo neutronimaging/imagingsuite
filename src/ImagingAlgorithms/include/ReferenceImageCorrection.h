@@ -62,6 +62,7 @@ public:
     void SetReferenceImages(kipl::base::TImage<float,2> *ob,
             kipl::base::TImage<float,2> *dc,
             bool useBB,
+            bool useExtBB,
             float dose_OB,
             float dose_DC,
             bool normBB,
@@ -93,11 +94,12 @@ public:
     kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
-    void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext);
+    void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
 
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
     void PrepareReferencesBB(); /// prepare reference images in case of BB
+    void PrepareReferencesExtBB(); /// prepare reference images in case of externally created BB
 
     float *SolveLinearEquation(std::map<std::pair<size_t,size_t>, float> &values, float &error);
 
@@ -116,6 +118,7 @@ protected:
 	bool m_bHaveOpenBeam;
 	bool m_bHaveDarkCurrent;
 	bool m_bHaveBlackBody;
+    bool m_bHaveExternalBlackBody;
 	bool m_bComputeLogarithm;
 
     kipl::base::TImage<float,2> m_OpenBeam;
@@ -128,6 +131,7 @@ protected:
 
     kipl::base::TImage<float,2> m_OB_BB_ext; /// externally computed OB image with BBs
     kipl::base::TImage<float,3> m_BB_sample_ext; /// externally computed sample image with BBs
+    kipl::base::TImage<float,2> m_BB_slice_ext; /// externally computed slice of sample image with BBs
 
 
 
@@ -137,6 +141,10 @@ protected:
     bool m_bHaveBBDoseROI;
 	bool m_bHaveBlackBodyROI;
     bool bPBvariante;
+
+    float fdoseOB_ext; /// dose value in externally computed open beam with BB image in dose roi
+    float *fdose_ext_list; /// dose value list in externally computed sample with BB image in dose roi
+    float fdose_ext_slice; /// dose value of current slice from fdose_ext_list
 
     float *ob_bb_parameters; /// interpolation parameters for the OB BB image
     float *sample_bb_parameters; /// interpolation parameters for the sample image with BB

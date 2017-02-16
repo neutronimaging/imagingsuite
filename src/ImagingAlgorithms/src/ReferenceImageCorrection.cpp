@@ -47,7 +47,9 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_IntMeth_x(SecondOrder_x),
     m_IntMeth_y(SecondOrder_y),
     m_nProj(0),
-    m_nBBimages(0)
+    m_nBBimages(0),
+    m_bHaveExternalBlackBody(false),
+    fdose_ext_slice(0.0f)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -91,14 +93,14 @@ void ReferenceImageCorrection::LoadReferenceImages(std::string path, std::string
 
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
         kipl::base::TImage<float,2> *dc,
-        bool useBB,
+        bool useBB, bool useExtBB,
         float dose_OB,
         float dose_DC,
         bool normBB,
         size_t *roi)
 {
-	m_bHaveOpenBeam=m_bHaveDarkCurrent=m_bHaveBlackBody=false;
-	m_bHaveDoseROI=m_bHaveBlackBodyROI=false;
+//	m_bHaveOpenBeam=m_bHaveDarkCurrent=m_bHaveBlackBody=false; // they are already declared in the
+//	m_bHaveDoseROI=m_bHaveBlackBodyROI=false;
 
 	if (ob!=NULL) {
 		m_bHaveOpenBeam=true;
@@ -156,20 +158,15 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 //        std::cout << "m_DoseBBflat_image image SIZEs: " << m_DoseBBflat_image.Size(0) << " " << m_DoseBBflat_image.Size(1) << std::endl;
         PrepareReferencesBB();
 	}
+    else if (useExtBB){
+        std::cout << "have external BB images!" << std::endl;
+        m_bHaveExternalBlackBody = true;
+        PrepareReferencesExtBB();
+    }
     else {
         PrepareReferences();
     }
 
-
-
-//    std::cout << "roi: " << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3] <<std::endl;
-
-
-//    std::cout << "before prepare references " << std::endl;
-
-
-
-//    std::cout << "after prepare references " << std::endl;
 
 }
 
@@ -280,6 +277,13 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             }
 
 
+        }
+
+        if (m_bHaveExternalBlackBody){
+//            std::cout << "Process HaveExternalBlackBody"<< std::endl;
+            m_BB_slice_ext.Resize(m_OB_BB_ext.Dims());
+            memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+            fdose_ext_slice = fdose_ext_list[i];
         }
 
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
@@ -1617,6 +1621,48 @@ void ReferenceImageCorrection::PrepareReferencesBB() {
 
 }
 
+void ReferenceImageCorrection::PrepareReferencesExtBB(){
+
+    if (m_bHaveExternalBlackBody) {
+
+    const int N=static_cast<int>(m_OpenBeam.Size());
+    float *pFlat=m_OpenBeam.GetDataPtr();
+    float *pDark=m_DarkCurrent.GetDataPtr();
+
+    float dose=1.0f/(m_fOpenBeamDose-m_fDarkDose-fdoseOB_ext);
+
+    float *pFlatBB = m_OB_BB_ext.GetDataPtr();
+
+
+        if (m_bHaveDarkCurrent) {
+            #pragma omp parallel for
+            for (int i=0; i<N; i++) {
+
+                float fProjPixel=pFlat[i]-pDark[i]-pFlatBB[i];
+                if (fProjPixel<=0)
+                    pFlat[i]=0;
+                else
+                    pFlat[i]=log(fProjPixel*(dose));
+
+            }
+        }
+        else {
+
+                #pragma omp parallel for
+                for (int i=0; i<N; i++) {
+
+                    float fProjPixel=pFlat[i]-pFlatBB[i];
+                    if (fProjPixel<=0)
+                        pFlat[i]=0;
+                    else
+                       pFlat[i]=log(fProjPixel*dose);
+                }
+
+        }
+    }
+
+}
+
 int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose)
 {
     dose = dose - m_fDarkDose;
@@ -1634,51 +1680,8 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 //    std::cout << m_bHaveDarkCurrent << " " << m_bHaveOpenBeam << std::endl;
 //    std::cout << "number of pixels: " << N << std::endl;
 
-    if (!m_bHaveBlackBody) {
-
-                if (m_bHaveDarkCurrent) {
-                    if (m_bHaveOpenBeam) {
-            //                #pragma omp parallel for firstprivate(pFlat,pDark)
-
-                                float *pImg=img.GetDataPtr();
-
-                                #pragma omp parallel for
-                                for (int i=0; i<N; i++) {
-
-            //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
-
-                                    float fProjPixel=(pImg[i]-pDark[i]);
-                                    if (fProjPixel<=0)
-                                        pImg[i]=0;
-                                    else
-                                        pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
-
-                                }
-
-                    }
-                    else {
-            //            #pragma omp parallel for firstprivate(pDark)
-
-                          float *pImg=img.GetDataPtr();
-
-                            #pragma omp parallel for
-                            for (int i=0; i<N; i++) {
-                                float fProjPixel=(pImg[i]-pDark[i]);
-                                if (fProjPixel<=0)
-                                    pImg[i]=0;
-                                else
-                                   pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
-                            }
-
-                    }
-                }
-        }
-     else {
-//        std::cout << "correct for BB as well" << std::endl;
-        //these cases are anyhow probably not used since without open beam we would not have segmented anyway the BBs
+    if (m_bHaveBlackBody) {
         if (m_bHaveDarkCurrent) {
-
-
 
 
             if (m_bHaveOpenBeam) {
@@ -1742,13 +1745,226 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                         if (fProjPixel<=0)
                             pImg[i]=0;
                         else
-                           pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose); // yes but what is logdose if there is no open beam?
+                           pImg[i]=-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose)); // yes but what is logdose if there is no open beam?
+                    }
+
+            }
+        }
+    }
+    else if (m_bHaveExternalBlackBody){
+        if (m_bHaveDarkCurrent) {
+
+
+            if (m_bHaveOpenBeam) {
+    //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+                        float *pImg=img.GetDataPtr();
+                        float *pImgBB = m_BB_slice_ext.GetDataPtr();
+
+
+
+
+                        #pragma omp parallel for
+                        for (int i=0; i<N; i++) {
+
+                            // now computed in prepareBBdata
+//                            if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
+//                                 pImgBB[i] *=(dose/tau); // this dose must be computed on another roi !
+//                            }
+
+
+
+                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
+                            if (fProjPixel<=0)
+                                pImg[i]=0;
+                            else
+                                pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-fdose_ext_slice)<1 ? 1.0f : (dose-fdose_ext_slice));
+
+                        }
+
+            }
+            else {
+    //            #pragma omp parallel for firstprivate(pDark)
+
+                  float *pImg=img.GetDataPtr();
+                  float *pImgBB = m_BB_slice_ext.GetDataPtr();
+
+
+                    #pragma omp parallel for
+                    for (int i=0; i<N; i++) {
+
+//                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
+//                             pImgBB[i] *=(dose/tau);
+//                        }
+
+                        float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
+                        if (fProjPixel<=0)
+                            pImg[i]=0;
+                        else
+                           pImg[i]=-log(fProjPixel)+log((dose-fdose_ext_slice)<1 ? 1.0f : (dose-fdose_ext_slice)); // yes but what is logdose if there is no open beam?
                     }
 
             }
         }
 
-       }
+
+    }
+    else {
+        if (m_bHaveDarkCurrent) {
+            if (m_bHaveOpenBeam) {
+    //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+                        float *pImg=img.GetDataPtr();
+
+                        #pragma omp parallel for
+                        for (int i=0; i<N; i++) {
+
+    //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
+
+                            float fProjPixel=(pImg[i]-pDark[i]);
+                            if (fProjPixel<=0)
+                                pImg[i]=0;
+                            else
+                                pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
+
+                        }
+
+            }
+            else {
+    //            #pragma omp parallel for firstprivate(pDark)
+
+                  float *pImg=img.GetDataPtr();
+
+                    #pragma omp parallel for
+                    for (int i=0; i<N; i++) {
+                        float fProjPixel=(pImg[i]-pDark[i]);
+                        if (fProjPixel<=0)
+                            pImg[i]=0;
+                        else
+                           pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
+                    }
+
+            }
+        }
+    }
+
+
+    // OLD CODE....
+//    if (!m_bHaveBlackBody) {
+
+//                if (m_bHaveDarkCurrent) {
+//                    if (m_bHaveOpenBeam) {
+//            //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+//                                float *pImg=img.GetDataPtr();
+
+//                                #pragma omp parallel for
+//                                for (int i=0; i<N; i++) {
+
+//            //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
+
+//                                    float fProjPixel=(pImg[i]-pDark[i]);
+//                                    if (fProjPixel<=0)
+//                                        pImg[i]=0;
+//                                    else
+//                                        pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
+
+//                                }
+
+//                    }
+//                    else {
+//            //            #pragma omp parallel for firstprivate(pDark)
+
+//                          float *pImg=img.GetDataPtr();
+
+//                            #pragma omp parallel for
+//                            for (int i=0; i<N; i++) {
+//                                float fProjPixel=(pImg[i]-pDark[i]);
+//                                if (fProjPixel<=0)
+//                                    pImg[i]=0;
+//                                else
+//                                   pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
+//                            }
+
+//                    }
+//                }
+//        }
+//     else {
+////        std::cout << "correct for BB as well" << std::endl;
+//        //these cases are anyhow probably not used since without open beam we would not have segmented anyway the BBs
+//        if (m_bHaveDarkCurrent) {
+
+
+
+
+//            if (m_bHaveOpenBeam) {
+//    //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+//                        float *pImg=img.GetDataPtr();
+//                        float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
+
+//                        if(bPBvariante){
+
+////                            kipl::base::TImage<float,2> imgDose = InterpolateBlackBodyImage();
+////                            imgDose = kipl::base::TSubImage<float,2>::Get(m_BB_sample_Interpolated, m_nDoseROI); // extract the roi
+
+////                            for (int i=0; i < static_cast<int>(m_DoseBBsample_image.Size(0)*m_DoseBBsample_image.Size(1)); i++){
+////                                m_DoseBBsample_image[i]*=(dose/tau);
+////                            }
+
+//                            Pdose = computedose(m_DoseBBsample_image);
+////                            std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
+
+//                        } // for now I assume I have all images.. other wise makes no much sense
+
+
+
+
+
+//                        #pragma omp parallel for
+//                        for (int i=0; i<N; i++) {
+
+//                            // now computed in prepareBBdata
+////                            if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
+////                                 pImgBB[i] *=(dose/tau); // this dose must be computed on another roi !
+////                            }
+
+
+
+//                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
+//                            if (fProjPixel<=0)
+//                                pImg[i]=0;
+//                            else
+//                                pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose));
+
+//                        }
+
+//            }
+//            else {
+//    //            #pragma omp parallel for firstprivate(pDark)
+
+//                  float *pImg=img.GetDataPtr();
+//                  float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
+
+
+//                    #pragma omp parallel for
+//                    for (int i=0; i<N; i++) {
+
+////                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
+////                             pImgBB[i] *=(dose/tau);
+////                        }
+
+//                        float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
+//                        if (fProjPixel<=0)
+//                            pImg[i]=0;
+//                        else
+//                           pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose); // yes but what is logdose if there is no open beam?
+//                    }
+
+//            }
+//        }
+
+//       }
 
     return 1;
 }
@@ -1781,7 +1997,7 @@ float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
 }
 
-void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext){
+void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist){
 
     m_OB_BB_ext.Resize(bb_ext.Dims());
     m_BB_sample_ext.Resize(bb_sample_ext.Dims());
@@ -1789,13 +2005,20 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
 //    m_OB_BB_ext = bb_ext;
 //    m_BB_sample_ext = bb_sample_ext;
+//    m_OB_BB_ext.clone();
+//    m_BB_sample_ext.clone();
 
-    std::cout << "SetExternalBBimages"<< std::endl;
-    kipl::io::WriteTIFF32(m_OB_BB_ext,"m_OB_BB_ext.tif");
+//    std::cout << "SetExternalBBimages"<< std::endl;
+//    kipl::io::WriteTIFF32(m_OB_BB_ext,"m_OB_BB_ext.tif");
 
-    kipl::base::TImage<float,2> slice(m_OB_BB_ext.Dims());
-    memcpy(slice.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,0), sizeof(float)*bb_ext.Size());
-    kipl::io::WriteTIFF32(slice,"slice.tif");
+//    kipl::base::TImage<float,2> slice(m_OB_BB_ext.Dims());
+//    memcpy(slice.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,0), sizeof(float)*bb_ext.Size());
+//    kipl::io::WriteTIFF32(slice,"slice.tif");
+
+    fdoseOB_ext = dose;
+    fdose_ext_list = new float[bb_sample_ext.Size(2)];
+    memcpy(fdose_ext_list, doselist, sizeof(float)*bb_sample_ext.Size(2));
+
 
 
 
