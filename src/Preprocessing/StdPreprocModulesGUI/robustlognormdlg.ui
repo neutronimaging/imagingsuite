@@ -298,7 +298,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spin_count_ext_BB"/>
+        <widget class="QSpinBox" name="spin_count_ext_BB">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer_10">

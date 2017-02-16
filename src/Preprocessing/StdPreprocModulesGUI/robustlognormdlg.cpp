@@ -589,7 +589,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
 
     if (rect.width()*rect.height()!=0) {
 
-        ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
+//        ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
 
         std::map<std::string, std::string> parameters;
         UpdateParameters();
