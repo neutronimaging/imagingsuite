@@ -128,6 +128,13 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         ui->tabWidget->setTabEnabled(1, false);
     } // not sure this is the right place
 
+    if (enum2string(m_BBOptions)!="ExternalBB"){
+        ui->group_externalBB->setEnabled(false);
+    }
+    else {
+        ui->group_externalBB->setEnabled(true);
+    }
+
 
 
     int res=QDialog::exec();
@@ -632,6 +639,13 @@ void RobustLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
     }
     else {
         ui->tabWidget->setTabEnabled(1,true);
+    }
+
+    if(arg1.toStdString()!="ExternalBB"){
+        ui->group_externalBB->setEnabled(false);
+    }
+    else {
+        ui->group_externalBB->setEnabled(true);
     }
 }
 
