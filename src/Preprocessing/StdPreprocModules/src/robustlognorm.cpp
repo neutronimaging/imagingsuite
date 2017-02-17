@@ -267,29 +267,31 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
     }
 
-    // prepare BB data
-    std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
-    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-        PrepareBBData();
-//        bUseBB = true;
-        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
-        m_corrector.SetBBInterpRoi(subroi);
-    }
+    SetReferenceImages(dark,flat);
 
-    if (bUseExternalBB && nBBextCount!=0){
-        LoadExternalBBData();
-    }
-
-
-
-
-//    if (bUseBB) {
-////        if (nBBCount!=0 && nBBSampleCount!=0) {PrepareBBData();}
-//            size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
-//            m_corrector.SetBBInterpRoi(subroi);
+//    // prepare BB data
+//    std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//        PrepareBBData();
+////        bUseBB = true;
+//        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+//        m_corrector.SetBBInterpRoi(subroi);
 //    }
 
-    m_corrector.SetReferenceImages(&flat, &dark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
+//    if (bUseExternalBB && nBBextCount!=0){
+//        LoadExternalBBData();
+//    }
+
+
+
+
+////    if (bUseBB) {
+//////        if (nBBCount!=0 && nBBSampleCount!=0) {PrepareBBData();}
+////            size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+////            m_corrector.SetBBInterpRoi(subroi);
+////    }
+
+//    m_corrector.SetReferenceImages(&flat, &dark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
 
 }
 
@@ -846,10 +848,14 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     float *bb_ob_param = new float[6];
 
-    bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,blackdose);
+    bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
+
+    int diffroi[4] = {int(BBroi[0]-m_Config.ProjectionInfo.projection_roi[0]), int(BBroi[1]-m_Config.ProjectionInfo.projection_roi[1]), int(BBroi[2]-m_Config.ProjectionInfo.projection_roi[2]), int(BBroi[3]-m_Config.ProjectionInfo.projection_roi[3])};
+
     m_corrector.SetRadius(radius);
     m_corrector.SetInterpolationOrderX(m_xInterpOrder);
     m_corrector.SetInterpolationOrderY(m_yInterpOrder);
+    m_corrector.setDiffRoi(diffroi);
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
@@ -891,17 +897,34 @@ float RobustLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
 int RobustLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
-    float dose=GetFloatParameter(coeff,"dose")-fDarkDose;
-    std::cout << "Process core 2D" << std::endl; // doesn't seem to enter in here actually..
-    std::cout << dose << std::endl;
+//    float dose=GetFloatParameter(coeff,"dose")-fDarkDose;
+//    std::cout << "Process core 2D" << std::endl; // doesn't seem to enter in here actually..
+//    std::cout << dose << std::endl;
 
-    // Handling the non-dose correction case
-    m_corrector.Process(img,dose);
+//    // Handling the non-dose correction case
+//    m_corrector.Process(img,dose);
 
     return 0;
 }
 
 int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) {
+
+
+    // prepare BB data if available
+    std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+        PrepareBBData();
+        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+        m_corrector.SetBBInterpRoi(subroi);
+    }
+
+    if (bUseExternalBB && nBBextCount!=0){
+        LoadExternalBBData();
+    }
+
+
+    m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
+
     int nDose=img.Size(2);
     float *doselist=nullptr;
 
@@ -926,6 +949,36 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
 
 void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat)
 {
+
+    mdark = dark;
+    mdark.Clone();
+
+    mflat = flat;
+    mflat.Clone();
+
+//    // prepare BB data
+//    std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//        PrepareBBData();
+////        bUseBB = true;
+//        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+//        m_corrector.SetBBInterpRoi(subroi);
+//    }
+
+//    if (bUseExternalBB && nBBextCount!=0){
+//        LoadExternalBBData();
+//    }
+
+
+
+
+////    if (bUseBB) {
+//////        if (nBBCount!=0 && nBBSampleCount!=0) {PrepareBBData();}
+////            size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+////            m_corrector.SetBBInterpRoi(subroi);
+////    }
+
+//    m_corrector.SetReferenceImages(&flat, &dark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
 
 }
 

@@ -93,6 +93,8 @@ protected:
 
 
     kipl::base::TImage<float,2> mMaskBB;
+    kipl::base::TImage<float,2> mdark;
+    kipl::base::TImage<float,2 > mflat;
 
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
