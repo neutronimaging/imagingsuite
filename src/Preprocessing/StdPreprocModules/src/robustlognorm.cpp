@@ -146,6 +146,13 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
         bUseNormROIBB = true;
     }
 
+    if (enum2string(m_ReferenceMethod)=="LogNorm"){
+        m_corrector.SetComputeMinusLog(true);
+    }
+    else {
+        m_corrector.SetComputeMinusLog(false);
+    }
+
 
 
 
