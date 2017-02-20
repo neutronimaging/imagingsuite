@@ -404,7 +404,7 @@ int ConfigureGeometryDialog::LoadImages()
         if (m_Config.ProjectionInfo.nOBCount) {
             m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
                     m_Config.ProjectionInfo.sOBFileMask,
-                    1,
+                    m_Config.ProjectionInfo.nOBFirstIndex,
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
