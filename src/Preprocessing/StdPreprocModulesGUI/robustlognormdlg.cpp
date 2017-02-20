@@ -25,8 +25,8 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     nBBSampleCount(0),
     nBBSampleFirstIndex(1),
     radius(2),
-    bUseNormROI(true),
-    bUseNormROIBB(false),
+//    bUseNormROI(true),
+//    bUseNormROIBB(false),
     tau(0.99f),
     bPBvariante(true),
     m_nWindow(5),
@@ -38,9 +38,7 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     ffirstAngle(0.0f),
     flastAngle(360.0f),
     nBBextCount(0),
-    nBBextFirstIndex(0),
-    bUseExternalBB(false), //this two boolean most likely are unused here. to be set in the module depending on the BB Option
-    bUseBB(false)
+    nBBextFirstIndex(0)
 {
 
     blackbodyname = "somename";
@@ -85,7 +83,7 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         GetUIntParameterVector(parameters,"BBroi",BBroi,4);
         GetUIntParameterVector(parameters, "doseBBroi",doseBBroi,4);
         radius = GetIntParameter(parameters,"radius");
-        bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
+//        bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
         tau = GetFloatParameter(parameters, "tau");
         bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
         string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
@@ -101,8 +99,8 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
         nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
         nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
-        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
-        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
+//        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
+//        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
 
 
 
@@ -252,13 +250,13 @@ void RobustLogNormDlg::UpdateParameters(){
     doseBBroi[2] = ui->spinx1BBdose->value();
     doseBBroi[3] = ui->spiny1BBdose->value();
 
-    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
-        bUseNormROIBB = true;
-        std::cout << "----------------" << bUseNormROIBB << std::endl;
-    } else {
-        bUseNormROIBB = false;
-        std::cout << "---------------------" << bUseNormROIBB << std::endl;
-    }
+//    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
+//        bUseNormROIBB = true;
+//        std::cout << "----------------" << bUseNormROIBB << std::endl;
+//    } else {
+//        bUseNormROIBB = false;
+//        std::cout << "---------------------" << bUseNormROIBB << std::endl;
+//    }
 
     radius = ui->spinRadius->value();
     string2enum(ui->combo_averagingMethod->currentText().toStdString(), m_ReferenceAverageMethod);
@@ -306,9 +304,9 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["refmethod"] = enum2string(m_ReferenceMethod);
     parameters["BBOption"] = enum2string(m_BBOptions);
     parameters["tau"] = kipl::strings::value2string(tau);
-    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
+//    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
-    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
+//    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
@@ -319,8 +317,8 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
-    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
-    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
+//    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
+//    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
 
 
 
@@ -603,7 +601,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
         UpdateParameterList(parameters);
         std::cout << "trying to compute error" << std::endl;
         std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
-        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters); // it seems to work now.. right?, except for some parameters that are not read from the "normal dialog"
+        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
     //    module.PrepareBBData();
         kipl::base::TImage<float,2> mymask;
 
