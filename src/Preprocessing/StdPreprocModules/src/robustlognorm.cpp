@@ -89,7 +89,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
     string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
     string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
-    bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
+//    bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
 
     bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
 
@@ -105,7 +105,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
     nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
     nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
-    bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB"));
+//    bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB"));
 
 
 
@@ -113,11 +113,11 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     radius = GetIntParameter(parameters, "radius");
     GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
     GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
-    bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
+//    bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
     ffirstAngle = GetFloatParameter(parameters, "firstAngle");
     flastAngle = GetFloatParameter(parameters, "lastAngle");
 
-    bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB")); // it was not in the parameters list before/
+//    bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB")); // it was not in the parameters list before/
 
 
 
@@ -144,6 +144,14 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     }
     else {
         bUseNormROIBB = true;
+    }
+
+    if ((m_Config.ProjectionInfo.dose_roi[2]-m_Config.ProjectionInfo.dose_roi[0])<=0 || (m_Config.ProjectionInfo.dose_roi[3]-m_Config.ProjectionInfo.dose_roi[1])<=0 ){
+        bUseNormROI=false;
+        throw ReconException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
+    }
+    else{
+        bUseNormROI=true;
     }
 
     if (enum2string(m_ReferenceMethod)=="LogNorm"){
@@ -179,7 +187,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
     parameters["refmethod"] = enum2string(m_ReferenceMethod);
-    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
+//    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
     parameters["BB_OB_name"] = blackbodyname;
     parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
     parameters["BB_first_index"] = kipl::strings::value2string(nBBFirstIndex);
@@ -190,7 +198,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["radius"] = kipl::strings::value2string(radius);
     parameters["BBroi"] = kipl::strings::value2string(BBroi[0])+" "+kipl::strings::value2string(BBroi[1])+" "+kipl::strings::value2string(BBroi[2])+" "+kipl::strings::value2string(BBroi[3]);
     parameters["doseBBroi"] = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
-    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
+//    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
     parameters["BBOption"] = enum2string(m_BBOptions);
     parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
@@ -202,8 +210,8 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
-    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
-    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
+//    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
+//    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 
     return parameters;
 }
@@ -858,6 +866,9 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
 
     int diffroi[4] = {int(BBroi[0]-m_Config.ProjectionInfo.projection_roi[0]), int(BBroi[1]-m_Config.ProjectionInfo.projection_roi[1]), int(BBroi[2]-m_Config.ProjectionInfo.projection_roi[2]), int(BBroi[3]-m_Config.ProjectionInfo.projection_roi[3])};
+
+    std::cout<< "diffroi: " << std::endl;
+    std::cout << diffroi[0] << " " << diffroi[1] << " " << diffroi[2] << " " << diffroi[3] << std::endl;
 
     m_corrector.SetRadius(radius);
     m_corrector.SetInterpolationOrderX(m_xInterpOrder);
