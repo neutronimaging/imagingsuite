@@ -155,7 +155,7 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
 
 void RobustLogNormDlg::ApplyParameters(){
 
-std::cout << "apply parameters" << std::endl;
+//std::cout << "apply parameters" << std::endl;
 
 ui->buttonPreviewOBBB->click();
 ui->buttonPreviewsampleBB->click();
@@ -227,7 +227,7 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->spinLastAngle->setValue(flastAngle);
 
 
-    std::cout << "update dialog" << std::endl;
+//    std::cout << "update dialog" << std::endl;
 
 }
 
@@ -274,15 +274,9 @@ void RobustLogNormDlg::UpdateParameters(){
     nBBextFirstIndex = ui->spin_first_extBB->value();
     nBBextCount = ui->spin_count_ext_BB->value();
 
-    std::cout << "update parameters " << std::endl;
-    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
-    std::cout << blackbodyname << std::endl;
-//    std::string sPath, sFname;
-//    std::string name,ext;
-//    kipl::strings::filenames::MakeFileName(blackbodyname, ui->edit_OB_BB_mask->text().toStdString(),sPath,sFname,exts);
-//    blackbodyname = ui->edit_OB_BB_mask->text().toStdString();
-
-//    std::cout << "blackbody name in update paramaters: " << sFname << std::endl;
+//    std::cout << "update parameters " << std::endl;
+//    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
+//    std::cout << blackbodyname << std::endl;
 
 }
 
@@ -322,7 +316,7 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
 
 
 
-    std::cout << "update parameters list" << std::endl;
+//    std::cout << "update parameters list" << std::endl;
 
 }
 
@@ -378,7 +372,7 @@ void RobustLogNormDlg::on_buttonPreviewOBBB_clicked()
                                  m_Config->ProjectionInfo.fBinning,
                                  NULL);
 
-    std::cout << "image read: " << filename << std::endl;
+//    std::cout << "image read: " << filename << std::endl;
 
     float lo,hi;
 
@@ -501,7 +495,7 @@ void RobustLogNormDlg::on_buttonPreviewsampleBB_clicked()
                                  m_Config->ProjectionInfo.fBinning,
                                  NULL);
 
-    std::cout << "image read: " << filename << std::endl;
+//    std::cout << "image read: " << filename << std::endl;
 
     float lo,hi;
 
@@ -599,14 +593,31 @@ void RobustLogNormDlg::on_errorButton_clicked()
         std::map<std::string, std::string> parameters;
         UpdateParameters();
         UpdateParameterList(parameters);
-        std::cout << "trying to compute error" << std::endl;
-        std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
-        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-    //    module.PrepareBBData();
-        kipl::base::TImage<float,2> mymask;
+//        std::cout << "trying to compute error" << std::endl;
+//        std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
 
-        float error = module.GetInterpolationError(mymask);
-        std::cout << error << std::endl;
+        kipl::base::TImage<float,2> mymask;
+        float error;
+
+        try {
+            module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+    //    module.PrepareBBData();
+            error = module.GetInterpolationError(mymask);
+        }
+        catch(kipl::base::KiplException &e) {
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpoltion error.");
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            return ;
+        }
+        catch(...){
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpoltion error.. generic exception.");
+            return ;
+        }
+
+
+//        std::cout << error << std::endl;
 
         // display interpolation error
         ui->errorBrowser->setText(QString::number(error));
@@ -631,7 +642,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
 void RobustLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
 {
 
-    std::cout << "arg1: " << arg1.toStdString() << std::endl;
+//    std::cout << "arg1: " << arg1.toStdString() << std::endl;
     if (arg1.toStdString()=="noBB" || arg1.toStdString()=="ExternalBB"){
         ui->tabWidget->setTabEnabled(1,false);
     }
