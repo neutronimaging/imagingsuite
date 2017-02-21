@@ -95,13 +95,15 @@ public:
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
+    void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
+
 
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
     void PrepareReferencesBB(); /// prepare reference images in case of BB
     void PrepareReferencesExtBB(); /// prepare reference images in case of externally created BB
 
-    float *SolveLinearEquation(std::map<std::pair<size_t,size_t>, float> &values, float &error);
+    float *SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error);
 
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
 
