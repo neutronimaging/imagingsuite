@@ -23,16 +23,11 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include "../../include/strings/filenames.h"
 
 using namespace std;
 
-#ifdef _MSC_VER
-const char slash='\\';
-const char wrong_slash='/';
-#else 
-const char slash='/';
-const char wrong_slash='\\';
-#endif
+
 namespace kipl { namespace strings { namespace filenames {
 
 void KIPLSHARED_EXPORT StripFileName(const std::string filestr,
@@ -146,7 +141,7 @@ int KIPLSHARED_EXPORT ExtractWildCard(const char *src, char *prefix, char *suffi
 	return 0;
 }
 
-int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd=true)
+int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd)
 {
 	int cnt=0;
 	if (!path.empty()) {

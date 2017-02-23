@@ -15,6 +15,14 @@
 #include <vector>
 
 namespace kipl { namespace strings { namespace filenames {
+#ifdef _MSC_VER
+const char slash='\\';
+const char wrong_slash='/';
+#else
+const char slash='/';
+const char wrong_slash='\\';
+#endif
+
 /// \brief Creates a numbered file name from a given mask 
 /// \param fname file name mask. The full path of the file with the number replaced by as many X's as the required zero padding
 /// \param num number to use for the file name
