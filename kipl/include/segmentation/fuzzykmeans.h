@@ -23,12 +23,12 @@
 #include <algorithm>
 #include <logging/logger.h>
 
-namespace akipl { namespace segmentation {
+namespace kipl { namespace segmentation {
 
 /// \brief The class performs a fuzzy K-means segmentation of an N-dimensional image
 /// @author Anders Kaestner
 template<class ImgType, class SegType , size_t NDim>
-class FuzzyKMeans : public akipl::segmentation::SegmentationBase<ImgType,SegType,NDim>
+class FuzzyKMeans : public SegmentationBase<ImgType,SegType,NDim>
 {
 public:
 	/// \brief Constructor that initializes the output and some variables
@@ -70,6 +70,15 @@ public:
 	///	\param seg Segmented image
     /// \param mask mask image for stayaway regions
     int operator()(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg, const kipl::base::TImage<bool,NDim> & mask);
+
+
+    /// \brief Interface function that is intended to perform the segmentation
+    ///	\param img Input graylevel image
+    ///	\param seg Segmented output image
+    virtual int operator()(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg) { }
+
+    /// Set the parameters for the segmentation
+    virtual void setParameters(std::map<std::string,std::string> parameters) { }
 
 protected:
 	/// \brief Finds initial guesses using random locations in the image

@@ -13,21 +13,21 @@
 #ifndef SEGMENTATIONFUZZYCMEANS_H
 #define SEGMENTATIONFUZZYCMEANS_H
 
-#include <base/timage.h>
+#include "../base/timage.h"
 #include "segmentationbase.h"
-#include <logging/logger.h>
+#include "../logging/logger.h"
 #include <stdlib.h>
 #include <vector>
 #include <map>
 #include <limits>
 #include <algorithm>
 
-namespace akipl { namespace segmentation {
+namespace kipl { namespace segmentation {
 
 /// \brief The class performs a fuzzy K-means segmentation of an N-dimensional image
 /// @author Anders Kaestner
-template<class ImgType, class SegType , size_t NDim>
-class KernelFuzzyKMeans : public akipl::segmentation::SegmentationBase<ImgType,SegType,NDim>
+template<typename ImgType, typename SegType , size_t NDim>
+class KernelFuzzyKMeans : public kipl::segmentation::SegmentationBase<ImgType,SegType,NDim>
 {
 public:
 	/// \brief Constructor that initializes the output and some variables

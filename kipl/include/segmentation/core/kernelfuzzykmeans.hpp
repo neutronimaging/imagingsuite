@@ -12,23 +12,26 @@
 #ifndef SEGMENTATIONKERNELFUZZYKMEANS_HPP
 #define SEGMENTATIONKERNELFUZZYKMEANS_HPP
 
-#include <base/timage.h>
-#include <math/image_statistics.h>
 #include <stdlib.h>
 #include <vector>
 #include <map>
 #include <limits>
 #include <algorithm>
 #include <sstream>
-#include <logging/logger.h>
-#include <math/LUTCollection.h>
+
+#include "../../base/timage.h"
+#include "../../math/image_statistics.h"
+#include "../../logging/logger.h"
+#include "../../math/LUTCollection.h"
+
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-namespace akipl { namespace segmentation {
+namespace kipl { namespace segmentation {
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 KernelFuzzyKMeans<ImgType,SegType,NDim>::KernelFuzzyKMeans() :
 	SegmentationBase<ImgType,SegType,NDim>("KernelFuzzyKMeans"),
 	maxIterations(250),
@@ -42,14 +45,14 @@ KernelFuzzyKMeans<ImgType,SegType,NDim>::KernelFuzzyKMeans() :
 	centers=new float[this->nClasses];
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 KernelFuzzyKMeans<ImgType,SegType,NDim>::~KernelFuzzyKMeans()
 {
 	if (centers!=NULL)
 		delete [] centers;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int KernelFuzzyKMeans<ImgType,SegType,NDim>::set(int NClasses, float fuz, int maxIt)
 { 
 	this->nClasses=NClasses; 
@@ -63,7 +66,7 @@ int KernelFuzzyKMeans<ImgType,SegType,NDim>::set(int NClasses, float fuz, int ma
 	return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int KernelFuzzyKMeans<ImgType,SegType,NDim>::initCenters(const kipl::base::TImage<ImgType,NDim> &img)
 { 
 	std::cout<<"Init centers"<<endl;
@@ -76,7 +79,7 @@ int KernelFuzzyKMeans<ImgType,SegType,NDim>::initCenters(const kipl::base::TImag
 	return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int KernelFuzzyKMeans<ImgType,SegType,NDim>::initU(kipl::base::TImage<float,2> &U)
 {
 	float *pU=U.GetDataPtr();
@@ -95,7 +98,7 @@ int KernelFuzzyKMeans<ImgType,SegType,NDim>::initU(kipl::base::TImage<float,2> &
     return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int KernelFuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> & seg)
 {
     std::stringstream msgstr;
@@ -166,7 +169,7 @@ int KernelFuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage
         }
         //logger(kipl::logging::Logger::LogMessage,msgstr.str());
 
-		std::sort(centers,centers+NC); // Assure that the class index 
+        std::sort(centers,centers+NC); // Assure that the typename index
 									   // is ordered with the center value
 
 		pU=U.GetDataPtr();
@@ -241,7 +244,7 @@ int KernelFuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage
 	return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int KernelFuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> & seg)
 {
 	//logger(kipl::logging::Logger::LogWarning,"The parallel version is not ready");
@@ -387,7 +390,7 @@ int KernelFuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<I
 ///	\param img Image to be segmented
 ///	\param seg Segmented image
 /// \param mask mask image for stayaway regions
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int KernelFuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg, const kipl::base::TImage<bool,NDim> & mask)
 {
     std::stringstream msgstr;

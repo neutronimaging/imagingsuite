@@ -27,14 +27,14 @@
 #include <omp.h>
 #endif
 
-namespace akipl { namespace segmentation {
+namespace kipl { namespace segmentation {
 
 template<class ImgType, class SegType ,size_t NDim>
 FuzzyKMeans<ImgType,SegType,NDim>::FuzzyKMeans() :
 	SegmentationBase<ImgType,SegType,NDim>("FuzzyKMeans"),
 	maxIterations(250),
 	haveCenters(false),
-	centers(NULL),
+    centers(nullptr),
 	fuzziness(1.5f)
 	
 {
@@ -46,7 +46,7 @@ FuzzyKMeans<ImgType,SegType,NDim>::FuzzyKMeans() :
 template<class ImgType, class SegType ,size_t NDim>
 FuzzyKMeans<ImgType,SegType,NDim>::~FuzzyKMeans()
 {
-	if (centers!=NULL)
+    if (centers!=nullptr)
 		delete [] centers;
 }
 
@@ -54,7 +54,7 @@ template<class ImgType, class SegType ,size_t NDim>
 int FuzzyKMeans<ImgType,SegType,NDim>::set(int NClasses, float fuz, int maxIt ,bool bSaveIterations, std::string sFname)
 { 
 	this->nClasses=NClasses; 
-	if (centers!=NULL)
+    if (centers!=nullptr)
 		delete [] centers;
 	centers=new float[this->nClasses];
 	
