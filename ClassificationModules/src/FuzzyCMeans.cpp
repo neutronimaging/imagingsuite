@@ -59,7 +59,7 @@ std::map<std::string, std::string> FuzzyCMeans::GetParameters()
 
 int FuzzyCMeans::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-	akipl::segmentation::FuzzyKMeans<float,float,3> segmenter;
+    kipl::segmentation::FuzzyKMeans<float,float,3> segmenter;
 
 	segmenter.set(m_nNClasses, m_fFuzziness, m_nMaxIt,m_bSaveIterations,m_sIterationFileName);
 	kipl::base::TImage<float,3> tmp;
