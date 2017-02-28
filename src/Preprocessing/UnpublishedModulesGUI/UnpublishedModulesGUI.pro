@@ -6,6 +6,8 @@
 
 QT       += widgets
 
+CONFIG += c++11
+
 TARGET = UnpublishedModulesGUI
 TEMPLATE = lib
 

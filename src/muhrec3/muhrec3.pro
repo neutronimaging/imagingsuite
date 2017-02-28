@@ -91,7 +91,7 @@ FORMS    += muhrecmainwindow.ui \
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include

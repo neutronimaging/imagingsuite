@@ -1,6 +1,7 @@
 #include "unpublishedmodulesgui_global.h"
 #include "unpublishedmodulesgui.h"
 #include <string>
+#include <cstring>
 
 //#include "morphspotcleandlg.h"
 
