@@ -61,17 +61,14 @@ FORMS    += viewermainwindow.ui
 
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lQtAddons
+else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/debug/ -lQtAddons
-else:symbian: LIBS += -lQtAddons
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Debug/ -lQtAddons
-
 INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
 DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
+
+
+
