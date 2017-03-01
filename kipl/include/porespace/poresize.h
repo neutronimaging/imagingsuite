@@ -1,24 +1,17 @@
-//
-// This file is part of the ModuleConfig library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-05-21 16:21:03 +0200 (Mon, 21 May 2012) $
-// $Rev: 1317 $
-// $Id: ModuleConfig.cpp 1317 2012-05-21 14:21:03Z kaestner $
-//
+//<LICENCE>
 
+#ifndef __PORESIZE_H_
+#define __PORESIZE_H_
+
+#include <map>
+#include <list>
+#include <sstream>
 
 #include "../base/timage.h"
 #include "../morphology/morphdist.h"
 #include "../base/index2coord.h"
 #include "../drawing/drawing.h"
 #include "../logging/logger.h"
-#include <map>
-#include <list>
-#include <sstream>
 
 namespace kipl { namespace porespace {
 
@@ -65,3 +58,5 @@ void PoreSizeMap(kipl::base::TImage<T,3> &mask, kipl::base::TImage<S,3> &poremap
 }
 
 }}
+
+#endif

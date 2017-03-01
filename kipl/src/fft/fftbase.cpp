@@ -1,17 +1,11 @@
-/***************************************************************************
- *   Copyright (C) 2006 by Anders Kaestner   *
- *   anders.kaestner@env.ethz.ch   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                  *
- ***************************************************************************/
-#include <iostream>
+//<LICENCE>
 
-#include <complex>
-#include "../../include/fft/fftbase.h"
-#include <fftw3.h>
 #include <iostream>
+#include <complex>
+
+#include <fftw3.h>
+
+#include "../../include/fft/fftbase.h"
 
 namespace kipl { namespace math { namespace fft {
 using namespace std;

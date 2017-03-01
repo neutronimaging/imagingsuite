@@ -1,9 +1,4 @@
-/*
- * DanielssonDistance.hpp
- *
- *  Created on: Jan 17, 2013
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef DANIELSSONDISTANCE_HPP_
 #define DANIELSSONDISTANCE_HPP_

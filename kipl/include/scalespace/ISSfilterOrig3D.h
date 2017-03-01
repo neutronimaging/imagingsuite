@@ -1,16 +1,8 @@
-//
-// C++ Interface: ISSfilter
-//
-// Description: 
-//
-//
-// Author: Anders Kaestner <perk@itoibm>, (C) 2007
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+//<LICENCE>
+
 #ifndef __ISSFILTER_H
 #define __ISSFILTER_H
+
 #include <iostream>
 
 using namespace Fileio;

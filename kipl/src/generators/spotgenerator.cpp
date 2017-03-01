@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include "../../include/generators/spotgenerator.h"
 
 namespace kipl { namespace generators {

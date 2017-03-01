@@ -1,21 +1,15 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
+
 #ifndef __LABEL_H
 #define __LABEL_H
 
-#include "../base/timage.h"
 #include <deque>
 #include <list>
 #include <vector>
+
 #include "morphology.h"
+#include "../base/timage.h"
+
 
 namespace kipl {namespace morphology {
 	/// \brief Creates a labelled image from a bi level image

@@ -1,7 +1,10 @@
+//<LICENCE>
+
 #ifndef STRING2ARRAY_H_
 #define STRING2ARRAY_H_
 
 #include "../kipl_global.h"
+
 #include <string>
 #include <vector>
 #include <cstdlib>

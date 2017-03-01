@@ -1,6 +1,4 @@
-#ifdef _MSC_VER
-#pragma once
-#endif
+//<LICENCE>
 
 #ifndef __PARENC_H
 #define __PARENC_H

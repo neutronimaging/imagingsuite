@@ -1,6 +1,9 @@
-#include "../../include/base/KiplException.h"
+//<LICENCE>
+
 #include <string>
 #include <sstream>
+
+#include "../../include/base/KiplException.h"
 
 namespace kipl
 {

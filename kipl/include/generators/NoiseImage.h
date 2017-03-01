@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __NOISEIMAGE_H
 #define __NOISEIMAGE_H
 

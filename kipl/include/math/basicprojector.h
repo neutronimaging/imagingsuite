@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef _BASICPROJECTOR_H_
 #define _BASICPROJECTOR_H_
 

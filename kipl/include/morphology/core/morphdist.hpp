@@ -1,7 +1,11 @@
+//<LICENCE>
+
 #ifndef MORPHDIST_HPP_
 #define MORPHDIST_HPP_
-#include "../../logging/logger.h"
+
 #include <sstream>
+
+#include "../../logging/logger.h"
 #include "../../base/KiplException.h"
 
 namespace kipl { namespace morphology {

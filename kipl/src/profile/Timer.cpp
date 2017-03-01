@@ -1,4 +1,5 @@
-#include "../../include/profile/Timer.h"
+//<LICENCE>
+
 #include <iostream>
 #include <time.h>
 #ifdef _OPENMP
@@ -8,6 +9,8 @@
 #else
 #include <unistd.h>
 #endif
+
+#include "../../include/profile/Timer.h"
 
 namespace kipl { namespace profile {
 

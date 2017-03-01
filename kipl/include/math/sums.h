@@ -1,8 +1,11 @@
+//<LICENCE>
+
 #ifndef __SUMS_H
 #define __SUMS_H
 
-#include <stddef.h>
 #include "../kipl_global.h"
+
+#include <stddef.h>
 #include <cstddef>
 #ifdef _OPENMP
 #include <omp.h>

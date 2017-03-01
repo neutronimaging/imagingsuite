@@ -1,23 +1,18 @@
-/***************************************************************************
- *   Copyright (C) 2004 by Anders Kaestner                                 *
- *   anders.kaestner@env.ethz.ch                                           *
- *                                                                         *
- ***************************************************************************/
+//<LICENCE>
+
 #ifndef __DIFF_FILTERBASE_H
 #define __DIFF_FILTERBASE_H
-
-#include <base/timage.h>
-#include <io/io_matlab.h>
-#include <profile/Timer.h>
-#include "lambdaest.h"
-
-
-//#include "../math/mathmisc.h"
 #include <iostream>
 #include <ios>
 #include <string>
 #include <limits>
 #include <deque>
+
+#include <base/timage.h>
+#include <io/io_matlab.h>
+#include <profile/Timer.h>
+#include "lambdaest.h"
+//#include "../math/mathmisc.h"
 
 
 namespace akipl { namespace scalespace {

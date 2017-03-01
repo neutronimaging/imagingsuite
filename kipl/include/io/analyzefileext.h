@@ -1,8 +1,12 @@
+//<LICENCE>
+
 #ifndef ANALYZEFILEEXT_H
 #define ANALYZEFILEEXT_H
+
+#include "../kipl_global.h"
+
 #include <iostream>
 #include <string>
-#include "../kipl_global.h"
 
 namespace kipl {
 /// The io name space contains functions and classes that support file io using different image file formats.

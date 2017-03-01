@@ -1,17 +1,17 @@
+//<LICENCE>
 #ifndef __NONLINDIFFAOS_H
 #define __NONLINDIFFAOS_H
-
-
-#include <base/timage.h>
-#include <io/io_matlab.h>
-//#include <math/mathmisc.h>
-#include "diff_filterbase.h"
-#include "lambdaest.h"
 
 #include <float.h>
 #include <iostream>
 #include <ios>
 #include <string>
+
+#include "../base/timage.h"
+#include "../io/io_matlab.h"
+#include "diff_filterbase.h"
+#include "lambdaest.h"
+
 
 namespace akipl{ namespace scalespace {
 

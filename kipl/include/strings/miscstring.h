@@ -1,7 +1,10 @@
+//<LICENCE>
+
 #ifndef MISCSTRING_H_
 #define MISCSTRING_H_
 
 #include "../kipl_global.h"
+
 #include <string>
 #include <sstream>
 

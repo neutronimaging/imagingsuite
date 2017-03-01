@@ -1,6 +1,9 @@
+//<LICENCE>
+
 #include <iostream>
 #include <cmath>
 #include "../../include/math/numfunc.h"
+
 using namespace std;
 namespace NRC {
 double gammln(double xx)

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __TRANSPOSE_HPP
 #define __TRANSPOSE_HPP
 

@@ -1,8 +1,11 @@
+//<LICENCE>
+
 #ifndef __INDEX2COORD_H	
 #define __INDEX2COORD_H	
 
-#include "../kipl_global.h"
 #include <iostream>
+
+#include "../kipl_global.h"
 
 namespace kipl { namespace base {
     /// \brief Struct to contain a 2D position

@@ -1,15 +1,16 @@
+//<LICENCE>
+
 #ifndef __ANISODIFF_H
 #define __ANISODIFF_H
-
-#include "image.h"
-#include "lambdaest.h"
-
 #include <float.h>
-#include "../math/mathmisc.h"
 #include <iostream>
 #include <ios>
 #include <string>
-//#include "../visualization/imgviewer.h"
+
+#include "../base/timage.h"
+#include "lambdaest.h"
+#include "../math/mathmisc.h"
+
 #include "../io/io_matlab.h"
 #include "diff_filterbase.h"
 

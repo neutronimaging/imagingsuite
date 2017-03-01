@@ -1,22 +1,14 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef MAPUPDATER_HPP
 #define MAPUPDATER_HPP
 
-//#include "../multiresseg.h"
-#include <base/timage.h>
-#include <morphology/morphology.h>
-#include <math/mathconstants.h>
 #include <map>
+
+#include "../../base/timage.h"
+#include "../../morphology/morphology.h"
+#include "../../math/mathconstants.h"
+//#include "../multiresseg.h"
 
 namespace akipl { namespace segmentation {
 

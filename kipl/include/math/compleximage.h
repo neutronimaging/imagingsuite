@@ -1,8 +1,11 @@
+//<LICENCE>
+
 #ifndef _COMPLEXIMAGE_H_
 #define _COMPLEXIMAGE_H_
 
-#include "../base/timage.h"
 #include <complex>
+
+#include "../base/timage.h"
 
 namespace kipl {
 /// \brief A name space that contains operations on complex valued images

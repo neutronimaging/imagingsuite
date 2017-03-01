@@ -1,9 +1,12 @@
-#include "../../include/strings/miscstring.h"
-#include "../../include/strings/filenames.h"
-#include "../../include/base/KiplException.h"
+//<LICENCE>
+
 #include <ctype.h>
 #include <string>
 #include <algorithm>
+
+#include "../../include/strings/miscstring.h"
+#include "../../include/strings/filenames.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl { namespace strings {
 std::string toLower(const std::string str)

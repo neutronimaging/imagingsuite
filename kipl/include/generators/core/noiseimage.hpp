@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef NOISEIMAGE_HPP
 #define NOISEIMAGE_HPP
 

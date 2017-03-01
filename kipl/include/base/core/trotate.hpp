@@ -1,9 +1,4 @@
-/*
- * trotate.hpp
- *
- *  Created on: Nov 30, 2011
- *      Author: kaestner
- */
+//<LICENCE>
 
 #ifndef TROTATE_HPP_
 #define TROTATE_HPP_

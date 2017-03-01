@@ -1,7 +1,10 @@
+//<LICENCE>
+
 #ifndef SINE2D_H_
 #define SINE2D_H_
 
 #include "../kipl_global.h"
+
 #include "../base/timage.h"
 
 namespace kipl { namespace generators { 

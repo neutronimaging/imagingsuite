@@ -1,17 +1,8 @@
-/*
- * io_vtk.h
- *
- *  Created on: Sep 13, 2012
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef IO_VTK_H_
 #define IO_VTK_H_
 
-#include "../base/imagecast.h"
-#include "../base/timage.h"
-#include "../strings/filenames.h"
-#include "../base/kiplenums.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdio>
@@ -23,6 +14,12 @@
 #else
 #include <inttypes.h>
 #endif
+
+#include "../base/imagecast.h"
+#include "../base/timage.h"
+#include "../strings/filenames.h"
+#include "../base/kiplenums.h"
+
 namespace kipl { namespace io {
 
 /// \brief Creates a VTK data type descriptor string for float

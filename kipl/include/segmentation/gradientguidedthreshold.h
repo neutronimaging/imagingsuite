@@ -1,7 +1,10 @@
+//<LICENCE>
+
 #ifndef GRADIENTGUIDEDTHRESHOLD_H
 #define GRADIENTGUIDEDTHRESHOLD_H
 
 #include <set>
+
 #include "../base/timage.h"
 #include "segmentationbase.h"
 

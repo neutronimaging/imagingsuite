@@ -1,8 +1,11 @@
-#include "../../include/strings/string2array.h"
-#include "../../include/base/KiplException.h"
+//<LICENCE>
+
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+
+#include "../../include/strings/string2array.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl { namespace strings {
 bool GetElement(std::string &str, std::string &element)

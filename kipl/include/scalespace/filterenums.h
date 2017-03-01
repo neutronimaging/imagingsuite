@@ -1,6 +1,9 @@
+//<LICENCE>
+
 #ifndef __FILTERENUMS_H
 #define __FILTERENUMS_H
 #include "../kipl_global.h"
+
 #include <iostream>
 #include <string>
 

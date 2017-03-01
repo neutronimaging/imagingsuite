@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef MATHCONSTANTS_H_
 #define MATHCONSTANTS_H_
 

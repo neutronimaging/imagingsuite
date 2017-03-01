@@ -1,31 +1,34 @@
-#ifdef _MSC_VER
-#include <winsock2.h>
-#include <Iphlpapi.h>
-#else
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#ifdef __APPLE__
-#include <net/if.h>
-//#include <iotypes.h>
-#include <ifaddrs.h>
-#include <net/if_dl.h>
-#else
-#include <linux/if.h>
-#endif // Apple
-#include <netdb.h>
-#include <cstring>
-#endif // MSCVER
+//<LICENCE>
 
-#include "../../include/utilities/nodelocker.h"
-#include "../../include/base/KiplException.h"
-#include "../../include/strings/miscstring.h"
-#include "../../include/strings/filenames.h"
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <set>
 #include <list>
+
+#ifdef _MSC_VER
+    #include <winsock2.h>
+    #include <Iphlpapi.h>
+#else
+    #include <sys/socket.h>
+    #include <sys/ioctl.h>
+    #ifdef __APPLE__
+        #include <net/if.h>
+        //#include <iotypes.h>
+        #include <ifaddrs.h>
+        #include <net/if_dl.h>
+    #else
+        #include <linux/if.h>
+    #endif // Apple
+    #include <netdb.h>
+    #include <cstring>
+#endif // MSCVER
+
+#include "../../include/utilities/nodelocker.h"
+#include "../../include/base/KiplException.h"
+#include "../../include/strings/miscstring.h"
+#include "../../include/strings/filenames.h"
 
 namespace kipl { namespace utilities { 
 

@@ -1,6 +1,9 @@
+//<LICENCE>
+
+#include <cmath>
+
 #include "../../include/generators/SequenceImage.h"
 #include "../../include/base/timage.h"
-#include <cmath>
 
 using namespace std;
 

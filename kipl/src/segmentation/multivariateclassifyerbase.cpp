@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include "../../include/segmentation/multivariateclassifyerbase.h"
 
 #include "../include/base/KiplException.h"

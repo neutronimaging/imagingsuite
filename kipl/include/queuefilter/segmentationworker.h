@@ -1,13 +1,5 @@
-/***************************************************************************
- *   Copyright (C) 2006 by Anders Kaestner   *
- *   anders.kaestner@env.ethz.ch   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                  *
- *                                                                         *
- ***************************************************************************/
- 
+//<LICENCE>
+
 #ifndef __SEGMENTATIONWORKER_H
 #define __SEGMENTATIONWORKER_H
 

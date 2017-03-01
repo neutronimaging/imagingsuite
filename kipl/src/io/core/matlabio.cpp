@@ -1,18 +1,17 @@
+//<LICENCE>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sstream>
-#include <zlib.h>
-#include "../../../include/io/core/matlabio.h"
-#include "../../../include/base/KiplException.h"
 #include <limits>
 
-#ifdef _MSC_VER
-#define STDCALL __stdcall
-#else
-#define STDCALL
-#endif
+#include <zlib.h>
+
+#include "../../../include/io/core/matlabio.h"
+#include "../../../include/base/KiplException.h"
+
 
 using namespace std;
 namespace kipl { namespace io {
@@ -355,8 +354,8 @@ namespace core {
 		return 1;
 	}
 
-//	int STDCALL WriteMATmatrix(void *data, int rows, int cols, mxClassID type, const char *varname, const char *fname)
-	int WriteMATmatrix(void *data, const size_t * dims, size_t NDim, mxClassID type, const char *varname, const char *fname)
+    int KIPLSHARED_EXPORT WriteMATmatrix(void *data, const size_t * dims, size_t NDim, mxClassID type, const char *varname, const char *fname)
+//	int WriteMATmatrix(void *data, const size_t * dims, size_t NDim, mxClassID type, const char *varname, const char *fname)
 	{
 		stringstream s;
 		char infotext[124];
@@ -533,7 +532,7 @@ namespace core {
 		return 0;
 	}
 
-	int STDCALL ReadMAThead(FILE **inf, int & rows, int & cols, mxClassID  & type, char  **varname, char *fname)
+    int KIPLSHARED_EXPORT ReadMAThead(FILE **inf, int & rows, int & cols, mxClassID  & type, char  **varname, char *fname)
 	{
 		char infotext[124];
 		char dummy[16];
@@ -642,7 +641,7 @@ namespace core {
 		return ftell(*inf);
 	}
 
-	int STDCALL WriteMAThead(FILE **of, 
+    int KIPLSHARED_EXPORT WriteMAThead(FILE **of,
 		const size_t *dims, 
 		size_t NDim, 
 		mxClassID type, 
@@ -783,7 +782,7 @@ namespace core {
 		return ftell(*of);
 	}
 
-	int STDCALL FinishWriteMAT(FILE **of, int headsize)
+    int KIPLSHARED_EXPORT FinishWriteMAT(FILE **of, int headsize)
 	{
 		char dummy[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 

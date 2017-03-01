@@ -1,4 +1,7 @@
+//<LICENCE>
+
 #include "../../../include/kipl_global.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <cstddef>
@@ -6,6 +9,7 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+
 #include "../../../include/math/sums.h"
 #include "../../../include/base/thistogram.h"
 #ifndef NO_TIFF

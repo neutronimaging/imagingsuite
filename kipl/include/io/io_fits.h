@@ -1,7 +1,10 @@
+//<LICENCE>
+
 #ifndef IO_FITS_H_
 #define IO_FITS_H_
 
 #include "../kipl_global.h"
+
 #include "../base/timage.h"
 
 namespace kipl { namespace io {

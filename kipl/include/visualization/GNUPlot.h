@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef GNUPLOT_H_
 #define GNUPLOT_H_
 

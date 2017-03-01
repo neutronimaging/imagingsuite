@@ -1,10 +1,11 @@
-#ifndef _MSC_VER
-#include <tiffio.h>
-#endif
+//<LICENCE>
+
 #include <iostream>
+
+#include <tiffio.h>
+
 #include "../../include/base/timage.h"
 #include "../../include/base/KiplException.h"
-#include <tiffio.h>
 
 namespace kipl { namespace io {
 

@@ -1,9 +1,4 @@
-/*
- * DanielssonDistance.h
- *
- *  Created on: Jan 17, 2013
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef DANIELSSONDISTANCE_H_
 #define DANIELSSONDISTANCE_H_

@@ -1,7 +1,10 @@
-#include "../../include/math/PoissonNoise.h"
-#include "../../include/math/mathconstants.h"
+//<LICENCE>
+
 #include <cstdlib>
 #include <cmath>
+
+#include "../../include/math/PoissonNoise.h"
+#include "../../include/math/mathconstants.h"
 
 namespace kipl { namespace math {
 

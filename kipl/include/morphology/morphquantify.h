@@ -1,12 +1,10 @@
-#ifdef _MSC_VER
-#pragma once
-#endif
+//<LICENCE>
 
 #ifndef __MORPHQUANTIFY_H
 #define __MORPHQUANTIFY_H
 
-#include "image.h"
-#include "Morphology.h"
+#include "../base/timage.h"
+#include "morphology.h"
 
 namespace Morphology {
 /** The purpose of the class is to Quantify an image in terms of stereology

@@ -1,13 +1,15 @@
-#include "../../include/visualization/GNUPlot.h"
-#include "../../include/base/KiplException.h"
+//<LICENCE>
+
 #include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <string>
 #ifdef _MSC_VER
-#include <io.h>
+    #include <io.h>
 #endif
 //#include "../../base/timage.h" 
+#include "../../include/visualization/GNUPlot.h"
+#include "../../include/base/KiplException.h"
 
 using namespace std;
 

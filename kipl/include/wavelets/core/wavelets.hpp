@@ -1,18 +1,15 @@
-/*
- * wavelets.hpp
- *
- *  Created on: Jan 24, 2012
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef WAVELETS_HPP_
 #define WAVELETS_HPP_
 
 //#define TUNING_WAVELETS
 #include <cmath>
+#include <algorithm>
+
 #include "../../base/kiplenums.h"
 #include "../../io/io_tiff.h"
-#include <algorithm>
+
 using namespace std;
 
 

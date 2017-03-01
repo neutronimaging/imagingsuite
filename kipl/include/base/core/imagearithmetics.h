@@ -1,18 +1,12 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef IMAGEARITHMETICS_H_
 #define IMAGEARITHMETICS_H_
-#include "../../kipl_global.h"
+
 #include <iostream>
+
+#include "../../kipl_global.h"
+
 
 namespace kipl { namespace base { namespace core {
 template <typename T>

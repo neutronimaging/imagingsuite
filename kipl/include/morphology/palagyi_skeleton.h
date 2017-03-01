@@ -1,12 +1,18 @@
+//<LICENCE>
+
+#ifndef _PALAGYI_SKELETON_
+#define _PALAGYI_SKELETON_
+
 // implement thinning templates given by 
 // Palagyi and Kuba in "A Parallel 3D 12-Subiteration Thinning Algorithm", 1999
 //
 #include <iostream>
-#include <base/timage.h>
-#include "morphology.h"
-#include "base3dskeleton.h"
 #include <vector>
 #include <deque>
+
+#include "../base/timage.h"
+#include "morphology.h"
+#include "base3dskeleton.h"
 #include "label.h"
 
 using namespace std;
@@ -857,3 +863,4 @@ bool PalagyiSkeleton<ImgType>::markBoundaryInDirection(kipl::base::TImage<ImgTyp
 
 }}
 
+#endif

@@ -1,8 +1,12 @@
+//<LICENCE>
+
+#include <cstddef>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
 #include "../include/math/sums.h"
-#include <cstddef>
+
 namespace kipl { namespace math {
 
 double KIPLSHARED_EXPORT sum(float const * const data, const size_t N)

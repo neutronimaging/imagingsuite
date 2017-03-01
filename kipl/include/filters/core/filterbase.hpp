@@ -1,11 +1,11 @@
+//<LICENCE>
+
 #ifndef __FILTERBASE_HPP_
 #define __FILTERBASE_HPP_
 #include <limits>
-#include "../../base/KiplException.h"
 #include <iostream>
-//#include "../../visualization/GNUPlot.h"
-//#include "../../io/io_matlab.h"
 
+#include "../../base/KiplException.h"
 
 namespace kipl { namespace filters {
 

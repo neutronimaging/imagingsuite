@@ -1,10 +1,14 @@
+//<LICENCE>
+
 #ifndef __NODELOCKER_H
 #define __NODELOCKER_H
 
 #include "../kipl_global.h"
+
 #include <string>
 #include <list>
 #include <set>
+
 #include "../../include/logging/logger.h"
 
 namespace kipl { namespace utilities { 

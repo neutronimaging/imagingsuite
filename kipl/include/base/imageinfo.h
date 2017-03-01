@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __IMAGEINFO_H
 #define __IMAGEINFO_H
 #include "../kipl_global.h"

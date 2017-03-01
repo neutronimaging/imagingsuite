@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef IMAGE_STATISTICS_H_
 #define IMAGE_STATISTICS_H_
 

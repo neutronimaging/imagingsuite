@@ -1,10 +1,13 @@
-#include "../../include/segmentation/thresholds.h"
-#include "../../include/morphology/morphology.h"
-#include "../../include/math/sums.h"
+//<LICENCE>
+
 #include <vector>
 #include <deque>
 #include <cmath>
 #include <algorithm>
+
+#include "../../include/segmentation/thresholds.h"
+#include "../../include/morphology/morphology.h"
+#include "../../include/math/sums.h"
 
 using namespace std;
 

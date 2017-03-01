@@ -1,19 +1,12 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef _IMAGECAST_HPP_
 #define _IMAGECAST_HPP_
 
-#include "../../logging/logger.h"
 #include <limits>
+
+#include "../../logging/logger.h"
+
 
 namespace kipl { namespace base {
 

@@ -1,6 +1,9 @@
+//<LICENCE>
+
 #ifndef DIRANALYZER_H
 #define DIRANALYZER_H
 #include "../kipl_global.h"
+
 #include <vector>
 #include <string>
 

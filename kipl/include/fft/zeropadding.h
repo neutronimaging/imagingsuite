@@ -1,13 +1,10 @@
-/*
- * zeropadding.h
- *
- *  Created on: Aug 16, 2011
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef ZEROPADDING_H_
 #define ZEROPADDING_H_
+
 #include "../kipl_global.h"
+
 #include "../base/timage.h"
 
 namespace kipl { namespace math { namespace fft {

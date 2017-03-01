@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef SEGMENTATIONSEGMENTATIONBASE_H
 #define SEGMENTATIONSEGMENTATIONBASE_H
@@ -16,11 +7,11 @@
 #include <iostream>
 #include <map>
 
-#include <base/timage.h>
-#include <base/textractor.h>
-#include <strings/parenc.h>
-#include <io/io_matlab.h>
-#include <logging/logger.h>
+#include "../base/timage.h"
+#include "../base/textractor.h"
+#include "../strings/parenc.h"
+#include "../io/io_matlab.h"
+#include "../logging/logger.h"
 
 /// \brief Grouping classification and segmentation related classes
 namespace kipl { namespace segmentation {

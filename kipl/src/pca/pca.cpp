@@ -1,12 +1,14 @@
+//<LICENCE>
+
 #ifndef __PCA_HPP
 #define __PCA_HPP
+
+#include <jama_eig.h>
+#include <tnt_array2d_utils.h>
 
 #include "../include/pca/pca.h"
 #include "../include/math/covariance.h"
 #include "../include/math/image_statistics.h"
-
-#include <jama_eig.h>
-#include <tnt_array2d_utils.h>
 #include "../include/math/tnt_utils.h"
 
 namespace kipl {

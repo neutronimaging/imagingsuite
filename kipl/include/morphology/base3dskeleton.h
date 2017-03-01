@@ -1,11 +1,13 @@
+//<LICENCE>
+
 #ifndef MORPHOLOGYBASE3DSKELETON_H
 #define MORPHOLOGYBASE3DSKELETON_H
-
-#include <base/timage.h>
-#include <morphology/morphology.h>
-#include <morphology/morphdist.h>
 #include <map>
 #include <string>
+
+#include "../base/timage.h"
+#include "morphology.h"
+#include "morphdist.h"
 
 namespace kipl { namespace morphology {
 

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include "../../include/base/KiplException.h"
 #include "../../include/scalespace/filterenums.h"
 

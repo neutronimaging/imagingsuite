@@ -1,8 +1,11 @@
+//<LICENCE>
+
 #ifndef __SHOCK_FILTER_H
 #define __SHOCK_FILTER_H
 
-#include "diff_filterbase.h"
 #include <string>
+
+#include "diff_filterbase.h"
 
 namespace ScaleSpace {
 /// Shock Laplacian filter according to Osher and Rudin

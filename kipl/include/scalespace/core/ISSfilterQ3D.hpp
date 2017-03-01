@@ -1,14 +1,16 @@
+//<LICENCE>
+
 #ifndef ISSFILTERQ3D_HPP_
 #define ISSFILTERQ3D_HPP_
 
-#include <base/timage.h>
-#include <base/tsubimage.h>
-#include <base/thistogram.h>
-#include <base/timagetests.h>
-#include <math/mathfunctions.h>
-#include <base/core/quad.h>
-#include <io/io_tiff.h>
-#include <strings/filenames.h>
+#include "../../base/timage.h"
+#include "../../base/tsubimage.h"
+#include "../../base/thistogram.h"
+#include "../../base/timagetests.h"
+#include "../../math/mathfunctions.h"
+#include "../../base/core/quad.h"
+#include "../../io/io_tiff.h"
+#include "../../strings/filenames.h"
 
 #include <iomanip>
 #include <sstream>

@@ -1,17 +1,9 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2011-09-27 19:35:43 +0200 (Di, 27 Sep 2011) $
-// $Rev: 1079 $
-//
-#include <xmmintrin.h>
-#include <emmintrin.h>
+//<LICENCE>
+
 #include <cmath>
 #include <cstdlib>
+#include <xmmintrin.h>
+#include <emmintrin.h>
 
 namespace kipl { namespace math {
 

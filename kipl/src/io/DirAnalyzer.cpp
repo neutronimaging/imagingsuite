@@ -1,4 +1,5 @@
-//#include <dirent.h>
+//<LICENCE>
+
 #include <sstream>
 #include <iostream>
 #include <stddef.h>

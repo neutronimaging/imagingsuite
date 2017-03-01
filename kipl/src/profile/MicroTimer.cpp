@@ -1,9 +1,12 @@
-#include "../../include/profile/MicroTimer.h"
+//<LICENCE>
+
 #include <iostream>
 #ifdef _MSC_VER
 #else
 #include <unistd.h>
 #endif
+
+#include "../../include/profile/MicroTimer.h"
 
 namespace kipl { namespace profile {
 double MicroTimer::m_dCalibration=0.0;

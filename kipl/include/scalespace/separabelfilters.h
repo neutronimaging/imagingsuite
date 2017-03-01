@@ -1,9 +1,8 @@
-/***************************************************************************
- *   Copyright (C) 2004 by Anders Kaestner                                 *
- *   anders.kaestner@env.ethz.ch                                           *
- *                                                                         *
- ***************************************************************************/
-	
+//<LICENCE>
+
+#ifndef __SEPARABLE_FILTERS_H_
+#define __SEPARABLE_FILTERS_H_
+
 #include "filter.h"
 
 namespace Filter {
@@ -351,3 +350,4 @@ namespace Filter {
 		this->edge_weight=NULL;
 	}
 }
+#endif

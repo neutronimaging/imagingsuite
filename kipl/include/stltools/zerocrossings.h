@@ -1,6 +1,7 @@
+//<LICENCE>
+
 #ifndef __ZEROCROSSINGS_H
 #define __ZEROCROSSINGS_H
-
 
 template <class ForwardIterator>
 int FindZeroCrossings(const ForwardIterator &begin,const ForwardIterator &end, vector<ForwardIterator> &pos)

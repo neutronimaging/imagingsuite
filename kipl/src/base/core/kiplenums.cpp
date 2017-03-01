@@ -1,7 +1,10 @@
-#include "../../../include/base/kiplenums.h"
-#include "../../../include/base/KiplException.h"
+//<LICENCE>
+
 #include <iostream>
 #include <map>
+
+#include "../../../include/base/kiplenums.h"
+#include "../../../include/base/KiplException.h"
 
 std::string enum2string(kipl::base::eImagePlanes plane) {
 	std::string s;

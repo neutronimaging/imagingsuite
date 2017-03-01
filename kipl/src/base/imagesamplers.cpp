@@ -1,12 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2009-02-13 16:25:29 +0100 (Fri, 13 Feb 2009) $
-// $Rev: 138 $
+//<LICENCE>
 
 #include "../../include/base/imagesamplers.h"
 

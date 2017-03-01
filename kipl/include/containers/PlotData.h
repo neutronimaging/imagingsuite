@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef _KIPL_PLOTDATA_H
 #define _KIPL_PLOTDATA_H
 

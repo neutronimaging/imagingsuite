@@ -1,6 +1,9 @@
-#include "../../../include/base/core/imagearithmetics.h"
+//<LICENCE>
+
 #include <emmintrin.h>
 #include <cstddef>
+#include "../../../include/base/core/imagearithmetics.h"
+
 #ifndef __CYGWIN__
 namespace kipl { namespace base { namespace core {
 

@@ -1,7 +1,11 @@
+//<LICENCE>
+
 #ifndef __FILTERBASE_H
 #define __FILTERBASE_H
 #include "../kipl_global.h"
+
 #include <iostream>
+
 #include "../base/timage.h"
 
 namespace kipl { namespace UnitTests { namespace basefilters {

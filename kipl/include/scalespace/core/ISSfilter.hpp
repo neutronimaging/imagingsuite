@@ -1,12 +1,14 @@
+//<LICENCE>
+
 #ifndef ISSFILTER_HPP_
 #define ISSFILTER_HPP_
-
-#include <base/timage.h>
-#include <base/imageoperators.h>
 #include <iomanip>
 #include <omp.h>
-#include <morphology/morphfilters.h>
-#include <math/mathfunctions.h>
+
+#include "../../base/timage.h"
+#include "../../base/imageoperators.h"
+#include "../../morphology/morphfilters.h"
+#include "../../math/mathfunctions.h"
 
 
 namespace akipl { namespace scalespace {

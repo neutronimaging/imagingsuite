@@ -1,19 +1,10 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef __ORIENTEDUPDATER_H
 #define __ORIENTEDUPDATER_H
 
-#include <segmentation/multiresseg.h>
-#include <segmentation/mapupdater.h>
+#include "../segmentation/multiresseg.h"
+#include "../segmentation/mapupdater.h"
 
 namespace Segmentation {
 

@@ -1,8 +1,11 @@
+//<LICENCE>
+
 #ifndef COVARIANCE_H
 #define COVARIANCE_H
 
-#include "../logging/logger.h"
 #include <tnt_array2d.h>
+
+#include "../logging/logger.h"
 
 namespace kipl {
 namespace math {

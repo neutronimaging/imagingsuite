@@ -1,10 +1,13 @@
+//<LICENCE>
+
 #ifndef __MORPHDIST_H
 #define __MORPHDIST_H
 
-#include "../base/timage.h"
-#include "morphology.h"
 #include <limits>
 #include <deque>
+
+#include "../base/timage.h"
+#include "morphology.h"
 
 using namespace std;
 

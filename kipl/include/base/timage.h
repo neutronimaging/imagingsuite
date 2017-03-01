@@ -1,20 +1,13 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef TIMAGE_H_
 #define TIMAGE_H_
 #include <stdexcept>
+#include <complex>
+
 #include "core/sharedbuffer.h"
 #include "imageinfo.h"
-#include <complex>
+
 namespace kipl {
 /// \brief The namespace contains classes for basic image handling
 namespace base {

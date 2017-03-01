@@ -1,20 +1,14 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
+
+#include <iostream>
+#include <sstream>
+
+#include "emmintrin.h" // why in "" and not <>?
+#include "xmmintrin.h"
+
 #include "../../include/math/LUTbase.h"
 #include "../../include/base/core/quad.h"
 #include "../../include/base/KiplException.h"
-#include "emmintrin.h"
-#include "xmmintrin.h"
-#include <iostream>
-#include <sstream>
 
 using namespace std;
 

@@ -1,15 +1,14 @@
+//<LICENCE>
+
 #ifndef IO_MATLAB_H_
 #define IO_MATLAB_H_
- /***************************************************************************
- *   Copyright (C) 2004 by Anders Kaestner                                 *
- *   anders.kaestner@env.ethz.ch                                           *
- *                                                                         *
- ***************************************************************************/
+
+#include <iostream>
 #include <cstddef>
+
 #include "../base/timage.h"
 #include "../base/kiplenums.h"
 #include "core/matlabio.h"
-#include <iostream>
 #include "../strings/filenames.h"
 #include "../visualization/GNUPlot.h"
 

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef MEDIAN_H_
 #define MEDIAN_H_
 

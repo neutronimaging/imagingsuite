@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef MICROTIMER_H_
 #define MICROTIMER_H_
 

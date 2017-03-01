@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef TPROFILE_H
 #define TPROFILE_H
 

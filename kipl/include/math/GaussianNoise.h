@@ -1,9 +1,4 @@
-/*
- * boxmueller.h
- *
- *  Created on: Mar 27, 2011
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef BOXMULLER_H_
 #define BOXMULLER_H_

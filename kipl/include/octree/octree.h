@@ -1,9 +1,4 @@
-/*
- * octree.h
- *
- *  Created on: Nov 11, 2012
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef OCTREE_H_
 #define OCTREE_H_

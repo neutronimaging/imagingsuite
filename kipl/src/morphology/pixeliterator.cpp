@@ -1,6 +1,8 @@
+//<LICENCE>
 
 #include <iostream>
 #include <cstring>
+
 #include "../../include/morphology/pixeliterator.h"
 #include "../../include/base/KiplException.h"
 

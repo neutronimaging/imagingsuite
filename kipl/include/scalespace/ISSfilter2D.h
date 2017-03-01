@@ -1,21 +1,15 @@
-//
-// C++ Interface: ISSfilter
-//
-// Description: 
-//
-//
-// Author: Anders Kaestner <perk@itoibm>, (C) 2007
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+//<LICENCE>
+
+#ifndef __ISSFILTER2D_H_
+#define __ISSFILTER2D_H_
+
+#include <sstream>
 
 #include "../base/timage.h"
 #include "../filters/filter.h"
 #include "../math/sums.h"
 #include "../logging/logger.h"
 
-#include <sstream>
 
 #define USEDIFF
 
@@ -283,3 +277,4 @@ int ISSfilter<T>::_P(kipl::base::TImage<T,2> &img, kipl::base::TImage<T,2> &res)
 
 }}
 
+#endif

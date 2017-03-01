@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef LINFIT_H
 #define LINFIT_H
 

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __IMAGETHRES_H
 #define __IMAGETHRES_H
 
@@ -6,13 +8,11 @@
 #include <deque>
 #include <iostream>
 #include <sstream>
-
-#include "../logging/logger.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+#include "../logging/logger.h"
 #include "../base/timage.h"
 #include "../morphology/morphology.h"
 #include "../base/thistogram.h"

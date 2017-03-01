@@ -1,15 +1,15 @@
+//<LICENCE>
+
 #ifndef __MORPHGEO_H
 #define __MORPHGEO_H
 #include <iostream>
 #include <deque>
+
 #include "../base/timage.h"
-//#include "filter.h"
+#include "../base/imageoperators.h"
+
 #include "morphology.h"
 #include "morphfilters.h"
-#include "../base/imageoperators.h"
-//#include "../visualization/imgviewer.h"
-//#include "../misc/templatetype.h"
-
 
 using namespace std;
 

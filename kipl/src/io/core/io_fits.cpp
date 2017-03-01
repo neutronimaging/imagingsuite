@@ -1,7 +1,11 @@
-#include <fitsio.h>
-#include "../../../include/base/KiplException.h"
+//<LICENCE>
+
 #include <exception>
 #include <sstream>
+
+#include <fitsio.h>
+
+#include "../../../include/base/KiplException.h"
 
 namespace kipl { namespace io {
 int KIPLSHARED_EXPORT FITSDataType(unsigned char x) 	{ return     TBYTE; }

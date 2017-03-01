@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef KIPL_GLOBAL_H
 #define KIPL_GLOBAL_H
 

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include <cstdlib>
 
 using namespace std;

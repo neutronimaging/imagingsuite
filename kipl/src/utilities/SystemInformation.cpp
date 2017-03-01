@@ -1,9 +1,5 @@
-/*
- * SytemInformation.cpp
- *
- *  Created on: Oct 13, 2011
- *      Author: anders
- */
+//<LICENCE>
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -12,13 +8,12 @@
 #ifdef _MSC_VER
 
 #else
+    #include "sys/types.h"
+    #ifdef __APPLE__
 
-#include "sys/types.h"
-#ifdef __APPLE__
-
-#else
-#include "sys/sysinfo.h"
-#endif
+    #else
+        #include "sys/sysinfo.h"
+    #endif
 #endif
 
 #include "../../include/utilities/SystemInformation.h"

@@ -1,7 +1,8 @@
-#include "../../include/filters/filter.h"
+//<LICENCE>
+
 #include "../../include/math/mathfunctions.h"
 #include "../../include/filters/filterbase.h"
-
+#include "../../include/filters/filter.h"
 #include "../../include/filters/stddevfilter.h"
 
 

@@ -1,11 +1,15 @@
+//<LICENCE>
+
 #ifndef TEXTRACTOR_HPP_
 #define TEXTRACTOR_HPP_
+
+#include <iostream>
 
 #include "../../logging/logger.h"
 #include "../timage.h"
 #include "../kiplenums.h"
 #include "../KiplException.h"
-#include <iostream>
+
 
 namespace kipl { namespace base {
 

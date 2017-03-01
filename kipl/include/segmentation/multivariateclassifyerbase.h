@@ -1,5 +1,8 @@
+//<LICENCE>
+
 #ifndef MULTIVARIATECLASSIFYERBASE_H
 #define MULTIVARIATECLASSIFYERBASE_H
+
 #include "../kipl_global.h"
 
 #include <tnt.h>

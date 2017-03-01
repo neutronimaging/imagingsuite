@@ -1,8 +1,11 @@
+//<LICENCE>
+
+#include <list>
+
 #include "../../include/kipl_global.h"
 #include "../../include/base/timage.h"
 #include "../../include/base/kiplenums.h"
 #include "../../include/io/io_generic.h"
-#include <list>
 
 namespace kipl { namespace io {
 union converter

@@ -1,10 +1,7 @@
-/*
- * zeropadding.cpp
- *
- *  Created on: Aug 16, 2011
- *      Author: anders
- */
+//<LICENCE>
+
 #include "../include/kipl_global.h"
+
 #include <cstdlib>
 #include <cmath>
 

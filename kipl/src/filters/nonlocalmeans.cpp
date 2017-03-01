@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include <cmath>
 #include <fstream>
 #include <sstream>

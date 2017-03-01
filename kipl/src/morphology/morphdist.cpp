@@ -1,12 +1,13 @@
-#include "../../include/base/timage.h"
-//#include "image/imagemath.h"
-#include "../../include/morphology/morphdist.h"
+//<LICENCE>
+
 #include <cstdlib>
 #include <cfloat>
 
+#include "../../include/base/timage.h"
+//#include "image/imagemath.h"
+#include "../../include/morphology/morphdist.h"
+
 using namespace std;
-//using namespace Imagemath;
-//using namespace Image;
 
 namespace kipl { namespace morphology {
 

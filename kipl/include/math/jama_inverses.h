@@ -1,8 +1,4 @@
-/***************************************************************************
- *   Copyright (C) 2004 by Anders Kaestner                                 *
- *   anders.kaestner@env.ethz.ch                                           *
- *                                                                         *
- ***************************************************************************/
+//<LICENCE>
 
 #ifndef __JAMA_INVERSES_H
 #define __JAMA_INVERSES_H

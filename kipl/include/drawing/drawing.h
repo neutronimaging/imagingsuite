@@ -1,19 +1,11 @@
-//
-// This file is part of the kipl library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-05-21 16:21:03 +0200 (Mon, 21 May 2012) $
-// $Rev: 1317 $
-// $Id: ModuleConfig.cpp 1317 2012-05-21 14:21:03Z kaestner $
-//
+//<LICENCE>
 
 #ifndef __DRAWING_H
 #define __DRAWING_H
-#include "../kipl_global.h"
+
 #include <string>
+
+#include "../kipl_global.h"
 #include "../base/timage.h"
 #include "../logging/logger.h"
 

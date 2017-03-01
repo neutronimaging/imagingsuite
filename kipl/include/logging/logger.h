@@ -1,16 +1,10 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
+
 #ifndef LOGGER_H_
 #define LOGGER_H_
+
 #include "../kipl_global.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -94,7 +88,7 @@ protected:
     static LogWriter * LogTarget;   //!< Refence to the global log target single log target case
 #endif
     static LogLevel CurrentLogLevel; //!< The current global log level
-    static std::mutex m_LoggerMutex; ///< A mutex to protect against simultaneous writing from several threrads.
+    static std::mutex m_LoggerMutex; ///< A mutex to protect against simultaneous writing from several threads.
 
     std::string sLogOrigin; //!< The name of the current log space. Every class that use a logger instance should tell what their name is to improve the quality of the message.
 };

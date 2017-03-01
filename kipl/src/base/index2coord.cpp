@@ -1,5 +1,8 @@
-#include "../../include/base/index2coord.h"
+//<LICENCE>
+
 #include <cmath>
+
+#include "../../include/base/index2coord.h"
 
 namespace kipl { namespace base {
 	Index2Coordinates::Index2Coordinates(size_t const * const dims, size_t N)

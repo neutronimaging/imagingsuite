@@ -1,16 +1,13 @@
+//<LICENCE>
+
 #ifndef MATLABIO_H_
 #define MATLABIO_H_
 
-#ifdef _MSC_VER
-#define STDCALL __stdcall
-#else
-#define STDCALL
-#endif
-
-
 #include "../../kipl_global.h"
+
 #include <cstdlib>
 #include <iostream>
+
 namespace kipl { namespace io { namespace core { 
 /// Enum used to select data type to save in mat file
 
@@ -40,39 +37,33 @@ std::ostream KIPLSHARED_EXPORT  & operator<<(std::ostream & s, mxClassID id);
 
 size_t KIPLSHARED_EXPORT sizeofMAT(mxClassID id);
 
-//#define __STDCALL
-/** \brief Reads the first matrix of a mat file (raw read)
-	Both compressed and raw data can be read
-	\param data pointer to the data array
-	\param dims Array containing the lengts of the supported dimensions
-	\param NDim Number of dimensions
-	\param type Data type of the matrix
-	\param name The Matlab name of the variable
-	\param fname Filename of the file to be read
-
-  \note The function allocates memory for both data and name. This memory has to be deallocated 
-  manually by delete [].
-*/
+/// \brief Reads the first matrix of a mat file (raw read)
+///	Both compressed and raw data can be read
+///	\param data pointer to the data array
+///	\param dims Array containing the lengts of the supported dimensions
+///	\param NDim Number of dimensions
+///	\param type Data type of the matrix
+///	\param name The Matlab name of the variable
+///	\param fname Filename of the file to be read
+///
+///  \note The function allocates memory for both data and name. This memory has to be deallocated
+///  manually by delete [].
 int KIPLSHARED_EXPORT ReadMATmatrix(char **data, size_t *dims, int &NDim, mxClassID  & type, char  **varname, const char *fname);
-//int __STDCALL ReadMATmatrix(char **data, int & rows, int & cols, mxClassID & type, char **name, const char *fname);
 
-/** \brief Writes mat file with the data (raw version)
-	\param data pointer to the data array
-	\param dims Array containing the lengts of the supported dimensions
-	\param NDim Number of dimensions
-	\param type Data type of the matrix
-	\param varname The Matlab name of the variable
-	\param fname Filename of the file to be written
 
-*/
+/// \brief Writes mat file with the data (raw version)
+///	\param data pointer to the data array
+///	\param dims Array containing the lengts of the supported dimensions
+///	\param NDim Number of dimensions
+///	\param type Data type of the matrix
+///	\param varname The Matlab name of the variable
+///	\param fname Filename of the file to be written
 int KIPLSHARED_EXPORT WriteMATmatrix(void *data,const size_t * dims, size_t NDim, mxClassID type, const char *varname, const char *fname);
-//int __STDCALL WriteMATmatrix(void *data, int rows, int cols, mxClassID type, const char *varname, const char *fname);
 
 /// Reads the file head of a mat file
 int  KIPLSHARED_EXPORT ReadMAThead(FILE **inf, size_t & rows, size_t & cols, mxClassID  & type, char  **varname, const char *fname);
 
 /// Writes the file head of a mat file
-//int KIPLSHARED_EXPORT STDCALL WriteMAThead(FILE **of,
 int KIPLSHARED_EXPORT WriteMAThead(FILE **of,
 				 const size_t *dims, 
 				 size_t NDim, 
@@ -81,13 +72,11 @@ int KIPLSHARED_EXPORT WriteMAThead(FILE **of,
 				 const char *fname);
 
 /// Finishes of the writing of a mat file
-//int KIPLSHARED_EXPORT STDCALL FinishWriteMAT(FILE **of, int headsize=0x88);
 int KIPLSHARED_EXPORT FinishWriteMAT(FILE **of, int headsize=0x88);
 
-/** \brief Get the text name of of MAT class id
-	\param id Class ID
-	\param str String containing the class description
-*/
+/// \brief Get the text name of of MAT class id
+///	\param id Class ID
+///	\param str String containing the class description
 std::string KIPLSHARED_EXPORT ClassIDstr(mxClassID id);
 
 mxClassID KIPLSHARED_EXPORT GetMatlabClassID( float a );
@@ -102,4 +91,4 @@ mxClassID KIPLSHARED_EXPORT GetMatlabClassID( unsigned int a );
 //mxClassID GetMatlabClassID( unsigned long long a );
 
 }}} // end namespace fileio
-#endif /*MATLABIO_H_*/
+#endif // MATLABIO_H_

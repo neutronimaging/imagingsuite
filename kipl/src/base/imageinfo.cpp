@@ -1,5 +1,8 @@
+//<LICENCE>
+
 #include <string>
 #include <iostream>
+
 #include "../../include/base/imageinfo.h"
 
 std::ostream & operator<<(std::ostream &s, kipl::base::ImageInfo &info)

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include "../../include/filters/filterbase.h"
 
 namespace kipl { namespace filters {

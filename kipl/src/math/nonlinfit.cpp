@@ -1,12 +1,15 @@
-#include "../../include/math/nonlinfit.h"
-#include "../../include/math/jama_inverses.h"
-#include "../../include/logging/logger.h"
+//<LICENCE>
 
-#include <tnt.h>
-#include <jama_lu.h>
 #include <cstring>
 #include <sstream>
 #include <cmath>
+
+#include <tnt.h>
+#include <jama_lu.h>
+
+#include "../../include/math/nonlinfit.h"
+#include "../../include/math/jama_inverses.h"
+#include "../../include/logging/logger.h"
 
 using namespace TNT;
 using namespace JAMA;

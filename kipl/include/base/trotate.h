@@ -1,9 +1,4 @@
-/*
- * trotate.h
- *
- *  Created on: Nov 30, 2011
- *      Author: kaestner
- */
+//<LICENCE>
 
 #ifndef TROTATE_H_
 #define TROTATE_H_

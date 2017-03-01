@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __IOWORKER_H
 #define __IOWORKER_H
 

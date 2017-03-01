@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __SIEMENSSTAR_H
 #define __SIEMENSSTAR_H
 

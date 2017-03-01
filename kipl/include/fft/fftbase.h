@@ -1,15 +1,10 @@
-/***************************************************************************
- *   Copyright (C) 2008 by Anders Kaestner   *
- *   anders.kaestner@psi.ch   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                  *
- ***************************************************************************/
+//<LICENCE>
+
 #ifndef _FFTBASE_H_
 #define _FFTBASE_H_
 
 #include "../kipl_global.h"
+
 #include <complex>
 #include <cstring>
 #include <fftw3.h>

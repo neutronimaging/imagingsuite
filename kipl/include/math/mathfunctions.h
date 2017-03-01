@@ -1,8 +1,12 @@
+//<LICENCE>
+
 #ifndef _MATHFUNCTIONS_H_
 #define _MATHFUNCTIONS_H_
 
-#include "../base/timage.h"
 #include <complex>
+
+#include "../base/timage.h"
+
 
 namespace kipl { namespace math {
 template <typename T, size_t N>

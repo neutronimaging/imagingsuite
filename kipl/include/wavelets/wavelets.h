@@ -1,21 +1,14 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2009-08-19 12:09:30 +0200 (Mi, 19 Aug 2009) $
-// $Rev: 330 $
-//
+//<LICENCE>
 
 #ifndef __WAVELETS_H
 #define __WAVELETS_H
+
+#include <iostream>
+#include <list>
+
 #include "../base/timage.h"
 #include "../logging/logger.h"
 #include "../base/kiplenums.h"
-#include <iostream>
-#include <list>
 
 namespace kipl { namespace wavelets {
 

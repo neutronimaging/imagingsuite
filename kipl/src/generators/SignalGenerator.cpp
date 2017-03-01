@@ -1,7 +1,9 @@
-#include "../../include/generators/SignalGenerator.h"
+//<LICENCE>
 
 #include <vector>
 #include <cmath>
+
+#include "../../include/generators/SignalGenerator.h"
 
 namespace kipl { namespace generators {
 

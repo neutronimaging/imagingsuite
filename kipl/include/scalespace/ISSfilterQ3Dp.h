@@ -1,19 +1,11 @@
-//
-// C++ Interface: Queue based ISSfilter 
-//
-// Description: 
-//
-//
-// Author: Anders Kaestner <anders.kaestner@solnet.ch>, (C) 2007
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+//<LICENCE>
+
 #ifndef __ISSFILTERQ3DP_H
 #define __ISSFILTERQ3DP_H
 #include <iostream>
-#include <base/timage.h>
 #include <list>
+
+#include <base/timage.h>
 #include "../logging/logger.h"
 #include "filterenums.h"
 

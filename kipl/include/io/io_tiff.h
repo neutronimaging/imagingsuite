@@ -1,27 +1,22 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
+//<LICENCE>
+
 #ifndef __IO_TIFF_H
 #define __IO_TIFF_H
+
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cstring>
+#include <sstream>
+
+#include <tiffio.h>
 
 #include "../base/imagecast.h"
 #include "../base/timage.h"
 #include "../base/imageinfo.h"
 #include "../strings/filenames.h"
 #include "../base/kiplenums.h"
-#include <tiffio.h>
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cstring>
-#include <sstream>
+
 
 namespace kipl { namespace io {
 

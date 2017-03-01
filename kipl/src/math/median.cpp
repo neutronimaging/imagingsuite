@@ -1,10 +1,13 @@
-#include "../../include/math/median.h"
-#include "../../include/base/core/quad.h"
+//<LICENCE>
+
+#include <iostream>
 #include <limits>
 #include <algorithm>
 #include <xmmintrin.h>
 #include <emmintrin.h>
-#include <iostream>
+
+#include "../../include/math/median.h"
+#include "../../include/base/core/quad.h"
 
 namespace kipl { namespace math {
 

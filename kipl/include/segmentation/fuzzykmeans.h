@@ -1,27 +1,17 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
-
+//<LICENCE>
 
 #ifndef SEGMENTATIONFUZZYCMEANS_H
 #define SEGMENTATIONFUZZYCMEANS_H
 
-#include <base/timage.h>
-#include "segmentationbase.h"
-#include <logging/logger.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <vector>
 #include <map>
 #include <limits>
 #include <algorithm>
-#include <logging/logger.h>
+
+#include "../base/timage.h"
+#include "segmentationbase.h"
+#include "../logging/logger.h"
 
 namespace kipl { namespace segmentation {
 

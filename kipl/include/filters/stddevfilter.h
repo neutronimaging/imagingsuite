@@ -1,9 +1,13 @@
+//<LICENCE>
+
 #ifndef STDDEVFILTER_H
 #define STDDEVFILTER_H
 
 #include "../kipl_global.h"
+
 #include "../base/timage.h"
 #include "filterbase.h"
+
 namespace kipl { namespace filters {
 
 /// \brief A filter to compute the local standard deviation of a 2D image

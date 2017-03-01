@@ -1,20 +1,17 @@
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef __stlvecmath_h
 #define __stlvecmath_h
+
 #include <vector>
 #include <iostream>
+
 #include "../math/median.h"
 //#include "statistics.h"
 //#include "../misc/sortalg.h"
 //#include "../image/imagethres.h"
 
 using namespace std;
-//using namespace Visualization;
 
 /// \brief Median filters the data in a vector
 ///

@@ -1,7 +1,10 @@
+//<LICENCE>
+
 #ifndef TIMER_H_
 #define TIMER_H_
 
 #include "../kipl_global.h"
+
 #include <sys/types.h>
 #include <time.h>
 #include <iostream>

@@ -1,18 +1,11 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
+
+#include <string>
+#include <limits>
+
 #include "../../include/morphology/morphology.h"
 #include "../../include/base/timage.h"
 #include "../../include/base/KiplException.h"
-#include <string>
-#include <limits>
 
 
 //////////////////////////////////////////////////////////////////////

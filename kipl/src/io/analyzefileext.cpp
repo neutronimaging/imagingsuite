@@ -1,10 +1,12 @@
-#include "../../include/io/analyzefileext.h"
-#include "../../include/strings/filenames.h"
-#include "../../include/base/KiplException.h"
+//<LICENCE>
 
 #include <string>
 #include <map>
 #include <algorithm>
+
+#include "../../include/io/analyzefileext.h"
+#include "../../include/strings/filenames.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl {
 

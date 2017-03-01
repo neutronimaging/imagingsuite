@@ -1,20 +1,10 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2014-11-27 09:03:06 +0100 (Thu, 27 Nov 2014) $
-// $Rev: 1215 $
-// $Id: InteractionBase.h 1215 2014-11-27 08:03:06Z kaestner $
-//
+//<LICENCE>
 
 #ifndef __KIPLINTERACTIONBASE_H
 #define __KIPLINTERACTIONBASE_H
 
 #include "../kipl_global.h"
+
 #include <string>
 
 #include "../logging/logger.h"

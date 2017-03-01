@@ -1,28 +1,21 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef TIMAGE_HPP_
 #define TIMAGE_HPP_
-#include "imagearithmetics.h"
-#include "../KiplException.h"
+
 #include <cstring>
 #include <typeinfo>
 #include <iomanip>
 #ifdef _OPENMP
-#include <omp.h>
+    #include <omp.h>
 #else
-typedef int omp_int_t;
-inline omp_int_t omp_get_thread_num() { return 0;}
-inline omp_int_t omp_get_max_threads() { return 1;}
+    typedef int omp_int_t;
+    inline omp_int_t omp_get_thread_num() { return 0;}
+    inline omp_int_t omp_get_max_threads() { return 1;}
 #endif
+
+#include "imagearithmetics.h"
+#include "../KiplException.h"
 
 using namespace std;
 namespace kipl { namespace base {

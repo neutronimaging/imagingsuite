@@ -1,9 +1,4 @@
-/*
- * timagetests.h
- *
- *  Created on: Mar 13, 2011
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef TIMAGETESTS_H_
 #define TIMAGETESTS_H_

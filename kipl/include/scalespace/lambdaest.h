@@ -1,5 +1,9 @@
+//<LICENCE>
+
 #ifndef __LAMBDAEST_H
 #define __LAMBDAEST_H
+
+#include <vector>
 
 #include <base/timage.h>
 //#include "imagestats.h"
@@ -7,7 +11,6 @@
 //#include "../misc/sortalg.h"
 //#include "../math/statistics.h"
 //#include <image/drawable.h>
-#include <vector>
 #include <base/thistogram.h>
 #include <base/textractor.h>
 #include <math/median.h>

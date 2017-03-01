@@ -1,13 +1,5 @@
-////
-//// This file is part of the i KIPL image processing library by Anders Kaestner
-//// (c) 2008 Anders Kaestner
-//// Distribution is only allowed with the permission of the author.
-////
-//// Revision information
-//// $Author: kaestner $
-//// $Date: 2009-08-19 12:09:30 +0200 (Mi, 19 Aug 2009) $
-//// $Rev: 330 $
-////
+//<LICENCE>
+
 //
 //#include "../../include/base/KiplException.h"
 //#include "../../include/wavelets/wavelets.h"

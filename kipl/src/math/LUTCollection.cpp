@@ -1,19 +1,10 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
-#include "../../include/math/LUTCollection.h"
-#include "../../include/base/KiplException.h"
 #include <cmath>
 #include <iostream>
 
+#include "../../include/math/LUTCollection.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl { namespace math {
 

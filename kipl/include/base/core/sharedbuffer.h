@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef SHAREDBUFFER_H_
 #define SHAREDBUFFER_H_
@@ -17,6 +8,7 @@
 #include <cmath>
 #include <cstring>
 #include <xmmintrin.h>
+
 #include "../KiplException.h"
 
 using namespace std;

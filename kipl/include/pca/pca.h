@@ -1,13 +1,18 @@
+//<LICENCE>
+
 #ifndef __PCA_H
 #define __PCA_H
 
 #include <iostream>
 #include <string>
+
+#include <tnt_array2d.h>
+
 #include "../base/timage.h"
 #include "../logging/logger.h"
 #include "../math/covariance.h"
 #include "../base/KiplException.h"
-#include <tnt_array2d.h>
+
 
 namespace kipl {
 namespace pca {

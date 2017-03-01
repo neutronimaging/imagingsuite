@@ -1,16 +1,8 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
+//<LICENCE>
 
 #include <sstream>
 #include <string>
+
 #include "../../include/io/io_stack.h"
 #include "../../include/base/KiplException.h"
 

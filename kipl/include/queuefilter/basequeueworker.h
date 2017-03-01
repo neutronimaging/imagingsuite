@@ -1,17 +1,12 @@
-/***************************************************************************
- *   Copyright (C) 2005 by Anders Kaestner   *
- *   anders.kaestner@env.ethz.ch   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                  *
- *                                                                         *
- ***************************************************************************/
+//<LICENCE>
+
 #ifndef QUEUEFILTERBASEQUEUEWORKER_H
 #define QUEUEFILTERBASEQUEUEWORKER_H
 
-#include <base/timage.h>
 #include <iostream>
+
+#include "../base/timage.h"
+
 
 namespace akipl {namespace queuefilter {
 

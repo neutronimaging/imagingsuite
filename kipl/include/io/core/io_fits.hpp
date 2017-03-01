@@ -1,27 +1,17 @@
+//<LICENCE>
+
 #ifndef IO_FITS_HPP_
 #define IO_FITS_HPP_
 
-#include "../../base/KiplException.h"
-//#include <io/IO_fits.h>
 #include <iostream>
 #include <sstream>
-#include <fitsio.h>
 #include <stdint.h>
 
+#include <fitsio.h>
+
+#include "../../base/KiplException.h"
+
 namespace kipl { namespace io {
-/*
-int FITSDataType(unsigned char x) 	{ return TBYTE; }
-int FITSDataType(char x)           	{ return TSBYTE; }
-int FITSDataType(unsigned short x) 	{ return TUSHORT; }
-int FITSDataType(short x) 			{ return TSHORT; }
-int FITSDataType(int x) 				{ return TINT; }
-int FITSDataType(unsigned int x) 	{ return TUINT; }
-int FITSDataType(long x) 				{ return TLONG; }
-int FITSDataType(long long x)			{ return TLONGLONG; }
-int FITSDataType(unsigned long x) 	{ return TULONG; }
-int FITSDataType(float x) 			{ return TFLOAT; }
-int FITSDataType(double x) 			{ return TDOUBLE; }
-*/
 
 int KIPLSHARED_EXPORT FITSDataType(unsigned char x);
 int KIPLSHARED_EXPORT FITSDataType(char x);

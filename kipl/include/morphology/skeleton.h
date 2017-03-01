@@ -1,17 +1,15 @@
-/***************************************************************************
- *   Copyright (C) 2005,2014 by Anders Kaestner   *
- *   anders.kaestner@psi.ch   *
- *                                                                         *
- ***************************************************************************/
+//<LICENCE>
+
 #ifndef __SKELETON_H
 #define __SKELETON_H
+
+#include <deque>
+#include <sstream>
 
 #include "../base/timage.h"
 #include "../logging/logger.h"
 #include "morphology.h"
 
-#include <deque>
-#include <sstream>
 
 using namespace std;
 using namespace kipl::base;

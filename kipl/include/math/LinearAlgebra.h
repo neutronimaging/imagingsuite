@@ -1,9 +1,4 @@
-/*
- * LinearAlgebra.h
- *
- *  Created on: Apr 11, 2012
- *      Author: kaestner
- */
+//<LICENCE>
 
 #ifndef LINEARALGEBRA_H_
 #define LINEARALGEBRA_H_

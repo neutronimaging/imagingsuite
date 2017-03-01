@@ -1,9 +1,8 @@
-#ifdef _MSC_VER
-#pragma once
-#endif
+//<LICENCE>
 
 #ifndef __NUMFUNC_H
 #define __NUMFUNC_H
+
 namespace NRC {
 double gammp(double a, double x);
 

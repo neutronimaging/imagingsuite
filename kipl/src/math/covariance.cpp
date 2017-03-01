@@ -1,7 +1,10 @@
-#include "../include/math/covariance.h"
-#include "../include/base/KiplException.h"
+//<LICENCE>
+
 #include <string>
 #include <iostream>
+
+#include "../include/math/covariance.h"
+#include "../include/base/KiplException.h"
 
 
 std::string enum2string(kipl::math::eCovarianceType ct)

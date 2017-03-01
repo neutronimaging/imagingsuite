@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef POISSONNOISE_H
 #define POISSONNOISE_H
 

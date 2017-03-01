@@ -1,23 +1,17 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
+
 #ifndef IMAGETHRESHOLDMULTIRESSEG_HPP
 #define IMAGETHRESHOLDMULTIRESSEG_HPP
 
-#include <base/timage.h>
-#include <base/imagesamplers.h>
 #include <vector>
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <logging/logger.h>
+
+#include "../../base/timage.h"
+#include "../../base/imagesamplers.h"
+#include "../../logging/logger.h"
+
 //#include "../segmentationbase.h"
 
 namespace akipl { namespace segmentation {

@@ -1,18 +1,10 @@
-//
-// C++ Interface: ISSfilter
-//
-// Description: 
-//
-//
-// Author: Anders Kaestner <anders.kaestner@solnet.ch>, (C) 2007
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+//<LICENCE>
+
 #ifndef __ISSFILTER_H
 #define __ISSFILTER_H
 #include <iostream>
-#include <base/timage.h>
+
+#include "../base/timage.h"
 
 namespace akipl { namespace scalespace {
 

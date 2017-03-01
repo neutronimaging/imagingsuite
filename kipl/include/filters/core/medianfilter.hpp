@@ -1,13 +1,16 @@
+//<LICENCE>
+
 #ifndef MEDIANFILTER_HPP_
 #define MEDIANFILTER_HPP_
 
-#include "../../base/timage.h"
-#include "../../math/median.h"
-#include "../../base/KiplException.h"
 #include <iomanip>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include "../../base/timage.h"
+#include "../../math/median.h"
+#include "../../base/KiplException.h"
 
 namespace kipl { namespace filters {
 
@@ -21,7 +24,7 @@ TMedianFilter<T,nDims>::TMedianFilter(size_t const * const Dims) : kipl::filters
 	
 	for (size_t i=0; i<nDims; i++)
 		nHalfKernel[i]=Dims[i]>>1;
-};
+}
 
 /// Implements a median filter
 template <class T, size_t nDims>

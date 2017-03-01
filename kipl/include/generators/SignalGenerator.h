@@ -1,10 +1,12 @@
+//<LICENCE>
+
 #ifndef _SignalGenerator_H_
 #define _SignalGenerator_H_
 
 #include <cstddef>
 #include <vector>
-namespace kipl { namespace generators {
 
+namespace kipl { namespace generators {
 
 class SignalGenerator {
 public:

@@ -1,5 +1,8 @@
+//<LICENCE>
+
 #ifndef __morphfilters_h_
 #define __morphfilters_h_
+
 #include "../filters/filterbase.h"
 
 namespace kipl { namespace morphology {

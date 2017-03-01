@@ -1,9 +1,4 @@
-/*
- * octree.cpp
- *
- *  Created on: Nov 11, 2012
- *      Author: anders
- */
+//<LICENCE>
 
 #include "../../include/octree/octree.h"
 

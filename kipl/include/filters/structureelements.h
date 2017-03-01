@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef __STRUCTUREELEMENTS_H_
 #define __STRUCTUREELEMENTS_H_
 

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #include <math.h>
 #include <cstdlib>
 

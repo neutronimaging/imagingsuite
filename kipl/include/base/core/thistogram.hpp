@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef THISTOGRAM_HPP
 #define THISTOGRAM_HPP
 

@@ -1,3 +1,5 @@
+//<LICENCE>
+
 #ifndef TPROFILE_HPP
 #define TPROFILE_HPP
 

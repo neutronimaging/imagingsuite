@@ -1,10 +1,15 @@
+//<LICENCE>
+
 #ifndef IO_GENERIC_H
 #define IO_GENERIC_H
+
 #include "../kipl_global.h"
-#include "../base/timage.h"
-#include "../base/kiplenums.h"
+
 #include <list>
 #include <fstream>
+
+#include "../base/timage.h"
+#include "../base/kiplenums.h"
 
 namespace kipl { namespace io {
 

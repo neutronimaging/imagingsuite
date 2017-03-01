@@ -1,9 +1,12 @@
+
 #ifndef __morphfilters_hpp_
 #define __morphfilters_hpp_
-#include "../../filters/filterbase.h"
-#include "../morphfilters.h"
+
 #include <iostream>
 #include <limits>
+
+#include "../../filters/filterbase.h"
+#include "../morphfilters.h"
 
 namespace kipl { namespace morphology {
 template<typename T>

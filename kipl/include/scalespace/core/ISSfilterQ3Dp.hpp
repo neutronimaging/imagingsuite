@@ -1,17 +1,22 @@
+//<LICENCE>
+
 #ifndef ISSFILTERQ3DP_HPP_
 #define ISSFILTERQ3DP_HPP_
 
-#include <base/timage.h>
 #include <iomanip>
 #include <omp.h>
-#include <base/tsubimage.h>
 #include <sstream>
-#include <math/mathfunctions.h>
-#include <base/core/quad.h>
-#include <emmintrin.h>
-#include <io/io_tiff.h>
-#include <strings/filenames.h>
 #include <iostream>
+#include <emmintrin.h>
+
+#include "../../base/timage.h"
+#include "../../base/tsubimage.h"
+
+#include "../../math/mathfunctions.h"
+#include "../../base/core/quad.h"
+
+#include "../../io/io_tiff.h"
+#include "../../strings/filenames.h"
 
 
 namespace akipl { namespace scalespace {

@@ -1,22 +1,13 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
-#include "../../include/kipl_global.h"
-#include "../../include/logging/logger.h"
-#include "../../include/base/KiplException.h"
+//<LICENCE>
 
 #include <sstream>
 #include <list>
 #include <iostream>
 #include <ctime>
 
+#include "../../include/kipl_global.h"
+#include "../../include/logging/logger.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl { namespace logging {
 using namespace std;

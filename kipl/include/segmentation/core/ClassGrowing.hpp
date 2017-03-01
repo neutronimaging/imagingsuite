@@ -1,10 +1,14 @@
+//<LICENCE>
+
 #ifndef CLASSGROWING_HPP_
 #define CLASSGROWING_HPP_
 
-#include "../../morphology/morphology.h"
-#include "../../logging/logger.h"
 #include <list>
 #include <sstream>
+
+#include "../../morphology/morphology.h"
+#include "../../logging/logger.h"
+
 namespace akipl { namespace segmentation {
 
 template <class T, size_t N>

@@ -1,7 +1,10 @@
+//<LICENCE>
+
+#include <cmath>
+
 #include "../../include/generators/Sine2D.h"
 #include "../../include/base/timage.h"
 #include "../../include/math/mathconstants.h"
-#include <cmath>
 
 using namespace std;
 

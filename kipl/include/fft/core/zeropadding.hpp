@@ -1,9 +1,4 @@
-/*
- * zeropadding.h
- *
- *  Created on: Aug 16, 2011
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef ZEROPADDING_HPP_
 #define ZEROPADDING_HPP_

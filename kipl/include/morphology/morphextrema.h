@@ -1,13 +1,16 @@
+//<LICENCE>
+
 #ifndef __MORPHEXTREMA_H
 #define __MORPHEXTREMA_H
 
+#include <deque>
+#include <iostream>
+
+#include "../base/KiplException.h"
 #include "../base/timage.h"
 #include "../math/image_statistics.h"
 #include "morphology.h"
 #include "morphgeo.h"
-#include <deque>
-#include <iostream>
-#include "../base/KiplException.h"
 
 
 /** Reconstruction based extrem operations */

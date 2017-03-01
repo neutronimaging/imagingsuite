@@ -1,12 +1,15 @@
+//<LICENCE>
+
 #include <cstdio>
-//#include <io.h>
+#include <cstring>
+#include <cstdlib>
 #include <ctime>
+//#include <io.h>
+
 #include <iostream>
 #include <iomanip>
-#include <cstring>
-//#include <cmath>
-#include <cstdlib>
 #include <vector>
+
 #include "../../include/strings/parenc.h"
 
 

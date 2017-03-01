@@ -1,25 +1,19 @@
-// Statistics.h: interface for the Statistics class.
-//
-//////////////////////////////////////////////////////////////////////
+//<LICENCE>
 
-#ifndef AFX_STATISTICS_H__B802B410_6183_11D1_8812_00C04FD8E524__INCLUDED_
-#define AFX_STATISTICS_H__B802B410_6183_11D1_8812_00C04FD8E524__INCLUDED_
+#ifndef KIPL_STATISTICS_H__
+#define KIPL_STATISTICS_H__
 
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
 
-#ifdef _MSC_VER
-#pragma once
-#endif
 
 
 
-/*! \brief Class to compute first and second order statistics of data
- *
- *  The class provides the posi 
- */
+/// \brief Class to compute first and second order statistics of data
+///
+///  The class provides the posi
 
 /// Namespace for numeric functions and support functions
 namespace kipl {
@@ -102,5 +96,5 @@ namespace math {
 }} // End namespace statistics
 ostream& operator <<(ostream & os, kipl::math::Statistics & s);
 #include "core/statistics.hpp"
-#endif // !defined(AFX_STATISTICS_H__B802B410_6183_11D1_8812_00C04FD8E524__INCLUDED_)
+#endif // !defined(KIPL_STATISTICS_H__)
 

@@ -1,9 +1,4 @@
-/*
- * SystemInformation.h
- *
- *  Created on: Oct 13, 2011
- *      Author: anders
- */
+//<LICENCE>
 
 #ifndef SYSTEMINFORMATION_H_
 #define SYSTEMINFORMATION_H_

@@ -1,19 +1,12 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENCE>
 
 #ifndef ALIGNED_MALLOC_H_
 #define ALIGNED_MALLOC_H_
 
-#include "../../kipl_global.h"
 #include <cstdlib>
+
+#include "../../kipl_global.h"
+
 /// \brief Memory alocation to a specified byte boundary
 /// \param size Length of the buffer to be allocated
 /// \param align_size Alignement length for the buffer. align_size has to be a power of two !!

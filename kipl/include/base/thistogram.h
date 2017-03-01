@@ -1,10 +1,14 @@
+//<LICENCE>
+
 #ifndef __THISTOGRAM_H
 #define __THISTOGRAM_H
 #include "../kipl_global.h"
-#include "timage.h"
+
 #include <vector>
 #include <map>
 #include <fstream>
+
+#include "timage.h"
 #include "../logging/logger.h"
 #include "kiplenums.h"
 
