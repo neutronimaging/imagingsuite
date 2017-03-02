@@ -234,6 +234,9 @@ Read(std::string filename,
 	extensions[".tiff"]=2;
 	extensions[".TIF"]=2;
 	extensions[".png"]=3;
+    extensions[".hdf"]=4;
+    extensions[".hd5"]=4;
+
 	size_t extpos=filename.find_last_of(".");
 
 	kipl::base::TImage<float,2> img;
@@ -242,11 +245,11 @@ Read(std::string filename,
 		std::string ext=filename.substr(extpos);
 		try {
 			switch (extensions[ext]) {
-			case 0  : img=ReadMAT(filename,pCrop);  break;
-			case 1  : img=ReadFITS(filename,pCrop); break;
+            case 0  : img=ReadMAT(filename,pCrop);   break;
+            case 1  : img=ReadFITS(filename,pCrop);  break;
 			case 2  : img=ReadTIFF(filename,pCrop);  break;
-			case 3  : img=ReadPNG(filename,pCrop);  break;
-			//case 4	: return ReadHDF(filename);  break;
+            case 3  : img=ReadPNG(filename,pCrop);   break;
+            case 4	: img=ReadHDF(filename);         break;
 			default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
 			}
 		}
@@ -352,6 +355,25 @@ kipl::base::TImage<float,2> ProjectionReader::ReadPNG(std::string filename, size
 {
 	throw ReconException("ReadPNG is not implemented",__FILE__, __LINE__); 
 	return kipl::base::TImage<float,2>();
+}
+
+kipl::base::TImage<float,2> ProjectionReader::ReadHDF(std::string filename, size_t const * const nCrop)
+{
+    kipl::base::TImage<float,2> img;
+    try {
+        // todo kipl::io::ReadFITS(img,filename.c_str(),nCrop);
+    }
+    catch (std::exception &e) {
+        throw ReconException(e.what(), __FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        throw kipl::base::KiplException(e.what(), __FILE__,__LINE__);
+    }
+    catch (...) {
+        throw ReconException("Unknown exception", __FILE__,__LINE__);
+    }
+
+    return img;
 }
 
 float ProjectionReader::GetProjectionDose(std::string filename,

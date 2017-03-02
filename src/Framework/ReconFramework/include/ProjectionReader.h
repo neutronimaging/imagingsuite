@@ -138,26 +138,33 @@ protected:
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-	kipl::base::TImage<float,2> ReadMAT(std::string filename,  size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadMAT(std::string filename,  size_t const * const nCrop=nullptr);
 
     /// Read FITS images.
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadFITS(std::string filename, size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadFITS(std::string filename, size_t const * const nCrop=nullptr);
 
     /// Read TIFF images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadTIFF(std::string filename, size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadTIFF(std::string filename, size_t const * const nCrop=nullptr);
 
     /// Read PNG images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
     /// \todo Implement PNG support
-	kipl::base::TImage<float,2> ReadPNG(std::string filename,  size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadPNG(std::string filename,  size_t const * const nCrop=nullptr);
+
+    /// Read HDF5 images
+    /// \param filename The name of the file to read.
+    /// \param nCrop ROI to read.
+    /// \returns A floating point image
+    /// \todo Implement PNG support
+    kipl::base::TImage<float,2> ReadHDF(std::string filename,  size_t const * const nCrop=nullptr);
 
     /// Interface to the interactor that updates the message and progress.
     /// \param val Progress, a value between 0.0 and 1.0.
