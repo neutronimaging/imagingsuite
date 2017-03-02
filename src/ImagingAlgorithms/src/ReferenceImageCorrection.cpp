@@ -12,6 +12,7 @@
 
 //#include <cstring>
 #include <map>
+#include <math.h>
 #include <sstream>
 #include <math/median.h>
 
