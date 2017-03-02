@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <sstream>
+#include <stdint.h>
 
 #include <fitsio.h>
 

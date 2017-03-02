@@ -6,6 +6,7 @@
 #include "../kipl_global.h"
 
 #include "../base/timage.h"
+#include <stdint.h>
 
 namespace kipl { namespace io {
 
