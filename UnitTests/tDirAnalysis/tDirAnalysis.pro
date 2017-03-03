@@ -12,6 +12,9 @@ TARGET = tst_tdiranalysistest
 CONFIG   += console
 CONFIG   -= app_bundle
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+
 TEMPLATE = app
 
 win32 {
@@ -23,11 +26,10 @@ win32 {
 SOURCES += tst_tdiranalysistest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug,   debug|release): LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Debug/ -lkipl
+CONFIG(release, debug|release): LIBS += -L../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L../../../../lib/debug/
+
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/include

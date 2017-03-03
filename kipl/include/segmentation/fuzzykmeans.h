@@ -65,7 +65,7 @@ public:
     /// \brief Interface function that is intended to perform the segmentation
     ///	\param img Input graylevel image
     ///	\param seg Segmented output image
-    virtual int operator()(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg) { }
+    virtual int operator()(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg) { return 0;}
 
     /// Set the parameters for the segmentation
     virtual void setParameters(std::map<std::string,std::string> parameters) { }

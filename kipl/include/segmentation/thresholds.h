@@ -485,18 +485,18 @@ int RegGrowThresh(const CImage<ImgType,NDim> & img, CImage<char,NDim> & simg, fl
 	/// \param Tc central threshold that maximize the cost function
 	/// \param T0 lower threshold
 	/// \param T1 upper threshold
-	int Threshold_Entropy(vector<long> &hist, vector<float> & inter, float re, int &Tc, int &T0, int &T1);
+    int KIPLSHARED_EXPORT Threshold_Entropy(vector<long> &hist, vector<float> & inter, float re, int &Tc, int &T0, int &T1);
 	
 	/// \brief Computes the image threshold acording to Otsu
 	/// \param hist Vector containing the histogram of the image to be thresholded
 	/// \bug Sometimes the second attempt fails...
-	int Threshold_Otsu(size_t const * const hist, const size_t N);
+    int KIPLSHARED_EXPORT Threshold_Otsu(size_t const * const hist, const size_t N);
 
 	/// \brief computes the threshold for a unimodal histogram
 	///	\param hist The histogram vector
 	///	\param tail Selects the tail
 	///	\param median_filter_len Length of the median filter
-	int Threshold_Rosin(size_t const * const hist, const TailType tail=tail_left, const size_t median_filter_len=0);
+    int KIPLSHARED_EXPORT Threshold_Rosin(size_t const * const hist, const TailType tail=tail_left, const size_t median_filter_len=0);
 }}
 
 
