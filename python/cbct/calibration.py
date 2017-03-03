@@ -1,21 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
-##
-#from astropy.io import fits
-#
-#dcfile = fits.open('../../data/cbct/dc_3s_5fps_00001.fits')
-#dc = dcfile[0].data
-#
-#obfile = fits.open('../../data/cbct/ob_3s_5fps_60kV_150uA_00001.fits')
-#ob = obfile[0].data
-#
-#imgfile = fits.open('../../data/cbct/fp200_x70_3s_5fps_60kV_150uA_00001.fits')
-#img = imgfile[0].data
-
 import matplotlib.pyplot as plt
 import numpy as np
 import skimage.io as io
