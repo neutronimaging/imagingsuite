@@ -31,7 +31,7 @@ class buffer {
 		//~cref() { delete [] m_pRawPointer; }
 		/// \returns The size of the allocated buffer 
 		size_t Size() { return m_nData; }
-		/// \returns True is the buffer pointer is adjusted to fit better into 16 byte blocks
+        /// \returns True is the buffer pointer is adjusted to fit better into 32 byte blocks
 		bool AdjustedPointer() { return m_pRawPointer!=data; }
 		
 		private:
@@ -41,8 +41,9 @@ class buffer {
 			char *m_pRawPointer;
 			/// \brief Does the allocation and adjusts the data pointer to the beginning of the next 32 block
 			void _Allocate(size_t N) {
-				m_pRawPointer=reinterpret_cast<char *>(_mm_malloc((N+16)*sizeof(T),32));
-				if (m_pRawPointer==NULL) {
+				m_pRawPointer=reinterpret_cast<char *>(_mm_malloc((N+16)*sizeof(T),32));               
+
+                if (m_pRawPointer==nullptr) {
 					std::ostringstream msg;
 					msg<<"Failed to allocate "<<(N+16)*sizeof(T)<<" bytes";
                     throw kipl::base::KiplException(msg.str(),std::string(__FILE__),size_t(__LINE__));
@@ -60,7 +61,7 @@ class buffer {
 		///\brief Copy c'tor. Manages the refence counting (cheap execution)
 		buffer(const buffer &a) {
 			m_cref=a.m_cref; 
-			m_cref->cnt++;
+            ++m_cref->cnt;
 		}
 		
 		///\brief Assignment operator. Manages reference counting (cheap execution)
@@ -68,14 +69,15 @@ class buffer {
 			if (!(--m_cref->cnt)) 
 				delete m_cref;
 			m_cref=a.m_cref; 
-			m_cref->cnt++;
+            ++m_cref->cnt;
 			
 			return *this;
 		}
 
 		buffer & Resize(size_t N) {
 			if (N!=this->m_cref->Size()) {
-				delete m_cref;
+                if (!(--m_cref->cnt))
+                    delete m_cref;
 
 				m_cref=new cref(N);
 			}

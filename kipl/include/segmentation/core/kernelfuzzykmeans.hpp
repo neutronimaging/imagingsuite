@@ -24,7 +24,7 @@ namespace kipl { namespace segmentation {
 
 template<typename ImgType, typename SegType ,size_t NDim>
 KernelFuzzyKMeans<ImgType,SegType,NDim>::KernelFuzzyKMeans() :
-	SegmentationBase<ImgType,SegType,NDim>("KernelFuzzyKMeans"),
+    kipl::segmentation::SegmentationBase<ImgType,SegType,NDim>("KernelFuzzyKMeans"),
 	maxIterations(250),
 	haveCenters(false),
 	centers(NULL),

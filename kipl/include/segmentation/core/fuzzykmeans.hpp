@@ -24,7 +24,7 @@ namespace kipl { namespace segmentation {
 
 template<class ImgType, class SegType ,size_t NDim>
 FuzzyKMeans<ImgType,SegType,NDim>::FuzzyKMeans() :
-	SegmentationBase<ImgType,SegType,NDim>("FuzzyKMeans"),
+    kipl::segmentation::SegmentationBase<ImgType,SegType,NDim>("FuzzyKMeans"),
 	maxIterations(250),
 	haveCenters(false),
     centers(nullptr),
