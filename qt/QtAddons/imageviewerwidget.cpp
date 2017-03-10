@@ -428,6 +428,16 @@ void ImageViewerWidget::clear_rectangle(int idx)
     m_ImagePainter.clear_rectangle(idx);
 }
 
+void ImageViewerWidget::set_marker(QMarker marker, int idx)
+{
+    m_ImagePainter.set_marker(marker,idx);
+}
+
+void ImageViewerWidget::clear_marker(int idx)
+{
+
+}
+
 void ImageViewerWidget::hold_annotations(bool hold)
 {
     m_ImagePainter.hold_annotations(hold);

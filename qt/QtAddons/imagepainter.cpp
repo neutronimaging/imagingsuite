@@ -102,9 +102,18 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
                     pointB=offset+m_fScale*it->first[i];
 
                     painter.drawLine(pointA,pointB);
-                    //line.setPoints(pointA.toPoint(),pointB.toPoint());
-                    //
                 }
+            }
+        }
+
+        if (!m_MarkerList.empty()) {
+            QMap<int,QMarker>::iterator it;
+            for (it=m_MarkerList.begin(); it!=m_MarkerList.end(); it++)
+            {
+                QPoint offset(offset_x,offset_y);
+
+                it->Draw(painter,m_fScale,offset);
+
             }
         }
 
@@ -223,6 +232,35 @@ int ImagePainter::clear_rectangle(int idx)
 
             if (it!=m_BoxList.end()) {
                 m_BoxList.erase (it);
+            }
+        }
+        m_pParent->update();
+        return 1;
+    }
+
+    return 0;
+}
+
+void ImagePainter::set_marker(QtAddons::QMarker marker, int idx)
+{
+    m_MarkerList.insert(idx,marker);
+    m_pParent->update();
+}
+
+int ImagePainter::clear_marker(int idx)
+{
+    QMap<int,QMarker >::iterator it;
+
+    if (!m_MarkerList.empty()) {
+        if (idx<0) {
+            m_MarkerList.clear();
+        }
+        else
+        {
+            it=m_MarkerList.find(idx);
+
+            if (it!=m_MarkerList.end()) {
+                m_MarkerList.erase (it);
             }
         }
         m_pParent->update();

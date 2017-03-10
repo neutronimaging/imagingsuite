@@ -23,6 +23,8 @@
 #include "imagepainter.h"
 #include "plotter.h"
 #include "imageviewerinfodialog.h"
+#include "qglyphs.h"
+#include "qmarker.h"
 
 namespace QtAddons {
 
@@ -60,6 +62,8 @@ public:
     void clear_plot(int idx=-1);
     void set_rectangle(QRect rect, QColor color, int idx);
     void clear_rectangle(int idx=-1);
+    void set_marker(QtAddons::QMarker marker, int idx);
+    void clear_marker(int idx=-1);
     void hold_annotations(bool hold);
 
     void clear_viewer();

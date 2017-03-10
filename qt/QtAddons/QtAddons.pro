@@ -45,7 +45,8 @@ SOURCES += qtlogviewer.cpp \
     plotpainter.cpp \
     plotwidget.cpp \
     reportgeneratorbase.cpp \
-    imageviewerinfodialog.cpp
+    imageviewerinfodialog.cpp \
+    qmarker.cpp
 
 
 
@@ -58,7 +59,8 @@ HEADERS += qtlogviewer.h\
     plotpainter.h \
     plotwidget.h \
     reportgeneratorbase.h \
-    imageviewerinfodialog.h
+    imageviewerinfodialog.h \
+    qmarker.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

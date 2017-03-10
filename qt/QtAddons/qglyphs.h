@@ -18,14 +18,15 @@ enum ePlotGlyph {
 class QGlyphBase {
 public:
     QGlyphBase(int size, ePlotGlyph gtype) : m_nSize(size), m_nSize2(size>>1), m_type(gtype) {}
-    QGlyphBase(QGlyphBase & glyph) ;
+    QGlyphBase(const QGlyphBase & glyph) ;
     virtual ~QGlyphBase() {}
 
-//    QGlyphBase & operator=(QGlyphBase & glyph);
+    const QGlyphBase & operator=(const QGlyphBase & glyph);
 
     virtual void Draw(QPainter & painter, int x, int y) = 0;
-    ePlotGlyph GlyphType() {return m_type;}
-    int Size() { return m_nSize;}
+    virtual void Draw(QPainter & painter, QPoint p) = 0;
+    ePlotGlyph GlyphType() const {return m_type;}
+    int Size() const { return m_nSize;}
 protected:
     int m_nSize;
     int m_nSize2;
@@ -39,6 +40,7 @@ public:
     virtual ~QGlyphCross() {};
 
     virtual void Draw(QPainter &painter, int x, int y);
+    virtual void Draw(QPainter & painter, QPoint p);
 };
 
 class QGlyphPlus : public QGlyphBase
@@ -48,6 +50,7 @@ public:
     virtual ~QGlyphPlus() {};
 
     virtual void Draw(QPainter & painter, int x, int y);
+    virtual void Draw(QPainter & painter, QPoint p);
 };
 
 class QGlyphSquare : public QGlyphBase
@@ -57,6 +60,7 @@ public:
     virtual ~QGlyphSquare() {};
 
     virtual void Draw(QPainter &painter, int x, int y);
+    virtual void Draw(QPainter & painter, QPoint p);
 };
 
 QGlyphBase * BuildGlyph(ePlotGlyph glyph, int size);

@@ -15,6 +15,8 @@
 #include <logging/logger.h>
 #include <base/timage.h>
 
+#include "qmarker.h"
+
 class QPainter;
 
 
@@ -40,6 +42,8 @@ public:
     int clear_plot(int idx=-1);
     void set_rectangle(QRect rect, QColor color, int idx);
     int  clear_rectangle(int idx=-1);
+    void set_marker(QMarker marker, int idx);
+    int clear_marker(int idx=-1);
     void hold_annotations(bool hold);
 
     int  clear();
@@ -87,6 +91,7 @@ protected:
     QVector<QRect> m_ZoomList; //<! Stack of zoom ROIs
     QMap<int,QPair<QRect, QColor> > m_BoxList; //<! List of Rectangles to draw on the image
     QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList; //<! List of plot data to draw on the image
+    QMap<int,QMarker > m_MarkerList;
     QVector<QPointF> m_Histogram; //<! Histogram of the full image
 
     QPixmap m_pixmap_full;

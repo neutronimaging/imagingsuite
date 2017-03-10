@@ -70,6 +70,8 @@ void MainWindow::on_ShowImageButton_clicked()
         for (int i=0;i<static_cast<int>(img.Size(0)); i++)
             data.append(QPointF(i,20+50*sin(2*3.14*i/100.0f)));
         ui->ImageView->set_plot(data,QColor(Qt::green),0);
+        QtAddons::QMarker marker(QtAddons::PlotGlyph_Plus,QPoint(20,30),QColor("blue"),10);
+        ui->ImageView->set_marker(marker,0);
     }
 
 }
