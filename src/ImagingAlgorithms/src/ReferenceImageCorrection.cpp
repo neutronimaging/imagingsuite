@@ -107,14 +107,14 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 		m_bHaveOpenBeam=true;
         m_OpenBeam=*ob;
 //        kipl::io::WriteTIFF32(m_OpenBeam,"~/repos/testdata/roi_ob.tif");
-        std::cout << "have OB!" << std::endl;
+//        std::cout << "have OB!" << std::endl;
 	}
 
 	if (dc!=NULL) {
 		m_bHaveDarkCurrent=true;
         m_DarkCurrent=*dc;
 //        kipl::io::WriteTIFF32(m_DarkCurrent,"~/repos/testdata/roi_dc.tif");
-        std::cout << "have DC!" << std::endl;
+//        std::cout << "have DC!" << std::endl;
 	}
 
     if(roi!=nullptr){
@@ -125,7 +125,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     if (dose_OB!=0) {
         m_bHaveDoseROI=true;
         m_fOpenBeamDose = dose_OB;
-                std::cout << " have dose roi!  " << std::endl;
+//                std::cout << " have dose roi!  " << std::endl;
         //        std::cout << dose_OB << std::endl;
 
 
@@ -139,7 +139,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         m_bHaveBlackBodyROI = true;
         m_bHaveBBDoseROI = true;
 
-        std::cout << "have dose roi for BBs!" << std::endl;
+//        std::cout << "have dose roi for BBs!" << std::endl;
 //		memcpy(m_nBlackBodyROI,dose_BB,4*sizeof(size_t));
     }
 
@@ -147,7 +147,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     if (useBB) {
 		m_bHaveBlackBody=true;
         // try with the open beam first,, and then go on with the sample one
-        std::cout << "have BB!" << std::endl;
+//        std::cout << "have BB!" << std::endl;
 
         // to understand what is done here with these images... they are used to compute the dose in the PB variante
         // for some reason they must be declared at this point otherwise it chrashes
@@ -638,16 +638,27 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
 //    std::cout << "MEAN AND STD DEV: " << mean_value << " " << std_dev << std::endl;
 
-    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-                it != values.end(); ++it) {
+//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
+//                it != values.end(); ++it) {
 
-        if(it->second >= (mean_value+2*std_dev)) {
-//            std::cout << "found outlier value" << std::endl;
-//            std:cout << it->first.first << " " << it->first.second << std::endl;
-            values.erase(it); // not sure it won't cause problems
+//        if(it->second >= (mean_value+2*std_dev)) {
+////            std::cout << "found outlier value" << std::endl;
+////            std:cout << it->first.first << " " << it->first.second << std::endl;
+//            values.erase(it); // not sure it won't cause problems
 
+//        }
+
+//    }
+
+    // this should be the correct way of removing element (STL book, page 205) -> to see if it works
+
+    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
+        if(it->second >= (mean_value+2*std_dev)){
+            values.erase(it++);
         }
-
+        else{
+            ++it;
+        }
     }
 
     float *myparam = new float[6];
@@ -721,7 +732,7 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 //      std::cout << "VALUES TO INTERPOLATE: " << std::endl;
     // find values to interpolate
 
-    kipl::io::WriteTIFF32(mask, "mask.tif");
+//    kipl::io::WriteTIFF32(mask, "mask.tif");
 
     float mean_value = 0.0f;
     for (int x=0; x<mask.Size(0); x++) {
@@ -1092,9 +1103,9 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
     error = sqrt(1/float(values.size())*error);
 
 
-    std::cout << "error in solve linear equation " << error << std::endl;
+//    std::cout << "error in solve linear equation " << error << std::endl;
 
-    std::cout << myparam[0] << " " << myparam[1] << " " << myparam[2] << " " << myparam[3] << " " << myparam[4] << " " << myparam[5] << std::endl;
+//    std::cout << myparam[0] << " " << myparam[1] << " " << myparam[2] << " " << myparam[3] << " " << myparam[4] << " " << myparam[5] << std::endl;
 
 
     return myparam;
@@ -1298,7 +1309,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
     switch(ebo) {
     case(Interpolate) : {
-        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+//        std::cout << "I am in....." << enum2string(ebo) << std::endl;
 //        size_t step = (nProj)/(nBBSampleCount);
 //        std::cout << "STEP: "  << step<<  std::endl;
         sample_bb_parameters = new float[6*m_nBBimages];
@@ -1324,7 +1335,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         break;
     }
     case(OneToOne) : {
-        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+//        std::cout << "I am in....." << enum2string(ebo) << std::endl;
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
@@ -1332,7 +1343,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         break;
     }
     case(Average) : {
-        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+//        std::cout << "I am in....." << enum2string(ebo) << std::endl;
         sample_bb_parameters = new float[6];
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6);
         sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
@@ -1770,7 +1781,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
 
 
-                        #pragma omp parallel for
+                        #pragma omp parallel for firstprivate(pImgBB, pFlat, pDark)
                         for (int i=0; i<N; i++) {
 
                             // now computed in prepareBBdata
@@ -1796,7 +1807,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                   float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
 
 
-                    #pragma omp parallel for
+                    #pragma omp parallel for firstprivate(pImgBB, pDark)
                     for (int i=0; i<N; i++) {
 
 //                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
@@ -1826,7 +1837,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
 
 
-                        #pragma omp parallel for
+                        #pragma omp parallel for firstprivate (pImgBB,pFlat,pDark)
                         for (int i=0; i<N; i++) {
 
                             // now computed in prepareBBdata
@@ -1852,7 +1863,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                   float *pImgBB = m_BB_slice_ext.GetDataPtr();
 
 
-                    #pragma omp parallel for
+                    #pragma omp parallel for firstprivate(pImgBB, pDark)
                     for (int i=0; i<N; i++) {
 
 //                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
@@ -1878,7 +1889,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
                         float *pImg=img.GetDataPtr();
 
-                        #pragma omp parallel for
+                        #pragma omp parallel for firstprivate(pFlat,pDark)
                         for (int i=0; i<N; i++) {
 
     //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
@@ -1897,7 +1908,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
                   float *pImg=img.GetDataPtr();
 
-                    #pragma omp parallel for
+                    #pragma omp parallel for firstprivate(pDark)
                     for (int i=0; i<N; i++) {
                         float fProjPixel=(pImg[i]-pDark[i]);
                         if (fProjPixel<=0)
@@ -2077,7 +2088,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 
 
 
-                        #pragma omp parallel for
+                        #pragma omp parallel for firstprivate(pImgBB, pDark, pFlat)
                         for (int i=0; i<N; i++) {
 
 
@@ -2097,7 +2108,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
                   float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
 
 
-                    #pragma omp parallel for
+                    #pragma omp parallel for firstprivate(pImgBB, pDark)
                     for (int i=0; i<N; i++) {
 
 //                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
@@ -2127,7 +2138,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 
 
 
-                        #pragma omp parallel for
+                        #pragma omp parallel for firstprivate(pImgBB, pFlat, pDark)
                         for (int i=0; i<N; i++) {
 
                             // now computed in prepareBBdata
@@ -2152,7 +2163,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
                   float *pImgBB = m_BB_slice_ext.GetDataPtr();
 
 
-                    #pragma omp parallel for
+                    #pragma omp parallel for firstprivate(pImgBB, pDark)
                     for (int i=0; i<N; i++) {
 
 //                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
@@ -2178,7 +2189,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 
                         float *pImg=img.GetDataPtr();
 
-                        #pragma omp parallel for
+                        #pragma omp parallel for firstprivate(pFlat,pDark)
                         for (int i=0; i<N; i++) {
 
     //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
@@ -2197,7 +2208,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 
                   float *pImg=img.GetDataPtr();
 
-                    #pragma omp parallel for
+                    #pragma omp parallel for firstprivate(pDark)
                     for (int i=0; i<N; i++) {
                         float fProjPixel=(pImg[i]-pDark[i]);
                         if (fProjPixel<=0)
