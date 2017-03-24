@@ -13,6 +13,20 @@
 
 namespace kipl { namespace io {
 
+union converter
+{
+  // for reading
+  char c;
+
+  // for convertion
+  unsigned char b;
+  struct
+  {
+    unsigned int hi: 4;
+    unsigned int lo: 4;
+  } nibbles;
+};
+
 /// \brief Prototype for reading the ANDOR NEO dmp data format
 /// \param fname The file name of the image
 /// \param x Size of the image in x
@@ -33,7 +47,8 @@ kipl::base::TImage<unsigned short,2> KIPLSHARED_EXPORT ReadDat(std::string fname
 /// \param imageindex In the case when imagesperfile is more than one, this parameter indexes a specific image
 /// \param nCrop Crop region. The entire image will be read if this is set to NULL
 /// \returns 0
-int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<unsigned short,2> &img,
+template <typename ImgType>
+int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
                 size_t size_x,
                 size_t size_y,
                 size_t offset, //< Given in bytes
@@ -42,7 +57,7 @@ int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<unsigned sh
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
                 size_t imageindex,
-                size_t const * const nCrop=NULL);
+                size_t const * const nCrop=nullptr);
 
 /// \brief Read a binary file as 2D image (unsigned short)
 /// \param img Destination image

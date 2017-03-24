@@ -69,7 +69,8 @@ enum eDataType {
     UInt4,      ///< 4bits unsigned integer
     UInt8,      ///< 8bits unsigned integer
     UInt12,     ///< 12bits unsigned integer
-    UInt16      ///< 16bits unsigned integer
+    UInt16,     ///< 16bits unsigned integer
+    Float32     ///< 32bit float
 };
 
 /// \brief Endian selector
