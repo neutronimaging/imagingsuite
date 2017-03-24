@@ -55,14 +55,17 @@ ICON = kip_icon.icns
 SOURCES +=  ../../src/main.cpp\
             ../../src/kiptoolmainwindow.cpp \
             ../../src/ImageIO.cpp \
-            ../../src/confighistorydialog.cpp
+            ../../src/confighistorydialog.cpp \
+            ../../src/genericconversion.cpp
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/ImageIO.h \
-            ../../src/confighistorydialog.h
+            ../../src/confighistorydialog.h \
+            ../../src/genericconversion.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
-            ../../src/confighistorydialog.ui
+            ../../src/confighistorydialog.ui \
+            ../../src/genericconversion.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/

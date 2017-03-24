@@ -776,7 +776,7 @@
      <x>0</x>
      <y>0</y>
      <width>1134</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -803,9 +803,16 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuFile_processing">
+    <property name="title">
+     <string>File processing</string>
+    </property>
+    <addaction name="actionGeneric_file_conversion"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuProcess"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuFile_processing"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -862,6 +869,11 @@
   <action name="actionClear_History">
    <property name="text">
     <string>Clear History</string>
+   </property>
+  </action>
+  <action name="actionGeneric_file_conversion">
+   <property name="text">
+    <string>Generic file conversion</string>
    </property>
   </action>
  </widget>

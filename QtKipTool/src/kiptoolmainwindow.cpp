@@ -24,6 +24,7 @@
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
 #include "confighistorydialog.h"
+#include "genericconversion.h"
 
 #include "ImageIO.h"
 
@@ -807,4 +808,12 @@ void KipToolMainWindow::on_slider_vprofile_sliderMoved(int position)
             ui->plotter_vprofile->setCurveData(1,data,QColor("red"));
         }
     }
+}
+
+void KipToolMainWindow::on_actionGeneric_file_conversion_triggered()
+{
+    GenericConversion dlg;
+
+    dlg.exec();
+
 }

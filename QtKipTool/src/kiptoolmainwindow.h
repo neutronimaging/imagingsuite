@@ -64,6 +64,8 @@ private slots:
 
     void on_slider_vprofile_sliderMoved(int position);
 
+    void on_actionGeneric_file_conversion_triggered();
+
 private:
     void UpdateDialog();
     void UpdateConfig();
