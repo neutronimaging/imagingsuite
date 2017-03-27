@@ -7,9 +7,11 @@
 
 #include <base/timage.h>
 #include <io/io_fits.h>
+#include <io/io_tiff.h>
 
 #include <MorphSpotClean.h>
 #include <averageimage.h>
+#include <piercingpointestimator.h>
 #include <pixelinfo.h>
 
 
@@ -28,6 +30,7 @@ private Q_SLOTS:
     void AverageImage_Enums();
     void AverageImage_Processing();
     void AverageImage_ProcessingWeights();
+    void PiercingPoint_Processing();
 
 private:
     kipl::base::TImage<float,2> holes;
@@ -235,6 +238,38 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
     QCOMPARE(r0,25.0f);
 
     delete [] w;
+}
+
+void TestImagingAlgorithms::PiercingPoint_Processing()
+{
+    size_t dims[2]={386,256};
+    kipl::base::TImage<float,2> img(dims);
+
+    float a =  80800.0f; //220*220+180*180;
+    float b = -220.0f;
+    float c = -180.0f;
+    float d =  0.0f;
+    float e =  0.5f;
+    float f =  0.75f;
+
+    int i=0;
+    for (float y=0.0f; y<256.0f; ++y) {
+        for (float x=0.0f; x<386.0f; ++x, ++i) {
+            img[i]=-(a+b*x+c*y+d*x*y+e*x*x+f*y*y);
+        }
+    }
+
+//    kipl::io::WriteTIFF32(img,"/Users/kaestner/repos/lib/sq.tif");
+
+    ImagingAlgorithms::PiercingPointEstimator pe;
+
+    pair<float,float> pos=pe(img);
+
+    std::ostringstream msg;
+    msg<<"pos=("<<pos.first<<", "<<pos.second<<")";
+    QVERIFY2(pos.first==220.0f,msg.str().c_str());
+    QVERIFY2(pos.second==120.0f,msg.str().c_str());
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)

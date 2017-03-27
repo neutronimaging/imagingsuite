@@ -13,10 +13,14 @@ CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG   += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+
 TEMPLATE = app
 
 unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
+    #INCLUDEPATH += "../../../../external/src/linalg"
+    INCLUDEPATH += ../../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -26,7 +30,7 @@ unix {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
+     #   QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -45,11 +49,8 @@ SOURCES += \
     tst_testImagingAlgorithms.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lImagingAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../ImagingAlgorithms/qt/ImagingAlgorithms-build-Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lImagingAlgorithms
-else:symbian: LIBS += -lImagingAlgorithms
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lImagingAlgorithms
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lImagingAlgorithms
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../ImagingAlgorithms/include
