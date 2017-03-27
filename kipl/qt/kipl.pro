@@ -45,6 +45,9 @@ else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -l
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 
+
+
+
 DEFINES += KIPL_LIBRARY
 
 SOURCES += \
@@ -109,6 +112,7 @@ SOURCES += \
     ../src/interactors/interactionbase.cpp \
     ../src/segmentation/multivariateclassifyerbase.cpp \
     ../src/morphology/pixeliterator.cpp
+
 
 HEADERS +=\
     ../include/kipl_global.h \
@@ -304,6 +308,21 @@ HEADERS +=\
     ../include/segmentation/gradientguidedthreshold.h \
     ../include/segmentation/core/gradientguidedthreshold.hpp
 
+unix:!mac {
+exists(/usr/lib/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
+    LIBS += -lNeXus -lNeXusCPP
+    SOURCES += ../src/io/io_nexus.cpp
+    HEADERS += ../include/io/io_nexus.h
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
+
+}
+
 
 
 
@@ -328,5 +347,7 @@ unix:!symbian {
 
 DISTFILES += \
     ../include/filters/nonlocalmeans.txt
+
+
 
 

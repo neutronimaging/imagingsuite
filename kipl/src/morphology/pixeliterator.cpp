@@ -5,6 +5,8 @@
 
 #include "../../include/morphology/pixeliterator.h"
 #include "../../include/base/KiplException.h"
+#include <cstring>
+
 
 namespace kipl {
 namespace base {
