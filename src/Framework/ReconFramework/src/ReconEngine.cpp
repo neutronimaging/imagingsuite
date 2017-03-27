@@ -105,7 +105,6 @@ void ReconEngine::SetBackProjector(BackProjItem *module)
 int ReconEngine::Run()
 {
 
-    // i don't think this actually is called
 	std::stringstream msg;
 
 	BuildFileList(&m_Config,&m_ProjectionList);
@@ -648,17 +647,6 @@ int ReconEngine::Run3DFull()
         m_Config.MatrixInfo.voi[5]
     };
 
-//    std::cout << "ebeam geometry: " << std::endl;
-//    std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
-
-
-
-//    std::cout << "strcmp ebeamgeometry: " << (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-//                 << std::endl;
-
-
-//    std::cout << "SDD: " << m_Config.ProjectionInfo.fSDD << std::endl;
-
 
     size_t totalSlices=0;
 
@@ -688,14 +676,6 @@ int ReconEngine::Run3DFull()
         if (m_Config.MatrixInfo.bUseVOI) {
               totalSlices = voi[5]-voi[4];
               std::cout << "totalslice: " << totalSlices << std::endl;
-
-//              size_t voi_dims[3] = {
-//                  voi[1]-voi[0],
-//                  voi[3]-voi[2],
-//                  voi[5]-voi[4]
-
-//              };
-//              m_Volume.Resize(voi_dims); // wrong place? yes
         }
         else {
             totalSlices=m_Config.MatrixInfo.nDims[2];
@@ -704,13 +684,6 @@ int ReconEngine::Run3DFull()
     }
 
 
-
-
-//    totalSlices=m_Config.MatrixInfo.nDims[2];
-
-//    std::cout << "debug on totalslices: " << std::endl;
-//    std::cout  << totalSlices << std::endl;
-//    std::cout << m_Config.MatrixInfo.nDims[2] << std::endl;
 
 
 	msg.str("");
@@ -1069,6 +1042,7 @@ int ReconEngine::Process3D(size_t *roi)
 
 	msg.str("");
 
+
 	try {
         ext_projections=m_ProjectionReader.Read(m_Config,extroi,parameters);
 	}
@@ -1084,6 +1058,7 @@ int ReconEngine::Process3D(size_t *roi)
 		msg<<"Reading projections failed with a STL exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
+
     msg.str("");
     msg<<": Size of read projections using ext roi: "<<ext_projections;
     logger(logger.LogMessage,msg.str());
@@ -1112,6 +1087,8 @@ int ReconEngine::Process3D(size_t *roi)
 		msg<<"Preprocessing failed with an STL exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
+
+
 	
     kipl::base::TImage<float,3> projections;
     size_t dims[3];
@@ -1151,7 +1128,6 @@ int ReconEngine::Process3D(size_t *roi)
         msg<<"BackProject3D failed with an STL exception: "<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-
 
 	logger(kipl::logging::Logger::LogVerbose,"Done process 3D.");
 

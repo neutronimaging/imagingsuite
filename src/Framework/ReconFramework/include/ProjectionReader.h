@@ -68,6 +68,51 @@ public:
 			float binning,
 			size_t const * const nCrop);
 
+    /// Reading a single file from a Nexus file
+    /// \param filename The name of the file to read.
+    /// \param number The file index number.
+    /// \param flip Should the image be flipped horizontally or vertically.
+    /// \param rotate Should the file be rotated, steps of 90deg.
+    /// \param binning Binning factor.
+    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \returns The 2D image stored in the specified file.
+    kipl::base::TImage<float, 2> ReadNexus(std::string filename,
+                                          size_t number,
+                                          kipl::base::eImageFlip flip = kipl::base::ImageFlipNone,
+                                          kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                                          float binning=1.0f,
+                                          size_t const * const nCrop=nullptr);
+
+    /// Reading a stack from a Nexus file
+    /// \param filename The name of the file to read.
+    /// \param start The file index number for starting position along z.
+    /// \param end The file index number for ending position along z
+    /// \param flip Should the image be flipped horizontally or vertically.
+    /// \param rotate Should the file be rotated, steps of 90deg.
+    /// \param binning Binning factor.
+    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \returns The 2D image stored in the specified file.
+    kipl::base::TImage<float, 3> ReadNexusStack(std::string filename,
+                                          size_t start, size_t end,
+                                          kipl::base::eImageFlip flip = kipl::base::ImageFlipNone,
+                                          kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                                          float binning=1.0f,
+                                          size_t const * const nCrop=nullptr);
+
+    /// Reading tomo from a Nexus file
+    /// \param filename The name of the file to read.
+    kipl::base::TImage<float, 3> ReadNexusTomo(std::string filename);
+
+    kipl::base::TImage<float,2> GetNexusSlice(kipl::base::TImage<float,3> &NexusTomo,
+                                              size_t number,
+                                              kipl::base::eImageFlip flip = kipl::base::ImageFlipNone,
+                                              kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                                              float binning=1.0f,
+                                              size_t const * const nCrop=nullptr);
+
+    int GetNexusInfo(std::string filename, size_t *NofImg, double *ScanAngles);
+
+
     /// Reading a block of image files using information provided by a ReconConfig struct.
     /// \param config A reconstruction configuration struct
     /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
@@ -91,6 +136,12 @@ public:
     /// \param dims A preallocated array to store the image dimensions.
 	void GetImageSize(std::string filename, float binning, size_t * dims);
 
+    /// Get the image dimensions for a Nexus image file using an explicit file name
+    /// \param filename File name of the of the image to read.
+    /// \param binning Binning factor
+    /// \param dims A preallocated array to store the image dimensions.
+    void GetImageSizeNexus(std::string filename, float binning, size_t * dims);
+
     /// Get the projection dose for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
     /// \param flip Flips the image about the horizontal or vertical axis.
@@ -111,6 +162,14 @@ public:
     /// \returns The dose value as the median of the row average intensity.
     float GetProjectionDose(std::string path, std::string filemask, size_t number, kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning ,size_t const * const nCrop);
 
+
+    float GetProjectionDoseNexus(std::string filename, size_t number, kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning ,size_t const * const nDoseROI);
+
+    float * GetProjectionDoseListNexus(string filename, size_t start, size_t end,
+                                                         kipl::base::eImageFlip flip,
+                                                         kipl::base::eImageRotate rotate,
+                                                         float binning,
+                                                         size_t const * const nDoseROI);
     /// Initializes the reading timer
 	void Initialize() {timer.Reset();}
 
@@ -165,6 +224,8 @@ protected:
     /// \returns A floating point image
     /// \todo Implement PNG support
     kipl::base::TImage<float,2> ReadHDF(std::string filename,  size_t const * const nCrop=nullptr);
+
+
 
     /// Interface to the interactor that updates the message and progress.
     /// \param val Progress, a value between 0.0 and 1.0.

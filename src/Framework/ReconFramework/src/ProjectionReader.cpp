@@ -16,9 +16,15 @@
 #include <string>
 #include <iostream>
 #include <base/timage.h>
+#include <base/tsubimage.h>
 #include <io/io_matlab.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>
+
+#ifdef HAVE_NEXUS
+    #include <io/io_nexus.h>
+#endif
+
 #include <math/median.h>
 #include <base/kiplenums.h>
 #include <base/trotate.h>
@@ -26,6 +32,7 @@
 #include "../include/ReconException.h"
 #include "../include/ProjectionReader.h"
 #include "../include/ReconHelpers.h"
+
 
 ProjectionReader::ProjectionReader(kipl::interactors::InteractionBase *interactor) :
 	logger("ProjectionReader"),
@@ -48,8 +55,25 @@ void ProjectionReader::GetImageSize(std::string path,
 	std::string filename;
 	std::string ext;
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
+    size_t found = filemask.find("hdf");
+    if (found!=std::string::npos) {
+        return GetImageSizeNexus(filemask, binning, dims);
+    }
+    else {
+        return GetImageSize(filename,binning, dims);
+    }
+}
 
-	return GetImageSize(filename,binning, dims);
+void ProjectionReader::GetImageSizeNexus(string filename, float binning, size_t *dims){
+    #ifdef HAVE_NEXUS
+        kipl::io::GetNexusDims(filename.c_str(), dims);
+        dims[0]/=binning;
+        dims[1]/=binning;
+    #else
+        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+    #endif
+
+
 }
 
 void ProjectionReader::GetImageSize(std::string filename, float binning, size_t *dims)
@@ -63,6 +87,8 @@ void ProjectionReader::GetImageSize(std::string filename, float binning, size_t 
 	extensions[".tiff"]=2;
 	extensions[".TIF"]=2;
 	extensions[".png"]=3;
+//    extensions[".hdf"]=4; // to be implemented
+//    extensions[".hd5"]=4;
 
 	size_t extpos=filename.find_last_of(".");
 	std::stringstream msg;
@@ -249,7 +275,7 @@ Read(std::string filename,
             case 1  : img=ReadFITS(filename,pCrop);  break;
 			case 2  : img=ReadTIFF(filename,pCrop);  break;
             case 3  : img=ReadPNG(filename,pCrop);   break;
-            case 4	: img=ReadHDF(filename);         break;
+            case 4	: img=ReadHDF(filename);         break; // does not enter in here..
 			default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
 			}
 		}
@@ -301,6 +327,336 @@ Read(std::string filename,
 
 	return img;
 }
+
+
+kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename){
+
+    kipl::base::TImage<int16_t,3> tmp;
+
+    #ifdef HAVE_NEXUS
+        kipl::io::ReadNexus(tmp, filename.c_str());
+    #else
+        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+    #endif
+
+    kipl::base::TImage<float,3> img(tmp.Dims());
+
+    float* pImg = img.GetDataPtr();
+    int16_t *ptmp = tmp.GetDataPtr();
+
+    for (size_t i=0; i<tmp.Size(0)*tmp.Size(1)*tmp.Size(2); ++i) {
+        pImg[i] = static_cast<float>(ptmp[i]);
+    }
+
+    return img;
+
+
+}
+
+int ProjectionReader::GetNexusInfo(string filename, size_t *NofImg, double *ScanAngles){
+
+    #ifdef HAVE_NEXUS
+    kipl::io::GetNexusInfo(filename.c_str(), NofImg, ScanAngles);
+    #else
+        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+    #endif
+
+    return 1;
+}
+
+kipl::base::TImage<float,2> ProjectionReader::GetNexusSlice(kipl::base::TImage<float,3> &NexusTomo,
+                                          size_t number,
+                                          kipl::base::eImageFlip flip,
+                                          kipl::base::eImageRotate rotate,
+                                          float binning,
+                                          size_t const * const nCrop){
+    // should this be in the Nexus io?
+    std::ostringstream msg;
+
+    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> cropped;
+    kipl::base::TImage<float,2> binned;
+    size_t num_slices = NexusTomo.Size(2);
+
+    if (number< num_slices){
+        size_t img_size2D[2] = {NexusTomo.Size(0), NexusTomo.Size(1)};
+        img.Resize(img_size2D);
+        memcpy(img.GetDataPtr(), NexusTomo.GetLinePtr(0, number), sizeof(float)*img_size2D[0]*img_size2D[1]);
+//        kipl::io::WriteTIFF(img, "img.tif"); // ok it is correct !
+    }
+    // to add binning, flipping and so on...
+
+    // 1. crop
+        if (nCrop!=NULL) {
+//    std::cout<< nCrop[0] << " " << nCrop[1] << " " << nCrop[2] << " " << nCrop[3] << std::endl;
+
+            cropped = kipl::base::TSubImage<float,2>::Get(img, nCrop);}
+        else {
+            cropped = img;
+        }
+
+    size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
+
+    msg.str("");
+    msg<<"Failed to resample or rotate the projection with a ";
+    try {
+        if (1<binning)
+            kipl::base::ReBin(cropped,binned,bins);
+        else
+            binned=cropped;
+        kipl::base::TRotate<float> rotator;
+        img=rotator.Rotate(binned,flip,rotate);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"KiplException: \n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg<<"STL exception: \n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg<<"unknown exception.";
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
+
+
+    return img;
+
+
+}
+
+kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
+                                                        size_t number,
+                                                        kipl::base::eImageFlip flip,
+                                                        kipl::base::eImageRotate rotate,
+                                                        float binning,
+                                                        size_t const * const nCrop)
+{
+   std::ostringstream msg;
+   kipl::base::TImage<float,2> img;
+
+
+
+    #ifdef HAVE_NEXUS
+
+           const char *fname = filename.c_str();
+
+            size_t dims[2];
+            try {
+                GetImageSizeNexus(filename, binning,dims);
+            }
+            catch (ReconException &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (std::exception &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (kipl::base::KiplException &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (...) {
+                throw ReconException("Unhandled exception",__FILE__,__LINE__);
+            }
+
+
+            size_t local_crop[4];
+
+            memset(local_crop,0,sizeof(size_t)*4);
+            size_t *pCrop=nullptr;
+            if (nCrop!=nullptr) {
+
+                local_crop[0]=nCrop[0];
+                local_crop[1]=nCrop[1];
+                local_crop[2]=nCrop[2];
+                local_crop[3]=nCrop[3];
+
+                // PrintCrop("local_crop pre-update",local_crop);
+                UpdateCrop(flip,rotate,dims,local_crop);
+
+                pCrop=local_crop;
+
+                for (size_t i=0; i<4; i++)
+                    pCrop[i]*=binning;
+            }
+
+//            kipl::base::TImage<int16_t,2> tmp;
+//            kipl::io::ReadNexus(tmp, fname, number, pCrop);
+
+//            img.Resize(tmp.Dims());
+////            kipl::base::TImage<float,2> cropped(tmp.Dims());
+//            kipl::base::TImage<float,2> binned(tmp.Dims());
+
+//            float* pImg = img.GetDataPtr();
+//            int16_t *ptmp = tmp.GetDataPtr(); //possibly get the type automatically?
+
+//            for (size_t i=0; i<tmp.Size(0)*tmp.Size(1); ++i) {
+//                pImg[i] = static_cast<float>(ptmp[i]);
+//            }
+
+            kipl::io::ReadNexus(img, fname, number, pCrop);
+            kipl::base::TImage<float,2> binned(img.Dims());
+
+
+
+            size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
+
+            msg.str("");
+            msg<<"Failed to resample or rotate the projection with a ";
+            try {
+                if (1<binning)
+                    kipl::base::ReBin(img,binned,bins);
+                else
+                    binned=img;
+                kipl::base::TRotate<float> rotator;
+                img=rotator.Rotate(binned,flip,rotate);
+            }
+            catch (kipl::base::KiplException &e) {
+                msg<<"KiplException: \n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+                throw ReconException(msg.str(),__FILE__,__LINE__);
+            }
+            catch (std::exception &e) {
+                msg<<"STL exception: \n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+                throw ReconException(msg.str(),__FILE__,__LINE__);
+            }
+            catch (...) {
+                msg<<"unknown exception.";
+                logger(kipl::logging::Logger::LogError,msg.str());
+                throw ReconException(msg.str(),__FILE__,__LINE__);
+            }
+
+            kipl::io::WriteTIFF(img, "cropped_img.tif");
+            return img;
+
+    #else
+        std::cout << "HAVE_NEXUS not defined" << std::endl;
+//        throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
+//        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+        return kipl::base::TImage<float,2>();
+    #endif
+
+
+
+
+}
+
+kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filename,
+                                      size_t start, size_t end,
+                                      kipl::base::eImageFlip flip,
+                                      kipl::base::eImageRotate rotate,
+                                      float binning,
+                                      size_t const * const nCrop)
+{
+    std::ostringstream msg;
+    kipl::base::TImage<float,3> img;
+
+
+     #ifdef HAVE_NEXUS
+
+            const char *fname = filename.c_str();
+
+             size_t dims[2];
+             try {
+                 GetImageSizeNexus(filename, binning,dims);
+             }
+             catch (ReconException &e) {
+                 throw ReconException(e.what(),__FILE__,__LINE__);
+             }
+             catch (std::exception &e) {
+                 throw ReconException(e.what(),__FILE__,__LINE__);
+             }
+             catch (kipl::base::KiplException &e) {
+                 throw ReconException(e.what(),__FILE__,__LINE__);
+             }
+             catch (...) {
+                 throw ReconException("Unhandled exception",__FILE__,__LINE__);
+             }
+
+
+             size_t local_crop[4];
+
+             memset(local_crop,0,sizeof(size_t)*4);
+             size_t *pCrop=nullptr;
+             if (nCrop!=nullptr) {
+
+                 local_crop[0]=nCrop[0];
+                 local_crop[1]=nCrop[1];
+                 local_crop[2]=nCrop[2];
+                 local_crop[3]=nCrop[3];
+
+                 // PrintCrop("local_crop pre-update",local_crop);
+                 UpdateCrop(flip,rotate,dims,local_crop);
+
+                 pCrop=local_crop;
+
+                 for (size_t i=0; i<4; i++)
+                     pCrop[i]*=binning;
+             }
+
+             size_t dim_img[3] = {pCrop[2]-pCrop[0], pCrop[3]-pCrop[1], end-start}; // img size in original coordinate
+             img.Resize(dim_img);
+             kipl::io::ReadNexusStack(img, fname, start, end, pCrop);
+
+             kipl::base::TImage<float,3> returnimg;
+             size_t dims_3D[3] = {nCrop[2]-nCrop[0], nCrop[3]-nCrop[1], end-start}; // img size in rotated and binned coordinate
+             returnimg.Resize(dims_3D);
+
+
+             for (size_t i=0; i<img.Size(2); ++i) {
+
+                 kipl::base::TImage<float,2> slice = kipl::base::ExtractSlice(img, i);
+                 kipl::base::TImage<float,2> binned(slice.Dims());
+
+                 size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
+
+                 msg.str("");
+                 msg<<"Failed to resample or rotate the projection with a ";
+                 try {
+                     if (1<binning) // create a new image with a bin
+                         kipl::base::ReBin(slice,binned,bins);
+                     else
+                         binned=slice;
+                     kipl::base::TRotate<float> rotator;
+                     slice=rotator.Rotate(binned,flip,rotate);
+                 }
+                 catch (kipl::base::KiplException &e) {
+                     msg<<"KiplException: \n"<<e.what();
+                     logger(kipl::logging::Logger::LogError,msg.str());
+                     throw ReconException(msg.str(),__FILE__,__LINE__);
+                 }
+                 catch (std::exception &e) {
+                     msg<<"STL exception: \n"<<e.what();
+                     logger(kipl::logging::Logger::LogError,msg.str());
+                     throw ReconException(msg.str(),__FILE__,__LINE__);
+                 }
+                 catch (...) {
+                     msg<<"unknown exception.";
+                     logger(kipl::logging::Logger::LogError,msg.str());
+                     throw ReconException(msg.str(),__FILE__,__LINE__);
+                 }
+
+                 kipl::base::InsertSlice(returnimg,slice,i); // to check this!!!!
+             }
+
+             return returnimg;
+
+//             return img;
+
+     #else
+         std::cout << "HAVE_NEXUS not defined" << std::endl;
+ //        throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
+ //        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+         return kipl::base::TImage<float,3>();
+     #endif
+}
+
+
 
 kipl::base::TImage<float,2> ProjectionReader::Read(std::string path, 
 												   std::string filemask, 
@@ -409,8 +765,79 @@ float ProjectionReader::GetProjectionDose(std::string filename,
 	return dose;
 }
 
+float ProjectionReader::GetProjectionDoseNexus(string filename, size_t number,
+                                               kipl::base::eImageFlip flip,
+                                               kipl::base::eImageRotate rotate,
+                                               float binning,
+                                               size_t const * const nDoseROI)
+{
+
+    kipl::base::TImage<float,2> img;
+
+    if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
+        return 1.0f;
+
+    img=ReadNexus(filename,number,flip,rotate,binning,nDoseROI);
+
+    float *pImg=img.GetDataPtr();
+
+    float *means=new float[img.Size(1)];
+    memset(means,0,img.Size(1)*sizeof(float));
+
+    for (size_t y=0; y<img.Size(1); y++) {
+        pImg=img.GetLinePtr(y);
+
+        for (size_t x=0; x<img.Size(0); x++) {
+            means[y]+=pImg[x];
+        }
+        means[y]=means[y]/static_cast<float>(img.Size(0));
+    }
+
+    float dose;
+    kipl::math::median(means,img.Size(1),&dose);
+    delete [] means;
+    return dose;
+}
+
+float * ProjectionReader::GetProjectionDoseListNexus(string filename, size_t start, size_t end,
+                                                     kipl::base::eImageFlip flip,
+                                                     kipl::base::eImageRotate rotate,
+                                                     float binning,
+                                                     size_t const * const nDoseROI)
+{
+
+    kipl::base::TImage<float,3> img;
+
+    if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
+        return NULL; // possibly stupid
+
+    img=ReadNexusStack(filename,start,end,flip,rotate,binning,nDoseROI);
+
+    float *pImg=img.GetDataPtr();
+
+    float *means=new float[img.Size(1)];
+    memset(means,0,img.Size(1)*sizeof(float));
+
+    for (size_t y=0; y<img.Size(1); y++) {
+        pImg=img.GetLinePtr(y);
+
+        for (size_t x=0; x<img.Size(0); x++) {
+            means[y]+=pImg[x];
+        }
+        means[y]=means[y]/static_cast<float>(img.Size(0));
+    }
+
+    float *doselist = new float[img.Size(2)];
+    for (size_t i=0; i<img.Size(2); ++i) {
+            kipl::math::median(means,img.Size(1),&doselist[i]);
+    }
+    delete [] means;
+    return doselist;
+
+}
+
 float ProjectionReader::GetProjectionDose(std::string path,
-		std::string filemask,
+        std::string filemask,
 		size_t number,
 		kipl::base::eImageFlip flip,
 		kipl::base::eImageRotate rotate,
@@ -420,8 +847,16 @@ float ProjectionReader::GetProjectionDose(std::string path,
 	std::string filename;
 	std::string ext;
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
+    float dose;
 
-	return GetProjectionDose(filename,flip,rotate,binning,nDoseROI);
+    size_t found = filemask.find("hdf");
+    if (found==std::string::npos )
+    {   dose = GetProjectionDose(filename,flip,rotate,binning,nDoseROI);}
+    else {
+        dose = GetProjectionDoseNexus(filemask,number,flip,rotate,binning,nDoseROI);
+    }
+
+    return dose;
 }
 
 kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t const * const nCrop,
@@ -452,81 +887,182 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 	float fResolutionWeight=1.0f/(0<config.ProjectionInfo.fResolution[0] ? config.ProjectionInfo.fResolution[0]*0.1f : 1.0f);
 	size_t i=0;
 	switch (config.ProjectionInfo.imagetype) {
-	case ReconConfig::cProjections::ImageType_Projections :
+    case ReconConfig::cProjections::ImageType_Projections : {
 		logger(kipl::logging::Logger::LogMessage,"Using projections");
-		for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
+
+        size_t found = ProjectionList.begin()->second.name.find("hdf");
+        if (found==std::string::npos ) {
+            for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
-			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-					config.ProjectionInfo.eRotate,
-					config.ProjectionInfo.fBinning,
-					config.ProjectionInfo.dose_roi)<<" ";
+//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+//					config.ProjectionInfo.eRotate,
+//					config.ProjectionInfo.fBinning,
+//					config.ProjectionInfo.dose_roi)<<" ";
         //	proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,config.ProjectionInfo.roi);
+
             proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,nCrop);
+
+            dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    config.ProjectionInfo.dose_roi)<<" ";
+
+
+//           std::cout << it->second.name << " " << it->second.angle << " " << it->second.weight << " " << it->first << std::endl;
 
 			memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
 			i++;
-		}
+            }
+        }
+        else{
+            img = ReadNexusStack(ProjectionList.begin()->second.name, 0, dims[2], config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,nCrop);
+            float *doselist = new float[dims[2]];
+            doselist = GetProjectionDoseListNexus(ProjectionList.begin()->second.name,
+                                                         0, dims[2],
+                                                        config.ProjectionInfo.eFlip,
+                                                        config.ProjectionInfo.eRotate,
+                                                        config.ProjectionInfo.fBinning,
+                                                        config.ProjectionInfo.dose_roi);
+
+
+            for (size_t i=0; i<dims[2]; ++i){
+                dose << doselist[i] << " ";
+            }
+            for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
+                angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
+                weight << (it->second.weight)*fResolutionWeight << " ";
+            }
+//            dose   << GetProjectionDoseNexus(it->second.name,i,config.ProjectionInfo.eFlip,
+//                    config.ProjectionInfo.eRotate,
+//                    config.ProjectionInfo.fBinning,
+//                    config.ProjectionInfo.dose_roi)<<" ";
+
+        }
 		break;
-	case ReconConfig::cProjections::ImageType_Sinograms :
+    }
+    case ReconConfig::cProjections::ImageType_Sinograms : {
 		logger(kipl::logging::Logger::LogMessage,"Using sinograms");
 		throw ReconException("Sinograms are not yet supported by ProjectionReader", __FILE__, __LINE__); break;
 		for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
-			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-					config.ProjectionInfo.eRotate,
-					config.ProjectionInfo.fBinning,
-					config.ProjectionInfo.dose_roi)<<" ";
-			proj = Read(it->second.name,config.ProjectionInfo.eFlip,
-					config.ProjectionInfo.eRotate,
-					config.ProjectionInfo.fBinning,
-					roi);
+//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+//					config.ProjectionInfo.eRotate,
+//					config.ProjectionInfo.fBinning,
+//					config.ProjectionInfo.dose_roi)<<" ";
+
+            size_t found = it->second.name.find("hdf");
+            if (found==std::string::npos ) {
+                dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        config.ProjectionInfo.dose_roi)<<" ";
+
+                proj = Read(it->second.name,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);}
+            else {
+                dose   << GetProjectionDoseNexus(it->second.name,i,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        config.ProjectionInfo.dose_roi)<<" ";
+
+                proj = ReadNexus(it->second.name, i, config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,roi);
+
+            }
 			for (size_t j=0; j<img.Size(1); j++)
 				memcpy(img.GetLinePtr(j,i),proj.GetDataPtr(),sizeof(float)*proj.Size(0));
 			i++;
 		}
 		break;
-	case ReconConfig::cProjections::ImageType_Proj_RepeatProjection :
+    }
+    case ReconConfig::cProjections::ImageType_Proj_RepeatProjection : {
 		logger(kipl::logging::Logger::LogMessage,"Using repeat projection");
 		it2=it=ProjectionList.begin();
 
-		proj = Read(it->second.name,config.ProjectionInfo.eFlip,
-				config.ProjectionInfo.eRotate,
-				config.ProjectionInfo.fBinning,
-				config.ProjectionInfo.roi);
+
 
 		for (i=0; i<img.Size(2); i++,it2++) {
 			memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
 			angle  << (it2->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it2->second.weight)*fResolutionWeight << " ";
-			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-					config.ProjectionInfo.eRotate,
-					config.ProjectionInfo.fBinning,
-					config.ProjectionInfo.dose_roi)<<" ";
+//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+//					config.ProjectionInfo.eRotate,
+//					config.ProjectionInfo.fBinning,
+//					config.ProjectionInfo.dose_roi)<<" ";
 		}
 
+        size_t found = it->second.name.find("hdf");
+        if (found==std::string::npos ) {
+            dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    config.ProjectionInfo.dose_roi)<<" ";
+
+        proj = Read(it->second.name,config.ProjectionInfo.eFlip,
+                config.ProjectionInfo.eRotate,
+                config.ProjectionInfo.fBinning,
+                config.ProjectionInfo.roi);
+        }
+        else {
+
+            dose   << GetProjectionDoseNexus(it->second.name,i,config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    config.ProjectionInfo.dose_roi)<<" ";
+
+            proj = ReadNexus(it->second.name, i,config.ProjectionInfo.eFlip,
+                             config.ProjectionInfo.eRotate,
+                             config.ProjectionInfo.fBinning,
+                             config.ProjectionInfo.roi);
+        }
+
+
+
 		break;
-	case ReconConfig::cProjections::ImageType_Proj_RepeatSinogram :
+    }
+    case ReconConfig::cProjections::ImageType_Proj_RepeatSinogram :{
 		logger(kipl::logging::Logger::LogMessage,"Using repeat sinogram");
 		roi[3]=roi[1]+1;
 
 		for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
-			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-					config.ProjectionInfo.eRotate,
-					config.ProjectionInfo.fBinning,
-					config.ProjectionInfo.dose_roi)<<" ";
-			proj = Read(it->second.name,config.ProjectionInfo.eFlip,
-					config.ProjectionInfo.eRotate,
-					config.ProjectionInfo.fBinning,
-					roi);
+//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+//					config.ProjectionInfo.eRotate,
+//					config.ProjectionInfo.fBinning,
+//					config.ProjectionInfo.dose_roi)<<" ";
+
+            size_t found = it->second.name.find("hdf");
+            if (found==std::string::npos ) {
+                proj = Read(it->second.name,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
+                dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        config.ProjectionInfo.dose_roi)<<" ";
+            }
+            else {
+                proj = ReadNexus(it->second.name,i,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
+                dose   << GetProjectionDoseNexus(it->second.name,i,config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        config.ProjectionInfo.dose_roi)<<" ";
+            }
+
 			for (size_t j=0; j<img.Size(1); j++)
 				memcpy(img.GetLinePtr(j,i),proj.GetDataPtr(),sizeof(float)*proj.Size(0));
 			i++;
 		}
 		break;
+    }
 	default :
 		throw ReconException("Unknown image type in ProjectionReader", __FILE__, __LINE__); break;
 	}

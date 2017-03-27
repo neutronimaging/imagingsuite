@@ -93,19 +93,27 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
                                 skip++;
                             }
                         }
-                        kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
-                        float angle=(i-config->ProjectionInfo.nFirstIndex)*fAngleStep+config->ProjectionInfo.fScanArc[0];
-                        (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);
-                    }
-                }
-                break;
-            case ReconConfig::cProjections::GoldenSectionScan : {
-                    const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
-                    float arc=config->ProjectionInfo.fScanArc[1];
-                    if ((arc!=180.0f) && (arc!=360.0f))
-                        throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
 
-                    for (size_t i=0; i<config->ProjectionInfo.nFirstIndex; i++) {
+
+						kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
+						float angle=(i-config->ProjectionInfo.nFirstIndex)*fAngleStep+config->ProjectionInfo.fScanArc[0];
+
+                        size_t found = config->ProjectionInfo.sFileMask.find("hdf");
+                        if (found==std::string::npos ){
+                        (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);}
+                        else {
+                            (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(config->ProjectionInfo.sFileMask,angle);
+                        }
+					}
+				}
+				break;
+			case ReconConfig::cProjections::GoldenSectionScan : {
+					const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+					float arc=config->ProjectionInfo.fScanArc[1];
+					if ((arc!=180.0f) && (arc!=360.0f))
+						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
+
+					for (size_t i=0; i<config->ProjectionInfo.nFirstIndex; i++) {
                         if (!ignore_skiplist) {
                             if (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end()) {
                                 msg.str("");
@@ -115,12 +123,12 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
                                 skip++;
                             }
                         }
-                    }
+					}
 
-                    for (size_t i=config->ProjectionInfo.nFirstIndex;
-                        (i<(config->ProjectionInfo.nLastIndex+skip));
-                        i++)
-                    {
+					for (size_t i=config->ProjectionInfo.nFirstIndex;
+						(i<(config->ProjectionInfo.nLastIndex+skip));
+						i++)
+					{
                         if (!ignore_skiplist) {
                             while (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end()) {
                                 msg.str("");
@@ -130,69 +138,81 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
                                 skip++;
                             }
                         }
-                        kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-                        //float angle=static_cast<float>(fmod((i-config->ProjectionInfo.nFirstIndex)*fGoldenSection*arc,arc));
-                        float angle=static_cast<float>(fmod(static_cast<float>(i-1-skip)*fGoldenSection*arc,arc));
-                        (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);
-                    }
-                }
-                break;
 
-            default:
-                throw ReconException("Unknown scan type in BuildFileList",__FILE__,__LINE__);
-        }
-    }
-    cout<<"proj list size="<<ProjectionList->size();
-//    msg.str(""); msg<<"proj list size="<<ProjectionList->size();
-//    logger(logger.LogDebug,msg.str());
+                       size_t found = config->ProjectionInfo.sFileMask.find("hdf");
 
+
+                       kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
+
+						//float angle=static_cast<float>(fmod((i-config->ProjectionInfo.nFirstIndex)*fGoldenSection*arc,arc));
+						float angle=static_cast<float>(fmod(static_cast<float>(i-1-skip)*fGoldenSection*arc,arc));
+
+
+                        if (found==std::string::npos ) {
+                            (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);
+                        } else {
+                             (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(config->ProjectionInfo.sFileMask,angle);
+                        }
+					}
+				}
+				break;
+
+			default:
+				throw ReconException("Unknown scan type in BuildFileList",__FILE__,__LINE__);
+		}
+	}
+
+    msg.str(""); msg<<"proj list size="<<ProjectionList->size();
+    logger(logger.LogMessage,msg.str());
 
 #ifdef EQUIDISTANT_WEIGHTS
-    std::map<float, ProjectionInfo>::iterator q0;
-    for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
-        q0->second.weight=1.0f/static_cast<float>(ProjectionList->size());
-    }
+	std::map<float, ProjectionInfo>::iterator q0;
+	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
+		q0->second.weight=1.0f/static_cast<float>(ProjectionList->size());
+	}
 
 #else
-    // Compute the projection weights
-    std::map<float, ProjectionInfo>::iterator q0,q1,q2;
+	// Compute the projection weights
+	std::map<float, ProjectionInfo>::iterator q0,q1,q2;
 
-    q0=q2=ProjectionList->begin();
-    q1=++q2;
-    q2++;
+	q0=q2=ProjectionList->begin();
+	q1=++q2;
+	q2++;
 
-    for (; q2!=ProjectionList->end(); q0++,q1++,q2++) {
-        q1->second.weight=(q2->first-q0->first)/360;
-    }
+	for (; q2!=ProjectionList->end(); q0++,q1++,q2++) {
+		q1->second.weight=(q2->first-q0->first)/360;
+	}
 
-    if (175.0f<(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])) {
-        logger(kipl::logging::Logger::LogMessage,"Normal arc");
-        // Compute last weight
-        q2=ProjectionList->begin();
-    //	q1->second.weight=((180.0f-q1->first)+(q1->first-q0->first))/(2*360.0f);
-        q1->second.weight=((q2->first+180)-(q0->first))/360.0f;
-        // Compute first weight
-        q0=q1;
-        q1=q2++;
-        q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
-    }
-    else {
-        logger(kipl::logging::Logger::LogMessage,"Short arc");
+	if (175.0f<(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])) {
+		logger(kipl::logging::Logger::LogMessage,"Normal arc");
+		// Compute last weight
+		q2=ProjectionList->begin();
+	//	q1->second.weight=((180.0f-q1->first)+(q1->first-q0->first))/(2*360.0f);
+		q1->second.weight=((q2->first+180)-(q0->first))/360.0f;
+		// Compute first weight
+		q0=q1;
+		q1=q2++;
+		q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
+	}
+	else {
+		logger(kipl::logging::Logger::LogMessage,"Short arc");
 
-        q0=q2=ProjectionList->begin();
-        q2++;
-        q0->second.weight=q2->second.weight;
-        q1->second.weight=q2->second.weight;;
-    }
+		q0=q2=ProjectionList->begin();
+		q2++;
+		q0->second.weight=q2->second.weight;
+		q1->second.weight=q2->second.weight;;
+	}
 #endif
 
-    std::map<float, ProjectionInfo> ProjectionList2;
+	std::map<float, ProjectionInfo> ProjectionList2;
 
-    for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++)
-        ProjectionList2[q0->second.angle]=q0->second;
+	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++)
+		ProjectionList2[q0->second.angle]=q0->second;
 
-    *ProjectionList=ProjectionList2;
+	*ProjectionList=ProjectionList2;
+
+//    std::cout << ProjectionList->size() << std::endl; //it gives 528 instead of 626 !
 
 	return sequence;
 }

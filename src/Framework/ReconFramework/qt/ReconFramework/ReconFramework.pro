@@ -75,6 +75,19 @@ unix:!symbian {
 
 }
 
+unix:!mac {
+    exists(/usr/lib/*NeXus*) {
+        message("-lNeXus exists")
+        DEFINES *= HAVE_NEXUS
+        LIBS += -lNeXus -lNeXusCPP
+    }
+    else {
+        message("-lNeXus does not exists $$LIBS")
+    }
+}
+
+
+
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
@@ -100,3 +113,5 @@ DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+
+
