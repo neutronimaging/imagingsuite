@@ -18,8 +18,8 @@ class ReconDialog : public QDialog
 public:
     explicit ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent = 0);
     ~ReconDialog();
-    void progress();
-    void process();
+    int progress();
+    int process();
     virtual int exec(ReconEngine *engine, bool bRerunBackProj);
 
 protected slots:

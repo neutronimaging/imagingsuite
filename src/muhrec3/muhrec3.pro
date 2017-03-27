@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport
+QT       += core widgets printsupport concurrent
 
 TARGET = muhrec3
 TEMPLATE = app
@@ -25,6 +25,7 @@ unix:!symbian {
 #        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons # due to strange ordering during ui build...
+        INCLUDEPATH += $$PWD/../../../../external/src/linalg
         INCLUDEPATH += /opt/local/include
 
         INCLUDEPATH += /opt/local/include/libxml2
@@ -67,7 +68,8 @@ SOURCES += main.cpp\
     stdafx.cpp \
     viewgeometrylistdialog.cpp \
     preferencesdialog.cpp \
-    dialogtoobig.cpp
+    dialogtoobig.cpp \
+    piercingpointdialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
@@ -78,7 +80,8 @@ HEADERS  += muhrecmainwindow.h \
     stdafx.h \
     viewgeometrylistdialog.h \
     preferencesdialog.h \
-    dialogtoobig.h
+    dialogtoobig.h \
+    piercingpointdialog.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
@@ -86,12 +89,13 @@ FORMS    += muhrecmainwindow.ui \
     recondialog.ui \
     viewgeometrylistdialog.ui \
     preferencesdialog.ui \
-    dialogtoobig.ui
+    dialogtoobig.ui \
+    piercingpointdialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
@@ -108,4 +112,5 @@ DEPENDPATH += $$PWD/../Framework/ReconFramework/src
 INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
 
-
+INCLUDEPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/src

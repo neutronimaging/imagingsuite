@@ -1,6 +1,8 @@
 //#include "stdafx.h"
 
 #include <QMessageBox>
+#include <QtConcurrent>
+#include <QFuture>
 #include "recondialog.h"
 #include "ui_recondialog.h"
 
@@ -36,26 +38,24 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     logger(kipl::logging::Logger::LogMessage,"Start");
 
     m_Interactor->Reset();
-#ifdef NEVERDO
-//#ifndef __APPLE__
-    progressbar.set_fraction(0.0);
+#if NEVERDO
+    logger(logger.LogMessage,"Starting with threads");
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(100);
 
-    Glib::Thread *const th_progress = Glib::Thread::create(
-        sigc::mem_fun(this, &ReconDialog::progress), true);
-    Glib::Thread *const th_process = Glib::Thread::create(
-        sigc::mem_fun(this, &ReconDialog::process), true);
+    QFuture<int> proc_thread=QtConcurrent::run(&this->process());
+    QFuture<int> progress_thread=QtConcurrent::run(&this->progress());
+    int res=exec();
 
-    logger(kipl::logging::Logger::LogVerbose,"Threads are started");
-    int res=Gtk::Dialog::run();
     finish=true;
-    if (res==Gtk::RESPONSE_CANCEL) {
+    if (res==QDialog::Rejected) {
         std::cout<<"calling abort process"<<std::endl;
         logger(kipl::logging::Logger::LogVerbose,"Cancel requested by user");
         Abort();
     }
 
-    th_progress->join();
-    th_process->join();
+    proc_thread.waitForFinished();
+    progress_thread.waitForFinished();
     logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
   return res;
 #else
@@ -97,20 +97,21 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 #endif
 }
 
-void ReconDialog::progress()
+int ReconDialog::progress()
 {
     logger(kipl::logging::Logger::LogVerbose,"Progress thread is started");
 
     while (!m_Interactor->Finished() && !m_Interactor->Aborted() ){
         ui->progressBar->setValue(m_Interactor->CurrentProgress());
-    //	progressbar.set_text(m_Interactor->CurrentMessage());
 
-        //Glib::usleep(50000);
+        QThread::sleep(1);
+
+
     }
     logger(kipl::logging::Logger::LogVerbose,"Progress thread end");
 }
 
-void ReconDialog::process()
+int ReconDialog::process()
 {
     logger(kipl::logging::Logger::LogVerbose,"Process thread is started");
     ostringstream msg;

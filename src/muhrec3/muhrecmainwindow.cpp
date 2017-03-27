@@ -35,6 +35,7 @@
 #include "viewgeometrylistdialog.h"
 #include "preferencesdialog.h"
 #include "dialogtoobig.h"
+#include "piercingpointdialog.h"
 
 
 
@@ -190,6 +191,8 @@ void MuhRecMainWindow::SetupCallBacks()
 
 void MuhRecMainWindow::BrowseProjectionPath()
 {
+    QString oldmask=ui->editProjectionMask->text();
+    QString newmask;
     QString projdir=QFileDialog::getOpenFileName(this,
                                       "Select location of the projections",
                                       ui->editProjectionMask->text());
@@ -207,8 +210,15 @@ void MuhRecMainWindow::BrowseProjectionPath()
         std::string fname=pdir.substr(pos+1);
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(pdir);
+        newmask=QString::fromStdString(fi.m_sMask);
+        ui->editProjectionMask->setText(newmask);
+    }
 
-        ui->editProjectionMask->setText(QString::fromStdString(fi.m_sMask));
+    if (oldmask!=newmask)
+    {
+        PreviewProjection(-1);
+        ui->projectionViewer->clear_rectangle(-1);
+        ui->projectionViewer->clear_plot(-1);
     }
 }
 
@@ -265,27 +275,22 @@ void MuhRecMainWindow::PreviewProjection(int x)
        int slice = ui->spinFirstProjection->value();
        ui->sliderProjections->setValue(slice);
     }
+    UpdateConfig();
 
-    msg.str("");
-    std::cout<<"Preview"<<endl;
     try {
         std::string fmask=ui->editProjectionMask->text().toStdString();
 
         std::string name, ext;
-//        kipl::strings::filenames::MakeFileName(fmask,ui->sliderProjections->value(),name,ext,'#','0');
-        cout<<"prelist"<<endl;
+
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
-        cout<<"postlist "<<fileList.size()<<endl;
-        int i=0;
+
         auto it=fileList.begin();
-        for (it=fileList.begin(); it!=fileList.end(); ++it,++i) {
-           if (i==ui->sliderProjections->value())
-               break;
-        }
+
+        std::advance(it,ui->sliderProjections->value());
 
         name=it->second.name;
-        std::cout<<name<<std::endl;
+
         if (QFile::exists(QString::fromStdString(name))) {
             int sliderval=ui->sliderProjections->value();
             m_PreviewImage=reader.Read(name,
@@ -1846,5 +1851,22 @@ void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
         else { m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
 //            std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
         }
+
+}
+
+void MuhRecMainWindow::on_buttonGetPP_clicked()
+{
+    PiercingPointDialog dlg;
+    UpdateConfig();
+
+    int res=dlg.exec(m_Config);
+
+    if (res==QDialog::Accepted) {
+        pair<float,float> position=dlg.getPosition();
+
+        m_Config.ProjectionInfo.fpPoint[0]=position.first;
+        m_Config.ProjectionInfo.fpPoint[1]=position.second;
+        UpdateDialog();
+    }
 
 }

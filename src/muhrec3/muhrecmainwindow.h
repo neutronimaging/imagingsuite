@@ -122,6 +122,9 @@ private slots:
 
     void on_checkCBCT_stateChanged(int arg1);
 
+
+    void on_buttonGetPP_clicked();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

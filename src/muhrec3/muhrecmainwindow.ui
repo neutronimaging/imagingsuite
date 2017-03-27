@@ -888,7 +888,7 @@
                     <x>0</x>
                     <y>120</y>
                     <width>711</width>
-                    <height>33</height>
+                    <height>36</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_21">
@@ -1119,7 +1119,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>711</width>
-                    <height>35</height>
+                    <height>38</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0">
@@ -1279,7 +1279,7 @@
                     <x>0</x>
                     <y>80</y>
                     <width>701</width>
-                    <height>35</height>
+                    <height>38</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_14">
@@ -1472,7 +1472,7 @@
                     <x>0</x>
                     <y>40</y>
                     <width>701</width>
-                    <height>35</height>
+                    <height>38</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_16">
@@ -1539,6 +1539,13 @@
                       </size>
                      </property>
                     </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="buttonGetPP">
+                     <property name="text">
+                      <string>Get piercing point</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1834,7 +1841,7 @@
              <x>20</x>
              <y>80</y>
              <width>644</width>
-             <height>33</height>
+             <height>36</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="layoutMatrixROI">
@@ -2229,7 +2236,7 @@
      <x>0</x>
      <y>0</y>
      <width>1268</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
