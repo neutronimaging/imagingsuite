@@ -66,6 +66,10 @@ protected:
 	float fFlatDose; 
 	float fDarkDose;
     float fBlackDose;
+    // chiara begin
+    float fBackScatt;
+    bool bBackScatt;
+    // chiara end
 
 	bool bUseNormROI;
 	bool bUseLUT;

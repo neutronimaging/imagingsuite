@@ -60,6 +60,7 @@ bool NormBase::SetROI(size_t *roi)
 	return true;
 }
 
+
 int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
 	m_Config    = config;
@@ -109,6 +110,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -117,6 +119,10 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
         float *fDoses=new float[N];
+
+       found = fmask.find("hdf");
+        if (found==std::string::npos ) {
+            std::cout << "before reference loader" << std::endl;
 
         kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
         img = reader.Read(filename,
@@ -130,6 +136,23 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
                     nOriginalNormRegion) : initialDose;
+        }
+        else {
+            img = reader.ReadNexus(fmask, firstIndex,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    config.ProjectionInfo.roi);
+
+                    kipl::io::WriteTIFF(img, "reference.tif");
+
+            tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
+
+        }
 
         tmpdose   = tmpdose - doseBias;
         dose      = tmpdose;
@@ -143,18 +166,34 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            img=reader.Read(filename,
-                    m_Config.ProjectionInfo.eFlip,
-                    m_Config.ProjectionInfo.eRotate,
-                    m_Config.ProjectionInfo.fBinning,
-                    roi);
-            memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+            if (found==std::string::npos ) {
+                img=reader.Read(filename,
+                        m_Config.ProjectionInfo.eFlip,
+                        m_Config.ProjectionInfo.eRotate,
+                        m_Config.ProjectionInfo.fBinning,
+                        roi);
+                memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
 
-            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion) : initialDose;
+                tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
+                            config.ProjectionInfo.eFlip,
+                            config.ProjectionInfo.eRotate,
+                            config.ProjectionInfo.fBinning,
+                            nOriginalNormRegion) : initialDose;
+            }
+            else{
+                    img=reader.ReadNexus(fmask,i+firstIndex,
+                            m_Config.ProjectionInfo.eFlip,
+                            m_Config.ProjectionInfo.eRotate,
+                            m_Config.ProjectionInfo.fBinning,
+                            roi);
+                    memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+                    tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask,i+firstIndex,
+                                config.ProjectionInfo.eFlip,
+                                config.ProjectionInfo.eRotate,
+                                config.ProjectionInfo.fBinning,
+                                nOriginalNormRegion) : initialDose;
+            }
 
             tmpdose   = tmpdose - doseBias;
             dose     += tmpdose;
@@ -163,6 +202,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 //            msg.str(""); msg<<"fDose["<<i<<"]="<<fDoses[i];
 //            logger(logger.LogMessage,msg.str());
         }
+
         fDoses[0]=1.0f;
 
         dose/=static_cast<float>(N);
@@ -239,11 +279,23 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 	std::string filename,ext;
 	ProjectionReader reader;
 
+
+
 	fDarkDose=0.0f;
 	fFlatDose=1.0f;
 
-    dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,roi,0.0f,0.0f,m_Config,fDarkDose);
+    if (nDCCount!=0) {
+        dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,roi,0.0f,0.0f,m_Config,fDarkDose);
+    }
+
+
+
     flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,fDarkDose,m_Config,fFlatDose);
+
+//    if (dark.Size()==0){
+//        dark.Resize(flat.Dims());
+//        dark = 0.0f;
+//    }
 
     { // old code
 //	if (nOBCount!=0) {
@@ -460,7 +512,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 				if (fProjPixel<=0)
 					pImg[i]=0;
 				else
-					pImg[i]=pFlat[i]-log(fProjPixel)+cLogDose;
+                    pImg[i]=pFlat[i]-log(fProjPixel)+cLogDose;
 			}
 		}
 		else {
@@ -470,7 +522,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 				if (fProjPixel<=0)
 					pImg[i]=0;
 				else
-					pImg[i]=pFlat[i]-log(fProjPixel)+cLogDose;
+                    pImg[i]=pFlat[i]-log(fProjPixel)+cLogDose;
 			}
 		}
 	}
