@@ -113,8 +113,9 @@ kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 			break;
 		case MatrixZXY : 
             pVolume+=origin[0]*sx+origin[1]*sxy;
-			if (volume.Size(0)<=idx)
-				throw ReconException("Slice index greater than matrix size (ZXY matrix)",__FILE__,__LINE__);
+            if (volume.Size(0)<=idx) {
+                msg<<"Slice index greater than matrix size (ZXY matrix). Slice index is "<<idx<<" and Matrix Sixe is: " << volume.Size(0);
+                throw ReconException(msg.str(),__FILE__,__LINE__);}
 			for (size_t y=0; y<dims[1]; y++) {
 				pSlice=slice.GetLinePtr(y);
 				for (size_t x=0; x<dims[0]; x++) {
