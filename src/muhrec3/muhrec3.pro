@@ -25,7 +25,6 @@ unix:!symbian {
 #        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons # due to strange ordering during ui build...
-        INCLUDEPATH += $$PWD/../../../../external/src/linalg
         INCLUDEPATH += /opt/local/include
 
         INCLUDEPATH += /opt/local/include/libxml2
@@ -43,6 +42,7 @@ unix:!symbian {
 
     LIBS += -ltiff -lxml2
 
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg
 }
 
 win32 {
