@@ -9,10 +9,17 @@
 #define GENERALFILTER_H_
 
 #include "StdPreprocModules_global.h"
+#include <string>
+
 #include <PreprocModuleBase.h>
+
 
 class STDPREPROCMODULESSHARED_EXPORT GeneralFilter: public PreprocModuleBase {
 public:
+    enum eGeneralFilter {
+        FilterBox,
+        FilterGauss
+    };
 	GeneralFilter();
 	virtual ~GeneralFilter();
 	
@@ -20,8 +27,16 @@ public:
 	virtual std::map<std::string, std::string> GetParameters();
 	virtual bool SetROI(size_t *roi);
 protected:
+    eGeneralFilter filterType;
+    float filterSize;
 	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
+    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
 
 };
+
+void string2enum(const std::string str,GeneralFilter::eGeneralFilter &ft);
+std::string enum2string(GeneralFilter::eGeneralFilter ft);
+
+std::ostream & operator<<(std::ostream & s, GeneralFilter::eGeneralFilter ft);
 
 #endif /* GENERALFILTER_H_ */

@@ -57,9 +57,10 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="FullLogNorm")
             return new FullLogNorm;
-
+#ifdef USE_UNPUBLISHED
         if (sName=="RobustLogNorm")
             return new RobustLogNorm;
+#endif
 
 		if (sName=="LogProjection")
 			return new LogProjection;
@@ -182,8 +183,10 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 	FullLogNorm norm;
 	modulelist->operator []("FullLogNorm")=norm.GetParameters();
 
+#ifdef USE_UNPUBLISHED
     RobustLogNorm robnorm;
     modulelist->operator[]("RobustLogNorm")=robnorm.GetParameters();
+#endif
 
 	LogProjection lproj;
 	modulelist->operator []("LogProjection")=lproj.GetParameters();

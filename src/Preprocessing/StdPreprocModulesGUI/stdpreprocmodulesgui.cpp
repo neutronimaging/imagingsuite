@@ -15,6 +15,7 @@
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
 #include "robustlognormdlg.h"
+#include "generalfilterdlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -29,8 +30,10 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
         if (sName=="FullLogNorm")
             return new FullLogNormDlg;
 
+#ifdef USE_UNPUBLISHED
         if (sName=="RobustLogNorm")
             return new RobustLogNormDlg;
+#endif
 
 //        if (sName=="LogProjection")
 //            return new LogProjection;
@@ -44,8 +47,8 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
         if (sName=="SpotClean2")
             return new SpotClean2Dlg;
 
-		//if (sName=="GeneralFilter")
-		//	return new GeneralFilter;
+        if (sName=="GeneralFilter")
+            return new GeneralFilterDlg;
 
         if (sName=="AdaptiveFilter")
             return new AdaptiveFilterDlg;

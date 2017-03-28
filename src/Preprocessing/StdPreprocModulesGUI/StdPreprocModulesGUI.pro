@@ -14,6 +14,7 @@ CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 DEFINES += STDPREPROCMODULESGUI_LIBRARY
+#DEFINES += USE_UNPUBLISHED
 
 SOURCES += stdpreprocmodulesgui.cpp \
     FullLogNormDlg.cpp \
@@ -25,7 +26,8 @@ SOURCES += stdpreprocmodulesgui.cpp \
     adaptivefilterdlg.cpp \
     SpotClean2Dlg.cpp \
     medianmixringcleandlg.cpp \
-    robustlognormdlg.cpp
+    robustlognormdlg.cpp \
+    generalfilterdlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
         StdPreprocModulesGUI_global.h \
@@ -38,7 +40,8 @@ HEADERS += stdpreprocmodulesgui.h\
     adaptivefilterdlg.h \
     SpotClean2Dlg.h \
     medianmixringcleandlg.h \
-    robustlognormdlg.h
+    robustlognormdlg.h \
+    generalfilterdlg.h
 
 
 symbian {
@@ -126,5 +129,6 @@ FORMS += \
     medianmixringclean.ui \
     projectionfilterdlg.ui \
     WaveletRingCleanDlg.ui \
-    robustlognormdlg.ui
+    robustlognormdlg.ui \
+    generalfilterdlg.ui
 
