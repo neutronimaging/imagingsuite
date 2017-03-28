@@ -147,6 +147,7 @@ private:
     kipl::base::TImage<float,2>     m_PreviewImage;
     kipl::base::TImage<float,2>     m_SliceImage;
     kipl::base::TImage<float,2>     m_LastMidSlice;
+    kipl::base::TImage<float,3>     m_NexusTomo;
 
     kipl::base::eImagePlanes m_eSlicePlane;
     size_t m_nSliceSizeX;

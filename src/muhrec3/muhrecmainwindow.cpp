@@ -12,6 +12,7 @@
 #include <QUrl>
 
 #include <base/timage.h>
+#include <base/KiplException.h>
 #include <math/mathfunctions.h>
 #include <base/thistogram.h>
 #include <strings/string2array.h>
@@ -196,6 +197,9 @@ void MuhRecMainWindow::BrowseProjectionPath()
     QString projdir=QFileDialog::getOpenFileName(this,
                                       "Select location of the projections",
                                       ui->editProjectionMask->text());
+
+    kipl::io::FileItem fi;
+
     if (!projdir.isEmpty()) {
         std::string pdir=projdir.toStdString();
 
@@ -204,15 +208,34 @@ void MuhRecMainWindow::BrowseProjectionPath()
         #else
         const char slash='/';
         #endif
+
         ptrdiff_t pos=pdir.find_last_of(slash);
 
         QString path(QString::fromStdString(pdir.substr(0,pos+1)));
         std::string fname=pdir.substr(pos+1);
         kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
+        fi=da.GetFileMask(pdir);
         newmask=QString::fromStdString(fi.m_sMask);
         ui->editProjectionMask->setText(newmask);
     }
+
+    if (fi.m_sExt=="hdf") {
+            ui->editProjectionMask->setText(projdir);
+
+             double angles[2];
+             size_t Nofimgs[2];
+             ProjectionReader reader;
+             reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
+//             std::cout << "NofImgs: " << Nofimgs[0]<< " " << Nofimgs[1] << std::endl;
+//             std::cout << "angles: " << angles[0] << " " << angles[1] << std::endl;
+             ui->spinFirstProjection->setValue(Nofimgs[0]);
+             ui->spinLastProjection->setValue(Nofimgs[1]);
+             ui->dspinAngleStart->setValue(angles[0]);
+             ui->dspinAngleStop->setValue(angles[1]);
+        }
+        else {
+            ui->editProjectionMask->setText(QString::fromStdString(fi.m_sMask));
+        }
 
     if (oldmask!=newmask)
     {
@@ -239,7 +262,18 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(projdir.toStdString());
 
-        ui->editOpenBeamMask->setText(QString::fromStdString(fi.m_sMask));
+
+        if (fi.m_sExt=="hdf"){
+            ui->editOpenBeamMask->setText(projdir);
+            ProjectionReader reader;
+            size_t Nofimgs[2];
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, NULL);
+            ui->spinFirstOpenBeam->setValue(Nofimgs[0]);
+            ui->spinOpenBeamCount->setValue(Nofimgs[1]+1);
+        }
+        else {
+            ui->editOpenBeamMask->setText(QString::fromStdString(fi.m_sMask));
+        }
     }
 }
 
@@ -271,16 +305,20 @@ void MuhRecMainWindow::PreviewProjection(int x)
     std::ostringstream msg;
     ProjectionReader reader;
 
+
     if (x<0) {
        int slice = ui->spinFirstProjection->value();
        ui->sliderProjections->setValue(slice);
     }
     UpdateConfig();
 
+    msg.str("");
+
     try {
         std::string fmask=ui->editProjectionMask->text().toStdString();
 
         std::string name, ext;
+        size_t found;
 
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
@@ -298,56 +336,143 @@ void MuhRecMainWindow::PreviewProjection(int x)
                             static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                             static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
-            float lo,hi;
+       if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
 
-            if (x < 0) {
-                const size_t NHist=512;
-                size_t hist[NHist];
-                float axis[NHist];
-                size_t nLo=0;
-                size_t nHi=0;
-                kipl::base::Histogram(m_PreviewImage.GetDataPtr(),m_PreviewImage.Size(),hist,NHist,0.0f,0.0f,axis);
-                kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
-                lo=axis[nLo];
-                hi=axis[nHi];
+           int sliderval=ui->sliderProjections->value();
 
-                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+           found = fmask.find("hdf");
+//           size_t zdims[2]={1,1};
+//            m_PreviewImage.Resize(zdims);
+
+            try{
+                  if (found!=std::string::npos ) {
+
+                        m_PreviewImage=reader.ReadNexus(fmask,static_cast<size_t>(ui->sliderProjections->value()),
+                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+                                        static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+
+
+                    }
+                        else {
+
+
+
+                        m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
+                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+                                        static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+                        }
+
+                  if ( m_PreviewImage.Size()==0){ // this happens in case an empty image is returned by ReadNexus
+
+                      QMessageBox mbox(this);
+                      msg.str("");
+                      msg<<"KiplException: Nexus format not supported\n";
+                      logger(kipl::logging::Logger::LogError,msg.str());
+                      mbox.setText(QString::fromStdString(msg.str()));
+                      mbox.exec();
+                  }
             }
-            else {
+            catch(ReconException &e){
 
-                ui->projectionViewer->get_levels(&lo,&hi);
-                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+                msg<<"ReconException: During preview\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+                throw ReconException(msg.str(),__FILE__,__LINE__);
+
+                QMessageBox mbox(this);
+                logger(kipl::logging::Logger::LogError,msg.str());
+                mbox.setText(QString::fromStdString(msg.str()));
+                mbox.exec();
             }
-            msg.str("");
-            msg<<sliderval<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
-                 (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
+            catch(kipl::base::KiplException &e){
+                msg<<"KiplException: During preview\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
+                throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 
-            ui->label_projindex->setText(QString::fromStdString(msg.str()));
+                QMessageBox mbox(this);
+                logger(kipl::logging::Logger::LogError,msg.str());
+                mbox.setText(QString::fromStdString(msg.str()));
+                mbox.exec();
+            }
 
-            SetImageDimensionLimits(m_PreviewImage.Dims());
-            UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
-        }
-        else {
-            QMessageBox mbox(this);
-            msg.str("");
-            msg<<"Could not load the image "<<name<<std::endl<<"the file does not exist.";
-            logger(kipl::logging::Logger::LogError,msg.str());
-            mbox.setText(QString::fromStdString(msg.str()));
-            mbox.exec();
-        }
+
+
+                float lo,hi;
+
+                if (m_PreviewImage.Size()==1) {
+                    logger(logger.LogWarning,"Could not read preview");
+                    return ;
+                }
+                if (x < 0) {
+
+                    const size_t NHist=512;
+                    size_t hist[NHist];
+                    float axis[NHist];
+                    size_t nLo=0;
+                    size_t nHi=0;
+
+                    kipl::base::Histogram(m_PreviewImage.GetDataPtr(),m_PreviewImage.Size(),hist,NHist,0.0f,0.0f,axis);
+                    kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+                    lo=axis[nLo];
+                    hi=axis[nHi];
+                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+                }
+                else {
+
+                    ui->projectionViewer->get_levels(&lo,&hi);
+                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+                }
+                msg.str("");
+                msg<<sliderval<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
+                     (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
+
+                ui->label_projindex->setText(QString::fromStdString(msg.str()));
+
+                SetImageDimensionLimits(m_PreviewImage.Dims());
+                UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+      }
+       else {
+                QMessageBox mbox(this);
+                msg.str("");
+                msg<<"Could not load the image "<<name<<std::endl<<"the file does not exist.";
+                logger(kipl::logging::Logger::LogError,msg.str());
+                mbox.setText(QString::fromStdString(msg.str()));
+                mbox.exec();
+       }
+    }
+
     }
     catch (ReconException &e) {
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
         logger(kipl::logging::Logger::LogMessage,msg.str());
-        PreviewProjection( ui->spinFirstProjection->value());
+     //   PreviewProjection( ui->spinFirstProjection->value());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+
+        QMessageBox mbox(this);
+        msg.str("");
+        msg<<"Could not load the projection for preview: \n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        mbox.setText(QString::fromStdString(msg.str()));
+        mbox.exec();
+
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
         logger(kipl::logging::Logger::LogMessage,msg.str());
-        PreviewProjection( ui->spinFirstProjection->value());
+     //   PreviewProjection( ui->spinFirstProjection->value());
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+
+        QMessageBox mbox(this);
+        msg.str("");
+        msg<<"Could not load the projection for preview: \n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        mbox.setText(QString::fromStdString(msg.str()));
+        mbox.exec();
     }
+
 }
 
 void MuhRecMainWindow::PreviewProjection()
@@ -1085,6 +1210,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
         bRerunBackproj=true;
     }
 
+
     msg.str("");
 
     ReconDialog dlg(&m_Interactor);
@@ -1446,6 +1572,13 @@ void MuhRecMainWindow::UpdateDialog()
     }
 
     if(ui->checkSubVolumeCBCT->checkState()){
+//        ui->spinSubVolumeSizeX0->setEnabled(true);
+//        ui->spinSubVolumeSizeX1->setEnabled(true);
+//        ui->spinSubVolumeSizeY0->setEnabled(true);
+//        ui->spinSubVolumeSizeY1->setEnabled(true);
+//        ui->spinSubVolumeSizeZ0->setEnabled(true);
+//        ui->spinSubVolumeSizeZ1->setEnabled(true);
+
         ui->spinSubVolumeSizeX0->setValue(m_Config.MatrixInfo.voi[0]);
         ui->spinSubVolumeSizeX1->setValue(m_Config.MatrixInfo.voi[1]);
         ui->spinSubVolumeSizeY0->setValue(m_Config.MatrixInfo.voi[2]);
@@ -1605,7 +1738,17 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        ui->editDarkMask->setText(QString::fromStdString(fi.m_sMask));
+        if (fi.m_sExt=="hdf"){
+            ui->editDarkMask->setText(projdir);
+            ProjectionReader reader;
+            size_t Nofimgs[2];
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, NULL);
+            ui->spinFirstDark->setValue(Nofimgs[0]);
+            ui->spinDarkCount->setValue(Nofimgs[1]+1);
+        }
+        else {
+            ui->editDarkMask->setText(QString::fromStdString(fi.m_sMask));
+        }
     }
 }
 
