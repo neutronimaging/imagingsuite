@@ -1176,13 +1176,18 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     norm -=dark;
     norm /= (flat-=dark);
 
-//    kipl::io::WriteTIFF32(norm,"~/repos/testdata/normBB.tif");
-//    kipl::io::WriteTIFF32(bb,"~/testdata/BB.tif");
-//    kipl::io::WriteTIFF32(flat,"~/repos/testdata/openBB.tif");
+//    kipl::io::WriteTIFF32(norm,"normBB.tif");
+//    kipl::io::WriteTIFF32(bb,"BB.tif");
+//    kipl::io::WriteTIFF32(flat,"openBB.tif");
 
-    SegmentBlackBody(norm, mask);
+    try{
+        SegmentBlackBody(norm, mask);
+    }
+    catch (...) {
+        throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
+    }
 
-//    kipl::io::WriteTIFF32(mask,"~/testdata/mask.tif");
+//    kipl::io::WriteTIFF32(mask,"mask.tif");
 
     kipl::base::TImage<float,2> BB_DC(bb.Dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
@@ -1301,6 +1306,7 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
 
 
+    m_nProj = nProj; // not very smartly defined
     ob_bb_parameters = new float[6];
     sample_bb_interp_parameters = new float[6*m_nProj];
 
@@ -1336,10 +1342,12 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
     }
     case(OneToOne) : {
 //        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+//        std::cout << "number of BB images and number of Proj: " << m_nBBimages << " " << m_nProj << std::endl;
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
-        memcpy(sample_bb_interp_parameters, sample_bb_parameters, sizeof(float)*6*m_nBBimages);
+        memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*6*m_nProj);
+
         break;
     }
     case(Average) : {
@@ -1525,7 +1533,8 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
 }
 
 
-float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n){
+float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n)
+{
     float *interpolated_param = new float[6*(n+1)];
     int index=0;
 
@@ -1548,7 +1557,8 @@ float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n){
 }
 
 // not used.
-int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand) {
+int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand)
+{
     int i, j;
     int* target = (int*)malloc(sizeof(int)*count * expand);
     for (i = 0; i < count; ++i) {
@@ -1604,7 +1614,8 @@ void ReferenceImageCorrection::PrepareReferences()
 
 }
 
-void ReferenceImageCorrection::PrepareReferencesBB() {
+void ReferenceImageCorrection::PrepareReferencesBB()
+{
 
     if (m_bHaveBlackBody) {
 
@@ -1741,6 +1752,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
     dose = dose - m_fDarkDose;
     float Pdose = 0.0f;
 
+    float defaultdose=-log(1.0f/(m_fOpenBeamDose-m_fDarkDose));
 
 
 //    float logdose = log(dose<1 ? 1.0f : dose);
@@ -1792,8 +1804,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
 
                             float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
-                            if (fProjPixel<=0)
-                                pImg[i]=0;
+                            if (fProjPixel<=0){
+//                                pImg[i]=0;
+                                pImg[i] = defaultdose;
+                            }
                             else
                                 pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose));
 
@@ -1815,8 +1829,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 //                        }
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
-                        if (fProjPixel<=0)
-                            pImg[i]=0;
+                        if (fProjPixel<=0){
+//                            pImg[i]=0;
+                            pImg[i] = defaultdose;
+                        }
                         else
                            pImg[i]=-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose)); // yes but what is logdose if there is no open beam?
                     }
@@ -1848,8 +1864,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
 
                             float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
-                            if (fProjPixel<=0)
-                                pImg[i]=0;
+                            if (fProjPixel<=0){
+    //                                pImg[i]=0;
+                                pImg[i] = defaultdose;
+                            }
                             else
                                 pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-fdose_ext_slice)<1 ? 1.0f : (dose-fdose_ext_slice));
 
@@ -1871,8 +1889,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 //                        }
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
-                        if (fProjPixel<=0)
-                            pImg[i]=0;
+                        if (fProjPixel<=0) {
+//                            pImg[i]=0;
+                            pImg[i]= defaultdose;
+                        }
                         else
                            pImg[i]=-log(fProjPixel)+log((dose-fdose_ext_slice)<1 ? 1.0f : (dose-fdose_ext_slice)); // yes but what is logdose if there is no open beam?
                     }
@@ -1895,8 +1915,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
     //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
 
                             float fProjPixel=(pImg[i]-pDark[i]);
-                            if (fProjPixel<=0)
-                                pImg[i]=0;
+                            if (fProjPixel<=0){
+//                                pImg[i]=0;
+                                pImg[i]= defaultdose;
+                            }
                             else
                                 pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
 
@@ -1911,8 +1933,10 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                     #pragma omp parallel for firstprivate(pDark)
                     for (int i=0; i<N; i++) {
                         float fProjPixel=(pImg[i]-pDark[i]);
-                        if (fProjPixel<=0)
-                            pImg[i]=0;
+                        if (fProjPixel<=0){
+//                            pImg[i]=0;
+                            pImg[i]= defaultdose;
+                        }
                         else
                            pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
                     }
@@ -2292,7 +2316,7 @@ void string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::e
 
 }
 
-std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm)
 {
     std::string str;
 
@@ -2329,7 +2353,7 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 
 }
 
-std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
 {
     std::string str;
 
@@ -2368,7 +2392,7 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 
 }
 
-std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x)
 {
     std::string str;
 
@@ -2404,7 +2428,7 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 
 }
 
-std::string enum2string(ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y)
 {
     std::string str;
 
