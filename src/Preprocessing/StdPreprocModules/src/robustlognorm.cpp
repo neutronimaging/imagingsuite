@@ -412,7 +412,7 @@ void RobustLogNorm::PrepareBBData(){
 
 //    std::cout << "blackdose: " << fBlackDose << std::endl;
 
-    //         kipl::io::WriteTIFF32(obmask,"/home/carminati_c/repos/testdata/maskOb.tif");
+//             kipl::io::WriteTIFF32(obmask,"/home/carminati_c/repos/testdata/maskOb.tif");
 
 
 
@@ -475,7 +475,7 @@ void RobustLogNorm::PrepareBBData(){
 
                              temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
                              mMaskBB = mask; // or memcpy
-                             kipl::io::WriteTIFF32(mMaskBB, "mMaskBB.tif");
+//                             kipl::io::WriteTIFF32(mMaskBB, "mMaskBB.tif");
 
 //                             std::cout << "temp parameters BEFORE normalization: " << std::endl;
 //                             std::cout << temp_parameters[0] << " " << temp_parameters[1] << " " <<temp_parameters[2] << " " <<temp_parameters[3] << " " <<temp_parameters[4] << " " <<temp_parameters[5] << std::endl;
@@ -551,26 +551,26 @@ void RobustLogNorm::PrepareBBData(){
                      samplebb_temp = BBLoader(blackbodysamplename, nBBSampleFirstIndex,1,1.0f,0.0f, m_Config, dose_temp);
                      samplebb = BBLoader(blackbodysamplename, nBBSampleFirstIndex,nBBSampleCount,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
 
-//                     std::cout << "nBBsample count: " << nBBSampleCount << std::endl;
-//                     std::cout << "sample bb sizes: " << samplebb.Size(0) << " " << samplebb.Size(1)  <<  std::endl;
-
 
                      float dosesample; // used for the correct dose roi computation (doseBBroi)
 
                      int index;
                      index = GetnProjwithAngle(ffirstAngle);
-//                     std::cout << "index: " << index << std::endl;
+                     std::cout << "index: " << index << std::endl;
                      sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // load the projection with angle closest to the first BB sample data
 
-//                     std::cout << "sample  sizes: " << sample.Size(0) << " " << sample.Size(1) <<  std::endl;
-//                     std::cout << "dark sizes: " << dark.Size(0) << " " << dark.Size(1) <<  std::endl;
-                     kipl::base::TImage<float,2> mask(sample.Dims());
-                     mask = 0.0f;
 
-                     mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
-                     mMaskBB = mask; // or memcpy
 
+
+//                     kipl::base::TImage<float,2> mask(sample.Dims());
+//                     mask = 0.0f;
+//                     mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
+//                     mMaskBB = mask; // or memcpy
 //                     kipl::io::WriteTIFF32(mMaskBB, "mMaskBB.tif");
+
+
+// try with giving the mask OB as parameters.. un comment the previous paragraph to get the old version
+                     mMaskBB = obmask;
 
                      temp_parameters= m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
 
@@ -604,12 +604,10 @@ void RobustLogNorm::PrepareBBData(){
 //                     std::cout << "temp parameters AFTER normalization: " << std::endl;
 //                     std::cout << temp_parameters[0] << " " << temp_parameters[1] << " " <<temp_parameters[2] << " " <<temp_parameters[3] << " " <<temp_parameters[4] << " " <<temp_parameters[5] << std::endl;
 
-//                     std::cout <<  "f balck dose sample " << fBlackDoseSample<< std::endl;
-                     memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6); // copio i primi 6
+                     memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6);
 
 
                      delete [] mask_parameters;
-//                std::cout << "ciao average" << std::endl;
                 break;
          }
 
@@ -617,10 +615,10 @@ void RobustLogNorm::PrepareBBData(){
                 bb_sample_parameters = new float[6*nBBSampleCount];
                 float dosesample;
 
-
+                std::cout << "one to one BEGIN" << std::endl;
                 for (size_t i=0; i<nBBSampleCount; i++) {
 
-                    std::cout << i << std::endl;
+//                    std::cout << i << std::endl;
                     samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
                     sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
 //                    std::cout << "fBlackDose sample at sample n. " << i << " without PB variante: " << fBlackDoseSample << std::endl;
@@ -628,11 +626,16 @@ void RobustLogNorm::PrepareBBData(){
                     // compute the mask again only for the first sample image, than assume BBs do not move during experiment
                     if (i==0) {
 
-                        kipl::base::TImage<float,2> mask(sample.Dims());
-                        mask = 0.0f;
+//                        kipl::base::TImage<float,2> mask(sample.Dims());
+//                        mask = 0.0f;
 
-                        temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
-                        mMaskBB = mask; // or memcpy
+//                        temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
+//                        mMaskBB = mask; // or memcpy
+
+                        mMaskBB = obmask; // the same mask as OB with BB in case the sample is not in the same position..
+                        temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
+
+
 
 //                        std::cout << "temp parameters BEFORE normalization: " << std::endl;
 //                        std::cout << temp_parameters[0] << " " << temp_parameters[1] << " " <<temp_parameters[2] << " " <<temp_parameters[3] << " " <<temp_parameters[4] << " " <<temp_parameters[5] << std::endl;
@@ -677,11 +680,15 @@ void RobustLogNorm::PrepareBBData(){
                         temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
 
                         for(size_t j=0; j<6; j++) {
-                         temp_parameters[j]/=fBlackDoseSample;
-                         temp_parameters[j]*=(dosesample*tau);
+                             temp_parameters[j]/=fBlackDoseSample;
+                             temp_parameters[j]*=(dosesample*tau);
                         }
 
                         memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6); // copio gli altri mano mano
+//                        std::cout << bb_sample_parameters[i*6] << " " <<
+//                                                                  bb_sample_parameters[i*6+1] << " " << bb_sample_parameters[i*6+2] << " "<<
+//                                                                  bb_sample_parameters[i*6+3] << " " << bb_sample_parameters[i*6+4] << " " <<
+//                                                                  bb_sample_parameters[i*6+5] << std::endl;
 
                     }
 
@@ -848,6 +855,8 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     kipl::base::TImage<float,2> obmask(bb.Dims());
     bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
     mask = obmask;
+//    std::cout << bb_ob_param[0] << " " << bb_ob_param[1] << " " << bb_ob_param[2] << " " << bb_ob_param[3] << " " <<
+//                                   bb_ob_param[4] << " " << bb_ob_param[5] << std::endl;
 
 //    std::cout << "error in get interpolation error: " << error << std::endl;
 
@@ -902,7 +911,9 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
     // prepare BB data if available
 //    std::cout << enum2string(m_BBOptions)<< std::endl; // on this BBOptions I have to set different booleans!
     if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+        std::cout << "before prepare BB data" << std::endl;
         PrepareBBData();
+        std::cout << "after prepare BB data" << std::endl;
         size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
         m_corrector.SetBBInterpRoi(subroi);
     }
@@ -992,6 +1003,7 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -999,20 +1011,38 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
+        found = fmask.find("hdf");
+         if (found==std::string::npos ) {
 
-
-        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
-        img = reader.Read(filename,
-                config.ProjectionInfo.eFlip,
-                config.ProjectionInfo.eRotate,
-                config.ProjectionInfo.fBinning,
-                config.ProjectionInfo.roi);
-
-        tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+            img = reader.Read(filename,
                     config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
-                    nOriginalNormRegion) : initialDose;
+                    config.ProjectionInfo.roi);
+
+            tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
+         }
+        else {
+            img = reader.ReadNexus(fmask, firstIndex,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    config.ProjectionInfo.roi);
+
+                    kipl::io::WriteTIFF(img, "reference.tif");
+
+            tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
+
+        }
 
         tmpdose   = tmpdose - doseBias;
         dose      = tmpdose;
@@ -1026,18 +1056,35 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            img=reader.Read(filename,
-                    m_Config.ProjectionInfo.eFlip,
-                    m_Config.ProjectionInfo.eRotate,
-                    m_Config.ProjectionInfo.fBinning,
-                    config.ProjectionInfo.roi);
-            memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+            if (found==std::string::npos ) {
 
-            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion) : initialDose;
+                img=reader.Read(filename,
+                        m_Config.ProjectionInfo.eFlip,
+                        m_Config.ProjectionInfo.eRotate,
+                        m_Config.ProjectionInfo.fBinning,
+                        config.ProjectionInfo.roi);
+                memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+                tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
+                            config.ProjectionInfo.eFlip,
+                            config.ProjectionInfo.eRotate,
+                            config.ProjectionInfo.fBinning,
+                            nOriginalNormRegion) : initialDose;
+            }
+            else{
+                    img=reader.ReadNexus(fmask,i+firstIndex,
+                            m_Config.ProjectionInfo.eFlip,
+                            m_Config.ProjectionInfo.eRotate,
+                            m_Config.ProjectionInfo.fBinning,
+                            config.ProjectionInfo.roi);
+                    memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+                    tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask,i+firstIndex,
+                                config.ProjectionInfo.eFlip,
+                                config.ProjectionInfo.eRotate,
+                                config.ProjectionInfo.fBinning,
+                                nOriginalNormRegion) : initialDose;
+            }
 
             tmpdose   = tmpdose - doseBias;
             dose     += tmpdose;
@@ -1096,6 +1143,7 @@ kipl::base::TImage<float,2> RobustLogNorm::BBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1104,19 +1152,33 @@ kipl::base::TImage<float,2> RobustLogNorm::BBLoader(std::string fname,
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
 
-
-        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
-        img = reader.Read(filename,
-                config.ProjectionInfo.eFlip,
-                config.ProjectionInfo.eRotate,
-                config.ProjectionInfo.fBinning,
-                BBroi);
-
-        tmpdose=bUseNormROIBB ? reader.GetProjectionDose(filename,
+        if (found==std::string::npos ) {
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+            img = reader.Read(filename,
                     config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
-                    doseBBroi) : initialDose;
+                    BBroi);
+
+            tmpdose=bUseNormROIBB ? reader.GetProjectionDose(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        doseBBroi) : initialDose;
+        }
+        else{
+                img=reader.ReadNexus(fmask,firstIndex,
+                        m_Config.ProjectionInfo.eFlip,
+                        m_Config.ProjectionInfo.eRotate,
+                        m_Config.ProjectionInfo.fBinning,
+                        BBroi);
+
+                tmpdose = bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,firstIndex,
+                            config.ProjectionInfo.eFlip,
+                            config.ProjectionInfo.eRotate,
+                            config.ProjectionInfo.fBinning,
+                            doseBBroi) : initialDose;
+        }
 
         tmpdose   = tmpdose - doseBias;
         dose      = tmpdose;
@@ -1128,20 +1190,37 @@ kipl::base::TImage<float,2> RobustLogNorm::BBLoader(std::string fname,
         memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
 
         for (int i=1; i<N; ++i) {
-            kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            img=reader.Read(filename,
-                    m_Config.ProjectionInfo.eFlip,
-                    m_Config.ProjectionInfo.eRotate,
-                    m_Config.ProjectionInfo.fBinning,
-                    BBroi);
-            memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+            if (found==std::string::npos ) {
+                kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            tmpdose = bUseNormROIBB ? reader.GetProjectionDose(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        doseBBroi) : initialDose;
+                img=reader.Read(filename,
+                        m_Config.ProjectionInfo.eFlip,
+                        m_Config.ProjectionInfo.eRotate,
+                        m_Config.ProjectionInfo.fBinning,
+                        BBroi);
+                memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+                tmpdose = bUseNormROIBB ? reader.GetProjectionDose(filename,
+                            config.ProjectionInfo.eFlip,
+                            config.ProjectionInfo.eRotate,
+                            config.ProjectionInfo.fBinning,
+                            doseBBroi) : initialDose;
+            }
+            else{
+                        img=reader.ReadNexus(fmask,i+firstIndex,
+                                m_Config.ProjectionInfo.eFlip,
+                                m_Config.ProjectionInfo.eRotate,
+                                m_Config.ProjectionInfo.fBinning,
+                                BBroi);
+                        memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+
+                        tmpdose = bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,i+firstIndex,
+                                    config.ProjectionInfo.eFlip,
+                                    config.ProjectionInfo.eRotate,
+                                    config.ProjectionInfo.fBinning,
+                                    doseBBroi) : initialDose;
+                }
 
             tmpdose   = tmpdose - doseBias;
             dose     += tmpdose;
@@ -1188,14 +1267,28 @@ float RobustLogNorm::DoseBBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
-    kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+    found=fname.find("hdf");
 
-    tmpdose=bUseNormROIBB ? reader.GetProjectionDose(filename,
-                config.ProjectionInfo.eFlip,
-                config.ProjectionInfo.eRotate,
-                config.ProjectionInfo.fBinning,
-                doseBBroi) : initialDose;
+    if (found!=std::string::npos)
+    {
+        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+
+        tmpdose=bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,firstIndex,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    doseBBroi) : initialDose;
+    }
+    else
+    {
+        tmpdose=bUseNormROIBB ? reader.GetProjectionDose(filename,
+                    config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    doseBBroi) : initialDose;
+    }
 
     tmpdose   = tmpdose - doseBias;
     dose      = tmpdose;

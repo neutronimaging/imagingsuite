@@ -346,7 +346,18 @@ void RobustLogNormDlg::BrowseOBBBPath(){
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        ui->edit_OB_BB_mask->setText(QString::fromStdString(fi.m_sMask));
+        if (fi.m_sExt=="hdf"){
+            ui->edit_OB_BB_mask->setText(QString::fromStdString(pdir));
+
+            ProjectionReader reader;
+            size_t Nofimgs[2];
+            reader.GetNexusInfo(pdir,Nofimgs,NULL);
+            ui->spinFirstOBBB->setValue(Nofimgs[0]);
+            ui->spinCountsOBBB->setValue(Nofimgs[1]);
+        }
+        else {
+            ui->edit_OB_BB_mask->setText(QString::fromStdString(fi.m_sMask));
+        }
     }
 
 
@@ -361,41 +372,39 @@ void RobustLogNormDlg::on_buttonPreviewOBBB_clicked()
 
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
-
-    if (QFile::exists(QString::fromStdString(filename))) {
-
+    size_t found=blackbodyname.find("hdf");
     ProjectionReader reader;
+    if (QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname)) && blackbodyname!="./")
+        {
+            if (found==std::string::npos )
+            {
+                m_Preview_OBBB = reader.Read(filename,
+                                             m_Config->ProjectionInfo.eFlip,
+                                             m_Config->ProjectionInfo.eRotate,
+                                             m_Config->ProjectionInfo.fBinning,
+                                             NULL);
+            }
+            else {
+                 m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
+                                                 m_Config->ProjectionInfo.eFlip,
+                                                 m_Config->ProjectionInfo.eRotate,
+                                                 m_Config->ProjectionInfo.fBinning,
+                                                 NULL);
+            }
+            float lo,hi;
 
-    m_Preview_OBBB = reader.Read(filename,
-                                 m_Config->ProjectionInfo.eFlip,
-                                 m_Config->ProjectionInfo.eRotate,
-                                 m_Config->ProjectionInfo.fBinning,
-                                 NULL);
+        //    if (x < 0) {
+                const size_t NHist=512;
+                size_t hist[NHist];
+                float axis[NHist];
+                size_t nLo=0;
+                size_t nHi=0;
+                kipl::base::Histogram(m_Preview_OBBB.GetDataPtr(),m_Preview_OBBB.Size(),hist,NHist,0.0f,0.0f,axis);
+                kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+                lo=axis[nLo];
+                hi=axis[nHi];
 
-//    std::cout << "image read: " << filename << std::endl;
-
-    float lo,hi;
-
-//    if (x < 0) {
-        const size_t NHist=512;
-        size_t hist[NHist];
-        float axis[NHist];
-        size_t nLo=0;
-        size_t nHi=0;
-        kipl::base::Histogram(m_Preview_OBBB.GetDataPtr(),m_Preview_OBBB.Size(),hist,NHist,0.0f,0.0f,axis);
-        kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
-        lo=axis[nLo];
-        hi=axis[nHi];
-
-        ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.Dims(), lo,hi);
-
-//    }
-//    else {
-
-//        ui->projectionViewer->get_levels(&lo,&hi);
-//        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-//    }
-
+                ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.Dims(), lo,hi);
     }
 
 
@@ -472,7 +481,20 @@ void RobustLogNormDlg::BrowseSampleBBPath(){
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        ui->edit_sample_BB_mask->setText(QString::fromStdString(fi.m_sMask));
+        if (fi.m_sExt=="hdf"){
+            ui->edit_sample_BB_mask->setText(QString::fromStdString(pdir));
+            ProjectionReader reader;
+            size_t Nofimgs[2];
+            double Angles[2];
+            reader.GetNexusInfo(pdir, Nofimgs, Angles);
+            ui->spinFirstsampleBB->setValue(Nofimgs[0]);
+            ui->spinCountsampleBB->setValue(Nofimgs[1]);
+            ui->spinFirstAngle->setValue(Angles[0]);
+            ui->spinLastAngle->setValue(Angles[1]);
+        }
+        else {
+            ui->edit_sample_BB_mask->setText(QString::fromStdString(fi.m_sMask));
+        }
     }
 
 }
@@ -484,40 +506,68 @@ void RobustLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodysamplename,nBBSampleFirstIndex,filename,ext,'#','0');
-
-    if (QFile::exists(QString::fromStdString(filename))) {
-
     ProjectionReader reader;
 
-    m_Preview_sampleBB = reader.Read(filename,
-                                 m_Config->ProjectionInfo.eFlip,
-                                 m_Config->ProjectionInfo.eRotate,
-                                 m_Config->ProjectionInfo.fBinning,
-                                 NULL);
+    if (QFile::exists(QString::fromStdString(filename)))
+    {
+        m_Preview_sampleBB = reader.Read(filename,
+                                     m_Config->ProjectionInfo.eFlip,
+                                     m_Config->ProjectionInfo.eRotate,
+                                     m_Config->ProjectionInfo.fBinning,
+                                     NULL);
 
-//    std::cout << "image read: " << filename << std::endl;
 
-    float lo,hi;
+        float lo,hi;
 
-//    if (x < 0) {
-        const size_t NHist=512;
-        size_t hist[NHist];
-        float axis[NHist];
-        size_t nLo=0;
-        size_t nHi=0;
-        kipl::base::Histogram(m_Preview_OBBB.GetDataPtr(),m_Preview_OBBB.Size(),hist,NHist,0.0f,0.0f,axis);
-        kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
-        lo=axis[nLo];
-        hi=axis[nHi];
+    //    if (x < 0) {
+            const size_t NHist=512;
+            size_t hist[NHist];
+            float axis[NHist];
+            size_t nLo=0;
+            size_t nHi=0;
+            kipl::base::Histogram(m_Preview_OBBB.GetDataPtr(),m_Preview_OBBB.Size(),hist,NHist,0.0f,0.0f,axis);
+            kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+            lo=axis[nLo];
+            hi=axis[nHi];
 
-        ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
+            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
 
-//    }
-//    else {
+    //    }
+    //    else {
 
-//        ui->projectionViewer->get_levels(&lo,&hi);
-//        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-//    }
+    //        ui->projectionViewer->get_levels(&lo,&hi);
+    //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+    //    }
+    }
+
+    if (QFile::exists(QString::fromStdString(blackbodysamplename)) && blackbodysamplename!="./") {
+        m_Preview_sampleBB = reader.ReadNexus(blackbodysamplename, nBBSampleFirstIndex,
+                                              m_Config->ProjectionInfo.eFlip,
+                                              m_Config->ProjectionInfo.eRotate,
+                                              m_Config->ProjectionInfo.fBinning,
+                                              NULL);
+        float lo,hi;
+
+    //    if (x < 0) {
+            const size_t NHist=512;
+            size_t hist[NHist];
+            float axis[NHist];
+            size_t nLo=0;
+            size_t nHi=0;
+            kipl::base::Histogram(m_Preview_OBBB.GetDataPtr(),m_Preview_OBBB.Size(),hist,NHist,0.0f,0.0f,axis);
+            kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+            lo=axis[nLo];
+            hi=axis[nHi];
+
+            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
+
+    //    }
+    //    else {
+
+    //        ui->projectionViewer->get_levels(&lo,&hi);
+    //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+    //    }
+
     }
 
 }
