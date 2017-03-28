@@ -122,7 +122,6 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
        found = fmask.find("hdf");
         if (found==std::string::npos ) {
-            std::cout << "before reference loader" << std::endl;
 
         kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
         img = reader.Read(filename,
@@ -144,7 +143,6 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                     config.ProjectionInfo.fBinning,
                     config.ProjectionInfo.roi);
 
-                    kipl::io::WriteTIFF(img, "reference.tif");
 
             tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
                         config.ProjectionInfo.eFlip,
