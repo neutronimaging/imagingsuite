@@ -402,6 +402,9 @@ int ConfigureGeometryDialog::LoadImages()
     // Load references
     try {
         if (m_Config.ProjectionInfo.nOBCount) {
+            size_t found = m_Config.ProjectionInfo.sOBFileMask.find("hdf");
+
+          if (found==std::string::npos) {
             m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
                     m_Config.ProjectionInfo.sOBFileMask,
                     m_Config.ProjectionInfo.nOBFirstIndex,
@@ -409,7 +412,23 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
                     NULL);
+            }
+            else{
+//           kipl::base::TImage<float,3> OBslices = reader.ReadNexusTomo(m_Config.ProjectionInfo.sOBFileMask);
+//           m_ProjOB = reader.GetNexusSlice(OBslices, m_Config.ProjectionInfo.nOBFirstIndex,
+//                                           m_Config.ProjectionInfo.eFlip,
+//                                           m_Config.ProjectionInfo.eRotate,
+//                                           m_Config.ProjectionInfo.fBinning,
+//                                           NULL);
+           m_ProjOB = reader.ReadNexus(m_Config.ProjectionInfo.sOBFileMask,
+                                       m_Config.ProjectionInfo.nOBFirstIndex,
+                                       m_Config.ProjectionInfo.eFlip,
+                                       m_Config.ProjectionInfo.eRotate,
+                                       m_Config.ProjectionInfo.fBinning,
+                                       NULL );
+          }
              m_ProjOB=medfilt(m_ProjOB);
+
         }
 
     }
@@ -442,27 +461,144 @@ int ConfigureGeometryDialog::LoadImages()
         return -1;
     }
 
-    std::map<float,ProjectionInfo> projlist;
-    BuildFileList(&m_Config,&projlist);
-    std::map<float,ProjectionInfo>::iterator it,marked;
+    size_t found = m_Config.ProjectionInfo.sFileMask.find("hdf");
+
+    if (found==std::string::npos) {
+
+        std::map<float,ProjectionInfo> projlist;
+        BuildFileList(&m_Config,&projlist);
+        std::map<float,ProjectionInfo>::iterator it,marked;
 
 
 
-    try {
-        marked=projlist.begin();
-        float diff=abs(marked->first);
-        for (it=projlist.begin(); it!=projlist.end(); it++) {
-            if (abs(it->first)<diff) {
-                marked=it;
-                diff=abs(marked->first);
+        try {
+            marked=projlist.begin();
+            float diff=abs(marked->first);
+            for (it=projlist.begin(); it!=projlist.end(); it++) {
+                if (abs(it->first)<diff) {
+                    marked=it;
+                    diff=abs(marked->first);
+                }
             }
-        }
-        msg.str("");
-        msg<<"Found first projection at "<<marked->second.angle<<", name: "<<marked->second.name<<", weight="<<marked->second.weight;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+            msg.str("");
+            msg<<"Found first projection at "<<marked->second.angle<<", name: "<<marked->second.name<<", weight="<<marked->second.weight;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        m_Proj0Deg=reader.Read(marked->second.
-                name,
+
+
+            m_Proj0Deg=reader.Read(marked->second.
+                    name,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    NULL);
+
+            if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                float *pProj=m_Proj0Deg.GetDataPtr();
+                float *pOB=m_ProjOB.GetDataPtr();
+
+                for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                    pProj[i]=pProj[i]/pOB[i];
+                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                }
+            }
+            else {
+                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+            }
+            m_Proj0Deg=medfilt(m_Proj0Deg);
+
+        }
+        catch (ReconException & e) {
+            msg<<"Failed to load the first projection (ReconException): "<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            loaderror_dlg.exec();
+            return -1;
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            msg.str("");
+            msg<<"Failed loading projection at 0 degrees: \n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            loaderror_dlg.exec();
+            return -1;
+        }
+        catch (std::exception & e)
+        {
+            msg.str("");
+            msg<<"Failed loading projection at 0 degrees:\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            loaderror_dlg.exec();
+            return -1;
+        }
+
+
+        try {
+            marked=projlist.begin();
+            float diff=abs(180.0f-marked->first);
+            for (it=projlist.begin(); it!=projlist.end(); it++) {
+                if (abs(180.0f-it->first)<diff) {
+                    marked=it;
+                    diff=abs(180.0f-marked->first);
+                }
+            }
+            msg.str("");
+            msg<<"Found opposite projection at "<<marked->second.angle<<", name: "<<marked->second.name<<", weight="<<marked->second.weight;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+
+            m_Proj180Deg=reader.Read(marked->second.name,
+                    m_Config.ProjectionInfo.eFlip,
+                    m_Config.ProjectionInfo.eRotate,
+                    m_Config.ProjectionInfo.fBinning,
+                    NULL);
+
+            if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
+                float *pProj=m_Proj180Deg.GetDataPtr();
+                float *pOB=m_ProjOB.GetDataPtr();
+                for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+                    pProj[i]=pProj[i]/pOB[i];
+                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                }
+            }
+            else {
+                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+            }
+
+            m_Proj180Deg=medfilt(m_Proj180Deg);
+        }
+        catch (ReconException & e) {
+            msg<<"Failed to load projection 180 degrees (ReconException): "<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            loaderror_dlg.exec();
+            return -1;
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            msg.str("");
+            msg<<"Failed loading projection at 180 degrees:\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            loaderror_dlg.exec();
+            return -1;
+        }
+        catch (std::exception & e)
+        {
+            msg.str("");
+            msg<<"Failed loading projection at 180 degrees:\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+            loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+            loaderror_dlg.exec();
+            return -1;
+        }
+    }
+
+    else { // read the hfd file
+
+        m_Proj0Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
+                0, // to be automatized
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
@@ -482,47 +618,8 @@ int ConfigureGeometryDialog::LoadImages()
         }
         m_Proj0Deg=medfilt(m_Proj0Deg);
 
-    }
-    catch (ReconException & e) {
-        msg<<"Failed to load the first projection (ReconException): "<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        loaderror_dlg.exec();
-        return -1;
-    }
-    catch (kipl::base::KiplException &e)
-    {
-        msg.str("");
-        msg<<"Failed loading projection at 0 degrees: \n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        loaderror_dlg.exec();
-        return -1;
-    }
-    catch (std::exception & e)
-    {
-        msg.str("");
-        msg<<"Failed loading projection at 0 degrees:\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        loaderror_dlg.exec();
-        return -1;
-    }
-
-    try {
-        marked=projlist.begin();
-        float diff=abs(180.0f-marked->first);
-        for (it=projlist.begin(); it!=projlist.end(); it++) {
-            if (abs(180.0f-it->first)<diff) {
-                marked=it;
-                diff=abs(180.0f-marked->first);
-            }
-        }
-        msg.str("");
-        msg<<"Found opposite projection at "<<marked->second.angle<<", name: "<<marked->second.name<<", weight="<<marked->second.weight;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-
-        m_Proj180Deg=reader.Read(marked->second.name,
+        m_Proj180Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
+                312, // to be automatized ASAP
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
@@ -541,32 +638,11 @@ int ConfigureGeometryDialog::LoadImages()
         }
 
         m_Proj180Deg=medfilt(m_Proj180Deg);
-    }
-    catch (ReconException & e) {
-        msg<<"Failed to load projection 180 degrees (ReconException): "<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        loaderror_dlg.exec();
-        return -1;
-    }
-    catch (kipl::base::KiplException &e)
-    {
-        msg.str("");
-        msg<<"Failed loading projection at 180 degrees:\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        loaderror_dlg.exec();
-        return -1;
-    }
-    catch (std::exception & e)
-    {
-        msg.str("");
-        msg<<"Failed loading projection at 180 degrees:\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        loaderror_dlg.exec();
-        return -1;
-    }
+
+
+
+
+        }
 
     return 0;
 }
