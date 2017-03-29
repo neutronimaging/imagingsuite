@@ -33,10 +33,10 @@ private slots:
 
     void on_button_BBroi_clicked();
 
-    void on_spinx0BBroi_valueChanged();
-    void on_spiny0BBroi_valueChanged();
-    void on_spinx1BBroi_valueChanged();
-    void on_spiny1BBroi_valueChanged();
+    void on_spinx0BBroi_valueChanged(int arg1);
+    void on_spiny0BBroi_valueChanged(int arg1);
+    void on_spinx1BBroi_valueChanged(int arg1);
+    void on_spiny1BBroi_valueChanged(int arg1);
 
     void on_button_sampleBBpath_clicked();
 
@@ -44,10 +44,10 @@ private slots:
 
     void on_button_BBdose_clicked();
 
-    void on_spinx0BBdose_valueChanged();
-    void on_spinx1BBdose_valueChanged();
-    void on_spiny0BBdose_valueChanged();
-    void on_spiny1BBdose_valueChanged();
+    void on_spinx0BBdose_valueChanged(int arg1);
+    void on_spinx1BBdose_valueChanged(int arg1);
+    void on_spiny0BBdose_valueChanged(int arg1);
+    void on_spiny1BBdose_valueChanged(int arg1);
 
 
 
@@ -58,6 +58,7 @@ private slots:
     void on_button_OB_BB_ext_clicked();
 
     void on_button_BBexternal_path_clicked();
+
 
 private:
     virtual void ApplyParameters();
@@ -99,6 +100,7 @@ private:
     bool bPBvariante;
     bool bUseNormROI; /// boolean value on the use of the norm roi
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
+    bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;

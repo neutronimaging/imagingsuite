@@ -29,6 +29,7 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
 //    bUseNormROIBB(false),
     tau(0.99f),
     bPBvariante(true),
+    bSameMask(true),
     m_nWindow(5),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
@@ -77,11 +78,11 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
         nBBCount = GetIntParameter(parameters,"BB_counts");
         blackbodyname = GetStringParameter(parameters,"BB_OB_name");
-        nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
-        nBBSampleCount = GetIntParameter(parameters, "BB_samplecounts");
+        nBBSampleFirstIndex = GetIntParameter(parameters,"BB_sample_firstindex");
+        nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
         blackbodysamplename = GetStringParameter(parameters, "BB_samplename");
         GetUIntParameterVector(parameters,"BBroi",BBroi,4);
-        GetUIntParameterVector(parameters, "doseBBroi",doseBBroi,4);
+        GetUIntParameterVector(parameters,"doseBBroi",doseBBroi,4);
         radius = GetIntParameter(parameters,"radius");
 //        bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
         tau = GetFloatParameter(parameters, "tau");
@@ -92,13 +93,14 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         m_nWindow = GetIntParameter(parameters,"window");
         ffirstAngle = GetFloatParameter(parameters,"firstAngle");
         flastAngle = GetFloatParameter(parameters,"lastAngle");
-        string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
-        string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
+        string2enum(GetStringParameter(parameters,"X_InterpOrder"), m_xInterpOrder);
+        string2enum(GetStringParameter(parameters,"Y_InterpOrder"), m_yInterpOrder);
 
-        blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
-        blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
-        nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
-        nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
+        blackbodyexternalname = GetStringParameter(parameters,"BB_OB_ext_name");
+        blackbodysampleexternalname = GetStringParameter(parameters,"BB_sample_ext_name");
+        nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
+        nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
+        bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
 //        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
 
@@ -222,7 +224,6 @@ void RobustLogNormDlg::UpdateDialog(){
 
 
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
-    ui->spinWindow->setValue(m_nWindow);
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
 
@@ -265,7 +266,6 @@ void RobustLogNormDlg::UpdateParameters(){
     string2enum(ui->combo_IntMeth_X->currentText().toStdString(), m_xInterpOrder);
     string2enum(ui->combo_IntMeth_Y->currentText().toStdString(), m_yInterpOrder);
 
-    m_nWindow = ui->spinWindow->value();
     ffirstAngle = ui->spinFirstAngle->value();
     flastAngle = ui->spinLastAngle->value();
 
@@ -311,6 +311,8 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
+
 //    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 //    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
 
@@ -444,14 +446,14 @@ void RobustLogNormDlg::UpdateBBROI()
     ui->ob_bb_Viewer->set_rectangle(rect,QColor("green").light(),0);
 }
 
-void RobustLogNormDlg::on_spinx0BBroi_valueChanged()
+void RobustLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
 {
     UpdateBBROI();
 }
 
-void RobustLogNormDlg::on_spinx1BBroi_valueChanged(){ UpdateBBROI(); }
-void RobustLogNormDlg::on_spiny0BBroi_valueChanged(){ UpdateBBROI(); }
-void RobustLogNormDlg::on_spiny1BBroi_valueChanged(){ UpdateBBROI(); }
+void RobustLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+void RobustLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+void RobustLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
 
 
 
@@ -607,22 +609,22 @@ void RobustLogNormDlg::UpdateDoseROI(){
 
 }
 
-void RobustLogNormDlg::on_spinx0BBdose_valueChanged()
+void RobustLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
-void RobustLogNormDlg::on_spinx1BBdose_valueChanged()
+void RobustLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
-void RobustLogNormDlg::on_spiny0BBdose_valueChanged()
+void RobustLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
-void RobustLogNormDlg::on_spiny1BBdose_valueChanged()
+void RobustLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
@@ -651,7 +653,6 @@ void RobustLogNormDlg::on_errorButton_clicked()
 
         try {
             module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-    //    module.PrepareBBData();
             error = module.GetInterpolationError(mymask);
         }
         catch(kipl::base::KiplException &e) {
@@ -760,3 +761,4 @@ void RobustLogNormDlg::on_button_BBexternal_path_clicked()
 
 
 }
+

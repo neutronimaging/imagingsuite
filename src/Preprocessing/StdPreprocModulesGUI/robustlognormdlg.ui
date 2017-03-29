@@ -108,16 +108,6 @@
         </item>
        </widget>
       </item>
-      <item>
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string>window</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="spinWindow"/>
-      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget_6">
