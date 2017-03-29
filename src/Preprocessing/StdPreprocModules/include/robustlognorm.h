@@ -76,6 +76,7 @@ protected:
     bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
     bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
+    bool bSameMask; /// boolean value on the use of the same mask computed for OB images with BB also for sample image with BB, in case of false the mask is recomputed on the first available image with BB. This implies that exists an image with the sample and without BB and the sample is in the exact same position
 
     bool bPBvariante;
 
