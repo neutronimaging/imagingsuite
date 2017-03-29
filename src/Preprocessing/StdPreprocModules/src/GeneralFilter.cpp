@@ -17,6 +17,7 @@
 
 
 GeneralFilter::GeneralFilter() :
+    PreprocModuleBase("GeneralFilter"),
     filterType(FilterBox),
     filterSize(3.0)
 {
@@ -31,6 +32,7 @@ GeneralFilter::~GeneralFilter() {
 int GeneralFilter::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
     string2enum(GetStringParameter(parameters,"type"),filterType);
+
     filterSize = GetFloatParameter(parameters,"size");
 
     return 0;
@@ -72,14 +74,15 @@ int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::
         N2=N/2;
         kernel=new float[N];
         sum = kernel[N2] = 1.0f;
-        for (size_t i=0; i<=N2; ++i)
+        for (size_t i=1; i<=N2; ++i)
         {
-            kernel[i+N2] = kernel[N2-i] = exp(-i*i/(2*filterSize*filterSize));
-            sum+=kernel[i+N2]*2;
+            float x=static_cast<float>(i);
+            kernel[N2+i] = kernel[N2-i] = exp(-x*x/(2*filterSize*filterSize));
+            sum+=kernel[N2+i]*2;
         }
         for (size_t i=0; i<N; ++i)
-            kernel[i]/=sum;
-
+            kernel[i]=kernel[i]/sum;
+        break;
     default:
         throw ReconException("Unknown filter type selected",__FILE__,__LINE__);
     }
@@ -116,10 +119,10 @@ void string2enum(const std::string str,GeneralFilter::eGeneralFilter &ft)
 {
     std::map<std::string, GeneralFilter::eGeneralFilter> types;
 
-    types["Box"]   = GeneralFilter::FilterBox;
-    types["box"]   = GeneralFilter::FilterBox;
-    types["Gauss"] = GeneralFilter::FilterGauss;
-    types["gauss"] = GeneralFilter::FilterGauss;
+    types["FilterBox"]   = GeneralFilter::FilterBox;
+    types["filterbox"]   = GeneralFilter::FilterBox;
+    types["FilterGauss"] = GeneralFilter::FilterGauss;
+    types["filtergauss"] = GeneralFilter::FilterGauss;
 
     auto it=types.find(str);
 
@@ -134,8 +137,8 @@ std::string enum2string(GeneralFilter::eGeneralFilter ft)
 {
     std::map<GeneralFilter::eGeneralFilter, std::string> types;
 
-    types[GeneralFilter::FilterBox]   = "Box";
-    types[GeneralFilter::FilterGauss] = "Gauss";
+    types[GeneralFilter::FilterBox]   = "FilterBox";
+    types[GeneralFilter::FilterGauss] = "FilterGauss";
 
     auto it=types.find(ft);
     std::string name;

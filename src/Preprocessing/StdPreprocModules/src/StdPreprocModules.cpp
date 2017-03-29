@@ -57,6 +57,9 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="FullLogNorm")
             return new FullLogNorm;
+
+        if (sName=="FullNorm")
+            return new FullNorm;
 #ifdef USE_UNPUBLISHED
         if (sName=="RobustLogNorm")
             return new RobustLogNorm;
@@ -180,8 +183,11 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
 	std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-	FullLogNorm norm;
-	modulelist->operator []("FullLogNorm")=norm.GetParameters();
+    FullLogNorm flnorm;
+    modulelist->operator []("FullLogNorm")=flnorm.GetParameters();
+
+    FullNorm fnorm;
+    modulelist->operator []("FullNorm")=fnorm.GetParameters();
 
 #ifdef USE_UNPUBLISHED
     RobustLogNorm robnorm;

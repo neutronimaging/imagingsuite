@@ -98,6 +98,24 @@ private:
 	kipl::math::LogLUT LUT;
 };
 
+class  STDPREPROCMODULESSHARED_EXPORT FullNorm : public NormBase
+{
+public:
+    FullNorm();
+    virtual ~FullNorm();
+
+    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
+
+    virtual void LoadReferenceImages(size_t *roi);
+
+protected:
+    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
+    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
+
+private:
+    virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat);
+};
+
 class NegLogNorm : public NormBase
 {
 public:
