@@ -8,8 +8,6 @@
 #ifndef IMGALG_REFERENCEIMAGECORRECTION_H_
 #define IMGALG_REFERENCEIMAGECORRECTION_H_
 #include "ImagingAlgorithms_global.h"
-
-//#include "stdafx.h"
 #include <base/timage.h>
 #include <logging/logger.h>
 #include <string>
