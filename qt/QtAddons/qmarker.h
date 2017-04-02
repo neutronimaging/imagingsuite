@@ -1,6 +1,7 @@
 #ifndef QMARKER_H
 #define QMARKER_H
 
+#include "QtAddons_global.h"
 #include <QPainter>
 #include <QPoint>
 #include <QColor>
@@ -11,7 +12,7 @@
 
 namespace QtAddons {
 
-class QMarker
+class QTADDONSSHARED_EXPORT QMarker
 {
     kipl::logging::Logger logger;
 public:
