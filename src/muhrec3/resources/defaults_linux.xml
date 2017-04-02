@@ -24,10 +24,10 @@
         <scantype>sequential</scantype>
         <imagetype>projections</imagetype>
         <center>50</center>
-	<sod>100</sod>
-	<sdd>100</sdd>
-	<direction>rotationdircw</direction>
-	<ppoint>500.0 500.0 </ppoint>
+	    <sod>100</sod>
+	    <sdd>100</sdd>
+	    <direction>RotationDirCW</direction>
+	    <ppoint>50.0 50.0 </ppoint>
         <translation>false</translation>
         <tiltangle>0</tiltangle>
         <tiltpivot>0</tiltpivot>
@@ -41,7 +41,7 @@
         <dcfilemask>dc_####.fits</dcfilemask>
         <dcfirstindex>1</dcfirstindex>
         <dccount>5</dccount>
-        <roi>0 0 100 100</roi>
+        <roi>0 0 99 99</roi>
         <projroi>0 0 99 99</projroi>
         <doseroi>0 0 10 10</doseroi>
         <scanarc>0 360</scanarc>

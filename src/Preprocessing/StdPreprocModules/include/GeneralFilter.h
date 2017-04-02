@@ -34,9 +34,9 @@ protected:
 
 };
 
-void string2enum(const std::string str,GeneralFilter::eGeneralFilter &ft);
-std::string enum2string(GeneralFilter::eGeneralFilter ft);
+void STDPREPROCMODULESSHARED_EXPORT string2enum(const std::string str,GeneralFilter::eGeneralFilter &ft);
+std::string STDPREPROCMODULESSHARED_EXPORT enum2string(GeneralFilter::eGeneralFilter ft);
 
-std::ostream & operator<<(std::ostream & s, GeneralFilter::eGeneralFilter ft);
+std::ostream STDPREPROCMODULESSHARED_EXPORT & operator<<(std::ostream & s, GeneralFilter::eGeneralFilter ft);
 
 #endif /* GENERALFILTER_H_ */

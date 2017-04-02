@@ -109,6 +109,8 @@ int ReconDialog::progress()
 
     }
     logger(kipl::logging::Logger::LogVerbose,"Progress thread end");
+
+    return 0;
 }
 
 int ReconDialog::process()
@@ -162,6 +164,8 @@ int ReconDialog::process()
 
     logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
     finish=true;
+
+    return 0;
 }
 
 void ReconDialog::Abort()

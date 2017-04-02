@@ -1,9 +1,4 @@
 
-#include <interactors/interactionbase.h>
-#include "fdkbp.h"
-#include <base/timage.h>
-#include <base/tpermuteimage.h>
-#include <math/mathconstants.h>
 #include <vector>
 #include <sstream>
 #include <string>
@@ -11,10 +6,20 @@
 #include <emmintrin.h>
 #include <cmath>
 #include <math.h>
+
 #include "fftw3.h"
 
+#include <base/timage.h>
+#include <base/tpermuteimage.h>
+#include <math/mathconstants.h>
+#include <interactors/interactionbase.h>
+
+
+
+#include "fdkbp.h"
+
 #ifndef DEGTORAD
-static const double DEGTORAD = M_PI/ 180.0;
+static const double DEGTORAD = dPi/ 180.0;
 #endif
 
 #ifndef MARGIN
@@ -108,7 +113,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Intrinsic matrix */
         double sad = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
         double sid = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
-        double cam[3] = {sad*cos(angles*M_PI/180),-sad*sin(angles*M_PI/180),0.0}; /* Location of camera */
+        double cam[3] = {sad*cos(angles*dPi/180),-sad*sin(angles*dPi/180),0.0}; /* Location of camera */
         double nrm[3] = {0.0,0.0,0.0}; /* Ray from image center to source */
         double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
         double plt[3] = {0.0,0.0,0.0}; /* Detector orientation */  /* Panel left (toward first column) */
@@ -121,8 +126,8 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         if (mConfig.ProjectionInfo.bCorrectTilt) {
 
             // this would be rotation around X:, changing the index 1 to 0 would have the effect to rotate around Y, however I'm not sure which one should be used.
-            vup[0] = sin(M_PI/180*mConfig.ProjectionInfo.fTiltAngle); // positive: clockwise?. it has the same effect like the tilt_matrix at the end of the file. check the sign of the angle
-            vup[2] = cos(M_PI/180*mConfig.ProjectionInfo.fTiltAngle);
+            vup[0] = sin(dPi/180*mConfig.ProjectionInfo.fTiltAngle); // positive: clockwise?. it has the same effect like the tilt_matrix at the end of the file. check the sign of the angle
+            vup[2] = cos(dPi/180*mConfig.ProjectionInfo.fTiltAngle);
 //            std::cout << "correct tilt: " << vup[0] <<" " << vup[1] << " " << vup[2] <<
 //                         std::endl;
         }

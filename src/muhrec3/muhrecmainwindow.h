@@ -25,8 +25,8 @@ class MuhRecMainWindow : public QMainWindow, public ApplicationBase
 public:
     explicit MuhRecMainWindow(QApplication *app, QWidget *parent = 0);
     ~MuhRecMainWindow();
-    virtual void UpdateDialog();
-    virtual void UpdateConfig();
+    void UpdateDialog();
+    void UpdateConfig();
     MuhrecInteractor * GetInteractor();
 
 private:

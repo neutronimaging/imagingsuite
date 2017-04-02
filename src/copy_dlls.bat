@@ -19,6 +19,7 @@ copy %REPOS%\lib\StdPreprocModules.dll .
 copy %REPOS%\lib\StdPreprocModulesGUI.dll .
 copy %REPOS%\lib\InspectorModulesGUI.dll .
 copy %REPOS%\lib\InspectorModules.dll .
+copy %REPOS%\lib\FDKBackProjectors.dll .
 
 copy %REPOS%\external\lib64\libtiff.dll .
 copy %REPOS%\external\lib64\libjpeg-62.dll .

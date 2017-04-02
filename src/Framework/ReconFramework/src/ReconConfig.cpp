@@ -917,6 +917,7 @@ void string2enum(const std::string str, ReconConfig::cProjections::eBeamGeometry
 
     std::string tmpstr=kipl::strings::toLower(str);
 
+
     if (nameconv.count(tmpstr)==0)
         throw ReconException("The key string does not exist for eBeamGeometry",__FILE__,__LINE__);
 
@@ -931,9 +932,9 @@ std::string enum2string(ReconConfig::cProjections::eBeamGeometry &bg)
     std::string str;
 
     switch (bg) {
-    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Parallel : str="Parallel"; break;
-    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Cone     : str="Cone"; break;
-    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Helix    : str="Helix"; break;
+    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Parallel : str="parallel"; break;
+    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Cone     : str="cone"; break;
+    case ReconConfig::cProjections::eBeamGeometry::BeamGeometry_Helix    : str="helix"; break;
     default                    : throw ReconException("Could not convert the beam geometry enum value to a string", __FILE__,__LINE__);
     }
 
