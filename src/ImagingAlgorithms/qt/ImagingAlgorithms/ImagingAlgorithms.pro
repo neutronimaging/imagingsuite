@@ -14,6 +14,19 @@ CONFIG += c++11
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
+win32 {
+    message(Building for Windows)
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+
+    INCLUDEPATH += "$$PWD/../../../../../../external/src/linalg" "$$PWD/../../../../../../external/include" "../../../../../../external/include/cfitsio"
+    QMAKE_LIBDIR += ../../../../../external/lib64
+
+#    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += "../../../../../../external/src/linalg"
@@ -23,7 +36,7 @@ unix {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
-        LIBS += -L/usr/lib -lxml2
+        LIBS += -L/usr/lib -lxml2 -ltiff
         INCLUDEPATH += /usr/include/libxml2
 
     }
@@ -34,7 +47,7 @@ unix {
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
 
-        LIBS += -L/opt/local/lib/ -lxml2
+        LIBS += -L/opt/local/lib/ -lxml2 -ltiff
     }
 
 
@@ -90,20 +103,7 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32 {
-    contains(QMAKE_HOST.arch, x86_64):{
-    QMAKE_LFLAGS += /MACHINE:X64
-    }
-    INCLUDEPATH += ../../../../../external/src/linalg ../../../../../external/include ../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../../external/lib64
 
-#    LIBS += -llibxml2_dll -llibtiff -lcfitsio
-    QMAKE_CXXFLAGS += /openmp /O2
-}
-else {
-    LIBS += -L/usr/lib -lxml2 -ltiff
-    INCLUDEPATH += /usr/include/libxml2
-}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib -lkipl
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug -lkipl
@@ -112,3 +112,5 @@ else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../../lib/d
 
 INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
+
+message($$INCLUDEPATH)
