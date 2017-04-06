@@ -15,33 +15,29 @@ CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 unix {
-unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
-    QMAKE_LFLAGS += -lgomp
-    LIBS += -lgomp
-    LIBS += -L/usr/lib -lxml2
-    INCLUDEPATH += /usr/include/libxml2
+    unix:!macx {
+        QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+        LIBS += -L/usr/lib -lxml2
+        INCLUDEPATH += /usr/include/libxml2
+    }
+
+    unix:macx {
+    #    QMAKE_MAC_SDK = macosx10.11
+        QMAKE_CXXFLAGS += -fPIC -O2
+        QMAKE_LIBDIR += /opt/local/lib
+        LIBS += -L/opt/local/lib -lxml2
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
+    }
 }
 
-unix:macx {
-#    QMAKE_MAC_SDK = macosx10.11
-    QMAKE_CXXFLAGS += -fPIC -O2
-    QMAKE_LIBDIR += /opt/local/lib
-    LIBS += -L/opt/local/lib -lxml2
-    INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
-}
-
-
-
-}
-
-
-win32 {
+windows {
     contains(QMAKE_HOST.arch, x86_64):{
-    QMAKE_LFLAGS += /MACHINE:X64
+        QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += ../../../../../external/include
-    LIBPATH += ../../../../external/lib64
+    LIBPATH += $$PWD/../../../../../external/lib64
     LIBS += -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
 }
