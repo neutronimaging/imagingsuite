@@ -28,12 +28,16 @@ copy %REPOS%\external\lib64\libfftw3-3.dll .
 copy %REPOS%\external\lib64\libfftw3f-3.dll .
 copy %REPOS%\external\lib64\libxml2-2.dll .
 copy %REPOS%\external\lib64\libiconv.dll .
+copy %REPOS%\external\lib64\cfitsio.dll .
 
 copy %REPOS%\Applications\muhrec3.exe .
 
 copy %REPOS%\tomography\trunk\src\muhrec3\resources resources
 
-cd C:\Qt\Qt5.2.1\5.2.1\msvc2012_64_opengl\bin
+rem cd C:\Qt\Qt5.2.1\5.2.1\msvc2012_64_opengl\bin
+
+cd C:\Qt\5.8\msvc2015_64\bin
+
 windeployqt %DEST%\muhrec3.exe
 copy Qt5PrintSupport.dll %DEST%
 
