@@ -241,7 +241,7 @@ In the first tab of the dialog (Figure \ref{fig:tab1_refmodule}), the following 
 \item \textit{Interpolate}: to be used when the BB images with the sample are acquired at regular angular step. In this case further configuration is done in the second tab "BB images" of the dialog.
 \item \textit{Average}: to be used when the BB images with the sample are acquired at the same angular position. In this case the averaging method chosen will be applied and further configuration is done in the second tab "BB images" of the dialog. 
 \item \textit{OneToOne}: to be used when the BB images are acquired at the sample angular position of the projection data. It is required that the number of BB images is the same of the projections. Further configuration is done in the second tab of the dialog. 
-\item \textit{ExternalBB}: to be used when the background images are created elsewhere. In this case the second part of the tab is activated and it is possible to load such images. Images are expected to be already dose corrected, in the case of the open beam image with BB a single file is expected to be loaded. In the case of the sample image with BBs, the number of images is expected to be equal to the number of projection data, meaning that a one by one correspondance is expected. Relevant parameters are 
+\item \textit{ExternalBB}: to be used when the background images are created elsewhere. In this case the second part of the tab is activated and it is possible to load such images. Images are expected to be already dose corrected, in the case of the open beam image with BB a single file is expected to be loaded. In the case of the sample image with BBs, the number of images is expected to be equal to the number of projection data, meaning that a one by one correspondence is expected. Relevant parameters are 
 \end{itemize}
 Default value: Interpolate
 \end{itemize}
@@ -264,7 +264,7 @@ For the open beam with BB images:
 \end{enumerate}
 For the sample images with BBs:
 \begin{enumerate}
-\item Get the file name throw the Browse button.\documentclass[options]{class} 
+\item Get the file name throw the Browse button.
 \item Select the first index of the image to be loaded (First) and the number of images belonging to the stack (Count). In the OneToOne BBOption, Count must be equal to the number of projection data. 
 \item Click the Preview button to display in the center bottom panel the first sample image with BBs. 
 \item Select the angles corresponding to the first and the last sample images with BB. These are used only in the Interpolate BBOption. 
@@ -273,7 +273,7 @@ For the sample images with BBs:
 Click finally on OK, to save all parameters. \\
 Two hidden boolean parameters can be finally tuned from the processing tab of the main window:
 \begin{itemize}
-\item \textit{PBvariante} triggers the use of the proposed formula (true) or a previous semplified one (false), to be use for testing purpose. Default value: true.
+\item \textit{PBvariante} triggers the use of the proposed formula (true) or a previous simplified one (false), to be use for testing purpose. Default value: true.
 \item \textit{SameMask}: if true, the mask is computed only once on the open beam image with BB. The same mask is then used to compute background images from sample images with BBs. This requires that the BBs are in the same position in open beam and sample images with BBs. If false, the mask is computed once again on the first image with sample and BBs and this second mask is used for all sample images with BBs. This option might be used when the BBs in the open beam and sample image are not in the same position, however it requires that the same angular position is available for the first projection image and the first sample image with BBs and that the sample position between the two is the same. Default value: true.   
 \end{itemize}
 
