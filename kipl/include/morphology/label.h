@@ -6,6 +6,8 @@
 #include <deque>
 #include <list>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 #include "morphology.h"
 #include "../base/timage.h"
@@ -116,7 +118,7 @@ namespace kipl {namespace morphology {
 		
 		deque<long> remove_queue;
 		
-		copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
+        copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
 	//	ImgType val;
 		deque<long>::iterator it;
 	//	const long inqueue=-1;
