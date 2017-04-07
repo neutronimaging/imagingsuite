@@ -38,7 +38,13 @@ public:
     /// The method shall be able to identify groups of file name sequences and tell the index number intervals.
     /// \param path the path to the directory to analyze
     /// \todo Implement the file list...
-    void GetDirList(std::string path);
+    std::vector<std::string> GetDirList(std::string path);
+
+    void AnalyzeMatchingNames(std::string mask,
+                              int &nFiles,
+                              int &firstIndex,
+                              int &lastIndex,
+                              char wildcard='#');
 
     /// \brief Gets the file mask from a file name string. The last set of numbers before the file extension are replaced by #'s
     FileItem GetFileMask(std::string str);

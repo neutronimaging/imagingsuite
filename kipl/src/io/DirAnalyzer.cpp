@@ -5,8 +5,10 @@
 #include <stddef.h>
 #include <string>
 #include <cstdlib>
+#include <dirent.h>
 #include "../../include/base/KiplException.h"
 #include "../../include/io/DirAnalyzer.h"
+#include "../../include/strings/filenames.h"
 
 #ifdef _MSC_VER
    #include <io.h>
@@ -44,25 +46,27 @@ DirAnalyzer::DirAnalyzer()
 
 }
 
-void DirAnalyzer::GetDirList(std::string path)
+std::vector<std::string> DirAnalyzer::GetDirList(std::string path)
 {
+    kipl::strings::filenames::CheckPathSlashes(path,false);
 
-//    m_vDirContents.clear();
+    m_vDirContents.clear();
 
-//    DIR *dir;
-//    struct dirent *ent;
-//    if ((dir = opendir (path.c_str())) != NULL) {
-//      while ((ent = readdir (dir)) != NULL) {
-//        m_vDirContents.push_back(ent->d_name);
-//      }
-//      closedir (dir);
-//    } else {
-//        // could not open directory
-//        std::stringstream msg;
-//        msg<<"Could not open path "<<path;
-//        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
-//    }
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir (path.c_str())) != nullptr) {
+      while ((ent = readdir (dir)) != nullptr) {
+        m_vDirContents.push_back(ent->d_name);
+      }
+      closedir (dir);
+    } else {
+        // could not open directory
+        std::stringstream msg;
+        msg<<"Could not open path "<<path;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
 
+    return m_vDirContents;
 }
 
 FileItem DirAnalyzer::GetFileMask(std::string str)
@@ -108,6 +112,50 @@ FileItem DirAnalyzer::GetFileMask(std::string str)
     return FileItem(mask,value,ext);
 }
 
+void DirAnalyzer::AnalyzeMatchingNames(std::string mask,
+                                       int &nFiles,
+                                       int &firstIndex,
+                                       int &lastIndex,
+                                       char wildcard)
+{
+    nFiles     = 0;
+    firstIndex = std::numeric_limits<int>::max();
+    lastIndex  = std::numeric_limits<int>::min();
 
+
+    ptrdiff_t wpos0 = mask.find_last_of(strings::filenames::slash);
+    wpos0 = wpos0 !=std::string::npos ? wpos0+1 : 0L;
+
+    std::string path = wpos0 != 0 ? mask.substr(0,wpos0) :"./";
+
+    GetDirList(path);
+
+    std::string maskname = mask.substr(wpos0);
+    ptrdiff_t wpos1 = maskname.find_first_of(wildcard);
+    if (wpos1== std::string::npos)
+        return;
+
+    ptrdiff_t wpos2 = maskname.find_first_not_of(wildcard,wpos1);
+
+    std::string maskbase = maskname.substr(0,wpos1);
+    std::string maskext  = maskname.substr(wpos2);
+
+    std::string base,ext;
+    std::string idxstr;
+    for (auto it=m_vDirContents.begin(); it!=m_vDirContents.end(); ++it) {
+        std::string &name = *it;
+        if (name.size()==maskname.size()) {
+            base = name.substr(0,wpos1);
+            ext  = name.substr(wpos2);
+            if ((base == maskbase) && (ext == maskext)) {
+                ++nFiles;
+                idxstr = name.substr(wpos1,wpos2-wpos1);
+                int idx=atoi(idxstr.c_str());
+                firstIndex = std::min(firstIndex,idx);
+                lastIndex  = std::max(lastIndex,idx);
+            }
+        }
+    }
+}
 
 }}
