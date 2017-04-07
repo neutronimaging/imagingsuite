@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <iostream>
+#include <string>
 #include <base/kiplenums.h>
 #include <base/timage.h>
 
@@ -24,6 +25,7 @@ public:
     int m_nLast;
     int m_nStep;
     int m_nStride;
+    std::string m_sVariableName;
 
     std::list<int> m_nSkipList;
 };
