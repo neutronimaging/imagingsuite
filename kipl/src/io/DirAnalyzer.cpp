@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <string>
 #include <cstdlib>
+#include <limits>
+#include <algorithm>
 #include <dirent.h>
 #include "../../include/base/KiplException.h"
 #include "../../include/io/DirAnalyzer.h"

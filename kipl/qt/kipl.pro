@@ -38,7 +38,8 @@ win32 {
     INCLUDEPATH += $$PWD/../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
     QMAKE_LIBDIR += ../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
-    LIBS += -l
+
+    DEFINES += NOMINMAX
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
