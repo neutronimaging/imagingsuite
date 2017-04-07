@@ -54,7 +54,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
             line_cnt++;
             listfile.getline(cline,2048,eolchar);
             logger(logger.LogMessage,cline);
-//            cout<<"p "<<cline<<endl;
+
         }
 
         while ((line_cnt <= config->ProjectionInfo.nLastIndex) && !listfile.eof()) {
@@ -65,10 +65,9 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
             std::string fname=line.substr(line.find_first_of(",\t")+1);
             fname=fname.substr(fname.find_first_not_of(" "));
             fname=fname.substr(0,fname.find_first_of("\n\r"));
-//            cout<<fname<<endl;
+
             (*ProjectionList)[angle]=ProjectionInfo(config->ProjectionInfo.sPath+fname,angle);
             listfile.getline(cline,2048,eolchar);
-//            cout<<"r "<<cline<<endl;
         }
         listfile.close();
         sequence=false;

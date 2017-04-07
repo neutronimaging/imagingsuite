@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QSignalBlocker>
 
 #include <base/timage.h>
 #include <base/KiplException.h>
@@ -217,6 +218,15 @@ void MuhRecMainWindow::BrowseProjectionPath()
         fi=da.GetFileMask(pdir);
         newmask=QString::fromStdString(fi.m_sMask);
         ui->editProjectionMask->setText(newmask);
+        int cnt,first,last;
+        da.AnalyzeMatchingNames(fi.m_sMask,cnt,first,last);
+//        ui->spinFirstProjection->setMaximum(last);
+//        ui->spinFirstProjection->setMinimum(first);
+        ui->spinFirstProjection->setValue(first);
+
+//        ui->spinLastProjection->setMaximum(last);
+//        ui->spinLastProjection->setMinimum(first);
+        ui->spinLastProjection->setValue(last);
     }
 
     if (fi.m_sExt=="hdf") {
@@ -302,6 +312,8 @@ void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
 
 void MuhRecMainWindow::PreviewProjection(int x)
 {
+    QSignalBlocker sliderSignal(ui->sliderProjections);
+
     std::ostringstream msg;
     ProjectionReader reader;
 
@@ -319,13 +331,19 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         std::string name, ext;
         size_t found;
+        int position=ui->sliderProjections->value();
 
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
+        if (fileList.size()<position) // Workaround for bad BuildFileList implementation
+        {
+            logger(logger.LogWarning, "Projection slider out of list range.");
+            return;
+        }
 
         auto it=fileList.begin();
 
-        std::advance(it,ui->sliderProjections->value());
+        std::advance(it,position);
 
         name=it->second.name;
 
@@ -344,27 +362,26 @@ void MuhRecMainWindow::PreviewProjection(int x)
 //           size_t zdims[2]={1,1};
 //            m_PreviewImage.Resize(zdims);
 
-            try{
-                  if (found!=std::string::npos ) {
-
+            try {
+                  if (found!=std::string::npos )
+                  {
                         m_PreviewImage=reader.ReadNexus(fmask,static_cast<size_t>(ui->sliderProjections->value()),
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                                         static_cast<float>(ui->spinProjectionBinning->value()),NULL);
 
 
-                    }
-                        else {
-
-
-
+                  }
+                  else
+                  {
                         m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                                         static_cast<float>(ui->spinProjectionBinning->value()),NULL);
-                        }
+                  }
 
-                  if ( m_PreviewImage.Size()==0){ // this happens in case an empty image is returned by ReadNexus
+                  if ( m_PreviewImage.Size()==0)
+                  { // this happens in case an empty image is returned by ReadNexus
 
                       QMessageBox mbox(this);
                       msg.str("");
@@ -375,10 +392,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                   }
             }
             catch(ReconException &e){
-
                 msg<<"ReconException: During preview\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
-                throw ReconException(msg.str(),__FILE__,__LINE__);
 
                 QMessageBox mbox(this);
                 logger(kipl::logging::Logger::LogError,msg.str());
@@ -387,8 +401,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
             }
             catch(kipl::base::KiplException &e){
                 msg<<"KiplException: During preview\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
-                throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 
                 QMessageBox mbox(this);
                 logger(kipl::logging::Logger::LogError,msg.str());
@@ -444,12 +456,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
     }
     catch (ReconException &e) {
-        msg.str("");
-        msg<<"Could not load the projection for preview: \n"<<e.what();
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-     //   PreviewProjection( ui->spinFirstProjection->value());
-        throw ReconException(msg.str(),__FILE__,__LINE__);
-
         QMessageBox mbox(this);
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
@@ -459,12 +465,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
     }
     catch (kipl::base::KiplException &e) {
-        msg.str("");
-        msg<<"Could not load the projection for preview: \n"<<e.what();
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-     //   PreviewProjection( ui->spinFirstProjection->value());
-        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
-
         QMessageBox mbox(this);
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
@@ -482,6 +482,8 @@ void MuhRecMainWindow::PreviewProjection()
 
 void MuhRecMainWindow::DisplaySlice(int x)
 {
+    QSignalBlocker blockSlider(ui->sliderSlices);
+
     if (m_pEngine==NULL)
         return;
 
@@ -491,12 +493,9 @@ void MuhRecMainWindow::DisplaySlice(int x)
     if (x<0) {
         nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
         ui->sliderProjections->setValue(nSelectedSlice);
-     //   on_comboSlicePlane_activated(0);
     }
 
     try {
-
-        //kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice-m_Config.ProjectionInfo.roi[1]);
         kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
         ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
                                    static_cast<float>(ui->dspinGrayLow->value()),
@@ -1471,6 +1470,10 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
 void MuhRecMainWindow::UpdateDialog()
 {
     std::ostringstream str;
+    QSignalBlocker blockFirstProjection(ui->spinFirstProjection);
+    QSignalBlocker blockLastProjection(ui->spinLastProjection);
+    QSignalBlocker blockFlipProjection(ui->comboFlipProjection);
+    QSignalBlocker blockRotateProjection(ui->comboRotateProjection);
 
     ui->editProjectionMask->setText(QString::fromStdString(m_Config.ProjectionInfo.sFileMask));
     ui->editOpenBeamMask->setText(QString::fromStdString(m_Config.ProjectionInfo.sOBFileMask));
@@ -1497,8 +1500,10 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinDoseROIx1->setValue(static_cast<int>(m_Config.ProjectionInfo.dose_roi[2]));
     ui->spinDoseROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.dose_roi[3]));
 
-    ui->spinSlicesFirst->blockSignals(true);
-    ui->spinSlicesLast->blockSignals(true);
+    QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
+    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
+ //   ui->spinSlicesFirst->blockSignals(true);
+ //   ui->spinSlicesLast->blockSignals(true);
 
     ui->spinProjROIx0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]));
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
@@ -1508,8 +1513,8 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
-    ui->spinSlicesFirst->blockSignals(false);
-    ui->spinSlicesLast->blockSignals(false);
+ //   ui->spinSlicesFirst->blockSignals(false);
+ //   ui->spinSlicesLast->blockSignals(false);
 
     ui->dspinRotationCenter->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinAngleStart->setValue(m_Config.ProjectionInfo.fScanArc[0]);
@@ -1595,6 +1600,10 @@ void MuhRecMainWindow::UpdateDialog()
         ui->spinSubVolumeSizeZ0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[4]));
         ui->spinSubVolumeSizeZ1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[5]));
     }
+    blockFirstProjection.unblock();
+    blockLastProjection.unblock();
+    blockFlipProjection.unblock();
+    blockRotateProjection.unblock();
 
     ProjROIChanged(0);
     SlicesChanged(0);
