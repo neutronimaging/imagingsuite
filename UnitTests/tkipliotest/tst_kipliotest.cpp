@@ -8,6 +8,7 @@
 #include <base/KiplException.h>
 #include <io/io_fits.h>
 #include <io/DirAnalyzer.h>
+#include <strings/filenames.h>
 
 class kiplIOTest : public QObject
 {
@@ -15,6 +16,9 @@ class kiplIOTest : public QObject
 
 public:
     kiplIOTest();
+
+private:
+    void MakeFiles(std::string mask, int N, int first=0);
 
 private Q_SLOTS:
 
@@ -80,6 +84,9 @@ void kiplIOTest::testFileItem()
 
 void kiplIOTest::testDirAnalyzer()
 {
+    MakeFiles("test_####.fits",5,1);
+    MakeFiles("test2_#####.fits",3,6);
+
     kipl::io::DirAnalyzer di;
 
     kipl::io::FileItem fi=di.GetFileMask("hepp_1234.xyz");
@@ -103,16 +110,51 @@ void kiplIOTest::testDirAnalyzer()
     std::string path="/";
     std::vector<std::string> dirlist=di.GetDirList(path);
 
-    for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
-        std::cout<<*it<<", ";
+    QDir dir("/");
 
-    std::cout<<std::endl;
+    QStringList qdirlist=dir.entryList(QDir::AllEntries | QDir::Hidden);
+    std::ostringstream msg;
+    msg<<"di size="<<dirlist.size()<<"qdir size="<<qdirlist.size();
+    QVERIFY2(qdirlist.size()==dirlist.size(), msg.str().c_str());
+
+    for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
+        QVERIFY(qdirlist.contains(QString::fromStdString(*it)));
+
     int cnt,first,last;
 
-    di.AnalyzeMatchingNames("/Users/data/02_CT/ob_#####.fits",cnt,first,last);
+    di.AnalyzeMatchingNames("test_####.fits",cnt,first,last);
     QVERIFY(cnt==5);
     QVERIFY(first==1);
     QVERIFY(last==5);
+
+    di.AnalyzeMatchingNames("test2_#####.fits",cnt,first,last);
+    QVERIFY(cnt==3);
+    QVERIFY(first==6);
+    QVERIFY(last==8);
+}
+
+
+void kiplIOTest::MakeFiles(std::string mask, int N, int first)
+{
+    QDir dir;
+    if (dir.exists("data")==false) {
+        dir.mkdir("data");
+    }
+
+//    dir.setCurrent("data");
+
+    std::string fname,ext;
+    for (int i=0; i<N; ++i) {
+        kipl::strings::filenames::MakeFileName(mask,i+first,fname,ext,'#');
+        QFile f(QString::fromStdString(fname));
+        f.open(QIODevice::WriteOnly);
+
+        f.write(fname.c_str(),fname.size());
+
+        f.close();
+    }
+//    dir.setCurrent("../");
+
 }
 
 QTEST_APPLESS_MAIN(kiplIOTest)

@@ -173,8 +173,9 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
     // write another optional keyword to the header
     // Note that the ADDRESS of the value is passed in the routine
     exposure = 1500;
+    char msg[]="Total Exposure Time";
     if ( fits_update_key(fptr, TLONG, "EXPOSURE", &exposure,
-         "Total Exposure Time", &status) )
+         msg, &status) )
     {
         fits_get_errstatus(status, err_msg);
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
