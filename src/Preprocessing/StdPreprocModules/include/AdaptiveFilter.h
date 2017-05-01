@@ -44,13 +44,12 @@ protected:
 	kipl::math::SigmoidLUT *pLUT;
 
     int m_nFilterSize;
-//	float m_fLambda;
-//	float m_fSigma;
     float m_fEccentricityMin;
     float m_fEccentricityMax;
 
     float m_fFilterStrength;
     float m_fFmax;
+    bool bNegative; /// boolean value that triggers the use on original sinograms (if true) or after the -log plugin (if false)
 };
 
 #endif /* ADAPTIVEFILTER_H_ */
