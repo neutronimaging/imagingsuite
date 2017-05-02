@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QToolTip>
 #include <QStylePainter>
+#include <QSignalBlocker>
 
 namespace QtAddons {
 
@@ -234,10 +235,12 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
 
 void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    QSignalBlocker blocker(this);
     std::ostringstream msg;
-
-    int dx=static_cast<int>(event->pos().x() - m_LastMotionPosition.x());
-    int dy=static_cast<int>(event->pos().y() - m_LastMotionPosition.y());
+    int x = event->pos().x();
+    int y = event->pos().y();
+    int dx= x - m_LastMotionPosition.x();
+    int dy= y - m_LastMotionPosition.y();
 
     if (m_RubberBandStatus == RubberBandDrag) {
 
@@ -247,12 +250,20 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     }
     else if (m_RubberBandStatus == RubberBandMove) {
         updateRubberBandRegion();
-        rubberBandRect.translate(dx,dy);
-//        rubberBandRect.setRect(rubberBandRect.x()+dx,
-//                               rubberBandRect.y()+dy,
-//                               rubberBandRect.width(),
-//                               rubberBandRect.height());
-        updateRubberBandRegion();
+        const int w=10;
+        QRect r0 = QRect(rubberBandRect.x()-w,
+                         rubberBandRect.y()-w,
+                         rubberBandRect.width()+2*w,
+                         rubberBandRect.height()+2*w);
+        QRect r1 = QRect(rubberBandRect.x()+w,
+                         rubberBandRect.y()+w,
+                         rubberBandRect.width()-2*w,
+                         rubberBandRect.height()-2*w);
+
+        if ((r0.contains(event->pos())==true) && (r1.contains(event->pos())==false)) {
+            rubberBandRect.translate(dx,dy);
+            updateRubberBandRegion();
+        }
     }
 
     if (m_MouseMode==ViewerProfile)
@@ -313,7 +324,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
     std::ostringstream msg;
     if ((event->button() == Qt::LeftButton)) {
         if ((m_RubberBandStatus == RubberBandDrag) || (m_RubberBandStatus == RubberBandMove)){
-          updateRubberBandRegion();
+            updateRubberBandRegion();
 
             QRect r=rubberBandRect.normalized();
             int const * const dims=m_ImagePainter.get_image_dims();
@@ -354,7 +365,7 @@ void ImageViewerWidget::updateRubberBandRegion()
 {
     QRect rect = rubberBandRect.normalized();
 
-    if (m_MouseMode==ViewerROI) {
+    if (m_MouseMode==ViewerROI)  {
         update(rect.left(), rect.top(), rect.width(), 1);
         update(rect.left(), rect.top(), 1, rect.height());
         update(rect.left(), rect.bottom(), rect.width(), 1);
@@ -387,6 +398,9 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 {
     std::ostringstream msg;
     m_ImagePainter.set_image(data,dims);
+    roiRect.setRect(0,0,1,1);
+    rubberBandRect.setRect(0,0,1,1);
+
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
     float mi,ma;
     m_ImagePainter.get_image_minmax(&mi,&ma);
@@ -396,7 +410,7 @@ QRect ImageViewerWidget::get_marked_roi()
 {
     m_RubberBandStatus = RubberBandHide;
     updateRubberBandRegion();
-
+    rubberBandRect=QRect(0,0,1,1);
     return roiRect;
 }
 
@@ -404,6 +418,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 {
     m_ImagePainter.set_image(data,dims,low,high);
     roiRect.setRect(0,0,1,1);
+    rubberBandRect.setRect(0,0,1,1);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
 }
