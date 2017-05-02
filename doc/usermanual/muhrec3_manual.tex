@@ -102,12 +102,12 @@ When all file parameters are set you can click the preview button to see the pro
 \subsection{Setting the geometry}
 The geometry is essential for the reconstruction. The most important is the center of rotation which has to be determined to sub-pixel accuracy. Other parameters defines the number of slices and the margins of the projections. The projection configuration dialog helps you to find the center of rotation. The estimated value should be seen as a starting point for the fine tuning. Depending on the sample shape, noise level, and artifacts the estimate may deviate by several pixels from the true center. 
 
-If your projection data was acquired with a tilted axis of rotation it will have an impact on the reconstructed data. For small tilts, this looks like a shift in center of rotation. Only the slice you tuned center of rotation for will be correctly reconstructed, on other slices the degradation will increase with the distance from the tuned slice. 
+If your projection data was acquired with a tilted axis of rotation it will have an impact on the reconstructed data. For small tilts, this looks like a shift in center of rotation. Only the slice you tuned the center of rotation for will be correctly reconstructed, on other slices the degradation will increase with the distance from the tuned slice. 
 Small tilts ($<$1$^{\circ}$) can be corrected. The correction for larger tilt angles is still a pending feature.
 
 Finally, you can also set the pixel size of the projections (unit mm). This information is needed if you want the gray-levels of the pixels to have the unit cm\textsuperscript{-1}. The pixel size is also written as resolution in the slice image files.
 
-The amount of memory required for the reconstruction is estimated to give you an idea if the task is feasible for your computer. You can control the memory usage by changing the geometry of the reconstructed image, i.e. change the margins or number of slices. In the interactive mode MuhRec3 is keeping all projection data and the reconstructed volume in memory. When the total size exceeds the available memory, MuhRec offers you the option to stream diectly to disk. Then the slices will the stored on the location specified on the results view.
+The amount of memory required for the reconstruction is estimated to give you an idea if the task is feasible for your computer. You can control the memory usage by changing the geometry of the reconstructed image, i.e. change the margins or number of slices. In the interactive mode MuhRec3 is keeping all projection data and the reconstructed volume in memory. When the total size exceeds the available memory, MuhRec offers you the option to stream directly to disk. Then the slices will the stored on the location specified on the results view.
 
 
 The region of interest is marked in the projection preview image. The region used for dose computation is also marked in this display.
