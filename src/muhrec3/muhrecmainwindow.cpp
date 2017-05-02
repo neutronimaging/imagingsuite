@@ -193,6 +193,7 @@ void MuhRecMainWindow::SetupCallBacks()
 
 void MuhRecMainWindow::BrowseProjectionPath()
 {
+    ostringstream msg;
     QString oldmask=ui->editProjectionMask->text();
     QString newmask;
     QString projdir=QFileDialog::getOpenFileName(this,
@@ -218,15 +219,22 @@ void MuhRecMainWindow::BrowseProjectionPath()
         fi=da.GetFileMask(pdir);
         newmask=QString::fromStdString(fi.m_sMask);
         ui->editProjectionMask->setText(newmask);
-        int cnt,first,last;
-        da.AnalyzeMatchingNames(fi.m_sMask,cnt,first,last);
-//        ui->spinFirstProjection->setMaximum(last);
-//        ui->spinFirstProjection->setMinimum(first);
-        ui->spinFirstProjection->setValue(first);
+        int c=0;
+        int f=0;
+        int l=0;
 
-//        ui->spinLastProjection->setMaximum(last);
-//        ui->spinLastProjection->setMinimum(first);
-        ui->spinLastProjection->setValue(last);
+
+
+        da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+
+        msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+        logger(logger.LogMessage,msg.str());
+
+        QSignalBlocker spinFirst(ui->spinFirstProjection);
+        ui->spinFirstProjection->setValue(f);
+
+        QSignalBlocker spinLast(ui->spinLastProjection);
+        ui->spinLastProjection->setValue(l);
     }
 
     if (fi.m_sExt=="hdf") {
