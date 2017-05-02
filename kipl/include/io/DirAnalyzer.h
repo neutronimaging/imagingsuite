@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include "../logging/logger.h"
+
 namespace kipl { namespace io {
 
 /// \brief File list item class
@@ -30,6 +32,7 @@ public:
 /// \brief Helper class to analyze file names and directories
 class KIPLSHARED_EXPORT DirAnalyzer
 {
+    kipl::logging::Logger logger;
 public:
     DirAnalyzer();
 

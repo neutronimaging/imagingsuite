@@ -107,8 +107,17 @@ void kiplIOTest::testDirAnalyzer()
     QVERIFY(fi3.m_sExt=="xyz");
     QVERIFY(fi3.m_sMask=="hopp###.xyz");
 
+//    std::string path="E:\\P08062_wood\\raw_CCD";
     std::string path="/";
     std::vector<std::string> dirlist=di.GetDirList(path);
+
+    int cnt,first,last;
+//    for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
+//        std::cout<<*it<<", ";
+
+//    std::cout<<std::endl;
+//    di.AnalyzeMatchingNames("E:\\P08062_wood\\raw_CCD\\wood_####.fits",cnt,first,last);
+//    std::cout<<cnt<<", "<<first<<", "<<last<<std::endl;
 
     QDir dir("/");
 
@@ -120,7 +129,6 @@ void kiplIOTest::testDirAnalyzer()
     for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
         QVERIFY(qdirlist.contains(QString::fromStdString(*it)));
 
-    int cnt,first,last;
 
     di.AnalyzeMatchingNames("test_####.fits",cnt,first,last);
     QVERIFY(cnt==5);

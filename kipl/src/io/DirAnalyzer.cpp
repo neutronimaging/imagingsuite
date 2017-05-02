@@ -43,7 +43,8 @@ FileItem::FileItem(std::string mask, int index, std::string ext) :
 }
 
 
-DirAnalyzer::DirAnalyzer()
+DirAnalyzer::DirAnalyzer() :
+    logger("DirAnalyzer")
 {
 
 }
@@ -120,22 +121,26 @@ void DirAnalyzer::AnalyzeMatchingNames(std::string mask,
                                        int &lastIndex,
                                        char wildcard)
 {
+    std::ostringstream msg;
     nFiles     = 0;
     firstIndex = std::numeric_limits<int>::max();
-    lastIndex  = std::numeric_limits<int>::min();
+    lastIndex  = 0;
 
-
-    ptrdiff_t wpos0 = mask.find_last_of(strings::filenames::slash);
+    std::string m2=mask;
+    kipl::strings::filenames::CheckPathSlashes(m2,false);
+    ptrdiff_t wpos0 = m2.find_last_of(strings::filenames::slash);
     wpos0 = wpos0 !=std::string::npos ? wpos0+1 : 0L;
 
-    std::string path = wpos0 != 0 ? mask.substr(0,wpos0) :"./";
-
+    std::string path = wpos0 != 0 ? m2.substr(0,wpos0) :"./";
     GetDirList(path);
 
-    std::string maskname = mask.substr(wpos0);
+    std::string maskname = m2.substr(wpos0);
     ptrdiff_t wpos1 = maskname.find_first_of(wildcard);
-    if (wpos1== std::string::npos)
+
+    if (wpos1== std::string::npos) {
+        logger(logger.LogWarning,"Didn't find the wildcard character.");
         return;
+    }
 
     ptrdiff_t wpos2 = maskname.find_first_not_of(wildcard,wpos1);
 
@@ -144,8 +149,10 @@ void DirAnalyzer::AnalyzeMatchingNames(std::string mask,
 
     std::string base,ext;
     std::string idxstr;
+
     for (auto it=m_vDirContents.begin(); it!=m_vDirContents.end(); ++it) {
         std::string &name = *it;
+
         if (name.size()==maskname.size()) {
             base = name.substr(0,wpos1);
             ext  = name.substr(wpos2);
