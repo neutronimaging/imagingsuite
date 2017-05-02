@@ -9,6 +9,7 @@ namespace kipl { namespace io{
 int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
 
     NeXus::File file(fname);
+    std::cout << fname << std::endl;
 
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 
@@ -45,7 +46,7 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 
                       if (it_att->name=="signal"){
 
-                          size_t img_size[3] = {file.getInfo().dims[2], file.getInfo().dims[1], file.getInfo().dims[0]};
+                          size_t img_size[3] = {static_cast<size_t>(file.getInfo().dims[2]), static_cast<size_t>(file.getInfo().dims[1]), static_cast<size_t>(file.getInfo().dims[0])};
 
                           NofImg[0]=0;
                           NofImg[1] = img_size[2]-1;

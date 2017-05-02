@@ -342,7 +342,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
                       int16_t * result;
 
 
-                      size_t img_size[3] = {file.getInfo().dims[2], file.getInfo().dims[1], file.getInfo().dims[0]};
+                      size_t img_size[3] = {static_cast<size_t>(file.getInfo().dims[2]), static_cast<size_t>(file.getInfo().dims[1]),static_cast<size_t>(file.getInfo().dims[0])};
                       result = new int16_t[img_size[0]*img_size[1]*img_size[2]];
 
                       try {
