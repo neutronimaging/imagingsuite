@@ -355,6 +355,7 @@ kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename){
 
 int ProjectionReader::GetNexusInfo(string filename, size_t *NofImg, double *ScanAngles){
 
+
     #ifdef HAVE_NEXUS
     kipl::io::GetNexusInfo(filename.c_str(), NofImg, ScanAngles);
     #else
@@ -377,14 +378,12 @@ kipl::base::TImage<float,2> ProjectionReader::GetNexusSlice(kipl::base::TImage<f
     kipl::base::TImage<float,2> cropped;
     kipl::base::TImage<float,2> binned;
     size_t num_slices = NexusTomo.Size(2);
-
     if (number< num_slices){
         size_t img_size2D[2] = {NexusTomo.Size(0), NexusTomo.Size(1)};
         img.Resize(img_size2D);
         memcpy(img.GetDataPtr(), NexusTomo.GetLinePtr(0, number), sizeof(float)*img_size2D[0]*img_size2D[1]);
-//        kipl::io::WriteTIFF(img, "img.tif"); // ok it is correct !
     }
-    // to add binning, flipping and so on...
+
 
     // 1. crop
         if (nCrop!=NULL) {
@@ -444,6 +443,7 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
 
     #ifdef HAVE_NEXUS
 
+
            const char *fname = filename.c_str();
 
             size_t dims[2];
@@ -484,19 +484,6 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
                     pCrop[i]*=binning;
             }
 
-//            kipl::base::TImage<int16_t,2> tmp;
-//            kipl::io::ReadNexus(tmp, fname, number, pCrop);
-
-//            img.Resize(tmp.Dims());
-////            kipl::base::TImage<float,2> cropped(tmp.Dims());
-//            kipl::base::TImage<float,2> binned(tmp.Dims());
-
-//            float* pImg = img.GetDataPtr();
-//            int16_t *ptmp = tmp.GetDataPtr(); //possibly get the type automatically?
-
-//            for (size_t i=0; i<tmp.Size(0)*tmp.Size(1); ++i) {
-//                pImg[i] = static_cast<float>(ptmp[i]);
-//            }
 
             kipl::io::ReadNexus(img, fname, number, pCrop);
             kipl::base::TImage<float,2> binned(img.Dims());
@@ -531,7 +518,6 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
                 throw ReconException(msg.str(),__FILE__,__LINE__);
             }
 
-            kipl::io::WriteTIFF(img, "cropped_img.tif");
             return img;
 
     #else
@@ -895,11 +881,6 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
             for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
-//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-//					config.ProjectionInfo.eRotate,
-//					config.ProjectionInfo.fBinning,
-//					config.ProjectionInfo.dose_roi)<<" ";
-        //	proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,config.ProjectionInfo.roi);
 
             proj = Read(it->second.name,config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,nCrop);
 
@@ -933,10 +914,6 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
                 angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
                 weight << (it->second.weight)*fResolutionWeight << " ";
             }
-//            dose   << GetProjectionDoseNexus(it->second.name,i,config.ProjectionInfo.eFlip,
-//                    config.ProjectionInfo.eRotate,
-//                    config.ProjectionInfo.fBinning,
-//                    config.ProjectionInfo.dose_roi)<<" ";
 
         }
 		break;
@@ -947,10 +924,6 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 		for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
-//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-//					config.ProjectionInfo.eRotate,
-//					config.ProjectionInfo.fBinning,
-//					config.ProjectionInfo.dose_roi)<<" ";
 
             size_t found = it->second.name.find("hdf");
             if (found==std::string::npos ) {
@@ -988,10 +961,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 			memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
 			angle  << (it2->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it2->second.weight)*fResolutionWeight << " ";
-//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-//					config.ProjectionInfo.eRotate,
-//					config.ProjectionInfo.fBinning,
-//					config.ProjectionInfo.dose_roi)<<" ";
+
 		}
 
         size_t found = it->second.name.find("hdf");
@@ -1001,10 +971,10 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
                     config.ProjectionInfo.fBinning,
                     config.ProjectionInfo.dose_roi)<<" ";
 
-        proj = Read(it->second.name,config.ProjectionInfo.eFlip,
-                config.ProjectionInfo.eRotate,
-                config.ProjectionInfo.fBinning,
-                config.ProjectionInfo.roi);
+            proj = Read(it->second.name,config.ProjectionInfo.eFlip,
+                    config.ProjectionInfo.eRotate,
+                    config.ProjectionInfo.fBinning,
+                    config.ProjectionInfo.roi);
         }
         else {
 
@@ -1030,10 +1000,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 		for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
-//			dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
-//					config.ProjectionInfo.eRotate,
-//					config.ProjectionInfo.fBinning,
-//					config.ProjectionInfo.dose_roi)<<" ";
+
 
             size_t found = it->second.name.find("hdf");
             if (found==std::string::npos ) {
