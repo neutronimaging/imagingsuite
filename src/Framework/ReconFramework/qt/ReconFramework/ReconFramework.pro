@@ -86,6 +86,23 @@ unix:!mac {
     }
 }
 
+unix:mac {
+exists(/usr/local/lib/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES *= HAVE_NEXUS
+
+     LIBS += -L$$PWD/../../../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+
+    INCLUDEPATH += $$PWD/../../../../../../../../../../usr/local/include
+    DEPENDPATH += $$PWD/../../../../../../../../../../usr/local/include
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
+
+}
+
 
 
 win32 {
