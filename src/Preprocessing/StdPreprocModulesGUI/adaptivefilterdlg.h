@@ -50,6 +50,7 @@ private:
     int m_nFilterSize;
     float m_fFilterStrenght;
     float m_fFmax;
+    bool bNegative;
 };
 
 #endif // ADAPTIVEFILTERDLG_H

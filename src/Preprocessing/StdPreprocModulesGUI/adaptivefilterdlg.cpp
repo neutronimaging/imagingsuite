@@ -17,7 +17,8 @@ AdaptiveFilterDlg::AdaptiveFilterDlg(QWidget *parent) :
     ui(new Ui::AdaptiveFilterDlg),
     m_nFilterSize(7),
     m_fFilterStrenght(1.0f),
-    m_fFmax(0.10f)
+    m_fFmax(0.10f),
+    bNegative(false)
 {
     try {
         ui->setupUi(this);
@@ -50,6 +51,7 @@ int AdaptiveFilterDlg::exec(ConfigBase * config, std::map<std::string, std::stri
         m_nFilterSize = GetIntParameter(parameters,"filtersize");
         m_fFilterStrenght = GetFloatParameter(parameters,"filterstrength");
         m_fFmax = GetFloatParameter(parameters, "fmax");
+        bNegative = kipl::strings::string2bool(GetStringParameter(parameters, "NegSinograms"));
     }
     catch (ModuleException & e)
     {
@@ -164,6 +166,7 @@ void AdaptiveFilterDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["filtersize"]   = kipl::strings::value2string(m_nFilterSize);
     parameters["filterstrength"] = kipl::strings::value2string(m_fFilterStrenght);
     parameters["fmax"] = kipl::strings::value2string(m_fFmax);
+    parameters["NegSinograms"]= kipl::strings::bool2string(bNegative);
 }
 
 void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
