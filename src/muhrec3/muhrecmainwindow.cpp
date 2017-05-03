@@ -200,44 +200,50 @@ void MuhRecMainWindow::BrowseProjectionPath()
                                       "Select location of the projections",
                                       ui->editProjectionMask->text());
 
-    kipl::io::FileItem fi;
 
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        std::string fname=pdir.substr(pos+1);
-        kipl::io::DirAnalyzer da;
-        fi=da.GetFileMask(pdir);
-        newmask=QString::fromStdString(fi.m_sMask);
-        ui->editProjectionMask->setText(newmask);
-        int c=0;
-        int f=0;
-        int l=0;
+    kipl::io::DirAnalyzer da;
+    kipl::io::FileItem fi = da.GetFileMask(projdir.toStdString());
 
 
+    if (fi.m_sExt!="hdf") {
+	    if (!projdir.isEmpty()) {
+		std::string pdir=projdir.toStdString();
 
-        da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+		#ifdef _MSC_VER
+		const char slash='\\';
+		#else
+		const char slash='/';
+		#endif
 
-        msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
-        logger(logger.LogMessage,msg.str());
+		ptrdiff_t pos=pdir.find_last_of(slash);
 
-        QSignalBlocker spinFirst(ui->spinFirstProjection);
-        ui->spinFirstProjection->setValue(f);
+		QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+		std::string fname=pdir.substr(pos+1);
+		kipl::io::DirAnalyzer da;
+		fi=da.GetFileMask(pdir);
+		newmask=QString::fromStdString(fi.m_sMask);
+		ui->editProjectionMask->setText(newmask);
+		int c=0;
+		int f=0;
+		int l=0;
 
-        QSignalBlocker spinLast(ui->spinLastProjection);
-        ui->spinLastProjection->setValue(l);
+
+
+		da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+
+		msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+		logger(logger.LogMessage,msg.str());
+
+		QSignalBlocker spinFirst(ui->spinFirstProjection);
+		ui->spinFirstProjection->setValue(f);
+
+		QSignalBlocker spinLast(ui->spinLastProjection);
+		ui->spinLastProjection->setValue(l);
+	    }
     }
 
-    if (fi.m_sExt=="hdf") {
+    if (fi.m_sExt=="hdf" && !projdir.isEmpty()) {
+
             ui->editProjectionMask->setText(projdir);
 
              double angles[2];
@@ -326,7 +332,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
     ProjectionReader reader;
 
 
-    if (x<0) {
+    if (x<=0) {
        int slice = ui->spinFirstProjection->value();
        ui->sliderProjections->setValue(slice);
     }
