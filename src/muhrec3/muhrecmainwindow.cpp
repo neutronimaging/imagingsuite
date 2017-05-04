@@ -196,29 +196,31 @@ void MuhRecMainWindow::BrowseProjectionPath()
     ostringstream msg;
     QString oldmask=ui->editProjectionMask->text();
     QString newmask;
+
     QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the projections",
+                                      tr("Select location of the projections"),
                                       ui->editProjectionMask->text());
 
 
-    kipl::io::DirAnalyzer da;
-    kipl::io::FileItem fi = da.GetFileMask(projdir.toStdString());
+    if (!projdir.isEmpty()) {
 
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi = da.GetFileMask(projdir.toStdString());
 
-    if (fi.m_sExt!="hdf") {
-	    if (!projdir.isEmpty()) {
+        if (fi.m_sExt!="hdf") {
+
 		std::string pdir=projdir.toStdString();
 
-		#ifdef _MSC_VER
-		const char slash='\\';
-		#else
-		const char slash='/';
-		#endif
+//        #ifdef _MSC_VER
+//        const char slash='\\';
+//        #else
+//        const char slash='/';
+//        #endif
 
-		ptrdiff_t pos=pdir.find_last_of(slash);
+//        ptrdiff_t pos=pdir.find_last_of(slash);
 
-		QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-		std::string fname=pdir.substr(pos+1);
+//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+//        std::string fname=pdir.substr(pos+1);
 		kipl::io::DirAnalyzer da;
 		fi=da.GetFileMask(pdir);
 		newmask=QString::fromStdString(fi.m_sMask);
@@ -234,15 +236,22 @@ void MuhRecMainWindow::BrowseProjectionPath()
 		msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
 		logger(logger.LogMessage,msg.str());
 
-		QSignalBlocker spinFirst(ui->spinFirstProjection);
+        QSignalBlocker spinFirst(ui->spinFirstProjection);
 		ui->spinFirstProjection->setValue(f);
 
-		QSignalBlocker spinLast(ui->spinLastProjection);
+        QSignalBlocker spinLast(ui->spinLastProjection);
 		ui->spinLastProjection->setValue(l);
-	    }
-    }
 
-    if (fi.m_sExt=="hdf" && !projdir.isEmpty()) {
+
+            if (oldmask!=newmask)
+            {
+                PreviewProjection(-1);
+                ui->projectionViewer->clear_rectangle(-1);
+                ui->projectionViewer->clear_plot(-1);
+            }
+
+        }
+        else {
 
             ui->editProjectionMask->setText(projdir);
 
@@ -256,17 +265,19 @@ void MuhRecMainWindow::BrowseProjectionPath()
              ui->spinLastProjection->setValue(static_cast<int>(Nofimgs[1]));
              ui->dspinAngleStart->setValue(angles[0]);
              ui->dspinAngleStop->setValue(angles[1]);
-        }
-        else {
-            ui->editProjectionMask->setText(QString::fromStdString(fi.m_sMask));
+
+             if (oldmask!=ui->editProjectionMask->text())
+             {
+                 PreviewProjection(-1);
+                 ui->projectionViewer->clear_rectangle(-1);
+                 ui->projectionViewer->clear_plot(-1);
+             }
         }
 
-    if (oldmask!=newmask)
-    {
-        PreviewProjection(-1);
-        ui->projectionViewer->clear_rectangle(-1);
-        ui->projectionViewer->clear_plot(-1);
     }
+
+
+
 }
 
 void MuhRecMainWindow::on_buttonBrowseReference_clicked()
@@ -1516,8 +1527,8 @@ void MuhRecMainWindow::UpdateDialog()
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
- //   ui->spinSlicesFirst->blockSignals(true);
- //   ui->spinSlicesLast->blockSignals(true);
+    ui->spinSlicesFirst->blockSignals(true);
+    ui->spinSlicesLast->blockSignals(true);
 
     ui->spinProjROIx0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]));
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
@@ -1527,8 +1538,8 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
- //   ui->spinSlicesFirst->blockSignals(false);
- //   ui->spinSlicesLast->blockSignals(false);
+    ui->spinSlicesFirst->blockSignals(false);
+    ui->spinSlicesLast->blockSignals(false);
 
     ui->dspinRotationCenter->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinAngleStart->setValue(m_Config.ProjectionInfo.fScanArc[0]);
@@ -1614,10 +1625,10 @@ void MuhRecMainWindow::UpdateDialog()
         ui->spinSubVolumeSizeZ0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[4]));
         ui->spinSubVolumeSizeZ1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[5]));
     }
-    blockFirstProjection.unblock();
-    blockLastProjection.unblock();
-    blockFlipProjection.unblock();
-    blockRotateProjection.unblock();
+//    blockFirstProjection.unblock();
+//    blockLastProjection.unblock();
+//    blockFlipProjection.unblock();
+//    blockRotateProjection.unblock();
 
     ProjROIChanged(0);
     SlicesChanged(0);
