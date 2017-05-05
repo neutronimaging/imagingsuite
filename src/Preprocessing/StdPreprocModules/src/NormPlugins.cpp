@@ -147,8 +147,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                     config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
-                    config.ProjectionInfo.roi);
-
+                    roi);
 
             tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
                         config.ProjectionInfo.eFlip,
