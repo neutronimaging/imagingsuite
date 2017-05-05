@@ -36,7 +36,7 @@ public:
     virtual float GetInterpolationError(kipl::base::TImage<float,2> &mask); /// computes and returns interpolation error and mask on OB image with BBs
     virtual kipl::base::TImage<float, 2> GetMaskImage();
     virtual void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is now called in LoadReferenceImages
-    virtual void LoadExternalBBData(); /// load BB images pre-processed elsewhere
+    virtual void LoadExternalBBData(size_t *roi); /// load BB images pre-processed elsewhere
 
 protected:
     ReconConfig m_Config;
@@ -100,6 +100,7 @@ protected:
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
                                                         int N,
+                                                        size_t *roi,
                                                         float initialDose,
                                                         float doseBias,
                                                         ReconConfig &config, float &dose); /// Loader function and dose computation for standard reference images (OB and DC)
@@ -120,9 +121,11 @@ protected:
 
     virtual kipl::base::TImage<float,2> BBExternalLoader(std::string fname,
                                                          ReconConfig &config,
+                                                         size_t *roi,
                                                          float &dose); /// Loader function for externally created BB, open beam case (only 1 image)
     virtual kipl::base::TImage<float,3> BBExternalLoader(std::string fname,
                                                          int N,
+                                                         size_t *roi,
                                                        int firstIndex,
                                                        ReconConfig &config, float *doselist); /// Loader function for externally created BB, sample image case (nProj images with filemask)
 

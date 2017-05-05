@@ -66,10 +66,6 @@ RobustLogNorm::~RobustLogNorm()
 int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
 
-
-//    std::cout << "ciao robust log norm" << std::endl;
-
-
     m_Config    = config;
     path        = config.ProjectionInfo.sReferencePath;
     flatname    = config.ProjectionInfo.sOBFileMask;
@@ -119,12 +115,6 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     flastAngle = GetFloatParameter(parameters, "lastAngle");
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
 
-//    bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB")); // it was not in the parameters list before/
-
-
-
-//    std::cout << blackbodyname << std::endl;
-//    std::cout << nBBCount << " " << nBBFirstIndex << std::endl;
 
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
@@ -227,21 +217,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     if (darkname.empty() && nDCCount!=0)
         throw ReconException("The dark current image mask is empty",__FILE__,__LINE__);
 
-//    std::cout << "path: " << path << std::endl; // it is actually empty.. so i don't know if we need to use it..
-//    std::cout << "flatname: " << flatname << std::endl;
-//    std::cout << "darkname: "<< darkname << std::endl;
-//    std::cout << "blackbody name: " <<blackbodyname << std::endl;
-//    std::cout << "roi: " << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]  << std::endl;
-//    std::cout << "projection roi: " << m_Config.ProjectionInfo.projection_roi[0] << " " <<
-//                 m_Config.ProjectionInfo.projection_roi[1] << " " <<
-//                 m_Config.ProjectionInfo.projection_roi[2] << " " <<
-//                 m_Config.ProjectionInfo.projection_roi[3] << std::endl;
 
-
-
-
-
-    // new code
     kipl::base::TImage<float,2> flat, dark;
 
     fDarkDose=0.0f;
@@ -249,8 +225,8 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     std::string flatmask=path+flatname;
     std::string darkmask=path+darkname;
 
-    dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,0.0f,0.0f,m_Config,fDarkDose);
-    flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,0.0f,m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
+    dark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,roi,0.0f,0.0f,m_Config,fDarkDose);
+    flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,0.0f,m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
 
 //    std::cout << "computed doses: " << std::endl;
 //    std::cout << fDarkDose << " " << fFlatDose << std::endl;
@@ -285,13 +261,28 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
     }
 
-    SetReferenceImages(dark,flat);
+
+
+    if (bUseExternalBB && nBBextCount!=0){
+        LoadExternalBBData(roi); // they must be ready for SetReferenceImages
+    }
+
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+        PrepareBBData();
+//        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+        size_t subroi[4] = {0,roi[1]-m_Config.ProjectionInfo.projection_roi[1], roi[2]-m_Config.ProjectionInfo.roi[0], roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+        m_corrector.SetBBInterpRoi(subroi);
+//        m_corrector.SetBBInterpRoi(roi);
+    }
+
+
+     SetReferenceImages(dark,flat);
 
 }
 
-void RobustLogNorm::LoadExternalBBData(){
+void RobustLogNorm::LoadExternalBBData(size_t *roi){
 
-//    std::cout << "LoadExternalBBData()" << std::endl;
+
     if (blackbodyexternalname.empty())
         throw ReconException("The pre-processed open beam with BB image mask is empty", __FILE__, __LINE__);
     if (blackbodysampleexternalname.empty() || nBBextCount==0)
@@ -308,9 +299,10 @@ void RobustLogNorm::LoadExternalBBData(){
     kipl::base::TImage<float,3> bb_sample_ext;
     float dose;
     float *doselist = new float[nBBextCount];
-    bb_ext = BBExternalLoader(blackbodyexternalname, m_Config, dose);
+
+    bb_ext = BBExternalLoader(blackbodyexternalname, m_Config, roi, dose);
 //    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
-    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, nBBextFirstIndex, m_Config, doselist);
+    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex, m_Config, doselist);
 
     m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
 
@@ -421,7 +413,7 @@ void RobustLogNorm::PrepareBBData(){
 
                      float *doselist = new float[nProj];
                      for (size_t i=0; i<int(nProj); i++) {
-                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config);
+                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); //
                      }
 
                      m_corrector.SetDoseList(doselist);
@@ -431,6 +423,7 @@ void RobustLogNorm::PrepareBBData(){
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
 
                          float dosesample; // used for the correct dose roi computation (doseBBroi)
+                         float current_dose; // current dose for sample with BBs
                          int index;
 
                          index = GetnProjwithAngle((angles[2]+(angles[3]-angles[2])/(nBBSampleCount-1)*i));
@@ -455,26 +448,27 @@ void RobustLogNorm::PrepareBBData(){
                              if (bUseNormROIBB && bUseNormROI){
              //                     prenormalize interpolation parameters with dose
 
+                                 current_dose = fBlackDoseSample;
 
                                  if (bPBvariante) {
 
                                          kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
                                          float mydose = computedose(mybb);
 //                                         std::cout << "black dose before PB variante: " << fBlackDoseSample << std::endl;
-                                         fBlackDoseSample+= ((1/tau-1)*mydose);
+                                         current_dose+= ((1/tau-1)*mydose);
 //                                         std::cout << "black dose with PB variante: " << fBlackDoseSample << std::endl;
 
                                       }
 
 
-                                 fBlackDoseSample = fBlackDoseSample<1 ? 1.0f : fBlackDoseSample;
+                                 current_dose = current_dose<1 ? 1.0f : current_dose;
 
 //                                 std::cout << "black dose with PB variante after value check: " << fBlackDoseSample << std::endl;
 
                                  for(size_t j=0; j<6; j++) {
 
-                                           temp_parameters[j]/=(fBlackDoseSample);
-//                                           temp_parameters[j]*=(dosesample/tau); // not any more in referenceimagecorrection::computelognorm
+                                           temp_parameters[j]/=(current_dose);
+//                                           temp_parameters[j]*=(dosesample/tau); // it is now in the m_corrector.SetInterpParameters
 
                                  }
                              }
@@ -487,8 +481,21 @@ void RobustLogNorm::PrepareBBData(){
 
                              temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
 
+                             current_dose = fBlackDoseSample;
+
+                             // I was missing the correct dose for indexes of i after 1....
+                             if (bPBvariante) {
+
+                                     kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
+                                     float mydose = computedose(mybb);
+                                     current_dose+= ((1/tau-1)*mydose);
+
+                                  }
+
+                             current_dose = current_dose<1 ? 1.0f : current_dose;
+
                              for(size_t j=0; j<6; j++) {
-                              temp_parameters[j]/=(fBlackDoseSample);
+                              temp_parameters[j]/=(current_dose);
 //                              temp_parameters[j]*=(dosesample/tau);
                              }
 
@@ -518,6 +525,7 @@ void RobustLogNorm::PrepareBBData(){
 
 
                      float dosesample; // used for the correct dose roi computation (doseBBroi)
+                     float current_dose;
 
                      int index;
                      index = GetnProjwithAngle(ffirstAngle);
@@ -539,22 +547,23 @@ void RobustLogNorm::PrepareBBData(){
                      if (bUseNormROIBB && bUseNormROI){
                 //                     prenormalize interpolation parameters with dose
 
+                        current_dose = fBlackDoseSample;
 
                          if (bPBvariante) {
 
                                  kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
                                  float mydose = computedose(mybb);
-                                 fBlackDoseSample+= ((1/tau-1)*mydose);
+                                 current_dose+= ((1/tau-1)*mydose);
 //                                 std::cout << "black dose with PB variante: " << fBlackDoseSample << std::endl;
 
                               }
 
 
-                         fBlackDoseSample = fBlackDoseSample<1 ? 1.0f : fBlackDoseSample;
+                         current_dose = current_dose<1 ? 1.0f : current_dose;
 
                          for(size_t j=0; j<6; j++) {
 
-                                   temp_parameters[j]/=fBlackDoseSample;
+                                   temp_parameters[j]/=current_dose;
                                    temp_parameters[j]*=(dosesample/tau);
 
                          }
@@ -569,6 +578,7 @@ void RobustLogNorm::PrepareBBData(){
          case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
                 bb_sample_parameters = new float[6*nBBSampleCount];
                 float dosesample;
+                float current_dose;
 
                 for (size_t i=0; i<nBBSampleCount; i++) {
 
@@ -594,22 +604,23 @@ void RobustLogNorm::PrepareBBData(){
                         if (bUseNormROIBB && bUseNormROI){
         //                     prenormalize interpolation parameters with dose
 
+                            current_dose= fBlackDoseSample;
 
                             if (bPBvariante) {
 
                                     kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
                                     float mydose = computedose(mybb);
-                                    fBlackDoseSample+= ((1/tau-1)*mydose);
+                                    current_dose+= ((1/tau-1)*mydose);
 //                                    std::cout << "black dose with PB variante: " << fBlackDoseSample << std::endl;
 
                                  }
 
 
-                            fBlackDoseSample = fBlackDoseSample<1 ? 1.0f : fBlackDoseSample;
+                            current_dose = current_dose<1 ? 1.0f : current_dose;
 
                             for(size_t j=0; j<6; j++) {
 
-                                      temp_parameters[j]/=fBlackDoseSample;
+                                      temp_parameters[j]/=current_dose;
                                       temp_parameters[j]*=(dosesample/tau);
 
                             }
@@ -622,10 +633,23 @@ void RobustLogNorm::PrepareBBData(){
                     else {
 
                         temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
+                        current_dose= fBlackDoseSample;
+
+                        if (bPBvariante) {
+
+                                kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
+                                float mydose = computedose(mybb);
+                                current_dose+= ((1/tau-1)*mydose);
+//                                    std::cout << "black dose with PB variante: " << fBlackDoseSample << std::endl;
+
+                             }
+
+                        current_dose = current_dose<1 ? 1.0f : current_dose;
+
 
                         for(size_t j=0; j<6; j++) {
-                             temp_parameters[j]/=fBlackDoseSample;
-                             temp_parameters[j]*=(dosesample*tau);
+                             temp_parameters[j]/=current_dose;
+                             temp_parameters[j]*=(dosesample/tau);
                         }
 
                         memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6);
@@ -802,18 +826,16 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::
 int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) {
 
 
-    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-        PrepareBBData();
-        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
-        m_corrector.SetBBInterpRoi(subroi);
-    }
-
-    if (bUseExternalBB && nBBextCount!=0){
-        LoadExternalBBData();
-    }
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//        PrepareBBData();
+//        size_t subroi[4] = {0,m_Config.ProjectionInfo.roi[1]-m_Config.ProjectionInfo.projection_roi[1], m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0], m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1]};
+//        m_corrector.SetBBInterpRoi(subroi);
+//    }
 
 
-    m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
+
+
+//    m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
 
     int nDose=img.Size(2);
     float *doselist=nullptr;
@@ -845,11 +867,21 @@ void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::b
 
     mflat = flat;
     mflat.Clone();
+
+
+
+    m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.dose_roi);
+
+    if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+            for (int i=1; i<static_cast<int>(flat.Size(1)); i++) {
+                memcpy(flat.GetLinePtr(i),flat.GetLinePtr(0),sizeof(float)*flat.Size(0));			}
+    }
+
 }
 
 // problem to use it as it is: i have different roi and doseroi for images (bb and not bb.. to take this into account..)
 kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
-                                                      int firstIndex, int N,
+                                                      int firstIndex, int N, size_t *roi,
                                                       float initialDose,
                                                       float doseBias,
                                                       ReconConfig &config,
@@ -884,7 +916,7 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
                     config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
-                    config.ProjectionInfo.roi);
+                    roi);
 
             tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
@@ -897,7 +929,7 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
                     config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
-                    config.ProjectionInfo.roi);
+                    roi);
 
 
             tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
@@ -926,7 +958,7 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
                         m_Config.ProjectionInfo.eFlip,
                         m_Config.ProjectionInfo.eRotate,
                         m_Config.ProjectionInfo.fBinning,
-                        config.ProjectionInfo.roi);
+                        roi);
                 memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
 
                 tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
@@ -940,7 +972,7 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
                             m_Config.ProjectionInfo.eFlip,
                             m_Config.ProjectionInfo.eRotate,
                             m_Config.ProjectionInfo.fBinning,
-                            config.ProjectionInfo.roi);
+                            roi);
                     memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
 
                     tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask,i+firstIndex,
@@ -1161,7 +1193,7 @@ float RobustLogNorm::DoseBBLoader(std::string fname,
 
 }
 
-kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, float &dose){
+kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, size_t *roi, float &dose){
 
 
     kipl::base::TImage<float,2> img;
@@ -1175,7 +1207,7 @@ kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, 
                 config.ProjectionInfo.eFlip,
                 config.ProjectionInfo.eRotate,
                 config.ProjectionInfo.fBinning,
-                config.ProjectionInfo.roi);
+                roi);
 
         dose = bUseNormROI ? reader.GetProjectionDose(fname,
                     config.ProjectionInfo.eFlip,
@@ -1189,7 +1221,7 @@ kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, 
 
 }
 
-kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, int N, int firstIndex, ReconConfig &config, float *doselist){
+kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, int N, size_t *roi, int firstIndex, ReconConfig &config, float *doselist){
 
 
     kipl::base::TImage <float, 2> tempimg;
@@ -1218,7 +1250,8 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
                     config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
-                   config.ProjectionInfo.roi);
+                    roi);
+
             if (i==0){
                 size_t dims[]={tempimg.Size(0), tempimg.Size(1),static_cast<size_t>(N)};
                 img.Resize(dims);
