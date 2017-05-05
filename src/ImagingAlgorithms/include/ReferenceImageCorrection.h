@@ -67,7 +67,7 @@ public:
             size_t *roi);
 
     void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo); /// set interpolation parameters to be used for BB image computation
-    void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values
+    void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values, it is the same as in SETROI in the pre-processing module?
 
     void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;} /// set bool value for computing -logarithm
     void SetRadius(size_t x) {radius=x;} /// set the radius used to define subset of segmented BBs

@@ -160,7 +160,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         PrepareReferencesBB();
 	}
     else if (useExtBB){
-        std::cout << "have external BB images!" << std::endl;
+//        std::cout << "have external BB images!" << std::endl;
         m_bHaveExternalBlackBody = true;
         PrepareReferencesExtBB();
     }
@@ -247,20 +247,13 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *dose)
 {
 	kipl::base::TImage<float, 2> slice(img.Dims());
-    std::cout<< img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl;
+//    std::cout<< img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl; // this is the roi that is given by GetRoi
     float *current_param = new float[6];
 
 	for (size_t i=0; i<img.Size(2); i++) {
 
         if (m_bHaveBlackBody) {
-            // compute m_BB_sample_Interpolated just for the current slice
-            // here I have to know if it is to be interpolated between projections
-            //check how many parameters do i have?
-            if (i==0) {
-                std::cout << "number of BB images with sample: " <<  m_nBBimages <<std::endl;
-            }
-            // so i am expetcing that the parameters are m_nBBimages*6 size.. of course! go on from here after lunch!
-//            sample_bb_interp_parameters = InterpolateParameters(sample_bb_parameters, img.Size());
+
 
             memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
             m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nBlackBodyROI);
@@ -599,7 +592,7 @@ void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
 
 float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img){
 
-    // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID
+    // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID (PROJECTION ROI)
     std::map<std::pair<int,int>, float> values;
 
 
@@ -1753,6 +1746,7 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
     float Pdose = 0.0f;
 
     float defaultdose=-log(1.0f/(m_fOpenBeamDose-m_fDarkDose));
+//    float defaultdose= 0.0f;
 
 
 //    float logdose = log(dose<1 ? 1.0f : dose);
