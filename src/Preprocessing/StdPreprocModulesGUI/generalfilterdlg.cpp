@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <sstream>
 
 #include <ParameterHandling.h>

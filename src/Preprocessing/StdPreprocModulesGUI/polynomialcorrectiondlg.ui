@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>743</width>
-    <height>503</height>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Configure Polynomial intensity correction</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

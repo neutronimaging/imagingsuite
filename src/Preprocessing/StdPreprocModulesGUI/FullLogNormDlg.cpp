@@ -1,38 +1,36 @@
-/*
- * FullLogNormDlg.cpp
- *
- *  Created on: Feb 29, 2012
- *      Author: kaestner
- */
+//<LICENSE>
+#include <sstream>
 
-#include "StdPreprocModulesGUI_global.h"
 #include "FullLogNormDlg.h"
+#include "ui_FullLogNormDlg.h"
 
-#include <strings/miscstring.h>
 #include <ParameterHandling.h>
+#include <strings/miscstring.h>
+#include <ReconException.h>
+#include <ModuleException.h>
 
 FullLogNormDlg::FullLogNormDlg(QWidget *parent) :
-    ConfiguratorDialogBase("FullLogNormDlg", false,false, false, parent),
-	m_checkbox_usedose("Use dose correction"),
-	m_checkbox_uselut("Use look-up table computing"),
-	m_bUseDose(false),
-	m_bUseLUT(false)
+    ConfiguratorDialogBase("FullLogNormDlg", true,false, false, parent),
+    ui(new Ui::FullLogNormDlg),
+    m_bUseDose(true),
+    m_bUseLUT(false),
+    m_eAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage)
 {
-    m_vbox_main.addWidget(&m_checkbox_usedose);
-    m_vbox_main.addWidget(&m_checkbox_uselut);
-    m_FrameMain.setLayout(&m_vbox_main);
-    setWindowTitle("Configure the Full Log Norm module");
+    ui->setupUi(this);
     UpdateDialog();
-
-    show();
 }
 
-FullLogNormDlg::~FullLogNormDlg() {
-}
-
-int FullLogNormDlg::exec(ConfigBase * UNUSED(config), std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
+FullLogNormDlg::~FullLogNormDlg()
 {
-	UpdateDialogFromParameterList(parameters);
+    delete ui;
+}
+
+int FullLogNormDlg::exec(ConfigBase * UNUSED(config),
+                         std::map<std::string,
+                         std::string> &parameters,
+                         kipl::base::TImage<float, 3> & UNUSED(img))
+{
+    UpdateDialogFromParameterList(parameters);
     UpdateDialog();
     std::ostringstream msg;
 
@@ -43,37 +41,47 @@ int FullLogNormDlg::exec(ConfigBase * UNUSED(config), std::map<std::string, std:
         msg.str("");
         msg<<"Accepted and got "<<parameters.size()<<" parameters";
         logger(kipl::logging::Logger::LogMessage,msg.str());
-	}
+        }
 
     return res;
 }
 
 void FullLogNormDlg::UpdateDialog()
 {
-    m_checkbox_usedose.setChecked(m_bUseDose);
-    m_checkbox_uselut.setChecked(m_bUseLUT);
+    ui->check_usedose->setChecked(m_bUseDose);
+    ui->check_useLut->setChecked(m_bUseLUT);
+    ui->combo_averagemethod->setCurrentIndex(static_cast<int>(m_eAverageMethod));
 }
 
 void FullLogNormDlg::UpdateParameters()
 {
-    m_bUseDose = m_checkbox_usedose.checkState();
-    m_bUseLUT = m_checkbox_uselut.checkState();
-
+    m_bUseDose = ui->check_usedose->checkState();
+    m_bUseLUT = ui->check_useLut->checkState();
+    m_eAverageMethod = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->combo_averagemethod->currentIndex());
 }
 
 void FullLogNormDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {
-	parameters.clear();
-    UpdateParameters();
-	parameters["usenormregion"]=kipl::strings::bool2string(m_bUseDose);
-	parameters["uselut"]=kipl::strings::bool2string(m_bUseLUT);
+        parameters.clear();
+        UpdateParameters();
+
+        parameters["usenormregion"]=kipl::strings::bool2string(m_bUseDose);
+        parameters["uselut"]=kipl::strings::bool2string(m_bUseLUT);
+        parameters["referenceaverage"]=enum2string(m_eAverageMethod);
 }
 
 void FullLogNormDlg::UpdateDialogFromParameterList(std::map<std::string, std::string> &parameters)
 {
-	m_bUseDose=kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
-	m_bUseLUT=kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
-	UpdateDialog();
+    try {
+        m_bUseDose       = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
+        m_bUseLUT        = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
+        string2enum(GetStringParameter(parameters,"referenceaverage"),m_eAverageMethod);
+    }
+    catch (ModuleException & e) {
+        logger(logger.LogError,e.what());
+    }
+
+    UpdateDialog();
 }
 
 void FullLogNormDlg::ApplyParameters()

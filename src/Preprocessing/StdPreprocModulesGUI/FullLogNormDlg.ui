@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GeneralFilterDlg</class>
- <widget class="QDialog" name="GeneralFilterDlg">
+ <class>FullLogNormDlg</class>
+ <widget class="QDialog" name="FullLogNormDlg">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Configure general filter</string>
+   <string>Full log normalization configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -21,29 +21,40 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Filter Type</string>
+          <string>Averaging method</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboFilter">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="currentIndex">
-          <number>1</number>
-         </property>
+        <widget class="QComboBox" name="combo_averagemethod">
          <item>
           <property name="text">
-           <string>Box filter</string>
+           <string>Sum</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Gauss filter</string>
+           <string>Average</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Median</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Weighted average</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Min</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Max  </string>
           </property>
          </item>
         </widget>
@@ -51,41 +62,18 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Filter size</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="spinBox_FilterSize">
-         <property name="minimum">
-          <double>0.500000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>15.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>1.500000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+      <widget class="QCheckBox" name="check_usedose">
+       <property name="text">
+        <string>Use dose normalization</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="check_useLut">
+       <property name="text">
+        <string>Use look-up table (no recommended)</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -119,7 +107,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>GeneralFilterDlg</receiver>
+   <receiver>FullLogNormDlg</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -135,7 +123,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>GeneralFilterDlg</receiver>
+   <receiver>FullLogNormDlg</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

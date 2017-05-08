@@ -130,5 +130,6 @@ FORMS += \
     projectionfilterdlg.ui \
     WaveletRingCleanDlg.ui \
     robustlognormdlg.ui \
-    generalfilterdlg.ui
+    generalfilterdlg.ui \
+    FullLogNormDlg.ui
 

@@ -1,36 +1,38 @@
-/*
- * FullLogNormDlg.h
- *
- *  Created on: Feb 29, 2012
- *      Author: kaestner
- */
+//<LICENSE>
+#ifndef FULLLOGNORMDLG_H
+#define FULLLOGNORMDLG_H
 
-#ifndef FULLLOGNORMDLG_H_
-#define FULLLOGNORMDLG_H_
+//#include <QDialog>
 #include "StdPreprocModulesGUI_global.h"
 
+#include <averageimage.h>
 #include <ConfiguratorDialogBase.h>
-#include <QVBoxLayout>
-#include <QCheckBox>
 
-class FullLogNormDlg: public ConfiguratorDialogBase {
+namespace Ui {
+class FullLogNormDlg;
+}
+
+class FullLogNormDlg : public ConfiguratorDialogBase
+{
+    Q_OBJECT
+
 public:
-    FullLogNormDlg(QWidget * parent = NULL);
-	virtual ~FullLogNormDlg();
+    explicit FullLogNormDlg(QWidget *parent = nullptr);
+    virtual ~FullLogNormDlg();
+
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();
-	void UpdateParameterList(std::map<std::string, std::string> &parameters);
-	void UpdateDialogFromParameterList(std::map<std::string, std::string> &parameters);
+    void UpdateParameterList(std::map<std::string, std::string> &parameters);
+    void UpdateDialogFromParameterList(std::map<std::string, std::string> &parameters);
 
-    QVBoxLayout m_vbox_main;
-    QCheckBox m_checkbox_usedose;
-    QCheckBox m_checkbox_uselut;
+    Ui::FullLogNormDlg *ui;
+    bool m_bUseDose;
+    bool m_bUseLUT;
+    ImagingAlgorithms::AverageImage::eAverageMethod m_eAverageMethod;
 
-	bool m_bUseDose;
-	bool m_bUseLUT;
 };
 
-#endif /* FULLLOGNORMDLG_H_ */
+#endif // FULLLOGNORMDLG_H

@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>851</width>
-    <height>564</height>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Configure median mix ring cleaning</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
