@@ -146,8 +146,8 @@ void FDKbp::computeProjMatrix(float angles, double *nrm, double *proj_matrix){
     double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Intrinsic matrix */
     double sad = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
     double sid = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
-    double offSourceX =  (mConfig.ProjectionInfo.fpPoint[0]-(mConfig.ProjectionInfo.nDims[0]/2-mConfig.ProjectionInfo.roi[0]))*mConfig.ProjectionInfo.fResolution[0];
-    double offSourceY = (mConfig.ProjectionInfo.fpPoint[1]-(mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]))*mConfig.ProjectionInfo.fResolution[1];
+    double offSourceX =  (mConfig.ProjectionInfo.fpPoint[0]-(mConfig.ProjectionInfo.roi[2]/2))*mConfig.ProjectionInfo.fResolution[0];
+    double offSourceY = (mConfig.ProjectionInfo.fpPoint[1]-(mConfig.ProjectionInfo.roi[3]/2))*mConfig.ProjectionInfo.fResolution[1];
 
     double cam[3] = {sad*sin(-angles*dPi/180)+offSourceX, 0.0f+offSourceY, sad*cos(-angles*dPi/180)}; /* Location of camera */
 //    double cam[3] = {sad*sin(-angles*dPi/180), 0.0f, sad*cos(-angles*dPi/180)}; /* Location of camera */
@@ -279,10 +279,13 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
     double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Intrinsic matrix */
     double sad = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
     double sid = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
-    double cam[3] = {cos(angles*dPi/180),-sin(angles*dPi/180),0.0}; /* Location of camera */
-//    double cam[3] = {sad*cos(angles*dPi/180),-sad*sin(angles*dPi/180),0.0}; /* Location of camera */ // it was like this before..
+    double offSourceX =  (mConfig.ProjectionInfo.fpPoint[0]-(mConfig.ProjectionInfo.nDims[0]/2-mConfig.ProjectionInfo.roi[0]))*mConfig.ProjectionInfo.fResolution[0];
+    double offSourceY = (mConfig.ProjectionInfo.fpPoint[1]-(mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]))*mConfig.ProjectionInfo.fResolution[1];
+
+//    double cam[3] = {cos(angles*dPi/180)+offSourceX,-sin(angles*dPi/180)+offSourceY,sad}; /* Location of camera it is quite wrong
+    double cam[3] = {cos(angles*dPi/180),-sin(angles*dPi/180),0.0}; // Location of camera
 //    double nrm[3] = {0.0,0.0,0.0}; /* Ray from image center to source */
-    double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; //
+//    double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; // not used here
     double plt[3] = {0.0,0.0,0.0}; /* Detector orientation */  /* Panel left (toward first column) */
     double pup[3] = {0.0,0.0,0.0}; /* Panel up (toward top row) */
     double vup[3] = {0.0,0.0,1.0}; /* hardcoded for ideal panel orientationf */
@@ -391,6 +394,7 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 //        extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+mConfig.ProjectionInfo.fSOD;
 
     extrinsic[3] = 0;
+//    extrinsic[3] = (mConfig.ProjectionInfo.fCenter-mConfig.ProjectionInfo.fpPoint[0])*mConfig.ProjectionInfo.fResolution[0]; // yet another attempt, looks terrible
     extrinsic[7] = 0;
     extrinsic[11] = 0+mConfig.ProjectionInfo.fSOD;
 
@@ -539,8 +543,9 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
         double proj_matrix[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Projection matrix */
 //        double proj_matrix2[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Projection matrix */
 
-        getProjMatrix(angles, nrm, proj_matrix); // first version that I produced - panel oriented as z, to be used with project_volume_onto_image_c
-//        computeProjMatrix(angles,nrm,proj_matrix); // second version with attempt to correct misalignments - panel oriented as y, to be used with project_volume_onto_image_c (but origin is not clearly computed..)
+//        std::cout << mConfig.ProjectionInfo.fCenter<<" " << mConfig.ProjectionInfo.fpPoint[0]<< " "<< mConfig.ProjectionInfo.fpPoint[1]<< std::endl;
+//        getProjMatrix(angles, nrm, proj_matrix); // first version that I produced - panel oriented as z, to be used with project_volume_onto_image_c
+        computeProjMatrix(angles,nrm,proj_matrix); // second version with attempt to correct misalignments - panel oriented as y, to be used with project_volume_onto_image_c (but origin is not clearly computed..)
 //        compRTKProjMatrix(angles, nrm, proj_matrix); // third version with rtk-like projection matrices
 
 
@@ -641,8 +646,8 @@ void FDKbp::project_volume_onto_image_c(
         if (mConfig.MatrixInfo.bUseVOI) {
 
 //            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fCenter-1)*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
-//            origin[1] = - ((mConfig.MatrixInfo.nDims[1]/2-1)*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
-//            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fCenter-1)*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
+//            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-mConfig.ProjectionInfo.fCenter-1)*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
+//            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fpPoint[1]-11)*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
 
 
 //            origin[0] = - ((mConfig.MatrixInfo.nDims[0]/2)*spacing[0]-mConfig.MatrixInfo.voi[0]/2*spacing[0]-spacing[0]/2);
@@ -681,10 +686,10 @@ void FDKbp::project_volume_onto_image_c(
 
 
 
-        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; //NOT OK
-//        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]}; // SEEMS THE MOST CORRECT
+//        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; //NOT OK
+        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]}; // SEEMS THE MOST CORRECT
+//        double ic[2] = {mConfig.ProjectionInfo.fCenter, static_cast<double>(mConfig.ProjectionInfo.nDims[1]/2)}; // totalmente sbagliato
 //        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]}; // NOT OK
-//        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
 
 //        std::cout << ic[0] << " " << ic[1] << std::endl;
 
