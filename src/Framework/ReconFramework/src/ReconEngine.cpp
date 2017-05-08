@@ -738,6 +738,7 @@ int ReconEngine::Run3DFull()
 	int result=0;
 	try {
 		for (nProcessedBlocks=0; (nProcessedBlocks<nTotalBlocks) && (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Blocks")); nProcessedBlocks++) {
+            m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
 			nProcessedProjections=0;
 			m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
@@ -1148,6 +1149,7 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
             msg<<"Back-projecting projection block "<<i+1;
             logger(kipl::logging::Logger::LogMessage,msg.str());
             m_BackProjector->GetModule()->SetROI(it->roi);
+            m_Interactor->SetOverallProgress(float(i)/float(m_ProjectionBlocks.size()));
 
             res=BackProject3D(it->projections,it->roi,it->parameters);
         }

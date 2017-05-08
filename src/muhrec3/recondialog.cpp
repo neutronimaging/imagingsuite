@@ -18,7 +18,7 @@ ReconDialog::ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget
     ui(new Ui::ReconDialog),
     fraction(0.0f),
     finish(false),
-    m_Engine(NULL),
+    m_Engine(nullptr),
     m_Interactor(interactor),
     m_bRerunBackproj(false)
 {
@@ -38,13 +38,14 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     logger(kipl::logging::Logger::LogMessage,"Start");
 
     m_Interactor->Reset();
-#if NEVERDO
+#define NEVERDO
+#ifdef NEVERDO
     logger(logger.LogMessage,"Starting with threads");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(&this->process());
-    QFuture<int> progress_thread=QtConcurrent::run(&this->progress());
+    QFuture<int> proc_thread=QtConcurrent::run(this,&ReconDialog::process);
+    QFuture<int> progress_thread=QtConcurrent::run(this,&ReconDialog::progress);
     int res=exec();
 
     finish=true;
@@ -99,23 +100,24 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 
 int ReconDialog::progress()
 {
-    logger(kipl::logging::Logger::LogVerbose,"Progress thread is started");
+    logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
 
     while (!m_Interactor->Finished() && !m_Interactor->Aborted() ){
-        ui->progressBar->setValue(m_Interactor->CurrentProgress());
+        ui->progressBar->setValue(m_Interactor->CurrentProgress()*100);
+        ui->progressBar_overall->setValue(m_Interactor->CurrentOverallProgress()*100);
+
+        ui->label_message->setText(QString::fromStdString(m_Interactor->CurrentMessage()));
 
         QThread::sleep(1);
-
-
     }
-    logger(kipl::logging::Logger::LogVerbose,"Progress thread end");
+    logger(kipl::logging::Logger::LogMessage,"Progress thread end");
 
     return 0;
 }
 
 int ReconDialog::process()
 {
-    logger(kipl::logging::Logger::LogVerbose,"Process thread is started");
+    logger(kipl::logging::Logger::LogMessage,"Process thread is started");
     ostringstream msg;
     QMessageBox dlg;
     dlg.setWindowTitle("Reconstruction error");
@@ -163,21 +165,23 @@ int ReconDialog::process()
     }
 
     logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
-    finish=true;
 
+    finish=true;
+    m_Interactor->Done();
+    this->accept();
     return 0;
 }
 
 void ReconDialog::Abort()
 {
-    if (m_Interactor!=NULL) {
+    if (m_Interactor!=nullptr) {
         m_Interactor->Abort();
     }
 }
 
 bool ReconDialog::Finished()
 {
-    if (m_Interactor!=NULL) {
+    if (m_Interactor!=nullptr) {
         return m_Interactor->Finished();
     }
 
@@ -186,4 +190,9 @@ bool ReconDialog::Finished()
 void ReconDialog::pressedCancel()
 {
 
+}
+
+void ReconDialog::on_buttonCancel_clicked()
+{
+    this->reject();
 }

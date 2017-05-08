@@ -38,6 +38,8 @@ protected:
     ReconEngine * m_Engine;
     kipl::interactors::InteractionBase * m_Interactor;
     bool m_bRerunBackproj;
+private slots:
+    void on_buttonCancel_clicked();
 };
 
 #endif // RECONDIALOG_H
