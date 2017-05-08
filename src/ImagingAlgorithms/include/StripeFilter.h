@@ -1,21 +1,16 @@
-/*
- * StripeFilter.h
- *
- *  Created on: Aug 13, 2011
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef STRIPEFILTER_H_
 #define STRIPEFILTER_H_
 
 #include "ImagingAlgorithms_global.h"
-#include <wavelets/wavelets.h>
+#include <iostream>
 
 #include <base/timage.h>
 #include <math/mathconstants.h>
 #include <fft/fftbase.h>
 #include <logging/logger.h>
-#include <iostream>
+#include <wavelets/wavelets.h>
 
 namespace ImagingAlgorithms {
 

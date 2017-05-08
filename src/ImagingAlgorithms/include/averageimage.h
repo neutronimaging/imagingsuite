@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef AVERAGEPROJECTION_H
 #define AVERAGEPROJECTION_H
 #include "ImagingAlgorithms_global.h"

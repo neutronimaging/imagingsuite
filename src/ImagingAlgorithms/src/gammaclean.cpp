@@ -1,11 +1,14 @@
+//<LICENSE>
+
 #include "../include/gammaclean.h"
+#include <sstream>
+#include <list>
+
 #include <filters/laplacianofgaussian.h>
 #include <filters/medianfilter.h>
 #include <math/median.h>
-#include "../include/ImagingException.h"
-#include <sstream>
 
-#include <list>
+#include "../include/ImagingException.h"
 
 namespace ImagingAlgorithms {
 

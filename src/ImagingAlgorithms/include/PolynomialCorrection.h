@@ -1,14 +1,9 @@
-/*
- * PolynomialCorrection.h
- *
- *  Created on: Jan 28, 2013
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef IMGALGPOLYNOMIALCORRECTION_H_
 #define IMGALGPOLYNOMIALCORRECTION_H_
+
 #include "ImagingAlgorithms_global.h"
-//#include "../src/stdafx.h"
 #include <logging/logger.h>
 
 namespace ImagingAlgorithms {

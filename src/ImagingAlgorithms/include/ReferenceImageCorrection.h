@@ -1,18 +1,16 @@
-/*
- * ReferenceImageCorrection.h
- *
- *  Created on: Jan 17, 2013
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef IMGALG_REFERENCEIMAGECORRECTION_H_
 #define IMGALG_REFERENCEIMAGECORRECTION_H_
 #include "ImagingAlgorithms_global.h"
+
+#include <map>
+#include <string>
+
 #include <base/timage.h>
 #include <logging/logger.h>
-#include <string>
 #include "../include/averageimage.h"
-#include <map>
+
 
 
 namespace ImagingAlgorithms {
@@ -69,20 +67,20 @@ public:
     void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo); /// set interpolation parameters to be used for BB image computation
     void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values, it is the same as in SETROI in the pre-processing module?
 
-    void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;} /// set bool value for computing -logarithm
-    void SetRadius(size_t x) {radius=x;} /// set the radius used to define subset of segmented BBs
-    void SetTau (float x) {tau=x;} /// set value of tau
-    void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);} /// set diffroi, which is the difference between BBroi and the Projection roi
-    void SetPBvariante (bool x) {bPBvariante = x; } /// set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
+    void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;} ///< set bool value for computing -logarithm
+    void SetRadius(size_t x) {radius=x;} ///< set the radius used to define subset of segmented BBs
+    void SetTau (float x) {tau=x;} ///< set value of tau
+    void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);} ///< set diffroi, which is the difference between BBroi and the Projection roi
+    void SetPBvariante (bool x) {bPBvariante = x; } ///< set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
 
     void SetInterpolationOrderX(eInterpMethodX eim_x);
     void SetInterpolationOrderY(eInterpMethodY eim_y);
 
-    void SetAngles(float *ang, size_t nProj, size_t nBB); /// set angles and number of proj and images with BB, to be used for more general interpolation
+    void SetAngles(float *ang, size_t nProj, size_t nBB); ///< set angles and number of proj and images with BB, to be used for more general interpolation
     void SetDoseList(float *doselist); /// set dose list for sample images in the BB dose roi, it has to be called after SetAngles for the right definition of m_nProj
 
-    kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); /// 2D process
-    void Process(kipl::base::TImage<float,3> &img, float *dose); /// 3D process
+    kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); ///< 2D process
+    void Process(kipl::base::TImage<float,3> &img, float *dose); ///< 3D process
 
     float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
     float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask, float &error); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter, finally computes interpolation error

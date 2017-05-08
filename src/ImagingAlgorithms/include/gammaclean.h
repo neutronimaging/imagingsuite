@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef GAMMACLEAN_H
 #define GAMMACLEAN_H
 

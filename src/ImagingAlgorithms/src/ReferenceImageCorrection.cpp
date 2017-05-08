@@ -1,32 +1,24 @@
-/*
- * ReferenceImageCorrection.cpp
- *
- *  Created on: Jan 17, 2013
- *      Author: anders
- */
+//<LICENSE>
 
-//#include "stdafx.h"
-#include "../include/ReferenceImageCorrection.h"
-#include "../include/ImagingException.h"
-#include <strings/miscstring.h>
-
-//#include <cstring>
 #include <map>
 #include <math.h>
 #include <sstream>
-#include <math/median.h>
-
-#include <io/io_tiff.h>
-#include <segmentation/thresholds.h>
-#include <base/thistogram.h>
-#include <base/tprofile.h>
-#include <base/tsubimage.h>
-
 
 #include <tnt_array1d.h>
 #include <tnt_array2d.h>
 #include <jama_lu.h>
 #include <jama_qr.h>
+
+#include <math/median.h>
+#include <io/io_tiff.h>
+#include <segmentation/thresholds.h>
+#include <base/thistogram.h>
+#include <base/tprofile.h>
+#include <base/tsubimage.h>
+#include <strings/miscstring.h>
+
+#include "../include/ReferenceImageCorrection.h"
+#include "../include/ImagingException.h"
 
 using namespace TNT;
 

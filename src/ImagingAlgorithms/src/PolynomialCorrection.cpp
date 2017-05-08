@@ -1,20 +1,14 @@
-/*
- *
- * PolynomialCorrection.cpp
- *
- *  Created on: Jan 28, 2013
- *      Author: kaestner
- */
-//#include "ImagingAlgorithms_global.h"
-//#include "stdafx.h"
-#include "../include/PolynomialCorrection.h"
-#include "../include/ImagingException.h"
+//<LICENSE>
+
 #include <cstring>
 #include <cstddef>
 #include <sstream>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include "../include/PolynomialCorrection.h"
+#include "../include/ImagingException.h"
 
 namespace ImagingAlgorithms {
 

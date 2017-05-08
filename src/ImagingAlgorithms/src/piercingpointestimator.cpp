@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "../include/piercingpointestimator.h"
 
 #include <algorithm>

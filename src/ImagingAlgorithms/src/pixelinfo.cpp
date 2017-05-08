@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "../include/pixelinfo.h"
 
 namespace ImagingAlgorithms {

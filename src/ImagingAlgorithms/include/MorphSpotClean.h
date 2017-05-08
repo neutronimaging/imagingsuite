@@ -1,16 +1,17 @@
+//<LICENSE>
+
 #ifndef MORPHSPOTCLEAN_H
 #define MORPHSPOTCLEAN_H
 
+#include <string>
+#include <iostream>
+
 #include "ImagingAlgorithms_global.h"
-//#include "stdafx.h"
 #include <base/timage.h>
 #include <morphology/morphology.h>
 #include <logging/logger.h>
 #include <containers/ArrayBuffer.h>
 #include <math/LUTCollection.h>
-
-#include <string>
-#include <iostream>
 
 #include "pixelinfo.h"
 

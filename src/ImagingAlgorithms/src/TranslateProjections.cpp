@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "../include/TranslateProjections.h"
 #include "../include/ImagingException.h"
 

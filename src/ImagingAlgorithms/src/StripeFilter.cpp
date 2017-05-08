@@ -1,13 +1,7 @@
-/*
- * StripeFilter.cpp
- *
- *  Created on: Aug 13, 2011
- *      Author: anders
- */
-//#include "stdafx.h"
+//<LICENSE>
 
-#include "../include/StripeFilter.h"
-#include "../include/ImagingException.h"
+#include <sstream>
+#include <iostream>
 
 #include <io/io_tiff.h>
 #include <fft/zeropadding.h>
@@ -15,9 +9,9 @@
 #include <base/trotate.h>
 #include <base/tpermuteimage.h>
 
+#include "../include/StripeFilter.h"
+#include "../include/ImagingException.h"
 
-#include <sstream>
-#include <iostream>
 
 namespace ImagingAlgorithms {
 

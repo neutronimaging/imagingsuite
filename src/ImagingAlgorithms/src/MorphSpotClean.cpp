@@ -1,11 +1,13 @@
-#include "../include/MorphSpotClean.h"
+//<LICENSE>
+
 #include <morphology/morphextrema.h>
 #include <math/image_statistics.h>
 #include <morphology/label.h>
-#include "../include/ImagingException.h"
 #include <math/median.h>
 #include <math/mathfunctions.h>
 
+#include "../include/MorphSpotClean.h"
+#include "../include/ImagingException.h"
 
 namespace ImagingAlgorithms {
 

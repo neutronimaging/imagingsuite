@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef PIXELINFO_H
 #define PIXELINFO_H
 #include "ImagingAlgorithms_global.h"

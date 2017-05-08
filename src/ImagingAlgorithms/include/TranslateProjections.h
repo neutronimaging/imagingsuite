@@ -1,12 +1,14 @@
+//<LICENSE>
+
 #ifndef TRANSLATEPROJECTIONS_H
 #define TRANSLATEPROJECTIONS_H
 
 #include "ImagingAlgorithms_global.h"
 
-//#include "stdafx.h"
-#include <base/timage.h>
 #include <iostream>
 #include <string>
+
+#include <base/timage.h>
 
 namespace ImagingAlgorithms {
 

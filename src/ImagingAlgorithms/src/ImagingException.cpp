@@ -1,10 +1,4 @@
-/*
- * ImagingException.cpp
- *
- *  Created on: Jan 25, 2013
- *      Author: kaestner
- */
-//#include "stdafx.h"
+//<LICENSE>
 
 #include <sstream>
 #include "../include/ImagingException.h"

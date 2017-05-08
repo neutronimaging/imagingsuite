@@ -1,16 +1,14 @@
-/*
- * SpotClean.h
- *
- *  Created on: Jan 17, 2013
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef IMGALG_SPOTCLEAN_H_
 #define IMGALG_SPOTCLEAN_H_
 #include "ImagingAlgorithms_global.h"
+#include <sstream>
+#include <algorithm>
+#include <string>
+#include <map>
+#include <list>
 
-//#include "stdafx.h"
-#include "pixelinfo.h"
 
 #include <base/timage.h>
 #include <strings/miscstring.h>
@@ -19,11 +17,7 @@
 #include <math/LUTCollection.h>
 #include <logging/logger.h>
 
-#include <sstream>
-#include <algorithm>
-#include <string>
-#include <map>
-#include <list>
+#include "pixelinfo.h"
 
 namespace ImagingAlgorithms {
 

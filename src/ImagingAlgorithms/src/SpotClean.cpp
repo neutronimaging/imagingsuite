@@ -1,15 +1,13 @@
-/*
- * SpotClean.cpp
- *
- *  Created on: Jan 17, 2013
- *      Author: anders
- */
-//#include "stdafx.h"
+//<LICENSE>
+
+#include <vector>
+#include <iterator>
+#include <limits>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#include "../include/SpotClean.h"
 #include <morphology/morphology.h>
 #include <morphology/morphfilters.h>
 #include <math/mathfunctions.h>
@@ -17,10 +15,7 @@
 #include <morphology/label.h>
 #include <filters/medianfilter.h>
 #include "../include/ImagingException.h"
-
-#include <vector>
-#include <iterator>
-#include <limits>
+#include "../include/SpotClean.h"
 
 namespace ImagingAlgorithms {
 

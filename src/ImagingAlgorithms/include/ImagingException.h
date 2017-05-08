@@ -1,16 +1,10 @@
-/*
- * ImagingException.h
- *
- *  Created on: Jan 25, 2013
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef IMAGINGEXCEPTION_H_
 #define IMAGINGEXCEPTION_H_
 #include "ImagingAlgorithms_global.h"
 #include <base/KiplException.h>
 #include <string>
-//#include "stdafx.h"
 
 class IMAGINGALGORITHMSSHARED_EXPORT ImagingException: public kipl::base::KiplException {
 public:
