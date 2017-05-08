@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef GENERICBACKPROJ_H
 #define GENERICBACKPROJ_H
 

@@ -1,11 +1,14 @@
+//<LICENSE
+
 #ifndef DATASCALERDLG_H
 #define DATASCALERDLG_H
 #include "StdPreprocModulesGUI_global.h"
+#include <QDialog>
 
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
 #include <ReconConfig.h>
-#include <QDialog>
+
 
 namespace Ui {
 class DataScalerDlg;

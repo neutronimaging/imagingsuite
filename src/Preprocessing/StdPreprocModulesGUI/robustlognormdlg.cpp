@@ -1,21 +1,22 @@
-#include "robustlognormdlg.h"
-#include "ui_robustlognormdlg.h"
+//<LICENSE>
 
-#include <ParameterHandling.h>
-#include <ModuleException.h>
 #include "StdPreprocModulesGUI_global.h"
-
-#include <strings/miscstring.h>
-#include <ParameterHandling.h>
 
 #include <QFileDialog>
 #include <QImage>
 #include <QMessageBox>
 
-#include <ProjectionReader.h>
+#include <strings/miscstring.h>
 #include <base/thistogram.h>
-
 #include <io/DirAnalyzer.h>
+
+#include <ParameterHandling.h>
+#include <ModuleException.h>
+
+#include <ProjectionReader.h>
+
+#include "robustlognormdlg.h"
+#include "ui_robustlognormdlg.h"
 
 RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     ConfiguratorDialogBase("RobustLogNorm",true,false,true,parent),

@@ -1,16 +1,20 @@
+//<LICENSE>
+
 #ifndef SPOTCLEAN2DLG_H
 #define SPOTCLEAN2DLG_H
 #include "StdPreprocModulesGUI_global.h"
 
 #include <QDialog>
 
-#include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>
 
+#include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
+
 #include <imageviewerwidget.h>
 #include <plotter.h>
+
 #include <SpotClean2.h>
 
 namespace Ui {

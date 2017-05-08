@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "medianmixringcleandlg.h"
 #undef None
 #include "ui_medianmixringclean.h"
@@ -5,12 +7,13 @@
 #include <QMessageBox>
 
 #include <strings/miscstring.h>
-#include <ParameterHandling.h>
+#include <base/KiplException.h>
 #include <base/thistogram.h>
 #include <math/sums.h>
 #include <math/mathfunctions.h>
+
+#include <ParameterHandling.h>
 #include <ModuleException.h>
-#include <base/KiplException.h>
 
 MedianMixRingCleanDlg::MedianMixRingCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MedianMixRingCleanDlg",true,true,true,parent),

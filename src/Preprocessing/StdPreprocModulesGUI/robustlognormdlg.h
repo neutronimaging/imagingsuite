@@ -1,14 +1,16 @@
+//<LICENSE>
+
 #ifndef ROBUSTLOGNORMDLG_H
 #define ROBUSTLOGNORMDLG_H
 #include "StdPreprocModulesGUI_global.h"
 
+#include <QDialog>
+
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
 #include <ReconConfig.h>
-#include <QDialog>
 #include <imageviewerwidget.h>
 #include <plotter.h>
-#include <QtAddons_global.h>
 
 #include <robustlognorm.h>
 

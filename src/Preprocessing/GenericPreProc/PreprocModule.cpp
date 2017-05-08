@@ -1,10 +1,5 @@
-/*
- * DataScaler.cpp
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
-//#include "stdafx.h"
+//<LICENSE>
+
 #include <sstream>
 
 #include "PreprocModule.h"

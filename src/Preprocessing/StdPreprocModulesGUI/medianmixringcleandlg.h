@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef MEDIANMIXRINGCLEAN_H
 #define MEDIANMIXRINGCLEAN_H
 #include "StdPreprocModulesGUI_global.h"

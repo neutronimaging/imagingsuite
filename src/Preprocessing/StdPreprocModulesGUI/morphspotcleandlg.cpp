@@ -1,15 +1,18 @@
+//<LICENSE>
+
 #include "morphspotcleandlg.h"
 #undef None
 #include "ui_morphspotcleandlg.h"
 #define None 0L
 
 #include <strings/miscstring.h>
-#include <ParameterHandling.h>
 #include <base/thistogram.h>
 #include <math/sums.h>
 #include <math/mathfunctions.h>
-#include <ModuleException.h>
 #include <base/KiplException.h>
+
+#include <ParameterHandling.h>
+#include <ModuleException.h>
 
 MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),

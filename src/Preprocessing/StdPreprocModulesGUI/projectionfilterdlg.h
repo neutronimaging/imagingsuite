@@ -1,16 +1,17 @@
+//<LICENSE>
+
 #ifndef PROJECTIONFILTERDLG_H
 #define PROJECTIONFILTERDLG_H
 
 #include "StdPreprocModulesGUI_global.h"
 
+#include <QDialog>
+
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
 #include <ReconConfig.h>
-#include <QDialog>
-
 
 #include <ProjectionFilter.h>
-#include <ReconConfig.h>
 
 namespace Ui {
 class ProjectionFilterDlg;

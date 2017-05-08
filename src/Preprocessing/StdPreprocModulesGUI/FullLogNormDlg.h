@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #ifndef FULLLOGNORMDLG_H
 #define FULLLOGNORMDLG_H
 

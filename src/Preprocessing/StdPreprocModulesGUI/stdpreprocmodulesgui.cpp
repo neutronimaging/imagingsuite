@@ -1,5 +1,5 @@
-// StdPreprocModulesGUI.cpp : Defines the exported functions for the DLL application.
-//
+//<LICENSE>
+
 
 #include "StdPreprocModulesGUI_global.h"
 #include "stdpreprocmodulesgui.h"

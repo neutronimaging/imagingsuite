@@ -1,11 +1,15 @@
+//<LICENSE>
+
 #ifndef POLYNOMIALCORRECTIONDLG_H
 #define POLYNOMIALCORRECTIONDLG_H
 #include "StdPreprocModulesGUI_global.h"
 
+#include <QDialog>
+
 #include <ConfiguratorDialogBase.h>
 #include <ConfigBase.h>
 #include <ReconConfig.h>
-#include <QDialog>
+
 #include <PolynomialCorrectionModule.h>
 
 namespace Ui {

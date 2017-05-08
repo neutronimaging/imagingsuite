@@ -1,15 +1,18 @@
+//<LICENSE>
+
 #include "SpotClean2Dlg.h"
 #undef None
 #include "ui_SpotClean2Dlg.h"
 #define None 0L
-#include <strings/miscstring.h>
-#include <ParameterHandling.h>
+
 #include <base/thistogram.h>
+#include <base/KiplException.h>
 #include <math/sums.h>
 #include <math/mathfunctions.h>
-#include <ModuleException.h>
-#include <base/KiplException.h>
+#include <strings/miscstring.h>
 
+#include <ModuleException.h>
+#include <ParameterHandling.h>
 
 SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
     ConfiguratorDialogBase("SpotClean2Dlg",true,true,true,parent),

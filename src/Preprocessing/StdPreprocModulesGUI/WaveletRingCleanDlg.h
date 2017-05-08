@@ -1,13 +1,17 @@
+//<LICENSE>
+
 #ifndef WAVELETRINGCLEANDLG_H
 #define WAVELETRINGCLEANDLG_H
 #include "StdPreprocModulesGUI_global.h"
 
-#include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>
 
 #include <ConfigBase.h>
+#include <ConfiguratorDialogBase.h>
+
 #include <ReconConfig.h>
+
 #include <imageviewerwidget.h>
 #include <plotter.h>
 

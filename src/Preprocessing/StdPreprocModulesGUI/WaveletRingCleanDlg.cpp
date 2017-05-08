@@ -1,10 +1,13 @@
+//<LICENSE>
+
 #include "WaveletRingCleanDlg.h"
 #undef None
 #include "ui_WaveletRingCleanDlg.h"
 #define None 0L
-#include <QMessageBox>
 
 #include <list>
+
+#include <QMessageBox>
 
 #include <strings/miscstring.h>
 #include <base/thistogram.h>

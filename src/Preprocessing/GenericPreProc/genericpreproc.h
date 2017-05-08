@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef GENERICPREPROC_H
 #define GENERICPREPROC_H
 

@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "projectionfilterdlg.h"
 #include "ui_projectionfilterdlg.h"
 
@@ -5,7 +7,6 @@
 
 #include <strings/miscstring.h>
 #include <ParameterHandling.h>
-
 
 ProjectionFilterDlg::ProjectionFilterDlg(QWidget *parent) :
     ConfiguratorDialogBase("ProjectionFilterDlg", true,false, false, parent),

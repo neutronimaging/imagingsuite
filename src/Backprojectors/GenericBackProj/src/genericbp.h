@@ -1,10 +1,14 @@
+//<LICENSE>
+
 #ifndef GENERICBP_H
 #define GENERICBP_H
 
 #include <map>
+
+#include <interactors/interactionbase.h>
+
 #include <ReconConfig.h>
 #include <BackProjectorModuleBase.h>
-#include <interactors/interactionbase.h>
 
 class GenericBP : public BackProjectorModuleBase
 {

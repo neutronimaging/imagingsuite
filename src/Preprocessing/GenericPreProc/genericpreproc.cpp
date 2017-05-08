@@ -1,16 +1,6 @@
-#include "genericpreproc.h"
+//<LICENSE>
 
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2015-06-16 08:21:46 +0200 (Die, 16 Jun 2015) $
-// $Rev: 1231 $
-// $Id: StdPreprocModules.cpp 1231 2015-06-16 06:21:46Z kaestner $
-//
+#include "genericpreproc.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>
@@ -31,9 +21,9 @@
 void * GetModule(const char *application, const char * name)
 {
     if (strcmp(application,"muhrec")!=0)
-        return NULL;
+        return nullptr;
 
-    if (name!=NULL) {
+    if (name!=nullptr) {
         std::string sName=name;
 
         if (sName=="PreprocModule")
@@ -42,7 +32,7 @@ void * GetModule(const char *application, const char * name)
 
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int Destroy(const char * application, void *obj)
@@ -54,7 +44,7 @@ int Destroy(const char * application, void *obj)
     std::ostringstream msg;
     std::string name="No name";
     try {
-        if (obj!=NULL) {
+        if (obj!=nullptr) {
             PreprocModuleBase *module=reinterpret_cast<PreprocModuleBase *>(obj);
             name=module->ModuleName();
             msg<<"Destroying "<<name;

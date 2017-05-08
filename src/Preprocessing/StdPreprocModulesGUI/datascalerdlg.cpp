@@ -1,9 +1,10 @@
+//<LICENSE>
+
 #include "datascalerdlg.h"
 #include "ui_datascalerdlg.h"
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <ParameterHandling.h>
-
 
 DataScalerDlg::DataScalerDlg(QWidget *parent) :
     ConfiguratorDialogBase("DataScaler",true,false,false,parent),

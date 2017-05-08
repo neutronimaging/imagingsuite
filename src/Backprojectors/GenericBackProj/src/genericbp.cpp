@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "genericbp.h"
 
 #include <ParameterHandling.h>

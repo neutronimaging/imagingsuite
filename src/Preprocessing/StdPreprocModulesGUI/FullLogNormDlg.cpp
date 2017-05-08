@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include <sstream>
 
 #include "FullLogNormDlg.h"

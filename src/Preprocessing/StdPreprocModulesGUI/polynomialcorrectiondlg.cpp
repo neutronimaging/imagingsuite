@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "polynomialcorrectiondlg.h"
 #include "ui_polynomialcorrectiondlg.h"
 #include <base/thistogram.h>

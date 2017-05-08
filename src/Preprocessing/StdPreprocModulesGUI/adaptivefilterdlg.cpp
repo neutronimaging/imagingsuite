@@ -1,16 +1,22 @@
-#include "adaptivefilterdlg.h"
-#include "ui_adaptivefilterdlg.h"
-#include <strings/miscstring.h>
-#include <ParameterHandling.h>
-#include <math/mathfunctions.h>
-#include <base/thistogram.h>
-#include <base/tprofile.h>
-#include <plotter.h>
+//<LICENSE>
+
 #include <map>
 #include <string>
 
+#include <strings/miscstring.h>
+#include <math/mathfunctions.h>
+#include <base/thistogram.h>
+#include <base/tprofile.h>
+
+#include <ParameterHandling.h>
+
+#include <plotter.h>
+
 #include <ParameterHandling.h>
 #include <ModuleException.h>
+
+#include "adaptivefilterdlg.h"
+#include "ui_adaptivefilterdlg.h"
 
 AdaptiveFilterDlg::AdaptiveFilterDlg(QWidget *parent) :
     ConfiguratorDialogBase("AdaptiveFilter",true,false,true,parent),

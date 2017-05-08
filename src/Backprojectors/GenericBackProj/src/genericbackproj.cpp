@@ -1,11 +1,14 @@
+//<LICENSE>
+
 #include "genericbackproj.h"
+
+#include <cstdlib>
+#include <string>
 
 #include <backprojectorbase.h>
 #include <interactors/interactionbase.h>
 #include "genericbp.h"
 
-#include <cstdlib>
-#include <string>
 
 
 void * GetModule(const char *application, const char * name, void *vinteractor)

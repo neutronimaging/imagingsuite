@@ -1,15 +1,19 @@
+//<LICENSE>
+
 #ifndef MORPHSPOTCLEANDLG_H
 #define MORPHSPOTCLEANDLG_H
 #include "StdPreprocModulesGUI_global.h"
+#include <QDialog>
 
-#include <ConfiguratorDialogBase.h>
 #include <base/timage.h>
 #include <morphology/morphology.h>
 
 #include <ConfigBase.h>
+#include <ConfiguratorDialogBase.h>
+
 #include <imageviewerwidget.h>
 #include <plotter.h>
-#include <QDialog>
+
 #include <MorphSpotCleanModule.h>
 #include <MorphSpotClean.h>
 
