@@ -16,6 +16,8 @@ void InteractionBase::Reset()
 	m_bAbort=false; 
 	m_bFinished=false;
 	m_fProgress=0.0f;
+    m_fOverallProgress=0.0f;
+    m_sMessage="";
 }
 
 void InteractionBase::Abort() 
@@ -36,9 +38,21 @@ bool InteractionBase::SetProgress(float progress, std::string msg)
 	return m_bAbort;
 }
 
+bool InteractionBase::SetOverallProgress(float progress)
+{
+    m_fOverallProgress=progress;
+
+    return m_bAbort;
+}
+
 float InteractionBase::CurrentProgress() 
 {
 	return m_fProgress;
+}
+
+float InteractionBase::CurrentOverallProgress()
+{
+    return m_fOverallProgress;
 }
 
 std::string InteractionBase::CurrentMessage()
