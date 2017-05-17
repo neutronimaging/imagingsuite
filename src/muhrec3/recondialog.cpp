@@ -46,6 +46,7 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 
     QFuture<int> proc_thread=QtConcurrent::run(this,&ReconDialog::process);
     QFuture<int> progress_thread=QtConcurrent::run(this,&ReconDialog::progress);
+
     int res=exec();
 
     finish=true;
@@ -58,7 +59,7 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     proc_thread.waitForFinished();
     progress_thread.waitForFinished();
     logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
-  return res;
+    return res;
 #else
     bool bFailure=false;
 
@@ -108,7 +109,7 @@ int ReconDialog::progress()
 
         ui->label_message->setText(QString::fromStdString(m_Interactor->CurrentMessage()));
 
-        QThread::sleep(1);
+        QThread::msleep(50);
     }
     logger(kipl::logging::Logger::LogMessage,"Progress thread end");
 
@@ -121,49 +122,45 @@ int ReconDialog::process()
     ostringstream msg;
     QMessageBox dlg;
     dlg.setWindowTitle("Reconstruction error");
+    bool failed=false;
     try {
         m_Engine->Run3D(m_bRerunBackproj);
     }
     catch (ReconException &e)
     {
         msg<<"ReconException with message: "<<e.what();
-        dlg.setText("Reconstruction failed");
-        dlg.setDetailedText(QString::fromStdString(msg.str()));
-        dlg.exec();
-        Abort();
+        failed =true;
     }
     catch (ModuleException &e) {
         msg<<"ModuleException with message: "<<e.what();
-        dlg.setText("Reconstruction failed");
-        dlg.setDetailedText(QString::fromStdString(msg.str()));
-        dlg.exec();
-        Abort();
+        failed = true;
     }
     catch (kipl::base::KiplException &e)
     {
         msg<<"KiplException with message: "<<e.what();
-        dlg.setText("Reconstruction failed");
-        dlg.setDetailedText(QString::fromStdString(msg.str()));
-        dlg.exec();
-        Abort();
+        failed = true ;
     }
     catch (std::exception &e)
     {
         msg<<"STL exception with message: "<<e.what();
-        dlg.setText("Reconstruction failed");
-        dlg.setDetailedText(QString::fromStdString(msg.str()));
-        dlg.exec();
-        Abort();
+        failed = true;
     }
     catch (...)
     {
         msg<<"An unknown exception";
+        failed =true;
+    }
+
+    if (failed==true)
+    {
         dlg.setText("Reconstruction failed");
         dlg.setDetailedText(QString::fromStdString(msg.str()));
         dlg.exec();
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        finish=false;
         Abort();
+        return 0;
     }
-
     logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
 
     finish=true;
@@ -187,10 +184,7 @@ bool ReconDialog::Finished()
 
     return true;
 }
-void ReconDialog::pressedCancel()
-{
 
-}
 
 void ReconDialog::on_buttonCancel_clicked()
 {

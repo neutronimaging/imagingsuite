@@ -529,33 +529,7 @@ kipl::base::TImage<float,2> ReconEngine::GetSlice(size_t index, kipl::base::eIma
 	kipl::base::TImage<float,2> img;
 
     if (m_Volume.Size()!=0)
-        img=kipl::base::ExtractSlice(m_Volume,index,plane,NULL);
-
-//    size_t dims[2];
-
-//	if (m_Volume.Size()!=0) {
-//        switch (plane) {
-//            case kipl::base::ImagePlaneXY :
-//                img.Resize(m_Volume.Dims());
-
-//                memcpy(img.GetDataPtr(),m_Volume.GetLinePtr(0,index),img.Size()*sizeof(float));
-//                break;
-//            case kipl::base::ImagePlaneXZ :
-//                dims[0]=m_Volume.Size(0);
-//                dims[1]=m_Volume.Size(2);
-//                img.Resize(dims);
-
-//                //memcpy(img.GetDataPtr(),m_Volume.GetLinePtr(0,index),img.Size()*sizeof(float));
-//                break;
-//            case kipl::base::ImagePlaneYZ :
-//                dims[0]=m_Volume.Size(1);
-//                dims[1]=m_Volume.Size(2);
-//                img.Resize(dims);
-
-//                //memcpy(img.GetDataPtr(),m_Volume.GetLinePtr(0,index),img.Size()*sizeof(float));
-//                break;
-//        }
-//	}
+        img=kipl::base::ExtractSlice(m_Volume,index,plane,nullptr);
 
 	return img;
 }
@@ -617,7 +591,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if ((bRerunBackproj) && (m_ProjectionBlocks.empty()==false))
+    if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
         res=Run3DBackProjOnly();
     else
         res=Run3DFull();
@@ -807,6 +781,7 @@ int ReconEngine::Run3DFull()
 	}
 	else {
 		logger(kipl::logging::Logger::LogVerbose,"Run 3D was canceled by the user.");
+        m_ProjectionBlocks.clear();
 	}
 
 	return result;
@@ -818,7 +793,7 @@ int ReconEngine::Run3DBackProjOnly()
     m_BackProjector->GetModule()->Configure(m_Config,m_Config.backprojector.parameters);
 
     m_Volume=0.0f;
-    int result=ProcessExistingProjections3D(NULL);
+    int result=ProcessExistingProjections3D(nullptr);
 
     Done();
     return result;

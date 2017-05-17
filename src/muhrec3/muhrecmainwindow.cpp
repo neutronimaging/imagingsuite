@@ -47,7 +47,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui(new Ui::MuhRecMainWindow),
     m_QtApp(app),
     m_ModuleConfigurator(&m_Config),
-    m_pEngine(NULL),
+    m_pEngine(nullptr),
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
     m_sApplicationPath(app->applicationDirPath().toStdString()),
@@ -469,14 +469,14 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 SetImageDimensionLimits(m_PreviewImage.Dims());
                 UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
       }
-       else {
-                QMessageBox mbox(this);
-                msg.str("");
-                msg<<"Could not load the image "<<name<<std::endl<<"the file does not exist.";
-                logger(kipl::logging::Logger::LogError,msg.str());
-                mbox.setText(QString::fromStdString(msg.str()));
-                mbox.exec();
-       }
+        else {
+            QMessageBox mbox(this);
+            msg.str("");
+            msg<<"Could not load the image "<<name<<std::endl<<"the file does not exist.";
+            logger(kipl::logging::Logger::LogError,msg.str());
+            mbox.setText(QString::fromStdString(msg.str()));
+            mbox.exec();
+        }
     }
 
     }
@@ -509,7 +509,7 @@ void MuhRecMainWindow::DisplaySlice(int x)
 {
     QSignalBlocker blockSlider(ui->sliderSlices);
 
-    if (m_pEngine==NULL)
+    if (m_pEngine==nullptr)
         return;
 
     std::ostringstream msg;
@@ -591,18 +591,18 @@ void MuhRecMainWindow::UpdateDoseROI()
 
 void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
 {
-    ui->spinDoseROIx0->setMaximum(dims[0]-1);
-    ui->spinDoseROIy0->setMaximum(dims[1]-1);
-    ui->spinDoseROIx1->setMaximum(dims[0]-1);
-    ui->spinDoseROIy1->setMaximum(dims[1]-1);
+    ui->spinDoseROIx0->setMaximum(static_cast<int>(dims[0])-1);
+    ui->spinDoseROIy0->setMaximum(static_cast<int>(dims[1])-1);
+    ui->spinDoseROIx1->setMaximum(static_cast<int>(dims[0])-1);
+    ui->spinDoseROIy1->setMaximum(static_cast<int>(dims[1])-1);
 
-    ui->spinProjROIx0->setMaximum(dims[0]-1);
-    ui->spinProjROIx1->setMaximum(dims[0]-1);
-    ui->spinProjROIy0->setMaximum(dims[1]-1);
-    ui->spinProjROIy1->setMaximum(dims[1]-1);
+    ui->spinProjROIx0->setMaximum(static_cast<int>(dims[0])-1);
+    ui->spinProjROIx1->setMaximum(static_cast<int>(dims[0])-1);
+    ui->spinProjROIy0->setMaximum(static_cast<int>(dims[1])-1);
+    ui->spinProjROIy1->setMaximum(static_cast<int>(dims[1])-1);
 
-    ui->spinSlicesFirst->setMaximum(dims[1]-1);
-    ui->spinSlicesLast->setMaximum(dims[1]-1);
+    ui->spinSlicesFirst->setMaximum(static_cast<int>(dims[1])-1);
+    ui->spinSlicesLast->setMaximum(static_cast<int>(dims[1])-1);
 }
 
 void MuhRecMainWindow::GetReconROI()
@@ -611,10 +611,10 @@ void MuhRecMainWindow::GetReconROI()
 
     if (rect.width()*rect.height()!=0)
     {
-        ui->spinProjROIx0->blockSignals(true);
-        ui->spinProjROIx1->blockSignals(true);
-        ui->spinProjROIy0->blockSignals(true);
-        ui->spinProjROIy1->blockSignals(true);
+        QSignalBlocker(ui->spinProjROIx0);
+        QSignalBlocker(ui->spinProjROIx1);
+        QSignalBlocker(ui->spinProjROIy0);
+        QSignalBlocker(ui->spinProjROIy1);
 
         ui->spinProjROIx0->setValue(rect.x());
         ui->spinProjROIy0->setValue(rect.y());
@@ -627,10 +627,6 @@ void MuhRecMainWindow::GetReconROI()
 //        ui->spinSlicesFirst->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
 //        ui->spinSlicesLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
 
-        ui->spinProjROIx0->blockSignals(false);
-        ui->spinProjROIx1->blockSignals(false);
-        ui->spinProjROIy0->blockSignals(false);
-        ui->spinProjROIy1->blockSignals(false);
         ProjROIChanged(0);
     }
 }
@@ -703,17 +699,18 @@ void MuhRecMainWindow::CenterOfRotationChanged()
 
 void MuhRecMainWindow::ConfigureGeometry()
 {
- ConfigureGeometryDialog dlg;
+    ConfigureGeometryDialog dlg;
 
- UpdateConfig();
+    UpdateConfig();
 
- int res=dlg.exec(m_Config);
+    int res=dlg.exec(m_Config);
 
- if (res==QDialog::Accepted) {
-    dlg.GetConfig(m_Config);
-    UpdateDialog();
-    UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
- }
+    if (res==QDialog::Accepted)
+    {
+        dlg.GetConfig(m_Config);
+        UpdateDialog();
+        UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+    }
 }
 
 void MuhRecMainWindow::StoreGeometrySetting()
@@ -747,7 +744,8 @@ void MuhRecMainWindow::ClearGeometrySettings()
 
         int res=confirm_dlg.exec();
 
-        if (res==QMessageBox::Ok) {
+        if (res==QMessageBox::Ok)
+        {
             logger(kipl::logging::Logger::LogMessage, "The list with stored configurations was cleared.");
             m_StoredReconList.clear();
             m_bCurrentReconStored = false;
@@ -788,6 +786,7 @@ void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
 {
     double low=ui->dspinGrayLow->value();
     double high=ui->dspinGrayHigh->value();
+
     ui->sliceViewer->set_levels(low,high);
     ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
     ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
@@ -1178,17 +1177,18 @@ void MuhRecMainWindow::ExecuteReconstruction()
     bool bRerunBackproj=!m_Config.ConfigChanged(m_LastReconConfig,freelist);
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
     logger(kipl::logging::Logger::LogMessage,msg.str());
-    if ( bRerunBackproj==false || m_pEngine==NULL || m_Config.MatrixInfo.bAutomaticSerialize==true) {
+
+    if ( bRerunBackproj==false || m_pEngine==nullptr || m_Config.MatrixInfo.bAutomaticSerialize==true) {
         bRerunBackproj=false; // Just in case if other cases outruled re-run
 
         logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
         msg.str("");
         try {
-            if (m_pEngine!=NULL) {
+            if (m_pEngine!=nullptr) {
                 delete m_pEngine;
             }
 
-            m_pEngine=NULL;
+            m_pEngine=nullptr;
 
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
@@ -1225,16 +1225,21 @@ void MuhRecMainWindow::ExecuteReconstruction()
 
             error_dlg.exec();
 
-            if (m_pEngine!=NULL)
+            if (m_pEngine!=nullptr)
                 delete m_pEngine;
-            m_pEngine=NULL;
+            m_pEngine=nullptr;
 
             return ;
         }
     }
     else {
         logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
-        m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
+        if (m_pEngine!=nullptr)
+            m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
+        else {
+            logger(logger.LogError,"No engine allocated");
+            return;
+        }
         bRerunBackproj=true;
     }
 
@@ -1244,7 +1249,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
     ReconDialog dlg(&m_Interactor);
     bool bRunFailure=false;
     try {
-        if (m_pEngine!=NULL) {
+        if (m_pEngine!=nullptr) {
             int res=0;
             ui->tabMainControl->setCurrentIndex(3);
             res=dlg.exec(m_pEngine,bRerunBackproj);
@@ -1286,8 +1291,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
                     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-                    ui->sliderSlices->setRange(0,m_Config.MatrixInfo.nDims[2]-1);
-                    ui->sliderSlices->setValue(m_Config.MatrixInfo.nDims[2]/2);
+                    ui->sliderSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
+                    ui->sliderSlices->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]/2));
                     m_nSliceSizeX=m_Config.MatrixInfo.nDims[0];
                     m_nSliceSizeY=m_Config.MatrixInfo.nDims[1];
                     m_eSlicePlane=kipl::base::ImagePlaneXY;
@@ -1306,12 +1311,19 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     configfile.close();
 
                     delete m_pEngine;
-                    m_pEngine=NULL;
+                    m_pEngine=nullptr;
                 }
 
             }
             if (res==QDialog::Rejected)
+            {
                 logger(kipl::logging::Logger::LogVerbose,"Finished with Cancel");
+                if (m_pEngine!=nullptr)
+                {
+                    delete m_pEngine;
+                    m_pEngine = nullptr;
+                }
+            }
         }
     }
     catch (std::exception &e) {
@@ -1348,9 +1360,9 @@ void MuhRecMainWindow::ExecuteReconstruction()
         error_dlg.setDetailedText(QString::fromStdString(msg.str()));
 
         error_dlg.exec();
-        if (m_pEngine!=NULL)
+        if (m_pEngine!=nullptr)
             delete m_pEngine;
-        m_pEngine=NULL;
+        m_pEngine=nullptr;
 
         return ;
     }
@@ -1360,7 +1372,7 @@ void MuhRecMainWindow::SaveMatrix()
 {
     UpdateConfig();
     std::ostringstream msg;
-    if (m_pEngine!=NULL) {
+    if (m_pEngine!=nullptr) {
         try {
             m_pEngine->Serialize(&m_Config.MatrixInfo);
 
@@ -1803,29 +1815,35 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
     std::ostringstream msg;
     m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<index);
     size_t dims[3];
-    m_pEngine->GetMatrixDims(dims);
-    int maxslices=static_cast<int>(dims[2-index]);
-    ui->sliderSlices->setMaximum(maxslices-1);
-    ui->sliderSlices->setValue(maxslices/2);
+    if (m_pEngine!=nullptr)
+    {
+        m_pEngine->GetMatrixDims(dims);
+        int maxslices=static_cast<int>(dims[2-index]);
+        ui->sliderSlices->setMaximum(maxslices-1);
+        ui->sliderSlices->setValue(maxslices/2);
 
-    msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+        msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    DisplaySlice(maxslices/2);
+        DisplaySlice(maxslices/2);
 
-    switch (m_eSlicePlane) {
-        case kipl::base::ImagePlaneXY :
-            m_nSliceSizeX=dims[0]-1;
-            m_nSliceSizeY=dims[1]-1;
-        break;
-        case kipl::base::ImagePlaneXZ :
-            m_nSliceSizeX=dims[0]-1;
-            m_nSliceSizeY=dims[2]-1;
-        break;
-        case kipl::base::ImagePlaneYZ :
-            m_nSliceSizeX=dims[1]-1;
-            m_nSliceSizeY=dims[2]-1;
-        break;
+        switch (m_eSlicePlane) {
+            case kipl::base::ImagePlaneXY :
+                m_nSliceSizeX=dims[0]-1;
+                m_nSliceSizeY=dims[1]-1;
+            break;
+            case kipl::base::ImagePlaneXZ :
+                m_nSliceSizeX=dims[0]-1;
+                m_nSliceSizeY=dims[2]-1;
+            break;
+            case kipl::base::ImagePlaneYZ :
+                m_nSliceSizeX=dims[1]-1;
+                m_nSliceSizeY=dims[2]-1;
+            break;
+        }
+    }
+    else {
+        logger(logger.LogWarning,"No engine allocated");
     }
 }
 

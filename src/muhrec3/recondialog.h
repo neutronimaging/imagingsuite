@@ -22,9 +22,6 @@ public:
     int process();
     virtual int exec(ReconEngine *engine, bool bRerunBackProj);
 
-protected slots:
-    void pressedCancel();
-
 private:
     Ui::ReconDialog *ui;
 
