@@ -77,6 +77,7 @@ void QtLogViewer::clear()
 
 void QtLogViewer::save_clicked()
 {
+    QMutexLocker locker(&m_Mutex);
     logger(kipl::logging::Logger::LogVerbose,"Save the log buffer");
 
     QString filename = QFileDialog::getSaveFileName(this,
@@ -90,12 +91,14 @@ void QtLogViewer::save_clicked()
 
 void QtLogViewer::clear_clicked()
 {
+    QMutexLocker locker(&m_Mutex);
     clear();
     logger(kipl::logging::Logger::LogVerbose,"Cleared the log buffer");
 }
 
 void QtLogViewer::loglevel_changed(int level)
 {
+    QMutexLocker locker(&m_Mutex);
     if (level!=m_CurrentLoglevel)
         SetLogLevel(static_cast<kipl::logging::Logger::LogLevel>(level));
 }
