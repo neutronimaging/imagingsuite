@@ -27,7 +27,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 	case kipl::base::ImagePlaneXY :
 		if (img.Size(2)<=index)
 			throw kipl::base::KiplException("Index exceeds image dimension for PlaneXY.", __FILE__, __LINE__);
-		if (roi==NULL) {
+        if (roi==nullptr) {
 			dims[0]=img.Size(0); dims[1]=img.Size(1);
 			offset[0]=0;
 			offset[1]=0;
@@ -58,7 +58,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 		if (img.Size(1)<=index)
 			throw kipl::base::KiplException("Index exceeds image dimension for PlaneXZ.", __FILE__, __LINE__);
 
-		if (roi==NULL) {
+        if (roi==nullptr) {
 			dims[0]=img.Size(0); dims[1]=img.Size(2);
 			offset[0]=0;
 			offset[1]=0;
@@ -91,7 +91,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 		if (img.Size(0)<=index)
 			throw kipl::base::KiplException("Index exceeds image dimension for PlaneYZ.", __FILE__, __LINE__);
 
-		if (roi==NULL) {
+        if (roi==nullptr) {
 			dims[0]=img.Size(1); dims[1]=img.Size(2);
 			offset[0]=0;
 			offset[1]=0;

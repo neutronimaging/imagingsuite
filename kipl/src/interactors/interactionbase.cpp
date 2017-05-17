@@ -6,15 +6,13 @@
 namespace kipl { namespace interactors {
 InteractionBase::InteractionBase(std::string name) : 
 	logger(name),
-	m_bAbort(false),
-	m_bFinished(false),
+    m_Status(interactorIdle),
 	m_fProgress(0.0f)
 {}
 
 void InteractionBase::Reset() 
 {
-	m_bAbort=false; 
-	m_bFinished=false;
+    m_Status=interactorIdle;
 	m_fProgress=0.0f;
     m_fOverallProgress=0.0f;
     m_sMessage="";
@@ -22,27 +20,31 @@ void InteractionBase::Reset()
 
 void InteractionBase::Abort() 
 {
-	m_bAbort=true;
+//    std::cout<<"Aborting"<<std::endl;
+    m_Status = interactorAborted;
 }
 
 void InteractionBase::Done()
 {
-	m_bFinished=true;
+//    std::cout<<"Done"<<std::endl;
+    m_Status = interactorFinished;
 }
 
 bool InteractionBase::SetProgress(float progress, std::string msg)
 {
 	m_fProgress=progress;
 	m_sMessage=msg;
+//    std::cout<<"Progress msg="<<m_sMessage<<", progress="<<m_fProgress<<std::endl;
 
-	return m_bAbort;
+    return m_Status == interactorAborted;
 }
 
 bool InteractionBase::SetOverallProgress(float progress)
 {
+//    std::cout<<"Overall Progress "<<m_fProgress<<std::endl;
     m_fOverallProgress=progress;
 
-    return m_bAbort;
+    return m_Status == interactorAborted;
 }
 
 float InteractionBase::CurrentProgress() 
@@ -62,11 +64,11 @@ std::string InteractionBase::CurrentMessage()
 
 bool InteractionBase::Aborted()
 {
-	return m_bAbort;
+    return m_Status == interactorAborted;
 }
 
 bool InteractionBase::Finished()
 {
-	return m_bFinished;
+    return m_Status == interactorFinished;
 }
 }}

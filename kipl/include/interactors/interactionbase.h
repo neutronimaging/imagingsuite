@@ -21,6 +21,12 @@ class KIPLSHARED_EXPORT InteractionBase
 {
     kipl::logging::Logger logger; ///< The logger for messages from the interactor
 public:
+    enum eInteractorStatus {
+        interactorIdle,
+        interactorRunning,
+        interactorAborted,
+        interactorFinished,
+    };
     /// Constructor to initialize the interactor class
     /// \param name The name of the interactor class. Mostly set throgh the refining class constructor.
 	InteractionBase(std::string name="InteractorBase");
@@ -68,8 +74,9 @@ public:
 	virtual std::string CurrentMessage();
 
 protected:
-    bool m_bAbort;              ///< State variable that holds the abort status (Set using Abort() and checked using Aborted()).
-    bool m_bFinished;           ///< State variable that holds the finished status (Set using Done() and checked using Finished().
+//    bool m_bAbort;              ///< State variable that holds the abort status (Set using Abort() and checked using Aborted()).
+//    bool m_bFinished;           ///< State variable that holds the finished status (Set using Done() and checked using Finished().
+    eInteractorStatus m_Status;
     float m_fProgress;          ///< Progress counter a value in the interval 0.0-1.0.
     float m_fOverallProgress;   ///< Progress counter a value in the interval 0.0-1.0.
     std::string m_sMessage;     ///< The progress message currently shown.
