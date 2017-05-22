@@ -1,14 +1,4 @@
-//
-// This file is part of the ModuleConfig library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #ifndef __CONFIGBASE_H
 #define __CONFIGBASE_H
@@ -26,7 +16,6 @@
 #include "ModuleConfig.h"
 
 #include <logging/logger.h>
-//#include <io/io_stack.h>
 
 /// Pure virtual base class with basic interface for processing configuartion
 /// It provides an interface the load and save configurations formatted as XML.
