@@ -924,7 +924,7 @@ void FDKbp::project_volume_onto_image_rtk(
 //        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; //NOT OK
 //        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]}; // SEEMS THE MOST CORRECT
 //        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]}; // NOT OK
-        double ic[2] = {mConfig.ProjectionInfo.nDims[0]/2-mConfig.ProjectionInfo.roi[0], mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]}; // center of the detector with respect of the projectionroi
+        double ic[2] = {static_cast<double>(mConfig.ProjectionInfo.nDims[0]/2-mConfig.ProjectionInfo.roi[0]), static_cast<double>(mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1])}; // center of the detector with respect of the projectionroi
 
 //        std::cout << ic[0] << " " << ic[1] << std::endl;
 

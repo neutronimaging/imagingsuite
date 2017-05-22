@@ -42,6 +42,7 @@ private slots:
 private:
 
     void LSQ_fit1(vector<float> &v, float *k, float *m);
+    void LSQ_fit_percentile(std::vector<float> &v, float *k, float *m, float percentile);
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
     float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
                                 kipl::base::TImage<float,2> proj_180,

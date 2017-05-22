@@ -177,6 +177,37 @@ void ConfigureGeometryDialog::LSQ_fit1(std::vector<float> &v, float *k, float *m
     *m=(e*d-b*f)/(a*d-b*c);
 }
 
+void ConfigureGeometryDialog::LSQ_fit_percentile(std::vector<float> &v, float *k, float *m, float percentile)
+{
+    size_t *roi=m_Config.ProjectionInfo.roi;
+    float a,b,c,d,e,f,val;
+
+    a=static_cast<float>(v.size());
+    b=c=d=e=f=0.0f;
+
+    map<float,int> sorted_v;
+    int N=v.size();
+    int Np=floor(N*percentile*0.5f);
+    for (int i=0; i<N; ++i)
+        sorted_v[v[i]]=i+roi[1];
+
+    auto sit=sorted_v.begin();
+    std::advance(sit,Np);
+
+    float x=0.0f;
+    for ( int i=0; (sit!=sorted_v.end()) || (i<(N-2*Np)) ; ++sit, ++i) {
+        val=*sit;
+        b+=val.second;
+        d+=val.second*val.second;
+        e+=val.first;
+        f+=val.second*val.first;
+    }
+
+    c=b;
+    *k=(a*f-c*e)/(a*d-b*c);
+    *m=(e*d-b*f)/(a*d-b*c);
+}
+
 kipl::base::TImage<float,2> ConfigureGeometryDialog::ThresholdProjection(const kipl::base::TImage<float,2> img, float level)
 {
     kipl::base::TImage<float,2> result(img.Dims());
