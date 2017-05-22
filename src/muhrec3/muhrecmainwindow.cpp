@@ -211,16 +211,6 @@ void MuhRecMainWindow::BrowseProjectionPath()
 
 		std::string pdir=projdir.toStdString();
 
-//        #ifdef _MSC_VER
-//        const char slash='\\';
-//        #else
-//        const char slash='/';
-//        #endif
-
-//        ptrdiff_t pos=pdir.find_last_of(slash);
-
-//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-//        std::string fname=pdir.substr(pos+1);
 		kipl::io::DirAnalyzer da;
 		fi=da.GetFileMask(pdir);
 		newmask=QString::fromStdString(fi.m_sMask);
@@ -228,8 +218,6 @@ void MuhRecMainWindow::BrowseProjectionPath()
 		int c=0;
 		int f=0;
 		int l=0;
-
-
 
 		da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
 
@@ -259,8 +247,7 @@ void MuhRecMainWindow::BrowseProjectionPath()
              size_t Nofimgs[2];
              ProjectionReader reader;
              reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
-//             std::cout << "NofImgs: " << Nofimgs[0]<< " " << Nofimgs[1] << std::endl;
-//             std::cout << "angles: " << angles[0] << " " << angles[1] << std::endl;
+
              ui->spinFirstProjection->setValue(static_cast<int>(Nofimgs[0]));
              ui->spinLastProjection->setValue(static_cast<int>(Nofimgs[1]));
              ui->dspinAngleStart->setValue(angles[0]);
@@ -282,6 +269,7 @@ void MuhRecMainWindow::BrowseProjectionPath()
 
 void MuhRecMainWindow::on_buttonBrowseReference_clicked()
 {
+    std::ostringstream msg;
     std::string sPath, sFname;
     std::vector<std::string> exts;
     if (ui->editOpenBeamMask->text().isEmpty())
@@ -308,6 +296,20 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
         }
         else {
             ui->editOpenBeamMask->setText(QString::fromStdString(fi.m_sMask));
+
+            QString newmask=QString::fromStdString(fi.m_sMask);
+            ui->editProjectionMask->setText(newmask);
+            int c=0;
+            int f=0;
+            int l=0;
+
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+
+            msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+            logger(logger.LogMessage,msg.str());
+
+            ui->spinFirstOpenBeam->setValue(f);
+            ui->spinOpenBeamCount->setValue(c);
         }
     }
 }
@@ -1779,6 +1781,7 @@ void MuhRecMainWindow::UpdateConfig()
 
 void MuhRecMainWindow::on_buttonBrowseDC_clicked()
 {
+    std::ostringstream msg;
     std::string sPath, sFname;
     std::vector<std::string> exts;
     kipl::strings::filenames::StripFileName(ui->editProjectionMask->text().toStdString(),sPath,sFname,exts);
@@ -1801,6 +1804,19 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
         }
         else {
             ui->editDarkMask->setText(QString::fromStdString(fi.m_sMask));
+            QString newmask=QString::fromStdString(fi.m_sMask);
+            ui->editProjectionMask->setText(newmask);
+            int c=0;
+            int f=0;
+            int l=0;
+
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+
+            msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+            logger(logger.LogMessage,msg.str());
+
+            ui->spinFirstDark->setValue(f);
+            ui->spinDarkCount->setValue(c);
         }
     }
 }
