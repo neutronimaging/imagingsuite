@@ -61,11 +61,20 @@ void TLinFitTest::testCalls()
         y[i]=x[i]*ck+cm;
 
     kipl::math::LinearLSFit(x,y,5,&m,&k, &R2);
+    QVERIFY(qFuzzyCompare(m,cm, 1e-7));
+    QVERIFY(qFuzzyCompare(k,ck,1e-7));
+    QVERIFY(qFuzzyCompare(R2,1.0,1e-7));
+
     kipl::math::LinearLSFit(x,y,5,q);
 
     QVERIFY(qFuzzyCompare(m,q[0], 1e-7));
     QVERIFY(qFuzzyCompare(k,q[1],1e-7));
     QVERIFY(qFuzzyCompare(R2,q[2],1e-7));
+
+    kipl::math::LinearLSFit(x,y,5,&m,&k,&R2,0.6);
+    std::cout<<"m="<<m<<", k="<<k<<", R2"<<R2<<std::endl;
+
+
 }
 
 QTEST_APPLESS_MAIN(TLinFitTest)

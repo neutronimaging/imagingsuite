@@ -18,9 +18,11 @@ TEMPLATE = app
 SOURCES += tst_tlinfittest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix: LIBS += -L$$PWD/../../kipl/build-kipl-Qt5-Release/ -lkipl
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/
+
+
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src
