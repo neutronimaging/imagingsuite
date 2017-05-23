@@ -616,6 +616,9 @@
                   <property name="toolTip">
                    <string>File index of the first dark current image</string>
                   </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -632,6 +635,9 @@
                  <widget class="QSpinBox" name="spinDarkCount">
                   <property name="toolTip">
                    <string>Number of dark current images</string>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
                   </property>
                  </widget>
                 </item>
@@ -2415,6 +2421,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
    <header location="global">qtlogviewer.h</header>
@@ -2424,12 +2436,6 @@
    <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">modulechainconfiguratorwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

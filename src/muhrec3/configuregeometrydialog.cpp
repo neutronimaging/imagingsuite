@@ -10,6 +10,7 @@
 #include <strings/filenames.h>
 #include <filters/medianfilter.h>
 #include <math/mathconstants.h>
+#include <math/linfit.h>
 #include <base/tsubimage.h>
 #include <morphology/morphfilters.h>
 
@@ -20,7 +21,8 @@
 ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     QDialog(parent),
     logger("ConfigGeometryDialog"),
-    ui(new Ui::ConfigureGeometryDialog)
+    ui(new Ui::ConfigureGeometryDialog),
+    fraction(0.9f)
 {
     ui->setupUi(this);
     connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
@@ -120,14 +122,31 @@ void ConfigureGeometryDialog::FindCenter()
     QVector<QPointF> plot_data;
 
     if (ui->checkUseTilt->isChecked()) {
-        float k=0.0f,m=0.0f;
-        LSQ_fit1(m_vCoG,&k,&m);
-        m_Config.ProjectionInfo.fTiltAngle=atan(k)*180.0f/fPi;
+        double k=1.0f,m=0.0f;
+        double R2;
+     //   LSQ_fit1(m_vCoG,&k,&m);
+     //   LSQ_fit_percentile(m_vCoG,&k,&m,percentage);
+        int N=m_vCoG.size();
+        float *x=new float[N];
+        float *y=new float[N];
 
+        for (int i=0; i<N; ++i) {
+            x[i]=i+roi[1];
+            y[i]=m_vCoG[i];
+        }
+
+        kipl::math::LinearLSFit(x,y,N,&m,&k,&R2);
+//        kipl::math::LinearLSFit(x,y,N,&m,&k,&R2,fraction);
+        delete [] x;
+        delete [] y;
+
+        m_Config.ProjectionInfo.fTiltAngle=atan(k)*180.0f/fPi;
         m_Config.ProjectionInfo.fCenter=k*(0.5f* m_Config.ProjectionInfo.nDims[1])+m;
+
+        ui->labelR2->setText(QString::number(R2,'g',3));
         msg.str("");
-        msg<<"Estimated center="<<m<<", tilt="<<k<<endl;
-        logger(kipl::logging::Logger::LogVerbose,msg.str());
+        msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<endl;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
         plot_data.clear();
         plot_data.append(QPointF(k*roi[1]+m+roi[0],0.0f));
         plot_data.append(QPointF(k*roi[3]+m+roi[0],m_Proj0Deg.Size(1)-1.0f));
@@ -147,65 +166,6 @@ void ConfigureGeometryDialog::FindCenter()
     }
 
     ui->viewerProjection->set_plot(plot_data,QColor("red"),0);
-
-
-
-
-
-}
-
-void ConfigureGeometryDialog::LSQ_fit1(std::vector<float> &v, float *k, float *m)
-{
-    size_t *roi=m_Config.ProjectionInfo.roi;
-    float a,b,c,d,e,f,val;
-
-    a=static_cast<float>(v.size());
-    b=c=d=e=f=0.0f;
-
-    vector<float>::iterator it;
-    float x=0.0f;
-    for (it=v.begin(), x=static_cast<float>(roi[1]); it!=v.end(); it++, x++) {
-        val=*it;
-        b+=x;
-        d+=x*x;
-        e+=val;
-        f+=x*val;
-    }
-
-    c=b;
-    *k=(a*f-c*e)/(a*d-b*c);
-    *m=(e*d-b*f)/(a*d-b*c);
-}
-
-void ConfigureGeometryDialog::LSQ_fit_percentile(std::vector<float> &v, float *k, float *m, float percentile)
-{
-    size_t *roi=m_Config.ProjectionInfo.roi;
-    float a,b,c,d,e,f,val;
-
-    a=static_cast<float>(v.size());
-    b=c=d=e=f=0.0f;
-
-    map<float,int> sorted_v;
-    int N=v.size();
-    int Np=floor(N*percentile*0.5f);
-    for (int i=0; i<N; ++i)
-        sorted_v[v[i]]=i+roi[1];
-
-    auto sit=sorted_v.begin();
-    std::advance(sit,Np);
-
-    float x=0.0f;
-    for ( int i=0; (sit!=sorted_v.end()) || (i<(N-2*Np)) ; ++sit, ++i) {
-        val=*sit;
-        b+=val.second;
-        d+=val.second*val.second;
-        e+=val.first;
-        f+=val.second*val.first;
-    }
-
-    c=b;
-    *k=(a*f-c*e)/(a*d-b*c);
-    *m=(e*d-b*f)/(a*d-b*c);
 }
 
 kipl::base::TImage<float,2> ConfigureGeometryDialog::ThresholdProjection(const kipl::base::TImage<float,2> img, float level)
@@ -690,7 +650,7 @@ void ConfigureGeometryDialog::UpdateConfig()
         m_Config.ProjectionInfo.fTiltAngle   = ui->dspinTiltAngle->value();
         m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
     }
-
+    fraction = static_cast<float>(ui->spinPercentage->value())/100.0f;
 }
 
 void ConfigureGeometryDialog::UpdateDialog()
