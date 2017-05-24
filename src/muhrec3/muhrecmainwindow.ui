@@ -1687,8 +1687,14 @@
                <x>10</x>
                <y>30</y>
                <width>681</width>
-               <height>391</height>
+               <height>291</height>
               </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
             </widget>
            </widget>
@@ -1965,7 +1971,7 @@
                <x>10</x>
                <y>20</y>
                <width>681</width>
-               <height>241</height>
+               <height>211</height>
               </rect>
              </property>
             </widget>
@@ -2249,7 +2255,7 @@
      <x>0</x>
      <y>0</y>
      <width>1268</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
