@@ -2,6 +2,7 @@
 #define MEDIAN_HPP_
 
 #include <algorithm>
+#include <cstring>
 #include "../../algorithms/sortalg.h"
 namespace kipl { namespace math {
 
@@ -9,7 +10,7 @@ template<class T, class S>
 void median(T *v,const size_t n, S * med)
 {
         T *tmp=new T[n];
-        memcpy(tmp,v,n*sizeof(T));
+       memcpy(tmp,v,n*sizeof(T));
         heapsort(tmp,static_cast<int>(n));
         *med=0;
         if ((n & 1) == 1)
