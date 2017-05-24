@@ -25,7 +25,6 @@ public:
 
 protected slots:
     void FindCenter();
-    void UseTilt(bool x);
 
 private slots:
     void onOKButtonClicked(){ this->setResult(QDialog::Accepted);}

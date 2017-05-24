@@ -1,5 +1,10 @@
+//<LICENSE>
+
 #include "configuregeometrydialog.h"
 #include "ui_configuregeometrydialog.h"
+
+#include <exception>
+#include <numeric>
 
 #include <QMessageBox>
 
@@ -14,10 +19,6 @@
 #include <base/tsubimage.h>
 #include <morphology/morphfilters.h>
 
-#include <exception>
-#include <numeric>
-
-
 ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     QDialog(parent),
     logger("ConfigGeometryDialog"),
@@ -26,9 +27,11 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
-    connect(ui->checkUseTilt,SIGNAL(toggled(bool)),SLOT(UseTilt(bool)));
+
     connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
+
+    on_checkUseTilt_toggled(false);
 }
 
 ConfigureGeometryDialog::~ConfigureGeometryDialog()
@@ -124,8 +127,7 @@ void ConfigureGeometryDialog::FindCenter()
     if (ui->checkUseTilt->isChecked()) {
         double k=1.0f,m=0.0f;
         double R2;
-     //   LSQ_fit1(m_vCoG,&k,&m);
-     //   LSQ_fit_percentile(m_vCoG,&k,&m,percentage);
+
         int N=m_vCoG.size();
         float *x=new float[N];
         float *y=new float[N];
@@ -141,7 +143,9 @@ void ConfigureGeometryDialog::FindCenter()
         delete [] y;
 
         m_Config.ProjectionInfo.fTiltAngle=atan(k)*180.0f/fPi;
-        m_Config.ProjectionInfo.fCenter=k*(0.5f* m_Config.ProjectionInfo.nDims[1])+m;
+        int vertical_center=(m_Config.ProjectionInfo.projection_roi[3]-m_Config.ProjectionInfo.projection_roi[1])/2;
+        m_Config.ProjectionInfo.fCenter=k*vertical_center+m;
+        m_Config.ProjectionInfo.fTiltPivotPosition=vertical_center;
 
         ui->labelR2->setText(QString::number(R2,'g',3));
         msg.str("");
@@ -363,12 +367,6 @@ pair<size_t, size_t> ConfigureGeometryDialog::FindMaxBoundary()
     return b;
 }
 
-
-void ConfigureGeometryDialog::UseTilt(bool x)
-{
-
-}
-
 int ConfigureGeometryDialog::LoadImages()
 {
     kipl::base::TImage<float,2> img;
@@ -395,56 +393,55 @@ int ConfigureGeometryDialog::LoadImages()
         if (m_Config.ProjectionInfo.nOBCount) {
             size_t found = m_Config.ProjectionInfo.sOBFileMask.find("hdf");
 
-          if (found==std::string::npos) {
-            m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
-                    m_Config.ProjectionInfo.sOBFileMask,
-                    m_Config.ProjectionInfo.nOBFirstIndex,
-                    m_Config.ProjectionInfo.eFlip,
-                    m_Config.ProjectionInfo.eRotate,
-                    m_Config.ProjectionInfo.fBinning,
-                    NULL);
+            if (found==std::string::npos) {
+                m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
+                m_Config.ProjectionInfo.sOBFileMask,
+                m_Config.ProjectionInfo.nOBFirstIndex,
+                m_Config.ProjectionInfo.eFlip,
+                m_Config.ProjectionInfo.eRotate,
+                m_Config.ProjectionInfo.fBinning,
+                nullptr);
             }
             else{
-//           kipl::base::TImage<float,3> OBslices = reader.ReadNexusTomo(m_Config.ProjectionInfo.sOBFileMask);
-//           m_ProjOB = reader.GetNexusSlice(OBslices, m_Config.ProjectionInfo.nOBFirstIndex,
-//                                           m_Config.ProjectionInfo.eFlip,
-//                                           m_Config.ProjectionInfo.eRotate,
-//                                           m_Config.ProjectionInfo.fBinning,
-//                                           NULL);
-           m_ProjOB = reader.ReadNexus(m_Config.ProjectionInfo.sOBFileMask,
-                                       m_Config.ProjectionInfo.nOBFirstIndex,
-                                       m_Config.ProjectionInfo.eFlip,
-                                       m_Config.ProjectionInfo.eRotate,
-                                       m_Config.ProjectionInfo.fBinning,
-                                       NULL );
-          }
-             m_ProjOB=medfilt(m_ProjOB);
+                m_ProjOB = reader.ReadNexus(m_Config.ProjectionInfo.sOBFileMask,
+                                   m_Config.ProjectionInfo.nOBFirstIndex,
+                                   m_Config.ProjectionInfo.eFlip,
+                                   m_Config.ProjectionInfo.eRotate,
+                                   m_Config.ProjectionInfo.fBinning,
+                                   nullptr );
+            }
+
+            m_ProjOB=medfilt(m_ProjOB);
 
         }
 
     }
-    catch (ReconException & e) {
+    catch (ReconException & e)
+    {
         msg<<"Failed to load the open beam image (ReconException): "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
         loaderror_dlg.exec();
         return -1;
     }
-    catch (kipl::base::KiplException & e) {
+    catch (kipl::base::KiplException & e)
+    {
         msg<<"Failed to load the open beam image (kipl): "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
         loaderror_dlg.exec();
         return -1;
     }
-    catch (std::exception & e) {
+    catch (std::exception & e)
+    {
         msg<<"Failed to load the open beam image (STL): "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
         loaderror_dlg.exec();
         return -1;
     }
-    catch (...) {
+    catch (...)
+    {
         msg<<"Failed to load the open beam image (unknown exception): ";
         logger(kipl::logging::Logger::LogError,msg.str());
         loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
@@ -454,7 +451,8 @@ int ConfigureGeometryDialog::LoadImages()
 
     size_t found = m_Config.ProjectionInfo.sFileMask.find("hdf");
 
-    if (found==std::string::npos) {
+    if (found==std::string::npos)
+    {
 
         std::map<float,ProjectionInfo> projlist;
         BuildFileList(&m_Config,&projlist);
@@ -462,7 +460,8 @@ int ConfigureGeometryDialog::LoadImages()
 
 
 
-        try {
+        try
+        {
             marked=projlist.begin();
             float diff=abs(marked->first);
             for (it=projlist.begin(); it!=projlist.end(); it++) {
@@ -499,7 +498,8 @@ int ConfigureGeometryDialog::LoadImages()
             m_Proj0Deg=medfilt(m_Proj0Deg);
 
         }
-        catch (ReconException & e) {
+        catch (ReconException & e)
+        {
             msg<<"Failed to load the first projection (ReconException): "<<e.what();
             logger(kipl::logging::Logger::LogError,msg.str());
             loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
@@ -682,7 +682,7 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
 
     ROIChanged(-1);
-    UseTilt(m_Config.ProjectionInfo.bCorrectTilt);
+    on_checkUseTilt_toggled(m_Config.ProjectionInfo.bCorrectTilt);
     ui->spinSliceFirst->blockSignals(false);
     ui->spinSliceLast->blockSignals(false);
 }
