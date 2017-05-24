@@ -35,7 +35,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <attribute name="title">
@@ -1690,8 +1690,6 @@
                <height>391</height>
               </rect>
              </property>
-             <zorder>label_39</zorder>
-             <zorder>dspinRotateRecon</zorder>
             </widget>
            </widget>
           </item>
