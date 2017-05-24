@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include <QtWidgets/QApplication>
 #include <QDesktopServices>
 #include <QPushButton>
@@ -16,7 +18,7 @@
 int RunGUI(QApplication *app);
 int RunOffline(QApplication *app);
 void TestConfig();
-//#define USE_NODE_LOCK
+
 
 int main(int argc, char *argv[])
 {

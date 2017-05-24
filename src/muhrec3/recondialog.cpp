@@ -38,8 +38,8 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     logger(kipl::logging::Logger::LogMessage,"Start");
 
     m_Interactor->Reset();
-#define NEVERDO
-#ifdef NEVERDO
+
+#ifndef _MSC_VER
     logger(logger.LogMessage,"Starting with threads");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);

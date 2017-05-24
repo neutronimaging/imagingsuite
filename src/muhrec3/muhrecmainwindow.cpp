@@ -40,7 +40,6 @@
 #include "piercingpointdialog.h"
 
 
-
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("MuhRec3MainWindow"),

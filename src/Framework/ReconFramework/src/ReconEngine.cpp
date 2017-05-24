@@ -75,6 +75,7 @@ ReconEngine::~ReconEngine(void)
 void ReconEngine::SetConfig(ReconConfig &config)
 {
 	m_Config=config;
+    m_ProjectionMargin = config.ProjectionInfo.nMargin;
 }
 
 size_t ReconEngine::AddPreProcModule(ModuleItem *module)
