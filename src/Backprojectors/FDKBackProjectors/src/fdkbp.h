@@ -24,12 +24,12 @@ protected:
     void ramp_filter (kipl::base::TImage<float,2>  &img);
     void project_volume_onto_image_reference (kipl::base::TImage<float,2>  &cbi, double *proj_matrix, double *nrm);///< Reference FDK implementation is the most straightforward implementation, also it is the slowest
     void project_volume_onto_image_c (kipl::base::TImage<float,2>  &cbi, double *proj_matrix);///< Multi core accelerated FDK implementation
-    void project_volume_onto_image_rtk (kipl::base::TImage<float,2>  &cbi, double *proj_matrix);/// attempt with FDK-RTK matrices
+//    void project_volume_onto_image_rtk (kipl::base::TImage<float,2>  &cbi, double *proj_matrix);/// attempt with FDK-RTK matrices
     float get_pixel_value_b (kipl::base::TImage<float,2> &cbi, double r, double c);
     float get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, double c);
     void getProjMatrix(float angles, double* nrm, double *proj_matrix);
-    void computeProjMatrix(float angles, double* nrm, double *proj_matrix);
-    void compRTKProjMatrix(float angles, double* nrm, double *proj_matrix);
+//    void computeProjMatrix(float angles, double* nrm, double *proj_matrix);
+//    void compRTKProjMatrix(float angles, double* nrm, double *proj_matrix);
     void multiplyMatrix (double *mat1, double *mat2, double *result, int rows, int columns, int columns1);
 };
 
