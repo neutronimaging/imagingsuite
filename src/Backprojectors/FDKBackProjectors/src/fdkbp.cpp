@@ -68,15 +68,13 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 
     // compute geometry matrix: detector oriented as the z axis (in case of no tilt), source perpendicular to x
 
-    double extrinsic[16] =   {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Extrinsic matrix */
-    double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Intrinsic matrix */
-    double sad = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
-    double sid = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
+    double extrinsic[16] =   {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // Extrinsic matrix
+    double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // Intrinsic matrix
+    double sad = mConfig.ProjectionInfo.fSOD; ; // Distance: source to axis = source to object distance
+    double sid = mConfig.ProjectionInfo.fSDD; // Distance: source to image = source to detector distance
 
 
-   double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.MatrixInfo.fVoxelSize[0];
-//    double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.ProjectionInfo.fResolution[0];
-
+   double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.MatrixInfo.fVoxelSize[0]; // in world coordinate
 
     double cam[3] = {sad*cos(-angles*dPi/180), sad*sin(-angles*dPi/180),0.0}; // Location of camera
     double plt[3] = {0.0,0.0,0.0}; // Detector orientation  Panel left (toward first column)
@@ -90,25 +88,23 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
     else {
         vup[2] = 1.0; // hardcoded for ideal panel orientation  -- add tilt here
     }
+
     double tgt[3] = {0.0,0.0,0.0};
 
 
 
-    /* Compute imager coordinate sys (nrm,pup,plt)
-       ---------------
-       nrm = cam - tgt
-       plt = nrm x vup
-       pup = plt x nrm
-       ---------------
-    */
+//    Compute imager coordinate sys (nrm,pup,plt)
+//       ---------------
+//       nrm = cam - tgt
+//       plt = nrm x vup
+//       pup = plt x nrm
+//       ---------------
+
 
     nrm[0] = cam[0]-tgt[0];
     nrm[1] = cam[1]-tgt[1];
     nrm[2] = cam[2]-tgt[2];
 
-//    nrm[0] = cam[0];
-//    nrm[1] = cam[1];
-//    nrm[2] = cam[2];
 
 
 
@@ -122,8 +118,6 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 
     std::cout << angles << std::endl;
 
-//        std::cout << "ray from image center to source: " << std::endl;
-//        std::cout << nrm[0] << " " << nrm[1] << " " << nrm[2] << std::endl;
 
 //            vec3_cross (plt, nrm, vup); // cross product
 //            vec3_normalize1 (plt);
@@ -159,7 +153,7 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 //        printf ("PUP = %g %g %g\n", pup[0], pup[1], pup[2]);
 
 
-    /* Build extrinsic matrix - rotation part */
+    // Build extrinsic matrix - rotation part
 
 
 //        vec3_invert (&pmat->extrinsic[0]);
@@ -182,19 +176,16 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 
 
 
-     /* Build extrinsic matrix - translation part */
+     //  ----------------- Build extrinsic matrix - translation part
 
 //        pmat->extrinsic[3] = vec3_dot (plt, tgt);
 //        pmat->extrinsic[7] = vec3_dot (pup, tgt);
 //        pmat->extrinsic[11] = vec3_dot (nrm, tgt) + pmat->sad;
 
-        extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2]; // -(mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.ProjectionInfo.fResolution[0]*sad/sid
-        extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2]-offCenter;
+        extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2]-offCenter;
+        extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
         extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+sad;
 
-//    extrinsic[3] = 0;
-//    extrinsic[7] = 0;
-//    extrinsic[11] = 0+mConfig.ProjectionInfo.fSOD;
 
 
 
@@ -210,7 +201,7 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 //        extrinsic[14], extrinsic[15]);
 
 
-        /* Build intrinsic matrix */
+        // -------------- Build intrinsic matrix
 
 
 //        m_idx (pmat->intrinsic,cols,0,0) = 1 / ps[0];
@@ -230,9 +221,10 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 
 
 
-    /* Build Projection Geometry Matrix = intrinsic * extrinsic */
+    // -------  Build Projection Geometry Matrix = intrinsic * extrinsic
    int i,j,k;
 
+   #pragma omp parallel for
    for (i = 0; i < 3; i++) {
         for (j = 0; j < 4; j++) {
             float acc = 0.0; // why not double?
@@ -243,111 +235,35 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
         }
    }
 
-   //       if (mConfig.ProjectionInfo.bCorrectTilt)  {
 
-   //           /*Build the tilt matrix: rotation around X */
-
-   //           std::cout << "tilt angle: " << mConfig.ProjectionInfo.fTiltAngle << std::endl;
-
-
-   //           tilt_matrix[0] = 1.0;
-   //           tilt_matrix[1] = 0.0;
-   //           tilt_matrix[2] = 0.0;
-   //           tilt_matrix[3] = 0.0;
-
-   //           tilt_matrix[5] = cos(mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-   //           tilt_matrix[4] = 0.0;
-   //           tilt_matrix[6] = sin(mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-   //           tilt_matrix[7] = 0.0;
-
-   //           tilt_matrix[9] = -sin(mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-   //           tilt_matrix[8] = 0.0;
-   //           tilt_matrix[10] = cos(mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-   //           tilt_matrix[11] = 0.0;
-
-   //           tilt_matrix[12] = 0.0;
-   //           tilt_matrix[13] = 0.0;
-   //           tilt_matrix[13] = 0.0;
-
-   //           tilt_matrix[15] = 1.0;
-
-
-   //           printf ("TILT MATRIX\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n %g %g %g %g\n",
-   //                   tilt_matrix[0], tilt_matrix[1],
-   //                   tilt_matrix[2], tilt_matrix[3],
-   //                   tilt_matrix[4], tilt_matrix[5],
-   //                   tilt_matrix[6], tilt_matrix[7],
-   //                   tilt_matrix[8], tilt_matrix[9],
-   //                   tilt_matrix[10], tilt_matrix[11],
-   //                   tilt_matrix[12], tilt_matrix[13],
-   //                   tilt_matrix[14], tilt_matrix[15]
-   //                   );
-
-
-   //           for (i=0; i<4; i++) {
-   //               for (j=0; j<4; j++) {
-   //                   float acc = 0.0;
-   //                   for (k=0; k<4; k++) {
-   //                       acc += m_idx(proj_matrix,4,i,k)*m_idx(tilt_matrix,4,k,j);
-   //                   }
-   //                   m_idx(tilted_proj_matrix,4,i,j) = acc;
-   //               }
-   //           }
-
-   ////           printf ("TILTED PROJECTION MATRIX\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
-   ////                   tilted_proj_matrix[0], tilted_proj_matrix[1],
-   ////                   tilted_proj_matrix[2], tilted_proj_matrix[3],
-   ////                   tilted_proj_matrix[4], tilted_proj_matrix[5],
-   ////                   tilted_proj_matrix[6], tilted_proj_matrix[7],
-   ////                   tilted_proj_matrix[8], tilted_proj_matrix[9],
-   ////                   tilted_proj_matrix[10], tilted_proj_matrix[11]
-   ////                   );
-
-   //       }
-
-
-//   printf ("GEOMETRY MATRIX in the function\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
-//   proj_matrix[0], proj_matrix[1],
-//   proj_matrix[2], proj_matrix[3],
-//   proj_matrix[4], proj_matrix[5],
-//   proj_matrix[6], proj_matrix[7],
-//   proj_matrix[8], proj_matrix[9],
-//   proj_matrix[10], proj_matrix[11]);
-
-
-//   return proj_matrix;
 }
 
 
-/* Main reconstruction loop - Loop over images, and backproject each
-    image into the volume. */
-size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
+/// Main reconstruction loop - Loop over images, and backproject each image into the volume.
+size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)
 {
 
     // missing things todo:
-    // 1. timer - OK. total timer
-    // 2. weights - OK
-    // 3. reconstruct VOI- ok
-    // 4. reconstruct from projections ROI - OK
-    // 5. use circular mask
+    // 1. use circular mask
+    // 2. check parallel cycles
 
 
 
-//        float scale;
+        float scale;
 //        double filter_time = 0.0;
 //        double backproject_time = 0.0;
 //        double io_time = 0.0;
         double nrm[3] = {0.0, 0.0, 0.0};
         double proj_matrix[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Projection matrix */
 
-        getProjMatrix(angles, nrm, proj_matrix); // panel oriented as z, to be used with project_volume_onto_image_c
-//        computeProjMatrix(angles,nrm,proj_matrix); // second version with attempt to correct misalignments - panel oriented as y, to be used with project_volume_onto_image_c (but origin is not clearly computed..)
-//        compRTKProjMatrix(angles, nrm, proj_matrix); // third version with rtk-like projection matrices
 
+        getProjMatrix(angles, nrm, proj_matrix); // panel oriented as z, to be used with project_volume_onto_image_c
 
 
         /* Arbitrary scale applied to each image */
-//        scale = (float) (sqrt(3.f) / (double) num_imgs);
+//        scale = (float) (sqrt(3.f) / (double) nProj);
+//        scale = 1.0f;
+//        proj*=scale;
 //        scale = scale * parms->scale;
 //        scale = 1.0; // do i need this?
 
@@ -366,10 +282,8 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 //        project_volume_onto_image_reference (proj, &proj_matrix[0], &nrm[0]);
 
 //       DEFAULT FDK BACK PROJECTOR:                
-        project_volume_onto_image_c (proj, &proj_matrix[0]);
-//          project_volume_onto_image_rtk (proj, &proj_matrix[0]);
+        project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
 
-//            backproject_time += timer->report ();
 
 
 
@@ -389,10 +303,8 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles)
 }
 
 
-void FDKbp::project_volume_onto_image_c(
-    kipl::base::TImage<float, 2> &cbi,
-    double *proj_matrix
-)
+void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
+    double *proj_matrix, size_t nProj)
 {
 
 
@@ -401,8 +313,13 @@ void FDKbp::project_volume_onto_image_c(
         float* img = volume.GetDataPtr(); // maybe i don't need this
         double *xip, *yip, *zip;
         double sad_sid_2;
+//        float scale = (float) (sqrt(3.f) / (double) (nProj));
+        float scale = 1.0f;
 
-//        std::cout << spacing[0] << std::endl;
+
+//        std::cout<< nProjectionBufferSize << std::endl;
+//        float scale = mConfig.ProjectionInfo.fResolution[0]; // compenso per la risoluzione che viene computata inizialmente
+
 
 
 
@@ -415,67 +332,33 @@ void FDKbp::project_volume_onto_image_c(
         spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
         spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
 
-        // origin of the reconstructed volume. Volume isocenter is assumed in position (0,0,0)
-//        float origin[3] = {-24.9512f, -24.9512f, -42.00f};
         float origin[3];
 
         float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
         float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
-        double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.MatrixInfo.fVoxelSize[0];
-//        double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.ProjectionInfo.fResolution[0];
-
 
         if (mConfig.MatrixInfo.bUseVOI) {
 
-            origin[0] =  - (U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
-            origin[1] = - (U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
-            origin[2] = -offCenter-(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
-
-//            std::cout << mConfig.MatrixInfo.voi[0] << " " << mConfig.MatrixInfo.voi[1] << " " << mConfig.MatrixInfo.voi[2] << " " << mConfig.MatrixInfo.voi[3] << " " << mConfig.MatrixInfo.voi[4] << " " << mConfig.MatrixInfo.voi[5]<<std::endl;
-
-//            origin[0] = - ((mConfig.MatrixInfo.nDims[0]/2)*spacing[0]-mConfig.MatrixInfo.voi[0]/2*spacing[0]-spacing[0]/2);
-//            origin[1] = - ((mConfig.MatrixInfo.nDims[1]/2)*spacing[1]-mConfig.MatrixInfo.voi[2]/2*spacing[1]-spacing[1]/2);
-//            origin[2] = - ((mConfig.MatrixInfo.nDims[2]/2)*spacing[2]-mConfig.MatrixInfo.voi[4]/2*spacing[2]-spacing[2]/2);
-
-//            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fCenter-1)*spacing[0]-mConfig.MatrixInfo.voi[0]/2*spacing[0]);
-//            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-mConfig.ProjectionInfo.fCenter-1)*spacing[1]-mConfig.MatrixInfo.voi[2]/2*spacing[1]);
-//            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-mConfig.MatrixInfo.voi[4]/2*spacing[2]);
-
-
-//            std::cout << "origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
-//            std::cout << "voi: " << mConfig.MatrixInfo.voi[0] << " " << mConfig.MatrixInfo.voi[1] << " " << mConfig.MatrixInfo.voi[2]  << " "
-//                          << mConfig.MatrixInfo.voi[3] << " " << mConfig.MatrixInfo.voi[4] << " " << mConfig.MatrixInfo.voi[5]
-//                      << std::endl;
-//            std::cout << "fpPoint: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
+            origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
+            origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
+            origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
         }
 
         else {
-//            origin[0] = - ((mConfig.MatrixInfo.nDims[0])/2*spacing[0]-spacing[0]/2);
-//            origin[1] = - ((mConfig.MatrixInfo.nDims[1])/2*spacing[1]-spacing[1]/2);
-//            origin[2] = - ((mConfig.MatrixInfo.nDims[2])/2*spacing[2]-spacing[2]/2);
-
-            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fpPoint[0]-1)*spacing[0]-spacing[0]/2);
-            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-mConfig.ProjectionInfo.fpPoint[0]-1)*spacing[1]-spacing[1]/2);
-            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fpPoint[1]-1)*spacing[2]-spacing[2]/2);
+            origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
+            origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
+            origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
         }
 
-//        std::cout << "un po' di debug su geometry:" << std::endl;
-//        std::cout << "matrix dims: " << mConfig.MatrixInfo.nDims[0] << " " << mConfig.MatrixInfo.nDims[1] << " " << mConfig.MatrixInfo.nDims[2] << std::endl;
-//        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
-//        std::cout << "center of rotation: " << mConfig.ProjectionInfo.fCenter << std::endl;
 
-//        std::cout << "debug origin: " << std::endl;
-//        std::cout << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; // piercing point
 
 
-
-        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]};
-
-
-        /* Rescale image (destructive rescaling) */
+        // Rescale image (destructive rescaling)
 //        sad_sid_2 = (pmat->sad * pmat->sad) / (pmat->sid * pmat->sid);
-        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
+        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (2*mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
+
 
 
 //        for (i = 0; i < cbi->dim[0]*cbi->dim[1]; i++) {
@@ -483,9 +366,10 @@ void FDKbp::project_volume_onto_image_c(
 //        cbi->img[i] *= scale;		// User scaling
 //        }
 
-        for (i=0; i<cbi.Size(0)*cbi.Size(1); i++) {
+        #pragma omp parallel for
+        for (i=0; i<cbi.Size(0)*cbi.Size(1); ++i) {
             cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
-//            cbi[i] *=scale; // User scaling
+            cbi[i] *=scale;         // User scaling
         }
 
 //        xip = (double*) malloc (3*vol->dim[0]*sizeof(double));
@@ -518,19 +402,24 @@ void FDKbp::project_volume_onto_image_c(
 //        zip[k*3+2] = z * pmat->matrix[10] + pmat->matrix[11];
 //        }
 
-        /* Precompute partial projections here */
+        // Precompute partial projections here
+        #pragma omp parallel for
         for (i = 0; i < volume.Size(0); i++) {
             double x = (double) (origin[0] + i * spacing[0]);
             xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
             xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
             xip[i*3+2] = x * proj_matrix[8];
         }
+
+        #pragma omp parallel for
         for (j = 0; j < volume.Size(1); j++) {
             double y = (double) (origin[1] + j * spacing[1]);
             yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
             yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
             yip[j*3+2] = y * proj_matrix[9];
         }
+
+        #pragma omp parallel for
         for (k = 0; k < volume.Size(2); k++) {
             double z = (double) (origin[2] + k * spacing[2]);
             zip[k*3+0] = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
@@ -569,41 +458,42 @@ void FDKbp::project_volume_onto_image_c(
 //        std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
 
           /* Main loop */
-    #pragma omp parallel for
+
+        #pragma omp parallel for // not sure about this firstprivate
         for (k = 0; k < volume.Size(2); k++) {
-        int long p = k * volume.Size(1) * volume.Size(0);
-        int long j;
-        for (j = 0; j < volume.Size(1); j++) {
-            int long i;
-            double acc2[3];
-//            static inline void vec3_add3 (double* v1, const double* v2, const double* v3) {
-//                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
-//            }
-//            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
-            acc2[0] = zip[3*k]+yip[3*j];
-            acc2[1] = zip[3*k+1]+yip[3*j+1];
-            acc2[2] = zip[3*k+2]+yip[3*j+2];
-            // hopefully correct
-
-            for (i = 0; i < volume.Size(0); i++) {
-            double dw;
-            double acc3[3];
-//            vec3_add3 (acc3, acc2, &xip[3*i]);
-            acc3[0] = acc2[0]+xip[3*i];
-            acc3[1] = acc2[1]+xip[3*i+1];
-            acc3[2] = acc2[2]+xip[3*i+2];
-
-            dw = 1 / acc3[2];
-            acc3[0] = acc3[0] * dw;
-            acc3[1] = acc3[1] * dw;
-
-//            std::cout << "p: " << p << std::endl;
-            img[p++] +=
-                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
-            //            volume[p++] +=
-            //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
+            int long p = k * volume.Size(1) * volume.Size(0);
+            int long j;
+            for (j = 0; j < volume.Size(1); j++) {
+                int long i;
+                double acc2[3];
+    //            static inline void vec3_add3 (double* v1, const double* v2, const double* v3) {
+    //                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
+    //            }
+    //            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
+                acc2[0] = zip[3*k]+yip[3*j];
+                acc2[1] = zip[3*k+1]+yip[3*j+1];
+                acc2[2] = zip[3*k+2]+yip[3*j+2];
+                for (i = 0; i < volume.Size(0); i++) {
+//                    if (i<=mask[j].first || i>=mask[j].second) {
+//                        img[p++]==0.0f;
+//                    }
+//                    else {
+                        double dw;
+                        double acc3[3];
+            //            vec3_add3 (acc3, acc2, &xip[3*i]);
+                        acc3[0] = acc2[0]+xip[3*i];
+                        acc3[1] = acc2[1]+xip[3*i+1];
+                        acc3[2] = acc2[2]+xip[3*i+2];
+                        dw = 1 / acc3[2];
+                        acc3[0] = acc3[0] * dw;
+                        acc3[1] = acc3[1] * dw;
+                        img[p++] +=
+                            dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
+                        //            volume[p++] +=
+                        //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
+//                    }
+                }
             }
-        }
         }
         free (xip);
         free (yip);
@@ -612,8 +502,7 @@ void FDKbp::project_volume_onto_image_c(
 
 
 
-/* Reference implementation is the most straightforward implementation,
-    also it is the slowest */
+// Reference implementation is the most straightforward implementation, also it is the slowest
 void FDKbp::project_volume_onto_image_reference (
     kipl::base::TImage<float, 2> &cbi,
     double *proj_matrix,
@@ -639,7 +528,7 @@ void FDKbp::project_volume_onto_image_reference (
     /* Loop k (slices), j (rows), i (cols) */
 
 
-    double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]};
+    double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
 
 
     float spacing[3];
@@ -647,18 +536,21 @@ void FDKbp::project_volume_onto_image_reference (
     spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
     spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
 
+    float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
+    float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
+
     float origin[3]; /* = {-12.475, -12.75, -24.975};*/
 
     if (mConfig.MatrixInfo.bUseVOI) {
-        origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
-        origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
-        origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
+        origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
+        origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
+        origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
     }
 
     else {
-        origin[0] = - ((mConfig.MatrixInfo.nDims[0]-1)/2*spacing[0]-spacing[0]/2);
-        origin[1] = - ((mConfig.MatrixInfo.nDims[1]-1)/2*spacing[1]-spacing[1]/2);
-        origin[2] = - ((mConfig.MatrixInfo.nDims[2]-1)/2*spacing[2]-spacing[2]/2);
+        origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
+        origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
+        origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
     }
 
 
@@ -667,20 +559,17 @@ void FDKbp::project_volume_onto_image_reference (
 
 //        vp[2] = (double) (vol->origin[2] + k * vol->spacing[2]);
         vp[2] = (double) (origin[2] + k * spacing[2]);
-//        std::cout<< "k: " << k << std::endl;
 
     for (j = 0; j < volume.Size(1); j++) {
         vp[1] = (double) (origin[1] + j * spacing[1]);
-//        std::cout << "j: " << j << std::endl;
 
         for (i = 0; i < volume.Size(0); i++) {
 
-//            std::cout << "i: " << i << std::endl;
-            double ip[3];        /* ip = image position */
-            double s;            /* s = projection of vp onto s axis */
+            double ip[3];        // ip = image position
+            double s;            // s = projection of vp onto s axis
             vp[0] = (double) (origin[0] + i * spacing[0]);
-//            mat43_mult_vec3 (ip, pmat->matrix, vp);  /* ip = matrix * vp */
-            /* ip = matrix * vp */
+//            mat43_mult_vec3 (ip, pmat->matrix, vp);
+            // ip = matrix * vp
             ip[0] = proj_matrix[0]*vp[0]+proj_matrix[1]*vp[1]+proj_matrix[2]*vp[2]+proj_matrix[3]*vp[3];
             ip[1] = proj_matrix[4]*vp[0]+proj_matrix[5]*vp[1]+proj_matrix[6]*vp[2]+proj_matrix[7]*vp[3];
             ip[2] = proj_matrix[8]*vp[0]+proj_matrix[9]*vp[1]+proj_matrix[10]*vp[2]+proj_matrix[11]*vp[3];
@@ -690,21 +579,21 @@ void FDKbp::project_volume_onto_image_reference (
                     ip[0] = ic[0] + ip[0] / ip[2];
                     ip[1] = ic[1] + ip[1] / ip[2];
 
-            /* Distance on central axis from voxel center to source */
-            /* pmat->nrm is normal of panel */
+            // Distance on central axis from voxel center to source
+            // pmat->nrm is normal of panel
 
 //            s = vec3_dot (pmat->nrm, vp);
 
             s = nrm[0]*vp[0]+nrm[1]*vp[1]+nrm[2]*vp[2];
 
-            /* Conebeam weighting factor */
+            // Conebeam weighting factor
             s = mConfig.ProjectionInfo.fSOD - s;
             s = mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD / (s * s);
 
 
 //            volume[p++] += scale * s * get_pixel_value_b (cbi, ip[1], ip[0]);
 
-            img[p++] += s * get_pixel_value_b (cbi, ip[1], ip[0]);
+            img[p++] += s*get_pixel_value_b (cbi, ip[1], ip[0]);
         }
 
 
@@ -713,7 +602,7 @@ void FDKbp::project_volume_onto_image_reference (
 
 }
 
-/* Nearest neighbor interpolation of intensity value on image */
+// Nearest neighbor interpolation of intensity value on image
  float FDKbp::get_pixel_value_b (kipl::base::TImage<float, 2> &cbi, double r, double c)
 {
     int rr, cc;
@@ -728,8 +617,7 @@ void FDKbp::project_volume_onto_image_reference (
 }
 
 
- /* get_pixel_value_c seems to be no faster than get_pixel_value_b,
-    despite having two fewer compares. */
+ // get_pixel_value_c seems to be no faster than get_pixel_value_b, despite having two fewer compares.
 float FDKbp::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, double c)
  {
      int rr, cc;
@@ -897,446 +785,3 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img){
 
 
 }
-
-// ----------------- non working stuff
-//void FDKbp::compRTKProjMatrix(float angles, double* nrm, double *proj_matrix){
-
-//    // RTK version of projection matrices
-
-//    double rotation[16] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-//    double translation[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-//    double sod = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
-//    double sdd = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
-//    double offSourceX =  0.0f; // first with the ideal case. source offset = 0. the source is inline with the isocenter
-//    double offSourceY = 0.0f;
-//    double offDetX = (mConfig.ProjectionInfo.nDims[0]/2-mConfig.ProjectionInfo.roi[0])*mConfig.ProjectionInfo.fResolution[0]; // ideal case: the detector is centered with the source and the isocenter
-//    double offDetY = (mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1])*mConfig.ProjectionInfo.fResolution[1];
-
-//    std::cout << angles << std::endl;
-
-//    // build rotation matrix:
-//    // rotation given only by the gantry angle - ideal case -
-//    rotation[0] = cos(-angles*dPi/180);
-//    rotation[2] = sin(-angles*dPi/180);
-//    rotation[5] = 1.0;
-//    rotation[8] = -sin(-angles*dPi/180);
-//    rotation[10] = cos(-angles*dPi/180);
-//    rotation[15] = 1.0;
-
-
-
-//    // build translation matrix
-//    double MT1 [9] = {1.0, 0.0, offSourceX-offDetX, 0.0, 1.0, offSourceY-offDetY, 0.0, 0.0, 1.0};
-//    double MT2 [12] = {-sdd, 0.0, 0.0, 0.0, 0.0, -sdd, 0.0, 0.0, 0.0, 0.0, 1.0, -sod};
-//    double MT3 [16] = {1.0, 0.0, 0.0, -offSourceX, 0.0, 1.0, 0.0, -offSourceY, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-
-//    // MT = MT1*MT2*MT3
-//    double MTT[12]= {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-//    multiplyMatrix(MT2, MT3, MTT, 3, 4, 4);
-
-////    printf ("MTT\n%g %g %g %g\n%g %g %g %g\n"
-////    "%g %g %g %g\n",
-////    MTT[0], MTT[1],
-////    MTT[2], MTT[3],
-////    MTT[4], MTT[5],
-////    MTT[6], MTT[7],
-////    MTT[8], MTT[9],
-////    MTT[10], MTT[11]);
-
-//    multiplyMatrix(MT1, MTT, translation, 3, 4, 3);
-
-////    printf ("translation\n%g %g %g %g\n%g %g %g %g\n"
-////    "%g %g %g %g\n",
-////    translation[0], translation[1],
-////    translation[2], translation[3],
-////    translation[4], translation[5],
-////    translation[6], translation[7],
-////    translation[8], translation[9],
-////    translation[10], translation[11]);
-
-//    multiplyMatrix(translation, rotation, proj_matrix, 3, 4, 4);
-
-////    printf ("proj_matrix\n%g %g %g %g\n%g %g %g %g\n"
-////    "%g %g %g %g\n",
-////    proj_matrix[0], proj_matrix[1],
-////    proj_matrix[2], proj_matrix[3],
-////    proj_matrix[4], proj_matrix[5],
-////    proj_matrix[6], proj_matrix[7],
-////    proj_matrix[8], proj_matrix[9],
-////    proj_matrix[10], proj_matrix[11]);
-
-//    nrm[0] = sin(-angles*dPi/180);
-//    nrm[1] = 0.0;
-//    nrm[2] = cos(-angles*dPi/180);
-
-
-//}
-
-
-
-//void FDKbp::computeProjMatrix(float angles, double *nrm, double *proj_matrix){
-
-////    std::cout << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl; // it is already in the projection roi reference
-////    std::cout << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl; // x0 y0 x1 y1
-////    std::cout << mConfig.ProjectionInfo.nDims[0] << " " << mConfig.ProjectionInfo.nDims[1] << std::endl; // it is the biggest dimension of the projection data
-
-//     // implement smarter projection matrix source perpendicular to the z axis and detector oriented as y
-//    double extrinsic[16] =   {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Extrinsic matrix */
-//    double intrinsic[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Intrinsic matrix */
-//    double sad = mConfig.ProjectionInfo.fSOD; ; /* Distance:source to axis */
-//    double sid = mConfig.ProjectionInfo.fSDD; /* Distance: Source to Image */
-
-
-//    double cam[3] = {sad*sin(-angles*dPi/180)+0.0f, 0.0f+0.0f, sad*cos(-angles*dPi/180)}; /* Location of camera */ // so far it is the best..
-////    double cam[3] = {sad*sin(-angles*dPi/180)+offSourceX, 0.0f+0.0f, sad*cos(-angles*dPi/180)}; // does not really help
-////    double cam[3] = {sad*sin(-angles*dPi/180), 0.0f, sad*cos(-angles*dPi/180)}; /* Location of camera */
-//    std::cout << angles << std::endl;
-
-
-////    double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]};
-//    double plt[3] = {0.0,0.0,0.0}; /* Detector orientation */  /* Panel left (toward first column) */
-//    double pup[3] = {0.0,0.0,0.0}; /* Panel up (toward top row) */
-//    double vup[3] = {0.0,1.0,0.0}; /* hardcoded for ideal panel orientationf */
-//    double tgt[3] = {0.0,0.0,0.0}; /* isoscenter, center of rotation of the sample in world coordinates */
-
-
-//    /* Compute imager coordinate sys (nrm,pup,plt)
-//       ---------------
-//       nrm = cam - tgt
-//       plt = nrm x vup
-//       pup = plt x nrm
-//       ---------------
-//    */
-
-//    nrm[0] = cam[0]-tgt[0];
-//    nrm[1] = cam[1]-tgt[1];
-//    nrm[2] = cam[2]-tgt[2];
-
-
-
-//    double norm_nrm = sqrt(nrm[0]*nrm[0]+nrm[1]*nrm[1]+nrm[2]*nrm[2]);
-
-//    nrm[0] /= norm_nrm;
-//    nrm[1] /= norm_nrm;
-//    nrm[2] /= norm_nrm;
-
-//    plt[0] =  nrm[1]*vup[2]-nrm[2]*vup[1];
-//    plt[1] =  nrm[2]*vup[0]-nrm[0]*vup[2];
-//    plt[2] =  nrm[0]*vup[1]-nrm[1]*vup[0];
-
-//    double norm_plt = sqrt(plt[0]*plt[0]+plt[1]*plt[1]+plt[2]*plt[2]);
-
-//    plt[0] /= norm_plt;
-//    plt[1] /= norm_plt;
-//    plt[2] /= norm_plt;
-
-////        vec3_cross (pup, plt, nrm);
-////        vec3_normalize1 (pup);
-
-//    pup[0] =  plt[1]*nrm[2]-plt[2]*nrm[1];
-//    pup[1] =  plt[2]*nrm[0]-plt[0]*nrm[2];
-//    pup[2] =  plt[0]*nrm[1]-plt[1]*nrm[0];
-
-//    double norm_pup = sqrt(pup[0]*pup[0]+pup[1]*pup[1]+pup[2]*pup[2]);
-
-//    pup[0] /= norm_pup;
-//    pup[1] /= norm_pup;
-//    pup[2] /= norm_pup;
-
-//    /* Build extrinsic matrix - rotation part */
-
-
-////        vec3_invert (&pmat->extrinsic[0]);
-////        vec3_invert (&pmat->extrinsic[4]);
-////        vec3_invert (&pmat->extrinsic[8]);
-
-//    extrinsic[0] = -1.0*plt[0];
-//    extrinsic[1] = -1.0*plt[1];
-//    extrinsic[2] = -1.0*plt[2];
-
-//    extrinsic[4] = -1.0*pup[0];
-//    extrinsic[5] = -1.0*pup[1];
-//    extrinsic[6] = -1.0*pup[2];
-
-//    extrinsic[8] = -1.0*nrm[0];
-//    extrinsic[9] = -1.0*nrm[1];
-//    extrinsic[10] = -1.0*nrm[2];
-
-//    extrinsic[15] = 1.0;
-
-//    /* Build extrinsic matrix - translation part */
-
-////        pmat->extrinsic[3] = vec3_dot (plt, tgt);
-////        pmat->extrinsic[7] = vec3_dot (pup, tgt);
-////        pmat->extrinsic[11] = vec3_dot (nrm, tgt) + pmat->sad;
-
-
-//        extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2]-(mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.ProjectionInfo.fResolution[0]/sid; // added offset contribution.. must be something like this
-//        extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
-//        extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+sad;
-
-////   extrinsic[3] = 0;
-////   extrinsic[7] = 0;
-////   extrinsic[11] = 0+mConfig.ProjectionInfo.fSOD;
-
-//   /* Build intrinsic matrix */
-
-
-////        m_idx (pmat->intrinsic,cols,0,0) = 1 / ps[0];
-////        m_idx (pmat->intrinsic,cols,1,1) = 1 / ps[1];
-////        m_idx (pmat->intrinsic,cols,2,2) = 1 / sid;
-//    intrinsic[0] = 1/mConfig.ProjectionInfo.fResolution[0];
-////    intrinsic[3] = mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter;
-//    intrinsic[5] = 1/mConfig.ProjectionInfo.fResolution[1];
-//    intrinsic[10] = 1/sid;
-
-//    /* Build Projection Geometry Matrix = intrinsic * extrinsic */
-//   int i,j,k;
-
-//   for (i = 0; i < 3; i++) {
-//        for (j = 0; j < 4; j++) {
-//            float acc = 0.0; // why not double?
-//            for (k = 0; k < 4; k++) {
-//                acc += m_idx(intrinsic,4,i,k) * m_idx(extrinsic,4,k,j);
-//            }
-//            m_idx(proj_matrix,4,i,j) = acc;
-//        }
-//   }
-
-
-
-
-
-//}
-
-//void FDKbp::project_volume_onto_image_rtk(
-//    kipl::base::TImage<float, 2> &cbi,
-//    double *proj_matrix
-//)
-//{
-
-////                           std::cout << "projection 1: " << std::endl;
-
-////                           for (int j=255*100; j<255*100+255; j++) {
-////                               std::cout << cbi[j] << " ";
-////                           }
-////                           std::cout << std::endl;
-
-
-
-
-//    //	printf("project_volume_onto_image_c\n");
-//        long int i, j, k;
-
-//        float* img = volume.GetDataPtr(); // maybe i don't need this
-//        double *xip, *yip, *zip;
-//        double sad_sid_2;
-
-////        std::cout << spacing[0] << std::endl;
-
-
-
-//        /// spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
-//        /// magnification = SDD/SOD
-////        float spacing[3] = {0.098f, 0.098f, 1.0f};
-
-//        float spacing[3];
-//        spacing[0] = mConfig.MatrixInfo.fVoxelSize[0];
-//        spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
-//        spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
-
-//        /// origin of the reconstructed volume. Volume isocenter is assumed in position (0,0,0)
-////        float origin[3] = {-24.9512f, -24.9512f, -42.00f};
-//        float origin[3];
-
-
-//        if (mConfig.MatrixInfo.bUseVOI) {
-
-////            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fCenter-1)*spacing[0]-mConfig.MatrixInfo.voi[0]*spacing[0]-spacing[0]/2);
-////            origin[1] = - ((mConfig.MatrixInfo.nDims[1]/2-1)*spacing[1]-mConfig.MatrixInfo.voi[2]*spacing[1]-spacing[1]/2);
-////            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fCenter-1)*spacing[2]-mConfig.MatrixInfo.voi[4]*spacing[2]-spacing[2]/2);
-
-
-//            origin[0] = - ((mConfig.MatrixInfo.nDims[0]/2)*spacing[0]-mConfig.MatrixInfo.voi[0]/2*spacing[0]-spacing[0]/2); // let's try with the ideal case
-//            origin[1] = - ((mConfig.MatrixInfo.nDims[1]/2)*spacing[1]-mConfig.MatrixInfo.voi[2]/2*spacing[1]-spacing[1]/2);
-//            origin[2] = - ((mConfig.MatrixInfo.nDims[2]/2)*spacing[2]-mConfig.MatrixInfo.voi[4]/2*spacing[2]-spacing[2]/2);
-
-////            std::cout << "origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
-////            std::cout << "voi: " << mConfig.MatrixInfo.voi[0] << " " << mConfig.MatrixInfo.voi[1] << " " << mConfig.MatrixInfo.voi[2]  << " "
-////                          << mConfig.MatrixInfo.voi[3] << " " << mConfig.MatrixInfo.voi[4] << " " << mConfig.MatrixInfo.voi[5]
-////                      << std::endl;
-//        }
-
-//        else {
-
-
-////            origin[0] = - ((mConfig.MatrixInfo.nDims[0]-mConfig.ProjectionInfo.fCenter-1)*spacing[0]-spacing[0]/2);
-////            origin[1] = - ((mConfig.MatrixInfo.nDims[1]-mConfig.ProjectionInfo.fCenter-1)*spacing[1]-spacing[1]/2);
-////            origin[2] = - ((mConfig.MatrixInfo.nDims[2]-mConfig.ProjectionInfo.fpPoint[1]-1)*spacing[2]-spacing[2]/2);
-
-//                        origin[0] = - ((mConfig.MatrixInfo.nDims[0])/2*spacing[0]-spacing[0]/2);
-//                        origin[1] = - ((mConfig.MatrixInfo.nDims[1])/2*spacing[1]-spacing[1]/2);
-//                        origin[2] = - ((mConfig.MatrixInfo.nDims[2])/2*spacing[2]-spacing[2]/2);
-//        }
-
-////        std::cout << "un po' di debug su geometry:" << std::endl;
-////        std::cout << "matrix dims: " << mConfig.MatrixInfo.nDims[0] << " " << mConfig.MatrixInfo.nDims[1] << " " << mConfig.MatrixInfo.nDims[2] << std::endl;
-////        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
-////        std::cout << "center of rotation: " << mConfig.ProjectionInfo.fCenter << std::endl;
-
-////        std::cout << "debug origin: " << std::endl;
-////        std::cout << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
-
-
-
-
-////        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; //NOT OK
-////        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.fpPoint[1]}; // SEEMS THE MOST CORRECT
-////        double ic[2] = {mConfig.ProjectionInfo.fCenter, mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]}; // NOT OK
-//        double ic[2] = {mConfig.ProjectionInfo.nDims[0]/2-mConfig.ProjectionInfo.roi[0], mConfig.ProjectionInfo.nDims[1]/2-mConfig.ProjectionInfo.roi[1]}; // center of the detector with respect of the projectionroi
-
-////        std::cout << ic[0] << " " << ic[1] << std::endl;
-
-
-
-//    //	printf("project_volume_onto_image_c:1\n");
-
-//        /* Rescale image (destructive rescaling) */
-////        sad_sid_2 = (pmat->sad * pmat->sad) / (pmat->sid * pmat->sid);
-//        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
-
-
-////        for (i = 0; i < cbi->dim[0]*cbi->dim[1]; i++) {
-////        cbi->img[i] *= sad_sid_2;	// Speedup trick re: Kachelsreiss
-////        cbi->img[i] *= scale;		// User scaling
-////        }
-
-//        for (i=0; i<cbi.Size(0)*cbi.Size(1); i++) {
-//            cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
-////            cbi[i] *=scale; // User scaling
-//        }
-
-////        xip = (double*) malloc (3*vol->dim[0]*sizeof(double));
-////        yip = (double*) malloc (3*vol->dim[1]*sizeof(double));
-////        zip = (double*) malloc (3*vol->dim[2]*sizeof(double));
-
-//        xip = (double*) malloc (3*volume.Size(0)*sizeof(double));
-//        yip = (double*) malloc (3*volume.Size(1)*sizeof(double));
-//        zip = (double*) malloc (3*volume.Size(2)*sizeof(double));
-
-////        /* Precompute partial projections here */
-////        for (i = 0; i < vol->dim[0]; i++) {
-////        double x = (double) (vol->offset[0] + i * vol->spacing[0]);
-////        xip[i*3+0] = x * (pmat->matrix[0] + pmat->ic[0] * pmat->matrix[8]);
-////        xip[i*3+1] = x * (pmat->matrix[4] + pmat->ic[1] * pmat->matrix[8]);
-////        xip[i*3+2] = x * pmat->matrix[8];
-////        }
-////        for (j = 0; j < vol->dim[1]; j++) {
-////        double y = (double) (vol->offset[1] + j * vol->spacing[1]);
-////        yip[j*3+0] = y * (pmat->matrix[1] + pmat->ic[0] * pmat->matrix[9]);
-////        yip[j*3+1] = y * (pmat->matrix[5] + pmat->ic[1] * pmat->matrix[9]);
-////        yip[j*3+2] = y * pmat->matrix[9];
-////        }
-////        for (k = 0; k < vol->dim[2]; k++) {
-////        double z = (double) (vol->offset[2] + k * vol->spacing[2]);
-////        zip[k*3+0] = z * (pmat->matrix[2] + pmat->ic[0] * pmat->matrix[10])
-////            + pmat->ic[0] * pmat->matrix[11] + pmat->matrix[3];
-////        zip[k*3+1] = z * (pmat->matrix[6] + pmat->ic[1] * pmat->matrix[10])
-////            + pmat->ic[1] * pmat->matrix[11] + pmat->matrix[7];
-////        zip[k*3+2] = z * pmat->matrix[10] + pmat->matrix[11];
-////        }
-
-//        /* Precompute partial projections here */
-//        for (i = 0; i < volume.Size(0); i++) {
-//            double x = (double) (origin[0] + i * spacing[0]);
-//            xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
-//            xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
-//            xip[i*3+2] = x * proj_matrix[8];
-//        }
-//        for (j = 0; j < volume.Size(1); j++) {
-//            double y = (double) (origin[1] + j * spacing[1]);
-//            yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
-//            yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
-//            yip[j*3+2] = y * proj_matrix[9];
-//        }
-//        for (k = 0; k < volume.Size(2); k++) {
-//            double z = (double) (origin[2] + k * spacing[2]);
-//            zip[k*3+0] = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
-//                + ic[0] * proj_matrix[11] + proj_matrix[3];
-//            zip[k*3+1] = z * (proj_matrix[6] + ic[1] * proj_matrix[10])
-//                + ic[1] * proj_matrix[11] + proj_matrix[7];
-//            zip[k*3+2] = z * proj_matrix[10] + proj_matrix[11];
-//        }
-
-////    //		printf("project_volume_onto_image_c:2\n");
-////        /* Main loop */
-////    #pragma omp parallel for
-////        for (k = 0; k < vol->dim[2]; k++) {
-////        plm_long p = k * vol->dim[1] * vol->dim[0];
-////        plm_long j;
-////        for (j = 0; j < vol->dim[1]; j++) {
-////            plm_long i;
-////            double acc2[3];
-////            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
-////            for (i = 0; i < vol->dim[0]; i++) {
-////            double dw;
-////            double acc3[3];
-////            vec3_add3 (acc3, acc2, &xip[3*i]);
-////            dw = 1 / acc3[2];
-////            acc3[0] = acc3[0] * dw;
-////            acc3[1] = acc3[1] * dw;
-////            img[p++] +=
-////                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
-////            }
-////        }
-////        }
-////        free (xip);
-////        free (yip);
-////        free (zip);
-
-////        std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
-
-//          /* Main loop */
-//    #pragma omp parallel for
-//        for (k = 0; k < volume.Size(2); k++) {
-//        int long p = k * volume.Size(1) * volume.Size(0);
-//        int long j;
-//        for (j = 0; j < volume.Size(1); j++) {
-//            int long i;
-//            double acc2[3];
-////            static inline void vec3_add3 (double* v1, const double* v2, const double* v3) {
-////                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
-////            }
-////            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
-//            acc2[0] = zip[3*k]+yip[3*j];
-//            acc2[1] = zip[3*k+1]+yip[3*j+1];
-//            acc2[2] = zip[3*k+2]+yip[3*j+2];
-//            // hopefully correct
-
-//            for (i = 0; i < volume.Size(0); i++) {
-//            double dw;
-//            double acc3[3];
-////            vec3_add3 (acc3, acc2, &xip[3*i]);
-//            acc3[0] = acc2[0]+xip[3*i];
-//            acc3[1] = acc2[1]+xip[3*i+1];
-//            acc3[2] = acc2[2]+xip[3*i+2];
-
-//            dw = 1 / acc3[2];
-//            acc3[0] = acc3[0] * dw;
-//            acc3[1] = acc3[1] * dw;
-
-////            std::cout << "p: " << p << std::endl;
-//            img[p++] +=
-//                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
-//            //            volume[p++] +=
-//            //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
-//            }
-//        }
-//        }
-//        free (xip);
-//        free (yip);
-//        free (zip);
-//}
-
-
-
