@@ -1,9 +1,5 @@
-/*
- * DataScaler.cpp
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
+
 #include "stdafx.h"
 #include "ISSfilterModule.h"
 

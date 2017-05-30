@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "nonlocalmeansmodule.h"
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>

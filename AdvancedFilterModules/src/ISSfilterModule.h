@@ -1,9 +1,4 @@
-/*
- * GeneralFilter.h
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef ISSFILTERMODULE_H_
 #define ISSFILTERMODULE_H_

@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef NONLINDIFFUSION_H
 #define NONLINDIFFUSION_H
 
