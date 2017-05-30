@@ -764,6 +764,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QSpinBox" name="spinSliceIndex">
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -807,6 +814,9 @@
     <property name="title">
      <string>File processing</string>
     </property>
+    <addaction name="actionReslice_images"/>
+    <addaction name="actionMerge_volumes"/>
+    <addaction name="actionFile_conversion"/>
     <addaction name="actionGeneric_file_conversion"/>
    </widget>
    <addaction name="menuFile"/>
@@ -874,6 +884,21 @@
   <action name="actionGeneric_file_conversion">
    <property name="text">
     <string>Generic file conversion</string>
+   </property>
+  </action>
+  <action name="actionReslice_images">
+   <property name="text">
+    <string>Reslice images</string>
+   </property>
+  </action>
+  <action name="actionMerge_volumes">
+   <property name="text">
+    <string>Merge volumes</string>
+   </property>
+  </action>
+  <action name="actionFile_conversion">
+   <property name="text">
+    <string>File conversion</string>
    </property>
   </action>
  </widget>

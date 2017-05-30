@@ -66,6 +66,16 @@ private slots:
 
     void on_actionGeneric_file_conversion_triggered();
 
+    void on_actionReslice_images_triggered();
+
+    void on_actionMerge_volumes_triggered();
+
+    void on_actionFile_conversion_triggered();
+
+    void on_spinSliceIndex_valueChanged(int arg1);
+
+    void on_spinSliceIndex_editingFinished();
+
 private:
     void UpdateDialog();
     void UpdateConfig();

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport
+QT       += core widgets printsupport concurrent
 
 TARGET = QtKipTool
 TEMPLATE = app
@@ -56,21 +56,38 @@ SOURCES +=  ../../src/main.cpp\
             ../../src/kiptoolmainwindow.cpp \
             ../../src/ImageIO.cpp \
             ../../src/confighistorydialog.cpp \
-            ../../src/genericconversion.cpp
+            ../../src/genericconversion.cpp \
+    ../../src/Reslicer.cpp \
+    ../../src/reslicerdialog.cpp \
+    ../../src/mergevolume.cpp \
+    ../../src/mergevolumesdialog.cpp \
+    ../../src/ImagingToolConfig.cpp \
+    ../../src/fileconversiondialog.cpp \
+    ../../src/Fits2Tif.cpp
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/ImageIO.h \
             ../../src/confighistorydialog.h \
-            ../../src/genericconversion.h
+            ../../src/genericconversion.h \
+    ../../src/Reslicer.h \
+    ../../src/reslicerdialog.h \
+    ../../src/mergevolume.h \
+    ../../src/mergevolumesdialog.h \
+    ../../src/ImagingToolConfig.h \
+    ../../src/fileconversiondialog.h \
+    ../../src/Fits2Tif.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
             ../../src/confighistorydialog.ui \
-            ../../src/genericconversion.ui
+            ../../src/genericconversion.ui \
+    ../../src/reslicerdialog.ui \
+    ../../src/mergevolumesdialog.ui \
+    ../../src/fileconversiondialog.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure -lReaderConfig -lReaderGUI -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../ProcessFramework/include
 DEPENDPATH += $$PWD/../../../ProcessFramework/include
@@ -83,5 +100,14 @@ INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
 INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
 
+INCLUDEPATH += $$PWD/../../../../../modules/trunk/ReaderConfig
+DEPENDPATH += $$PWD/../../../../../modules/trunk/ReaderConfig
+
+INCLUDEPATH += $$PWD/../../../../../modules/trunk/ReaderGUI
+DEPENDPATH += $$PWD/../../../../../modules/trunk/ReaderGUI
+
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+
+INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/src

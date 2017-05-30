@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSignalBlocker>
 
 #include <KiplFrameworkException.h>
 #include <ModuleException.h>
@@ -25,6 +26,9 @@
 #include "ui_kiptoolmainwindow.h"
 #include "confighistorydialog.h"
 #include "genericconversion.h"
+#include "reslicerdialog.h"
+#include "mergevolumesdialog.h"
+#include "fileconversiondialog.h"
 
 #include "ImageIO.h"
 
@@ -356,6 +360,9 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
     }
 
     if ((m_OriginalImage.Size()!=0) && (position<maxslice) && (0<=position)) {
+        QSignalBlocker blocker(ui->spinSliceIndex);
+
+        ui->spinSliceIndex->setValue(position);
         float lo = 0.0f;
         float hi = 0.0f;
         if (m_bJustLoaded) {
@@ -816,4 +823,38 @@ void KipToolMainWindow::on_actionGeneric_file_conversion_triggered()
 
     dlg.exec();
 
+}
+
+void KipToolMainWindow::on_actionReslice_images_triggered()
+{
+    ReslicerDialog dlg;
+
+    dlg.exec();
+}
+
+void KipToolMainWindow::on_actionMerge_volumes_triggered()
+{
+    MergeVolumesDialog dlg;
+
+    dlg.exec();
+}
+
+void KipToolMainWindow::on_actionFile_conversion_triggered()
+{
+    FileConversionDialog dlg;
+
+    dlg.exec();
+}
+
+void KipToolMainWindow::on_spinSliceIndex_valueChanged(int arg1)
+{
+    QSignalBlocker blocker(ui->slider_images);
+
+    ui->slider_images->setValue(arg1);
+    on_slider_images_sliderMoved(arg1);
+}
+
+void KipToolMainWindow::on_spinSliceIndex_editingFinished()
+{
+    on_spinSliceIndex_valueChanged(ui->spinSliceIndex->value());
 }
