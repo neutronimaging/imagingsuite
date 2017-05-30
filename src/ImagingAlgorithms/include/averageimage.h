@@ -20,6 +20,7 @@ public:
         ImageMin,               ///< Compute the minimum pixel value of the images
         ImageMax                ///< Compute the maximum pixel value of the images
     };
+
     AverageImage();
 
     ~AverageImage();
