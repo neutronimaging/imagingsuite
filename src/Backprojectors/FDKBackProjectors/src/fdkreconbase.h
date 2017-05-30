@@ -63,13 +63,13 @@ public:
 
 
 protected:
-    virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles)=0;
+    virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;
 
 
     ForwardProjectorBase *m_fp;
     BackProjectorBase    *m_bp;
 
-    struct ProjectionInfo { // check later how to pass matrix
+    struct ProjectionInfo {
         ProjectionInfo(const float _angle, const float _weight) :
             angle(_angle), weight(_weight) {}
         ProjectionInfo(const ProjectionInfo & p) : angle(p.angle), weight(p.weight){}

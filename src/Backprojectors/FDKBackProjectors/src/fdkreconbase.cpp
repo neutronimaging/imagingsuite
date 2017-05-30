@@ -62,23 +62,6 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
     nSliceBlock=GetIntParameter(parameters,"SliceBlock");
     GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
 
-//    mConfig.ProjectionInfo.fSDD = 210;
-//    mConfig.ProjectionInfo.fSOD = 60;
-//    mConfig.ProjectionInfo.fpPoint[0] = 558.75; // x in pixel coordinate
-//    mConfig.ProjectionInfo.fpPoint[1] = 525.0; // y in pixel coordinate
-
-//    mConfig.ProjectionInfo.fSDD = 560.0;
-//    mConfig.ProjectionInfo.fSOD = 425.0;
-//    mConfig.ProjectionInfo.fpPoint[0] = 132.3; // x in pixel coordinate
-//    mConfig.ProjectionInfo.fpPoint[1] = 154.0; // y in pixel coordinate
-
-//    mConfig.ProjectionInfo.fSDD = GetFloatParameter(parameters,"SDD");
-//    mConfig.ProjectionInfo.fSOD = GetFloatParameter(parameters,"SOD");
-//    mConfig.ProjectionInfo.fpPoint[0] = GetFloatParameter(parameters, "HorizontalCenter");
-//    mConfig.ProjectionInfo.fpPoint[1] = GetFloatParameter(parameters, "VerticalCenter");
-//    GetUIntParameterVector(parameters,"volumeSize",volume_size,3);
-//    GetFloatParameterVector(parameters,"volumeSpacing",spacing,3);
-
     if (mConfig.MatrixInfo.bUseVOI) {
         volume_size[0] = mConfig.MatrixInfo.voi[1]-mConfig.MatrixInfo.voi[0];
         volume_size[1] = mConfig.MatrixInfo.voi[3]-mConfig.MatrixInfo.voi[2];
@@ -90,32 +73,8 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
         volume_size[2] = mConfig.MatrixInfo.nDims[2];
     }
 
-//    std::cout << "volume size: " << std::endl;
-//    std::cout << volume_size[0] << " " << volume_size[1] << " " << volume_size[2]<< std::endl;
-
-//    // set the output exten
-//    mConfig.MatrixInfo.nDims[0] = volume_size[0];
-//    mConfig.MatrixInfo.nDims[1] = volume_size[1];
-//    mConfig.MatrixInfo.nDims[2] = volume_size[2];
-
     volume.Resize(volume_size);
     volume = 0.0f;
-
-//    std::cout << "debug paramaters values: " << std::endl;
-//    std::cout << mConfig.ProjectionInfo.fSDD << std::endl;
-//    std::cout << mConfig.ProjectionInfo.fSOD << std::endl;
-//    std::cout << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
-
-
-
-
-
-//    std::cout << mConfig.ProjectionInfo.nFirstIndex << std::endl;
-//    std::cout << mConfig.ProjectionInfo.nLastIndex << std::endl;
-//    std::cout << mConfig.ProjectionInfo.nProjectionStep<< std::endl;
-//    std::cout << mConfig.ProjectionInfo.fScanArc[0] << " " <<
-//                                                       mConfig.ProjectionInfo.fScanArc[1] << std::endl;
-
 
 //   std::cout << "projections size: " << std::endl;
 //   std::cout << projections.Size(0) << " " << projections.Size(1) << " "<< projections.Size(2) << std::endl;
@@ -148,12 +107,13 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
 
     return parameters;
 }
-// clear all non mi serve?
+
 
 /// Sets the region of interest on the projections.
 /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
 void FdkReconBase::SetROI(size_t *roi)
 {
+
 //    // commented: not used for now
 //    ProjCenter    = mConfig.ProjectionInfo.fCenter;
 //    SizeU         = roi[2]-roi[0];
@@ -288,6 +248,8 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        if (volume.Size()==0)
            throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
+//       BuildCircleMask();
+
 
 //       std::cout << mConfig.ProjectionInfo.nDims[0] << " " << mConfig.ProjectionInfo.nDims[1]
 //                                                    << std::endl;
@@ -304,13 +266,12 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        size_t nProj=projections.Size(2);
        std::cout<< "NProj:   "<<nProj << std::endl; // numero totale di proiezioni
 
-       // Extract the projection parameters . not used for now.
+       // Extract the projection parameters
 //       float *weights=new float[nProj+16];
        float *weights=new float[nProj];
        GetFloatParameterVector(parameters,"weights",weights,nProj);
 
 
-//       float *angles=new float[nProj+16];
        float *angles=new float[nProj];
        GetFloatParameterVector(parameters,"angles",angles,nProj);
 
@@ -325,6 +286,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
        std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
+       std::cout << "nProjectionBufferSize: " << nProjectionBufferSize << std::endl;
        mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0];
        mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
 
@@ -339,26 +301,10 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
            pProj=projections.GetLinePtr(0,i);
            memcpy(pImg,pProj,sizeof(float)*img.Size()); // ma perchè devo fare qst??
 
-
-
-// // ----- following cycle used to check projection value.
-//         if (i==0) {
-//               std::cout << "projection 1: " << std::endl;
-
-//               for (int j=255*100; j<255*100+255; j++) {
-//                   std::cout << img[j] << " ";
-//               }
-//               std::cout << std::endl;
-//           }
-//           Process(img,angles[i],weights[i],i==(nProj-1));
-
-           img *= weights[i];
+//           img *= weights[i];
 //           std::cout << "weigth: " << weights[i] << std::endl;
 
-//           std::cout << "size of projections:" << img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl;
-
-
-          this->reconstruct(img, angles[i]); // i am not sure i am passing the image in the optimal way.
+          this->reconstruct(img, angles[i], nProj); // i am not sure i am passing the image in the optimal way.
 
 
        }
@@ -375,16 +321,10 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
 
 
-//    std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
-//    std::cout << volume.GetLinePtr(85,3)<< std::endl;
 
     float matrixMin=Min();
-
-//    std::cout << "min: " << matrixMin << std::endl;
-
     float matrixMax=Max();
 
-//    std::cout << "max: " << matrixMax << std::endl;
     ostringstream msg;
 
     msg<<"Preparing histogram; #bins: "<<nBins<<", Min: "<<matrixMin<<", Max: "<<matrixMax;
