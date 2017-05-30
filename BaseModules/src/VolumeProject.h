@@ -1,9 +1,4 @@
-/*
- * GeneralFilter.h
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef VOLUMEPROJECT_H_
 #define VOLUMEPROJECT_H_

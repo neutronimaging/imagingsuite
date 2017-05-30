@@ -1,9 +1,4 @@
-/*
- * BuildScene.cpp
- *
- *  Created on: Nov 8, 2012
- *      Author: anders
- */
+//<LICENSE>
 
 #include "BuildScene.h"
 

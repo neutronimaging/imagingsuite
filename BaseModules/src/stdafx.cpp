@@ -1,3 +1,5 @@
+//<LICENSE>
+
 // stdafx.cpp : source file that includes just the standard includes
 // BaseModules.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information

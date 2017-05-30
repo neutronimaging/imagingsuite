@@ -1,9 +1,4 @@
-/*
- * BuildScene.h
- *
- *  Created on: Nov 8, 2012
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef BUILDSCENE_H_
 #define BUILDSCENE_H_
