@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include <sstream>
@@ -31,6 +20,8 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
     msg<<config->ProjectionInfo.nlSkipList.size()<<" projections will be skipped";
     logger(logger.LogDebug,msg.str());
 	ProjectionList->clear();
+
+    std::multimap<float, ProjectionInfo> multiProjectionList;
 
 	bool sequence=true;
 
@@ -66,7 +57,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
             fname=fname.substr(fname.find_first_not_of(" "));
             fname=fname.substr(0,fname.find_first_of("\n\r"));
 
-            (*ProjectionList)[angle]=ProjectionInfo(config->ProjectionInfo.sPath+fname,angle);
+            multiProjectionList.insert(std::make_pair(angle,ProjectionInfo(config->ProjectionInfo.sPath+fname,angle)));
             listfile.getline(cline,2048,eolchar);
         }
         listfile.close();
@@ -77,7 +68,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
         switch (config->ProjectionInfo.scantype) {
             case ReconConfig::cProjections::SequentialScan : {
                     const float fAngleStep=(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])/
-                            static_cast<float>(config->ProjectionInfo.nLastIndex-config->ProjectionInfo.nFirstIndex+1);
+                            static_cast<float>(config->ProjectionInfo.nLastIndex-config->ProjectionInfo.nFirstIndex);
 
                     for (size_t i=config->ProjectionInfo.nFirstIndex;
                         (i<=config->ProjectionInfo.nLastIndex);
@@ -98,10 +89,13 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 						float angle=(i-config->ProjectionInfo.nFirstIndex)*fAngleStep+config->ProjectionInfo.fScanArc[0];
 
                         size_t found = config->ProjectionInfo.sFileMask.find("hdf");
-                        if (found==std::string::npos ){
-                        (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);}
-                        else {
-                            (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(config->ProjectionInfo.sFileMask,angle);
+                        if (found==std::string::npos )
+                        {
+                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
+                        }
+                        else
+                        {
+                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sFileMask,angle)));
                         }
 					}
 				}
@@ -128,8 +122,10 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 						(i<(config->ProjectionInfo.nLastIndex+skip));
 						i++)
 					{
-                        if (!ignore_skiplist) {
-                            while (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end()) {
+                        if (!ignore_skiplist)
+                        {
+                            while (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end())
+                            {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;
                                 logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -144,14 +140,16 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 
                        kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-						//float angle=static_cast<float>(fmod((i-config->ProjectionInfo.nFirstIndex)*fGoldenSection*arc,arc));
 						float angle=static_cast<float>(fmod(static_cast<float>(i-1-skip)*fGoldenSection*arc,arc));
 
 
-                        if (found==std::string::npos ) {
-                            (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);
-                        } else {
-                             (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(config->ProjectionInfo.sFileMask,angle);
+                        if (found==std::string::npos )
+                        {
+                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
+                        }
+                        else
+                        {
+                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sFileMask,angle)));
                         }
 					}
 				}
@@ -165,53 +163,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
     msg.str(""); msg<<"proj list size="<<ProjectionList->size();
     logger(logger.LogMessage,msg.str());
 
-#ifdef EQUIDISTANT_WEIGHTS
-	std::map<float, ProjectionInfo>::iterator q0;
-	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
-		q0->second.weight=1.0f/static_cast<float>(ProjectionList->size());
-	}
-
-#else
-	// Compute the projection weights
-	std::map<float, ProjectionInfo>::iterator q0,q1,q2;
-
-	q0=q2=ProjectionList->begin();
-	q1=++q2;
-	q2++;
-
-	for (; q2!=ProjectionList->end(); q0++,q1++,q2++) {
-		q1->second.weight=(q2->first-q0->first)/360;
-	}
-
-	if (175.0f<(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])) {
-		logger(kipl::logging::Logger::LogMessage,"Normal arc");
-		// Compute last weight
-		q2=ProjectionList->begin();
-	//	q1->second.weight=((180.0f-q1->first)+(q1->first-q0->first))/(2*360.0f);
-		q1->second.weight=((q2->first+180)-(q0->first))/360.0f;
-		// Compute first weight
-		q0=q1;
-		q1=q2++;
-		q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
-	}
-	else {
-		logger(kipl::logging::Logger::LogMessage,"Short arc");
-
-		q0=q2=ProjectionList->begin();
-		q2++;
-		q0->second.weight=q2->second.weight;
-		q1->second.weight=q2->second.weight;;
-	}
-#endif
-
-	std::map<float, ProjectionInfo> ProjectionList2;
-
-	for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++)
-		ProjectionList2[q0->second.angle]=q0->second;
-
-	*ProjectionList=ProjectionList2;
-
-//    std::cout << ProjectionList->size() << std::endl; //it gives 528 instead of 626 !
+    ComputeWeights(config,multiProjectionList,ProjectionList);
 
 	return sequence;
 }
@@ -382,4 +334,59 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
 
 
     return sequence;
+}
+
+
+int ComputeWeights(ReconConfig const * const config, std::multimap<float, ProjectionInfo> &multiProjectionList, std::map<float, ProjectionInfo>  * ProjectionList)
+{
+    kipl::logging::Logger logger("ComputeWeights");
+#ifdef EQUIDISTANT_WEIGHTS
+    std::map<float, ProjectionInfo>::iterator q0;
+    for (q0=ProjectionList->begin(); q0!=ProjectionList->end(); q0++) {
+        q0->second.weight=1.0f/static_cast<float>(ProjectionList->size());
+    }
+
+#else
+    // Compute the projection weights
+    std::multimap<float, ProjectionInfo>::iterator q0,q1,q2,q00;
+    std::list<std::multimap<float, ProjectionInfo>::iterator> stack;
+
+    q0=q2=multiProjectionList.begin();
+    q1=++q2;
+    q2++;
+
+    for (; q2!=multiProjectionList.end(); q0++,q1++,q2++) {
+
+        q1->second.weight=(q2->first-q0->first)/360.0f;
+        //todo: Enter code to handle multiple projections with same angle
+    }
+
+    if (175.0f<(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])) {
+        logger(kipl::logging::Logger::LogMessage,"Normal arc");
+        // Compute last weight
+        q2=multiProjectionList.begin();
+        q1->second.weight=((q2->first+180)-(q0->first))/360.0f;
+
+        // Compute first weight
+        q0=q1;
+        q1=q2++;
+        q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"Short arc");
+
+        q0=q2=multiProjectionList.begin();
+        q2++;
+        q0->second.weight=q2->second.weight;
+        q1->second.weight=q2->second.weight;;
+    }
+#endif
+
+    std::map<float, ProjectionInfo> ProjectionList2;
+
+    for (q0=multiProjectionList.begin(); q0!=multiProjectionList.end(); q0++)
+        ProjectionList2[q0->second.angle]=q0->second;
+
+    *ProjectionList=ProjectionList2;
+    return 0;
 }

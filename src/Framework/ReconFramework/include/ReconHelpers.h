@@ -1,16 +1,4 @@
-//
-// ReconHelpers.h
-//
-//  Created on: Sep 5, 2010
-//      Author: anders
-//
-//  Revision information
-//    Checked in by $author$
-//    Check-in date $date$
-//    svn Revision  $revision$
-//    $Id$
-//
-
+//<LICENSE>
 
 #ifndef RECONHELPERS_H_
 #define RECONHELPERS_H_
@@ -40,6 +28,10 @@ bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(std::string sFileMask, std::strin
                    float fScanArc[2], ReconConfig::cProjections::eScanType scantype,
                    std::set<size_t> * nlSkipList,
                    std::map<float, ProjectionInfo>  * ProjectionList);
+
+int RECONFRAMEWORKSHARED_EXPORT ComputeWeights(ReconConfig const * const config,
+                                               std::multimap<float, ProjectionInfo> &multiProjectionList,
+                                               std::map<float, ProjectionInfo>  * ProjectionList);
 
 
 

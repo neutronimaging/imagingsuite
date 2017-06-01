@@ -21,6 +21,7 @@ public:
 
 private Q_SLOTS:
     void testProjectionReader();
+    void testBuildFileList_GeneratedSequence();
     void testBuildFileList();
     void testBuildFileList2();
 
@@ -563,6 +564,53 @@ void FrameWorkTest::testProjectionReader()
     }
 }
 
+void FrameWorkTest::testBuildFileList_GeneratedSequence()
+{
+    std::ostringstream msg;
+    size_t N=10;
+    size_t i=0;
+
+    ReconConfig config;
+// Test even number
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=18;
+    config.ProjectionInfo.fScanArc[0]=0.0f;
+    config.ProjectionInfo.fScanArc[1]=360.0f;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList);
+    msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
+    float sum=0.0f;
+    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); it++) {
+        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
+        sum+=(*it).second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+
+    // Test odd number
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=19;
+
+    BuildFileList(&config,&ProjectionList);
+    msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
+    sum=0.0f;
+    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); it++) {
+        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
+        sum+=(*it).second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
 void FrameWorkTest::testBuildFileList()
 {
     // File list
@@ -605,17 +653,17 @@ void FrameWorkTest::testBuildFileList()
 
 void FrameWorkTest::testBuildFileList2()
 {
-    size_t N=50;
-    ReconConfig config;
+//    size_t N=50;
+//    ReconConfig config;
 
-    config.ProjectionInfo.sFileMask="ct2.csv";
-    config.ProjectionInfo.nFirstIndex=1;
-    config.ProjectionInfo.nLastIndex=N;
+//    config.ProjectionInfo.sFileMask="ct2.csv";
+//    config.ProjectionInfo.nFirstIndex=1;
+//    config.ProjectionInfo.nLastIndex=N;
 
-    std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList,'\r');
+//    std::map<float,ProjectionInfo> ProjectionList;
+//    BuildFileList(&config,&ProjectionList,'\r');
 
-    QVERIFY(ProjectionList.size()==N);
+//    QVERIFY(ProjectionList.size()==N);
 
 }
 QTEST_APPLESS_MAIN(FrameWorkTest)
