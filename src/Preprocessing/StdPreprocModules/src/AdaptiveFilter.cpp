@@ -189,8 +189,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
 
     // convolution filter
-    // todo: replace by TFilter => Much faster
-
+    // todo: replace by TFilter => Much faster - still missing
 //    size_t dims[]={100,100};
 //    kipl::base::TImage<float,2> img(dims),res;
 //    float kernel[]={1,1,1, 1,1,1, 1,1,1};
@@ -254,6 +253,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
 
     // compute pmax and pmin
+    float den = 1/(m_fEccentricityMax-m_fEccentricityMin);
 
     for (size_t i=0; i<img.Size(1); i++) {
 
@@ -263,8 +263,8 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
 //            std::cout << pMax[i] << " " << pMin[i] << " ";
 //            std::cout << ecc[i] << std::endl;
-            ecc[i] = (ecc[i]-m_fEccentricityMin)/(m_fEccentricityMax-m_fEccentricityMin); // truncated eccentricity
-                                                                                          // todo: replace by multiplication by precomputed reciprocal
+            ecc[i] = (ecc[i]-m_fEccentricityMin)*den; // truncated eccentricity
+                                                                                          // todo: replace by multiplication by precomputed reciprocal - OK
             if (ecc[i]<0) { ecc[i]=0; }
             if (ecc[i]>1) { ecc[i]=1; }
 
@@ -284,7 +284,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
         float ws, wo;
         float high, low, mid;
         float *f_alfa = new float[img.Size(1)]; // fraction of modified projections
-        int counts = 0; // Todo: consider declare counts as float. You are anyway casting it several times
+        float counts = 0.0f; // Todo: consider declare counts as float. You are anyway casting it several times - OK
 
 
         for (size_t y=0; y<dims[1]; y++){ //for each projection angle
@@ -300,7 +300,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
             bool search = true; // todo: use true and false instead of 0 and 1 - OK
 
-            while (search) { // todo: as you always do at least one run the do {} while loop is the appropriate choice
+            do{ // todo: as you always do at least one run the do {} while loop is the appropriate choice - OK
 
 //                std::cout <<"--- high value ---  " << high << std::endl;
 //                std::cout <<"--- low value ----  " << low << std::endl;
@@ -313,7 +313,7 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 
                 for (size_t x=0; x<dims[0]; x++) {
                     if (pImg[x]>=mid) {
-                        counts++;
+                        counts += 1.0f;
                     }
                 }
 //                std::cout << counts << std::endl;
@@ -323,22 +323,25 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
 //                std::cout << "f_alfa: " << f_alfa[y] << std::endl;
 
 
-                if ( (static_cast< float >(counts)/img.Size(0))<=f_alfa[y]+0.005 && (static_cast< float >(counts)/img.Size(0))>=f_alfa[y]-0.005) // se soddisfo la condizione
-                    // todo: Try abs(counts/size-f_alpha[y])<0.005
-                    // todo: "static_cast< float >(counts)/img.Size(0))" is used several times compute it once as a constant
+//                if ( (static_cast< float >(counts/img.Size(0))<=f_alfa[y]+0.005 && (static_cast< float >(counts)/img.Size(0))>=f_alfa[y]-0.005) // se soddisfo la condizione
+                float normalized_counts = counts/img.Size(0);
+
+                if (abs(normalized_counts-f_alfa[y])<0.005)
+                    // todo: Try abs(counts/size-f_alpha[y])<0.005 - OK
+                    // todo: "static_cast< float >(counts)/img.Size(0))" is used several times compute it once as a constant - OK
                 {
                     for (size_t x=0; x<dims[0]; x++){
-                        // Todo: can be implemented without branch
-                        // ws=static_cast<float>(pImg[x]>=mid);
-                        // wo=1.0f-ws;
-                        if (pImg[x]>=mid) {
-                            wo = 0;
-                            ws = 1;
-                        }
-                        else{
-                            wo = 1;
-                            ws = 0;
-                        }
+                        // Todo: can be implemented without branch - OK
+                         ws=static_cast<float>(pImg[x]>=mid);
+                         wo=1.0f-ws;
+//                        if (pImg[x]>=mid) {
+//                            wo = 0;
+//                            ws = 1;
+//                        }
+//                        else{
+//                            wo = 1;
+//                            ws = 0;
+//                        }
                         pImg[x] = wo*pImg[x]+ws*pFilt[x];
                     }
 
@@ -352,11 +355,11 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
                 {
 //                    std::cout << "---------ELSE-------" << std::endl;
 
-                    if (static_cast< float >(counts)/img.Size(0)>f_alfa[y]+0.005) // devo alzare la soglia
+                    if (normalized_counts>f_alfa[y]+0.005) // devo alzare la soglia
                     {
                         low = mid;}
 
-                    if (static_cast< float >(counts)/img.Size(0)<f_alfa[y]-0.005) // devo abbassare la soglia
+                    if (normalized_counts<f_alfa[y]-0.005) // devo abbassare la soglia
                        {
                           high = mid;
                        }
@@ -367,19 +370,21 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
                     if (high<=low+0.005) // con una certa tolleranza?
                     {
                         // se ho finito di cercare e cmq la mia frazione di pixel modificati è minore di quanto aspettato, applica il filtro
-                        if ( (static_cast< float >(counts)/img.Size(0)) <= (f_alfa[y]+0.005) ){
+                        if ( (normalized_counts) <= (f_alfa[y]+0.005) ){
 //                            std::cout << "------------ filter --------------" << std::endl;
 
                             for (size_t x=0; x<dims[0]; x++){
-                                // todo: again try with branchless implementation
-                                if (pImg[x]>=mid) {
-                                    wo = 0;
-                                    ws = 1;
-                                }
-                                else{
-                                    wo = 1;
-                                    ws = 0;
-                                }
+                                // todo: again try with branchless implementation - OK
+                                ws=static_cast<float>(pImg[x]>=mid);
+                                wo=1.0f-ws;
+//                                if (pImg[x]>=mid) {
+//                                    wo = 0;
+//                                    ws = 1;
+//                                }
+//                                else{
+//                                    wo = 1;
+//                                    ws = 0;
+//                                }
                                 pImg[x] = wo*pImg[x]+ws*pFilt[x];
                             }
 
@@ -389,13 +394,13 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
                     }
 
 
-                    counts = 0;
+                    counts = 0.0f;
 
                 }
 
 
 
-            }
+            }while (search);
 
                 }
 
