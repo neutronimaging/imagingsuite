@@ -1,6 +1,7 @@
-//<LICENCE>
+//<LICENSE>
 
 #include <string>
+#include <sstream>
 #include <map>
 #include <algorithm>
 
@@ -56,6 +57,7 @@ std::string KIPLSHARED_EXPORT enum2string(kipl::io::eExtensionTypes et)
 /// \param et target enum variable
 void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &et)
 {
+    std::ostringstream msg;
     std::string e=ext;
     std::transform(e.begin(),e.begin(),e.end(),tolower);
     if (e[0]=='.')
@@ -81,12 +83,14 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &e
     extmap["hd5"]   = kipl::io::ExtensionHDF5;
     extmap["hdf"]   = kipl::io::ExtensionHDF;
 
-    auto it=extmap.find(ext);
+    auto it=extmap.find(e);
 
     if (it!=extmap.end())
         et=it->second;
     else {
-        throw kipl::base::KiplException("Unknown file extension",__FILE__,__LINE__);
+        msg.str("");
+        msg<<"Unknown file extension "<<ext<<" -> "<<e;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 }
 
