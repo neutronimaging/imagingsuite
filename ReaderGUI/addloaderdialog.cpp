@@ -36,8 +36,14 @@ void AddLoaderDialog::on_pushButton_Browse_clicked()
         QString path(QString::fromStdString(pdir.substr(0,pos+1)));
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(pdir);
+        int nFiles;
+        int nFirstIndex;
+        int nLastIndex;
+        da.AnalyzeMatchingNames(fi.m_sMask,nFiles,nFirstIndex,nLastIndex);
 
         ui->lineEdit_FileMask->setText(QString::fromStdString(fi.m_sMask));
+        ui->spinBox_First->setValue(nFirstIndex);
+        ui->spinBox_Last->setValue(nLastIndex);
 
     }
 }
