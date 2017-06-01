@@ -296,8 +296,6 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
         else {
             ui->editOpenBeamMask->setText(QString::fromStdString(fi.m_sMask));
 
-            QString newmask=QString::fromStdString(fi.m_sMask);
-            ui->editProjectionMask->setText(newmask);
             int c=0;
             int f=0;
             int l=0;
@@ -1803,8 +1801,7 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
         }
         else {
             ui->editDarkMask->setText(QString::fromStdString(fi.m_sMask));
-            QString newmask=QString::fromStdString(fi.m_sMask);
-            ui->editProjectionMask->setText(newmask);
+
             int c=0;
             int f=0;
             int l=0;
