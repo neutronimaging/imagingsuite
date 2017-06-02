@@ -75,8 +75,16 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 
 
    double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.MatrixInfo.fVoxelSize[0]; // in world coordinate
+   double cam[3] = {0.0, 0.0, 0.0}; // Location of Camera
 
-    double cam[3] = {sad*cos(-angles*dPi/180), sad*sin(-angles*dPi/180),0.0}; // Location of camera
+   if (mConfig.ProjectionInfo.eDirection == kipl::base::RotationDirCW) {
+       cam[0] = sad*cos(-angles*dPi/180);
+       cam[1] = sad*sin(-angles*dPi/180);
+   }
+   else{
+       cam[0] = sad*cos(angles*dPi/180);
+       cam[1] = sad*sin(angles*dPi/180);
+   }
     double plt[3] = {0.0,0.0,0.0}; // Detector orientation  Panel left (toward first column)
     double pup[3] = {0.0,0.0,0.0}; // Panel up (toward top row)
     double vup[3] = {0.0, 0.0, 0.0};
@@ -262,7 +270,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
 //            /* Apply ramp filter */
 //            if (parms->filter == FDK_FILTER_TYPE_RAMP) {
 //                timer->start ();
-//                ramp_filter(proj);
+                ramp_filter(proj);
 //                filter_time += timer->report ();
 //            }
 
@@ -303,14 +311,13 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         float* img = volume.GetDataPtr(); // maybe i don't need this
         double *xip, *yip, *zip;
         double sad_sid_2;
-        float scale = (float) (sqrt(1.f) / (double) (nProj)); // this one seems the most meaningful
-        scale *=(mConfig.ProjectionInfo.fResolution[0]);
+//        float scale = (float) (sqrt(1.f) / (double) (nProj)); // this one seems the most meaningful
+//        scale /=(mConfig.ProjectionInfo.fResolution[0]*0.1);
 
 //        float scale = 1.0f;
 
 //        std::cout<< nProjectionBufferSize << std::endl;
-//        float scale = mConfig.ProjectionInfo.fResolution[0]*0.1; // compenso per la risoluzione che viene computata inizialmente
-
+        float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
 
 
 
@@ -329,18 +336,18 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
 
-        if (mConfig.MatrixInfo.bUseVOI) {
+//        if (mConfig.MatrixInfo.bUseVOI) {
 
             origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
             origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
             origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
-        }
+//        }
 
-        else {
-            origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
-            origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
-            origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
-        }
+//        else {
+//            origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
+//            origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
+//            origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
+//        }
 
 
         double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; // piercing point
@@ -348,7 +355,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
         // Rescale image (destructive rescaling)
 //        sad_sid_2 = (pmat->sad * pmat->sad) / (pmat->sid * pmat->sid);
-        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (2*mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
+        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
 
 
 
@@ -363,7 +370,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
             cbi[i] *=scale;         // User scaling
         }
 
-        ramp_filter(cbi);
+//        ramp_filter(cbi);
 
 //        xip = (double*) malloc (3*vol->dim[0]*sizeof(double));
 //        yip = (double*) malloc (3*vol->dim[1]*sizeof(double));
@@ -534,17 +541,17 @@ void FDKbp::project_volume_onto_image_reference (
 
     float origin[3]; /* = {-12.475, -12.75, -24.975};*/
 
-    if (mConfig.MatrixInfo.bUseVOI) {
+//    if (mConfig.MatrixInfo.bUseVOI) {
         origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
         origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
         origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
-    }
+//    }
 
-    else {
-        origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
-        origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
-        origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
-    }
+//    else {
+//        origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
+//        origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
+//        origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
+//    }
 
 
 

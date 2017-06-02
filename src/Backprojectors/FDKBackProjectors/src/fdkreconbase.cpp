@@ -24,8 +24,8 @@ FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAli
     SizeProj(0),
     MatrixCenterX(0),
     ProjCenter(0.0f),
-    nProjectionBufferSize(16),
-    nSliceBlock(1348), // try to workaround roi in projections.. let's see
+    nProjectionBufferSize(0),
+    nSliceBlock(300), // try to workaround roi in projections.. let's see
     fRotation(0.0f) // not sure if i need these parameters.. for sure i would need the others that we have added in reconconfig
 {
    logger(kipl::logging::Logger::LogMessage,"c'tor FdkProjectorBase");
@@ -62,16 +62,18 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
     nSliceBlock=GetIntParameter(parameters,"SliceBlock");
     GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
 
-    if (mConfig.MatrixInfo.bUseVOI) {
+//    if (mConfig.MatrixInfo.bUseVOI) {
         volume_size[0] = mConfig.MatrixInfo.voi[1]-mConfig.MatrixInfo.voi[0];
         volume_size[1] = mConfig.MatrixInfo.voi[3]-mConfig.MatrixInfo.voi[2];
         volume_size[2] = mConfig.MatrixInfo.voi[5]-mConfig.MatrixInfo.voi[4];
-    }
-    else {
-        volume_size[0] = mConfig.MatrixInfo.nDims[0];
-        volume_size[1] = mConfig.MatrixInfo.nDims[1];
-        volume_size[2] = mConfig.MatrixInfo.nDims[2];
-    }
+
+//        std::cout << "volume size: " << volume_size[0] << " " << volume_size[1] << " " << volume_size[2] << std::endl;
+//    }
+//    else {
+//        volume_size[0] = mConfig.MatrixInfo.nDims[0];
+//        volume_size[1] = mConfig.MatrixInfo.nDims[1];
+//        volume_size[2] = mConfig.MatrixInfo.nDims[2];
+//    }
 
     volume.Resize(volume_size);
     volume = 0.0f;
@@ -250,18 +252,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
 //       BuildCircleMask();
 
-
-//       std::cout << mConfig.ProjectionInfo.nDims[0] << " " << mConfig.ProjectionInfo.nDims[1]
-//                                                    << std::endl;
-
-
-
        kipl::base::TImage<float,2> img(projections.Dims());
-
-//       // ---- projections dims is not a number
-//       std::cout << "projections dimensions: " << std::endl;
-//       std::cout << projections.Dims() << std::endl;
-//       std::cout << projections.Size(0) << " " << projections.Size(1) << std::endl;
 
        size_t nProj=projections.Size(2);
        std::cout<< "NProj:   "<<nProj << std::endl; // numero totale di proiezioni
@@ -279,8 +270,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        float *pImg=img.GetDataPtr();
        float *pProj=NULL;
 
-//       std::cout << "ANGLES" << std::endl;
-//        std::cout<< angles[180] << " " << angles[181]  << " " << angles[182] << std::endl;
+
 
        /* Update piercing point position in projection rois */
 
@@ -299,12 +289,12 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
          for (int i=0; (i<nProj); i++) {
 
            pProj=projections.GetLinePtr(0,i);
-           memcpy(pImg,pProj,sizeof(float)*img.Size()); // ma perchè devo fare qst??
+           memcpy(pImg,pProj,sizeof(float)*img.Size());
 
-//           img *= weights[i];
+           img *= weights[i];
 //           std::cout << "weigth: " << weights[i] << std::endl;
 
-          this->reconstruct(img, angles[i], nProj); // i am not sure i am passing the image in the optimal way.
+          this->reconstruct(img, angles[i], nProj);
 
 
        }
@@ -321,12 +311,10 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
 
 
-
     float matrixMin=Min();
     float matrixMax=Max();
 
     ostringstream msg;
-
     msg<<"Preparing histogram; #bins: "<<nBins<<", Min: "<<matrixMin<<", Max: "<<matrixMax;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -358,6 +346,7 @@ void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
 float FdkReconBase::Min()
 {
     float minval=std::numeric_limits<float>::max();
+
 
 //    if (MatrixAlignment==FdkReconBase::MatrixXYZ) {
 //        logger(kipl::logging::Logger::LogWarning,"Min is not implemented for MatrixXYZ");
