@@ -366,7 +366,7 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 			if (sName=="useroi")			MatrixInfo.bUseROI = kipl::strings::string2bool(sValue);
 			if (sName=="roi")				kipl::strings::String2Array(sValue,MatrixInfo.roi,4);
             if (sName=="voxelsize")         kipl::strings::String2Array(sValue,MatrixInfo.fVoxelSize,3);
-            if (sName=="usevoi")            MatrixInfo.bUseVOI = kipl::strings::string2bool(sValue);
+//            if (sName=="usevoi")            MatrixInfo.bUseVOI = kipl::strings::string2bool(sValue);
             if (sName=="voi")               kipl::strings::String2Array(sValue,MatrixInfo.voi, 6);
     	}
         ret = xmlTextReaderRead(reader);
@@ -780,7 +780,7 @@ ReconConfig::cMatrix::cMatrix() :
 	sFileMask("slice_####.tif"),
 	nFirstIndex(0),
 	bUseROI(false),
-    bUseVOI(false),
+//    bUseVOI(false),
 	FileType(kipl::io::TIFF16bits)
 {
 	nDims[2]=nDims[1]=nDims[0]=0;
@@ -801,7 +801,7 @@ ReconConfig::cMatrix::cMatrix(const cMatrix &a) :
 	sFileMask(a.sFileMask),
 	nFirstIndex(a.nFirstIndex),
 	bUseROI(a.bUseROI),
-    bUseVOI(a.bUseVOI),
+//    bUseVOI(a.bUseVOI),
 	FileType(a.FileType)
 {
 	nDims[2] = a.nDims[2];
@@ -849,7 +849,7 @@ ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a)
 	roi[2]= a.roi[2];
 	roi[3]= a.roi[3];
 
-    bUseVOI = a.bUseVOI;
+//    bUseVOI = a.bUseVOI;
     voi[0] = a.voi[0];
     voi[1] = a.voi[1];
     voi[2] = a.voi[2];
@@ -882,7 +882,7 @@ std::string ReconConfig::cMatrix::WriteXML(size_t indent)
 	str<<setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(bUseROI)<<"</useroi>"<<endl;
 	str<<setw(indent+4)  <<" "<<"<roi>"<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<" "<<"</roi>"<<endl;
     str<<setw(indent+4)  <<" "<<"<voxelsize>"<< fVoxelSize[0] << " "<< fVoxelSize[1] <<" " <<fVoxelSize[2] << " " << "</voxelsize>"<< endl;
-    str<<setw(indent+4)  <<" "<<"<usevoi>"<<kipl::strings::bool2string(bUseVOI)<<"</usevoi>"<< endl;
+//    str<<setw(indent+4)  <<" "<<"<usevoi>"<<kipl::strings::bool2string(bUseVOI)<<"</usevoi>"<< endl;
     str<<setw(indent+4)  <<" "<<"<voi>"<< voi[0]<<" "<<voi[1] << " " << voi[2] << " " << voi[3] << " " << voi[4] <<" " << voi[5] << "</voi>" << endl;
 	str<<setw(indent)  <<" "<<"</matrix>"<<std::endl;
 

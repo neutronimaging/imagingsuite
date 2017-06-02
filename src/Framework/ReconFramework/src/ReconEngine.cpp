@@ -153,7 +153,7 @@ int ReconEngine::Run()
    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
 
 
-      if (m_Config.MatrixInfo.bUseVOI) {
+//      if (m_Config.MatrixInfo.bUseVOI) {
             totalSlices = voi[5]-voi[4];
 
             size_t voi_dims[3] = {
@@ -163,11 +163,11 @@ int ReconEngine::Run()
 
             };
             m_Volume.Resize(voi_dims);
-        }
-      else {
-            totalSlices = m_Config.MatrixInfo.nDims[2];
-            m_Volume.Resize(m_Config.MatrixInfo.nDims);
-        }
+//        }
+//      else {
+//            totalSlices = m_Config.MatrixInfo.nDims[2];
+//            m_Volume.Resize(m_Config.MatrixInfo.nDims);
+//        }
 
     }
 
@@ -648,13 +648,13 @@ int ReconEngine::Run3DFull()
 }
     else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
 
-        if (m_Config.MatrixInfo.bUseVOI) {
+//        if (m_Config.MatrixInfo.bUseVOI) {
               totalSlices = voi[5]-voi[4];
               std::cout << "totalslice: " << totalSlices << std::endl;
-        }
-        else {
-            totalSlices=m_Config.MatrixInfo.nDims[2];
-        }
+//        }
+//        else {
+//            totalSlices=m_Config.MatrixInfo.nDims[2];
+//        }
 
     }
 
@@ -664,7 +664,7 @@ int ReconEngine::Run3DFull()
 	msg.str("");
 	if (!m_Config.MatrixInfo.bAutomaticSerialize) {
 		try {
-            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone && m_Config.MatrixInfo.bUseVOI) {
+            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
 
                 size_t voi_dims[3] = {
                     voi[1]-voi[0],

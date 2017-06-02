@@ -154,7 +154,7 @@ public:
         bool bUseROI;                   ///< Reconstruct the data in the defined region of interest.
         size_t roi[4];                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1). Relevant for parallel beam
         size_t voi[6];                  ///< Subvolume to reconstruct (volume coordinates x0, x1, y0, y1, z0, z1). Relevant for divergent beam
-        bool bUseVOI;                   ///< Reconstruct the data in the defined volume of interest. Relevant for divergent beam
+//        bool bUseVOI;                   ///< Reconstruct the data in the defined volume of interest. Relevant for divergent beam
         kipl::io::eFileType FileType;   ///< File type of the reconstructed slices.
         float fVoxelSize[3];            ///< Voxel size of the reconstructed volume, relevant for divergent beam only
 
