@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1268</width>
-    <height>872</height>
+    <width>1285</width>
+    <height>917</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
          <bool>true</bool>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -133,10 +133,10 @@
          <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
-            <x>0</x>
+            <x>20</x>
             <y>0</y>
             <width>766</width>
-            <height>741</height>
+            <height>771</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="layoutProjectionInformation">
@@ -457,18 +457,147 @@
               <string>Reference images</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="0">
-               <widget class="QPushButton" name="buttonTakePath">
-                <property name="toolTip">
-                 <string>Copy the projection data path to the reference data path</string>
-                </property>
-                <property name="whatsThis">
-                 <string/>
-                </property>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="buttonGetPathDC">
                 <property name="text">
-                 <string>Open beam</string>
+                 <string>Dark current</string>
                 </property>
                </widget>
+              </item>
+              <item row="2" column="1">
+               <layout class="QHBoxLayout" name="layoutOBMaskIndex">
+                <item>
+                 <widget class="QLabel" name="label_16">
+                  <property name="text">
+                   <string>First</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>spinFirstOpenBeam</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinFirstOpenBeam">
+                  <property name="toolTip">
+                   <string>File index of the first open beam image</string>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_17">
+                  <property name="text">
+                   <string>Count</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>spinOpenBeamCount</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinOpenBeamCount">
+                  <property name="toolTip">
+                   <string>Number of open beam images</string>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="5" column="2">
+               <widget class="QPushButton" name="buttonGetDoseROI">
+                <property name="text">
+                 <string>Get ROI</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QPushButton" name="buttonBrowseReference">
+                <property name="toolTip">
+                 <string>Browse for reference data</string>
+                </property>
+                <property name="whatsThis">
+                 <string>Browse for reference data path</string>
+                </property>
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="editDarkMask">
+                <property name="toolTip">
+                 <string>File maskof the dark current image (Format: file_####.ext)</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="editOpenBeamMask">
+                <property name="toolTip">
+                 <string>Path to the reference data</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Open beam index</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <layout class="QHBoxLayout" name="layoutDarkIndex">
+                <item>
+                 <widget class="QLabel" name="label_23">
+                  <property name="text">
+                   <string>First</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>spinFirstOpenBeam</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinFirstDark">
+                  <property name="toolTip">
+                   <string>File index of the first dark current image</string>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_24">
+                  <property name="text">
+                   <string>Count</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>spinOpenBeamCount</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinDarkCount">
+                  <property name="toolTip">
+                   <string>Number of dark current images</string>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item row="5" column="1">
                <layout class="QHBoxLayout" name="layoutDoseROI">
@@ -542,132 +671,16 @@
                 </item>
                </layout>
               </item>
-              <item row="3" column="1">
-               <widget class="QLineEdit" name="editDarkMask">
+              <item row="0" column="0">
+               <widget class="QPushButton" name="buttonTakePath">
                 <property name="toolTip">
-                 <string>File maskof the dark current image (Format: file_####.ext)</string>
+                 <string>Copy the projection data path to the reference data path</string>
                 </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <layout class="QHBoxLayout" name="layoutOBMaskIndex">
-                <item>
-                 <widget class="QLabel" name="label_16">
-                  <property name="text">
-                   <string>First</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>spinFirstOpenBeam</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spinFirstOpenBeam">
-                  <property name="toolTip">
-                   <string>File index of the first open beam image</string>
-                  </property>
-                  <property name="maximum">
-                   <number>5000</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_17">
-                  <property name="text">
-                   <string>Count</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>spinOpenBeamCount</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spinOpenBeamCount">
-                  <property name="toolTip">
-                   <string>Number of open beam images</string>
-                  </property>
-                  <property name="maximum">
-                   <number>5000</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="4" column="1">
-               <layout class="QHBoxLayout" name="layoutDarkIndex">
-                <item>
-                 <widget class="QLabel" name="label_23">
-                  <property name="text">
-                   <string>First</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>spinFirstOpenBeam</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spinFirstDark">
-                  <property name="toolTip">
-                   <string>File index of the first dark current image</string>
-                  </property>
-                  <property name="maximum">
-                   <number>5000</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_24">
-                  <property name="text">
-                   <string>Count</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>spinOpenBeamCount</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spinDarkCount">
-                  <property name="toolTip">
-                   <string>Number of dark current images</string>
-                  </property>
-                  <property name="maximum">
-                   <number>5000</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_18">
-                <property name="text">
-                 <string>Dose ROI</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QPushButton" name="buttonGetPathDC">
-                <property name="text">
-                 <string>Dark current</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_14">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+                <property name="whatsThis">
+                 <string/>
                 </property>
                 <property name="text">
-                 <string>Open beam index</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="editOpenBeamMask">
-                <property name="toolTip">
-                 <string>Path to the reference data</string>
+                 <string>Open beam</string>
                 </property>
                </widget>
               </item>
@@ -678,23 +691,10 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="2">
-               <widget class="QPushButton" name="buttonGetDoseROI">
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_18">
                 <property name="text">
-                 <string>Get ROI</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QPushButton" name="buttonBrowseReference">
-                <property name="toolTip">
-                 <string>Browse for reference data</string>
-                </property>
-                <property name="whatsThis">
-                 <string>Browse for reference data path</string>
-                </property>
-                <property name="text">
-                 <string>Browse</string>
+                 <string>Dose ROI</string>
                 </property>
                </widget>
               </item>
@@ -1273,199 +1273,6 @@
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QWidget" name="horizontalLayoutWidget_5">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>80</y>
-                    <width>701</width>
-                    <height>38</height>
-                   </rect>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_14">
-                   <item>
-                    <widget class="QLabel" name="label_33">
-                     <property name="text">
-                      <string>Volume Size</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_15">
-                     <item>
-                      <widget class="QLabel" name="label_34">
-                       <property name="text">
-                        <string>x</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinVolumeSizeX">
-                       <property name="maximum">
-                        <number>99999</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_44">
-                       <property name="text">
-                        <string>y</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinVolumeSizeY">
-                       <property name="maximum">
-                        <number>999999</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_45">
-                       <property name="text">
-                        <string>z</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinVolumeSizeZ">
-                       <property name="maximum">
-                        <number>999999</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_11">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="buttonCompSize">
-                     <property name="text">
-                      <string>Compute size</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="horizontalLayoutWidget_7">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>120</y>
-                    <width>701</width>
-                    <height>35</height>
-                   </rect>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_17">
-                   <item>
-                    <widget class="QLabel" name="label_46">
-                     <property name="text">
-                      <string>Voxel spacing</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_22">
-                     <item>
-                      <widget class="QLabel" name="label_47">
-                       <property name="text">
-                        <string>x</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QDoubleSpinBox" name="dspinVoxelSpacingX">
-                       <property name="decimals">
-                        <number>4</number>
-                       </property>
-                       <property name="minimum">
-                        <double>0.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>10.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.010000000000000</double>
-                       </property>
-                       <property name="value">
-                        <double>0.000000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_54">
-                       <property name="text">
-                        <string>y</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QDoubleSpinBox" name="dSpinVoxelSpacingY">
-                       <property name="decimals">
-                        <number>4</number>
-                       </property>
-                       <property name="minimum">
-                        <double>0.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>10.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.010000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_55">
-                       <property name="text">
-                        <string>z</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QDoubleSpinBox" name="dspinVoxelSpacingZ">
-                       <property name="decimals">
-                        <number>4</number>
-                       </property>
-                       <property name="minimum">
-                        <double>0.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>10.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.010000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_12">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </widget>
                  <widget class="QWidget" name="horizontalLayoutWidget_6">
                   <property name="geometry">
                    <rect>
@@ -1549,110 +1356,121 @@
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QWidget" name="horizontalLayoutWidget_3">
+                 <widget class="QWidget" name="horizontalLayoutWidget_4">
                   <property name="geometry">
                    <rect>
                     <x>0</x>
-                    <y>160</y>
-                    <width>706</width>
-                    <height>35</height>
+                    <y>80</y>
+                    <width>701</width>
+                    <height>31</height>
                    </rect>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <layout class="QHBoxLayout" name="horizontalLayout_14">
                    <item>
-                    <widget class="QCheckBox" name="checkSubVolumeCBCT">
+                    <widget class="QLabel" name="label_33">
                      <property name="text">
-                      <string>VOI</string>
+                      <string>Direction of rotation</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <widget class="QComboBox" name="comboDirRotation">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <item>
-                      <widget class="QLabel" name="label_60">
-                       <property name="text">
-                        <string>x0</string>
-                       </property>
-                      </widget>
+                      <property name="text">
+                       <string>RotationDirCW</string>
+                      </property>
                      </item>
                      <item>
-                      <widget class="QSpinBox" name="spinSubVolumeSizeX0">
-                       <property name="maximum">
-                        <number>9999</number>
-                       </property>
-                      </widget>
+                      <property name="text">
+                       <string>RotationDirCCW</string>
+                      </property>
                      </item>
-                     <item>
-                      <widget class="QLabel" name="label_63">
-                       <property name="text">
-                        <string>x1</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinSubVolumeSizeX1">
-                       <property name="maximum">
-                        <number>9999</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_61">
-                       <property name="text">
-                        <string>y0</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinSubVolumeSizeY0">
-                       <property name="maximum">
-                        <number>9999</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_64">
-                       <property name="text">
-                        <string>y1</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinSubVolumeSizeY1">
-                       <property name="maximum">
-                        <number>9999</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_62">
-                       <property name="text">
-                        <string>z0</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinSubVolumeSizeZ0">
-                       <property name="maximum">
-                        <number>9999</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_65">
-                       <property name="text">
-                        <string>z1</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="spinSubVolumeSizeZ1">
-                       <property name="maximum">
-                        <number>9999</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_14">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Minimum</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>30</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_5">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>110</y>
+                    <width>701</width>
+                    <height>32</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <item>
+                    <widget class="QLabel" name="label_34">
+                     <property name="text">
+                      <string>Slices to reconstruct first</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Minimum</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_67">
+                     <property name="text">
+                      <string>First</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="spinSubVolumeSizeZ0">
+                     <property name="maximum">
+                      <number>9999</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_68">
+                     <property name="text">
+                      <string>Last</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="spinSubVolumeSizeZ1">
+                     <property name="maximum">
+                      <number>9999</number>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1969,9 +1787,9 @@
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>20</y>
+               <y>30</y>
                <width>681</width>
-               <height>211</height>
+               <height>151</height>
               </rect>
              </property>
             </widget>
@@ -2140,6 +1958,12 @@
             </item>
             <item>
              <widget class="QLabel" name="label_projindex">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>0 (0deg)</string>
               </property>
@@ -2223,7 +2047,7 @@
             <item>
              <widget class="QLabel" name="label_sliceindex">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -2254,8 +2078,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1268</width>
-     <height>21</height>
+     <width>1285</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

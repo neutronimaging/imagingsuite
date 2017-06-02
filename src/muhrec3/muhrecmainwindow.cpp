@@ -825,6 +825,14 @@ void MuhRecMainWindow::MatrixROIChanged(int x)
 {
     logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
     UpdateMatrixROI();
+
+    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
+        ComputeVolumeSize(); // updated volume size
+        std::ostringstream msg;
+        msg.str("");
+        msg<<"Volume size update: "<<m_Config.MatrixInfo.nDims[0]<<" "<<m_Config.MatrixInfo.nDims[1]<<" "<<m_Config.MatrixInfo.nDims[2];
+        logger(logger.LogMessage,msg.str());
+    }
 }
 
 void MuhRecMainWindow::UpdateMatrixROI()
@@ -1599,43 +1607,40 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinPiercPointX->setValue(m_Config.ProjectionInfo.fpPoint[0]);
     ui->dspinPiercPointY->setValue(m_Config.ProjectionInfo.fpPoint[1]);
 
-    ui->dspinVoxelSpacingX->setValue(m_Config.MatrixInfo.fVoxelSize[0]);
-    ui->dSpinVoxelSpacingY->setValue(m_Config.MatrixInfo.fVoxelSize[1]);
-    ui->dspinVoxelSpacingZ->setValue(m_Config.MatrixInfo.fVoxelSize[2]);
+    ui->comboDirRotation->setCurrentIndex(m_Config.ProjectionInfo.eDirection);
 
 //    if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
 //        ui->checkCBCT->setChecked(true);
+//        ComputeVolumeSizeSpacing();
 //    }
 
     if (ui->checkCBCT->isChecked()) {
-        ui->spinVolumeSizeX->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[0]));
-        ui->spinVolumeSizeY->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[1]));
-        ui->spinVolumeSizeZ->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]));
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+        ComputeVolumeSizeSpacing();
     }
     else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
     }
 
-    if (m_Config.MatrixInfo.bUseVOI==true) {
-        ui->checkSubVolumeCBCT->setChecked(true);
-    }
+//    if (m_Config.MatrixInfo.bUseVOI==true) {
+//        ui->checkSubVolumeCBCT->setChecked(true);
+//    }
 
-    if(ui->checkSubVolumeCBCT->checkState()){
-//        ui->spinSubVolumeSizeX0->setEnabled(true);
-//        ui->spinSubVolumeSizeX1->setEnabled(true);
-//        ui->spinSubVolumeSizeY0->setEnabled(true);
-//        ui->spinSubVolumeSizeY1->setEnabled(true);
-//        ui->spinSubVolumeSizeZ0->setEnabled(true);
-//        ui->spinSubVolumeSizeZ1->setEnabled(true);
+//    if(ui->checkSubVolumeCBCT->checkState()){
+////        ui->spinSubVolumeSizeX0->setEnabled(true);
+////        ui->spinSubVolumeSizeX1->setEnabled(true);
+////        ui->spinSubVolumeSizeY0->setEnabled(true);
+////        ui->spinSubVolumeSizeY1->setEnabled(true);
+////        ui->spinSubVolumeSizeZ0->setEnabled(true);
+////        ui->spinSubVolumeSizeZ1->setEnabled(true);
 
-        ui->spinSubVolumeSizeX0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[0]));
-        ui->spinSubVolumeSizeX1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[1]));
-        ui->spinSubVolumeSizeY0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[2]));
-        ui->spinSubVolumeSizeY1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[3]));
+//        ui->spinSubVolumeSizeX0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[0]));
+//        ui->spinSubVolumeSizeX1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[1]));
+//        ui->spinSubVolumeSizeY0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[2]));
+//        ui->spinSubVolumeSizeY1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[3]));
         ui->spinSubVolumeSizeZ0->setValue(static_cast<int>(m_Config.MatrixInfo.voi[4]));
         ui->spinSubVolumeSizeZ1->setValue(static_cast<int>(m_Config.MatrixInfo.voi[5]));
-    }
+//    }
 //    blockFirstProjection.unblock();
 //    blockLastProjection.unblock();
 //    blockFlipProjection.unblock();
@@ -1709,30 +1714,36 @@ void MuhRecMainWindow::UpdateConfig()
 
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
-        m_Config.MatrixInfo.nDims[0] = ui->spinVolumeSizeX->value();
-        m_Config.MatrixInfo.nDims[1] = ui->spinVolumeSizeY->value();
-        m_Config.MatrixInfo.nDims[2] = ui->spinVolumeSizeZ->value();
-
-
+        ComputeVolumeSizeSpacing();
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
     }
 
-    if (ui->checkSubVolumeCBCT->isChecked()){ //maybe they should be in a different order
+//    if (ui->checkSubVolumeCBCT->isChecked()){ //maybe they should be in a different order
 
-        m_Config.MatrixInfo.bUseVOI = true;
-        m_Config.MatrixInfo.voi[0] = ui->spinSubVolumeSizeX0->value();
-        m_Config.MatrixInfo.voi[1] = ui->spinSubVolumeSizeX1->value();
-        m_Config.MatrixInfo.voi[2] = ui->spinSubVolumeSizeY0->value();
-        m_Config.MatrixInfo.voi[3] = ui->spinSubVolumeSizeY1->value();
+//        m_Config.MatrixInfo.bUseVOI = true;
+//        m_Config.MatrixInfo.voi[0] = ui->spinSubVolumeSizeX0->value();
+//        m_Config.MatrixInfo.voi[1] = ui->spinSubVolumeSizeX1->value();
+//        m_Config.MatrixInfo.voi[2] = ui->spinSubVolumeSizeY0->value();
+//        m_Config.MatrixInfo.voi[3] = ui->spinSubVolumeSizeY1->value();
+//        m_Config.MatrixInfo.voi[4] = ui->spinSubVolumeSizeZ0->value();
+//        m_Config.MatrixInfo.voi[5] = ui->spinSubVolumeSizeZ1->value();
+//    }
+
+        m_Config.MatrixInfo.voi[0] = 0;
+        m_Config.MatrixInfo.voi[1] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
+        m_Config.MatrixInfo.voi[2] = 0;
+        m_Config.MatrixInfo.voi[3] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
         m_Config.MatrixInfo.voi[4] = ui->spinSubVolumeSizeZ0->value();
         m_Config.MatrixInfo.voi[5] = ui->spinSubVolumeSizeZ1->value();
-    }
 
-    m_Config.MatrixInfo.fVoxelSize[0] = ui->dspinVoxelSpacingX->value();
-    m_Config.MatrixInfo.fVoxelSize[1] = ui->dSpinVoxelSpacingY->value();
-    m_Config.MatrixInfo.fVoxelSize[2] = ui->dspinVoxelSpacingZ->value();
+//        std::cout << "MatrixInfoVoi: " << m_Config.MatrixInfo.voi[0] << " " <<
+//                     m_Config.MatrixInfo.voi[1] << " " <<
+//                     m_Config.MatrixInfo.voi[2] << " " <<
+//                     m_Config.MatrixInfo.voi[3] << " " <<
+//                     m_Config.MatrixInfo.voi[4] << " " <<
+//                     m_Config.MatrixInfo.voi[5] << " " << std::endl;
 
     m_Config.modules = ui->moduleconfigurator->GetModules();
     m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
@@ -1773,6 +1784,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fSOD = ui->dspinSOD->value();
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
+    m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
 }
 
 
@@ -1934,7 +1946,6 @@ void MuhRecMainWindow::on_spinSlicesFirst_valueChanged(int arg1)
 void MuhRecMainWindow::on_spinSlicesLast_valueChanged(int arg1)
 {
     SlicesChanged(arg1);
-
 }
 
 void MuhRecMainWindow::SlicesChanged(int arg1)
@@ -1991,75 +2002,50 @@ void MuhRecMainWindow::on_actionReport_a_bug_triggered()
 
 void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
 {
-//    std::cout << "CBCT checkbox clicked!" << std::endl;
-//    std::cout << checked << std::endl;
 
     if (checked) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
-//        std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
+        ComputeVolumeSizeSpacing();
+        std::ostringstream msg;
+        msg.str("");
+        msg<<"Volume for CBCT: "<<m_Config.MatrixInfo.nDims[0]<<" "<<m_Config.MatrixInfo.nDims[1]<<" "<<m_Config.MatrixInfo.nDims[2]
+          <<" voxels with isotropic spacing: "<< m_Config.MatrixInfo.fVoxelSize[0];
+        logger(logger.LogMessage,msg.str());
+
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-//        std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
     }
 }
 
-
-
-void MuhRecMainWindow::on_checkSubVolumeCBCT_clicked(bool checked)
+void MuhRecMainWindow::ComputeVolumeSizeSpacing()
 {
-    if (checked) {
-        m_Config.MatrixInfo.bUseVOI = true;
-//        ui->spinSubVolumeSizeX0->setEnabled(true);
-//        ui->spinSubVolumeSizeX1->setEnabled(true);
-//        ui->spinSubVolumeSizeY0->setEnabled(true);
-//        ui->spinSubVolumeSizeY1->setEnabled(true);
-//        ui->spinSubVolumeSizeZ0->setEnabled(true);
-//        ui->spinSubVolumeSizeZ1->setEnabled(true);
-//        std::cout << "use voi checked: " << m_Config.MatrixInfo.bUseVOI << std::endl;
-    }
-    else{
-        m_Config.MatrixInfo.bUseVOI = false;
-//        ui->spinSubVolumeSizeX0->setEnabled(false);
-//        ui->spinSubVolumeSizeX1->setEnabled(false);
-//        ui->spinSubVolumeSizeY0->setEnabled(false);
-//        ui->spinSubVolumeSizeY1->setEnabled(false);
-//        ui->spinSubVolumeSizeZ0->setEnabled(false);
-//        ui->spinSubVolumeSizeZ1->setEnabled(false);
-    }
+    ComputeVolumeSize();
+    ComputeVoxelSpacing();
 }
 
-void MuhRecMainWindow::on_buttonCompSize_clicked()
+void MuhRecMainWindow::ComputeVolumeSize()
 {
-
-    // automatically computes size of volumes with isotropic resolution
-
-    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
-
-        float magn = m_Config.ProjectionInfo.fSDD/m_Config.ProjectionInfo.fSOD;
-
-        // compute voxel size
-        m_Config.MatrixInfo.fVoxelSize[0] = m_Config.MatrixInfo.fVoxelSize[1] = m_Config.MatrixInfo.fVoxelSize[2] = m_Config.ProjectionInfo.fResolution[0]/magn;
-        ui->dspinVoxelSpacingX->setValue(m_Config.MatrixInfo.fVoxelSize[0]);
-        ui->dSpinVoxelSpacingY->setValue(m_Config.MatrixInfo.fVoxelSize[1]);
-        ui->dspinVoxelSpacingZ->setValue(m_Config.MatrixInfo.fVoxelSize[2]);
-
-
-        // compute volume dimensions
-        m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
-        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-        m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
-        ui->spinVolumeSizeX->setValue(m_Config.MatrixInfo.nDims[0]);
-        ui->spinVolumeSizeY->setValue(m_Config.MatrixInfo.nDims[1]);
-        ui->spinVolumeSizeZ->setValue(m_Config.MatrixInfo.nDims[2]);
-
-    }
-
+    float magn = m_Config.ProjectionInfo.fSDD/m_Config.ProjectionInfo.fSOD;
+    // compute volume dimensions
+    m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+    m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
+    m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
 }
+
+void MuhRecMainWindow::ComputeVoxelSpacing()
+{
+    float magn = m_Config.ProjectionInfo.fSDD/m_Config.ProjectionInfo.fSOD;
+    m_Config.MatrixInfo.fVoxelSize[0] = m_Config.MatrixInfo.fVoxelSize[1] = m_Config.MatrixInfo.fVoxelSize[2] = m_Config.ProjectionInfo.fResolution[0]/magn;
+}
+
+
 
 void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
 {
 
-        if (ui->checkCBCT->isChecked()) { m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+        if (ui->checkCBCT->isChecked()) {
+            m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+            ComputeVolumeSizeSpacing();
 //        std::cout << m_Config.ProjectionInfo.beamgeometry << std::endl;
         }
         else { m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
@@ -2084,3 +2070,20 @@ void MuhRecMainWindow::on_buttonGetPP_clicked()
     }
 
 }
+
+void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
+{
+    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
+        m_Config.ProjectionInfo.fResolution[0]=m_Config.ProjectionInfo.fResolution[1]= ui->dspinResolution->value();
+        ComputeVoxelSpacing();
+        std::ostringstream msg;
+        msg.str("");
+        msg<<"Voxel spacing for CBCT updated: "<< m_Config.MatrixInfo.fVoxelSize[0]<< " =" << m_Config.ProjectionInfo.fResolution[0] << "/magnification";
+        logger(logger.LogMessage,msg.str());
+    }
+}
+
+//void MuhRecMainWindow::on_comboDirRotation_currentIndexChanged(int)
+//{
+//    m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
+//}

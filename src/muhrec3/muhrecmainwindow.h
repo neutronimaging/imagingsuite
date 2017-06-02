@@ -93,6 +93,11 @@ protected:
     bool reconstructToDisk();
     void saveCurrentRecon();
 
+    //Cone beam related
+    void ComputeVolumeSizeSpacing();
+    void ComputeVolumeSize();
+    void ComputeVoxelSpacing();
+
 private slots:
     void on_buttonBrowseReference_clicked();
 
@@ -116,14 +121,13 @@ private slots:
 
     void on_checkCBCT_clicked(bool checked);
 
-    void on_checkSubVolumeCBCT_clicked(bool checked);
-
-    void on_buttonCompSize_clicked();
-
     void on_checkCBCT_stateChanged(int arg1);
 
-
     void on_buttonGetPP_clicked();
+
+    void on_dspinResolution_valueChanged(double arg1);
+
+//    void on_comboDirRotation_currentIndexChanged(int);
 
 private:
     // Data members
