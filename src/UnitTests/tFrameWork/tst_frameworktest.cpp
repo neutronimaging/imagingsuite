@@ -22,6 +22,7 @@ public:
 private Q_SLOTS:
     void testProjectionReader();
     void testBuildFileList_GeneratedSequence();
+    void testBuildFileList_GeneratedGolden();
     void testBuildFileList();
     void testBuildFileList2();
 
@@ -611,6 +612,54 @@ void FrameWorkTest::testBuildFileList_GeneratedSequence()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 }
 
+void FrameWorkTest::testBuildFileList_GeneratedGolden()
+{
+    std::ostringstream msg;
+    size_t N=10;
+    size_t i=0;
+
+    ReconConfig config;
+// Test even number
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=18;
+    config.ProjectionInfo.fScanArc[0]=0.0f;
+    config.ProjectionInfo.fScanArc[1]=180.0f;
+    config.ProjectionInfo.scantype=config.ProjectionInfo.GoldenSectionScan;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList);
+    msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
+    float sum=0.0f;
+    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); it++) {
+        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
+        sum+=(*it).second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+
+    // Test odd number
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=19;
+
+    BuildFileList(&config,&ProjectionList);
+    msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
+    sum=0.0f;
+    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); it++) {
+        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
+        sum+=(*it).second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
 void FrameWorkTest::testBuildFileList()
 {
     // File list
@@ -624,22 +673,23 @@ void FrameWorkTest::testBuildFileList()
     }
 
     listfile<<18*i<<", file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
-    ++i;listfile<<18*i<<"\tfile_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
-    ++i;listfile<<18*i<<"\t  file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
+//    ++i;listfile<<18*i<<"\tfile_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
+//    ++i;listfile<<18*i<<"\t  file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
     //++i;listfile<<"file_"<<setfill('0') << setw(5) << i <<".fits,"<<18*i<<std::endl;
 
     ReconConfig config;
 
     config.ProjectionInfo.sFileMask="listfile.txt";
     config.ProjectionInfo.nFirstIndex=1;
-    config.ProjectionInfo.nLastIndex=13;
+    config.ProjectionInfo.nLastIndex=i+1;
 
     std::map<float,ProjectionInfo> ProjectionList;
     BuildFileList(&config,&ProjectionList);
 
-    QVERIFY(ProjectionList.size()==N+3);
+    QVERIFY(ProjectionList.size()==i+1);
 
     i=0;
+    float sum=0.0f;
     for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); ++it,++i)
     {
         fname.str("");
@@ -648,7 +698,11 @@ void FrameWorkTest::testBuildFileList()
         msg<<fname.str()<<"!="<<it->second.name;
         QVERIFY2(it->second.name==fname.str(),msg.str().c_str());
         QVERIFY(it->second.angle==static_cast<float>(18*i));
+        sum+=it->second.weight;
     }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 }
 
 void FrameWorkTest::testBuildFileList2()
