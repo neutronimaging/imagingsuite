@@ -728,7 +728,7 @@
                     <x>0</x>
                     <y>40</y>
                     <width>711</width>
-                    <height>35</height>
+                    <height>45</height>
                    </rect>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_12">
@@ -740,7 +740,7 @@
                     </widget>
                    </item>
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_18">
+                    <layout class="QHBoxLayout" name="slices_layout">
                      <item>
                       <widget class="QLabel" name="label_50">
                        <property name="text">
@@ -2002,7 +2002,6 @@
               <height>256</height>
              </size>
             </property>
-            <zorder>tabMainControl</zorder>
            </widget>
           </item>
           <item>
@@ -2080,7 +2079,7 @@
      <x>0</x>
      <y>0</y>
      <width>1285</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2259,12 +2258,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
    <header location="global">qtlogviewer.h</header>
@@ -2274,6 +2267,12 @@
    <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">modulechainconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

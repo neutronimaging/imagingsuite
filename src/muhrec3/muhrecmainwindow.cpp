@@ -1609,17 +1609,19 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->comboDirRotation->setCurrentIndex(m_Config.ProjectionInfo.eDirection);
 
-//    if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
-//        ui->checkCBCT->setChecked(true);
+    if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
+        ui->checkCBCT->setChecked(true);
 //        ComputeVolumeSizeSpacing();
-//    }
+    }
 
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
+        ui->TabGeometry->setTabEnabled(1,true);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
+        ui->TabGeometry->setTabEnabled(1,false);
     }
 
 //    if (m_Config.MatrixInfo.bUseVOI==true) {
@@ -2011,9 +2013,11 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         msg<<"Volume for CBCT: "<<m_Config.MatrixInfo.nDims[0]<<" "<<m_Config.MatrixInfo.nDims[1]<<" "<<m_Config.MatrixInfo.nDims[2]
           <<" voxels with isotropic spacing: "<< m_Config.MatrixInfo.fVoxelSize[0];
         logger(logger.LogMessage,msg.str());
+        ui->TabGeometry->setTabEnabled(1,true);
 
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
+        ui->TabGeometry->setTabEnabled(1,false);
     }
 }
 
