@@ -85,12 +85,19 @@ void ConfigureGeometryDialog::onROIButtonClicked()
 void ConfigureGeometryDialog::ROIChanged(int x)
 {
     QRect rect;
+//    size_t * dims=m_Config.ProjectionInfo.roi;
+//    if (0<=x) {
+//        dims[1]=ui->spinSliceFirst->value();
+//        dims[3]=ui->spinSliceLast->value();
+//    }
+//    rect.setCoords(dims[0], dims[1], dims[2], dims[3]);
     size_t * dims=m_Config.ProjectionInfo.roi;
     if (0<=x) {
-        dims[1]=ui->spinSliceFirst->value();
-        dims[3]=ui->spinSliceLast->value();
+        rect.setCoords(dims[0], ui->spinSliceFirst->value(), dims[2],ui->spinSliceLast->value());
     }
-    rect.setCoords(dims[0], dims[1], dims[2], dims[3]);
+    else {
+        rect.setCoords(dims[0], dims[1], dims[2], dims[3]);
+    }
 
     on_comboROISelection_currentIndexChanged(ui->comboROISelection->currentIndex());
 }
@@ -640,8 +647,8 @@ int ConfigureGeometryDialog::LoadImages()
 
 void ConfigureGeometryDialog::UpdateConfig()
 {
-    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
-    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
+//    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
+//    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
@@ -673,8 +680,8 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->spinSliceFirst->blockSignals(true);
     ui->spinSliceLast->blockSignals(true);
     ui->checkUseTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
-    ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
-    ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
+//    ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
+//    ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
     ui->dspinAngleFirst->setValue(m_Config.ProjectionInfo.fScanArc[0]);
     ui->dspinAngleLast->setValue(m_Config.ProjectionInfo.fScanArc[1]);
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
@@ -723,9 +730,9 @@ void ConfigureGeometryDialog::on_comboROISelection_currentIndexChanged(int index
                 m_Config.ProjectionInfo.projection_roi[3]);
                 break;
        case 1: rect.setCoords(m_Config.ProjectionInfo.projection_roi[0],
-                m_Config.ProjectionInfo.roi[1],
+                ui->spinSliceFirst->value(),
                 m_Config.ProjectionInfo.projection_roi[2],
-                m_Config.ProjectionInfo.roi[3]);
+                ui->spinSliceLast->value());
                 break;
     }
 
