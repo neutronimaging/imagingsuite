@@ -775,20 +775,27 @@
                        </property>
                       </widget>
                      </item>
+                     <item>
+                      <spacer name="horizontalSpacer_8">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
                     </layout>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_8">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                    <widget class="QCheckBox" name="checkCBCT">
+                     <property name="text">
+                      <string>Cone beam </string>
                      </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1231,16 +1238,9 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_10">
                    <item>
-                    <widget class="QCheckBox" name="checkCBCT">
-                     <property name="text">
-                      <string>Cone beam </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
                     <widget class="QLabel" name="label_29">
                      <property name="text">
-                      <string>SOD</string>
+                      <string>Source to Object  (mm)</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -1257,7 +1257,7 @@
                    <item>
                     <widget class="QLabel" name="label_28">
                      <property name="text">
-                      <string>SDD</string>
+                      <string>Source to Detector (mm)</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -1424,7 +1424,7 @@
                    <item>
                     <widget class="QLabel" name="label_34">
                      <property name="text">
-                      <string>Slices to reconstruct first</string>
+                      <string>Slices to reconstruct</string>
                      </property>
                     </widget>
                    </item>
@@ -2002,6 +2002,7 @@
               <height>256</height>
              </size>
             </property>
+            <zorder>tabMainControl</zorder>
            </widget>
           </item>
           <item>
