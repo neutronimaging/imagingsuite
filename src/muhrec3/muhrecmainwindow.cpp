@@ -525,7 +525,12 @@ void MuhRecMainWindow::DisplaySlice(int x)
                                    static_cast<float>(ui->dspinGrayLow->value()),
                                    static_cast<float>(ui->dspinGrayHigh->value()));
         msg.str("");
-        msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
+        if (ui->checkCBCT->isChecked()){
+            msg<<x<<" ("<<x+ui->spinSubVolumeSizeZ0->value()<<")";
+        }
+        else {
+             msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
+        }
         ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
 
     }
@@ -1893,11 +1898,22 @@ bool MuhRecMainWindow::reconstructToDisk()
     UpdateConfig();
 
     logger(logger.LogMessage,msg.str());
-    largesize_dlg.SetFields(ui->editDestPath->text(),
-                            ui->editSliceMask->text(),
-                            false,
-                            m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
-                            m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+    {
+        largesize_dlg.SetFields(ui->editDestPath->text(),
+                                ui->editSliceMask->text(),
+                                false,
+                                m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
+                                m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+    }
+    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
+    {
+        largesize_dlg.SetFields(ui->editDestPath->text(),
+                                ui->editSliceMask->text(),
+                                false,
+                                ui->spinSubVolumeSizeZ0->value(), ui->spinSubVolumeSizeZ1->value(),
+                                m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+    }
 
     int res=largesize_dlg.exec();
 
