@@ -80,6 +80,7 @@ protected:
 
     std::vector<std::pair<ProjectionInfo, kipl::base::TImage<float, 2> > > ProjectionList;
     kipl::base::TImage<float,3> projections;
+    kipl::base::TImage<float,3> cbct_volume;
     size_t nProjCounter; //!< Counts the projections in the buffer
     size_t SizeU;
     size_t SizeV;

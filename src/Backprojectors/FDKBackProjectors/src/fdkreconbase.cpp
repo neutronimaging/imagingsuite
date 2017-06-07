@@ -12,6 +12,7 @@
 
 #include <strings/miscstring.h>
 #include <base/tpermuteimage.h>
+#include <base/trotate.h>
 #include <math/mathconstants.h>
 
 FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor) :
@@ -77,6 +78,9 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
 
     volume.Resize(volume_size);
     volume = 0.0f;
+
+    cbct_volume.Resize(volume_size);
+    cbct_volume = 0.0f;
 
 //   std::cout << "projections size: " << std::endl;
 //   std::cout << projections.Size(0) << " " << projections.Size(1) << " "<< projections.Size(2) << std::endl;
@@ -150,8 +154,8 @@ void FdkReconBase::SetROI(size_t *roi)
 //        MatrixDims[2]=SizeV;
 //    }
 
-////    volume.Resize(MatrixDims);
-////    volume=0.0f;
+//    volume.Resize(MatrixDims);
+//    volume=0.0f;
 
 //    size_t mysize[3] = {500, 500, 1000};
 
@@ -301,6 +305,26 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
          fdkTimer.Toc();
          std::cout << "fdkTimer: " << fdkTimer << std::endl;
+
+//         for (int k=0; k<volume.Size(2); ++k){
+//             memcpy(volume.GetLinePtr(0,k), cbct_volume.GetLinePtr(0,k), sizeof(float)*volume.Size(0)*volume.Size(1));
+//         }
+
+         // go into the parallel case reference system
+         kipl::base::TRotate<float> rotate;
+         kipl::base::TImage<float,2> ori, rotated;
+         size_t dims2d[2] = {cbct_volume.Size(0), cbct_volume.Size(1)};
+         ori.Resize(dims2d);
+         rotated.Resize(dims2d);
+
+         for (int k=0; k<volume.Size(2); ++k){
+             memcpy(ori.GetDataPtr(), cbct_volume.GetLinePtr(0,k), sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
+             rotated = rotate.MirrorHorizontal(ori);
+             memcpy(volume.GetLinePtr(0,volume.Size(2)-k-1),rotated.GetDataPtr(),sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
+//             memcpy(volume.GetLinePtr(0,volume.Size(2)-k-1),cbct_volume.GetLinePtr(0,k),sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
+         }
+
+
 
        delete [] weights;
        delete [] angles;

@@ -256,7 +256,6 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
     // 2. check parallel cycles
 
 
-
 //        float scale;
 //        double filter_time = 0.0;
 //        double backproject_time = 0.0;
@@ -283,8 +282,6 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
         project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
 
 
-
-
 //        printf ("I/O time (total) = %g\n", io_time);
 //        printf ("I/O time (per image) = %g\n", io_time / num_imgs);
 //        printf ("Filter time = %g\n", filter_time);
@@ -295,7 +292,6 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
 
 //        delete timer;
 
-//    free(proj_matrix); // crashes everything
 
     return 0L;
 }
@@ -308,7 +304,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
         long int i, j, k;
 
-        float* img = volume.GetDataPtr(); // maybe i don't need this
+        float* img = cbct_volume.GetDataPtr();
         double *xip, *yip, *zip;
         double sad_sid_2;
 //        float scale = (float) (sqrt(1.f) / (double) (nProj)); // this one seems the most meaningful
@@ -495,6 +491,8 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
                 }
             }
         }
+
+
         free (xip);
         free (yip);
         free (zip);

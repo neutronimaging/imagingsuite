@@ -20,7 +20,7 @@ public:
 
 protected:
     virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj); ///< Compute the geometry matrix for each projection and passes it to the backprojector
-    float m_fAlpha; // was ist das?
+    float m_fAlpha;
     void ramp_filter (kipl::base::TImage<float,2>  &img);
     void project_volume_onto_image_reference (kipl::base::TImage<float,2>  &cbi, double *proj_matrix, double *nrm);///< Reference FDK implementation is the most straightforward implementation, also it is the slowest
     void project_volume_onto_image_c (kipl::base::TImage<float,2>  &cbi, double *proj_matrix, size_t nProj);///< Multi core accelerated FDK implementation
