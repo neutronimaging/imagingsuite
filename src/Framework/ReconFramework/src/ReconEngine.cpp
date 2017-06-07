@@ -179,7 +179,16 @@ int ReconEngine::Run()
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogVerbose,msg.str());
-	m_FirstSlice=roi[1];
+
+    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+    {
+        m_FirstSlice=roi[1];
+    }
+    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
+    {
+        m_FirstSlice=roi[3]-voi[5];
+    }
+
 	kipl::profile::Timer totalTimer;
 
 	totalTimer.Tic();
@@ -399,7 +408,6 @@ bool ReconEngine::TransferMatrix(size_t *dims)
         if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
 
                 for (size_t i=0; i<(dims[3]-dims[1]); i++) {
-
                     slice=m_BackProjector->GetModule()->GetSlice(i);
                     float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
                     memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
@@ -693,7 +701,15 @@ int ReconEngine::Run3DFull()
     msg<<": ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-	m_FirstSlice=roi[1];
+    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+    {
+        m_FirstSlice=roi[1];
+    }
+    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
+    {
+        m_FirstSlice=roi[3]-voi[5];
+    }
+
 	kipl::profile::Timer totalTimer;
 
 	totalTimer.Tic();
