@@ -2079,7 +2079,7 @@
      <x>0</x>
      <y>0</y>
      <width>1285</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2258,6 +2258,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>QtAddons::Plotter</class>
+   <extends>QWidget</extends>
+   <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QtAddons::QtLogViewer</class>
    <extends>QWidget</extends>
    <header location="global">qtlogviewer.h</header>
@@ -2267,12 +2273,6 @@
    <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">modulechainconfiguratorwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
