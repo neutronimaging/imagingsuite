@@ -34,6 +34,7 @@ private:
     QApplication *m_QtApp;
     void SetApplicationPath(std::string path) {m_sApplicationPath=path;}
     void SlicesChanged(int x);
+    void SlicesCBCTChanged(int x);
 
 
     // Collection of call-backs
@@ -128,6 +129,10 @@ private slots:
     void on_dspinResolution_valueChanged(double arg1);
 
 //    void on_comboDirRotation_currentIndexChanged(int);
+
+    void on_spinSubVolumeSizeZ0_valueChanged(int arg1);
+
+    void on_spinSubVolumeSizeZ1_valueChanged(int arg1);
 
 private:
     // Data members

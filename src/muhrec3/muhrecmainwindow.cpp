@@ -111,6 +111,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     SlicesChanged(0);
     SetupCallBacks();
 
+    if (ui->checkCBCT->isChecked()) SlicesCBCTChanged(0);
+
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
@@ -2119,3 +2121,25 @@ void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 }
 
 
+
+void MuhRecMainWindow::on_spinSubVolumeSizeZ0_valueChanged(int arg1)
+{
+    SlicesCBCTChanged(arg1);
+}
+
+void MuhRecMainWindow::on_spinSubVolumeSizeZ1_valueChanged(int arg1)
+{
+    SlicesCBCTChanged(arg1);
+}
+
+void MuhRecMainWindow::SlicesCBCTChanged(int x)
+{
+    QRect rect;
+
+    rect.setCoords(ui->spinProjROIx0->value(),
+                   ui->spinSubVolumeSizeZ0->value(),
+                   ui->spinProjROIx1->value(),
+                   ui->spinSubVolumeSizeZ1->value());
+
+    ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
+}
