@@ -108,9 +108,9 @@ void ConfigureGeometryDialog::FindCenter()
     UpdateConfig();
 
     size_t sub_roi[4] = {m_Config.ProjectionInfo.projection_roi[0],
-                         ui->spinSliceFirst->value(),
+                         static_cast<size_t>(ui->spinSliceFirst->value()),
                          m_Config.ProjectionInfo.projection_roi[2],
-                         ui->spinSliceLast->value()};
+                         static_cast<size_t>(ui->spinSliceLast->value())};
 
     size_t *roi=ui->comboROISelection->currentIndex() == 0 ? m_Config.ProjectionInfo.projection_roi : sub_roi;
     msg.str("");
