@@ -107,7 +107,12 @@ void ConfigureGeometryDialog::FindCenter()
     ostringstream msg;
     UpdateConfig();
 
-    size_t *roi=ui->comboROISelection->currentIndex() == 0 ? m_Config.ProjectionInfo.projection_roi : m_Config.ProjectionInfo.roi;
+    size_t sub_roi[4] = {m_Config.ProjectionInfo.projection_roi[0],
+                         ui->spinSliceFirst->value(),
+                         m_Config.ProjectionInfo.projection_roi[2],
+                         ui->spinSliceLast->value()};
+
+    size_t *roi=ui->comboROISelection->currentIndex() == 0 ? m_Config.ProjectionInfo.projection_roi : sub_roi;
     msg.str("");
     msg<<"Find center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
