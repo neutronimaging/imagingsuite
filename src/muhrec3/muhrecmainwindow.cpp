@@ -1754,6 +1754,7 @@ void MuhRecMainWindow::UpdateConfig()
 
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+2);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
+
     // Validity test of the slice file mask
     if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
         logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
@@ -1929,8 +1930,17 @@ bool MuhRecMainWindow::reconstructToDisk()
     m_Config.MatrixInfo.sFileMask        = largesize_dlg.GetMask().toStdString();
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
-    ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
-    ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
+
+    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+    {
+        ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
+        ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
+    }
+    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
+    {
+        ui->spinSubVolumeSizeZ0->setValue(largesize_dlg.GetFirst());
+        ui->spinSubVolumeSizeZ1->setValue(largesize_dlg.GetLast());
+    }
 
     UpdateConfig();
 
@@ -2028,6 +2038,8 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         ui->label_51->hide();
         ui->label_30->hide();
 
+        SlicesCBCTChanged(0);
+
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->TabGeometry->setTabEnabled(1,false);
@@ -2036,6 +2048,8 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         ui->label_50->show();
         ui->label_51->show();
         ui->label_30->show();
+
+        SlicesChanged(0);
     }
 }
 
