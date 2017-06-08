@@ -71,9 +71,18 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
     for (it=reconList.begin(); it!=reconList.end(); it++) {
 
         msg.str("");
-        msg<<it->first.UserInformation.sDate<<std::endl
-           <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
-          <<"Slice="<<(it->first.ProjectionInfo.roi[1])<<std::endl;
+        if (it->first.ProjectionInfo.beamgeometry == it->first.ProjectionInfo.BeamGeometry_Parallel)
+        {
+            msg<<it->first.UserInformation.sDate<<std::endl
+               <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
+              <<"Slice="<<(it->first.ProjectionInfo.roi[1])<<std::endl;
+        }
+        else if (it->first.ProjectionInfo.beamgeometry == it->first.ProjectionInfo.BeamGeometry_Cone)
+        {
+            msg<<it->first.UserInformation.sDate<<std::endl
+               <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
+              <<"Slice="<<(it->first.ProjectionInfo.roi[3]-it->first.MatrixInfo.voi[5])<<std::endl;
+        }
         ConfigListItem *item = new ConfigListItem;
 
         item->config = it->first;
@@ -181,7 +190,14 @@ void ViewGeometryListDialog::ComputeTilt()
             ConfigListItem *item = dynamic_cast<ConfigListItem *>(ui->listWidget->item(row));
 
             if (item->checkState()==Qt::Checked) {
-                slice[cnt]=item->config.ProjectionInfo.roi[1];
+                if (item->config.ProjectionInfo.beamgeometry == item->config.ProjectionInfo.BeamGeometry_Parallel)
+                {
+                    slice[cnt]=item->config.ProjectionInfo.roi[1];
+                }
+                else if (item->config.ProjectionInfo.beamgeometry == item->config.ProjectionInfo.BeamGeometry_Cone)
+                {
+                    slice[cnt] = item->config.ProjectionInfo.roi[3]-item->config.MatrixInfo.voi[5];
+                }
                 if (slice[cnt]<slice[minsliceidx])
                     minsliceidx=cnt;
                 center[cnt]=item->config.ProjectionInfo.fCenter;
@@ -199,7 +215,15 @@ void ViewGeometryListDialog::ComputeTilt()
 //            m_fPivot  = slice[minsliceidx];
 
             ConfigListItem *item = dynamic_cast<ConfigListItem *>(ui->listWidget->item(0));
-            m_fPivot  = floor((item->config.ProjectionInfo.projection_roi[3]+item->config.ProjectionInfo.projection_roi[1])/2);
+            if (item->config.ProjectionInfo.beamgeometry == item->config.ProjectionInfo.BeamGeometry_Parallel)
+            {
+                m_fPivot  = floor((item->config.ProjectionInfo.projection_roi[3]+item->config.ProjectionInfo.projection_roi[1])/2);
+            }
+            else if (item->config.ProjectionInfo.beamgeometry == item->config.ProjectionInfo.BeamGeometry_Cone)
+            {
+                m_fPivot  = floor(item->config.ProjectionInfo.fpPoint[1]);
+            }
+
             m_fCenter+= m_fPivot*m_fTilt;
             m_fTilt   = -180.0f / fPi *atan(m_fTilt);
 
