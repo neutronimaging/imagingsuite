@@ -503,10 +503,20 @@ bool ReconEngine::Serialize(size_t *dims)
             }
             else {
                 logger(kipl::logging::Logger::LogMessage,"Serializing full matrix");
-                kipl::io::WriteImageStack(img,
-                    str.str(),
-                    m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                    0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,NULL);
+                if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+                {
+                    kipl::io::WriteImageStack(img,
+                        str.str(),
+                        m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
+                        0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,NULL);
+                }
+                else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
+                {
+                    kipl::io::WriteImageStack(img,
+                        str.str(),
+                        m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
+                        0,nSlices, m_FirstSlice, m_Config.MatrixInfo.FileType,plane,NULL);
+                }
             }
         }
         catch (ReconException & e) {
