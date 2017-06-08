@@ -87,15 +87,15 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
    }
     double plt[3] = {0.0,0.0,0.0}; // Detector orientation  Panel left (toward first column)
     double pup[3] = {0.0,0.0,0.0}; // Panel up (toward top row)
-    double vup[3] = {0.0, 0.0, 0.0};
+    double vup[3] = {0.0,0.0,1.0};
 
-    if (mConfig.ProjectionInfo.bCorrectTilt) { // check the sign and the pivot
-        vup[1] = sin(mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-        vup[2] = cos(mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-    }
-    else {
-        vup[2] = 1.0; // hardcoded for ideal panel orientation  -- add tilt here
-    }
+//    if (mConfig.ProjectionInfo.bCorrectTilt) { // check the sign and the pivot (OK pivot)
+//        vup[1] = sin(-mConfig.ProjectionInfo.fTiltAngle*dPi/180);
+//        vup[2] = cos(-mConfig.ProjectionInfo.fTiltAngle*dPi/180);
+//    }
+//    else {
+//        vup[2] = 1.0; // hardcoded for ideal panel orientation  -- add tilt here
+//    }
 
     double tgt[3] = {0.0,0.0,0.0};
 
@@ -315,8 +315,6 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 //        std::cout<< nProjectionBufferSize << std::endl;
         float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
 
-
-
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
         // magnification = SDD/SOD
 
@@ -415,9 +413,20 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
             yip[j*3+2] = y * proj_matrix[9];
         }
 
+        double cor_tilted;
+
+
         #pragma omp parallel for
         for (k = 0; k < volume.Size(2); k++) {
             double z = (double) (origin[2] + k * spacing[2]);
+
+            // not so elegant solution but it seems to work
+                if (mConfig.ProjectionInfo.bCorrectTilt){
+                    cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*(mConfig.ProjectionInfo.projection_roi[3]-mConfig.MatrixInfo.voi[5]-k-mConfig.ProjectionInfo.fTiltPivotPosition)+mConfig.ProjectionInfo.fCenter;
+                    proj_matrix[3] = ((cor_tilted-mConfig.ProjectionInfo.fpPoint[0])*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
+
+                }
+
             zip[k*3+0] = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
                 + ic[0] * proj_matrix[11] + proj_matrix[3];
             zip[k*3+1] = z * (proj_matrix[6] + ic[1] * proj_matrix[10])
@@ -516,8 +525,6 @@ void FDKbp::project_volume_onto_image_reference (
 
     const size_t SizeZ  = volume.Size(0)>>2;
     __m128 column[2048]; // not used for now..
-
-
 
 //    Proj_matrix *pmat = cbi->pmat; /* projection matrix 3D -> 2D in homogenous coordinates */
 
