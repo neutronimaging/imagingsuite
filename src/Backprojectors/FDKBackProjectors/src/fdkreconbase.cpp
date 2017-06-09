@@ -26,7 +26,7 @@ FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAli
     MatrixCenterX(0),
     ProjCenter(0.0f),
     nProjectionBufferSize(0),
-    nSliceBlock(300), // try to workaround roi in projections.. let's see
+    nSliceBlock(3000),
     fRotation(0.0f) // not sure if i need these parameters.. for sure i would need the others that we have added in reconconfig
 {
    logger(kipl::logging::Logger::LogMessage,"c'tor FdkProjectorBase");
