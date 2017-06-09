@@ -422,8 +422,13 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
             // not so elegant solution but it seems to work
                 if (mConfig.ProjectionInfo.bCorrectTilt){
-                    cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*(mConfig.ProjectionInfo.projection_roi[3]-mConfig.MatrixInfo.voi[5]-k-mConfig.ProjectionInfo.fTiltPivotPosition)+mConfig.ProjectionInfo.fCenter;
+                    float pos = static_cast<float> (mConfig.ProjectionInfo.projection_roi[3])-static_cast<float>(mConfig.MatrixInfo.voi[5])-static_cast<float>(k)-mConfig.ProjectionInfo.fTiltPivotPosition;
+                    cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
                     proj_matrix[3] = ((cor_tilted-mConfig.ProjectionInfo.fpPoint[0])*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
+//                    std::cout << "pos: " << pos << std::endl;
+//                    std::cout << mConfig.ProjectionInfo.projection_roi[3] << " " << mConfig.MatrixInfo.voi[5] << " " << k << std::endl;
+//                    std::cout << "cor_tilted: " << cor_tilted << std::endl;
+//                    std::cout << "offCenter: " << proj_matrix[3] << std::endl;
 
                 }
 
