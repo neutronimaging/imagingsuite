@@ -415,19 +415,19 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
         double cor_tilted;
 
-
         #pragma omp parallel for
         for (k = 0; k < volume.Size(2); k++) {
             double z = (double) (origin[2] + k * spacing[2]);
 
             // not so elegant solution but it seems to work
                 if (mConfig.ProjectionInfo.bCorrectTilt){
-                    float pos = static_cast<float> (mConfig.ProjectionInfo.projection_roi[3])-static_cast<float>(mConfig.MatrixInfo.voi[5])-static_cast<float>(k)-mConfig.ProjectionInfo.fTiltPivotPosition;
+                    double pos = static_cast<double> (mConfig.ProjectionInfo.projection_roi[3])-static_cast<double>(k)-static_cast<double>(mConfig.ProjectionInfo.fTiltPivotPosition);
                     cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
                     proj_matrix[3] = ((cor_tilted-mConfig.ProjectionInfo.fpPoint[0])*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
 //                    std::cout << "pos: " << pos << std::endl;
 //                    std::cout << mConfig.ProjectionInfo.projection_roi[3] << " " << mConfig.MatrixInfo.voi[5] << " " << k << std::endl;
 //                    std::cout << "cor_tilted: " << cor_tilted << std::endl;
+//                    std::cout << "tan angle: " << tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180) << std::endl;
 //                    std::cout << "offCenter: " << proj_matrix[3] << std::endl;
 
                 }
