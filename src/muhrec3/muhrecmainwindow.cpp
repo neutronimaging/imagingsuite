@@ -1724,12 +1724,33 @@ void MuhRecMainWindow::UpdateConfig()
         ComputeVolumeSizeSpacing();
         m_Config.ProjectionInfo.roi[1] = m_Config.ProjectionInfo.projection_roi[1];
         m_Config.ProjectionInfo.roi[3] = m_Config.ProjectionInfo.projection_roi[3];
+        ui->TabGeometry->setTabEnabled(1,true);
+        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
+        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
+        ui->spinSlicesFirst->hide();
+        ui->spinSlicesLast->hide();
+        ui->label_50->hide();
+        ui->label_51->hide();
+        ui->label_30->hide();
+        ui->checkUseMatrixROI->hide();
+
+        SlicesCBCTChanged(0);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
         m_Config.ProjectionInfo.roi[1] = ui->spinSlicesFirst->value();
         m_Config.ProjectionInfo.roi[3] = ui->spinSlicesLast->value();
+        ui->TabGeometry->setTabEnabled(1,false);
+        ui->spinSlicesFirst->show();
+        ui->spinSlicesLast->show();
+        ui->label_50->show();
+        ui->label_51->show();
+        ui->label_30->show();
+        ui->checkUseMatrixROI->show();
+
+        SlicesChanged(0);
     }
+
 
 
         m_Config.MatrixInfo.voi[0] = 0;
@@ -2037,6 +2058,7 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         ui->label_50->hide();
         ui->label_51->hide();
         ui->label_30->hide();
+        ui->checkUseMatrixROI->hide();
 
         SlicesCBCTChanged(0);
 
@@ -2048,6 +2070,7 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         ui->label_50->show();
         ui->label_51->show();
         ui->label_30->show();
+        ui->checkUseMatrixROI->show();
 
         SlicesChanged(0);
     }
