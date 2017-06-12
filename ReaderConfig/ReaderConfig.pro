@@ -66,14 +66,13 @@ win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llib
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lcfitsio
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
+win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../lib/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../lib/debug -lkipl
 else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../lib/ -lkipl
 else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../lib/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
