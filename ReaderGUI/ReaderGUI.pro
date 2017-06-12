@@ -69,8 +69,8 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../lib/debug -lkip
 INCLUDEPATH += $$PWD/../ReaderConfig
 DEPENDPATH += $$PWD/../ReaderConfig
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../lib/ -lkipl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../lib/debug/ -lkipl
 
 
 INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
