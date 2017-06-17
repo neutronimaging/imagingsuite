@@ -16,8 +16,8 @@
 #endif
 #include <math/mathconstants.h>
 
-WaveletRingClean::WaveletRingClean() :
-	PreprocModuleBase("WaveletRingClean"),
+WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase("WaveletRingClean",interactor),
     m_sWName("daub15"),
     m_fSigma(0.05f),
     m_nDecNum(2),
@@ -85,9 +85,9 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 				fail=true;
 		}
 		if (!fail) {
-            for (size_t j=0; j<img.Size(1); j++)
+            const size_t N=img.Size(1);
+            for (size_t j=0; (j<N) && (UpdateStatus(float(j)/N,m_sModuleName)==false); ++j)
 			{
-				std::cout<<"Processing sinogram "<<j<<std::endl;
 				ExtractSinogram(img,sinogram,j);
 
 				filter->Process(sinogram);

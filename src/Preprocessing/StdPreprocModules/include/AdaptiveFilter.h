@@ -22,7 +22,7 @@
 class STDPREPROCMODULESSHARED_EXPORT AdaptiveFilter : public PreprocModuleBase
 {
 public:
-	AdaptiveFilter();
+    AdaptiveFilter(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~AdaptiveFilter();
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);

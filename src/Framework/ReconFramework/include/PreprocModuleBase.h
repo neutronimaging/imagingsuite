@@ -24,6 +24,7 @@
 #include <map>
 
 #include <ProcessModuleBase.h>
+#include <interactors/interactionbase.h>
 
 #include "ReconConfig.h"
 
@@ -33,7 +34,7 @@ class  RECONFRAMEWORKSHARED_EXPORT PreprocModuleBase : public ProcessModuleBase
 public:
     /// Constructor that essentially forwards the parameterto the base.
     /// \param name The name of the module.
-	PreprocModuleBase(std::string name="PreprocModuleBase");
+    PreprocModuleBase(std::string name="PreprocModuleBase", kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Configures the module with parameters.
     /// \param config The config struct with general information.

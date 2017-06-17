@@ -8,7 +8,7 @@
 
 class STDPREPROCMODULESSHARED_EXPORT MorphSpotCleanModule: public PreprocModuleBase {
 public:
-    MorphSpotCleanModule();
+    MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~MorphSpotCleanModule();
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);

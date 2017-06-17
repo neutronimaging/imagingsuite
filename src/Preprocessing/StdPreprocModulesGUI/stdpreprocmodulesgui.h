@@ -18,7 +18,7 @@
 //#endif
 
 extern "C" {
-void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char *application, const char *name);
+void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char *application, const char *name,void *interactor);
 int STDPREPROCMODULESGUISHARED_EXPORT DestroyGUIModule(const char *application, void *obj);
 }
 #endif 

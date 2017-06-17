@@ -22,7 +22,7 @@
 //#endif
 
 extern "C" {
-UNPUBLISHEDMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name);
+UNPUBLISHEDMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor);
 UNPUBLISHEDMODULESSHARED_EXPORT int Destroy(const char *application, void *obj);
 UNPUBLISHEDMODULESSHARED_EXPORT int LibVersion();
 UNPUBLISHEDMODULESSHARED_EXPORT int GetModuleList(const char *application, void *listptr);

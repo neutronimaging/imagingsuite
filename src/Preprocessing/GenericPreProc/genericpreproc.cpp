@@ -18,7 +18,7 @@
 
 #include "PreprocModule.h"
 
-void * GetModule(const char *application, const char * name)
+void * GetModule(const char *application, const char * name,void *vinteractor)
 {
     if (strcmp(application,"muhrec")!=0)
         return nullptr;

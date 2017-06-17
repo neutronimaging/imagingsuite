@@ -19,7 +19,7 @@
 
 class ConfiguratorDialogBase;
 
-void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name)
+void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name, void *interactor)
 {
 	if (strcmp(application,"muhrec")!=0)
 		return NULL;

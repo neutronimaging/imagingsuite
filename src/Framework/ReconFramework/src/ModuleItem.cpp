@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #include "stdafx.h"
 #include <string>
 #include <sstream>
@@ -23,8 +12,8 @@
 
 //--------------------------------------------------
 // Module item
-ModuleItem::ModuleItem(std::string application,std::string sharedobject, std::string modulename):
-	ModuleItemBase(application,sharedobject,modulename)
+ModuleItem::ModuleItem(std::string application,std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor):
+	ModuleItemBase(application,sharedobject,modulename,interactor)
 {
 }
 

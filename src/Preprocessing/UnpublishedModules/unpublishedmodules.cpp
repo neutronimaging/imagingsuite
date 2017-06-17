@@ -28,7 +28,7 @@
 //#include <logging/logger.h>
 
 
-//UNPUBLISHEDMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name)
+//UNPUBLISHEDMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name,void *vinteractor)
 //{
 //    if (strcmp(application,"muhrec")!=0)
 //        return nullptr;

@@ -40,7 +40,7 @@ public:
     /// \param application the name of the application. Needed to aviod loading modules from a different application.
     /// \param sharedobject filename of the library containing the module.
     /// \param modulename name of the module to load.
-    ModuleItem(std::string application, std::string sharedobject, std::string modulename);
+    ModuleItem(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Gets a reference to the processing module the held by the item.
 	PreprocModuleBase * GetModule() {return dynamic_cast<PreprocModuleBase *>(ModuleItemBase::GetModule());}

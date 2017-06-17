@@ -25,7 +25,7 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
 	m_Interactor(interactor)
 {
 	logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
-	if (m_Interactor!=NULL) {
+    if (m_Interactor!=nullptr) {
 		logger(kipl::logging::Logger::LogVerbose,"Got an interactor");
 	}
 	else {
@@ -143,7 +143,7 @@ size_t BackProjectorModuleBase::GetNSlices()
 
 bool BackProjectorModuleBase::UpdateStatus(float val, std::string msg)
 {
-	if (m_Interactor!=NULL) {
+    if (m_Interactor!=nullptr) {
 		return m_Interactor->SetProgress(val,msg);
 	}
 

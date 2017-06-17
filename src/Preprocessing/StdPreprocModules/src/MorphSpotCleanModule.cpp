@@ -12,8 +12,8 @@
 #include <ModuleException.h>
 
 
-MorphSpotCleanModule::MorphSpotCleanModule() :
-    PreprocModuleBase("MorphSpotClean"),
+MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase("MorphSpotClean",interactor),
     m_eConnectivity(kipl::morphology::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectPeaks),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
@@ -130,7 +130,8 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
 
     msg.str("");
     try {
-        for (i=0; i<N; i++) {
+        for (i=0; (i<N) && (UpdateStatus(float(i)/N,m_sModuleName)==false); i++) {
+
             memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
             cleaner.Process(proj,m_fThreshold,m_fSigma);
             memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));

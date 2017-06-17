@@ -16,7 +16,7 @@
 
 class STDPREPROCMODULESSHARED_EXPORT WaveletRingClean: public PreprocModuleBase {
 public:
-	WaveletRingClean();
+    WaveletRingClean(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~WaveletRingClean();
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);

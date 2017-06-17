@@ -24,8 +24,8 @@
 #include <averageimage.h>
 
 
-AdaptiveFilter::AdaptiveFilter() :
-	PreprocModuleBase("AdaptiveFilter"),
+AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase("AdaptiveFilter",interactor),
 	pLUT(NULL),
     m_nFilterSize(7),
     m_fEccentricityMin(0.3f),
@@ -75,8 +75,9 @@ int AdaptiveFilter::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::
 
     kipl::base::TImage<float,2> sinogram;
 
-    for (size_t i=0; i<img.Size(1); i++) {
-        std::cout<<"Processing sinogram "<<i<<std::endl;
+    const size_t N=img.Size(1);
+    for (size_t i=0; (i<N) && (UpdateStatus(float(i)/N,m_sModuleName)==false); i++) {
+     //   std::cout<<"Processing sinogram "<<i<<std::endl;
         ExtractSinogram(img,sinogram,i);
         ProcessSingle(sinogram, parameters);
         InsertSinogram(sinogram,img,i);

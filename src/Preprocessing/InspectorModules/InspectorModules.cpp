@@ -20,7 +20,7 @@
 #include <string>
 
 
-INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name)
+INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name,void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
 		return NULL;

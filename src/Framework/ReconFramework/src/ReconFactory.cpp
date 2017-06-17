@@ -41,9 +41,9 @@ ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::
     int i=0;
     for (it=config.modules.begin(); it!=config.modules.end(); it++, i++) {
 		if (it->m_bActive==true) {
-			ModuleItem *module=NULL;
+            ModuleItem *module=nullptr;
 			try {
-				module=new ModuleItem("muhrec",it->m_sSharedObject,it->m_sModule);
+                module=new ModuleItem("muhrec",it->m_sSharedObject,it->m_sModule,interactor);
 
 				module->GetModule()->Configure(config,it->parameters);
 				engine->AddPreProcModule(module);
@@ -62,7 +62,7 @@ ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::
 void ReconFactory::SetBackProjector(ReconConfig &config, ReconEngine * engine, kipl::interactors::InteractionBase *interactor)
 {
     if (config.backprojector.m_bActive==true) {
-        BackProjItem *module=NULL;
+        BackProjItem *module=nullptr;
         try {
             module=new BackProjItem("muhrecbp",config.backprojector.m_sSharedObject,config.backprojector.m_sModule,interactor);
 

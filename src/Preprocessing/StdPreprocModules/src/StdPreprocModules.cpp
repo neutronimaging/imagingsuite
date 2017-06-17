@@ -47,10 +47,12 @@
 #include <sstream>
 #include <map>
 
-STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name)
+STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
 		return NULL;
+
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 
 	if (name!=NULL) {
 		std::string sName=name;
@@ -87,7 +89,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 			return new GeneralFilter;
 
         if (sName=="AdaptiveFilter")
-            return new AdaptiveFilter;
+            return new AdaptiveFilter(interactor);
 
 		if (sName=="BasicRingClean")
 			return new BasicRingClean;
@@ -102,7 +104,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 			return new ISSfilter;
 
 		if (sName=="WaveletRingClean")
-			return new WaveletRingClean;
+            return new WaveletRingClean(interactor);
 		
 		if (sName=="PolynomialCorrection")
 			return new PolynomialCorrection;
@@ -114,7 +116,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
             return new TranslateProjectionsModule;
 
         if (sName=="MorphSpotClean")
-            return new MorphSpotCleanModule;
+            return new MorphSpotCleanModule(interactor);
 
         if (sName=="GammaSpotClean")
             return new GammaSpotCleanModule;

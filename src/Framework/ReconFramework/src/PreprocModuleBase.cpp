@@ -21,8 +21,8 @@
 #include <string.h>
 
 
-PreprocModuleBase::PreprocModuleBase(std::string name) :
-	ProcessModuleBase(name)
+PreprocModuleBase::PreprocModuleBase(std::string name, kipl::interactors::InteractionBase *interactor) :
+    ProcessModuleBase(name,interactor)
 {
 }
 
