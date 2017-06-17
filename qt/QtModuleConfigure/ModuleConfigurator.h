@@ -27,10 +27,10 @@
 #include <logging/logger.h>
 
 #ifdef _MSC_VER // Shared object specific for msvc
-typedef void * (__cdecl *FACTORY)(const char *, const char *);
+typedef void * (__cdecl *FACTORY)(const char *, const char *, void *);
 typedef int (__cdecl *DESTROYER)(const char *, void *);
 #else // Shared object specific for gcc
-typedef void * (*FACTORY)(const char *, const char *) ;
+typedef void * (*FACTORY)(const char *, const char *,void *) ;
 typedef int (*DESTROYER)(const char *, void *);
 typedef  void * HINSTANCE;
 #define MODULECONFIGURATOR_API

@@ -124,7 +124,7 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 		 // If the function address is valid, call the function.
 		if (NULL != m_fnModuleFactory)
         {
-			m_Dialog=reinterpret_cast<ConfiguratorDialogBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str()));
+            m_Dialog=reinterpret_cast<ConfiguratorDialogBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str(),nullptr));
 			if (m_Dialog==NULL) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;
