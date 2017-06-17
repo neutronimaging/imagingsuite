@@ -15,11 +15,19 @@
 
 #include "../include/ModuleException.h"
 
-ProcessModuleBase::ProcessModuleBase(std::string name) :
+ProcessModuleBase::ProcessModuleBase(std::string name,kipl::interactors::InteractionBase *interactor) :
  logger(name),
- m_sModuleName(name)
+ m_sModuleName(name),
+  m_Interactor(interactor)
 {
+    logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
+    if (m_Interactor!=nullptr) {
+        logger(kipl::logging::Logger::LogVerbose,"Got an interactor");
+    }
+    else {
+        logger(kipl::logging::Logger::LogVerbose,"An interactor was not provided");
 
+    }
 }
 
 ProcessModuleBase::~ProcessModuleBase() {
@@ -73,3 +81,11 @@ int ProcessModuleBase::SourceVersion()
 	return kipl::strings::VersionNumber("$Rev$");
 }
 
+bool ProcessModuleBase::UpdateStatus(float val, std::string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+
+    return false;
+}

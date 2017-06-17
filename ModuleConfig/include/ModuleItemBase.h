@@ -1,23 +1,13 @@
-//
-// This file is part of the ModuleConfig library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #ifndef MODULEITEMBASE_H_
 #define MODULEITEMBASE_H_
 
 #ifdef _MSC_VER // Shared object specific for msvc
-typedef void * (__cdecl *FACTORY)(const char *,const char *);
+typedef void * (__cdecl *FACTORY)(const char *,const char *, void *);
 typedef int (__cdecl *DESTROYER)(const char *,void *);
 #else // Shared object specific for gcc
-typedef void * (*FACTORY)(const char *, const char *) ;
+typedef void * (*FACTORY)(const char *, const char *, void *) ;
 typedef int (*DESTROYER)(const char *,void *);
 typedef  void * HINSTANCE;
 #endif
@@ -40,7 +30,7 @@ public:
     /// \param application The name of the application. The name is used to verify that the requested module can be used by the current application.
     /// \param sharedobject File name of the shared object file.
     /// \param modulename Name of the requested module.
-	ModuleItemBase(std::string application, std::string sharedobject, std::string modulename);
+	ModuleItemBase(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Copy constructor makes a shallow copy. Be careful with the destructor.
     /// \param item The object to copy.
@@ -66,7 +56,7 @@ protected:
 
 private:
     /// Loads the specified module from the shared object file.
-	void LoadModuleObject();
+	void LoadModuleObject(kipl::interactors::InteractionBase *interactor=nullptr);
 
     HINSTANCE hinstLib;           ///< Handler to the shared object file.
     FACTORY m_fnModuleFactory;    ///< Handler to the module factory function in the SO file.

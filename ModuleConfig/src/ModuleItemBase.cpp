@@ -19,7 +19,7 @@
 #include "../include/ModuleException.h"
 #include "../include/ModuleItemBase.h"
 
-ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject, std::string modulename):
+ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor):
 		logger(modulename),
 		hinstLib(NULL),
 		m_fnModuleFactory(NULL),
@@ -30,7 +30,7 @@ ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject
 	m_sModuleName=modulename;
 	m_sSharedObject=sharedobject;
 
-	LoadModuleObject();
+    LoadModuleObject(interactor);
 }
 
 
@@ -87,7 +87,7 @@ ModuleItemBase::~ModuleItemBase()
 }
 
 
-void ModuleItemBase::LoadModuleObject()
+void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *interactor)
 {
 	std::ostringstream msg;
 
@@ -110,7 +110,7 @@ void ModuleItemBase::LoadModuleObject()
 		 // If the function address is valid, call the function.
 		if (NULL != m_fnModuleFactory)
         {
-			m_Module=reinterpret_cast<ProcessModuleBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str()));
+            m_Module=reinterpret_cast<ProcessModuleBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str(),reinterpret_cast<void *>(interactor)));
 			if (m_Module==NULL) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;

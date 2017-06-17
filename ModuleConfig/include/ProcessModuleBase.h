@@ -22,6 +22,7 @@
 #include <profile/Timer.h>
 #include <logging/logger.h>
 #include <strings/miscstring.h>
+#include <interactors/interactionbase.h>
 #include <algorithm>
 
 /// Base class for all processing modules. This class will allways be refined for each processing framework.
@@ -32,7 +33,7 @@ protected:
 public:
     /// Constructor to initialize basic information.
     /// \param name The name of the module. The name will be obtained from the constructor of the refining class. It is mainly used for the logging.
-	ProcessModuleBase(std::string name="ProcessModuleBase");
+    ProcessModuleBase(std::string name="ProcessModuleBase", kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Destructor
     virtual ~ProcessModuleBase();
@@ -80,17 +81,26 @@ public:
 	}
 
 protected:
+
     /// Method that executes the algorithmic core of the processing for 2D images.
     /// \throws A module exception if the method is called without refinement.
 	virtual int ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
+
     /// Method that executes the algorithmic core of the processing for 3D images.
     /// \throws A module exception if the method is called without refinement.
 	virtual int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
+
+    /// Interface to a progress bar in a GUI.
+    /// \param val a fraction value 0.0-1.0 to tell the progress of the back-projection.
+    /// \param msg a message string to add information to the progress bar.
+    /// \returns The abort status of interactor object. True means abort back-projection and false continue.
+    bool UpdateStatus(float val, std::string msg);
 
     std::string m_sModuleName;   ///< The name of the module
     kipl::profile::Timer timer;  ///< Timer object to measure the execution time.
     virtual int SourceVersion(); ///< \returns the value of the repository version of the source code.
 
+    kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
 };
 
 
