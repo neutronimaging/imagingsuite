@@ -47,15 +47,19 @@ size_t QtLogViewer::Write(std::string str)
     QMutexLocker locker(&m_Mutex);
     textedit.append(QString(str.c_str()));
     m_LogFile<<str<<std::endl;
+
     return 0;
 }
 
 QString QtLogViewer::serialize()
 {
-    std::string str;
+    QString str;
 
     QMutexLocker locker(&m_Mutex);
-    return textedit.toPlainText();
+
+    str=textedit.toPlainText();
+
+    return str;
 
 }
 
@@ -77,21 +81,25 @@ void QtLogViewer::clear()
 
 void QtLogViewer::save_clicked()
 {
-    QMutexLocker locker(&m_Mutex);
     logger(kipl::logging::Logger::LogVerbose,"Save the log buffer");
 
     QString filename = QFileDialog::getSaveFileName(this,
          tr("Save log file"), "/home", tr("log Files (*.log)"));
-    QFile f( filename );
-    f.open( QIODevice::WriteOnly | QIODevice::Text);
-    QTextStream out(&f);
-    out<<serialize();
-    f.close();
+    if (filename.isEmpty()==false)
+    {
+        QFile f( filename );
+        f.open( QIODevice::WriteOnly | QIODevice::Text);
+        QTextStream out(&f);
+        out<<serialize();
+        f.close();
+    }
+    else {
+        logger(logger.LogWarning,"Cancelled the dialog, no file saved.");
+    }
 }
 
 void QtLogViewer::clear_clicked()
 {
-    QMutexLocker locker(&m_Mutex);
     clear();
     logger(kipl::logging::Logger::LogVerbose,"Cleared the log buffer");
 }
