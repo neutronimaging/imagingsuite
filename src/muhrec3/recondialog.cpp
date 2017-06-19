@@ -39,7 +39,13 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 
     m_Interactor->Reset();
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+    #undef USEDIALOG
+#else
+    #define USEDIALOG
+#endif
+
+#ifdef USEDIALOG
     logger(logger.LogMessage,"Starting with threads");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
