@@ -118,6 +118,7 @@ protected:
     enum { Margin = 5 };
     ImageViewerInfoDialog m_infoDialog;
     QMutex m_MouseMoveMutex;
+    QMutex m_ImageMutex;
 };
 
 class SetGrayLevelsDialog : public QDialog

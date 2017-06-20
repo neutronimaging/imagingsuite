@@ -396,6 +396,7 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)
 {
+    QMutexLocker locker(&m_ImageMutex);
     std::ostringstream msg;
     m_ImagePainter.set_image(data,dims);
     roiRect.setRect(0,0,1,1);
@@ -416,6 +417,7 @@ QRect ImageViewerWidget::get_marked_roi()
 
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.set_image(data,dims,low,high);
     roiRect.setRect(0,0,1,1);
     rubberBandRect.setRect(0,0,1,1);
@@ -425,26 +427,31 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 
 void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.set_plot(data,color,idx);
 }
 
 void ImageViewerWidget::clear_plot(int idx)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.clear_plot(idx);
 }
 
 void ImageViewerWidget::set_rectangle(QRect rect, QColor color, int idx)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.set_rectangle(rect,color,idx);
 }
 
 void ImageViewerWidget::clear_rectangle(int idx)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.clear_rectangle(idx);
 }
 
 void ImageViewerWidget::set_marker(QMarker marker, int idx)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.set_marker(marker,idx);
 }
 
@@ -460,11 +467,13 @@ void ImageViewerWidget::hold_annotations(bool hold)
 
 void ImageViewerWidget::clear_viewer()
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.clear();
 }
 
 void ImageViewerWidget::set_levels(const float level_low, const float level_high, bool updatelinked)
 {
+    QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.set_levels(level_low,level_high);
     if (updatelinked) {
         UpdateLinkedViewers();
