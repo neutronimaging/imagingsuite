@@ -302,6 +302,7 @@ void RobustLogNorm::LoadExternalBBData(size_t *roi){
 
     bb_ext = BBExternalLoader(blackbodyexternalname, m_Config, roi, dose);
 //    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
+//    std::cout << "dose: " << dose << std::endl;
     bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex, m_Config, doselist);
 
     m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
@@ -1215,7 +1216,7 @@ kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, 
                     config.ProjectionInfo.fBinning,
                     nOriginalNormRegion) : 0.0f;
 
-//        std::cout << dose << std::endl;
+//        std::cout << "dose in BB external loader " <<dose << std::endl;
 
         return img;
 
@@ -1257,11 +1258,15 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
                 img.Resize(dims);
             }
 
-            mylist[i] = bUseNormROIBB ? reader.GetProjectionDose(filename,
+//            std::cout << "before the GetProjectiondose " << std::endl;
+//            std::cout << "bUseNormROIBB " << bUseNormROIBB << std::endl;
+
+            mylist[i] = bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
                         nOriginalNormRegion) : 0.0f;
+//            std::cout << "dose in BBexternal loader: " << mylist[i] << std::endl;
 
 
             memcpy(img.GetLinePtr(0,i),tempimg.GetDataPtr(),tempimg.Size()*sizeof(float));
@@ -1271,6 +1276,7 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
 
 
     }
+
 
      delete [] mylist;
 
