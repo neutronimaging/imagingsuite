@@ -272,11 +272,11 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
        // Process the projections
        float *pImg=img.GetDataPtr();
-       float *pProj=NULL;
+       float *pProj=nullptr;
 
 
 
-       /* Update piercing point position in projection rois */
+       // Update piercing point position in projection rois
 
        std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
@@ -290,7 +290,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
         kipl::profile::Timer fdkTimer;
         fdkTimer.Tic();
 
-         for (int i=0; (i<nProj); i++) {
+         for (int i=0; (i<nProj) && (!m_Interactor->SetProgress(float(i)/nProj,"FDK back-projection")); i++) {
 
            pProj=projections.GetLinePtr(0,i);
            memcpy(pImg,pProj,sizeof(float)*img.Size());
