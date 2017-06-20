@@ -1204,7 +1204,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
         logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
         msg.str("");
         try {
-            if (m_pEngine!=nullptr) {
+            if (m_pEngine!=nullptr)
+            {
                 delete m_pEngine;
             }
 

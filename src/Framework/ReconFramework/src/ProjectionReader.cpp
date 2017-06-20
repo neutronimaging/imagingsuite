@@ -1,25 +1,16 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #include "stdafx.h"
 
 #include <map>
 #include <string>
 #include <iostream>
+#include <algorithm>
 #include <base/timage.h>
 #include <base/tsubimage.h>
 #include <io/io_matlab.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>
+#include <io/analyzefileext.h>
 
 #ifdef HAVE_NEXUS
     #include <io/io_nexus.h>
@@ -211,8 +202,8 @@ Read(std::string filename,
 {
     std::ostringstream msg;
 
-    msg.str(""); msg<<"Reading: "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning<<std::endl;
-    logger(logger.LogDebug,msg.str());
+    msg.str(""); msg<<"Reading : "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning;
+    logger(logger.LogMessage,msg.str());
 
     size_t dims[8];
 	try {
@@ -232,8 +223,10 @@ Read(std::string filename,
 	}
     size_t local_crop[4];
 
-    memset(local_crop,0,sizeof(size_t)*4);
+    std::fill(local_crop,local_crop+4,0);
+
     size_t *pCrop=nullptr;
+
     if (nCrop!=nullptr) {
 
 		local_crop[0]=nCrop[0];
@@ -250,52 +243,37 @@ Read(std::string filename,
 			pCrop[i]*=binning;
 	}
 
-    // PrintCrop("local_crop to use",local_crop);
-	std::map<std::string, size_t> extensions;
-	extensions[".mat"]=0;
-	extensions[".fits"]=1;
-	extensions[".fit"]=1;
-	extensions[".fts"]=1;
-	extensions[".tif"]=2;
-	extensions[".tiff"]=2;
-	extensions[".TIF"]=2;
-	extensions[".png"]=3;
-    extensions[".hdf"]=4;
-    extensions[".hd5"]=4;
-
-	size_t extpos=filename.find_last_of(".");
-
 	kipl::base::TImage<float,2> img;
 
-	if (extpos!=filename.npos) {
-		std::string ext=filename.substr(extpos);
-		try {
-			switch (extensions[ext]) {
-            case 0  : img=ReadMAT(filename,pCrop);   break;
-            case 1  : img=ReadFITS(filename,pCrop);  break;
-			case 2  : img=ReadTIFF(filename,pCrop);  break;
-            case 3  : img=ReadPNG(filename,pCrop);   break;
-            case 4	: img=ReadHDF(filename);         break; // does not enter in here..
-			default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
-			}
-		}
-		catch (ReconException &e) {
-            msg.str("");
-			msg<<"Failed to read "<<filename<<" recon exception:\n"<<e.what();
-			throw ReconException(msg.str(),__FILE__,__LINE__);
-		}
-		catch (kipl::base::KiplException &e) {
-			msg<<"Failed to read "<<filename<<" kipl exception:\n"<<e.what();
-			throw ReconException(msg.str(),__FILE__,__LINE__);
-		}
-		catch (std::exception &e) {
-			msg<<"Failed to read "<<filename<<" STL exception:\n"<<e.what();
-			throw ReconException(msg.str(),__FILE__,__LINE__);
-		}
-	}
-	else {
-		throw ReconException("Unknown file type",__FILE__, __LINE__); 
-	}
+    try {
+        kipl::io::eExtensionTypes ext=kipl::io::GetFileExtensionType(filename);
+        switch (ext) {
+        case kipl::io::ExtensionMAT  : img=ReadMAT(filename,pCrop);   break;
+        case kipl::io::ExtensionFITS : img=ReadFITS(filename,pCrop);  break;
+        case kipl::io::ExtensionTIFF : img=ReadTIFF(filename,pCrop);  break;
+        case kipl::io::ExtensionPNG  : img=ReadPNG(filename,pCrop);   break;
+        case kipl::io::ExtensionHDF  : img=ReadHDF(filename);         break; // does not enter in here..
+        default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
+        }
+    }
+    catch (ReconException &e) {
+        msg.str("");
+        msg<<"Failed to read "<<filename<<" recon exception:\n"<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Failed to read "<<filename<<" kipl exception:\n"<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Failed to read "<<filename<<" STL exception:\n"<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
 
     size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
 	kipl::base::TImage<float,2> binned;
@@ -386,7 +364,7 @@ kipl::base::TImage<float,2> ProjectionReader::GetNexusSlice(kipl::base::TImage<f
 
 
     // 1. crop
-        if (nCrop!=NULL) {
+        if (nCrop!=nullptr) {
 //    std::cout<< nCrop[0] << " " << nCrop[1] << " " << nCrop[2] << " " << nCrop[3] << std::endl;
 
             cropped = kipl::base::TSubImage<float,2>::Get(img, nCrop);}
@@ -422,11 +400,7 @@ kipl::base::TImage<float,2> ProjectionReader::GetNexusSlice(kipl::base::TImage<f
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
-
-
     return img;
-
-
 }
 
 kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
@@ -688,7 +662,19 @@ kipl::base::TImage<float,2> ProjectionReader::ReadFITS(std::string filename, siz
 kipl::base::TImage<float,2> ProjectionReader::ReadTIFF(std::string filename, size_t const * const nCrop)
 {
 	kipl::base::TImage<float,2> img;
-	kipl::io::ReadTIFF(img,filename.c_str(),nCrop);
+
+    try {
+        kipl::io::ReadTIFF(img,filename.c_str(),nCrop);
+    }
+    catch (std::exception &e) {
+        throw ReconException(e.what(), __FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        throw kipl::base::KiplException(e.what(), __FILE__,__LINE__);
+    }
+    catch (...) {
+        throw ReconException("Unknown exception", __FILE__,__LINE__);
+    }
 	
 	return img;
 }
@@ -862,7 +848,8 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 	kipl::base::TImage<float,3> img(dims);
 //	size_t roi[4]; memcpy(roi,config.ProjectionInfo.roi,4*sizeof(size_t));
     size_t roi[4]; memcpy(roi,nCrop,4*sizeof(size_t));
-    msg.str(""); msg<<"ProjectionList="<<ProjectionList.size()<<", dims={"<<dims[0]<<", "<<dims[1]<<","<<dims[2]<<"}";
+
+    msg.str(""); msg<<"ProjectionList="<<ProjectionList.size()<<", dims=["<<dims[0]<<", "<<dims[1]<<", "<<dims[2]<<"]";
     logger(logger.LogMessage,msg.str());
 
 	std::ostringstream dose;
@@ -870,15 +857,19 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 	std::ostringstream weight;
 	std::map<float, ProjectionInfo>::iterator it,it2;
 
+    kipl::io::eExtensionTypes fileext=kipl::io::GetFileExtensionType(ProjectionList.begin()->second.name);
+
 	float fResolutionWeight=1.0f/(0<config.ProjectionInfo.fResolution[0] ? config.ProjectionInfo.fResolution[0]*0.1f : 1.0f);
 	size_t i=0;
 	switch (config.ProjectionInfo.imagetype) {
     case ReconConfig::cProjections::ImageType_Projections : {
 		logger(kipl::logging::Logger::LogMessage,"Using projections");
 
-        size_t found = ProjectionList.begin()->second.name.find("hdf");
-        if (found==std::string::npos ) {
-            for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++) {
+        if (fileext!=kipl::io::ExtensionHDF) {
+            for (it=ProjectionList.begin();
+                 (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections");
+                 ++it)
+            {
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
 
@@ -889,11 +880,8 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
                     config.ProjectionInfo.fBinning,
                     config.ProjectionInfo.dose_roi)<<" ";
 
-
-//           std::cout << it->second.name << " " << it->second.angle << " " << it->second.weight << " " << it->first << std::endl;
-
 			memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
-			i++;
+            ++i;
             }
         }
         else{
@@ -925,8 +913,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
 
-            size_t found = it->second.name.find("hdf");
-            if (found==std::string::npos ) {
+            if (fileext != kipl::io::ExtensionHDF ) {
                 dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
@@ -964,8 +951,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 
 		}
 
-        size_t found = it->second.name.find("hdf");
-        if (found==std::string::npos ) {
+        if (fileext != kipl::io::ExtensionHDF) {
             dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
                     config.ProjectionInfo.fBinning,
@@ -1001,9 +987,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
 
-
-            size_t found = it->second.name.find("hdf");
-            if (found==std::string::npos ) {
+            if (fileext != kipl::io::ExtensionHDF) {
                 proj = Read(it->second.name,config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
@@ -1048,7 +1032,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 
 bool ProjectionReader::UpdateStatus(float val, std::string msg)
 {
-	if (m_Interactor!=NULL)
+    if (m_Interactor!=nullptr)
 		return m_Interactor->SetProgress(val, msg);;
 
 	return false;
@@ -1056,7 +1040,7 @@ bool ProjectionReader::UpdateStatus(float val, std::string msg)
 
 bool ProjectionReader::Aborted()
 {
-	if (m_Interactor!=NULL)
+    if (m_Interactor!=nullptr)
 		return m_Interactor->Aborted();
 
 	return false;

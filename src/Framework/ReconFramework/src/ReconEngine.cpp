@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include <iostream>
@@ -32,7 +21,7 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 	m_FirstSlice(0),
     m_ProjectionMargin(0),
 	m_ProjectionReader(interactor),
-    m_BackProjector(NULL),
+    m_BackProjector(nullptr),
     nProcessedBlocks(0),
 	nProcessedProjections(0),
 	nTotalProcessedProjections(0),
@@ -40,8 +29,8 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 	m_bCancel(false),
 	m_Interactor(interactor)
 {
-	logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
-	if (m_Interactor!=NULL) {
+    logger(kipl::logging::Logger::LogMessage,"C'tor Recon engine");
+    if (m_Interactor!=nullptr) {
 		logger(kipl::logging::Logger::LogMessage,"Got an interactor");
 	}
 	else {
@@ -58,7 +47,7 @@ ReconEngine::~ReconEngine(void)
 		msg.str("");
 		msg<<"Removing "<<m_PreprocList.front()->GetModule()->ModuleName()<<" from the module list ("<<m_PreprocList.size()<<")";
 		logger(kipl::logging::Logger::LogMessage,msg.str());
-		if (m_PreprocList.front()!=NULL) {
+        if (m_PreprocList.front()!=nullptr) {
 			delete m_PreprocList.front();
 		}
 		msg.str("");
@@ -68,7 +57,7 @@ ReconEngine::~ReconEngine(void)
 		m_PreprocList.pop_front();
 	}
 
-	if (m_BackProjector!=NULL)
+    if (m_BackProjector!=nullptr)
 		delete m_BackProjector;
 }
 
@@ -80,7 +69,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
 size_t ReconEngine::AddPreProcModule(ModuleItem *module)
 {
-	if (module!=NULL) {
+    if (module!=nullptr) {
 		if (module->Valid())
 			m_PreprocList.push_back(module);
 	}
@@ -92,10 +81,10 @@ size_t ReconEngine::AddPreProcModule(ModuleItem *module)
 
 void ReconEngine::SetBackProjector(BackProjItem *module)
 {
-    if (m_BackProjector!=NULL)
+    if (m_BackProjector!=nullptr)
         delete m_BackProjector;
 
-	if (module!=NULL) {
+    if (module!=nullptr) {
 		if (module->Valid())
 			m_BackProjector=module;
 	}
@@ -180,13 +169,21 @@ int ReconEngine::Run()
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-    {
-        m_FirstSlice=roi[1];
-    }
-    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-    {
-        m_FirstSlice=roi[3]-voi[5];
+    switch (m_Config.ProjectionInfo.beamgeometry) {
+        case m_Config.ProjectionInfo.BeamGeometry_Parallel:
+            m_FirstSlice=roi[1];
+            break;
+        case m_Config.ProjectionInfo.BeamGeometry_Cone:
+            m_FirstSlice=roi[3]-voi[5];
+            break;
+        case m_Config.ProjectionInfo.BeamGeometry_Helix:
+            logger(logger.LogError,"Helix is not supported by the engine.");
+            throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
+            break;
+        default:
+            logger(logger.LogError,"Unsupported geometry type.");
+            throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
+            break;
     }
 
 	kipl::profile::Timer totalTimer;
@@ -326,9 +323,9 @@ int ReconEngine::Process(size_t *roi)
 	// Start processing
 	kipl::base::TImage<float,2> projection;
 	kipl::profile::Timer timer;
-
-	msg<<"Allocated preprocessors "<<m_PreprocList.size()<<" using "<<m_BackProjector->GetModule()->Name()<<"\n"
-		<<"Arc=["<<m_Config.ProjectionInfo.fScanArc[0]<<", "<<m_Config.ProjectionInfo.fScanArc[1]<<"]"<<"\n"
+    msg.str("");
+    msg<<"Allocated preprocessors "<<m_PreprocList.size()<<" using "<<m_BackProjector->GetModule()->Name()<<std::endl
+        <<"Arc=["<<m_Config.ProjectionInfo.fScanArc[0]<<", "<<m_Config.ProjectionInfo.fScanArc[1]<<"]"<<std::endl
 		<<"Target matrix "<<m_BackProjector->GetModule()->GetVolume();
 
 	logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -337,7 +334,9 @@ int ReconEngine::Process(size_t *roi)
 	timer.Tic();
 	std::map<float,ProjectionInfo>::iterator it_Proj;
 	size_t i=0;
-	for (it_Proj=m_ProjectionList.begin(); (it_Proj!=m_ProjectionList.end()) && (m_bCancel==false) ; it_Proj++, i++)
+    for (it_Proj=m_ProjectionList.begin();
+         (it_Proj!=m_ProjectionList.end()) && (m_bCancel==false) ;
+         ++it_Proj, ++i)
 	{
 		float fWeight=it_Proj->second.weight/(0<m_Config.ProjectionInfo.fResolution[0] ? m_Config.ProjectionInfo.fResolution[0]*0.1f : 1.0f);
 		float fAngle=it_Proj->second.angle+m_Config.MatrixInfo.fRotation;
@@ -396,13 +395,6 @@ bool ReconEngine::TransferMatrix(size_t *dims)
     // the argument dims should be maybe changed before depending on parallel/cone beam
 
 	kipl::base::TImage<float,2> slice;
-
-//    std::cout<< "Debug ReconEngine::TransferMatrix(size_t *dims)" << std::endl;
-//    std::cout << dims[3]-dims[1] << std::endl;
-//    std::cout << dims[0] << " " << dims[1] << " " << dims[2] << " " << dims[3] << std::endl;
-
-//    std::cout  << "Debug on mVolume: " << std::endl;
-//    std::cout << m_Volume.Size(0) << " " << m_Volume.Size(1) << " " << m_Volume.Size(2) << std::endl;
 
     try {
         if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
@@ -537,7 +529,7 @@ bool ReconEngine::Serialize(size_t *dims)
 
 	}
 
-	if (dims!=NULL)
+    if (dims!=nullptr)
 		memcpy(dims,img.Dims(),3*sizeof(size_t));
 
 	return bTransposed;
@@ -547,7 +539,7 @@ kipl::base::TImage<float,2> ReconEngine::GetSlice(size_t index, kipl::base::eIma
 {
 	kipl::base::TImage<float,2> img;
 
-    if (m_Volume.Size()!=0)
+    if (m_Volume.Size()!=0UL)
         img=kipl::base::ExtractSlice(m_Volume,index,plane,nullptr);
 
 	return img;
@@ -643,8 +635,9 @@ int ReconEngine::Run3DFull()
 
     size_t totalSlices=0;
 
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel) {
-
+    switch (m_Config.ProjectionInfo.beamgeometry)
+    {
+    case m_Config.ProjectionInfo.BeamGeometry_Parallel:
         if (m_Config.MatrixInfo.bUseROI) {
             m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
             m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
@@ -663,21 +656,13 @@ int ReconEngine::Run3DFull()
         }
 
         totalSlices=m_Config.MatrixInfo.nDims[2];
-}
-    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+        break;
 
-//        if (m_Config.MatrixInfo.bUseVOI) {
-              totalSlices = voi[5]-voi[4];
-              std::cout << "totalslice: " << totalSlices << std::endl;
-//        }
-//        else {
-//            totalSlices=m_Config.MatrixInfo.nDims[2];
-//        }
-
+    case m_Config.ProjectionInfo.BeamGeometry_Cone:
+            totalSlices = voi[5]-voi[4];
+            std::cout << "totalslice: " << totalSlices << std::endl;
+            break;
     }
-
-
-
 
 	msg.str("");
 	if (!m_Config.MatrixInfo.bAutomaticSerialize) {
@@ -694,7 +679,7 @@ int ReconEngine::Run3DFull()
             }
             else {
                 m_Volume.Resize(m_Config.MatrixInfo.nDims);
-                m_Volume=0.0f;
+                m_Volume = 0.0f;
             }
 		}
 		catch (kipl::base::KiplException &e) {
@@ -738,7 +723,10 @@ int ReconEngine::Run3DFull()
 	m_bCancel=false;
 	int result=0;
 	try {
-		for (nProcessedBlocks=0; (nProcessedBlocks<nTotalBlocks) && (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Blocks")); nProcessedBlocks++) {
+        for (nProcessedBlocks=0;
+             (nProcessedBlocks<nTotalBlocks) && (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Blocks"));
+             ++nProcessedBlocks)
+        {
             m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
 			nProcessedProjections=0;
 			m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
@@ -753,7 +741,8 @@ int ReconEngine::Run3DFull()
 			m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
 		}
 
-		if ((totalSlices!=nSliceBlock*nTotalBlocks) && !UpdateProgress(1.0f, "Last block")) {
+        if ((totalSlices!=nSliceBlock*nTotalBlocks) && !UpdateProgress(1.0f, "Last block"))
+        {
 			nProcessedProjections=0;
 			m_Config.ProjectionInfo.roi[3]=roi[3];
 			msg.str("");
@@ -797,17 +786,17 @@ int ReconEngine::Run3DFull()
 		msg.str("");
 		msg<<"\nModule process time:\n";
 		std::list<ModuleItem *>::iterator it_Module;
-		for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); it_Module++) {
+        for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); ++it_Module) {
 			msg<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
 		}
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
-		logger(kipl::logging::Logger::LogVerbose,"Run 3D done.");
+        logger(kipl::logging::Logger::LogMessage,"Run 3D done.");
 		Done();
 	}
 	else {
-		logger(kipl::logging::Logger::LogVerbose,"Run 3D was canceled by the user.");
+        logger(kipl::logging::Logger::LogMessage,"Run 3D was canceled by the user.");
         m_ProjectionBlocks.clear();
 	}
 
@@ -1004,7 +993,7 @@ int ReconEngine::Process3D(size_t *roi)
             msg<<"SetROI failed with a ModuleException for "<<m_BackProjector->GetModule()->Name()<<"\n"<<e.what();
             logger(kipl::logging::Logger::LogError,msg.str());
             throw ReconException(msg.str(),__FILE__,__LINE__);
-        }
+    }
     catch (kipl::base::KiplException &e) {
         msg.str("");
         msg<<"SetROI failed with a KiplException for "<<m_BackProjector->GetModule()->Name()<<"\n"<<e.what();
@@ -1028,13 +1017,12 @@ int ReconEngine::Process3D(size_t *roi)
 
 	// Start processing
 	kipl::profile::Timer timer;
-
+    msg.str("");
     msg<<": Allocated preprocessors "<<m_PreprocList.size()<<" using "<<m_BackProjector->GetModule()->Name()<<"\n"
 		<<"Arc=["<<m_Config.ProjectionInfo.fScanArc[0]<<", "<<m_Config.ProjectionInfo.fScanArc[1]<<"]"<<"\n"
 		<<"Target matrix "<<m_BackProjector->GetModule()->GetVolume();
 
 	logger(kipl::logging::Logger::LogMessage,msg.str());
-	msg.str("");
 
 	timer.Tic();
 
@@ -1050,17 +1038,21 @@ int ReconEngine::Process3D(size_t *roi)
         ext_projections=m_ProjectionReader.Read(m_Config,extroi,parameters);
 	}
 	catch (ReconException &e) {
-		msg<<"Reading projections failed with a recon exception: "<<e.what();
+        msg<<"Reading projections failed with a recon exception: "<<std::endl<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 	catch (kipl::base::KiplException &e) {
-		msg<<"Reading projections failed with a kipl exception: "<<e.what();
+        msg<<"Reading projections failed with a kipl exception: "<<std::endl<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 	catch (std::exception &e) {
-		msg<<"Reading projections failed with a STL exception: "<<e.what();
+        msg<<"Reading projections failed with a STL exception: "<<std::endl<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
+    catch (...) {
+        msg<<"Reading projections failed with an unsupported exception: ";
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
 
     msg.str("");
     msg<<": Size of read projections using ext roi: "<<ext_projections;
@@ -1090,8 +1082,10 @@ int ReconEngine::Process3D(size_t *roi)
 		msg<<"Preprocessing failed with an STL exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-
-
+    catch (...) {
+        msg<<"Preprocessing failed with an unsupported exception: ";
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
 	
     kipl::base::TImage<float,3> projections;
     size_t dims[3];
@@ -1145,7 +1139,7 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     int res=0;
 
     try {
-        for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); it++, i++)
+        for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); ++it, ++i)
         {
             msg.str("");
             msg<<"Back-projecting projection block "<<i+1;
@@ -1221,7 +1215,7 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
 
 bool ReconEngine::UpdateProgress(float val, std::string msg)
 {
-	if (m_Interactor!=NULL)
+    if (m_Interactor!=nullptr)
 		return m_Interactor->SetProgress(val, msg);
 
 	return false;
@@ -1229,7 +1223,7 @@ bool ReconEngine::UpdateProgress(float val, std::string msg)
 
 void ReconEngine::Done()
 {
-	if (m_Interactor!=NULL)
+    if (m_Interactor!=nullptr)
 		m_Interactor->Done();
 }
 

@@ -1,4 +1,4 @@
-//#include "stdafx.h"
+//<LICENSE>
 
 #include <QMessageBox>
 #include <QtConcurrent>
@@ -32,6 +32,12 @@ ReconDialog::~ReconDialog()
 
 int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 {
+    if (engine==nullptr)
+    {
+        logger(logger.LogError,"Called recon dialog with unallocated engine");
+        return Rejected;
+    }
+
     m_Engine=engine;
     m_bRerunBackproj=bRerunBackProj;
     finish=false;
@@ -40,7 +46,8 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     m_Interactor->Reset();
 
 #ifdef _MSC_VER
-    #undef USEDIALOG
+//    #undef USEDIALOG
+    #define USEDIALOG
 #else
     #define USEDIALOG
 #endif
@@ -108,7 +115,7 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 int ReconDialog::progress()
 {
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
-
+    QThread::msleep(250);
     while (!m_Interactor->Finished() && !m_Interactor->Aborted() ){
         ui->progressBar->setValue(m_Interactor->CurrentProgress()*100);
         ui->progressBar_overall->setValue(m_Interactor->CurrentOverallProgress()*100);
@@ -130,7 +137,12 @@ int ReconDialog::process()
     dlg.setWindowTitle("Reconstruction error");
     bool failed=false;
     try {
-        m_Engine->Run3D(m_bRerunBackproj);
+        if (m_Engine!=nullptr)
+            m_Engine->Run3D(m_bRerunBackproj);
+        else {
+            logger(logger.LogError,"Trying to start an unallocated engine.");
+            failed=true;
+        }
     }
     catch (ReconException &e)
     {
