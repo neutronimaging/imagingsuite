@@ -1,10 +1,11 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef IO_FITS_HPP_
 #define IO_FITS_HPP_
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include <stdint.h>
 
 #include <fitsio.h>
@@ -36,10 +37,17 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 	fitsfile *fptr;
 	int status=0;
 	fits_open_image(&fptr, fname, READONLY, &status);
-	
+    if (status!=0) {
+        msg.str("");
+        char errtext[2048];
+        fits_get_errstatus(status,errtext);
+        msg<<"Failed opening "<<fname<<std::endl<<errtext;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
 	int bitpix=0;
 	int naxis;
-	long naxes[3];
+    long naxes[10];
 	
 	try {
 		fits_get_img_param(fptr, 2,  &bitpix, &naxis, naxes, &status);
@@ -61,7 +69,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 	
 	size_t dims[3];
 	long coord[3]={1,0,1};
-	if (nCrop==NULL) {
+    if (nCrop==nullptr) {
 		dims[0]=static_cast<size_t>(naxes[0]);
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
 	}
@@ -91,15 +99,15 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 
 	int datatype=FITSDataType(static_cast<ImgType>(0));
 	
-	const size_t cnStart = nCrop==NULL ? 0 : min(static_cast<size_t>(naxes[1]),nCrop[1]);
-	const size_t cnStop  = nCrop==NULL ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
+    const size_t cnStart = nCrop==nullptr ? 0 : min(static_cast<size_t>(naxes[1]),nCrop[1]);
+    const size_t cnStop  = nCrop==nullptr ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
 	
-	ImgType *pLine=new ImgType[naxes[0]];
+    ImgType *pLine=new ImgType[naxes[0]+16];
 	for (size_t i=cnStart, j=0; i<cnStop; i++,j++) {
 		coord[1]=i+1;
 
 		if (fits_read_pix(fptr, datatype, coord, static_cast<int>(dims[0]), 
-				NULL, pLine, NULL, &status))
+                nullptr, pLine, nullptr, &status))
 		{
 			char err_text[512];
 					fits_get_errstatus(status, err_text);
@@ -108,7 +116,8 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 					throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 		}
 		
-		memcpy(src.GetLinePtr(j),pLine,src.Size(0)*sizeof(ImgType));
+        //memcpy(src.GetLinePtr(j),pLine,src.Size(0)*sizeof(ImgType));
+        std::copy(pLine, pLine+src.Size(0), src.GetLinePtr(j));
 	}
 
 	delete [] pLine;
