@@ -45,7 +45,7 @@ public:
 
     /// Check if the item contains a valid module
     /// \returns true if the module pointer is non-NULL.
-	bool Valid() {return m_Module!=NULL;}
+    bool Valid() {return m_Module!=nullptr;}
 
     /// Destructor that unloads the loaded module.
 	virtual ~ModuleItemBase();

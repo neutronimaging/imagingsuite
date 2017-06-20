@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef IMAGEWRITER_H
 #define IMAGEWRITER_H
 

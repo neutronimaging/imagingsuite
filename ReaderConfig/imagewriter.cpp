@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include <strings/filenames.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>

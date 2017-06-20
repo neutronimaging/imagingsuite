@@ -1,15 +1,6 @@
-//
-// This file is part of the ModuleConfig library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
+#include <sstream>
 #include "../include/ModuleConfig_global.h"
 #include "../include/ProcessModuleBase.h"
 
@@ -20,7 +11,11 @@ ProcessModuleBase::ProcessModuleBase(std::string name,kipl::interactors::Interac
  m_sModuleName(name),
   m_Interactor(interactor)
 {
-    logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
+    std::ostringstream msg;
+
+    msg<<"C'tor ProcessModuleBase for "<<m_sModuleName;
+
+    logger(kipl::logging::Logger::LogMessage,msg.str());
     if (m_Interactor!=nullptr) {
         logger(kipl::logging::Logger::LogVerbose,"Got an interactor");
     }
