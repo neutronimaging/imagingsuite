@@ -170,13 +170,13 @@ int ReconEngine::Run()
     logger(kipl::logging::Logger::LogVerbose,msg.str());
 
     switch (m_Config.ProjectionInfo.beamgeometry) {
-        case m_Config.ProjectionInfo.BeamGeometry_Parallel:
+        case ReconConfig::cProjections::BeamGeometry_Parallel:
             m_FirstSlice=roi[1];
             break;
-        case m_Config.ProjectionInfo.BeamGeometry_Cone:
+        case ReconConfig::cProjections::BeamGeometry_Cone:
             m_FirstSlice=roi[3]-voi[5];
             break;
-        case m_Config.ProjectionInfo.BeamGeometry_Helix:
+        case ReconConfig::cProjections::BeamGeometry_Helix:
             logger(logger.LogError,"Helix is not supported by the engine.");
             throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
             break;
@@ -637,7 +637,7 @@ int ReconEngine::Run3DFull()
 
     switch (m_Config.ProjectionInfo.beamgeometry)
     {
-    case m_Config.ProjectionInfo.BeamGeometry_Parallel:
+    case ReconConfig::cProjections::BeamGeometry_Parallel:
         if (m_Config.MatrixInfo.bUseROI) {
             m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
             m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
@@ -658,7 +658,7 @@ int ReconEngine::Run3DFull()
         totalSlices=m_Config.MatrixInfo.nDims[2];
         break;
 
-    case m_Config.ProjectionInfo.BeamGeometry_Cone:
+    case ReconConfig::cProjections::BeamGeometry_Cone:
             totalSlices = voi[5]-voi[4];
             std::cout << "totalslice: " << totalSlices << std::endl;
             break;
@@ -667,7 +667,7 @@ int ReconEngine::Run3DFull()
 	msg.str("");
 	if (!m_Config.MatrixInfo.bAutomaticSerialize) {
 		try {
-            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+            if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Cone) {
 
                 size_t voi_dims[3] = {
                     voi[1]-voi[0],
