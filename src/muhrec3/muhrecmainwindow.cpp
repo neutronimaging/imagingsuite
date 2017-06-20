@@ -1473,7 +1473,11 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
         double nBufferMemory=0;
         // Matrix size
         double length = abs(static_cast<ptrdiff_t>(roi[2])-static_cast<ptrdiff_t>(roi[0]));
-        double height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
+        double height = 0;
+        if (ui->checkCBCT->isChecked())
+            height = abs(ui->spinSubVolumeSizeZ0->value()-ui->spinSubVolumeSizeZ1->value()+1);
+        else
+            height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
         text.str("");
 
         nMatrixMemory = length*length*height*sizeof(float);
