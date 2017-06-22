@@ -50,6 +50,19 @@ int FDKbp::Initialize()
     return 0;
 }
 
+int FDKbp::InitializeBuffers(int width, int height)
+{
+    prepareFFT(width,height);
+    return 0;
+}
+
+int FDKbp::FinalizeBuffers()
+{
+    cleanupFFT();
+
+    return 0;
+}
+
 void FDKbp::multiplyMatrix(double *mat1, double *mat2, double *result, int rows, int columns, int columns1){
 
     int i,j,k;
@@ -272,9 +285,9 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
 //            if (parms->filter == FDK_FILTER_TYPE_RAMP) {
 //                timer->start ();
 
-        prepareFFT(proj.Size(0),proj.Size(1)); // Prepare and cleanup should be called outside this loop
+      //  prepareFFT(proj.Size(0),proj.Size(1)); // Prepare and cleanup should be called outside this loop
         ramp_filter_tuned(proj);
-        cleanupFFT();
+      //  cleanupFFT();
 //                filter_time += timer->report ();
 //            }
 

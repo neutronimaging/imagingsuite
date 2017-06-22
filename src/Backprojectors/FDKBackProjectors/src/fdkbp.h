@@ -32,6 +32,8 @@ protected:
     void multiplyMatrix (double *mat1, double *mat2, double *result, int rows, int columns, int columns1);
     void prepareFFT(int width,int height);
     void cleanupFFT();
+    virtual int InitializeBuffers(int width, int height);
+    virtual int FinalizeBuffers();
 
     unsigned int padwidth;
     fftw_complex *in;

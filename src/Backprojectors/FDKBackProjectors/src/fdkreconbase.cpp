@@ -95,6 +95,14 @@ int FdkReconBase::Initialize()
     return 0;
 }
 
+int FdkReconBase::InitializeBuffers(int width, int height)
+{
+    return 0;
+}
+
+int FdkReconBase::FinalizeBuffers() {
+    return 0;
+}
 /// Gets a list parameters required by the module.
 /// \returns The parameter list
 std::map<std::string, std::string> FdkReconBase::GetParameters()
@@ -289,8 +297,8 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
         kipl::profile::Timer fdkTimer;
         fdkTimer.Tic();
-
-         for (int i=0; (i<nProj) && (!m_Interactor->SetProgress(float(i)/nProj,"FDK back-projection")); i++) {
+        InitializeBuffers(img.Size(0),img.Size(1));
+        for (int i=0; (i<nProj) && (!m_Interactor->SetProgress(float(i)/nProj,"FDK back-projection")); i++) {
 
            pProj=projections.GetLinePtr(0,i);
            memcpy(pImg,pProj,sizeof(float)*img.Size());
@@ -303,6 +311,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
        }
 
+        FinalizeBuffers();
          fdkTimer.Toc();
          std::cout << "fdkTimer: " << fdkTimer << std::endl;
 

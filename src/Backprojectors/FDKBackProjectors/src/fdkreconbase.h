@@ -27,6 +27,8 @@ public:
 
     /// Initializing the reconstructor
     virtual int Initialize();
+    virtual int InitializeBuffers(int width, int height);
+    virtual int FinalizeBuffers();
 
     /// Add one projection to the back-projection stack
     /// \param proj The projection
