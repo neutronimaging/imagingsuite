@@ -9,6 +9,7 @@
 #include "genericbp.h"
 #include "fdkbackproj.h"
 #include "fdkbp.h"
+#include "fdkbp_single.h"
 #include "fdkreconbase.h"
 
 FDKBACKPROJSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
@@ -20,8 +21,8 @@ FDKBACKPROJSHARED_EXPORT void * GetModule(const char *application, const char * 
     if (name!=NULL) {
         std::string sName=name;
 
-        if (sName=="GenericBP")
-            return new GenericBP(interactor);
+        if (sName=="FDKbp_single")
+            return new FDKbp_single(interactor);
 
         if (sName=="FDKbp")
             return new FDKbp(interactor);
@@ -60,8 +61,8 @@ FDKBACKPROJSHARED_EXPORT int GetModuleList(const char * application, void *listp
 
     std::map<std::string, std::map<std::string, std::string> > &modules = *modulelist;
 
-    GenericBP mpbp;
-    modules["GenericBP"]=mpbp.GetParameters();
+    FDKbp_single fdkbps;
+    modules["FDKbp_single"]=fdkbps.GetParameters();
 
     FDKbp fdkbp;
     modules["FDKbp"]=fdkbp.GetParameters();

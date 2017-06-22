@@ -24,7 +24,7 @@ unix:!symbian {
     unix:macx {
 #       QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
-        QMAKE_LFLAGS += -lfftw3
+#        QMAKE_LFLAGS += -lfftw3 -lfftw3f
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
@@ -38,7 +38,7 @@ unix:!symbian {
         INCLUDEPATH += /usr/include/libxml2
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -ltiff -lxml2 -lfftw3 -lfftw3f
 
 }
 
@@ -49,7 +49,7 @@ win32 {
     INCLUDEPATH  += ../../../../../../../external/src/linalg ../../../../../../../external/include ../../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio -llibfftw3-3
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -59,7 +59,8 @@ DEFINES += FDKBACKPROJ_LIBRARY
 SOURCES += ../../src/fdkbackproj.cpp  \
         ../../src/genericbp.cpp \
         ../../src/fdkreconbase.cpp \
-        ../../src/fdkbp.cpp
+        ../../src/fdkbp.cpp \
+        ../../src/fdkbp_single.cpp
 #        ../../src/ramp_filter.cpp
 #        ../../src/fdk.cxx \
 #        ../../src/bowtie_correction.cxx \
@@ -78,7 +79,8 @@ HEADERS += ../../src/fdkbackproj.h \
 	../../src/fdkbackproj_global.h \
 	../../src/genericbp.h \
         ../../src/fdkreconbase.h \
-         ../../src/fdkbp.h
+         ../../src/fdkbp.h \
+        ../../src/fdkbp_single.h
 #        ../../src/ramp_filter.h
 #        ../../src/fdk.h \
 #        ../../src/bowtie_correction.h \
