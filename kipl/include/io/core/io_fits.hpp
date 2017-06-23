@@ -74,10 +74,10 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
 	}
 	else {
-        if ((naxes[0]<=nCrop[0]) ||
-                (naxes[0]<=nCrop[2]) ||
-                (naxes[1]<=nCrop[1]) ||
-                (naxes[1]<=nCrop[3]))
+        if ((naxes[0]<=static_cast<long>(nCrop[0])) ||
+                (naxes[0]<=static_cast<long>(nCrop[2])) ||
+                (naxes[1]<=static_cast<long>(nCrop[1])) ||
+                (naxes[1]<=static_cast<long>(nCrop[3])))
         {
             msg.str("");
             msg<<"Cropping region ("<<nCrop[0]<<", "<<nCrop[1]<<", "<<nCrop[2]<<", "<<nCrop[3]<<") out of bounds ("<<naxes[0]<<", "<<naxes[1]<<") for file "<<fname;
