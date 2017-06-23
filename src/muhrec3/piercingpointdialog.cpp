@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "piercingpointdialog.h"
 #include "ui_piercingpointdialog.h"
 
@@ -9,6 +10,7 @@
 
 PiercingPointDialog::PiercingPointDialog(QWidget *parent) :
     QDialog(parent),
+    logger("PiercingPointDialog"),
     ui(new Ui::PiercingPointDialog),
     useROI(false),
     correctGain(false)
@@ -115,7 +117,13 @@ void PiercingPointDialog::on_pushButton_estimate_clicked()
 {
     ImagingAlgorithms::PiercingPointEstimator pe;
 
+    UpdateConfig();
+    logger(logger.LogMessage,"Pre estimate");
     position=pe(ob,dc,correctGain,useROI ? roi : nullptr );
+    logger(logger.LogMessage,"post estimate");
+    std::ostringstream msg;
+    msg<<"Found pp at ["<<position.first<<", "<<position.second<<"]";
+    logger(logger.LogMessage,msg.str());
     QPointF pos(position.first,position.second);
     UpdateDialog();
     ui->viewer->set_marker(QtAddons::QMarker(QtAddons::PlotGlyph_Plus,pos,QColor("red"),10),0);

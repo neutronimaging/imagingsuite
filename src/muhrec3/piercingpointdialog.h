@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <ReconConfig.h>
+#include <logging/logger.h>
 
 namespace Ui {
 class PiercingPointDialog;
@@ -12,6 +13,7 @@ class PiercingPointDialog : public QDialog
 {
     Q_OBJECT
 
+    kipl::logging::Logger logger;
 public:
     explicit PiercingPointDialog(QWidget *parent = 0);
     ~PiercingPointDialog();
