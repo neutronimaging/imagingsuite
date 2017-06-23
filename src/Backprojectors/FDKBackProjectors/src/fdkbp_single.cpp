@@ -169,12 +169,6 @@ void FDKbp_single::getProjMatrix(float angles, float *nrm, float *proj_matrix){
     pup[2] /= norm_pup;
 
 
-//        printf ("CAM = %g %g %g\n", cam[0], cam[1], cam[2]);
-//        printf ("TGT = %g %g %g\n", tgt[0], tgt[1], tgt[2]);
-//        printf ("NRM = %g %g %g\n", nrm[0], nrm[1], nrm[2]);
-//        printf ("PLT = %g %g %g\n", plt[0], plt[1], plt[2]);
-//        printf ("PUP = %g %g %g\n", pup[0], pup[1], pup[2]);
-
 
     // Build extrinsic matrix - rotation part
 
@@ -281,16 +275,10 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 
         getProjMatrix(angles, nrm, proj_matrix); // panel oriented as z, to be used with project_volume_onto_image_c
 
-//            /* Apply ramp filter */
+//             Apply ramp filter
 //            if (parms->filter == FDK_FILTER_TYPE_RAMP) {
 //                timer->start ();
-
-      //  prepareFFT(proj.Size(0),proj.Size(1)); // Prepare and cleanup should be called outside this loop
         ramp_filter_tuned(proj);
-      //  cleanupFFT();
-//                filter_time += timer->report ();
-//            }
-
 
 
 //        REFERENCE FDK IMPLEMENTATION:
@@ -298,18 +286,6 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 
 //       DEFAULT FDK BACK PROJECTOR:                
         project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
-
-
-//        printf ("I/O time (total) = %g\n", io_time);
-//        printf ("I/O time (per image) = %g\n", io_time / num_imgs);
-//        printf ("Filter time = %g\n", filter_time);
-//        printf ("Filter time (per image) = %g\n", filter_time / num_imgs);
-//        printf ("Backprojection time = %g\n", backproject_time);
-//        printf ("Backprojection time (per image) = %g\n",
-//        backproject_time / num_imgs);
-
-//        delete timer;
-
 
     return 0L;
 }
@@ -712,15 +688,7 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     unsigned int height = img.Size(1);
     unsigned int padwidth = 2*pow(2, ceil(log(width)/log(2)));
     unsigned int pad_factor = padwidth-width;
-//    unsigned int padheight = 2*pow(2, ceil(log(height)/log(2)));
     unsigned int padheight = height;
-//    width = pow(2, ceil(log(width)/log(2)));
-//    width *=2;
-//    height = pow(2, ceil(log(height)/log(2)));
-//    height *=2; // much more padding
-
-
-//    std::cout << "width and height: " << width << " " << height << std::endl;
 
     size_t pad_dims[2] = {padwidth, height};
     kipl::base::TImage< float,2 > padImg(pad_dims);
@@ -730,10 +698,6 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     for (size_t i=0; i<height; ++i){
         memcpy(padImg.GetLinePtr(i,0)+pad_factor/2, img.GetLinePtr(i,0), sizeof(float)*width);
     }
-
-//    kipl::io::WriteTIFF32(padImg,"padImg.tif");
-//    kipl::io::WriteTIFF32(img,"img.tif");
-
 
     fftw_complex *in;
     fftw_complex *fft;
@@ -940,8 +904,6 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     // Comment AK: Using only the intended line will speed up things
     unsigned int firstLine  = 0;      //mConfig.ProjectionInfo.roi[1];
     unsigned int lastLine   = height; //mConfig.ProjectionInfo.roi[3];
-//    unsigned int firstLine  = mConfig.ProjectionInfo.roi[1];
-//    unsigned int lastLine   = mConfig.ProjectionInfo.roi[3];
 
     msg.str("");
     msg<<"Pad width="<<padwidth;
@@ -1018,7 +980,7 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     for (r = firstLine; r < lastLine; ++r)
     {
         // Copy padded projection line to 'in' buffer
-        memcpy(in_buffer,in+r*padwidth,sizeof(fftw_complex)*padwidth);
+        memcpy(in_buffer,in+r*padwidth,sizeof(fftwf_complex)*padwidth);
         fftwf_execute (fftp);
 
         // Apply ramp
@@ -1030,16 +992,17 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
         // Add apodization. Comment AK: This already done as roll-off ramp.
 
         fftwf_execute (ifftp);
-        memcpy(ifft+r*padwidth,ifft_buffer,sizeof(fftw_complex)*padwidth);
+        memcpy(ifft+r*padwidth,ifft_buffer,sizeof(fftwf_complex)*padwidth);
     }
 
-    data[i] = (float)(ifft[i][0]);
+    data[i] = ifft[i][0];
+    float rpadwidth= 1.0f/padwidth;
+
+//    for (i = 0; i < Npad; ++i)
+//        ifft[i][0] *= rpadwidth;
 
     for (i = 0; i < Npad; ++i)
-        ifft[i][0] /= padwidth;
-
-    for (i = 0; i < Npad; ++i)
-        paddata[i] = (float)(ifft[i][0]);
+        paddata[i] = ifft[i][0]*rpadwidth;
 
     // fo back to original dimension
 

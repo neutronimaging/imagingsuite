@@ -203,7 +203,7 @@ Read(std::string filename,
     std::ostringstream msg;
 
     msg.str(""); msg<<"Reading : "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning;
-    logger(logger.LogMessage,msg.str());
+    logger(logger.LogVerbose,msg.str());
 
     size_t dims[8];
 	try {
