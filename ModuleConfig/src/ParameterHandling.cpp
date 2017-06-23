@@ -9,6 +9,7 @@
 // $Rev$
 // $Id$
 //
+//<LICENSE>
 
 #include "stdafx.h"
 

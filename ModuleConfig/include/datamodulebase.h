@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef DATAMODULEBASE_H
 #define DATAMODULEBASE_H
 

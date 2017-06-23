@@ -1,14 +1,4 @@
-//
-// This file is part of the ModuleConfig library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #ifndef MODULECONFIG_H_
 #define MODULECONFIG_H_

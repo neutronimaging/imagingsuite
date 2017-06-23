@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "../../include/datamodulebase.h"
 
 int DataModuleBase::m_nIDCount=0;
