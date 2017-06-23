@@ -7,6 +7,8 @@
 #include <backprojectorbase.h>
 #include <string>
 #include <list>
+//<LICENSE>
+
 #include <vector>
 #include <base/timage.h>
 #include <math/LinearAlgebra.h>

@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "fdkreconbase.h"
 
 #include "../include/ReconException.h"

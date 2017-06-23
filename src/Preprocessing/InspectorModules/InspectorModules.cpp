@@ -1,14 +1,5 @@
-//
-// This file is part of the backprojector modules of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-05-21 16:13:06 +0200 (Mon, 21 May 2012) $
-// $Rev: 1315 $
-// $Id: InspectorModules.cpp 1315 2012-05-21 14:13:06Z kaestner $
-//
+//<LICENSE>
+
 #include "inspectormodules_global.h"
 #include "InspectorModules.h"
 #include "ProjectionInspector.h"

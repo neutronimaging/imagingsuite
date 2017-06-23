@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "findskiplistdialog.h"
 #include "ui_findskiplistdialog.h"
 #include <strings/filenames.h>

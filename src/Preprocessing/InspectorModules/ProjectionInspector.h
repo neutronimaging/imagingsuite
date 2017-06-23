@@ -1,14 +1,5 @@
-//
-// This file is part of the Inspector modules of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-10-05 15:47:22 +0200 (Fri, 05 Oct 2012) $
-// $Rev $
-// $Id $
-//
+//<LICENSE>
+
 #ifndef PROJECTIONINSPECTOR_H_
 #define PROJECTIONINSPECTOR_H_
 

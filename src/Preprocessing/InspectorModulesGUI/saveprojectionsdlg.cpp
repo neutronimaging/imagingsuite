@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "saveprojectionsdlg.h"
 #include "ui_saveprojectionsdlg.h"
 #include "QFileDialog"

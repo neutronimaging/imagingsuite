@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "inspectormodulesgui.h"
 
 

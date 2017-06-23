@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef FDKBACKPROJ_H
 #define FDKBACKPROJ_H
 

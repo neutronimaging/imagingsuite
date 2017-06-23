@@ -1,9 +1,4 @@
-/*
- * CountNANs.cpp
- *
- *  Created on: Sep 22, 2011
- *      Author: anders
- */
+//<LICENSE>
 
 #include "stdafx.h"
 #include "CountNANs.h"

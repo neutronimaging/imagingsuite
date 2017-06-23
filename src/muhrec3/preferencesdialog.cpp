@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "preferencesdialog.h"
 #include "ui_preferencesdialog.h"
 

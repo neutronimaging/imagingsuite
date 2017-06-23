@@ -1,9 +1,4 @@
-/*
- * CountNANs.h
- *
- *  Created on: Sep 22, 2011
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef COUNTNANS_H_
 #define COUNTNANS_H_

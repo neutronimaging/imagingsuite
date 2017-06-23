@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef FDKBP_H
 #define FDKBP_H
 #include "fftw3.h"

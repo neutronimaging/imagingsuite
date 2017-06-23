@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include <set>
 #include <sstream>
 #include <string>

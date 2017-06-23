@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef GETIMAGESIZE_H
 #define GETIMAGESIZE_H
 

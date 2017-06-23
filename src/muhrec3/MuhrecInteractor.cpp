@@ -1,4 +1,5 @@
 //<LICENCE>
+
 #include "stdafx.h"
 #undef max
 #include "MuhrecInteractor.h"

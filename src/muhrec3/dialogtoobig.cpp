@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "QFileDialog"
 
 #include "dialogtoobig.h"

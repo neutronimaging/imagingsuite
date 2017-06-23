@@ -1,3 +1,4 @@
+//<LICENSE>
 
 #include <vector>
 #include <sstream>
@@ -28,7 +29,7 @@ static const unsigned int MARGIN = 5;
 #endif
 
 
-/* Matrix element m[i,j] for matrix with c columns */
+// Matrix element m[i,j] for matrix with c columns
 #define m_idx(m1,c,i,j) m1[i*c+j]
 
 

@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include <sstream>
 
 #include "getimagesize.h"

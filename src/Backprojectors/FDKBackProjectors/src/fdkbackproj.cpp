@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "fdkbackproj_global.h"
 
 #include <cstdlib>

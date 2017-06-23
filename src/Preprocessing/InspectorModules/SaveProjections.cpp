@@ -1,15 +1,4 @@
-//
-// This file is part of the Inspector library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2012-12-21 15:25:10 +0100 (Fri, 21 Dec 2012) $
-// $Rev: 1417 $
-// $Id: SaveProjections.cpp 1417 2012-12-21 14:25:10Z kaestner $
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include "SaveProjections.h"

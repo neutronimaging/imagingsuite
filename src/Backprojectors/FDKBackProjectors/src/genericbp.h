@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef GENERICBP_H
 #define GENERICBP_H
 
