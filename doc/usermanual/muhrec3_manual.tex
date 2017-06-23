@@ -27,7 +27,7 @@
 \tableofcontents
 \chapter{Introduction}
 \section{Introduction}
-The development of MuhRec started when there was a need to support a reconstruction mode that was not availabe in our usual reconstruction software. A that time I was newly coming to the field of neutron imaging from a position as algorithm developer at Varian medical systems. Using some of the skills I acquired at Varian, I took up an old reconstructor project I started as post doc at the Swiss Federal Institute of Technology. Over the year this first prototype has been several times heavliy revised to provide GUI and the flexible module system that makes it possible to easily add new processing features. 
+The development of MuhRec started when there was a need to support a reconstruction mode that was not available in our usual reconstruction software. A that time I was newly coming to the field of neutron imaging from a position as algorithm developer at Varian medical systems. Using some skills I acquired at Varian, I took up an old reconstructor project I started as post doc at the Swiss Federal Institute of Technology. Over the year this first prototype has been several times heavliy revised to provide GUI and the flexible module system that makes it possible to easily add new processing features. 
 
 \section{Main features}
 MuhRec is a reconstructor software for computed tomography. It currently reconstructs projection data from parallel beam tomography acquisitions. The software includes the following features:
@@ -52,12 +52,18 @@ The name MuhRec is derived from the sound of the cow (in German 'Muh') and Recon
 \section{Installation}
 The installation process of MuhRec are very limited. There is currently no installer that helps you so it requires a few manual steps to get running.
 \begin{itemize}
-\item Download the latest binaries (the date is part of the file name) for your OS from \href{http://www.imagingscience.ch/downloads.php}{www.imagingscience.ch}
+\item Download the latest binaries (the date is part of the file name) for your OS from \href{http://www.imagingscience.ch}{www.imagingscience.ch}
 \item Unpack the file
 \item Copy (and rename) it to the location of your preference.
 \item Locate the executable
 \begin{description}
-\item[Windows] \verb+<Muhrec folder>/muhrec3.exe+
+\item[Windows] \verb+<Muhrec folder>/muhrec3.exe+\\
+There may be some problems starting under windows:
+\begin{itemize}
+	\item  If you get the error message that MSVCR110.DLL is missing. It indicates that you did not previously install the VC redistributable for Visual C++ 2012. Please download the 64-bit version of \href{https://www.microsoft.com/en-us/download/details.aspx?id=30679}{Microsoft Visual C++ 2012 Redistributable} from Microsoft and install.
+	\item  If you get the error message that MSVCR120.DLL is missing. It indicates that you did not previously install the VC redistributable for Visual C++ 2013. Please download the 64-bit version of \href{https://www.microsoft.com/en-US/download/details.aspx?id=40784}{Microsoft Visual C++ 2013 Redistributable} from Microsoft and install (unfortunately there is no direct link).
+	\item If you get the error message that VCOMP140.DLL is missing. It indicates that you did not previously install the VC redistributable for Visual C++ 2015. Please download the 64-bit version of  \href{https://www.microsoft.com/en-us/download/details.aspx?id=53587}{Microsoft Visual C++ 2015 Redistributable} from Microsoft and install.
+\end{itemize}
 \item[MacOS] The \verb+muhrec3.app+ is the executable
 \item[Linux] \verb+<Muhrec folder>/muhrec3+ is a script setting environment variables and call the application. 
 \end{description}
@@ -186,6 +192,25 @@ It is possible to store the current configuration in the geometry list using the
 \caption{The Geometry list dialog.}
 \end{figure}
 Please note that compute ROI is not implemented. It is just a place holder to remind me to implement it.
+
+\chapter{Reconstruction with cone beam}
+Cone beam reconstruction requires a different back-projection module and an extended geometry compared to the parallel beam reconstruction previously described. The typical use case is for X-ray data, but it is also beneficial to use conebeam reconstruction for neutron imaging data. This corrects for the penumbra blurring that can be observed for low collimated beams when large samples are scanned.
+
+Starting from a clean configuration [File]$\rightarrow$[New] you have to make some changes that are described below.
+
+Cone beam reconstruction is a feature under development. This means you cannot expect the same reconstruction speed as you are used to with the parallel beam back projection. In fact, you have to wait long time for a few slices. 
+
+\section{Configure the geometry}
+The geometry needs to be described with more detail for cone beam reconstruction. This is enabled by setting the check box Cone beam in the geometry field of configure projections. This activates the "Advanced geometry" tab. In this tab, you can set the distances from source to the rotation axis of the object/sample and to the detector. These distances define the magnification for the measurement and should be available from the experiment meta data.  The next parameters to set is the position where the beam hits the detector perpendicular to the detector plane (piercing point). This position is given in pixels. 
+
+\section{Configure the processing chain}
+The typical preprocessing chain for a cone beam reconstruction include
+\begin{itemize}
+	\item Projection normalization and negative logarithm
+	\item Spot cleaning.
+	\item Ring cleaning.
+\end{itemize}
+The projection filter used for parallel beam reconstruction is not needed as it is part of the CBCT backprojection module.
 
 
 \chapter{Detailed descriptions}
@@ -652,9 +677,7 @@ Definitions: The software refers to any revision of MuhRec. The author Anders
 Kaestner is referred to as the author. Any person who installed and intends to
 use or uses the software is referred to as the user.
 \begin{itemize}
-\item The software (source code, binaries, and any supporting material) is the property of the author.
 \item The user is allowed to install and use the software free of charge.
-\item It is not allowed to decompile and/or modify the files in the software distribution.
 \item The software is delivered as is. The author gratefully receives bug
 reports and feature requests but can not promise any updates. In case of updates
 the user will be notified.
@@ -809,15 +832,16 @@ The buffer parameters have direct impact on the reconstruction time.
 \chapter{Known bugs and limitations\ldots}
 \section{Limitations}
 \begin{enumerate}
-\item The back-projection core only works on a single thread.
 \item Center of rotation can not be found for translated projection data.
 \end{enumerate}
-\section{Bugs}
+\section{Known bugs}
 \begin{itemize}
 \item The reconstructor may crash when the number of slices is not a factor of 4. 
 \item The translated center reconstruction does not reconstruct correctly near the center of rotation.
 This is especially noticeable when tilt correction is activated
-\item First and last slice in a block appears to have different intensity. Not verified.
+\item Muhrec may crash, if you use the projection slider too much or rapidly.
+\item Reconstruction progress dialog does not work on windows (hence deactivated).
 \item The module selection list in add module is not cleared when a new object file is opened.
+\item Zooming and panning in the viewer is incomplete.
 \end{itemize}
 \end{document} 
