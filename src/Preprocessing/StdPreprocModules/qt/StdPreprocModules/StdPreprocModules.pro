@@ -14,7 +14,7 @@ CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 DEFINES += STDPREPROCMODULES_LIBRARY
-DEFINES += USE_UNPUBLISHED
+#DEFINES += USE_UNPUBLISHED
 
 SOURCES += \
     ../../src/WaveletRingClean.cpp \
