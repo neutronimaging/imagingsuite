@@ -46,7 +46,8 @@ RobustLogNorm::RobustLogNorm() :
     nBBextCount(0),
     nBBextFirstIndex(0),
     bUseExternalBB(false),
-    bSameMask(true)
+    bSameMask(true),
+    min_area(20)
 {
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
@@ -108,6 +109,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
 
     tau = GetFloatParameter(parameters, "tau");
     radius = GetIntParameter(parameters, "radius");
+    min_area = GetIntParameter(parameters, "min_area");
     GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
     GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
 //    bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
@@ -203,6 +205,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
     parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
+    parameters["min_area"] = kipl::strings::value2string(min_area);
 //    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
 //    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 
@@ -331,6 +334,7 @@ void RobustLogNorm::PrepareBBData(){
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
     m_corrector.SetTau(tau);
+//    m_corrector.SetMinarea(min_area); // to add for BB segmentation
     m_corrector.SetPBvariante(bPBvariante);
     m_corrector.SetInterpolationOrderX(m_xInterpOrder);
     m_corrector.SetInterpolationOrderY(m_yInterpOrder);
@@ -1245,7 +1249,7 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
 
         for (int i=0; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
-//            std::cout << filename << std::endl;
+            std::cout << filename << std::endl;
 
             tempimg=reader.Read(filename,
                     config.ProjectionInfo.eFlip,

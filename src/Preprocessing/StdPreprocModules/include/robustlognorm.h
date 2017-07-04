@@ -86,6 +86,7 @@ protected:
     size_t doseBBroi[4]; /// region of interest for dose computation in BB images
 
     size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
+    size_t min_area; /// minimal area to be used for BB segmentation: if smaller, segmented BB is considered as noise and not considered for background computation
     float ferror; /// interpolation error, computed on the open beam with BBs image
     float ffirstAngle; /// first angle for BB sample image, used for BB interpolation option
     float flastAngle; /// last angle for BB sample image, used for BB interpolation option
