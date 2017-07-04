@@ -40,7 +40,8 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     ffirstAngle(0.0f),
     flastAngle(360.0f),
     nBBextCount(0),
-    nBBextFirstIndex(0)
+    nBBextFirstIndex(0),
+    min_area(20)
 {
 
     blackbodyname = "somename";
@@ -102,6 +103,9 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
         nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
         bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+
+        min_area = GetIntParameter(parameters, "min_area");
+
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
 //        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
 
@@ -313,6 +317,8 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
     parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
+
+    parameters["min_area"] = kipl::strings::value2string(min_area);
 
 //    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 //    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);

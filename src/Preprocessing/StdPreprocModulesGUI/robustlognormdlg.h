@@ -88,6 +88,7 @@ private:
     size_t BBroi[4];
     size_t doseBBroi[4];
     size_t radius;
+    size_t min_area;
 
     float ffirstAngle;
     float flastAngle;
