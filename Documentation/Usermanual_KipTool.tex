@@ -19,7 +19,7 @@
 \tableofcontents
 \chapter{Introduction}
 \section{Introduction}
-
+KipTool is a image processing tool mainly intended to process 3D images. It provides a GUI that allows you to load an image from tiff slices and then process it through a chain of processing modules. In 
 \chapter{A first example}
 KipTool has a number of register tabs for different tasks. In the data part there are four tabs; Project information, Data, Processing
 \section{Project information}
@@ -51,6 +51,20 @@ When the data is loaded and at least one module is configured you can start the 
 When the processing is complete you probably want to save the results to disk. Select the data tab again and enter destination path using the browse button and enter the file mask using \#'s as place holders for the index numbers, exceeding \#'s will be filled with zeros. When you press save the data will be saved in the same format as the original data. You can however also select a different format by using the drop-down for file formats. 
 
 \chapter{Detailed description}
+\section{File processing tools}
+The file processing tools is a set of tools to process stacks of image without loading all of them into memory. This make them lightweight and puts essentially no resource requirements on the used computer.
+\subsection{Reslice}
+Reslicing is when you want to permute the image planes of the data. Normally CT is save in the XY plane, perpendicular to the rotation axis. Using this tool you can reslice the data to XZ- and YZ-planes. Reslicing can also be used to build sinograms from a projection data set.
+
+\subsection{Merge volumes}
+Extruded samples, i.e. long and narrow, usually don't fit in the field of view. For such samples, it is possible to make several scans while the axis is translated along the acquisition axis with a small overlap. This tool is used merge the reconstructed subvolumes into a single sequence with file indices in a continuous sequence. This essentially a file copy/rename task, except for the overlap region. In this region slices from the two data sets are mixed with sigmoid mixing weight. The weighted mixing guarantees a seamless transition between the data sets.
+
+\subsection{File conversion}
+This is mainly a renaming and file type conversion tool. It was originally developed when we had problems with our cameras and a CT scan consisted of several sub-sets. Now it is possible to reshuffle projections acquired with the golden ratio acquisition scheme into a linear sequence. You can also collate images, for the case when several images are acquired at the same angle. The converted images can also be cropped.
+
+\subsection{Generic file conversion}
+The generic file conversion is a reverse engineering tool. It is often a hard task to handle  images saved with an unknown/unspecified file format, e.g. dump files from a camera, and want to convert them into something more readable by other software. This tool helps you to identify how data is stored and to save it in a new format.
+
 \section{Processing modules}
 There are many modules available for KipTool. Unfortunately many are also under development which means that they can crash the software or are very slow. The modules that are documented here are well tested and will work.
 \subsection{The ISS filter}
@@ -71,13 +85,20 @@ The error curve shows how the filter performs. Figure \ref{fig_iss_errorplot} sh
 \subsubsection{The difference image}
 A quality check is to inspect the difference image. A well tuned ISS filter should only show noise and artifact in the difference image between original and filtered. If you see any structures you know that the filter is modifying the structures in the image. This is an indication that you should try to tweak the parameters a bit more.
 
+\chapter{Command line tool}
+KipTool can also be operated from the command line. This is convenient when you want to process many images of the same type or to save memory when you work with large images. The CLI version doesn't have to save the original image for comparison as in the GUI. CLI processing requires that you have a process script file. The typical workflow is that you tune your processing using the GUI and then save the configuration to file. Once you have this file you can start KipTool with
+\begin{verbatim}
+kiptool -f <configfile.xml>
+\end{verbatim}
+
+
 \chapter{Continued development}
 Kiptool is continuously developing to adapt to new challenges at the neutron
 imaging beamlines at Paul Scherrer Institut. Unfortunately, it is not only new
 development but also bug fixing. To fix bug the input from users is important,
 so I kindly ask you to report problems when the software misbehaves.
 
-For the continued development it also important with feedback regarding
+For the continued development, it also important with feedback regarding
 improvements of existing and new features. So, if you have any comments that you
 would like to share I appreciate if you send them to me. I cannot promise that I
 will implement everything but I will at least consider it.

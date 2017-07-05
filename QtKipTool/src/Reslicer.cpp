@@ -1,13 +1,4 @@
-//
-// This file is part of the MuhRec reconstruction application by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-09-05 15:55:11 +0200 (So, 05 Sep 2010) $
-// $Rev: 694 $
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include <cstring>
@@ -143,7 +134,7 @@ int TIFFReslicer::process(std::string sSrcMask, size_t nFirst, size_t nLast, std
 	msg<<"Getting header for "<<fname;
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	try {
-        m_nBytesPerPixel=GetHeader(fname)/8;
+        GetHeader(fname);
 	}
 	catch (kipl::base::KiplException &e) {
 		throw kipl::base::KiplException(e.what(),__FILE__,__LINE__);
@@ -194,13 +185,13 @@ int TIFFReslicer::process(std::string sSrcMask, size_t nFirst, size_t nLast, std
 						WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,buffer+idx*m_nBytesPerLine);
 					else {
 
-//                        for (int i=0; i<m_nImageDims[1]; i++) {
-//                            for (int j=0; j<m_nBytesPerPixel; j++) {
-//                                pLineBuffer[i*m_nBytesPerPixel+j]=255; //buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
-//                                //pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
-//                            }
-//                        }
-                        memset(pLineBuffer,160,m_nBytesPerLine);
+                        for (int i=0; i<m_nImageDims[1]; i++) {
+                            for (int j=0; j<m_nBytesPerPixel; j++) {
+                               // pLineBuffer[i*m_nBytesPerPixel+j]=255; //buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                            }
+                        }
+                        //memset(pLineBuffer,160,m_nBytesPerLine);
                         WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,pLineBuffer);
 					}
 
