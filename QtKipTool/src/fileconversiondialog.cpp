@@ -139,16 +139,19 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 
 int FileConversionDialog::Process(bool sameext)
 {
+    int res=0;
     if ((sameext) &&
         (ui->checkBox->checkState() == Qt::Unchecked) &&
         (ui->checkCollate->checkState() == Qt::Unchecked))
     {
-        CopyImages();
+        res=CopyImages();
     }
     else
     {
-        ConvertImages();
+        res=ConvertImages();
     }
+
+    return res;
 }
 
 int FileConversionDialog::CopyImages()
