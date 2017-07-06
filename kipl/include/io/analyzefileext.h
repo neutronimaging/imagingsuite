@@ -30,6 +30,7 @@ enum eExtensionTypes {
 };
 
 eExtensionTypes KIPLSHARED_EXPORT GetFileExtensionType(std::string fname);
+
 }}
 
 /// \brief Sends the name of the enum value to a stream
