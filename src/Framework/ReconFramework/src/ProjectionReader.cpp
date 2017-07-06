@@ -335,7 +335,7 @@ int ProjectionReader::GetNexusInfo(string filename, size_t *NofImg, double *Scan
 
 
     #ifdef HAVE_NEXUS
-    kipl::io::GetNexusInfo(filename.c_str(), NofImg, ScanAngles);
+         kipl::io::GetNexusInfo(filename.c_str(), NofImg, ScanAngles);
     #else
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
@@ -610,8 +610,8 @@ kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filena
 
      #else
          std::cout << "HAVE_NEXUS not defined" << std::endl;
- //        throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
- //        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+           throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
+             throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
          return kipl::base::TImage<float,3>();
      #endif
 }
