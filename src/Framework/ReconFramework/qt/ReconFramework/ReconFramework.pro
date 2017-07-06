@@ -118,6 +118,18 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+win32 {
+exists($$PWD/../../../../../../../external/lib64/nexus/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES *= HAVE_NEXUS
+    INCLUDEPATH += $$PWD/../../../../../../../external/include/nexus $$PWD/../../../../../../../external/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../../../../external/lib64/nexus $$PWD/../../../../../../../external/lib64/hdf5
+
+    LIBS += -lNeXus -lNeXusCPP
+}
+}
+
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig
