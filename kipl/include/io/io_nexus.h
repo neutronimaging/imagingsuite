@@ -1,6 +1,7 @@
 #ifndef __IO_NEXUS_H
 #define __IO_NEXUS_H
 
+#include "../kipl_global.h"
 #include "../base/imagecast.h"
 #include "../base/timage.h"
 #include "../base/imageinfo.h"
@@ -18,8 +19,13 @@
 #include <nexus/napi.h>
 #include <nexus/NeXusFile.hpp>
 
-
+#ifdef _MSC_VER
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
+
+
 using std::cout;
 using std::endl;
 using std::map;
@@ -286,7 +292,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
     file.close(); // close the file. hopefully
 
 
-    return 0;
+    return 1;
 }
 
 template <class ImgType, size_t NDim> // maybe I can suppose that they are all 3D images? for starting
@@ -375,7 +381,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
 
 
 
-    return 0;
+    return 1;
 }
 
 
