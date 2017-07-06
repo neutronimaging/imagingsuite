@@ -14,6 +14,8 @@ CONFIG += c++11
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
 
+message("Destdir $$DESTDIR")
+
 unix {
     INCLUDEPATH += "../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
@@ -345,6 +347,23 @@ exists(/usr/local/lib/*NeXus*) {
 }
 else {
 message("-lNeXus does not exists $$HEADERS")
+}
+
+}
+
+win32 {
+
+exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
+    INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
+
+    LIBS +=  -lNeXus -lNeXusCPP
+
+    SOURCES += ../src/io/io_nexus.cpp
+    HEADERS += ../include/io/io_nexus.h
 }
 
 }
