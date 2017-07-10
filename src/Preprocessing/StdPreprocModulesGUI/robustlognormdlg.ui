@@ -643,8 +643,8 @@
          </item>
          <item>
           <widget class="QSpinBox" name="spin_minarea">
-           <property name="value">
-            <number>20</number>
+           <property name="maximum">
+            <number>999</number>
            </property>
           </widget>
          </item>

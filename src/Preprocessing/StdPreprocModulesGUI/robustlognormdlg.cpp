@@ -162,33 +162,31 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
 
 void RobustLogNormDlg::ApplyParameters(){
 
-//std::cout << "apply parameters" << std::endl;
+    //std::cout << "apply parameters" << std::endl;
 
-ui->buttonPreviewOBBB->click();
-ui->buttonPreviewsampleBB->click();
-ui->errorButton->click();
-//    UpdateParameters();
-UpdateDoseROI();
-UpdateBBROI();
-
-
-std::map<std::string, std::string> parameters;
-UpdateParameterList(parameters);
-
-try {
-    module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-}
-
-catch (kipl::base::KiplException &e) {
-    QMessageBox errdlg(this);
-    errdlg.setText("Failed to configure RobustLogNorm module.");
-
-    logger(kipl::logging::Logger::LogWarning,e.what());
-    return ;
-
-}
+    ui->buttonPreviewOBBB->click();
+    ui->buttonPreviewsampleBB->click();
+    ui->errorButton->click();
+    //    UpdateParameters();
+    UpdateDoseROI();
+    UpdateBBROI();
 
 
+    std::map<std::string, std::string> parameters;
+    UpdateParameterList(parameters);
+
+    try {
+        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+    }
+
+    catch (kipl::base::KiplException &e) {
+        QMessageBox errdlg(this);
+        errdlg.setText("Failed to configure RobustLogNorm module.");
+
+        logger(kipl::logging::Logger::LogWarning,e.what());
+        return ;
+
+    }
 
 
 }
@@ -231,6 +229,7 @@ void RobustLogNormDlg::UpdateDialog(){
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
+    ui->spin_minarea->setValue(min_area);
 
 
 //    std::cout << "update dialog" << std::endl;
@@ -278,6 +277,8 @@ void RobustLogNormDlg::UpdateParameters(){
     blackbodysampleexternalname = ui->edit_BB_external->text().toStdString();
     nBBextFirstIndex = ui->spin_first_extBB->value();
     nBBextCount = ui->spin_count_ext_BB->value();
+
+    min_area = ui->spin_minarea->value();
 
 //    std::cout << "update parameters " << std::endl;
 //    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
