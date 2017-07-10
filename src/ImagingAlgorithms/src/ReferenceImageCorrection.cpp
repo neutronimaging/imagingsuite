@@ -42,7 +42,8 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_nProj(0),
     m_nBBimages(0),
     m_bHaveExternalBlackBody(false),
-    fdose_ext_slice(0.0f)
+    fdose_ext_slice(0.0f),
+    min_area(20)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -118,13 +119,16 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         m_bHaveDoseROI=true;
         m_fOpenBeamDose = dose_OB;
 //                std::cout << " have dose roi!  " << std::endl;
-        //        std::cout << dose_OB << std::endl;
+//                std::cout << dose_OB << std::endl;
 
 
     }
 
     if (dose_DC!=0){
        m_fDarkDose = dose_DC;
+
+//       std::cout << " have dose dc!  " << std::endl;
+//       std::cout << dose_DC << std::endl;
     }
 
     if (normBB) {
@@ -297,33 +301,17 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     kipl::base::THistogram<float> myhist(256, min, max);
     histo =  myhist(norm);
 
-//    std::cout << "max: " << *std::max_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size()) << std::endl;
-//    std::cout << "min: " << *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size()) << std::endl;
-
 
     size_t * vec_hist = new size_t[256];
-    for(int i=0; i<256; i++) {
-
-//    std::cout << histo.at(i).first <<  " " << histo.at(i).second << std::endl;
-    vec_hist[i] = histo.at(i).second;
-
+    for(int i=0; i<256; i++)
+    {
+        vec_hist[i] = histo.at(i).second;
     }
 
-
-
-
-//     for( size_t it = histo.begin(); it != histo.end(); ++it )
-//        {
-//          float* p_a = it.first;
-//          size_t* p_b = it.second;
-//        }
 
     //2.b compute otsu threshold
 
     int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-//    std::cout << "OTSU THRESHOLD: " << std::endl;
-//    std::cout<< value << std::endl;
-//    std::cout << histo.at(value).first << " "<< histo.at(value).second << std::endl;
     float ot = static_cast<float>(histo.at(value).first);
 
     //2.c threshold image
@@ -345,23 +333,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         }
     }
 
-   // inverts values back
-//    for (size_t i=0; i<N; i++) {
-//        if (res[i]==0) res[1]=1;
-//        else res[i]=0;
-//    }
-
-//    kipl::io::WriteTIFF32(maskOtsu,"~/testdata/maskOtsu.tif");
-
 
     // 3. Compute mask within Otsu
     // 3.a sum of rows and columns and location of rois
 
-//    const size_t *dims = new size_t[2];
-//    dims[0] = maskOtsu.Size(0);
-//    dims[1] = maskOtsu.Size(1);
-
-//    const size_t dims[2] = {maskOtsu.Size(0), maskOtsu.Size(1)};
     float *vert_profile = new float[maskOtsu.Size(1)];
     float *hor_profile = new float[maskOtsu.Size(0)];
 
@@ -369,22 +344,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
     kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
 
-    // they seem meaningfull
-//    std::cout<< "vertical profiles: " << std::endl;
-//    for (size_t i=0; i<maskOtsu.Size(1); i++) {
-//        std::cout << vert_profile[i] << std::endl;
-//    }
-
-//    std::cout<< "horizontal profiles: " << std::endl;
-//    for (size_t i=0; i<maskOtsu.Size(0); i++) {
-//        std::cout << hor_profile[i] << std::endl;
-//    }
 
     //3.b create binary Signal
     float *bin_VP = new float[maskOtsu.Size(1)];
     float *bin_HP = new float[maskOtsu.Size(0)];
 
-//    std::cout << "binary vertical signal" << std::endl;
     for (size_t i=0; i<maskOtsu.Size(1); i++) {
         float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
         if(vert_profile[i]<max) {
@@ -394,10 +358,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
             bin_VP[i] = 0;
         }
 
-//        std::cout << bin_VP[i] << std::endl;
     }
 
-//    std::cout << "binary horizontal signal" << std::endl;
 
     for (size_t i=0; i<maskOtsu.Size(0); i++) {
         float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
@@ -407,33 +369,27 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         else {
             bin_HP[i] = 0;
         }
-
-//        std::cout << bin_HP[i] << std::endl;
     }
 
     // 3.c compute edges - diff signal
-//    std::vector<float> pos_left(100);
+
     float *pos_left = new float[100];
     float *pos_right = new float[100];
     int index_left = 0;
     int index_right = 0;
 
-//    std::cout << "vertical edges: " << std::endl;
+
      for (int i=0; i<maskOtsu.Size(1)-1; i++) {
          float diff = bin_VP[i+1]-bin_VP[i];
          if (diff>=1) {
              pos_left[index_left] = i;
-//             std::cout << pos_left[index_left] << std::endl;
              index_left++;
          }
          if (diff<=-1) {
              pos_right[index_right]=i+1; // to have all BB within the rois
-//             std::cout << pos_right[index_right] << std::endl;
              index_right++;
          }
      }
-//     std::cout<< "index left: " << index_left << std::endl;
-//     std::cout << "index right: " << index_right << std::endl;
 
      // the same on the horizontal profile:
      float *pos_left_2 = new float[100];
@@ -441,31 +397,23 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      int index_left_2 = 0;
      int index_right_2 = 0;
 
-//     std::cout << "horizontal edges" << std::endl;
+
       for (int i=0; i<maskOtsu.Size(0)-1; i++) {
           float diff = bin_HP[i+1]-bin_HP[i];
           if (diff>=1) {
               pos_left_2[index_left_2] = i;
-//              std::cout << pos_left_2[index_left_2] << std::endl;
               index_left_2++;
           }
           if (diff<=-1) {
               pos_right_2[index_right_2]=i+1;
-//              std::cout << pos_right_2[index_right_2] << std::endl;
               index_right_2++;
           }
       }
 
-//      std::cout<< "index left: " << index_left_2 << std::endl;
-//      std::cout << "index right: " << index_right_2 << std::endl;
 
       // from these define ROIs containing BBs --> i can probably delete them later on
       std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
       std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
-
-//      std::cout << "edges together: " << std::endl;
-//      std::cout << (index_left-1)*(index_left_2-1)<< std::endl;
-
 
       int pos = 0;
       for (int i=0; i<(index_left); i++) {
@@ -476,13 +424,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
                 right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
                 left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
                 left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
-
-//                std::cout << "x0 y0 x1 y1: " << std::endl;
-
-//                std::cout << left_edges.at(pos).second << " " << left_edges.at(pos).first << " ";
-//                std::cout << right_edges.at(pos).second << " " << right_edges.at(pos).first << std::endl;
                 pos++;
-
           }
 
       }
@@ -493,7 +435,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
       for (size_t bb_index=0; bb_index<pos; bb_index++){
 
           const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
-//          std::cout << "roi1 dimension: "<< roi_dim[0]<< " " << roi_dim[1]<< std::endl;
           kipl::base::TImage<float,2> roi(roi_dim);
           kipl::base::TImage<float,2> roi_im(roi_dim);
 
@@ -501,7 +442,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           for (int i=0; i<roi_dim[1]; i++) {
                 memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
                 memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
-//                std::cout << left_edges.at(bb_index).first+i << "  " << left_edges.at(bb_index).second << " " << right_edges.at(bb_index).second<< std::endl;
           }
 
           float x_com= 0.0f;
@@ -542,16 +482,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           // draw the circle with user-defined radius
 
           // check on BB dimensions:
-          if (size>=20) { // to check if 20 is a meaningfull number
+          if (size>=min_area) {
 
 
               x_com /=sum_roi;
               y_com /=sum_roi;
-
-              // std::cout << "roi size: " << roi.Size(0) << " " << roi.Size(1) << std::endl;
-
-              // std::cout << "x_com and y_com and sum_roi: " << x_com << " " << y_com << " " << sum_roi << std::endl; // i don't understand why sometimes I have nan... should not really happens
-
 
                   for (size_t x=0; x<roi.Size(0); x++) {
                       for (size_t y=0; y<roi.Size(1); y++) {
@@ -563,8 +498,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
                   }
 
                   roi(int(x_com+0.5), int(y_com+0.5))=2;
-//                  std::cout << roi(0,0)<< std::endl;
-//                  std::cout << x_com << " " << y_com << std::endl;
           }
 
       }
@@ -627,15 +560,13 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 //                it != values.end(); ++it) {
 
 //        if(it->second >= (mean_value+2*std_dev)) {
-////            std::cout << "found outlier value" << std::endl;
-////            std:cout << it->first.first << " " << it->first.second << std::endl;
 //            values.erase(it); // not sure it won't cause problems
 
 //        }
 
 //    }
 
-    // this should be the correct way of removing element (STL book, page 205) -> to see if it works
+    // this should be the correct way of removing element (STL book, page 205)
 
     for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
         if(it->second >= (mean_value+2*std_dev)){

@@ -72,6 +72,7 @@ public:
     void SetTau (float x) {tau=x;} ///< set value of tau
     void setDiffRoi (int *roi) {memcpy(m_diffBBroi, roi, sizeof(int)*4);} ///< set diffroi, which is the difference between BBroi and the Projection roi
     void SetPBvariante (bool x) {bPBvariante = x; } ///< set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
+    void SetMinArea (size_t x) {min_area = x;} ///< set min area for BB segmentation
 
     void SetInterpolationOrderX(eInterpMethodX eim_x);
     void SetInterpolationOrderY(eInterpMethodY eim_y);
@@ -165,6 +166,7 @@ protected:
     size_t radius; /// radius value for BB mask creation
     float tau; /// mean pattern transmission
     float *dosesamplelist; /// list of doses for sample images computed at dose BB roi, to be used in the Interpolate BBOption
+    size_t min_area; /// min area for BB segmentation
 };
 
 }
