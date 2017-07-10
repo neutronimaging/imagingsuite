@@ -43,7 +43,7 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_nBBimages(0),
     m_bHaveExternalBlackBody(false),
     fdose_ext_slice(0.0f),
-    min_area(20)
+    min_area(0)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
