@@ -771,9 +771,14 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 //    std::cout << diffroi[0] << " " << diffroi[1] << " " << diffroi[2] << " " << diffroi[3] << std::endl;
 
     m_corrector.SetRadius(radius);
+    m_corrector.SetMinArea(min_area);
     m_corrector.SetInterpolationOrderX(m_xInterpOrder);
     m_corrector.SetInterpolationOrderY(m_yInterpOrder);
     m_corrector.setDiffRoi(diffroi);
+
+    std::stringstream msg;
+    msg.str(""); msg<<"Min area set to  "<<min_area;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
