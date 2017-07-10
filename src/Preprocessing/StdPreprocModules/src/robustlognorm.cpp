@@ -338,6 +338,7 @@ void RobustLogNorm::PrepareBBData(){
     m_corrector.SetPBvariante(bPBvariante);
     m_corrector.SetInterpolationOrderX(m_xInterpOrder);
     m_corrector.SetInterpolationOrderY(m_yInterpOrder);
+    m_corrector.SetMinArea(min_area);
 
 
     kipl::base::TImage<float,2> img, flat, dark, bb, sample, samplebb;
