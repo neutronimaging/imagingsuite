@@ -33,6 +33,8 @@ copy %REPOS%\external\lib64\nexus\NeXus.dll .
 copy %REPOS%\external\lib64\nexus\NexusCPP.dll .
 copy %REPOS%\external\lib64\hdf5\hdf5.dll .
 copy %REPOS%\external\lib64\hdf5\hdf5_cpp.dll .
+copy %REPOS%\external\lib64\hdf5\zlib.dll .
+copy %REPOS%\external\lib64\hdf5\szip.dll .
 
 
 copy %REPOS%\Applications\muhrec3.exe .
