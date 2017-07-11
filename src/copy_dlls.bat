@@ -29,6 +29,11 @@ copy %REPOS%\external\lib64\libfftw3f-3.dll .
 copy %REPOS%\external\lib64\libxml2-2.dll .
 copy %REPOS%\external\lib64\libiconv.dll .
 copy %REPOS%\external\lib64\cfitsio.dll .
+copy %REPOS%\external\lib64\nexus\NeXus.dll .
+copy %REPOS%\external\lib64\nexus\NexusCPP.dll .
+copy %REPOS%\external\lib64\hdf5\hdf5.dll .
+copy %REPOS%\external\lib64\hdf5\hdf5_cpp.dll .
+
 
 copy %REPOS%\Applications\muhrec3.exe .
 
@@ -42,3 +47,4 @@ windeployqt %DEST%\muhrec3.exe
 copy Qt5PrintSupport.dll %DEST%
 
 popd
+
