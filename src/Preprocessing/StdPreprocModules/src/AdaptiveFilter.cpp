@@ -94,7 +94,7 @@ int AdaptiveFilter::ProcessSingle(kipl::base::TImage<float,2> &img, std::map<std
 int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
 {
 
-        float mymax = *std::max_element(img.GetLinePtr(0), img.GetLinePtr(0)+img.Size()); // find the max value
+       float mymax = *std::max_element(img.GetLinePtr(0), img.GetLinePtr(0)+img.Size()); // find the max value
 
     if (bNegative){
 
@@ -107,7 +107,6 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     // find min and translate all values
 
     float mymin = *std::min_element(img.GetLinePtr(0),img.GetLinePtr(0)+img.Size());
-//    std::cout << "mymin: " << mymin << std::endl;
 
     if (mymin<0) {
         for (size_t x=0; x<img.Size(); x++){
@@ -123,18 +122,11 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     size_t dimx[2]={static_cast<size_t>(m_nFilterSize), 1UL};
 
     kipl::filters::TFilter<float,2> filterx(k,dimx);
-//    std::cout << "dimx: "<< dimx[0] << " " << dimx[1] << endl;
-
-
     kipl::base::TImage<float,2> smoothx;
-//    kipl::base::TImage<float,2> weight;
-//    kipl::base::TImage<float,2> thr_values;
 
     try {
-        smoothx=filterx(img,kipl::filters::FilterBase::EdgeMirror); // apply average filter with size 7 in the row direction applico il filtro medio con dimensione 7 in direzione righe! quindi prendo un range
-        // di angoli +- 7*projangle ..
+        smoothx=filterx(img,kipl::filters::FilterBase::EdgeMirror);
     }
-
     catch (kipl::base::KiplException &e)
     {
         throw ReconException(e.what(),__FILE__, __LINE__);
@@ -145,47 +137,30 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     // 1. compute smoothed max projection p(alfa) on sinograms, in pi/10 neighborhood-> that is not used later..
     // pi/10 of the neighborhood means 626 columns, each column is 0.58 degree, i want to threshold it on 18 degree, about 31 columns
 
-
-//    std::cout << img.Size(0) << " " << img.Size(1) << endl; // image size are now correct
-
-//    std::cout << mConfig.ProjectionInfo.fScanArc[0] << " " << mConfig.ProjectionInfo.fScanArc[1] << std::endl;
-//    std::cout << mConfig.ProjectionInfo.fResolution[0] << " " << mConfig.ProjectionInfo.fResolution[1] << std::endl;
-//    std::cout << mConfig.ProjectionInfo.nFirstIndex << " " << mConfig.ProjectionInfo.nLastIndex << std::endl;
-//    std::cout << mConfig.ProjectionInfo.nlSkipList. << std::endl;
-//    std::cout << mConfig.ProjectionInfo.nDims[0] << std::endl;// number of pixel
-//    std::cout << img.Size(0) << " " << img.Size(1) << std::endl;
-
-
-
     float *pm = new float[img.Size(1)];
     float *av_pm = new float[img.Size(1)];
 
 
     for (size_t i=0; i<img.Size(1); i++) { // for each sinogram row (i.e. for each angle) == iterate ALONG Y
         pm[i] = *std::max_element(img.GetLinePtr(i),img.GetLinePtr(i)+img.Size(0)); // compute max for each angle
-//        std::cout << pm[i] << std::endl;
     }
 
     // then compute average on a window of pi/10 (or else..)
 //    int win = 15; // window of 31 samples -> try with this
     int win = floor(img.Size(1)*18/mConfig.ProjectionInfo.fScanArc[1]/2);
-//    std::cout << "win: " << win << std::endl;
-    float sum;
-//    int ind;
 
+    std::stringstream msg;
+    msg<<"win = "<<win;
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+
+    float sum;
     // create pad array
     float *pad_pm = new float[img.Size(1)+2*win]; // +1 ?
 
     std::copy(pm+img.Size(1)-win, pm+img.Size(1), pad_pm);
     std::copy(pm, pm+img.Size(1), pad_pm+win);
     std::copy(pm, pm+win, pad_pm+win+img.Size(1));
-
-//    std::cout << "padding done" << endl;
-//    std::cout << pad_pm[0] << " " << pm[img.Size(1)-win] << endl;
-//    std::cout << pad_pm[1] << " " << pm[img.Size(1)-win+1] << endl;
-//    std::cout << pad_pm[win] << " " << pm[0] << endl;
-//    std::cout << pad_pm[win+1] << " " << pm[1] << endl;
-//    std::cout << pad_pm[win+img.Size(1)-1] << " " << pm[img.Size(1)-1] << endl; // seems correct.. also with Matlab check!
 
 
 
@@ -218,74 +193,46 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
         }
            sum/=(2*win+1);
            av_pm[i]=sum;
-//           std::cout << pm[i] << " " << av_pm[i] << endl;
     }
 
 
-//    std::cout << "after convolution" << endl;
-
-
-
-
     // 2. compute p+(alfa) and p-(alfa) in +-pi/2 neighborhood, compute this time local minima and local maxima of p(alfa)
-    // pi/2 on 625 projections are about 156 sample
-
-    // second try without transpose but get column
-
-    // compute p +(alfa) and p-(alfa) from pad images
-
 
     float *pMax = new float[img.Size(1)];
     float *pMin = new float[img.Size(1)];
     float *ecc = new float[img.Size(1)];
 
     // padding
-//    int win90 = 156;
-    int win90 = floor(img.Size(1)*180/mConfig.ProjectionInfo.fScanArc[1]/2);
-//    std::cout << "win90: " << win90 << std::endl;
+
+    int win90 = floor(img.Size(1)*180/mConfig.ProjectionInfo.fScanArc[1]/2+0.5);
     size_t pad_dims[2] = {img.Size(0),(img.Size(1)+2*win90)};
     kipl::base::TImage<float,2> padImg(pad_dims);
+    padImg = 0.0f;
 
-    // do pad
-
-    std::copy(img.GetLinePtr(img.Size(1)-win90),img.GetLinePtr(img.Size(1))+img.Size(0), padImg.GetLinePtr(0));
-    std::copy(img.GetLinePtr(0), img.GetLinePtr(img.Size(1))+img.Size(0), padImg.GetLinePtr(win90));
-    std::copy(img.GetLinePtr(0), img.GetLinePtr(win90-1)+img.Size(0), padImg.GetLinePtr(win90+img.Size(1)));
+    std::copy(img.GetLinePtr(img.Size(1)-win90-1), img.GetLinePtr(img.Size(1)-1)+img.Size(0), padImg.GetLinePtr(0)); // start, end, destination
+    std::copy(img.GetLinePtr(0), img.GetLinePtr(img.Size(1)-1)+img.Size(0), padImg.GetLinePtr(win90));
+    std::copy(img.GetLinePtr(0), img.GetLinePtr(win90-1)+img.Size(0), padImg.GetLinePtr(win90+img.Size(1)-1));
 
 
     // compute pmax and pmin
-    float den = 1/(m_fEccentricityMax-m_fEccentricityMin);
+    float den = 1.0f/(m_fEccentricityMax-m_fEccentricityMin);
 
-    for (size_t i=0; i<img.Size(1); i++) {
-
-            pMax[i] = *std::max_element(padImg.GetLinePtr(i), padImg.GetLinePtr(i)+padImg.Size(0)*2*win90);
-            pMin[i] = *std::min_element(padImg.GetLinePtr(i), padImg.GetLinePtr(i)+padImg.Size(0)*2*win90);
-            ecc[i] = 1-pMin[i]/pMax[i];
-
-//            std::cout << pMax[i] << " " << pMin[i] << " ";
-//            std::cout << ecc[i] << std::endl;
-            ecc[i] = (ecc[i]-m_fEccentricityMin)*den; // truncated eccentricity
-                                                                                          // todo: replace by multiplication by precomputed reciprocal - OK
-            if (ecc[i]<0) { ecc[i]=0; }
-            if (ecc[i]>1) { ecc[i]=1; }
-
-//            std::cout << ecc[i] << std::endl;
+    for (size_t i=0; i<img.Size(1); i++)
+    {
+        pMax[i] = *std::max_element(padImg.GetLinePtr(i), padImg.GetLinePtr(i)+padImg.Size(0)*2*win90);
+        pMin[i] = *std::min_element(padImg.GetLinePtr(i), padImg.GetLinePtr(i)+padImg.Size(0)*2*win90);
+        ecc[i] = 1-pMin[i]/pMax[i];
+        ecc[i] = (ecc[i]-m_fEccentricityMin)*den; // truncated eccentricity
+        if (ecc[i]<0) { ecc[i]=0; }
+        if (ecc[i]>1) { ecc[i]=1; }
     }
 
-
-
-
-
     size_t dims[2] = {img.Size(0), img.Size(1)};
-
-
-
-
 
         float ws, wo;
         float high, low, mid;
         float *f_alfa = new float[img.Size(1)]; // fraction of modified projections
-        float counts = 0.0f; // Todo: consider declare counts as float. You are anyway casting it several times - OK
+        float counts = 0.0f;
 
 
         for (size_t y=0; y<dims[1]; y++){ //for each projection angle
@@ -296,117 +243,63 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
             float *pFilt = smoothx.GetLinePtr(y);
             f_alfa[y] = m_fFmax*ecc[y]*m_fFilterStrength;
 
-//            std:: cout << "searching in line ................................" << y << std::endl;
+            bool search = true;
 
-
-            bool search = true; // todo: use true and false instead of 0 and 1 - OK
-
-            do{ // todo: as you always do at least one run the do {} while loop is the appropriate choice - OK
-
-//                std::cout <<"--- high value ---  " << high << std::endl;
-//                std::cout <<"--- low value ----  " << low << std::endl;
+            do{
 
                 mid = low + (high-low)/2; // threshold binary search
-
-
-//                std::cout<< "----mid value------" << mid << std::endl;
-
 
                 for (size_t x=0; x<dims[0]; x++) {
                     if (pImg[x]>=mid) {
                         counts += 1.0f;
                     }
                 }
-//                std::cout << counts << std::endl;
-//                                return 0;
 
-//                std::cout << "fraction of modified pixels: " << static_cast< float >(counts)/img.Size(0) << std::endl;
-//                std::cout << "f_alfa: " << f_alfa[y] << std::endl;
-
-
-//                if ( (static_cast< float >(counts/img.Size(0))<=f_alfa[y]+0.005 && (static_cast< float >(counts)/img.Size(0))>=f_alfa[y]-0.005) // se soddisfo la condizione
                 float normalized_counts = counts/img.Size(0);
 
                 if (abs(normalized_counts-f_alfa[y])<0.005)
-                    // todo: Try abs(counts/size-f_alpha[y])<0.005 - OK
-                    // todo: "static_cast< float >(counts)/img.Size(0))" is used several times compute it once as a constant - OK
                 {
                     for (size_t x=0; x<dims[0]; x++){
-                        // Todo: can be implemented without branch - OK
                          ws=static_cast<float>(pImg[x]>=mid);
                          wo=1.0f-ws;
-//                        if (pImg[x]>=mid) {
-//                            wo = 0;
-//                            ws = 1;
-//                        }
-//                        else{
-//                            wo = 1;
-//                            ws = 0;
-//                        }
                         pImg[x] = wo*pImg[x]+ws*pFilt[x];
                     }
-
-//                    std::cout << "---------IF-------" << std::endl;
-//                    std::cout <<"--- high value ---  " << high << std::endl;
-//                    std::cout <<"--- low value ----  " << low << std::endl;
 
                     search = false;
                 }
                 else
                 {
-//                    std::cout << "---------ELSE-------" << std::endl;
-
-                    if (normalized_counts>f_alfa[y]+0.005) // devo alzare la soglia
+                    if (normalized_counts>f_alfa[y]+0.005) // increase threshold
                     {
-                        low = mid;}
+                        low = mid;
+                    }
 
-                    if (normalized_counts<f_alfa[y]-0.005) // devo abbassare la soglia
-                       {
+                    if (normalized_counts<f_alfa[y]-0.005) // decrease threshold
+                    {
                           high = mid;
-                       }
+                    }
 
-//                    std::cout <<"--- high value ---  " << high << std::endl;
-//                    std::cout <<"--- low value ----  " << low << std::endl;
 
                     if (high<=low+0.005) // con una certa tolleranza?
                     {
                         // se ho finito di cercare e cmq la mia frazione di pixel modificati è minore di quanto aspettato, applica il filtro
-                        if ( (normalized_counts) <= (f_alfa[y]+0.005) ){
-//                            std::cout << "------------ filter --------------" << std::endl;
-
-                            for (size_t x=0; x<dims[0]; x++){
-                                // todo: again try with branchless implementation - OK
+                        if ( (normalized_counts) <= (f_alfa[y]+0.005))
+                        {
+                            for (size_t x=0; x<dims[0]; x++)
+                            {
                                 ws=static_cast<float>(pImg[x]>=mid);
                                 wo=1.0f-ws;
-//                                if (pImg[x]>=mid) {
-//                                    wo = 0;
-//                                    ws = 1;
-//                                }
-//                                else{
-//                                    wo = 1;
-//                                    ws = 0;
-//                                }
                                 pImg[x] = wo*pImg[x]+ws*pFilt[x];
                             }
-
                         }
                         search = false;
-
                     }
-
-
                     counts = 0.0f;
-
                 }
+            } while (search);
+        }
 
 
-
-            }while (search);
-
-                }
-
-
-//        std::cout << img.Size() << std::endl;
 
         // after everything, rescale all values back to the original ones
 
