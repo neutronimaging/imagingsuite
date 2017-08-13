@@ -312,7 +312,8 @@ HEADERS +=\
     ../include/segmentation/multivariateclassifyerbase.h \
     ../include/morphology/pixeliterator.h \
     ../include/segmentation/gradientguidedthreshold.h \
-    ../include/segmentation/core/gradientguidedthreshold.hpp
+    ../include/segmentation/core/gradientguidedthreshold.hpp \
+    ../include/morphology/morphgeo2.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

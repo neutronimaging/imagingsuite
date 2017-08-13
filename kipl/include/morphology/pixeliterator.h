@@ -65,19 +65,25 @@ public:
 
     /// \brief returns the forward neighborhood of the pixel
     /// \param idx index of the neighbor pixel
-    ptrdiff_t forwardNeigborhood(int idx);
+    ptrdiff_t forwardNeighborhood(int idx);
 
     /// \brief returns the forward neighborhood of the pixel
     /// \param idx index of the neighbor pixel
-    ptrdiff_t backwardNeigborhood(int idx);
+    ptrdiff_t backwardNeighborhood(int idx);
 
-    /// \brief Returns the size of the forward eighborhood with the current connectivity
+    /// \brief Returns the size of the forward or backward neighborhood with the current connectivity
     int forwardSize();
-    /// \brief Returns the size of the backward neighborhood with the current connectivity
+
     int backwardSize();
 
     /// \brief Returns the pixel index of the current pixel position
     ptrdiff_t getCurrentPosition() ;
+
+    /// \brief Returns the pixel index of the current pixel position
+    int getCurrentX() ;
+
+    /// \brief Returns the pixel index of the current pixel position
+    int getCurrentY() ;
 
     /// \brief Returns the connectivity used to investigate the neighborhood.
     kipl::base::eConnectivity getConnectivity();
@@ -125,6 +131,7 @@ protected:
 
     neighborhoodsizes m_neighborhoodSize;
     neighborhoodsizes m_fwbwSize;
+    neighborhoodsizes m_halfSizePos;
 
 
     ptrdiff_t m_currentPosition;
