@@ -35,11 +35,12 @@ RobustLogNorm::RobustLogNorm() :
     m_nWindow(5),
     tau(0.99f),
     bPBvariante(true),
-    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
+    m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
     ferror(0.0f),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
@@ -87,6 +88,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
     string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
     string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
+    string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
 //    bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
 
     bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
@@ -199,6 +201,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
     parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
     parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
+    parameters["InterpolationMethod"] = enum2string(m_InterpMethod);
 
     parameters["BB_OB_ext_name"] = blackbodyexternalname;
     parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
@@ -1283,6 +1286,14 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
 
         }
         memcpy(doselist, mylist, sizeof(float)*N);
+
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+             float *pFlat=img.GetDataPtr();
+            for (size_t i=1; i<img.Size(1); i++) {
+                memcpy(img.GetLinePtr(i), pFlat, sizeof(float)*img.Size(0));
+
+            } // not sure what is this
+        }
 
 
     }
