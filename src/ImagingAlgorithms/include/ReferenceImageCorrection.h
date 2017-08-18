@@ -32,17 +32,22 @@ public:
       ExternalBB
     }; /// Options for BB image handling
 
-    enum eInterpMethodX{
+    enum eInterpOrderX{
         SecondOrder_x,
         FirstOrder_x,
         ZeroOrder_x
     }; /// Options for BB mask interpolation, x direction
 
-    enum eInterpMethodY{
+    enum eInterpOrderY{
         SecondOrder_y,
         FirstOrder_y,
         ZeroOrder_y
     }; /// Options for BB mask interpolation, y direction
+
+    enum eInterpMethod{
+        Polynomial,
+        ThinPlateSplines
+    }; /// Options for background interpolation
 
 
 
@@ -74,8 +79,8 @@ public:
     void SetPBvariante (bool x) {bPBvariante=x; } ///< set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
     void SetMinArea (size_t x) {min_area=x;} ///< set min area for BB segmentation
 
-    void SetInterpolationOrderX(eInterpMethodX eim_x);
-    void SetInterpolationOrderY(eInterpMethodY eim_y);
+    void SetInterpolationOrderX(eInterpOrderX eim_x);
+    void SetInterpolationOrderY(eInterpOrderY eim_y);
 
     void SetAngles(float *ang, size_t nProj, size_t nBB); ///< set angles and number of proj and images with BB, to be used for more general interpolation
     void SetDoseList(float *doselist); /// set dose list for sample images in the BB dose roi, it has to be called after SetAngles for the right definition of m_nProj
@@ -101,8 +106,10 @@ protected:
     void PrepareReferencesExtBB(); /// prepare reference images in case of externally created BB
 
     float *SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error);
+    float *SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values);
 
-    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning:
+    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning
+    void SegmentBlackBody(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning and creates a list with position of BB centroids
 
     float *InterpolateParameters(float *param, size_t n, size_t step); /// Interpolate parameters assuming the BB sample image are acquired uniformally with some step over the n Projection images
     float *InterpolateParametersGeneric(float *param); /// Interpolate parameters for generic configuration of number of BB sample images and projection data, it assumes first SetAngle is called
@@ -151,8 +158,8 @@ protected:
 
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
-    eInterpMethodX m_IntMeth_x;
-    eInterpMethodY m_IntMeth_y;
+    eInterpOrderX m_IntMeth_x;
+    eInterpOrderY m_IntMeth_y;
 
 
     int a,b,c,d,e,f; /// weights for interpolation scheme, used to set different combined order
@@ -183,17 +190,24 @@ std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
 
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX eim_x);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
 
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY eim_y);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY eim_y);
+
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
+
 
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */

@@ -167,7 +167,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 }
 
-void ReferenceImageCorrection::SetInterpolationOrderX(eInterpMethodX eim_x){
+void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrderX eim_x){
     m_IntMeth_x = eim_x;
 //    std::cout << enum2string(m_IntMeth_x)<< std::endl;
 
@@ -197,7 +197,7 @@ void ReferenceImageCorrection::SetInterpolationOrderX(eInterpMethodX eim_x){
 //    std::cout << "x order: " << b << " " << d << " " << e << std::endl;
 }
 
-void ReferenceImageCorrection::SetInterpolationOrderY(eInterpMethodY eim_y){
+void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
     m_IntMeth_y = eim_y;
 //    std::cout << enum2string(m_IntMeth_y)<< std::endl;
 
@@ -507,6 +507,244 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 }
 
+void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values)
+{
+    // 2. otsu threshold
+    // 2.a compute histogram
+    kipl::base::TImage<float,2> norm(normimg.Dims());
+    memcpy(norm.GetDataPtr(), normimg.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
+
+    std::vector<pair<float, size_t>> histo;
+    float min = *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
+    float max = *std::max_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
+    kipl::base::THistogram<float> myhist(256, min, max);
+    histo =  myhist(norm);
+
+
+    size_t * vec_hist = new size_t[256];
+    for(int i=0; i<256; i++)
+    {
+        vec_hist[i] = histo.at(i).second;
+    }
+
+
+    //2.b compute otsu threshold
+
+    int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+    float ot = static_cast<float>(histo.at(value).first);
+
+    //2.c threshold image
+
+    kipl::base::TImage<float,2> maskOtsu(mask.Dims());
+
+ // now it works:
+//    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
+
+    float *pImg = norm.GetDataPtr();
+    float *res = maskOtsu.GetDataPtr();
+    const int N=static_cast<int>(norm.Size());
+    for (size_t i=0; i<N; i++){
+        if (pImg[i]>=ot){
+            res[i] = 1;
+        }
+        else {
+            res[i] = 0;
+        }
+    }
+
+
+    // 3. Compute mask within Otsu
+    // 3.a sum of rows and columns and location of rois
+
+    float *vert_profile = new float[maskOtsu.Size(1)];
+    float *hor_profile = new float[maskOtsu.Size(0)];
+
+
+    kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
+    kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
+
+
+    //3.b create binary Signal
+    float *bin_VP = new float[maskOtsu.Size(1)];
+    float *bin_HP = new float[maskOtsu.Size(0)];
+
+    for (size_t i=0; i<maskOtsu.Size(1); i++) {
+        float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
+        if(vert_profile[i]<max) {
+            bin_VP[i] = 1;
+        }
+        else {
+            bin_VP[i] = 0;
+        }
+
+    }
+
+
+    for (size_t i=0; i<maskOtsu.Size(0); i++) {
+        float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
+        if(hor_profile[i]<max) {
+            bin_HP[i] = 1;
+        }
+        else {
+            bin_HP[i] = 0;
+        }
+    }
+
+    // 3.c compute edges - diff signal
+
+    float *pos_left = new float[100];
+    float *pos_right = new float[100];
+    int index_left = 0;
+    int index_right = 0;
+
+
+     for (int i=0; i<maskOtsu.Size(1)-1; i++) {
+         float diff = bin_VP[i+1]-bin_VP[i];
+         if (diff>=1) {
+             pos_left[index_left] = i;
+             index_left++;
+         }
+         if (diff<=-1) {
+             pos_right[index_right]=i+1; // to have all BB within the rois
+             index_right++;
+         }
+     }
+
+     // the same on the horizontal profile:
+     float *pos_left_2 = new float[100];
+     float *pos_right_2 = new float[100];
+     int index_left_2 = 0;
+     int index_right_2 = 0;
+
+
+      for (int i=0; i<maskOtsu.Size(0)-1; i++) {
+          float diff = bin_HP[i+1]-bin_HP[i];
+          if (diff>=1) {
+              pos_left_2[index_left_2] = i;
+              index_left_2++;
+          }
+          if (diff<=-1) {
+              pos_right_2[index_right_2]=i+1;
+              index_right_2++;
+          }
+      }
+
+
+      // from these define ROIs containing BBs --> i can probably delete them later on
+      std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+      std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
+
+      int pos = 0;
+      for (int i=0; i<(index_left); i++) {
+
+          for (int j=0; j<(index_left_2); j++) {
+
+                right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+                right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+                left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
+                left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+                pos++;
+          }
+
+      }
+
+
+//      std::cout << "pos: " << pos << std::endl; // it is the number of potential BBs that I have found:
+
+      for (size_t bb_index=0; bb_index<pos; bb_index++){
+
+          const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+          kipl::base::TImage<float,2> roi(roi_dim);
+          kipl::base::TImage<float,2> roi_im(roi_dim);
+
+
+          for (int i=0; i<roi_dim[1]; i++) {
+                memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+          }
+
+          float x_com= 0.0f;
+          float y_com= 0.0f;
+          int size = 0;
+
+//          // old implementation with geometrical mean:
+//          for (size_t x=0; x<roi.Size(0); x++) {
+//              for (size_t y=0; y<roi.Size(1); y++) {
+//                  if(roi(x,y)==0) {
+//                      x_com +=x;
+//                      y_com +=y;
+//                      size++;
+//                  }
+
+//              }
+//          }
+//          x_com /=size;
+//          y_com /=size;
+
+          float sum_roi = 0.0f;
+
+          // weighted center of mass:
+          for (size_t x=0; x<roi.Size(0); x++) {
+              for (size_t y=0; y<roi.Size(1); y++) {
+                  if(roi(x,y)==0) {
+                      x_com += (roi_im(x,y)*float(x));
+                      y_com += (roi_im(x,y)*float(y));
+                      sum_roi += roi_im(x,y);
+                      size++;
+                  }
+
+              }
+          }
+
+
+
+          // draw the circle with user-defined radius
+
+          // check on BB dimensions:
+          if (size>=min_area) {
+
+
+              x_com /=sum_roi;
+              y_com /=sum_roi;
+
+              std::pair<int,int> temp;
+              temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+              float value = 0.0f;
+              std::vector<float> grayvalues;
+
+                  for (size_t x=0; x<roi.Size(0); x++) {
+                      for (size_t y=0; y<roi.Size(1); y++) {
+                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
+//                              roi(x,y)=1; // this one actually I don't need
+                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
+                              value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
+                              grayvalues.push_back(value);
+
+                          }
+                      }
+                  }
+
+                  roi(int(x_com+0.5), int(y_com+0.5))=2;
+
+                  const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
+                  const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
+                  std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
+                  std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
+                  float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
+                  values.insert(std::make_pair(temp,median));
+         }
+
+      }
+
+      // print out the values: // they seem correct!
+//      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
+//      {
+//          std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//      }
+
+//      std::cout << "number of centroids found: " << values.size() << " "  << std::endl;
+}
+
 void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
 
     memcpy(m_nBlackBodyROI,roi,sizeof(size_t)*4);
@@ -580,60 +818,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     float *myparam = new float[6];
     float error;
     myparam = SolveLinearEquation(values, error);
-
-
-// OLD CODE
-//    // uncomment this to print out values from map
-
-////      std::cout << values.size() << std::endl;
-
-////      std::cout << "FROM MAP: " << std::endl;
-
-
-////      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-////          it != values.end(); ++it)
-////      {
-////          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-////      } // giusto!!!
-
-//    // c_2D_2order_int:
-
-//    Array2D< double > my_matrix(values.size(),6, 0.0);
-//    Array1D< double > I(values.size(), 0.0);
-//    Array1D< double > param(6, 0.0);
-//    std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-
-////    std::cout << "TNT STUFF: " << std::endl;
-////    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
-//    for (int x=0; x<my_matrix.dim1(); x++) {
-//              my_matrix[x][0] = 1;
-//              my_matrix[x][1] = it->first.first;
-//              my_matrix[x][2] = it->first.first*it->first.first;
-//              my_matrix[x][3] = it->first.first*it->first.second;
-//              my_matrix[x][4] = it->first.second;
-//              my_matrix[x][5] = it->first.second*it->first.second;
-
-//              I[x] = static_cast<double>(it->second);
-////                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-
-//              it++;
-
-//    }
-
-//    JAMA::QR<double> qr(my_matrix);
-//    param = qr.solve(I);
-////    std::cout << "paramters! " << std::endl;
-////    std::cout << param.dim()<< std::endl;
-//    std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
-
-//    float *myparam = new float[6];
-////    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
-//    myparam[0] = static_cast<float>(param[0]);
-//    myparam[1] = static_cast<float>(param[1]);
-//    myparam[2] = static_cast<float>(param[2]);
-//    myparam[3] = static_cast<float>(param[3]);
-//    myparam[4] = static_cast<float>(param[4]);
-//    myparam[5] = static_cast<float>(param[5]);
 
     return myparam;
 
@@ -721,99 +905,12 @@ int outlier = 0;
 
 //    std::cout << "error in compute interpolation parameters: " << error << std::endl;
 
-
-// old code..
-//    // uncomment this to print out values from map
-
-//      std::cout << values.size() << std::endl;
-
-//      std::cout << "FROM MAP inside ComputeInterpolationParameters: " << std::endl;
-
-
-//      for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-//          it != values.end(); ++it)
-//      {
-//          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-//      } // giusto!!! adesso sono diventati strani...
-
-//    // c_2D_2order_int:
-
-//    Array2D< double > my_matrix(values.size(),6, 0.0);
-//    Array1D< double > I(values.size(), 0.0);
-//    Array1D< double > param(6, 0.0);
-//    std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-
-////    std::cout << "TNT STUFF: " << std::endl;
-////    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
-//    for (int x=0; x<my_matrix.dim1(); x++) {
-//              my_matrix[x][0] = 1;
-//              my_matrix[x][1] = it->first.first;
-//              my_matrix[x][2] = it->first.first*it->first.first;
-//              my_matrix[x][3] = it->first.first*it->first.second;
-//              my_matrix[x][4] = it->first.second;
-//              my_matrix[x][5] = it->first.second*it->first.second;
-
-//              I[x] = static_cast<double>(it->second);
-////                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-
-//              it++;
-
-//    }
-
-//    JAMA::QR<double> qr(my_matrix);
-//    param = qr.solve(I);
-////    std::cout << "paramters! " << std::endl;
-////    std::cout << param.dim()<< std::endl;
-////    std::cout << param[0] << "\n" << param[1] << "\n" << param[2] << "\n" << param[3] << "\n" << param[4] << "\n" << param[5] << std::endl;
-
-//    float *myparam = new float[6];
-////    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
-//    myparam[0] = static_cast<float>(param[0]);
-//    myparam[1] = static_cast<float>(param[1]);
-//    myparam[2] = static_cast<float>(param[2]);
-//    myparam[3] = static_cast<float>(param[3]);
-//    myparam[4] = static_cast<float>(param[4]);
-//    myparam[5] = static_cast<float>(param[5]);
-
-
-//    Array1D< double > I_int(values.size(), 0.0);
-
-
-//    it = values.begin();
-//  for (int i=0; i<values.size(); i++){
-//            I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
-//           // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
-//            it++;
-//  }
-
-
-//  error = 0.0f;
-
-//  for (int i=0; i<values.size(); i++){
-//        error += (((I_int[i]-I[i])/I[i])*((I_int[i]-I[i])/I[i]));
-//  }
-
-//          error = sqrt(1/float(values.size())*error);
-
-////          std::cout << "INTERPOLATION ERROR: " << error << std::endl;
-
          return myparam;
 
 }
 
 float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error){
 
-
-//          std::cout << values.size() << std::endl;
-
-//          std::cout << "FROM MAP inside SolveLinearEquation: " << std::endl;
-
-
-//          for(std::map<std::pair<size_t,size_t>, float>::const_iterator it = values.begin();
-//              it != values.end(); ++it)
-//          {
-//              std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-//          } // giusto!!!
 
     int matrix_size = 1 + ((d && a)+b+c+f+e);
 //    std::cout << "matrix_size: " << matrix_size << std::endl;
@@ -1029,6 +1126,39 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
 }
 
+float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values) {
+
+    //1. create system matrix, dimension of the matrix depends on the number of BB found
+
+    Array2D< double > my_matrix(values.size()+3,values.size()+3, 0.0);
+
+    for (int i=0; i<values.size(); ++i) {
+        for(int j=0; j<values.size(); ++j) {
+
+            if (i==j)
+                my_matrix[i][j] =  0.0f;
+            else {
+//                float dist = sqrt((values.at(i).first.first-values.at(j).first.first)*(values.at(i).first.first-values.at(j).first.first)+(values.at(i).first.second-values.at(j).first.second)*(values.at(i).first.second-values.at(j).first.second)); // does not work like this...
+//                my_matrix[j][j] = dist*dist*log(dist);
+            }
+
+
+        }
+    }
+
+//    for index_row = 1:length(x)
+
+//        for index_col = 1:length(x)
+//            d(index_row,index_col) = sqrt((interpolation_points(index_row,2)-interpolation_points(index_col,2))^2+(interpolation_points(index_row,1)-interpolation_points(index_col,1))^2);
+//            if (d(index_row, index_col)~=0)
+//                system_matrix(index_row, index_col) = d(index_row, index_col)^2*log(d(index_row, index_col));
+//            end
+//        end
+
+//    end
+
+}
+
 kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, size_t *roi) {
 
 //    std::cout << "roi in interpolated black body image" << std::endl;
@@ -1083,21 +1213,28 @@ float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<flo
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask)
 {
 
+    // do i enter here?
 
     // 1. normalize image
 
     kipl::base::TImage<float, 2> norm(bb.Dims());
+    kipl::base::TImage<float, 2> normdc(bb.Dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    normdc -=dark;
 
     norm -=dark;
     norm /= (flat-=dark);
 
+    std::map<std::pair<int, int>, float> values;
 //    kipl::io::WriteTIFF32(norm,"normBB.tif");
 //    kipl::io::WriteTIFF32(bb,"BB.tif");
 //    kipl::io::WriteTIFF32(flat,"openBB.tif");
 
     try{
         SegmentBlackBody(norm, mask);
+        SegmentBlackBody(norm, normdc, mask, values);
     }
     catch (...) {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
@@ -1126,14 +1263,20 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     // 1. normalize image
 
     kipl::base::TImage<float, 2> norm(bb.Dims());
+    kipl::base::TImage<float, 2> normdc(bb.Dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
+    normdc -=dark;
     norm -=dark;
     norm /= (flat-=dark);
 
 //    kipl::io::WriteTIFF32(norm,"~/repos/testdata/normBB.tif");
 //    kipl::io::WriteTIFF32(bb,"~/testdata/BB.tif");
 //    kipl::io::WriteTIFF32(flat,"~/repos/testdata/openBB.tif");
+
+    std::map<std::pair<int, int>, float> values;
+    SegmentBlackBody(norm, normdc, mask, values);
 
     SegmentBlackBody(norm, mask);
 
@@ -1209,17 +1352,6 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
 
 
-    // it seems to work.. roi is not used
-
-//    std::cout << "ciao parameters " << std::endl;
-//    std::cout << ob_parameter[0] << std::endl;
-//    std::cout << sample_parameter[0] << std::endl;
-//    std::cout << sample_parameter[10] << std::endl;
-
-
-//    std::cout << (sizeof(sample_parameter)/sizeof(float)) << std::endl;
-//    std::cout << (sizeof(ob_parameter)/sizeof(float)) << std::endl;
-
 
 
     m_nProj = nProj; // not very smartly defined
@@ -1231,15 +1363,10 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 
     switch(ebo) {
     case(Interpolate) : {
-//        std::cout << "I am in....." << enum2string(ebo) << std::endl;
-//        size_t step = (nProj)/(nBBSampleCount);
-//        std::cout << "STEP: "  << step<<  std::endl;
+
         sample_bb_parameters = new float[6*m_nBBimages];
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
-//        float *int_par = new float[6*m_nProj];
         sample_bb_interp_parameters = InterpolateParametersGeneric(sample_bb_parameters);
-
-        // try to add here the doselist stuff
 
         for (size_t i=0; i<m_nProj; i++){
             for (size_t j=0; j<6; j++){
@@ -1247,18 +1374,10 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
             }
         }
 
-//        std::cout << "prova InterpolateParametersGeneric" << std::endl;
-//        for (size_t i=0; i<m_nProj; i++){
-//            std::cout << sample_bb_interp_parameters[0+i*6] << " " << sample_bb_interp_parameters[1+i*6] << " " << sample_bb_interp_parameters[2+i*6] << " " <<sample_bb_interp_parameters[3+i*6] << " " <<sample_bb_interp_parameters[4+i*6] << " " << sample_bb_interp_parameters[5+i*6] << std::endl;
-//        }
-
-
-//        int_par = InterpolateParameters(sample_bb_parameters, nProj, step); // it assumes that BB sample image where acquired corresponding to the number of projections.. to be generalized
         break;
     }
     case(OneToOne) : {
-//        std::cout << "I am in....." << enum2string(ebo) << std::endl;
-//        std::cout << "number of BB images and number of Proj: " << m_nBBimages << " " << m_nProj << std::endl;
+
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
@@ -1267,23 +1386,13 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         break;
     }
     case(Average) : {
-//        std::cout << "I am in....." << enum2string(ebo) << std::endl;
+
         sample_bb_parameters = new float[6];
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6);
         sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
         break;
     }
     }
-
-//    std::cout << (sizeof(sample_bb_parameters)/sizeof(*sample_bb_parameters)) << std::endl;
-//    std::cout << (sizeof(ob_bb_parameters)/sizeof(*ob_bb_parameters)) << std::endl;
-
-//    std::cout << ob_bb_parameters[0] << std::endl;
-//    std::cout << sample_bb_parameters[0] << std::endl;
-//    std::cout << sample_bb_parameters[10] << std::endl;
-
-
-
 
 
 }
@@ -1300,22 +1409,17 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
     int index_1;
     int index_2;
 
-//    std::cout << "bb_angles:" << std::endl;
+
     for (size_t i=0; i<m_nBBimages; i++){
         bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
-//        std::cout << bb_angles[i] << " ";
     }
 
-//    std::cout << std::endl;
-
-//    std::cout << "number of projections: " << m_nProj << std::endl;
 
     for (size_t i=0; i<m_nProj; i++){
     //1. compute current angle for projection
 
         curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
-//        std::cout << "curr angle: " << curr_angle << " ";
-//        std::cout << "curr proj: " << i << std::endl;
+
 
     //2. find two closest projection in BB data
         if (i==0){
@@ -1334,12 +1438,10 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
 
         float *temp_param = new float[6];
-//        std::cout<< "interpolated parameters: " << std::endl;
+
         for (size_t k=0; k<6;k++){
             temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
-//            std::cout << temp_param[k] << " ";
         }
-//        std::cout << std::endl;
 
         memcpy(interpolated_param+i*6,temp_param,sizeof(float)*6);
         delete[] temp_param;
@@ -1375,12 +1477,6 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
             }
         }
 
-
-
-
-//        std::cout << "generic step: " << step << std::endl;
-
-//        std::cout << "angles: " <<*small_a << " " << *big_a << std::endl;
 
 
 
@@ -1438,9 +1534,6 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
 //       }
 //       std::cout << std::endl;
 //   }
-
-
-
 
     return interpolated_param;
 
@@ -1679,8 +1772,6 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
     float *pFlat=m_OpenBeam.GetDataPtr();
     float *pDark=m_DarkCurrent.GetDataPtr();
 
-//    std::cout << m_bHaveDarkCurrent << " " << m_bHaveOpenBeam << std::endl;
-//    std::cout << "number of pixels: " << N << std::endl;
 
     if (m_bHaveBlackBody) {
         if (m_bHaveDarkCurrent) {
@@ -1693,18 +1784,8 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
                         float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
 
                         if(bPBvariante){
-
-//                            kipl::base::TImage<float,2> imgDose = InterpolateBlackBodyImage();
-//                            imgDose = kipl::base::TSubImage<float,2>::Get(m_BB_sample_Interpolated, m_nDoseROI); // extract the roi
-
-//                            for (int i=0; i < static_cast<int>(m_DoseBBsample_image.Size(0)*m_DoseBBsample_image.Size(1)); i++){
-//                                m_DoseBBsample_image[i]*=(dose/tau);
-//                            }
-
                             Pdose = computedose(m_DoseBBsample_image);
-//                            std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
-
-                        } // for now I assume I have all images.. other wise makes no much sense
+                        }
 
 
 
@@ -1720,9 +1801,8 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
 
 
 
-                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
+                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
                             if (fProjPixel<=0){
-//                                pImg[i]=0;
                                 pImg[i] = defaultdose;
                             }
                             else
@@ -1863,122 +1943,6 @@ int ReferenceImageCorrection::ComputeLogNorm(kipl::base::TImage<float,2> &img, f
     }
 
 
-    // OLD CODE....
-//    if (!m_bHaveBlackBody) {
-
-//                if (m_bHaveDarkCurrent) {
-//                    if (m_bHaveOpenBeam) {
-//            //                #pragma omp parallel for firstprivate(pFlat,pDark)
-
-//                                float *pImg=img.GetDataPtr();
-
-//                                #pragma omp parallel for
-//                                for (int i=0; i<N; i++) {
-
-//            //                        if (i==0) std::cout<< "sono dentro" << std::endl; // ci entra..
-
-//                                    float fProjPixel=(pImg[i]-pDark[i]);
-//                                    if (fProjPixel<=0)
-//                                        pImg[i]=0;
-//                                    else
-//                                        pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
-
-//                                }
-
-//                    }
-//                    else {
-//            //            #pragma omp parallel for firstprivate(pDark)
-
-//                          float *pImg=img.GetDataPtr();
-
-//                            #pragma omp parallel for
-//                            for (int i=0; i<N; i++) {
-//                                float fProjPixel=(pImg[i]-pDark[i]);
-//                                if (fProjPixel<=0)
-//                                    pImg[i]=0;
-//                                else
-//                                   pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose);
-//                            }
-
-//                    }
-//                }
-//        }
-//     else {
-////        std::cout << "correct for BB as well" << std::endl;
-//        //these cases are anyhow probably not used since without open beam we would not have segmented anyway the BBs
-//        if (m_bHaveDarkCurrent) {
-
-
-
-
-//            if (m_bHaveOpenBeam) {
-//    //                #pragma omp parallel for firstprivate(pFlat,pDark)
-
-//                        float *pImg=img.GetDataPtr();
-//                        float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
-
-//                        if(bPBvariante){
-
-////                            kipl::base::TImage<float,2> imgDose = InterpolateBlackBodyImage();
-////                            imgDose = kipl::base::TSubImage<float,2>::Get(m_BB_sample_Interpolated, m_nDoseROI); // extract the roi
-
-////                            for (int i=0; i < static_cast<int>(m_DoseBBsample_image.Size(0)*m_DoseBBsample_image.Size(1)); i++){
-////                                m_DoseBBsample_image[i]*=(dose/tau);
-////                            }
-
-//                            Pdose = computedose(m_DoseBBsample_image);
-////                            std::cout << "pierre's dose in BB sample interpolated: " <<  Pdose << std::endl;
-
-//                        } // for now I assume I have all images.. other wise makes no much sense
-
-
-
-
-
-//                        #pragma omp parallel for
-//                        for (int i=0; i<N; i++) {
-
-//                            // now computed in prepareBBdata
-////                            if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
-////                                 pImgBB[i] *=(dose/tau); // this dose must be computed on another roi !
-////                            }
-
-
-
-//                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]); // to add dose normalization in pImgBB - done
-//                            if (fProjPixel<=0)
-//                                pImg[i]=0;
-//                            else
-//                                pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose));
-
-//                        }
-
-//            }
-//            else {
-//    //            #pragma omp parallel for firstprivate(pDark)
-
-//                  float *pImg=img.GetDataPtr();
-//                  float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
-
-
-//                    #pragma omp parallel for
-//                    for (int i=0; i<N; i++) {
-
-////                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
-////                             pImgBB[i] *=(dose/tau);
-////                        }
-
-//                        float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
-//                        if (fProjPixel<=0)
-//                            pImg[i]=0;
-//                        else
-//                           pImg[i]=-log(fProjPixel)+log(dose<1 ? 1.0f : dose); // yes but what is logdose if there is no open beam?
-//                    }
-
-//            }
-//        }
-
-//       }
 
     return 1;
 }
@@ -2208,9 +2172,6 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     fdose_ext_list = new float[bb_sample_ext.Size(2)];
     memcpy(fdose_ext_list, doselist, sizeof(float)*bb_sample_ext.Size(2));
 
-
-
-
 }
 
 }
@@ -2294,12 +2255,12 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 }
 
 
-void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x)
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x)
 {
-    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX > int_methods;
-    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX::SecondOrder_x;
-    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX::FirstOrder_x;
-    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX::ZeroOrder_x;
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX > int_methods;
+    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::SecondOrder_x;
+    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::FirstOrder_x;
+    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::ZeroOrder_x;
 
     if (int_methods.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
@@ -2309,7 +2270,7 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 
 }
 
-std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX &eim_x)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x)
 {
     std::string str;
 
@@ -2323,19 +2284,19 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInte
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX eim_x)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x)
 {
     s<<enum2string(eim_x);
 
     return s;
 }
 
-void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y)
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y)
 {
-    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY > int_methods;
-    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY::SecondOrder_y;
-    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY::FirstOrder_y;
-    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY::ZeroOrder_y;
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY > int_methods;
+    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::SecondOrder_y;
+    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::FirstOrder_y;
+    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::ZeroOrder_y;
 
     if (int_methods.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
@@ -2345,7 +2306,7 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 
 }
 
-std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY &eim_y)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y)
 {
     std::string str;
 
@@ -2359,7 +2320,7 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInte
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY eim_y)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY eim_y)
 {
     s<<enum2string(eim_y);
 
@@ -2367,5 +2328,38 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 }
 
 
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint)
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod > int_types;
+    int_types["Polynomial"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::Polynomial;
+    int_types["ThinPLateSplines"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::ThinPlateSplines;
+
+    if (int_types.count(str)==0)
+        throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
+
+    eint=int_types[str];
+
+
+}
+
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint)
+{
+    std::string str;
+
+    switch (eint) {
+        case ImagingAlgorithms::ReferenceImageCorrection::Polynomial: str="Polynomial"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines: str="ThinPLateSplines"; break;
+        default                                     	: return "Undefined Interpolation method"; break;
+    }
+    return  str;
+
+}
+
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint)
+{
+    s<<enum2string(eint);
+
+    return s;
+}
 
 
