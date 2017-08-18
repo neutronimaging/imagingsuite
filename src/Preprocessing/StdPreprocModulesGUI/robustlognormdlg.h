@@ -106,8 +106,9 @@ private:
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
-    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodX m_xInterpOrder;
-    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethodY m_yInterpOrder;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX m_xInterpOrder;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY m_yInterpOrder;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod m_InterpMethod;
     int m_nWindow;
 
     RobustLogNorm module;

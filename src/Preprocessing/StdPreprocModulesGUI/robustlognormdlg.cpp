@@ -32,11 +32,12 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     bPBvariante(true),
     bSameMask(true),
     m_nWindow(5),
-    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
+    m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
     nBBextCount(0),
@@ -97,6 +98,7 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         flastAngle = GetFloatParameter(parameters,"lastAngle");
         string2enum(GetStringParameter(parameters,"X_InterpOrder"), m_xInterpOrder);
         string2enum(GetStringParameter(parameters,"Y_InterpOrder"), m_yInterpOrder);
+        string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
 
         blackbodyexternalname = GetStringParameter(parameters,"BB_OB_ext_name");
         blackbodysampleexternalname = GetStringParameter(parameters,"BB_sample_ext_name");
@@ -116,6 +118,12 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
     catch(ModuleException &e){
         logger(kipl::logging::Logger::LogWarning,e.what());
         return false;
+
+            QMessageBox error_dlg;
+            error_dlg.setWindowTitle("Error");
+            error_dlg.setText("Module exception");
+            error_dlg.setDetailedText(QString::fromStdString(e.what()));
+
     }
 
     UpdateDialog();
@@ -303,6 +311,7 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
     parameters["refmethod"] = enum2string(m_ReferenceMethod);
     parameters["BBOption"] = enum2string(m_BBOptions);
+    parameters["InterpolationMethod"] = enum2string(m_InterpMethod);
     parameters["tau"] = kipl::strings::value2string(tau);
 //    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);

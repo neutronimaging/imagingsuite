@@ -689,6 +689,40 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
+          <widget class="QLabel" name="label_29">
+           <property name="text">
+            <string>Interpolation method: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="combo_InterpolationMethod">
+           <item>
+            <property name="text">
+             <string>Polynomial</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ThinPlateSplines</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QLabel" name="label_23">
            <property name="text">
             <string>Interpolation X:</string>
@@ -739,19 +773,6 @@
             </property>
            </item>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
