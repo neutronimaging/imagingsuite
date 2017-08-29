@@ -8,6 +8,8 @@
 #include <tnt_array2d.h>
 #include <jama_lu.h>
 #include <jama_qr.h>
+#include <jama_svd.h>
+#include <tnt_cmat.h>
 
 #include <math/median.h>
 #include <io/io_tiff.h>
@@ -709,6 +711,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
 
               std::pair<int,int> temp;
               temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+//              std::cout << "x_com and y_com: " << x_com << " " << y_com << std::endl;
+//              std::cout << "edges: " << left_edges.at(bb_index).second << " " << left_edges.at(bb_index).first << std::endl;
+//              std::cout << "m_diffBBroi: " << m_diffBBroi[0] << " " << m_diffBBroi[1] << std::endl;
+
               float value = 0.0f;
               std::vector<float> grayvalues;
 
@@ -737,12 +743,12 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
       }
 
       // print out the values: // they seem correct!
-//      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
-//      {
-//          std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//      }
+      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
+      {
+          std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+      }
 
-//      std::cout << "number of centroids found: " << values.size() << " "  << std::endl;
+      std::cout << "number of centroids found: " << values.size() << " "  << std::endl;
 }
 
 void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
@@ -1108,7 +1114,6 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
     error = 0.0f;
 
 //    std::cout << "value size:" << values.size()<< std::endl;
-
     for (int i=0; i<values.size(); i++){
           error += (((I_int[i]-I[i])/I[i])*((I_int[i]-I[i])/I[i]));
     }
@@ -1129,33 +1134,164 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values) {
 
     //1. create system matrix, dimension of the matrix depends on the number of BB found
+    float *param = new float[values.size()+3];
 
     Array2D< double > my_matrix(values.size()+3,values.size()+3, 0.0);
+    Array1D< double > b_vector(values.size()+3, 0.0);
+    Array1D< double > qr_param(values.size()+3, 0.0);
 
+
+    std::map<std::pair<int,int>, float>::const_iterator it_i = values.begin();
     for (int i=0; i<values.size(); ++i) {
-        for(int j=0; j<values.size(); ++j) {
+            std::map<std::pair<int,int>, float>::const_iterator it_j = values.begin();
+        for (int j=0; j<values.size(); ++j) {
 
-            if (i==j)
+            if (i==j){
                 my_matrix[i][j] =  0.0f;
-            else {
-//                float dist = sqrt((values.at(i).first.first-values.at(j).first.first)*(values.at(i).first.first-values.at(j).first.first)+(values.at(i).first.second-values.at(j).first.second)*(values.at(i).first.second-values.at(j).first.second)); // does not work like this...
-//                my_matrix[j][j] = dist*dist*log(dist);
             }
+            else {
+                float ii_1 = static_cast<float>(it_i->first.first);
+                float ii_2 = static_cast<float>(it_i->first.second);
+                float jj_1 = static_cast<float>(it_j->first.first);
+                float jj_2 = static_cast<float>(it_j->first.second);
+                float dist = sqrt((ii_1-jj_1)*(ii_1-jj_1)+(ii_2-jj_2)*(ii_2-jj_2));
+  //              float dist = sqrt((it_i->first.first-it_j->first.first)*(it_i->first.first-it_j->first.first)+(it_i->first.second-it_j->first.second)*(it_i->first.second-it_j->first.second));
+//                float dist = sqrt((values.at(i).first.first-values.at(j).first.first)*(values.at(i).first.first-values.at(j).first.first)+(values.at(i).first.second-values.at(j).first.second)*(values.at(i).first.second-values.at(j).first.second)); // does not work like this...
+                my_matrix[i][j] = dist*dist*log(dist);
+
+            }
+            ++it_j;
+//            std::cout <<my_matrix[i][j] << "  " ; // might be OK.. high number because are distances to the power of 2 multiplied by their log
 
 
         }
+//        std::cout << std::endl;
+        ++it_i;
     }
 
-//    for index_row = 1:length(x)
+    it_i = values.begin();
+    for (int i=0; i<values.size(); ++i){
+        my_matrix[i][values.size()] = 1.0;
+        my_matrix[i][values.size()+1] = it_i->first.second; // y
+        my_matrix[i][values.size()+2] = it_i->first.first; // x
+        ++it_i;
+    }
 
-//        for index_col = 1:length(x)
-//            d(index_row,index_col) = sqrt((interpolation_points(index_row,2)-interpolation_points(index_col,2))^2+(interpolation_points(index_row,1)-interpolation_points(index_col,1))^2);
-//            if (d(index_row, index_col)~=0)
-//                system_matrix(index_row, index_col) = d(index_row, index_col)^2*log(d(index_row, index_col));
+    it_i = values.begin();
+    for (int i=0; i<values.size(); ++i){
+        my_matrix[values.size()][i] = 1.0;
+        my_matrix[values.size()+1][i] = it_i->first.second; // y
+        my_matrix[values.size()+2][i] = it_i->first.first; // x
+        ++it_i;
+    }
+
+    int i=0;
+    for (it_i = values.begin(); it_i!=values.end(); ++it_i){
+        b_vector[i] = it_i->second;
+        ++i;
+    }
+
+//    JAMA::QR<double> qr(my_matrix);
+//    qr_param = my_matrix.solve(b_vector); // crashed with QR
+
+    JAMA::SVD<double> svd(my_matrix);
+    Array2D< double > U(values.size()+3,values.size()+3, 0.0);
+    Array2D< double > V(values.size()+3,values.size()+3, 0.0);
+    Array1D< double > S(values.size()+3, 0.0);
+
+    svd.getU(U);
+    svd.getV(V);
+    svd.getSingularValues(S);
+
+    TNT::Array2D<double> Utran(U.dim1(), U.dim2());
+    for(int r=0; r<U.dim1(); ++r)
+        for(int c=0; c<U.dim2(); ++c)
+            Utran[c][r] = U[r][c];
+
+    TNT::Array2D<double> Si(U.dim1(), U.dim2(), 0.0);
+    for (int i=0; i<Si.dim1(); ++i)
+        Si[i][i] = 1/S[i];
+
+    TNT::Array2D<double> inv_matrix(my_matrix.dim1(), my_matrix.dim2());
+    inv_matrix =  matmult(matmult(V,Si),Utran);
+
+
+    for (int i=0;i<my_matrix.dim1();i++){
+         for (int j=0;j<my_matrix.dim2();j++){
+             qr_param[i]+=( inv_matrix[i][j]*b_vector[j]);
+         }
+     }
+
+//    std::cout << "thin plates spline parameter: " << std::endl;
+    for (i=0; i<values.size()+3; ++i){
+        param[i] = static_cast<float>(qr_param[i]);
+//        std::cout << qr_param[i] << std::endl; // they seem OK
+    }
+
+    // i could try to create image here.. so
+
+//    float dist[values.size()+3];
+//    for (size_t ind=0; i<)
+
+
+    return param;
+
+}
+
+kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int, int>, float> &values, size_t *roi){
+    // go on from here tomorrow: I have the param and I have to compute the image.. do it in a smart way possibly
+    size_t dimx = roi[2]-roi[0];
+    size_t dimy = roi[3]-roi[1];
+
+    size_t dims[2] = {dimx,dimy};
+    kipl::base::TImage <float,2> interpolated_img(dims);
+    interpolated_img = 0.0f;
+//    std::cout << interpolated_img.Size(0) << " " << interpolated_img.Size(1) << std::endl;
+
+    float *dist = new float[values.size()];
+    float sumdist = 0.0f;
+    std::map<std::pair<int,int>, float>::const_iterator it_i;
+
+    for (size_t x=0; x<dimx; ++x) {
+        for (size_t y=0; y<dimy; ++y){
+             it_i = values.begin();
+            for (size_t ind=0; ind<values.size(); ++ind) {
+                dist[ind] = sqrt((it_i->first.first-x)*(it_i->first.first-x)+(it_i->first.second-y)*(it_i->first.second-y));
+                if (dist[ind]!=0){
+                    sumdist = dist[ind]*dist[ind]*log(dist[ind])*parameters[ind]; // correct?
+                    sumdist += sumdist;
+                }
+//                else {
+//                    dist[ind]=0;
+//                }
+                ++it_i;
+            }
+            interpolated_img(x,y) = sumdist+parameters[values.size()]+parameters[values.size()+1]*y+parameters[values.size()+2]*x;
+//            interpolated_img(x,y) = parameters[0] + parameters[1]*static_cast<float>(x+roi[0])+parameters[2]*static_cast<float>(x+roi[0])*static_cast<float>(x+roi[0])+parameters[3]*static_cast<float>(x+roi[0])*static_cast<float>(y+roi[1])+parameters[4]*static_cast<float>(y+roi[1])+parameters[5]*static_cast<float>(y+roi[1])*static_cast<float>(y+roi[1]);
+        }
+    }
+
+    return interpolated_img;
+
+//    for index_row = 1:size(interpolated_im,1)
+//        for index_col = 1:size(interpolated_im,2)
+//            for basis=1:20
+//                d(basis) = sqrt((interpolation_points(basis,1)-index_row)^2+(interpolation_points(basis,2)-index_col)^2);
+//                if (d(basis)~=0)
+//                    dd(basis) = X(basis)*d(basis)^2*log(d(basis));
+//                else
+//                    dd(basis) = 0;
+//                end
 //            end
+
+
+//            interpolated_im(index_row, index_col) = sum(dd)+X(21)+X(22)*index_col+X(23)*index_row;
+
 //        end
 
 //    end
+
+
 
 }
 
@@ -1234,7 +1370,7 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
     try{
         SegmentBlackBody(norm, mask);
-        SegmentBlackBody(norm, normdc, mask, values);
+//        SegmentBlackBody(norm, normdc, mask, values); // try for thin plates spline
     }
     catch (...) {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
@@ -1275,8 +1411,19 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 //    kipl::io::WriteTIFF32(bb,"~/testdata/BB.tif");
 //    kipl::io::WriteTIFF32(flat,"~/repos/testdata/openBB.tif");
 
-    std::map<std::pair<int, int>, float> values;
-    SegmentBlackBody(norm, normdc, mask, values);
+    // thin plate spline stuff
+//    std::map<std::pair<int, int>, float> values;
+//    SegmentBlackBody(norm, normdc, mask, values);
+//    float *tps_param = new float[values.size()+3];
+//    tps_param = SolveThinPlateSplines(values);
+
+//    for (int i=0; i<values.size()+3; ++i){
+//        std::cout << tps_param[i] << std::endl;
+//    }
+
+//    size_t roi[4] = {0, 0, 1788, 2500};
+//    kipl::base::TImage<float,2> mythinimage = InterpolateBlackBodyImagewithSplines(tps_param, values, roi);
+//     kipl::io::WriteTIFF32(mythinimage,"TSP_image.tif");
 
     SegmentBlackBody(norm, mask);
 

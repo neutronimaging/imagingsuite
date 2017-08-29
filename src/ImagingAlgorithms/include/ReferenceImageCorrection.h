@@ -94,6 +94,7 @@ public:
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img, float &error); /// compute interpolation parameters from img and mask and give as output interpolation error
     kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters, size_t *roi); /// compute interpolated image from parameters
+    kipl::base::TImage<float,2> InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int,int>,float> &values, size_t *roi);
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
