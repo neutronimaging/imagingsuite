@@ -67,10 +67,11 @@ public:
             float dose_OB,
             float dose_DC,
             bool normBB,
-            size_t *roi);
+            size_t *roi, size_t *doseroi);
 
     void SetInterpParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo); /// set interpolation parameters to be used for BB image computation
-    void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values, it is the same as in SETROI in the pre-processing module?
+    void SetBBInterpRoi(size_t *roi); ///set roi to be used for computing interpolated values, it is a roi relative to the projection_roi, because the interpolation parameters are computed with respect to the projection_roi
+    void SetBBInterpDoseRoi(size_t *roi); /// set dose roi to be used for computing interpolated values. it is the dose roi relative the projection_roi, because the interpolation parameters are computed with respect to the projection_roi
 
     void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;} ///< set bool value for computing -logarithm
     void SetRadius(size_t x) {radius=x;} ///< set the radius used to define subset of segmented BBs
@@ -129,6 +130,7 @@ protected:
 	bool m_bComputeLogarithm;
 
     kipl::base::TImage<float,2> m_OpenBeam;
+    kipl::base::TImage<float,2> m_OpenBeamforBB;
 	kipl::base::TImage<float,2> m_DarkCurrent;
 	kipl::base::TImage<float,2> m_BlackBody;
     kipl::base::TImage<float,2> m_OB_BB_Interpolated;
@@ -166,8 +168,10 @@ protected:
     int a,b,c,d,e,f; /// weights for interpolation scheme, used to set different combined order
 
     size_t m_nDoseROI[4]; /// roi to be used for dose computation on BB images ("big roi" I would say..)
+    size_t m_nROI[4]; /// actual roi onto compute the background images
     size_t m_nBlackBodyROI[4]; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
     int m_diffBBroi[4]; /// difference between BB roi and projection roi, important when computing interpolation parameters
+    size_t m_nDoseBBRoi[4]; /// "big roi" to be used for dose computation on BB images, this is now relative to projection roi coordinates, due to the interpolation scheme
     size_t m_nBBimages; /// number of images with BB sample that are available
     size_t m_nProj; /// number of images that are needed after interpolation
     float angles[4]; /// first and last angles of nProj and nBBImages, respectively
