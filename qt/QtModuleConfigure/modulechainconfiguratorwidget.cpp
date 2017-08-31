@@ -114,10 +114,11 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
     logger(kipl::logging::Logger::LogMessage,"Configure module");
     std::ostringstream msg;
 
-    if (m_pConfigurator!=NULL) {
-        if (m_pCurrentModule!=NULL) {
+    if (m_pConfigurator!=nullptr) {
+        if (m_pCurrentModule!=nullptr) {
             QListWidgetModuleItem *pCurrentModule=dynamic_cast<QListWidgetModuleItem *>(m_pCurrentModule);
-            UpdateCurrentModuleParameters();
+            //UpdateCurrentModuleParameters();
+
             m_pApplication->UpdateConfig();
             std::string modulename = pCurrentModule->m_Module.m_sModule;
             std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
@@ -129,7 +130,8 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             logger(kipl::logging::Logger::LogMessage,msg.str());
 
             try {
-                std::map<std::string, std::string> parameters=pCurrentModule->m_Module.parameters;
+                std::map<std::string, std::string> parameters=GetParameterList();
+                //std::map<std::string, std::string> parameters=pCurrentModule->m_Module.parameters;
 
                 int res=m_pConfigurator->configure(m_sApplication,guisoname,modulename,parameters);
                 if (res==QDialog::Accepted) {
@@ -276,9 +278,9 @@ void ModuleChainConfiguratorWidget::UpdateCurrentModuleParameters()
     QListWidgetModuleItem *moduleitem=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
 
     QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
-    QTreeWidgetItem *item = NULL;
+    QTreeWidgetItem *item = nullptr;
 
-    if (moduleitem!=NULL) {
+    if (moduleitem!=nullptr) {
         std::map<std::string,std::string>::iterator it;
 
         for (it=moduleitem->m_Module.parameters.begin();
