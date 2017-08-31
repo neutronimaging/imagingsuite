@@ -2,6 +2,7 @@
 #include <sstream>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QSignalBlocker>
 
 namespace QtAddons {
 QtLogViewer::QtLogViewer(QWidget *parent) :
@@ -9,7 +10,7 @@ QtLogViewer::QtLogViewer(QWidget *parent) :
     logger("QtLogViewer"),
     save_button("Save"),
     clear_button("Clear"),
-    m_LogFile((QDir::homePath()+"/muhlog.txt").toStdString().c_str()),
+    m_LogFile((QDir::homePath()+"/logger.txt").toStdString().c_str()),
     m_CurrentLoglevel(kipl::logging::Logger::LogError)
 {
     this->setLayout(&vbox);
@@ -65,12 +66,14 @@ QString QtLogViewer::serialize()
 
 void QtLogViewer::SetLogLevel(kipl::logging::Logger::LogLevel level)
 {
-        m_CurrentLoglevel=level;
-        kipl::logging::Logger::SetLogLevel(level);
-        loglevel_combo.setCurrentIndex(static_cast<int>(level));
-        std::ostringstream msg;
-        msg<<"Changed log-level to "<<kipl::logging::Logger::GetLogLevel();
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+    QSignalBlocker blocker(loglevel_combo);
+
+    m_CurrentLoglevel=level;
+    kipl::logging::Logger::SetLogLevel(level);
+    loglevel_combo.setCurrentIndex(static_cast<int>(level));
+    std::ostringstream msg;
+    msg<<"Changed log-level to "<<kipl::logging::Logger::GetLogLevel();
+    logger(level,msg.str());
 }
 
 void QtLogViewer::clear()
@@ -106,7 +109,6 @@ void QtLogViewer::clear_clicked()
 
 void QtLogViewer::loglevel_changed(int level)
 {
-    QMutexLocker locker(&m_Mutex);
     if (level!=m_CurrentLoglevel)
         SetLogLevel(static_cast<kipl::logging::Logger::LogLevel>(level));
 }
