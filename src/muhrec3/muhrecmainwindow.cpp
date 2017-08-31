@@ -333,9 +333,15 @@ void MuhRecMainWindow::TakeProjectionPath()
 
 void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
 {
-    ui->sliderProjections->setMaximum(ui->spinLastProjection->value());
-    ui->sliderProjections->setMinimum(ui->spinFirstProjection->value());
-    PreviewProjection();
+    int first=ui->spinFirstProjection->value();
+    int last=ui->spinLastProjection->value();
+
+    if (first<last) {
+        ui->sliderProjections->setMaximum(last);
+        ui->sliderProjections->setMinimum(first);
+
+        PreviewProjection();
+    }
 }
 
 void MuhRecMainWindow::PreviewProjection(int x)
@@ -350,11 +356,11 @@ void MuhRecMainWindow::PreviewProjection(int x)
        int slice = ui->spinFirstProjection->value();
        ui->sliderProjections->setValue(slice);
     }
-    UpdateConfig();
 
     msg.str("");
 
     try {
+        UpdateConfig();
         std::string fmask=ui->editProjectionMask->text().toStdString();
 
         std::string name, ext;
@@ -436,41 +442,39 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 mbox.exec();
             }
 
+            float lo,hi;
 
+            if (m_PreviewImage.Size()==1) {
+                logger(logger.LogWarning,"Could not read preview");
+                return ;
+            }
+            if (x < 0) {
 
-                float lo,hi;
+                const size_t NHist=512;
+                size_t hist[NHist];
+                float axis[NHist];
+                size_t nLo=0;
+                size_t nHi=0;
 
-                if (m_PreviewImage.Size()==1) {
-                    logger(logger.LogWarning,"Could not read preview");
-                    return ;
-                }
-                if (x < 0) {
+                kipl::base::Histogram(m_PreviewImage.GetDataPtr(),m_PreviewImage.Size(),hist,NHist,0.0f,0.0f,axis);
+                kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
+                lo=axis[nLo];
+                hi=axis[nHi];
+                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+            }
+            else {
 
-                    const size_t NHist=512;
-                    size_t hist[NHist];
-                    float axis[NHist];
-                    size_t nLo=0;
-                    size_t nHi=0;
+                ui->projectionViewer->get_levels(&lo,&hi);
+                ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+            }
+            msg.str("");
+            msg<<sliderval<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
+                 (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
 
-                    kipl::base::Histogram(m_PreviewImage.GetDataPtr(),m_PreviewImage.Size(),hist,NHist,0.0f,0.0f,axis);
-                    kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
-                    lo=axis[nLo];
-                    hi=axis[nHi];
-                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-                }
-                else {
+            ui->label_projindex->setText(QString::fromStdString(msg.str()));
 
-                    ui->projectionViewer->get_levels(&lo,&hi);
-                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-                }
-                msg.str("");
-                msg<<sliderval<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
-                     (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
-
-                ui->label_projindex->setText(QString::fromStdString(msg.str()));
-
-                SetImageDimensionLimits(m_PreviewImage.Dims());
-                UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+            SetImageDimensionLimits(m_PreviewImage.Dims());
+            UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
       }
         else {
             QMessageBox mbox(this);
@@ -1809,6 +1813,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
     m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
+
+    m_Config.SanityCheck();
 }
 
 
@@ -2038,7 +2044,7 @@ void MuhRecMainWindow::on_actionRemove_CurrentRecon_xml_triggered()
 
 void MuhRecMainWindow::on_actionReport_a_bug_triggered()
 {
-    QUrl url=QUrl("https://github.com/neutronimaging/tools/issues");
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/issues");
     if (!QDesktopServices::openUrl(url)) {
  //       QMessageBox dlg("Could not open repository","MuhRec could not open your web browser with the link https://github.com/neutronimaging/tools/issues");
     }

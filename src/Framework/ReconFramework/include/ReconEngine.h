@@ -102,6 +102,7 @@ public:
 
 	virtual ~ReconEngine(void);
 protected:
+    void ConfigSanityCheck(ReconConfig &config);
     int Run3DFull();
     int Run3DBackProjOnly();
 	int Process(size_t *roi);

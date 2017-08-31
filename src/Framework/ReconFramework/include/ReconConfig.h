@@ -175,6 +175,8 @@ public:
     /// \param config The configuration to copy.
     const ReconConfig & operator=(const ReconConfig &config);
 
+    bool SanityCheck();
+
     /// Destructor to clean up
 	~ReconConfig(void);
 

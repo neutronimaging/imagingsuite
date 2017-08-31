@@ -63,6 +63,8 @@ ReconEngine::~ReconEngine(void)
 
 void ReconEngine::SetConfig(ReconConfig &config)
 {
+    config.SanityCheck();
+
 	m_Config=config;
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
 }

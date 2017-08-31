@@ -55,6 +55,17 @@ const ReconConfig & ReconConfig::operator=(const ReconConfig &config)
 	return *this;
 }
 
+bool ReconConfig::SanityCheck()
+{
+    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0])
+        throw ReconException("Incorrect config: ROI x1<x0",__FILE__,__LINE__);
+
+    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1])
+        throw ReconException("Incorrect config: ROI y1<y0",__FILE__,__LINE__);
+
+    return true;
+}
+
 std::string ReconConfig::WriteXML()
 {
 	std::ostringstream str;
