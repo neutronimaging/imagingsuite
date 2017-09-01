@@ -935,7 +935,7 @@ int ReconEngine::Process3D(size_t *roi)
     if (m_ProjectionMargin<=roi[1])
         extroi[1]-=m_ProjectionMargin;
 
-    extroi[3]  = margin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? margin+extroi[3] : extroi[3];
+    extroi[3]  = m_ProjectionMargin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? m_ProjectionMargin+extroi[3] : extroi[3];
     //extroi[3]+=m_ProjectionMargin;
 
     msg.str("");

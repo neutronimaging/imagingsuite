@@ -212,26 +212,32 @@ void MuhRecMainWindow::BrowseProjectionPath()
 
         if (fi.m_sExt!="hdf") {
 
-		std::string pdir=projdir.toStdString();
+            std::string pdir=projdir.toStdString();
 
-		kipl::io::DirAnalyzer da;
-		fi=da.GetFileMask(pdir);
-		newmask=QString::fromStdString(fi.m_sMask);
-		ui->editProjectionMask->setText(newmask);
-		int c=0;
-		int f=0;
-		int l=0;
+            kipl::io::DirAnalyzer da;
+            fi=da.GetFileMask(pdir);
+            newmask=QString::fromStdString(fi.m_sMask);
+            ui->editProjectionMask->setText(newmask);
+            int c=0;
+            int f=0;
+            int l=0;
 
-		da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            if ((fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
+                da.AnalyzeFileList(fi.m_sMask,c);
+                f=1;
+                l=c;
+            }
+            else
+                da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
 
-		msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
-		logger(logger.LogMessage,msg.str());
+            msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+            logger(logger.LogMessage,msg.str());
 
-        QSignalBlocker spinFirst(ui->spinFirstProjection);
-		ui->spinFirstProjection->setValue(f);
+            QSignalBlocker spinFirst(ui->spinFirstProjection);
+            ui->spinFirstProjection->setValue(f);
 
-        QSignalBlocker spinLast(ui->spinLastProjection);
-		ui->spinLastProjection->setValue(l);
+            QSignalBlocker spinLast(ui->spinLastProjection);
+            ui->spinLastProjection->setValue(l);
 
 
             if (oldmask!=newmask)
