@@ -43,7 +43,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
     ComputeEstimate(cimg);
 
     pair<float,float> position=LocateMax();
-
+    logger(logger.LogMessage,"Got max");
     position.first  += crop[0];
     position.second += crop[1];
 
@@ -75,7 +75,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 
         float *pLine=nullptr;
 
-        for (int y=0; y<correctedImage.Size(1); ++y) {
+        for (int y=0; y<static_cast<int>(correctedImage.Size(1)); ++y) {
             pLine=correctedImage.GetLinePtr(y);
             for (int x=0; x<N; ++x) {
                 pLine[x]-=profile[x];
@@ -135,6 +135,8 @@ void PiercingPointEstimator::ComputeEstimate(kipl::base::TImage<float,2> &img)
 ///  $\left(\begin{array}{cc}2e &d\\ d & 2f\end{array}\right) \left(\begin{array}{c}x \\y\end{array}\right)=\left(\begin{array}{c}-b\\-c\end{array}\right)$
 pair<float,float> PiercingPointEstimator::LocateMax()
 {
+    std::ostringstream msg;
+    logger(logger.LogMessage,"Enter locate max");
     pair<float,float> position;
 
     Array2D< double > H(2,2, 0.0);
@@ -149,10 +151,22 @@ pair<float,float> PiercingPointEstimator::LocateMax()
     I[0]    =  -parameters[1];
     I[1]    =  -parameters[2];
 
+    logger(logger.LogMessage,"Initialize");
     JAMA::QR<double> qr(H);
-    Array1D< double > pos = qr.solve(I);
+    Array1D< double > pos(2, 0.0);
+    pos = qr.solve(I);
 
-    position = make_pair(static_cast<float>(pos[0]),static_cast<float>(pos[1]));
+    logger(logger.LogMessage,"Equation solved");
+ //   position = make_pair(static_cast<float>(pos[0]),static_cast<float>(pos[1]));
+ //   position.first=static_cast<float>(pos[0]);
+ //   position.second=static_cast<float>(pos[1]);
+    float a = static_cast<float>(pos[0]);
+    float b = static_cast<float>(pos[1]);
+    position = make_pair(1.0f,2.0f);
+    msg.str("");
+//    msg<<"Got pair "<<position.first<<", "<<position.second<<", "<<a<<", "<<b;
+        msg<<"Got pair "<<position.first<<", "<<position.second<<", ";
+    logger(logger.LogMessage,msg.str());
     return position;
 }
 
