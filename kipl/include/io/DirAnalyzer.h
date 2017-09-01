@@ -49,6 +49,9 @@ public:
                               int &lastIndex,
                               char wildcard='#');
 
+    void AnalyzeFileList(std::string fname,
+                         int &nFiles);
+
     /// \brief Gets the file mask from a file name string. The last set of numbers before the file extension are replaced by #'s
     FileItem GetFileMask(std::string str);
 protected:

@@ -167,4 +167,24 @@ void DirAnalyzer::AnalyzeMatchingNames(std::string mask,
     }
 }
 
+void DirAnalyzer::AnalyzeFileList(std::string fname,
+                     int &nFiles)
+{
+    std::ifstream reader(fname.c_str());
+
+    if (reader.bad())
+        throw kipl::base::KiplException("Could not open list file.",__FILE__,__LINE__);
+
+    // new lines will be skipped unless we stop it from happening:
+    reader.unsetf(std::ios_base::skipws);
+
+    // count the newlines with an algorithm specialized for counting:
+    unsigned line_count = std::count(
+          std::istream_iterator<char>(reader),
+          std::istream_iterator<char>(),
+          '\n');
+
+    nFiles=line_count;
+}
+
 }}

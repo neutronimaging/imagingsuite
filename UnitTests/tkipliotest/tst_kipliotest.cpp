@@ -26,6 +26,7 @@ private Q_SLOTS:
     void testCroppedFITSreading();
     void testFileItem();
     void testDirAnalyzer();
+    void testCountLinesInFile();
 };
 
 kiplIOTest::kiplIOTest()
@@ -124,7 +125,7 @@ void kiplIOTest::testDirAnalyzer()
     QStringList qdirlist=dir.entryList(QDir::AllEntries | QDir::Hidden);
     std::ostringstream msg;
     msg<<"di size="<<dirlist.size()<<"qdir size="<<qdirlist.size();
-    QVERIFY2(qdirlist.size()==dirlist.size(), msg.str().c_str());
+    QVERIFY2(qdirlist.size()==static_cast<int>(dirlist.size()), msg.str().c_str());
 
     for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
         QVERIFY(qdirlist.contains(QString::fromStdString(*it)));
@@ -140,7 +141,6 @@ void kiplIOTest::testDirAnalyzer()
     QVERIFY(first==6);
     QVERIFY(last==8);
 }
-
 
 void kiplIOTest::MakeFiles(std::string mask, int N, int first)
 {
@@ -163,6 +163,26 @@ void kiplIOTest::MakeFiles(std::string mask, int N, int first)
     }
 //    dir.setCurrent("../");
 
+}
+
+void kiplIOTest::testCountLinesInFile()
+{
+    std::string fname="listfile.txt";
+    QDir d;
+    d.remove(QString::fromStdString(fname));
+    std::ofstream outfile(fname.c_str());
+
+    int N=5;
+    for (int i=0; i<N; i++) {
+        outfile<<i<<", text"<<i<<".fits"<<std::endl;
+    }
+
+    kipl::io::DirAnalyzer da;
+
+    int cnt=0;
+    da.AnalyzeFileList(fname,cnt);
+
+    QVERIFY(N==cnt);
 }
 
 QTEST_APPLESS_MAIN(kiplIOTest)
