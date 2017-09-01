@@ -159,8 +159,7 @@ bool RobustLogNorm::SetROI(size_t *roi) {
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     LoadReferenceImages(roi);
-    memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t));
-
+    memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t)); //nNormRegion seems not used
     return true;
 }
 
@@ -216,6 +215,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
     mydark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,roi,0.0f,0.0f,m_Config,fDarkDose);
     myflat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,0.0f,m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
+    SetReferenceImages(mydark,myflat);
 
     switch (m_BBOptions){
     case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
@@ -262,8 +262,8 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
     }
 
+     m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, m_Config.ProjectionInfo.dose_roi);
 
-     SetReferenceImages(mydark,myflat);
 
 }
 
@@ -811,7 +811,7 @@ void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::b
 
 
 
-    m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.roi, m_Config.ProjectionInfo.dose_roi);
+//    m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), m_Config.ProjectionInfo.roi, m_Config.ProjectionInfo.dose_roi);
 
     if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
             for (int i=1; i<static_cast<int>(flat.Size(1)); i++) {
