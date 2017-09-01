@@ -67,6 +67,11 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
 	m_Config=config;
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
+    std::string fname,ext;
+
+    kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#',0);
+
+    m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning,m_Config.ProjectionInfo.nDims);
 }
 
 size_t ReconEngine::AddPreProcModule(ModuleItem *module)
@@ -281,7 +286,7 @@ int ReconEngine::Process(size_t *roi)
     size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
 
     extroi[1]  = margin<extroi[1] ? extroi[1] : extroi[1]-margin;
-    extroi[3] += margin;
+    extroi[3]  = margin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? margin+extroi[3] : extroi[3];
 
 	std::list<ModuleItem *>::iterator it_Module;
 	msg<<"Processing ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
@@ -930,7 +935,8 @@ int ReconEngine::Process3D(size_t *roi)
     if (m_ProjectionMargin<=roi[1])
         extroi[1]-=m_ProjectionMargin;
 
-    extroi[3]+=m_ProjectionMargin;
+    extroi[3]  = margin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? margin+extroi[3] : extroi[3];
+    //extroi[3]+=m_ProjectionMargin;
 
     msg.str("");
     msg<<": Processing ext ROI ["<<extroi[0]<<", "<<extroi[1]<<", "<<extroi[2]<<", "<<extroi[3]<<"]";

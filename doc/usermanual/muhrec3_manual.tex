@@ -198,10 +198,10 @@ Cone beam reconstruction requires a different back-projection module and an exte
 
 Starting from a clean configuration [File]$\rightarrow$[New] you have to make some changes that are described below.
 
-Cone beam reconstruction is a feature under development. This means you cannot expect the same reconstruction speed as you are used to with the parallel beam back projection. In fact, you have to wait long time for a few slices. 
+Cone beam reconstruction is a feature under development. This means you cannot expect the same reconstruction speed as you are used to with the parallel beam back projection. In fact, you have to wait long time for a few slices depending on system. 
 
 \section{Configure the geometry}
-The geometry needs to be described with more detail for cone beam reconstruction. This is enabled by setting the check box Cone beam in the geometry field of configure projections. This activates the "Advanced geometry" tab. In this tab, you can set the distances from source to the rotation axis of the object/sample and to the detector. These distances define the magnification for the measurement and should be available from the experiment meta data.  The next parameters to set is the position where the beam hits the detector perpendicular to the detector plane (piercing point). This position is given in pixels. 
+The geometry needs to be described with more detail for cone beam reconstruction. This is enabled by setting the check box Cone beam in the geometry field of configure projections. This activates the "Advanced geometry" tab. In this tab, you can set the distances from source to the rotation axis of the object/sample and to the detector. These distances define the magnification for the measurement and should be available from the experiment meta data.  The next parameters to set is the position where the beam hits the detector perpendicular to the detector plane (piercing point). This position is given in pixels relative to the global detector area. 
 
 \section{Configure the processing chain}
 The typical preprocessing chain for a cone beam reconstruction include
@@ -210,8 +210,8 @@ The typical preprocessing chain for a cone beam reconstruction include
 	\item Spot cleaning.
 	\item Ring cleaning.
 \end{itemize}
-The projection filter used for parallel beam reconstruction is not needed as it is part of the CBCT backprojection module.
-
+The projection filter used for parallel beam reconstruction is not needed as it is part of the CBCT back-projection module.
+Finally, you also have to change the back-projection module which is located in the file \verb+libFDKBackProjectors+. It is recommended to use the \verb+fdkbp_single+ module as this module process the data faster. 
 
 \chapter{Detailed descriptions}
 \section{Processing modules}
@@ -241,71 +241,6 @@ This module computes the flat field correction of the projections. The correctio
 \end{figure}
 Object file: libStdPreprocModules.so
 
-\subsection{RobustLogNorm}
-This modules implements the normalization of projection data to reference images, including open beam, dark current and images with black bodies (BB). The full normalization operation is computed using:
-\begin{equation}
-p=-\log\left(\frac{D_0}{D}\cdot\frac{I-I_{DC}-I_{BG}^{sample}}{I_{OB}-I_{DC}-I_{BG}^{OB}}\right) 
-\end{equation}
-where background images (BG) are computed from BB images (background image computed from open beam images with BBs: ${I_{BG}^{OB}}$, background image computed from sample image with BBs: $ I_{BG}^{sample} $) and compensate for light that is scattered back from the mirror to the scintillator.
-BB images are expected to be acquired without the sample (open beam images with BB) and with the sample (sample images with BB). \\
-Several options for this module are available and can be configured through the module dialog.
-In the first tab of the dialog (Figure \ref{fig:tab1_refmodule}), the following parameters can be set:
-\begin{figure}[th!]
-\centering
-\includegraphics[scale=0.3]{./figures3/tab1_refmodule}
-\caption{First tab of the configuration dialog for the RobustLogNorm module.}
-\label{fig:tab1_refmodule}
-\end{figure}
-\begin{itemize}
-\item \textit{Averaging method} allows to choose between different averaging method to be applied to stack of dark current, open beam and eventually BB images.  \\ Methods available: ImageWeightedAverage, ImageAverage, ImageMedian, ImageMax, ImageMin, ImageSum \\ Default value: ImageWeightedAverage
-\item \textit{Referencing method} triggers the execution of the -log. \\ Methods available: LogNorm, Norm\\ Default value: LogNorm
-\item \textit{BB option} allows to choose different referencing options depending on the type of BB images. 
-\\ Options available: 
-\begin{itemize}
-\item \textit{noBB}: to be used when no BB images are available or needed. In this case no other parameters need to be configured and the referencing method is the same as the one available in the FullLogNorm module. 
-\item \textit{Interpolate}: to be used when the BB images with the sample are acquired at regular angular step. In this case further configuration is done in the second tab "BB images" of the dialog.
-\item \textit{Average}: to be used when a stack of BB images with the sample is taken at the same angular position. In this case the averaging method chosen will be applied and further configuration is done in the second tab "BB images" of the dialog. 
-\item \textit{OneToOne}: to be used when the BB images are acquired at the sample angular position of the projection data. It is required that the number of BB images is the same of the projections. Further configuration is done in the second tab of the dialog. 
-\item \textit{ExternalBB}: to be used when the background images are created elsewhere. In this case the second part of the tab is activated and it is possible to load such images. Images are expected to be already dose corrected, in the case of the open beam image with BB a single file is expected to be loaded. In the case of the sample image with BBs, the number of images is expected to be equal to the number of projection data, meaning that a one by one correspondence is expected.
-\end{itemize}
-Default value: Interpolate
-\end{itemize}
-In the second tab of the dialog, BB images can be loaded and parameters set (Figure \ref{fig:tab2_refmodule}). \\
-For the open beam with BB images:
-\begin{figure}[th!]
-\centering
-\includegraphics[scale=0.3]{./figures3/tab2_refmodule}
-\caption{Second tab of the configuration dialog for the RobustLogNorm module.}
-\label{fig:tab2_refmodule}
-\end{figure}
-\begin{enumerate}
-\item Get the file name throw the browse button.
-\item Select the first index of the image to be loaded (First) and the number of images belonging to the stack (Count).
-\item Click on the Preview button to visualize the first image in the left bottom panel
-\item On the Open beam with BBs panel, select a ROI including all BBs, then click on GetBBroi. On this roi, Otsu thresholding segmentation is applied to detect BB position. In case of the presence of the rotary table it is probably better to exclude it from the roi. From the segmented image a submask is created, defined as circles of a certain radius centered in the weighted center of mass of each BB (this is not always in the center of BB, also due to beam characteristics). The values of the BB images under these points are used to create an interpolated image of the background. 
-\item Select the radius for the mask computation. Default value is 2 pixel. Maximum size is defined by the size of the BBs, any radius that defines circle bigger than the maximum size will produce masks of the size of BBs. 
-\item Choose the interpolation order along x and y. Options are: ZeroOrder, FirstOrder and SecondOrder. Default value is SecondOrder for both direction. For PSI experiments, higher order for x than the order of y is possibly needed. 
-\item Click on the "Compute error" button. This will display the BB mask, obtained by segmenting the BB roi with the defined radius, and the root mean square error for the given interpolation scheme. At this point it can be useful to tune the radius and the interpolation orders to minimize the interpolation error. 
-\end{enumerate}
-For the sample images with BBs:
-\begin{enumerate}
-\item Get the file name throw the Browse button.
-\item Select the first index of the image to be loaded (First) and the number of images belonging to the stack (Count). In the OneToOne BBOption, Count must be equal to the number of projection data. 
-\item Click the Preview button to display in the center bottom panel the first sample image with BBs. 
-\item Select the angles corresponding to the first and the last sample images with BB. These are used only in the Interpolate BBOption. 
-\item Into the Sample image with BBs panel, select an open beam ROI, then click on GetBBdose.
-\end{enumerate}
-Click finally on OK, to save all parameters. \\
-Two hidden boolean and one numerical parameters can be finally tuned from the processing tab of the main window:
-\begin{itemize}
-\item \textit{PBvariante} triggers the use of the proposed formula (true) or a previous simplified one (false), to be use for testing purpose. Default value: true.
-\item \textit{SameMask}: if true, the mask is computed only once on the open beam image with BB. The same mask is then used to compute background images from sample images with BBs. This requires that the BBs are in the same position in open beam and sample images with BBs. If false, the mask is computed once again on the first image with sample and BBs and this second mask is used for all sample images with BBs. This option might be used when the BBs in the open beam and sample image are not in the same position, however it requires that the same angular position is available for the first projection image and the first sample image with BBs and that the sample position between the two is the same. Default value: true.  
-\item \textit{tau}: mean transmission pattern. It is a parameter which contributes in the computation of background images and can be changed in order to obtain more flat profiles and empty regions closed to zero by lowering its value. Default value = 0.99;
-\end{itemize}
-
-
-  
-Object file: libStdPreprocModules.so
 
 
 \subsection{SpotClean2}
@@ -845,3 +780,70 @@ This is especially noticeable when tilt correction is activated
 \item Zooming and panning in the viewer is incomplete.
 \end{itemize}
 \end{document} 
+
+%%%%%%%%% This text will reappear after 
+\subsection{RobustLogNorm}
+This modules implements the normalization of projection data to reference images, including open beam, dark current and images with black bodies (BB). The full normalization operation is computed using:
+\begin{equation}
+p=-\log\left(\frac{D_0}{D}\cdot\frac{I-I_{DC}-I_{BG}^{sample}}{I_{OB}-I_{DC}-I_{BG}^{OB}}\right) 
+\end{equation}
+where background images (BG) are computed from BB images (background image computed from open beam images with BBs: ${I_{BG}^{OB}}$, background image computed from sample image with BBs: $ I_{BG}^{sample} $) and compensate for light that is scattered back from the mirror to the scintillator.
+BB images are expected to be acquired without the sample (open beam images with BB) and with the sample (sample images with BB). \\
+Several options for this module are available and can be configured through the module dialog.
+In the first tab of the dialog (Figure \ref{fig:tab1_refmodule}), the following parameters can be set:
+\begin{figure}[th!]
+	\centering
+	\includegraphics[scale=0.3]{./figures3/tab1_refmodule}
+	\caption{First tab of the configuration dialog for the RobustLogNorm module.}
+	\label{fig:tab1_refmodule}
+\end{figure}
+\begin{itemize}
+	\item \textit{Averaging method} allows to choose between different averaging method to be applied to stack of dark current, open beam and eventually BB images.  \\ Methods available: ImageWeightedAverage, ImageAverage, ImageMedian, ImageMax, ImageMin, ImageSum \\ Default value: ImageWeightedAverage
+	\item \textit{Referencing method} triggers the execution of the -log. \\ Methods available: LogNorm, Norm\\ Default value: LogNorm
+	\item \textit{BB option} allows to choose different referencing options depending on the type of BB images. 
+	\\ Options available: 
+	\begin{itemize}
+		\item \textit{noBB}: to be used when no BB images are available or needed. In this case no other parameters need to be configured and the referencing method is the same as the one available in the FullLogNorm module. 
+		\item \textit{Interpolate}: to be used when the BB images with the sample are acquired at regular angular step. In this case further configuration is done in the second tab "BB images" of the dialog.
+		\item \textit{Average}: to be used when a stack of BB images with the sample is taken at the same angular position. In this case the averaging method chosen will be applied and further configuration is done in the second tab "BB images" of the dialog. 
+		\item \textit{OneToOne}: to be used when the BB images are acquired at the sample angular position of the projection data. It is required that the number of BB images is the same of the projections. Further configuration is done in the second tab of the dialog. 
+		\item \textit{ExternalBB}: to be used when the background images are created elsewhere. In this case the second part of the tab is activated and it is possible to load such images. Images are expected to be already dose corrected, in the case of the open beam image with BB a single file is expected to be loaded. In the case of the sample image with BBs, the number of images is expected to be equal to the number of projection data, meaning that a one by one correspondence is expected.
+	\end{itemize}
+	Default value: Interpolate
+\end{itemize}
+In the second tab of the dialog, BB images can be loaded and parameters set (Figure \ref{fig:tab2_refmodule}). \\
+For the open beam with BB images:
+\begin{figure}[th!]
+	\centering
+	\includegraphics[scale=0.3]{./figures3/tab2_refmodule}
+	\caption{Second tab of the configuration dialog for the RobustLogNorm module.}
+	\label{fig:tab2_refmodule}
+\end{figure}
+\begin{enumerate}
+	\item Get the file name throw the browse button.
+	\item Select the first index of the image to be loaded (First) and the number of images belonging to the stack (Count).
+	\item Click on the Preview button to visualize the first image in the left bottom panel
+	\item On the Open beam with BBs panel, select a ROI including all BBs, then click on GetBBroi. On this roi, Otsu thresholding segmentation is applied to detect BB position. In case of the presence of the rotary table it is probably better to exclude it from the roi. From the segmented image a submask is created, defined as circles of a certain radius centered in the weighted center of mass of each BB (this is not always in the center of BB, also due to beam characteristics). The values of the BB images under these points are used to create an interpolated image of the background. 
+	\item Select the radius for the mask computation. Default value is 2 pixel. Maximum size is defined by the size of the BBs, any radius that defines circle bigger than the maximum size will produce masks of the size of BBs. 
+	\item Choose the interpolation order along x and y. Options are: ZeroOrder, FirstOrder and SecondOrder. Default value is SecondOrder for both direction. For PSI experiments, higher order for x than the order of y is possibly needed. 
+	\item Click on the "Compute error" button. This will display the BB mask, obtained by segmenting the BB roi with the defined radius, and the root mean square error for the given interpolation scheme. At this point it can be useful to tune the radius and the interpolation orders to minimize the interpolation error. 
+\end{enumerate}
+For the sample images with BBs:
+\begin{enumerate}
+	\item Get the file name throw the Browse button.
+	\item Select the first index of the image to be loaded (First) and the number of images belonging to the stack (Count). In the OneToOne BBOption, Count must be equal to the number of projection data. 
+	\item Click the Preview button to display in the center bottom panel the first sample image with BBs. 
+	\item Select the angles corresponding to the first and the last sample images with BB. These are used only in the Interpolate BBOption. 
+	\item Into the Sample image with BBs panel, select an open beam ROI, then click on GetBBdose.
+\end{enumerate}
+Click finally on OK, to save all parameters. \\
+Two hidden boolean and one numerical parameters can be finally tuned from the processing tab of the main window:
+\begin{itemize}
+	\item \textit{PBvariante} triggers the use of the proposed formula (true) or a previous simplified one (false), to be use for testing purpose. Default value: true.
+	\item \textit{SameMask}: if true, the mask is computed only once on the open beam image with BB. The same mask is then used to compute background images from sample images with BBs. This requires that the BBs are in the same position in open beam and sample images with BBs. If false, the mask is computed once again on the first image with sample and BBs and this second mask is used for all sample images with BBs. This option might be used when the BBs in the open beam and sample image are not in the same position, however it requires that the same angular position is available for the first projection image and the first sample image with BBs and that the sample position between the two is the same. Default value: true.  
+	\item \textit{tau}: mean transmission pattern. It is a parameter which contributes in the computation of background images and can be changed in order to obtain more flat profiles and empty regions closed to zero by lowering its value. Default value = 0.99;
+\end{itemize}
+
+
+
+Object file: libStdPreprocModules.so

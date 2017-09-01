@@ -119,7 +119,7 @@ void PiercingPointDialog::on_pushButton_estimate_clicked()
 
     UpdateConfig();
     logger(logger.LogMessage,"Pre estimate");
-    position=pe(ob,dc,correctGain,useROI ? roi : nullptr );
+    pair<float,float> p2=pe(ob,dc,correctGain,useROI ? roi : nullptr );
     logger(logger.LogMessage,"post estimate");
     std::ostringstream msg;
     msg<<"Found pp at ["<<position.first<<", "<<position.second<<"]";
