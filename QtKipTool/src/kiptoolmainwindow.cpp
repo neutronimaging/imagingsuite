@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSignalBlocker>
+#include <QDesktopServices>
 
 #include <KiplFrameworkException.h>
 #include <ModuleException.h>
@@ -857,4 +858,25 @@ void KipToolMainWindow::on_spinSliceIndex_valueChanged(int arg1)
 void KipToolMainWindow::on_spinSliceIndex_editingFinished()
 {
     on_spinSliceIndex_valueChanged(ui->spinSliceIndex->value());
+}
+
+void KipToolMainWindow::on_actionReport_a_bug_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/issues");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link https://github.com/neutronimaging/tools/issues");
+
+        dlg.exec();
+    }
+}
+
+void KipToolMainWindow::on_actionRegister_for_news_letter_triggered()
+{
+    QUrl url=QUrl("http://www.imagingscience.ch/newsletter/");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("KipTool could not open your web browser with the link http://www.imagingscience.ch/newsletter/");
+        dlg.exec();
+    }
 }

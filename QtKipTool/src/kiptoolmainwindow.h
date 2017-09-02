@@ -76,6 +76,10 @@ private slots:
 
     void on_spinSliceIndex_editingFinished();
 
+    void on_actionReport_a_bug_triggered();
+
+    void on_actionRegister_for_news_letter_triggered();
+
 private:
     void UpdateDialog();
     void UpdateConfig();

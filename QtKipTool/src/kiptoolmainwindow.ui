@@ -809,6 +809,8 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionReport_a_bug"/>
+    <addaction name="actionRegister_for_news_letter"/>
    </widget>
    <widget class="QMenu" name="menuFile_processing">
     <property name="title">
@@ -901,15 +903,19 @@
     <string>File conversion</string>
    </property>
   </action>
+  <action name="actionReport_a_bug">
+   <property name="text">
+    <string>Report a bug</string>
+   </property>
+  </action>
+  <action name="actionRegister_for_news_letter">
+   <property name="text">
+    <string>Register for news letter</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header location="global">qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
@@ -917,15 +923,21 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ModuleChainConfiguratorWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">modulechainconfiguratorwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
    <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header location="global">qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ModuleChainConfiguratorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">modulechainconfiguratorwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
