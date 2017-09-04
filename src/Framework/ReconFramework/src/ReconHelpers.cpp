@@ -157,14 +157,12 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 		}
 	}
 
+    ComputeWeights(config,multiProjectionList,ProjectionList);
     msg.str(""); msg<<"proj list size="<<ProjectionList->size();
     logger(logger.LogMessage,msg.str());
 
-    ComputeWeights(config,multiProjectionList,ProjectionList);
-
 	return sequence;
 }
-
 
 bool BuildFileList(std::string sFileMask, std::string sPath,
                    int nFirstIndex, int nLastIndex, int nProjectionStep,
@@ -359,7 +357,7 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
     //
     // Compute weights for list start and end
     if (175.0f<(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])) {
-        logger(kipl::logging::Logger::LogMessage,"Normal arc");
+        logger(kipl::logging::Logger::LogDebug,"Normal arc");
         // Compute last weight
         bool repeatedLast=false;
         q2=multiProjectionList.begin();
@@ -380,18 +378,13 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
             q1->second.weight=((q2->first)-(q0->first-180))/180.0f;
     }
     else {
-        logger(kipl::logging::Logger::LogMessage,"Short arc");
+        logger(kipl::logging::Logger::LogDebug,"Short arc");
 
         q0=q2=multiProjectionList.begin();
         q2++;
         q0->second.weight=q2->second.weight;
         q1->second.weight=q2->second.weight;
     }
-
-//    std::cout<<"Intermediate list in compute weights"<<std::endl;
-//    for (auto it=multiProjectionList.begin(); it!=multiProjectionList.end(); it++) {
-//        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
-//    }
 
     //
     // Fix weighting for multiple views on same angle
@@ -416,7 +409,7 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
                 ++q11;
             }
             while ((q11->second.weight==0.0f) && q11!=multiProjectionList.end());
-       //     std::cout<<q00->second.weight<<", stack size="<<stack.size()<<std::endl;
+
             weight=q00->second.weight/(stack.size()+1);
             q00->second.weight = weight;
 
@@ -442,9 +435,8 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
         sum+=q0->second.weight;
     }
 
- //   std::cout<<"Weight sum="<<sum<<std::endl;
+
     if (fabs(sum-0.5f)<0.001f) {
- //       std::cout<<"Double weights"<<std::endl;
         for (auto it=ProjectionList2.begin(); it!=ProjectionList2.end(); ++it)
             it->second.weight*=2;
     }

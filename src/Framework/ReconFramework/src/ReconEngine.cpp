@@ -63,14 +63,16 @@ ReconEngine::~ReconEngine(void)
 
 void ReconEngine::SetConfig(ReconConfig &config)
 {
+    std::ostringstream msg;
     config.SanityCheck();
 
 	m_Config=config;
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
     std::string fname,ext;
 
-    kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#',0);
-
+    kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
+    logger(logger.LogMessage,msg.str());
     m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning,m_Config.ProjectionInfo.nDims);
 }
 
