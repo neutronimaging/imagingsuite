@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <limits>
 #include <algorithm>
+#include <iterator>
 #include <dirent.h>
 #include "../../include/base/KiplException.h"
 #include "../../include/io/DirAnalyzer.h"
