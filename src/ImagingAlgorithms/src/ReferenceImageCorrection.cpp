@@ -145,11 +145,37 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 //        m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
 //        m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseBBRoi);
+//        std::cout << "before switch interpmethod" << std::endl;
 
-        m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nROI); // now rois are in absolute coordinates , richtig?
-        m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
+        switch (m_InterpMethod) {
+        case (Polynomial):{
+//            std::cout << "case polynomial" << std::endl;
+            m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nROI); // now rois are in absolute coordinates , richtig?
+            m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
+            break;
+        }
+        case(ThinPlateSplines): {
+//            std::cout << "case splines: " << std::endl;
+//            for (std::map<std::pair<int, int>, float>::const_iterator it = spline_values.begin(); it != spline_values.end();  ++it)
+//            {
+//                std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//            }
 
-         kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_bb.tif");
+//            std::cout << "number of centroids found: " << spline_values.size() << " "  << std::endl;
+
+            m_OB_BB_Interpolated = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nROI); // now rois are in absolute coordinates , richtig?
+            m_DoseBBflat_image = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nDoseROI);
+
+
+
+            break;}
+//        default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
+        }
+
+
+//    std::cout   << "before PrepareReferencesBB" << std::endl;
+//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_bb.tif"); // seem correct
+//        kipl::io::WriteTIFF32(m_DoseBBflat_image,"dose_bb.tif");
         PrepareReferencesBB();
 	}
 
@@ -238,21 +264,61 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *dose)
 {
 	kipl::base::TImage<float, 2> slice(img.Dims());
-    float *current_param = new float[6];
+    float *current_param;
 
 	for (size_t i=0; i<img.Size(2); i++) {
 
         if (m_bHaveBlackBody) {
 
 
-            memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
-            m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
-            m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
+
+            switch (m_InterpMethod) {
+            case Polynomial:{
+                current_param =new float[6];
+                memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
+                m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
+                m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
+                break;
+            }
+            case ThinPlateSplines:{
+                current_param =new float[spline_sample_values.size()+3];
+
+                memcpy(current_param, sample_bb_interp_parameters+i*(spline_sample_values.size()+3), sizeof(float)*(spline_sample_values.size()+3));
+
+//                if (i==0){
+//                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
+//                    for(int j=0;j<spline_sample_values.size()+3;++j){
+//                        std::cout << current_param[j] << " ";
+//                    }
+//                    std::cout << std::endl;
+
+////                     spline sample  values sembrano giusti..
+//                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
+//                  for (std::map<std::pair<int, int>, float>::const_iterator it = spline_sample_values.begin(); it != spline_sample_values.end();  ++it)
+//                  {
+//                      std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//                  }
+//                    std::cout << std::endl;
+
+//                }
+
+                m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
+                m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
+                break;
+            }
+            default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
+            }
 
 
-//            if (i==10) // random numbers
+//            if (i==0)
 //            {
-//                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"samplebb10.tif");
+//                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"samplebb0.tif"); // these are correct.. seems to me..
+//                    kipl::io::WriteTIFF32(m_DoseBBsample_image,"dosesamplebb0.tif");
+//            }
+
+//            if (i==10)
+//            {
+//                    kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"samplebb10.tif"); // these are wrong!
 //                    kipl::io::WriteTIFF32(m_DoseBBsample_image,"dosesamplebb10.tif");
 //            }
 
@@ -275,7 +341,9 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
         }
 
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
+//        std::cout << "before Process" << std::endl;
         Process(slice,dose[i]);
+//        std::cout << "after process" << std::endl;
         memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
 	}
 
@@ -286,6 +354,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
     // 2. otsu threshold
     // 2.a compute histogram
+
+
     kipl::base::TImage<float,2> norm(img.Dims());
     memcpy(norm.GetDataPtr(), img.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
 
@@ -304,6 +374,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 
     //2.b compute otsu threshold
+
 
     int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
     float ot = static_cast<float>(histo.at(value).first);
@@ -330,6 +401,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
     // 3. Compute mask within Otsu
     // 3.a sum of rows and columns and location of rois
+
 
     float *vert_profile = new float[maskOtsu.Size(1)];
     float *hor_profile = new float[maskOtsu.Size(0)];
@@ -471,8 +543,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
               }
           }
 
-
-
           // draw the circle with user-defined radius
 
           // check on BB dimensions:
@@ -497,7 +567,231 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
       }
 
 
+
 //      kipl::io::WriteTIFF32(mask,"/home/carminati_c/repos/testdata/mask.tif");
+
+}
+
+void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
+{
+    // 3. Compute mask within Otsu
+    // 3.a sum of rows and columns and location of rois
+    kipl::base::TImage<float,2> maskOtsu(img.Dims());
+    maskOtsu= 0.0f;
+
+    float *p_mask = mask.GetDataPtr();
+    float *p_otsu = maskOtsu.GetDataPtr();
+    for (int i=0; i<mask.Size(); i++)
+    {
+        if (p_mask[i]==0.0f) p_otsu[i]=1.0f;
+
+    }
+
+    float *vert_profile = new float[maskOtsu.Size(1)];
+    float *hor_profile = new float[maskOtsu.Size(0)];
+
+
+//    kipl::io::WriteTIFF32(mask, "mask.tif");
+//    kipl::io::WriteTIFF32(img, "img.tif"); // they are correct
+//    kipl::io::WriteTIFF32(maskOtsu, "maskOtsu.tif");
+
+    kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
+    kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
+
+
+    //3.b create binary Signal
+    float *bin_VP = new float[maskOtsu.Size(1)];
+    float *bin_HP = new float[maskOtsu.Size(0)];
+
+    for (size_t i=0; i<mask.Size(1); i++) {
+        float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
+        if(vert_profile[i]<max) {
+            bin_VP[i] = 1;
+        }
+        else {
+            bin_VP[i] = 0;
+        }
+
+    }
+
+
+    for (size_t i=0; i<mask.Size(0); i++) {
+        float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
+        if(hor_profile[i]<max) {
+            bin_HP[i] = 1;
+        }
+        else {
+            bin_HP[i] = 0;
+        }
+    }
+
+    // 3.c compute edges - diff signal
+
+    float *pos_left = new float[100];
+    float *pos_right = new float[100];
+    int index_left = 0;
+    int index_right = 0;
+
+
+     for (int i=0; i<mask.Size(1)-1; i++) {
+         float diff = bin_VP[i+1]-bin_VP[i];
+         if (diff>=1) {
+             pos_left[index_left] = i;
+             index_left++;
+         }
+         if (diff<=-1) {
+             pos_right[index_right]=i+1; // to have all BB within the rois
+             index_right++;
+         }
+     }
+
+     // the same on the horizontal profile:
+     float *pos_left_2 = new float[100];
+     float *pos_right_2 = new float[100];
+     int index_left_2 = 0;
+     int index_right_2 = 0;
+
+
+      for (int i=0; i<mask.Size(0)-1; i++) {
+          float diff = bin_HP[i+1]-bin_HP[i];
+          if (diff>=1) {
+              pos_left_2[index_left_2] = i;
+              index_left_2++;
+          }
+          if (diff<=-1) {
+              pos_right_2[index_right_2]=i+1;
+              index_right_2++;
+          }
+      }
+
+
+      // from these define ROIs containing BBs --> i can probably delete them later on
+      std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+      std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
+
+      int pos = 0;
+      for (int i=0; i<(index_left); i++) {
+
+          for (int j=0; j<(index_left_2); j++) {
+
+                right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+                right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+                left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
+                left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+                pos++;
+          }
+
+      }
+
+
+//            std::cout << "pos: " << pos << std::endl; // it is the number of potential BBs that I have found: that one is correct, error comes later on
+
+      std::map<std::pair<int, int>, float>::const_iterator it_values = values.begin();
+
+      for (size_t bb_index=0; bb_index<pos; ++bb_index){
+
+          const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+          kipl::base::TImage<float,2> roi(roi_dim);
+          kipl::base::TImage<float,2> roi_im(roi_dim);
+
+
+          for (int i=0; i<roi_dim[1]; i++) {
+                memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                memcpy(roi_im.GetLinePtr(i),img.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+          }
+
+          float x_com= 0.0f;
+          float y_com= 0.0f;
+          int size = 0;
+
+//          // old implementation with geometrical mean:
+//          for (size_t x=0; x<roi.Size(0); x++) {
+//              for (size_t y=0; y<roi.Size(1); y++) {
+//                  if(roi(x,y)==0) {
+//                      x_com +=x;
+//                      y_com +=y;
+//                      size++;
+//                  }
+
+//              }
+//          }
+//          x_com /=size;
+//          y_com /=size;
+
+          float sum_roi = 0.0f;
+
+          // weighted center of mass:
+          for (size_t x=0; x<roi.Size(0); x++) {
+              for (size_t y=0; y<roi.Size(1); y++) {
+                  if(roi(x,y)==0) {
+                      x_com += (roi_im(x,y)*float(x));
+                      y_com += (roi_im(x,y)*float(y));
+                      sum_roi += roi_im(x,y);
+                      size++;
+                  }
+
+              }
+          }
+
+
+
+          // draw the circle with user-defined radius
+
+          // check on BB dimensions:
+//          if (size>=min_area) { //this is now wrong
+
+
+              x_com /=sum_roi;
+              y_com /=sum_roi;
+
+//              std::pair<int,int> temp;
+//              temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+
+              float value = 0.0f;
+              std::vector<float> grayvalues;
+//              float mean_value =0.0f;
+
+                  for (size_t x=0; x<roi.Size(0); x++) {
+                      for (size_t y=0; y<roi.Size(1); y++) {
+
+                          if (roi(x,y)==0){
+//                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) { // and also this one is useless
+//                              roi(x,y)=1; // this one actually I don't need
+//                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1; // this is now useless
+                              value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
+                              grayvalues.push_back(value);
+//                              mean_value += value;
+
+                          }
+                      }
+                  }
+
+
+                  roi(int(x_com+0.5), int(y_com+0.5))=2;
+
+                  const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
+                  const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
+                  std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
+                  std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
+                  float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
+//                  values.insert(std::make_pair(temp,median));
+                  std::pair<int,int> mypair;
+                  mypair.first = it_values->first.first;
+                  mypair.second = it_values->first.second;
+                  values.at(mypair) = median;
+
+                  it_values ++;
+
+//         }
+
+      }
+
+//      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
+//      {
+//          std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//      }
+
+//      std::cout << "number of centroids found: " << values.size() << " "  << std::endl;
 
 }
 
@@ -1085,7 +1379,6 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
     error = 0.0f;
 
-//    std::cout << "value size:" << values.size()<< std::endl;
     for (int i=0; i<values.size(); i++){
           error += (((I_int[i]-I[i])/I[i])*((I_int[i]-I[i])/I[i]));
     }
@@ -1104,6 +1397,8 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 }
 
 float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values) {
+
+
 
     //1. create system matrix, dimension of the matrix depends on the number of BB found
     float *param = new float[values.size()+3];
@@ -1133,11 +1428,10 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 
             }
             ++it_j;
-//            std::cout <<my_matrix[i][j] << "  " ; // might be OK.. high number because are distances to the power of 2 multiplied by their log
 
 
         }
-//        std::cout << std::endl;
+
         ++it_i;
     }
 
@@ -1194,16 +1488,9 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
          }
      }
 
-//    std::cout << "thin plates spline parameter: " << std::endl;
     for (i=0; i<values.size()+3; ++i){
         param[i] = static_cast<float>(qr_param[i]);
-//        std::cout << qr_param[i] << std::endl; // they seem OK
     }
-
-    // i could try to create image here.. so
-
-//    float dist[values.size()+3];
-//    for (size_t ind=0; i<)
 
 
     return param;
@@ -1211,57 +1498,43 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 }
 
 kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int, int>, float> &values, size_t *roi){
-    // go on from here tomorrow: I have the param and I have to compute the image.. do it in a smart way possibly
+
+
     size_t dimx = roi[2]-roi[0];
     size_t dimy = roi[3]-roi[1];
+
 
     size_t dims[2] = {dimx,dimy};
     kipl::base::TImage <float,2> interpolated_img(dims);
     interpolated_img = 0.0f;
-//    std::cout << interpolated_img.Size(0) << " " << interpolated_img.Size(1) << std::endl;
 
-    float *dist = new float[values.size()];
-    float sumdist = 0.0f;
+    float sumdist;
     std::map<std::pair<int,int>, float>::const_iterator it_i;
 
     for (size_t x=0; x<dimx; ++x) {
         for (size_t y=0; y<dimy; ++y){
              it_i = values.begin();
+
+                sumdist = 0.0;
+                float *dist = new float[values.size()];
+
             for (size_t ind=0; ind<values.size(); ++ind) {
-                dist[ind] = sqrt((it_i->first.first-x)*(it_i->first.first-x)+(it_i->first.second-y)*(it_i->first.second-y));
+                dist[ind] = sqrt((it_i->first.first-(x+roi[0]))*(it_i->first.first-(x+roi[0]))+(it_i->first.second-(y+roi[1]))*(it_i->first.second-(y+roi[1])));
                 if (dist[ind]!=0){
-                    sumdist = dist[ind]*dist[ind]*log(dist[ind])*parameters[ind]; // correct?
-                    sumdist += sumdist;
+                    sumdist += (dist[ind]*dist[ind]*log(dist[ind])*parameters[ind]); // correct?                }
                 }
-//                else {
-//                    dist[ind]=0;
-//                }
+
                 ++it_i;
             }
-            interpolated_img(x,y) = sumdist+parameters[values.size()]+parameters[values.size()+1]*y+parameters[values.size()+2]*x;
-//            interpolated_img(x,y) = parameters[0] + parameters[1]*static_cast<float>(x+roi[0])+parameters[2]*static_cast<float>(x+roi[0])*static_cast<float>(x+roi[0])+parameters[3]*static_cast<float>(x+roi[0])*static_cast<float>(y+roi[1])+parameters[4]*static_cast<float>(y+roi[1])+parameters[5]*static_cast<float>(y+roi[1])*static_cast<float>(y+roi[1]);
+
+                delete [] dist;
+
+            interpolated_img(x,y) = sumdist+parameters[values.size()]+parameters[values.size()+1]*(y+roi[1])+parameters[values.size()+2]*(x+roi[0]);
         }
     }
 
     return interpolated_img;
 
-//    for index_row = 1:size(interpolated_im,1)
-//        for index_col = 1:size(interpolated_im,2)
-//            for basis=1:20
-//                d(basis) = sqrt((interpolation_points(basis,1)-index_row)^2+(interpolation_points(basis,2)-index_col)^2);
-//                if (d(basis)~=0)
-//                    dd(basis) = X(basis)*d(basis)^2*log(d(basis));
-//                else
-//                    dd(basis) = 0;
-//                end
-//            end
-
-
-//            interpolated_im(index_row, index_col) = sum(dd)+X(21)+X(22)*index_col+X(23)*index_row;
-
-//        end
-
-//    end
 
 
 
@@ -1269,25 +1542,13 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagew
 
 kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, size_t *roi) {
 
-//    std::cout << "roi in interpolated black body image" << std::endl;
-//    std::cout << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3] << std::endl;
 
     size_t dimx = roi[2]-roi[0];
     size_t dimy = roi[3]-roi[1];
-//    std::cout << "dimx and dimy in interpolateblackbodyimage" << std::endl;
-//    std::cout << dimx << " " << dimy << std::endl;
 
-//    std::cout << "parameters in interpolate blackbody image" << std::endl;
-//    std::cout << parameters[0] << " "
-//                                  <<  parameters[1] << " " <<
-//                                       parameters[2] << " " <<
-//                                       parameters[3] << " "<<
-//                                       parameters[4] << " " <<
-//                                       parameters[5] << " " << std::endl;
     size_t dims[2] = {dimx,dimy};
     kipl::base::TImage <float,2> interpolated_img(dims);
     interpolated_img = 0.0f;
-//    std::cout << interpolated_img.Size(0) << " " << interpolated_img.Size(1) << std::endl;
 
     for (size_t x=0; x<dimx; x++) {
         for (size_t y=0; y<dimy; y++){
@@ -1320,8 +1581,6 @@ float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<flo
 
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask)
 {
-
-
 
     // 1. normalize image
 
@@ -1364,6 +1623,43 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
 }
 
+float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
+{
+    // 1. normalize image
+
+    kipl::base::TImage<float, 2> norm(bb.Dims());
+    kipl::base::TImage<float, 2> normdc(bb.Dims());
+    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    normdc -=dark;
+    norm -=dark;
+    norm /= (flat-=dark);
+
+    SegmentBlackBody(norm, normdc, mask, values);
+    float *tps_param = new float[values.size()+3];
+
+    tps_param = SolveThinPlateSplines(values);
+
+    return tps_param;
+
+}
+
+float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
+{
+
+    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+    BB_DC-=dark;
+
+    ComputeBlackBodyCentroids(BB_DC,mask, values);
+
+    float *tps_param = new float[values.size()+3];
+    tps_param = SolveThinPlateSplines(values);
+
+    return tps_param;
+}
+
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask, float &error)
 {
 
@@ -1379,27 +1675,7 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     norm -=dark;
     norm /= (flat-=dark);
 
-//    kipl::io::WriteTIFF32(norm,"~/repos/testdata/normBB.tif");
-//    kipl::io::WriteTIFF32(bb,"~/testdata/BB.tif");
-//    kipl::io::WriteTIFF32(flat,"~/repos/testdata/openBB.tif");
-
-    // thin plate spline stuff
-//    std::map<std::pair<int, int>, float> values;
-//    SegmentBlackBody(norm, normdc, mask, values);
-//    float *tps_param = new float[values.size()+3];
-//    tps_param = SolveThinPlateSplines(values);
-
-//    for (int i=0; i<values.size()+3; ++i){
-//        std::cout << tps_param[i] << std::endl;
-//    }
-
-//    size_t roi[4] = {0, 0, 1788, 2500};
-//    kipl::base::TImage<float,2> mythinimage = InterpolateBlackBodyImagewithSplines(tps_param, values, roi);
-//     kipl::io::WriteTIFF32(mythinimage,"TSP_image.tif");
-
     SegmentBlackBody(norm, mask);
-
-//    kipl::io::WriteTIFF32(mask,"~/testdata/mask.tif");
 
     kipl::base::TImage<float,2> BB_DC(bb.Dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
@@ -1410,11 +1686,10 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
     float * param = new float[6];
     float myerror;
-    param = ComputeInterpolationParameters(mask,BB_DC,myerror);
 
+    param = ComputeInterpolationParameters(mask,BB_DC,myerror);
     error = myerror;
 
-//    std::cout << "error in PrepareBlackBodyImage: " << error << std::endl;
 
     return param;
 
@@ -1445,11 +1720,6 @@ void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
     m_nProj = nProj; // to set eventually around where it is used
     m_nBBimages = nBB;
 
-//    std::cout << "SetAngles" << std::endl;
-//    std::cout << angles[0] << " " << angles[1] << " " << angles[2] << " " << angles[3] << std::endl;
-//    std::cout << m_nProj << std::endl;
-//    std::cout << m_nBBimages << std::endl;
-
 
 }
 
@@ -1463,6 +1733,50 @@ void ReferenceImageCorrection::SetDoseList(float *doselist){
         throw ImagingException("m_nProj was not set before calling ReferenceImageCorrection::SetDoseList",__FILE__,__LINE__);
     }
 
+}
+
+void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo, int nBBs)
+{
+    m_nProj = nProj; // not very smartly defined
+    ob_bb_parameters = new float[nBBs+3];
+    sample_bb_interp_parameters = new float[(nBBs+3)*m_nProj];
+
+    m_nBBimages = nBBSampleCount; // store how many images with BB and sample i do have
+    memcpy(ob_bb_parameters, ob_parameter, sizeof(float)*(nBBs+3));
+
+    switch(ebo) {
+    case(Interpolate) : {
+
+        sample_bb_parameters = new float[(nBBs+3)*m_nBBimages];
+        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nBBimages);
+        sample_bb_interp_parameters = InterpolateSplineGeneric(sample_bb_parameters, nBBs);
+
+
+        for (size_t i=0; i<m_nProj; i++){
+            for (size_t j=0; j<(nBBs+3); j++){
+                sample_bb_interp_parameters[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
+            }
+        }
+
+        break;
+    }
+    case(OneToOne) : {
+
+        if (m_nBBimages!=m_nProj){
+            throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
+        }
+        memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
+
+        break;
+    }
+    case(Average) : {
+
+        sample_bb_parameters = new float[nBBs+3];
+        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3));
+        sample_bb_interp_parameters = ReplicateSplineParameters(sample_bb_parameters, nProj, nBBs);
+        break;
+    }
+    }
 }
 
 
@@ -1510,6 +1824,96 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
     }
 
 
+}
+
+float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs)
+{
+    // it is assumed that angles are in order
+    float *interpolated_param = new float[(nBBs+3)*m_nProj];
+    float curr_angle;
+    float *small_a;
+    float *big_a;
+    float *bb_angles = new float[m_nBBimages];
+    float step;
+    int index_1;
+    int index_2;
+
+
+    for (size_t i=0; i<m_nBBimages; i++){
+        bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+    }
+
+
+    for (size_t i=0; i<m_nProj; i++){
+    //1. compute current angle for projection
+
+        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
+
+
+    //2. find two closest projection in BB data
+        if (i==0){
+            small_a = &bb_angles[0];
+            big_a = &bb_angles[1];
+            index_1=0;
+            index_2=(nBBs+3);
+        }
+
+        if(curr_angle<*small_a) {
+            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
+        }
+        else {
+            step = (curr_angle-*small_a)/(*big_a-*small_a);
+        }
+
+
+        float *temp_param = new float[nBBs+3];
+
+        for (size_t k=0; k<(nBBs+3);k++){
+            temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
+        }
+
+        memcpy(interpolated_param+i*(nBBs+3),temp_param,sizeof(float)*(nBBs+3));
+        delete[] temp_param;
+
+
+
+
+        if (curr_angle>=*big_a){ // se esco dal range incremento di 1
+
+
+
+            if(curr_angle>=bb_angles[m_nBBimages-1]) {
+
+                if (*big_a==bb_angles[m_nBBimages-1]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+                    index_1=index_2;
+                    index_2 =0;
+                }
+
+                small_a = &bb_angles[m_nBBimages-1];
+                big_a = &bb_angles[0];
+                step = (curr_angle-*small_a)/(360.0f-*small_a);
+
+
+
+            }
+            else {
+
+                index_1=index_2;
+                index_2 +=(nBBs+3);
+
+                small_a++;
+                big_a++;
+            }
+        }
+
+
+
+
+    }
+
+    delete [] bb_angles;
+
+    return interpolated_param;
 }
 
 float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
@@ -1610,7 +2014,6 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
 //    float *int_param = new float[6*n];
 
    // first copy the one that i already have
-    std::cout << "copy interpolated values" << std::endl;
     size_t index = 0;
     for (size_t i=0; i<6*n; i+=step*6){
         memcpy(interpolated_param+i, param+index, sizeof(float)*6);
@@ -1639,21 +2042,24 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
         }
     }
 
-//    std::cout <<" ---- END TEMP PARAMETER ----" << std::endl;
-//   std::cout << "INTERPOLATED PARAMETERS:" << std::endl;
-
-//   for (size_t i=0; i<=6*n; i+=6){
-
-//       for (size_t j=0; j<6; j++){
-//           std::cout << interpolated_param[i+j] << " ";
-//       }
-//       std::cout << std::endl;
-//   }
 
     return interpolated_param;
 
 
 
+}
+
+float *ReferenceImageCorrection::ReplicateSplineParameters(float *param, size_t n, int nBBs)
+{
+    float *interpolated_param = new float[(nBBs+3)*(n+1)];
+    int index=0;
+
+        for (int i=0; i<=n; i++){
+            memcpy(interpolated_param+index,param,sizeof(float)*(nBBs+3));
+            index+=(nBBs+3);
+        }
+
+    return interpolated_param;
 }
 
 
@@ -1667,15 +2073,6 @@ float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n)
             index+=6;
         }
 
-//       std::cout << "Replicated PARAMETERS:" << std::endl;
-
-//       for (size_t i=0; i<=6*n; i+=6){
-
-//           for (size_t j=0; j<6; j++){
-//               std::cout << interpolated_param[i+j] << " ";
-//           }
-//           std::cout << std::endl;
-//       }
 
     return interpolated_param;
 }
@@ -1881,8 +2278,8 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
     float Pdose = 0.0f;
 
-//    float defaultdose=-log(1.0f/(m_fOpenBeamDose-m_fDarkDose));
-    float defaultdose= 0.0f;
+    float defaultdose=-log(1.0f/(m_fOpenBeamDose-m_fDarkDose));
+//    float defaultdose= 0.0f;
 
 
 //    float logdose = log(dose<1 ? 1.0f : dose);
@@ -1930,10 +2327,6 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
                     #pragma omp parallel for firstprivate(pImgBB, pDark)
                     for (int i=0; i<N; i++) {
-
-//                        if (m_bHaveBBDoseROI &&  m_bHaveDoseROI){
-//                             pImgBB[i] *=(dose/tau);
-//                        }
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
                         if (fProjPixel<=0){
@@ -2400,7 +2793,7 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod > int_types;
     int_types["Polynomial"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::Polynomial;
-    int_types["ThinPLateSplines"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::ThinPlateSplines;
+    int_types["ThinPlateSplines"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::ThinPlateSplines;
 
     if (int_types.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
@@ -2416,7 +2809,7 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInte
 
     switch (eint) {
         case ImagingAlgorithms::ReferenceImageCorrection::Polynomial: str="Polynomial"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines: str="ThinPLateSplines"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines: str="ThinPlateSplines"; break;
         default                                     	: return "Undefined Interpolation method"; break;
     }
     return  str;
