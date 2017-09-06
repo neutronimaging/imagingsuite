@@ -91,6 +91,9 @@ protected:
     float ffirstAngle; /// first angle for BB sample image, used for BB interpolation option
     float flastAngle; /// last angle for BB sample image, used for BB interpolation option
 
+    float *ob_bb_param;
+    float *sample_bb_param;
+
     int GetnProjwithAngle(float angle); /// compute the index of projection data at a given angle
 
 
@@ -132,6 +135,9 @@ protected:
 
 
     float computedose(kipl::base::TImage<float,2>&img);
+
+    void PreparePolynomialInterpolationParameters(); /// get the interpolation parameters for the polynomial case
+    int PrepareSplinesInterpolationParameters(); /// get the interpolation parameters for the thin plates spline case
 
 private:
     int m_nWindow; /// apparentely not used
