@@ -1213,7 +1213,6 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
               case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
 
-                  std::map<std::pair<int, int>, float> values_bb;
 
                           bb_sample_parameters = new float[values.size()+3]; // i am assuming there is the same number of BBs
                           sample_bb_param = new float[values.size()+3];
@@ -1236,8 +1235,9 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                           if (bSameMask){
                              mMaskBB = obmask;
+                             values_bb = values;
                              mask_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb, mMaskBB, values_bb);
-//                             values_bb = values;
+//
                           }
                           else {
                                kipl::base::TImage<float,2> mask(sample.Dims());
@@ -1292,7 +1292,6 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                      for (size_t i=0; i<nBBSampleCount; i++) {
 
-                         std::map<std::pair<int, int>, float> values_bb;
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
                          sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
 
@@ -1302,9 +1301,10 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                              if (bSameMask){
                                 mMaskBB = obmask;
-//                                values_bb = values;
+                                values_bb = values;
                                 temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
 //                                temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
+                                m_corrector.SetSplineSampleValues(values_bb);
                              }
                              else {
                                   kipl::base::TImage<float,2> mask(sample.Dims());
@@ -1313,6 +1313,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
 //                                  temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
                                   mMaskBB = mask; // or memcpy
+                                  m_corrector.SetSplineSampleValues(values_bb);
                              }
 
                              if (bUseNormROIBB && bUseNormROI){
@@ -1340,6 +1341,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                              memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*(values.size()+3));
 
+
                          }
 
                          else {
@@ -1366,8 +1368,6 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
 
                          }
-
-                         values_bb.clear();
                  }
 
                      memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3)*nBBSampleCount);
