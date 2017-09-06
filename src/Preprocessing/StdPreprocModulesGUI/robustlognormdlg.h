@@ -59,6 +59,8 @@ private slots:
     void on_button_BBexternal_path_clicked();
 
 
+    void on_combo_InterpolationMethod_activated(const QString &arg1);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();

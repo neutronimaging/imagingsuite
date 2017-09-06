@@ -232,6 +232,8 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->spin_first_extBB->setValue(nBBextFirstIndex);
     ui->spin_count_ext_BB->setValue(nBBextCount);
 
+    ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
+
 
 
 //    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
@@ -277,6 +279,7 @@ void RobustLogNormDlg::UpdateParameters(){
     string2enum(ui->combo_BBoptions->currentText().toStdString(), m_BBOptions);
     string2enum(ui->combo_IntMeth_X->currentText().toStdString(), m_xInterpOrder);
     string2enum(ui->combo_IntMeth_Y->currentText().toStdString(), m_yInterpOrder);
+    string2enum(ui->combo_InterpolationMethod->currentText().toStdString(), m_InterpMethod);
 
     ffirstAngle = ui->spinFirstAngle->value();
     flastAngle = ui->spinLastAngle->value();
@@ -779,3 +782,23 @@ void RobustLogNormDlg::on_button_BBexternal_path_clicked()
 
 }
 
+
+void RobustLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
+{
+    if (arg1.toStdString()=="Polynomial") {
+        ui->combo_IntMeth_X->setEnabled(true);
+        ui->combo_IntMeth_Y->setEnabled(true);
+        ui->label_23->setEnabled(true);
+        ui->label_24->setEnabled(true);
+        ui->errorBrowser->setEnabled(true);
+    }
+
+    if (arg1.toStdString()=="ThinPlateSplines"){
+        ui->combo_IntMeth_X->setEnabled(false);
+        ui->combo_IntMeth_Y->setEnabled(false);
+        ui->label_23->setEnabled(false);
+        ui->label_24->setEnabled(false);
+        ui->errorBrowser->setEnabled(false);
+    }
+
+}
