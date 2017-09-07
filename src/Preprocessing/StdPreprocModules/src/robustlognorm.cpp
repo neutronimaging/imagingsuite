@@ -316,26 +316,27 @@ void RobustLogNorm::PrepareBBData(){
 
     size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
 
-    switch (m_InterpMethod) {
-    case (ImagingAlgorithms::ReferenceImageCorrection::Polynomial): {
-        PreparePolynomialInterpolationParameters();
+        switch (m_InterpMethod) {
+        case (ImagingAlgorithms::ReferenceImageCorrection::Polynomial): {
+            PreparePolynomialInterpolationParameters();
 
-        if (nBBCount!=0 && nBBSampleCount!=0) {
-             m_corrector.SetInterpParameters(ob_bb_param, sample_bb_param,nBBSampleCount, nProj, m_BBOptions);
+            if (nBBCount!=0 && nBBSampleCount!=0) {
+                 m_corrector.SetInterpParameters(ob_bb_param, sample_bb_param,nBBSampleCount, nProj, m_BBOptions);
+            }
+
+            break;
+        }
+        case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
+            int nBBs = PrepareSplinesInterpolationParameters();
+
+            if (nBBCount!=0 && nBBSampleCount!=0) {
+                m_corrector.SetSplinesParameters(ob_bb_param, sample_bb_param, nBBSampleCount, nProj, m_BBOptions, nBBs); // i also need the coordinates.
+            }
+            break;
+        }
+        default: throw ReconException("Unknown m_InterpMethod in RobustLogNorm::PrepareBBData()", __FILE__, __LINE__);
         }
 
-        break;
-    }
-    case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
-        int nBBs = PrepareSplinesInterpolationParameters();
-
-        if (nBBCount!=0 && nBBSampleCount!=0) {
-            m_corrector.SetSplinesParameters(ob_bb_param, sample_bb_param, nBBSampleCount, nProj, m_BBOptions, nBBs); // i also need the coordinates.
-        }
-        break;
-    }
-    default: throw ReconException("Unknown m_InterpMethod in RobustLogNorm::PrepareBBData()", __FILE__, __LINE__);
-    }
 
 
 // OLD CODE (WORKING)
@@ -920,8 +921,12 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
          }
 
          case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+//             std::cout << "OneToOne" << std::endl;
+
                 bb_sample_parameters = new float[6*nBBSampleCount];
                 sample_bb_param = new float[6*nBBSampleCount];
+                temp_parameters = new float[6];
+
                 float dosesample;
                 float current_dose;
 
@@ -1017,9 +1022,9 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 
          }
 
-         delete [] temp_parameters;
-         delete [] bb_ob_param;
-         delete [] bb_sample_parameters;
+//         delete [] temp_parameters;
+//         delete [] bb_ob_param;
+//         delete [] bb_sample_parameters;
 }
 
 int RobustLogNorm::PrepareSplinesInterpolationParameters() {
@@ -1242,7 +1247,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                           else {
                                kipl::base::TImage<float,2> mask(sample.Dims());
                                mask = 0.0f;
-                               mask_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark, samplebb_temp,mask,values_bb);
+                               mask_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark, samplebb_temp, mask,values_bb);
 //                               mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
                                mMaskBB = mask; // or memcpy
                           }
@@ -1285,8 +1290,11 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
               }
 
               case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+
                      bb_sample_parameters = new float[(values.size()+3)*nBBSampleCount];
                      sample_bb_param = new float[(values.size()+3)*nBBSampleCount];
+                     temp_parameters = new float[values.size()+3];
+
                      float dosesample;
                      float current_dose;
 
@@ -1310,7 +1318,6 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                                   kipl::base::TImage<float,2> mask(sample.Dims());
                                   mask = 0.0f;
                                   temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
-
 //                                  temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
                                   mMaskBB = mask; // or memcpy
                                   m_corrector.SetSplineSampleValues(values_bb);
@@ -1320,6 +1327,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
              //                     prenormalize interpolation parameters with dose
 
                                  current_dose= fBlackDoseSample;
+
 
                                  if (bPBvariante) {
                                          kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImagewithSplines(temp_parameters,values_bb,doseBBroi);
@@ -1345,7 +1353,8 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                          }
 
                          else {
-                             temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB,values_bb);
+
+                               temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB,values_bb);
 //                             temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
                              current_dose= fBlackDoseSample;
 
@@ -1364,7 +1373,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                                   temp_parameters[j]*=(dosesample/tau);
                              }
 
-                             memcpy(bb_sample_parameters+i*(values.size()+3), temp_parameters, sizeof(float)*6);
+                             memcpy(bb_sample_parameters+i*(values.size()+3), temp_parameters, sizeof(float)*(values.size()+3));
 
 
                          }
@@ -1386,9 +1395,9 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
               }
 
-              delete [] temp_parameters;
-              delete [] bb_ob_param;
-              delete [] bb_sample_parameters;
+//              delete [] temp_parameters;
+//              delete [] bb_ob_param;
+//              delete [] bb_sample_parameters;
 
 
     return values.size();
