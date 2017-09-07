@@ -185,6 +185,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     }
 
     if(!useBB && !useExtBB) {
+//        std::cout << "noBB option" << std::endl;
         PrepareReferences(); // original way
     }
 
@@ -250,7 +251,7 @@ void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
 kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage<float,2> &img, float dose)
 {
     if (m_bComputeLogarithm) {
-        //        kipl::io::WriteTIFF32(img,"prelogimg.tif");
+//        kipl::io::WriteTIFF32(img,"prelogimg.tif");
         ComputeLogNorm(img,dose);
 //        kipl::io::WriteTIFF32(img,"img.tif");
     }
@@ -264,13 +265,13 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *dose)
 {
 	kipl::base::TImage<float, 2> slice(img.Dims());
-    float *current_param;
+
 
 	for (size_t i=0; i<img.Size(2); i++) {
 
         if (m_bHaveBlackBody) {
 
-
+            float *current_param;
 
             switch (m_InterpMethod) {
             case Polynomial:{
@@ -278,6 +279,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
                 m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
                 m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
+                delete[] current_param;
                 break;
             }
             case ThinPlateSplines:{
@@ -304,6 +306,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
                 m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
                 m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
+                    delete[] current_param;
                 break;
             }
             default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
@@ -341,13 +344,13 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
         }
 
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
-//        std::cout << "before Process" << std::endl;
+//        std::cout << "before Process: " << i << std::endl;
         Process(slice,dose[i]);
 //        std::cout << "after process" << std::endl;
         memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
 	}
 
-    delete[] current_param;
+
 }
 
 void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask){
@@ -1806,6 +1809,8 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         break;
     }
     case(OneToOne) : {
+//        std::cout << "OneToOne.... " << std::endl;
+//        std::cout << "copying parameters" << std::endl;
 
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
@@ -2392,6 +2397,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
     }
     else {
+//        std::cout << "noBB option" << std::endl;
         if (m_bHaveDarkCurrent) {
             if (m_bHaveOpenBeam) {
     //                #pragma omp parallel for firstprivate(pFlat,pDark)
