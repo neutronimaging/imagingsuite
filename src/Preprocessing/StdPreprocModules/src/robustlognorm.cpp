@@ -286,8 +286,8 @@ void RobustLogNorm::LoadExternalBBData(size_t *roi){
 
 void RobustLogNorm::PrepareBBData(){
 
-
-//    std::cout << "PrepareBBData begin--" << std::endl;
+    logger(kipl::logging::Logger::LogMessage,"PrepareBBData begin--");
+    std::cout << "PrepareBBData begin--" << std::endl;
     if (flatname.empty() && nOBCount!=0)
         throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
     if (darkname.empty() && nDCCount!=0)
@@ -327,7 +327,12 @@ void RobustLogNorm::PrepareBBData(){
             break;
         }
         case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
+            std::cout << "ThinPlateSplines" << std::endl;
+             logger(kipl::logging::Logger::LogMessage,"ThinPlateSplines");
+
             int nBBs = PrepareSplinesInterpolationParameters();
+
+             logger(kipl::logging::Logger::LogMessage,"After PrepareSplinesInterpolationParameters ");
 
             if (nBBCount!=0 && nBBSampleCount!=0) {
                 m_corrector.SetSplinesParameters(ob_bb_param, sample_bb_param, nBBSampleCount, nProj, m_BBOptions, nBBs); // i also need the coordinates.
@@ -1074,6 +1079,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
       }
      }
 
+
 //     std::cout << (fFlatBBdose-fdarkBBdose)/(fBlackDose*tau) << std::endl;// very close to 1
 
 //          kipl::base::TImage<float,2> mythinimage = m_corrector.InterpolateBlackBodyImagewithSplines(bb_ob_param, values, BBroi);
@@ -1094,7 +1100,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
               switch (m_BBOptions) {
 
               case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-//                      std::cout << "ciao interpolate" << std::endl;
+
                       bb_sample_parameters = new float[(values.size()+3)*nBBSampleCount]; // these two are exactly the same..
                       sample_bb_param = new float[(values.size()+3)*nBBSampleCount];
                       temp_parameters = new float[(values.size()+3)];
@@ -1110,7 +1116,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 //                          std::cout << "doselist: " << std::endl;
 
                           float *doselist = new float[nProj];
-                          for (size_t i=0; i<int(nProj); i++) {
+                          for (size_t i=0; i<nProj; i++) {
                               doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
                           }
 
