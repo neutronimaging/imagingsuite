@@ -10,6 +10,7 @@
 #include <base/timage.h>
 #include <logging/logger.h>
 #include "../include/averageimage.h"
+#include <QTextStream>
 
 
 
@@ -130,7 +131,6 @@ protected:
     void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
     int* repeat_matrix(int* source, int count, int expand); /// repeat matrix. not used.
     float computedose(kipl::base::TImage<float,2>&img); /// duplicate.. to move in timage probably or something like this
-
 
 	bool m_bHaveOpenBeam;
 	bool m_bHaveDarkCurrent;

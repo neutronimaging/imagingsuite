@@ -582,6 +582,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
     kipl::base::TImage<float,2> maskOtsu(img.Dims());
     maskOtsu= 0.0f;
 
+    std::map<std::pair<int, int>, float> new_values;
+
     float *p_mask = mask.GetDataPtr();
     float *p_otsu = maskOtsu.GetDataPtr();
     for (int i=0; i<mask.Size(); i++)
@@ -688,10 +690,16 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 
 
 //            std::cout << "pos: " << pos << std::endl; // it is the number of potential BBs that I have found: that one is correct, error comes later on
+//      ostringstream msg;
+//      msg.str(""); msg<<"pos= "<<pos;
+//      logger(kipl::logging::Logger::LogMessage,msg.str());
 
       std::map<std::pair<int, int>, float>::const_iterator it_values = values.begin();
 
       for (size_t bb_index=0; bb_index<pos; ++bb_index){
+
+//          msg.str(""); msg<<"bb_index= "<<bb_index;
+//          logger(kipl::logging::Logger::LogMessage,msg.str());
 
           const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
           kipl::base::TImage<float,2> roi(roi_dim);
@@ -743,6 +751,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           // check on BB dimensions:
 //          if (size>=min_area) { //this is now wrong
 
+          if (size!=0) { // check on BB existance
+
 
               x_com /=sum_roi;
               y_com /=sum_roi;
@@ -770,24 +780,28 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
                   }
 
 
-                  roi(int(x_com+0.5), int(y_com+0.5))=2;
+                      roi(int(x_com+0.5), int(y_com+0.5))=2;
+                      const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
+                      const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
+                      std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
+                      std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
+                      float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
+    //                  values.insert(std::make_pair(temp,median));
+                      std::pair<int,int> mypair;\
+                      mypair = std::make_pair(it_values->first.first, it_values->first.second);
+                      mypair.first = it_values->first.first;
+                      mypair.second = it_values->first.second;
+                      values.at(mypair) = median;
+//                      logger(kipl::logging::Logger::LogMessage,"before insert");
+//                      new_values.insert(std::make_pair(mypair, median));
+//                      logger(kipl::logging::Logger::LogMessage,"after insert");
+                       ++it_values;
 
-                  const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
-                  const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
-                  std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
-                  std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
-                  float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
-//                  values.insert(std::make_pair(temp,median));
-                  std::pair<int,int> mypair;
-                  mypair.first = it_values->first.first;
-                  mypair.second = it_values->first.second;
-                  values.at(mypair) = median;
-
-                  it_values ++;
-
-//         }
+         }
 
       }
+
+//      return new_values;
 
 //      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
 //      {
