@@ -134,6 +134,8 @@ private slots:
 
     void on_spinSubVolumeSizeZ1_valueChanged(int arg1);
 
+    void on_actionRegister_for_news_letter_triggered();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

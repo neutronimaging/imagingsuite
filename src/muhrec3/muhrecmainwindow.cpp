@@ -685,6 +685,12 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
     rect=rect.normalized();
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
+    ui->spinSlicesFirst->setMinimum(dims[1]);
+    ui->spinSlicesFirst->setMaximum(dims[3]);
+
+    ui->spinSlicesLast->setMinimum(dims[1]);
+    ui->spinSlicesLast->setMaximum(dims[3]);
+
     SlicesChanged(0);
     CenterOfRotationChanged();
     UpdateMemoryUsage(dims);
@@ -1874,6 +1880,41 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
 
 void MuhRecMainWindow::on_buttonGetPathDC_clicked()
 {
+//    std::ostringstream msg;
+//    kipl::io::DirAnalyzer da;
+//    kipl::io::FileItem fi=da.GetFileMask(ui->editProjectionMask->text().toStdString());
+
+//    if (fi.m_sExt=="hdf"){
+//        ui->editDarkMask->setText(ui->editProjectionMask->text());
+//    }
+//    else {
+//        std::string darkname=fi.m_sPath+"dc_*."+fi.m_sExt;
+//        std::vector<std::string> flist=da.GetDirList(darkname);
+//        if (flist.size()==0) {
+//            darkname=fi.m_sPath+"dark_*."+fi.m_sExt;
+//            flist=da.GetDirList(darkname);
+//        }
+
+//        if (flist.size()!=0) {
+//            int c=0;
+//            int f=0;
+//            int l=0;
+//            fi=da.GetFileMask(flist.front());
+//            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+
+//            msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+//            logger(logger.LogMessage,msg.str());
+
+//            ui->editDarkMask->setText(QString::fromStdString(fi.m_sMask));
+//            ui->spinFirstDark->setValue(f);
+//            ui->spinDarkCount->setValue(c);
+//        }
+//        else {
+//            ui->editDarkMask->setText(ui->editProjectionMask->text());
+//        }
+//    }
+
+
     ui->editDarkMask->setText(ui->editProjectionMask->text());
 }
 
@@ -2205,4 +2246,15 @@ void MuhRecMainWindow::SlicesCBCTChanged(int x)
                    ui->spinSubVolumeSizeZ1->value());
 
     ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
+}
+
+void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
+{
+    QUrl url=QUrl("http://www.imagingscience.ch/newsletter/");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link http://www.imagingscience.ch/newsletter/");
+        dlg.exec();
+    }
+
 }
