@@ -69,18 +69,20 @@ void kiplIOTest::testFileItem()
     QVERIFY(fi.m_nIndex==0);
     QVERIFY(fi.m_sExt=="tif");
     QVERIFY(fi.m_sMask=="noname_####.tif");
+    QVERIFY(fi.m_sPath=="");
 
-    kipl::io::FileItem fi2("hepp_####.abc",1,"abc");
+    kipl::io::FileItem fi2("hepp_####.abc",1,"abc","/home/data/");
     QVERIFY(fi2.m_nIndex==1);
     QVERIFY(fi2.m_sExt=="abc");
     QVERIFY(fi2.m_sMask=="hepp_####.abc");
+
 
     fi=fi2;
 
     QVERIFY(fi2.m_nIndex==fi.m_nIndex);
     QVERIFY(fi2.m_sExt==fi.m_sExt);
     QVERIFY(fi2.m_sMask==fi.m_sMask);
-
+    QVERIFY(fi2.m_sPath==fi.m_sPath);
 }
 
 void kiplIOTest::testDirAnalyzer()
@@ -95,36 +97,46 @@ void kiplIOTest::testDirAnalyzer()
     QVERIFY(fi.m_nIndex==1234);
     QVERIFY(fi.m_sExt=="xyz");
     QVERIFY(fi.m_sMask=="hepp_####.xyz");
+    QVERIFY(fi.m_sPath=="");
 
     kipl::io::FileItem fi2=di.GetFileMask("hopp2_56780.abc");
 
     QVERIFY(fi2.m_nIndex==56780);
     QVERIFY(fi2.m_sExt=="abc");
     QVERIFY(fi2.m_sMask=="hopp2_#####.abc");
+    QVERIFY(fi2.m_sPath=="");
 
     kipl::io::FileItem fi3=di.GetFileMask("hopp567.xyz");
 
     QVERIFY(fi3.m_nIndex==567);
     QVERIFY(fi3.m_sExt=="xyz");
     QVERIFY(fi3.m_sMask=="hopp###.xyz");
+    QVERIFY(fi3.m_sPath=="");
 
-//    std::string path="E:\\P08062_wood\\raw_CCD";
+    std::string fname="/home/data/hopp_567.xyz";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::FileItem fi4=di.GetFileMask(fname);
+
+    QVERIFY(fi4.m_nIndex==567);
+    QVERIFY(fi4.m_sExt=="xyz");
+    QVERIFY(fi4.m_sMask=="/home/data/hopp_###.xyz");
+    std::cout<<fi4.m_sPath<<std::endl;
+    QVERIFY(fi4.m_sPath=="/home/data/");
+
+//    std::string path="\\P08062_wood\\raw_CCD";
+
     std::string path="/";
     std::vector<std::string> dirlist=di.GetDirList(path);
 
     int cnt,first,last;
-//    for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
-//        std::cout<<*it<<", ";
 
-//    std::cout<<std::endl;
-//    di.AnalyzeMatchingNames("E:\\P08062_wood\\raw_CCD\\wood_####.fits",cnt,first,last);
-//    std::cout<<cnt<<", "<<first<<", "<<last<<std::endl;
 
     QDir dir("/");
 
     QStringList qdirlist=dir.entryList(QDir::AllEntries | QDir::Hidden);
     std::ostringstream msg;
-    msg<<"di size="<<dirlist.size()<<"qdir size="<<qdirlist.size();
+    msg<<"di size="<<dirlist.size()<<", qdir size="<<qdirlist.size();
+
     QVERIFY2(qdirlist.size()==static_cast<int>(dirlist.size()), msg.str().c_str());
 
     for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)

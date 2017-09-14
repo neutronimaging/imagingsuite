@@ -31,14 +31,16 @@ bool FileExists( const std::string &Filename )
 FileItem::FileItem() :
     m_sMask("noname_####.tif"),
     m_nIndex(0),
-    m_sExt("tif")
+    m_sExt("tif"),
+    m_sPath("")
 {
 }
 
-FileItem::FileItem(std::string mask, int index, std::string ext) :
+FileItem::FileItem(std::string mask, int index, std::string ext, std::string path) :
     m_sMask(mask),
     m_nIndex(index),
-    m_sExt(ext)
+    m_sExt(ext),
+    m_sPath(path)
 {
 
 }
@@ -113,7 +115,12 @@ FileItem DirAnalyzer::GetFileMask(std::string str)
     if ((epos!=std::string::npos) && (numstart<epos))
         ext=str.substr(epos+1);
 
-    return FileItem(mask,value,ext);
+    std::string path="";
+    epos=str.find_last_of(kipl::strings::filenames::slash);
+    if (epos!=std::string::npos)
+        path=str.substr(0,epos+1);
+
+    return FileItem(mask,value,ext,path);
 }
 
 void DirAnalyzer::AnalyzeMatchingNames(std::string mask,

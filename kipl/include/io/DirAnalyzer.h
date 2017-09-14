@@ -21,11 +21,12 @@ public:
     /// \param mask A file mask with wildcard for file index
     /// \param index the index number of the file
     /// \param ext file extension of the file
-    FileItem(std::string mask, int index, std::string ext);
+    FileItem(std::string mask, int index, std::string ext, std::string path);
 
     std::string m_sMask;    ///< File name mask
     int m_nIndex;           ///< File index number
     std::string m_sExt;     ///< File extension
+    std::string m_sPath;
 };
 
 
