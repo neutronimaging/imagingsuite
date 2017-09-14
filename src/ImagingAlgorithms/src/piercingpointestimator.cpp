@@ -43,10 +43,17 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
     ComputeEstimate(cimg);
 
     pair<float,float> position=LocateMax();
-    logger(logger.LogMessage,"Got max");
+    std::ostringstream msg;
+    msg.str("");
+    msg<<"Got max "<<position.first<<", "<<position.second;
+    logger(logger.LogMessage,msg.str());
+
     position.first  += crop[0];
     position.second += crop[1];
 
+    msg.str("");
+    msg<<"Adjusted max "<<position.first<<", "<<position.second;
+    logger(logger.LogMessage,msg.str());
     return position;
 }
 
@@ -139,33 +146,28 @@ pair<float,float> PiercingPointEstimator::LocateMax()
     logger(logger.LogMessage,"Enter locate max");
     pair<float,float> position;
 
-    Array2D< double > H(2,2, 0.0);
+    Array2D< float > H(2,2, 0.0);
 
     H[0][0] = 2*parameters[4];
     H[0][1] =   parameters[3];
     H[1][0] =   parameters[3];
     H[1][1] = 2*parameters[5];
 
-    Array1D< double > I(2, 0.0);
+    Array1D< float > I(2, 0.0);
 
     I[0]    =  -parameters[1];
     I[1]    =  -parameters[2];
 
     logger(logger.LogMessage,"Initialize");
-    JAMA::QR<double> qr(H);
-    Array1D< double > pos(2, 0.0);
+    JAMA::QR<float> qr(H);
+    Array1D< float > pos(2, 0.0);
     pos = qr.solve(I);
 
     logger(logger.LogMessage,"Equation solved");
- //   position = make_pair(static_cast<float>(pos[0]),static_cast<float>(pos[1]));
- //   position.first=static_cast<float>(pos[0]);
- //   position.second=static_cast<float>(pos[1]);
-    float a = static_cast<float>(pos[0]);
-    float b = static_cast<float>(pos[1]);
-    position = make_pair(1.0f,2.0f);
+    position = make_pair(pos[0], pos[1]);
+
     msg.str("");
-//    msg<<"Got pair "<<position.first<<", "<<position.second<<", "<<a<<", "<<b;
-        msg<<"Got pair "<<position.first<<", "<<position.second<<", ";
+    msg<<"Got pair "<<position.first<<", "<<position.second<<", ";
     logger(logger.LogMessage,msg.str());
     return position;
 }
