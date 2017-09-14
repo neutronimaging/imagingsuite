@@ -183,7 +183,7 @@ void FdkReconBase::SetROI(size_t *roi)
 //    msg<<"Projection buffer dimensions "<<projections<<std::endl;
 //    logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-//    BuildCircleMask();
+    BuildCircleMask();
 //    MatrixCenterX = volume.Size(1)/2;
 
 }
