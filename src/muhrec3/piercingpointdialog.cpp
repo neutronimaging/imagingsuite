@@ -119,12 +119,17 @@ void PiercingPointDialog::on_pushButton_estimate_clicked()
 
     UpdateConfig();
     logger(logger.LogMessage,"Pre estimate");
-    pair<float,float> p2=pe(ob,dc,correctGain,useROI ? roi : nullptr );
+    position=pe(ob,dc,correctGain,useROI ? roi : nullptr );
     logger(logger.LogMessage,"post estimate");
     std::ostringstream msg;
     msg<<"Found pp at ["<<position.first<<", "<<position.second<<"]";
     logger(logger.LogMessage,msg.str());
-    QPointF pos(position.first,position.second);
+    msg.str("");
+    msg<<"Got pair "<<position.first<<", "<<position.second<<", ";
+    logger(logger.LogMessage,msg.str());
     UpdateDialog();
+    QPointF pos(position.first,position.second);
+
+
     ui->viewer->set_marker(QtAddons::QMarker(QtAddons::PlotGlyph_Plus,pos,QColor("red"),10),0);
 }
