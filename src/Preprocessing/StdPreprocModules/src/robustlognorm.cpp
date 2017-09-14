@@ -1465,7 +1465,10 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
 
-    int diffroi[4] = {int(BBroi[0]), int(BBroi[1]), int(BBroi[2]), int(BBroi[3])}; // it is now just the BBroi position, makes more sense
+    int diffroi[4] = {static_cast<int>(BBroi[0]),
+                      static_cast<int>(BBroi[1]),
+                      static_cast<int>(BBroi[2]),
+                      static_cast<int>(BBroi[3])}; // it is now just the BBroi position, makes more sense
 
 
     m_corrector.SetRadius(radius);
