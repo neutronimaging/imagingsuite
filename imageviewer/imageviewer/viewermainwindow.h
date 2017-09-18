@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 #include <base/timage.h>
+#include <io/analyzefileext.h>
 
 namespace Ui {
 class ViewerMainWindow;
@@ -21,9 +22,19 @@ public:
 private slots:
     void on_actionOpen_triggered();
 
+    void on_horizontalSlider_sliderMoved(int position);
+
+    void on_spinBox_valueChanged(int arg1);
+
+    void dragEnterEvent(QDragEnterEvent *e);
+    void dropEvent(QDropEvent *e);
+
 private:
     void LoadImage(std::string fname,kipl::base::TImage<float,2> &img);
     Ui::ViewerMainWindow *ui;
+
+    std::string m_fname;
+    kipl::io::eExtensionTypes m_ext;
 };
 
 #endif // VIEWERMAINWINDOW_H
