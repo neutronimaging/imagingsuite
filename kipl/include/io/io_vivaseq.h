@@ -1,12 +1,13 @@
 #ifndef VIVASEQ_H
 #define VIVASEQ_H
 
+#include "../kipl_global.h"
 #include <string>
 
 #include "../base/timage.h"
 namespace kipl { namespace io {
 
-class ViVaSEQHeader
+class KIPLSHARED_EXPORT ViVaSEQHeader
 {
 public:
     ViVaSEQHeader();
@@ -50,15 +51,15 @@ public:
     float voltage[16];
 };
 
-int GetViVaSEQHeader(std::string fname, ViVaSEQHeader *header);
+int KIPLSHARED_EXPORT GetViVaSEQHeader(std::string fname, ViVaSEQHeader *header);
 
-int GetViVaSEQDims(std::string fname,size_t *dims, int &numframes);
+int KIPLSHARED_EXPORT GetViVaSEQDims(std::string fname,size_t *dims, int &numframes);
 
-int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t *roi=nullptr, int first_frame=-1, int last_frame=0, int frame_step=1);
+int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t *roi=nullptr, int first_frame=-1, int last_frame=0, int frame_step=1);
 
-int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t *roi=nullptr);
+int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t *roi=nullptr);
 
-int WriteViVaSEQ(std::string fname, kipl::base::TImage<float,3> & img, float low=0.0f, float high=0.0f);
+int KIPLSHARED_EXPORT WriteViVaSEQ(std::string fname, kipl::base::TImage<float,3> & img, float low=0.0f, float high=0.0f);
 
 }
 }

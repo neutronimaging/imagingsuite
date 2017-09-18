@@ -94,7 +94,7 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t *roi
 
         img.Resize(dims);
 
-        const int buffersize = img.Size(0) * header.bytesPerPixel;
+        const size_t buffersize = img.Size(0) * header.bytesPerPixel;
         char * buffer = new char[buffersize];
 
         for (int i=first; i<last; i+=frame_step) {
