@@ -26,7 +26,8 @@ enum eExtensionTypes {
     ExtensionMAT,   ///< Images are stored in the matlab binary format (deprecated since a several years)
     ExtensionHDF,    ///< Images are stored using a HDF format
     ExtensionHDF4,    ///< Images are stored using a HDF4 format
-    ExtensionHDF5    ///< Images are stored using a HDF5 format
+    ExtensionHDF5,    ///< Images are stored using a HDF5 format
+    ExtensionSEQ    ///< Images are stored in the Varian ViVa SEQ format
 };
 
 eExtensionTypes KIPLSHARED_EXPORT GetFileExtensionType(std::string fname);

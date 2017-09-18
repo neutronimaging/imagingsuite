@@ -8,6 +8,7 @@
 #include <base/KiplException.h>
 #include <io/io_fits.h>
 #include <io/DirAnalyzer.h>
+#include <io/io_vivaseq.h>
 #include <strings/filenames.h>
 
 class kiplIOTest : public QObject
@@ -27,6 +28,8 @@ private Q_SLOTS:
     void testFileItem();
     void testDirAnalyzer();
     void testCountLinesInFile();
+    void testSEQHeader();
+    void testSEQRead();
 };
 
 kiplIOTest::kiplIOTest()
@@ -185,7 +188,8 @@ void kiplIOTest::testCountLinesInFile()
     std::ofstream outfile(fname.c_str());
 
     int N=5;
-    for (int i=0; i<N; i++) {
+    for (int i=0; i<N; i++)
+    {
         outfile<<i<<", text"<<i<<".fits"<<std::endl;
     }
 
@@ -195,6 +199,52 @@ void kiplIOTest::testCountLinesInFile()
     da.AnalyzeFileList(fname,cnt);
 
     QVERIFY(N==cnt);
+}
+
+
+void kiplIOTest::testSEQHeader()
+{
+   std::ostringstream msg;
+   kipl::io::ViVaSEQHeader header;
+
+   msg<<"sizeof(header)=="<<sizeof(header);
+   QVERIFY2(sizeof(header)==2048,msg.str().c_str());
+
+   kipl::io::GetViVaSEQHeader("/Users/kaestner/Desktop/Video1.seq",&header);
+//   std::cout << header.headerSize  << ", "
+//             << header.imageWidth  << ", "
+//             << header.imageHeight << ", "
+//             << header.numberOfFrames<<std::endl;
+   size_t dims[2]={0,0};
+   int numframes=0;
+   kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims,numframes);
+
+   QVERIFY(dims[0]==header.imageWidth);
+   QVERIFY(dims[1]==header.imageHeight);
+   QVERIFY(numframes==static_cast<int>(header.numberOfFrames));
+}
+
+void kiplIOTest::testSEQRead()
+{
+    kipl::base::TImage<float,3> img;
+    kipl::io::ViVaSEQHeader header;
+
+    kipl::io::GetViVaSEQHeader("/Users/kaestner/Desktop/Video1.seq",&header);
+    kipl::io::ReadViVaSEQ("/Users/kaestner/Desktop/Video1.seq",img);
+
+    QVERIFY(img.Size(0)==header.imageWidth);
+    QVERIFY(img.Size(1)==header.imageHeight);
+    QVERIFY(img.Size(2)==header.numberOfFrames);
+
+    size_t roi[]={100,100,300,200};
+
+    kipl::io::ReadViVaSEQ("/Users/kaestner/Desktop/Video1.seq",img,roi);
+
+    QVERIFY(img.Size(0)==(roi[2]-roi[0]));
+    QVERIFY(img.Size(1)==(roi[3]-roi[1]));
+    QVERIFY(img.Size(2)==header.numberOfFrames);
+
+
 }
 
 QTEST_APPLESS_MAIN(kiplIOTest)

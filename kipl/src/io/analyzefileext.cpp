@@ -32,19 +32,20 @@ std::string KIPLSHARED_EXPORT enum2string(kipl::io::eExtensionTypes et)
     std::string ext;
 
     switch (et) {
-    case kipl::io::ExtensionTXT:  ext="txt"; break;
-    case kipl::io::ExtensionDMP:  ext="dmp"; break;
-    case kipl::io::ExtensionDAT:  ext="dat"; break;
-    case kipl::io::ExtensionXML:  ext="xml"; break;
-    case kipl::io::ExtensionRAW:  ext="raw";  break;
-    case kipl::io::ExtensionFITS: ext="fits"; break;
-    case kipl::io::ExtensionPNG:  ext="png"; break;
-    case kipl::io::ExtensionJPG:  ext="jpg"; break;
-    case kipl::io::ExtensionTIFF: ext="tif"; break;
-    case kipl::io::ExtensionMAT:  ext="mat"; break;
+    case kipl::io::ExtensionTXT:   ext="txt"; break;
+    case kipl::io::ExtensionDMP:   ext="dmp"; break;
+    case kipl::io::ExtensionDAT:   ext="dat"; break;
+    case kipl::io::ExtensionXML:   ext="xml"; break;
+    case kipl::io::ExtensionRAW:   ext="raw";  break;
+    case kipl::io::ExtensionFITS:  ext="fits"; break;
+    case kipl::io::ExtensionPNG:   ext="png"; break;
+    case kipl::io::ExtensionJPG:   ext="jpg"; break;
+    case kipl::io::ExtensionTIFF:  ext="tif"; break;
+    case kipl::io::ExtensionMAT:   ext="mat"; break;
     case kipl::io::ExtensionHDF4:  ext="hd4"; break;
     case kipl::io::ExtensionHDF5:  ext="hd5"; break;
-    case kipl::io::ExtensionHDF:  ext="hdf"; break;
+    case kipl::io::ExtensionHDF:   ext="hdf"; break;
+    case kipl::io::ExtensionSEQ:   ext="seq"; break;
 
     default: throw kipl::base::KiplException("Unable to translate the extension enum to a string",__FILE__, __LINE__);
     }
@@ -82,6 +83,7 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &e
     extmap["hd4"]   = kipl::io::ExtensionHDF4;
     extmap["hd5"]   = kipl::io::ExtensionHDF5;
     extmap["hdf"]   = kipl::io::ExtensionHDF;
+    extmap["seq"]   = kipl::io::ExtensionSEQ;
 
     auto it=extmap.find(e);
 

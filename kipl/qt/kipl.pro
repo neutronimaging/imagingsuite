@@ -115,7 +115,8 @@ SOURCES += \
     ../src/filters/stddevfilter.cpp \
     ../src/interactors/interactionbase.cpp \
     ../src/segmentation/multivariateclassifyerbase.cpp \
-    ../src/morphology/pixeliterator.cpp
+    ../src/morphology/pixeliterator.cpp \
+    ../src/io/io_vivaseq.cpp
 
 
 HEADERS +=\
@@ -313,7 +314,8 @@ HEADERS +=\
     ../include/morphology/pixeliterator.h \
     ../include/segmentation/gradientguidedthreshold.h \
     ../include/segmentation/core/gradientguidedthreshold.hpp \
-    ../include/morphology/morphgeo2.h
+    ../include/morphology/morphgeo2.h \
+    ../include/io/io_vivaseq.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
