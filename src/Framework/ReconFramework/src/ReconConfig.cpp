@@ -180,6 +180,9 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="rotate") string2enum(value,ProjectionInfo.eRotate);
             if (var=="flip") string2enum(value,ProjectionInfo.eFlip);
             if (var=="direction") string2enum(value, ProjectionInfo.eDirection);
+            if (var=="sod") ProjectionInfo.fSOD=atof(value.c_str());
+            if (var=="sdd") ProjectionInfo.fSDD=atof(value.c_str());
+            if (var=="pPoint") kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
         }
 
         if (group=="matrix") {
