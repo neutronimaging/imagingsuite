@@ -13,6 +13,9 @@ TEMPLATE = app
 
 CONFIG += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -45,8 +48,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -59,10 +62,10 @@ HEADERS  += viewermainwindow.h
 
 FORMS    += viewermainwindow.ui
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lQtAddons
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl -lQtAddons
+CONFIG(release, debug|release):      LIBS += -L$$PWD/../../../../lib
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug
+
+LIBS += -lkipl -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
