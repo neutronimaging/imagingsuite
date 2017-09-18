@@ -80,7 +80,7 @@ void ImageReader::GetImageSize(std::string filename, float binning, size_t *dims
             case 1  : kipl::io::GetFITSDims(filename.c_str(),dims); break;
             case 2  : kipl::io::GetTIFFDims(filename.c_str(),dims);  break;
             //case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
-            case 4  : kipl::io::GetViVaSEQDims(filename,dims,frames); break;
+            case 4  : kipl::io::GetViVaSEQDims(filename,dims,nFrames); break;
 
             default : throw ReaderException("Unknown file type",__FILE__, __LINE__); break;
             }
