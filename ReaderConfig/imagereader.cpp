@@ -21,6 +21,7 @@
 #include <io/io_matlab.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>
+#include <io/io_vivaseq.h>
 #include <math/median.h>
 #include <base/kiplenums.h>
 #include <base/trotate.h>
@@ -65,10 +66,11 @@ void ImageReader::GetImageSize(std::string filename, float binning, size_t *dims
     extensions[".tif"]=2;
     extensions[".tiff"]=2;
     extensions[".png"]=3;
+    extensions[".seq"]=4;
 
     size_t extpos=filename.find_last_of(".");
     std::stringstream msg;
-
+    int nFrames=0;
     try {
         if (extpos!=filename.npos) {
             std::string ext=filename.substr(extpos);
@@ -78,6 +80,7 @@ void ImageReader::GetImageSize(std::string filename, float binning, size_t *dims
             case 1  : kipl::io::GetFITSDims(filename.c_str(),dims); break;
             case 2  : kipl::io::GetTIFFDims(filename.c_str(),dims);  break;
             //case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
+            case 4  : kipl::io::GetViVaSEQDims(filename,dims,frames); break;
 
             default : throw ReaderException("Unknown file type",__FILE__, __LINE__); break;
             }
@@ -228,6 +231,8 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     extensions[".tiff"]=2;
     extensions[".TIF"]=2;
     extensions[".png"]=3;
+    extensions[".seq"]=4;
+
     size_t extpos=filename.find_last_of(".");
     std::ostringstream msg;
     kipl::base::TImage<float,2> img;
