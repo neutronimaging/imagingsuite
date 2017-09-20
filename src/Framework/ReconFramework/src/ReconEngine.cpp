@@ -736,7 +736,8 @@ int ReconEngine::Run3DFull()
              (nProcessedBlocks<nTotalBlocks) && (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Blocks"));
              ++nProcessedBlocks)
         {
-            m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
+            if (m_Interactor!=nullptr)
+                m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
 			nProcessedProjections=0;
 			m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
