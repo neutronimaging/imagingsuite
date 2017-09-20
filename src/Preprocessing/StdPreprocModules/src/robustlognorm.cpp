@@ -146,7 +146,39 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
         m_corrector.SetComputeMinusLog(false);
     }
 
+    switch (m_BBOptions){
+    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+        bUseBB = false;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+        bUseBB = false; // to evaluate
+        bUseExternalBB = true;
+        break;
+    }
+    default: throw ReconException("Unknown BBOption method in RobustLogNorm::Configure",__FILE__,__LINE__);
 
+    }
+
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+        PrepareBBData();
+    }
 
 
     return 1;
@@ -217,35 +249,35 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     myflat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,0.0f,m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
     SetReferenceImages(mydark,myflat);
 
-    switch (m_BBOptions){
-    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
-        bUseBB = false;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-        bUseBB = true;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-        bUseBB = true;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
-        bUseBB = true;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
-        bUseBB = false; // to evaluate
-        bUseExternalBB = true;
-        break;
-    }
-    default: throw ReconException("Unknown BBOption method in RobustLogNorm::Configure",__FILE__,__LINE__);
+//    switch (m_BBOptions){
+//    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+//        bUseBB = false;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+//        bUseBB = false; // to evaluate
+//        bUseExternalBB = true;
+//        break;
+//    }
+//    default: throw ReconException("Unknown BBOption method in RobustLogNorm::Configure",__FILE__,__LINE__);
 
-    }
+//    }
 
 
     if (bUseExternalBB && nBBextCount!=0){
@@ -253,9 +285,9 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
     }
 
 
-    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-        PrepareBBData();
-    }
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//        PrepareBBData();
+//    }
 
      m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, m_Config.ProjectionInfo.dose_roi);
 
