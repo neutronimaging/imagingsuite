@@ -29,6 +29,7 @@ private Q_SLOTS:
     void MorphSpotClean_CleanHoles();
     void MorphSpotClean_CleanPeaks();
     void MorphSpotClean_CleanBoth();
+    void MorphSpotClean_ListAlgorithm();
     void AverageImage_Enums();
     void AverageImage_Processing();
     void AverageImage_ProcessingWeights();
@@ -127,6 +128,29 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],1.8f);
 }
+
+void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
+{
+    ImagingAlgorithms::MorphSpotClean cleaner;
+
+    kipl::base::TImage<float,2> img,res;
+
+    kipl::io::ReadTIFF(img,"../qni/trunk/data/spots.tif");
+
+    try {
+        res.Clone(img);
+    } catch (kipl::base::KiplException &e) {
+        std::cout<<"Clone failed with "<<e.what()<<std::endl;
+    }
+
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
+    cleaner.setConnectivity(kipl::morphology::conn4);
+
+    cleaner.Process(res,0.04,0.01);
+
+
+}
+
 
 void TestImagingAlgorithms::AverageImage_Enums()
 {

@@ -8,18 +8,17 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = testimagingalgorithms
+TARGET = tst_ImagingAlgorithms
 CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG   += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
 unix {
-    #INCLUDEPATH += "../../../../external/src/linalg"
     INCLUDEPATH += ../../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
 
@@ -34,6 +33,8 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
+
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 }
 
 win32 {
@@ -57,3 +58,4 @@ DEPENDPATH += $$PWD/../../ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/src
+
