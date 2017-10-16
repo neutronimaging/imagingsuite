@@ -30,7 +30,7 @@ public:
             kipl::base::eImageFlip flip,
             kipl::base::eImageRotate rotate,
             float binning,
-            size_t const * const nCrop);
+            size_t const * const nCrop, size_t idx=0L);
 
     /// Reading a single file with file name given by a file mask and an index number.
     /// \param path Path to the location where the file is saved
@@ -49,19 +49,39 @@ public:
             float binning,
             size_t const * const nCrop);
 
+    /// Reading a block of images into a volume with file name given by a file mask and an index number.
+    /// \param path Path to the location where the file is saved
+    /// \param filemask The mask of the file to read, # are used as place holders for the number.
+    /// \param number The file index number.
+    /// \param flip Should the image be flipped horizontally or vertically.
+    /// \param rotate Should the file be rotated, steps of 90deg.
+    /// \param binning Binning factor.
+    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \returns The 2D image stored in the specified file.
+    kipl::base::TImage<float,3> Read(std::string fname,
+                                      size_t first,
+                                      size_t last,
+                                      size_t step,
+                                      kipl::base::eImageFlip flip,
+                                      kipl::base::eImageRotate rotate,
+                                      float binning,
+                                      size_t const * const nCrop);
+
     /// Get the image dimensions for an image file using a file mask
     /// \param path The path where image is stored
     /// \param filemask Mask of the images, # are used as placeholders for the index numbers.
     /// \param number The index number of the image to read.
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
-    void GetImageSize(std::string path, std::string filemask, size_t number, float binning, size_t *dims);
+    /// \returns number of dimensions
+    int GetImageSize(std::string path, std::string filemask, size_t number, float binning, size_t *dims);
 
     /// Get the image dimensions for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
-    void GetImageSize(std::string filename, float binning, size_t * dims);
+    /// \returns number of dimensions
+    int GetImageSize(std::string filename, float binning, size_t * dims);
 
     /// Get the projection dose for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
@@ -97,6 +117,7 @@ protected:
     void UpdateCrop(kipl::base::eImageFlip flip,
             kipl::base::eImageRotate rotate, size_t *dims, size_t *nCrop);
 
+
     /// Performs the rotation and flipping of the image
     /// \param img The image to transform
     /// \param flip How should the image be flipped.
@@ -110,26 +131,30 @@ protected:
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadMAT(std::string filename,  size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadMAT(std::string filename,  size_t const * const nCrop=nullptr);
 
     /// Read FITS images.
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadFITS(std::string filename, size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadFITS(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
 
     /// Read TIFF images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadTIFF(std::string filename, size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadTIFF(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
 
     /// Read PNG images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
     /// \todo Implement PNG support
-    kipl::base::TImage<float,2> ReadPNG(std::string filename,  size_t const * const nCrop=NULL);
+    kipl::base::TImage<float,2> ReadPNG(std::string filename,  size_t const * const nCrop=nullptr, size_t idx=0L);
+
+    kipl::base::TImage<float,2> ReadHDF(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
+
+    kipl::base::TImage<float,2> ReadSEQ(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
 
     /// Interface to the interactor that updates the message and progress.
     /// \param val Progress, a value between 0.0 and 1.0.

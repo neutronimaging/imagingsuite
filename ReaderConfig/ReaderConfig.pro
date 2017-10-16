@@ -21,7 +21,8 @@ SOURCES += readerconfig.cpp \
     buildfilelist.cpp \
     imagereader.cpp \
     readerexception.cpp \
-    imagewriter.cpp
+    imagewriter.cpp \
+    analyzefileext.cpp
 
 HEADERS += readerconfig.h\
         readerconfig_global.h \
@@ -29,7 +30,8 @@ HEADERS += readerconfig.h\
     buildfilelist.h \
     imagereader.h \
     readerexception.h \
-    imagewriter.h
+    imagewriter.h \
+    analyzefileext.h
 
 unix {
     target.path = /usr/lib
@@ -47,6 +49,22 @@ unix {
     }
 
     unix:macx {
+        exists(/usr/local/lib/*NeXus*) {
+
+            message("-lNeXus exists")
+            DEFINES += HAVE_NEXUS
+
+            LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+
+            INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
+            DEPENDPATH += $$PWD/../../../../../../../usr/local/include
+
+            SOURCES += ../src/io/io_nexus.cpp
+            HEADERS += ../include/io/io_nexus.h
+        }
+        else {
+            message("-lNeXus does not exists $$HEADERS")
+        }
         QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
@@ -60,6 +78,19 @@ win32 {
     INCLUDEPATH += ../../../external/src/linalg ../../../external/include ../../../external/include/cfitsio
     QMAKE_LIBDIR += ../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
+
+    exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
+
+        message("-lNeXus exists")
+        DEFINES += HAVE_NEXUS
+        INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
+        QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
+
+        LIBS +=  -lNeXus -lNeXusCPP
+
+        SOURCES += ../src/io/io_nexus.cpp
+        HEADERS += ../include/io/io_nexus.h
+    }
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
@@ -74,5 +105,3 @@ else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../lib/debug/ -lk
 INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
 DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
