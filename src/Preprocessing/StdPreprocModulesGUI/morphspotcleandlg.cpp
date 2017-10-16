@@ -77,14 +77,16 @@ void MorphSpotCleanDlg::ApplyParameters()
     size_t N99=ii;
     ui->plotDetection->setCurveData(0,axis,fcumhist,N99);
     float threshold[N];
-    if (m_eCleanMethod==ImagingAlgorithms::MorphCleanFill) { // In case of sigmoid mixing
-        for (size_t i=0; i<N; i++) {
+    if (m_fSigma!=0.0f)
+    { // In case of sigmoid mixing
+        for (size_t i=0; i<N99; i++) {
             threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
         }
-        ui->plotDetection->setCurveData(1,axis,threshold,N99);
+        ui->plotDetection->setCurveData(1,axis,threshold,N99,Qt::red);
     }
-    else {
-        ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+    else
+    {
+            ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
     }
 
     std::map<std::string,std::string> pars;
