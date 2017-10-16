@@ -40,7 +40,7 @@ void * GetModule(const char *application, const char * name)
             return new StripeFilterModule;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int Destroy(const char *application, void *obj)
@@ -52,7 +52,7 @@ int Destroy(const char *application, void *obj)
     kipl::logging::Logger logger("ImagingModules destroy");
     std::ostringstream msg;
 
-    if (obj!=NULL) {
+    if (obj!=nullptr) {
         KiplProcessModuleBase * module = reinterpret_cast<KiplProcessModuleBase *>(obj);
         msg<<"Destroying "<<module->ModuleName();
         logger(kipl::logging::Logger::LogMessage,msg.str());
