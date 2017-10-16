@@ -81,6 +81,13 @@ void TImage<T,N>::Clone()
 }
 
 template<typename T, size_t N>
+void TImage<T,N>::Clone(kipl::base::TImage<T,N> &img)
+{
+    this->Resize(img.Dims());
+    std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),this->GetDataPtr());
+}
+
+template<typename T, size_t N>
 size_t TImage<T,N>::_ComputeNElements(size_t const * const dims)
 {
 	size_t NData=dims[0];
@@ -107,7 +114,6 @@ T & TImage<T,N>::operator()(size_t x, size_t y, size_t z)
 template<typename T, size_t N>
 size_t TImage<T,N>::Resize(size_t const * const dims) 
 {
-//	m_buffer=kipl::base::core::buffer<T>(_ComputeNElements(dims));
 	m_buffer.Resize(_ComputeNElements(dims));
 	for (size_t i=0; i<N; i++)
 		m_Dims[i]=dims[i];

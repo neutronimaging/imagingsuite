@@ -16,7 +16,7 @@
 using namespace std;
 namespace kipl { namespace io {
 
-void KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims)
+int KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims)
 {
 
 }

@@ -30,7 +30,7 @@ int KIPLSHARED_EXPORT FITSDataType(double x);
 
 
 template <typename ImgType>
-int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop)
+int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop, size_t idx)
 {
 	using namespace std; 
     ostringstream msg;

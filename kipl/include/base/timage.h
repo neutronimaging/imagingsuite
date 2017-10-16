@@ -120,8 +120,13 @@ public:
 	/// \brief Returns a reference to the dimension array
     const size_t * Dims() const {return m_Dims;}
 
-	/// \brief Makes a deep copy of the data.
+    /// \brief Makes a current image a deep copy of the data.
 	void Clone();
+
+    /// \brief Makes a deep copy of the data in the provided image.
+    /// \param img Source image
+    void Clone(kipl::base::TImage<T,N> &img);
+
 	ImageInfo info;
 private:
   /// \brief Computes to number of elements to allocate for the image

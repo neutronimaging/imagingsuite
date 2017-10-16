@@ -32,7 +32,7 @@ int KIPLSHARED_EXPORT FITSPixelSize(float x)            { return    FLOAT_IMG; }
 int KIPLSHARED_EXPORT FITSPixelSize(double x)           { return   DOUBLE_IMG; }    // 64-bit double precision floating point
 
 
-void KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
+int KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
 {
 	fitsfile *fptr;
 	int status=0;
@@ -71,5 +71,6 @@ void KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
 		dims[i]=naxes[i];
 
 	fits_close_file(fptr, &status);
+    return naxis;
 }
 }}

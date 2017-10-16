@@ -41,6 +41,13 @@ T Sigmoid(const T x, const T level, const T width);
 template <typename T, size_t N>
 kipl::base::TImage<T,N> SigmoidWeights(kipl::base::TImage<T,N> img, const T level, const T width);
 
+/// \brief Compute the sigmoid function of the input data
+/// \param img   - input data
+/// \param level - value for center point in the sigmoid function
+/// \param width - width of the sigmoid function (for w=1, 99.9% of the sigmoid are within +/-2pi)
+template <typename T>
+T SigmoidWeights(T val,T a, T b, const float level, const float width);
+
 template <typename T>
 double Entropy(T const * const data, const size_t N);
 

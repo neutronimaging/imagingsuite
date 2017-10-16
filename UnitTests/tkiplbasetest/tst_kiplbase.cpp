@@ -23,6 +23,7 @@ private Q_SLOTS:
 
     /// Tests for TImage
     void testTImageInitialization();
+    void testTImageClones();
 
     /// Tests for ImageInformation
     void testImageInfoCtor();
@@ -107,6 +108,35 @@ void TkiplbasetestTest::testImageInfoCtor()
 
     QVERIFY(infoA.GetMetricX()==infoC.GetMetricX());
     QVERIFY(infoA.GetMetricY()==infoC.GetMetricY());
+}
+
+void TkiplbasetestTest::testTImageClones()
+{
+    size_t dims[]={100,110};
+
+    kipl::base::TImage<float,2> a(dims),b,c;
+    for (int i=0; i<a.Size(); i++)
+        a[i]=float(i);
+
+    a=b;
+
+    QVERIFY(a.GetDataPtr()==b.GetDataPtr());
+    b.Clone();
+    QVERIFY(a.GetDataPtr()!=b.GetDataPtr());
+
+    for (int i=0; i<a.Size(); i++)
+        QVERIFY(a[i]==b[i]);
+
+    c.Clone(a);
+
+    QVERIFY(a.GetDataPtr()!=c.GetDataPtr());
+    QVERIFY(a.Size()==c.Size());
+    QVERIFY(a.Size(0)==c.Size(0));
+    QVERIFY(a.Size(1)==c.Size(1));
+
+    for (int i=0; i<a.Size(); i++)
+        QVERIFY(a[i]==c[i]);
+
 }
 
 void TkiplbasetestTest::testImageInfoResolutions()

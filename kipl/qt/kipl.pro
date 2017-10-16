@@ -68,6 +68,7 @@ SOURCES += \
     ../src/io/io_stack.cpp \
     ../src/io/core/matlabio.cpp \
     ../src/io/core/io_fits.cpp \
+    ../src/io/io_vivaseq.cpp \
     ../src/generators/Sine2D.cpp \
     ../src/generators/SignalGenerator.cpp \
     ../src/generators/SequenceImage.cpp \
@@ -116,7 +117,8 @@ SOURCES += \
     ../src/interactors/interactionbase.cpp \
     ../src/segmentation/multivariateclassifyerbase.cpp \
     ../src/morphology/pixeliterator.cpp \
-    ../src/io/io_vivaseq.cpp
+    ../src/io/io_png.cpp
+
 
 
 HEADERS +=\
@@ -178,6 +180,7 @@ HEADERS +=\
     ../include/io/io_fits.h \
     ../include/io/core/matlabio.h \
     ../include/io/core/io_fits.hpp \
+    ../include/io/DirAnalyzer.h \
     ../include/octree/octree.h \
     ../include/morphology/palagyi_skeleton.h \
     ../include/morphology/morphquantify.h \
@@ -294,7 +297,6 @@ HEADERS +=\
     ../include/filters/GaborFilter.h \
     ../include/morphology/skeleton.h \
     ../include/base/core/thistogram.hpp \
-    ../include/io/DirAnalyzer.h \
     ../include/math/linfit.h \
     ../include/math/core/linfit.hpp \
     ../include/base/tprofile.h \
@@ -315,7 +317,8 @@ HEADERS +=\
     ../include/segmentation/gradientguidedthreshold.h \
     ../include/segmentation/core/gradientguidedthreshold.hpp \
     ../include/morphology/morphgeo2.h \
-    ../include/io/io_vivaseq.h
+    ../include/io/io_vivaseq.h \
+    ../include/io/io_png.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

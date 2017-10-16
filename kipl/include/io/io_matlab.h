@@ -370,7 +370,7 @@ int SliceWriteMAT(kipl::base::TImage<ImgType,3u> & img,
 	return 1;
 }
 
-void KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims);
+int KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims);
 
 }}
 

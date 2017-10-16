@@ -90,6 +90,15 @@ kipl::base::TImage<T,N> SigmoidWeights(kipl::base::TImage<T,N> img, const T leve
 }
 
 template <typename T>
+inline T SigmoidWeights(T val, T a, T b, const float level, const float width)
+{
+    float w=1.0f/(1.0f+exp((level-val)/width));
+
+    return a + (b-a)*w;
+
+}
+
+template <typename T>
 double Entropy(T const * const data, const size_t N)
 {
 // Compute data sum

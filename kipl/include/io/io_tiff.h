@@ -120,13 +120,13 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname, ImgType lo, I
 
 /// \brief Reads the contents of a tiff file and stores the contents in the data type specified by the image
 ///	\param src the image to be stored
-///	\param fname file name of the destination file (including extension .bmp)
+///	\param fname file name of the destination file
 ///	
 ///	\return Error code 	
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname)
+int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L)
 {
 	std::stringstream msg;
 	TIFF *image;
@@ -316,7 +316,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname)
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const * const crop)
+int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const * const crop, size_t idx=0L)
 {
 	if (crop==NULL) {
 		return ReadTIFF(src,fname);
