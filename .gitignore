@@ -1,4 +1,4 @@
-
+build*
 *.user
 *.stash
 *.o
