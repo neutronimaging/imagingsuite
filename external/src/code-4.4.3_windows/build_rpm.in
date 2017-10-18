@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Script to build RPMs from current nexus*.tar.gz file
+# Copyright (C) 2004 Freddie Akeroyd
+#
+# $1 is set to any options you want to pass to ./configure
+#
+# get topdir - must find a better way ...
+topdir=`rpm --showrc|grep  " _topdir"| awk '{print $3}' | tail -1`
+if test ! -e "$topdir"; then
+    echo "Unable to determine RPM topdir from rpmrc; assuming $HOME/rpmbuild"
+    topdir="$HOME/rpmbuild"
+fi
+if test ! -w "$topdir"; then
+    echo "ERROR: RPM build directory not writable - check README.rpm"
+    exit
+fi
+#
+nxtop=`pwd`
+rm -fr $nxtop/installroot
+mkdir $nxtop/installroot
+# 
+make dist
+ln -sf $nxtop/@PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.gz $topdir/SOURCES
+cp $nxtop/nexus.spec $topdir/SPECS
+#
+if test -z "$1"; then
+    build_args='@CONFIGURE_ARGS@'
+else
+    build_args="$1"
+fi
+if ! test -z "$2"; then
+    RESULTS=/tmp/nexus-mock-results
+    mkdir -p $RESULTS
+    mock_args="-r $2 --resultdir=$RESULTS"
+    rm -f $RESULTS/*.src.rpm # clean up so do not pick up wrong .src.rpm later
+    mock ${mock_args} --init
+    mock ${mock_args} --buildsrpm --spec nexus.spec --sources . --define "nexus_config_options $build_args" --define "_source_filedigest_algorithm md5" --define "_binary_filedigest_algorithm md5" 
+    srpm=`ls $RESULTS/*.src.rpm`
+    mock ${mock_args} --rebuild $srpm --define "nexus_config_options $build_args" --define "_source_filedigest_algorithm md5" --define "_binary_filedigest_algorithm md5"
+else
+# buildroot is actually where we install to
+    cd $topdir/SPECS
+    rpmbuild -ba --buildroot $nxtop/installroot --define "nexus_config_options $build_args" --define "_source_filedigest_algorithm md5" --define "_binary_filedigest_algorithm md5" nexus.spec
+fi

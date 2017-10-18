@@ -1,0 +1,456 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.Common.props(150,5): warning MSB4211: The property "WindowsTargetPlatformVersion" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.WindowsSDK.props (29,5)".
+  string_util.cpp
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(29): error C2632: 'char' followed by 'char' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(29): warning C4091: 'typedef ': ignored on left of 'signed char' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(30): error C2632: 'short' followed by 'short' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(30): warning C4091: 'typedef ': ignored on left of 'short' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(31): error C2632: 'int' followed by 'int' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(31): warning C4091: 'typedef ': ignored on left of 'int' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(32): warning C4114: same type qualifier used more than once
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(32): error C2632: 'char' followed by 'char' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(32): warning C4091: 'typedef ': ignored on left of 'unsigned char' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(33): warning C4114: same type qualifier used more than once
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(33): error C2632: 'short' followed by 'short' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(33): warning C4091: 'typedef ': ignored on left of 'unsigned short' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(34): warning C4114: same type qualifier used more than once
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(34): warning C4091: 'typedef ': ignored on left of 'unsigned int' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2589: 'char': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2589: 'short': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(11): error C2589: 'int': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(11): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2144: syntax error: 'char' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): warning C4091: '': ignored on left of 'char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2144: syntax error: 'short' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): warning C4091: '': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(13): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(13): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2589: 'char': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2589: 'short': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(31): error C2589: 'int': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(31): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2144: syntax error: 'char' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): warning C4091: '': ignored on left of 'char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2144: syntax error: 'short' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): warning C4091: '': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(33): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(33): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\users\carminati_c\repos\external\src\code-4.4.3\applications\nxsummary\string_util.cpp(33): fatal error C1083: Cannot open include file: 'napi.h': No such file or directory
+  preferences.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\users\carminati_c\repos\external\src\code-4.4.3\applications\nxsummary\preferences.cpp(3): fatal error C1083: Cannot open include file: 'libxml/parser.h': No such file or directory
+  output.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.Common.props(150,5): warning MSB4211: The property "WindowsTargetPlatformVersion" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.WindowsSDK.props (29,5)".
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.Common.props(150,5): warning MSB4211: The property "WindowsTargetPlatformVersion" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.WindowsSDK.props (29,5)".
+c:\users\carminati_c\repos\external\src\code-4.4.3\applications\nxsummary\output.cpp(2): fatal error C1083: Cannot open include file: 'libxml/parser.h': No such file or directory
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.Common.props(150,5): warning MSB4211: The property "WindowsTargetPlatformVersion" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.WindowsSDK.props (29,5)".
+  main.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.Common.props(150,5): warning MSB4211: The property "WindowsTargetPlatformVersion" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.WindowsSDK.props (29,5)".
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(29): error C2632: 'char' followed by 'char' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(29): warning C4091: 'typedef ': ignored on left of 'signed char' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(30): error C2632: 'short' followed by 'short' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(30): warning C4091: 'typedef ': ignored on left of 'short' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(31): error C2632: 'int' followed by 'int' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(31): warning C4091: 'typedef ': ignored on left of 'int' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(32): warning C4114: same type qualifier used more than once
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(32): error C2632: 'char' followed by 'char' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(32): warning C4091: 'typedef ': ignored on left of 'unsigned char' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(33): warning C4114: same type qualifier used more than once
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(33): error C2632: 'short' followed by 'short' is illegal
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(33): warning C4091: 'typedef ': ignored on left of 'unsigned short' when no variable is declared
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(34): warning C4114: same type qualifier used more than once
+c:\users\carminati_c\repos\external\src\code-4.4.3\windows\stdint.h(34): warning C4091: 'typedef ': ignored on left of 'unsigned int' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2589: 'char': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2589: 'short': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(11): error C2589: 'int': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(11): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2144: syntax error: 'char' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): warning C4091: '': ignored on left of 'char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2144: syntax error: 'short' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): warning C4091: '': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(13): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(13): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2589: 'char': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2589: 'short': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(31): error C2589: 'int': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(31): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2144: syntax error: 'char' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): warning C4091: '': ignored on left of 'char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2144: syntax error: 'short' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): warning C4091: '': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(33): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(33): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\users\carminati_c\repos\external\src\code-4.4.3\applications\nxsummary\data_util.hpp(7): fatal error C1083: Cannot open include file: 'napi.h': No such file or directory
+  data_util.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(15): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(16): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(17): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(18): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(20): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(21): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(22): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(23): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(25): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(26): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2039: 'int_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(35): error C2873: 'int_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2039: 'int_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(36): error C2873: 'int_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2039: 'uint_least16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(37): error C2873: 'uint_least16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2039: 'uint_least64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(38): error C2873: 'uint_least64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2039: 'int_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(40): error C2873: 'int_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2039: 'int_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(41): error C2873: 'int_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast8_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast8_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2039: 'uint_fast16_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(42): error C2873: 'uint_fast16_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast32_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast32_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2039: 'uint_fast64_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(43): error C2873: 'uint_fast64_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2039: 'intmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(45): error C2873: 'intmax_t': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2039: 'uintmax_t': is not a member of '`global namespace''
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(46): error C2873: 'uintmax_t': symbol cannot be used in a using-declaration
+c:\users\carminati_c\repos\external\src\code-4.4.3\applications\nxsummary\data_util.hpp(7): fatal error C1083: Cannot open include file: 'napi.h': No such file or directory
+  Generating Code...

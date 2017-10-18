@@ -1,0 +1,45 @@
+Unless you plan to build the rpm files as root you will need to do the
+following:
+
+(1) Create a   ~/.rpmmacros   file with a line similar to the following
+
+%_topdir	/home/faa/mybuilds
+
+(note: that is a tab separating the two parts)
+
+(2) create the corresponding RPM build directories
+
+    cd /home/faa/mybuilds
+    mkdir BUILD RPMS SOURCES SPECS SRPMS
+    cd RPMS
+    mkdir i386 i486 i586 i686
+
+(i.e. this should look like the default build area /usr/src/redhat)
+
+(3) Now you should be able to run the  build_rpm  script - this
+    will generate src and binary rpms from the current 
+    nexus*.tar.gz created from the last "make distcheck" or "make dist"
+
+(4) The above will generate both a src and binary (probably i386) rpm
+    You can always generate a binary rpm from a source rpm using e.g.
+
+        rpmbuild --rebuild nexus-2.0.0-1.src.rpm
+
+    While re-building files will be copied to a
+    temporary installation directory structure under /tmp/nexus-2.0.0
+    You may change this location using the  --buildroot  option, but
+    be very careful as the "build root" may ultimately get removed by rpm.
+    In particular, DO NOT give "/" as the build root.
+
+    If you want the final files installed in a different directory to
+    the defaults (/usr/local/{bin,lib,nexus}), get/build the binary rpm 
+    and then use the  rpm --prefix  installation option e.g.
+
+        rpm -ivh --prefix /opt nexus-2.0.0-1.i386.rpm
+
+    will install the files to /opt/{bin,lib,nexus}
+
+Freddie Akeroyd <F.A.Akeroyd@rl.ac.uk>
+2004/02/22
+
+$Id$

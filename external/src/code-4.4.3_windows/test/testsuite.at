@@ -1,0 +1,2370 @@
+# Process this file with autom4te to create testsuite. -*- Autotest -*-
+
+# Test suite for NeXus.
+# Copyright (C) Jens Krueger, jens.krueger@frm2.tum.de.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# We need a recent Autotest.
+m4_version_prereq([2.56])
+
+AT_INIT
+dnl AT_TESTED(NXtest.f90)
+
+AT_BANNER([[Testing the NeXus C library.]])
+
+AT_SETUP([Check the C binding using HDF5])
+AT_CHECK([ $HAVE_HDF5 && $SETUP_TEST && napi_test-hdf5 | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest.h5
+Number of global attributes: 4
+   NeXus_version = 4.4.0
+   file_name = NXtest.h5
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 10 items
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+   Subgroup: data(NXdata)
+Data path /entry/grosse_zahl
+   grosse_zahl(26) =  12 555555555555 23 777777777777
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.h5
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.h5
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.h5#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.h5#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.h5#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C binding using HDF5 (static library)])
+AT_CHECK([ $HAVE_HDF5 && $SETUP_TEST && napi_test-hdf5-static | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest.h5
+Number of global attributes: 4
+   NeXus_version = 4.4.0
+   file_name = NXtest.h5
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 10 items
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+   Subgroup: data(NXdata)
+Data path /entry/grosse_zahl
+   grosse_zahl(26) =  12 555555555555 23 777777777777
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.h5
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.h5
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.h5#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.h5#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.h5#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C binding using HDF4])
+AT_CHECK([ $HAVE_HDF4 && $SETUP_TEST && napi_test-hdf4 | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest.hdf
+Number of global attributes: 4
+   NeXus_version = 4.4.0
+   file_name = NXtest.hdf
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 9 items
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+   Subgroup: data(NXdata)
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.hdf
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.hdf
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.hdf#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.hdf#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.hdf#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C binding using HDF4 (static library)])
+AT_CHECK([ $HAVE_HDF4 && $SETUP_TEST && napi_test-hdf4-static | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest.hdf
+Number of global attributes: 4
+   NeXus_version = 4.4.0
+   file_name = NXtest.hdf
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 9 items
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+   Subgroup: data(NXdata)
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.hdf
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.hdf
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.hdf#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.hdf#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.hdf#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C binding using XML])
+AT_CHECK([ $HAVE_XML && $SETUP_TEST && napi_test-xml | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest.xml
+Number of global attributes: 7
+   NeXus_version = 4.4.0
+   file_name = NXtest.xml
+   xmlns = http://definition.nexusformat.org/schema/3.1
+   xmlns:xsi = http://www.w3.org/2001/XMLSchema-instance
+   xsi:schemaLocation = http://definition.nexusformat.org/schema/3.1 http://definition.nexusformat.org/schema/3.1/BASE.xsd
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 10 items
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+Data path /entry/grosse_zahl
+   grosse_zahl(26) =  12 555555555555 23 777777777777
+   Subgroup: data(NXdata)
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.xml
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.xml
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.xml#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.xml#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.xml#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C binding using XML (static library)])
+AT_CHECK([ $HAVE_XML && $SETUP_TEST && napi_test-xml-static | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest.xml
+Number of global attributes: 7
+   NeXus_version = 4.4.0
+   file_name = NXtest.xml
+   xmlns = http://definition.nexusformat.org/schema/3.1
+   xmlns:xsi = http://www.w3.org/2001/XMLSchema-instance
+   xsi:schemaLocation = http://definition.nexusformat.org/schema/3.1 http://definition.nexusformat.org/schema/3.1/BASE.xsd
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 10 items
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+Data path /entry/grosse_zahl
+   grosse_zahl(26) =  12 555555555555 23 777777777777
+   Subgroup: data(NXdata)
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.xml
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.xml
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.xml#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.xml#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.xml#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C binding using XML table (static)])
+AT_CHECK([ $HAVE_XML && $SETUP_TEST && napi_test-xml-table-static | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: NXtest-table.xml
+Number of global attributes: 7
+   NeXus_version = 4.4.0
+   file_name = NXtest-table.xml
+   xmlns = http://definition.nexusformat.org/schema/3.1
+   xmlns:xsi = http://www.w3.org/2001/XMLSchema-instance
+   xsi:schemaLocation = http://definition.nexusformat.org/schema/3.1 http://definition.nexusformat.org/schema/3.1/BASE.xsd
+Number of group attributes: 2
+NXentry path /entry
+   hugo = namenlos
+   cucumber = passion
+Group: entry(NXentry) contains 10 items
+Data path /entry/ch_data
+   ch_data(4) = NeXus ><}&{'\&" Data
+Data path /entry/c1_data
+   c1_data(4) = abcdefghijklmnopqrst
+Data path /entry/i1_data
+   i1_data(20) =  1 2 3 4
+Data path /entry/i2_data
+   i2_data(22) =  1000 2000 3000 4000
+Data path /entry/i4_data
+   i4_data(24) =  1000000 2000000 3000000 4000000
+Data path /entry/grosse_zahl
+   grosse_zahl(26) =  12 555555555555 23 777777777777
+Data path /entry/r4_data
+   r4_data(5)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+Data path /entry/r8_data
+   r8_data(6)
+       1.000000 2.000000 3.000000 4.000000
+       5.000000 6.000000 7.000000 8.000000
+       9.000000 10.000000 11.000000 12.000000
+       13.000000 14.000000 15.000000 16.000000
+       17.000000 18.000000 19.000000 20.000000
+      Number of attributes : 4
+         ch_attribute : NeXus ><}&{'\&" Data
+         i4_attribute : 42
+         r4_attribute : 3.141593
+         target : /entry/r8_data
+   Subgroup: data(NXdata)
+   Subgroup: sample(NXsample)
+Group path /link/sample
+Link check OK
+NXopenpath checks OK
+before load path tests
+before external link tests
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.xml
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.xml
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.xml#/entry1
+testing link to external data set
+extlinkdata external URL = nxfile://data/dmc01.xml#/entry1/sample/temperature_mean
+value retrieved: 4.00
+extlinknative external URL = nxfile://data/dmc01.xml#/entry1/sample/temperature_mean
+value retrieved: 4.00
+External File Linking tested OK
+all ok - done
+]])
+AT_CLEANUP
+
+AT_BANNER([[Testing new API for array attributes.]])
+
+AT_SETUP([Checking HDF5 (full support)])
+AT_CHECK([$HAVE_HDF5 && napi_attra_test-hdf5-static 2>&1 | sed -e 's/\r$//' -e 's, *$,,' ],[], 
+[[
+starting attra napi test
+creating file
+creating global attributes
+creating group attributes
+creating dataset attributes
+file closed - reopening for testing reads
+=== at root level
+iterating over attributes
+	Number of attributes : 9
+	skipping over NeXus_version as the value is not controlled by this test!
+	found attribute named file_name of type 4, rank 1 and dimensions  8
+		attra.h5
+	reading 1d string the old way should produce similar result
+	file_name = attra.h5
+	skipping over HDF5_Version as the value is not controlled by this test!
+	skipping over file_time as the value is not controlled by this test!
+	found attribute named attribute_0d of type 5, rank 1 and dimensions  1
+		 1.000000
+	reading scalar attributes the old way should produce similar result
+		 1.000000
+	found attribute named attribute_1d of type 5, rank 1 and dimensions  5
+		 1.000000 2.000000 3.000000 4.000000 5.000000
+	reading array attributes the old way should produce an error
+ERROR: attribute arrays not supported by this api 
+		- it does!
+	found attribute named attribute_2d of type 6, rank 2 and dimensions  5 4
+		 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 17.000000 18.000000 19.000000 20.000000
+	reading array attributes the old way should produce an error
+ERROR: attribute arrays not supported by this api 
+		- it does!
+	found attribute named old_style_int_attribute of type 24, rank 1 and dimensions  1
+		 2015
+	reading scalar attributes the old way should produce similar result
+		 2015
+	found attribute named oldstylestrattr of type 4, rank 1 and dimensions  15
+		i:wq!<ESC><ESC>
+	reading 1d string the old way should produce similar result
+	oldstylestrattr = i:wq!<ESC><ESC>
+Next we are expecting a failure iterating with the old api
+ERROR iterating through attributes found array attribute not understood by this api 
+=== at entry level
+iterating over attributes
+	Number of attributes : 5
+	found attribute named attribute_0d of type 5, rank 1 and dimensions  1
+		 1.000000
+	reading scalar attributes the old way should produce similar result
+		 1.000000
+	found attribute named attribute_1d of type 5, rank 1 and dimensions  5
+		 1.000000 2.000000 3.000000 4.000000 5.000000
+	reading array attributes the old way should produce an error
+ERROR: attribute arrays not supported by this api 
+		- it does!
+	found attribute named attribute_2d of type 6, rank 2 and dimensions  5 4
+		 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 17.000000 18.000000 19.000000 20.000000
+	reading array attributes the old way should produce an error
+ERROR: attribute arrays not supported by this api 
+		- it does!
+	found attribute named old_style_int_attribute of type 24, rank 1 and dimensions  1
+		 2016
+	reading scalar attributes the old way should produce similar result
+		 2016
+	found attribute named oldstylestrattr of type 4, rank 1 and dimensions  15
+		i:wq!<ESC><ESC>
+	reading 1d string the old way should produce similar result
+	oldstylestrattr = i:wq!<ESC><ESC>
+Next we are expecting a failure iterating with the old api
+ERROR iterating through attributes found array attribute not understood by this api 
+=== at dataset level
+iterating over attributes
+	Number of attributes : 5
+	found attribute named attribute_0d of type 5, rank 1 and dimensions  1
+		 1.000000
+	reading scalar attributes the old way should produce similar result
+		 1.000000
+	found attribute named attribute_1d of type 5, rank 1 and dimensions  5
+		 1.000000 2.000000 3.000000 4.000000 5.000000
+	reading array attributes the old way should produce an error
+ERROR: attribute arrays not supported by this api 
+		- it does!
+	found attribute named attribute_2d of type 6, rank 2 and dimensions  5 4
+		 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 17.000000 18.000000 19.000000 20.000000
+	reading array attributes the old way should produce an error
+ERROR: attribute arrays not supported by this api 
+		- it does!
+	found attribute named old_style_int_attribute of type 24, rank 1 and dimensions  1
+		 2017
+	reading scalar attributes the old way should produce similar result
+		 2017
+	found attribute named oldstylestrattr of type 4, rank 1 and dimensions  15
+		i:wq!<ESC><ESC>
+	reading 1d string the old way should produce similar result
+	oldstylestrattr = i:wq!<ESC><ESC>
+Next we are expecting a failure iterating with the old api
+ERROR iterating through attributes found array attribute not understood by this api 
+we reached the end - this looks good
+]])
+AT_CLEANUP
+AT_SETUP([Checking HDF4 (limited functionality)])
+AT_CHECK([$HAVE_HDF4 && napi_attra_test-hdf4-static 2>&1 | sed -e 's/\r$//' -e 's, *$,,' ],[], 
+[[
+starting attra napi test
+creating file
+creating global attributes
+This is a HDF4 file, attribute array API is not supported here 
+creating group attributes
+This is a HDF4 file, attribute array API is not supported here 
+creating dataset attributes
+This is a HDF4 file, attribute array API is not supported here 
+file closed - reopening for testing reads
+=== at root level
+iterating over attributes
+	Number of attributes : 4
+This is a HDF4 file, attribute array API is not supported here 
+]])
+AT_CLEANUP
+AT_SETUP([Checking XML  (limited functionality)])
+AT_CHECK([$HAVE_XML && napi_attra_test-xml-static 2>&1 | sed -e 's/\r$//' -e 's, *$,,' ],[], 
+[[
+starting attra napi test
+creating file
+creating global attributes
+This is an XML file, attribute array API is not supported here 
+creating group attributes
+This is an XML file, attribute array API is not supported here 
+creating dataset attributes
+This is an XML file, attribute array API is not supported here 
+file closed - reopening for testing reads
+=== at root level
+iterating over attributes
+	Number of attributes : 7
+This is an XML file, attribute array API is not supported here 
+]])
+AT_CLEANUP
+
+AT_BANNER([Check the FORTRAN binding.])
+
+AT_SETUP([Check the F90 binding using HDF5.])
+AT_CHECK([ $HAVE_F90 && $HAVE_HDF5 && $SETUP_TEST && NXtest | sed -e 's/\r$//' ], [], 
+[[Writing character data
+Number of global attributes:        4
+   NeXus_version = 4.4.0
+   file_name = NXtest.nxs
+Group: entry(NXentry) contains        8 items
+   ch_data : NX_CHAR
+   Values : NeXus data
+   Subgroup: data(NXdata)
+   i1_data : NX_INT8
+   Values :        1       2       3       4
+   i2_data : NX_INT16
+   Values :     1000    2000    3000    4000
+   i4_data : NX_INT32
+   Values :  1000000 2000000 3000000 4000000
+   r4_data : NX_FLOAT32
+   Values :    1.0000000   2.0000000   3.0000000   4.0000000
+          :    5.0000000   6.0000000   7.0000000   8.0000000
+          :    9.0000000  10.0000000  11.0000000  12.0000000
+          :   13.0000000  14.0000000  15.0000000  16.0000000
+          :   17.0000000  18.0000000  19.0000000  20.0000000
+   r8_data : NX_FLOAT64
+   Values :    1.0000000   2.0000000   3.0000000   4.0000000
+          :    5.0000000   6.0000000   7.0000000   8.0000000
+          :    9.0000000  10.0000000  11.0000000  12.0000000
+          :   13.0000000  14.0000000  15.0000000  16.0000000
+          :   17.0000000  18.0000000  19.0000000  20.0000000
+   ch_attribute : NeXus
+   i4_attribute :       42
+   r4_attribute :    3.1415930
+   target : /entry/r8_data
+   Subgroup: sample(NXsample)
+Link Check OK
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the F77 binding using HDF5.])
+AT_CHECK([ $HAVE_F77 && $HAVE_HDF5 && $SETUP_TEST && napif_test-hdf5 | sed -e 's/\r$//' ], [], 
+[[ Number of global attributes:  4
+    NeXus_version = 4.4.0
+    file_name = NXtest.nxs
+ Group: entry(NXentry) contains  8 items
+ Path = /entry/ch_data
+    ch_data( 4)
+    Values : NeXus data
+    Subgroup: data(NXdata)
+ Path = /entry/i1_data
+    i1_data(20)
+    Values :   1  2  3  4
+ Path = /entry/i2_data
+    i2_data(22)
+    Values :   1000  2000  3000  4000
+ Path = /entry/i4_data
+    i4_data(24)
+    Values :      1000000     2000000     3000000     4000000
+ Path = /entry/r4_data
+    r4_data( 5)
+    Values :    1.00   2.00   3.00   4.00
+           :    5.00   6.00   7.00   8.00
+           :    9.00  10.00  11.00  12.00
+           :   13.00  14.00  15.00  16.00
+           :   17.00  18.00  19.00  20.00
+ Path = /entry/r8_data
+    r8_data( 6)
+    Values :    1.00   2.00   3.00   4.00
+           :    5.00   6.00   7.00   8.00
+           :    9.00  10.00  11.00  12.00
+           :   13.00  14.00  15.00  16.00
+           :   17.00  18.00  19.00  20.00
+       ch_attribute : NeXus
+       i4_attribute :    42
+       r4_attribute :   3.141593
+       target : /entry/r8_data
+    Subgroup: sample(NXsample)
+ Link Check OK
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the F77 binding using HDF4.])
+AT_CHECK([ $HAVE_F77 && $HAVE_HDF4 && $SETUP_TEST && napif_test-hdf4 | sed -e 's/\r$//' ], [], 
+[[ Number of global attributes:  4
+    NeXus_version = 4.4.0
+    file_name = NXtest.nxs
+ Group: entry(NXentry) contains  8 items
+ Path = /entry/ch_data
+    ch_data( 4)
+    Values : NeXus data
+ Path = /entry/i1_data
+    i1_data(20)
+    Values :   1  2  3  4
+ Path = /entry/i2_data
+    i2_data(22)
+    Values :   1000  2000  3000  4000
+ Path = /entry/i4_data
+    i4_data(24)
+    Values :      1000000     2000000     3000000     4000000
+ Path = /entry/r4_data
+    r4_data( 5)
+    Values :    1.00   2.00   3.00   4.00
+           :    5.00   6.00   7.00   8.00
+           :    9.00  10.00  11.00  12.00
+           :   13.00  14.00  15.00  16.00
+           :   17.00  18.00  19.00  20.00
+ Path = /entry/r8_data
+    r8_data( 6)
+    Values :    1.00   2.00   3.00   4.00
+           :    5.00   6.00   7.00   8.00
+           :    9.00  10.00  11.00  12.00
+           :   13.00  14.00  15.00  16.00
+           :   17.00  18.00  19.00  20.00
+       ch_attribute : NeXus
+       i4_attribute :    42
+       r4_attribute :   3.141593
+       target : /entry/r8_data
+    Subgroup: data(NXdata)
+    Subgroup: sample(NXsample)
+ Link Check OK
+]])
+AT_CLEANUP
+
+AT_BANNER([Check the C++ binding.])
+
+AT_SETUP([Check the C++ binding using HDF5.])
+AT_CHECK([ $HAVE_HDF5 && $SETUP_TEST && napi_test_cpp-hdf5 | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: napi_test_cpp.h5
+Number of global attributes: 4
+   NeXus_version = 4.4.0
+   file_name = napi_test_cpp.h5
+Number of group attributes: 2
+   hugo = namenlos
+   cucumber = passion
+Group contains 10 items
+   c1_data[5,4] = 2d character array
+   Path = /entry/c1_data
+   ch_data[10] = NeXus_data
+   Path = /entry/ch_data
+   data:NXdata
+   grosszahl[4] = [12,555555555555,23,777777777777]
+   Path = /entry/grosszahl
+   i1_data[4] = [,,,]
+   Path = /entry/i1_data
+   i2_data[4] = [1000,2000,3000,4000]
+   Path = /entry/i2_data
+   i4_data[4] = [1000000,2000000,3000000,4000000]
+   Path = /entry/i4_data
+   r4_data[5,4] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+   Path = /entry/r4_data
+   r8_data[5,4] = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39]
+   Path = /entry/r8_data
+   sample:NXsample
+Link check OK
+NXopenpath checks OK
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.h5
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.h5
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.h5#entry1
+TypeMap is correct size
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C++ binding using HDF4.])
+AT_CHECK([ $HAVE_HDF4 && $SETUP_TEST && napi_test_cpp-hdf4 | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: napi_test_cpp.hdf
+Number of global attributes: 4
+   NeXus_version = 4.4.0
+   file_name = napi_test_cpp.hdf
+Number of group attributes: 2
+   hugo = namenlos
+   cucumber = passion
+Group contains 9 items
+   c1_data[5,4] = 2d character array
+   Path = /entry/c1_data
+   ch_data[10] = NeXus_data
+   Path = /entry/ch_data
+   data:NXdata
+   i1_data[4] = [,,,]
+   Path = /entry/i1_data
+   i2_data[4] = [1000,2000,3000,4000]
+   Path = /entry/i2_data
+   i4_data[4] = [1000000,2000000,3000000,4000000]
+   Path = /entry/i4_data
+   r4_data[5,4] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+   Path = /entry/r4_data
+   r8_data[5,4] = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39]
+   Path = /entry/r8_data
+   sample:NXsample
+Link check OK
+NXopenpath checks OK
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.hdf
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.hdf
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.hdf#entry1
+TypeMap is correct size
+]])
+AT_CLEANUP
+
+AT_SETUP([Check the C++ binding using XML.])
+AT_CHECK([ $HAVE_XML && $SETUP_TEST && napi_test_cpp-xml | sed -e 's/\r$//' ], [], 
+[[NXinquirefile found: napi_test_cpp.xml
+Number of global attributes: 7
+   NeXus_version = 4.4.0
+   file_name = napi_test_cpp.xml
+   xmlns = http://definition.nexusformat.org/schema/3.1
+   xmlns:xsi = http://www.w3.org/2001/XMLSchema-instance
+   xsi:schemaLocation = http://definition.nexusformat.org/schema/3.1 http://definition.nexusformat.org/schema/3.1/BASE.xsd
+Number of group attributes: 2
+   hugo = namenlos
+   cucumber = passion
+Group contains 10 items
+   c1_data[5,4] = 2d character array
+   Path = /entry/c1_data
+   ch_data[10] = NeXus_data
+   Path = /entry/ch_data
+   data:NXdata
+   grosszahl[4] = [12,555555555555,23,777777777777]
+   Path = /entry/grosszahl
+   i1_data[4] = [,,,]
+   Path = /entry/i1_data
+   i2_data[4] = [1000,2000,3000,4000]
+   Path = /entry/i2_data
+   i4_data[4] = [1000000,2000000,3000000,4000000]
+   Path = /entry/i4_data
+   r4_data[5,4] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+   Path = /entry/r4_data
+   r8_data[5,4] = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39]
+   Path = /entry/r8_data
+   sample:NXsample
+Link check OK
+NXopenpath checks OK
+First file time: 2005-05-27 05:44:13
+NXinquirefile found: data/dmc01.xml
+Second file sample: Ga0.94Mn0.04Sb_8mm
+NXinquirefile found: data/dmc02.xml
+Second file time: 2005-05-27 05:48:56
+entry1 external URL = nxfile://data/dmc01.xml#entry1
+TypeMap is correct size
+]])
+AT_CLEANUP
+
+AT_BANNER([[Testing the Python bindings.]])
+AT_SETUP([Checking python binding using HDF5])
+AT_CHECK([$HAVE_HDF5 && $HAVE_PYTHON && $PYTHON $abs_srcdir/../bindings/python/nxstest.py -q hdf5 | sed -e 's/\r$//' ],[], 
+[[]])
+AT_CLEANUP
+
+AT_SETUP([Checking python binding using HDF4])
+AT_CHECK([skip_test && $HAVE_HDF4 && $HAVE_PYTHON && $PYTHON $abs_srcdir/../bindings/python/nxstest.py -q hdf4 | sed -e 's/\r$//' ],[], 
+[[]])
+AT_CLEANUP
+
+AT_SETUP([Checking python binding using XML])
+AT_CHECK([$HAVE_XML && $HAVE_PYTHON && $PYTHON $abs_srcdir/../bindings/python/nxstest.py -q xml | sed -e 's/\r$//' ],[], 
+[[]])
+AT_CLEANUP
+
+AT_BANNER([[Testing the Java bindings.]])
+AT_SETUP([Checking Java binding using HDF5])
+AT_CHECK([$HAVE_HDF5 && $HAVE_JAVA && (cd $abs_srcdir/../bindings/java ; $JAVA -Djava.library.path=.libs TestJapi hdf5 ) 2> /dev/null | sed -e 's/\r$//' ],[], 
+[[=================
+Testing Java API.
+=================
+
+Testing HDF5
+------------
+Exception handling mechanism works
+ *** Writing Tests passed with flying banners
+Found global attribute: HDF5_Version type: 4
+HDF5_Version= XXXX (volatile information withheld to aid automatic testing)
+Found global attribute: intarray type: 24, dimensions: 2 2, length: 4
+intarray = 1, 2, 3, 4
+Found global attribute: file_time type: 4
+file_time= XXXX (volatile information withheld to aid automatic testing)
+Found global attribute: singlenumber type: 24, dimensions: 1, length: 1
+singlenumber = -177
+Found global attribute: standardstringattribute type: 4, dimensions: 13, length: 13
+standardstringattribute = @012345abcdef
+Found global attribute: NeXus_version type: 4
+NeXus_version= XXXX (volatile information withheld to aid automatic testing)
+Found global attribute: floatarray type: 5, dimensions: 3 10, length: 30
+floatarray = 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 10.1, 10.3, 10.5, 10.7, 10.9, 11.1, 11.3, 11.5, 11.7, 11.9, 20.2, 20.4, 20.6, 20.8, 21.0, 21.2, 21.4, 21.6, 21.8, 22.0
+Found global attribute: file_name type: 4, dimensions: 13, length: 13
+file_name = japitest.hdf5
+Found in vGroup entry:
+     Item: iData1 class: SDS
+     Item: iData1_compressed class: SDS
+     Item: fData1 class: SDS
+     Item: slabbed class: SDS
+     Item: Stuart class: SDS
+Found iData1 with: rank = 2 type = 24 dims = 3, 10
+Found SDS attribute: signal type: 24, length: 1
+Found SDS attribute: target type: 4, length: 14
+Found SDS attribute: Units type: 4, length: 9
+ **** Inquiry routines passed test
+Read attribute Units to: MegaFarts
+ *** Data Reading routines appear to work
+*** openpath seems to work
+Success.
+
+Exiting.
+]])
+AT_CLEANUP
+
+AT_SETUP([Checking Java binding using XML])
+AT_CHECK([skip_test && $HAVE_XML && $HAVE_JAVA && (cd $abs_srcdir/../bindings/java ; $JAVA -Djava.library.path=.libs TestJapi xml ) 2> /dev/null | sed -e 's/\r$//' ],[], 
+[[
+This as well as hdf4 could be made to work with attribute arrays, but at the moment there is limited interest in non-HDF5 backends
+]])
+AT_CLEANUP
+
+AT_SETUP([Checking Java binding using HDF4])
+AT_CHECK([skip_test && $HAVE_HDF4 && $HAVE_JAVA && (cd $abs_srcdir/../bindings/java ; $JAVA -Djava.library.path=.libs TestJapi hdf4 ) 2> /dev/null | sed -e 's/\r$//' ],[], 
+[[
+hdf4 broken or at least inconsistent with other backends: emits null charaters in strings
+]])
+AT_CLEANUP
+
+
+AT_BANNER([[Testing the IDL bindings.]])
+
+AT_SETUP([Checking IDL binding using HDF5])
+AT_CHECK([$HAVE_HDF5 && $HAVE_IDL && $SETUP_TEST && $SHELL $abs_srcdir/../bindings/idl/testidlnapi "'hdf5'" | sed -e 's/\r$//' ],[], 
+[['hdf5'
+NeXus IDL Api Write test
+Using HDF5
+% Loaded DLM: NEXUSIDL-API.
+nxopen status:        1
+nxsetnumberformat status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxputattr status:        1
+nxputattr status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputslab status:       1
+nxputattr status :        1
+nxputattr status :        1
+nxputattr status :        1
+nxgetdataid status:        1
+nxclosedata status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakelink status:        1
+nxmakecompdata status:       1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxflush status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputslab            1 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            2 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            3 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            4 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            5 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            6 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            7 status:       1
+nxflush status:        1
+nxclosegroup status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxgetgroupid status:        1
+groupid handle:        2
+nxclosegroup status:        1
+nxclosegroup status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakelink status:        1
+groupid handle       2
+nxmakenamedlink status :        1
+dataid handle       1
+nxmakenamedlink status :        1
+nxclosegroup status:        1
+nxclose status:        1
+
+ ####################  Test external linking  ######################
+
+nxopen status:        1
+nxmakegroup status:        1
+nxlinkexternal:        1
+nxmakegroup status:        1
+nxlinkexternal:        1
+nxclose status:        1
+nxopen status:        1
+nxopenpath status       1
+
+nxget data status:        1
+First file time :
+2005-05-27 05:44:13
+
+nxinquirefile status:        1
+current file: data/dmc01.h5
+nxopenpath status       1
+nxget data status:        1
+Second file sample :
+Ga0.94Mn0.04Sb_8mm
+
+nxinquirefile status:        1
+current file: data/dmc01.h5
+nxopenpath status       1
+nxget data status:        1
+Second file time :
+2005-05-27 05:44:13
+
+nxisexternalgroup status       1
+entry1 external URL =
+nxclose status:        1
+% Compiled module: READ_TEST.
+Opening file: NXtest.h5
+nxopen status:        1
+nxinquirefile status:        1
+nxinquirefile found: NXtest.h5
+nxgetattrinfo status:       1
+Number of global attributes:        4
+
+NXgetnextattr status:        1
+
+attribute name: NeXus_version
+attribute value: 4.4.0
+
+NXgetnextattr status:        1
+
+attribute name: file_name
+attribute value: NXtest.h5
+
+NXgetnextattr status:        1
+
+attribute name: HDF5_Version
+attribute value: 1.6.8
+
+NXgetnextattr status:        1
+
+
+NXgetnextattr status:       -1
+
+nxopengroup status:       1
+nxgetattrinfo status:       1
+Number of group attributes:        2
+NXgetnextattr status:        1
+nxgetattr status       1
+attribute name: hugo
+attrubute lenght:        8
+attribute type:        4
+attribute value: namenlos
+
+NXgetnextattr status:        1
+nxgetattr status       1
+attribute name: cucumber
+attrubute lenght:        7
+attribute type:        4
+attribute value: passion
+
+NXgetnextattr status:       -1
+nxgetgroupinfo status       1
+current group name: entry
+current group class: NXentry
+number of items in group:        7
+
+nxgetnextentry status:        1
+nxgetnextentry name: ch_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       4
+
+opening data: ch_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       1
+Dim [       0]:      10
+Data Type:       4
+
+nxget data status:        1
+data :
+NeXus Data
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: data
+nxgetnextentry class: NXdata
+nxgetnextentry data_type       0
+
+nxgetnextentry status:        1
+nxgetnextentry name: i1_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type      21
+
+opening data: i1_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:      21
+
+nxgetslab status:        1
+data :
+   0   4   8  12
+
+nxgetslab status:        1
+data :
+   1   5   9  13
+
+nxgetslab status:        1
+data :
+   2   6  10  14
+
+nxgetslab status:        1
+data :
+   4   7  11  15
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: i4_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type      24
+
+opening data: i4_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:      24
+
+nxgetslab status:        1
+data :
+           0           4           8          12
+
+nxgetslab status:        1
+data :
+           1           5           9          13
+
+nxgetslab status:        1
+data :
+           2           6          10          14
+
+nxgetslab status:        1
+data :
+           3           7          11          15
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: r4_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       5
+
+opening data: r4_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:       5
+
+nxgetslab status:        1
+data :
+    0.0111112     0.34.4.0     0.666669     -12.2000
+
+nxgetslab status:        1
+data :
+    0.0212222     0.555556      1.00000     -13.4444
+
+nxgetslab status:        1
+data :
+     0.233333     0.666667      10.1000     -14.2222
+
+nxgetslab status:        1
+data :
+     0.344444     0.777773      11.2222     -15.4444
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: r8_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       6
+
+opening data: r8_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:       6
+
+nxgetslab status:        1
+data :
+       0.0000000       0.0000000       0.0000000       0.0000000
+
+nxgetslab status:        1
+data :
+       0.0000000       0.0000000       0.0000000       0.0000000
+
+nxgetslab status:        1
+data :
+     0.011111200     0.021222220      0.23333333      0.34444444
+
+nxgetslab status:        1
+data :
+       0.0000000       0.0000000       0.0000000       0.0000000
+
+nxgetattrinfo status:       1
+Number of group attributes:        4
+Number of global attributes:        4
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: ch_attribute
+attribute value: NeXus
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: i4_attribute
+attribute value:           42
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: r4_attribute
+attribute value:       3.14159
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: target
+attribute value: /entry/r8_data
+
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: sample
+nxgetnextentry class: NXsample
+nxgetnextentry data_type       0
+
+nxgetnextentry status:       -1
+nxclosegroup status:        1
+
+#######################  Checking Links ###########################
+
+nxopengroup status:       1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+groupid handle:        1
+
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+nxclosedata status:        1
+nxclosegroup status:        1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+nxclosedata status:        1
+debug
+nxsamid status:        1
+Data id: Link check succesfull
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+
+Group Id: Link check succesfull
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+
+Group Id Named: Link check succesfull
+
+nxclosegroup status:        1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+Data Id Named: Link check succesfull
+nxclosedata status:        1
+Openpath succesfull (/entry/data/comp_data)
+Openpath on a relative path  (../r8_data) succesfull
+nxclose status:        1
+finished napi test
+]])
+AT_CLEANUP
+AT_SETUP([Checking IDL binding using HDF4])
+AT_CHECK([skip_test && $HAVE_HDF4 && $HAVE_IDL && $SETUP_TEST && $SHELL $abs_srcdir/../bindings/idl/testidlnapi "'hdf4'" | sed -e 's/\r$//' ],[], 
+[['hdf4'
+NeXus IDL Api Write test
+Using HDF4
+% Loaded DLM: NEXUSIDL-API.
+nxopen status:        1
+nxsetnumberformat status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxputattr status:        1
+nxputattr status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       0
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputslab status:       1
+nxputattr status :        1
+nxputattr status :        1
+nxputattr status :        1
+nxgetdataid status:        1
+nxclosedata status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakelink status:        1
+nxmakecompdata status:       1
+opendata status:        1
+nxputdata status:       0
+nxclosedata status:        1
+nxflush status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputslab            1 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            2 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            3 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            4 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            5 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            6 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            7 status:       1
+nxflush status:        1
+nxclosegroup status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxgetgroupid status:        1
+groupid handle:        2
+nxclosegroup status:        1
+nxclosegroup status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakelink status:        1
+groupid handle       2
+nxmakenamedlink status :        1
+dataid handle       1
+nxmakenamedlink status :        1
+nxclosegroup status:        1
+nxclose status:        1
+
+ ####################  Test external linking  ######################
+
+nxopen status:        1
+nxmakegroup status:        1
+nxlinkexternal:        1
+nxmakegroup status:        1
+nxlinkexternal:        1
+nxclose status:        1
+nxopen status:        1
+nxopenpath status       1
+
+nxget data status:        1
+First file time :
+2005-05-27 05:44:13
+
+nxinquirefile status:        1
+current file: data/dmc01.hdf
+nxopenpath status       1
+nxget data status:        1
+Second file sample :
+Ga0.94Mn0.04Sb_8mm
+
+nxinquirefile status:        1
+current file: data/dmc01.hdf
+nxopenpath status       1
+nxget data status:        1
+Second file time :
+2005-05-27 05:44:13
+
+nxisexternalgroup status       1
+entry1 external URL =
+nxclose status:        1
+% Compiled module: READ_TEST.
+Opening file: NXtest.hdf
+nxopen status:        1
+nxinquirefile status:        1
+nxinquirefile found: NXtest.hdf
+nxgetattrinfo status:       1
+Number of global attributes:        4
+
+NXgetnextattr status:        1
+
+attribute name: NeXus_version
+attribute value: 4.4.0
+
+NXgetnextattr status:        1
+
+attribute name: HDF_version
+attribute value: NCSA HDF Version 4.2 Release 2, October 4, 2007
+
+NXgetnextattr status:        1
+
+attribute name: file_name
+attribute value: NXtest.hdf
+
+NXgetnextattr status:        1
+
+
+NXgetnextattr status:       -1
+
+nxopengroup status:       1
+nxgetattrinfo status:       1
+Number of group attributes:        2
+NXgetnextattr status:        1
+nxgetattr status       1
+attribute name: hugo
+attrubute lenght:        8
+attribute type:        4
+attribute value: namenlos
+
+NXgetnextattr status:        1
+nxgetattr status       1
+attribute name: cucumber
+attrubute lenght:        7
+attribute type:        4
+attribute value: passion
+
+NXgetnextattr status:       -1
+nxgetgroupinfo status       1
+current group name: entry
+current group class: NXentry
+number of items in group:        7
+
+nxgetnextentry status:        1
+nxgetnextentry name: ch_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       4
+
+opening data: ch_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       1
+Dim [       0]:      10
+Data Type:       4
+
+nxget data status:        1
+data :
+NeXus Data
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: i1_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type      21
+
+opening data: i1_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:      21
+
+nxgetslab status:        1
+data :
+   0   4   8  12
+
+nxgetslab status:        1
+data :
+   1   5   9  13
+
+nxgetslab status:        1
+data :
+   2   6  10  14
+
+nxgetslab status:        1
+data :
+   4   7  11  15
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: i4_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type      24
+
+opening data: i4_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:      24
+
+nxgetslab status:        1
+data :
+           0           4           8          12
+
+nxgetslab status:        1
+data :
+           1           5           9          13
+
+nxgetslab status:        1
+data :
+           2           6          10          14
+
+nxgetslab status:        1
+data :
+           3           7          11          15
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: r4_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       5
+
+opening data: r4_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:       5
+
+nxgetslab status:        1
+data :
+  9.96921e+36  9.96921e+36  9.96921e+36  9.96921e+36
+
+nxgetslab status:        1
+data :
+  9.96921e+36  9.96921e+36  9.96921e+36  9.96921e+36
+
+nxgetslab status:        1
+data :
+  9.96921e+36  9.96921e+36  9.96921e+36  9.96921e+36
+
+nxgetslab status:        1
+data :
+  9.96921e+36  9.96921e+36  9.96921e+36  9.96921e+36
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: r8_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       6
+
+opening data: r8_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:       6
+
+nxgetslab status:        1
+data :
+   9.9692100e+36   9.9692100e+36   9.9692100e+36   9.9692100e+36
+
+nxgetslab status:        1
+data :
+   9.9692100e+36   9.9692100e+36   9.9692100e+36   9.9692100e+36
+
+nxgetslab status:        1
+data :
+     0.011111200     0.021222220      0.23333333      0.34444444
+
+nxgetslab status:        1
+data :
+   9.9692100e+36   9.9692100e+36   9.9692100e+36   9.9692100e+36
+
+nxgetattrinfo status:       1
+Number of group attributes:        4
+Number of global attributes:        4
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: ch_attribute
+attribute value: NeXus
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: i4_attribute
+attribute value:           42
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: r4_attribute
+attribute value:       3.14159
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: target
+attribute value: /entry/r8_data
+
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: data
+nxgetnextentry class: NXdata
+nxgetnextentry data_type    1965
+
+nxgetnextentry status:        1
+nxgetnextentry name: sample
+nxgetnextentry class: NXsample
+nxgetnextentry data_type    1965
+
+nxgetnextentry status:       -1
+nxclosegroup status:        1
+
+#######################  Checking Links ###########################
+
+nxopengroup status:       1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+groupid handle:        1
+
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+nxclosedata status:        1
+nxclosegroup status:        1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+nxclosedata status:        1
+debug
+nxsamid status:        1
+Data id: Link check succesfull
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+
+Group Id: Link check succesfull
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+
+Group Id Named: Link check succesfull
+
+nxclosegroup status:        1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+Data Id Named: Link check succesfull
+nxclosedata status:        1
+Openpath succesfull (/entry/data/comp_data)
+Openpath on a relative path  (../r8_data) succesfull
+nxclose status:        1
+finished napi test
+]])
+AT_CLEANUP
+AT_SETUP([Checking IDL binding using XML])
+AT_CHECK([$HAVE_XML && $HAVE_IDL && $SETUP_TEST && $SHELL $abs_srcdir/../bindings/idl/testidlnapi "'xml'" | sed -e 's/\r$//' ],[], 
+[['xml'
+NeXus IDL Api Write test
+Using XML
+% Loaded DLM: NEXUSIDL-API.
+nxopen status:        1
+nxsetnumberformat status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxputattr status:        1
+nxputattr status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputslab status:       1
+nxputattr status :        1
+nxputattr status :        1
+nxputattr status :        1
+nxgetdataid status:        1
+nxclosedata status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakelink status:        1
+nxmakecompdata status:       1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxflush status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputslab            1 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            2 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            3 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            4 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            5 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            6 status:       1
+nxflush status:        1
+opendata status:        1
+nxputslab            7 status:       1
+nxflush status:        1
+nxclosegroup status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakedata status:        1
+opendata status:        1
+nxputdata status:       1
+nxclosedata status:        1
+nxgetgroupid status:        1
+groupid handle:        2
+nxclosegroup status:        1
+nxclosegroup status:        1
+nxmakegroup status:        1
+nxopengroup status:        1
+nxmakelink status:        1
+groupid handle       2
+nxmakenamedlink status :        1
+dataid handle       1
+nxmakenamedlink status :        1
+nxclosegroup status:        1
+nxclose status:        1
+
+ ####################  Test external linking  ######################
+
+nxopen status:        1
+nxmakegroup status:        1
+nxlinkexternal:        1
+nxmakegroup status:        1
+nxlinkexternal:        1
+nxclose status:        1
+nxopen status:        1
+nxopenpath status       1
+
+nxget data status:        1
+First file time :
+2005-05-27 05:44:13
+
+nxinquirefile status:        1
+current file: data/dmc01.xml
+nxopenpath status       1
+nxget data status:        1
+Second file sample :
+Ga0.94Mn0.04Sb_8mm
+
+nxinquirefile status:        1
+current file: data/dmc01.xml
+nxopenpath status       1
+nxget data status:        1
+Second file time :
+2005-05-27 05:44:13
+
+nxisexternalgroup status       1
+entry1 external URL =
+nxclose status:        1
+% Compiled module: READ_TEST.
+Opening file: NXtest.xml
+nxopen status:        1
+nxinquirefile status:        1
+nxinquirefile found: NXtest.xml
+nxgetattrinfo status:       1
+Number of global attributes:        7
+
+NXgetnextattr status:        1
+
+attribute name: NeXus_version
+attribute value: 4.4.0
+
+NXgetnextattr status:        1
+
+attribute name: XML_version
+attribute value: mxml
+
+NXgetnextattr status:        1
+
+attribute name: file_name
+attribute value: NXtest.xml
+
+NXgetnextattr status:        1
+
+attribute name: xmlns
+attribute value: http://definition.nexusformat.org/schema/3.1
+
+NXgetnextattr status:        1
+
+attribute name: xmlns:xsi
+attribute value: http://www.w3.org/2001/XMLSchema-instance
+
+NXgetnextattr status:        1
+
+attribute name: xsi:schemaLocation
+attribute value: http://definition.nexusformat.org/schema/3.1 http://definition.nexusformat.org/schema/3.0/BASE.xsd
+
+NXgetnextattr status:        1
+
+
+NXgetnextattr status:       -1
+
+nxopengroup status:       1
+nxgetattrinfo status:       1
+Number of group attributes:        2
+NXgetnextattr status:        1
+nxgetattr status       1
+attribute name: hugo
+attrubute lenght:        8
+attribute type:        4
+attribute value: namenlos
+
+NXgetnextattr status:        1
+nxgetattr status       1
+attribute name: cucumber
+attrubute lenght:        7
+attribute type:        4
+attribute value: passion
+
+NXgetnextattr status:       -1
+nxgetgroupinfo status       1
+current group name: entry
+current group class: NXentry
+number of items in group:        7
+
+nxgetnextentry status:        1
+nxgetnextentry name: ch_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       4
+
+opening data: ch_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       1
+Dim [       0]:      10
+Data Type:       4
+
+nxget data status:        1
+data :
+NeXus Data
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: i1_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type      21
+
+opening data: i1_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:      21
+
+nxgetslab status:        1
+data :
+   0   4   8  12
+
+nxgetslab status:        1
+data :
+   1   5   9  13
+
+nxgetslab status:        1
+data :
+   2   6  10  14
+
+nxgetslab status:        1
+data :
+   4   7  11  15
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: i4_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type      24
+
+opening data: i4_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:      24
+
+nxgetslab status:        1
+data :
+           0           4           8          12
+
+nxgetslab status:        1
+data :
+           1           5           9          13
+
+nxgetslab status:        1
+data :
+           2           6          10          14
+
+nxgetslab status:        1
+data :
+           3           7          11          15
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: r4_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       5
+
+opening data: r4_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:       5
+
+nxgetslab status:        1
+data :
+    0.0110000     0.344000     0.667000     -12.2000
+
+nxgetslab status:        1
+data :
+    0.0210000     0.556000      1.00000     -13.4440
+
+nxgetslab status:        1
+data :
+     0.233000     0.667000      10.1000     -14.2220
+
+nxgetslab status:        1
+data :
+     0.344000     0.778000      11.2220     -15.4440
+
+nxgetattrinfo status:       1
+Number of group attributes:        0
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: r8_data
+nxgetnextentry class: SDS
+nxgetnextentry data_type       6
+
+opening data: r8_data
+nxopendata status:        1
+
+nxgetinfo Status:       1
+Rank:       2
+Dim [       0]:       4
+Dim [       1]:       4
+Data Type:       6
+
+nxgetslab status:        1
+data :
+       0.0000000       0.0000000       0.0000000       0.0000000
+
+nxgetslab status:        1
+data :
+       0.0000000       0.0000000       0.0000000       0.0000000
+
+nxgetslab status:        1
+data :
+     0.011110000     0.021220000      0.23333000      0.34444000
+
+nxgetslab status:        1
+data :
+       0.0000000       0.0000000       0.0000000       0.0000000
+
+nxgetattrinfo status:       1
+Number of group attributes:        4
+Number of global attributes:        4
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: ch_attribute
+attribute value: NeXus
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: i4_attribute
+attribute value:           42
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: r4_attribute
+attribute value:       3.14159
+
+nxgetnextattr status:        1
+nxgetattr status       1
+attribute name: target
+attribute value: /entry/r8_data
+
+nxgetnextattr status:       -1
+nxclosedata status:        1
+nxgetnextentry status:        1
+nxgetnextentry name: data
+nxgetnextentry class: NXdata
+nxgetnextentry data_type       0
+
+nxgetnextentry status:        1
+nxgetnextentry name: sample
+nxgetnextentry class: NXsample
+nxgetnextentry data_type       0
+
+nxgetnextentry status:       -1
+nxclosegroup status:        1
+
+#######################  Checking Links ###########################
+
+nxopengroup status:       1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+groupid handle:        1
+
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+nxclosedata status:        1
+nxclosegroup status:        1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+nxclosedata status:        1
+debug
+nxsamid status:        1
+Data id: Link check succesfull
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+
+Group Id: Link check succesfull
+nxclosegroup status:        1
+
+nxopengroup status:       1
+
+nxgetgroupid status:        1
+
+Group Id Named: Link check succesfull
+
+nxclosegroup status:        1
+
+nxopendata status:        1
+
+nxgetdataid status:        1
+Data Id Named: Link check succesfull
+nxclosedata status:        1
+Openpath succesfull (/entry/data/comp_data)
+Openpath on a relative path  (../r8_data) succesfull
+nxclose status:        1
+finished napi test
+]])
+AT_CLEANUP
+
+AT_BANNER([[Testing the NeXus File Converter.]])
+AT_SETUP([Checking nxconvert HDF5 -> HDF5 ])
+AT_CHECK([$HAVE_HDF5 && nxconvert --hdf 5 NXtest.h5 a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.h5 to HDF5 NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert HDF5 -> HDF4 ])
+AT_CHECK([skip_test && $HAVE_HDF5 && $HAVE_HDF4 && nxconvert --hdf 4 NXtest.h5 a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.h5 to HDF4 NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert HDF5 -> XML ])
+AT_CHECK([$HAVE_HDF5 && $HAVE_XML && nxconvert -x NXtest.h5 a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.h5 to XML NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert HDF4 -> HDF5 ])
+AT_CHECK([$HAVE_HDF4 && $HAVE_HDF5 && nxconvert --hdf 5 NXtest.hdf a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.hdf to HDF5 NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert HDF4 -> HDF4 ])
+AT_CHECK([skip_test && $HAVE_HDF4 && nxconvert --hdf 4 NXtest.hdf a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.hdf to HDF4 NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert HDF4 -> XML ])
+AT_CHECK([$HAVE_HDF4 && $HAVE_XML && nxconvert -x NXtest.hdf a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.hdf to XML NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert XML -> HDF5 ])
+AT_CHECK([$HAVE_XML && $HAVE_HDF5 && nxconvert --hdf 5 NXtest.xml a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.xml to HDF5 NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert XML -> HDF4 ])
+AT_CHECK([skip_test && $HAVE_XML && $HAVE_HDF4 && nxconvert --hdf 4 NXtest.xml a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.xml to HDF4 NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxconvert XML -> XML ])
+AT_CHECK([$HAVE_XML && nxconvert -x NXtest.xml a.a | sed -e 's/\r$//' ],[], 
+[[Converting NXtest.xml to XML NeXus file a.a
+Convertion successful.
+]])
+AT_CLEANUP
+
+AT_BANNER([[Testing NXsummary Tool.]])
+
+AT_SETUP([Checking nxsummary HDF5 test file])
+AT_CHECK([$HAVE_HDF5 && $HAVE_NXSUMMARY && nxsummary --config NONE NXtest.h5 | sed -e 's/\r$//' ],[], 
+[[SAMPLE:
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxsummary HDF4 test file])
+AT_CHECK([$HAVE_HDF4 && $HAVE_NXSUMMARY && nxsummary --config NONE NXtest.hdf | sed -e 's/\r$//' ],[], 
+[[SAMPLE:
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxsummary XML test file])
+AT_CHECK([$HAVE_XML && $HAVE_NXSUMMARY && nxsummary --config NONE NXtest.xml | sed -e 's/\r$//' ],[], 
+[[SAMPLE:
+]])
+AT_CLEANUP
+
+AT_BANNER([[Testing NXbrowse Tool.]])
+AT_SETUP([Checking nxbrowse HDF5 test file])
+AT_CHECK([$HAVE_HDF5 && env NO_READLINE=1 nxbrowse NXtest.h5  < ${abs_srcdir}/nxbrowse.txt | grep -v 'HDF5_Version = ' | grep -v 'file_time = ' | grep -v 'readline support' | sed -e 's/\r$//' | sed -e 's/[ ]*$//' ],[], 
+[[NXBrowse 4.4.0 Copyright (C) 2009-2014 NeXus Data Format
+    NeXus_version = 4.4.0
+    file_name = NXtest.h5
+NX/>   NX Group : entry (NXentry)
+             entry attribute: hugo = namenlos
+             entry attribute: cucumber = passion
+  NX Group : link (NXentry)
+NX/>
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxbrowse HDF4 test file])
+AT_CHECK([$HAVE_HDF4 && env NO_READLINE=1 nxbrowse NXtest.hdf  < ${abs_srcdir}/nxbrowse.txt | grep -v 'HDF_version = ' | grep -v 'file_time = ' | grep -v 'readline support' | sed -e 's/\r$//' | sed -e 's/[ ]*$//' ],[], 
+[[NXBrowse 4.4.0 Copyright (C) 2009-2014 NeXus Data Format
+    NeXus_version = 4.4.0
+    file_name = NXtest.hdf
+NX/>   NX Group : entry (NXentry)
+             entry attribute: hugo = namenlos
+             entry attribute: cucumber = passion
+  NX Group : link (NXentry)
+NX/>
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxbrowse XML test file])
+AT_CHECK([$HAVE_XML && env NO_READLINE=1 nxbrowse NXtest.xml  < ${abs_srcdir}/nxbrowse.txt | grep -v 'file_time = ' | grep -v 'XML_version = ' | grep -v 'readline support' | sed -e 's/\r$//' | sed -e 's/[ ]*$//' ],[], 
+[[NXBrowse 4.4.0 Copyright (C) 2009-2014 NeXus Data Format
+    NeXus_version = 4.4.0
+    file_name = NXtest.xml
+    xmlns = http://definition.nexusformat.org/schema/3.1
+    xmlns:xsi = http://www.w3.org/2001/XMLSchema-instance
+    xsi:schemaLocation = http://definition.nexusformat.org/schema/3.1 http://definition.nexusformat.org/schema/3.1/BASE.xsd
+NX/>   NX Group : entry (NXentry)
+             entry attribute: hugo = namenlos
+             entry attribute: cucumber = passion
+  NX Group : link (NXentry)
+NX/>
+]])
+AT_CLEANUP
+
+AT_BANNER([[Testing NXdir Tool.]])
+
+AT_SETUP([Checking nxdir HDF5 test file])
+AT_CHECK([$HAVE_HDF5 && nxdir NXtest.h5 | sed -e 's/\r$//' ],[], 
+[[/entry/
+/link/
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxdir HDF4 test file])
+AT_CHECK([$HAVE_HDF4 && nxdir NXtest.hdf | sed -e 's/\r$//' ],[], 
+[[/entry/
+/link/
+]])
+AT_CLEANUP
+AT_SETUP([Checking nxdir XML test file])
+AT_CHECK([$HAVE_XML && nxdir NXtest.xml | sed -e 's/\r$//' ],[], 
+[[/entry/
+/link/
+]])
+AT_CLEANUP
+
+
+dnl AT_BANNER([[Testing validating files with the nxvalidate tool.]])
+dnl AT_SETUP([Checking HDF4 test file via web (wget)])
+dnl AT_CHECK([$HAVE_HDF4 && $HAVE_WGET && $SETUP_TEST && napi_test-hdf4 -q && nxvalidate -q -w NXtest.hdf | sed -e 's/\r$//' ],[], 
+dnl 
+dnl AT_CLEANUP
+dnl AT_SETUP([Checking HDF5 test file via web (wget)])
+dnl AT_CHECK([$HAVE_HDF4 && $HAVE_WGET && $SETUP_TEST && napi_test-hdf5 -q && nxvalidate -q -w NXtest.h5 | sed -e 's/\r$//' ],[], 
+dnl 
+dnl AT_CLEANUP
+dnl AT_SETUP([Checking XML test file via web (wget)])
+dnl AT_CHECK([$HAVE_HDF4 && $HAVE_WGET && $SETUP_TEST && napi_test-xml -q && nxvalidate -q -w NXtest.xml | sed -e 's/\r$//' ],[], 
+dnl 
+dnl AT_CLEANUP

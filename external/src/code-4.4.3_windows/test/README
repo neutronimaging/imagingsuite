@@ -1,0 +1,38 @@
+*
+* This file is CVS only - README.tests is installed in /usr/local/nexus/tests
+*
+Both dynamic library versions (e.g. napi_test-hdf4) and 
+static library versions (e.g. napi_test-hdf4-static) of the test
+programs are now build. 
+
+Static Library Version
+----------------------
+
+The static version "napi_test-hdf4-static" is a real self contained
+executable and you can run it either directly or in a debugger with simply
+
+    gdb napi_test-hdf4-static
+
+Dynamic Library Version
+-----------------------
+
+"napi_test-hdf4" is not a real executable, but a shell script that
+invokes the real dynamic executable ".libs/napi_test-hdf4". Though
+you can run ".libs/napi_test-hdf4" directly you should be aware that
+it will then pick up whatever NeXus library is either currently in your 
+LD_* environment variable paths or installed in a system shared library 
+area (such as /usr/local/lib)
+
+To test the NeXus shared library you have just built you must use 
+the shell script "napi_test-hdf4" which will set
+the correct environment before running ".libs/napi_test-hdf4"
+
+If you wish to run the program in a debugger you must use
+
+    libtool --mode=execute gdb napi_test-hdf4
+
+To check what shared libraries the program will load run
+
+    libtool --mode=execute ldd napi_test-hdf4
+
+$Id$

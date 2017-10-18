@@ -1,0 +1,12 @@
+#
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: nexus Fortran 77 bindings
+Description:Libraries and utilities for using NeXus format data files from Fortran 77
+Version:@API_VERSION@
+Requires: nexus
+Libs:	-L${libdir} -lNeXus77 
+Cflags:	-I${includedir}/nexus -I${includedir}

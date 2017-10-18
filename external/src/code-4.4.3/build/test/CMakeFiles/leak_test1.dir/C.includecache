@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/chiaracarminati/Downloads/code-4.4.3/test/leak_test1.c
+stdio.h
+-
+unistd.h
+-
+stdlib.h
+-
+napi.h
+-
+
+include/napi.h
+stdint.h
+-
+stdint.h
+-
+

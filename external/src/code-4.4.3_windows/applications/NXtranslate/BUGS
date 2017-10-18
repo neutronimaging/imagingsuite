@@ -1,0 +1,22 @@
+This file contains a list of known bugs in NXtranslate or one of the
+libraries it depends on. Being smart about how you write your
+translation file will be able to avoid most of them.
+
+OPENING A NEXUS FILE MULTIPLE TIMES - There is an inconsistent bug in
+the NeXus API (napi) where the library will crash if a NeXus file is
+opened for read, closed, then opened for reading again. I have been
+unable to reproduce it in a sample code to submit to the NeXus
+developers.
+
+LINKING TO A ROOT GROUP - Creating a link to a group that exists at
+the root level (e.g. a NXentry) will move the group, not create a
+copy. If the link is at the same level, just inside the root, the
+group will be renamed. If the link is somewhere else in hierarchy the
+group will be moved to that point.
+
+RETURNING AN EMPTY TREE - The retrievers are assumed that they add at
+least one Node to the tree they are given for population. If they do
+not the xml_parser will crash. The user cannot create this error, only
+a programmer can. Instead of returning an empty tree the Retriever
+should throw an exception (invalid_argument, runtime_error, or
+exception) to notify xml_parser of the extraordinary call.
