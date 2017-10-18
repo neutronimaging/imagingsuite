@@ -1,0 +1,9 @@
+v0.2.0
+
+  Fixed bug that accidentily converted text in the translation file
+  into a float value of "0.0".
+
+  Added ability of NeXus retriever to convert Attributes into Nodes.
+
+  Can create links in output file.
+

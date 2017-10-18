@@ -1,0 +1,100 @@
+#!/bin/sh
+#
+# $Id$
+#
+# @configure_input@
+#
+SETUP_TEST="sh $abs_srcdir/setup_test $abs_srcdir"
+export SETUP_TEST
+#
+if test ! -z "@H4ROOT@"; then
+    HAVE_HDF4="napi_test-hdf4-static -q"
+else
+    HAVE_HDF4=skip_test
+fi
+export HAVE_HDF4
+#
+if test ! -z "@H5ROOT@"; then
+    HAVE_HDF5="napi_test-hdf5-static -q"
+else
+    HAVE_HDF5=skip_test
+fi
+export HAVE_HDF5
+#
+if test ! -z "@MXMLROOT@"; then
+    HAVE_XML="napi_test-xml-static -q"
+else
+    HAVE_XML=skip_test
+fi
+export HAVE_XML
+#
+if test "@WITH_F77@" = "yes"; then
+    HAVE_F77=run_test
+else
+    HAVE_F77=skip_test
+fi
+export HAVE_F77
+#
+if test "@WITH_F90@" = "yes"; then
+    HAVE_F90=run_test
+else
+    HAVE_F90=skip_test
+fi
+export HAVE_F90
+#
+if test -f nxsummary; then
+    HAVE_NXSUMMARY=run_test
+else
+    HAVE_NXSUMMARY=skip_test
+fi
+export HAVE_NXSUMMARY
+#
+if test -f nxtranslate; then
+    HAVE_NXTRANSLATE=run_test
+else
+    HAVE_NXTRANSLATE=skip_test
+fi
+export HAVE_NXTRANSLATE
+#
+if test ! -z "@WGET@"; then
+    HAVE_WGET=run_test
+else
+    HAVE_WGET=skip_test
+fi
+export HAVE_WGET
+#
+if test ! -z "@XMLLINT@"; then
+    HAVE_XMLLINT=run_test
+else
+    HAVE_XMLLINT=skip_test
+fi
+export HAVE_XMLLINT
+#
+if test ! -z "@PYTHONROOT@"; then
+    HAVE_PYTHON=run_test
+else
+    HAVE_PYTHON=skip_test
+fi
+export HAVE_PYTHON
+#
+if test ! -z "@JAVAC@"; then
+    HAVE_JAVA=run_test
+else
+    HAVE_JAVA=skip_test
+fi
+export HAVE_JAVA
+#
+if test ! -z "@JAVA@"; then
+    JAVA="@JAVA@"
+else
+    JAVA=:
+fi
+export JAVA
+#
+if test ! -z "@IDLROOT@"; then
+    HAVE_IDL=run_test
+else
+    HAVE_IDL=skip_test
+fi
+export HAVE_IDL
+#

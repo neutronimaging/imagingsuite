@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<icat version="1.0 RC6" xsi:noNamespaceSchemaLocation="icatXSD.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<study>
+<name>_2007</name>
+<purpose>Group all Investigation per instrument and per year.</purpose>
+<status>ONGOING</status>
+<study_creation_date>2007-10-15T10:26:23</study_creation_date>
+<investigation trusted="false">
+<inv_number>0</inv_number>
+<visit_id>1</visit_id>
+<title>mon pos 2.0</title>
+<inv_type>EXPERIMENT</inv_type>
+<keyword>
+<name>mon</name></keyword>
+<keyword>
+<name>pos</name></keyword>
+<keyword>
+<name>2.0</name></keyword>
+<dataset>
+<name>Default</name>
+<dataset_type>EXPERIMENT_RAW</dataset_type>
+<dataset_status>COMPLETE</dataset_status>
+<description> Title =mon pos 2.0 Note =</description>
+<sample>
+<instance>0</instance>
+<safety_information>No information available.</safety_information></sample>
+<datafile>
+<name>SRF76670.nxs</name>
+<location>file:///mnt/isisdata/NDX/instrument/data/test_data/Neutron/SRF76670.nxs</location>
+<description>mon pos 2.0</description>
+<datafile_version>1.0</datafile_version>
+<datafile_version_comment>First version</datafile_version_comment>
+<datafile_format>NeXus</datafile_format>
+<datafile_format_version>2.1.0</datafile_format_version>
+<datafile_create_time>2007-10-11T10:25:45</datafile_create_time>
+<datafile_modify_time>2007-10-11T10:27:23</datafile_modify_time>
+<file_size>36963</file_size>
+<parameter>
+<name>run_number</name>
+<numeric_value>76670</numeric_value>
+<units>N/A</units>
+<description>Run Number</description></parameter>
+<parameter>
+<name>nexus_version</name>
+<string_value>2.1.0</string_value>
+<units>N/A</units>
+<description>NeXus version used to create the file.</description></parameter>
+<parameter>
+<name>hdf_version</name>
+<string_value>NCSA HDF Version 4.1 Release 5, November 5, 2001</string_value>
+<units>N/A</units>
+<description>HDF Version used to create the file.</description></parameter>
+<parameter>
+<name>program_name</name>
+<string_value>ICP</string_value>
+<units>N/A</units>
+<description>Name of creating program.</description></parameter>
+<parameter>
+<name>program_version</name>
+<string_value>v1</string_value>
+<units>N/A</units>
+<description>version of creating program.</description></parameter>
+<parameter>
+<name>start_date</name>
+<string_value>2007-10-11 10:25:45+0000</string_value>
+<units>yyyy-MM-dd HH:mm:ss</units>
+<description>Start Time of the dataset.</description></parameter>
+<parameter>
+<name>finish_date</name>
+<string_value>2007-10-11 10:27:23+0000</string_value>
+<units>yyyy-MM-dd HH:mm:ss</units>
+<description>Start Time of the dataset.</description></parameter>
+<parameter>
+<name>run_duration</name>
+<numeric_value>98</numeric_value>
+<units>seconds</units>
+<description>Calculated duration.</description></parameter>
+<parameter>
+<name>data_avg_counts</name>
+<numeric_value>4</numeric_value>
+<units>counts</units>
+<description>Average of number of counts in histogram_data_1.</description></parameter>
+<parameter>
+<name>data_std_counts</name>
+<numeric_value>151.295</numeric_value>
+<units>counts</units>
+<description>Standard deviation of number of counts in histogram_data_1.</description></parameter>
+<parameter>
+<name>histogram_resolution</name>
+<numeric_value>20000</numeric_value>
+<units>picoseconds</units>
+<description>Histogram resolution. set to 0 if not applicable.</description></parameter></datafile></dataset></investigation></study></icat>

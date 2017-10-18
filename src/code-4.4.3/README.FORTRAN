@@ -1,0 +1,86 @@
+The NAPI FORTRAN interface consists of wrapper routines (napif.f) and
+an include file of definitions (napif.inc). The routines are called
+exactly like their C counterparts, but the setup for NXHandle
+and NXlink structures is done slightly differently (see the
+example program "napif_test.f")
+
+For a NXhandle, you use:
+
+    INTEGER FILEID(NXHANDLESIZE)
+
+And for an NXlink
+
+    INTEGER LINK(NXLINKSIZE)
+
+--- Running the Examples ---
+
+The Fortran 77 library is now built by the standard Makefile. See the 
+README file for installation instructions.
+   
+The test program, napif_test, should print the following:
+
+ Number of global attributes:  4
+    NeXus_version = 2.0.0.
+    file_name = NXtest.nxs
+    HDF5_Version = 1.4.3
+    file_time = 2002-05-17 14:40:24-0600
+ Group: entry(NXentry) contains  8 items
+    ch_data( 4)
+    Values : NeXus data
+    Subgroup: data(NXdata)
+    i1_data(20)
+    Values :   1  2  3  4
+    i2_data(22)
+    Values :   1000  2000  3000  4000
+    i4_data(24)
+    Values :      1000000     2000000     3000000     4000000
+    r4_data( 5)
+    Values :    1.00   2.00   3.00   4.00
+           :    5.00   6.00   7.00   8.00
+           :    9.00  10.00  11.00  12.00
+           :   13.00  14.00  15.00  16.00
+           :   17.00  18.00  19.00  20.00
+    r8_data( 6)
+    Values :    1.00   2.00   3.00   4.00
+           :    5.00   6.00   7.00   8.00
+           :    9.00  10.00  11.00  12.00
+           :   13.00  14.00  15.00  16.00
+           :   17.00  18.00  19.00  20.00
+       ch_attribute : NeXus
+       i4_attribute :    42
+       r4_attribute :   3.141593
+    Subgroup: sample(NXsample)
+ Link Check OK
+
+A file called "NXtest.nxs" is also created.
+
+*** FORTRAN Interface Notes ***
+
+- NAPIF.F uses the non-standard type specification BYTE to convert Fortran
+  character data to C strings.  There is no method of specifying single-byte
+  storage under the Fortran 77 standard, but if the BYTE specification is 
+  not allowed by your Fortran compiler, please try one of the other common
+  compiler extensions, e.g., INTEGER*1, LOGICAL*1.
+
+- There are separate routines for reading and writing character data
+  and attributes (NXGETCHARDATA, NXGETCHARATTR, NXPUTCHARDATA, NXPUTCHARATTR).
+  This is necessary because character strings are passed by descriptor rather
+  than by reference.
+
+- If you don't wish to use these routines, it is possible to pass character
+  data to the C interface using the regular routines (i.e. NXGETDATA etc) 
+  by forcing the string arguments to be passed by reference.  Either 
+  equivalence the string to a BYTE array or use the %REF (or equivalent) 
+  function.  It does not appear to be necessary to null-terminate the strings
+  since the string length, passed to the HDF file, does not include the 
+  terminator.
+
+--
+Freddie Akeroyd
+ISIS Facility
+Rutherford Appleton Laboratory
+Chilton, Didcot, OX11 OQX, GB
+
+Email: Freddie.Akeroyd@rl.ac.uk
+
+$Id$

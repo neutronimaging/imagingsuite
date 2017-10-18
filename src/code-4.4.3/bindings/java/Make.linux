@@ -1,0 +1,99 @@
+#--------------------------------------------------------------------------
+# Makefile for the NeXus Java API. Builds both the required Java class
+# files and the shared library with the native methods.
+#
+# This version for Redhat Linux 
+# 
+# Mark Koennecke, October 2003
+#--------------------------------------------------------------------------
+.SUFFIXES:
+.SUFFIXES: .java .class .c .o 
+
+###########################################################################
+#         C O N F I G U R A T I O N       S E C T I O N                   #
+###########################################################################
+
+include ../../make_general
+
+#Where to find the napi C stuff
+NAPIROOT=$(SINQDIR)/linux
+
+# Where Java lives
+JAVAROOT=/scratch/j2sdk1.4.2
+JAVABIN=$(JAVAROOT)/bin
+
+# The classpath for compiling java
+JCP=.:
+
+# The path to the include files for the jni-headers
+JINCLUDE= -I$(JAVAROOT)/include -I$(JAVAROOT)/include/linux 
+
+# The C-compiler to use
+CC=gcc
+
+# Compiler flags to use for compiling
+CFLAGS= -g -c $(JINCLUDE) $(NXFLAGS) -I../../include \
+       -Inative
+
+#Compiler flags used for linking
+LFLAGS= -g -shared -L../../src -lNeXus $(NXLDFLAGS)
+
+#Target location for the shared library
+SHLIB=bin/rh62/libjnexus.so
+
+###########################################################################
+#     END OF C O N F I G U R A T I O N       S E C T I O N                #
+#                  DO NOT TOUCH ANYTHING BELOW!                           #
+###########################################################################
+
+.java.class:
+	$(JAVABIN)/javac -g -target 1.1 -classpath $(JCP) $*.java
+
+.c.o:
+	$(CC) $(CFLAGS) -o $*.o $*.c
+
+JOBJ=ncsa/hdf/hdflib/HDFException.class \
+     ncsa/hdf/hdflib/HDFJavaException.class \
+     ncsa/hdf/hdflib/HDFNotImplementedException.class \
+     ncsa/hdf/hdflib/HDFConstants.class \
+     ncsa/hdf/hdflib/HDFArray.class \
+     ncsa/hdf/hdflib/HDFNativeData.class \
+     neutron/nexus/NexusException.class \
+     neutron/nexus/NXlink.class \
+     neutron/nexus/NeXusFileInterface.class \
+     neutron/nexus/AttributeEntry.class \
+     neutron/nexus/NexusFile.class 
+     
+
+COBJ=native/hdfnativeImp.o \
+     native/hdfexceptionImp.o \
+     native/handle.o \
+     native/NexusFile.o
+
+du40: all
+rh62: all
+
+
+all: jnexus.jar libjnexus.so test
+
+jnexus.jar: $(JOBJ)
+	- rm jnexus.jar
+	$(JAVABIN)/jar cvf jnexus.jar $(JOBJ) \
+	  ncsa/hdf/hdflib/ArrayDescriptor.class
+
+libjnexus.so: $(COBJ)
+	$(CC)  -o $(SHLIB) $(COBJ)  \
+	 $(LFLAGS) -lz -lm 
+
+
+header: neutron/nexus/NexusFile.class
+	$(JAVABIN)/javah -jni -d native neutron.nexus.NexusFile
+
+test: test/TestJapi.class
+
+clean:
+	- rm neutron/nexus/*.class
+	- rm ncsa/hdf/hdflib/*.class
+	- rm native/*.o
+
+

@@ -1,0 +1,5 @@
+NeXus is an international standard for exchanging data files
+among Neutron, Muon and X-ray science facilities. The underlying
+data is stored using the HDF format from NCSA. This package provides
+access routines, documentation, examples and a basic NeXus file browser.
+

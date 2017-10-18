@@ -1,0 +1,47 @@
+﻿  NeXusStream.cpp
+c:\users\carminati_c\repos\external\src\code-4.4.3\bindings\cpp\nexusfile.hpp(8): fatal error C1083: Cannot open include file: 'napi.h': No such file or directory
+  NeXusFile.cpp
+c:\users\carminati_c\repos\external\src\code-4.4.3\bindings\cpp\nexusfile.hpp(8): fatal error C1083: Cannot open include file: 'napi.h': No such file or directory
+  NeXusException.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(17): error C2632: 'char' followed by 'char' is illegal
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(17): warning C4091: 'typedef ': ignored on left of 'signed char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(18): error C2632: 'short' followed by 'short' is illegal
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(18): warning C4091: 'typedef ': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(19): error C2632: 'int' followed by 'int' is illegal
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(19): warning C4091: 'typedef ': ignored on left of 'int' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(21): warning C4114: same type qualifier used more than once
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(21): error C2632: 'char' followed by 'char' is illegal
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(21): warning C4091: 'typedef ': ignored on left of 'unsigned char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(22): warning C4114: same type qualifier used more than once
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(22): error C2632: 'short' followed by 'short' is illegal
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(22): warning C4091: 'typedef ': ignored on left of 'unsigned short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(23): warning C4114: same type qualifier used more than once
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\stdint.h(23): warning C4091: 'typedef ': ignored on left of 'unsigned int' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2589: 'char': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(10): error C2589: 'short': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(11): error C2589: 'int': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(11): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2144: syntax error: 'char' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): warning C4091: '': ignored on left of 'char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): error C2144: syntax error: 'short' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(12): warning C4091: '': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(13): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(13): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2589: 'char': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(30): error C2589: 'short': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(31): error C2589: 'int': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(31): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2144: syntax error: 'char' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): warning C4091: '': ignored on left of 'char' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): error C2144: syntax error: 'short' should be preceded by ';'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(32): warning C4091: '': ignored on left of 'short' when no variable is declared
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(33): error C2589: 'unsigned': illegal token on right side of '::'
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\cstdint(33): error C2873: 'unknown-type': symbol cannot be used in a using-declaration
+c:\users\carminati_c\repos\external\src\code-4.4.3\bindings\cpp\nexusfile.hpp(8): fatal error C1083: Cannot open include file: 'napi.h': No such file or directory
+  Generating Code...

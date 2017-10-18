@@ -1,0 +1,6 @@
+This directory contains software contributed by the community that is not 
+(yet) part of the official NeXus distribution. Its structure should mirror 
+that of the top directory i.e. have bindings, test and applications
+sub-directories.
+
+$Id$

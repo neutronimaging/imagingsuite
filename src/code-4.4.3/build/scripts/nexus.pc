@@ -1,0 +1,11 @@
+#
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=/usr/local/lib
+includedir=/usr/local/include
+
+Name: nexus
+Description:Libraries and utilities for using NeXus format data files
+Version:4.4.2
+Libs:	-L${libdir} -lNeXus
+Cflags:	-I${includedir}/nexus -I${includedir}

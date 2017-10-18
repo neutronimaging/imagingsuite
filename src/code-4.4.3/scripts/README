@@ -1,0 +1,8 @@
+
+This directory contains some more or less useful config files and 
+helper scripts to compile or install the NeXus libraries or applications.
+
+Some of the scripts have a very limited target audience, with hardcoded
+paths and other hurdles. But the hope is they may still serve as a guide
+or even have some documentation value.
+
