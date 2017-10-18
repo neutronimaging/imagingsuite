@@ -1068,6 +1068,7 @@ void MuhRecMainWindow::MenuFileSave()
     if (m_sConfigFilename=="noname.xml")
         MenuFileSaveAs();
     else {
+        UpdateConfig();
         std::ofstream conffile(m_sConfigFilename.c_str());
 
         conffile<<m_Config.WriteXML();
@@ -1078,6 +1079,7 @@ void MuhRecMainWindow::MenuFileSaveAs()
 {
     QString fname=QFileDialog::getSaveFileName(this,"Save configuration file",QDir::homePath());
 
+    UpdateConfig();
     m_sConfigFilename=fname.toStdString();
     std::ofstream conffile(m_sConfigFilename.c_str());
 
@@ -1592,7 +1594,6 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
     ui->spinProjROIx1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]));
     ui->spinProjROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
-
 
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
