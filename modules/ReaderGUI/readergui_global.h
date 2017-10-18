@@ -1,0 +1,12 @@
+#ifndef READERGUI_GLOBAL_H
+#define READERGUI_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(READERGUI_LIBRARY)
+#  define READERGUISHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define READERGUISHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // READERGUI_GLOBAL_H
