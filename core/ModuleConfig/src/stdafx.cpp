@@ -1,5 +1,0 @@
-//<LICENSE>
-
-#include "stdafx.h"
-
-
