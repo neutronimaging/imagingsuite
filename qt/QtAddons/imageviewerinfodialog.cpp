@@ -1,0 +1,108 @@
+#include <sstream>
+#include <string>
+
+#include <QString>
+
+#include <base/tsubimage.h>
+#include <math/statistics.h>
+#include <base/thistogram.h>
+
+#include "imageviewerinfodialog.h"
+#include "ui_imageviewerinfodialog.h"
+
+
+ImageViewerInfoDialog::ImageViewerInfoDialog(QWidget *parent) :
+    QDialog(parent),
+    logger("ImageViewerInfoDialog"),
+    ui(new Ui::ImageViewerInfoDialog)
+{
+    ui->setupUi(this);
+}
+
+ImageViewerInfoDialog::~ImageViewerInfoDialog()
+{
+    delete ui;
+}
+
+void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect roi)
+{
+    size_t nroi[4]={static_cast<size_t>(roi.x()),
+                    static_cast<size_t>(roi.y()),
+                    static_cast<size_t>(roi.x()+roi.width()),
+                    static_cast<size_t>(roi.y()+roi.height())};
+
+    m_roiImage = kipl::base::TSubImage<float,2>::Get(img,nroi);
+
+    kipl::math::Statistics stats;
+
+    stats.put(m_roiImage.GetDataPtr(),m_roiImage.Size());
+
+    double mean=stats.E();
+    double stddev=stats.s();
+    double minval=stats.Min();
+    double maxval=stats.Max();
+
+    int area=roi.width()*roi.height();
+
+    std::ostringstream text;
+    text.str(""); text<<"["<<nroi[0]<<", "<<nroi[1]<<", "<<nroi[2]<<", "<<nroi[3]<<"]";
+    ui->label_ROI->setText(QString::fromStdString(text.str()));
+
+    text.str(""); text<<area<<" pixels";
+    ui->label_Area->setText(QString::fromStdString(text.str()));
+
+    text.str(""); text<<mean;
+    ui->label_Mean->setText(QString::fromStdString(text.str()));
+
+    text.str(""); text<<stddev;
+    ui->label_StdDev->setText(QString::fromStdString(text.str()));
+
+    text.str(""); text<<minval;
+    ui->label_Min->setText(QString::fromStdString(text.str()));
+
+    text.str(""); text<<maxval;
+    ui->label_Max->setText(QString::fromStdString(text.str()));
+
+    const size_t nHist=256;
+    float axis[nHist];
+    size_t hist[nHist];
+
+    memset(hist,0,nHist*sizeof(size_t));
+    kipl::base::Histogram(m_roiImage.GetDataPtr(),m_roiImage.Size(),hist,nHist,0.0f,0.0f,axis);
+
+    auto maxit=std::max_element(hist,hist+nHist);
+    maxval=static_cast<float>(*maxit);
+
+    m_LocalHistogram.clear();
+    for (size_t i=0; i<nHist; i++) {
+        m_LocalHistogram.append(QPointF(axis[i],static_cast<float>(hist[i])/(maxval)));
+    }
+
+    on_check_showglobal_toggled(ui->check_showglobal->isChecked());
+}
+
+
+void ImageViewerInfoDialog::setHistogram(const QVector<QPointF> &hist)
+{
+    float maxval=0.0;
+    for (auto it=hist.begin(); it!=hist.end(); it++) {
+        maxval=maxval<it->y() ? it->y(): maxval;
+    }
+
+    m_GlobalHistogram.clear();
+    for (auto it=hist.begin(); it!=hist.end(); it++) {
+        m_GlobalHistogram.append(QPointF(it->x(),it->y()/maxval));
+    }
+}
+
+void ImageViewerInfoDialog::on_check_showglobal_toggled(bool checked)
+{
+    if (checked) {
+        ui->histogramplot->setCurveData(1,m_GlobalHistogram,QColor("lightgreen"));
+    }
+    else {
+        ui->histogramplot->clearCurve(1);
+    }
+
+    ui->histogramplot->setCurveData(0,m_LocalHistogram,QColor("red"));
+}
