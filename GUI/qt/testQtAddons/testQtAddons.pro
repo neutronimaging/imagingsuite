@@ -46,8 +46,8 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/
 
 LIBS += -lkipl -lQtAddons
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../core/kipl/kipl/src
 
 INCLUDEPATH += $$PWD/../QtAddons
 DEPENDPATH += $$PWD/../../QtAddons

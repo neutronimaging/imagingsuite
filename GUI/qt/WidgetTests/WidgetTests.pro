@@ -36,47 +36,28 @@ unix:!macx {
 }
 
 win32 {
-    INCLUDEPATH += ../../../../external/include
-    LIBPATH += ../../../../../external/lib64
+    INCLUDEPATH += ../../../external/include
+    LIBPATH += ../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
-
-
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../build-QtAddons-Qt5-Release/release/ -lQtAddons
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-QtAddons-Qt5-Debug/debug/ -lQtAddons
-
+INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../QtAddons
 DEPENDPATH += $$PWD/../QtAddons
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../build-QtModuleConfigure-Qt5-Release/release/ -lQtModuleConfigure
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-QtModuleConfigure-Qt5-Debug/debug/ -lQtModuleConfigure
-
 INCLUDEPATH += $$PWD/../QtModuleConfigure
 DEPENDPATH += $$PWD/../QtModuleConfigure
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/qt/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/ModuleConfig/qt/build-ModuleConfig-Qt5-Debug/debug/ -lModuleConfig
+INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig
+DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderConfig-Qt5-Release/release/ -lReaderConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderConfig-Qt5-Release/debug/ -lReaderConfig
-
-INCLUDEPATH += $$PWD/../../../../modules/trunk/ReaderConfig
-DEPENDPATH += $$PWD/../../../../modules/trunk/ReaderConfig
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderGUI-Qt5-Release/release/ -lReaderGUI
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../modules/trunk/build-ReaderGUI-Qt5-Release/debug/ -lReaderGUI
-
-INCLUDEPATH += $$PWD/../../../../modules/trunk/ReaderGUI
-DEPENDPATH += $$PWD/../../../../modules/trunk/ReaderGUI
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderGUI
+DEPENDPATH += $$PWD/../../../core/modules/ReaderGUI

@@ -11,8 +11,8 @@ TEMPLATE = lib
 
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
 unix {
     unix:!macx {
@@ -37,7 +37,7 @@ windows {
         QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += ../../../../../external/include
-    LIBPATH += $$PWD/../../../../../external/lib64
+    LIBPATH += $$PWD/../../../../../../external/lib64
     LIBS += -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
 }
@@ -86,10 +86,8 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl
-else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../lib/ -lkipl
-else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl
+CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../../lib/ -lkipl
+else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../kipl/kipl/include/
+DEPENDPATH += $$PWD/../../../../kipl/kipl/include/
