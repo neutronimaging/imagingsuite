@@ -85,7 +85,11 @@ void kiplSegmentationTest::testMultiThreshold()
     kipl::base::TImage<float,2> img;
     kipl::base::TImage<float,2> res;
 
-    kipl::io::ReadTIFF(img,"../kipl/trunk/UnitTests/data/multi_class_reference.tif");
+#ifdef QT_DEBUG
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/multi_class_reference.tif");
+#else
+    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/multi_class_reference.tif");
+#endif
     //kipl::io::ReadTIFF(img,"../kipl/trunk/UnitTests/data/multi_class_smooth.tif");
     float th[2]={80.0f,150.0f};
 
@@ -118,9 +122,11 @@ void kiplSegmentationTest::testGradientGuidedThreshold()
     kipl::base::TImage<float,2> img(dims);
     kipl::base::TImage<float,2> res(dims);
 
-
-    //kipl::io::ReadTIFF(img,"../kipl/trunk/UnitTests/data/multi_class_smooth_noise.tif");
-    kipl::io::ReadTIFF(img,"../kipl/trunk/UnitTests/data/multi_class_smooth.tif");
+#ifdef QT_DEBUG
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/multi_class_smooth.tif");
+#else
+    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/multi_class_smooth.tif");
+#endif
 
     kipl::segmentation::gradientGuidedThreshold<float,float,2> gs;
     float th[2]={80.0f,150.0f};
