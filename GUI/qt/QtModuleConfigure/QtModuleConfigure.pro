@@ -37,8 +37,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../external/include
-    LIBPATH += ../../../../../external/lib64
+    INCLUDEPATH += ../../../external/include
+    LIBPATH += ../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -84,16 +84,11 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../lib -lkipl -lModuleConfig
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig
-else:symbian: LIBS += -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig
 
+INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
 
-
-INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
-
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../core/kipl/kipl/include

@@ -30,8 +30,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../../external/include .
-    LIBPATH += ../../../../../external/lib64
+    INCLUDEPATH += ../../../external/include .
+    LIBPATH += ../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -81,13 +81,11 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../lib/ -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../lib/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
 FORMS += \
     imageviewerinfodialog.ui

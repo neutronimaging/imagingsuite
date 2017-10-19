@@ -217,7 +217,7 @@ void kiplIOTest::testSEQHeader()
 //             << header.numberOfFrames<<std::endl;
    size_t dims[2]={0,0};
    int numframes=0;
-   kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims,numframes);
+   numframes=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims);
 
    QVERIFY(dims[0]==header.imageWidth);
    QVERIFY(dims[1]==header.imageHeight);

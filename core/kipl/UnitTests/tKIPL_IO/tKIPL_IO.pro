@@ -16,11 +16,11 @@ TEMPLATE = app
 
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
+    INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -51,8 +51,8 @@ win32 {
 SOURCES += tst_tkipl_iotest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../lib/ -lkipl
-else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl
+CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../lib/ -lkipl
+else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/include

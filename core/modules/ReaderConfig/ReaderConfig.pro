@@ -8,8 +8,8 @@ QT       -= gui
 
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
 
 TARGET = ReaderConfig
 TEMPLATE = lib
@@ -39,7 +39,7 @@ unix {
 }
 
 unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
+    INCLUDEPATH += "../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -97,11 +97,11 @@ win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llib
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lcfitsio
 
-win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../lib/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../lib/debug -lkipl
-else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../lib/ -lkipl
-else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../lib/debug/ -lkipl
+CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../lib/
+else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../lib/debug/
 
-INCLUDEPATH += $$PWD/../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../kipl/trunk/kipl/include
+LIBS += -lkipl
+
+INCLUDEPATH += $$PWD/../../kipl/kipl/include
+DEPENDPATH += $$PWD/../../kipl/kipl/include
 

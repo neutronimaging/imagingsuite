@@ -30,7 +30,7 @@ void TNoiseImageTest::testGauss()
 
     kipl::generators::NoiseGenerator<float,2> noise;
 
-    noise.Gauss(img,10.0f,1.0f);
+   // noise.Gauss(img,10.0f,1.0f);
 }
 
 void TNoiseImageTest::testPoisson()

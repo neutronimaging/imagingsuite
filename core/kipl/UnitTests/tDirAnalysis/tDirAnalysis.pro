@@ -12,8 +12,8 @@ TARGET = tst_tdiranalysistest
 CONFIG   += console
 CONFIG   -= app_bundle
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
@@ -26,8 +26,8 @@ win32 {
 SOURCES += tst_tdiranalysistest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release): LIBS += -L../../../../lib/
-else:CONFIG(debug, debug|release): LIBS += -L../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L../../../../../lib/debug/
 
 LIBS += -lkipl
 

@@ -14,6 +14,11 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+CONFIG += c++11
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+
 SOURCES += \
     tstcovariance.cpp \
     tstDirAnalyzer.cpp \
@@ -21,13 +26,13 @@ SOURCES += \
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
-else:symbian: LIBS += -lkipl
-else:unix: LIBS += -L../../kipl/kipl-build-Qt_4_8_1_Release/ -lkipl
+CONFIG(release, debug|release): LIBS += -L../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L../../../../../lib/debug/
 
 INCLUDEPATH += $$PWD/../../kipl/include $$PWD/../../../../src/external/src/linalg
 DEPENDPATH += $$PWD/../../kipl/include
+
+LIBS += -lkipl
 
 HEADERS += \
     tstcovariance.h \
