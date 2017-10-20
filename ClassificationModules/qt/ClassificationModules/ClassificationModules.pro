@@ -42,16 +42,16 @@ DEFINES += CLASSIFICATIONMODULES_LIBRARY
 
 SOURCES += \
     ../../src/RemoveBackground.cpp \
-    ../../src/KernelFuzzyCMeans.cpp \
-    ../../src/FuzzyCMeans.cpp \
+    # ../../src/KernelFuzzyCMeans.cpp \
+    #../../src/FuzzyCMeans.cpp \
     ../../src/DoubleThreshold.cpp \
     ../../src/ClassificationModules.cpp \
     ../../src/BasicThreshold.cpp
 
 HEADERS += \
     ../../src/RemoveBackground.h \
-    ../../src/KernelFuzzyCMeans.h \
-    ../../src/FuzzyCMeans.h \
+   # ../../src/KernelFuzzyCMeans.h \
+   # ../../src/FuzzyCMeans.h \
     ../../src/DoubleThreshold.h \
     ../../src/ClassificationModules.h \
     ../../src/BasicThreshold.h \
