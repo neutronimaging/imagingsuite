@@ -1,0 +1,1953 @@
+﻿FN Thomson Reuters Web of Science™
+VR 1.0
+PT J
+AU Vamvakeros, Antonios
+   Jacques, Simon D. M.
+   Di Michiel, Marco
+   Middelkoop, Vesna
+   Egan, Christopher K.
+   Cernik, Robert J.
+   Beale, Andrew M.
+TI Removing multiple outliers and single-crystal artefacts from X-ray
+   diffraction computed tomography data
+SO JOURNAL OF APPLIED CRYSTALLOGRAPHY
+VL 48
+BP 1943
+EP 1955
+DI 10.1107/S1600576715020701
+PN 6
+PD DEC 2015
+PY 2015
+AB This paper reports a simple but effective filtering approach to deal
+   with single-crystal artefacts in X-ray diffraction computed tomography
+   (XRD-CT). In XRD-CT, large crystallites can produce spots on top of the
+   powder diffraction rings, which, after azimuthal integration and
+   tomographic reconstruction, lead to line/streak artefacts in the
+   tomograms. In the simple approach presented here, the polar transform is
+   taken of collected two-dimensional diffraction patterns followed by
+   directional median/mean filtering prior to integration. Reconstruction
+   of one-dimensional diffraction projection data sets treated in such a
+   way leads to a very significant improvement in reconstructed image
+   quality for systems that exhibit powder spottiness arising from large
+   crystallites. This approach is not computationally heavy which is an
+   important consideration with big data sets such as is the case with
+   XRD-CT. The method should have application to two-dimensional X-ray
+   diffraction data in general where such spottiness arises.
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1600-5767
+UT WOS:000365774800042
+ER
+
+PT J
+AU Van Nieuwenhove, Vincent
+   De Beenhouwer, Jan
+   De Carlo, Francesco
+   Mancini, Lucia
+   Marone, Federica
+   Sijbers, Jan
+TI Dynamic intensity normalization using eigen flat fields in X-ray imaging
+SO OPTICS EXPRESS
+VL 23
+IS 21
+BP 27975
+EP 27989
+DI 10.1364/OE.23.027975
+PD OCT 19 2015
+PY 2015
+AB In X-ray imaging, it is common practice to normalize the acquired
+   projection data with averaged flat fields taken prior to the scan.
+   Unfortunately, due to source instabilities, vibrating beamline
+   components such as the monochromator, time varying detector properties,
+   or other confounding factors, flat fields are often far from stationary,
+   resulting in significant systematic errors in intensity normalization.
+   In this work, a simple and efficient method is proposed to account for
+   dynamically varying flat fields. Through principal component analysis of
+   a set of flat fields, eigen flat fields are computed. A linear
+   combination of the most important eigen flat fields is then used to
+   individually normalize each X-ray projection. Experiments show that the
+   proposed dynamic flat field correction leads to a substantial reduction
+   of systematic errors in projection intensity normalization compared to
+   conventional flat field correction. (C) 2015 Optical Society of America
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1094-4087
+UT WOS:000366574400107
+PM 26480456
+ER
+
+PT J
+AU Paleo, Pierre
+   Mirone, Alessandro
+TI Ring artifacts correction in compressed sensing tomographic
+   reconstruction
+SO JOURNAL OF SYNCHROTRON RADIATION
+VL 22
+BP 1268
+EP 1278
+DI 10.1107/S1600577515010176
+PN 5
+PD SEP 2015
+PY 2015
+AB Ring artifacts are a very common problem in tomographic reconstruction,
+   and numerous methods exist to either pre-process the sinogram or correct
+   the reconstructed slice. A novel approach to perform the correction as
+   part of the reconstruction process is presented. It is shown that for
+   iterative techniques, which amount to optimizing an objective function,
+   the ring artifacts correction can be easily integrated in the formalism,
+   enabling simultaneous slice reconstruction and ring artifacts
+   correction. This method is tested and compared with mainstream
+   correction techniques for both simulated and experimental data. Results
+   show that the correction is efficient, especially for undersampled
+   datasets. This technique is included in the PyHST2 code which is used at
+   the European Synchrotron Radiation Facility for tomographic
+   reconstruction.
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1600-5775
+UT WOS:000360142400017
+PM 26289279
+ER
+
+PT J
+AU Guo, Hong
+   Zeng, Dong
+   Zhang, Hua
+   Huang, Jing
+   Zhang, Jing
+   Ma, Jianhua
+TI [CT ring artifact reduction using an improved wavelet filtering in the
+   sinogram domain].
+SO Nan fang yi ke da xue xue bao = Journal of Southern Medical University
+VL 35
+IS 9
+BP 1258
+EP 62
+PD 2015-Aug
+PY 2015
+AB OBJECTIVE: Ring artifacts often appear in flat-panel detector-based CT
+   images due to the malfunction or mis-calibration of the detector
+   elements that result in stripe artifacts in the line integral projection
+   (sinogram) data. The ring artifacts lower the image quality and affect
+   image-based diagnoses. Here we propose a ring artifacts removal approach
+   based on wavelet filtering in the sinogram domain. The line integral
+   projection (sinogram) dataset were divided into 4 sub-sinogram dataset,
+   and for each of them the wavelet decomposition operation was employed to
+   produce the associated wavelet dataset, followed by filtering operation
+   on the vertical detail band and the low-pass detail band. Wavelet
+   reconstruction operation was then performed, and the weighted moving
+   average filter was used to yield the filtered sinogram, which was
+   processed using filtered back-projection (FBP) for image reconstruction.
+   The results showed that the proposed approach could effectively remove
+   the ring artifacts while preserving the structural information of the
+   image.
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1673-4254
+UT MEDLINE:26403734
+PM 26403734
+ER
+
+PT J
+AU 천권수
+TI Removal of Ring Artifact in Computed Tomography
+Z1 전산화단층촬영장치에서 링 아티팩트 제거
+SO Journal of the Korean Society of Radiology
+S1 한국방사선학회논문지
+VL 9
+IS 6
+BP 403
+EP 406
+DI 10.7742/jksr.2015.9.6.403
+PD 2015
+PY 2015
+AB Hard X-ray has been widely used in medical and industrial fields because
+   it can be applied to observe the inside of a sample. Computed tomography
+   provides sectional images of the sample through the reconstruction of
+   the projection images. The quality of sectional images strongly depends
+   on that of projection images. Ring artifact appeared on the seconal
+   image can be made by the abnormal pixels of the detector used. In this
+   study, we examine the ring artifact ratio in the circle phantom as a
+   function of detection error of the detector used in computed tomography.
+   The ring artifact increased with the increment of detection error under
+   parallel and fan beam geometries and strongly increased near the center
+   of rotation. The corrections, dead pixel and flat field corrections, for
+   the images taken with the detector are required before the image
+   reconstruction process to reduce the ring artifact in the computed
+   tomography.
+AK 경엑스선은 물체의 내부구조 관찰에 유용하고 의료 및 산업분야에 광범위하게 사용되고 있다. 전산화단층촬영기법은 수백장의 투영영상을
+   이용하여 재구성함으로써 물체의 2차원 단면 영상을 얻을 수 있다. 단면 영상의 품질은 투영영상에 크게 의존한다. 투영영상을 얻는
+   검출기의 픽셀에 따라 링 아티팩트가 나타난다. 본 연구는 visual C++기반으로 한 원형 팬텀에서 검출기의 검출 에러에 따른
+   링 아티팩트 비를 조사하였다. 평행빔 및 부채살빔에서 링 아티팩트 비는 검출기의 검출 에러에 비례하여 나타났고, 회전 중심에
+   가까울수록 링 아티팩트는 강하게 나타났다. 전산화단층촬영의 단면 영상에서 링 아티팩트를 줄이기 위해서는 영상재구성 이전에 검출기의
+   보정이 필요함을 알 수 있었다.
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1976-0620
+UT KJD:ART002043366
+ER
+
+PT J
+AU Zhu, Leqing
+   Wang, Dadong
+   Wang, Huiyan
+TI An improved method for the removal of ring artifacts in synchrotron
+   radiation images by using GPGPU computing with compute unified device
+   architecture
+SO CONCURRENCY AND COMPUTATION-PRACTICE & EXPERIENCE
+VL 26
+IS 18
+BP 2880
+EP 2892
+DI 10.1002/cpe.3183
+PD DEC 25 2014
+PY 2014
+AB Ring artifacts are a common problem in computed tomography, positron
+   emission tomography, magnetic resonance imaging, and synchrotron
+   radiation images. Before further processing the images such as
+   segmentation and quantification, these artifacts have to be removed or
+   suppressed. Otherwise, they may introduce additional errors for the
+   segmentation and subsequent analysis. This paper proposes an improved
+   ring artifact removal method based on biorthogonal wavelet transform,
+   one-dimensional fast Fourier transform, and Gaussian damping, which is
+   implemented on general-purpose computing on graphics processing unit
+   with compute unified device architecture. The experimental results show
+   that the proposed algorithms can be speed up several hundred times
+   compared with the previous algorithms on CPU. The significant
+   performance improvement makes the algorithms much more practical in
+   processing large volume of images in real time. Copyright (c) 2013 John
+   Wiley & Sons, Ltd.
+TC 1
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 1
+SN 1532-0626
+EI 1532-0634
+UT WOS:000345514200004
+ER
+
+PT J
+AU Ma Jiming
+   Song Yang
+   Wang Qunshu
+   Song Guzhou
+   Zhang Jiangi
+   Xia Jingtao
+   Han Changcai
+   Duan Baojun
+   Du Jiye
+   Zhou Ming
+TI Ring artifact correction for X-ray computed tomography
+SO High Power Laser and Particle Beams
+VL 26
+IS 12
+BP 124001 (6 pp.)
+EP 124001 (6 pp.)
+DI 10.11884/HPLPB201426.124001
+PD Dec. 2014
+PY 2014
+AB Summary form only given. In this paper, a novel preprocessing technique
+   is proposed for the correction of ring artifact in X-ray CT image. By
+   fitting each projection in sinogram image with piecewise polynomial, a
+   set of candidate correction factors for mis-calibrated detector is
+   created and then the factor with maximum probability occurrence is
+   picked out to rectify the projection data. Principle and procedure of
+   the method is illustrated. Tests under different condition show that,
+   sparse or continuous ring artifact in the CT image can both be well
+   rectified effectively, while spatial resolution of the image preserved.
+   CT images for multi-material object can also be corrected by the method.
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1001-4322
+UT INSPEC:15442734
+ER
+
+PT J
+AU Miqueles, E. X.
+   Rinkel, J.
+   O'Dowd, F.
+   Bermudez, J. S. V.
+TI Generalized Titarenko's algorithm for ring artefacts reduction
+SO JOURNAL OF SYNCHROTRON RADIATION
+VL 21
+BP 1333
+EP 1346
+DI 10.1107/S1600577514016919
+PN 6
+PD NOV 2014
+PY 2014
+AB A fast algorithm for ring artefact reduction in high-resolution
+   micro-tomography with synchrotron radiation is presented. The new method
+   is a generalization of the one proposed by Titarenko and collaborators,
+   with a complete sinogram restoration prior to reconstruction with
+   classical algorithms. The generalized algorithm can be performed in
+   linear time and is easy to implement. Compared with the original
+   approach, with an explicit solution, this approach is fast through the
+   use of the conjugate gradient method. Also, low/high-resolution
+   sinograms can be restored using higher/lower-order derivatives of the
+   projections. Using different order for the derivative is an advantage
+   over the classical Titarenko's approach. Several numerical results using
+   the proposed method are provided, supporting our claims.
+RI Cepid, CeMEAI/J-2417-2015
+TC 1
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 1
+SN 0909-0495
+EI 1600-5775
+UT WOS:000344370400017
+PM 25343803
+ER
+
+PT J
+AU Jha, D.
+   Sorensen, H. O.
+   Dobberschutz, S.
+   Feidenhans'l, R.
+   Stipp, S. L. S.
+TI Adaptive center determination for effective suppression of ring
+   artifacts in tomography images
+SO APPLIED PHYSICS LETTERS
+VL 105
+IS 14
+AR 143107
+DI 10.1063/1.4897441
+PD OCT 6 2014
+PY 2014
+AB Ring artifacts on tomogram slices hinder image interpretation. They are
+   caused by minor variation in the response from individual elements in a
+   two dimensional (2D) X-ray detector. Polar space decreases the
+   suppression complexity by transforming the rings on the tomogram slice
+   to linear stripes. However, it requires that the center of rings lie at
+   the origin of polar transformation. If this is not the case, all methods
+   employing polar space become ineffective. We developed a method based on
+   Gaussian localization of the ring center in Hough parameter space to
+   assign the origin for the polar transformation. Thus, obtained linear
+   stripes can be effectively suppressed by already existing methods. This
+   effectively suppresses ring artifacts in the data from a variety of
+   experimental setups, sample types and also handles tomograms that are
+   previously cropped. This approach functions automatically, avoids the
+   need for assumptions and preserves fine details, all critical for
+   synchrotron based nanometer resolution tomography. (C) 2014 AIP
+   Publishing LLC.
+RI Sorensen, Henning/C-7479-2012; Dobberschutz, Soren/
+OI Sorensen, Henning/0000-0002-7004-547X; Dobberschutz,
+   Soren/0000-0002-6193-2253
+TC 3
+ZB 1
+Z8 0
+ZR 0
+ZS 0
+Z9 3
+SN 0003-6951
+EI 1077-3118
+UT WOS:000344343900051
+ER
+
+PT J
+AU Altunbas, Cem
+   Lai, Chao-Jen
+   Zhong, Yuncheng
+   Shaw, Chris C.
+TI Reduction of ring artifacts in CBCT: Detection and correction of pixel
+   gain variations in flat panel detectors
+SO MEDICAL PHYSICS
+VL 41
+IS 9
+AR 091913
+DI 10.1118/1.4893278
+PD SEP 2014
+PY 2014
+AB Purpose: In using flat panel detectors (FPD) for cone beam computed
+   tomography (CBCT), pixel gain variations may lead to structured
+   nonuniformities in projections and ring artifacts in CBCT images. Such
+   gain variations can be caused by change in detector entrance exposure
+   levels or beam hardening, and they are not accounted by conventional
+   flat field correction methods. In this work, the authors presented a
+   method to identify isolated pixel clusters that exhibit gain variations
+   and proposed a pixel gain correction (PGC) method to suppress both beam
+   hardening and exposure level dependent gain variations.
+   Methods: To modulate both beam spectrum and entrance exposure, flood
+   field FPD projections were acquired using beam filters with varying
+   thicknesses. "Ideal" pixel values were estimated by performing
+   polynomial fits in both raw and flat field corrected projections.
+   Residuals were calculated by taking the difference between measured and
+   ideal pixel values to identify clustered image and FPD artifacts in flat
+   field corrected and raw images, respectively. To correct clustered image
+   artifacts, the ratio of ideal to measured pixel values in filtered
+   images were utilized as pixel-specific gain correction factors, referred
+   as PGC method, and they were tabulated as a function of pixel value in a
+   look-up table.
+   Results: 0.035% of detector pixels lead to clustered image artifacts in
+   flat field corrected projections, where 80% of these pixels were traced
+   back and linked to artifacts in the FPD. The performance of PGC method
+   was tested in variety of imaging conditions and phantoms. The PGC method
+   reduced clustered image artifacts and fixed pattern noise in
+   projections, and ring artifacts in CBCT images.
+   Conclusions: Clustered projection image artifacts that lead to ring
+   artifacts in CBCT can be better identified with our artifact detection
+   approach. When compared to the conventional flat field correction
+   method, the proposed PGC method enables characterization of nonlinear
+   pixel gain variations as a function of change in x-ray spectrum and
+   intensity. Hence, it can better suppress image artifacts due to beam
+   hardening as well as artifacts that arise from detector entrance
+   exposure variation. (C) 2014 American Association of Physicists in
+   Medicine.
+TC 1
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 1
+SN 0094-2405
+UT WOS:000342204800028
+PM 25186400
+ER
+
+PT J
+AU Kim, Younguk
+   Baek, Jongduk
+   Hwang, Dosik
+TI Ring artifact correction using detector line-ratios in computed
+   tomography
+SO OPTICS EXPRESS
+VL 22
+IS 11
+BP 13380
+EP 13392
+DI 10.1364/OE.22.013380
+PD JUN 2 2014
+PY 2014
+AB Ring artifacts in computed tomography (CT) images degrade image quality
+   and obscure the true shapes of objects. While several correction methods
+   have been developed, their performances are often task-dependent and not
+   generally applicable. Here, we propose a novel method to reduce ring
+   artifacts by calculating the ratio of adjacent detector elements in the
+   projection data, termed the line-ratio. Our method estimates the
+   sensitivity of each detector element and equalizes them in sinogram
+   space. As a result, the stripe pattern can be effectively removed from
+   sinogram data, thereby also removing ring artifacts from the
+   reconstructed CT image. Numerical simulations were performed to evaluate
+   and compare the performance of our method with that of conventional
+   methods. We also tested our method experimentally and demonstrated that
+   our method has superior performance to other methods. (C) 2014 Optical
+   Society of America
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1094-4087
+UT WOS:000337501600065
+PM 24921532
+ER
+
+PT J
+AU Pikalov, V.V.
+TI Subpixel smoothing by floating grids for ring artifact reduction in
+   fan-beam tomography
+SO Numerical Methods and Programming. Advanced Computing
+VL 15
+BP 726
+EP 31
+PD 2014
+PY 2014
+AB The distinctions between the artifacts of the tomographic data
+   acquisition systems with parallel and fan-beam geometry are studied. A
+   new method for suppressing such artifacts on the basis of subpixel
+   smoothing by floating grids is proposed. A non-iterative algorithm based
+   on the classical Shepp-Logan method of filtered back-projection with
+   random shifts (within fractions of a pixel) of each detector element or
+   each pixel of a tomogram is developed. According to the results of
+   mathematical simulation using a variety of models, it is shown that the
+   level of ring artifacts can be reduced by subpixel smoothing comparable
+   to the existing methods of artifact suppression.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 0507-5386
+UT INSPEC:14979264
+ER
+
+PT J
+AU Wei, Zhouping
+   Wiebe, Sheldon
+   Chapman, Dean
+TI Ring artifacts removal from synchrotron CT image slices
+SO JOURNAL OF INSTRUMENTATION
+VL 8
+AR C06006
+DI 10.1088/1748-0221/8/06/C06006
+PD JUN 2013
+PY 2013
+AB Ring artifacts can occur in reconstructed images from x-ray Computerized
+   Tomography (CT) as full or partial concentric rings superimposed on the
+   scanned structures. Due to the data corruption by those ring artifacts
+   in CT images, qualitative and quantitative analysis of these images are
+   compromised. In this paper, we propose to correct the ring artifacts on
+   the reconstructed synchrotron radiation (SR) CT image slices. The
+   proposed correction procedure includes the following steps: (1).
+   transform the reconstructed CT images into polar coordinates; (2) apply
+   discrete two-dimensional (2D) wavelet transform to the polar image to
+   decompose it into four image components: low pass band image component,
+   as well as the components from horizontal, vertical and diagonal details
+   bands; (3). apply 2D Fourier transform to the vertical details band
+   image component only, since the ring artifacts become vertical lines in
+   the polar coordinates; (4). apply Gaussian filtering in Fourier domain
+   along the abscissa direction to suppress the vertical lines, since the
+   information of the vertical lines in Fourier domain is completely
+   condensed to that direction; (5). perform inverse Fourier transform to
+   get the corrected vertical details band image component; (6). perform
+   inverse wavelet transform to get the corrected polar image; (7).
+   transform the corrected polar image back to Cartesian coordinates to get
+   the CT image slice with reduced ring artifacts. This approach has been
+   successfully used on CT data acquired from the Biomedical Imaging and
+   Therapy (BMIT) beamline in Canadian Light Source (CLS), and the results
+   show that the ring artifacts in original SR CT images have been
+   effectively suppressed with all the structure information in the image
+   preserved.
+TC 2
+ZB 1
+Z8 0
+ZS 0
+Z9 2
+SN 1748-0221
+UT WOS:000321627400006
+ER
+
+PT J
+AU Stefan, W.
+   Cody, D.
+   Liu, X.
+   Rong, J.
+TI Automatic Detection of Ring and Streak Artifacts in Routine CT QC Images
+SO MEDICAL PHYSICS
+VL 40
+IS 6
+DI 10.1118/1.4814058
+PD JUN 2013
+PY 2013
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 0094-2405
+UT WOS:000336849902345
+ER
+
+PT B
+AU Dong Zeng
+   Jianhua Ma
+   Yunwan Zhang
+   Zhaoying Bian
+   Jing Huang
+   Wufan Chen
+TI An improved ring artifact removal approach for flat-panel detector based
+   computed tomography images
+SO 2013 IEEE Nuclear Science Symposium and Medical Imaging Conference (2013
+   NSS/MIC)
+BP 4 pp.
+EP 4 pp.
+DI 10.1109/NSSMIC.2013.6829124
+PD 2013
+PY 2013
+AB Ring artifacts often appear in flat-panel detector based CT images due
+   to the malfunction and mis-calibration of detector elements resulting in
+   stripe artifacts in the sinogram data. In this paper, we propose an
+   improved ring artifacts removal (IRAR) approach by combining
+   multi-resolution analysis and weighted moving average filter methods.
+   Specifically, the multi-resolution analysis method can suppress these
+   high-intensity vertical stripes in the sinogram domain and the moving
+   average filter method is effective to deal with the relatively
+   high-intensity vertical stripes. Experimental results on the data
+   acquired from a commercial micro-CT scanner show that the presented
+   approach can achieve significant gains over the existing methods in the
+   ring artifacts removal while preserving spatial resolution.
+CT 2013 IEEE Nuclear Science Symposium and Medical Imaging Conference (2013
+   NSS/MIC)
+CY 27 Oct.-2 Nov. 2013
+CL Seoul, South Korea
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+BN 978-1-4799-0533-1
+UT INSPEC:14392530
+ER
+
+PT J
+AU Wang Huan
+   Zhu Guochun
+   Wang Yuanyuan
+   Liu Huan
+TI Efficient Ring Artifact Remove Scheme of Cone-Beam CT Image
+SO Applied Mechanics and Materials
+VL 340
+BP 529
+EP 32
+DI 10.4028/www.scientific.net/AMM.340.529
+PD 2013
+PY 2013
+AB The element response inconsistency of flat-panel detector may result in
+   ring artefacts in cone-beam CT image reconstruction. Ring artefacts
+   severely affect the quality of CT reconstructed image, thus removing
+   ring artefacts is very meaningful for image analysis and subsequent
+   processing. This paper presents an algorithm for processing
+   reconstructed image, and has achieved a result through simulating. This
+   approach proves very effective in removing ring artefacts from images.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 1660-9336
+UT INSPEC:14339109
+ER
+
+PT S
+AU Brun, Francesco
+   Accardo, Agostino
+   Kourousias, George
+   Dreossi, Diego
+   Pugliese, Roberto
+GP IEEE
+TI Effective implementation of ring artifacts removal filters for
+   synchrotron radiation microtomographic images
+SO 2013 8TH INTERNATIONAL SYMPOSIUM ON IMAGE AND SIGNAL PROCESSING AND
+   ANALYSIS (ISPA)
+SE International Symposium on Image and Signal Processing and Analysis
+BP 672
+EP 676
+PD 2013
+PY 2013
+AB The presence of ring artifacts in X-ray computed microtomography affects
+   the qualitative and quantitative analyses of the reconstructed images.
+   Although digital image processing approaches to ring artifacts removal
+   via direct filtering of the reconstructed images exist, in synchrotron
+   radiation microtomography this issue is usually faced during the actual
+   reconstruction process by de-striping the sinogram image. In this work
+   different de-striping algorithms are discussed and preliminary compared
+   using a suitably created test image as well as actual imaged data.
+   Because of the increasing need for fast reconstruction workflows,
+   details of the implementation and the related computational aspects are
+   also considered. Moreover, the hardware and software solution developed
+   and deployed for the SYRMEP (SYnchrotron Radiation for MEdical Physics)
+   microtomographic beamline of the Italian synchrotron radiation facility
+   (Elettra - Sincrotrone Trieste S.C.p.A) is presented. This solution is
+   based on a high-performance computing (HPC) cluster with the Oracle Grid
+   Engine distributed resource management (DRM) system and Python code that
+   takes advantage of the NumPy and SciPy libraries.
+CT 8th International Symposium on Image and Signal Processing and Analysis
+   (ISPA)
+CY SEP 04-06, 2013
+CL Trieste, ITALY
+SP Univ Trieste, Dept Engn & Arch; Univ Zagreb, Fac Elect Engn &d Comp;
+   EURASIP; IEEE Signal Proc Soc, Italy Chapter; DAVe; FONDAZIONE
+   CRTRIESTE; CHIRON; FIMI; ESTECO
+TC 1
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 1
+SN 1845-5921
+BN 978-953-184-194-8; 978-953-184-187-0
+UT WOS:000349789200119
+ER
+
+PT J
+AU Zeng, Dong
+   Ma, Jianhua
+   Zhang, Yunwan
+   Bian, Zhaoying
+   Huang, Jing
+   Chen, Wufan
+GP IEEE
+TI An Improved Ring Artifact Removal Approach for Flat-panel Detector Based
+   Computed Tomography Images
+SO 2013 IEEE NUCLEAR SCIENCE SYMPOSIUM AND MEDICAL IMAGING CONFERENCE
+   (NSS/MIC)
+PD 2013
+PY 2013
+AB Ring artifacts often appear in flat-panel detector based CT images due
+   to the malfunction and mis-calibration of detector elements resulting in
+   stripe artifacts in the sinogram data. In this paper, we propose an
+   improved ring artifacts removal (IRAR) approach by combining
+   multi-resolution analysis and weighted moving average filter methods.
+   Specifically, the multi-resolution analysis method can suppress these
+   high-intensity vertical stripes in the sinogram domain and the moving
+   average filter method is effective to deal with the relatively
+   high-intensity vertical stripes. Experimental results on the data
+   acquired from a commercial micro-CT scanner show that the presented
+   approach can achieve significant gains over the existing methods in the
+   ring artifacts removal while preserving spatial resolution.
+CT 60th IEEE Nuclear Science Symposium (NSS) / Medical Imaging Conference
+   (MIC) / 20th International Workshop on Room-Temperature Semiconductor
+   X-ray and Gamma-ray Detectors
+CY OCT 27-NOV 02, 2013
+CL Seoul, SOUTH KOREA
+SP IEEE; Inst Elect & Elect Engineers, Nucl & Plasma Sci Soc
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+BN 978-1-4799-0534-8
+UT WOS:000347163500116
+ER
+
+PT J
+AU Qi, Hongliang
+   Hong, Hong
+   Xu, Yuan
+   Zhen, Xin
+   Lu, Wenting
+   Zhou, Linghong
+TI [A method for rapidly removing ring artifacts in CT image].
+SO Nan fang yi ke da xue xue bao = Journal of Southern Medical University
+VL 32
+IS 12
+BP 1748
+EP 51
+PD 2012-Dec
+PY 2012
+AB OBJECTIVE: To propose a new method for effectively and rapidly removing
+   the ring artifacts in CT images based on image post-processing.
+   METHODS: The CT image with ring artifacts in the Cartesian coordinate
+   was first transformed into an image with line artifacts in the polar
+   coordinate. The image in the polar coordinate was then filtered by
+   designing a one-dimensional filter to calculate the mean and variance of
+   each pixel after filtering, which were compared with the variance
+   threshold value and the pixel threshold value to determine the position
+   of the artifacts for corrections accordingly. Finally, the polar
+   coordinate image was converted into Cartesian coordinate image.
+   RESULTS: Simulated and actual CT data experimental results demonstrated
+   the efficiency of this method for removing artifacts, retaining the
+   image fidelity and reducing the processing time.
+   CONCLUSION: The new method can accurately recognize the position of the
+   artifacts and effectively remove them to facilitate the clinical
+   diagnosis.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 1673-4254
+UT MEDLINE:23268402
+PM 23268402
+ER
+
+PT J
+AU Hasan, Md. Kamrul
+   Sadi, Fazle
+   Lee, Soo Yeol
+TI Removal of ring artifacts in micro-CT imaging using iterative
+   morphological filters
+SO SIGNAL IMAGE AND VIDEO PROCESSING
+VL 6
+IS 1
+BP 41
+EP 53
+DI 10.1007/s11760-010-0170-z
+PD MAR 2012
+PY 2012
+AB In this paper, a novel technique based on morphological filtering is
+   proposed for the detection and removal of ring artifacts with different
+   patterns, e.g., sharp isolated rings with varying intensity, isolated
+   light rings, and band rings, from the mu- and/or C-Arm CT images. To
+   optimize the performance of our ring removal algorithm, three different
+   types of iterative morphological filters (IMFs) are proposed here for
+   different ring patterns. All the IMFs detect the positions of the
+   defective detector elements using the mean curve constructed from the
+   corrupted sinogram. However, the basic principle of sinogram correction
+   differs. For the elimination of sharp intense rings, the IMF is directly
+   applied on the raw projection data for each angle of view, whereas in
+   other cases an estimate of the ring-noise-free mean curve is first
+   obtained to remove the ring generating artifacts from the sinogram data
+   through a normalization process. The effectiveness of the proposed IMFs
+   is tested for a variety of mu-CT acquired images. Experimental results
+   show that the IMFs perform better than the previously reported
+   techniques in the removal of ring artifacts from real mu-CT images.
+TC 4
+ZB 3
+Z8 0
+ZR 0
+ZS 0
+Z9 4
+SN 1863-1703
+UT WOS:000300454200005
+ER
+
+PT J
+AU Yongsheng Pan
+   De Carlo, F.
+   Xianghui Xiao
+TI Ring artifact removal for micro-tomography in synchrotron radiation
+SO Proceedings of the SPIE - The International Society for Optical
+   Engineering
+VL 8313
+BP 831329 (7 pp.)
+EP 831329 (7 pp.)
+DI 10.1117/12.911578
+PD 2012
+PY 2012
+AB Ring artifacts are common in tomography reconstructions. These artifacts
+   may arise, in microtomography using synchrotron radiation, from dead
+   pixels in CCD detectors, damaged scintillator screens and instabilities
+   of the synchrotron beam. Ring artifact removal is therefore an important
+   task. We apply an image inpainting algorithm on the sinogram data to
+   reduce ring artifacts in reconstructions. The applied image inpainting
+   algorithm is advantageous in two aspects. First, the proposed method is
+   local, and it affects only the user-specified corrupted region. Second,
+   it utilizes the directional information of level lines, as well as the
+   intensity information, in the sinogram data. Experimental results show
+   that the proposed method is able to compensate both the missing
+   directional information and the distorted intensity information, which
+   reduces ring artifacts in reconstructions. An improvement in
+   reconstruction image qualities is achieved for micro-tomography using
+   the proposed method. A comparison shows that the proposed method may
+   outperform existing methods in terms of reconstruction accuracy.
+CT Medical Imaging 2012: Physics of Medical Imaging
+CY 5-8 Feb. 2012
+CL San Diego, CA, USA
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 0277-786X
+UT INSPEC:12670218
+ER
+
+PT J
+AU Rashid, Sabrina
+   Lee, Soo Yeol
+   Hasan, Md Kamrul
+TI An improved method for the removal of ring artifacts in high resolution
+   CT imaging
+SO EURASIP JOURNAL ON ADVANCES IN SIGNAL PROCESSING
+AR 93
+DI 10.1186/1687-6180-2012-93
+PD 2012
+PY 2012
+AB In high resolution computed tomography (CT) using flat panel detectors,
+   imperfect or defected detector elements cause stripe artifacts in
+   sinogram which results in concentric ring artifacts in the image. Such
+   ring artifacts obscure image details in the regions of interest of the
+   image. In this article, novel techniques are proposed for the detection,
+   classification, and correction of ring artifacts in the sinogram domain.
+   The proposed method is suitable for multislice CT with parallel or fan
+   beam geometry. It can also be employed for ring artifact removal in 3D
+   cone beam volume CT by adopting a sinogram by sinogram processing
+   technique. The detection algorithm is based on applying data driven
+   thresholds on the mean curve and difference curve of the sinogram. The
+   ring artifacts are classified into three types and a separate correction
+   algorithm is used for each class. The performance of the proposed
+   techniques is evaluated on a number of real micro-CT images.
+   Experimental results corroborate that the proposed algorithm can remove
+   ring artifacts from micro-CT images more effectively as compared to
+   other recently reported techniques in the literature.
+TC 1
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 1
+SN 1687-6180
+UT WOS:000305841500001
+ER
+
+PT S
+AU Pan, Yongsheng
+   De Carlo, Francesco
+   Xiao, Xianghui
+BE Pelc, NJ
+   Nishikawa, RM
+   Whiting, BR
+TI Ring Artifact Removal for Micro-Tomography in Synchrotron Radiation
+SO MEDICAL IMAGING 2012: PHYSICS OF MEDICAL IMAGING
+SE Proceedings of SPIE
+VL 8313
+AR 831329
+DI 10.1117/12.911578
+PD 2012
+PY 2012
+AB Ring artifacts are common in tomography reconstructions. These artifacts
+   may arise, in micro-tomography using synchrotron radiation, from dead
+   pixels in CCD detectors, damaged scintillator screens and instabilities
+   of the synchrotron beam. Ring artifact removal is therefore an important
+   task. We apply an image inpainting algorithm on the sinogram data to
+   reduce ring artifacts in reconstructions. The applied image inpainting
+   algorithm is advantageous in two aspects. First, the proposed method is
+   local, and it affects only the user-specified corrupted region. Second,
+   it utilizes the directional information of level lines, as well as the
+   intensity information, in the sinogram data. Experimental results show
+   that the proposed method is able to compensate both the missing
+   directional information and the distorted intensity information, which
+   reduces ring artifacts in reconstructions. An improvement in
+   reconstruction image qualities is achieved for micro-tomography using
+   the proposed method. A comparison shows that the proposed method may
+   outperform existing methods in terms of reconstruction accuracy.
+CT Conference on Medical Imaging - Physics of Medical Imaging
+CY FEB 05-08, 2012
+CL San Diego, CA
+SP SPIE; Agilent Technol; Diamond SA; DQE Instruments Inc; eMagin; Isuzu
+   Glass Co Ltd; Medtronic, Inc.; Ocean Thin Films Inc
+TC 1
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 1
+SN 0277-786X
+BN 978-0-8194-8962-3
+UT WOS:000304768000076
+ER
+
+PT S
+AU Persson, Mats
+   Meyer, Bettina
+   Bornefalk, Hans
+   Danielsson, Mats
+BE Pelc, NJ
+   Nishikawa, RM
+   Whiting, BR
+TI Quantification of ring artifact visibility in CT
+SO MEDICAL IMAGING 2012: PHYSICS OF MEDICAL IMAGING
+SE Proceedings of SPIE
+VL 8313
+AR 83132J
+DI 10.1117/12.910537
+PD 2012
+PY 2012
+AB Ring artifacts appear in computed tomography images if there are too
+   large inhomogeneities between different detector elements. The question
+   of how large inhomogeneities are acceptable is gaining in importance due
+   to the development of energy discriminating photon counting CT, where
+   detector homogeneity is an important design parameter. We propose using
+   the systematic-to-statistical error quotient q, defined as the variance
+   of the expected log-normalized count number between detector elements
+   (dels) divided by the variance of log-normalized count numbers measured
+   with the same del, as a metric of ring artifact visibility. With a
+   simple observer study using simulated images, it is shown that rings are
+   visible in the reconstructed image if q exceeds a threshold which lies
+   close to 1.2 . 10(-3) for 1500 detector elements and 2000 projection
+   angles. It is also shown by visual inspection of simulated images that
+   the threshold value is, to a good approximation, inversely proportional
+   to the number of angle measurements and independent of the number of
+   detector elements. The results suggest that a simple oberver study,
+   together with these scaling relationships, is sufficient for
+   establishing sinogram homogeneity requirements for a particular
+   reconstruction method.
+CT Conference on Medical Imaging - Physics of Medical Imaging
+CY FEB 05-08, 2012
+CL San Diego, CA
+SP SPIE; Agilent Technol; Diamond SA; DQE Instruments Inc; eMagin; Isuzu
+   Glass Co Ltd; Medtronic, Inc.; Ocean Thin Films Inc
+TC 3
+ZB 0
+Z8 0
+ZS 0
+Z9 3
+SN 0277-786X
+BN 978-0-8194-8962-3
+UT WOS:000304768000086
+ER
+
+PT J
+AU Abu Anas, Emran Mohammad
+   Kim, Jae Gon
+   Lee, Soo Yeol
+   Hasan, Md Kamrul
+TI High-quality 3D correction of ring and radiant artifacts in flat panel
+   detector-based cone beam volume CT imaging
+SO PHYSICS IN MEDICINE AND BIOLOGY
+VL 56
+IS 19
+BP 6495
+EP 6519
+DI 10.1088/0031-9155/56/19/020
+PD OCT 7 2011
+PY 2011
+AB The use of an x-ray flat panel detector is increasingly becoming popular
+   in 3D cone beam volume CT machines. Due to the deficient semiconductor
+   array manufacturing process, the cone beam projection data are often
+   corrupted by different types of abnormalities, which cause severe ring
+   and radiant artifacts in a cone beam reconstruction image, and as a
+   result, the diagnostic image quality is degraded. In this paper, a novel
+   technique is presented for the correction of error in the 2D cone beam
+   projections due to abnormalities often observed in 2D x-ray flat panel
+   detectors. Template images are derived from the responses of the
+   detector pixels using their statistical properties and then an effective
+   non-causal derivative-based detection algorithm in 2D space is presented
+   for the detection of defective and mis-calibrated detector elements
+   separately. An image inpainting-based 3D correction scheme is proposed
+   for the estimation of responses of defective detector elements, and the
+   responses of the mis-calibrated detector elements are corrected using
+   the normalization technique. For real-time implementation, a
+   simplification of the proposed off-line method is also suggested.
+   Finally, the proposed algorithms are tested using different real cone
+   beam volume CT images and the experimental results demonstrate that the
+   proposed methods can effectively remove ring and radiant artifacts from
+   cone beam volume CT images compared to other reported techniques in the
+   literature.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 0031-9155
+UT WOS:000295156900021
+ER
+
+PT J
+AU Zeng, Gengsheng L
+TI Gibbs artifact reduction by nonnegativity constraint.
+SO Journal of nuclear medicine technology
+VL 39
+IS 3
+BP 213
+EP 9
+DI 10.2967/jnmt.110.086439
+PD 2011-Sep
+PY 2011
+AB UNLABELLED: This paper proposes a 2-step image reconstruction method in
+   which the nonnegativity constraint in the iterative maximum-likelihood
+   expectation maximization (MLEM) algorithm is used to effectively reduce
+   Gibbs ringing artifacts.
+   METHODS: Gibbs artifacts are difficult to control during imaging
+   reconstruction. The proposed method uses the postprocessing strategy to
+   suppress Gibbs artifacts. In the first step, a raw image is
+   reconstructed from projections without correction for point spread
+   function (PSF). The attenuation correction can be performed in the first
+   step by using, for example, the iterative MLEM or ordered-subsets
+   expectation maximization (OS-EM) algorithm. The second step is a
+   postprocessing procedure that corrects for the PSF blurring effect. If
+   the target features (e.g., hot lesions) have a positive background,
+   removing the background before application of the postprocessing filter
+   significantly helps with target deblurring and Gibbs artifact
+   suppression. This postprocessing filter is the image-domain MLEM
+   algorithm. The background activity is attached back to the foreground
+   after lesion sharpening.
+   RESULTS: Computer simulations and PET phantom studies were performed
+   using the proposed 2-step method. The background removal strategy
+   significantly reduced Gibbs artifacts.
+   CONCLUSION: Gibbs ringing artifacts generated during image
+   reconstruction are difficult to avoid if compensation for the PSF of the
+   system is needed. The strategy of separating image reconstruction from
+   PSF compensation has been shown effective in removal of Gibbs ringing
+   artifacts.
+TC 3
+ZB 1
+Z8 0
+ZR 0
+ZS 0
+Z9 3
+EI 1535-5675
+UT MEDLINE:21795376
+PM 21795376
+ER
+
+PT J
+AU Abu Anas, Emran M.
+   Kim, Jae G.
+   Lee, Soo Y.
+   Hasan, Md K.
+TI Comparison of ring artifact removal methods using flat panel detector
+   based CT images
+SO BIOMEDICAL ENGINEERING ONLINE
+VL 10
+AR 72
+DI 10.1186/1475-925X-10-72
+PD AUG 17 2011
+PY 2011
+AB Background: Ring artifacts are the concentric rings superimposed on the
+   tomographic images often caused by the defective and insufficient
+   calibrated detector elements as well as by the damaged scintillator
+   crystals of the flat panel detector. It may be also generated by objects
+   attenuating X-rays very differently in different projection direction.
+   Ring artifact reduction techniques so far reported in the literature can
+   be broadly classified into two groups. One category of the approaches is
+   based on the sinogram processing also known as the pre-processing
+   techniques and the other category of techniques perform processing on
+   the 2-D reconstructed images, recognized as the post-processing
+   techniques in the literature. The strength and weakness of these
+   categories of approaches are yet to be explored from a common platform.
+   Method: In this paper, a comparative study of the two categories of ring
+   artifact reduction techniques basically designed for the multi-slice CT
+   instruments is presented from a common platform. For comparison, two
+   representative algorithms from each of the two categories are selected
+   from the published literature. A very recently reported state-of-the-art
+   sinogram domain ring artifact correction method that classifies the ring
+   artifacts according to their strength and then corrects the artifacts
+   using class adaptive correction schemes is also included in this
+   comparative study. The first sinogram domain correction method uses a
+   wavelet based technique to detect the corrupted pixels and then using a
+   simple linear interpolation technique estimates the responses of the bad
+   pixels. The second sinogram based correction method performs all the
+   filtering operations in the transform domain, i.e., in the wavelet and
+   Fourier domain. On the other hand, the two post-processing based
+   correction techniques actually operate on the polar transform domain of
+   the reconstructed CT images. The first method extracts the ring artifact
+   template vector using a homogeneity test and then corrects the CT images
+   by subtracting the artifact template vector from the uncorrected images.
+   The second post-processing based correction technique performs median
+   and mean filtering on the reconstructed images to produce the corrected
+   images.
+   Results: The performances of the comparing algorithms have been tested
+   by using both quantitative and perceptual measures. For quantitative
+   analysis, two different numerical performance indices are chosen. On the
+   other hand, different types of artifact patterns, e. g., single/band
+   ring, artifacts from defective and mis-calibrated detector elements,
+   rings in highly structural object and also in hard object, rings from
+   different flat-panel detectors are analyzed to perceptually investigate
+   the strength and weakness of the five methods. An investigation has been
+   also carried out to compare the efficacy of these algorithms in
+   correcting the volume images from a cone beam CT with the parameters
+   determined from one particular slice. Finally, the capability of each
+   correction technique in retaining the image information (e. g., small
+   object at the iso-center) accurately in the corrected CT image has been
+   also tested.
+   Conclusions: The results show that the performances of the algorithms
+   are limited and none is fully suitable for correcting different types of
+   ring artifacts without introducing processing distortion to the image
+   structure. To achieve the diagnostic quality of the corrected slices a
+   combination of the two approaches (sinogram- and post-processing) can be
+   used. Also the comparing methods are not suitable for correcting the
+   volume images from a cone beam flat-panel detector based CT.
+TC 0
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 0
+SN 1475-925X
+UT WOS:000295220600001
+ER
+
+PT J
+AU Abu Anas, Emran Mohammad
+   Lee, Soo Yeol
+   Hasan, Md Kamrul
+TI Classification of ring artifacts for their effective removal using type
+   adaptive correction schemes
+SO COMPUTERS IN BIOLOGY AND MEDICINE
+VL 41
+IS 6
+BP 390
+EP 401
+DI 10.1016/j.compbiomed.2011.03.018
+PD JUN 2011
+PY 2011
+AB High resolution tomographic images acquired with a digital X-ray
+   detector are often degraded by the so called ring artifacts. In this
+   paper, a detail analysis including the classification, detection and
+   correction of these ring artifacts is presented. At first, a novel idea
+   for classifying rings into two categories, namely type I and type II
+   rings, is proposed based on their statistical characteristics. The
+   defective detector elements and the dusty scintillator screens result in
+   type I ring and the mis-calibrated detector elements lead to type II
+   ring. Unlike conventional approaches, we emphasize here on the separate
+   detection and correction schemes for each type of rings for their
+   effective removal. For the detection of type I ring, the histogram of
+   the responses of the detector elements is used and a modified fast image
+   inpainting algorithm is adopted to correct the responses of the
+   defective pixels. On the other hand, to detect the type II ring, first a
+   simple filtering scheme is presented based on the fast Fourier transform
+   (FFT) to smooth the sum curve derived form the type I ring corrected
+   projection data. The difference between the sum curve and its smoothed
+   version is then used to detect their positions. Then, to remove the
+   constant bias suffered by the responses of the mis-calibrated detector
+   elements with view angle, an estimated dc shift is subtracted from them.
+   The performance of the proposed algorithm is evaluated using real
+   micro-CT images and is compared with three recently reported algorithms.
+   Simulation results demonstrate superior performance of the proposed
+   technique as compared to the techniques reported in the literature. (C)
+   2011 Elsevier Ltd. All rights reserved.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 0010-4825
+UT WOS:000292178600011
+ER
+
+PT J
+AU Anas, Emran Mohammad Abu
+   Lee, Soo Yeol
+   Hasan, Kamrul
+TI Classification of ring artifacts for their effective removal using type
+   adaptive correction schemes.
+SO Computers in biology and medicine
+VL 41
+IS 6
+BP 390
+EP 401
+DI 10.1016/j.compbiomed.2011.03.018
+PD 2011-Jun
+PY 2011
+AB High resolution tomographic images acquired with a digital X-ray
+   detector are often degraded by the so called ring artifacts. In this
+   paper, a detail analysis including the classification, detection and
+   correction of these ring artifacts is presented. At first, a novel idea
+   for classifying rings into two categories, namely type I and type II
+   rings, is proposed based on their statistical characteristics. The
+   defective detector elements and the dusty scintillator screens result in
+   type I ring and the mis-calibrated detector elements lead to type II
+   ring. Unlike conventional approaches, we emphasize here on the separate
+   detection and correction schemes for each type of rings for their
+   effective removal. For the detection of type I ring, the histogram of
+   the responses of the detector elements is used and a modified fast image
+   inpainting algorithm is adopted to correct the responses of the
+   defective pixels. On the other hand, to detect the type II ring, first a
+   simple filtering scheme is presented based on the fast Fourier transform
+   (FFT) to smooth the sum curve derived form the type I ring corrected
+   projection data. The difference between the sum curve and its smoothed
+   version is then used to detect their positions. Then, to remove the
+   constant bias suffered by the responses of the mis-calibrated detector
+   elements with view angle, an estimated dc shift is subtracted from them.
+   The performance of the proposed algorithm is evaluated using real
+   micro-CT images and is compared with three recently reported algorithms.
+   Simulation results demonstrate superior performance of the proposed
+   technique as compared to the techniques reported in the literature.
+TC 5
+ZB 1
+Z8 0
+ZR 0
+ZS 0
+Z9 5
+EI 1879-0534
+UT MEDLINE:21513928
+PM 21513928
+ER
+
+PT S
+AU Brun, F.
+   Kourousias, G.
+   Dreossi, D.
+   Mancini, L.
+   Tromba, G.
+GP IEEE
+TI A COMPARATIVE EVALUATION OF RING ARTIFACTS REDUCTION FILTERS FOR X-RAY
+   COMPUTED MICROTOMOGRAPHY IMAGES
+SO 2011 18TH IEEE INTERNATIONAL CONFERENCE ON IMAGE PROCESSING (ICIP)
+SE IEEE International Conference on Image Processing ICIP
+BP 405
+EP 408
+PD 2011
+PY 2011
+AB Concentric rings are among the most recurrent artifacts in X-ray
+   computed microtomography imaging. Their presence have a negative impact
+   on the quantitative and qualitative analyses of the data. An interesting
+   approach for ring artifacts removal is based on direct filtering of the
+   reconstructed slices. Slice filtering does not require additional
+   imaging data (i.e. flat fielding images), it does not exclude methods
+   applied during the reconstruction process (i.e. sinogram processing) and
+   it can be applied also to past archived tomographic data. In this work
+   four different approaches for the removal of complete ring artifacts are
+   presented and preliminary compared using a suitably created artificial
+   image as well as an experimental image. After a critical analysis of the
+   considered filters, the results support that an approach based on a
+   modified Sijbers and Postnov [1] method effectively compensates ring
+   artifacts in reconstructed slices, thus resulting in a powerful tool for
+   established microtomography workflows.
+CT 18th IEEE International Conference on Image Processing (ICIP)
+CY SEP 11-14, 2011
+CL Brussels, BELGIUM
+SP IEEE; IEEE Signal Proc Soc
+TC 4
+ZB 0
+Z8 0
+ZS 0
+Z9 4
+SN 1522-4880
+BN 978-1-4577-1303-3
+UT WOS:000298962500102
+ER
+
+PT J
+AU Anas, Emran M Abu
+   Kim, Jae G
+   Lee, Soo Y
+   Hasan, K
+TI Comparison of ring artifact removal methods using flat panel detector
+   based CT images.
+SO Biomedical engineering online
+VL 10
+BP 72
+EP 72
+DI 10.1186/1475-925X-10-72
+PD 2011 Aug 17
+PY 2011
+AB BACKGROUND: Ring artifacts are the concentric rings superimposed on the
+   tomographic images often caused by the defective and insufficient
+   calibrated detector elements as well as by the damaged scintillator
+   crystals of the flat panel detector. It may be also generated by objects
+   attenuating X-rays very differently in different projection direction.
+   Ring artifact reduction techniques so far reported in the literature can
+   be broadly classified into two groups. One category of the approaches is
+   based on the sinogram processing also known as the pre-processing
+   techniques and the other category of techniques perform processing on
+   the 2-D reconstructed images, recognized as the post-processing
+   techniques in the literature. The strength and weakness of these
+   categories of approaches are yet to be explored from a common platform.
+   METHOD: In this paper, a comparative study of the two categories of ring
+   artifact reduction techniques basically designed for the multi-slice CT
+   instruments is presented from a common platform. For comparison, two
+   representative algorithms from each of the two categories are selected
+   from the published literature. A very recently reported state-of-the-art
+   sinogram domain ring artifact correction method that classifies the ring
+   artifacts according to their strength and then corrects the artifacts
+   using class adaptive correction schemes is also included in this
+   comparative study. The first sinogram domain correction method uses a
+   wavelet based technique to detect the corrupted pixels and then using a
+   simple linear interpolation technique estimates the responses of the bad
+   pixels. The second sinogram based correction method performs all the
+   filtering operations in the transform domain, i.e., in the wavelet and
+   Fourier domain. On the other hand, the two post-processing based
+   correction techniques actually operate on the polar transform domain of
+   the reconstructed CT images. The first method extracts the ring artifact
+   template vector using a homogeneity test and then corrects the CT images
+   by subtracting the artifact template vector from the uncorrected images.
+   The second post-processing based correction technique performs median
+   and mean filtering on the reconstructed images to produce the corrected
+   images.
+   RESULTS: The performances of the comparing algorithms have been tested
+   by using both quantitative and perceptual measures. For quantitative
+   analysis, two different numerical performance indices are chosen. On the
+   other hand, different types of artifact patterns, e.g., single/band
+   ring, artifacts from defective and mis-calibrated detector elements,
+   rings in highly structural object and also in hard object, rings from
+   different flat-panel detectors are analyzed to perceptually investigate
+   the strength and weakness of the five methods. An investigation has been
+   also carried out to compare the efficacy of these algorithms in
+   correcting the volume images from a cone beam CT with the parameters
+   determined from one particular slice. Finally, the capability of each
+   correction technique in retaining the image information (e.g., small
+   object at the iso-center) accurately in the corrected CT image has been
+   also tested.
+   CONCLUSIONS: The results show that the performances of the algorithms
+   are limited and none is fully suitable for correcting different types of
+   ring artifacts without introducing processing distortion to the image
+   structure. To achieve the diagnostic quality of the corrected slices a
+   combination of the two approaches (sinogram- and post-processing) can be
+   used. Also the comparing methods are not suitable for correcting the
+   volume images from a cone beam flat-panel detector based CT.
+TC 5
+ZB 0
+Z8 0
+ZS 0
+Z9 5
+EI 1475-925X
+UT MEDLINE:21846411
+PM 21846411
+ER
+
+PT J
+AU Ashrafuzzaman, A. N. M.
+   Lee, Soo Yeol
+   Hasan, Md Kamrul
+TI A Self-Adaptive Approach for the Detection and Correction of Stripes in
+   the Sinogram: Suppression of Ring Artifacts in CT Imaging
+SO EURASIP JOURNAL ON ADVANCES IN SIGNAL PROCESSING
+AR 183547
+DI 10.1155/2011/183547
+PD 2011
+PY 2011
+AB The digital X-ray detectors often generate stripe artifact in the
+   sinogram which in turn creates ring artifact in the reconstructed
+   micro-Computed Tomography (mu-CT), C-Arm CT, and most recent dental CT
+   images. Such ring artifacts not only obscure image details in the
+   regions of interest but also mask the whole image with some artifacts.
+   In this paper, novel techniques are proposed for the detection and
+   suppression of ring artifacts in the sinogram domain. As ring artifacts
+   are manifested as edge creating stripes, single or contiguous, in the
+   sinogram, they are detected based on a set of specific conditions
+   derived from the second derivative of the sinogram and a new
+   self-adaptive threshold computed from its first derivative. A new method
+   for the detection of wide band contiguous stripes using the mean curve
+   and multilevel polyphase decomposition of the given sinogram is also
+   proposed here. For the correction of ring artifacts, novel variable
+   window moving average (VWMA) and weighted moving average (WMA) filters
+   are proposed in this work. To evaluate and compare the performance of
+   the proposed algorithm, various types of synthetic and real mu-CT images
+   are used. Experimental results show that the proposed method can detect
+   ring artifacts with high accuracy and thus remove them more effectively
+   without imparting noticeable distortion in the image as compared to
+   other reported techniques.
+TC 3
+ZB 2
+Z8 0
+ZR 0
+ZS 0
+Z9 3
+SN 1687-6172
+UT WOS:000283219300001
+ER
+
+PT J
+AU Titarenko, Sofya
+   Withers, Philip J.
+   Yagola, Anatoly
+TI An analytical formula for ring artefact suppression in X-ray tomography
+SO APPLIED MATHEMATICS LETTERS
+VL 23
+IS 12
+BP 1489
+EP 1495
+DI 10.1016/j.aml.2010.08.022
+PD DEC 2010
+PY 2010
+AB A method of ring artefact suppression in X-ray computerised tomography
+   (CT) reconstructions is proposed. The method is based on the assumption
+   that a sinogram is a smooth function along the horizontal spatial
+   coordinate. Methods based on the theory of ill-posed problems are
+   applied to find a regularised solution. An analytical formula for the
+   solution is proposed allowing fast ring artefact suppression. Its
+   performance is demonstrated for parallel beam synchrotron X-ray
+   tomography. (C) 2010 Elsevier Ltd. All rights reserved.
+RI Withers, Philip/A-6760-2009; Yagola, Anatoly/H-5752-2012
+TC 14
+ZB 1
+Z8 0
+ZR 0
+ZS 0
+Z9 14
+SN 0893-9659
+UT WOS:000282411200018
+ER
+
+PT J
+AU Wang Jue
+   Huang Su-hong
+   Cai Yu-fang
+TI Ring artifact correction for ICT images
+SO Optics and Precision Engineering
+VL 18
+IS 5
+BP 1226
+EP 33
+DI 10.3788/OPE.20101805.1226
+PD May 2010
+PY 2010
+AB A new image correction method based on projection sinograms is proposed
+   to remove ring artifacts in industrial Computerized Tomography (CT) and
+   to improve the precisions of post processing and quantitative analysis.
+   A S-L filter is adopted to filter original projection data and to
+   enhance artifact information. Then, the filtered projection data are
+   processed by line integral and difference to further increase the
+   difference between artifact edges and work piece contours. Furthermore,
+   the differenced projection data are averaged according to the number of
+   interpolations, and the artifact lo cation is automatically searched
+   according to the threshold selected by normal distribution. Finally, the
+   projection data of ring artifacts are corrected by combining the linear
+   interpolation and linear extrapolation. A correction experiment is
+   carried out in the actual CT images including ring artifacts. The result
+   indicates that the SNR of gray image using the proposed method has
+   increased by 1.688 dB, which shows that proposed method effectively
+   eliminates the ring artifacts and keeps the image edges and resolution
+   as compared with the methods of polar coordinate transformation or
+   Wave-FFT. The proposed method is suitable for correcting the
+   discontinuous ring artifacts caused by detector faults and unstable
+   performance.
+TC 1
+ZB 0
+Z8 4
+ZS 0
+Z9 5
+SN 1004-924X
+UT INSPEC:11886750
+ER
+
+PT J
+AU Luo Shouhua
+   Wu Jing
+   Zhang Bo
+   Chen Gong
+TI Fitting correction method of ring artifacts for reconstructing cone-beam
+   CT images
+SO Transactions of Nanjing University of Aeronautics & Astronautics
+VL 27
+IS 1
+BP 34
+EP 8
+PD March 2010
+PY 2010
+AB In high-resolution cone-beam computed tomography (CBCT) using the
+   flat-panel detector, imperfect or defect detector elements cause ring
+   artifacts due to the none-uniformity of their X-ray response. They often
+   disturb the image quality. A dedicated fitting correction method for
+   high-resolution micro-CT is presented. The method converts each
+   elementary X-ray response curve to an average one, and eliminates
+   response inconsistency among pixels. Other factors of the method are
+   discussed, such as the correction factor variability by different
+   sampling frames and nonlinear factors over the whole spectrum. Results
+   show that the noise and artifacts are both reduced in reconstructed
+   images.
+TC 0
+ZB 0
+Z8 1
+ZS 0
+Z9 1
+SN 1005-1120
+UT INSPEC:11896254
+ER
+
+PT J
+AU Titarenko, S. S.
+   Yagola, A. G.
+TI Ring artefact suppression in real-time x-ray tomography
+SO MOSCOW UNIVERSITY PHYSICS BULLETIN
+VL 65
+IS 1
+BP 65
+EP 67
+DI 10.3103/S0027134910010157
+PD FEB 2010
+PY 2010
+AB A ring artefact suppression algorithm in x-ray tomography is proposed
+   and allows one to process input data in real time. The algorithm is
+   based on methods of the theory of inverse and ill-posed problems. Its
+   numerical implementation uses minimisation of the smoothing Tikhonov's
+   functional with the conjugate gradient method.
+RI Yagola, Anatoly/H-5752-2012
+TC 5
+ZB 0
+Z8 0
+ZR 0
+ZS 0
+Z9 5
+SN 0027-1349
+UT WOS:000276615000015
+ER
+
+PT J
+AU Sadi, Fazle
+   Lee, Soo Yeol
+   Hasan, Md. Kamrul
+TI Removal of ring artifacts in computed tomographic imaging using
+   iterative center weighted median filter
+SO COMPUTERS IN BIOLOGY AND MEDICINE
+VL 40
+IS 1
+BP 109
+EP 118
+DI 10.1016/j.compbiomed.2009.11.007
+PD JAN 2010
+PY 2010
+AB A new iterative center weighted median filter (ICWMF) for ring artifact
+   reduction from the micro-computed tomographic (mu-CT) image is proposed
+   in this paper. The center weight of the median filter is computed based
+   on the characteristic of the ring artifact in the mean curve of the
+   projection data. The filter operates on the deviation of the mean curve
+   to smooth the ring generating peaks and troughs iteratively while
+   preserving the details due to image. A convergence criterion for the
+   iterative algorithm is determined from the distribution of the local
+   deviation computed from the mean curve deviation. The estimate of the
+   mean curve obtained using the ICWMF is used to correct the ring
+   corrupted projection data from which reconstruction gives the ring
+   artifact suppressed mu-CT image. Test results on both the synthetic and
+   real images demonstrate that the ring artifacts can be more effectively
+   suppressed using our method as compared to other ring removal techniques
+   reported in the literature. (C) 2009 Elsevier Ltd. All rights reserved.
+TC 15
+ZB 3
+Z8 0
+ZR 0
+ZS 0
+Z9 15
+SN 0010-4825
+UT WOS:000274948300012
+PM 20031123
+ER
+
+PT S
+AU Brun, F.
+   Kourousias, G.
+   Dreossi, D.
+   Mancini, L.
+BE Dossel, O
+   Schlegel, WC
+TI An improved method for ring artifacts removing in reconstructed
+   tomographic images
+SO WORLD CONGRESS ON MEDICAL PHYSICS AND BIOMEDICAL ENGINEERING, VOL 25, PT
+   4: IMAGE PROCESSING, BIOSIGNAL PROCESSING, MODELLING AND SIMULATION,
+   BIOMECHANICS
+SE IFMBE Proceedings
+VL 25
+BP 926
+EP 929
+PN 4
+PD 2010
+PY 2010
+AB Differences in the individual pixel response of detector elements
+   introduce ring artifacts in tomographic images seriously degrading image
+   quality. Removing or at least significantly reducing such artifacts is
+   indispensable. In this paper an improved ring artifacts remover filter
+   based on the approach of I. Sijbers and A. Postnov [1] is presented. The
+   principal advantage and core characteristic of the proposed method is
+   that it can be applied directly on images that have been already
+   reconstructed, thus eliminating the need for additional imaging data
+   like sinograms, flat fields and dark fields that are traditionally used
+   for ring removal. The proposed method is computationally inexpensive and
+   can be used even within established CT workflows or on past archived
+   tomographic data.
+CT World Congress on Medical Physics and Biomedical Engineering
+CY SEP 07-12, 2009
+CL Munich, GERMANY
+SP IUPESM; IOMP
+TC 1
+ZB 0
+Z8 0
+ZS 0
+Z9 1
+SN 1680-0737
+BN 978-3-642-03881-5
+UT WOS:000300975300247
+ER
+
+PT J
+AU Titarenko, Sofya
+   Titarenko, Valeriy
+   Kyrieleis, Albrecht
+   Withers, Philip J.
+TI A ring artifact suppression algorithm based on a priori information
+SO APPLIED PHYSICS LETTERS
+VL 95
+IS 7
+AR 071113
+DI 10.1063/1.3211956
+PD AUG 17 2009
+PY 2009
+AB In this letter, ring artifacts in two-dimensional (2D) tomographic
+   slices are considered. For a parallel beam geometry we propose an
+   interactive algorithm, which removes the artifacts while preserving fine
+   image details. The algorithm comprises two stages and is based on a
+   priori information about the true attenuation coefficient in some areas
+   of a 2D slice. Even in the absence of any a priori information the
+   initial stage of the algorithm can already provide good ring artifact
+   suppression.
+RI Withers, Philip/A-6760-2009
+TC 10
+ZB 1
+Z8 1
+ZR 1
+ZS 0
+Z9 11
+SN 0003-6951
+UT WOS:000269288300013
+ER
+
+PT J
+AU Prell, Daniel
+   Kyriakou, Yiannis
+   Kalender, Willi A.
+TI Comparison of ring artifact correction methods for flat-detector CT
+SO PHYSICS IN MEDICINE AND BIOLOGY
+VL 54
+IS 12
+BP 3881
+EP 3895
+DI 10.1088/0031-9155/54/12/018
+PD JUN 21 2009
+PY 2009
+AB In flat-detector CT, imperfect or defect detector elements may cause
+   concentric ring artifacts due to their continuous over-or
+   underestimation of attenuation values, which often disturb image
+   quality. Especially due to the demand for high-spatial resolution images
+   and the necessary pixel read-out without arbitrary pixel-binning, ring
+   artifacts become more pronounced and the reduction of these artifacts
+   becomes a necessity. We here present a comparison of two dedicated ring
+   artifact correction methods for flat-detector CT, on the basis of
+   different median and mean filterings of the reconstructed image but each
+   working in different geometric planes. While the first method works in
+   Cartesian coordinates, the second method performs a transformation to
+   polar coordinates. Both post-processing methods efficiently reduce ring
+   artifacts in the reconstructed images and improve image quality. The
+   transformation to polar coordinates turned out to be a necessary step
+   for efficient ring artifact correction, since correction in Cartesian
+   coordinates suffers from newly introduced artifacts as well as
+   insufficient correction of artifacts close to the center of rotation.
+TC 36
+ZB 13
+Z8 2
+ZR 0
+ZS 0
+Z9 38
+SN 0031-9155
+UT WOS:000266582300018
+PM 19491452
+ER
+
+PT J
+AU Muench, Beat
+   Trtik, Pavel
+   Marone, Federica
+   Stampanoni, Marco
+TI Stripe and ring artifact removal with combined wavelet - Fourier
+   filtering
+SO OPTICS EXPRESS
+VL 17
+IS 10
+BP 8567
+EP 8591
+DI 10.1364/OE.17.008567
+PD MAY 11 2009
+PY 2009
+AB A fast, powerful and stable filter based on combined wavelet and Fourier
+   analysis for the elimination of horizontal or vertical stripes in images
+   is presented and compared with other types of destriping filters. Strict
+   separation between artifacts and original features allowing both,
+   suppression of the unwanted structures and high degree of preservation
+   of the original image information is endeavoured. The results are
+   validated by visual assessments, as well as by quantitative estimation
+   of the image energy loss. The capabilities and the performance of the
+   filter are tested on a number of case studies related to applications in
+   tomographic imaging. The case studies include (i) suppression of
+   waterfall artifacts in electron microscopy images based on focussed ion
+   beam nanotomography, (ii) removal of different types of ring artifacts
+   in synchrotron based X-ray microtomography and (iii) suppression of
+   horizontal stripe artifacts from phase projections in grating
+   interferometry. (C) 2009 Optical Society of America
+RI Marone, Federica/J-4420-2013; Stampanoni, Marco/J-4099-2013
+OI Stampanoni, Marco/0000-0001-7486-6681
+TC 89
+ZB 13
+Z8 6
+ZR 0
+ZS 0
+Z9 95
+SN 1094-4087
+UT WOS:000266381900089
+PM 19434191
+ER
+
+PT B
+AU Yen-Wei Chen
+   Guifang Duan
+   Fujita, A.
+   Hirooka, K.
+   Ueno, Y.
+TI Ring artifacts reduction in cone-beam CT images based on independent
+   component analysis
+SO 2009 IEEE Instrumentation and Measurement Technology Conference (I2MTC)
+BP 1734
+EP 7
+DI 10.1109/IMTC.2009.5168737
+PD 2009
+PY 2009
+AB Cone-beam CT (CBCT) scanners are based on volumetric tomography, using a
+   2D extended digital array providing an area detector [1]. Compared to
+   traditional CT, CBCT has many advantages, such as less X-ray beam
+   limitation, high image accuracy, rapid scan time, etc. However, in CBCT
+   images there are always some ring artifacts that appear as rings
+   centered on the rotation axis. Due to the data of the constructed images
+   are corrupted by these ring artifacts, qualitative and quantitative
+   analysis of CBCT images will be compromised. Post processing and
+   application such as image segmentation and registration also turn more
+   complex as the presence of such artifacts. In this paper, a method based
+   on independent component analysis (ICA) is presented. It deals with the
+   reconstructed CBCT image and can effectively reduce such ring artifacts.
+CT 2009 IEEE Intrumentation and Measurement Technology Conference (I2MTC)
+CY 5-7 May 2009
+CL Singapore, Singapore
+SP IEEE Instrum. Meas. Soc.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+BN 978-1-4244-3352-0
+UT INSPEC:10790070
+ER
+
+PT J
+AU Li Junjiang
+   Hu Shaoxing
+   Li Baolei
+   Yang Min
+TI Ring artifact correction for industrial CT images
+SO Journal of Beijing University of Aeronautics and Astronautics
+VL 33
+IS 11
+BP 1378
+EP 82
+PD Nov. 2007
+PY 2007
+AB Ring artifacts in computed tomography (CT) images are introduced by
+   imperfect pixel channel in a detector. Ring artifacts degrade the CT
+   image, hamper post processing and prohibit quantitative analysis. A set
+   of algorithms that enable virtually complete ring artifact correction
+   were proposed. Correction for pixel channel response nonuniformity was
+   that offset and gain correction were done to compensate for response
+   non- uniformity in the detector. Correction for projection sinogram data
+   was that the vertical line artifacts in the sonogram were removed by a
+   computationally efficient filter. Correction for already-reconstructed
+   images was that the ring artifacts in the Cartesian coordinate were
+   transformed into the vertical line artifacts in the polar coordinate and
+   removed as sonogram correction. The procedures were created to deal with
+   data acquired from an YXLON XRS232 9" image intensifier. Ring artifacts
+   were reduced significantly with minimal to negligible contamination of
+   the underlying data.
+TC 0
+ZB 0
+Z8 4
+ZR 0
+ZS 0
+Z9 4
+SN 1001-5965
+UT INSPEC:10122832
+ER
+
+PT J
+AU Boin, M.
+   Haibel, A.
+TI Compensation of ring artefacts in synchrotron tomographic images
+SO Optics Express
+VL 14
+IS 25
+PD Dec. 2006
+PY 2006
+AB Tomographic images are often superimposed by so called ring artefacts.
+   Ring artefacts are concentric rings in the images around the center of
+   rotation of the tomographic setup caused e.g. by differences in the
+   individual pixel response of the detector. They complicate the post
+   processing of the data, i.e. the segmentation of individual image
+   information. Hence, for a quantitative analysis of the tomographic
+   images a significant reduction of these artefacts is essential. In this
+   paper, a simple but efficient method to eliminate such artefacts during
+   the reconstruction is proposed.
+TC 0
+ZB 0
+Z8 0
+ZS 0
+Z9 0
+SN 1094-4087
+UT INSPEC:9334278
+ER
+
+PT S
+AU Ketcham, Richard A.
+BE Bonse, U
+TI New algorithms for ring artifact removal - art. no. 63180O
+SO Developments in X-Ray Tomography V
+SE PROCEEDINGS OF THE SOCIETY OF PHOTO-OPTICAL INSTRUMENTATION ENGINEERS
+   (SPIE)
+VL 6318
+BP O3180
+EP O3180
+AR 63180O
+DI 10.1117/12.680939
+PD 2006
+PY 2006
+AB This paper describes a set of algorithms that enable virtually complete
+   ring artifact removal from tomographic imagery with minimal to
+   negligible contamination of the underlying data. These procedures were
+   created specifically to deal with data as acquired at the University of
+   Texas high-resolution X-ray CT facility, but are likely to be applicable
+   in other settings as well. In most cases corrections are optimally
+   applied to sinogram data before reconstruction, but a variant is
+   developed for correcting already-reconstructed images. The algorithms
+   make particular use of repetitive aspects of the artifact across images
+   to improve behavior. However, fully utilizing this functionality
+   requires processing entire data sets simultaneously, rather than one
+   image at a time. A number of parameters may be adjusted to optimize
+   results for particular data sets.
+CT 5th Conference on Developments in X-Ray Tomography
+CY AUG 15-17, 2006
+CL San Diego, CA
+SP SPIE
+RI Ketcham, Richard/B-5431-2011
+OI Ketcham, Richard/0000-0002-2748-0409
+TC 6
+ZB 1
+Z8 0
+ZR 0
+ZS 0
+Z9 6
+SN 0277-786X
+BN 0-8194-6397-3
+UT WOS:000241974100023
+ER
+
+PT S
+AU Axelsson, Maria
+   Svensson, Stina
+   Borgefors, Gunilla
+BE Franke, K
+   Muller, KR
+   Nickolay, B
+   Schafer, R
+TI Reduction of ring artifacts in high resolution X-ray microtomography
+   images
+SO PATTERN RECOGNITION, PROCEEDINGS
+SE LECTURE NOTES IN COMPUTER SCIENCE
+VL 4174
+BP 61
+EP 70
+PD 2006
+PY 2006
+AB Ring artifacts can occur in reconstructed images from X-ray
+   microtomography as full or partial circles centred on the rotation axis.
+   In this paper, a 2D method is proposed that reduces these ring artifacts
+   in the reconstructed images. The method consists of two main parts.
+   First, the artifacts are localised in the image using local orientation
+   estimation of the image structures and filtering to find ring patterns
+   in the orientation information. Second, the map of the located artifacts
+   is used to calculate a correction image using normalised convolution.
+   The method is evaluated on 2D images from volume data of paper fibre
+   imaged at the European Synchrotron Radiation Facility (ESRF) with high
+   resolution X-ray microtomography. The results show that the proposed
+   method reduces the artifacts and restores the pixel values for all types
+   of partial and complete ring artifacts where the signal is not
+   completely saturated.
+CT 28th Annual Symposium of the Gernan-Association-for-Pattern-Recognition
+CY SEP 12-14, 2006
+CL Fraunhofer Inst IPK, Berlin, GERMANY
+HO Fraunhofer Inst IPK
+SP German Assoc Pattern Recognit; Fraunhofer Inst HHI; Frauhofer Inst FIRST
+TC 9
+ZB 1
+Z8 1
+ZS 0
+Z9 10
+SN 0302-9743
+BN 3-540-44412-2
+UT WOS:000241486800007
+ER
+
+EF
