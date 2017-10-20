@@ -23,8 +23,8 @@
 
 #include "BasicThreshold.h"
 #include "DoubleThreshold.h"
-#include "FuzzyCMeans.h"
-#include "KernelFuzzyCMeans.h"
+//#include "FuzzyCMeans.h"
+//#include "KernelFuzzyCMeans.h"
 #include "RemoveBackground.h"
 
 #include "../include/KiplProcessModuleBase.h"
@@ -46,11 +46,11 @@ void * GetModule(const char * application, const char * name)
 		if (sName=="DoubleThreshold")
 			return new DoubleThreshold;
 
-		if (sName=="FuzzyCMeans")
-			return new FuzzyCMeans;
+//		if (sName=="FuzzyCMeans")
+//			return new FuzzyCMeans;
 
-		if (sName=="KernelFuzzyCMeans")
-			return new KernelFuzzyCMeans;
+//		if (sName=="KernelFuzzyCMeans")
+//			return new KernelFuzzyCMeans;
 
 		if (sName=="RemoveBackground")
 			return new RemoveBackground;
@@ -89,11 +89,11 @@ int GetModuleList(const char * application, void *listptr)
 	BasicThreshold dt;
 	modulelist->operator []("DoubleThreshold")=dt.GetParameters();
 
-	FuzzyCMeans fcm;
-	modulelist->operator []("FuzzyCMeans")=fcm.GetParameters();
+//	FuzzyCMeans fcm;
+//	modulelist->operator []("FuzzyCMeans")=fcm.GetParameters();
 
-	KernelFuzzyCMeans kfcm;
-	modulelist->operator []("KernelFuzzyCMeans")=kfcm.GetParameters();
+//	KernelFuzzyCMeans kfcm;
+//	modulelist->operator []("KernelFuzzyCMeans")=kfcm.GetParameters();
 
 	RemoveBackground rb;
 	modulelist->operator []("RemoveBackground")=rb.GetParameters();
