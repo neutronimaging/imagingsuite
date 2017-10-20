@@ -1,0 +1,42 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+
+%opening
+\title{Installation instructions for MuhRec2 on Linux}
+\author{A. Kaestner}
+
+\begin{document}
+
+\maketitle
+
+\section{System requirements}
+To install MuhRec2 on your system it is recommended that it is running with
+Ubuntu 11.04 or more, using the bash-shell. This is the easiest\ldots
+The current distribution is compiled and tested for a 64-bit OS, i.e. don't try
+to use it with a 32-bit system!
+
+\section{Installation}
+The installation of the application is done with the following steps:
+\begin{enumerate}
+ \item Extract the muhrec directory in the distribution file to the \verb+/opt+
+directory. \\
+\verb+cd /; sudo tar -xvf muhrec2_YYMMDD.tar+
+\item Set environment variables.
+\begin{description}
+ \item[Temporary] Call \verb+source /opt/muhrec/install/set_enviroment.sh+
+ \item[Single user] Add the previous source call to your \verb+.bashrc+-file
+\item[All users] Add the source call to the \verb+/etc/bash.bashrc+
+\end{description}
+\item Start the application \verb+muhrec2+ to work with the GUI or
+\verb+muhrec2 -f parameters.xml+ for command-line operation. The parameter file
+is the same type as saved from the GUI.
+\end{enumerate}
+
+\section{Good luck}
+This software is distributed with no guarantee of accuracy or functionality.
+If the software would show a malfunction please report it to me, then I will see
+what I can do about it. I am also open for suggestions for improvements. There
+is no guarantee that it will be implemented, that is a matter of time\ldots 
+
+
+\end{document}

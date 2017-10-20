@@ -1,0 +1,133 @@
+<reconstructor>
+    <userinformation>
+        <operator>unknown</operator>
+        <instrument>beamline</instrument>
+        <projectnumber>P20yyxxxx</projectnumber>
+        <sample>Test bodies</sample>
+        <comment>No comment</comment>
+    </userinformation>
+    <system>
+        <memory>6000</memory>
+        <loglevel>message</loglevel>
+    </system>
+    <projections>
+	<beamgeometry>parallel</beamgeometry>
+        <dims>100 100</dims>
+        <resolution>0.1 0.1</resolution>
+        <binning>1</binning>
+        <margin>2</margin>
+        <firstindex>1</firstindex>
+        <lastindex>100</lastindex>
+        <projectionstep>1</projectionstep>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <imagetype>projections</imagetype>
+        <center>50</center>
+	    <sod>100</sod>
+	    <sdd>100</sdd>
+	    <direction>RotationDirCW</direction>
+	    <ppoint>50.0 50.0 </ppoint>
+        <translation>false</translation>
+        <tiltangle>0</tiltangle>
+        <tiltpivot>0</tiltpivot>
+        <correcttilt>false</correcttilt>
+        <filemask>proj_####.fits</filemask>
+        <path></path>
+        <referencepath></referencepath>
+        <obfilemask>ob_####.fits</obfilemask>
+        <obfirstindex>1</obfirstindex>
+        <obcount>5</obcount>
+        <dcfilemask>dc_####.fits</dcfilemask>
+        <dcfirstindex>1</dcfirstindex>
+        <dccount>5</dccount>
+        <roi>0 0 99 99</roi>
+        <projroi>0 0 99 99</projroi>
+        <doseroi>0 0 10 10</doseroi>
+        <scanarc>0 360</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipnone</flip>
+    </projections>
+    <matrix>
+        <dims>999 999 16</dims>
+        <rotation>32</rotation>
+        <serialize>false</serialize>
+        <path>/Users/kaestner/</path>
+        <matrixname>objects_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>0 2</grayinterval>
+        <useroi>false</useroi>
+        <roi>0 0 100 100 </roi>
+	<voxelsize>0 0 0 </voxelsize>
+	<usevoi>false</usevoi>
+	<voi>0 0 0 0 0 0</voi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.1.0.0.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <referenceaverage>ImageWeightedAverage</referenceaverage>
+                    <uselut>false</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>MorphSpotClean</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <cleanmethod>morphcleanreplace</cleanmethod>
+                    <connectivity>conn4</connectivity>
+                    <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <edgesmooth>5</edgesmooth>
+                    <maxarea>30</maxarea>
+                    <maxlevel>12</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <sigma>0.01</sigma>
+                    <threading>false</threading>
+                    <threshold>0.1</threshold>
+                </parameters>
+            </module>
+            <module>
+                <modulename>WaveletRingClean</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <decnum>4</decnum>
+                    <method>verticalfft</method>
+                    <parallel>false</parallel>
+                    <sigma>0.1</sigma>
+                    <wname>daub25</wname>
+                </parameters>
+            </module>
+            <module>
+                <modulename>ProjectionFilterSingle</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <biasweight>0.1</biasweight>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
+                    <usebias>true</usebias>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBP</modulename>
+                <sharedobject>@executable_path/Frameworks/libStdBackProjectors.1.0.0.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1 1</SubVolume>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>

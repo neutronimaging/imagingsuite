@@ -1,0 +1,119 @@
+<reconstructor>
+    <userinformation>
+        <operator>Anders Kaestner</operator>
+        <instrument>ICON</instrument>
+        <projectnumber>P11001</projectnumber>
+        <sample>Unknown item</sample>
+        <comment>No comment</comment>
+    </userinformation>
+    <system>
+        <memory>1500</memory>
+        <loglevel>message</loglevel>
+    </system>
+    <projections>
+        <dims>2048 2048</dims>
+        <resolution>0.045 0.045</resolution>
+        <binning>1</binning>
+        <firstindex>1</firstindex>
+        <lastindex>180</lastindex>
+        <projectionstep>1</projectionstep>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <imagetype>projections</imagetype>
+        <center>382.083</center>
+        <translation>false</translation>
+        <tiltangle>0.1903</tiltangle>
+        <tiltpivot>400</tiltpivot>
+        <correcttilt>true</correcttilt>
+        <filemask>/Volumes/DataDisk/P20140142/02_rawdata/20141126/S6/C/C_T1301_X#.tif</filemask>
+        <path></path>
+        <referencepath></referencepath>
+        <obfilemask>/Volumes/DataDisk/P20140142/02_rawdata/20141126/S6/OB_X#.tif</obfilemask>
+        <obfirstindex>1</obfirstindex>
+        <obcount>10</obcount>
+        <dcfilemask>dc_####.fits</dcfilemask>
+        <dcfirstindex>1</dcfirstindex>
+        <dccount>0</dccount>
+        <roi>200 400 1000 432</roi>
+        <doseroi>104 81 185 192</doseroi>
+        <scanarc>0 180</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipnone</flip>
+    </projections>
+    <matrix>
+        <dims>800 800 32</dims>
+        <rotation>0</rotation>
+        <serialize>false</serialize>
+        <path>/Volumes/DataDisk/P20140142/04_evaluation/20141126/recon_roots/</path>
+        <matrixname>slice_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>-0.61 1.63</grayinterval>
+        <useroi>false</useroi>
+        <roi>0 0 0 0 </roi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>/Users/kaestner/Applications/muhrec3.app/Contents/Frameworks/libStdPreprocModules.1.0.0.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <uselut>false</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>MorphSpotClean</modulename>
+                <sharedobject>/Users/kaestner/Applications/muhrec3.app/Contents/MacOS/../Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <cleanmethod>morphcleanreplace</cleanmethod>
+                    <connectivity>conn4</connectivity>
+                    <detectionmethod>morphdetectholes</detectionmethod>
+                    <edgesmooth>5</edgesmooth>
+                    <maxarea>30</maxarea>
+                    <maxlevel>12</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <sigma>0.01</sigma>
+                    <threshold>0.07</threshold>
+                </parameters>
+            </module>
+            <module>
+                <modulename>WaveletRingClean</modulename>
+                <sharedobject>/Users/kaestner/Applications/muhrec3.app/Contents/MacOS/../Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <decnum>4</decnum>
+                    <method>verticalfft</method>
+                    <parallel>false</parallel>
+                    <sigma>0.05</sigma>
+                    <wname>daub11</wname>
+                </parameters>
+            </module>
+            <module>
+                <modulename>ProjectionFilterSingle</modulename>
+                <sharedobject>/Users/kaestner/Applications/muhrec3.app/Contents/MacOS/../Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <cutoff>0.25</cutoff>
+                    <filtertype>Hanning</filtertype>
+                    <order>1</order>
+                    <usebias>true</usebias>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBP</modulename>
+                <sharedobject>/Users/kaestner/Applications/muhrec3.app/Contents/Frameworks/libStdBackProjectors.1.0.0.dylib</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1 1</SubVolume>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>

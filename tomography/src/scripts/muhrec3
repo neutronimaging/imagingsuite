@@ -1,0 +1,18 @@
+#!/bin/sh
+
+RP="`readlink -e $0`"
+BASEPATH="`dirname $RP`"
+
+MUHREC_BASE_PATH=$BASEPATH
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASEPATH/Frameworks
+export MUHREC_BASE_PATH
+export LD_LIBRARY_PATH
+
+args="";
+for arg in $*;
+do
+	args=$args" "$arg
+done
+
+$BASEPATH/bin/muhrec3 $args
+
