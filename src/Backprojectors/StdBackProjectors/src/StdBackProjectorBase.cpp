@@ -72,6 +72,7 @@ void StdBackProjectorBase::ClearAll()
 
 size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
+    std::ostringstream msg;
 	if (volume.Size()==0)
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
@@ -104,13 +105,18 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 #else
 	memcpy(projections.GetLinePtr(0,nProjCounter),pProj,proj.Size()*sizeof(float));
 #endif
-	nProjCounter++;
-	if (bLastProjection || (nProjectionBufferSize<=nProjCounter)) {
-		if (nProjectionBufferSize<=nProjCounter)
-			nProjCounter--;
+    nProjCounter++;
+    if (bLastProjection || (nProjectionBufferSize<=(nProjCounter))) {
+        if (nProjectionBufferSize<=nProjCounter)
+            nProjCounter--;
+
+        msg.str("");
+        msg<<"Counter="<<nProjCounter<<", buffer size="<<nProjectionBufferSize<<" last "<<(bLastProjection ? "True" : "False");
+        logger(logger.LogMessage,msg.str());
 		this->BackProject();
 		nProjCounter=0;
 	}
+
 
 	return nProjCounter;
 }
@@ -281,18 +287,18 @@ float StdBackProjectorBase::Min()
 {
 	float minval=std::numeric_limits<float>::max();
 	
-	if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
-		logger(kipl::logging::Logger::LogWarning,"Min is not implemented for MatrixXYZ");
-		throw ReconException("Min is not implemented for MatrixXYZ",__FILE__,__LINE__);
-	}
-	else {
+    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
+        logger(kipl::logging::Logger::LogWarning,"Min is not implemented for MatrixXYZ");
+        throw ReconException("Min is not implemented for MatrixXYZ",__FILE__,__LINE__);
+    }
+    else {
 		for (size_t y=0; y<mask.size(); y++) {
 			for (size_t x=mask[y].first; x<mask[y].second; x++) {
 				float *pLine=volume.GetLinePtr(x,y);
 				minval=min(minval,*min(pLine,pLine+volume.Size(0)));
 			}
-		}
-	}
+        }
+    }
 
 	return minval;
 }
@@ -301,18 +307,18 @@ float StdBackProjectorBase::Max()
 {
 	float maxval=-std::numeric_limits<float>::max();
 	
-	if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
-		logger(kipl::logging::Logger::LogWarning,"Max is not implemented for MatrixXYZ");
-		throw ReconException("Max is not implemented for MatrixXYZ",__FILE__,__LINE__);
-	}
-	else {
+    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
+        logger(kipl::logging::Logger::LogWarning,"Max is not implemented for MatrixXYZ");
+        throw ReconException("Max is not implemented for MatrixXYZ",__FILE__,__LINE__);
+    }
+    else {
 		for (size_t y=0; y<mask.size(); y++) {
 			for (size_t x=mask[y].first; x<mask[y].second; x++) {
 				float *pLine=volume.GetLinePtr(x,y);
 				maxval=max(maxval,*min(pLine,pLine+volume.Size(0)));
 			}
-		}
-	}
+        }
+    }
 	
 	return maxval;
 }
