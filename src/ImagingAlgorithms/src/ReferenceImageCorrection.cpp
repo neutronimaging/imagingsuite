@@ -174,7 +174,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 
 //    std::cout   << "before PrepareReferencesBB" << std::endl;
-//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_bb.tif"); // seem correct
+        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_backgroundimage.tif"); // seem correct
 //        kipl::io::WriteTIFF32(m_DoseBBflat_image,"dose_bb.tif");
         PrepareReferencesBB();
 	}
@@ -267,7 +267,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 	kipl::base::TImage<float, 2> slice(img.Dims());
 
 
-	for (size_t i=0; i<img.Size(2); i++) {
+    for (size_t i=0; i<img.Size(2); i++) {
 
         if (m_bHaveBlackBody) {
 
@@ -278,6 +278,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 current_param =new float[6];
                 memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
                 m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
+                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
+
                 m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
                 delete[] current_param;
                 break;
@@ -306,6 +308,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
                 m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
                 m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
+                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
                     delete[] current_param;
                 break;
             }
@@ -971,34 +974,34 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
           float y_com= 0.0f;
           int size = 0;
 
-//          // old implementation with geometrical mean:
-//          for (size_t x=0; x<roi.Size(0); x++) {
-//              for (size_t y=0; y<roi.Size(1); y++) {
-//                  if(roi(x,y)==0) {
-//                      x_com +=x;
-//                      y_com +=y;
-//                      size++;
-//                  }
-
-//              }
-//          }
-//          x_com /=size;
-//          y_com /=size;
-
-          float sum_roi = 0.0f;
-
-          // weighted center of mass:
+          // old implementation with geometrical mean:
           for (size_t x=0; x<roi.Size(0); x++) {
               for (size_t y=0; y<roi.Size(1); y++) {
                   if(roi(x,y)==0) {
-                      x_com += (roi_im(x,y)*float(x));
-                      y_com += (roi_im(x,y)*float(y));
-                      sum_roi += roi_im(x,y);
+                      x_com +=x;
+                      y_com +=y;
                       size++;
                   }
 
               }
           }
+          x_com /=size;
+          y_com /=size;
+
+//          float sum_roi = 0.0f;
+
+//          // weighted center of mass:
+//          for (size_t x=0; x<roi.Size(0); x++) {
+//              for (size_t y=0; y<roi.Size(1); y++) {
+//                  if(roi(x,y)==0) {
+//                      x_com += (roi_im(x,y)*float(x));
+//                      y_com += (roi_im(x,y)*float(y));
+//                      sum_roi += roi_im(x,y);
+//                      size++;
+//                  }
+
+//              }
+//          }
 
 
 
@@ -1008,8 +1011,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
           if (size>=min_area) {
 
 
-              x_com /=sum_roi;
-              y_com /=sum_roi;
+//              x_com /=sum_roi;
+//              y_com /=sum_roi;
 
               std::pair<int,int> temp;
               temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
@@ -1030,18 +1033,43 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                   }
 
                   roi(int(x_com+0.5), int(y_com+0.5))=2;
+                  // mi manca il check sugli outliers!! me misera e me tapina! ----- CONTROLLARE DOMANI DA QUI CHE COSA È SUCC .. NON SI SA ANCORA
 
                   const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
                   const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
                   std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
                   std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
                   float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
+                  float average = accumulate( grayvalues.begin(), grayvalues.end(), 0.0/ grayvalues.size());
                   values.insert(std::make_pair(temp,median));
+//                  values.insert(std::make_pair(temp,average));
+
+//                  float average = accumulate( grayvalues.begin(), grayvalues.end(), 0.0)/grayvalues.size();
+//                  std::vector<double> diff(grayvalues.size());
+//                  std::transform(grayvalues.begin(), grayvalues.end(), diff.begin(),
+//                                 std::bind2nd(std::minus<double>(), average));
+//                  double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+//                  double stdev = std::sqrt(sq_sum / grayvalues.size());
+
+//                  float mean_value = 0;
+//                  float n= 0;
+
+//                  for (std::vector<float>::const_iterator it = grayvalues.begin(); it!= grayvalues.end(); ){
+//                      if( *it < (average+2*stdev)) {
+//                          mean_value += *it;
+//                          n+=1.0f;
+//                      }
+//                  }
+
+//                  mean_value/=n;
+
+
+//                  values.insert(std::make_pair(temp,mean_value));
          }
 
       }
 
-      // print out the values: // they seem correct!
+//      // print out the values: // they seem correct!
 //      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
 //      {
 //          std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
