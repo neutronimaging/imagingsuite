@@ -1573,7 +1573,7 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
         }
     }
 
-    m_corrector.Process(img,doselist);
+        m_corrector.Process(img,doselist);
 
     if (doselist!=nullptr)
         delete [] doselist;
@@ -1965,7 +1965,7 @@ kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, 
 
         for (int i=0; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
-            std::cout << filename << std::endl;
+//            std::cout << filename << std::endl;
 
             tempimg=reader.Read(filename,
                     config.ProjectionInfo.eFlip,
