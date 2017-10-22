@@ -26,7 +26,6 @@ SOURCES += stdpreprocmodulesgui.cpp \
     adaptivefilterdlg.cpp \
     SpotClean2Dlg.cpp \
     medianmixringcleandlg.cpp \
-    robustlognormdlg.cpp \
     generalfilterdlg.cpp
 
 HEADERS += stdpreprocmodulesgui.h\
@@ -40,7 +39,6 @@ HEADERS += stdpreprocmodulesgui.h\
     adaptivefilterdlg.h \
     SpotClean2Dlg.h \
     medianmixringcleandlg.h \
-    robustlognormdlg.h \
     generalfilterdlg.h
 
 
@@ -129,7 +127,6 @@ FORMS += \
     medianmixringclean.ui \
     projectionfilterdlg.ui \
     WaveletRingCleanDlg.ui \
-    robustlognormdlg.ui \
     generalfilterdlg.ui \
     FullLogNormDlg.ui
 
