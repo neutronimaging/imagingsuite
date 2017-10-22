@@ -18,7 +18,7 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 DEFINES += RECONALGORITHMS_LIBRARY
 
 unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
+    INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -73,10 +73,9 @@ unix {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/ -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/ -lkipl
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
+
+INCLUDEPATH += $$PWD/../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../core/kipl/kipl/include
