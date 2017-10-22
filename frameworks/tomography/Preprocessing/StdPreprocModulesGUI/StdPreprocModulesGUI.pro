@@ -91,20 +91,19 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
-else:symbian: LIBS += -lQtModuleConfigure
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
+LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
 
-INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
+INCLUDEPATH += $$PWD/../../../../gui/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../gui/qt/QtAddons
+
+INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/include
@@ -112,11 +111,11 @@ DEPENDPATH += $$PWD/../../Framework/ReconFramework/include
 INCLUDEPATH += $$PWD/../StdPreprocModules/include
 DEPENDPATH += $$PWD/../StdPreprocModules/include
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 
 FORMS += \
     polynomialcorrectiondlg.ui \

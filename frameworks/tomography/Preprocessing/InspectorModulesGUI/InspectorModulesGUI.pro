@@ -52,32 +52,32 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg
-    INCLUDEPATH += $$PWD/../../../../../external/include
-    INCLUDEPATH += $$PWD/../../../../../external/include/cfitsio
-    INLCUDEPATH += $$PWD/../../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../../external/include
+    INCLUDEPATH += $$PWD/../../../../external/include/cfitsio
+    INLCUDEPATH += $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../../lib/debug -lkipl  -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../../lib/debug/
+
+LIBS += -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework
 
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../../gui/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../gui/qt/QtAddons
 
-INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../core/kipl/kipl/src
