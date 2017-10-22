@@ -1,7 +1,7 @@
 #ifndef ROBUSTLOGNORM_H_
 #define ROBUSTLOGNORM_H_
 
-#include "StdPreprocModules_global.h"
+#include "unpublpreprocessing_global.h"
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -12,8 +12,7 @@
 #include <PreprocModuleBase.h>
 #include <ReconConfig.h>
 
-#include "PreprocEnums.h"
-#include "ImagingAlgorithms_global.h"
+#include <PreprocEnums.h>
 #include <averageimage.h>
 #include <ReferenceImageCorrection.h>
 

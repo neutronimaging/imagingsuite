@@ -8,7 +8,7 @@
 
 #include <ParameterHandling.h>
 
-#include "../include/robustlognorm.h"
+#include "robustlognorm.h"
 
 RobustLogNorm::RobustLogNorm() :
     PreprocModuleBase("RobustLogNorm"),
