@@ -1,0 +1,59 @@
+MuhRec Release June 2017
+
+Core libraries:
+KIPL
+- Improved messaging at exceptions.
+- Added DirAnalyzer to provide file list information (finds indices of the files).
+- Added support for nexus file format
+- Added FITS writing
+- Bug fix in generic reader
+- Added unit tests
+- Added documentation comments to the code
+
+GUI
+- Imagviewer: Improved zoom performance. Added image info dialog. Added point markers. Changes hot zones near ROI. 
+- LogViewer: Added guarded regions for thread safer code… still not reliable.
+
+Modules
+- ConfigBase: Added user info in the copying code
+- Started construction of variable handling
+
+ImagingAlgorithms
+- Class for ReferenceImageCorrection implemented with BB correction.
+- Added prototype for detector lag correction
+- Added piercing point estimator for
+
+—— Tomography —— 
+Framework
+- Added geometry config for cone beam (GUI).
+- Added support for Nexus file format.
+- Revised projection reader with cropping.
+- Added more exception handling
+- Fixed projection weighting
+- Fixed rotation and flipping with crop
+
+Preprocessing modules
+- Adaptive filter module revised to reflect the algorithm described by Kachelriess
+- Added RobustLogNorm with BB correction
+- Changed average method for ob and dc to selectable (mean, median, weighted mean)
+- Added module with general convolution filter
+
+
+Back projector modules
+- Added FDK reconstruction
+
+Muhrec application
+- Added geometry config for cone beam (GUI).
+- Added dialog to estimate the piercing point of a CB open beam projection.
+- Added ability to delete CurrentRecon for cases of corrupt configs.
+- Added bug reporting menu. Redirects to github.
+- Updated default parameters (New recon).
+- Added progress dialog during recon (not working on windows)
+- Updated user documentation.
+- The file indices for the selected images are automatically detected.
+- Updated find center dialog.
+
+And a lot of management scripting and structuring not visible to the user, but help us in the development.
+
+
+

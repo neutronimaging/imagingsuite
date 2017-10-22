@@ -1,0 +1,7 @@
+Normalized sinogram from the pertified wood CT (P08062)
+
+Scan arc 360 deg
+625 Projections
+Incremental sequence
+
+A decent center is at 284 pixels from the left side

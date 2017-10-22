@@ -1,0 +1,113 @@
+Here: 
+forwproj2D  - forward projector
+backproj2D - backprojector
+
+%%%% Landweber method is the simplest - essentially a gradient descent of quadratic cost function. Regularization can be easily added to it, however method usually takes many iterations and convergence is tuned with the samll parameter "tau", which can be found automatically e.g. using Barzilai Borwein approach
+
+function [x] = landweberOTF(b,theta,N,iterations,tau)
+
+x = zeros(N,N); % storage for solution
+resid = zeros(1,iterations);
+for i = 1:iterations    
+     r = b - forwproj2D(x, theta); % residual       
+     x = x + tau.*(backproj2D(r, theta, N));        
+     % project onto positive subspace
+     x(x < 0) = 0;        
+end
+ 
+%%%% SIRT is more advanced and there is no need for "tau" estimation, though regularization embedding is not so strightforward anymore
+
+function [x] = SIRT_OTF(b,theta,x,iterations)
+ 
+[nsino1, nsino2] = size(b);
+N = size(x,1);
+if (N == 1) 
+    disp('Initialize image!'); 
+end
+
+row_sum = forwproj2D(ones(N,N), theta, nsino2);
+column_sum = backproj2D(ones(nsino1, nsino2), theta, N);
+
+R = zeros(nsino1, nsino2); 
+C = zeros(N,N); 
+
+roi1 = find(row_sum(:) > 0);
+roi2 = find(column_sum(column_sum(:) > 0));
+
+R(roi1) = 1./row_sum(roi1); 
+C(roi2) = 1./column_sum(roi2);
+
+for i = 1:iterations    
+     r =  forwproj2D(x, theta, nsino2); % forward proj         
+     res = (b-r);
+     res = res.*R;
+     
+     bp = backproj2D(res, theta, N);
+     bp = bp.*C;
+     
+     x = x + bp;    
+     %x(x<0)=0; 
+end
+
+
+%%% CGLS is much faster gradient descent in convergence and some regularization can be also embedded. Note here that we have to operate on matrix-vector level, therefore there is some reshaping
+
+function [x] = cgLS_OTF(b,theta,N,iterations)
+
+% Initialization.
+P = size(b,2);
+resid = zeros(1,iterations);
+x = zeros(N,N);
+n = N*N;
+Sm = length(theta)*P;
+d = backproj2D(b, theta, N);
+d = reshape(d,n,1);
+r = reshape(b,Sm,1);
+x = reshape(x,n,1);
+normr2 = d'*d;
+
+for j=1:iterations 
+  % Update x and r vectors.  
+  Ad = forwproj2D(reshape(d,N,N), theta); 
+  Ad = reshape(Ad, Sm, 1);
+  alpha = normr2/(Ad'*Ad);
+  x  = x + alpha*d;  
+  r  = r - alpha*Ad;
+  
+  s = backproj2D(reshape(r,length(theta),P), theta, N);
+  s = reshape(s,n,1);  
+  
+  % Update d vector. 
+  normr2_new = s'*s;
+  beta = normr2_new/normr2;
+  normr2 = normr2_new;
+  d = s + beta*d;  
+end
+x = reshape(x,N,N);
+end
+
+%%% MLEM algorithm is for emission tomography here (still works OK)
+
+function [x,resid] = MLEM_OTF(b,theta, N,iterations)
+ 
+[nsino1, nsino2] = size(b);
+ % Initialization with ones
+x_norm = ones(nsino1, nsino2); 
+x = ones(N,N); % storage for solution
+normalization =  1./(backproj2D(x_norm, theta, N));
+% normalization = (myBackprojection(x_norm,theta)).^-1;
+resid = zeros(1,iterations);
+
+ratio = zeros(nsino1,nsino2);
+
+for i = 1:iterations    
+     sinoEST =  forwproj2D(x, theta); % forward proj         
+     ROIsinoEST = (sinoEST ~= 0);        
+     ratio(ROIsinoEST) = (b(ROIsinoEST))./(sinoEST(ROIsinoEST));        
+     val = ratio(round(nsino1/2),round(nsino2/2));
+     ratio(ratio(:) > 10*val) = 0;
+     ratio(ratio(:) < 0) = 0;
+    
+     backProj_Ratio = backproj2D(ratio, theta, N);       
+     x =  x.*normalization.*backProj_Ratio; 
+end

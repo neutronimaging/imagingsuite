@@ -1,0 +1,20 @@
+//<LICENSE>
+
+#ifndef STDPREPROCMODULESGUI_GLOBAL_H
+#define STDPREPROCMODULESGUI_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(STDPREPROCMODULESGUI_LIBRARY)
+#  define STDPREPROCMODULESGUISHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define STDPREPROCMODULESGUISHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#ifdef __GNUC__
+#define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#define UNUSED(x) UNUSED_ ## x
+#endif
+
+#endif // STDPREPROCMODULESGUI_GLOBAL_H
