@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "../include/detectorlagcorrection.h"
+#include "detectorlagcorrection.h"
 
 DetectorLagCorrection::DetectorLagCorrection()
 {

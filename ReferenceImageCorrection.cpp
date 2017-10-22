@@ -19,8 +19,8 @@
 #include <base/tsubimage.h>
 #include <strings/miscstring.h>
 
-#include "../include/ReferenceImageCorrection.h"
-#include "../include/ImagingException.h"
+#include "ReferenceImageCorrection.h"
+#include <ImagingException.h>
 
 using namespace TNT;
 
