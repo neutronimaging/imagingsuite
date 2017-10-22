@@ -47,16 +47,16 @@ else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -l
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 else:unix: LIBS +=  -lm -lz   -ltiff  -lcfitsio
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+LIBS += -lkipl -lModuleConfig -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+
+INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
