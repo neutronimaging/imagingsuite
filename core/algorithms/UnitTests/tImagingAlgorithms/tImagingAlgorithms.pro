@@ -19,7 +19,7 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 TEMPLATE = app
 
 unix {
-    INCLUDEPATH += ../../../../../external/src/linalg
+    INCLUDEPATH += ../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -50,12 +50,14 @@ SOURCES += \
     tst_testImagingAlgorithms.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/ -lkipl -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+
+LIBS += -lkipl -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../ImagingAlgorithms/include
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../kipl/kipl/include
+DEPENDPATH += $$PWD/../../../kipl/kipl/src
 

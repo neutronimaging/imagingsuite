@@ -54,37 +54,28 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../build-ReconFramework-Qt5-Release/debug/ -lReconFramework
+
+
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
+
+LIBS += -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
+
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
-
-INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../modules/trunk/ModuleConfig/build-ModuleConfig-Qt5-Release/debug/ -lModuleConfig
-
-
-INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/src
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/release/ -lReconAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../build-ReconAlgorithms-Qt5-Release/debug/ -lReconAlgorithms
-
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/src
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
 DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
