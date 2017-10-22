@@ -20,7 +20,7 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += "$$PWD/../../../../../../external/src/linalg" "$$PWD/../../../../../../external/include" "../../../../../../external/include/cfitsio"
+    INCLUDEPATH += "$$PWD/../../../../../external/src/linalg" "$$PWD/../../../../../external/include" "../../../../../external/include/cfitsio"
     QMAKE_LIBDIR += ../../../../../external/lib64
 
 #    LIBS += -llibxml2_dll -llibtiff -lcfitsio
@@ -29,7 +29,7 @@ win32 {
 
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
-    INCLUDEPATH += "../../../../../../external/src/linalg"
+    INCLUDEPATH += "../../../../../external/src/linalg"
 
     unix:!macx {
 
@@ -57,7 +57,6 @@ DEFINES += IMAGINGALGORITHMS_LIBRARY NOMINMAX
 SOURCES += \
     ../../src/StripeFilter.cpp \
     ../../src/SpotClean.cpp \
-    ../../src/ReferenceImageCorrection.cpp \
     ../../src/PolynomialCorrection.cpp \
     ../../src/ImagingException.cpp \
     ../../src/TranslateProjections.cpp \
@@ -65,13 +64,11 @@ SOURCES += \
     ../../src/pixelinfo.cpp \
     ../../src/gammaclean.cpp \
     ../../src/averageimage.cpp \
-    ../../src/detectorlagcorrection.cpp \
     ../../src/piercingpointestimator.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
     ../../include/SpotClean.h \
-    ../../include/ReferenceImageCorrection.h \
     ../../include/PolynomialCorrection.h \
     ../../include/ImagingException.h \
     ../../include/TranslateProjections.h \
@@ -80,7 +77,6 @@ HEADERS += \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \
     ../../include/averageimage.h \
-    ../../include/detectorlagcorrection.h \
     ../../include/piercingpointestimator.h
 
 
@@ -105,12 +101,10 @@ unix:!symbian {
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug -lkipl
-else:unix:CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../../lib -lkipl
+CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../../lib -lkipl
 else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
 
-INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../kipl/kipl/include
 
 message($$INCLUDEPATH)

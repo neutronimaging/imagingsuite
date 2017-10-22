@@ -131,16 +131,14 @@ exists($$PWD/../../../../../../../external/lib64/nexus/*NeXus*) {
 }
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig
 
 
-INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
-INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 

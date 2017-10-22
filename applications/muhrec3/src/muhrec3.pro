@@ -24,7 +24,7 @@ unix:!symbian {
     unix:macx {
 #        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons # due to strange ordering during ui build...
+#        INCLUDEPATH += $$PWD/../../../gui/qt/QtAddons # due to strange ordering during ui build...
         INCLUDEPATH += /opt/local/include
 
         INCLUDEPATH += /opt/local/include/libxml2
@@ -42,15 +42,15 @@ unix:!symbian {
 
     LIBS += -ltiff -lxml2
 
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../external/src/linalg
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -92,25 +92,23 @@ FORMS    += muhrecmainwindow.ui \
     dialogtoobig.ui \
     piercingpointdialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
-INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../gui/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../gui/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../gui/qt/QtAddons
+DEPENDPATH += $$PWD/../../../gui/qt/QtAddons
 
-INCLUDEPATH += $$PWD/../Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../Framework/ReconFramework/src
+INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
+DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
 
-INCLUDEPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../qni/trunk/src/ImagingAlgorithms/src
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
