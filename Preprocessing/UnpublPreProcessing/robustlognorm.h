@@ -18,7 +18,7 @@
 
 //#include "../include/NormPlugins.h"
 
-class STDPREPROCMODULESSHARED_EXPORT RobustLogNorm : public PreprocModuleBase
+class UNPUBLPREPROCESSINGSHARED_EXPORT RobustLogNorm : public PreprocModuleBase
 {
 public:
     RobustLogNorm();

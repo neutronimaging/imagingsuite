@@ -2,7 +2,7 @@
 
 #ifndef ROBUSTLOGNORMDLG_H
 #define ROBUSTLOGNORMDLG_H
-#include "StdPreprocModulesGUI_global.h"
+#include "unpublpreprocessinggui_global.h"
 
 #include <QDialog>
 

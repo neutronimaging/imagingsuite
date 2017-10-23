@@ -11,12 +11,16 @@ TEMPLATE = lib
 
 CONFIG += c++11
 
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 DEFINES += UNPUBLPREPROCESSING_LIBRARY
 
 SOURCES += unpublpreprocessing.cpp \
            robustlognorm.cpp
 HEADERS += unpublpreprocessing.h\
-           robustlognorm.h
+           robustlognorm.h \
+    unpublpreprocessing_global.h
            unpublpreprocessing_global.h
 
 unix {
@@ -59,7 +63,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lImagingAlgorithms -lUnpublishedImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/src/linalg
 INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/include
