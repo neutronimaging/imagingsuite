@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "StdPreprocModulesGUI_global.h"
+#include "unpublpreprocessinggui_global.h"
 
 #include <QFileDialog>
 #include <QImage>
