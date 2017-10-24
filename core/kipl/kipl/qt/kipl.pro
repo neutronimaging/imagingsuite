@@ -117,7 +117,8 @@ SOURCES += \
     ../src/interactors/interactionbase.cpp \
     ../src/segmentation/multivariateclassifyerbase.cpp \
     ../src/morphology/pixeliterator.cpp \
-    ../src/io/io_png.cpp
+    ../src/io/io_png.cpp \
+    ../src/math/tcenterofgravity.cpp
 
 
 
@@ -318,7 +319,9 @@ HEADERS +=\
     ../include/segmentation/core/gradientguidedthreshold.hpp \
     ../include/morphology/morphgeo2.h \
     ../include/io/io_vivaseq.h \
-    ../include/io/io_png.h
+    ../include/io/io_png.h \
+    ../include/math/tcenterofgravity.h \
+    ../include/math/core/tcenterofgravity.hpp
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

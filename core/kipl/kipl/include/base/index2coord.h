@@ -50,6 +50,47 @@ namespace kipl { namespace base {
 		}
 	};
 
+    struct KIPLSHARED_EXPORT coords3Df {
+        /// \brief constructor to initialize the struct
+        /// \param xx x coordinate
+        /// \param yy y coordinate
+        /// \param zz z coordinate
+        coords3Df(float xx,float yy, float zz) : x(xx), y(yy), z(zz) {}
+
+        /// \param C'tor to set the struct to default values (all =0)
+        coords3Df() : x(0.0f), y(0.0f), z(0.0f), reserved(0.0f) {}
+
+        /// \brief Copy c'tor
+        /// \param c the instance to copy
+        coords3Df(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
+
+        /// \brief Assignment operator
+        /// \param c the instance to copy
+        const coords3Df & operator=(const coords3Df & c) {
+            x=c.x; y=c.y; z=c.z; reserved=c.reserved;
+            return *this;
+        }
+
+        float x; ///< The x coordinate
+        float y; ///< The y coordinate
+        float z; ///< The z coordinate
+        float reserved; ///< Bit filling for optimal access
+
+        /// \brief Equality test
+        /// \param c the instance to compare
+        /// \returns the status of the test (true if equal otherwise false)
+        bool operator==(const coords3Df &c) {
+            return (c.x==x) && (c.y==y) && (c.z==z);
+        }
+
+        /// \brief Inequality test
+        /// \param c the instance to compare
+        /// \returns the status of the test (false if equal otherwise true)
+        bool operator!=(const coords3Df &c) {
+            return !(operator==(c));
+        }
+    };
+
     /// \brief Struct to contain a 2D position
     struct KIPLSHARED_EXPORT coords2D {
         short x;
