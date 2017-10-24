@@ -18,7 +18,7 @@ namespace kipl { namespace io {
 
 int KIPLSHARED_EXPORT GetMATDims(char const * const filename,size_t * dims)
 {
-
+    return 0;
 }
 
 namespace core {
