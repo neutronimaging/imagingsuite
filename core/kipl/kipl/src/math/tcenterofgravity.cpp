@@ -51,7 +51,7 @@ kipl::base::coords3Df CenterOfGravity::findCenter(kipl::base::TImage<float,3> im
         int idx=kipl::segmentation::Threshold_Otsu(hist,nBins);
 
         threshold=axis[idx];
-        logger(looger)
+        logger(logger.LogMessage,"Used threshold");
     }
 
     computeProfiles(img,applythreshold,threshold);
