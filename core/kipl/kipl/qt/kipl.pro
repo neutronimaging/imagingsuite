@@ -118,7 +118,8 @@ SOURCES += \
     ../src/segmentation/multivariateclassifyerbase.cpp \
     ../src/morphology/pixeliterator.cpp \
     ../src/io/io_png.cpp \
-    ../src/math/tcenterofgravity.cpp
+    ../src/math/tcenterofgravity.cpp \
+    ../src/math/statistics.cpp
 
 
 
@@ -209,7 +210,6 @@ HEADERS +=\
     ../include/math/jama_inverses.h \
     ../include/math/image_statistics.h \
     ../include/math/GaussianNoise.h \
-    ../include/math/core/statistics.hpp \
     ../include/math/core/median.hpp \
     ../include/math/core/mathfunctions.hpp \
     ../include/math/core/LinearAlgebra.hpp \

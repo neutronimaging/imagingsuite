@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-
+#include "../kipl_global.h"
 
 
 /// \brief Class to compute first and second order statistics of data
@@ -20,7 +20,7 @@ namespace kipl {
 namespace math {
     /// \brief A class to compute the statistics of an input sequence of data
 
-    class Statistics
+    class KIPLSHARED_EXPORT Statistics
     {
     public:
         /// Returns the minimum value of the data
@@ -46,8 +46,7 @@ namespace math {
         double Sum2() {return m_fSum2;}
         /// Add a new item to the variable
 
-        template<typename T>
-        size_t put(T *_x, size_t N) {
+        size_t put(float *_x, size_t N) {
             for (size_t i=0;i<N; i++) {
                 put(_x[i]);
             }
@@ -55,8 +54,7 @@ namespace math {
             return N;
         }
 
-        template<typename T>
-        size_t put(T _x)
+        size_t put(float _x)
         {
 			double x=static_cast<long double>(_x);
 			m_fSum+=x;
@@ -94,7 +92,8 @@ namespace math {
 
 
 }} // End namespace statistics
-ostream& operator <<(ostream & os, kipl::math::Statistics & s);
-#include "core/statistics.hpp"
+
+std::ostream KIPLSHARED_EXPORT & operator <<(std::ostream & os, kipl::math::Statistics & s);
+
 #endif // !defined(KIPL_STATISTICS_H__)
 

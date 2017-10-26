@@ -6,7 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <limits>
-#include <math/statistics.h>
+#include "../../include/math/statistics.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -95,12 +95,12 @@ size_t Statistics::n() const
 }
 } // End namespace statistics
 
-ostream& operator <<(ostream & os, kipl::math::Statistics & s)
+std::ostream& operator <<(std::ostream & os, kipl::math::Statistics & s)
 {
-	os<<"E="<<s.E()<<endl;
-	os<<"V="<<s.V()<<endl;
-	os<<"s="<<s.s()<<endl;
-	os<<"n="<<s.n()<<endl;
+    os<<"E="<<s.E()<<std::endl;
+    os<<"V="<<s.V()<<std::endl;
+    os<<"s="<<s.s()<<std::endl;
+    os<<"n="<<s.n()<<std::endl;
 
 	return os;
 }

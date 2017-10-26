@@ -4,12 +4,14 @@
 #include "../kipl_global.h"
 #include "../base/timage.h"
 #include "../base/index2coord.h"
+#include "../logging/logger.h"
 
 namespace kipl {
 namespace math {
 
 class KIPLSHARED_EXPORT CenterOfGravity
 {
+    kipl::logging::Logger logger;
 public:
     CenterOfGravity();
     ~CenterOfGravity();

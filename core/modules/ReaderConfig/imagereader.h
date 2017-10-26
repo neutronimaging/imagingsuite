@@ -8,6 +8,8 @@
 #include <base/kiplenums.h>
 #include <profile/Timer.h>
 
+#include "datasetbase.h"
+
 class READERCONFIGSHARED_EXPORT ImageReader
 {
     kipl::logging::Logger logger; ///< The logger for messages from the reader
@@ -62,6 +64,12 @@ public:
                                       size_t first,
                                       size_t last,
                                       size_t step,
+                                      kipl::base::eImageFlip flip,
+                                      kipl::base::eImageRotate rotate,
+                                      float binning,
+                                      size_t const * const nCrop);
+
+    kipl::base::TImage<float,3> Read(ImageLoader &loader,
                                       kipl::base::eImageFlip flip,
                                       kipl::base::eImageRotate rotate,
                                       float binning,

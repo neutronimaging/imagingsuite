@@ -7,6 +7,7 @@ namespace kipl {
 namespace math {
 
 CenterOfGravity::CenterOfGravity() :
+    logger("CenterOfGravity"),
     profileX(nullptr),
     profileY(nullptr),
     profileZ(nullptr)
@@ -50,6 +51,7 @@ kipl::base::coords3Df CenterOfGravity::findCenter(kipl::base::TImage<float,3> im
         int idx=kipl::segmentation::Threshold_Otsu(hist,nBins);
 
         threshold=axis[idx];
+        logger(looger)
     }
 
     computeProfiles(img,applythreshold,threshold);
