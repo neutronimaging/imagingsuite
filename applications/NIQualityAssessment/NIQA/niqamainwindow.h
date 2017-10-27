@@ -26,11 +26,18 @@ private slots:
 
     void on_spin_bigball_slice_valueChanged(int arg1);
 
+    void on_button_contrast_load_clicked();
+
+    void on_slider_contrast_images_sliderMoved(int position);
+
+    void on_spin_contrast_images_valueChanged(int arg1);
+
 private:
     Ui::NIQAMainWindow *ui;
 
     kipl::base::TImage<float,3> m_BigBall;
     kipl::base::TImage<float,3> m_BallAssembly;
+    kipl::base::TImage<float,3> m_Contrast;
 
     std::map<float, kipl::base::TImage<float,2>> m_Edges;
 

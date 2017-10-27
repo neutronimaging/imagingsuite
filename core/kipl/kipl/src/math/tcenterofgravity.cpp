@@ -42,6 +42,8 @@ kipl::base::coords3Df CenterOfGravity::findCenter(kipl::base::TImage<float,3> im
 {
     float threshold=0.0f;
 
+    std::copy(img.Dims(),img.Dims()+3,dims);
+
     if (applythreshold)
     {
         const int nBins=1024;
@@ -72,14 +74,14 @@ float CenterOfGravity::computeCOG(float *profile,int N)
     float cog=0;
     float wsum=0.0f;
     float sum=0.0f;
-    for (int i=0; i<dims[0]; ++i) {
-        sum+=profileX[i];
-        wsum+=i*profileX[i];
+    for (int i=0; i<N; ++i) {
+        sum+=profile[i];
+        wsum+=(i+1)*profile[i];
     }
 
     cog=wsum/sum;
 
-    return cog;
+    return cog-1;
 }
 
 void CenterOfGravity::computeProfiles(kipl::base::TImage<float,3> img, bool applythreshold, float threshold)

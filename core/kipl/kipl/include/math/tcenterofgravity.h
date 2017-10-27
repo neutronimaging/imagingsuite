@@ -26,7 +26,7 @@ private:
    float *profileX;
    float *profileY;
    float *profileZ;
-   size_t dims[3];
+   int dims[3];
 };
 
 }

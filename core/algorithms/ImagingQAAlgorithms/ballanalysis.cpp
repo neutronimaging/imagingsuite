@@ -5,7 +5,8 @@
 
 namespace ImagingQAAlgorithms {
 BallAnalysis::BallAnalysis() :
-    logger("BallAnalysis")
+    logger("BallAnalysis"),
+    precision(0.1f)
 {
 
 }
@@ -51,7 +52,21 @@ void BallAnalysis::getEdgeProfile(float r0, float r1, vector<float> &distance, v
     std::map<float,kipl::math::Statistics > profile0;
     profileInBoundingBox(center, b0, b1, r0,r1,profile0);
 
+    distance.clear();
+    profile.clear();
+    stddev.clear();
+    std::ostringstream msg;
 
+
+    for (auto it=profile0.begin(); it!=profile0.end(); ++it ) {
+        distance.push_back(it->first);
+        profile.push_back(it->second.E());
+        stddev.push_back(it->second.s());
+    }
+
+    msg<<"p0="<<profile0.size()<<", p="<<profile.size();
+
+    logger(logger.LogMessage, msg.str());
 }
 
 void BallAnalysis::computeSphereGeometry()
@@ -107,12 +122,13 @@ void BallAnalysis::profileInBoundingBox(kipl::base::coords3Df center,
     float x2=0.0f;
     float r=0.0f;
 
-    const float r02 = r0*r0;
-    const float r12 = r1*r1;
+    const float r02 = r0;
+    const float r12 = r1;
 
     size_t posZ=0UL;
     size_t posY=0UL;
     float *pImg=img.GetDataPtr();
+    float invprecision=1.0f/precision;
 
     for (int z=b0.z; z<=b1.z; ++z) {
         z2=static_cast<float>(z)-center.z;
@@ -126,7 +142,7 @@ void BallAnalysis::profileInBoundingBox(kipl::base::coords3Df center,
             for (int x=b0.x; x<=b1.x; ++x) {
                 x2=static_cast<float>(x)-center.x;
                 x2=x2*x2;
-                r=y2+x2;
+                r=floor(sqrt(y2+x2)*invprecision+0.5)*precision;
                 if ((r02<=r) && (r<=r12)) {
                     profile[r].put(pImg[posY+x]);
                 }

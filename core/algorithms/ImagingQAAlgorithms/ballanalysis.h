@@ -43,6 +43,8 @@ public:
     const kipl::base::coords3Df getCenter() { return center; }
 
     void saveIntermediateImages(bool save, std::string path="") {saveIntermediate=save; intermediateImagePath=path;}
+    void setPrecision(float p) { precision=p; }
+    float getPrecision() { return precision; }
 
 protected:
     void computeSphereGeometry();
@@ -62,6 +64,7 @@ protected:
     kipl::base::TImage<float,3> img;
     kipl::base::coords3Df center;
     float radius;
+    float precision;
     bool saveIntermediate;
     std::string intermediateImagePath;
 
