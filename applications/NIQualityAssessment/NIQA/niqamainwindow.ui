@@ -28,7 +28,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <widget class="ReaderForm" name="widget_2" native="true">
+           <widget class="ReaderForm" name="ImageLoader_contrast" native="true">
             <property name="minimumSize">
              <size>
               <width>350</width>

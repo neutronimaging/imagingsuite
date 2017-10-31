@@ -17,6 +17,7 @@
 
 NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     QMainWindow(parent),
+    logger("NIQAMainWindow"),
     ui(new Ui::NIQAMainWindow)
 {
     ui->setupUi(this);
@@ -94,11 +95,16 @@ void NIQAMainWindow::on_spin_bigball_slice_valueChanged(int arg1)
 
 void NIQAMainWindow::on_button_contrast_load_clicked()
 {
-    ImageLoader loader=ui->ImageLoader_bigball->getReaderConfig();
+    std::ostringstream msg;
+
+    ImageLoader loader=ui->ImageLoader_contrast->getReaderConfig();
 
     ImageReader reader;
 
+    msg<<loader.m_sFilemask<<loader.m_nFirst<<", "<<loader.m_nLast;
+    logger(logger.LogMessage,msg.str());
     m_Contrast=reader.Read(loader,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
+
     ui->slider_contrast_images->setMinimum(0);
     ui->slider_contrast_images->setMaximum(m_Contrast.Size(2)-1);
     ui->slider_contrast_images->setValue((m_Contrast.Size(2)-1)/2);

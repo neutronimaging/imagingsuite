@@ -119,7 +119,8 @@ SOURCES += \
     ../src/morphology/pixeliterator.cpp \
     ../src/io/io_png.cpp \
     ../src/math/tcenterofgravity.cpp \
-    ../src/math/statistics.cpp
+    ../src/math/statistics.cpp \
+    ../src/math/circularhoughtransform.cpp
 
 
 
@@ -321,7 +322,9 @@ HEADERS +=\
     ../include/io/io_vivaseq.h \
     ../include/io/io_png.h \
     ../include/math/tcenterofgravity.h \
-    ../include/math/core/tcenterofgravity.hpp
+    ../include/math/core/tcenterofgravity.hpp \
+    ../include/math/circularhoughtransform.h \
+    ../include/math/circularhoughtransform.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

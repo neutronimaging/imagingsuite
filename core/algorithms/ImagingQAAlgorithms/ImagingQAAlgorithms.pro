@@ -18,13 +18,15 @@ DEFINES += IMAGINGQAALGORITHMS_LIBRARY
 SOURCES += imagingqaalgorithms.cpp \
     ballanalysis.cpp \
     collimationestimator.cpp \
-    resolutionestimators.cpp
+    resolutionestimators.cpp \
+    contrastsampleanalysis.cpp
 
 HEADERS += imagingqaalgorithms.h\
         imagingqaalgorithms_global.h \
     ballanalysis.h \
     collimationestimator.h \
-    resolutionestimators.h
+    resolutionestimators.h \
+    contrastsampleanalysis.h
 
 win32 {
     message(Building for Windows)

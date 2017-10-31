@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include <base/timage.h>
+#include <logging/logger.h>
 
 #include <ballanalysis.h>
 
@@ -14,7 +15,7 @@ class NIQAMainWindow;
 class NIQAMainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    kipl::logging::Logger logger;
 public:
     explicit NIQAMainWindow(QWidget *parent = 0);
     ~NIQAMainWindow();
