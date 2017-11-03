@@ -1,3 +1,6 @@
+//<LICENSE>
+#include <cmath>
+
 #include "../../include/math/circularhoughtransform.h"
 #include "../../include/drawing/drawing.h"
 #include "../../include/filters/filter.h"
@@ -12,22 +15,35 @@ CircularHoughTransform::CircularHoughTransform()
 
 kipl::base::TImage<float,2> CircularHoughTransform::operator()(kipl::base::TImage<float,2> img, float radius)
 {
-    size_t kerneldims[2]={static_cast<size_t>(2*ceil(radius)+1),static_cast<size_t>(2*ceil(radius)+1)};
-    kipl::base::TImage<float,2> kernel;
-
-    kipl::drawing::Circle<float> circle(radius);
-    int center=kerneldims[0]/2;
-
-    circle.Draw(kernel,center,center,1.0);
-    float s=sum(kernel.GetDataPtr(), kernel.Size());
-
-    kernel*=1.0f/s;
-
-    kipl::filters::TFilter<float,2> cht(kernel.GetDataPtr(),kernel.Dims());
+    kipl::filters::TFilter<float,2> cht(ringKernel.GetDataPtr(),ringKernel.Dims());
 
     kipl::base::TImage<float,2> chtmap=cht(img,kipl::filters::FilterBase::EdgeMirror);
 
     return chtmap;
 }
 
+void CircularHoughTransform::buildKernel(float radius)
+{
+    int N=ceil(radius+1)*2+1;
+    int C=N/2;
+    size_t dims[2]={N,N};
+    ringKernel.Resize(dims);
+
+    int i=0;
+    float sum=0.0f;
+
+    for (int y=0; y<N; ++y) {
+        float y2=(y-C)*(y-C);
+
+        for (int x=0; x<N; ++x, ++i) {
+            ringKernel[i]=abs(sqrt((x-C)*(x-C)+y2))<0.5f;
+            sum+=ringKernel[i];
+        }
+    }
+
+    for (int i=0; i<ringKernel.Size(); ++i)
+        ringKernel[i]/=sum;
+
+    return 0;
+}
 }}
