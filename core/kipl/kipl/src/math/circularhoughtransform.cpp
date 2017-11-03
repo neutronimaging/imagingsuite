@@ -1,11 +1,13 @@
 //<LICENSE>
 #include <cmath>
 #include <sstream>
+#include <iostream>
 
 #include "../../include/math/circularhoughtransform.h"
 #include "../../include/drawing/drawing.h"
 #include "../../include/filters/filter.h"
 #include "../../include/math/sums.h"
+#include "../../include/io/io_tiff.h"
 
 namespace kipl { namespace math {
 
@@ -44,13 +46,18 @@ void CircularHoughTransform::buildKernel(float radius)
         float y2=(y-C)*(y-C);
 
         for (int x=0; x<N; ++x, ++i) {
-            ringKernel[i]=abs(sqrt((x-C)*(x-C)+y2))<0.5f;
+            ringKernel[i]=abs(sqrt((x-C)*(x-C)+y2)-radius)<0.5f;
             sum+=ringKernel[i];
         }
     }
 
     for (size_t i=0; i<ringKernel.Size(); ++i)
         ringKernel[i]/=sum;
+
+    std::ostringstream msg;
+
+    msg<<"Kernel info: "<<ringKernel;
+    logger(logger.LogMessage,msg.str());
 }
 
 void CircularHoughTransform::absDerivative(bool useDerivative)

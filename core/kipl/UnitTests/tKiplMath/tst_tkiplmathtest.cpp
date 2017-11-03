@@ -6,7 +6,11 @@
 #include <base/timage.h>
 #include <base/index2coord.h>
 #include <math/tcenterofgravity.h>
+#include <math/circularhoughtransform.h>
 #include <filters/filter.h>
+#include <drawing/drawing.h>
+
+#include <io/io_tiff.h>
 
 class TKiplMathTest : public QObject
 {
@@ -21,6 +25,7 @@ public:
 
 private Q_SLOTS:
     void testCOG();
+    void testCircularHoughTransform();
 };
 
 TKiplMathTest::TKiplMathTest()
@@ -85,6 +90,34 @@ void TKiplMathTest::testCOG()
     msg.str("");
     msg<<center.z<<"!="<<cogcenter.z;
     QVERIFY2(qFuzzyCompare(cogcenter.z,center.z,delta),msg.str().c_str());
+}
+
+void TKiplMathTest::testCircularHoughTransform()
+{
+    size_t dims[2]={100,100};
+
+    kipl::base::TImage<float,2> img(dims);
+
+    kipl::drawing::Circle<float> circ1(10.0);
+    kipl::drawing::Circle<float> circ2(5.0);
+
+    circ1.Draw(img,50,50,1.1);
+
+    circ1.Draw(img,75,25,0.6);
+    circ1.Draw(img,70,80,2.3);
+    circ2.Draw(img,25,75,1.5);
+
+    kipl::math::CircularHoughTransform cht;
+
+    kipl::base::TImage<float,2> chm=cht(img,10.0f);
+
+    kipl::io::WriteTIFF32(img,"cht_orig.tif");
+    kipl::io::WriteTIFF32(chm,"cht_map.tif");
+
+    chm=cht(img,10.0f,true);
+
+    kipl::io::WriteTIFF32(img,"chtg_orig.tif");
+    kipl::io::WriteTIFF32(chm,"chtg_map.tif");
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)
