@@ -1,6 +1,16 @@
 #include <QString>
 #include <QtTest>
 
+
+#include <base/timage.h>
+#include <base/index2coord.h>
+#include <math/mathconstants.h>
+#include <drawing/drawing.h>
+#include <io/io_tiff.h>
+#include <math/statistics.h>
+
+#include <contrastsampleanalysis.h>
+
 class TImagingQAAlgorithmsTest : public QObject
 {
     Q_OBJECT
@@ -9,16 +19,38 @@ public:
     TImagingQAAlgorithmsTest();
 
 private Q_SLOTS:
-    void testCase1();
+    void testContrastSampleAnalysis();
 };
 
 TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
 {
 }
 
-void TImagingQAAlgorithmsTest::testCase1()
+void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 {
-    QVERIFY2(true, "Failure");
+    ImagingQAAlgorithms::ContrastSampleAnalysis csa;
+    const size_t N=512;
+    size_t dims[2]={N,N};
+
+    kipl::base::TImage<float,2> orig(dims);
+    const float radius=0.1f*N;
+    kipl::drawing::Circle<float> inset(radius);
+
+    for (int i=0; i<6; ++i) {
+        int x=N/2.0f+(3.0f*N)/8.0f*cos(i*fPi/3.0f);
+        int y=N/2.0f+(3.0f*N)/8.0f*sin(i*fPi/3.0f);
+        float val=1.0f+i*0.1f;
+      //  std::cout<<x<<", "<<y<<": "<<val<<std::endl;
+        inset.Draw(orig,x,y,val);
+    }
+    kipl::io::WriteTIFF32(orig,"csa_orig.tif");
+
+    kipl::math::Statistics stats[6];
+    kipl::base::coords3Df centers[6];
+
+    csa.setImage(orig);
+   // csa.analyzeContrast(1.0f,stats,centers);
+
 }
 
 QTEST_APPLESS_MAIN(TImagingQAAlgorithmsTest)
