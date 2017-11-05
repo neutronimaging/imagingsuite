@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef __MORPHEXTREMA_H
 #define __MORPHEXTREMA_H
@@ -13,18 +13,18 @@
 #include "morphgeo.h"
 
 
-/** Reconstruction based extrem operations */
+/// Reconstruction based extrem operations
 namespace kipl {
 namespace morphology {
-/** \brief Computes the regional minimum image
-	\param img Input image
-	\param extremes Resulting image
-	\param conn Connectivity selector
+/// \brief Computes the regional minimum image
+///	\param img Input image
+///	\param extremes Resulting image
+///	\param conn Connectivity selector
+///
+///	\todo Fix edge processing
 
-	\todo Fix edge processing
-*/
-template <typename ImgType,size_t NDim>
-int RMin(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &extremes, MorphConnect &conn, bool bilevel=true)
+template <typename ImgType,size_t N>
+int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, MorphConnect &conn, bool bilevel=true)
 {
     const size_t *dims=img.Dims();
 	//Statistics stats=ComputeImageStats(img);
@@ -34,7 +34,7 @@ int RMin(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType
 	
 	deque<int> posQ;
 
-	CNeighborhood NG(dims,NDim,conn);
+    CNeighborhood NG(dims,N,conn);
 	int Nng=NG.N();
 	ImgType *pExt=extremes.getDataptr();
 	ImgType *pImg=img.getDataptr();
@@ -74,15 +74,14 @@ int RMin(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType
 	return 0;
 }
 
-/** \brief Computes the regional maximum image
-	\param img Input image
-	\param extremes Resulting image
-	\param conn Connectivity selector
-
-	\todo Fix edge processing
-*/
-template <typename ImgType,size_t NDim>
-int RMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &extremes, MorphConnect &conn)
+/// \brief Computes the regional maximum image
+///	\param img Input image
+///	\param extremes Resulting image
+///	\param conn Connectivity selector
+///
+///	\todo Fix edge processing
+template <typename ImgType,size_t N>
+int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, MorphConnect &conn)
 {
     const size_t *dims=img.Dims();
 	
@@ -90,7 +89,7 @@ int RMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType
 	extremes=img;
 	
 	deque<int> posQ;
-	CNeighborhood NG(dims,NDim,conn);
+    CNeighborhood NG(dims,N,conn);
 	int Nng=NG.N();
 	
 	ImgType *pExt=extremes.getDataptr();
@@ -129,17 +128,16 @@ int RMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType
 	return 0;
 }
 
-/** \brief Computes the h maximum image
-	\param img Input image
-	\param result Resulting image
-	\param h threshold level
-	\param conn Connectivity selector
-
-	The method computes \f$R^{\delta}_{img}(img-h)\f$
-	\todo Fix edge processing
-*/
-template <typename ImgType,int NDim>
-int hMax(const kipl::base::TImage<ImgType,NDim> &img,kipl::base::TImage<ImgType,NDim> &result,ImgType h, MorphConnect conn=conn4)
+///    \brief Computes the h maximum image
+///	\param img Input image
+///	\param result Resulting image
+///	\param h threshold level
+///	\param conn Connectivity selector
+///
+///	The method computes \f$R^{\delta}_{img}(img-h)\f$
+///	\todo Fix edge processing
+template <typename ImgType,size_t N>
+int hMax(const kipl::base::TImage<ImgType,N> &img,kipl::base::TImage<ImgType,N> &result,ImgType h, MorphConnect conn=conn4)
 {
 	if (h<0) {
 		cerr<<"hMax: h must be >0"<<endl;
@@ -153,15 +151,14 @@ int hMax(const kipl::base::TImage<ImgType,NDim> &img,kipl::base::TImage<ImgType,
 	return 0;
 }
 
-/** \brief Computes the extended maximum image
-	\param img Input image
-	\param res Resulting image
-	\param h Threshold level
-	\param conn Connectivity selector
-	
-	The method computes \f$RMAX(hMAX_h(img)\f$
-	\todo Fix edge processing
-*/
+/// \brief Computes the extended maximum image
+///	\param img Input image
+///	\param res Resulting image
+///	\param h Threshold level
+///	\param conn Connectivity selector
+///
+///	The method computes \f$RMAX(hMAX_h(img)\f$
+///	\todo Fix edge processing
 template <typename ImgType, int NDim>
 int ExtendedMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &res, ImgType h, MorphConnect conn=conn4)
 {
@@ -178,17 +175,16 @@ int ExtendedMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<
 
 
 
-/** \brief Computes the h minimum image
-	\param img Input image
-	\param res Resulting image
-	\param h threshold level
-	\param conn Connectivity selector
-
-	The method computes \f$R^{\epsilon}_{img}(img+h)\f$
-	\todo Fix edge processing
-*/
-template <class ImgType, int NDim>
-int hMin(const kipl::base::TImage<ImgType,NDim> &img,kipl::base::TImage<ImgType,NDim> &res, ImgType h, MorphConnect conn=conn4)
+/// \brief Computes the h minimum image
+///	\param img Input image
+///	\param res Resulting image
+///	\param h threshold level
+///	\param conn Connectivity selector
+///
+///	The method computes \f$R^{\epsilon}_{img}(img+h)\f$
+///	\todo Fix edge processing
+template <class ImgType, size_t N>
+int hMin(const kipl::base::TImage<ImgType,N> &img,kipl::base::TImage<ImgType,N> &res, ImgType h, MorphConnect conn=conn4)
 {
 	if (h<0) {
 		cerr<<"hMin: h must be >0"<<endl;
@@ -201,18 +197,17 @@ int hMin(const kipl::base::TImage<ImgType,NDim> &img,kipl::base::TImage<ImgType,
 	return 0;
 }
 
-/** \brief Computes the extended minimum image
-	\param img Input image
-	\param res Output image
-	\param h threshold level
-	\param conn Connectivity selector
-	\param bilevel obsolete parameter
-
-	The method computes \f$RMIN(hMIN_h(img)\f$
-	\todo Fix edge processing
-*/
-template <typename T, size_t NDim>
-int ExtendedMin(const kipl::base::TImage<T,NDim> &img,kipl::base::TImage<T,NDim> &res, T h, MorphConnect conn=conn4, bool bilevel=true)
+/// \brief Computes the extended minimum image
+///	\param img Input image
+///	\param res Output image
+///	\param h threshold level
+///	\param conn Connectivity selector
+///	\param bilevel obsolete parameter
+///
+///	The method computes \f$RMIN(hMIN_h(img)\f$
+///	\todo Fix edge processing
+template <typename T, size_t N>
+int ExtendedMin(const kipl::base::TImage<T,N> &img,kipl::base::TImage<T,N> &res, T h, MorphConnect conn=conn4, bool bilevel=true)
 {
 	if (h<0) {
 		cerr<<"ExtendedMin: h must be >0"<<endl;
@@ -227,18 +222,17 @@ int ExtendedMin(const kipl::base::TImage<T,NDim> &img,kipl::base::TImage<T,NDim>
 }
 
 
-/** \brief Imposes minimum according to a marker image
-	\param f Input image
-	\param fm Marker image fm=0 for min and =max{f} otherwise
-	\param res Resulting image
-	\param conn Connectivity of the reconstruction
+//  \brief Imposes minimum according to a marker image
+//	\param f Input image
+//	\param fm Marker image fm=0 for min and =max{f} otherwise
+//	\param res Resulting image
+//	\param conn Connectivity of the reconstruction
 
-	Computes \f$R^{\epsilon}_{(f+1)\wedge f_m}(f_m)\f$
-  */
-template <typename T, size_t NDim>
-int MinImpose(const kipl::base::TImage<T,NDim> &f, const kipl::base::TImage<T,NDim> &fm, kipl::base::TImage<T,NDim> &res, MorphConnect conn=conn4)
+//	Computes \f$R^{\epsilon}_{(f+1)\wedge f_m}(f_m)\f$
+template <typename T, size_t N>
+int MinImpose(const kipl::base::TImage<T,N> &f, const kipl::base::TImage<T,N> &fm, kipl::base::TImage<T,N> &res, MorphConnect conn=conn4)
 {
-    kipl::base::TImage<T,NDim> tmp(f.Dims());
+    kipl::base::TImage<T,N> tmp(f.Dims());
 	
 	res=f;
 	

@@ -35,7 +35,7 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
 	kipl::base::TImage<ImgType,NDim> temp(f);
 	deque<int> fifo;
 	
-	size_t i;
+    ptrdiff_t i;
 
 	const size_t *pDimsF=f.Dims();
 	const size_t *pDimsG=g.Dims();
@@ -158,7 +158,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 	kipl::base::TImage<ImgType,NDimG> temp;
 	deque<int> fifo;
 
-	size_t i;
+    ptrdiff_t i;
 
 	const size_t *pDimsF=f.Dims();
 	const size_t *pDimsG=g.Dims();
@@ -184,7 +184,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     ImgType const * const pf=f.GetDataPtr();
     ImgType *ptemp=temp.GetDataPtr();
     size_t errcnt=0L;
-    for (i=0; i<f.Size(); i++) {
+    for (i=0; i<static_cast<ptrdiff_t>(f.Size()); i++) {
         if (pg[i]<pf[i]) {
             errcnt++;
         }
@@ -207,7 +207,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     // Forward scan
     cNGpm=NG.Nfb();
     cNG=NG.N();
-    for (pos=0; pos< f.Size(); pos++) {
+    for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); pos++) {
         max=ptemp[pos];
         for (i=1; i<cNGpm; i++) {
             if ((ipos=NG.backward(pos,i))!=-1)
@@ -218,7 +218,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 
     // Backward scan
     ImgType tmppos;
-    for (pos=f.Size()-1; pos>=0; pos--) {
+    for (pos=static_cast<ptrdiff_t>(f.Size())-1; pos>=0; pos--) {
         max=ptemp[pos];
         tmppos=max;
         for (i=1; i<cNGpm; i++) {
