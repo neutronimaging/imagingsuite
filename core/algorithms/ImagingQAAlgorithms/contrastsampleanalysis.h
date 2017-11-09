@@ -25,11 +25,16 @@ public:
 
     int getHistogram(float *axis, size_t *bins);
     int getHistogramSize();
+    bool saveIntermediateImages;
+    float metricInsetDiameter;
+
 protected:
 
     void clearAllocation();
+    void createAllocation();
     void makeHistogram();
     void findCenters(float ps);
+    kipl::math::Statistics computeInsetStatistics(kipl::base::coords3Df pos,float ps);
     void buildRingKernel(float radius);
 
     kipl::base::TImage<float,3> m_Img3D;
@@ -44,7 +49,9 @@ protected:
     size_t *hist_bins;
     kipl::base::TImage<float,2> ringKernel;
 
+
     kipl::math::Statistics m_insetStats[6];
+    kipl::base::coords3Df m_ringCenter;
     kipl::base::coords3Df m_insetCenters[6];
 
 };
