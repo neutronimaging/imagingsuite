@@ -4,6 +4,8 @@
 #include <base/kiplenums.h>
 #include <morphology/pixeliterator.h>
 #include <base/KiplException.h>
+#include <morphology/morphextrema.h>
+#include <io/io_tiff.h>
 
 using namespace std;
 
@@ -19,6 +21,7 @@ private Q_SLOTS:
     void testPixelIteratorMoving();
     void testPixelIteratorNeighborhood();
     void testPixelIteratorHalfNeighborhood();
+    void testhMax();
 };
 
 kiplMorphologyTest::kiplMorphologyTest()
@@ -429,6 +432,27 @@ void kiplMorphologyTest::testPixelIteratorHalfNeighborhood()
     }
 }
 
+void kiplMorphologyTest::testhMax()
+{
+    size_t dims[2]={11,13};
+    kipl::base::TImage<float,2> img(dims);
+    int idx=0;
+    for (int y=0;y<dims[1]; ++y)
+        for (int x=0; x<dims[0]; ++x,++idx) {
+            img[idx]=sqrt((x-dims[0]/2)*(x-dims[0]/2)+(y-dims[1]/2)*(y-dims[1]/2));
+        }
+
+    kipl::base::TImage<float,2> res;
+    kipl::morphology::hMax(img,res,3.0f);
+
+    QVERIFY(img.Size()==res.Size());
+    QVERIFY(img.Size(0)==res.Size(0));
+    QVERIFY(img.Size(1)==res.Size(1));
+
+    kipl::io::WriteTIFF32(img,"hmax_orig.tif");
+    kipl::io::WriteTIFF32(res,"hmax_res.tif");
+
+}
 
 QTEST_APPLESS_MAIN(kiplMorphologyTest)
 
