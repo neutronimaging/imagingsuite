@@ -20,8 +20,8 @@ SOURCES += unpublpreprocessing.cpp \
            robustlognorm.cpp
 HEADERS += unpublpreprocessing.h\
            robustlognorm.h \
-    unpublpreprocessing_global.h
            unpublpreprocessing_global.h
+
 
 unix {
     target.path = /usr/lib
@@ -65,8 +65,8 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/src/linalg
-INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/include
+#INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/src/linalg
+#INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/include
 
 INCLUDEPATH += $$PWD/../../../../../imagingsuite/core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../imagingsuite/core/kipl/kipl/include

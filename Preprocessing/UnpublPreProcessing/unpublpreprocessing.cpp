@@ -91,10 +91,9 @@ int GetModuleList(const char *application, void *listptr)
 
     std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-#ifdef USE_UNPUBLISHED
     RobustLogNorm robnorm;
     modulelist->operator[]("RobustLogNorm")=robnorm.GetParameters();
-#endif
+
 
 
     return 0;

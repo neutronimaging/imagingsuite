@@ -64,10 +64,10 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms -lUnpublPreprocessing
+LIBS += -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms -lUnpublPreProcessing
 
-INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/src/linalg
-INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/include
+#INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/src/linalg
+#INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/include
 
 INCLUDEPATH += $$PWD/../../../../../imagingsuite/core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../imagingsuite/core/kipl/kipl/include
@@ -75,11 +75,11 @@ DEPENDPATH += $$PWD/../../../../../imagingsuite/core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../../../../imagingsuite/core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../imagingsuite/core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../../imagingsuite/gui/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../../imagingsuite/gui/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../../../imagingsuite/GUI/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../../imagingsuite/GUI/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../../imagingsuite/gui/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../../imagingsuite/gui/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../../../imagingsuite/GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../../imagingsuite/GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/UnpublishedImagingAlgorithms/
 DEPENDPATH += $$PWD/../../../../core/algorithms/UnpublishedImagingAlgorithms/

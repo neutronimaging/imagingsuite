@@ -14,7 +14,6 @@
 
 #include <PreprocEnums.h>
 #include <averageimage.h>
-#include <ReferenceImageCorrection.h>
 
 //#include "../include/NormPlugins.h"
 
