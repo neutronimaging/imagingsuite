@@ -33,6 +33,16 @@ Statistics::Statistics(const Statistics & s) :
 {
 }
 
+Statistics & Statistics::operator=(const Statistics &s)
+{
+    m_fMax   = s.m_fMax;
+    m_fMin   = s.m_fMin;
+    m_fSum2  = s.m_fSum2;
+    m_fSum   = s.m_fSum;
+    m_nNdata = s.m_nNdata;
+
+    return *this;
+}
 
 Statistics::~Statistics()
 {
