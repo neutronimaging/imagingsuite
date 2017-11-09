@@ -96,11 +96,12 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
 
-INCLUDEPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../gui/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../gui/qt/QtAddons
+
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
@@ -117,6 +118,7 @@ DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 
+
 FORMS += \
     polynomialcorrectiondlg.ui \
     datascalerdlg.ui \
@@ -128,4 +130,3 @@ FORMS += \
     WaveletRingCleanDlg.ui \
     generalfilterdlg.ui \
     FullLogNormDlg.ui
-

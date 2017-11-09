@@ -217,8 +217,8 @@ HEADERS +=\
     ../include/math/core/basicprojector.hpp \
     ../include/math/compleximage.h \
     ../include/math/basicprojector.h \
-    ../include/regression/linefit.h \
-    ../include/regression/core/linefit.hpp \
+#    ../include/regression/linefit.h \
+#    ../include/regression/core/linefit.hpp \
     ../include/segmentation/wsthres.h \
     ../include/segmentation/thresholds.h \
     ../include/segmentation/segmentationbase.h \
