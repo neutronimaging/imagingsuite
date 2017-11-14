@@ -10,8 +10,8 @@ TARGET = PCAModules
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
@@ -40,7 +40,7 @@ HEADERS += \
     ../../src/PCAModules_global.h \
     ../../src/pcamodules.h
 
-unix:INCLUDEPATH += $$PWD/../../../../../external/src/linalg
+unix:INCLUDEPATH += $$PWD/../../../../../../external/src/linalg
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -61,22 +61,16 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/modules/trunk/ModuleConfig/ModuleConfig-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lProcessFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+LIBS += -lkipl -lModuleConfig -lProcessFramework
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../src/libs/kipl/trunk/kipl/kipl-build_Qt_4_8_1_for_GCC__Qt_SDK__Release/debug/ -lkipl
+INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
+DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../..//kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/release/ -lProcessFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../ProcessFramework/qt/ProcessFramework-build_Qt_4_8_1_Release/debug/ -lProcessFramework
-
-INCLUDEPATH += $$PWD/../../../ProcessFramework/include
-DEPENDPATH += $$PWD/../../../ProcessFramework/include
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

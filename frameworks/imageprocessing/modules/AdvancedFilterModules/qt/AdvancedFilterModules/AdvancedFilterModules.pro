@@ -9,8 +9,8 @@ TARGET = AdvancedFilterModules
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 DEFINES += ADVANCEDFILTERMODULES_LIBRARY
 
@@ -26,16 +26,6 @@ HEADERS += \
     ../../src/NonLinDiffusion.h \
     ../../src/AdvancedFilterModules_global.h \
     ../../src/nonlocalmeansmodule.h
-
-symbian {
-    MMP_RULES += EXPORTUNFROZEN
-    TARGET.UID3 = 0xE9202092
-    TARGET.CAPABILITY = 
-    TARGET.EPOCALLOWDLLDATA = 1
-    addFiles.sources = AdvancedFilterModules.dll
-    addFiles.path = !:/sys/bin
-    DEPLOYMENT += addFiles
-}
 
 unix:!symbian {
     maemo5 {
@@ -74,16 +64,16 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lProcessFramework
 
-INCLUDEPATH += $$PWD/../../../ProcessFramework/include
-DEPENDPATH += $$PWD/../../../ProcessFramework/include
+INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
+DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

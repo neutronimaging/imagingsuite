@@ -10,8 +10,8 @@ TARGET = ImagingModules
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 DEFINES += IMAGINGMODULES_LIBRARY
 
@@ -72,19 +72,22 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../ProcessFramework/include
-DEPENDPATH += $$PWD/../../../ProcessFramework/include
+INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
+DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/src
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/src
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
+DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

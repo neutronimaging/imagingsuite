@@ -10,8 +10,8 @@ TARGET = ProcessFramework
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
 unix:!symbian {
     maemo5 {
@@ -93,15 +93,13 @@ unix:!symbian {
     INSTALLS += target
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/
 
 LIBS+= -lkipl -lModuleConfig
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../core/kipl/kipl/include
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../core/modules/ModuleConfig/include

@@ -89,25 +89,25 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtAddons -lQtModuleConfigure -lReaderConfig -lReaderGUI -lImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../ProcessFramework/include
-DEPENDPATH += $$PWD/../../../ProcessFramework/include
+INCLUDEPATH += $$PWD/../../../../frameworks/imageprocessing/ProcessFramework/include
+DEPENDPATH += $$PWD/../../../../frameworks/imageprocessing/ProcessFramework/include/
 
-INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../../gui/trunk/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtAddons
 
-INCLUDEPATH += $$PWD/../../../../../gui/trunk/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ReaderConfig
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ReaderConfig
+INCLUDEPATH += $$PWD/../../../../core/modules/ReaderConfig
+DEPENDPATH += $$PWD/../../../../core/modules/ReaderConfig
 
-INCLUDEPATH += $$PWD/../../../../../modules/trunk/ReaderGUI
-DEPENDPATH += $$PWD/../../../../../modules/trunk/ReaderGUI
+INCLUDEPATH += $$PWD/../../../../core/modules/ReaderGUI
+DEPENDPATH += $$PWD/../../../../core/modules/ReaderGUI
 
-INCLUDEPATH += $$PWD/../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
-INCLUDEPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../../qni/trunk/src/ImagingAlgorithms/src
+INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/src
