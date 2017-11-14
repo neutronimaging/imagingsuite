@@ -7,6 +7,7 @@
 #include <logging/logger.h>
 
 #include <ballanalysis.h>
+#include <contrastsampleanalysis.h>
 
 namespace Ui {
 class NIQAMainWindow;
@@ -33,7 +34,22 @@ private slots:
 
     void on_spin_contrast_images_valueChanged(int arg1);
 
+    void on_combo_contrastplots_currentIndexChanged(int index);
+
+    void on_button_AnalyzeContrast_clicked();
+
+    void on_button_addEdgeFile_clicked();
+
+    void on_button_deleteEdgeFile_clicked();
+
+    void on_listEdgeFiles_doubleClicked(const QModelIndex &index);
+
+    void on_listEdgeFiles_clicked(const QModelIndex &index);
+
 private:
+    void showContrastBoxPlot();
+    void showContrastHistogram();
+
     Ui::NIQAMainWindow *ui;
 
     kipl::base::TImage<float,3> m_BigBall;
@@ -43,6 +59,7 @@ private:
     std::map<float, kipl::base::TImage<float,2>> m_Edges;
 
     ImagingQAAlgorithms::BallAnalysis m_BallAnalyzer;
+    ImagingQAAlgorithms::ContrastSampleAnalysis m_ContrastSampleAnalyzer;
 
 };
 

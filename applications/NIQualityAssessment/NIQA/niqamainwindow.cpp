@@ -9,11 +9,25 @@
 #include <QLineSeries>
 #include <QPointF>
 #include <QChart>
+#include <QListWidgetItem>
 
 #include <base/index2coord.h>
 
 #include <datasetbase.h>
 #include <imagereader.h>
+
+#include "edgefileitemdialog.h"
+
+
+class EdgeFileListItem : public QListWidgetItem
+{
+public:
+    EdgeFileListItem() {}
+    EdgeFileListItem(const EdgeFileListItem &item) : QListWidgetItem(item) {}
+
+    float distance;
+    QString filename;
+};
 
 NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,6 +35,7 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     ui(new Ui::NIQAMainWindow)
 {
     ui->setupUi(this);
+
 }
 
 NIQAMainWindow::~NIQAMainWindow()
@@ -112,6 +127,9 @@ void NIQAMainWindow::on_button_contrast_load_clicked()
     ui->slider_contrast_images->setMinimum(0);
     ui->spin_contrast_images->setMaximum(m_Contrast.Size(2)-1);
 
+    m_ContrastSampleAnalyzer.setImage(m_Contrast);
+
+
 }
 
 void NIQAMainWindow::on_slider_contrast_images_sliderMoved(int position)
@@ -131,4 +149,139 @@ void NIQAMainWindow::on_spin_contrast_images_valueChanged(int arg1)
     ui->slider_contrast_images->setValue(arg1);
 
     on_slider_contrast_images_sliderMoved(arg1);
+}
+
+void NIQAMainWindow::on_combo_contrastplots_currentIndexChanged(int index)
+{
+    switch (index) {
+        case 0: showContrastHistogram(); break;
+        case 1: showContrastBoxPlot(); break;
+    }
+}
+
+void NIQAMainWindow::showContrastBoxPlot()
+{
+    std::ostringstream msg;
+    QChart *chart = new QChart(); // Life time
+    std::vector<kipl::math::Statistics> stats=m_ContrastSampleAnalyzer.getStatistics();
+
+    for (int i=0; i<6; ++i) {
+        QBoxPlotSeries *insetSeries = new QBoxPlotSeries();
+        msg.str("");
+        msg<<"Inset "<<i+1;
+        QBoxSet *set = new QBoxSet(QString::fromStdString(msg.str()));
+
+        set->setValue(QBoxSet::LowerExtreme,stats[i].Min());
+        set->setValue(QBoxSet::UpperExtreme,stats[i].Max());
+        set->setValue(QBoxSet::LowerQuartile,stats[i].E()-stats[i].s()*1.96f);
+        set->setValue(QBoxSet::UpperQuartile,stats[i].E()+stats[i].s()*1.96f);
+        set->setValue(QBoxSet::Median,stats[i].E());
+        insetSeries->append(set);
+
+        chart->addSeries(insetSeries);
+    }
+
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+
+    ui->chart_contrast->setChart(chart);
+}
+
+void NIQAMainWindow::showContrastHistogram()
+{
+    size_t bins[16000];
+    float axis[16000];
+    int histsize=m_ContrastSampleAnalyzer.getHistogram(axis,bins);
+
+    QLineSeries *series0 = new QLineSeries(); //Life time
+
+    for (int i=0; i<histsize; ++i) {
+        series0->append(QPointF(axis[i],float(bins[i])));
+    }
+
+    QChart *chart = new QChart(); // Life time
+
+    chart->addSeries(series0);
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+//    chart->axisX()->setRange(0, 20);
+//    chart->axisY()->setRange(0, 10);
+
+    ui->chart_contrast->setChart(chart);
+}
+
+void NIQAMainWindow::on_button_AnalyzeContrast_clicked()
+{
+    m_ContrastSampleAnalyzer.analyzeContrast(ui->spin_contrast_pixelsize->value());
+}
+
+void NIQAMainWindow::on_button_addEdgeFile_clicked()
+{
+    QStringList filenames = QFileDialog::getOpenFileNames(this,"Select files to open",QDir::homePath());
+
+    std::ostringstream msg;
+
+    for (auto it=filenames.begin(); it!=filenames.end(); it++) {
+
+        msg.str("");
+
+        EdgeFileListItem *item = new EdgeFileListItem;
+
+        item->distance  = 0.0f;
+        item->filename  = *it;
+
+        msg<<it->toStdString()<<std::endl<<"Edge distance="<<item->distance;
+        item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+        item->setData(Qt::CheckStateRole,Qt::Unchecked);
+
+        ui->listEdgeFiles->addItem(item);
+    }
+}
+
+
+
+void NIQAMainWindow::on_button_deleteEdgeFile_clicked()
+{
+    QList<QListWidgetItem*> items = ui->listEdgeFiles->selectedItems();
+    foreach(QListWidgetItem * item, items)
+    {
+        delete ui->listEdgeFiles->takeItem(ui->listEdgeFiles->row(item));
+    }
+}
+
+void NIQAMainWindow::on_listEdgeFiles_doubleClicked(const QModelIndex &index)
+{
+    EdgeFileListItem *item = dynamic_cast<EdgeFileListItem *>(ui->listEdgeFiles->item(index.row()));
+
+    EdgeFileItemDialog dlg;
+
+    dlg.setInfo(item->distance,item->filename);
+    int res=dlg.exec();
+
+    if (res==dlg.Accepted) {
+        dlg.getInfo(item->distance,item->filename);
+        std::ostringstream msg;
+        msg<<item->filename.toStdString()<<std::endl<<"Edge distance="<<item->distance;
+        item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+    }
+
+
+}
+
+void NIQAMainWindow::on_listEdgeFiles_clicked(const QModelIndex &index)
+{
+    EdgeFileListItem *item = dynamic_cast<EdgeFileListItem *>(ui->listEdgeFiles->item(index.row()));
+
+    kipl::base::TImage<float,2> img;
+
+    ImageReader reader;
+
+//    msg<<loader.m_sFilemask<<loader.m_nFirst<<", "<<loader.m_nLast;
+//    logger(logger.LogMessage,msg.str());
+    img=reader.Read(item->filename.toStdString(),kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
+
+    ui->viewer_edgeimages->set_image(img.GetDataPtr(),img.Dims());
 }

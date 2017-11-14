@@ -62,11 +62,14 @@ win32 {
 }
 
 SOURCES += main.cpp\
-        niqamainwindow.cpp
+        niqamainwindow.cpp \
+    edgefileitemdialog.cpp
 
-HEADERS  += niqamainwindow.h
+HEADERS  += niqamainwindow.h \
+    edgefileitemdialog.h
 
-FORMS    += niqamainwindow.ui
+FORMS    += niqamainwindow.ui \
+    edgefileitemdialog.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug

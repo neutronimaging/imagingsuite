@@ -54,7 +54,7 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 
     csa.setImage(orig);
 
-    csa.analyzeContrast(resolution,stats,centers);
+    csa.analyzeContrast(resolution);
 
 }
 
