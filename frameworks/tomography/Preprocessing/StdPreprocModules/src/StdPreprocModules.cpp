@@ -31,7 +31,6 @@
 #include "../include/MorphSpotCleanModule.h"
 #include "../include/GammaSpotCleanModule.h"
 #include "../include/CameraStripeClean.h"
-#include "../include/robustlognorm.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>

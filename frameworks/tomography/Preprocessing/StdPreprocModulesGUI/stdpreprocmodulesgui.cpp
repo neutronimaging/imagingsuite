@@ -14,7 +14,6 @@
 #include "morphspotcleandlg.h"
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
-#include "robustlognormdlg.h"
 #include "generalfilterdlg.h"
 
 class ConfiguratorDialogBase;
@@ -22,18 +21,13 @@ class ConfiguratorDialogBase;
 void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name, void *interactor)
 {
 	if (strcmp(application,"muhrec")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    if (name!=nullptr) {
 		std::string sName=name;
 
         if (sName=="FullLogNorm")
             return new FullLogNormDlg;
-
-#ifdef USE_UNPUBLISHED
-        if (sName=="RobustLogNorm")
-            return new RobustLogNormDlg;
-#endif
 
 //        if (sName=="LogProjection")
 //            return new LogProjection;
@@ -83,7 +77,7 @@ STDPREPROCMODULESGUISHARED_EXPORT int DestroyGUIModule(const char * application,
 	if (strcmp(application,"muhrec")!=0)
 		return -1;
 
-	if (obj!=NULL) {
+    if (obj!=nullptr) {
 		ConfiguratorDialogBase *dlg=reinterpret_cast<ConfiguratorDialogBase *>(obj);
 		delete dlg;
 	}

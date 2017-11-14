@@ -46,8 +46,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += ../../../../../../../external/src/linalg ../../../../../../../external/include ../../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../../external/lib64
+    INCLUDEPATH  += ../../../../../../external/src/linalg ../../../../../../external/include ../../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3
     QMAKE_CXXFLAGS += /openmp /O2
@@ -97,11 +97,11 @@ HEADERS += ../../src/fdkbackproj.h \
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/src
 
-INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/src
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/src
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
 DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms

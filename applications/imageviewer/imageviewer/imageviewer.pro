@@ -48,30 +48,36 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
 SOURCES += main.cpp\
-        viewermainwindow.cpp
+        viewermainwindow.cpp \
+    saveasdialog.cpp
 
-HEADERS  += viewermainwindow.h
+HEADERS  += viewermainwindow.h \
+    saveasdialog.h
 
-FORMS    += viewermainwindow.ui
+FORMS    += viewermainwindow.ui \
+    saveasdialog.ui
 
 CONFIG(release, debug|release):      LIBS += -L$$PWD/../../../../lib
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug
 
-LIBS += -lkipl -lQtAddons
+LIBS += -lkipl -lQtAddons -lReaderConfig
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig
+DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig
 
-INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../core/kipl/kipl/src
+
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
 
 

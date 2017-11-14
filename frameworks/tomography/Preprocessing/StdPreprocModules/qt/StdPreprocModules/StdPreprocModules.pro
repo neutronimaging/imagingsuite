@@ -14,7 +14,6 @@ CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 DEFINES += STDPREPROCMODULES_LIBRARY
-DEFINES += USE_UNPUBLISHED
 
 SOURCES += \
     ../../src/WaveletRingClean.cpp \
@@ -39,8 +38,7 @@ SOURCES += \
     ../../src/TranslateProjectionsModule.cpp \
     ../../src/MorphSpotCleanModule.cpp \
     ../../src/GammaSpotCleanModule.cpp \
-    ../../src/CameraStripeClean.cpp \
-    ../../src/robustlognorm.cpp
+    ../../src/CameraStripeClean.cpp
 
 HEADERS += \
     ../../include/WaveletRingClean.h \
@@ -65,8 +63,7 @@ HEADERS += \
     ../../include/MorphSpotCleanModule.h \
     ../../include/GammaSpotCleanModule.h \
     ../../include/StdPreprocModules_global.h \
-    ../../include/CameraStripeClean.h \
-    ../../include/robustlognorm.h
+    ../../include/CameraStripeClean.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -118,20 +115,19 @@ win32 {
     DEFINES += NOMINMAX
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
-INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../../../../qni/trunk/src/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../../../../qni/trunk/src/ImagingAlgorithms/include
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include

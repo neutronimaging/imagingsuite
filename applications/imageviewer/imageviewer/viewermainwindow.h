@@ -29,12 +29,15 @@ private slots:
     void dragEnterEvent(QDragEnterEvent *e);
     void dropEvent(QDropEvent *e);
 
+    void on_actionSave_as_triggered();
+
 private:
     void LoadImage(std::string fname,kipl::base::TImage<float,2> &img);
     Ui::ViewerMainWindow *ui;
 
     std::string m_fname;
     kipl::io::eExtensionTypes m_ext;
+    bool isMultiFrame;
 };
 
 #endif // VIEWERMAINWINDOW_H
