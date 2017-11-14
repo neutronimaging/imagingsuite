@@ -7,6 +7,7 @@
 #include <base/index2coord.h>
 #include <math/tcenterofgravity.h>
 #include <math/circularhoughtransform.h>
+#include <math/nonlinfit.h>
 #include <filters/filter.h>
 #include <drawing/drawing.h>
 
@@ -26,6 +27,8 @@ public:
 private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
+    void testNonLinFit_fitfunctions();
+    void testNonLinFit_fitter();
 };
 
 TKiplMathTest::TKiplMathTest()
@@ -119,6 +122,18 @@ void TKiplMathTest::testCircularHoughTransform()
     kipl::io::WriteTIFF32(img,"chtg_orig.tif");
     kipl::io::WriteTIFF32(chm,"chtg_map.tif");
 }
+
+void TKiplMathTest::testNonLinFit_fitfunctions()
+{
+    kipl::Nonlinear::SumOfGaussians sog;
+
+}
+
+void TKiplMathTest::testNonLinFit_fitter()
+{
+
+}
+
 
 QTEST_APPLESS_MAIN(TKiplMathTest)
 
