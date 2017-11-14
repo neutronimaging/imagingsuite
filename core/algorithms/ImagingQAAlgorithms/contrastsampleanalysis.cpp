@@ -90,16 +90,21 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
         kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
 }
 
-void ContrastSampleAnalysis::analyzeContrast(float ps, kipl::math::Statistics *stats, kipl::base::coords3Df *centers)
+void ContrastSampleAnalysis::analyzeContrast(float ps)
 {
     findCenters(ps);
     std::ostringstream msg;
     msg<<"Values of insets:";
     for (int i=0; i<6; ++i) {
-        m_insetStats[i]=computeInsetStatistics(m_insetCenters[i],ps);
+        m_insetStats.push_back(computeInsetStatistics(m_insetCenters[i],ps));
         msg<<m_insetStats[i].E()<<", s="<<m_insetStats[i].s()<<std::endl;
     }
     logger(logger.LogMessage,msg.str());
+}
+
+std::vector<kipl::math::Statistics> ContrastSampleAnalysis::getStatistics()
+{
+    return m_insetStats;
 }
 
 void ContrastSampleAnalysis::findCenters(float ps)
@@ -117,8 +122,9 @@ void ContrastSampleAnalysis::findCenters(float ps)
 
     float *max=std::max_element(chm.GetDataPtr(),chm.GetDataPtr()+chm.Size());
     size_t maxpos=max-chm.GetDataPtr();
-    m_insetCenters[0].y=maxpos/m_Img2D.Size(0);
-    m_insetCenters[0].x=maxpos%m_Img2D.Size(0);
+    kipl::base::coords3Df maxinset_center;
+    maxinset_center.y=maxpos/m_Img2D.Size(0);
+    maxinset_center.x=maxpos%m_Img2D.Size(0);
 
     float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
     std::ostringstream msg;
@@ -175,17 +181,22 @@ void ContrastSampleAnalysis::findCenters(float ps)
     msg<<"Ring center at ["<<parameters[0]<<", "<<parameters[1]<<"]";
     logger(logger.LogMessage,msg.str());
 
-    float phi=atan2f(m_insetCenters[0].x-m_ringCenter.x,m_insetCenters[0].y-m_ringCenter.y);
+    float phi=atan2f(maxinset_center.x-m_ringCenter.x,maxinset_center.y-m_ringCenter.y);
     msg.str("");
-    msg<<"Max intensity at ["<<m_insetCenters[0].x<<", "<<m_insetCenters[0].y<<", phi="<<phi*180.0f/fPi;
+    msg<<"Max intensity at ["<<maxinset_center.x<<", "<<maxinset_center.y<<", phi="<<phi*180.0f/fPi;
     logger(logger.LogDebug,msg.str());
+
     msg.str("");
     msg<<"Dot centers at:"<<std::endl;
-    float r=hypotf(m_insetCenters[0].x-m_ringCenter.x,m_insetCenters[0].y-m_ringCenter.y);
+    float r=hypotf(maxinset_center.x-m_ringCenter.x,maxinset_center.y-m_ringCenter.y);
     for (int i=0 ; i<6 ; i++) {
-        m_insetCenters[i].y=r*cos(phi+i*fPi/3)+m_ringCenter.y;
-        m_insetCenters[i].x=r*sin(phi+i*fPi/3)+m_ringCenter.x;
-        msg<<m_insetCenters[i].x<<", "<<m_insetCenters[i].y<<std::endl;
+        kipl::base::coords3Df coord;
+
+        coord.y=r*cos(phi+i*fPi/3)+m_ringCenter.y;
+        coord.x=r*sin(phi+i*fPi/3)+m_ringCenter.x;
+        m_insetCenters.push_back(coord);
+
+        msg<<coord.x<<", "<<coord.y<<std::endl;
     }
     logger(logger.LogDebug,msg.str());
 }

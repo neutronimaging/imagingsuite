@@ -3,6 +3,7 @@
 
 #include "imagingqaalgorithms_global.h"
 
+#include <vector>
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <base/index2coord.h>
@@ -21,10 +22,11 @@ public:
     void setImage(kipl::base::TImage<float,2> img);
     void setImage(kipl::base::TImage<float,3> img);
 
-    void analyzeContrast(float pixelSize, kipl::math::Statistics *stats, kipl::base::coords3Df *centers);
+    void analyzeContrast(float pixelSize);
 
     int getHistogram(float *axis, size_t *bins);
     int getHistogramSize();
+    std::vector<kipl::math::Statistics> getStatistics();
     bool saveIntermediateImages;
     float metricInsetDiameter;
 
@@ -50,9 +52,9 @@ protected:
     kipl::base::TImage<float,2> ringKernel;
 
 
-    kipl::math::Statistics m_insetStats[6];
+    std::vector<kipl::math::Statistics> m_insetStats;
     kipl::base::coords3Df m_ringCenter;
-    kipl::base::coords3Df m_insetCenters[6];
+    std::vector<kipl::base::coords3Df> m_insetCenters;
 
 };
 }
