@@ -1,0 +1,12 @@
+#!/bin/sh
+
+RP="`readlink -e $0`"
+BASEPATH="`dirname $RP`"
+
+KIPTOOL_BASE_PATH=$BASEPATH
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BASEPATH/Frameworks
+export KIPTOOL_BASE_PATH
+export LD_LIBRARY_PATH
+
+$BASEPATH/bin/QtKipTool $1 $2
+
