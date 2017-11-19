@@ -1,4 +1,5 @@
 .DS_Store
+.DS-Store
 build*
 *.user
 *.stash
