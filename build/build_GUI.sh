@@ -1,0 +1,45 @@
+#!/bin/bash
+QTBINPATH=/Applications/Qt59/5.9.2/clang_64/bin/
+REPOSPATH=/Users/kaestner/git/imagingsuite
+
+DEST=/Users/kaestner/git/builds
+
+mkdir -p $DEST/build-QtAddons
+cd $DEST/build-QtAddons
+
+$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/GUI/qt/QtAddons/QtAddons.pro
+make -f Makefile clean
+make -f Makefile mocables all
+make -f Makefile
+
+mkdir -p $DEST/build-QtModuleConfigure
+cd $DEST/build-QtModuleConfigure
+
+$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/GUI/qt/QtModuleConfigure
+make -f Makefile clean
+make -f Makefile mocables all
+make -f Makefile
+
+
+if [ -e "$REPOSPATH/GUI/qt/UnitTests" ]
+then
+    echo "Build tests"
+
+    for f in `ls $REPOSPATH/GUI/qt/UnitTests`
+    do
+        echo "$REPOSPATHGUI/qt/UnitTests/$f/$f.pro"
+        if [ -e "$REPOSPATH/GUI/qt/UnitTests/$f/$f.pro" ]
+        then
+            mkdir -p $DEST/build-$f
+            cd $DEST/build-$f
+
+            $QTBINPATH/qmake -makefile -o Makefile ../../imagingsuite/GUI/qt/UnitTests/$f/$f.pro
+            make -f Makefile clean
+            make -f Makefile mocables all
+            make -f Makefile
+        fi
+
+    done
+
+    echo "Tests built"
+fi
