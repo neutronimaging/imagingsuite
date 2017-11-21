@@ -64,7 +64,7 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lProcessFramework
