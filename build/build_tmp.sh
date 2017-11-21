@@ -1,5 +1,5 @@
 #!/bin/bash
-QTBINPATH=/Applications/Qt59/5.9.2/clang_64/bin/
+QTBINPATH=$QT_PATH
 REPOSPATH=/Users/kaestner/git/imagingsuite
 
 DEST=/Users/kaestner/git/builds
