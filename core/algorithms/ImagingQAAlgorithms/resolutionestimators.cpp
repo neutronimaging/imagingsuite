@@ -3,7 +3,7 @@
 namespace ImagingQAAlgorithms {
 
 ResolutionEstimators::ResolutionEstimators() :
-    profileFunction(LorenzProfile),
+    profileFunction(ResolutionEstimators::LorenzProfile),
     pixelSize(0.1f),
     profileSize(0),
     dx(1.0f),
@@ -59,7 +59,7 @@ void ResolutionEstimators::removeAllocation()
 {
     if (profile!=nullptr) {
         delete [] profile;
-        N=0;
+        profileSize=0;
     }
 }
 }

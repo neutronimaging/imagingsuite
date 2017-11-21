@@ -36,5 +36,5 @@ protected:
     float dx;
     float *profile;
 };
-
+}
 #endif // RESOLUTIONESTIMATORS_H
