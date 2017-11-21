@@ -8,6 +8,7 @@
 
 #include <ballanalysis.h>
 #include <contrastsampleanalysis.h>
+#include <ballassemblyanalysis.h>
 
 namespace Ui {
 class NIQAMainWindow;
@@ -46,6 +47,14 @@ private slots:
 
     void on_listEdgeFiles_clicked(const QModelIndex &index);
 
+    void on_button_LoadPacking_clicked();
+
+    void on_button_AnalyzePacking_clicked();
+
+    void on_slider_PackingImages_sliderMoved(int position);
+
+    void on_combo_PackingImage_currentIndexChanged(int index);
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
@@ -60,6 +69,7 @@ private:
 
     ImagingQAAlgorithms::BallAnalysis m_BallAnalyzer;
     ImagingQAAlgorithms::ContrastSampleAnalysis m_ContrastSampleAnalyzer;
+    ImagingQAAlgorithms::BallAssemblyAnalysis m_BallAssemblyAnalyzer;
 
 };
 

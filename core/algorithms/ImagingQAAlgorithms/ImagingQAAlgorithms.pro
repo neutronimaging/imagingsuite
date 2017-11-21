@@ -19,14 +19,16 @@ SOURCES += imagingqaalgorithms.cpp \
     ballanalysis.cpp \
     collimationestimator.cpp \
     resolutionestimators.cpp \
-    contrastsampleanalysis.cpp
+    contrastsampleanalysis.cpp \
+    ballassemblyanalysis.cpp
 
 HEADERS += imagingqaalgorithms.h\
         imagingqaalgorithms_global.h \
     ballanalysis.h \
     collimationestimator.h \
     resolutionestimators.h \
-    contrastsampleanalysis.h
+    contrastsampleanalysis.h \
+    ballassemblyanalysis.h
 
 win32 {
     message(Building for Windows)

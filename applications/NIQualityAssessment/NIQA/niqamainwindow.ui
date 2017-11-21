@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -587,6 +587,124 @@
        <attribute name="title">
         <string>3D Ball packing</string>
        </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_14">
+            <item>
+             <widget class="ReaderForm" name="imageloader_packing" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>95</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_LoadPacking">
+              <property name="text">
+               <string>Load images</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_AnalyzePacking">
+              <property name="text">
+               <string>Analyze</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_15">
+            <item>
+             <widget class="QtAddons::ImageViewerWidget" name="viewer_Packing" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>350</width>
+                <height>350</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QSlider" name="slider_PackingImages">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="combo_PackingImage">
+                <item>
+                 <property name="text">
+                  <string>Original</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Mask</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Labels</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_16">
+            <item>
+             <widget class="QChartView" name="chart_packing" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>350</width>
+                <height>350</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_Report">
        <attribute name="title">

@@ -285,3 +285,58 @@ void NIQAMainWindow::on_listEdgeFiles_clicked(const QModelIndex &index)
 
     ui->viewer_edgeimages->set_image(img.GetDataPtr(),img.Dims());
 }
+
+void NIQAMainWindow::on_button_LoadPacking_clicked()
+{
+    ImageLoader loader=ui->imageloader_packing->getReaderConfig();
+
+    ImageReader reader;
+
+     m_BallAssembly=reader.Read(loader,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
+
+     QSignalBlocker blocker(ui->slider_PackingImages);
+     ui->slider_PackingImages->setMinimum(0);
+     ui->slider_PackingImages->setMaximum(static_cast<int>(m_BallAssembly.Size(2))-1);
+     ui->slider_PackingImages->setValue(m_BallAssembly.Size(2)/2);
+     on_slider_PackingImages_sliderMoved(m_BallAssembly.Size(2)/2);
+}
+
+void NIQAMainWindow::on_button_AnalyzePacking_clicked()
+{
+    try
+    {
+        m_BallAssemblyAnalyzer.analyzeImage(m_BallAssembly);
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        logger(logger.LogError, e.what());
+    }
+}
+
+void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
+{
+
+    switch (ui->combo_PackingImage->currentIndex()) {
+        case 0: ui->viewer_Packing->set_image(m_BallAssembly.GetLinePtr(0,position),
+                                              m_BallAssembly.Dims()); break;
+        case 1: ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getMask().GetLinePtr(0,position),
+                                              m_BallAssembly.Dims());
+                break;
+        case 2:
+                {
+                    kipl::base::TImage<float,2> slice(m_BallAssembly.Dims());
+                    int *pSlice=m_BallAssemblyAnalyzer.getLabels().GetLinePtr(0,position);
+                    std::copy(pSlice,pSlice+slice.Size(),slice.GetDataPtr());
+                    ui->viewer_Packing->set_image(slice.GetDataPtr(),slice.Dims());
+                    break;
+                }
+
+    }
+
+
+}
+
+void NIQAMainWindow::on_combo_PackingImage_currentIndexChanged(int index)
+{
+    on_slider_PackingImages_sliderMoved(ui->slider_PackingImages->value());
+}
