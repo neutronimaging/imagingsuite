@@ -125,7 +125,7 @@ void TKiplMathTest::testCircularHoughTransform()
 
 void TKiplMathTest::testNonLinFit_fitfunctions()
 {
-    kipl::Nonlinear::SumOfGaussians sog;
+ //   kipl::Nonlinear::SumOfGaussians sog;
 
 }
 
