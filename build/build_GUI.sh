@@ -15,7 +15,7 @@ make -f Makefile
 mkdir -p $DEST/build-QtModuleConfigure
 cd $DEST/build-QtModuleConfigure
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/GUI/qt/QtModuleConfigure
+$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/GUI/qt/QtModuleConfigure.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
