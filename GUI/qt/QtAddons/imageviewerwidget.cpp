@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "imageviewerwidget.h"
 
 #include <iostream>
@@ -98,7 +99,7 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
     }
 }
 
-void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
+void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
 {
 
     QPainter painter(this);
