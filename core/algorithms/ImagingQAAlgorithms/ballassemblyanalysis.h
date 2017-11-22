@@ -21,12 +21,14 @@ public:
 
     kipl::base::TImage<float,3> & getMask();
     kipl::base::TImage<int,3> &getLabels();
+    kipl::base::TImage<float,3> &getDist();
     float pixelSize;
     float strelRadius;
 private:
     void createLabelledMask(kipl::base::TImage<float,3> &img);
 
     kipl::base::TImage<float,3> mask;
+    kipl::base::TImage<float,3> dist;
     kipl::base::TImage<int,3> labels;
     std::vector<kipl::math::Statistics> assemblyStats;
 };

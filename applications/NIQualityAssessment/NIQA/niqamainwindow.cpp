@@ -320,7 +320,7 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
         case 0: ui->viewer_Packing->set_image(m_BallAssembly.GetLinePtr(0,position),
                                               m_BallAssembly.Dims()); break;
         case 1: ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getMask().GetLinePtr(0,position),
-                                              m_BallAssembly.Dims());
+                                              m_BallAssemblyAnalyzer.getMask().Dims());
                 break;
         case 2:
                 {
@@ -330,6 +330,9 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
                     ui->viewer_Packing->set_image(slice.GetDataPtr(),slice.Dims());
                     break;
                 }
+        case 3: ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getDist().GetLinePtr(0,position),
+                                                     m_BallAssemblyAnalyzer.getDist().Dims());
+                       break;
 
     }
 

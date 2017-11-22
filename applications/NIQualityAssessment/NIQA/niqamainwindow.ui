@@ -669,6 +669,11 @@
                   <string>Labels</string>
                  </property>
                 </item>
+                <item>
+                 <property name="text">
+                  <string>Distance</string>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
