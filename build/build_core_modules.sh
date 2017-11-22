@@ -1,8 +1,7 @@
 #!/bin/bash
-QTBINPATH=/Applications/Qt59/5.9.2/clang_64/bin/
-REPOSPATH=/Users/kaestner/git/imagingsuite
+REPOSPATH=$WORKSPACE/imagingsuite
 
-DEST=/Users/kaestner/git/builds
+DEST=$WORKSPACE/builds
 
 mkdir -p $DEST/build-moduleconfig
 cd $DEST/build-moduleconfig
