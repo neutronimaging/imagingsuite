@@ -73,11 +73,11 @@ DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../gui/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../gui/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtAddons
 
-INCLUDEPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../core/kipl/kipl/src
