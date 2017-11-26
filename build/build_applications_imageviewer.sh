@@ -1,4 +1,10 @@
 #!/bin/bash
+if [ `uname` == 'Linux' ]; then
+    SPECSTR="-spec linux-g++"
+else
+    SPECSTR="-spec macx-clang CONFIG+=x86_64"
+fi
+
 REPOSPATH=$WORKSPACE/imagingsuite
 
 DEST=$WORKSPACE/builds
@@ -6,7 +12,7 @@ DEST=$WORKSPACE/builds
 mkdir -p $DEST/build-muhrec
 cd $DEST/build-muhrec
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/applications/imageviewer/imageviewer/imageviewer.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/applications/imageviewer/imageviewer/imageviewer.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -24,7 +30,7 @@ then
             mkdir -p $DEST/build-$f
             cd $DEST/build-$f
 
-            $QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/applications/imageviewer/UnitTests/$f/$f.pro
+            $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/applications/imageviewer/UnitTests/$f/$f.pro
             make -f Makefile clean
             make -f Makefile mocables all
             make -f Makefile

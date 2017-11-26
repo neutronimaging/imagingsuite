@@ -1,4 +1,10 @@
 #!/bin/bash
+if [ `uname` == 'Linux' ]; then
+    SPECSTR="-spec linux-g++"
+else
+    SPECSTR="-spec macx-clang CONFIG+=x86_64"
+fi
+
 REPOSPATH=$WORKSPACE/imagingsuite
 
 DEST=$WORKSPACE/builds
@@ -6,7 +12,7 @@ DEST=$WORKSPACE/builds
 mkdir -p $DEST/build-ReconFramework
 cd $DEST/build-ReconFramework
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Framework/ReconFramework/qt/ReconFramework/ReconFramework.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Framework/ReconFramework/qt/ReconFramework/ReconFramework.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -14,7 +20,7 @@ make -f Makefile
 mkdir -p $DEST/build-ReconAlgorithms
 cd $DEST/build-ReconAlgorithms
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms/ReconAlgorithms.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms/ReconAlgorithms.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -22,7 +28,7 @@ make -f Makefile
 mkdir -p $DEST/build-StdBackProjectors
 cd $DEST/build-StdBackProjectors
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/StdBackProjectors/qt/StdBackProjectors/StdBackProjectors.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/StdBackProjectors/qt/StdBackProjectors/StdBackProjectors.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -30,7 +36,7 @@ make -f Makefile
 mkdir -p $DEST/build-FDKBackProjectors
 cd $DEST/build-FDKBackProjectors
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/FDKBackProjectors/qt/FDKBackProjectors/FDKBackProjectors.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/FDKBackProjectors/qt/FDKBackProjectors/FDKBackProjectors.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -38,7 +44,7 @@ make -f Makefile
 mkdir -p $DEST/build-GenericBackProj
 cd $DEST/build-GenericBackProj
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/GenericBackProj/qt/GenericBackProj/GenericBackProj.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/GenericBackProj/qt/GenericBackProj/GenericBackProj.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -46,7 +52,7 @@ make -f Makefile
 mkdir -p $DEST/build-IterativeBackProj
 cd $DEST/build-IterativeBackProj
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/IterativeBackProj/qt/IterativeBackProj/IterativeBackProj.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/IterativeBackProj/qt/IterativeBackProj/IterativeBackProj.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -70,7 +76,7 @@ make -f Makefile
 mkdir -p $DEST/build-InspectorModules
 cd $DEST/build-InspectorModules
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/InspectorModules/InspectorModules.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/InspectorModules/InspectorModules.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -78,7 +84,7 @@ make -f Makefile
 mkdir -p $DEST/build-InspectorModulesGUI
 cd $DEST/build-InspectorModulesGUI
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/InspectorModulesGUI/InspectorModulesGUI.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/InspectorModulesGUI/InspectorModulesGUI.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -86,7 +92,7 @@ make -f Makefile
 mkdir -p $DEST/build-StdPreprocModules
 cd $DEST/build-StdPreprocModules
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModules/qt/StdPreprocModules/StdPreprocModules.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModules/qt/StdPreprocModules/StdPreprocModules.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -94,7 +100,7 @@ make -f Makefile
 mkdir -p $DEST/build-StdPreprocModulesGUI
 cd $DEST/build-StdPreprocModulesGUI
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModulesGUI/StdPreprocModulesGUI.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModulesGUI/StdPreprocModulesGUI.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -102,7 +108,7 @@ make -f Makefile
 mkdir -p $DEST/build-genericpreproc
 cd $DEST/build-genericpreproc
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/GenericPreProc/GenericPreProc.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/GenericPreProc/GenericPreProc.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -120,7 +126,7 @@ then
             mkdir -p $DEST/build-$f
             cd $DEST/build-$f
 
-            $QTBINPATH/qmake -makefile -o Makefile ../../imagingsuite/frameworks/tomography/UnitTests/$f/$f.pro
+            $QTBINPATH/qmake -makefile $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/UnitTests/$f/$f.pro
             make -f Makefile clean
             make -f Makefile mocables all
             make -f Makefile
