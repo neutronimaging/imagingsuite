@@ -59,6 +59,8 @@ public:
     /// \param N number of bins
     virtual void GetHistogram(float *axis, size_t *hist,size_t nBins);
 
+    void GetMatrixDims(size_t *dims);
+
     virtual float Min();
 
     virtual float Max();

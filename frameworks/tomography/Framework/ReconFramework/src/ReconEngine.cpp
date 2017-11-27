@@ -406,22 +406,29 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 	kipl::base::TImage<float,2> slice;
 
     try {
-        if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
 
-                for (size_t i=0; i<(dims[3]-dims[1]); i++) {
-                    slice=m_BackProjector->GetModule()->GetSlice(i);
-                    float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
-                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-                }
-        }
-        else if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone ) {
+        for (size_t i=0; i<(dims[3]-dims[1]); i++) {
+            slice=m_BackProjector->GetModule()->GetSlice(i);
+            float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
+            memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
 
 
-             for (size_t i=0; i<m_Volume.Size(2); i++) {
-                    slice=m_BackProjector->GetModule()->GetSlice(i);
-                    float *pVol=m_Volume.GetLinePtr(0,i); // changed from parallel beam case
-                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-                }
+//        if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
+
+//                for (size_t i=0; i<(dims[3]-dims[1]); i++) {
+//                    slice=m_BackProjector->GetModule()->GetSlice(i);
+//                    float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
+//                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
+//                }
+//        }
+//        else if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone ) {
+
+
+//             for (size_t i=0; i<m_Volume.Size(2); i++) {
+//                    slice=m_BackProjector->GetModule()->GetSlice(i);
+//                    float *pVol=m_Volume.GetLinePtr(0,i); // changed from parallel beam case
+//                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
+//                }
 
         }
     }
@@ -444,7 +451,6 @@ bool ReconEngine::TransferMatrix(size_t *dims)
     catch (...) {
         msg<<"Transfer matrix from backprojector failed with unhandled exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl;
         throw ReconException(msg.str(),__FILE__,__LINE__);
-
     }
 
 	return bTransposed;

@@ -90,7 +90,10 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
     double sid = mConfig.ProjectionInfo.fSDD; // Distance: source to image = source to detector distance
 
 
-   double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.fCenter)*mConfig.MatrixInfo.fVoxelSize[0]; // in world coordinate
+   double offCenter =  (mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.projection_roi[0]-mConfig.ProjectionInfo.fCenter)*mConfig.MatrixInfo.fVoxelSize[0]; // in world coordinate
+   // --------------- added -roi[0] because i have removed from fdkreconbase
+
+
    double cam[3] = {0.0, 0.0, 0.0}; // Location of Camera
 
    if (mConfig.ProjectionInfo.eDirection == kipl::base::RotationDirCW) {
@@ -140,7 +143,7 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 
 
 
-    std::cout << angles << std::endl;
+//    std::cout << angles << std::endl;
 
 
 //            vec3_cross (plt, nrm, vup); // cross product
@@ -286,7 +289,7 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
 //            if (parms->filter == FDK_FILTER_TYPE_RAMP) {
 //                timer->start ();
 
-      //  prepareFFT(proj.Size(0),proj.Size(1)); // Prepare and cleanup should be called outside this loop
+      //  prepareFFT(proj.Size(0),proj.Size(1)); // Prepare and cleanup should be called outside this loop why this is commented?
         ramp_filter_tuned(proj);
       //  cleanupFFT();
 //                filter_time += timer->report ();
@@ -326,12 +329,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         float* img = cbct_volume.GetDataPtr();
         double *xip, *yip, *zip;
         double sad_sid_2;
-//        float scale = (float) (sqrt(1.f) / (double) (nProj)); // this one seems the most meaningful
-//        scale /=(mConfig.ProjectionInfo.fResolution[0]*0.1);
 
-//        float scale = 1.0f;
-
-//        std::cout<< nProjectionBufferSize << std::endl;
         float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
 
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
@@ -348,21 +346,19 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
 
-//        if (mConfig.MatrixInfo.bUseVOI) {
+        origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
+        origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
+        origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1])-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
 
-            origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
-            origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
-            origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
-//        }
+//        std::cout << "origin: "<< std::endl;
+//        std::cout << origin[0] << " " << origin[1] << " " << origin[2] << std::endl; // why does not print?
 
-//        else {
-//            origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
-//            origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
-//            origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
-//        }
+//        origin[0] = 0.0;
+//        origin[1] = 0.0;
+//        origin[2] = 0.0;
 
 
-        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0], mConfig.ProjectionInfo.fpPoint[1]}; // piercing point
+        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0], mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]}; // piercing point
 
 
         // Rescale image (destructive rescaling)
@@ -439,9 +435,9 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
             // not so elegant solution but it seems to work
                 if (mConfig.ProjectionInfo.bCorrectTilt){
-                    double pos = static_cast<double> (mConfig.ProjectionInfo.projection_roi[3])-static_cast<double>(k)-static_cast<double>(mConfig.ProjectionInfo.fTiltPivotPosition);
+                    double pos = static_cast<double> (mConfig.ProjectionInfo.projection_roi[3])-static_cast<double>(k)-static_cast<double>(mConfig.ProjectionInfo.fTiltPivotPosition); // here to check if it is projection_roi or roi. please be lucid
                     cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
-                    proj_matrix[3] = ((cor_tilted-mConfig.ProjectionInfo.fpPoint[0])*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
+                    proj_matrix[3] = ((cor_tilted-(mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.projection_roi[0]))*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
 //                    std::cout << "pos: " << pos << std::endl;
 //                    std::cout << mConfig.ProjectionInfo.projection_roi[3] << " " << mConfig.MatrixInfo.voi[5] << " " << k << std::endl;
 //                    std::cout << "cor_tilted: " << cor_tilted << std::endl;

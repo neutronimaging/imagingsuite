@@ -27,8 +27,8 @@ FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAli
     SizeProj(0),
     MatrixCenterX(0),
     ProjCenter(0.0f),
-    nProjectionBufferSize(0),
-    nSliceBlock(3000),
+    nProjectionBufferSize(2000),
+    nSliceBlock(32),
     fRotation(0.0f) // not sure if i need these parameters.. for sure i would need the others that we have added in reconconfig
 {
    logger(kipl::logging::Logger::LogMessage,"c'tor FdkProjectorBase");
@@ -59,33 +59,24 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
 
     mConfig=config;
 
-//    config.ProjectionInfo.beamgeometry = mConfig.ProjectionInfo.BeamGeometry_Cone;
-
     nProjectionBufferSize=GetIntParameter(parameters,"ProjectionBufferSize");
     nSliceBlock=GetIntParameter(parameters,"SliceBlock");
     GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
 
-//    if (mConfig.MatrixInfo.bUseVOI) {
-        volume_size[0] = mConfig.MatrixInfo.voi[1]-mConfig.MatrixInfo.voi[0];
-        volume_size[1] = mConfig.MatrixInfo.voi[3]-mConfig.MatrixInfo.voi[2];
-        volume_size[2] = mConfig.MatrixInfo.voi[5]-mConfig.MatrixInfo.voi[4];
 
-//        std::cout << "volume size: " << volume_size[0] << " " << volume_size[1] << " " << volume_size[2] << std::endl;
-//    }
-//    else {
-//        volume_size[0] = mConfig.MatrixInfo.nDims[0];
-//        volume_size[1] = mConfig.MatrixInfo.nDims[1];
-//        volume_size[2] = mConfig.MatrixInfo.nDims[2];
-//    }
+//    volume_size[0] = mConfig.MatrixInfo.voi[1]-mConfig.MatrixInfo.voi[0]; // (x1-x0)
+//    volume_size[1] = mConfig.MatrixInfo.voi[3]-mConfig.MatrixInfo.voi[2]; // (y1-y0)
+//    volume_size[2] = mConfig.MatrixInfo.voi[5]-mConfig.MatrixInfo.voi[4]; // (z1-z0)
 
-    volume.Resize(volume_size);
-    volume = 0.0f;
 
-    cbct_volume.Resize(volume_size);
-    cbct_volume = 0.0f;
+//    volume.Resize(volume_size);
+//    volume = 0.0f;
+
+//    cbct_volume.Resize(volume_size);
+//    cbct_volume = 0.0f;
 
 //   std::cout << "projections size: " << std::endl;
-//   std::cout << projections.Size(0) << " " << projections.Size(1) << " "<< projections.Size(2) << std::endl;
+//   std::cout << projections.Size(0) << " " << projections.Size(1) << " "<< projections.Size(2) << std::endl; //this is in this case the entire projection roi. that takes a lot of memory
 
     return 0;
 }
@@ -130,58 +121,69 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
 void FdkReconBase::SetROI(size_t *roi)
 {
 
-//    // commented: not used for now
-//    ProjCenter    = mConfig.ProjectionInfo.fCenter;
-//    SizeU         = roi[2]-roi[0];
-//    if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
-//        SizeV = roi[3];
-//    else
-//        SizeV = roi[3]-roi[1];
+    // commented: not used for now
+    ProjCenter    = mConfig.ProjectionInfo.fCenter;
+    SizeU         = roi[2]-roi[0];
+    if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
+        SizeV = roi[3];
+    else
+        SizeV = roi[3]-roi[1];
 
-//    mConfig.ProjectionInfo.roi[0]=roi[0];
-//    mConfig.ProjectionInfo.roi[1]=roi[1];
-//    mConfig.ProjectionInfo.roi[2]=roi[2];
-//    mConfig.ProjectionInfo.roi[3]=roi[3];
+    mConfig.ProjectionInfo.roi[0]=roi[0];
+    mConfig.ProjectionInfo.roi[1]=roi[1];
+    mConfig.ProjectionInfo.roi[2]=roi[2];
+    mConfig.ProjectionInfo.roi[3]=roi[3];
 
-//    SizeProj      = SizeU*SizeV;
-//    size_t rest=0;
-//#ifdef USE_PROJ_PADDING
-//    rest = SizeV & 3 ;
-//    rest = rest !=0 ? 4 - rest : 0;
-//#endif
-//    size_t projDims[3]={SizeU, SizeV + rest, nProjectionBufferSize};
+    volume_size[0] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (x1-x0)
+    volume_size[1] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (y1-y0)
+    volume_size[2] = mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]; // (z1-z0)
 
-//    if (MatrixAlignment==MatrixZXY) {
-//        MatrixDims[0]=SizeV;
-//        MatrixDims[1]=SizeU;
-//        MatrixDims[2]=SizeU;
+//    std::cout << "volume size: " << volume_size[0] << " " << volume_size[1] << " " << volume_size[2] << std::endl;
 
-//        std::swap(projDims[0],   projDims[1]);
-//    }
-//    else {
-//        MatrixDims[0]=SizeU;
-//        MatrixDims[1]=SizeU;
-//        MatrixDims[2]=SizeV;
-//    }
 
-//    volume.Resize(MatrixDims);
-//    volume=0.0f;
-
-//    size_t mysize[3] = {500, 500, 1000};
-
-//    volume.Resize(mysize);
+//    volume.Resize(volume_size);
 //    volume = 0.0f;
+
+//    cbct_volume.Resize(volume_size);
+//    cbct_volume = 0.0f;
+
+        SizeProj      = SizeU*SizeV;
+        size_t rest=0;
+    #ifdef USE_PROJ_PADDING
+        rest = SizeV & 3 ;
+        rest = rest !=0 ? 4 - rest : 0;
+    #endif
+    size_t projDims[3]={SizeU, SizeV + rest, nProjectionBufferSize};
+
+    if (MatrixAlignment==MatrixZXY) {
+        MatrixDims[0]=SizeV;
+        MatrixDims[1]=SizeU;
+        MatrixDims[2]=SizeU;
+
+        std::swap(projDims[0],   projDims[1]);
+    }
+    else {
+        MatrixDims[0]=SizeU;
+        MatrixDims[1]=SizeU;
+        MatrixDims[2]=SizeV;
+    }
+
+    volume.Resize(MatrixDims);
+    volume=0.0f;
+
+    cbct_volume.Resize(MatrixDims);
+    cbct_volume=0.0f;
+
 
 //    std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
 
-//    stringstream msg;
-
-//    msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
-//    msg<<"Matrix dimensions "<<volume<<std::endl;
-//    projections.Resize(projDims);
-//    projections=0.0f;
-//    msg<<"Projection buffer dimensions "<<projections<<std::endl;
-//    logger(kipl::logging::Logger::LogVerbose,msg.str());
+    stringstream msg;
+    msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
+    msg<<"Matrix dimensions "<<volume<<std::endl;
+    projections.Resize(projDims);
+    projections=0.0f;
+    msg<<"Projection buffer dimensions "<<projections<<std::endl;
+    logger(kipl::logging::Logger::LogVerbose,msg.str());
 
     BuildCircleMask();
 //    MatrixCenterX = volume.Size(1)/2;
@@ -209,7 +211,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 //       fSin[nProjCounter]      = sin(angle*fPi/180.0f);
 //       fCos[nProjCounter]      = cos(angle*fPi/180.0f);
 //       fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter;
-//       float *pProj=NULL; // QUA SEMBREREBEB FARE QLC CON IL CENTRO!!
+//       float *pProj=NULL;
 
 //            this->reconstruct(proj, angle);
 
@@ -264,8 +266,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        if (volume.Size()==0)
            throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-//       BuildCircleMask();
-
        kipl::base::TImage<float,2> img(projections.Dims());
 
        size_t nProj=projections.Size(2);
@@ -291,11 +291,11 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
        std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
        std::cout << "nProjectionBufferSize: " << nProjectionBufferSize << std::endl;
-       mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0];
-       mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
+//       mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0]; // relative position to the projection roi . I am not sure that overwriting is correct
+//       mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
 
 
-        std::cout << "Processing projection with angle: " << std::endl;
+//        std::cout << "Processing projection with angle: " << std::endl;
 
         kipl::profile::Timer fdkTimer;
         fdkTimer.Tic();
@@ -341,6 +341,20 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        delete [] angles;
 
     return 0L;
+}
+
+void FdkReconBase::GetMatrixDims(size_t *dims)
+{
+    if (MatrixAlignment==MatrixZXY) {
+        dims[0]=volume.Size(1);
+        dims[1]=volume.Size(2);
+        dims[2]=volume.Size(0);
+    }
+    else {
+        dims[0]=volume.Size(0);
+        dims[1]=volume.Size(1);
+        dims[2]=volume.Size(2);
+    }
 }
 
 void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
