@@ -96,11 +96,11 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
 
-INCLUDEPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../gui/qt/QtModuleConfigure
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 
-INCLUDEPATH += $$PWD/../../../../gui/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../gui/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
