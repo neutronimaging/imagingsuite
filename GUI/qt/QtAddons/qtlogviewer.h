@@ -2,6 +2,7 @@
 #define QTLOGVIEWER_H
 
 #include <QWidget>
+#include <QMutex>
 
 #include <logging/logger.h>
 
