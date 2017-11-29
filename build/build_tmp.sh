@@ -1,14 +1,19 @@
 #!/bin/bash
-QTBINPATH=$QT_PATH
-REPOSPATH=/Users/kaestner/git/imagingsuite
+if [ `uname` == 'Linux' ]; then
+    SPECSTR="-spec linux-g++"
+else
+    SPECSTR="-spec macx-clang CONFIG+=x86_64"
+fi
 
-DEST=/Users/kaestner/git/builds
+REPOSPATH=$WORKSPACE/imagingsuite
+
+DEST=$WORKSPACE/builds
 
 
 mkdir -p $DEST/build-StdBackProjectors
 cd $DEST/build-StdBackProjectors
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/StdBackProjectors/qt/StdBackProjectors/StdBackProjectors.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Backprojectors/StdBackProjectors/qt/StdBackProjectors/StdBackProjectors.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -17,7 +22,7 @@ make -f Makefile
 mkdir -p $DEST/build-StdPreprocModulesGUI
 cd $DEST/build-StdPreprocModulesGUI
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModulesGUI/StdPreprocModulesGUI.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModulesGUI/StdPreprocModulesGUI.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -36,7 +41,7 @@ then
             mkdir -p $DEST/build-$f
             cd $DEST/build-$f
 
-            $QTBINPATH/qmake -makefile -o Makefile ../../imagingsuite/frameworks/tomography/UnitTests/$f/$f.pro
+            $QTBINPATH/qmake -makefile $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/UnitTests/$f/$f.pro
             make -f Makefile clean
             make -f Makefile mocables all
             make -f Makefile

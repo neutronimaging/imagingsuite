@@ -1,8 +1,9 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-REPOSPATH="/home/`whoami`/repos"
+REPOSPATH=$WORKSPACE
 
-DEST="$REPOSPATH/tomography/muhrec3"
+
+DEST="$WORKSPACE/deploy/muhrec3"
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
 mkdir --parent $DEST/Frameworks
@@ -48,10 +49,10 @@ done
 cd $DEST/bin
 `$CPCMD $REPOSPATH/Applications/muhrec3 .`
 cd ..
-`$CPCMD $REPOSPATH/tomography/trunk/src/scripts/muhrec3 .`
+`$CPCMD $REPOSPATH/imagingsuite/applications/muhrec3/scripts/muhrec3 .`
 chmod +x muhrec3
 
-cp $REPOSPATH/tomography/trunk/src/muhrec3/resources/*.xml resources
+cp $REPOSPATH/imagingsuite/applications/muhrec3/src/resources/*.xml resources
 popd
 
 

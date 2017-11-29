@@ -1,13 +1,18 @@
 #!/bin/bash
-QTBINPATH=/Applications/Qt59/5.9.2/clang_64/bin/
-REPOSPATH=/Users/kaestner/git/imagingsuite
+if [ `uname` == 'Linux' ]; then
+    SPECSTR="-spec linux-g++"
+else
+    SPECSTR="-spec macx-clang CONFIG+=x86_64"
+fi
 
-DEST=/Users/kaestner/git/builds
+REPOSPATH=$WORKSPACE/imagingsuite
+
+DEST=$WORKSPACE/builds
 
 mkdir -p $DEST/build-QtAddons
 cd $DEST/build-QtAddons
 
-$QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/imageprocessing/ProcessFramework/qt/ProcessFramework/ProcessFramework.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/ProcessFramework/qt/ProcessFramework/ProcessFramework.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
@@ -22,7 +27,7 @@ do
         mkdir -p $DEST/build-$f
         cd $DEST/build-$f
 
-        $QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/imageprocessing/modules/$f/qt/$f/$f.pro
+        $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/modules/$f/qt/$f/$f.pro
         make -f Makefile clean
         make -f Makefile mocables all
         make -f Makefile
@@ -45,7 +50,7 @@ then
             mkdir -p $DEST/build-$f
             cd $DEST/build-$f
 
-            $QTBINPATH/qmake -makefile -r -spec macx-clang CONFIG+=x86_64 -o Makefile ../../imagingsuite/frameworks/imageprocessing/UnitTests/$f/$f.pro
+            $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/UnitTests/$f/$f.pro
             make -f Makefile clean
             make -f Makefile mocables all
             make -f Makefile
