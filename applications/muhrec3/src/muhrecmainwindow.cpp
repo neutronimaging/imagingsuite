@@ -1993,23 +1993,23 @@ bool MuhRecMainWindow::reconstructToDisk()
     UpdateConfig();
 
     logger(logger.LogMessage,msg.str());
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-    {
+//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+//    {
         largesize_dlg.SetFields(ui->editDestPath->text(),
                                 ui->editSliceMask->text(),
                                 false,
                                 m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
                                 m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-    }
-    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-    {
-        largesize_dlg.SetFields(ui->editDestPath->text(),
-                                ui->editSliceMask->text(),
-                                false,
-                                m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
-//                                ui->spinSubVolumeSizeZ0->value(), ui->spinSubVolumeSizeZ1->value(),
-                                m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-    }
+//    }
+//    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
+//    {
+//        largesize_dlg.SetFields(ui->editDestPath->text(),
+//                                ui->editSliceMask->text(),
+//                                false,
+//                                m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
+////                                ui->spinSubVolumeSizeZ0->value(), ui->spinSubVolumeSizeZ1->value(),
+//                                m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
+//    }
 
     int res=largesize_dlg.exec();
 

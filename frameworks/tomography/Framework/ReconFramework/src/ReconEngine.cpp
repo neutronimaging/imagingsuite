@@ -136,7 +136,7 @@ int ReconEngine::Run()
 
     size_t totalSlices=0;
 
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel) {
+//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel) {
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
             m_Config.MatrixInfo.nDims[2] = roi[3];
             totalSlices=roi[3];
@@ -146,28 +146,28 @@ int ReconEngine::Run()
             totalSlices=roi[3]-roi[1];
         }
             m_Volume.Resize(m_Config.MatrixInfo.nDims);
-    }
+//    }
 
-   if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+//   if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
 
 
-//      if (m_Config.MatrixInfo.bUseVOI) {
-            totalSlices = voi[5]-voi[4];
+// //     if (m_Config.MatrixInfo.bUseVOI) {
+//            totalSlices = voi[5]-voi[4];
 
-            size_t voi_dims[3] = {
-                voi[1]-voi[0],
-                voi[3]-voi[2],
-                voi[5]-voi[4]
+//            size_t voi_dims[3] = {
+//                voi[1]-voi[0],
+//                voi[3]-voi[2],
+//                voi[5]-voi[4]
 
-            };
-            m_Volume.Resize(voi_dims);
-//        }
-//      else {
-//            totalSlices = m_Config.MatrixInfo.nDims[2];
-//            m_Volume.Resize(m_Config.MatrixInfo.nDims);
-//        }
+//            };
+//            m_Volume.Resize(voi_dims);
+//   //     }
+//   //   else {
+//   //         totalSlices = m_Config.MatrixInfo.nDims[2];
+//    //        m_Volume.Resize(m_Config.MatrixInfo.nDims);
+//    //    }
 
-    }
+//    }
 
 //    std::cout<< "total slices in ReconEngine::Run()"<< std::endl;
 //    std::cout << totalSlices << std::endl;
@@ -510,20 +510,20 @@ bool ReconEngine::Serialize(size_t *dims)
             }
             else {
                 logger(kipl::logging::Logger::LogMessage,"Serializing full matrix");
-                if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-                {
+//                if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+//                {
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
                         0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,NULL);
-                }
-                else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
-                {
-                    kipl::io::WriteImageStack(img,
-                        str.str(),
-                        m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices, m_FirstSlice, m_Config.MatrixInfo.FileType,plane,NULL);
-                }
+//                }
+//                else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
+//                {
+//                    kipl::io::WriteImageStack(img,
+//                        str.str(),
+//                        m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
+//                        0,nSlices, m_FirstSlice, m_Config.MatrixInfo.FileType,plane,NULL);
+//                }
             }
         }
         catch (ReconException & e) {

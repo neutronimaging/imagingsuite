@@ -121,7 +121,6 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
 void FdkReconBase::SetROI(size_t *roi)
 {
 
-    // commented: not used for now
     ProjCenter    = mConfig.ProjectionInfo.fCenter;
     SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
@@ -138,14 +137,6 @@ void FdkReconBase::SetROI(size_t *roi)
     volume_size[1] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (y1-y0)
     volume_size[2] = mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]; // (z1-z0)
 
-//    std::cout << "volume size: " << volume_size[0] << " " << volume_size[1] << " " << volume_size[2] << std::endl;
-
-
-//    volume.Resize(volume_size);
-//    volume = 0.0f;
-
-//    cbct_volume.Resize(volume_size);
-//    cbct_volume = 0.0f;
 
         SizeProj      = SizeU*SizeV;
         size_t rest=0;
@@ -175,8 +166,6 @@ void FdkReconBase::SetROI(size_t *roi)
     cbct_volume=0.0f;
 
 
-//    std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
-
     stringstream msg;
     msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
     msg<<"Matrix dimensions "<<volume<<std::endl;
@@ -185,8 +174,8 @@ void FdkReconBase::SetROI(size_t *roi)
     msg<<"Projection buffer dimensions "<<projections<<std::endl;
     logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-    BuildCircleMask();
-//    MatrixCenterX = volume.Size(1)/2;
+    BuildCircleMask(); // not usefull for now
+    MatrixCenterX = volume.Size(1)/2;
 
 }
 
@@ -288,9 +277,9 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
        // Update piercing point position in projection rois
 
-       std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
-       std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
-       std::cout << "nProjectionBufferSize: " << nProjectionBufferSize << std::endl;
+//       std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
+//       std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
+//       std::cout << "nProjectionBufferSize: " << nProjectionBufferSize << std::endl;
 //       mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0]; // relative position to the projection roi . I am not sure that overwriting is correct
 //       mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
 
