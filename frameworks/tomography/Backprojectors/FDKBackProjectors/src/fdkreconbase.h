@@ -37,7 +37,7 @@ public:
     /// \param angle Acquisition angle
     /// \param weight Intensity scaling factor for interpolation when the angles are non-uniformly distributed
     /// \param bLastProjection termination signal. When true the back-projeciton is finalized.
-    virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection);
+    virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, size_t nProj, bool bLastProjection);
 
     /// Starts the back-projection process of projections stored as a 3D volume. Projections are then passed to the FDK backprojector
     /// \param proj The projection data

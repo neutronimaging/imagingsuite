@@ -185,63 +185,57 @@ void FdkReconBase::SetROI(size_t *roi)
 /// \param angle Acquisition angle
 /// \param weight Intensity scaling factor for interpolation when the angles are non-uniformly distributed
 /// \param bLastProjection termination signal. When true the back-projeciton is finalized.
-size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
+size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, size_t nProj, bool bLastProjection)
 {
+    std::ostringstream msg;
+    if (volume.Size()==0)
+        throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-    // -------- not used -----
-//       logger(kipl::logging::Logger::LogMessage,"FdkReconBase::Process 2");
-//       msg<<"FdkReconBase::Process 2" <<std::endl;
-//       if (volume.Size()==0)
-//           throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
+    proj.Clone();
+    ProjCenter=mConfig.ProjectionInfo.fCenter;
+    fWeights[nProjCounter]  = weight;
+    fSin[nProjCounter]      = sin(angle*fPi/180.0f);
+    fCos[nProjCounter]      = cos(angle*fPi/180.0f);
+    fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter; // this stuff for now i don-t use it
+    float *pProj=NULL;
 
-//       proj.Clone();
-//       ProjCenter=mConfig.ProjectionInfo.fCenter;
-//       fWeights[nProjCounter]  = weight;
-//       fSin[nProjCounter]      = sin(angle*fPi/180.0f);
-//       fCos[nProjCounter]      = cos(angle*fPi/180.0f);
-//       fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter;
-//       float *pProj=NULL;
+    kipl::base::TImage<float,2> img;
+    proj*=weight;
+    size_t N=0;
+    if (MatrixAlignment==MatrixZXY) {
+        kipl::base::Transpose<float,8> transpose;
+        img=transpose(proj);
+        pProj=img.GetDataPtr();
+        N=img.Size(0);
+    }
+    else {
+        pProj=proj.GetDataPtr();
+        N=proj.Size(0);
+    }
 
-//            this->reconstruct(proj, angle);
+#ifdef USE_PROJ_PADDING
+    for (int i=0; i<static_cast<int>(projections.Size(1)); i++) {
+        memcpy(projections.GetLinePtr(i,nProjCounter),pProj+i*N,N*sizeof(float));
+    }
+#else
+    memcpy(projections.GetLinePtr(0,nProjCounter),pProj,proj.Size()*sizeof(float));
+#endif
+    nProjCounter++;
+    if (bLastProjection || (nProjectionBufferSize<=(nProjCounter))) {
+        if (nProjectionBufferSize<=nProjCounter)
+            nProjCounter--;
 
-//        nProjCounter++;
-
-
-
-//       kipl::base::TImage<float,2> img;
-//       proj*=weight;
-//       size_t N=0;
-//       if (MatrixAlignment==MatrixZXY) {
-//           kipl::base::Transpose<float,8> transpose;
-//           img=transpose(proj);
-//           pProj=img.GetDataPtr();
-//           N=img.Size(0);
-//       }
-//       else {
-//           pProj=proj.GetDataPtr();
-//           N=proj.Size(0);
-//       }
-
-//   #ifdef USE_PROJ_PADDING
-//       for (int i=0; i<static_cast<int>(projections.Size(1)); i++) {
-//           memcpy(projections.GetLinePtr(i,nProjCounter),pProj+i*N,N*sizeof(float));
-//       }
-//   #else
-//       memcpy(projections.GetLinePtr(0,nProjCounter),pProj,proj.Size()*sizeof(float));
-//   #endif
-//       nProjCounter++;
-//       if (bLastProjection || (nProjectionBufferSize<=nProjCounter)) {
-//           if (nProjectionBufferSize<=nProjCounter)
-//               nProjCounter--;
-//           this->reconstruct(proj, angle); //
-//           nProjCounter=0;
-//       }
-
-//       std::cout << "nProjCounter " << nProjCounter << std::endl;
+        msg.str("");
+        msg<<"Counter="<<nProjCounter<<", buffer size="<<nProjectionBufferSize<<" last "<<(bLastProjection ? "True" : "False");
+        logger(logger.LogMessage,msg.str());
+        this->reconstruct(proj,angle,nProj);
+        nProjCounter=0;
+    }
 
 
-//       return nProjCounter;
-    return 0L;
+    return nProjCounter;
+
+//    return 0L;
 }
 
 
@@ -258,11 +252,10 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        kipl::base::TImage<float,2> img(projections.Dims());
 
        size_t nProj=projections.Size(2);
-       std::cout<< "NProj:   "<<nProj << std::endl; // numero totale di proiezioni
 
        // Extract the projection parameters
-//       float *weights=new float[nProj+16];
-       float *weights=new float[nProj];
+       float *weights=new float[nProj+16];
+//       float *weights=new float[nProj];
        GetFloatParameterVector(parameters,"weights",weights,nProj);
 
 
@@ -275,16 +268,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
 
 
-       // Update piercing point position in projection rois
-
-//       std::cout << "projection roi: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " << mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl;
-//       std::cout << "piercing point: " << mConfig.ProjectionInfo.fpPoint[0] << " " << mConfig.ProjectionInfo.fpPoint[1] << std::endl;
-//       std::cout << "nProjectionBufferSize: " << nProjectionBufferSize << std::endl;
-//       mConfig.ProjectionInfo.fpPoint[0] -= mConfig.ProjectionInfo.roi[0]; // relative position to the projection roi . I am not sure that overwriting is correct
-//       mConfig.ProjectionInfo.fpPoint[1] -= mConfig.ProjectionInfo.roi[1];
-
-
-//        std::cout << "Processing projection with angle: " << std::endl;
 
         kipl::profile::Timer fdkTimer;
         fdkTimer.Tic();
@@ -296,6 +279,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
            img *= weights[i];
 //           std::cout << "weigth: " << weights[i] << std::endl;
+//           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
 
           this->reconstruct(img, angles[i], nProj);
 
@@ -305,10 +289,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
         FinalizeBuffers();
          fdkTimer.Toc();
          std::cout << "fdkTimer: " << fdkTimer << std::endl;
-
-//         for (int k=0; k<volume.Size(2); ++k){
-//             memcpy(volume.GetLinePtr(0,k), cbct_volume.GetLinePtr(0,k), sizeof(float)*volume.Size(0)*volume.Size(1));
-//         }
 
          // go into the parallel case reference system
          kipl::base::TRotate<float> rotate;
@@ -326,9 +306,8 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
 
 
-       delete [] weights;
-       delete [] angles;
-
+    delete [] weights;
+    delete [] angles;
     return 0L;
 }
 
