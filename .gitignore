@@ -4,3 +4,5 @@ build*
 *.stash
 *.o
 *~
+*.autosave
+

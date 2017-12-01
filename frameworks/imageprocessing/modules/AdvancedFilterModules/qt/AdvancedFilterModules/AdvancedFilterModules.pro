@@ -9,7 +9,7 @@ TARGET = AdvancedFilterModules
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 DEFINES += ADVANCEDFILTERMODULES_LIBRARY
@@ -64,7 +64,7 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lProcessFramework
