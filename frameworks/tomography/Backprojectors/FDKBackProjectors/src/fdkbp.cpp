@@ -423,11 +423,11 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         }
 
           /* Main loop */
-//         int long p;
+//        int long p;
 
         #pragma omp parallel for
         for (k = 0; k < volume.Size(2); k++) {
-            int long p = k * volume.Size(1) * volume.Size(0);
+//             p = k * volume.Size(1) * volume.Size(0);
 //            int long p;
             int long j;
             for (j = 0; j < volume.Size(1); j++) {
@@ -440,8 +440,10 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
                 acc2[0] = zip[3*k]+yip[3*j];
                 acc2[1] = zip[3*k+1]+yip[3*j+1];
                 acc2[2] = zip[3*k+2]+yip[3*j+2];
-                for (i = 0; i < volume.Size(0); i++) {
-//                for (i = mask[j].first+1; i <= mask[j].second; i++) { // it is slightly slower with this
+//                int long p = k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
+//                for (i = 0; i < volume.Size(0); i++) {
+                int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
+                for (i = mask[j].first+1; i <= mask[j].second; i++) { // it is slightly slower with this
                         double dw;
                         double acc3[3];
                         acc3[0] = acc2[0]+xip[3*i];
@@ -450,8 +452,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
                         dw = 1.0 / acc3[2];
                         acc3[0] = acc3[0] * dw;
                         acc3[1] = acc3[1] * dw;
-//                        p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0)+i;
-                        img[p++] +=
+                        img[p+i] +=
                             dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
                 }
             }

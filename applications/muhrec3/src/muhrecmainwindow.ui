@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MuhRec 3</string>
   </property>
+  <property name="toolTip">
+   <string/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
@@ -1380,6 +1383,9 @@
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string extracomment="select direction of rotation "/>
                      </property>
                      <item>
                       <property name="text">
