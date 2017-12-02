@@ -17,6 +17,7 @@ QtLogViewer::QtLogViewer(QWidget *parent) :
 {
     ui->setupUi(this);
     setLogLevel(m_CurrentLoglevel);
+    connect(this,&QtLogViewer::newText,this,&QtLogViewer::updateText);
 }
 
 QtLogViewer::~QtLogViewer()
@@ -57,10 +58,9 @@ void QtLogViewer::on_comboLogLevel_currentIndexChanged(int index)
 
 size_t QtLogViewer::Write(std::string str)
 {
-//    QMutexLocker locker(&m_Mutex);
-    ui->textEdit->append(QString(str.c_str()));
-    m_LogFile<<str<<std::endl;
+    emit newText(QString::fromStdString(str));
 
+    m_LogFile<<str<<std::endl;
     return 0;
 }
 
@@ -91,6 +91,11 @@ void QtLogViewer::clear()
 {
 //    QMutexLocker locker(&m_Mutex);
     ui->textEdit->clear();
+}
+
+void QtLogViewer::updateText(QString msg)
+{
+    ui->textEdit->append(msg);
 }
 
 }

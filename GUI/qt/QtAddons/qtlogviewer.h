@@ -33,6 +33,8 @@ private slots:
 
     void on_comboLogLevel_currentIndexChanged(int index);
 
+    void updateText(QString msg);
+
 private:
     Ui::QtLogViewer *ui;
 
@@ -40,6 +42,9 @@ private:
 
     QMutex m_Mutex;
     kipl::logging::Logger::LogLevel m_CurrentLoglevel;
+
+signals:
+    void newText(QString msg);
 };
 }
 
