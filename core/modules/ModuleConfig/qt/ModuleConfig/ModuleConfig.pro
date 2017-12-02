@@ -37,7 +37,7 @@ windows {
         QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += ../../../../../external/include
-    LIBPATH += $$PWD/../../../../../../external/lib64
+    LIBPATH += $$PWD/../../../../../external/lib64
     LIBS += -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
 }
