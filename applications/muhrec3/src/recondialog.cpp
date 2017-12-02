@@ -46,7 +46,7 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 
     m_Interactor->Reset();
 
-#ifdef _MSC_VER
+#ifdef NEVER//_MSC_VER
     #undef USEDIALOG
 //    #define USEDIALOG
 #else

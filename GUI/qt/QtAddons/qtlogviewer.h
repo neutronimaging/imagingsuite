@@ -1,6 +1,8 @@
 #ifndef QTLOGVIEWER_H
 #define QTLOGVIEWER_H
 
+#include "QtAddons_global.h"
+
 #include <QWidget>
 #include <QMutex>
 
@@ -12,7 +14,7 @@ class QtLogViewer;
 
 namespace QtAddons {
 
-class QtLogViewer : public QWidget, public kipl::logging::LogWriter
+class QTADDONSSHARED_EXPORT QtLogViewer : public QWidget, public kipl::logging::LogWriter
 {
     Q_OBJECT
     kipl::logging::Logger logger;
