@@ -68,7 +68,7 @@ QString QtLogViewer::serialize()
 {
     QString str;
 
-//    QMutexLocker locker(&m_Mutex);
+    QMutexLocker locker(&m_Mutex);
 
     str=ui->textEdit->toPlainText();
 
@@ -89,11 +89,11 @@ void QtLogViewer::setLogLevel(kipl::logging::Logger::LogLevel level)
 
 void QtLogViewer::clear()
 {
-//    QMutexLocker locker(&m_Mutex);
+    QMutexLocker locker(&m_Mutex);
     ui->textEdit->clear();
 }
 
-void QtLogViewer::updateText(QString msg)
+void QtLogViewer::updateText(QString msg) // Update text slot
 {
     ui->textEdit->append(msg);
 }
