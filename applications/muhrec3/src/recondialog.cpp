@@ -23,6 +23,7 @@ ReconDialog::ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget
     m_bRerunBackproj(false)
 {
     ui->setupUi(this);
+    connect(this,&ReconDialog::updateProgress,this,&ReconDialog::changedProgress);
 }
 
 ReconDialog::~ReconDialog()
@@ -117,16 +118,27 @@ int ReconDialog::progress()
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
     QThread::msleep(250);
     while (!m_Interactor->Finished() && !m_Interactor->Aborted() ){
-        ui->progressBar->setValue(m_Interactor->CurrentProgress()*100);
-        ui->progressBar_overall->setValue(m_Interactor->CurrentOverallProgress()*100);
+        emit updateProgress(m_Interactor->CurrentProgress(),
+                            m_Interactor->CurrentOverallProgress(),
+                            QString::fromStdString(m_Interactor->CurrentMessage()));
+//        ui->progressBar->setValue(m_Interactor->CurrentProgress()*100);
+//        ui->progressBar_overall->setValue(m_Interactor->CurrentOverallProgress()*100);
 
-        ui->label_message->setText(QString::fromStdString(m_Interactor->CurrentMessage()));
+//        ui->label_message->setText(QString::fromStdString(m_Interactor->CurrentMessage()));
 
         QThread::msleep(50);
     }
     logger(kipl::logging::Logger::LogMessage,"Progress thread end");
 
     return 0;
+}
+
+void ReconDialog::changedProgress(float progress, float overallProgress, QString msg)
+{
+    ui->progressBar->setValue(progress*100);
+    ui->progressBar_overall->setValue(overallProgress*100);
+
+    ui->label_message->setText(msg);
 }
 
 int ReconDialog::process()
