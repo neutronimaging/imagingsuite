@@ -100,7 +100,7 @@ make -f Makefile
 mkdir -p $DEST/build-StdPreprocModulesGUI
 cd $DEST/build-StdPreprocModulesGUI
 
-$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModulesGUI/StdPreprocModulesGUI.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModulesGUI/qt/StdPreprocModulesGUI/StdPreprocModulesGUI.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile

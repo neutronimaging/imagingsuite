@@ -3,4 +3,8 @@ build*
 *.user
 *.stash
 *.o
+*~
 *.autosave
+
+
+.DS_Store

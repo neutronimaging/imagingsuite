@@ -1,8 +1,8 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-REPOSPATH="/home/`whoami`/repos"
+REPOSPATH=$WORKSPACE
 
-DEST="$REPOSPATH/kiptool/kiptool"
+DEST="$REPOSPATH/deploy/kiptool"
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
 mkdir --parent $DEST/Frameworks

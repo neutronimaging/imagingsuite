@@ -93,10 +93,21 @@ unix:!symbian {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
+
+#INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+#DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+#INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+#DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/src
+
+
+#INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+#DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+
 LIBS += -lkipl -lModuleConfig -lReconFramework
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

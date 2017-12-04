@@ -100,8 +100,10 @@ else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lcfitsio
 CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../lib/
 else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../lib/debug/
 
-LIBS += -lkipl
-
 INCLUDEPATH += $$PWD/../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../kipl/kipl/include
+
+LIBS += -lkipl
+
+
 
