@@ -443,7 +443,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 //                int long p = k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
 //                for (i = 0; i < volume.Size(0); i++) {
                 int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
-                for (i = mask[j].first+1; i <= mask[j].second; i++) { // it is slightly slower with this
+                for (i = mask[j].first+1; i <= mask[j].second; i++) {
                         double dw;
                         double acc3[3];
                         acc3[0] = acc2[0]+xip[3*i];

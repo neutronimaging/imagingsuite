@@ -405,7 +405,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
             // not so elegant solution but it seems to work
                 if (mConfig.ProjectionInfo.bCorrectTilt){
-                    float pos = static_cast<float> (mConfig.ProjectionInfo.projection_roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
+                    float pos = static_cast<float> (mConfig.ProjectionInfo.roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
                     cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
                     proj_matrix[3] = ((cor_tilted-(mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0]))*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
 //                    std::cout << "pos: " << pos << std::endl;
@@ -455,7 +455,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
         #pragma omp parallel for // not sure about this firstprivate
         for (k = 0; k < volume.Size(2); k++) {
-            int long p = k * volume.Size(1) * volume.Size(0);
+//            int long p = k * volume.Size(1) * volume.Size(0);
             int long j;
             for (j = 0; j < volume.Size(1); j++) {
                 int long i;
@@ -467,11 +467,10 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
                 acc2[0] = zip[3*k]+yip[3*j];
                 acc2[1] = zip[3*k+1]+yip[3*j+1];
                 acc2[2] = zip[3*k+2]+yip[3*j+2];
-                for (i = 0; i < volume.Size(0); i++) {
-//                    if (i<=mask[j].first || i>=mask[j].second) {
-//                        img[p++]==0.0f;
-//                    }
-//                    else {
+                int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
+                for (i = mask[j].first+1; i <= mask[j].second; i++) {
+//                for (i = 0; i < volume.Size(0); i++) {
+
                         float dw;
                         float acc3[3];
             //            vec3_add3 (acc3, acc2, &xip[3*i]);
@@ -485,11 +484,10 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
                         dw = 1.0f / (acc2[2]+xip[3*i+2]);
 
-                        img[p++] +=
+                        img[p+i] +=
                             dw * dw * get_pixel_value_c (cbi, dw*(acc2[1]+xip[3*i+1]), dw*(acc2[0]+xip[3*i]));
                         //            volume[p++] +=
                         //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
-//                    }
                 }
             }
         }
