@@ -480,20 +480,20 @@ bool ReconEngine::Serialize(size_t *dims)
             }
             else {
                 logger(kipl::logging::Logger::LogMessage,"Serializing full matrix");
-//                if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-//                {
+                if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
+                {
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
                         0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,NULL);
-//                }
-//                else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
-//                {
-//                    kipl::io::WriteImageStack(img,
-//                        str.str(),
-//                        m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-//                        0,nSlices, m_FirstSlice, m_Config.MatrixInfo.FileType,plane,NULL);
-//                }
+                }
+                else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
+                {
+                    kipl::io::WriteImageStack(img,
+                        str.str(),
+                        m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
+                        0,nSlices, CBroi[1], m_Config.MatrixInfo.FileType,plane,NULL);
+                }
             }
         }
         catch (ReconException & e) {
@@ -728,6 +728,7 @@ int ReconEngine::Run3DFull()
                 size_t CBCT_roi[4];
                 CBCT_roi[0] = m_Config.ProjectionInfo.roi[0];
                 CBCT_roi[2] = m_Config.ProjectionInfo.roi[2];
+                std::cout << "CB case" << std::endl;
 
                 nProcessedProjections=0;
                 m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
@@ -1201,7 +1202,25 @@ int ReconEngine::Process3D(size_t *roi)
     }
 
     if (m_Config.MatrixInfo.bAutomaticSerialize==false) // Don't store the projections for the reconstruction to disk case
-        m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
+    {
+//        m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
+    switch (m_Config.ProjectionInfo.beamgeometry) {
+        case ReconConfig::cProjections::BeamGeometry_Parallel:
+            m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
+            break;
+        case ReconConfig::cProjections::BeamGeometry_Cone:
+            m_ProjectionBlocks.push_back(ProjectionBlock(projections,CBroi,parameters));
+            break;
+        case ReconConfig::cProjections::BeamGeometry_Helix:
+            logger(logger.LogError,"Helix is not supported by the engine.");
+            throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
+            break;
+        default:
+            logger(logger.LogError,"Unsupported geometry type.");
+            throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
+            break;
+    }
+    }
 
     int res=0;
 
@@ -1249,6 +1268,7 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     std::list<ProjectionBlock>::iterator it;
     int i=0;
     int res=0;
+    std::cout << "roi in ProcessExistingProjections3D" << std::endl;
 
     try {
         for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); ++it, ++i)
@@ -1256,7 +1276,27 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
             msg.str("");
             msg<<"Back-projecting projection block "<<i+1;
             logger(kipl::logging::Logger::LogMessage,msg.str());
+            // go on from here tomorrow: fix the roi in this case. then go on with the reconstruct to dosk issue.
+//            std::cout << it->roi[0] << " " << it->roi[1] << " " << it->roi[2] << " " << it->roi[3] << std::endl;
+//            std::cout << CBroi[0] << " " << CBroi[1] << " " << CBroi[2] << " " << CBroi[3] << std::endl;
+
             m_BackProjector->GetModule()->SetROI(it->roi);
+//            switch (m_Config.ProjectionInfo.beamgeometry) {
+//                case ReconConfig::cProjections::BeamGeometry_Parallel:
+//                    m_BackProjector->GetModule()->SetROI(roi);
+//                    break;
+//                case ReconConfig::cProjections::BeamGeometry_Cone:
+//                    m_BackProjector->GetModule()->SetROI(CBroi);
+//                    break;
+//                case ReconConfig::cProjections::BeamGeometry_Helix:
+//                    logger(logger.LogError,"Helix is not supported by the engine.");
+//                    throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
+//                    break;
+//                default:
+//                    logger(logger.LogError,"Unsupported geometry type.");
+//                    throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
+//                    break;
+//            }
             m_Interactor->SetOverallProgress(float(i)/float(m_ProjectionBlocks.size()));
 
             res=BackProject3D(it->projections,it->roi,it->parameters);
@@ -1278,7 +1318,7 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     return res;
 }
 
-int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t *roi,std::map<std::string, std::string> parameters)
+int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t *roi, std::map<std::string, std::string> parameters)
 {
     std::stringstream msg;
 
