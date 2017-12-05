@@ -121,6 +121,8 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
 void FdkReconBase::SetROI(size_t *roi)
 {
 
+    // now here i Get the CBCT roi! here it should be the small one
+    std::cout << "CBCTroi in fdkReconBase: "  << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]<< std::endl;
     ProjCenter    = mConfig.ProjectionInfo.fCenter;
     SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
@@ -169,12 +171,12 @@ void FdkReconBase::SetROI(size_t *roi)
     stringstream msg;
     msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
     msg<<"Matrix dimensions "<<volume<<std::endl;
-    projections.Resize(projDims);
+    projections.Resize(projDims); // this is wrong, but I don-t use the projection buffer size anyway.. so maybe I don;t mind
     projections=0.0f;
     msg<<"Projection buffer dimensions "<<projections<<std::endl;
     logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-    BuildCircleMask(); // not usefull for now
+    BuildCircleMask();
     MatrixCenterX = volume.Size(1)/2;
 
 }
@@ -265,6 +267,8 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        // Process the projections
        float *pImg=img.GetDataPtr();
        float *pProj=nullptr;
+
+       std::cout << "projection size in FDK:" << img.Size(0) << " " << img.Size(1) << std::endl; // it is correct!!!!
 
 
 

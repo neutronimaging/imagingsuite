@@ -37,6 +37,7 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 		logger(kipl::logging::Logger::LogMessage,"An interactor was not provided");
 
 	}
+
 }
 
 ReconEngine::~ReconEngine(void)
@@ -124,19 +125,9 @@ int ReconEngine::Run()
         m_Config.MatrixInfo.voi[5]
     };
 
-//    if (m_Config.MatrixInfo.bUseROI) {
-//        m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;;
-//        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
-//    }
-//    else {
-//        m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
-//        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-//    }
-
 
     size_t totalSlices=0;
 
-//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel) {
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
             m_Config.MatrixInfo.nDims[2] = roi[3];
             totalSlices=roi[3];
@@ -146,34 +137,7 @@ int ReconEngine::Run()
             totalSlices=roi[3]-roi[1];
         }
             m_Volume.Resize(m_Config.MatrixInfo.nDims);
-//    }
 
-//   if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
-
-
-// //     if (m_Config.MatrixInfo.bUseVOI) {
-//            totalSlices = voi[5]-voi[4];
-
-//            size_t voi_dims[3] = {
-//                voi[1]-voi[0],
-//                voi[3]-voi[2],
-//                voi[5]-voi[4]
-
-//            };
-//            m_Volume.Resize(voi_dims);
-//   //     }
-//   //   else {
-//   //         totalSlices = m_Config.MatrixInfo.nDims[2];
-//    //        m_Volume.Resize(m_Config.MatrixInfo.nDims);
-//    //    }
-
-//    }
-
-//    std::cout<< "total slices in ReconEngine::Run()"<< std::endl;
-//    std::cout << totalSlices << std::endl;
-
-
-//	m_Volume.Resize(m_Config.MatrixInfo.nDims);
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -212,31 +176,37 @@ int ReconEngine::Run()
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	m_bCancel=false;
 	int result=0;
+    float radius = (static_cast<float>(m_Config.ProjectionInfo.roi[2])-static_cast<float>(m_Config.ProjectionInfo.roi[0]))/2;
+
+
 	try {
 		for (nProcessedBlocks=0; (nProcessedBlocks<nTotalBlocks) && (m_bCancel==false); nProcessedBlocks++) {
-			nProcessedProjections=0;
-			m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
+                nProcessedProjections=0;
+                m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
-			msg.str("");
-			msg<<"Processing block "<<nProcessedBlocks<<" ["
-				<<m_Config.ProjectionInfo.roi[1]<<", "
-				<<m_Config.ProjectionInfo.roi[3]<<"]";
-			logger(kipl::logging::Logger::LogMessage,msg.str());
+                msg.str("");
+                msg<<"Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[3]<<"]";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
 
-			result=Process(m_Config.ProjectionInfo.roi);
-			m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
+                result=Process(m_Config.ProjectionInfo.roi);
+                m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
+
 		}
 
 		if (totalSlices!=nSliceBlock*nTotalBlocks) {
-			nProcessedProjections=0;
-			m_Config.ProjectionInfo.roi[3]=roi[3];
-			msg.str("");
-			msg<<"Processing block "<<nProcessedBlocks<<" ["
-				<<m_Config.ProjectionInfo.roi[1]<<", "
-				<<m_Config.ProjectionInfo.roi[3]<<"]";
-			logger(kipl::logging::Logger::LogMessage,msg.str());
 
-			result=Process(m_Config.ProjectionInfo.roi);
+                nProcessedProjections=0;
+                m_Config.ProjectionInfo.roi[3]=roi[3];
+                msg.str("");
+                msg<<"Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[3]<<"]";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                result=Process(m_Config.ProjectionInfo.roi);
+
 		}
 	}
 	catch (ReconException &e) {
@@ -325,7 +295,7 @@ int ReconEngine::Process(size_t *roi)
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 
-	m_BackProjector->GetModule()->SetROI(roi);
+    m_BackProjector->GetModule()->SetROI(roi);
 
 	std::map<std::string, std::string> parameters;
 
@@ -638,6 +608,11 @@ int ReconEngine::Run3DFull()
 		m_Config.ProjectionInfo.roi[3]
 	};
 
+    CBroi[0] = m_Config.ProjectionInfo.roi[0];
+    CBroi[1] = m_Config.ProjectionInfo.roi[1];
+    CBroi[2] = m_Config.ProjectionInfo.roi[2];
+    CBroi[3] = m_Config.ProjectionInfo.roi[3];
+
     size_t voi[6] = {
         m_Config.MatrixInfo.voi[0],
         m_Config.MatrixInfo.voi[1],
@@ -682,7 +657,7 @@ int ReconEngine::Run3DFull()
 	msg.str("");
 	if (!m_Config.MatrixInfo.bAutomaticSerialize) {
 		try {
-            if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Cone) {
+            if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Cone) { // this is now most likely useless
 
                 size_t voi_dims[3] = {
                     voi[1]-voi[0],
@@ -734,40 +709,126 @@ int ReconEngine::Run3DFull()
 			<<" blocks ("<<(totalSlices)
 			<<"/"<<nSliceBlock<<")";
 
+
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	m_bCancel=false;
 	int result=0;
-	try {
+    float radius = static_cast<float>(m_Volume.Size(1))*m_Config.MatrixInfo.fVoxelSize[0]/2;
+
+
+    try {
         for (nProcessedBlocks=0;
              (nProcessedBlocks<nTotalBlocks) && (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Blocks"));
              ++nProcessedBlocks)
         {
-            if (m_Interactor!=nullptr)
-                m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
-			nProcessedProjections=0;
-			m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
+            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+                if (m_Interactor!=nullptr)
+                    m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
 
-			msg.str("");
-            msg<<": Processing block "<<nProcessedBlocks<<" ["
-				<<m_Config.ProjectionInfo.roi[1]<<", "
-				<<m_Config.ProjectionInfo.roi[3]<<"]";
-			logger(kipl::logging::Logger::LogMessage,msg.str());
+                size_t CBCT_roi[4];
+                CBCT_roi[0] = m_Config.ProjectionInfo.roi[0];
+                CBCT_roi[2] = m_Config.ProjectionInfo.roi[2];
 
-			result=Process3D(m_Config.ProjectionInfo.roi);
-			m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
+                nProcessedProjections=0;
+                m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
+
+                // if this is correct than change it to a swith case I would say
+
+                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1])) {
+
+                     CBCT_roi[1] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]-((m_Config.ProjectionInfo.fpPoint[1]-static_cast<float>(m_Config.ProjectionInfo.roi[1]))*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD-radius))/m_Config.ProjectionInfo.fResolution[0]);
+                }
+                else {
+                    CBCT_roi[1] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]+((static_cast<float>(m_Config.ProjectionInfo.roi[1])-m_Config.ProjectionInfo.fpPoint[1])*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD+radius))/m_Config.ProjectionInfo.fResolution[0]);
+                }
+
+                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1]) && m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[3]))
+                     CBCT_roi[3] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]-((m_Config.ProjectionInfo.fpPoint[1]-static_cast<float>(m_Config.ProjectionInfo.roi[3]))*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD+radius))/m_Config.ProjectionInfo.fResolution[0]);
+                else
+                    CBCT_roi[3] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]+((static_cast<float>(m_Config.ProjectionInfo.roi[3])-m_Config.ProjectionInfo.fpPoint[1])*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD-radius))/m_Config.ProjectionInfo.fResolution[0]);
+
+
+                msg.str("");
+                msg<<": Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[3]<<"]";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                CBroi[0] = m_Config.ProjectionInfo.roi[0];
+                CBroi[1] = m_Config.ProjectionInfo.roi[1];
+                CBroi[2] = m_Config.ProjectionInfo.roi[2];
+                CBroi[3] = m_Config.ProjectionInfo.roi[3];
+                result=Process3D(CBCT_roi);
+                m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
+
+            }
+            else {
+                    if (m_Interactor!=nullptr)
+                        m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
+                    nProcessedProjections=0;
+                    m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
+
+                    msg.str("");
+                    msg<<": Processing block "<<nProcessedBlocks<<" ["
+                        <<m_Config.ProjectionInfo.roi[1]<<", "
+                        <<m_Config.ProjectionInfo.roi[3]<<"]";
+                    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                    result=Process3D(m_Config.ProjectionInfo.roi);
+                    m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
+            }
 		}
 
         if ((totalSlices!=nSliceBlock*nTotalBlocks) && !UpdateProgress(1.0f, "Last block"))
         {
-			nProcessedProjections=0;
-			m_Config.ProjectionInfo.roi[3]=roi[3];
-			msg.str("");
-            msg<<": Processing block "<<nProcessedBlocks<<" ["
-				<<m_Config.ProjectionInfo.roi[1]<<", "
-				<<m_Config.ProjectionInfo.roi[3]<<"]";
-			logger(kipl::logging::Logger::LogMessage,msg.str());
+            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
 
-			result=Process3D(m_Config.ProjectionInfo.roi);
+                size_t CBCT_roi[4];
+                CBCT_roi[0] = m_Config.ProjectionInfo.roi[0];
+                CBCT_roi[2] = m_Config.ProjectionInfo.roi[2];
+
+                nProcessedProjections=0;
+                m_Config.ProjectionInfo.roi[3]=roi[3];
+
+                CBroi[0] = m_Config.ProjectionInfo.roi[0];
+                CBroi[1] = m_Config.ProjectionInfo.roi[1];
+                CBroi[2] = m_Config.ProjectionInfo.roi[2];
+                CBroi[3] = m_Config.ProjectionInfo.roi[3];
+
+                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1])) {
+
+                     CBCT_roi[1] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]-((m_Config.ProjectionInfo.fpPoint[1]-static_cast<float>(m_Config.ProjectionInfo.roi[1]))*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD-radius))/m_Config.ProjectionInfo.fResolution[0]);
+                }
+                else {
+                    CBCT_roi[1] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]+((static_cast<float>(m_Config.ProjectionInfo.roi[1])-m_Config.ProjectionInfo.fpPoint[1])*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD+radius))/m_Config.ProjectionInfo.fResolution[0]);
+                }
+
+                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1]) && m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[3]))
+                     CBCT_roi[3] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]-((m_Config.ProjectionInfo.fpPoint[1]-static_cast<float>(m_Config.ProjectionInfo.roi[3]))*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD+radius))/m_Config.ProjectionInfo.fResolution[0]);
+                else
+                    CBCT_roi[3] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]+((static_cast<float>(m_Config.ProjectionInfo.roi[3])-m_Config.ProjectionInfo.fpPoint[1])*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD-radius))/m_Config.ProjectionInfo.fResolution[0]);
+
+
+                msg.str("");
+                msg<<": Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[3]<<"]";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                result=Process3D(CBCT_roi);
+            }
+            else
+            {
+                nProcessedProjections=0;
+                m_Config.ProjectionInfo.roi[3]=roi[3];
+                msg.str("");
+                msg<<": Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[3]<<"]";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                result=Process3D(m_Config.ProjectionInfo.roi);
+            }
 		}
 	}
 	catch (ReconException &e) {
@@ -997,7 +1058,24 @@ int ReconEngine::Process3D(size_t *roi)
 	}
 
     try {
-        m_BackProjector->GetModule()->SetROI(roi);
+        // add switch on beam geometry
+        switch (m_Config.ProjectionInfo.beamgeometry) {
+            case ReconConfig::cProjections::BeamGeometry_Parallel:
+                m_BackProjector->GetModule()->SetROI(roi);
+                break;
+            case ReconConfig::cProjections::BeamGeometry_Cone:
+                m_BackProjector->GetModule()->SetROI(CBroi);
+                break;
+            case ReconConfig::cProjections::BeamGeometry_Helix:
+                logger(logger.LogError,"Helix is not supported by the engine.");
+                throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
+                break;
+            default:
+                logger(logger.LogError,"Unsupported geometry type.");
+                throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
+                break;
+        }
+
     }
     catch (ReconException &e) {
         msg.str("");
@@ -1128,7 +1206,24 @@ int ReconEngine::Process3D(size_t *roi)
     int res=0;
 
     try {
-        BackProject3D(projections,roi,parameters);
+        switch (m_Config.ProjectionInfo.beamgeometry) {
+            case ReconConfig::cProjections::BeamGeometry_Parallel:
+                BackProject3D(projections,roi,parameters);
+                break;
+            case ReconConfig::cProjections::BeamGeometry_Cone:
+                BackProject3D(projections,CBroi,parameters);
+                break;
+            case ReconConfig::cProjections::BeamGeometry_Helix:
+                logger(logger.LogError,"Helix is not supported by the engine.");
+                throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
+                break;
+            default:
+                logger(logger.LogError,"Unsupported geometry type.");
+                throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
+                break;
+        }
+
+
     }
     catch (ReconException &e) {
         msg<<"BackProject3D failed with a recon exception: "<<e.what();
