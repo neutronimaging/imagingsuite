@@ -63,20 +63,8 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
     nSliceBlock=GetIntParameter(parameters,"SliceBlock");
     GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
 
-
-//    volume_size[0] = mConfig.MatrixInfo.voi[1]-mConfig.MatrixInfo.voi[0]; // (x1-x0)
-//    volume_size[1] = mConfig.MatrixInfo.voi[3]-mConfig.MatrixInfo.voi[2]; // (y1-y0)
-//    volume_size[2] = mConfig.MatrixInfo.voi[5]-mConfig.MatrixInfo.voi[4]; // (z1-z0)
-
-
-//    volume.Resize(volume_size);
-//    volume = 0.0f;
-
-//    cbct_volume.Resize(volume_size);
-//    cbct_volume = 0.0f;
-
-//   std::cout << "projections size: " << std::endl;
-//   std::cout << projections.Size(0) << " " << projections.Size(1) << " "<< projections.Size(2) << std::endl; //this is in this case the entire projection roi. that takes a lot of memory
+    size_t NProj = (mConfig.ProjectionInfo.nLastIndex-mConfig.ProjectionInfo.nFirstIndex+1)/mConfig.ProjectionInfo.nProjectionStep;
+    proj_matrices = new float[12*NProj]; // not sure that the configure is not called every slice block.
 
     return 0;
 }
@@ -406,4 +394,8 @@ float FdkReconBase::Max()
     //    maxval = max_element(volume.GetDataPtr(), volume.GetDataPtr()+volume.Size(0)*volume.Size(1)*volume.Size(2));
 
     return maxval;
+}
+
+size_t FdkReconBase::ComputeGeometryMatrices(float *matrices){
+    return 1;
 }

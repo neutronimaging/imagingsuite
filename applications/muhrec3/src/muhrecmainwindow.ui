@@ -1389,12 +1389,12 @@
                      </property>
                      <item>
                       <property name="text">
-                       <string>RotationDirCW</string>
+                       <string>ClockWise</string>
                       </property>
                      </item>
                      <item>
                       <property name="text">
-                       <string>RotationDirCCW</string>
+                       <string>CounterClockWise</string>
                       </property>
                      </item>
                     </widget>

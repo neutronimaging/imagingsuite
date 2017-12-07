@@ -1649,32 +1649,7 @@ void MuhRecMainWindow::UpdateDialog()
 //        ComputeVolumeSizeSpacing();
     }
 
-//    if (ui->checkCBCT->isChecked()) {
-//        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
-//        ComputeVolumeSizeSpacing();
-//        ui->TabGeometry->setTabEnabled(1,true);
-//        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-//        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-//        ui->spinSlicesFirst->hide();
-//        ui->spinSlicesLast->hide();
-//        ui->label_50->hide();
-//        ui->label_51->hide();
-//        ui->label_30->hide();
-//    }
-//    else {
-//        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-//        ui->TabGeometry->setTabEnabled(1,false);
-//        ui->spinSlicesFirst->show();
-//        ui->spinSlicesLast->show();
-//        ui->label_50->show();
-//        ui->label_51->show();
-//        ui->label_30->show();
-//    }
-
-
-//        ui->spinSubVolumeSizeZ0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3] - m_Config.MatrixInfo.voi[5]));
-//        ui->spinSubVolumeSizeZ1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3] - m_Config.MatrixInfo.voi[4]));
-
+    CenterOfRotationChanged(0);
     ProjROIChanged(0);
     SlicesChanged(0);
     UpdateDoseROI();
@@ -1745,38 +1720,19 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
 
+    CenterOfRotationChanged(0);
+
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
-//        m_Config.ProjectionInfo.roi[1] = m_Config.ProjectionInfo.projection_roi[1]; // this is then the setroi
-//        m_Config.ProjectionInfo.roi[3] = m_Config.ProjectionInfo.projection_roi[3];
-//       m_Config.ProjectionInfo.roi[1] = ui->spinSubVolumeSizeZ0->value();
-//       m_Config.ProjectionInfo.roi[3] = ui->spinSubVolumeSizeZ1->value(); // i should not need the entire proj roi
-//       std::cout << m_Config.ProjectionInfo.roi[1] << " " << m_Config.ProjectionInfo.roi[3] << std::endl;
         ui->TabGeometry->setTabEnabled(1,true);
-//        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-//        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-//        ui->spinSlicesFirst->hide();
-//        ui->spinSlicesLast->hide();
-//        ui->label_50->hide();
-//        ui->label_51->hide();
-//        ui->label_30->hide();
         ui->checkUseMatrixROI->hide();
-//        SlicesCBCTChanged(0);
         SlicesChanged(0);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
-//        m_Config.ProjectionInfo.roi[1] = ui->spinSlicesFirst->value();
-//        m_Config.ProjectionInfo.roi[3] = ui->spinSlicesLast->value();
         ui->TabGeometry->setTabEnabled(1,false);
-//        ui->spinSlicesFirst->show();
-//        ui->spinSlicesLast->show();
-//        ui->label_50->show();
-//        ui->label_51->show();
-//        ui->label_30->show();
         ui->checkUseMatrixROI->show();
-
         SlicesChanged(0);
     }
 
@@ -1792,8 +1748,6 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
 
 
-//    std::cout << "voi[4] and voi[5] " << std::endl;
-//    std::cout << m_Config.MatrixInfo.voi[4] << " " << m_Config.MatrixInfo.voi[5] << std::endl;
 
     m_Config.modules = ui->moduleconfigurator->GetModules();
     m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
@@ -1993,23 +1947,12 @@ bool MuhRecMainWindow::reconstructToDisk()
     UpdateConfig();
 
     logger(logger.LogMessage,msg.str());
-//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-//    {
-        largesize_dlg.SetFields(ui->editDestPath->text(),
+
+    largesize_dlg.SetFields(ui->editDestPath->text(),
                                 ui->editSliceMask->text(),
                                 false,
                                 m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
                                 m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-//    }
-//    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-//    {
-//        largesize_dlg.SetFields(ui->editDestPath->text(),
-//                                ui->editSliceMask->text(),
-//                                false,
-//                                m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
-////                                ui->spinSubVolumeSizeZ0->value(), ui->spinSubVolumeSizeZ1->value(),
-//                                m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-//    }
 
     int res=largesize_dlg.exec();
 
@@ -2027,18 +1970,6 @@ bool MuhRecMainWindow::reconstructToDisk()
     ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
     ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
 
-//    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-//    {
-//        ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
-//        ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
-//    }
-//    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-//    {
-//        ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
-//        ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
-//        ui->spinSubVolumeSizeZ0->setValue(largesize_dlg.GetFirst());
-//        ui->spinSubVolumeSizeZ1->setValue(largesize_dlg.GetLast());
-//    }
 
     UpdateConfig();
 
@@ -2073,7 +2004,6 @@ void MuhRecMainWindow::SlicesChanged(int arg1)
                    dims[3]=ui->spinSlicesLast->value());
 
     ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
-
     UpdateMemoryUsage(dims);
 }
 
@@ -2128,26 +2058,25 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         logger(logger.LogMessage,msg.str());
 
         ui->TabGeometry->setTabEnabled(1,true);
-//        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-//        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-//        ui->spinSlicesFirst->hide();
-//        ui->spinSlicesLast->hide();
-//        ui->label_50->hide();
-//        ui->label_51->hide();
-//        ui->label_30->hide();
         ui->checkUseMatrixROI->hide();
 
-//        SlicesCBCTChanged(0);
         SlicesChanged(0);
+
+        // add here the message
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Cone Beam CT");
+        msgBox.setText("Cone Beam CT reconstruction: \n - in the Preprocessing module please remove ProjectionFilterSingle. \n - in Back-projector configuration, please add  FDKBackprojectors and then choose FDKbp (for double precision) or FDKbp_single (faster, for single precision). \nEnjoy!");
+//        msgBox.setDetailedText(QString::fromStdString(msg.str()));
+        msgBox.exec();
 
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->TabGeometry->setTabEnabled(1,false);
-        ui->spinSlicesFirst->show();
-        ui->spinSlicesLast->show();
-        ui->label_50->show();
-        ui->label_51->show();
-        ui->label_30->show();
+//        ui->spinSlicesFirst->show();
+//        ui->spinSlicesLast->show();
+//        ui->label_50->show();
+//        ui->label_51->show();
+//        ui->label_30->show();
         ui->checkUseMatrixROI->show();
 
         SlicesChanged(0);
@@ -2197,11 +2126,11 @@ void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
         else {
             m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
             ui->TabGeometry->setTabEnabled(1,false);
-            ui->spinSlicesFirst->show();
-            ui->spinSlicesLast->show();
-            ui->label_50->show();
-            ui->label_51->show();
-            ui->label_30->show();
+//            ui->spinSlicesFirst->show();
+//            ui->spinSlicesLast->show();
+//            ui->label_50->show();
+//            ui->label_51->show();
+//            ui->label_30->show();
         }
 
 }

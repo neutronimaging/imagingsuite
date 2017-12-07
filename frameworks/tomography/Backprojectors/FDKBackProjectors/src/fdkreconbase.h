@@ -69,7 +69,8 @@ public:
 
 
 protected:
-    virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;
+    virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;   
+    virtual size_t ComputeGeometryMatrices(float *matrices);
 
 
     ForwardProjectorBase *m_fp;
@@ -99,6 +100,7 @@ protected:
     float fCos[1024];
     float fStartU[1024];
     float fLocalStartU[1024];
+    float *proj_matrices;
 
     size_t nProjectionBufferSize;
     size_t nSliceBlock;
