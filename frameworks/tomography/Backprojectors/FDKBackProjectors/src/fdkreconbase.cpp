@@ -122,7 +122,7 @@ void FdkReconBase::SetROI(size_t *roi)
 {
 
     // now here i Get the CBCT roi! here it should be the small one
-    std::cout << "CBCTroi in fdkReconBase: "  << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]<< std::endl;
+//    std::cout << "CBCTroi in fdkReconBase: "  << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]<< std::endl;
     ProjCenter    = mConfig.ProjectionInfo.fCenter;
     SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
@@ -268,13 +268,9 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        float *pImg=img.GetDataPtr();
        float *pProj=nullptr;
 
-       std::cout << "projection size in FDK:" << img.Size(0) << " " << img.Size(1) << std::endl; // it is correct!!!!
 
-
-
-
-        kipl::profile::Timer fdkTimer;
-        fdkTimer.Tic();
+//        kipl::profile::Timer fdkTimer;
+//        fdkTimer.Tic();
         InitializeBuffers(img.Size(0),img.Size(1));
         for (int i=0; (i<nProj) && (!m_Interactor->SetProgress(float(i)/nProj,"FDK back-projection")); i++) {
 
@@ -291,8 +287,8 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        }
 
         FinalizeBuffers();
-         fdkTimer.Toc();
-         std::cout << "fdkTimer: " << fdkTimer << std::endl;
+//         fdkTimer.Toc();
+//         std::cout << "fdkTimer: " << fdkTimer << std::endl;
 
          // go into the parallel case reference system
          kipl::base::TRotate<float> rotate;

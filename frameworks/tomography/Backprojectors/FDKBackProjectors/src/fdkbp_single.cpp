@@ -293,7 +293,7 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
     float *proj_matrix, size_t nProj)
 {
-        logger(logger.LogMessage,"Started FDK back-projector");
+        logger(logger.LogDebug,"Started FDK back-projector");
 
         long int i, j, k;
 
@@ -312,11 +312,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
         float origin[3];
 
-        // also the geometry must be updated to the the real projection roi, forse posso ricomputarlo da qui come ho fatto in fdkReconEngine
-//        std::cout << "ROI in reconstruct: " << mConfig.ProjectionInfo.roi[0] << " " << mConfig.ProjectionInfo.roi[1] << " " <<
-//                     mConfig.ProjectionInfo.roi[2] << " " << mConfig.ProjectionInfo.roi[3] << std::endl; // here the roi is the little. it is correct? oder nicht?
-
-        float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]); // this must be updated
+        float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
         float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
         origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2; // voi[0] and voi[2] and voi[4] are 0
@@ -329,18 +325,40 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         CBCT_roi[0] = mConfig.ProjectionInfo.roi[0];
         CBCT_roi[2] = mConfig.ProjectionInfo.roi[2];
 
-        if (mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[1])) {
-
-             CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
+        if (mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[1]) && mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[3])) {
+            CBCT_roi[3] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[3]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0]);
+            float value = mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+            if(value<=0)
+                CBCT_roi[1] = 0;
+            else
+                CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
         }
-        else {
-            CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[1])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0]);
+
+        if (mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[1]) && mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[3]))
+        {
+            float value = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[1])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0];
+             CBCT_roi[1] = static_cast<size_t>(value);
+             float value2 = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[3])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+             if (value2>=mConfig.ProjectionInfo.projection_roi[3])
+                 CBCT_roi[3] = mConfig.ProjectionInfo.projection_roi[3];
+             else
+                 CBCT_roi[3] = static_cast<float>(value2);
         }
 
-        if (mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[1]) && mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[3]))
-             CBCT_roi[3] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[3]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0]);
-        else
-            CBCT_roi[3] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[3])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
+       if (mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[1]) && mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[3]))
+       {
+           float value = mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+           if(value<=0)
+               CBCT_roi[1] = 0;
+           else
+               CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
+
+           float value2 = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[3])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+           if (value2>=mConfig.ProjectionInfo.projection_roi[3])
+               CBCT_roi[3] = mConfig.ProjectionInfo.projection_roi[3];
+           else
+               CBCT_roi[3] = static_cast<float>(value2);
+       }
 
 
 
@@ -684,7 +702,7 @@ float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r
 
 void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 {
-    logger(logger.LogMessage,"Started ramp_filter");
+    logger(logger.LogDebug,"Started ramp_filter");
     unsigned int i, r, c;
     unsigned int N, Npad;
 
@@ -897,7 +915,7 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
 {
     std::ostringstream msg;
-    logger(logger.LogMessage,"Started tuned ramp_filter");
+    logger(logger.LogDebug,"Started tuned ramp_filter");
     unsigned int i, r, c;
     unsigned int N, Npad;
 
@@ -911,7 +929,7 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
 
     msg.str("");
     msg<<"Pad width="<<padwidth;
-    logger(logger.LogMessage,msg.str());
+    logger(logger.LogDebug,msg.str());
 
     size_t pad_dims[2] = {padwidth, height};
     kipl::base::TImage< float,2 > padImg(pad_dims);
