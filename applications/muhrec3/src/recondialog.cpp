@@ -196,6 +196,7 @@ int ReconDialog::process()
     finish=true;
     m_Interactor->Done();
     this->accept();
+    //emit accepted();
     return 0;
 }
 
