@@ -1,9 +1,4 @@
-/*
- * MuhrecInteractor.h
- *
- *  Created on: Dec 6, 2011
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef MUHRECINTERACTOR_H_
 #define MUHRECINTERACTOR_H_
@@ -33,9 +28,6 @@ public:
 
 	virtual float CurrentProgress();
 	virtual std::string CurrentMessage();
-
-protected:
-    QMutex m_Mutex;
 };
 
 #endif /* MUHRECINTERACTOR_H_ */

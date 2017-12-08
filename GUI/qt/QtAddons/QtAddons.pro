@@ -37,8 +37,7 @@ win32 {
 
 DEFINES += QTADDONS_LIBRARY
 
-SOURCES += qtlogviewer.cpp \
-    plotter.cpp \
+SOURCES += plotter.cpp \
     imagepainter.cpp \
     imageviewerwidget.cpp \
     qglyphs.cpp \
@@ -46,12 +45,12 @@ SOURCES += qtlogviewer.cpp \
     plotwidget.cpp \
     reportgeneratorbase.cpp \
     imageviewerinfodialog.cpp \
-    qmarker.cpp
+    qmarker.cpp \
+    qtlogviewer.cpp
 
 
 
-HEADERS += qtlogviewer.h\
-        QtAddons_global.h \
+HEADERS += QtAddons_global.h \
     plotter.h \
     imagepainter.h \
     imageviewerwidget.h \
@@ -60,7 +59,8 @@ HEADERS += qtlogviewer.h\
     plotwidget.h \
     reportgeneratorbase.h \
     imageviewerinfodialog.h \
-    qmarker.h
+    qmarker.h \
+    qtlogviewer.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -88,4 +88,5 @@ INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
 FORMS += \
-    imageviewerinfodialog.ui
+    imageviewerinfodialog.ui \
+    qtlogviewer.ui
