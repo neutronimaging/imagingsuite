@@ -1,14 +1,13 @@
-#!/bin/bash
-./build_core_kipl.sh
-./build_GUI.sh # needs to be here due to GUI components in modules
-./build_core_modules.sh
-./build_core_algorithms.sh
+call build_core_kipl.bat
+call build_GUI.bat # needs to be here due to GUI components in modules
+call build_core_modules.bat
+call build_core_algorithms.bat
 
-./build_frameworks_tomography.sh
-./build_frameworks_imageprocessing.sh
+call build_frameworks_tomography.bat
+rem call build_frameworks_imageprocessing.bat
 
-./build_applications_NIQA.sh
-./build_applications_imageviewer.sh
-./build_applications_kipltool.sh
-./build_applications_muhrec.sh
+rem call build_applications_NIQA.bat
+rem call build_applications_imageviewer.bat
+rem call build_applications_kipltool.bat
+call build_applications_muhrec.bat
 

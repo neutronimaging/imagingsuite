@@ -14,7 +14,7 @@ cd %DEST%\build-kipl
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
 echo "Build tests"
-pushd .
+
 cd %REPOSPATH%\core\kipl\UnitTests\
 
 FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%

@@ -78,7 +78,7 @@ $QTBINPATH\qmake -makefile -r $SPECSTR -o Makefile
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-mkdir -p %DEST%\build-InspectorModulesGUI
+mkdir %DEST%\build-InspectorModulesGUI
 cd %DEST%\build-InspectorModulesGUI
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\tomography\Preprocessing\InspectorModulesGUI\InspectorModulesGUI.pro -o Makefile
@@ -86,7 +86,7 @@ cd %DEST%\build-InspectorModulesGUI
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-mkdir -p %DEST%\build-StdPreprocModules
+mkdir %DEST%\build-StdPreprocModules
 cd %DEST%\build-StdPreprocModules
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\tomography\Preprocessing\StdPreprocModules\qt\StdPreprocModules\StdPreprocModules.pro -o Makefile
@@ -94,7 +94,7 @@ cd %DEST%\build-StdPreprocModules
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-mkdir -p %DEST%\build-StdPreprocModulesGUI
+mkdir %DEST%\build-StdPreprocModulesGUI
 cd %DEST%\build-StdPreprocModulesGUI
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\tomography\Preprocessing\StdPreprocModulesGUI\qt\StdPreprocModulesGUI\StdPreprocModulesGUI.pro -o Makefile
@@ -102,7 +102,7 @@ cd %DEST%\build-StdPreprocModulesGUI
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-mkdir -p %DEST%\build-genericpreproc
+mkdir %DEST%\build-genericpreproc
 cd %DEST%\build-genericpreproc
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\tomography\Preprocessing\GenericPreProc\GenericPreProc.pro -o Makefile
@@ -111,7 +111,7 @@ cd %DEST%\build-genericpreproc
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
 echo "Build tests"
-pushd .
+
 cd %REPOSPATH%\frameworks\tomography\UnitTests
 
 FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%

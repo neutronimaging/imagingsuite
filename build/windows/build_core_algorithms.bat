@@ -5,7 +5,7 @@ set REPOSPATH=%WORKSPACE%\imagingsuite
 set DEST=%WORKSPACE%\builds
 set SPECSTR=-spec win32-msvc2015
 
-mkdir -p %DEST%\build-imagingalgorithms
+mkdir %DEST%\build-imagingalgorithms
 cd %DEST%\build-imagingalgorithms
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\core\algorithms\ImagingAlgorithms\qt\ImagingAlgorithms\ImagingAlgorithms.pro -o Makefile
@@ -13,7 +13,7 @@ cd %DEST%\build-imagingalgorithms
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-mkdir -p %DEST%/build-imagingqaalgorithms
+mkdir %DEST%/build-imagingqaalgorithms
 cd %DEST%/build-imagingqaalgorithms
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\core\algorithms\ImagingQAAlgorithms\ImagingQAAlgorithms.pro -o Makefile

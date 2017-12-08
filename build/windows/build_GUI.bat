@@ -21,9 +21,15 @@ cd %DEST%\build-QtModuleConfigure
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
+mkdir %DEST%/build-readerGUI
+cd %DEST%/build-readerGUI
+
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ../../imagingsuite/core/modules/ReaderGUI/ReaderGUI.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
 echo "Build tests"
-pushd .
 cd %REPOSPATH%/GUI/qt/UnitTests
 
 FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%

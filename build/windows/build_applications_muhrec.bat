@@ -15,7 +15,7 @@ cd %DEST%\build-muhrec
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
 echo "Build tests"
-pushd .
+
 cd %REPOSPATH%\applications\muhrec3\UnitTests
 
 FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
