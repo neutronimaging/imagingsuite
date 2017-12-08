@@ -37,6 +37,10 @@ protected:
     bool m_bRerunBackproj;
 private slots:
     void on_buttonCancel_clicked();
+    void changedProgress(float progress, float overallProgress, QString msg);
+
+signals:
+    void updateProgress(float progress, float overallProgress, QString msg);
 };
 
 #endif // RECONDIALOG_H

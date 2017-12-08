@@ -21,6 +21,7 @@ mkdir -p $DEST/build-QtModuleConfigure
 cd $DEST/build-QtModuleConfigure
 
 $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/GUI/qt/QtModuleConfigure/QtModuleConfigure.pro
+
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile

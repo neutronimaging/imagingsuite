@@ -36,8 +36,8 @@ windows {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../../external/include
-    LIBPATH += $$PWD/../../../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../../external/include
+    LIBPATH += $$PWD/../../../../../external/lib64
     LIBS += -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
 }

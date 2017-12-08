@@ -109,10 +109,10 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../../../../external/src/linalg
-    INCLUDEPATH += ../../../../../../../external/include
-    INCLUDEPATH += ../../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../../external/lib64
+    INCLUDEPATH += ../../../../../../external/src/linalg
+    INCLUDEPATH += ../../../../../../external/include
+    INCLUDEPATH += ../../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS +=  -llibtiff -lcfitsio -llibxml2_dll
     QMAKE_CXXFLAGS += /openmp /O2
