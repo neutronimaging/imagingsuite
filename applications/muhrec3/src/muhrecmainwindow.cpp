@@ -2065,7 +2065,7 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         // add here the message
         QMessageBox msgBox;
         msgBox.setWindowTitle("Cone Beam CT");
-        msgBox.setText("Cone Beam CT reconstruction: \n - in the Preprocessing module please remove ProjectionFilterSingle. \n - in Back-projector configuration, please add  FDKBackprojectors and then choose FDKbp (for double precision) or FDKbp_single (faster, for single precision). \nEnjoy!");
+        msgBox.setText("Cone Beam CT reconstruction: \n - Tune the CB geometry in the Advanced geometry tab \n - in the Preprocessing module remove ProjectionFilterSingle. \n - in Back-projector configuration, add  FDKBackprojectors and then choose FDKbp (for double precision) or FDKbp_single (faster, for single precision). \n \n Enjoy!");
 //        msgBox.setDetailedText(QString::fromStdString(msg.str()));
         msgBox.exec();
 

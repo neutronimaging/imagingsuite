@@ -6,8 +6,8 @@
 
 namespace kipl { namespace io{
 
-int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
-//int GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
+//int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
+int GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
 
     NeXus::File file(fname);
     std::cout << fname << std::endl;
@@ -85,8 +85,8 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 
 }
 
-int KIPLSHARED_EXPORT GetNexusDims(const char *fname, size_t *dims){
-//int GetNexusDims(const char *fname, size_t *dims){
+//int KIPLSHARED_EXPORT GetNexusDims(const char *fname, size_t *dims){
+int GetNexusDims(const char *fname, size_t *dims){
 
     NeXus::File file(fname);
 
