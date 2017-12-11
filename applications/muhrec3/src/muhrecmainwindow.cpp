@@ -1058,7 +1058,6 @@ void MuhRecMainWindow::MenuFileOpen()
         msgbox.setDetailedText(QString::fromStdString(msg.str()));
         msgbox.exec();
     }
-
     UpdateDialog();
 
 }
@@ -1594,7 +1593,6 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
     ui->spinProjROIx1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]));
     ui->spinProjROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
-
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
     ui->spinSlicesFirst->blockSignals(false);
@@ -1624,7 +1622,7 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
-    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType-2);
+    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType-3);
     // -2 to skip matlab types
 
     ui->editProjectName->setText(QString::fromStdString(m_Config.UserInformation.sProjectNumber));
@@ -1652,6 +1650,9 @@ void MuhRecMainWindow::UpdateDialog()
     if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
         ui->checkCBCT->setChecked(true);
 //        ComputeVolumeSizeSpacing();
+    }
+    else{
+        ui->checkCBCT->setChecked(false);
     }
 
 //    if (ui->checkCBCT->isChecked()) {
@@ -1804,7 +1805,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
 
-    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+2);
+    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+3);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
 
     // Validity test of the slice file mask
