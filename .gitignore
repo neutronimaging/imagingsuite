@@ -4,3 +4,7 @@ build*
 *.stash
 *.o
 *~
+*.autosave
+
+
+.DS_Store

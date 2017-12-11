@@ -309,8 +309,8 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 	    	if (sName=="dcfilemask")  ProjectionInfo.sDCFileMask=sValue;
 	    	if (sName=="dcfirstindex")  ProjectionInfo.nDCFirstIndex=atoi(sValue.c_str());
 	    	if (sName=="dccount")  ProjectionInfo.nDCCount=atoi(sValue.c_str());
-	        if (sName=="roi")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
+            if (sName=="roi")
+                kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
             if (sName=="projroi")
                 kipl::strings::String2Array(sValue,ProjectionInfo.projection_roi,4);
 

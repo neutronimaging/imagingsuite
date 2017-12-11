@@ -1,8 +1,12 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-REPOSPATH="/home/`whoami`/git"
 
-DEST="$REPOSPATH/muhrec3"
+#REPOSPATH="/home/`whoami`/git"
+#DEST="$REPOSPATH/muhrec3"
+
+REPOSPATH=$WORKSPACE
+DEST="$WORKSPACE/deploy/muhrec3"
+
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
 mkdir --parent $DEST/Frameworks
@@ -58,7 +62,6 @@ cd $DEST/bin
 cd ..
 `$CPCMD $REPOSPATH/imagingsuite/applications/muhrec3/scripts/muhrec3 .`
 chmod +x muhrec3
-
 
 cp $REPOSPATH/imagingsuite/applications/muhrec3/src/resources/*.xml resources
 popd
