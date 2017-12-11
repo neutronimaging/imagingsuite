@@ -234,14 +234,18 @@ void MuhRecMainWindow::BrowseProjectionPath()
             logger(logger.LogMessage,msg.str());
 
             QSignalBlocker spinFirst(ui->spinFirstProjection);
+//            ui->spinFirstProjection->setMaximum(l);
+//            ui->spinFirstProjection->setMinimum(f);
             ui->spinFirstProjection->setValue(f);
 
             QSignalBlocker spinLast(ui->spinLastProjection);
+//            ui->spinLastProjection->setMaximum(l);
+//            ui->spinLastProjection->setMinimum(f);
             ui->spinLastProjection->setValue(l);
-
 
             if (oldmask!=newmask)
             {
+                ProjectionIndexChanged(0);
                 PreviewProjection(-1);
                 ui->projectionViewer->clear_rectangle(-1);
                 ui->projectionViewer->clear_plot(-1);
@@ -264,6 +268,7 @@ void MuhRecMainWindow::BrowseProjectionPath()
 
              if (oldmask!=ui->editProjectionMask->text())
              {
+                 ProjectionIndexChanged(0);
                  PreviewProjection(-1);
                  ui->projectionViewer->clear_rectangle(-1);
                  ui->projectionViewer->clear_plot(-1);
@@ -337,17 +342,20 @@ void MuhRecMainWindow::TakeProjectionPath()
     ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
 }
 
-void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
+void MuhRecMainWindow::ProjectionIndexChanged(int x)
 {
+    (void)x;
+
     int first=ui->spinFirstProjection->value();
     int last=ui->spinLastProjection->value();
 
-    if (first<last) {
-        ui->sliderProjections->setMaximum(last);
-        ui->sliderProjections->setMinimum(first);
-
-        PreviewProjection();
+    if (last<first) {
+        std::swap(first,last);
     }
+
+    ui->sliderProjections->setMaximum(last);
+    ui->sliderProjections->setMinimum(first);
+    PreviewProjection();
 }
 
 void MuhRecMainWindow::PreviewProjection(int x)
@@ -524,7 +532,6 @@ void MuhRecMainWindow::PreviewProjection()
 void MuhRecMainWindow::DisplaySlice(int x)
 {
     QSignalBlocker blockSlider(ui->sliderSlices);
-
     if (m_pEngine==nullptr)
         return;
 
@@ -533,7 +540,7 @@ void MuhRecMainWindow::DisplaySlice(int x)
 
     if (x<0) {
         nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
-        ui->sliderProjections->setValue(nSelectedSlice);
+        ui->sliderSlices->setValue(nSelectedSlice);
     }
 
     try {
@@ -543,13 +550,12 @@ void MuhRecMainWindow::DisplaySlice(int x)
                                    static_cast<float>(ui->dspinGrayHigh->value()));
         msg.str("");
         if (ui->checkCBCT->isChecked()){
-            msg<<x<<" ("<<x+ui->spinSubVolumeSizeZ0->value()<<")";
+            msg<<"("<<x+ui->spinSubVolumeSizeZ0->value()<<")";
         }
         else {
-             msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
+             msg<<"("<<x+m_Config.ProjectionInfo.roi[1]<<")";
         }
         ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
-
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -563,6 +569,7 @@ void MuhRecMainWindow::DisplaySlice()
 {
     DisplaySlice(-1);
 }
+
 void MuhRecMainWindow::GetSkipList()
 {
     UpdateConfig();
@@ -2263,3 +2270,4 @@ void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
     }
 
 }
+
