@@ -1058,7 +1058,6 @@ void MuhRecMainWindow::MenuFileOpen()
         msgbox.setDetailedText(QString::fromStdString(msg.str()));
         msgbox.exec();
     }
-
     UpdateDialog();
 
 }
@@ -1594,7 +1593,6 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
     ui->spinProjROIx1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]));
     ui->spinProjROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
-
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
     ui->spinSlicesFirst->blockSignals(false);
@@ -1652,6 +1650,9 @@ void MuhRecMainWindow::UpdateDialog()
     if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
         ui->checkCBCT->setChecked(true);
 //        ComputeVolumeSizeSpacing();
+    }
+    else{
+        ui->checkCBCT->setChecked(false);
     }
 
 //    if (ui->checkCBCT->isChecked()) {
