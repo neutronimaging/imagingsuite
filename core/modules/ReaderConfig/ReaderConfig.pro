@@ -79,17 +79,17 @@ win32 {
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
-    exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
+    exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
         message("-lNeXus exists")
         DEFINES += HAVE_NEXUS
-        INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
-        QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
+        INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
+        QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
         LIBS +=  -lNeXus -lNeXusCPP
 
-        SOURCES += ../src/io/io_nexus.cpp
-        HEADERS += ../include/io/io_nexus.h
+#        SOURCES += ../src/io/io_nexus.cpp
+#        HEADERS += ../include/io/io_nexus.h
     }
 }
 

@@ -119,12 +119,12 @@ win32 {
 }
 
 win32 {
-exists($$PWD/../../../../../../../external/lib64/nexus/*NeXus*) {
+exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 
     message("-lNeXus exists")
     DEFINES *= HAVE_NEXUS
-    INCLUDEPATH += $$PWD/../../../../../../../external/include/nexus $$PWD/../../../../../../../external/include/hdf5
-    QMAKE_LIBDIR += $$PWD/../../../../../../../external/lib64/nexus $$PWD/../../../../../../../external/lib64/hdf5
+    INCLUDEPATH += $$PWD/../../../../../../external/include/nexus $$PWD/../../../../../../external/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64/nexus $$PWD/../../../../../../external/lib64/hdf5
 
     LIBS += -lNeXus -lNeXusCPP
 }
