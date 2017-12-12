@@ -82,19 +82,19 @@ win32 {
 
     LIBS += -llibxml2_dll
 
-    exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
+#    exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
-        message("-lNeXus exists")
-        DEFINES += HAVE_NEXUS
-        INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
-        QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
+#        message("-lNeXus exists")
+#        DEFINES += HAVE_NEXUS
+#        INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
+#        QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
-        LIBS +=  -lNeXus -lNeXusCPP
+#        LIBS +=  -lNeXus -lNeXusCPP
 
-        SOURCES += ../../kipl/kipl/src/io/io_nexus.cpp
-        HEADERS += ../../kipl/kipl/include/io/io_nexus.h
+#        SOURCES += ../../kipl/kipl/src/io/io_nexus.cpp
+#        HEADERS += ../../kipl/kipl/include/io/io_nexus.h
 
-    }
+#    }
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
