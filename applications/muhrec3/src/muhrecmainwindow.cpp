@@ -2155,6 +2155,7 @@ void MuhRecMainWindow::on_buttonGetPP_clicked()
 
 void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 {
+    (void)arg1;
     if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
         m_Config.ProjectionInfo.fResolution[0]=m_Config.ProjectionInfo.fResolution[1]= ui->dspinResolution->value();
         ComputeVoxelSpacing();
@@ -2164,6 +2165,7 @@ void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
         logger(logger.LogMessage,msg.str());
     }
 }
+
 
 
 
@@ -2180,7 +2182,6 @@ void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 //void MuhRecMainWindow::SlicesCBCTChanged(int x)
 //{
 //    QRect rect;
-
 //    rect.setCoords(ui->spinProjROIx0->value(),
 //                   ui->spinSubVolumeSizeZ0->value(),
 //                   ui->spinProjROIx1->value(),

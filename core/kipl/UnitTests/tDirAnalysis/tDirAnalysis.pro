@@ -18,8 +18,8 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 TEMPLATE = app
 
 win32 {
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    LIBPATH += ../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $PWD/../../../external/include/cfitsio
+    LIBPATH += $PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 

@@ -171,8 +171,8 @@ void TkiplbasetestTest::testBivariateHistogramInitialize()
     QCOMPARE(lim.second,3.0f);
 
     size_t const *dims=bihi.Dims();
-    QCOMPARE(dims[0],10UL);
-    QCOMPARE(dims[1],20UL);
+    QCOMPARE(dims[0],size_t(10));
+    QCOMPARE(dims[1],size_t(20));
 
     bihi.Initialize(1.0f,0.0f,10,3.0f,2.0f,20);
 
@@ -185,8 +185,8 @@ void TkiplbasetestTest::testBivariateHistogramInitialize()
     QCOMPARE(lim.second,3.0f);
 
     size_t const *dims2=bihi.Dims();
-    QCOMPARE(dims2[0],10UL);
-    QCOMPARE(dims2[1],20UL);
+    QCOMPARE(dims2[0],size_t(10));
+    QCOMPARE(dims2[1],size_t(20));
 }
 
 void TkiplbasetestTest::testBivariateHistogram()

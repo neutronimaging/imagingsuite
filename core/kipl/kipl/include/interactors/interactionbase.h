@@ -6,10 +6,9 @@
 #include "../kipl_global.h"
 
 #include <string>
+#include <mutex>
 
 #include "../logging/logger.h"
-
-
 
 namespace kipl {
 /// \brief Provides interaction functionality between a user interface and processing components
@@ -80,6 +79,7 @@ protected:
     float m_fProgress;          ///< Progress counter a value in the interval 0.0-1.0.
     float m_fOverallProgress;   ///< Progress counter a value in the interval 0.0-1.0.
     std::string m_sMessage;     ///< The progress message currently shown.
+    std::mutex m_Mutex;
 };
 }}
 

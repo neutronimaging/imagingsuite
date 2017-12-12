@@ -1,9 +1,6 @@
 #CPCMD="ln -s "
 CPCMD="cp "
 
-#REPOSPATH="/home/`whoami`/git"
-#DEST="$REPOSPATH/muhrec3"
-
 REPOSPATH=$WORKSPACE
 DEST="$WORKSPACE/deploy/muhrec3"
 

@@ -76,8 +76,7 @@ void Logger::SetLogLevel(LogLevel level)
 }
 
 void Logger::operator()(LogLevel severity, std::string message)
-{
-	
+{	
 	std::ostringstream ostr;
 	ostr<<sLogOrigin<<": "<<message;
 	
