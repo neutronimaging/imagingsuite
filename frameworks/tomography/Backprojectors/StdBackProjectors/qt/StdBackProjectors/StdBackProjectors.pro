@@ -95,11 +95,11 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../li
 else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
 else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src

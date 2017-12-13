@@ -54,13 +54,13 @@ unix {
             message("-lNeXus exists")
             DEFINES += HAVE_NEXUS
 
-            LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+            LIBS += -L$$PWD/../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
 
-            INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
-            DEPENDPATH += $$PWD/../../../../../../../usr/local/include
+            INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
+            DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
 
-            SOURCES += ../src/io/io_nexus.cpp
-            HEADERS += ../include/io/io_nexus.h
+            SOURCES += ../../kipl/kipl/src/io/io_nexus.cpp
+            HEADERS += ../../kipl/kipl/include/io/io_nexus.h
         }
         else {
             message("-lNeXus does not exists $$HEADERS")
