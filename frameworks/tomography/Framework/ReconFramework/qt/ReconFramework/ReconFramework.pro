@@ -126,7 +126,10 @@ exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
     INCLUDEPATH += $$PWD/../../../../../../external/include/nexus $$PWD/../../../../../../external/include/hdf5
     QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64/nexus $$PWD/../../../../../../external/lib64/hdf5
 
-    LIBS += -lNeXus -lNeXusCPP
+    LIBS += -lNeXus -lNeXusCPP -lhdf5 -lhdf5_cpp
+
+#    SOURCES += $$PWD/../../../../../../core/kipl/kipl/src/io/io_nexus.cpp
+#    HEADERS += $$PWD/../../../../../../core/kipl/kipl/include/io/io_nexus.h
 }
 }
 
@@ -138,7 +141,6 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debu
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
+
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
-
-
