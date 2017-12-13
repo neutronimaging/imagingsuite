@@ -86,7 +86,7 @@ win32 {
         INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
         QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
-        LIBS +=  -lNeXus -lNeXusCPP -lhdf5 -lhdf5_cpp
+        LIBS +=  -lNeXus -lNeXusCPP
 
 #        SOURCES += $$PWD/../../kipl/kipl/src/io/io_nexus.cpp
 #        HEADERS += $$PWD/../../kipl/kipl/include/io/io_nexus.h
