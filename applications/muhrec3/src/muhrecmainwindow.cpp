@@ -240,11 +240,8 @@ void MuhRecMainWindow::BrowseProjectionPath()
             size_t Nofimgs[2];
             ProjectionReader reader;
             reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
-
             f=static_cast<int>(Nofimgs[0]);
             l=static_cast<int>(Nofimgs[1]);
-
-
             ui->dspinAngleStart->setValue(angles[0]);
             ui->dspinAngleStop->setValue(angles[1]);
         }
