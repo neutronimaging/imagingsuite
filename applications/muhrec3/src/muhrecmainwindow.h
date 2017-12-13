@@ -38,6 +38,9 @@ private:
 
 
     // Collection of call-backs
+    void PreviewProjection(int x);
+    void ProjectionIndexChanged(int x);
+
 protected slots:
     void BrowseProjectionPath();
     void BrowseDestinationPath();
@@ -62,9 +65,9 @@ protected slots:
     void MatrixROIChanged(int x);
     void UseMatrixROI(int x);
     void SaveMatrix();
-    void ProjectionIndexChanged(int x);
+
     void PreviewProjection();
-    void PreviewProjection(int x);
+
     void DisplaySlice();
     void DisplaySlice(int x);
 
@@ -135,6 +138,18 @@ private slots:
     void on_spinSubVolumeSizeZ1_valueChanged(int arg1);
 
     void on_actionRegister_for_news_letter_triggered();
+
+    void on_sliderProjections_sliderMoved(int position);
+
+    void on_spinFirstProjection_valueChanged(int arg1);
+
+    void on_spinLastProjection_valueChanged(int arg1);
+
+    void on_comboFlipProjection_currentIndexChanged(int index);
+
+    void on_comboRotateProjection_currentIndexChanged(int index);
+
+    void on_buttonPreview_clicked();
 
 private:
     // Data members
