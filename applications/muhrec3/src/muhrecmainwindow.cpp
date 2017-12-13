@@ -343,6 +343,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
     msg<<"New projection indices first="<<first<<", last="<<last;
     logger(logger.LogMessage,msg.str());
+    qDebug() << QString::fromStdString(msg.str());
 
     if (last<first) {
         logger(logger.LogWarning,"Last<First index.");
@@ -351,6 +352,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
     }
     ui->sliderProjections->setMaximum(last);
     ui->sliderProjections->setMinimum(first);
+    qDebug() << "Limits set";
     PreviewProjection();
 }
 
@@ -375,7 +377,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
      << ui->sliderProjections->value();
 
     logger(logger.LogVerbose,msg.str());
-  //  qDebug()<<QString::fromStdString(msg.str());
+    qDebug()<<QString::fromStdString(msg.str());
 
     try {
         UpdateConfig();
@@ -384,9 +386,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string name, ext;
         size_t found;
         int position=ui->sliderProjections->value();
-        // qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
+        qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
+        qDebug()<<"BuildFileList ok";
         if (fileList.size()<position) // Workaround for bad BuildFileList implementation
         {
             logger(logger.LogWarning, "Projection slider out of list range.");
@@ -395,7 +398,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         auto it=fileList.begin();
         if (position<=ui->sliderProjections->maximum())
-            std::advance(it,position-1);
+            std::advance(it,position-(position==0 ? 0 :1));
         else {
             logger(logger.LogError,"Slider out of range");
             return;
@@ -405,10 +408,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         if (QFile::exists(QString::fromStdString(name))) {
             int sliderval=ui->sliderProjections->value();
-            m_PreviewImage=reader.Read(name,
-                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                            static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+//            m_PreviewImage=reader.Read(name,
+//                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+//                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+//                            static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
 
             if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
 
@@ -430,7 +433,11 @@ void MuhRecMainWindow::PreviewProjection(int x)
                     }
                     else
                     {
-                        m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
+//                        m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
+//                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+//                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+//                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
+                        m_PreviewImage=reader.Read(name,
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
                                         static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
