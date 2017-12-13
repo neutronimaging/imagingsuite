@@ -366,7 +366,7 @@ exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
     INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
 
-    LIBS +=  -lNeXus -lNeXusCPP -lhdf5 -lhdf5_cpp
+    LIBS +=  -lNeXus -lNeXusCPP
 
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h

@@ -405,10 +405,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         if (QFile::exists(QString::fromStdString(name))) {
             int sliderval=ui->sliderProjections->value();
-            m_PreviewImage=reader.Read(name,
-                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                            static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
+//            m_PreviewImage=reader.Read(name,
+//                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+//                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+//                            static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
 
             if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
 
