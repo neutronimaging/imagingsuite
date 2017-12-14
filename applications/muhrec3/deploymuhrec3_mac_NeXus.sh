@@ -39,6 +39,9 @@ fi
 `$CPCMD $REPOSPATH/lib/libInspectorModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libInspectorModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libFDKBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
+
 
 # if [ ! -d "./Resources" ]; then
 #  mkdir ./Resources
@@ -56,12 +59,13 @@ for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.dylib"
 done
+
 cd ..
 
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
-#cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources #this must be mistaken 
+#cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources #this must be mistaken
 cp $REPOSPATH/imagingsuite/applications/muhrec3/Resources/* ./Resources
 
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
@@ -110,7 +114,13 @@ install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/lib
 install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib muhrec3
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib muhrec3
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
+
+
 cd ../Frameworks
+
+#nexus_related
+install_name_tool -change /usr/local/Cellar/hdf5/1.8.16_1/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libhdf5_cpp.11.dylib
+install_name_tool -change /usr/local/Cellar/hdf5/1.8.16_1/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libhdf5_hl.10.dylib
 
 # ModuleConfig
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libModuleConfig.1.0.0.dylib
@@ -154,8 +164,6 @@ install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libFDKBackProjectors.1.0.0.dylib
 #install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libFDKBackProjectors.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libFDKBackProjectors.1.0.0.dylib
-
-#NeXus
 
 
 # Inspectors
