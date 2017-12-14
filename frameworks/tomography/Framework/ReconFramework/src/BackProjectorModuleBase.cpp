@@ -87,14 +87,8 @@ kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 
 	kipl::base::TImage<float,2> slice(dims);
 
-//    std::cout << "slice dimensions: " << std::endl; // sono giuste
-//    std::cout << dims[0] << " " << dims[1] << std::endl;
-
     size_t sxy=volume.Size(0)*volume.Size(1);
 	size_t sx=volume.Size(0);
-
-//    std::cout << "Volume size in BackProjectorModuleBase::GetSlice(size_t idx)" << std::endl;
-//    std::cout<< volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
 
     float *pVolume=volume.GetDataPtr()+idx;
 	float *pSlice=slice.GetDataPtr();

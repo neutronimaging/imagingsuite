@@ -32,7 +32,7 @@ unix {
     }
 }
 
-windows {
+win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
@@ -91,3 +91,9 @@ else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../../lib/debug/
 
 INCLUDEPATH += $$PWD/../../../../kipl/kipl/include/
 DEPENDPATH += $$PWD/../../../../kipl/kipl/include/
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../external/lib64/ -llibxml2_dll
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../external/lib64/ -llibxml2_dlld
+
+#INCLUDEPATH += $$PWD/../../../../../external/lib64
+#DEPENDPATH += $$PWD/../../../../../external/lib64
