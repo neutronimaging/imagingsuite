@@ -13,14 +13,14 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 SOURCES += tst_qtaddons.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
+    INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -41,13 +41,13 @@ win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llib
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:unix: LIBS +=  -lm -lz   -ltiff  -lcfitsio
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lQtAddons
 
-INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../core/kipl/kipl/src
+INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../core/kipl/kipl/src
 
-INCLUDEPATH += $$PWD/../QtAddons
+INCLUDEPATH += $$PWD/../../QtAddons
 DEPENDPATH += $$PWD/../../QtAddons

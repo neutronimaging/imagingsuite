@@ -1,0 +1,12 @@
+#ifndef PCAMODULES_GLOBAL_H
+#define PCAMODULES_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(PCAMODULES_LIBRARY)
+#  define PCAMODULESSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define PCAMODULESSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // PCAMODULES_GLOBAL_H

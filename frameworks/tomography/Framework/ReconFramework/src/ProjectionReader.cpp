@@ -335,7 +335,29 @@ int ProjectionReader::GetNexusInfo(string filename, size_t *NofImg, double *Scan
 
 
     #ifdef HAVE_NEXUS
+     std::ostringstream msg;
+
+    try{
          kipl::io::GetNexusInfo(filename.c_str(), NofImg, ScanAngles);
+    }
+
+    catch (kipl::base::KiplException &e) {
+        msg<<"KiplException: \n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg<<"STL exception: \n"<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg<<"unknown exception.";
+        logger(kipl::logging::Logger::LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
+
     #else
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif

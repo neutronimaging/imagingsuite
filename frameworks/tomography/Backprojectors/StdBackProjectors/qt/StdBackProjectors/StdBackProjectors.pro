@@ -42,8 +42,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += ../../../../../../../external/src/linalg ../../../../../../../external/include ../../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../../external/lib64
+    INCLUDEPATH  += ../../../../../../external/src/linalg ../../../../../../external/include ../../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -90,13 +90,24 @@ unix:!symbian {
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
+
+
+#INCLUDEPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+#DEPENDPATH += $$PWD/../../../../../../../modules/trunk/ModuleConfig/include
+#INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+#DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/src
+
+
+#INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+#DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
+
+LIBS += -lkipl -lModuleConfig -lReconFramework
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

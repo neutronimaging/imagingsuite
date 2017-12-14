@@ -128,7 +128,9 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname, ImgType lo, I
 template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L)
 {
-	std::stringstream msg;
+    (void)idx; // Terminating unused parameter
+
+    std::stringstream msg;
 	TIFF *image;
 	uint16 photo, spp, fillorder,bps, sformat;
 	tsize_t stripSize, stripCount;
@@ -318,6 +320,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const * const crop, size_t idx=0L)
 {
+    (void)idx; // Terminating unused parameter warning
+
 	if (crop==NULL) {
 		return ReadTIFF(src,fname);
 	}
