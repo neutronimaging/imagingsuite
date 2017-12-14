@@ -86,16 +86,34 @@ unix:!mac {
     }
 }
 
+#unix:mac {
+#exists(/usr/local/lib/*NeXus*) {
+
+#    message("-lNeXus exists")
+#    DEFINES *= HAVE_NEXUS
+
+#     LIBS += -L$$PWD/../../../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+
+#    INCLUDEPATH += $$PWD/../../../../../../../../../../usr/local/include
+#    DEPENDPATH += $$PWD/../../../../../../../../../../usr/local/include
+#}
+#else {
+#message("-lNeXus does not exists $$HEADERS")
+#}
+
 unix:mac {
-exists(/usr/local/lib/*NeXus*) {
+exists($$PWD/../../../../../../external/mac/lib/*NeXus*) {
 
     message("-lNeXus exists")
     DEFINES *= HAVE_NEXUS
 
-     LIBS += -L$$PWD/../../../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+    INCLUDEPATH += $$PWD/../../../../../../external/mac/include/ $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../../../external/mac/include/ $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/mac/lib/
 
-    INCLUDEPATH += $$PWD/../../../../../../../../../../usr/local/include
-    DEPENDPATH += $$PWD/../../../../../../../../../../usr/local/include
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+
+
 }
 else {
 message("-lNeXus does not exists $$HEADERS")

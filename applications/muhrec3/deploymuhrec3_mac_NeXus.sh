@@ -61,7 +61,8 @@ cd ..
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
-cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources
+#cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources #this must be mistaken 
+cp $REPOSPATH/imagingsuite/applications/muhrec3/Resources/* ./Resources
 
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 echo "copy plugins"
@@ -153,6 +154,9 @@ install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libFDKBackProjectors.1.0.0.dylib
 #install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libFDKBackProjectors.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libFDKBackProjectors.1.0.0.dylib
+
+#NeXus
+
 
 # Inspectors
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libInspectorModules.1.0.0.dylib
