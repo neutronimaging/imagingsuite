@@ -333,10 +333,17 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
     return sequence;
 }
 
-
 int ComputeWeights(ReconConfig const * const config, std::multimap<float, ProjectionInfo> &multiProjectionList, std::map<float, ProjectionInfo>  * ProjectionList)
 {
     kipl::logging::Logger logger("ComputeWeights");
+    if (multiProjectionList.size()<3) {
+        for (auto it=multiProjectionList.begin(); it!=multiProjectionList.end(); ++it) {
+            ProjectionInfo info=(*it).second;
+            info.weight=1.0/multiProjectionList.size();
+            ProjectionList->insert(make_pair((*it).first,info));
+        }
+        return 0;
+    }
 
     //
     // Compute the projection weights

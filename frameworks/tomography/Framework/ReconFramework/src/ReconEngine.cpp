@@ -586,11 +586,32 @@ int ReconEngine::Run3D(bool bRerunBackproj)
     int res=0;
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
     logger(kipl::logging::Logger::LogMessage,msg.str());
-
-    if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
-        res=Run3DBackProjOnly();
-    else
-        res=Run3DFull();
+    try {
+        if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
+            res=Run3DBackProjOnly();
+        else
+            res=Run3DFull();
+    }
+    catch (ReconException &e) {
+        msg.str("");
+        msg<<"Run3D failed with "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Run3D failed with "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Run3D failed with "<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg.str("");
+        msg<<"Run3D failed with an unknown error";
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
 
     return res;
 }

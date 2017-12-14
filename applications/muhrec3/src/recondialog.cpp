@@ -24,6 +24,7 @@ ReconDialog::ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget
 {
     ui->setupUi(this);
     connect(this,&ReconDialog::updateProgress,this,&ReconDialog::changedProgress);
+    connect(this,&ReconDialog::processFailure,this,&ReconDialog::on_processFailure);
 }
 
 ReconDialog::~ReconDialog()
@@ -145,8 +146,7 @@ int ReconDialog::process()
 {
     logger(kipl::logging::Logger::LogMessage,"Process thread is started");
     ostringstream msg;
-    QMessageBox dlg;
-    dlg.setWindowTitle("Reconstruction error");
+
     bool failed=false;
     try {
         if (m_Engine!=nullptr)
@@ -183,12 +183,9 @@ int ReconDialog::process()
 
     if (failed==true)
     {
-        dlg.setText("Reconstruction failed");
-        dlg.setDetailedText(QString::fromStdString(msg.str()));
-        dlg.exec();
         logger(kipl::logging::Logger::LogMessage,msg.str());
         finish=false;
-        Abort();
+        emit processFailure(QString::fromStdString(msg.str()));
         return 0;
     }
     logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
@@ -196,7 +193,7 @@ int ReconDialog::process()
     finish=true;
     m_Interactor->Done();
     this->accept();
-    //emit accepted();
+
     return 0;
 }
 
@@ -205,6 +202,7 @@ void ReconDialog::Abort()
     if (m_Interactor!=nullptr) {
         m_Interactor->Abort();
     }
+    this->reject();
 }
 
 bool ReconDialog::Finished()
@@ -216,6 +214,16 @@ bool ReconDialog::Finished()
     return true;
 }
 
+void ReconDialog::on_processFailure(QString msg)
+{
+    QMessageBox dlg;
+    dlg.setWindowTitle("Reconstruction error");
+
+    dlg.setText("Reconstruction failed");
+    dlg.setDetailedText(msg);
+    dlg.exec();
+    Abort();
+}
 
 void ReconDialog::on_buttonCancel_clicked()
 {

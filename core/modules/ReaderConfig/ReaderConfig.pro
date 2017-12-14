@@ -79,22 +79,20 @@ win32 {
     INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
-
     LIBS += -llibxml2_dll
 
-#    exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
-#        message("-lNeXus exists")
-#        DEFINES += HAVE_NEXUS
-#        INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
-#        QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
+    exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
-#        LIBS +=  -lNeXus -lNeXusCPP
+        message("-lNeXus exists")
+        DEFINES += HAVE_NEXUS
+        INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
+        QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
-#        SOURCES += ../../kipl/kipl/src/io/io_nexus.cpp
-#        HEADERS += ../../kipl/kipl/include/io/io_nexus.h
+#        SOURCES += $$PWD/../../kipl/kipl/src/io/io_nexus.cpp
+#        HEADERS += $$PWD/../../kipl/kipl/include/io/io_nexus.h
+    }
 
-#    }
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
@@ -108,12 +106,3 @@ INCLUDEPATH += $$PWD/../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../kipl/kipl/include
 
 LIBS += -lkipl
-
-
-
-
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../external/lib64/ -llibxml2_dll
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../external/lib64/ -llibxml2_dlld
-
-#INCLUDEPATH += $$PWD/../../../external/lib64
-#DEPENDPATH += $$PWD/../../../external/lib64

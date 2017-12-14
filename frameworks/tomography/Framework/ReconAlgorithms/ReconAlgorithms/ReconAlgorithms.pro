@@ -40,7 +40,6 @@ win32 {
     }
     INCLUDEPATH += ../../../../../external/src/linalg ../../../../../external/include ../../../../../external/include/cfitsio
     QMAKE_LIBDIR += ../../../../../external/lib64
-
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
