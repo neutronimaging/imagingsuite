@@ -57,6 +57,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sConfigFilename("noname.xml"),
     m_bCurrentReconStored(true)
 {
+
     std::ostringstream msg;
     ui->setupUi(this);
     kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
@@ -79,6 +80,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
       <<"HomePath         = "<<m_sHomePath<<std::endl
       <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
     logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    ui->buttonGetPP->setEnabled(false);
 
     ui->projectionViewer->hold_annotations(true);
     std::string defaultmodules;
@@ -1580,6 +1583,7 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
 
 void MuhRecMainWindow::UpdateDialog()
 {
+
     std::ostringstream str;
     QSignalBlocker blockFirstProjection(ui->spinFirstProjection);
     QSignalBlocker blockLastProjection(ui->spinLastProjection);
@@ -2195,18 +2199,18 @@ void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
 
 void MuhRecMainWindow::on_buttonGetPP_clicked()
 {
-    PiercingPointDialog dlg;
-    UpdateConfig();
+//    PiercingPointDialog dlg;
+//    UpdateConfig();
 
-    int res=dlg.exec(m_Config);
+//    int res=dlg.exec(m_Config);
 
-    if (res==QDialog::Accepted) {
-        pair<float,float> position=dlg.getPosition();
+//    if (res==QDialog::Accepted) {
+//        pair<float,float> position=dlg.getPosition();
 
-        m_Config.ProjectionInfo.fpPoint[0]=position.first;
-        m_Config.ProjectionInfo.fpPoint[1]=position.second;
-        UpdateDialog();
-    }
+//        m_Config.ProjectionInfo.fpPoint[0]=position.first;
+//        m_Config.ProjectionInfo.fpPoint[1]=position.second;
+//        UpdateDialog();
+//    }
 
 }
 
