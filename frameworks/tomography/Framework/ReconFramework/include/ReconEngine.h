@@ -136,6 +136,7 @@ protected:
 	size_t nTotalProcessedProjections;				//!< Counts the total number of processed projections for the progress monitor
 	size_t nTotalBlocks;							//!< The total number of blocks to process
 	bool m_bCancel;									//!< Cancel flag if true the reconstruction process will terminate
+    size_t CBroi[4];                                //!< Additional ROI to be used for the cone beam case
 	//eReconstructorStatus status;
     kipl::interactors::InteractionBase *m_Interactor;
 };

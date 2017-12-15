@@ -49,22 +49,39 @@ unix {
     }
 
     unix:macx {
-        exists(/usr/local/lib/*NeXus*) {
+        exists($$PWD/../../../external/mac/lib/*NeXus*) {
 
             message("-lNeXus exists")
             DEFINES += HAVE_NEXUS
+            INCLUDEPATH += $$PWD/../../../external/mac/include/ $$PWD/../../../external/mac/include/nexus $$PWD/../../../external/mac/include/hdf5
+            DEPENDPATH += $$PWD/../../../external/mac/include/ $$PWD/../../../external/mac/include/nexus $$PWD/../../../external/mac/include/hdf5
+            QMAKE_LIBDIR += $$PWD/../../../external/mac/lib/
+            LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 
-            LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
-
-            INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
-            DEPENDPATH += $$PWD/../../../../../../../usr/local/include
-
-            SOURCES += ../src/io/io_nexus.cpp
-            HEADERS += ../include/io/io_nexus.h
+     #       SOURCES += ../../kipl/kipl/src/io/io_nexus.cpp
+     #       HEADERS += ../../kipl/kipl/include/io/io_nexus.h
         }
         else {
-            message("-lNeXus does not exists $$HEADERS")
+            message("-lNeXus does not exist $$HEADERS")
         }
+
+#    unix:macx {
+#        exists(/usr/local/lib/*NeXus*) {
+
+#            message("-lNeXus exists")
+#            DEFINES += HAVE_NEXUS
+
+#            LIBS += -L$$PWD/../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+
+#            INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
+#            DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
+
+#            SOURCES += ../../kipl/kipl/src/io/io_nexus.cpp
+#            HEADERS += ../../kipl/kipl/include/io/io_nexus.h
+#        }
+#        else {
+#            message("-lNeXus does not exists $$HEADERS")
+#        }
         QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
@@ -75,9 +92,12 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
+
     INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
+    LIBS += -llibxml2_dll
+
 
     exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
@@ -86,11 +106,10 @@ win32 {
         INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
         QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
-        LIBS +=  -lNeXus -lNeXusCPP
-
 #        SOURCES += $$PWD/../../kipl/kipl/src/io/io_nexus.cpp
 #        HEADERS += $$PWD/../../kipl/kipl/include/io/io_nexus.h
     }
+
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
@@ -104,4 +123,3 @@ INCLUDEPATH += $$PWD/../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../kipl/kipl/include
 
 LIBS += -lkipl
-
