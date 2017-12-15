@@ -651,6 +651,20 @@ void MuhRecMainWindow::GetReconROI()
         ui->spinProjROIx1->setValue(rect.x()+rect.width());
         ui->spinProjROIy1->setValue(rect.y()+rect.height());
 
+        if (ui->spinSlicesFirst->value()<ui->spinProjROIy0->value())
+        {
+            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
+            ui->spinSlicesLast->setValue(ui->spinProjROIy0->value()+32);
+        }
+
+        if (ui->spinSlicesLast->value()>ui->spinProjROIy1->value())
+        {
+            ui->spinSlicesFirst->setValue(ui->spinProjROIy1->value()-32);
+            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
+        }
+
+
+
 //        ui->spinSlicesFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
 //        ui->spinSlicesLast->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
 
@@ -697,11 +711,12 @@ void MuhRecMainWindow::ProjROIChanged(int x)
     rect=rect.normalized();
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
-    ui->spinSlicesFirst->setMinimum(dims[1]);
-    ui->spinSlicesFirst->setMaximum(dims[3]);
+//    ui->spinSlicesFirst->setMinimum(dims[1]);
+//    ui->spinSlicesFirst->setMaximum(dims[3]);
 
-    ui->spinSlicesLast->setMinimum(dims[1]);
-    ui->spinSlicesLast->setMaximum(dims[3]);
+//    ui->spinSlicesLast->setMinimum(dims[1]);
+//    ui->spinSlicesLast->setMaximum(dims[3]);
+
 
     SlicesChanged(0);
     CenterOfRotationChanged();
