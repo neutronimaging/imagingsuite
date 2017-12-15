@@ -112,7 +112,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
         msg.str("");
         msg<<"Counter="<<nProjCounter<<", buffer size="<<nProjectionBufferSize<<" last "<<(bLastProjection ? "True" : "False");
-        logger(logger.LogMessage,msg.str());
+        logger(logger.LogDebug,msg.str());
 		this->BackProject();
 		nProjCounter=0;
 	}

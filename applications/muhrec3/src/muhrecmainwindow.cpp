@@ -651,6 +651,20 @@ void MuhRecMainWindow::GetReconROI()
         ui->spinProjROIx1->setValue(rect.x()+rect.width());
         ui->spinProjROIy1->setValue(rect.y()+rect.height());
 
+        if (ui->spinSlicesFirst->value()<ui->spinProjROIy0->value())
+        {
+            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
+            ui->spinSlicesLast->setValue(ui->spinProjROIy0->value()+32);
+        }
+
+        if (ui->spinSlicesLast->value()>ui->spinProjROIy1->value())
+        {
+            ui->spinSlicesFirst->setValue(ui->spinProjROIy1->value()-32);
+            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
+        }
+
+
+
 //        ui->spinSlicesFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
 //        ui->spinSlicesLast->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
 
@@ -676,13 +690,16 @@ void MuhRecMainWindow::RotateChanged()
 
 }
 
-void MuhRecMainWindow::DoseROIChanged(int UNUSED(x))
+void MuhRecMainWindow::DoseROIChanged(int x)
 {
+    (void)x;
     UpdateDoseROI();
 }
 
-void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
+void MuhRecMainWindow::ProjROIChanged(int x)
 {
+    (void)x;
+
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
 
@@ -694,11 +711,12 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
     rect=rect.normalized();
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
-    ui->spinSlicesFirst->setMinimum(dims[1]);
-    ui->spinSlicesFirst->setMaximum(dims[3]);
+//    ui->spinSlicesFirst->setMinimum(dims[1]);
+//    ui->spinSlicesFirst->setMaximum(dims[3]);
 
-    ui->spinSlicesLast->setMinimum(dims[1]);
-    ui->spinSlicesLast->setMaximum(dims[3]);
+//    ui->spinSlicesLast->setMinimum(dims[1]);
+//    ui->spinSlicesLast->setMaximum(dims[3]);
+
 
     SlicesChanged(0);
     CenterOfRotationChanged();
@@ -711,13 +729,15 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
     }
 }
 
-void MuhRecMainWindow::CenterOfRotationChanged(int UNUSED(x))
+void MuhRecMainWindow::CenterOfRotationChanged(int x)
 {
+    (void)x;
     CenterOfRotationChanged();
 }
 
-void  MuhRecMainWindow::CenterOfRotationChanged(double UNUSED(x))
+void  MuhRecMainWindow::CenterOfRotationChanged(double x)
 {
+    (void)x;
     CenterOfRotationChanged();
 }
 
@@ -921,6 +941,10 @@ void MuhRecMainWindow::UseMatrixROI(int x)
 
 void MuhRecMainWindow::MenuFileNew()
 {
+    if (m_pEngine!=nullptr) {
+        delete m_pEngine;
+        m_pEngine=nullptr;
+    }
     LoadDefaults(false);
 }
 
@@ -1164,6 +1188,8 @@ void MuhRecMainWindow::saveCurrentRecon()
 void MuhRecMainWindow::MenuReconstructStart()
 {
     ui->tabMainControl->setCurrentIndex(4);
+
+    UpdateConfig();
 
     ostringstream msg;
     m_Config.MatrixInfo.bAutomaticSerialize=false;
@@ -1579,7 +1605,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjectionBinning->setValue(m_Config.ProjectionInfo.fBinning);
     ui->comboFlipProjection->setCurrentIndex(m_Config.ProjectionInfo.eFlip);
     ui->comboRotateProjection->setCurrentIndex(m_Config.ProjectionInfo.eRotate);
-
+  //  ProjectionIndexChanged(-1);
 
     ui->spinFirstOpenBeam->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBFirstIndex));
     ui->spinOpenBeamCount->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBCount));
@@ -1594,9 +1620,11 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinDoseROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.dose_roi[3]));
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
-    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
-    ui->spinSlicesFirst->blockSignals(true);
-    ui->spinSlicesLast->blockSignals(true);
+    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
+    QSignalBlocker blockProjROIx0(ui->spinProjROIx0);
+    QSignalBlocker blockProjROIx1(ui->spinProjROIx1);
+    QSignalBlocker blockProjROIy0(ui->spinProjROIy0);
+    QSignalBlocker blockProjROIy1(ui->spinProjROIy1);
 
     ui->spinProjROIx0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]));
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
@@ -1604,8 +1632,6 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
-    ui->spinSlicesFirst->blockSignals(false);
-    ui->spinSlicesLast->blockSignals(false);
 
     ui->dspinRotationCenter->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinAngleStart->setValue(m_Config.ProjectionInfo.fScanArc[0]);
@@ -1697,6 +1723,7 @@ void MuhRecMainWindow::UpdateDialog()
 
 void MuhRecMainWindow::UpdateConfig()
 {
+    std::ostringstream msg;
     m_Config.ProjectionInfo.sPath="";
     m_Config.ProjectionInfo.sReferencePath="";
 
@@ -1853,7 +1880,22 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
     m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
 
-    m_Config.SanityCheck();
+    try {
+        m_Config.SanityCheck();
+    }
+    catch (ReconException & e)
+    {
+        msg<<"Config sanity check failed in update config"<<std::endl<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException & e)
+    {
+        msg<<"Config sanity check failed in update config"<<std::endl<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
 }
 
 
