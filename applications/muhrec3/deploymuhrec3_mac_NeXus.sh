@@ -65,6 +65,7 @@ cd ..
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
+
 #cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources #this must be mistaken
 cp $REPOSPATH/imagingsuite/applications/muhrec3/Resources/* ./Resources
 
