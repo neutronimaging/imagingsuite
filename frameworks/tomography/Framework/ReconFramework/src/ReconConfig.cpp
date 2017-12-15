@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include "../include/ReconConfig.h"
@@ -57,12 +46,16 @@ const ReconConfig & ReconConfig::operator=(const ReconConfig &config)
 
 bool ReconConfig::SanityCheck()
 {
-    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0])
-        throw ReconException("Incorrect config: ROI x1<x0",__FILE__,__LINE__);
+    std::ostringstream msg;
 
-    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1])
-        throw ReconException("Incorrect config: ROI y1<y0",__FILE__,__LINE__);
-
+    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0]) {
+        msg<<"Incorrect config: ROI x1<x0 (x0="<<ProjectionInfo.roi[0]<<", x1="<<ProjectionInfo.roi[2]<<")";
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1]) {
+        msg<<"Incorrect config: ROI y1<y0 (y0="<<ProjectionInfo.roi[1]<<", y1="<<ProjectionInfo.roi[3]<<")";
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
     return true;
 }
 
