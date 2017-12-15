@@ -48,7 +48,7 @@ done
 cd $DEST/bin
 `$CPCMD $REPOSPATH/Applications/QtKipTool .`
 cd ..
-`$CPCMD $REPOSPATH/kiptool/trunk/QtKipTool/scripts/kiptool .`
+`$CPCMD $REPOSPATH/imagingsuite/applications/kiptool/scripts/kiptool .`
 chmod +x kiptool
 
 popd
