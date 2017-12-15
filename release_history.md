@@ -16,6 +16,6 @@ In the current release we focussed on stability and the open source release incl
 3. Many issues with crashes as consequence have been fixed. E.g fixed an issue that made the logging display to crash.
 
 ### Repository:
-1. MuhRec and its dependencies are now uploaded on GitHub under GPL 3.0 License.
+1. MuhRec and its dependencies are now uploaded on GitHub under GPL 3.0 License. Location https://github.com/neutronimaging/imagingsuite
 2. Build scripts for automated build are implemented.
 Unsolved issues are listed on https://github.com/neutronimaging/imagingsuite/issues
