@@ -64,7 +64,7 @@ else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
 
-LIBS += -lkipl -lReaderConfig -lQtAddons -lReaderConfig
+LIBS += -lkipl -lReaderConfig -lQtAddons
 
 INCLUDEPATH += $$PWD/../ReaderConfig
 DEPENDPATH += $$PWD/../ReaderConfig
