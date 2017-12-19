@@ -5,3 +5,6 @@ build*
 *.stash
 *.o
 .ipynb_checkpoints
+*.in
+*.pc
+*.sym
