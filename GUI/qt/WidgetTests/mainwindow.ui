@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>894</width>
+    <width>1050</width>
     <height>777</height>
    </rect>
   </property>
@@ -251,13 +251,23 @@
      <string>List data sets</string>
     </property>
    </widget>
+   <widget class="QtAddons::ROIWidget" name="roiWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>570</y>
+      <width>461</width>
+      <height>61</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>894</width>
+     <width>1050</width>
      <height>22</height>
     </rect>
    </property>
@@ -308,6 +318,12 @@
    <class>ReaderConfigListWidget</class>
    <extends>QWidget</extends>
    <header location="global">readerconfiglistwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ROIWidget</class>
+   <extends>QWidget</extends>
+   <header>roiwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

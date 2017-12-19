@@ -1,6 +1,7 @@
 #ifndef ROIWIDGET_H
 #define ROIWIDGET_H
 
+#include "QtAddons_global.h"
 #include <QWidget>
 
 #include <logging/logger.h>
@@ -9,7 +10,8 @@ namespace Ui {
 class ROIWidget;
 }
 
-class ROIWidget : public QWidget
+namespace QtAddons {
+class QTADDONSSHARED_EXPORT ROIWidget : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;
@@ -21,6 +23,11 @@ public:
     void setROI(int x0,int y0, int x1, int y1);
     void setROI(int *roi);
     void setROI(size_t *roi);
+    void setROI(QRect rect);
+
+    void getROI(int *roi);
+    void getROI(size_t *roi);
+    QRect getROI();
 
 
 private slots:
@@ -36,11 +43,13 @@ private slots:
 
 private:
     Ui::ROIWidget *ui;
-    int roi[4];
+    int mroi[4];
+
+    void updateFields();
 
 signals:
     void getROIClicked(void);
     void valueChanged(int x0,int y0, int x1, int y1);
 };
-
+}
 #endif // ROIWIDGET_H

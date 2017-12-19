@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->PlotButton,SIGNAL(clicked()),this,SLOT(PlotClicked()));
     connect(ui->GetModulesButton,SIGNAL(clicked()),this,SLOT(GetModulesClicked()));
 
+    connect(ui->roiWidget,&QtAddons::ROIWidget::getROIClicked,this,&MainWindow::on_roiwidget_getROIclicked);
+    connect(ui->roiWidget,&QtAddons::ROIWidget::valueChanged,this,&MainWindow::on_roiwidget_valueChanged);
     ui->singlemodule->Configure("muhrec");
 }
 
@@ -127,4 +129,20 @@ void MainWindow::on_pushButton_listdata_clicked()
     }
 
 
+}
+
+void MainWindow::on_roiwidget_getROIclicked()
+{
+    logger(logger.LogMessage,"Get roi clicked");
+    QRect rect=ui->ImageView_2->get_marked_roi();
+
+    ui->roiWidget->setROI(rect);
+    ui->ImageView_2->set_rectangle(rect,QColor("red"),0);
+}
+
+
+void MainWindow::on_roiwidget_valueChanged(int x0, int y0, int x1, int y1)
+{
+    QRect rect(x0,y0,x1-x0,y1-y0);
+    ui->ImageView_2->set_rectangle(rect,QColor("red"),0);
 }
