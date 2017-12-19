@@ -36,6 +36,8 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roiEdge2D_getROIclicked);
+    connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roiEdge2D_valueChanged);
 }
 
 NIQAMainWindow::~NIQAMainWindow()
@@ -284,6 +286,7 @@ void NIQAMainWindow::on_listEdgeFiles_clicked(const QModelIndex &index)
     img=reader.Read(item->filename.toStdString(),kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
 
     ui->viewer_edgeimages->set_image(img.GetDataPtr(),img.Dims());
+    ui->viewer_edgeimages->set_rectangle(ui->widget_roiEdge2D->getROI(),QColor("red"),0);
 }
 
 void NIQAMainWindow::on_button_LoadPacking_clicked()
@@ -342,4 +345,18 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
 void NIQAMainWindow::on_combo_PackingImage_currentIndexChanged(int index)
 {
     on_slider_PackingImages_sliderMoved(ui->slider_PackingImages->value());
+}
+
+void NIQAMainWindow::on_widget_roiEdge2D_getROIclicked()
+{
+    QRect rect=ui->viewer_edgeimages->get_marked_roi();
+
+    ui->widget_roiEdge2D->setROI(rect);
+    ui->viewer_edgeimages->set_rectangle(rect,QColor("red"),0);
+}
+
+void NIQAMainWindow::on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, int y1)
+{
+    QRect rect(x0,y0,x1-x0+1,y1-y0+1);
+    ui->viewer_edgeimages->set_rectangle(rect,QColor("red"),0);
 }

@@ -59,6 +59,9 @@ private:
     void showContrastBoxPlot();
     void showContrastHistogram();
 
+    void on_widget_roiEdge2D_getROIclicked();
+    void on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, int y1);
+
     Ui::NIQAMainWindow *ui;
 
     kipl::base::TImage<float,3> m_BigBall;

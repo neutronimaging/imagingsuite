@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -260,6 +260,23 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>ROI</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QtAddons::ROIWidget" name="widget_roiEdge2D" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>45</height>
+             </size>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_2">
@@ -804,6 +821,18 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ROIWidget</class>
+   <extends>QWidget</extends>
+   <header>roiwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QChartView</class>
    <extends>QWidget</extends>
    <header location="global">QtCharts</header>
@@ -813,12 +842,6 @@
    <class>ReaderForm</class>
    <extends>QWidget</extends>
    <header location="global">../../../core/modules/ReaderGUI/readerform.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::ImageViewerWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">../../../GUI/qt/QtAddons/imageviewerwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
