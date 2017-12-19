@@ -42,6 +42,13 @@ unix {
     }
 }
 
+win32 {
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    LIBPATH += $$PWD/../../../../external/lib64
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
+
 SOURCES += tst_tnoiseimagetest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 

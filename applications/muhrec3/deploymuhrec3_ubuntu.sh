@@ -1,8 +1,9 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-REPOSPATH="/home/`whoami`/repos"
 
-DEST="$REPOSPATH/tomography/muhrec3"
+REPOSPATH=$WORKSPACE
+DEST="$WORKSPACE/deploy/muhrec3"
+
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
 mkdir --parent $DEST/Frameworks
@@ -28,8 +29,13 @@ rm -f *.1.0.0.dylib
 `$CPCMD $REPOSPATH/lib/libStdPreprocModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libStdPreprocModulesGUI.so.1.0.0 .`
 
+`$CPCMD $REPOSPATH/lib/libUnpublPreProcessing.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libUnpublPreProcessingGUI.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libUnpublishedImagingAlgorithms.so.1.0.0 .`
+
 `$CPCMD $REPOSPATH/lib/libInspectorModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libInspectorModulesGUI.so.1.0.0 .`
+
 
 `$CPCMD $REPOSPATH/lib/libFDKBackProjectors.so.1.0.0 .`
 
@@ -45,13 +51,16 @@ for f in `ls *.so.1.0.0`; do
 	ln -s $bn.so.1 $bn.so
 done
 
+
+
+
 cd $DEST/bin
 `$CPCMD $REPOSPATH/Applications/muhrec3 .`
 cd ..
-`$CPCMD $REPOSPATH/tomography/trunk/src/scripts/muhrec3 .`
+`$CPCMD $REPOSPATH/imagingsuite/applications/muhrec3/scripts/muhrec3 .`
 chmod +x muhrec3
 
-cp $REPOSPATH/tomography/trunk/src/muhrec3/resources/*.xml resources
+cp $REPOSPATH/imagingsuite/applications/muhrec3/src/resources/*.xml resources
 popd
 
 

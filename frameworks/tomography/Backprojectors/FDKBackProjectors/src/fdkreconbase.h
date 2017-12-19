@@ -37,7 +37,7 @@ public:
     /// \param angle Acquisition angle
     /// \param weight Intensity scaling factor for interpolation when the angles are non-uniformly distributed
     /// \param bLastProjection termination signal. When true the back-projeciton is finalized.
-    virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection);
+    virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, size_t nProj, bool bLastProjection);
 
     /// Starts the back-projection process of projections stored as a 3D volume. Projections are then passed to the FDK backprojector
     /// \param proj The projection data
@@ -59,6 +59,8 @@ public:
     /// \param N number of bins
     virtual void GetHistogram(float *axis, size_t *hist,size_t nBins);
 
+    void GetMatrixDims(size_t *dims);
+
     virtual float Min();
 
     virtual float Max();
@@ -67,7 +69,8 @@ public:
 
 
 protected:
-    virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;
+    virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;   
+    virtual size_t ComputeGeometryMatrices(float *matrices);
 
 
     ForwardProjectorBase *m_fp;
@@ -97,6 +100,7 @@ protected:
     float fCos[1024];
     float fStartU[1024];
     float fLocalStartU[1024];
+    float *proj_matrices;
 
     size_t nProjectionBufferSize;
     size_t nSliceBlock;

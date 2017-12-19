@@ -1,16 +1,13 @@
 DIRECTORY=~/Applications
-#QTPATH="/Applications/Qt531/5.3/clang_64"
-#QTPATH="/Applications/Qt541/5.4/clang_64"
-QTPATH=$QT_HOME
-#QTPATH=~/Qt5.7.0/5.7/clang_64
+QTPATH=$QTBINPATH/..
 DEST="$DIRECTORY/muhrec3.app"
-REPOSPATH=~/repos
+REPOSPATH=$WORKSPACE
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi
 
-cp -r ~/repos/Applications/muhrec3.app $DIRECTORY
+cp -r $REPOSPATH/Applications/muhrec3.app $DIRECTORY
 
 pushd .
 CPCMD="cp"

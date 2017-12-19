@@ -12,6 +12,8 @@ InteractionBase::InteractionBase(std::string name) :
 
 void InteractionBase::Reset() 
 {
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
     m_Status=interactorIdle;
 	m_fProgress=0.0f;
     m_fOverallProgress=0.0f;
@@ -20,28 +22,32 @@ void InteractionBase::Reset()
 
 void InteractionBase::Abort() 
 {
-//    std::cout<<"Aborting"<<std::endl;
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
     m_Status = interactorAborted;
 }
 
 void InteractionBase::Done()
 {
-//    std::cout<<"Done"<<std::endl;
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
     m_Status = interactorFinished;
 }
 
 bool InteractionBase::SetProgress(float progress, std::string msg)
 {
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
 	m_fProgress=progress;
 	m_sMessage=msg;
-//    std::cout<<"Progress msg="<<m_sMessage<<", progress="<<m_fProgress<<std::endl;
 
     return m_Status == interactorAborted;
 }
 
 bool InteractionBase::SetOverallProgress(float progress)
 {
-//    std::cout<<"Overall Progress "<<m_fProgress<<std::endl;
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
     m_fOverallProgress=progress;
 
     return m_Status == interactorAborted;
@@ -49,26 +55,35 @@ bool InteractionBase::SetOverallProgress(float progress)
 
 float InteractionBase::CurrentProgress() 
 {
-	return m_fProgress;
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
+    return m_fProgress;
 }
 
 float InteractionBase::CurrentOverallProgress()
 {
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
     return m_fOverallProgress;
 }
 
 std::string InteractionBase::CurrentMessage()
 {
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
 	return m_sMessage;
 }
 
 bool InteractionBase::Aborted()
 {
+    std::lock_guard<std::mutex> guard(m_Mutex);
     return m_Status == interactorAborted;
 }
 
 bool InteractionBase::Finished()
 {
+    std::lock_guard<std::mutex> guard(m_Mutex);
+
     return m_Status == interactorFinished;
 }
 }}

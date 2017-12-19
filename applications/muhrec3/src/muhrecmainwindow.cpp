@@ -13,6 +13,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QSignalBlocker>
+#include <QDebug>
 
 #include <base/timage.h>
 #include <base/KiplException.h>
@@ -56,6 +57,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sConfigFilename("noname.xml"),
     m_bCurrentReconStored(true)
 {
+
     std::ostringstream msg;
     ui->setupUi(this);
     kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
@@ -78,6 +80,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
       <<"HomePath         = "<<m_sHomePath<<std::endl
       <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
     logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    ui->buttonGetPP->setEnabled(false);
 
     ui->projectionViewer->hold_annotations(true);
     std::string defaultmodules;
@@ -113,7 +117,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     SlicesChanged(0);
     SetupCallBacks();
 
-    if (ui->checkCBCT->isChecked()) SlicesCBCTChanged(0);
+//    if (ui->checkCBCT->isChecked()) SlicesCBCTChanged(0);
 
 }
 
@@ -130,7 +134,7 @@ void MuhRecMainWindow::SetupCallBacks()
  //   connect(ui->buttonBrowseReference,SIGNAL(clicked()),this,SLOT(BrowseReferencePath()));
     connect(ui->buttonBrowseDestinationPath,SIGNAL(clicked()),this,SLOT(BrowseDestinationPath()));
     connect(ui->buttonTakePath,SIGNAL(clicked()),this,SLOT(TakeProjectionPath()));
-    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+//    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
     connect(ui->buttonGetDoseROI,SIGNAL(clicked()),this,SLOT(GetDoseROI()));
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
@@ -157,12 +161,12 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->dspinGrayHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
 
     // Display projections
-    connect(ui->sliderProjections,SIGNAL(sliderMoved(int)),this,SLOT(PreviewProjection(int)));
-  //  connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
-    connect(ui->spinFirstProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
-    connect(ui->spinLastProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
-    connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
-    connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
+    //   connect(ui->sliderProjections,SIGNAL(sliderMoved(int)),this,SLOT(PreviewProjection(int)));
+    //  connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
+//    connect(ui->spinFirstProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
+//    connect(ui->spinLastProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
+//    connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
+//    connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
 
     // Display slices
     connect(ui->sliderSlices,SIGNAL(sliderMoved(int)),this,SLOT(DisplaySlice(int)));
@@ -210,17 +214,16 @@ void MuhRecMainWindow::BrowseProjectionPath()
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi = da.GetFileMask(projdir.toStdString());
 
-        if (fi.m_sExt!="hdf") {
+        int c=0;
+        int f=0;
+        int l=0;
 
+        if (fi.m_sExt!="hdf") {
             std::string pdir=projdir.toStdString();
 
             kipl::io::DirAnalyzer da;
             fi=da.GetFileMask(pdir);
             newmask=QString::fromStdString(fi.m_sMask);
-            ui->editProjectionMask->setText(newmask);
-            int c=0;
-            int f=0;
-            int l=0;
 
             if ((fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
                 da.AnalyzeFileList(fi.m_sMask,c);
@@ -232,48 +235,40 @@ void MuhRecMainWindow::BrowseProjectionPath()
 
             msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
             logger(logger.LogMessage,msg.str());
-
-            QSignalBlocker spinFirst(ui->spinFirstProjection);
-            ui->spinFirstProjection->setValue(f);
-
-            QSignalBlocker spinLast(ui->spinLastProjection);
-            ui->spinLastProjection->setValue(l);
-
-
-            if (oldmask!=newmask)
-            {
-                PreviewProjection(-1);
-                ui->projectionViewer->clear_rectangle(-1);
-                ui->projectionViewer->clear_plot(-1);
-            }
-
         }
         else {
-
-            ui->editProjectionMask->setText(projdir);
-
-             double angles[2];
-             size_t Nofimgs[2];
-             ProjectionReader reader;
-             reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
-
-             ui->spinFirstProjection->setValue(static_cast<int>(Nofimgs[0]));
-             ui->spinLastProjection->setValue(static_cast<int>(Nofimgs[1]));
-             ui->dspinAngleStart->setValue(angles[0]);
-             ui->dspinAngleStop->setValue(angles[1]);
-
-             if (oldmask!=ui->editProjectionMask->text())
-             {
-                 PreviewProjection(-1);
-                 ui->projectionViewer->clear_rectangle(-1);
-                 ui->projectionViewer->clear_plot(-1);
-             }
+            newmask=projdir;
+            double angles[2];
+            size_t Nofimgs[2];
+            ProjectionReader reader;
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
+            f=static_cast<int>(Nofimgs[0]);
+            l=static_cast<int>(Nofimgs[1]);
+            ui->dspinAngleStart->setValue(angles[0]);
+            ui->dspinAngleStop->setValue(angles[1]);
         }
 
+
+        QSignalBlocker spinFirst(ui->spinFirstProjection);
+        ui->spinFirstProjection->setMaximum(l);
+        ui->spinFirstProjection->setMinimum(f);
+        ui->spinFirstProjection->setValue(f);
+
+        QSignalBlocker spinLast(ui->spinLastProjection);
+        ui->spinLastProjection->setMaximum(l);
+        ui->spinLastProjection->setMinimum(f);
+        ui->spinLastProjection->setValue(l);
+
+        ProjectionIndexChanged(0);
+        if (oldmask!=newmask)
+        {
+            ui->editProjectionMask->setText(newmask);
+
+            PreviewProjection(-1);
+            ui->projectionViewer->clear_rectangle(-1);
+            ui->projectionViewer->clear_plot(-1);
+        }
     }
-
-
-
 }
 
 void MuhRecMainWindow::on_buttonBrowseReference_clicked()
@@ -337,17 +332,27 @@ void MuhRecMainWindow::TakeProjectionPath()
     ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
 }
 
-void MuhRecMainWindow::ProjectionIndexChanged(int UNUSED(x))
+void MuhRecMainWindow::ProjectionIndexChanged(int x)
 {
+    (void)x;
+
+    std::ostringstream msg;
     int first=ui->spinFirstProjection->value();
     int last=ui->spinLastProjection->value();
 
-    if (first<last) {
-        ui->sliderProjections->setMaximum(last);
-        ui->sliderProjections->setMinimum(first);
+    msg<<"New projection indices first="<<first<<", last="<<last;
+    logger(logger.LogMessage,msg.str());
+    qDebug() << QString::fromStdString(msg.str());
 
-        PreviewProjection();
+    if (last<first) {
+        logger(logger.LogWarning,"Last<First index.");
+
+        return ;
     }
+    ui->sliderProjections->setMaximum(last);
+    ui->sliderProjections->setMinimum(first);
+    qDebug() << "Limits set";
+    PreviewProjection();
 }
 
 void MuhRecMainWindow::PreviewProjection(int x)
@@ -357,6 +362,8 @@ void MuhRecMainWindow::PreviewProjection(int x)
     std::ostringstream msg;
     ProjectionReader reader;
 
+    if (ui->spinLastProjection->value()<ui->spinFirstProjection->value())
+        return;
 
     if (x<=0) {
        int slice = ui->spinFirstProjection->value();
@@ -364,11 +371,12 @@ void MuhRecMainWindow::PreviewProjection(int x)
     }
 
     msg.str("");
-    msg<<"Preview slider info: max="
-      <<ui->sliderProjections->maximum()<<", current="
+    msg<<"Preview slider info:min="<<ui->sliderProjections->minimum()
+      <<", max="<<ui->sliderProjections->maximum()<<", current="
      << ui->sliderProjections->value();
 
-    logger(logger.LogMessage,msg.str());
+    logger(logger.LogVerbose,msg.str());
+    qDebug()<<QString::fromStdString(msg.str());
 
     try {
         UpdateConfig();
@@ -377,9 +385,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string name, ext;
         size_t found;
         int position=ui->sliderProjections->value();
-
+        qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
+        qDebug()<<"BuildFileList ok";
         if (fileList.size()<position) // Workaround for bad BuildFileList implementation
         {
             logger(logger.LogWarning, "Projection slider out of list range.");
@@ -388,7 +397,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         auto it=fileList.begin();
         if (position<=ui->sliderProjections->maximum())
-            std::advance(it,position-1);
+            std::advance(it,position-(position==0 ? 0 :1));
         else {
             logger(logger.LogError,"Slider out of range");
             return;
@@ -398,10 +407,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         if (QFile::exists(QString::fromStdString(name))) {
             int sliderval=ui->sliderProjections->value();
-            m_PreviewImage=reader.Read(name,
-                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                            static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+//            m_PreviewImage=reader.Read(name,
+//                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+//                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+//                            static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
 
             if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
 
@@ -412,34 +421,37 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 //            m_PreviewImage.Resize(zdims);
 
                 try {
-                if (found!=std::string::npos )
-                {
-                    m_PreviewImage=reader.ReadNexus(fmask,static_cast<size_t>(ui->sliderProjections->value()),
-                                    static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-                                    static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                                    static_cast<float>(ui->spinProjectionBinning->value()),NULL);
+                    if (found!=std::string::npos )
+                    {
+                        m_PreviewImage=reader.ReadNexus(fmask,static_cast<size_t>(ui->sliderProjections->value()),
+                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
 
 
+                    }
+                    else
+                    {
+//                        m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
+//                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+//                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+//                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
+                        m_PreviewImage=reader.Read(name,
+                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
+                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
+                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
+                    }
+
+                    if ( m_PreviewImage.Size()==0)
+                    { // this happens in case an empty image is returned by ReadNexus
+                        QMessageBox mbox(this);
+                        msg.str("");
+                        msg<<"KiplException: Nexus format not supported\n";
+                        logger(kipl::logging::Logger::LogError,msg.str());
+                        mbox.setText(QString::fromStdString(msg.str()));
+                        mbox.exec();
+                    }
                 }
-                else
-                {
-                    m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
-                                    static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-                                    static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                                    static_cast<float>(ui->spinProjectionBinning->value()),NULL);
-                }
-
-                if ( m_PreviewImage.Size()==0)
-                { // this happens in case an empty image is returned by ReadNexus
-
-                  QMessageBox mbox(this);
-                  msg.str("");
-                  msg<<"KiplException: Nexus format not supported\n";
-                  logger(kipl::logging::Logger::LogError,msg.str());
-                  mbox.setText(QString::fromStdString(msg.str()));
-                  mbox.exec();
-                }
-            }
                 catch(ReconException &e){
                     msg<<"ReconException: Reading file failed\n"<<e.what();
 
@@ -524,7 +536,6 @@ void MuhRecMainWindow::PreviewProjection()
 void MuhRecMainWindow::DisplaySlice(int x)
 {
     QSignalBlocker blockSlider(ui->sliderSlices);
-
     if (m_pEngine==nullptr)
         return;
 
@@ -533,7 +544,7 @@ void MuhRecMainWindow::DisplaySlice(int x)
 
     if (x<0) {
         nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
-        ui->sliderProjections->setValue(nSelectedSlice);
+        ui->sliderSlices->setValue(nSelectedSlice);
     }
 
     try {
@@ -542,14 +553,8 @@ void MuhRecMainWindow::DisplaySlice(int x)
                                    static_cast<float>(ui->dspinGrayLow->value()),
                                    static_cast<float>(ui->dspinGrayHigh->value()));
         msg.str("");
-        if (ui->checkCBCT->isChecked()){
-            msg<<x<<" ("<<x+ui->spinSubVolumeSizeZ0->value()<<")";
-        }
-        else {
-             msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
-        }
+        msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
         ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
-
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -563,6 +568,7 @@ void MuhRecMainWindow::DisplaySlice()
 {
     DisplaySlice(-1);
 }
+
 void MuhRecMainWindow::GetSkipList()
 {
     UpdateConfig();
@@ -642,6 +648,20 @@ void MuhRecMainWindow::GetReconROI()
         ui->spinProjROIx1->setValue(rect.x()+rect.width());
         ui->spinProjROIy1->setValue(rect.y()+rect.height());
 
+        if (ui->spinSlicesFirst->value()<ui->spinProjROIy0->value())
+        {
+            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
+            ui->spinSlicesLast->setValue(ui->spinProjROIy0->value()+32);
+        }
+
+        if (ui->spinSlicesLast->value()>ui->spinProjROIy1->value())
+        {
+            ui->spinSlicesFirst->setValue(ui->spinProjROIy1->value()-32);
+            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
+        }
+
+
+
 //        ui->spinSlicesFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
 //        ui->spinSlicesLast->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
 
@@ -667,13 +687,16 @@ void MuhRecMainWindow::RotateChanged()
 
 }
 
-void MuhRecMainWindow::DoseROIChanged(int UNUSED(x))
+void MuhRecMainWindow::DoseROIChanged(int x)
 {
+    (void)x;
     UpdateDoseROI();
 }
 
-void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
+void MuhRecMainWindow::ProjROIChanged(int x)
 {
+    (void)x;
+
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
 
@@ -685,11 +708,12 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
     rect=rect.normalized();
 
     ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
-    ui->spinSlicesFirst->setMinimum(dims[1]);
-    ui->spinSlicesFirst->setMaximum(dims[3]);
+//    ui->spinSlicesFirst->setMinimum(dims[1]);
+//    ui->spinSlicesFirst->setMaximum(dims[3]);
 
-    ui->spinSlicesLast->setMinimum(dims[1]);
-    ui->spinSlicesLast->setMaximum(dims[3]);
+//    ui->spinSlicesLast->setMinimum(dims[1]);
+//    ui->spinSlicesLast->setMaximum(dims[3]);
+
 
     SlicesChanged(0);
     CenterOfRotationChanged();
@@ -697,18 +721,20 @@ void MuhRecMainWindow::ProjROIChanged(int UNUSED(x))
 
     if (ui->checkCBCT->isChecked()){
         ComputeVolumeSize(); // update the size of the output volume
-        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
+//        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
+//        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
     }
 }
 
-void MuhRecMainWindow::CenterOfRotationChanged(int UNUSED(x))
+void MuhRecMainWindow::CenterOfRotationChanged(int x)
 {
+    (void)x;
     CenterOfRotationChanged();
 }
 
-void  MuhRecMainWindow::CenterOfRotationChanged(double UNUSED(x))
+void  MuhRecMainWindow::CenterOfRotationChanged(double x)
 {
+    (void)x;
     CenterOfRotationChanged();
 }
 
@@ -912,6 +938,10 @@ void MuhRecMainWindow::UseMatrixROI(int x)
 
 void MuhRecMainWindow::MenuFileNew()
 {
+    if (m_pEngine!=nullptr) {
+        delete m_pEngine;
+        m_pEngine=nullptr;
+    }
     LoadDefaults(false);
 }
 
@@ -1058,7 +1088,6 @@ void MuhRecMainWindow::MenuFileOpen()
         msgbox.setDetailedText(QString::fromStdString(msg.str()));
         msgbox.exec();
     }
-
     UpdateDialog();
 
 }
@@ -1156,6 +1185,8 @@ void MuhRecMainWindow::saveCurrentRecon()
 void MuhRecMainWindow::MenuReconstructStart()
 {
     ui->tabMainControl->setCurrentIndex(4);
+
+    UpdateConfig();
 
     ostringstream msg;
     m_Config.MatrixInfo.bAutomaticSerialize=false;
@@ -1497,10 +1528,8 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
         // Matrix size
         double length = abs(static_cast<ptrdiff_t>(roi[2])-static_cast<ptrdiff_t>(roi[0]));
         double height = 0;
-        if (ui->checkCBCT->isChecked())
-            height = abs(ui->spinSubVolumeSizeZ0->value()-ui->spinSubVolumeSizeZ1->value()+1);
-        else
-            height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
+
+        height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
         text.str("");
 
         nMatrixMemory = length*length*height*sizeof(float);
@@ -1554,6 +1583,7 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
 
 void MuhRecMainWindow::UpdateDialog()
 {
+
     std::ostringstream str;
     QSignalBlocker blockFirstProjection(ui->spinFirstProjection);
     QSignalBlocker blockLastProjection(ui->spinLastProjection);
@@ -1571,7 +1601,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjectionBinning->setValue(m_Config.ProjectionInfo.fBinning);
     ui->comboFlipProjection->setCurrentIndex(m_Config.ProjectionInfo.eFlip);
     ui->comboRotateProjection->setCurrentIndex(m_Config.ProjectionInfo.eRotate);
-
+  //  ProjectionIndexChanged(-1);
 
     ui->spinFirstOpenBeam->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBFirstIndex));
     ui->spinOpenBeamCount->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBCount));
@@ -1586,19 +1616,18 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinDoseROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.dose_roi[3]));
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
-    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
-    ui->spinSlicesFirst->blockSignals(true);
-    ui->spinSlicesLast->blockSignals(true);
+    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
+    QSignalBlocker blockProjROIx0(ui->spinProjROIx0);
+    QSignalBlocker blockProjROIx1(ui->spinProjROIx1);
+    QSignalBlocker blockProjROIy0(ui->spinProjROIy0);
+    QSignalBlocker blockProjROIy1(ui->spinProjROIy1);
 
     ui->spinProjROIx0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]));
     ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
     ui->spinProjROIx1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]));
     ui->spinProjROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
-
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
-    ui->spinSlicesFirst->blockSignals(false);
-    ui->spinSlicesLast->blockSignals(false);
 
     ui->dspinRotationCenter->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinAngleStart->setValue(m_Config.ProjectionInfo.fScanArc[0]);
@@ -1624,7 +1653,7 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
-    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType-2);
+    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType-3);
     // -2 to skip matlab types
 
     ui->editProjectName->setText(QString::fromStdString(m_Config.UserInformation.sProjectNumber));
@@ -1653,33 +1682,11 @@ void MuhRecMainWindow::UpdateDialog()
         ui->checkCBCT->setChecked(true);
 //        ComputeVolumeSizeSpacing();
     }
+    else{
+        ui->checkCBCT->setChecked(false);
+    }
 
-//    if (ui->checkCBCT->isChecked()) {
-//        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
-//        ComputeVolumeSizeSpacing();
-//        ui->TabGeometry->setTabEnabled(1,true);
-//        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-//        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-//        ui->spinSlicesFirst->hide();
-//        ui->spinSlicesLast->hide();
-//        ui->label_50->hide();
-//        ui->label_51->hide();
-//        ui->label_30->hide();
-//    }
-//    else {
-//        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-//        ui->TabGeometry->setTabEnabled(1,false);
-//        ui->spinSlicesFirst->show();
-//        ui->spinSlicesLast->show();
-//        ui->label_50->show();
-//        ui->label_51->show();
-//        ui->label_30->show();
-//    }
-
-
-        ui->spinSubVolumeSizeZ0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3] - m_Config.MatrixInfo.voi[5]));
-        ui->spinSubVolumeSizeZ1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3] - m_Config.MatrixInfo.voi[4]));
-
+    CenterOfRotationChanged(0);
     ProjROIChanged(0);
     SlicesChanged(0);
     UpdateDoseROI();
@@ -1687,6 +1694,7 @@ void MuhRecMainWindow::UpdateDialog()
 
 void MuhRecMainWindow::UpdateConfig()
 {
+    std::ostringstream msg;
     m_Config.ProjectionInfo.sPath="";
     m_Config.ProjectionInfo.sReferencePath="";
 
@@ -1694,6 +1702,15 @@ void MuhRecMainWindow::UpdateConfig()
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sFileMask,false);
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
     m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
+    if (m_Config.ProjectionInfo.nLastIndex<m_Config.ProjectionInfo.nFirstIndex) {
+        qDebug()<<"Update config: Last<First projection";
+        std::swap(m_Config.ProjectionInfo.nLastIndex,m_Config.ProjectionInfo.nFirstIndex);
+        ui->spinFirstProjection->setValue(m_Config.ProjectionInfo.nFirstIndex);
+        ui->spinLastProjection->setValue(m_Config.ProjectionInfo.nLastIndex);
+        QMessageBox dlg;
+        dlg.setText("Last<First projection, swapped values");
+    }
+
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
     m_Config.ProjectionInfo.imagetype = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
     m_Config.ProjectionInfo.fBinning = ui->spinProjectionBinning->value();
@@ -1750,46 +1767,33 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
 
+    CenterOfRotationChanged(0);
+
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
-        m_Config.ProjectionInfo.roi[1] = m_Config.ProjectionInfo.projection_roi[1];
-        m_Config.ProjectionInfo.roi[3] = m_Config.ProjectionInfo.projection_roi[3];
         ui->TabGeometry->setTabEnabled(1,true);
-        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-        ui->spinSlicesFirst->hide();
-        ui->spinSlicesLast->hide();
-        ui->label_50->hide();
-        ui->label_51->hide();
-        ui->label_30->hide();
         ui->checkUseMatrixROI->hide();
-
-        SlicesCBCTChanged(0);
+        SlicesChanged(0);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
-        m_Config.ProjectionInfo.roi[1] = ui->spinSlicesFirst->value();
-        m_Config.ProjectionInfo.roi[3] = ui->spinSlicesLast->value();
         ui->TabGeometry->setTabEnabled(1,false);
-        ui->spinSlicesFirst->show();
-        ui->spinSlicesLast->show();
-        ui->label_50->show();
-        ui->label_51->show();
-        ui->label_30->show();
         ui->checkUseMatrixROI->show();
-
         SlicesChanged(0);
     }
 
 
 
-        m_Config.MatrixInfo.voi[0] = 0;
-        m_Config.MatrixInfo.voi[1] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
-        m_Config.MatrixInfo.voi[2] = 0;
-        m_Config.MatrixInfo.voi[3] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
-        m_Config.MatrixInfo.voi[4] = m_Config.ProjectionInfo.roi[3]-ui->spinSubVolumeSizeZ1->value();
-        m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-ui->spinSubVolumeSizeZ0->value();
+    m_Config.MatrixInfo.voi[0] = 0;
+    m_Config.MatrixInfo.voi[1] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
+    m_Config.MatrixInfo.voi[2] = 0;
+    m_Config.MatrixInfo.voi[3] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
+//        m_Config.MatrixInfo.voi[4] = m_Config.ProjectionInfo.roi[3]-ui->spinSubVolumeSizeZ1->value();
+//        m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-ui->spinSubVolumeSizeZ0->value();
+    m_Config.MatrixInfo.voi[4] = 0;
+    m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
+
 
 
     m_Config.modules = ui->moduleconfigurator->GetModules();
@@ -1804,7 +1808,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
 
-    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+2);
+    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+3);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
 
     // Validity test of the slice file mask
@@ -1834,7 +1838,22 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
     m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
 
-    m_Config.SanityCheck();
+    try {
+        m_Config.SanityCheck();
+    }
+    catch (ReconException & e)
+    {
+        msg<<"Config sanity check failed in update config"<<std::endl<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException & e)
+    {
+        msg<<"Config sanity check failed in update config"<<std::endl<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
 }
 
 
@@ -1990,22 +2009,12 @@ bool MuhRecMainWindow::reconstructToDisk()
     UpdateConfig();
 
     logger(logger.LogMessage,msg.str());
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-    {
-        largesize_dlg.SetFields(ui->editDestPath->text(),
+
+    largesize_dlg.SetFields(ui->editDestPath->text(),
                                 ui->editSliceMask->text(),
                                 false,
                                 m_Config.ProjectionInfo.roi[1], m_Config.ProjectionInfo.roi[3],
                                 m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-    }
-    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-    {
-        largesize_dlg.SetFields(ui->editDestPath->text(),
-                                ui->editSliceMask->text(),
-                                false,
-                                ui->spinSubVolumeSizeZ0->value(), ui->spinSubVolumeSizeZ1->value(),
-                                m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-    }
 
     int res=largesize_dlg.exec();
 
@@ -2020,16 +2029,9 @@ bool MuhRecMainWindow::reconstructToDisk()
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
 
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-    {
-        ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
-        ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
-    }
-    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-    {
-        ui->spinSubVolumeSizeZ0->setValue(largesize_dlg.GetFirst());
-        ui->spinSubVolumeSizeZ1->setValue(largesize_dlg.GetLast());
-    }
+    ui->spinSlicesFirst->setValue(largesize_dlg.GetFirst());
+    ui->spinSlicesLast->setValue(largesize_dlg.GetLast());
+
 
     UpdateConfig();
 
@@ -2064,7 +2066,6 @@ void MuhRecMainWindow::SlicesChanged(int arg1)
                    dims[3]=ui->spinSlicesLast->value());
 
     ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
-
     UpdateMemoryUsage(dims);
 }
 
@@ -2119,25 +2120,25 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         logger(logger.LogMessage,msg.str());
 
         ui->TabGeometry->setTabEnabled(1,true);
-        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-        ui->spinSlicesFirst->hide();
-        ui->spinSlicesLast->hide();
-        ui->label_50->hide();
-        ui->label_51->hide();
-        ui->label_30->hide();
         ui->checkUseMatrixROI->hide();
 
-        SlicesCBCTChanged(0);
+        SlicesChanged(0);
+
+        // add here the message
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Cone Beam CT");
+        msgBox.setText("Cone Beam CT reconstruction: \n - Tune the CB geometry in the Advanced geometry tab \n - in the Preprocessing module remove ProjectionFilterSingle. \n - in Back-projector configuration, add  FDKBackprojectors and then choose FDKbp (for double precision) or FDKbp_single (faster, for single precision). \n \n Enjoy!");
+//        msgBox.setDetailedText(QString::fromStdString(msg.str()));
+        msgBox.exec();
 
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->TabGeometry->setTabEnabled(1,false);
-        ui->spinSlicesFirst->show();
-        ui->spinSlicesLast->show();
-        ui->label_50->show();
-        ui->label_51->show();
-        ui->label_30->show();
+//        ui->spinSlicesFirst->show();
+//        ui->spinSlicesLast->show();
+//        ui->label_50->show();
+//        ui->label_51->show();
+//        ui->label_30->show();
         ui->checkUseMatrixROI->show();
 
         SlicesChanged(0);
@@ -2154,9 +2155,9 @@ void MuhRecMainWindow::ComputeVolumeSize()
 {
     float magn = m_Config.ProjectionInfo.fSDD/m_Config.ProjectionInfo.fSOD;
     // compute volume dimensions
-    m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+    m_Config.MatrixInfo.nDims[0] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.projection_roi[0])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
     m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-    m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
+    m_Config.MatrixInfo.nDims[2] = (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.projection_roi[1])*m_Config.ProjectionInfo.fResolution[0]/magn/m_Config.MatrixInfo.fVoxelSize[0];
 }
 
 void MuhRecMainWindow::ComputeVoxelSpacing()
@@ -2175,46 +2176,47 @@ void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
             m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
             ComputeVolumeSizeSpacing();
             ui->TabGeometry->setTabEnabled(1,true);
-            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-            ui->spinSlicesFirst->hide();
-            ui->spinSlicesLast->hide();
-            ui->label_50->hide();
-            ui->label_51->hide();
-            ui->label_30->hide();
+//            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
+//            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
+//            ui->spinSlicesFirst->hide();
+//            ui->spinSlicesLast->hide();
+//            ui->label_50->hide();
+//            ui->label_51->hide();
+//            ui->label_30->hide();
 
         }
         else {
             m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
             ui->TabGeometry->setTabEnabled(1,false);
-            ui->spinSlicesFirst->show();
-            ui->spinSlicesLast->show();
-            ui->label_50->show();
-            ui->label_51->show();
-            ui->label_30->show();
+//            ui->spinSlicesFirst->show();
+//            ui->spinSlicesLast->show();
+//            ui->label_50->show();
+//            ui->label_51->show();
+//            ui->label_30->show();
         }
 
 }
 
 void MuhRecMainWindow::on_buttonGetPP_clicked()
 {
-    PiercingPointDialog dlg;
-    UpdateConfig();
+//    PiercingPointDialog dlg;
+//    UpdateConfig();
 
-    int res=dlg.exec(m_Config);
+//    int res=dlg.exec(m_Config);
 
-    if (res==QDialog::Accepted) {
-        pair<float,float> position=dlg.getPosition();
+//    if (res==QDialog::Accepted) {
+//        pair<float,float> position=dlg.getPosition();
 
-        m_Config.ProjectionInfo.fpPoint[0]=position.first;
-        m_Config.ProjectionInfo.fpPoint[1]=position.second;
-        UpdateDialog();
-    }
+//        m_Config.ProjectionInfo.fpPoint[0]=position.first;
+//        m_Config.ProjectionInfo.fpPoint[1]=position.second;
+//        UpdateDialog();
+//    }
 
 }
 
 void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 {
+    (void)arg1;
     if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
         m_Config.ProjectionInfo.fResolution[0]=m_Config.ProjectionInfo.fResolution[1]= ui->dspinResolution->value();
         ComputeVoxelSpacing();
@@ -2227,27 +2229,27 @@ void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 
 
 
-void MuhRecMainWindow::on_spinSubVolumeSizeZ0_valueChanged(int arg1)
-{
-    SlicesCBCTChanged(arg1);
-}
 
-void MuhRecMainWindow::on_spinSubVolumeSizeZ1_valueChanged(int arg1)
-{
-    SlicesCBCTChanged(arg1);
-}
+//void MuhRecMainWindow::on_spinSubVolumeSizeZ0_valueChanged(int arg1)
+//{
+//    SlicesCBCTChanged(arg1);
+//}
 
-void MuhRecMainWindow::SlicesCBCTChanged(int x)
-{
-    QRect rect;
+//void MuhRecMainWindow::on_spinSubVolumeSizeZ1_valueChanged(int arg1)
+//{
+//    SlicesCBCTChanged(arg1);
+//}
 
-    rect.setCoords(ui->spinProjROIx0->value(),
-                   ui->spinSubVolumeSizeZ0->value(),
-                   ui->spinProjROIx1->value(),
-                   ui->spinSubVolumeSizeZ1->value());
+//void MuhRecMainWindow::SlicesCBCTChanged(int x)
+//{
+//    QRect rect;
+//    rect.setCoords(ui->spinProjROIx0->value(),
+//                   ui->spinSubVolumeSizeZ0->value(),
+//                   ui->spinProjROIx1->value(),
+//                   ui->spinSubVolumeSizeZ1->value());
 
-    ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
-}
+//    ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
+//}
 
 void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
 {
@@ -2258,4 +2260,81 @@ void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
         dlg.exec();
     }
 
+}
+
+void MuhRecMainWindow::on_sliderProjections_sliderMoved(int position)
+{
+    bool fail=false;
+    std::ostringstream msg;
+
+    try {
+        PreviewProjection(position);
+    }
+    catch (ReconException &e) {
+        fail=true;
+        msg<<e.what();
+    }
+    catch (kipl::base::KiplException &e) {
+        fail=true;
+        msg<<e.what();
+    }
+
+    if (fail) {
+        QMessageBox dlg;
+        dlg.setText("Failed to show projection");
+        dlg.setDetailedText(QString::fromStdString(msg.str()));
+        dlg.exec();
+    }
+}
+
+void MuhRecMainWindow::on_spinFirstProjection_valueChanged(int arg1)
+{
+    std::ostringstream msg;
+    if (ui->spinFirstProjection->text().isEmpty())
+        return;
+
+//    QFile::exists(QString::fromStdString(name));
+    int last=ui->spinLastProjection->value();
+    if (last<arg1) {
+        msg<<"First projection greater than last ("<<last<<"<"<<arg1<<")";
+        qDebug()<<QString::fromStdString(msg.str());
+        logger(logger.LogWarning,msg.str());
+    }
+    else {
+        ProjectionIndexChanged(0);
+    }
+}
+
+void MuhRecMainWindow::on_spinLastProjection_valueChanged(int arg1)
+{
+    std::ostringstream msg;
+
+    if (ui->spinLastProjection->text().isEmpty())
+        return;
+
+    int first=ui->spinFirstProjection->value();
+
+    if (arg1<first) {
+        msg<<"Last projection is less than first ("<<arg1<<"<"<<first<<")";
+        qDebug()<<QString::fromStdString(msg.str());
+        logger(logger.LogWarning,msg.str());
+    }
+    else {
+        ProjectionIndexChanged(0);
+    }
+}
+
+void MuhRecMainWindow::on_comboFlipProjection_currentIndexChanged(int index)
+{
+    PreviewProjection();
+}
+
+void MuhRecMainWindow::on_comboRotateProjection_currentIndexChanged(int index)
+{
+    PreviewProjection();
+}
+
+void MuhRecMainWindow::on_buttonPreview_clicked()
+{
+    PreviewProjection();
 }

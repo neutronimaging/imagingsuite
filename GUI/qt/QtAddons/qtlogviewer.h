@@ -2,52 +2,52 @@
 #define QTLOGVIEWER_H
 
 #include "QtAddons_global.h"
-#include <qwidget.h>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QComboBox>
-#include <QTextEdit>
-#include <qmutex.h>
+
+#include <QWidget>
+#include <QMutex>
+
 #include <logging/logger.h>
-#include <fstream>
+
+namespace Ui {
+class QtLogViewer;
+}
 
 namespace QtAddons {
-class QTADDONSSHARED_EXPORT QtLogViewer : public QWidget, public kipl::logging::LogWriter{
+
+class QTADDONSSHARED_EXPORT QtLogViewer : public QWidget, public kipl::logging::LogWriter
+{
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    QtLogViewer(QWidget *parent=NULL);
+    explicit QtLogViewer(QWidget *parent = 0);
     ~QtLogViewer();
 
     virtual size_t Write(std::string str);
 
-    bool isContainer() { return false;}
     QString serialize();
-    void SetLogLevel(kipl::logging::Logger::LogLevel level);
+    void setLogLevel(kipl::logging::Logger::LogLevel level);
     void clear();
 
 private slots:
-    void save_clicked();
-    void clear_clicked();
-    void loglevel_changed(int level);
+    void on_buttonSave_clicked();
 
-protected:
-    QVBoxLayout vbox;
-    QHBoxLayout hbox;
+    void on_buttonClear_clicked();
 
-    QTextEdit textedit;
+    void on_comboLogLevel_currentIndexChanged(int index);
 
+    void updateText(QString msg);
 
-    QPushButton save_button;
-    QPushButton clear_button;
-    QComboBox   loglevel_combo;
+private:
+    Ui::QtLogViewer *ui;
 
     std::ofstream m_LogFile;
 
     QMutex m_Mutex;
     kipl::logging::Logger::LogLevel m_CurrentLoglevel;
-};
 
+signals:
+    void newText(QString msg);
+};
 }
+
 #endif // QTLOGVIEWER_H

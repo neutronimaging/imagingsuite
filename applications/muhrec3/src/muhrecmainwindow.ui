@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MuhRec 3</string>
   </property>
+  <property name="toolTip">
+   <string/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
@@ -1381,14 +1384,17 @@
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
+                     <property name="toolTip">
+                      <string extracomment="select direction of rotation "/>
+                     </property>
                      <item>
                       <property name="text">
-                       <string>RotationDirCW</string>
+                       <string>ClockWise</string>
                       </property>
                      </item>
                      <item>
                       <property name="text">
-                       <string>RotationDirCCW</string>
+                       <string>CounterClockWise</string>
                       </property>
                      </item>
                     </widget>
@@ -1408,69 +1414,6 @@
                       </size>
                      </property>
                     </spacer>
-                   </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="horizontalLayoutWidget_5">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>110</y>
-                    <width>701</width>
-                    <height>32</height>
-                   </rect>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_15">
-                   <item>
-                    <widget class="QLabel" name="label_34">
-                     <property name="text">
-                      <string>Slices to reconstruct</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_3">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeType">
-                      <enum>QSizePolicy::Minimum</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_67">
-                     <property name="text">
-                      <string>First</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="spinSubVolumeSizeZ0">
-                     <property name="maximum">
-                      <number>9999</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_68">
-                     <property name="text">
-                      <string>Last</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="spinSubVolumeSizeZ1">
-                     <property name="maximum">
-                      <number>9999</number>
-                     </property>
-                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1830,13 +1773,8 @@
              <item row="1" column="2">
               <widget class="QComboBox" name="comboDestFileType">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
-               <item>
-                <property name="text">
-                 <string>8-bit TIFF</string>
-                </property>
-               </item>
                <item>
                 <property name="text">
                  <string>16-bit TIFF</string>
@@ -2079,7 +2017,7 @@
      <x>0</x>
      <y>0</y>
      <width>1285</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

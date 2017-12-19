@@ -1,0 +1,14 @@
+//<LICENSE>
+
+#ifndef BASEMODULES_GLOBAL_H
+#define BASEMODULES_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(BASEMODULES_LIBRARY)
+#  define BASEMODULES_EXPORT Q_DECL_EXPORT
+#else
+#  define BASEMODULES_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // BASEMODULES_GLOBAL_H
