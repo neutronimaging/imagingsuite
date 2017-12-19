@@ -1,7 +1,7 @@
 #ifndef IMAGEVIEWERINFODIALOG_H
 #define IMAGEVIEWERINFODIALOG_H
 
-#include <QtAddons_global.h>
+#include "QtAddons_global.h"
 #include <QDialog>
 #include <QRect>
 #include <QPoint>

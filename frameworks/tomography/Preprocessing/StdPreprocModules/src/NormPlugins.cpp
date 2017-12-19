@@ -280,8 +280,9 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
     }
 
 
-
-    flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,fDarkDose,m_Config,fFlatDose);
+    if (nOBCount!=0) {
+        flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,fDarkDose,m_Config,fFlatDose);
+    }
 
 //    if (dark.Size()==0){
 //        dark.Resize(flat.Dims());

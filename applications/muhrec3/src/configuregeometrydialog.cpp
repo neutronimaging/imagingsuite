@@ -601,7 +601,7 @@ int ConfigureGeometryDialog::LoadImages()
     else { // read the hfd file
 
         m_Proj0Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
-                0, // to be automatized
+                m_Config.ProjectionInfo.nFirstIndex, // to be automatized
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
@@ -620,9 +620,10 @@ int ConfigureGeometryDialog::LoadImages()
             logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
         }
         m_Proj0Deg=medfilt(m_Proj0Deg);
+        int proj_180 = static_cast<int>(180.0f/((m_Config.ProjectionInfo.fScanArc[1]-m_Config.ProjectionInfo.fScanArc[0])/(static_cast<float>(m_Config.ProjectionInfo.nLastIndex)-static_cast<float>(m_Config.ProjectionInfo.nFirstIndex))));
 
         m_Proj180Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
-                312, // to be automatized ASAP
+                proj_180, // to be automatized ASAP
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
@@ -652,8 +653,8 @@ int ConfigureGeometryDialog::LoadImages()
 
 void ConfigureGeometryDialog::UpdateConfig()
 {
-//    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
-//    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
+    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
+    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
@@ -685,8 +686,8 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->spinSliceFirst->blockSignals(true);
     ui->spinSliceLast->blockSignals(true);
     ui->checkUseTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
-//    ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
-//    ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
+    ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
+    ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
     ui->dspinAngleFirst->setValue(m_Config.ProjectionInfo.fScanArc[0]);
     ui->dspinAngleLast->setValue(m_Config.ProjectionInfo.fScanArc[1]);
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);

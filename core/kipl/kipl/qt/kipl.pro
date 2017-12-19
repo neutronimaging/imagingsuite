@@ -37,8 +37,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include ../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
     DEFINES += NOMINMAX
@@ -219,8 +219,8 @@ HEADERS +=\
     ../include/math/core/basicprojector.hpp \
     ../include/math/compleximage.h \
     ../include/math/basicprojector.h \
-    ../include/regression/linefit.h \
-    ../include/regression/core/linefit.hpp \
+#    ../include/regression/linefit.h \
+#    ../include/regression/core/linefit.hpp \
     ../include/segmentation/wsthres.h \
     ../include/segmentation/thresholds.h \
     ../include/segmentation/segmentationbase.h \
@@ -341,18 +341,44 @@ message("-lNeXus does not exists $$HEADERS")
 
 }
 
+#unix:mac {
+#exists(/usr/local/lib/*NeXus*) {
+
+#    message("-lNeXus exists")
+#    DEFINES += HAVE_NEXUS
+##    INCLUDEPATH += /usr/local/lib
+##    LIBS += -L/usr/local/lib/  -lNeXus -lNeXusCPP
+
+#    LIBS += -L$$PWD/../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+
+#    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
+#    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
+
+#    SOURCES += ../src/io/io_nexus.cpp
+#    HEADERS += ../include/io/io_nexus.h
+#}
+#else {
+#message("-lNeXus does not exists $$HEADERS")
+#}
+
 unix:mac {
-exists(/usr/local/lib/*NeXus*) {
+exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
     message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
-#    INCLUDEPATH += /usr/local/lib
-#    LIBS += -L/usr/local/lib/  -lNeXus -lNeXusCPP
 
-    LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
+    #INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5 #can i take the same as win?? probably stupid question
+    #QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
 
-    INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
-    DEPENDPATH += $$PWD/../../../../../../../usr/local/include
+    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
+
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+
+
+#    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
+#    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
 
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
@@ -408,7 +434,3 @@ DISTFILES += \
     ../include/filters/nonlocalmeans.txt
 
 message($$INCLUDEPATH)
-
-
-
-

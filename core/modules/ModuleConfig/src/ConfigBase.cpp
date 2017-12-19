@@ -270,6 +270,11 @@ bool ConfigBase::ConfigChanged(ConfigBase & config, std::list<std::string> freel
 
                 return true;
             }
+            else {
+                std::ostringstream msg;
+                msg<<"Parameter "<<thispar<<" differs between the configurations but is in the skip list";
+                logger(kipl::logging::Logger::LogMessage,msg.str());
+            }
         }
 
         tpos0=tpos1;
