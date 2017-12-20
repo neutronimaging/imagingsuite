@@ -95,7 +95,7 @@ void ROIWidget::getROI(int *roi)
 
 void ROIWidget::getROI(size_t *roi)
 {
-   std::copy(mroi,mroi,roi);
+   std::copy(mroi,mroi+4,roi);
 }
 
 QRect ROIWidget::getROI()

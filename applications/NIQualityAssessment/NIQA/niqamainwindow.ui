@@ -262,9 +262,9 @@
            </layout>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox">
-            <property name="title">
-             <string>ROI</string>
+           <widget class="QCheckBox" name="check_edge2dcrop">
+            <property name="text">
+             <string>Crop images</string>
             </property>
            </widget>
           </item>
@@ -279,22 +279,27 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>- Load images with edges acquired at different distances
-- set pixel size
-- provide distances
-- Compute resolution using MTF, FWHM, etc (combobox)
-- Estimate L/D
-- Plot results
-- Generate PDF report </string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QPushButton" name="button_get2Dedges">
+              <property name="text">
+               <string>Get edges</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_estimateCollimation">
+              <property name="text">
+               <string>Estimate collimation</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QTabWidget" name="tabWidget_2">
+         <widget class="QTabWidget" name="tabWidget_edge2D">
           <property name="currentIndex">
            <number>0</number>
           </property>

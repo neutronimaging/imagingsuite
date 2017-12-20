@@ -55,12 +55,21 @@ private slots:
 
     void on_combo_PackingImage_currentIndexChanged(int index);
 
+    void on_check_edge2dcrop_toggled(bool checked);
+
+    void on_button_get2Dedges_clicked();
+
+    void on_button_estimateCollimation_clicked();
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
 
     void on_widget_roiEdge2D_getROIclicked();
     void on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, int y1);
+    void getEdge2Dprofiles();
+    void estimateResolutions();
+    void plotEdgeProfiles();
 
     Ui::NIQAMainWindow *ui;
 
@@ -68,7 +77,8 @@ private:
     kipl::base::TImage<float,3> m_BallAssembly;
     kipl::base::TImage<float,3> m_Contrast;
 
-    std::map<float, kipl::base::TImage<float,2>> m_Edges;
+//    std::map<float, kipl::base::TImage<float,2>> m_Edges;
+    map<float,std::vector<float>> m_Edges;
 
     ImagingQAAlgorithms::BallAnalysis m_BallAnalyzer;
     ImagingQAAlgorithms::ContrastSampleAnalysis m_ContrastSampleAnalyzer;

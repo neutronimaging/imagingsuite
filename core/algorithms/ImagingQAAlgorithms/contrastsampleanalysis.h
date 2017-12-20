@@ -11,7 +11,7 @@
 
 namespace ImagingQAAlgorithms {
 
-class ContrastSampleAnalysis
+class IMAGINGQAALGORITHMSSHARED_EXPORT ContrastSampleAnalysis
 {
     kipl::logging::Logger logger;
 

@@ -15,6 +15,7 @@
 
 #include <datasetbase.h>
 #include <imagereader.h>
+#include <base/tprofile.h>
 
 #include "edgefileitemdialog.h"
 
@@ -38,6 +39,8 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
 
     connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roiEdge2D_getROIclicked);
     connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roiEdge2D_valueChanged);
+    ui->check_edge2dcrop->setChecked(false);
+    on_check_edge2dcrop_toggled(false);
 }
 
 NIQAMainWindow::~NIQAMainWindow()
@@ -235,10 +238,23 @@ void NIQAMainWindow::on_button_addEdgeFile_clicked()
         item->distance  = 0.0f;
         item->filename  = *it;
 
+        EdgeFileItemDialog dlg;
+
+        dlg.setInfo(item->distance,item->filename);
+        int res=dlg.exec();
+
+        if (res==dlg.Accepted) {
+            dlg.getInfo(item->distance,item->filename);
+            std::ostringstream msg;
+            msg<<item->filename.toStdString()<<std::endl<<"Edge distance="<<item->distance;
+            item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+        }
+
         msg<<it->toStdString()<<std::endl<<"Edge distance="<<item->distance;
         item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
         item->setData(Qt::CheckStateRole,Qt::Unchecked);
 
+        item->setCheckState(Qt::CheckState::Checked);
         ui->listEdgeFiles->addItem(item);
     }
 }
@@ -281,12 +297,11 @@ void NIQAMainWindow::on_listEdgeFiles_clicked(const QModelIndex &index)
 
     ImageReader reader;
 
-//    msg<<loader.m_sFilemask<<loader.m_nFirst<<", "<<loader.m_nLast;
-//    logger(logger.LogMessage,msg.str());
     img=reader.Read(item->filename.toStdString(),kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
 
     ui->viewer_edgeimages->set_image(img.GetDataPtr(),img.Dims());
-    ui->viewer_edgeimages->set_rectangle(ui->widget_roiEdge2D->getROI(),QColor("red"),0);
+    on_check_edge2dcrop_toggled(ui->check_edge2dcrop->isEnabled());
+
 }
 
 void NIQAMainWindow::on_button_LoadPacking_clicked()
@@ -344,6 +359,7 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
 
 void NIQAMainWindow::on_combo_PackingImage_currentIndexChanged(int index)
 {
+    (void) index;
     on_slider_PackingImages_sliderMoved(ui->slider_PackingImages->value());
 }
 
@@ -359,4 +375,93 @@ void NIQAMainWindow::on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, in
 {
     QRect rect(x0,y0,x1-x0+1,y1-y0+1);
     ui->viewer_edgeimages->set_rectangle(rect,QColor("red"),0);
+}
+
+
+
+void NIQAMainWindow::on_check_edge2dcrop_toggled(bool checked)
+{
+    if (checked) {
+        ui->widget_roiEdge2D->show();
+        ui->viewer_edgeimages->set_rectangle(ui->widget_roiEdge2D->getROI(),QColor("red"),0);
+    }
+    else {
+        ui->widget_roiEdge2D->hide();
+        ui->viewer_edgeimages->clear_rectangle(0);
+    }
+}
+
+void NIQAMainWindow::on_button_get2Dedges_clicked()
+{
+    getEdge2Dprofiles();
+    plotEdgeProfiles();
+
+    ui->tabWidget_edge2D->setCurrentIndex(1);
+}
+
+void NIQAMainWindow::on_button_estimateCollimation_clicked()
+{
+
+}
+
+void NIQAMainWindow::getEdge2Dprofiles()
+{
+    kipl::base::TImage<float,2> img;
+    EdgeFileListItem *item = nullptr;
+
+    ImageReader reader;
+    size_t crop[4];
+    ui->widget_roiEdge2D->getROI(crop);
+    m_Edges.clear();
+    size_t *pCrop= ui->check_edge2dcrop->isChecked() ? crop : nullptr;
+
+    float *profile=nullptr;
+    for (int i=0; i<ui->listEdgeFiles->count(); ++i) {
+        item = dynamic_cast<EdgeFileListItem *>(ui->listEdgeFiles->item(i));
+        if (item->checkState()==Qt::CheckState::Unchecked)
+            continue;
+
+        qDebug() <<item->filename;
+        try {
+            img=reader.Read(item->filename.toStdString(),kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,pCrop);
+        }
+        catch (kipl::base::KiplException &e) {
+            qDebug() << QString::fromStdString(e.what());
+            return ;
+        }
+
+        if (profile==nullptr)
+            profile=new float[img.Size(0)];
+
+        kipl::base::HorizontalProjection2D(img.GetDataPtr(), img.Dims(), profile, true);
+        std::vector<float> pvec;
+        std::copy(profile,profile+img.Size(0),std::back_inserter(pvec));
+        m_Edges[item->distance]=pvec;
+    }
+
+    delete [] profile;
+}
+
+void NIQAMainWindow::estimateResolutions()
+{
+
+}
+
+void NIQAMainWindow::plotEdgeProfiles()
+{
+    QChart *chart = new QChart(); // Life time
+
+    for (auto it = m_Edges.begin(); it!=m_Edges.end(); ++it) {
+        QLineSeries *series = new QLineSeries(); //Life time
+        auto edge=it->second;
+        for (size_t i=0; i<edge.size(); ++i) {
+            series->append(QPointF(i,float(edge[i])));
+        }
+
+        chart->addSeries(series);
+    }
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+
+    ui->chart_2Dedges->setChart(chart);
 }

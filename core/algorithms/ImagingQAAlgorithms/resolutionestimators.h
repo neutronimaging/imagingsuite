@@ -7,7 +7,7 @@
 #include <base/timage.h>
 
 namespace ImagingQAAlgorithms {
-class  ResolutionEstimators
+class  IMAGINGQAALGORITHMSSHARED_EXPORT ResolutionEstimators
 {
 public:
     enum eProfileFunction {

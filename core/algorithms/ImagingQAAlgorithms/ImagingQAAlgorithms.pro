@@ -20,7 +20,8 @@ SOURCES += imagingqaalgorithms.cpp \
     collimationestimator.cpp \
     resolutionestimators.cpp \
     contrastsampleanalysis.cpp \
-    ballassemblyanalysis.cpp
+    ballassemblyanalysis.cpp \
+    profileextractor.cpp
 
 HEADERS += imagingqaalgorithms.h\
         imagingqaalgorithms_global.h \
@@ -28,7 +29,8 @@ HEADERS += imagingqaalgorithms.h\
     collimationestimator.h \
     resolutionestimators.h \
     contrastsampleanalysis.h \
-    ballassemblyanalysis.h
+    ballassemblyanalysis.h \
+    profileextractor.h
 
 win32 {
     message(Building for Windows)
