@@ -5,6 +5,8 @@ build*
 *.o
 *~
 *.autosave
+*.in
+*.pc
+*.sym
 
-
-.DS_Store
+.DS-Store
