@@ -128,6 +128,49 @@ public:
 
 };
 
+/// \brief Function implementation of a sum of Lorenzians
+class Lorenzian: public CBaseFunction
+{
+public:
+    /// \brief Constructor
+    /// \param n Number of Lorenzians in the sum
+    ///
+    /// \note The number of parameters stored by the instance are 3*n
+    Lorenzian(int n=1) ;
+
+    /// \brief Computes the function value
+    ///
+    /// \param x The argument
+    /// \retval The method returns \f$\sum_{i=1}^{N}A_i*\frac{1}{\pi}\frac{1/2 \Gamma}{(x-x_i)^2+(1/2 \Gamma)^2}$
+    virtual long double operator()(long double x);
+
+    /// \brief Computes information needed by the LevenbergMarquardt fitting
+    ///
+    /// \param x Input argument
+    /// \param y Function value
+    /// \param dyda partial derivatives of the target function at x
+    virtual int operator()(long double x, long double &y, Array1D<long double> & dyda);
+
+    /// \brief Computes the numerical Hessian
+    ///
+    ///	\param x The input argument
+    ///	\param hes The numerical Hessian at x
+    virtual int Hessian(long double x, Array2D<long double> &hes);
+
+    /// \brief Computes the numerical Jacobian
+    ///
+    ///	\param x The input argument
+    ///	\param jac The numerical Jacobian at x
+    virtual int Jacobian(long double x, Array2D<long double> &jac);
+
+    /// \brief Prints the parameters stored by the instance
+    ///
+    ///	The estimated parameters are marked by a *
+    virtual int PrintPars();
+    virtual ~Lorenzian() {}
+
+};
+
 /// \brief Estimates the parameters of a targefunction using Levenberg-Marquardt algorithm
 ///
 ///  \param x Array containing the x data
