@@ -324,7 +324,9 @@ HEADERS +=\
     ../include/math/tcenterofgravity.h \
     ../include/math/core/tcenterofgravity.hpp \
     ../include/math/circularhoughtransform.h \
-    ../include/math/circularhoughtransform.h
+    ../include/math/circularhoughtransform.h \
+    ../include/base/marginsetter.h \
+    ../include/base/core/marginsetter.hpp
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
