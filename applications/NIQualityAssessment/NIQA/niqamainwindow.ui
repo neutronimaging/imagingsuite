@@ -11,14 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>NIQAMainWindow</string>
+   <string>NIQA - Neutron Imaging Quality Assessment Tool</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -625,6 +625,23 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="check_3DBallsCrop">
+              <property name="text">
+               <string>Crop</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QtAddons::ROIWidget" name="widget_roi3DBalls" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="button_LoadPacking">
               <property name="text">
                <string>Load images</string>
@@ -726,6 +743,19 @@
                </size>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>

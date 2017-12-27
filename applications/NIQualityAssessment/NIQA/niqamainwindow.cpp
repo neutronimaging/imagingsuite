@@ -41,6 +41,11 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roiEdge2D_valueChanged);
     ui->check_edge2dcrop->setChecked(false);
     on_check_edge2dcrop_toggled(false);
+
+    connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roi3DBalls_getROIclicked);
+    connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roi3DBalls_valueChanged);
+    ui->check_3DBallsCrop->setChecked(false);
+    on_check_3DBallsCrop_toggled(false);
 }
 
 NIQAMainWindow::~NIQAMainWindow()
@@ -310,7 +315,14 @@ void NIQAMainWindow::on_button_LoadPacking_clicked()
 
     ImageReader reader;
 
-     m_BallAssembly=reader.Read(loader,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
+    size_t crop[4];
+    size_t *pCrop = nullptr;
+
+    if (ui->check_3DBallsCrop->isChecked()) {
+        ui->widget_roi3DBalls->getROI(crop);
+        pCrop=crop;
+    }
+     m_BallAssembly=reader.Read(loader,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,pCrop);
 
      QSignalBlocker blocker(ui->slider_PackingImages);
      ui->slider_PackingImages->setMinimum(0);
@@ -336,7 +348,12 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
 
     switch (ui->combo_PackingImage->currentIndex()) {
         case 0: ui->viewer_Packing->set_image(m_BallAssembly.GetLinePtr(0,position),
-                                              m_BallAssembly.Dims()); break;
+                                              m_BallAssembly.Dims());
+                if (ui->check_3DBallsCrop->isChecked())
+                    ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
+
+                break;
+
         case 1: ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getMask().GetLinePtr(0,position),
                                               m_BallAssemblyAnalyzer.getMask().Dims());
                 break;
@@ -464,4 +481,33 @@ void NIQAMainWindow::plotEdgeProfiles()
     chart->createDefaultAxes();
 
     ui->chart_2Dedges->setChart(chart);
+}
+
+void NIQAMainWindow::on_check_3DBallsCrop_toggled(bool checked)
+{
+    if (checked) {
+        ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
+        ui->widget_roi3DBalls->show();
+    }
+    else {
+        ui->viewer_Packing->clear_rectangle(0);
+        ui->widget_roi3DBalls->hide();
+    }
+}
+
+void NIQAMainWindow::on_widget_roi3DBalls_getROIclicked()
+{
+   QRect rect=ui->viewer_Packing->get_marked_roi();
+   ui->widget_roi3DBalls->setROI(rect);
+   ui->viewer_Packing->set_rectangle(rect,QColor("red"),0);
+}
+
+void NIQAMainWindow::on_widget_roi3DBalls_valueChanged(int x0, int y0, int x1, int y1)
+{
+    (void) x0;
+    (void) y0;
+    (void) x1;
+    (void) y1;
+
+    ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
 }

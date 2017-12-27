@@ -61,12 +61,16 @@ private slots:
 
     void on_button_estimateCollimation_clicked();
 
+    void on_check_3DBallsCrop_toggled(bool checked);
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
 
     void on_widget_roiEdge2D_getROIclicked();
     void on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, int y1);
+    void on_widget_roi3DBalls_getROIclicked();
+    void on_widget_roi3DBalls_valueChanged(int x0, int y0, int x1, int y1);
     void getEdge2Dprofiles();
     void estimateResolutions();
     void plotEdgeProfiles();
