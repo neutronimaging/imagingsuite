@@ -1,10 +1,14 @@
 #include <iostream>
+#include <algorithm>
+
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 #include <base/kiplenums.h>
 #include <morphology/pixeliterator.h>
 #include <base/KiplException.h>
 #include <morphology/morphextrema.h>
+#include <morphology/morphfilters.h>
 #include <io/io_tiff.h>
 
 using namespace std;
@@ -21,6 +25,10 @@ private Q_SLOTS:
     void testPixelIteratorMoving();
     void testPixelIteratorNeighborhood();
     void testPixelIteratorHalfNeighborhood();
+    void testErosion2D();
+    void testDilation2D();
+    void testErosion3D();
+    void testDilation3D();
     void testhMax();
 };
 
@@ -451,6 +459,54 @@ void kiplMorphologyTest::testhMax()
 
     kipl::io::WriteTIFF32(img,"hmax_orig.tif");
     kipl::io::WriteTIFF32(res,"hmax_res.tif");
+
+}
+
+void kiplMorphologyTest::testErosion2D()
+{
+    size_t dims[]={7,7};
+    kipl::base::TImage<float,2> orig(dims);
+    for (int i=2; i<5; ++i)
+        std::fill(orig.GetLinePtr(i)+2,orig.GetLinePtr(i)+5,1);
+
+    // Simple case
+    float se4[]={0,1,0,1,1,1,0,1,0};
+    size_t sedims[2]={3,3};
+    kipl::morphology::TErode<float,2> er4(se4,sedims);
+
+    kipl::base::TImage<float,2> res;
+
+    res=er4(orig,kipl::filters::FilterBase::EdgeMirror);
+    for (size_t i=0; i<res.Size(); ++i) {
+    //    qDebug() << i<<" -> "<<res[i];
+        QVERIFY(res[i]== (i==24 ? 1.0f :0.0f));
+    }
+
+    res=er4(orig,kipl::filters::FilterBase::EdgeValid);
+    for (size_t i=0; i<res.Size(); ++i) {
+    //    qDebug() << i<<" -> "<<res[i];
+        QVERIFY(res[i]== (i==24 ? 1.0f :0.0f));
+    }
+
+    res=er4(orig,kipl::filters::FilterBase::EdgeZero);
+    for (size_t i=0; i<res.Size(); ++i) {
+    //    qDebug() << i<<" -> "<<res[i];
+        QVERIFY(res[i]== (i==24 ? 1.0f :0.0f));
+    }
+}
+
+void kiplMorphologyTest::testDilation2D()
+{
+
+}
+
+void kiplMorphologyTest::testErosion3D()
+{
+
+}
+
+void kiplMorphologyTest::testDilation3D()
+{
 
 }
 
