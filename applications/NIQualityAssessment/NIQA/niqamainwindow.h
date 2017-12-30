@@ -74,11 +74,13 @@ private:
     void getEdge2Dprofiles();
     void estimateResolutions();
     void plotEdgeProfiles();
+    void plotPackingStatistics(std::list<kipl::math::Statistics> &roiStats);
 
     Ui::NIQAMainWindow *ui;
 
     kipl::base::TImage<float,3> m_BigBall;
     kipl::base::TImage<float,3> m_BallAssembly;
+    kipl::base::TImage<float,2> m_BallAssemblyProjection;
     kipl::base::TImage<float,3> m_Contrast;
 
 //    std::map<float, kipl::base::TImage<float,2>> m_Edges;

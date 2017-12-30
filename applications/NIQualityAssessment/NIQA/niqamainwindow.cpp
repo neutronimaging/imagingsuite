@@ -4,6 +4,7 @@
 #include "ui_niqamainwindow.h"
 
 #include <sstream>
+#include <array>
 
 #include <QSignalBlocker>
 #include <QLineSeries>
@@ -16,6 +17,7 @@
 #include <datasetbase.h>
 #include <imagereader.h>
 #include <base/tprofile.h>
+#include <math/basicprojector.h>
 
 #include "edgefileitemdialog.h"
 
@@ -36,6 +38,7 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     ui(new Ui::NIQAMainWindow)
 {
     ui->setupUi(this);
+    logger.AddLogTarget(*ui->widget_logger);
 
     connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roiEdge2D_getROIclicked);
     connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roiEdge2D_valueChanged);
@@ -46,6 +49,8 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roi3DBalls_valueChanged);
     ui->check_3DBallsCrop->setChecked(false);
     on_check_3DBallsCrop_toggled(false);
+    ui->widget_bundleroi0->setViewer(ui->viewer_Packing);
+
 }
 
 NIQAMainWindow::~NIQAMainWindow()
@@ -329,43 +334,98 @@ void NIQAMainWindow::on_button_LoadPacking_clicked()
      ui->slider_PackingImages->setMaximum(static_cast<int>(m_BallAssembly.Size(2))-1);
      ui->slider_PackingImages->setValue(m_BallAssembly.Size(2)/2);
      on_slider_PackingImages_sliderMoved(m_BallAssembly.Size(2)/2);
+     m_BallAssemblyProjection=kipl::math::BasicProjector<float>::project(m_BallAssembly,kipl::base::ImagePlaneXY);
 }
 
 void NIQAMainWindow::on_button_AnalyzePacking_clicked()
 {
+    std::ostringstream msg;
+    std::list<kipl::base::RectROI> roiList=ui->widget_bundleroi0->getSelectedROIs();
+
+    msg<<"Have "<<roiList.size()<<" ROIs";
+    logger(logger.LogMessage,msg.str());
+
+    if (roiList.empty())
+        return ;
+
     try
     {
-        m_BallAssemblyAnalyzer.analyzeImage(m_BallAssembly);
+        m_BallAssemblyAnalyzer.analyzeImage(m_BallAssembly,roiList);
     }
     catch (kipl::base::KiplException &e)
     {
         logger(logger.LogError, e.what());
+        return;
     }
+
+    std::list<kipl::math::Statistics> roiStats=m_BallAssemblyAnalyzer.getStatistics();
+    plotPackingStatistics(roiStats);
+}
+
+void NIQAMainWindow::plotPackingStatistics(std::list<kipl::math::Statistics> &roiStats)
+{
+    std::vector<float> points;
+
+    foreach(auto stats, roiStats) {
+        points.push_back(stats.s());
+    }
+
+    std::sort(points.begin(),points.end());
+
+    QLineSeries *series0 = new QLineSeries(); //Life time
+    float pos=0;
+    foreach (auto point, points) {
+        series0->append(QPointF(++pos,point));
+    }
+
+    QChart *chart = new QChart(); // Life time
+
+
+    chart->addSeries(series0);
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+//    chart->axisX()->setRange(0, 20);
+//    chart->axisY()->setRange(0, 10);
+
+    ui->chart_packing->setChart(chart);
+
+
 }
 
 void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
 {
 
     switch (ui->combo_PackingImage->currentIndex()) {
-        case 0: ui->viewer_Packing->set_image(m_BallAssembly.GetLinePtr(0,position),
+        case 0: ui->slider_PackingImages->setEnabled(true);
+                ui->viewer_Packing->set_image(m_BallAssembly.GetLinePtr(0,position),
                                               m_BallAssembly.Dims());
                 if (ui->check_3DBallsCrop->isChecked())
                     ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
 
                 break;
 
-        case 1: ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getMask().GetLinePtr(0,position),
+        case 1:
+                ui->slider_PackingImages->setEnabled(false);
+                ui->viewer_Packing->set_image(m_BallAssemblyProjection.GetDataPtr(),
+                                      m_BallAssemblyProjection.Dims());
+
+                break;
+        case 2: ui->slider_PackingImages->setEnabled(true);
+                ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getMask().GetLinePtr(0,position),
                                               m_BallAssemblyAnalyzer.getMask().Dims());
                 break;
-        case 2:
+        case 3:
                 {
+                    ui->slider_PackingImages->setEnabled(true);
                     kipl::base::TImage<float,2> slice(m_BallAssembly.Dims());
                     int *pSlice=m_BallAssemblyAnalyzer.getLabels().GetLinePtr(0,position);
                     std::copy(pSlice,pSlice+slice.Size(),slice.GetDataPtr());
                     ui->viewer_Packing->set_image(slice.GetDataPtr(),slice.Dims());
                     break;
                 }
-        case 3: ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getDist().GetLinePtr(0,position),
+        case 4:
+                ui->slider_PackingImages->setEnabled(true);
+                ui->viewer_Packing->set_image(m_BallAssemblyAnalyzer.getDist().GetLinePtr(0,position),
                                                      m_BallAssemblyAnalyzer.getDist().Dims());
                        break;
 

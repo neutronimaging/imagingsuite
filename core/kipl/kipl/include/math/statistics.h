@@ -10,6 +10,8 @@
 
 #include "../kipl_global.h"
 
+#include "../base/timage.h"
+#include "../base/roi.h"
 
 /// \brief Class to compute first and second order statistics of data
 ///
@@ -90,10 +92,12 @@ namespace math {
         size_t m_nNdata;
     };
 
-
+    template <typename T, size_t N>
+    Statistics imageStatistics(kipl::base::TImage<T,N> &img, kipl::base::RectROI &roi);
 }} // End namespace statistics
 
 std::ostream KIPLSHARED_EXPORT & operator <<(std::ostream & os, kipl::math::Statistics & s);
 
+#include "core/statistics.hpp"
 #endif // !defined(KIPL_STATISTICS_H__)
 

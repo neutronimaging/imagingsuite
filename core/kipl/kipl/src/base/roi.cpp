@@ -3,33 +3,6 @@
 namespace kipl {
 namespace base {
 
-//ROIBase::ROIBase(std::string name, int dims) :
-//{
-
-//}
-
-//ROIBase::ROIBase(ROIBase &roi)
-//{
-
-//}
-
-//ROIBase::~ROIBase()
-//{
-
-//}
-
-//ROIBase & ROIBase::operator=(ROIBase & roi)
-//{
-
-//}
-//int ROIBase::getDimensions()
-//{
-//    return dimensions;
-//}
-//int ROIBase::getID()
-//{
-//    return id;
-//}
 int RectROI::cnt=0;
 
 RectROI::RectROI(size_t *roi) :

@@ -328,7 +328,8 @@ HEADERS +=\
     ../include/math/circularhoughtransform.h \
     ../include/base/marginsetter.h \
     ../include/base/core/marginsetter.hpp \
-    ../include/base/roi.h
+    ../include/base/roi.h \
+    ../include/math/core/statistics.hpp
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

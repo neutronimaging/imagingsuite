@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1160</width>
-    <height>624</height>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -649,6 +649,16 @@
              </widget>
             </item>
             <item>
+             <widget class="QtAddons::ROIManager" name="widget_bundleroi0" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>125</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="button_AnalyzePacking">
               <property name="text">
                <string>Analyze</string>
@@ -700,17 +710,7 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>Mask</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Labels</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Distance</string>
+                  <string>Z projection</string>
                  </property>
                 </item>
                </widget>
@@ -829,6 +829,16 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Messages</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QtAddons::QtLogViewer" name="widget_logger" native="true"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -877,6 +887,18 @@
    <class>ReaderForm</class>
    <extends>QWidget</extends>
    <header location="global">../../../core/modules/ReaderGUI/readerform.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header>qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ROIManager</class>
+   <extends>QWidget</extends>
+   <header location="global">roimanager.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
