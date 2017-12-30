@@ -35,6 +35,8 @@ private slots:
     void on_check_linkimages_toggled(bool checked);
     void on_pushButton_listdata_clicked();
 
+    void on_button_ListAllROIs_clicked();
+    void on_button_ListSelectedROIs_clicked();
 };
 
 #endif // MAINWINDOW_H

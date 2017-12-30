@@ -120,7 +120,8 @@ SOURCES += \
     ../src/io/io_png.cpp \
     ../src/math/tcenterofgravity.cpp \
     ../src/math/statistics.cpp \
-    ../src/math/circularhoughtransform.cpp
+    ../src/math/circularhoughtransform.cpp \
+    ../src/base/roi.cpp
 
 
 
@@ -326,7 +327,8 @@ HEADERS +=\
     ../include/math/circularhoughtransform.h \
     ../include/math/circularhoughtransform.h \
     ../include/base/marginsetter.h \
-    ../include/base/core/marginsetter.hpp
+    ../include/base/core/marginsetter.hpp \
+    ../include/base/roi.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
