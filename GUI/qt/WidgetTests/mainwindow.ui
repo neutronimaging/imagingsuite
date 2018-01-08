@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>894</width>
+    <width>1050</width>
     <height>777</height>
    </rect>
   </property>
@@ -241,8 +241,8 @@
    <widget class="QPushButton" name="pushButton_listdata">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>520</y>
+      <x>600</x>
+      <y>490</y>
       <width>115</width>
       <height>32</height>
      </rect>
@@ -251,13 +251,59 @@
      <string>List data sets</string>
     </property>
    </widget>
+   <widget class="QtAddons::ROIWidget" name="roiWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>630</y>
+      <width>461</width>
+      <height>61</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QtAddons::ROIManager" name="widgetROImanager" native="true">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>490</y>
+      <width>281</width>
+      <height>121</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_ListAllROIs">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>520</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>List all ROIs</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_ListSelectedROIs">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>560</y>
+      <width>141</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>List selected ROIs</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>894</width>
+     <width>1050</width>
      <height>22</height>
     </rect>
    </property>
@@ -278,6 +324,12 @@
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ROIWidget</class>
+   <extends>QWidget</extends>
+   <header>roiwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -308,6 +360,12 @@
    <class>ReaderConfigListWidget</class>
    <extends>QWidget</extends>
    <header location="global">readerconfiglistwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ROIManager</class>
+   <extends>QWidget</extends>
+   <header location="global">roimanager.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

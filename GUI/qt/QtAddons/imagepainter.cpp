@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <sstream>
 
 #include <QLine>
@@ -18,8 +19,8 @@ ImagePainter::ImagePainter(QWidget * parent) :
     m_MinVal(0.0f),
     m_MaxVal(1.0f),
     m_bHold_annotations(false),
-    m_data(NULL),
-    m_cdata(NULL),
+    m_data(nullptr),
+    m_cdata(nullptr),
     m_currentROI(0,0,0,0)
 {
       const int N=16;
@@ -34,10 +35,10 @@ ImagePainter::ImagePainter(QWidget * parent) :
 
 ImagePainter::~ImagePainter()
 {
-    if (m_data!=NULL)
+    if (m_data!=nullptr)
         delete [] m_data;
 
-    if (m_cdata!=NULL)
+    if (m_cdata!=nullptr)
         delete [] m_cdata;
 }
 
@@ -310,7 +311,7 @@ void ImagePainter::show_clamped(bool show)
 void ImagePainter::prepare_pixbuf()
 {
     ostringstream msg;
-    if (m_cdata!=NULL)
+    if (m_cdata!=nullptr)
         delete [] m_cdata;
 
     m_NData=m_ZoomedImage.Size();
@@ -354,7 +355,7 @@ void ImagePainter::prepare_pixbuf()
         logger(kipl::logging::Logger::LogMessage,"Pixmap failed");
     }
 
-    if (m_pParent!=NULL) {
+    if (m_pParent!=nullptr) {
         m_pParent->update();
     }
 

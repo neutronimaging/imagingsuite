@@ -150,6 +150,37 @@ protected:
 
 /// \brief A class to draw filled circles in 2D images.
 template <typename T>
+class Circle : public Drawable<T>
+{
+public:
+    /// \brief C'tor to define a disc drawing object
+    /// \param radius The radius of the circle.
+    Circle(float radius): kipl::drawing::Drawable<T>("Circle"), m_fRadius(radius), m_nRadius(ceil(radius)), m_fRadius2(radius*radius) {}
+    virtual ~Circle() {}
+    /// \brief Draws the disc into a 2D image
+    /// \param img the target image
+    /// \param x the x-coordinate for the drawing object
+    /// \param y the y-coordinate for the drawing object
+    /// \param value intensity value of the item
+    /// \param paintmethod selects how the object is inserted into the image
+    virtual void Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaintMethod paintmethod = PaintInsert);
+protected:
+    /// \brief Hidden drawer for 3D images
+    /// \param img the target image
+    /// \param x the x-coordinate for the drawing object
+    /// \param y the y-coordinate for the drawing object
+    /// \param z the z-coordinate for the drawing object
+    /// \param value intensity value of the item
+    /// \param paintmethod selects how the object is inserted into the image
+    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod = PaintInsert) {}
+
+    float m_fRadius;
+    int m_nRadius;
+    float m_fRadius2;
+};
+
+/// \brief A class to draw filled circles in 2D images.
+template <typename T>
 class Disc : public Drawable<T>
 {
 public:

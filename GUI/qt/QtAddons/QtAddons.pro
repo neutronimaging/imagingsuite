@@ -46,7 +46,9 @@ SOURCES += plotter.cpp \
     reportgeneratorbase.cpp \
     imageviewerinfodialog.cpp \
     qmarker.cpp \
-    qtlogviewer.cpp
+    qtlogviewer.cpp \
+    roiwidget.cpp \
+    roimanager.cpp
 
 
 
@@ -60,7 +62,9 @@ HEADERS += QtAddons_global.h \
     reportgeneratorbase.h \
     imageviewerinfodialog.h \
     qmarker.h \
-    qtlogviewer.h
+    qtlogviewer.h \
+    roiwidget.h \
+    roimanager.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -89,4 +93,6 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
 FORMS += \
     imageviewerinfodialog.ui \
-    qtlogviewer.ui
+    qtlogviewer.ui \
+    roiwidget.ui \
+    roimanager.ui

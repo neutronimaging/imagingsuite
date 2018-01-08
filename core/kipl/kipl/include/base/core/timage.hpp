@@ -81,7 +81,7 @@ void TImage<T,N>::Clone()
 }
 
 template<typename T, size_t N>
-void TImage<T,N>::Clone(kipl::base::TImage<T,N> &img)
+void TImage<T,N>::Clone(const kipl::base::TImage<T,N> &img)
 {
     this->Resize(img.Dims());
     std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),this->GetDataPtr());
@@ -259,6 +259,66 @@ TImage<T,N> & TImage<T,N>::operator/=(const T x)
 		m_buffer[i]*=inv;
 
 	return *this;
+}
+
+template<typename T, size_t N>
+TImage<T,N> TImage<T,N>::operator+(const T x) const
+{
+    const ptrdiff_t ndata=this->Size();
+
+    TImage<T,N> res;
+    res.Clone(*this);
+
+
+    for (ptrdiff_t i=0; i<ndata; i++)
+        res.m_buffer[i]+=x;
+
+    return res;
+}
+
+template<typename T, size_t N>
+TImage<T,N> TImage<T,N>::operator-(const T x) const
+{
+    const ptrdiff_t ndata=Size();
+
+    TImage<T,N> res=*this;
+    res.Clone();
+
+#pragma omp parallel for
+    for (ptrdiff_t i=0; i<ndata; i++)
+        res.m_buffer[i]-=x;
+
+    return res;
+}
+
+template<typename T, size_t N>
+TImage<T,N> TImage<T,N>::operator*(const T x) const
+{
+    const ptrdiff_t ndata=Size();
+
+    TImage<T,N> res=*this;
+    res.Clone();
+
+#pragma omp parallel for
+    for (ptrdiff_t i=0; i<ndata; i++)
+        res.m_buffer[i]*=x;
+
+    return res;
+}
+
+template<typename T, size_t N>
+TImage<T,N> TImage<T,N>::operator/(const T x) const
+{
+    const ptrdiff_t ndata=Size();
+
+    TImage<T,N> res=*this;
+    res.Clone();
+
+#pragma omp parallel for
+    for (ptrdiff_t i=0; i<ndata; i++)
+        res.m_buffer[i]/=x;
+
+    return res;
 }
 
 template<typename T, size_t N>

@@ -1,5 +1,6 @@
 #include <sstream>
 #include <string>
+#include <numeric>
 
 #include <QString>
 #include <QtTest>
@@ -9,6 +10,7 @@
 #include <base/imageinfo.h>
 #include <base/tsubimage.h>
 #include <base/trotate.h>
+#include <base/marginsetter.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -39,6 +41,9 @@ private Q_SLOTS:
 
     /// Tests rotations
     void testRotateImage();
+
+    /// Tests margin setter
+    void testMarginSetter();
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -383,6 +388,94 @@ void TkiplbasetestTest::testRotateImage()
             msg.str("");
             msg<<"i="<<i;
             QVERIFY2(res[i]==horref[i], msg.str().c_str());
+        }
+    }
+}
+
+void TkiplbasetestTest::testMarginSetter()
+{
+    // 1D
+    size_t dims[]={10,15,20};
+
+    kipl::base::TImage<float,1> img1D_orig(dims);
+    std::iota(img1D_orig.GetDataPtr(),img1D_orig.GetDataPtr()+img1D_orig.Size(),0);
+    kipl::base::TImage<float,1> img1D;
+    img1D.Clone(img1D_orig);
+    float val=-1;
+    size_t w=3;
+    kipl::base::setMarginValue(img1D,w,val);
+    size_t i=0;
+    for (i=0; i<w; i++)
+        QVERIFY(img1D[i]==val);
+    for ( ; i<dims[0]-w-1; ++i)
+        QVERIFY(img1D[i]==img1D_orig[i]);
+    for ( ; i<dims[0]; ++i)
+        QVERIFY(img1D[i]==val);
+
+    // 2D
+    kipl::base::TImage<float,2> img2D_orig(dims);
+    std::iota(img2D_orig.GetDataPtr(),img2D_orig.GetDataPtr()+img2D_orig.Size(),0);
+    kipl::base::TImage<float,2> img2D;
+    img2D.Clone(img2D_orig);
+    val=-1;
+    w=3;
+    kipl::base::setMarginValue(img2D,w,val);
+
+    for (i=0; i<w*dims[0]; i++)
+        QVERIFY(img2D[i]==val);
+
+    for (i=1; i<(w+1)*dims[0]; i++) {
+   //     qDebug() << i <<" "<< img2D[img2D.Size()-i];
+        QVERIFY(img2D[img2D.Size()-i]==val);
+    }
+    size_t j=0;
+    for (j=w; j<dims[1]-w-1; ++j) {
+        float *pLine=img2D.GetLinePtr(j);
+        float *pOrig=img2D_orig.GetLinePtr(j);
+        for (i=0; i<w; i++)
+            QVERIFY(pLine[i]==val);
+        for ( ; i<dims[0]-w-1; ++i)
+            QVERIFY(pLine[i]==pOrig[i]);
+        for ( ; i<dims[0]; ++i)
+            QVERIFY(pLine[i]==val);
+    }
+
+    // 3D
+    kipl::base::TImage<float,3> img3D_orig(dims);
+    std::iota(img3D_orig.GetDataPtr(),img3D_orig.GetDataPtr()+img3D_orig.Size(),0);
+    kipl::base::TImage<float,3> img3D;
+    img3D.Clone(img3D_orig);
+    val=-1;
+    w=3;
+    kipl::base::setMarginValue(img3D,w,val);
+
+    for (i=0; i<w*dims[0]*dims[1]; i++)
+        QVERIFY(img3D[i]==val);
+
+    for (i=1; i<(w+1)*dims[0]*dims[1]; i++) {
+     //   qDebug() << i <<" "<< img3D[img3D.Size()-i];
+        QVERIFY(img3D[img3D.Size()-i]==val);
+    }
+    size_t k=0;
+    for (k=w; k<dims[2]-w-1; ++k) {
+
+        for (i=0; i<w*dims[0]; i++)
+            QVERIFY(img3D[dims[0]*dims[1]*k+i]==val);
+
+        for (i=1; i<(w+1)*dims[0]; i++) {
+        //    qDebug() << i <<" "<< img3D[img3D.Size()-i];
+            QVERIFY(img3D[dims[0]*dims[1]*(k+1)-i]==val);
+        }
+
+        for (j=w; j<dims[1]-w-1; ++j) {
+            float *pLine=img3D.GetLinePtr(j,k);
+            float *pOrig=img3D_orig.GetLinePtr(j,k);
+            for (i=0; i<w; i++)
+                QVERIFY(pLine[i]==val);
+            for ( ; i<dims[0]-w-1; ++i)
+                QVERIFY(pLine[i]==pOrig[i]);
+            for ( ; i<dims[0]; ++i)
+                QVERIFY(pLine[i]==val);
         }
     }
 }

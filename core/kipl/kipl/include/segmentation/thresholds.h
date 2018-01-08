@@ -357,126 +357,126 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 	return 0;
 }
 
-/*
-/// \brief Threshold operator that grows the edges of the regions until stability
-template<class ImgType, int NDim>	
-int RegGrowThresh(const CImage<ImgType,NDim> & img, CImage<char,NDim> & simg, float t0, float t1,  MorphConnect conn=NDim==3 ? conn6 : conn4)
-{
-	const unsigned int * dims=img.getDimsptr();
-	//const int NDim=2;
-	simg.resize(dims);
+
+///// \brief Threshold operator that grows the edges of the regions until stability
+//template<class ImgType, int NDim>
+//int RegGrowThresh(const CImage<ImgType,NDim> & img, CImage<char,NDim> & simg, float t0, float t1,  MorphConnect conn=NDim==3 ? conn6 : conn4)
+//{
+//	const unsigned int * dims=img.getDimsptr();
+//	//const int NDim=2;
+//	simg.resize(dims);
 	
-	const char fuzzy=-1;
-	const char hi=1;
-	const char lo=0;
+//	const char fuzzy=-1;
+//	const char hi=1;
+//	const char lo=0;
 	
-//	CImgViewer fig;
+////	CImgViewer fig;
 	
-	int i,j,pos;
-	// Initial thresholding
-	CNeighborhood NG(dims,NDim,conn);
-	int Nng=NG.N();
+//	int i,j,pos;
+//	// Initial thresholding
+//	CNeighborhood NG(dims,NDim,conn);
+//	int Nng=NG.N();
 	
-	deque<int> fifo_hiA, fifo_hiB, fifo_loA, fifo_loB;
-	deque<int> *pFifo_hiA=&fifo_hiA, *pFifo_hiB=&fifo_hiB;
-	deque<int> *pFifo_loA=&fifo_loA, *pFifo_loB=&fifo_loB;
-	cout<<"Initial thresholding"<<endl;
-	for (i=0; i<img.N(); i++) {
-		if (img[i]<=t0) {
-			simg[i]=lo;
-			continue;
-		}
-		if (img[i]>t1) {
-			simg[i]=hi;
-			continue;
-		}
-		simg[i]=fuzzy;
-		for (j=0; j<Nng; j++) {
-			if ((pos=NG.neighbor(i,j))!=-1) {
-				if (img[pos]<=t0) {
-					fifo_loA.push_back(i);
-				//	break;
-				}
-				if (img[pos]>t1) {
-					fifo_hiA.push_back(i);
-				//	break;
-				}
-			}
-		}
-	}
+//	deque<int> fifo_hiA, fifo_hiB, fifo_loA, fifo_loB;
+//	deque<int> *pFifo_hiA=&fifo_hiA, *pFifo_hiB=&fifo_hiB;
+//	deque<int> *pFifo_loA=&fifo_loA, *pFifo_loB=&fifo_loB;
+//	cout<<"Initial thresholding"<<endl;
+//	for (i=0; i<img.N(); i++) {
+//		if (img[i]<=t0) {
+//			simg[i]=lo;
+//			continue;
+//		}
+//		if (img[i]>t1) {
+//			simg[i]=hi;
+//			continue;
+//		}
+//		simg[i]=fuzzy;
+//		for (j=0; j<Nng; j++) {
+//			if ((pos=NG.neighbor(i,j))!=-1) {
+//				if (img[pos]<=t0) {
+//					fifo_loA.push_back(i);
+//				//	break;
+//				}
+//				if (img[pos]>t1) {
+//					fifo_hiA.push_back(i);
+//				//	break;
+//				}
+//			}
+//		}
+//	}
 		
-	int it_cnt=0;
-	cout<<"Processing the fuzzy region "<<endl;
-	while (!(pFifo_hiA->empty() || pFifo_loA->empty())) {
-		cout<<it_cnt++<<" "<<pFifo_hiA->size()<<", "<<pFifo_loA->size()<<endl; 
-		while (!pFifo_hiA->empty()) {
-			i=pFifo_hiA->front();
-			pFifo_hiA->pop_front();
-			if (simg[i]==fuzzy) {
-				if (img[i]>t0) {
-					simg[i]=hi;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if (simg[pos]==fuzzy) 
-								pFifo_hiB->push_back(pos);
-						}
-					}
-				}
-				else {
-					simg[i]=lo;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if (simg[pos]==fuzzy) 
-								pFifo_loB->push_back(pos);
-						}
-					}
-				}
-			}
-		}
+//	int it_cnt=0;
+//	cout<<"Processing the fuzzy region "<<endl;
+//	while (!(pFifo_hiA->empty() || pFifo_loA->empty())) {
+//		cout<<it_cnt++<<" "<<pFifo_hiA->size()<<", "<<pFifo_loA->size()<<endl;
+//		while (!pFifo_hiA->empty()) {
+//			i=pFifo_hiA->front();
+//			pFifo_hiA->pop_front();
+//			if (simg[i]==fuzzy) {
+//				if (img[i]>t0) {
+//					simg[i]=hi;
+//					for (j=0; j<Nng; j++) {
+//						if ((pos=NG.neighbor(i,j))!=-1) {
+//							if (simg[pos]==fuzzy)
+//								pFifo_hiB->push_back(pos);
+//						}
+//					}
+//				}
+//				else {
+//					simg[i]=lo;
+//					for (j=0; j<Nng; j++) {
+//						if ((pos=NG.neighbor(i,j))!=-1) {
+//							if (simg[pos]==fuzzy)
+//								pFifo_loB->push_back(pos);
+//						}
+//					}
+//				}
+//			}
+//		}
 		
-		while (!pFifo_loA->empty()) {
-			i=pFifo_loA->front();
-			pFifo_loA->pop_front();
-			if (simg[i]==fuzzy) {
-				if (img[i]<t1) {
-					simg[i]=lo;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if (simg[pos]==fuzzy) 
-								pFifo_loB->push_back(pos);
-						}
-					}
-				}
-				else {
-					simg[i]=hi;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if (simg[pos]==fuzzy) 
-								pFifo_hiB->push_back(pos);
-						}
-					}
-				}
-			}
-		}
+//		while (!pFifo_loA->empty()) {
+//			i=pFifo_loA->front();
+//			pFifo_loA->pop_front();
+//			if (simg[i]==fuzzy) {
+//				if (img[i]<t1) {
+//					simg[i]=lo;
+//					for (j=0; j<Nng; j++) {
+//						if ((pos=NG.neighbor(i,j))!=-1) {
+//							if (simg[pos]==fuzzy)
+//								pFifo_loB->push_back(pos);
+//						}
+//					}
+//				}
+//				else {
+//					simg[i]=hi;
+//					for (j=0; j<Nng; j++) {
+//						if ((pos=NG.neighbor(i,j))!=-1) {
+//							if (simg[pos]==fuzzy)
+//								pFifo_hiB->push_back(pos);
+//						}
+//					}
+//				}
+//			}
+//		}
 		
-		if (fifo_hiA.empty()) {
-			pFifo_hiA=&fifo_hiB;
-			pFifo_hiB=&fifo_hiA;
-			pFifo_loA=&fifo_loB;
-			pFifo_loB=&fifo_loA;
-		}
-		else {
-			pFifo_hiA=&fifo_hiA;
-			pFifo_hiB=&fifo_hiB;
-			pFifo_loA=&fifo_loA;
-			pFifo_loB=&fifo_loB;
-		}
-	}
+//		if (fifo_hiA.empty()) {
+//			pFifo_hiA=&fifo_hiB;
+//			pFifo_hiB=&fifo_hiA;
+//			pFifo_loA=&fifo_loB;
+//			pFifo_loB=&fifo_loA;
+//		}
+//		else {
+//			pFifo_hiA=&fifo_hiA;
+//			pFifo_hiB=&fifo_hiB;
+//			pFifo_loA=&fifo_loA;
+//			pFifo_loB=&fifo_loB;
+//		}
+//	}
 	
-	cout<<endl<<"Done"<<endl;
-	return 1;
-}
-*/
+//	cout<<endl<<"Done"<<endl;
+//	return 1;
+//}
+
 
 	/// \brief Computes the image threshold using an entropy based approach
 	///	the method delivers a central threshold and two hi/lo thresholds

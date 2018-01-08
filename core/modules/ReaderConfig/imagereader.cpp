@@ -300,6 +300,21 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string path,
     return img;
 }
 
+kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader,
+                                  kipl::base::eImageFlip flip,
+                                  kipl::base::eImageRotate rotate,
+                                  float binning,
+                                  size_t const * const nCrop)
+{
+    return Read(loader.m_sFilemask,
+                loader.m_nFirst,
+                loader.m_nLast,
+                loader.m_nStep,
+                flip,
+                rotate,
+                binning,
+                nCrop);
+}
 
 kipl::base::TImage<float,3> ImageReader::Read(string fname,
                                               size_t first,

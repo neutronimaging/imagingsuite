@@ -117,7 +117,11 @@ SOURCES += \
     ../src/interactors/interactionbase.cpp \
     ../src/segmentation/multivariateclassifyerbase.cpp \
     ../src/morphology/pixeliterator.cpp \
-    ../src/io/io_png.cpp
+    ../src/io/io_png.cpp \
+    ../src/math/tcenterofgravity.cpp \
+    ../src/math/statistics.cpp \
+    ../src/math/circularhoughtransform.cpp \
+    ../src/base/roi.cpp
 
 
 
@@ -208,7 +212,6 @@ HEADERS +=\
     ../include/math/jama_inverses.h \
     ../include/math/image_statistics.h \
     ../include/math/GaussianNoise.h \
-    ../include/math/core/statistics.hpp \
     ../include/math/core/median.hpp \
     ../include/math/core/mathfunctions.hpp \
     ../include/math/core/LinearAlgebra.hpp \
@@ -318,7 +321,15 @@ HEADERS +=\
     ../include/segmentation/core/gradientguidedthreshold.hpp \
     ../include/morphology/morphgeo2.h \
     ../include/io/io_vivaseq.h \
-    ../include/io/io_png.h
+    ../include/io/io_png.h \
+    ../include/math/tcenterofgravity.h \
+    ../include/math/core/tcenterofgravity.hpp \
+    ../include/math/circularhoughtransform.h \
+    ../include/math/circularhoughtransform.h \
+    ../include/base/marginsetter.h \
+    ../include/base/core/marginsetter.hpp \
+    ../include/base/roi.h \
+    ../include/math/core/statistics.hpp
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
@@ -355,35 +366,35 @@ message("-lNeXus does not exists $$HEADERS")
 #message("-lNeXus does not exists $$HEADERS")
 #}
 
-unix:mac {
-exists($$PWD/../../../../external/mac/lib/*NeXus*) {
+#unix:mac {
+#exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
-    message("-lNeXus exists")
-    DEFINES += HAVE_NEXUS
+#    message("-lNeXus exists")
+#    DEFINES += HAVE_NEXUS
 
-    #INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5 #can i take the same as win?? probably stupid question
-    #QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
+#    #INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5 #can i take the same as win?? probably stupid question
+#    #QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
 
-    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
+#    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+#    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+#    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
+
 
 #    LIBS += -L$$PWD/../../../../external/mac/lib/
     LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 #    LIBS += -lNeXus -lNeXusCPP
 
+##    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
+##    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
 
-#    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
-#    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
-
-    SOURCES += ../src/io/io_nexus.cpp
-    HEADERS += ../include/io/io_nexus.h
-}
-else {
-message("-lNeXus does not exists $$HEADERS")
-}
-
-}
+#    SOURCES += ../src/io/io_nexus.cpp
+#    HEADERS += ../include/io/io_nexus.h
+#}
+#else {
+#message("-lNeXus does not exists $$HEADERS")
+#}
+#
+#}
 
 win32 {
 

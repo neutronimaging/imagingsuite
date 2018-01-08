@@ -1,106 +1,34 @@
-// Statistics.cpp: implementation of the Statistics class.
-//
-//////////////////////////////////////////////////////////////////////
+#ifndef STATISTICS_HPP
+#define STATISTICS_HPP
 
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <limits>
-#include <math/statistics.h>
+#include "../../base/timage.h"
+#include "../../base/roi.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 namespace kipl {
 namespace math {
 
-Statistics::Statistics() :
-			m_fMax(-std::numeric_limits<double>::max()),
-			m_fMin(std::numeric_limits<double>::max()),
-			m_fSum2(0.0),
-			m_fSum(0.0),
-			m_nNdata(0)
+template <typename T, size_t N>
+Statistics imageStatistics(kipl::base::TImage<T,N> &img, kipl::base::RectROI &roi)
 {
+    Statistics stats;
+    const size_t *imgDims=img.Dims();
+    size_t roiDims[4];
+    size_t last = (N==3) ? imgDims[2] : 1;
+
+    roi.getBox(roiDims);
+
+    for (size_t i=0; i<last; ++i)
+    {
+        for (size_t j=roiDims[1]; j<roiDims[3]; ++j)
+        {
+            T *pImg=img.GetLinePtr(j,i);
+            for (size_t k=roiDims[0]; k<roiDims[2]; ++k) {
+                stats.put(static_cast<float>(pImg[k]));
+            }
+        }
+    }
+    return stats;
 }
 
-
-Statistics::Statistics(const Statistics & s) :
-			m_fMax(s.m_fMax),
-			m_fMin(s.m_fMin),
-			m_fSum2(s.m_fSum2),
-			m_fSum(s.m_fSum),
-			m_nNdata(s.m_nNdata)
-{
-}
-
-
-Statistics::~Statistics()
-{
-}
-
-
-double Statistics::E() const
-{
-	return m_fSum/m_nNdata;
-}
-
-double Statistics::V() const
-{
-	return (m_fSum2-m_fSum*m_fSum/m_nNdata)/(m_nNdata);
-}
-
-double Statistics::s() const
-{
-	return sqrt(m_fSum2-m_fSum*m_fSum/m_nNdata)/(m_nNdata-1);
-}
-
-Statistics Statistics::operator +(Statistics & s)
-{
-	Statistics temp;
-	temp.m_fSum=m_fSum+s.m_fSum;
-	temp.m_fSum2=m_fSum2+s.m_fSum2;
-	temp.m_nNdata=m_nNdata+s.m_nNdata;
-
-	return temp;
-
-}
-
-
-int Statistics::reset()
-{
-	m_fSum=0.0;
-	m_fSum2=0.0;
-	m_nNdata=0;
-	m_fMin=std::numeric_limits<double>::max();
-	m_fMax=-std::numeric_limits<double>::max();
-
-	return 1;
-}
-
-double Statistics::Max() const
-{
-	return m_fMax;
-}
-
-double Statistics::Min() const
-{
-	return m_fMin;
-}
-
-size_t Statistics::n() const
-{
-  return m_nNdata;
-}
-
-}
-} // End namespace statistics
-
-ostream& operator <<(ostream & os, kipl::math::Statistics & s)
-{
-	os<<"E="<<s.E()<<endl;
-	os<<"V="<<s.V()<<endl;
-	os<<"s="<<s.s()<<endl;
-	os<<"n="<<s.n()<<endl;
-
-	return os;
-}
+}}
+#endif // STATISTICS_HPP

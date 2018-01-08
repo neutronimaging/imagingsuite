@@ -4,16 +4,19 @@
 #include "imagingqaalgorithms_global.h"
 
 #include <map>
+#include <vector>
 
 #include <base/timage.h>
 #include <base/index2coord.h>
 #include <logging/logger.h>
+#include <math/statistics.h>
 
 namespace ImagingQAAlgorithms {
 
 class IMAGINGQAALGORITHMSSHARED_EXPORT BallAnalysis
 {
     kipl::logging::Logger logger;
+
 public:
     BallAnalysis();
 
@@ -35,23 +38,36 @@ public:
     /// \param r0 The start radius
     /// \param r1 The end radius
     /// \param profile a map containg the average intensity for each encountered radius.
-    void getEdgeProfile(float r0, float r1,std::map<float,float> &profile);
+    void getEdgeProfile(float r0, float r1,std::vector<float> &distance, std::vector<float> &profile, std::vector<float> &stddev);
     float getRadius() { return radius; }
-    const kipl::base::coords3D getCenter() { return center; }
+    const kipl::base::coords3Df getCenter() { return center; }
+
+    void saveIntermediateImages(bool save, std::string path="") {saveIntermediate=save; intermediateImagePath=path;}
+    void setPrecision(float p) { precision=p; }
+    float getPrecision() { return precision; }
 
 protected:
     void computeSphereGeometry();
     void projectionCenter();
-    void profileInBoundingBox(kipl::base::coords3D center,
+    void profileInBoundingBox(kipl::base::coords3Df center,
                               kipl::base::coords3D b0,
                               kipl::base::coords3D b1,
                               float r0,
                               float r1,
-                              std::map<float,pair<float,int> > &profile);
+                              std::map<float,kipl::math::Statistics> &profile);
+
+    void convertProfileStats(std::map<float,kipl::math::Statistics> &pm,
+                             std::vector<float> &distance,
+                             std::vector<float> &profile,
+                             std::vector<float> &stddev);
 
     kipl::base::TImage<float,3> img;
-    kipl::base::coords3D center;
+    kipl::base::coords3Df center;
     float radius;
+    float precision;
+    bool saveIntermediate;
+    std::string intermediateImagePath;
+
 };
 
 }
