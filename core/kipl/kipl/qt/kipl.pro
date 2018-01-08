@@ -379,8 +379,10 @@ message("-lNeXus does not exists $$HEADERS")
 #    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
 #    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
 
-#    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 
+#    LIBS += -L$$PWD/../../../../external/mac/lib/
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+#    LIBS += -lNeXus -lNeXusCPP
 
 ##    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
 ##    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
