@@ -166,6 +166,22 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
             m_OB_BB_Interpolated = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nROI); // now rois are in absolute coordinates , richtig?
             m_DoseBBflat_image = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nDoseROI);
 
+            ofstream spline_OB_values("tps_OB_points.txt");
+
+//                if (i==0){
+//                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
+//                    for(int j=0;j<spline_sample_values.size()+3;++j){
+//                        std::cout << current_param[j] << " ";
+//                    }
+//                    std::cout << std::endl;
+
+////                     spline sample  values sembrano giusti..
+//                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
+              for (std::map<std::pair<int, int>, float>::const_iterator it = spline_ob_values.begin(); it != spline_ob_values.end();  ++it)
+              {
+                  spline_OB_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+              }
+
 
 
             break;}
@@ -174,7 +190,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 
 //    std::cout   << "before PrepareReferencesBB" << std::endl;
-        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_backgroundimage.tif"); // seem correct
+//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_backgroundimage.tif"); // seem correct
 //        kipl::io::WriteTIFF32(m_DoseBBflat_image,"dose_bb.tif");
         PrepareReferencesBB();
 	}
@@ -278,7 +294,9 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 current_param =new float[6];
                 memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
                 m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
-                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
+
+//                if (i==0)
+                  kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all!
 
                 m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
                 delete[] current_param;
@@ -288,6 +306,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 current_param =new float[spline_sample_values.size()+3];
 
                 memcpy(current_param, sample_bb_interp_parameters+i*(spline_sample_values.size()+3), sizeof(float)*(spline_sample_values.size()+3));
+
+
 
 //                if (i==0){
 //                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
@@ -300,15 +320,16 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 //                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
 //                  for (std::map<std::pair<int, int>, float>::const_iterator it = spline_sample_values.begin(); it != spline_sample_values.end();  ++it)
 //                  {
-//                      std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//                      spline_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
 //                  }
-//                    std::cout << std::endl;
 
-//                }
+//                  spline_values.close();
+
 
                 m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
                 m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
-                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
+//                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
+//                kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all!
                     delete[] current_param;
                 break;
             }
@@ -1033,13 +1054,13 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                   }
 
                   roi(int(x_com+0.5), int(y_com+0.5))=2;
-                  // mi manca il check sugli outliers!! me misera e me tapina! ----- CONTROLLARE DOMANI DA QUI CHE COSA È SUCC .. NON SI SA ANCORA
+
 
                   const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
                   const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
                   std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
                   std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
-                  float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
+                  float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2; // here I compute the median
                   float average = accumulate( grayvalues.begin(), grayvalues.end(), 0.0/ grayvalues.size());
                   values.insert(std::make_pair(temp,median));
 //                  values.insert(std::make_pair(temp,average));
@@ -1165,7 +1186,8 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     // find values to interpolate
 
-//    kipl::io::WriteTIFF32(mask, "mask.tif");
+//     kipl::io::WriteTIFF32(mask, "mask.tif");
+
 
     float mean_value = 0.0f;
     for (int x=0; x<mask.Size(0); x++) {
@@ -1209,6 +1231,16 @@ int outlier = 0;
             outlier++;
 
         }
+
+    }
+
+    ofstream int_points("poly_points.txt");
+
+    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
+                it != values.end(); ++it) {
+
+           int_points << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+
 
     }
 
@@ -1545,6 +1577,7 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int, int>, float> &values, size_t *roi){
 
 
+
     size_t dimx = roi[2]-roi[0];
     size_t dimy = roi[3]-roi[1];
 
@@ -1564,9 +1597,9 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagew
                 float *dist = new float[values.size()];
 
             for (size_t ind=0; ind<values.size(); ++ind) {
-                dist[ind] = sqrt((it_i->first.first-(x+roi[0]))*(it_i->first.first-(x+roi[0]))+(it_i->first.second-(y+roi[1]))*(it_i->first.second-(y+roi[1])));
+                dist[ind] = ((it_i->first.first-(x+roi[0]))*(it_i->first.first-(x+roi[0]))+(it_i->first.second-(y+roi[1]))*(it_i->first.second-(y+roi[1])));
                 if (dist[ind]!=0){
-                    sumdist += (dist[ind]*dist[ind]*log(dist[ind])*parameters[ind]); // correct?                }
+                    sumdist += (0.5*dist[ind]*log(dist[ind])*parameters[ind]); // correct?                }
                 }
 
                 ++it_i;
@@ -1817,8 +1850,21 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
     case(Average) : {
 
         sample_bb_parameters = new float[nBBs+3];
-        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3));
-        sample_bb_interp_parameters = ReplicateSplineParameters(sample_bb_parameters, nProj, nBBs);
+        float *temp_parameters = new float[nBBs+3];
+        memcpy(temp_parameters, sample_parameter, sizeof(float)*(nBBs+3));
+
+//        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
+
+        for (size_t i=0; i<m_nProj; ++i){
+
+            memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*(nBBs+3));
+            for (size_t j=0; j<(nBBs+3); ++j){
+                sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
+            }
+
+            memcpy(sample_bb_interp_parameters+i*(nBBs+3), sample_bb_parameters, sizeof(float)*(nBBs+3));
+        }
+
         break;
     }
     }
@@ -1864,8 +1910,21 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
     case(Average) : {
 
         sample_bb_parameters = new float[6];
-        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6);
-        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
+        float *temp_parameters = new float[6];
+        memcpy(temp_parameters, sample_parameter, sizeof(float)*6);
+
+//        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
+
+        for (size_t i=0; i<m_nProj; ++i){
+
+            memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*6);
+            for (size_t j=0; j<6; ++j){
+                sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
+            }
+
+            memcpy(sample_bb_interp_parameters+i*6, sample_bb_parameters, sizeof(float)*6);
+        }
+
         break;
     }
     }
