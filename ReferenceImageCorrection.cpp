@@ -1843,7 +1843,16 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
+
         memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
+
+
+        for (size_t i=0; i<m_nProj; i++){
+            for (size_t j=0; j<(nBBs+3); j++){
+                sample_bb_interp_parameters[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
+            }
+        }
+
 
         break;
     }
@@ -1903,7 +1912,17 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
-        memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*6*m_nProj);
+
+
+
+        for (size_t i=0; i<m_nProj; i++){
+            for (size_t j=0; j<6; j++){
+                sample_parameter[j+i*6] *= (dosesamplelist[i]/tau);
+            }
+        }
+
+       memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*6*m_nProj);
+
 
         break;
     }
