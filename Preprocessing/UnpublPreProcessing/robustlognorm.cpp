@@ -434,6 +434,20 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
     size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
     size_t step = (nProj)/(nBBSampleCount);
 
+    float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+    m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+
+//                          std::cout << "doselist: " << std::endl;
+
+    float *doselist = new float[nProj];
+    for (size_t i=0; i<nProj; i++) {
+        doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
+    }
+
+    m_corrector.SetDoseList(doselist);
+    delete [] doselist;
+
+
 
 // here Exceptions need to be added to veirfy if the selected module is compatible with the number of loaded images
          switch (m_BBOptions) {
@@ -447,18 +461,18 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 
                      logger(kipl::logging::Logger::LogMessage,"Loading sample images with BB");
 
-                     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
-                     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+//                     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+//                     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
-//                     std::cout << "doselist: " << std::endl;
+////                     std::cout << "doselist: " << std::endl;
 
-                     float *doselist = new float[nProj];
-                     for (size_t i=0; i<int(nProj); i++) {
-                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
-                     }
+//                     float *doselist = new float[nProj];
+//                     for (size_t i=0; i<int(nProj); i++) {
+//                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
+//                     }
 
-                     m_corrector.SetDoseList(doselist);
-                     delete [] doselist;
+//                     m_corrector.SetDoseList(doselist);
+//                     delete [] doselist;
 
                      for (size_t i=0; i<nBBSampleCount; i++) {
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
@@ -552,18 +566,18 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
                      temp_parameters = new float[6];
                      float * mask_parameters = new float[6];
 
-                     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
-                     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+//                     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+//                     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
-//                          std::cout << "doselist: " << std::endl;
+////                          std::cout << "doselist: " << std::endl;
 
-                     float *doselist = new float[nProj];
-                     for (size_t i=0; i<nProj; i++) {
-                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
-                     }
+//                     float *doselist = new float[nProj];
+//                     for (size_t i=0; i<nProj; i++) {
+//                         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
+//                     }
 
-                     m_corrector.SetDoseList(doselist);
-                     delete [] doselist;
+//                     m_corrector.SetDoseList(doselist);
+//                     delete [] doselist;
 
 
                      kipl::base::TImage<float,2> samplebb_temp;
@@ -629,6 +643,7 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
                 sample_bb_param = new float[6*nBBSampleCount];
                 temp_parameters = new float[6];
 
+
                 float dosesample;
                 float current_dose;
 
@@ -636,7 +651,7 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 
 
                     samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
-                    sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // continuare da qui.. valuatare se devo caricare sample tutte le volte oppure no e nel caso moltiplicare per la doselist in ReferenceImageCorrection come faccio negli altri due casi
+                    sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // continuare da qui.. valuatare se devo caricare sample tutte le volte oppure no e nel caso moltiplicare per la doselist in ReferenceImageCorrection come faccio negli altri due casi
 
 
                     // compute the mask again only for the first sample image, than assume BBs do not move during experiment
@@ -671,7 +686,7 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
                             for(size_t j=0; j<6; j++) {
 
                                       temp_parameters[j]/=current_dose;
-                                      temp_parameters[j]*=(dosesample/tau);
+//                                      temp_parameters[j]*=(dosesample/tau);
 
                             }
                         }
@@ -696,7 +711,7 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 
                         for(size_t j=0; j<6; j++) {
                              temp_parameters[j]/=current_dose;
-                             temp_parameters[j]*=(dosesample/tau);
+//                             temp_parameters[j]*=(dosesample/tau);
                         }
 
                         memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6);
@@ -994,13 +1009,13 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                               for(size_t j=0; j<(values_bb.size()+3); j++) {
 
                                         temp_parameters[j]/=current_dose;
-                                        temp_parameters[j]*=(dosesample/tau);
+//                                        temp_parameters[j]*=(dosesample/tau);
                               }
 //                              std::cout << std::endl;
                           }
 
-                          memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*(values.size()+3));
-                          memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3));
+                          memcpy(sample_bb_param, temp_parameters, sizeof(float)*(values.size()+3));
+//                          memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3));
                           delete [] mask_parameters;
 
                      break;
@@ -1059,7 +1074,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                                  for(size_t j=0; j<(values.size()+3); j++) {
 
                                            temp_parameters[j]/=current_dose;
-                                           temp_parameters[j]*=(dosesample/tau);
+//                                           temp_parameters[j]*=(dosesample/tau);
 
                                  }
                              }
@@ -1087,7 +1102,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                              for(size_t j=0; j<(values.size()+3); j++) {
                                   temp_parameters[j]/=current_dose;
-                                  temp_parameters[j]*=(dosesample/tau);
+//                                  temp_parameters[j]*=(dosesample/tau);
                              }
 
                              memcpy(bb_sample_parameters+i*(values.size()+3), temp_parameters, sizeof(float)*(values.size()+3));
