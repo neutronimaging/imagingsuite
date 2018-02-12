@@ -636,7 +636,7 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 
 
                     samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
-                    sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
+                    sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // continuare da qui.. valuatare se devo caricare sample tutte le volte oppure no e nel caso moltiplicare per la doselist in ReferenceImageCorrection come faccio negli altri due casi
 
 
                     // compute the mask again only for the first sample image, than assume BBs do not move during experiment
@@ -1018,7 +1018,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                      for (size_t i=0; i<nBBSampleCount; i++) {
 
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
-                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
+                         sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
 
 
                          // compute the mask again only for the first sample image, than assume BBs do not move during experiment
