@@ -1,3 +1,4 @@
+#include <iostream>
 #include <QString>
 #include <QtTest>
 #include <base/timage.h>
@@ -15,7 +16,7 @@ private Q_SLOTS:
     void testSharedBuffer();
     void testConstructors();
     void testAssignment();
-    void testArithmetics();
+    void testScalarArithmetics();
     void testDataAccess();
 };
 
@@ -178,8 +179,54 @@ void TKIPLbaseTImageTest::testAssignment()
 
 }
 
-void TKIPLbaseTImageTest::testArithmetics()
-{}
+void TKIPLbaseTImageTest::testScalarArithmetics()
+{
+    size_t dims[2]={4,4};
+
+    kipl::base::TImage<float,2> img(dims);
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=i;
+
+    kipl::base::TImage<float,2> res;
+
+    res=img+2.0f;
+
+    QVERIFY(res.Size(0)==img.Size(0));
+    QVERIFY(res.Size(1)==img.Size(1));
+    QVERIFY(res.Size()==img.Size());
+
+    for (size_t i=0; i<img.Size(); ++i)
+        QVERIFY(res[i]==i+2.0f);
+
+    res=img-2.0f;
+
+    QVERIFY(res.Size(0)==img.Size(0));
+    QVERIFY(res.Size(1)==img.Size(1));
+    QVERIFY(res.Size()==img.Size());
+
+    for (size_t i=0; i<img.Size(); ++i)
+        QVERIFY(res[i]==i-2.0f);
+
+    res=img*2.0f;
+
+    QVERIFY(res.Size(0)==img.Size(0));
+    QVERIFY(res.Size(1)==img.Size(1));
+    QVERIFY(res.Size()==img.Size());
+
+    for (size_t i=0; i<img.Size(); ++i)
+        QVERIFY(res[i]==i*2.0f);
+
+    res=img/2.0f;
+
+    QVERIFY(res.Size(0)==img.Size(0));
+    QVERIFY(res.Size(1)==img.Size(1));
+    QVERIFY(res.Size()==img.Size());
+
+    for (size_t i=0; i<img.Size(); ++i)
+        QVERIFY(res[i]==i/2.0f);
+
+}
 
 void TKIPLbaseTImageTest::testDataAccess()
 {

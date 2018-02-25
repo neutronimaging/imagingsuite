@@ -3,6 +3,7 @@
 #include <cmath>
 #include <emmintrin.h>
 #include <iostream>
+#include <algorithm>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -162,31 +163,35 @@ double diffsum2(T * const beginA, T const * const endA, const T val)
 template <typename T>
 void minmax(T const * const data, const size_t N, T *minval, T *maxval)
 {
-	*minval=std::numeric_limits<T>::max();
-	*maxval=-std::numeric_limits<T>::max();
+//	*minval=std::numeric_limits<T>::max();
+//	*maxval=-std::numeric_limits<T>::max();
 
-	#pragma omp parallel
-	{
-		T mi=*minval;
-		T ma=*maxval;
+    std::pair<const T*, const T*> mm = minmax_element(data, data+N);
 
-		ptrdiff_t NN=static_cast<ptrdiff_t>(N);
+    *minval=*(mm.first);
+    *maxval=*(mm.second);
+//	#pragma omp parallel
+//	{
+//		T mi=*minval;
+//		T ma=*maxval;
 
-		#pragma omp for
-		for (ptrdiff_t i=0; i<NN; i++) {
-			if (data[i]==data[i]) { // Exclude NaNs from the search
-				if (ma<data[i])
-					ma=data[i];
-				else if (data[i]<mi)
-					mi=data[i];
-			}
-		}
-		#pragma omp critical
-		{
-			*minval=     mi < *minval ? mi : *minval;
-			*maxval=*maxval <  ma     ? ma : *maxval ;
-		}
-	}
+//		ptrdiff_t NN=static_cast<ptrdiff_t>(N);
+
+//		#pragma omp for
+//		for (ptrdiff_t i=0; i<NN; i++) {
+//			if (data[i]==data[i]) { // Exclude NaNs from the search
+//				if (ma<data[i])
+//					ma=data[i];
+//				else if (data[i]<mi)
+//					mi=data[i];
+//			}
+//		}
+//		#pragma omp critical
+//		{
+//			*minval=     mi < *minval ? mi : *minval;
+//			*maxval=*maxval <  ma     ? ma : *maxval ;
+//		}
+//	}
 }
 
 template <typename T>

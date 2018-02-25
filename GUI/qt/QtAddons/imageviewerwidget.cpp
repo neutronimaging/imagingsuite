@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "imageviewerwidget.h"
 
 #include <iostream>
@@ -98,7 +99,7 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
     }
 }
 
-void ImageViewerWidget::paintEvent(QPaintEvent * /* event */)
+void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
 {
 
     QPainter painter(this);
@@ -558,8 +559,8 @@ SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
     m_VerticalLayout.insertWidget(2,&m_buttonClose);
     this->setLayout(&m_VerticalLayout);
     this->setWindowTitle(tr("Set viewer gray levels"));
-    float fMin;
-    float fMax;
+    float fMin=0.0f;
+    float fMax=0.0f;
     m_pParent->get_minmax(&fMin,&fMax);
     double step=pow(10.0,floor(log10(fabs(fMax-fMin))-2.0));
     m_spinLow.setMaximum(fMax);

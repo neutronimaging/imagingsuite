@@ -1,8 +1,8 @@
 #ifndef _BASICPROJECTOR_HPP_
 #define _BASICPROJECTOR_HPP_
 
-#include "../base/timage.h"
-#include "../base/kiplenums.h"
+#include "../../base/timage.h"
+#include "../../base/kiplenums.h"
 #include <iostream>
 
 namespace kipl { namespace math {

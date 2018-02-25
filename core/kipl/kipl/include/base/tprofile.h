@@ -20,6 +20,8 @@ void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool 
 /// \param bMeanProjection switch to select if the average projection is to be computed instead of the sum
 template <typename T, typename S>
 void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+
+
 }}
 
 #include "core/tprofile.hpp"

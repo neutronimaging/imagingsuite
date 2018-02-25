@@ -1,7 +1,7 @@
 #!/bin/bash
 ./build_core_kipl.sh
-./build_GUI.sh # needs to be here due to GUI components in modules
 ./build_core_modules.sh
+./build_GUI.sh # needs to be here due to GUI components in modules
 ./build_core_algorithms.sh
 
 ./build_frameworks_tomography.sh

@@ -11,8 +11,8 @@ namespace kipl { namespace math {
 template<typename T>
 class BasicProjector {
 public:
-	BasicProjector();
-	~BasicProjector();
+    BasicProjector() {}
+    ~BasicProjector() {}
 	static kipl::base::TImage<T, 2> project (kipl::base::TImage<T, 3> img, const kipl::base::eImagePlanes plane);
 private:
 	static kipl::base::TImage<T, 2> ProjectOnPlaneXY(kipl::base::TImage<T, 3> img);

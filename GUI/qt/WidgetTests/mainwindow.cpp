@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include <QListWidgetItem>
+#include <QDebug>
 
 
 #include <base/timage.h>
@@ -23,7 +24,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->PlotButton,SIGNAL(clicked()),this,SLOT(PlotClicked()));
     connect(ui->GetModulesButton,SIGNAL(clicked()),this,SLOT(GetModulesClicked()));
 
+    connect(ui->roiWidget,&QtAddons::ROIWidget::getROIClicked,this,&MainWindow::on_roiwidget_getROIclicked);
+    connect(ui->roiWidget,&QtAddons::ROIWidget::valueChanged,this,&MainWindow::on_roiwidget_valueChanged);
     ui->singlemodule->Configure("muhrec");
+    ui->widgetROImanager->setViewer(ui->ImageView_2);
 }
 
 MainWindow::~MainWindow()
@@ -127,4 +131,57 @@ void MainWindow::on_pushButton_listdata_clicked()
     }
 
 
+}
+
+void MainWindow::on_roiwidget_getROIclicked()
+{
+    logger(logger.LogMessage,"Get roi clicked");
+    QRect rect=ui->ImageView_2->get_marked_roi();
+
+    ui->roiWidget->setROI(rect);
+    ui->ImageView_2->set_rectangle(rect,QColor("red"),0);
+}
+
+
+void MainWindow::on_roiwidget_valueChanged(int x0, int y0, int x1, int y1)
+{
+    QRect rect(x0,y0,x1-x0,y1-y0);
+    ui->ImageView_2->set_rectangle(rect,QColor("red"),0);
+}
+
+void MainWindow::on_button_ListAllROIs_clicked()
+{
+    qDebug() << "List all rois";
+    std::list<kipl::base::RectROI> roilist=ui->widgetROImanager->getROIs();
+    qDebug() << "got list "<<roilist.size();
+    std::ostringstream msg;
+    msg<<"All ROIs";
+    size_t coord[4];
+    foreach (kipl::base::RectROI roi, roilist) {
+        msg<<std::endl;
+        roi.getBox(coord);
+        msg<<roi.getName()<<" ("<<roi.getID()
+          <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
+          <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
+    }
+    logger(logger.LogMessage,msg.str());
+
+}
+
+void MainWindow::on_button_ListSelectedROIs_clicked()
+{
+    qDebug() << "List some rois";
+    std::list<kipl::base::RectROI> roilist=ui->widgetROImanager->getSelectedROIs();
+    qDebug() << "got list "<<roilist.size();
+    std::ostringstream msg;
+    msg<<"Selected ROIs";
+    size_t coord[4];
+    foreach (kipl::base::RectROI roi, roilist) {
+        msg<<std::endl;
+        roi.getBox(coord);
+        msg<<roi.getName()<<" ("<<roi.getID()
+          <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
+          <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
+    }
+    logger(logger.LogMessage,msg.str());
 }

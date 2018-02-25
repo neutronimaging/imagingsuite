@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef DATASETBASE_H
 #define DATASETBASE_H
 
@@ -5,6 +7,7 @@
 #include <list>
 #include <iostream>
 #include <string>
+
 #include <base/kiplenums.h>
 #include <base/timage.h>
 
@@ -18,8 +21,8 @@ public:
     std::string WriteXML(int indent=4);
     int ParseXML(std::string xml);
 
-    kipl::base::TImage<float,2> Load(int idx, kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop=NULL);
-    kipl::base::TImage<float,3> Load(kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop=NULL);
+    kipl::base::TImage<float,2> Load(int idx, kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop=nullptr);
+    kipl::base::TImage<float,3> Load(kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop=nullptr);
     std::string m_sFilemask;
     int m_nFirst;
     int m_nLast;

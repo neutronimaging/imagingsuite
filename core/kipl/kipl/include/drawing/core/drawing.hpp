@@ -6,6 +6,31 @@
 namespace kipl { namespace drawing {
 
 template <typename T>
+void Circle<T>::Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaintMethod paintmethod)
+{
+    int sx=img.Size(0);
+    int sy=img.Size(1);
+
+    for (int j=-m_nRadius; j<=m_nRadius; j++) {
+        int yj=y+j;
+        if ((0<=yj) && (yj<sy)) {
+            float rj2=j*j;
+            T *pLine=img.GetLinePtr(yj);
+            int begin=(x-m_nRadius)<0 ? -x : -m_nRadius;
+            int end=(x+m_nRadius)<=sx ? sx-x: m_nRadius;
+
+            for (int k=begin; k<=end; k++) {
+                float sum=rj2+k*k;
+                if (sum<=m_fRadius2) {
+                    pLine[k+x]=value;
+                }
+            }
+        }
+    }
+
+}
+
+template <typename T>
 void Sphere<T>::Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod)
 {
 	int sx=img.Size(0);

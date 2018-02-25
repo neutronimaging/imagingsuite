@@ -84,8 +84,13 @@ public:
 	TImage<T,N> & operator-=(const T x);
 	TImage<T,N> & operator*=(const T x);
 	TImage<T,N> & operator/=(const T x);
+
+    TImage<T,N> operator+(const T x) const;
+    TImage<T,N> operator-(const T x) const;
+    TImage<T,N> operator*(const T x) const;
+    TImage<T,N> operator/(const T x) const;
 	
-	/// \brief Returns the pointer to the data
+    /// \brief Returns the pointer to the data
 	/// \test The method is tested with unit test
 	T * GetDataPtr() { return m_buffer.GetDataPtr();}
 	
@@ -125,7 +130,7 @@ public:
 
     /// \brief Makes a deep copy of the data in the provided image.
     /// \param img Source image
-    void Clone(kipl::base::TImage<T,N> &img);
+    void Clone(const kipl::base::TImage<T,N> &img);
 
 	ImageInfo info;
 private:
