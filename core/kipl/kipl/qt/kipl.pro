@@ -375,14 +375,14 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 #    #INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5 #can i take the same as win?? probably stupid question
 #    #QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
 
-#    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
 #    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-#    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
+    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
 
 
 #    LIBS += -L$$PWD/../../../../external/mac/lib/
-    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
-#    LIBS += -lNeXus -lNeXusCPP
+#    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -lNeXus -lNeXusCPP
 
 ##    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
 ##    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
@@ -412,11 +412,6 @@ exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
 }
 
 }
-
-
-
-
-
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
