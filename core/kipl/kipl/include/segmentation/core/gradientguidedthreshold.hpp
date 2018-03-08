@@ -160,6 +160,7 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
 
 
     }
+    return 0;
 }
 
 }}

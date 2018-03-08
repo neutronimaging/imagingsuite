@@ -31,8 +31,6 @@ unix {
 
     unix:macx {
         QMAKE_MAC_SDK = macosx10.11
-        INCLUDEPATH += /opt/local/include
-        QMAKE_LIBDIR += /opt/local/lib
     }
 }
 
@@ -49,8 +47,8 @@ win32 {
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
+else:unix: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+
 
 
 SOURCES += tst_tkipladvfilterstest.cpp

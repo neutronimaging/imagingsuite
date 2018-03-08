@@ -101,7 +101,12 @@ void TKiplAdvFiltersTest::NLMeans_WindowEnum()
 
 void TKiplAdvFiltersTest::NLMeans_AlgorithmEnum()
 {
-
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMalgorithms::NLM_Naive),std::string("NLM_Naive"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal),std::string("NLM_HistogramOriginal"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSum),std::string("NLM_HistogramSum"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel),std::string("NLM_HistogramSumParallel"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMalgorithms::NLM_Bivariate),std::string("NLM_Bivariate"));
+    QCOMPARE(enum2string(akipl::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel),std::string("NLM_BivariateParallel"));
 }
 
 void TKiplAdvFiltersTest::NLMeans_process()
