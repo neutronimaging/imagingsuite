@@ -73,6 +73,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
     if (gaincorrection) {
         int N=static_cast<int>(img.Size(0));
 
+// Too good kernel
 //        size_t fdim[2]={3,3};
 
 //        float diff[9]={-3.0f/16.0f,0.0f,3.0f/16.0f,
