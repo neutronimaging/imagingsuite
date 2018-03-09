@@ -61,6 +61,10 @@ private slots:
 
     void on_combo_InterpolationMethod_activated(const QString &arg1);
 
+    void on_checkBox_thresh_clicked(bool checked);
+
+    void on_threshSpinBox_valueChanged(const QString &arg1);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();

@@ -802,3 +802,14 @@ void RobustLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg
     }
 
 }
+
+void RobustLogNormDlg::on_checkBox_thresh_clicked(bool checked)
+{
+    std::cout << "checked" << std::endl;
+
+}
+
+void RobustLogNormDlg::on_threshSpinBox_valueChanged(const QString &arg1)
+{
+    std::cout << "changed" << std::endl;
+}
