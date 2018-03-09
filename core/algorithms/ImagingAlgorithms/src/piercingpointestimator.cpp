@@ -14,11 +14,16 @@
 #include <base/textractor.h>
 #include <math/tnt_utils.h>
 #include <math/statistics.h>
+#include <filters/filter.h>
+
+#include <io/io_serializecontainers.h>
+#include <io/io_tiff.h>
 
 namespace ImagingAlgorithms {
 
 PiercingPointEstimator::PiercingPointEstimator() :
-    logger("PiercingPointEstimator")
+    logger("PiercingPointEstimator"),
+    m_gainThreshold(3.0f)
 {
 
 }
@@ -28,6 +33,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
     size_t crop[4];
 
     if (roi==nullptr) {
+        logger(logger.LogMessage,"Using default crop (reduction by 10\%).");
         float marg=0.05;
         crop[0]=static_cast<size_t>(img.Size(0)*marg);
         crop[1]=static_cast<size_t>(img.Size(1)*marg);
@@ -63,25 +69,41 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
                              size_t *roi)
 {
     correctedImage=img-dc;
+
     if (gaincorrection) {
         int N=static_cast<int>(img.Size(0));
+
+//        size_t fdim[2]={3,3};
+
+//        float diff[9]={-3.0f/16.0f,0.0f,3.0f/16.0f,
+//                 -10.0f/16.0f,0.0f,10.0f/16.0f,
+//                 -3.0f/16.0f,0,3.0f/16.0f};
+
+        size_t fdim[2]={3,1};
+
+        float diff[9]={-1.0f/2.0,0.0f,1.0f/2.0f};
+
+        kipl::filters::TFilter<float,2> filt(diff,fdim);
+
+        kipl::base::TImage<float,2> gradImage=filt(correctedImage,kipl::filters::FilterBase::EdgeMirror);
         float *profile=new float[N];
 
-        kipl::base::HorizontalProjection2D(correctedImage.GetDataPtr(), correctedImage.Dims(), profile, true);
+
+        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.Dims(), profile, true);
 
         kipl::math::Statistics stats;
-        for (int i=1; i<N; ++i) {
-            profile[i]-=profile[i-1];
+        for (int i=0; i<N; ++i) {
             stats.put(profile[i]);
         }
-        profile[0]=profile[1];
-        profile[0]= abs(profile[0]) < 2.5*stats.s() ? 0 : profile[0];
+        profile[0]= m_gainThreshold < abs(profile[0]-stats.E())/stats.s()? 0 : profile[0];
+        std::cout<<stats<<std::endl;
         for (int i=1; i<N; ++i) {
-            profile[i]= abs(profile[i]) < 2.5*stats.s() ? profile[i-1] : profile[i]+=profile[i-1];
+            profile[i]= m_gainThreshold < abs(profile[i]-stats.E())/stats.s() ? profile[i] : 0;
+            profile[i]+=profile[i-1];
         }
 
         float *pLine=nullptr;
-
+ //        kipl::io::WriteTIFF(correctedImage,"pp_obdc.tif",0.0f,65535.0f);
         for (int y=0; y<static_cast<int>(correctedImage.Size(1)); ++y) {
             pLine=correctedImage.GetLinePtr(y);
             for (int x=0; x<N; ++x) {
@@ -89,6 +111,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
             }
         }
 
+ //       kipl::io::WriteTIFF(correctedImage,"pp_obdc_gain.tif",0.0f,65535.0f);
         delete [] profile;
     }
 

@@ -51,17 +51,17 @@ Statistics::~Statistics()
 
 double Statistics::E() const
 {
-	return m_fSum/m_nNdata;
+    return m_nNdata == 0UL ? 0.0 : m_fSum/m_nNdata;
 }
 
 double Statistics::V() const
 {
-	return (m_fSum2-m_fSum*m_fSum/m_nNdata)/(m_nNdata);
+    return m_nNdata == 0UL ? 0.0 : (m_fSum2-m_fSum*m_fSum/m_nNdata)/(m_nNdata);
 }
 
 double Statistics::s() const
 {
-	return sqrt(m_fSum2-m_fSum*m_fSum/m_nNdata)/(m_nNdata-1);
+    return m_nNdata == 0UL ? 0.0 : sqrt((m_fSum2-m_fSum*m_fSum/m_nNdata)/(m_nNdata));
 }
 
 Statistics Statistics::operator +(Statistics & s)
@@ -89,12 +89,12 @@ int Statistics::reset()
 
 double Statistics::Max() const
 {
-	return m_fMax;
+    return m_nNdata == 0UL ? 0.0 : m_fMax;
 }
 
 double Statistics::Min() const
 {
-	return m_fMin;
+    return m_nNdata == 0UL ? 0.0 : m_fMin;
 }
 
 size_t Statistics::n() const

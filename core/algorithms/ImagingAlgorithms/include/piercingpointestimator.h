@@ -28,8 +28,11 @@ private:
     void ComputeEstimate(kipl::base::TImage<float, 2> &img);
     pair<float,float> LocateMax();
 
+
     kipl::base::TImage<float,2> correctedImage;
     TNT::Array1D< double > parameters;
+
+    float m_gainThreshold;
 };
 
 }

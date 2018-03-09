@@ -10,6 +10,7 @@
 #include <math/nonlinfit.h>
 #include <filters/filter.h>
 #include <drawing/drawing.h>
+#include <math/statistics.h>
 
 #include <io/io_tiff.h>
 
@@ -29,6 +30,7 @@ private Q_SLOTS:
     void testCircularHoughTransform();
     void testNonLinFit_fitfunctions();
     void testNonLinFit_fitter();
+    void testStatistics();
 };
 
 TKiplMathTest::TKiplMathTest()
@@ -131,6 +133,38 @@ void TKiplMathTest::testNonLinFit_fitfunctions()
 
 void TKiplMathTest::testNonLinFit_fitter()
 {
+
+}
+
+void TKiplMathTest::testStatistics()
+{
+    kipl::math::Statistics stats;
+
+    QVERIFY(stats.n()==0UL);
+    QVERIFY(stats.E()==0.0f);
+    QVERIFY(stats.s()==0.0f);
+    QVERIFY(stats.Min()==0.0f);
+    QVERIFY(stats.Max()==0.0f);
+    QVERIFY(stats.V()==0.0f);
+    QVERIFY(stats.Sum()==0.0f);
+    QVERIFY(stats.Sum2()==0.0f);
+
+    double data[10]={ 4.49201549,  3.63910658,  1.14245381,  2.42364998,  2.12082273,
+                     -0.89899808,  2.27052317,  0.62877943,  5.10328637,  4.0204556};
+
+    for (int i=0; i<10; ++i)
+        stats.put(data[i]);
+    double eps=0.0001;
+    QVERIFY(fabs(stats.Sum()==24.942095070011739)<eps);
+    QVERIFY(fabs(stats.Sum2()==93.664900413805682)<eps);
+    QVERIFY(stats.n()==10UL);
+    QVERIFY(fabs(stats.E()-2.4942095070011741)<eps);
+    cout<<stats.s()<<std::endl;
+    QVERIFY(fabs(stats.s()-1.7735300889935668)<eps);
+    QVERIFY(fabs(stats.Min()==-0.89899808236334788)<eps);
+    QVERIFY(fabs(stats.Max()==5.1032863747302493)<eps);
+    QVERIFY(fabs(stats.V()==3.1454089765655291)<eps);
+
 
 }
 
