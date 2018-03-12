@@ -18,6 +18,7 @@
 #include <base/tprofile.h>
 #include <base/tsubimage.h>
 #include <strings/miscstring.h>
+#include <morphology/label.h>
 
 #include "ReferenceImageCorrection.h"
 #include <ImagingException.h>
@@ -45,7 +46,9 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_nBBimages(0),
     m_bHaveExternalBlackBody(false),
     fdose_ext_slice(0.0f),
-    min_area(0)
+    min_area(0),
+    bUseManualThresh(false),
+    thresh(0.0f)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -402,13 +405,26 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
     //2.b compute otsu threshold
 
+    float ot;
 
-    int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-    float ot = static_cast<float>(histo.at(value).first);
+    if (bUseManualThresh)
+        {
+              ot = thresh;
+              std::cout << "manual threshold " << ot << std::endl;
+        }
+    else
+        {
+            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+            ot = static_cast<float>(histo.at(value).first);
+            std::cout << "otsu threshold " << ot << std::endl;
+            }
+
+
 
     //2.c threshold image
 
     kipl::base::TImage<float,2> maskOtsu(mask.Dims());
+    kipl::base::TImage<int,2> labelImage(mask.Dims());
 
  // now it works:
 //    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
@@ -425,177 +441,207 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         }
     }
 
-
-    // 3. Compute mask within Otsu
-    // 3.a sum of rows and columns and location of rois
+     kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
 
 
-    float *vert_profile = new float[maskOtsu.Size(1)];
-    float *hor_profile = new float[maskOtsu.Size(0)];
+     kipl::morphology::MorphConnect conn = kipl::morphology::conn4;
+     float bg = 1.0f;
 
+     int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::morphology::conn4, bg);
 
-    kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
-    kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
+     vector< pair< size_t, size_t > > area;
+     kipl::morphology::LabelArea(labelImage, num_obj, area);
+     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
 
-
-    //3.b create binary Signal
-    float *bin_VP = new float[maskOtsu.Size(1)];
-    float *bin_HP = new float[maskOtsu.Size(0)];
-
-    for (size_t i=0; i<maskOtsu.Size(1); i++) {
-        float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
-        if(vert_profile[i]<max) {
-            bin_VP[i] = 1;
-        }
-        else {
-            bin_VP[i] = 0;
-        }
-
-    }
-
-
-    for (size_t i=0; i<maskOtsu.Size(0); i++) {
-        float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
-        if(hor_profile[i]<max) {
-            bin_HP[i] = 1;
-        }
-        else {
-            bin_HP[i] = 0;
-        }
-    }
-
-    // 3.c compute edges - diff signal
-
-    float *pos_left = new float[100];
-    float *pos_right = new float[100];
-    int index_left = 0;
-    int index_right = 0;
-
-
-     for (int i=0; i<maskOtsu.Size(1)-1; i++) {
-         float diff = bin_VP[i+1]-bin_VP[i];
-         if (diff>=1) {
-             pos_left[index_left] = i;
-             index_left++;
-         }
-         if (diff<=-1) {
-             pos_right[index_right]=i+1; // to have all BB within the rois
-             index_right++;
-         }
+     if (num_obj==2 || area.at(1).first>=3*area.at(2).first)
+     {
+         std::cout << "give error message" << std::endl;
+         throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
      }
-
-     // the same on the horizontal profile:
-     float *pos_left_2 = new float[100];
-     float *pos_right_2 = new float[100];
-     int index_left_2 = 0;
-     int index_right_2 = 0;
+     else
+         {
 
 
-      for (int i=0; i<maskOtsu.Size(0)-1; i++) {
-          float diff = bin_HP[i+1]-bin_HP[i];
-          if (diff>=1) {
-              pos_left_2[index_left_2] = i;
-              index_left_2++;
-          }
-          if (diff<=-1) {
-              pos_right_2[index_right_2]=i+1;
-              index_right_2++;
-          }
-      }
+        // 3. Compute mask within Otsu
+        // 3.a sum of rows and columns and location of rois
 
 
-      // from these define ROIs containing BBs --> i can probably delete them later on
-      std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
-      std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
 
-      int pos = 0;
-      for (int i=0; i<(index_left); i++) {
-
-          for (int j=0; j<(index_left_2); j++) {
-
-                right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
-                right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
-                left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
-                left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
-                pos++;
-          }
-
-      }
+        float *vert_profile = new float[maskOtsu.Size(1)];
+        float *hor_profile = new float[maskOtsu.Size(0)];
 
 
-//      std::cout << "pos: " << pos << std::endl; // it is the number of potential BBs that I have found:
-
-      for (size_t bb_index=0; bb_index<pos; bb_index++){
-
-          const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
-          kipl::base::TImage<float,2> roi(roi_dim);
-          kipl::base::TImage<float,2> roi_im(roi_dim);
+        kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
+        kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
 
 
-          for (int i=0; i<roi_dim[1]; i++) {
-                memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
-                memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
-          }
+        //3.b create binary Signal
+        float *bin_VP = new float[maskOtsu.Size(1)];
+        float *bin_HP = new float[maskOtsu.Size(0)];
 
-          float x_com= 0.0f;
-          float y_com= 0.0f;
-          int size = 0;
+        for (size_t i=0; i<maskOtsu.Size(1); i++) {
+            float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
+            if(vert_profile[i]<max) {
+                bin_VP[i] = 1;
+            }
+            else {
+                bin_VP[i] = 0;
+            }
 
-//          // old implementation with geometrical mean:
-//          for (size_t x=0; x<roi.Size(0); x++) {
-//              for (size_t y=0; y<roi.Size(1); y++) {
-//                  if(roi(x,y)==0) {
-//                      x_com +=x;
-//                      y_com +=y;
-//                      size++;
-//                  }
+        }
 
-//              }
-//          }
-//          x_com /=size;
-//          y_com /=size;
 
-          float sum_roi = 0.0f;
+        for (size_t i=0; i<maskOtsu.Size(0); i++) {
+            float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
+            if(hor_profile[i]<max) {
+                bin_HP[i] = 1;
+            }
+            else {
+                bin_HP[i] = 0;
+            }
+        }
 
-          // weighted center of mass:
-          for (size_t x=0; x<roi.Size(0); x++) {
-              for (size_t y=0; y<roi.Size(1); y++) {
-                  if(roi(x,y)==0) {
-                      x_com += (roi_im(x,y)*float(x));
-                      y_com += (roi_im(x,y)*float(y));
-                      sum_roi += roi_im(x,y);
-                      size++;
-                  }
 
+        // 3.c compute edges - diff signal
+
+        float *pos_left = new float[100];
+        float *pos_right = new float[100];
+        int index_left = 0;
+        int index_right = 0;
+
+
+         for (int i=0; i<maskOtsu.Size(1)-1; i++) {
+             float diff = bin_VP[i+1]-bin_VP[i];
+             if (diff>=1) {
+                 pos_left[index_left] = i;
+                 index_left++;
+             }
+             if (diff<=-1) {
+                 pos_right[index_right]=i+1; // to have all BB within the rois
+                 index_right++;
+             }
+         }
+
+
+
+         // the same on the horizontal profile:
+         float *pos_left_2 = new float[100];
+         float *pos_right_2 = new float[100];
+         int index_left_2 = 0;
+         int index_right_2 = 0;
+
+
+          for (int i=0; i<maskOtsu.Size(0)-1; i++) {
+              float diff = bin_HP[i+1]-bin_HP[i];
+              if (diff>=1) {
+                  pos_left_2[index_left_2] = i;
+                  index_left_2++;
+              }
+              if (diff<=-1) {
+                  pos_right_2[index_right_2]=i+1;
+                  index_right_2++;
               }
           }
 
-          // draw the circle with user-defined radius
-
-          // check on BB dimensions:
-          if (size>=min_area) {
 
 
-              x_com /=sum_roi;
-              y_com /=sum_roi;
+          // from these define ROIs containing BBs --> i can probably delete them later on
+          std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+          std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
 
-                  for (size_t x=0; x<roi.Size(0); x++) {
-                      for (size_t y=0; y<roi.Size(1); y++) {
-                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
-//                              roi(x,y)=1; // this one actually I don't need
-                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
-                          }
-                      }
-                  }
+          int pos = 0;
+          for (int i=0; i<(index_left); i++) {
 
-                  roi(int(x_com+0.5), int(y_com+0.5))=2;
+              for (int j=0; j<(index_left_2); j++) {
+
+                    right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+                    right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+                    left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
+                    left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+
+                    std::cout << pos_right[i] << " " << pos_right_2[j] << " " << pos_left[i] << " " << pos_left_2[j] << std::endl;
+                    pos++;
+              }
+
           }
 
-      }
+
+
+          for (size_t bb_index=0; bb_index<pos; bb_index++){
+
+              const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+
+              std::cout << roi_dim[0] << " " << roi_dim[1] << std::endl;
+              kipl::base::TImage<float,2> roi(roi_dim);
+              kipl::base::TImage<float,2> roi_im(roi_dim);
+
+
+              for (int i=0; i<roi_dim[1]; i++) {
+                    memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                    memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+              }
+
+              float x_com= 0.0f;
+              float y_com= 0.0f;
+              int size = 0;
+
+    //          // old implementation with geometrical mean:
+    //          for (size_t x=0; x<roi.Size(0); x++) {
+    //              for (size_t y=0; y<roi.Size(1); y++) {
+    //                  if(roi(x,y)==0) {
+    //                      x_com +=x;
+    //                      y_com +=y;
+    //                      size++;
+    //                  }
+
+    //              }
+    //          }
+    //          x_com /=size;
+    //          y_com /=size;
+
+              float sum_roi = 0.0f;
+
+              // weighted center of mass:
+              for (size_t x=0; x<roi.Size(0); x++) {
+                  for (size_t y=0; y<roi.Size(1); y++) {
+                      if(roi(x,y)==0) {
+                          x_com += (roi_im(x,y)*float(x));
+                          y_com += (roi_im(x,y)*float(y));
+                          sum_roi += roi_im(x,y);
+                          size++;
+                      }
+
+                  }
+              }
+
+
+              // draw the circle with user-defined radius
+
+              // check on BB dimensions:
+              if (size>=min_area) {
+
+
+                  x_com /=sum_roi;
+                  y_com /=sum_roi;
+
+                      for (size_t x=0; x<roi.Size(0); x++) {
+                          for (size_t y=0; y<roi.Size(1); y++) {
+                              if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
+    //                              roi(x,y)=1; // this one actually I don't need
+                                  mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
+                              }
+                          }
+                      }
+
+                      roi(int(x_com+0.5), int(y_com+0.5))=2;
+              }
+
+          }
 
 
 
-//      kipl::io::WriteTIFF32(mask,"/home/carminati_c/repos/testdata/mask.tif");
+//          kipl::io::WriteTIFF32(mask,"mask.tif");
+    }
 
 }
 
@@ -859,8 +905,20 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
 
     //2.b compute otsu threshold
 
-    int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-    float ot = static_cast<float>(histo.at(value).first);
+
+    float ot;
+
+    if (bUseManualThresh)
+        {
+              ot = thresh;
+              std::cout << "manual threshold " << ot << std::endl;
+        }
+    else
+        {
+            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+            ot = static_cast<float>(histo.at(value).first);
+            std::cout << "otsu threshold " << ot << std::endl;
+            }
 
     //2.c threshold image
 
@@ -909,6 +967,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     }
 
 
+    std::cout <<  "after max" << std::endl;
+
     for (size_t i=0; i<maskOtsu.Size(0); i++) {
         float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
         if(hor_profile[i]<max) {
@@ -918,6 +978,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
             bin_HP[i] = 0;
         }
     }
+
+        std::cout <<  "after max" << std::endl;
 
     // 3.c compute edges - diff signal
 
@@ -939,6 +1001,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
          }
      }
 
+     std::cout <<  "after vertical profiles" << std::endl;
+
      // the same on the horizontal profile:
      float *pos_left_2 = new float[100];
      float *pos_right_2 = new float[100];
@@ -958,6 +1022,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
           }
       }
 
+      std::cout <<  "after horizontal profiles" << std::endl;
+
 
       // from these define ROIs containing BBs --> i can probably delete them later on
       std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
@@ -976,6 +1042,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
           }
 
       }
+
+      std::cout << "pos: " << pos << std::endl;
 
 
 

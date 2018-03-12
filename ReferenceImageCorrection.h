@@ -87,6 +87,7 @@ public:
     void SetSplineObValues(std::map<std::pair<int, int>, float> &values) {spline_ob_values = values;} /// set map to be used for spline interpolation of ob images
     void SetSplineSampleValues(std::map<std::pair<int, int>, float> &values){spline_sample_values = values; } /// set map to used for spline interpolation of sample images
     void SetInterpolationMethod(eInterpMethod eint_meth) {m_InterpMethod = eint_meth;} /// set method for background interpolation, polynomial or splines
+    void SetManualThreshold(bool bThresh, float value) {{bUseManualThresh=bThresh; thresh=value;}}
 
     void SetAngles(float *ang, size_t nProj, size_t nBB); ///< set angles and number of proj and images with BB, to be used for more general interpolation
     void SetDoseList(float *doselist); /// set dose list for sample images in the BB dose roi, it has to be called after SetAngles for the right definition of m_nProj
@@ -137,6 +138,7 @@ protected:
 	bool m_bHaveBlackBody;
     bool m_bHaveExternalBlackBody;
 	bool m_bComputeLogarithm;
+    bool bUseManualThresh;
 
     kipl::base::TImage<float,2> m_OpenBeam;
     kipl::base::TImage<float,2> m_OpenBeamforBB;
@@ -190,6 +192,7 @@ protected:
     float tau; /// mean pattern transmission
     float *dosesamplelist; /// list of doses for sample images computed at dose BB roi, to be used in the Interpolate BBOption
     size_t min_area; /// min area for BB segmentation
+    float thresh; /// manual threshold
 
     std::map<std::pair<int, int>, float> spline_ob_values; /// map to be used for interpolation with splines and ob image. should be in principle the same number of images with BB, i start now with 1
     std::map<std::pair<int, int>, float> spline_sample_values; /// map to be used for interpolation with splines and sample image
