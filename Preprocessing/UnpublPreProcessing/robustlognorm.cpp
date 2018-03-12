@@ -48,7 +48,9 @@ RobustLogNorm::RobustLogNorm() :
     nBBextFirstIndex(0),
     bUseExternalBB(false),
     bSameMask(true),
-    min_area(20)
+    bUseManualThresh(false),
+    min_area(20),
+    thresh(0)
 {
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
@@ -110,7 +112,11 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     ffirstAngle = GetFloatParameter(parameters, "firstAngle");
     flastAngle = GetFloatParameter(parameters, "lastAngle");
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+    bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+    thresh = GetFloatParameter(parameters,"thresh");
 
+    m_corrector.SetManualThreshold(bUseManualThresh,thresh);
+    std::cout << bUseManualThresh << " " << thresh << std::endl;
 
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
@@ -225,6 +231,8 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
     parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
     parameters["min_area"] = kipl::strings::value2string(min_area);
+    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
+    parameters["thresh"]= kipl::strings::value2string(thresh);
 
     return parameters;
 }

@@ -60,10 +60,11 @@ private slots:
 
 
     void on_combo_InterpolationMethod_activated(const QString &arg1);
-
     void on_checkBox_thresh_clicked(bool checked);
 
-    void on_threshSpinBox_valueChanged(const QString &arg1);
+    void on_spinThresh_valueChanged(double arg1);
+
+    void on_checkBox_thresh_stateChanged(int arg1);
 
 private:
     virtual void ApplyParameters();
@@ -102,11 +103,13 @@ private:
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
 
-    float tau;
+    float tau; /// mean pattern transmission, default 0.97
+    float thresh; /// manual threshold
     bool bPBvariante;
     bool bUseNormROI; /// boolean value on the use of the norm roi
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
+    bool bUseManualThresh; /// boolear value on the use of a manual threshold instead of Otsu
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
