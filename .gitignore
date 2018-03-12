@@ -7,11 +7,6 @@ build*
 *.autosave
 *.in
 *.pc
-*.sym
-
 .DS-Store
 .ipynb_checkpoints
-*.in
-*.pc
 *.sym
-
