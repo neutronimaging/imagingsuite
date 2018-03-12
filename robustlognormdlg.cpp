@@ -31,6 +31,7 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     tau(0.99f),
     bPBvariante(true),
     bSameMask(true),
+    bUseManualThresh(false),
     m_nWindow(5),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
@@ -42,7 +43,8 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
     flastAngle(360.0f),
     nBBextCount(0),
     nBBextFirstIndex(0),
-    min_area(20)
+    min_area(20),
+    thresh(0)
 {
 
     blackbodyname = "somename";
@@ -105,7 +107,8 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
         nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
         nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
         bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-
+        bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+        thresh = GetFloatParameter(parameters,"thresh");
         min_area = GetIntParameter(parameters, "min_area");
 
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
@@ -174,7 +177,7 @@ void RobustLogNormDlg::ApplyParameters(){
 
     ui->buttonPreviewOBBB->click();
     ui->buttonPreviewsampleBB->click();
-    ui->errorButton->click();
+//    ui->errorButton->click();
     //    UpdateParameters();
     UpdateDoseROI();
     UpdateBBROI();
@@ -233,6 +236,8 @@ void RobustLogNormDlg::UpdateDialog(){
     ui->spin_count_ext_BB->setValue(nBBextCount);
 
     ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
+    ui->checkBox_thresh->setChecked(bUseManualThresh);
+    ui->spinThresh->setValue(thresh);
 
 
 
@@ -291,6 +296,9 @@ void RobustLogNormDlg::UpdateParameters(){
 
     min_area = ui->spin_minarea->value();
 
+    bUseManualThresh = ui->checkBox_thresh->isChecked();
+    thresh = ui->spinThresh->value();
+
 //    std::cout << "update parameters " << std::endl;
 //    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
 //    std::cout << blackbodyname << std::endl;
@@ -330,8 +338,9 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
     parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
-
+    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["min_area"] = kipl::strings::value2string(min_area);
+    parameters["thresh"]= kipl::strings::value2string(thresh);
 
 //    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 //    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
@@ -678,12 +687,14 @@ void RobustLogNormDlg::on_errorButton_clicked()
         catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to compute interpoltion error.");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
             logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
             return ;
         }
         catch(...){
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpoltion error.. generic exception.");
+            errdlg.setText("Failed to compute interpolation error.. generic exception.");
             return ;
         }
 
@@ -691,7 +702,8 @@ void RobustLogNormDlg::on_errorButton_clicked()
 //        std::cout << error << std::endl;
 
         // display interpolation error
-        ui->errorBrowser->setText(QString::number(error));
+//        ui->errorBrowser->setText(QString::number(error));
+        ui->label_error->setText(QString::number(error));
 
         // display computed mask
     //    kipl::base::TImage<float,2> mymask = module.GetMaskImage();
@@ -790,7 +802,7 @@ void RobustLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg
         ui->combo_IntMeth_Y->setEnabled(true);
         ui->label_23->setEnabled(true);
         ui->label_24->setEnabled(true);
-        ui->errorBrowser->setEnabled(true);
+//        ui->errorBrowser->setEnabled(true);
     }
 
     if (arg1.toStdString()=="ThinPlateSplines"){
@@ -798,18 +810,24 @@ void RobustLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg
         ui->combo_IntMeth_Y->setEnabled(false);
         ui->label_23->setEnabled(false);
         ui->label_24->setEnabled(false);
-        ui->errorBrowser->setEnabled(false);
+//        ui->errorBrowser->setEnabled(false);
     }
 
 }
 
 void RobustLogNormDlg::on_checkBox_thresh_clicked(bool checked)
 {
-    std::cout << "checked" << std::endl;
+    bUseManualThresh = checked;
 
 }
 
-void RobustLogNormDlg::on_threshSpinBox_valueChanged(const QString &arg1)
+
+void RobustLogNormDlg::on_spinThresh_valueChanged(double arg1)
 {
-    std::cout << "changed" << std::endl;
+    thresh = arg1;
+}
+
+void RobustLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
+{
+
 }
