@@ -116,7 +116,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     thresh = GetFloatParameter(parameters,"thresh");
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
-    std::cout << bUseManualThresh << " " << thresh << std::endl;
+//    std::cout << bUseManualThresh << " " << thresh << std::endl;
 
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
