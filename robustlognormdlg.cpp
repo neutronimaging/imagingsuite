@@ -388,6 +388,12 @@ void RobustLogNormDlg::BrowseOBBBPath(){
         }
         else {
             ui->edit_OB_BB_mask->setText(QString::fromStdString(fi.m_sMask));
+            int c=0;
+            int f=0;
+            int l=0;
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            ui->spinFirstOBBB->setValue(f);
+            ui->spinCountsOBBB->setValue(c);
         }
     }
 
@@ -525,6 +531,12 @@ void RobustLogNormDlg::BrowseSampleBBPath(){
         }
         else {
             ui->edit_sample_BB_mask->setText(QString::fromStdString(fi.m_sMask));
+            int c=0;
+            int f=0;
+            int l=0;
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            ui->spinFirstsampleBB->setValue(f);
+            ui->spinCountsampleBB->setValue(c);
         }
     }
 
@@ -830,4 +842,14 @@ void RobustLogNormDlg::on_spinThresh_valueChanged(double arg1)
 void RobustLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
 {
 
+}
+
+void RobustLogNormDlg::on_pushButton_filenameOBBB_clicked()
+{
+    ui->edit_OB_BB_mask->setText(QString::fromStdString(m_Config->ProjectionInfo.sFileMask));
+}
+
+void RobustLogNormDlg::on_pushButton_filenameBB_clicked()
+{
+    ui->edit_sample_BB_mask->setText(ui->edit_OB_BB_mask->text());
 }

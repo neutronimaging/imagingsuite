@@ -66,6 +66,10 @@ private slots:
 
     void on_checkBox_thresh_stateChanged(int arg1);
 
+    void on_pushButton_filenameOBBB_clicked();
+
+    void on_pushButton_filenameBB_clicked();
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();

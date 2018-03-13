@@ -348,7 +348,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_17">
             <item>
-             <widget class="QLabel" name="label_OBBB">
+             <widget class="QPushButton" name="pushButton_filenameOBBB">
               <property name="text">
                <string>filename</string>
               </property>
@@ -363,7 +363,7 @@
                <bool>false</bool>
               </property>
               <property name="toolTip">
-               <string>Browse in the open beam with black body images </string>
+               <string>Browse to select the open beam with black body images </string>
               </property>
               <property name="text">
                <string>Browse</string>
@@ -554,7 +554,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_16">
             <item>
-             <widget class="QLabel" name="label_8">
+             <widget class="QPushButton" name="pushButton_filenameBB">
               <property name="text">
                <string>filename</string>
               </property>
@@ -569,7 +569,7 @@
                <bool>false</bool>
               </property>
               <property name="toolTip">
-               <string>Browse in the open beam with black body images </string>
+               <string>Browse to select the sample image with BB</string>
               </property>
               <property name="text">
                <string>Browse</string>
