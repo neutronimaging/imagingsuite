@@ -375,11 +375,8 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
     INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
     DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-
-
-   QMAKE_LIBDIR += -L$$PWD/../../../../external/mac/lib/
-   LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
-
+    QMAKE_LIBDIR += -L$$PWD/../../../../external/mac/lib/
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
 }
@@ -405,11 +402,6 @@ exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
 }
 
 }
-
-
-
-
-
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

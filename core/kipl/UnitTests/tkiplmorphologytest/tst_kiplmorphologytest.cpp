@@ -89,8 +89,10 @@ void kiplMorphologyTest::testPixelIteratorSetup()
 
 void kiplMorphologyTest::testPixelIteratorMoving()
 {
-    size_t dims4[2]={11,5};
-    kipl::base::PixelIterator it4(dims4,kipl::base::conn4);
+    size_t dims4u[2]={11,5};
+    ptrdiff_t dims4[2];
+    std::copy(dims4u,dims4u+2,dims4);
+    kipl::base::PixelIterator it4(dims4u,kipl::base::conn4);
     ++it4;
     QVERIFY2(it4.getCurrentPosition() == 1,"Initialize to wrong start position");
     QVERIFY2(it4.getEdgeStatus()      == kipl::base::edgeY0,"Wrong edge status at init");
@@ -126,7 +128,8 @@ void kiplMorphologyTest::testPixelIteratorMoving()
     QVERIFY2(it4.getEdgeStatus()      == kipl::base::noEdge,"Wrong edge status at init");
     QVERIFY2(it4.neighborhoodSize()   == 4, "Wrong neighborhood size for edge x0 (conn4)");
 
-    kipl::base::PixelIterator it8(dims4,kipl::base::conn8);
+    kipl::base::PixelIterator it8(dims4u,kipl::base::conn8);
+    std::copy(dims4u,dims4u+2,dims4);
     ++it8;
     QVERIFY2(it8.getCurrentPosition() == 1,"Initialize to wrong start position");
     QVERIFY2(it8.getEdgeStatus()      == kipl::base::edgeY0,"Wrong edge status at init");
@@ -289,8 +292,8 @@ void kiplMorphologyTest::testPixelIteratorHalfNeighborhood()
     QVERIFY2(it4.forwardSize()  == 1, "Forward size at Corner X1Y0");
     QVERIFY2(it4.backwardSize() == 1, "Backward size at Corner X1Y0");
 
-    QVERIFY2(it4.forwardNeighborhood(0) == 2*dims4[0]-1,"Forward corner X1Y0");
-    QVERIFY2(it4.backwardNeighborhood(0) == dims4[0]-2,"BackwardCorner X1Y0");
+    QVERIFY2(it4.forwardNeighborhood(0) == ptrdiff_t(2*dims4[0]-1),"Forward corner X1Y0");
+    QVERIFY2(it4.backwardNeighborhood(0) == ptrdiff_t(dims4[0]-2),"BackwardCorner X1Y0");
 
     it4.setPosition(0,dims4[1]-1);
     QVERIFY2(it4.forwardSize()  == 1, "Forward size at Corner X0Y1");
