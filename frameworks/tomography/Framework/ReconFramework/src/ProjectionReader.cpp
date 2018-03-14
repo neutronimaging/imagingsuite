@@ -48,7 +48,15 @@ void ProjectionReader::GetImageSize(std::string path,
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
     size_t found = filemask.find("hdf");
     if (found!=std::string::npos) {
-        return GetImageSizeNexus(filemask, binning, dims);
+        try {
+            return GetImageSizeNexus(filemask, binning, dims);
+        }
+        catch (std::exception &e) {
+            throw ReconException(e.what(),__FILE__,__LINE__);
+        }
+        catch (kipl::base::KiplException &e) {
+            throw ReconException(e.what(),__FILE__,__LINE__);
+        }
     }
     else {
         return GetImageSize(filename,binning, dims);
@@ -481,7 +489,22 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
             }
 
 
-            kipl::io::ReadNexus(img, fname, number, pCrop);
+            try {
+                kipl::io::ReadNexus(img, fname, number, pCrop);
+            }
+            catch (ReconException &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (std::exception &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (kipl::base::KiplException &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (...) {
+                throw ReconException("Unhandled exception",__FILE__,__LINE__);
+            }
+
             kipl::base::TImage<float,2> binned(img.Dims());
 
 
@@ -907,7 +930,23 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
             }
         }
         else{
-            img = ReadNexusStack(ProjectionList.begin()->second.name, 0, dims[2], config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,nCrop);
+
+            try {
+                img = ReadNexusStack(ProjectionList.begin()->second.name, 0, dims[2], config.ProjectionInfo.eFlip,config.ProjectionInfo.eRotate,config.ProjectionInfo.fBinning,nCrop);
+            }
+            catch (ReconException &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (std::exception &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (kipl::base::KiplException &e) {
+                throw ReconException(e.what(),__FILE__,__LINE__);
+            }
+            catch (...) {
+                throw ReconException("Unhandled exception",__FILE__,__LINE__);
+            }
+
             float *doselist = new float[dims[2]];
             doselist = GetProjectionDoseListNexus(ProjectionList.begin()->second.name,
                                                          0, dims[2],

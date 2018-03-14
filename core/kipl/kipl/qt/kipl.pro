@@ -378,8 +378,7 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
 
    QMAKE_LIBDIR += -L$$PWD/../../../../external/mac/lib/
-   LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0 #not sure this one has to be commented
-#   LIBS += -lNeXus -lNeXusCPP #does not work with this one.
+   LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
