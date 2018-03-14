@@ -1,6 +1,6 @@
 DIRECTORY=~/Applications
-#QTPATH=$QT_HOME
-QTPATH=/Applications/QT/5.9.4/clang_64
+QTPATH=$QT_HOME
+#QTPATH=/Applications/QT/5.9.4/clang_64
 
 DEST="$DIRECTORY/muhrec3.app"
 #REPOSPATH=$WORKSPACE
