@@ -360,10 +360,10 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
                CBCT_roi[3] = static_cast<float>(value2);
        }
 
-       if (CBCT_roi[1]-2>=0)
-           CBCT_roi[1] -=2;
-       if (CBCT_roi[3]+2<=mConfig.ProjectionInfo.projection_roi[3])
-           CBCT_roi[3] +=2;
+       if (CBCT_roi[1]-5>=0)
+           CBCT_roi[1] -=5;
+       if (CBCT_roi[3]+5<=mConfig.ProjectionInfo.projection_roi[3])
+           CBCT_roi[3] +=5;
 
 
 
