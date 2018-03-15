@@ -32,6 +32,7 @@ int KIPLSHARED_EXPORT FITSDataType(double x);
 template <typename ImgType>
 int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop, size_t idx)
 {
+    (void) idx;
 	using namespace std; 
     ostringstream msg;
 	fitsfile *fptr;
@@ -131,7 +132,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 {
 
     fitsfile *fptr;                  // pointer to the FITS file, defined in fitsio.h
-    int status, ii, jj;
+    int status, ii;
     long  fpixel, nelements, exposure;
     ImgType *array[200];
     char err_msg[128];
