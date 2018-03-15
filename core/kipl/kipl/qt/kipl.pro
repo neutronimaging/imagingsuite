@@ -370,26 +370,15 @@ message("-lNeXus does not exists $$HEADERS")
 unix:mac {
 exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
-#    message("-lNeXus exists")
-#    DEFINES += HAVE_NEXUS
+    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
 
-##    #INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5 #can i take the same as win?? probably stupid question
-##    #QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
-
-##    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-##    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-##    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
-
-
-##    LIBS += -L$$PWD/../../../../external/mac/lib/
-#    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
-##    LIBS += -lNeXus -lNeXusCPP
-
-###    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
-###    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
-
-#    SOURCES += ../src/io/io_nexus.cpp
-#    HEADERS += ../include/io/io_nexus.h
+    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    QMAKE_LIBDIR += -L$$PWD/../../../../external/mac/lib/
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    SOURCES += ../src/io/io_nexus.cpp
+    HEADERS += ../include/io/io_nexus.h
 }
 else {
 message("-lNeXus does not exists $$HEADERS")

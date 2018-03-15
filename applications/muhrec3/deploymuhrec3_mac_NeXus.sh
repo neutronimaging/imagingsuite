@@ -1,5 +1,6 @@
 DIRECTORY=~/Applications
 QTPATH=$QT_HOME
+#QTPATH=/Applications/QT/5.9.4/clang_64
 
 DEST="$DIRECTORY/muhrec3.app"
 #REPOSPATH=$WORKSPACE
@@ -119,6 +120,7 @@ install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/lib
 install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib muhrec3
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib muhrec3
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
+install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
 
 
 cd ../Frameworks
@@ -135,7 +137,7 @@ install_name_tool -change /Users/chiaracarminati/Downloads/code-4.4.3/build/src/
 
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_cpp.11.dylib @executable_path/../Frameworks/libhdf5_cpp.11.dylib libNeXusCPP.1.0.0.dylib
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libNeXusCPP.1.0.0.dylib
-install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib libNeXusCPP.1.0.0.dylib
+#install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib libNeXusCPP.1.0.0.dylib
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_hl.10.dylib @executable_path/../Frameworks/libhdf5_hl.10.dylib libNeXusCPP.1.0.0.dylib
 
 # kipl

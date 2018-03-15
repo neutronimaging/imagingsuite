@@ -1,10 +1,12 @@
 .DS_Store
-.DS-Store
 build*
 *.user
 *.stash
 *.o
-.ipynb_checkpoints
+*~
+*.autosave
 *.in
 *.pc
+.DS-Store
+.ipynb_checkpoints
 *.sym
