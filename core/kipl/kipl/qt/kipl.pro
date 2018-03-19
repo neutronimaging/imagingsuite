@@ -373,12 +373,13 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
     message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
 
-    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-    QMAKE_LIBDIR += -L$$PWD/../../../../external/mac/lib/
-    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    INCLUDEPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+
+    LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
+
 }
 else {
 message("-lNeXus does not exists $$HEADERS")
