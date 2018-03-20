@@ -297,13 +297,23 @@
      <string>List selected ROIs</string>
     </property>
    </widget>
-   <widget class="QtAddons::uxROIWidget" name="widget" native="true">
+   <widget class="QtAddons::uxROIWidget" name="uxROI1" native="true">
     <property name="geometry">
      <rect>
       <x>920</x>
       <y>50</y>
-      <width>120</width>
-      <height>80</height>
+      <width>171</width>
+      <height>141</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QtAddons::uxROIWidget" name="uxROI2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>210</y>
+      <width>171</width>
+      <height>141</height>
      </rect>
     </property>
    </widget>

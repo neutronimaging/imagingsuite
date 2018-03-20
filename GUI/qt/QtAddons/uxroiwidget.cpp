@@ -11,6 +11,7 @@ int uxROIWidget::cnt=0;
 
 uxROIWidget::uxROIWidget(QWidget *parent) :
     QWidget(parent),
+    logger("uxROIWidget"),
     roiID(cnt++),
     ui(new Ui::uxROIWidget),
     hViewer(nullptr)
@@ -73,7 +74,7 @@ void uxROIWidget::setROI(int *roi)
 
 void uxROIWidget::setROI(QRect rect)
 {
-    setROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.width());
+    setROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.height());
 }
 
 void uxROIWidget::getROI(QRect &rect)
@@ -155,6 +156,7 @@ void uxROIWidget::on_buttonGetROI_clicked()
 {
     if (hViewer != nullptr) {
         QRect rect=hViewer->get_marked_roi();
+        qDebug("%d, %d %d, %d",rect.x(),rect.y(),rect.width(),rect.height());
         setROI(rect);
     }
     emit getROIClicked();

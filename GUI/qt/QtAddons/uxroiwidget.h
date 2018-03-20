@@ -5,6 +5,8 @@
 #include <QRect>
 #include <QString>
 
+#include <logging/logger.h>
+
 namespace Ui {
 class uxROIWidget;
 }
@@ -16,6 +18,7 @@ class ImageViewerWidget;
 class uxROIWidget : public QWidget
 {
     Q_OBJECT
+    kipl::logging::Logger logger;
     static int cnt;
     int roiID;
 public:
