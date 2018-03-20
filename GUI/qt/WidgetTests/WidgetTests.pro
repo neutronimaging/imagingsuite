@@ -21,18 +21,19 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-unix {
+unix:!macx {
+    QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
+    QMAKE_LFLAGS += -lgomp
+    LIBS += -lgomp
+    LIBS += -L/usr/lib -lxml2
     INCLUDEPATH += /usr/include/libxml2
 }
 
 unix:macx {
-    QMAKE_MAC_SDK = macosx10.12
-}
-
-unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -lgomp
-    LIBS += -lgomp
+    QMAKE_CXXFLAGS += -fPIC -O2
+#    QMAKE_LIBDIR += /opt/local/lib
+    LIBS += -L/opt/local/lib -lxml2
+    INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
 }
 
 win32 {

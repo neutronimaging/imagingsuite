@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1050</width>
-    <height>777</height>
+    <width>1248</width>
+    <height>810</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -297,13 +297,23 @@
      <string>List selected ROIs</string>
     </property>
    </widget>
+   <widget class="QtAddons::uxROIWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>920</x>
+      <y>50</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1050</width>
+     <width>1248</width>
      <height>22</height>
     </rect>
    </property>
@@ -327,9 +337,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::ROIWidget</class>
+   <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
-   <header>roiwidget.h</header>
+   <header location="global">plotter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header location="global">qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -339,21 +355,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header>qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SingleModuleConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">singlemoduleconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ROIWidget</class>
+   <extends>QWidget</extends>
+   <header>roiwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -366,6 +376,12 @@
    <class>QtAddons::ROIManager</class>
    <extends>QWidget</extends>
    <header location="global">roimanager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
