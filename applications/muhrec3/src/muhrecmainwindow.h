@@ -83,6 +83,7 @@ protected slots:
 protected:
     /// Sets up all call-back functions during the initialization.
     void SetupCallBacks();
+    void lookForReferences();
     void UpdateMatrixROI();
     void UpdateDoseROI();
     void SetImageDimensionLimits(size_t const * const dims);

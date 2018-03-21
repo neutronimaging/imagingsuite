@@ -268,7 +268,15 @@ void MuhRecMainWindow::BrowseProjectionPath()
             ui->projectionViewer->clear_rectangle(-1);
             ui->projectionViewer->clear_plot(-1);
         }
+
+        lookForReferences();
     }
+}
+
+void MuhRecMainWindow::lookForReferences()
+{
+
+
 }
 
 void MuhRecMainWindow::on_buttonBrowseReference_clicked()
