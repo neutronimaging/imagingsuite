@@ -58,6 +58,7 @@ public:
 
     void set_image(float const * const data, size_t const * const dims);
     void set_image(float const * const data, size_t const * const dims, const float low, const float high);
+    void getImageDims(int &x, int &y);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
     void clear_plot(int idx=-1);
     void set_rectangle(QRect rect, QColor color, int idx);
@@ -119,6 +120,9 @@ protected:
     ImageViewerInfoDialog m_infoDialog;
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
+
+signals:
+    void newImageDims(const QRect &rect);
 };
 
 class SetGrayLevelsDialog : public QDialog

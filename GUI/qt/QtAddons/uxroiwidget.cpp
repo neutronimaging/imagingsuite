@@ -44,6 +44,15 @@ void uxROIWidget::setBoundingBox(int x0, int y0, int x1, int y1, bool updateFiel
     }
 }
 
+void uxROIWidget::updateBounds()
+{
+    if (hViewer!=nullptr) {
+        int x,y;
+        hViewer->getImageDims(x,y);
+        setBoundingBox(0,0,x-1,y-1);
+    }
+}
+
 void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
 {
     ui->spinX0->setValue(std::min(x0,x1));
@@ -61,6 +70,7 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
 void uxROIWidget::updateViewer()
 {
     if (hViewer!=nullptr) {
+        updateBounds();
         QRect rect;
         getROI(rect);
         hViewer->set_rectangle(rect,QColor(roiColor),roiID);
@@ -155,6 +165,7 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
 void uxROIWidget::on_buttonGetROI_clicked()
 {
     if (hViewer != nullptr) {
+        updateBounds();
         QRect rect=hViewer->get_marked_roi();
         qDebug("%d, %d %d, %d",rect.x(),rect.y(),rect.width(),rect.height());
         setROI(rect);
@@ -163,9 +174,30 @@ void uxROIWidget::on_buttonGetROI_clicked()
     repaint();
 }
 
+void uxROIWidget::on_valueChange(int x0,int y0, int x1, int y1)
+{
+    (void) x0;
+    (void) y0;
+    (void) x1;
+    (void) y1;
+
+    updateViewer();
+}
+
+void uxROIWidget::on_viewerNewImageDims(const QRect &rect)
+{
+    if (hViewer!=nullptr) {
+        setBoundingBox(0,0,rect.width()-1,rect.height()-1);
+    }
+
+}
+
 void uxROIWidget::registerViewer(ImageViewerWidget *viewer)
 {
   hViewer = viewer;
+  updateViewer();
+  if (hViewer)
+    connect(hViewer,&QtAddons::ImageViewerWidget::newImageDims,this,&uxROIWidget::on_viewerNewImageDims);
 }
 
 }

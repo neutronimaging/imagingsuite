@@ -406,6 +406,9 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
     float mi,ma;
     m_ImagePainter.get_image_minmax(&mi,&ma);
+
+    QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    emit newImageDims(rect);
 }
 
 QRect ImageViewerWidget::get_marked_roi()
@@ -424,6 +427,16 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     rubberBandRect.setRect(0,0,1,1);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
+
+    QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    emit newImageDims(rect);
+}
+
+void ImageViewerWidget::getImageDims(int &x, int &y)
+{
+    const int *dims=m_ImagePainter.get_image_dims();
+    x=dims[0];
+    y=dims[1];
 }
 
 void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
