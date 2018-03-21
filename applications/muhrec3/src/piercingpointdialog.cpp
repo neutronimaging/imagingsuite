@@ -130,6 +130,10 @@ void PiercingPointDialog::on_pushButton_estimate_clicked()
     UpdateDialog();
     QPointF pos(position.first,position.second);
 
-
-    ui->viewer->set_marker(QtAddons::QMarker(QtAddons::PlotGlyph_Plus,pos,QColor("red"),10),0);
+    if ((0.0f<pos.x()) && (pos.x()<ob.Size(0)) && (0.0f<pos.y()) && (pos.y()<ob.Size(1))) {
+        ui->viewer->set_marker(QtAddons::QMarker(QtAddons::PlotGlyph_Plus,pos,QColor("red"),10),0);
+    }
+    else {
+        logger(logger.LogWarning,"Estimated PP outside image, will not be marked.");
+    }
 }

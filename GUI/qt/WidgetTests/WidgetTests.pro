@@ -20,19 +20,24 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
-
 unix {
-    INCLUDEPATH += /usr/include/libxml2
-}
 
-unix:macx {
-    QMAKE_MAC_SDK = macosx10.12
-}
+    unix:macx {
+        QMAKE_CXXFLAGS += -fPIC -O2
+        INCLUDEPATH += /opt/local/include
 
-unix:!macx {
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -lgomp
-    LIBS += -lgomp
+        INCLUDEPATH += /opt/local/include/libxml2
+
+        QMAKE_LIBDIR += /opt/local/lib
+    }
+    else {
+        QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
+    }
+
+    LIBS += -ltiff -lxml2
 }
 
 win32 {
