@@ -33,6 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->uxROI2->registerViewer(ui->ImageView);
     ui->uxROI2->setROIColor("green");
 
+    ui->uxROI3->registerViewer(ui->ImageView);
+    ui->uxROI3->setROIColor("deepskyblue");
+    ui->uxROI3->setTitle("My ROI");
+
 }
 
 MainWindow::~MainWindow()

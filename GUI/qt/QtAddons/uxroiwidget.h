@@ -85,7 +85,7 @@ private slots:
     void on_buttonGetROI_clicked();
 
     /// \brief Slot to update the value boxes when a spin button value is changed
-    void on_valueChange(int x0,int y0, int x1, int y1);
+    void on_valueChanged(int x0,int y0, int x1, int y1);
 
 private:
     /// \brief Updates the roi rectangle in the viewer

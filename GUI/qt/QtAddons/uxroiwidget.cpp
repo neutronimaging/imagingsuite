@@ -19,6 +19,8 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     ui->setupUi(this);
     setROI(0,0,100,100);
     setROIColor("darkgray");
+
+ //   connect(this,&QtAddons::uxROIWidget::valueChanged,this,&uxROIWidget::on_valueChanged);
 }
 
 uxROIWidget::~uxROIWidget()
@@ -135,6 +137,7 @@ void uxROIWidget::on_spinX0_valueChanged(int arg1)
     ui->spinX1->setMinimum(arg1+1);
     int roi[4];
     getROI(roi);
+    updateViewer();
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -143,6 +146,7 @@ void uxROIWidget::on_spinY0_valueChanged(int arg1)
     ui->spinY1->setMinimum(arg1+1);
     int roi[4];
     getROI(roi);
+    updateViewer();
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -151,6 +155,7 @@ void uxROIWidget::on_spinY1_valueChanged(int arg1)
     ui->spinY0->setMaximum(arg1-1);
     int roi[4];
     getROI(roi);
+    updateViewer();
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -159,6 +164,7 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
     ui->spinX0->setMaximum(arg1-1);
     int roi[4];
     getROI(roi);
+    updateViewer();
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -174,7 +180,7 @@ void uxROIWidget::on_buttonGetROI_clicked()
     repaint();
 }
 
-void uxROIWidget::on_valueChange(int x0,int y0, int x1, int y1)
+void uxROIWidget::on_valueChanged(int x0,int y0, int x1, int y1)
 {
     (void) x0;
     (void) y0;
@@ -194,10 +200,11 @@ void uxROIWidget::on_viewerNewImageDims(const QRect &rect)
 
 void uxROIWidget::registerViewer(ImageViewerWidget *viewer)
 {
-  hViewer = viewer;
-  updateViewer();
-  if (hViewer)
-    connect(hViewer,&QtAddons::ImageViewerWidget::newImageDims,this,&uxROIWidget::on_viewerNewImageDims);
+    hViewer = viewer;
+    updateViewer();
+    if (hViewer!=nullptr) {
+        connect(hViewer,&QtAddons::ImageViewerWidget::newImageDims,this,&uxROIWidget::on_viewerNewImageDims);
+    }
 }
 
 }

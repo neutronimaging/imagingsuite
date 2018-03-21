@@ -22,6 +22,9 @@
      <height>111</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string/>
+   </property>
    <property name="title">
     <string>ROI</string>
    </property>
@@ -39,6 +42,9 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>y1 Coordinate</string>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinX1">
     <property name="geometry">
@@ -53,6 +59,9 @@
      <font>
       <pointsize>10</pointsize>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>x1 Coordinate</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="spinX0">
@@ -69,6 +78,9 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>x0 coordinate</string>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinY0">
     <property name="geometry">
@@ -84,6 +96,9 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>y0 Coordinate</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="buttonGetROI">
     <property name="geometry">
@@ -93,6 +108,9 @@
       <width>51</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Gets the coordinates of marked region in the ascociated viewer.</string>
     </property>
     <property name="text">
      <string>Get</string>

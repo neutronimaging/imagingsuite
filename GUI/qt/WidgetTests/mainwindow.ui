@@ -317,6 +317,16 @@
      </rect>
     </property>
    </widget>
+   <widget class="QtAddons::uxROIWidget" name="uxROI3" native="true">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>370</y>
+      <width>171</width>
+      <height>131</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
