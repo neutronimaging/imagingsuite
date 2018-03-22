@@ -398,10 +398,10 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
        }
 
 
-       if (CBCT_roi[1]-5>=0)
-           CBCT_roi[1] -=5;
-       if (CBCT_roi[3]+5<=mConfig.ProjectionInfo.projection_roi[3])
-           CBCT_roi[3] +=5;
+       if (CBCT_roi[1]-8>=0)
+           CBCT_roi[1] -=8;
+       if (CBCT_roi[3]+8<=mConfig.ProjectionInfo.projection_roi[3])
+           CBCT_roi[3] +=8;
 
 
 //        double ic[2] = {mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0], mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]}; // piercing point

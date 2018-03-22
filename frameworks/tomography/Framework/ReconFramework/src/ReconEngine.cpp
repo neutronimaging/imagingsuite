@@ -789,10 +789,10 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<float>(value2);
                }
 
-               if (CBCT_roi[1]-5>=0)
-                   CBCT_roi[1] -=5;
-               if (CBCT_roi[3]+5<=m_Config.ProjectionInfo.projection_roi[3])
-                   CBCT_roi[3] +=5;
+               if (CBCT_roi[1]-8>=0)
+                   CBCT_roi[1] -=8;
+               if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
+                   CBCT_roi[3] +=8;
 
 //                std::cout << CBCT_roi[1] << " " << CBCT_roi[3] << std::endl;
 
@@ -878,10 +878,10 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<float>(value2);
                }
 
-               if (CBCT_roi[1]-5>=0)
-                   CBCT_roi[1] -=5;
-               if (CBCT_roi[3]+5<=m_Config.ProjectionInfo.projection_roi[3])
-                   CBCT_roi[3] +=5;
+               if (CBCT_roi[1]-8>=0)
+                   CBCT_roi[1] -=8;
+               if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
+                   CBCT_roi[3] +=8;
 
 
                 msg.str("");
