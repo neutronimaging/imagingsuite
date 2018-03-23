@@ -195,4 +195,9 @@ void DirAnalyzer::AnalyzeFileList(std::string fname,
     nFiles=line_count;
 }
 
+void DirAnalyzer::AnalyzeDirList(std::vector<std::string> &dirList, std::map<std::string,int> &masks)
+{
+
+}
+
 }}

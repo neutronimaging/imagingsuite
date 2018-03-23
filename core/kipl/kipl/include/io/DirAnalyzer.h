@@ -55,6 +55,11 @@ public:
 
     /// \brief Gets the file mask from a file name string. The last set of numbers before the file extension are replaced by #'s
     FileItem GetFileMask(std::string str);
+
+    /// \brief Analyses the contents of a file list for different file masks.
+    /// \param dirlist A vector containing filenames as privided by GetDirList
+    /// \param masks A list of file masks and a pair containing first and last index
+    void AnalyzeDirList(std::vector<std::string> &dirList, std::map<std::string,pair<int,int> > &masks);
 protected:
     std::vector<std::string> m_vDirContents;
 };
