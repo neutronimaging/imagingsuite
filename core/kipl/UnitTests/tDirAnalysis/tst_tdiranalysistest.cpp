@@ -67,7 +67,7 @@ void TDirAnalysisTest::testGetDirList()
     QVERIFY(flist.size()==fl0.size()+2);
     int cnt=0;
     for (auto it=fl0.begin(); it!=fl0.end(); ++it,++cnt) {
-        qDebug("%d",cnt);
+  //      qDebug("%d",cnt);
         QVERIFY(std::find(flist.begin(),flist.end(),*it)!=flist.end());
 
     }
@@ -140,6 +140,8 @@ void TDirAnalysisTest::testAnalyzeDirList() {
         fl0.push_back(fname);
     }
 
+    fl0.push_back(".");
+    fl0.push_back("..");
     da.AnalyzeDirList(fl0,masks0);
 
     for (auto it=masks0.begin(); it!=masks0.end(); ++it)
