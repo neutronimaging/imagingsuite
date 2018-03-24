@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "../../include/strings/filenames.h"
+#include "../../include/base/KiplException.h"
 
 using namespace std;
 
@@ -53,6 +54,9 @@ void KIPLSHARED_EXPORT StripFileName(const std::string filestr,
 
 int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar, const char cFillChar,bool bReversedIndex)
 {
+    if (cFillChar < 32)
+        throw kipl::base::KiplException("MakeFileName: Fill char ascii code < 32",__FILE__,__LINE__);
+
 	string::size_type first=filename.find_first_of(cWildCardChar);
 	string::size_type last=filename.find_first_not_of(cWildCardChar,first);
 

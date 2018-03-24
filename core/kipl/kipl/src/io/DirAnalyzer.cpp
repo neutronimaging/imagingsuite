@@ -195,8 +195,21 @@ void DirAnalyzer::AnalyzeFileList(std::string fname,
     nFiles=line_count;
 }
 
-void DirAnalyzer::AnalyzeDirList(std::vector<std::string> &dirList, std::map<std::string,int> &masks)
+void DirAnalyzer::AnalyzeDirList(std::vector<std::string> &dirList, std::map<std::string,std::pair<int,int>> &masks)
 {
+    masks.clear();
+
+    FileItem fi;
+
+    for (auto it = dirList.begin(); it != dirList.end(); ++it) {
+        fi=GetFileMask(*it);
+        if (masks.find(fi.m_sMask) != masks.end()) {
+            masks[fi.m_sMask].first=std::min(masks[fi.m_sMask].first,fi.m_nIndex);
+            masks[fi.m_sMask].second=std::max(masks[fi.m_sMask].second,fi.m_nIndex);
+        }
+        else
+            masks[fi.m_sMask]=std::make_pair(fi.m_nIndex,fi.m_nIndex);
+    }
 
 }
 
