@@ -28,6 +28,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->roiWidget,&QtAddons::ROIWidget::valueChanged,this,&MainWindow::on_roiwidget_valueChanged);
     ui->singlemodule->Configure("muhrec");
     ui->widgetROImanager->setViewer(ui->ImageView_2);
+    ui->uxROI1->registerViewer(ui->ImageView);
+    ui->uxROI1->setROIColor("red");
+    ui->uxROI2->registerViewer(ui->ImageView);
+    ui->uxROI2->setROIColor("green");
+
+    ui->uxROI3->registerViewer(ui->ImageView);
+    ui->uxROI3->setROIColor("deepskyblue");
+    ui->uxROI3->setTitle("My ROI");
+
 }
 
 MainWindow::~MainWindow()

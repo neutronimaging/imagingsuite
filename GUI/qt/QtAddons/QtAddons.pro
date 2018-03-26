@@ -48,7 +48,8 @@ SOURCES += plotter.cpp \
     qmarker.cpp \
     qtlogviewer.cpp \
     roiwidget.cpp \
-    roimanager.cpp
+    roimanager.cpp \
+    uxroiwidget.cpp
 
 
 
@@ -64,7 +65,8 @@ HEADERS += QtAddons_global.h \
     qmarker.h \
     qtlogviewer.h \
     roiwidget.h \
-    roimanager.h
+    roimanager.h \
+    uxroiwidget.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -95,4 +97,5 @@ FORMS += \
     imageviewerinfodialog.ui \
     qtlogviewer.ui \
     roiwidget.ui \
-    roimanager.ui
+    roimanager.ui \
+    uxroiwidget.ui

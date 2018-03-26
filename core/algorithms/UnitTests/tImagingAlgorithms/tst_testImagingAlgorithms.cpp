@@ -29,12 +29,15 @@ private Q_SLOTS:
     void MorphSpotClean_CleanHoles();
     void MorphSpotClean_CleanPeaks();
     void MorphSpotClean_CleanBoth();
-    void MorphSpotClean_ListAlgorithm();
+
     void AverageImage_Enums();
     void AverageImage_Processing();
     void AverageImage_ProcessingWeights();
     void PiercingPoint_Processing();
+    void piercingPointExperiment();
 
+private:
+    void MorphSpotClean_ListAlgorithm();
 private:
     kipl::base::TImage<float,2> holes;
     std::map<int,float> points;
@@ -295,6 +298,27 @@ void TestImagingAlgorithms::PiercingPoint_Processing()
     msg<<"pos=("<<pos.first<<", "<<pos.second<<")";
     QVERIFY2(pos.first==220.0f,msg.str().c_str());
     QVERIFY2(pos.second==120.0f,msg.str().c_str());
+
+}
+
+void TestImagingAlgorithms::piercingPointExperiment()
+{
+    kipl::base::TImage<float,2> ob;
+    kipl::base::TImage<float,2> dc;
+
+    kipl::io::ReadTIFF(ob,"../imagingsuite/frameworks/tomography/data/cbct/ob_3s_5fps_60kV_150uA_00001.tif");
+    kipl::io::ReadTIFF(dc,"../imagingsuite/frameworks/tomography/data/cbct/dc_3s_5fps_00001.tif");
+
+    ImagingAlgorithms::PiercingPointEstimator pe;
+
+    pair<float,float> pos0=pe(ob);
+    pair<float,float> pos1=pe(ob,dc,false);
+
+    QVERIFY(fabs(pos0.first-pos1.first)<3.0f);
+    QVERIFY(fabs(pos0.second-pos1.second)<3.0f);
+
+    // Gain correction
+    pair<float,float> pos2=pe(ob,dc,true);
 
 }
 

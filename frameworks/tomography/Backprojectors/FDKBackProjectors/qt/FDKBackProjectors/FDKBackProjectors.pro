@@ -22,14 +22,10 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-#       QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
-#        QMAKE_LFLAGS += -lfftw3 -lfftw3f
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
-        ICON = muhrec3.icns
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
