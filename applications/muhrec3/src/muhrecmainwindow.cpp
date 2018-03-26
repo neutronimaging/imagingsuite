@@ -141,12 +141,13 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetDoseROI->registerViewer(ui->projectionViewer);
     ui->widgetDoseROI->setROIColor("green");
 
+    ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
+    ui->widgetProjectionROI->setROIColor("orange");
     // Connecting buttons
     connect(ui->buttonProjectionPath,SIGNAL(clicked()),this,SLOT(BrowseProjectionPath()));
- //   connect(ui->buttonBrowseReference,SIGNAL(clicked()),this,SLOT(BrowseReferencePath()));
+
     connect(ui->buttonBrowseDestinationPath,SIGNAL(clicked()),this,SLOT(BrowseDestinationPath()));
     connect(ui->buttonTakePath,SIGNAL(clicked()),this,SLOT(TakeProjectionPath()));
-//    connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
 
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
@@ -176,13 +177,6 @@ void MuhRecMainWindow::SetupCallBacks()
 
     // Display slices
     connect(ui->sliderSlices,SIGNAL(sliderMoved(int)),this,SLOT(DisplaySlice(int)));
-
-    // Proj ROI
-    connect(ui->spinProjROIx0,SIGNAL(valueChanged(int)),this,SLOT(ProjROIChanged(int)));
-    connect(ui->spinProjROIx1,SIGNAL(valueChanged(int)),this,SLOT(ProjROIChanged(int)));
-    connect(ui->spinProjROIy0,SIGNAL(valueChanged(int)),this,SLOT(ProjROIChanged(int)));
-    connect(ui->spinProjROIy1,SIGNAL(valueChanged(int)),this,SLOT(ProjROIChanged(int)));
-    connect(ui->buttonGetReconROI,SIGNAL(clicked()),this,SLOT(GetReconROI()));
 
     connect(ui->dspinRotationCenter,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
     connect(ui->dspinTiltAngle,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
@@ -620,53 +614,8 @@ void MuhRecMainWindow::GetSkipList()
 
 void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
 {
-    ui->spinProjROIx0->setMaximum(static_cast<int>(dims[0])-1);
-    ui->spinProjROIx1->setMaximum(static_cast<int>(dims[0])-1);
-    ui->spinProjROIy0->setMaximum(static_cast<int>(dims[1])-1);
-    ui->spinProjROIy1->setMaximum(static_cast<int>(dims[1])-1);
-
     ui->spinSlicesFirst->setMaximum(static_cast<int>(dims[1])-1);
     ui->spinSlicesLast->setMaximum(static_cast<int>(dims[1])-1);
-}
-
-void MuhRecMainWindow::GetReconROI()
-{
-    QRect rect=ui->projectionViewer->get_marked_roi();
-
-    if (rect.width()*rect.height()!=0)
-    {
-        QSignalBlocker(ui->spinProjROIx0);
-        QSignalBlocker(ui->spinProjROIx1);
-        QSignalBlocker(ui->spinProjROIy0);
-        QSignalBlocker(ui->spinProjROIy1);
-
-        ui->spinProjROIx0->setValue(rect.x());
-        ui->spinProjROIy0->setValue(rect.y());
-        ui->spinProjROIx1->setValue(rect.x()+rect.width());
-        ui->spinProjROIy1->setValue(rect.y()+rect.height());
-
-        if (ui->spinSlicesFirst->value()<ui->spinProjROIy0->value())
-        {
-            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-            ui->spinSlicesLast->setValue(ui->spinProjROIy0->value()+32);
-        }
-
-        if (ui->spinSlicesLast->value()>ui->spinProjROIy1->value())
-        {
-            ui->spinSlicesFirst->setValue(ui->spinProjROIy1->value()-32);
-            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-        }
-
-
-
-//        ui->spinSlicesFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
-//        ui->spinSlicesLast->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
-
-//        ui->spinSlicesFirst->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
-//        ui->spinSlicesLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
-
-        ProjROIChanged(0);
-    }
 }
 
 void MuhRecMainWindow::BinningChanged()
@@ -685,35 +634,17 @@ void MuhRecMainWindow::RotateChanged()
 }
 
 void MuhRecMainWindow::ProjROIChanged(int x)
-{
+{ // TODO Fix callback for Projection roi changed
     (void)x;
-
-    QRect rect;
-    size_t * dims=m_Config.ProjectionInfo.roi;
-
-    rect.setCoords(dims[0]=ui->spinProjROIx0->value(),
-                   dims[1]=ui->spinProjROIy0->value(),
-                   dims[2]=ui->spinProjROIx1->value(),
-                   dims[3]=ui->spinProjROIy1->value());
-
-    rect=rect.normalized();
-
-    ui->projectionViewer->set_rectangle(rect,QColor("yellow"),1);
-//    ui->spinSlicesFirst->setMinimum(dims[1]);
-//    ui->spinSlicesFirst->setMaximum(dims[3]);
-
-//    ui->spinSlicesLast->setMinimum(dims[1]);
-//    ui->spinSlicesLast->setMaximum(dims[3]);
-
 
     SlicesChanged(0);
     CenterOfRotationChanged();
-    UpdateMemoryUsage(dims);
+    size_t roi[4];
+    ui->widgetProjectionROI->getROI(roi);
+    UpdateMemoryUsage(roi);
 
     if (ui->checkCBCT->isChecked()){
         ComputeVolumeSize(); // update the size of the output volume
-//        ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-//        ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
     }
 }
 
@@ -731,7 +662,9 @@ void  MuhRecMainWindow::CenterOfRotationChanged(double x)
 
 void MuhRecMainWindow::CenterOfRotationChanged()
 {
-    double pos=ui->dspinRotationCenter->value()+ui->spinProjROIx0->value();
+    int roi[4];
+    ui->widgetProjectionROI->getROI(roi);
+    double pos=ui->dspinRotationCenter->value()+roi[0];
     QVector<QPointF> coords;
     coords.push_back(QPointF(pos,0));
     coords.push_back(QPointF(pos,m_PreviewImage.Size(1)));
@@ -874,6 +807,7 @@ void MuhRecMainWindow::GetMatrixROI()
 
 void MuhRecMainWindow::MatrixROIChanged(int x)
 {
+    (void) x;
     logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
     UpdateMatrixROI();
 
@@ -1184,13 +1118,14 @@ void MuhRecMainWindow::MenuReconstructStart()
     if (m_Config.System.nMemory<m_nRequiredMemory) {
 
         DialogTooBig largesize_dlg;
-
+        int roi[4];
+        ui->widgetProjectionROI->getROI(roi);
         largesize_dlg.SetFields(ui->editDestPath->text(),
                                 ui->editSliceMask->text(),
                                 false,
                                 ui->spinSlicesFirst->value(),
                                 ui->spinSlicesLast->value(),
-                                ui->spinProjROIy0->value(),ui->spinProjROIy1->value());
+                                roi[1],roi[3]);
         int res=largesize_dlg.exec();
 
         if (res!=QDialog::Accepted) {
@@ -1605,15 +1540,8 @@ void MuhRecMainWindow::UpdateDialog()
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
-    QSignalBlocker blockProjROIx0(ui->spinProjROIx0);
-    QSignalBlocker blockProjROIx1(ui->spinProjROIx1);
-    QSignalBlocker blockProjROIy0(ui->spinProjROIy0);
-    QSignalBlocker blockProjROIy1(ui->spinProjROIy1);
 
-    ui->spinProjROIx0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]));
-    ui->spinProjROIy0->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]));
-    ui->spinProjROIx1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]));
-    ui->spinProjROIy1->setValue(static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
+    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
 
@@ -1724,14 +1652,10 @@ void MuhRecMainWindow::UpdateConfig()
         m_Config.ProjectionInfo.nlSkipList.clear();
 
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
+    ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
 
-    m_Config.ProjectionInfo.projection_roi[0] = ui->spinProjROIx0->value();
-    m_Config.ProjectionInfo.projection_roi[1] = ui->spinProjROIy0->value();
-    m_Config.ProjectionInfo.projection_roi[2] = ui->spinProjROIx1->value();
-    m_Config.ProjectionInfo.projection_roi[3] = ui->spinProjROIy1->value();
-
-    m_Config.ProjectionInfo.roi[0] = ui->spinProjROIx0->value();
-    m_Config.ProjectionInfo.roi[2] = ui->spinProjROIx1->value();
+    m_Config.ProjectionInfo.roi[0] = m_Config.ProjectionInfo.projection_roi[0];
+    m_Config.ProjectionInfo.roi[2] = m_Config.ProjectionInfo.projection_roi[2];
     m_Config.ProjectionInfo.roi[1] = ui->spinSlicesFirst->value();
     m_Config.ProjectionInfo.roi[3] = ui->spinSlicesLast->value();
 
@@ -2044,12 +1968,15 @@ void MuhRecMainWindow::SlicesChanged(int arg1)
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
 
-    rect.setCoords(dims[0]=ui->spinProjROIx0->value(),
+    size_t roi[4];
+    ui->widgetProjectionROI->getROI(roi);
+
+    rect.setCoords(dims[0]=roi[0],
                    dims[1]=ui->spinSlicesFirst->value(),
-                   dims[2]=ui->spinProjROIx1->value(),
+                   dims[2]=roi[2],
                    dims[3]=ui->spinSlicesLast->value());
 
-    ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
+    ui->projectionViewer->set_rectangle(rect,QColor("deepskyblue"),2); // TODO select a robust index, will be fixed with ROI manager.
     UpdateMemoryUsage(dims);
 }
 

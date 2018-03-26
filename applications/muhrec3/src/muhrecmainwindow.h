@@ -51,7 +51,7 @@ protected slots:
     void GetSkipList();
 
 //    void GetDoseROI();
-    void GetReconROI();
+//    void GetReconROI();
     void BinningChanged();
     void FlipChanged();
     void RotateChanged();
