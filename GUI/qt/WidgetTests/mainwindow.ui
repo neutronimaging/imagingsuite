@@ -327,6 +327,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_showLogger">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>190</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show logger</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -351,6 +364,12 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QtAddons::QtLogViewer</class>
+   <extends>QWidget</extends>
+   <header>qtlogviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
@@ -360,12 +379,6 @@
    <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
    <header location="global">plotter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header location="global">qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

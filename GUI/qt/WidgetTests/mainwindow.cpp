@@ -9,6 +9,8 @@
 
 #include <buildfilelist.h>
 
+#include <loggingdialog.h>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -16,10 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("MainWindow"),
     ui(new Ui::MainWindow),
+    logdlg(new QtAddons::LoggingDialog(this)),
     m_fScale(1.0)
 {
     ui->setupUi(this);
-    kipl::logging::Logger::AddLogTarget(*ui->LogView);
+    kipl::logging::Logger::AddLogTarget(*logdlg);
     connect(ui->TestButton,SIGNAL(clicked()),this,SLOT(TestClicked()));
     connect(ui->PlotButton,SIGNAL(clicked()),this,SLOT(PlotClicked()));
     connect(ui->GetModulesButton,SIGNAL(clicked()),this,SLOT(GetModulesClicked()));
@@ -41,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete logdlg;
     delete ui;
 }
 
@@ -193,4 +197,15 @@ void MainWindow::on_button_ListSelectedROIs_clicked()
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
     }
     logger(logger.LogMessage,msg.str());
+}
+
+void MainWindow::on_pushButton_showLogger_clicked()
+{
+    if (logdlg->isHidden()) {
+
+        logdlg->show();
+    }
+    else {
+        logdlg->hide();
+    }
 }

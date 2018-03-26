@@ -17,7 +17,7 @@
    <string/>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -38,7 +38,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <attribute name="title">
@@ -1832,21 +1832,6 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tabLogging">
-         <attribute name="title">
-          <string>Logging</string>
-         </attribute>
-         <widget class="QtAddons::QtLogViewer" name="logviewer" native="true">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>10</y>
-            <width>791</width>
-            <height>681</height>
-           </rect>
-          </property>
-         </widget>
-        </widget>
        </widget>
       </item>
       <item>
@@ -2009,6 +1994,30 @@
       </item>
      </layout>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_logging">
+        <property name="text">
+         <string>Logging</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -2017,7 +2026,7 @@
      <x>0</x>
      <y>0</y>
      <width>1285</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2205,12 +2214,6 @@
    <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
    <header location="global">plotter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header location="global">qtlogviewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

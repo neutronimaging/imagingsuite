@@ -3,5 +3,5 @@ Install MacPorts
 sudo port install libxml2
 sudo port install tiff 
 sudo port install cfitsio
-sudo port install fftw3-single (installs fftw3 as dependency)
+sudo port install fftw-3-single (installs fftw3 as dependency)
 sudo port install hdf5 

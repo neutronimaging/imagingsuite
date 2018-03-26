@@ -41,12 +41,14 @@
 #include "preferencesdialog.h"
 #include "dialogtoobig.h"
 #include "piercingpointdialog.h"
+#include "referencefiledlg.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("MuhRec3MainWindow"),
     ui(new Ui::MuhRecMainWindow),
+    logdlg(new QtAddons::LoggingDialog(this)),
     m_QtApp(app),
     m_ModuleConfigurator(&m_Config),
     m_pEngine(nullptr),
@@ -60,9 +62,14 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 
     std::ostringstream msg;
     ui->setupUi(this);
-    kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
+
+    // Setup logging dialog
+    logdlg->setModal(false);
+    kipl::logging::Logger::AddLogTarget(*logdlg);
+
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
 
+    // Prepare paths
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
     kipl::strings::filenames::CheckPathSlashes(m_sHomePath,true);
 
@@ -81,9 +88,10 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
       <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-//    ui->buttonGetPP->setEnabled(false);
 
     ui->projectionViewer->hold_annotations(true);
+
+    // Setup default module libs in the config
     std::string defaultmodules;
 #ifdef Q_OS_WIN
         defaultmodules=m_sApplicationPath+"\\StdBackProjectors.dll";
@@ -109,6 +117,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
     ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
     ui->moduleconfigurator->SetApplicationObject(this);
+
 
     LoadDefaults(true);
     UpdateDialog();
@@ -268,6 +277,35 @@ void MuhRecMainWindow::BrowseProjectionPath()
             ui->projectionViewer->clear_rectangle(-1);
             ui->projectionViewer->clear_plot(-1);
         }
+
+        lookForReferences(fi.m_sPath);
+    }
+}
+
+void MuhRecMainWindow::lookForReferences(string &path)
+{
+    ReferenceFileDlg dlg;
+
+    dlg.setPath(QString::fromStdString(path));
+
+    int res=dlg.exec();
+
+    if (res == QDialog::Accepted) {
+        int first;
+        int last;
+        QString mask;
+
+        if (dlg.getOpenBeamMask(mask,first,last)) {
+            ui->editOpenBeamMask->setText(mask);
+            ui->spinFirstOpenBeam->setValue(first);
+            ui->spinOpenBeamCount->setValue(last-first+1);
+        }
+
+        if (dlg.getDarkCurrentMask(mask,first,last)) {
+            ui->editDarkMask->setText(mask);
+            ui->spinFirstDark->setValue(first);
+            ui->spinDarkCount->setValue(last-first+1);
+        }
     }
 }
 
@@ -342,7 +380,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
     msg<<"New projection indices first="<<first<<", last="<<last;
     logger(logger.LogMessage,msg.str());
-    qDebug() << QString::fromStdString(msg.str());
+ //   qDebug() << QString::fromStdString(msg.str());
 
     if (last<first) {
         logger(logger.LogWarning,"Last<First index.");
@@ -351,7 +389,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
     }
     ui->sliderProjections->setMaximum(last);
     ui->sliderProjections->setMinimum(first);
-    qDebug() << "Limits set";
+//    qDebug() << "Limits set";
     PreviewProjection();
 }
 
@@ -376,7 +414,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
      << ui->sliderProjections->value();
 
     logger(logger.LogVerbose,msg.str());
-    qDebug()<<QString::fromStdString(msg.str());
+   // qDebug()<<QString::fromStdString(msg.str());
 
     try {
         UpdateConfig();
@@ -385,10 +423,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string name, ext;
         size_t found;
         int position=ui->sliderProjections->value();
-        qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
+   //     qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
-        qDebug()<<"BuildFileList ok";
+   //     qDebug()<<"BuildFileList ok";
         if (fileList.size()<position) // Workaround for bad BuildFileList implementation
         {
             logger(logger.LogWarning, "Projection slider out of list range.");
@@ -1308,14 +1346,14 @@ void MuhRecMainWindow::ExecuteReconstruction()
         }
     }
     else {
-        logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
-        if (m_pEngine!=nullptr)
-            m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
-        else {
-            logger(logger.LogError,"No engine allocated");
-            return;
-        }
-        bRerunBackproj=true;
+            logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
+            if (m_pEngine!=nullptr)
+                m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
+            else {
+                logger(logger.LogError,"No engine allocated");
+                return;
+            }
+            bRerunBackproj=true;
     }
 
 
@@ -2337,4 +2375,15 @@ void MuhRecMainWindow::on_comboRotateProjection_currentIndexChanged(int index)
 void MuhRecMainWindow::on_buttonPreview_clicked()
 {
     PreviewProjection();
+}
+
+void MuhRecMainWindow::on_pushButton_logging_clicked()
+{
+    if (logdlg->isHidden()) {
+
+        logdlg->show();
+    }
+    else {
+        logdlg->hide();
+    }
 }
