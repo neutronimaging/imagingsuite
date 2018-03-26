@@ -1773,13 +1773,13 @@ void MuhRecMainWindow::UpdateConfig()
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
         ui->TabGeometry->setTabEnabled(1,true);
-        ui->checkUseMatrixROI->hide();
+//        ui->checkUseMatrixROI->hide();
         SlicesChanged(0);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->TabGeometry->setTabEnabled(1,false);
-        ui->checkUseMatrixROI->show();
+//        ui->checkUseMatrixROI->show();
         SlicesChanged(0);
     }
 
@@ -2120,7 +2120,7 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         logger(logger.LogMessage,msg.str());
 
         ui->TabGeometry->setTabEnabled(1,true);
-        ui->checkUseMatrixROI->hide();
+//        ui->checkUseMatrixROI->hide();
 
         SlicesChanged(0);
 
@@ -2139,7 +2139,7 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
 //        ui->label_50->show();
 //        ui->label_51->show();
 //        ui->label_30->show();
-        ui->checkUseMatrixROI->show();
+//        ui->checkUseMatrixROI->show();
 
         SlicesChanged(0);
     }

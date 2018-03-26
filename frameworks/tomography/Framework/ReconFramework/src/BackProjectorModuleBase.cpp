@@ -195,8 +195,17 @@ void BackProjectorModuleBase::BuildCircleMask()
         }
         if (mConfig.MatrixInfo.bUseROI) {
             if ((mConfig.MatrixInfo.roi[1]<=i) && (i<=mConfig.MatrixInfo.roi[3])) {
-                mask[i].first=max(mask[i].first,mConfig.MatrixInfo.roi[0]);
-                mask[i].second=min(mask[i].second,mConfig.MatrixInfo.roi[2]);
+                switch (mConfig.ProjectionInfo.beamgeometry)
+                {
+                case ReconConfig::cProjections::BeamGeometry_Parallel:
+                    mask[i].first=max(mask[i].first,mConfig.MatrixInfo.roi[0]);
+                    mask[i].second=min(mask[i].second,mConfig.MatrixInfo.roi[2]);
+                    break;
+                case ReconConfig::cProjections::BeamGeometry_Cone:
+                     mask[i].first=max(mask[i].first,nSizeX-mConfig.MatrixInfo.roi[2]);
+                     mask[i].second=min(mask[i].second,nSizeX-mConfig.MatrixInfo.roi[0]);
+                    break;
+                }
             }
             else {
                 mask[i].first=0u;

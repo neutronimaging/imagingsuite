@@ -311,11 +311,10 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
 
         float origin[3];
-
         float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
         float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
-        origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2; // voi[0] and voi[2] and voi[4] are 0
+        origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
         origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
         origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing[2]-spacing[2]/2;
 
@@ -368,8 +367,6 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
 
 
-
-//        float ic[2] = {mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0], mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]}; // piercing point THIS MUST BE UPDATED
         float ic[2] = {mConfig.ProjectionInfo.fpPoint[0]-CBCT_roi[0], mConfig.ProjectionInfo.fpPoint[1]-CBCT_roi[1]};
 
 
@@ -566,24 +563,16 @@ void FDKbp_single::project_volume_onto_image_reference (
     spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
     spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
 
+    float origin[3];
     float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
     float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
-    float origin[3]; /* = {-12.475, -12.75, -24.975};*/
-
-//    if (mConfig.MatrixInfo.bUseVOI) {
-        origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
-        origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
-        origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1]-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
-//    }
-
-//    else {
-//        origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
-//        origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
-//        origin[2] = -(V-mConfig.ProjectionInfo.fpPoint[1])*spacing[2]-spacing[2]/2;
-//    }
+    origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
+    origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
+    origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing[2]-spacing[2]/2;
 
 
+    // the following part is not updated
 
     for (k = 0; k < volume.Size(2); k++) {
 
