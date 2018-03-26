@@ -41,6 +41,7 @@
 #include "preferencesdialog.h"
 #include "dialogtoobig.h"
 #include "piercingpointdialog.h"
+#include "referencefiledlg.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -268,6 +269,35 @@ void MuhRecMainWindow::BrowseProjectionPath()
             ui->projectionViewer->clear_rectangle(-1);
             ui->projectionViewer->clear_plot(-1);
         }
+
+        lookForReferences(fi.m_sPath);
+    }
+}
+
+void MuhRecMainWindow::lookForReferences(string &path)
+{
+    ReferenceFileDlg dlg;
+
+    dlg.setPath(QString::fromStdString(path));
+
+    int res=dlg.exec();
+
+    if (res == QDialog::Accepted) {
+        int first;
+        int last;
+        QString mask;
+
+        if (dlg.getOpenBeamMask(mask,first,last)) {
+            ui->editOpenBeamMask->setText(mask);
+            ui->spinFirstOpenBeam->setValue(first);
+            ui->spinOpenBeamCount->setValue(last-first+1);
+        }
+
+        if (dlg.getDarkCurrentMask(mask,first,last)) {
+            ui->editDarkMask->setText(mask);
+            ui->spinFirstDark->setValue(first);
+            ui->spinDarkCount->setValue(last-first+1);
+        }
     }
 }
 
@@ -342,7 +372,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
     msg<<"New projection indices first="<<first<<", last="<<last;
     logger(logger.LogMessage,msg.str());
-    qDebug() << QString::fromStdString(msg.str());
+ //   qDebug() << QString::fromStdString(msg.str());
 
     if (last<first) {
         logger(logger.LogWarning,"Last<First index.");
@@ -351,7 +381,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
     }
     ui->sliderProjections->setMaximum(last);
     ui->sliderProjections->setMinimum(first);
-    qDebug() << "Limits set";
+//    qDebug() << "Limits set";
     PreviewProjection();
 }
 
@@ -376,7 +406,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
      << ui->sliderProjections->value();
 
     logger(logger.LogVerbose,msg.str());
-    qDebug()<<QString::fromStdString(msg.str());
+   // qDebug()<<QString::fromStdString(msg.str());
 
     try {
         UpdateConfig();
@@ -385,10 +415,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string name, ext;
         size_t found;
         int position=ui->sliderProjections->value();
-        qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
+   //     qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
-        qDebug()<<"BuildFileList ok";
+   //     qDebug()<<"BuildFileList ok";
         if (fileList.size()<position) // Workaround for bad BuildFileList implementation
         {
             logger(logger.LogWarning, "Projection slider out of list range.");
