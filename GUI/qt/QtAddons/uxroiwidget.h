@@ -36,6 +36,10 @@ public:
     /// \param roi Coordinates organized as x0,y0,x1,y1.
     void setROI(int *roi);
 
+    /// \brief Set the ROI coordinates using an array with two x/y pairs
+    /// \param roi Coordinates organized as x0,y0,x1,y1.
+    void setROI(size_t *roi);
+
     /// \brief Set the ROI coordinates using a Qt rect
     /// \param rect The rectangle object describing the roi
     void setROI(QRect rect);
@@ -52,8 +56,11 @@ public:
     /// \brief Returns x0,y0,x1,y1 describing the oposite corners of the ROI
     void getROI(int &x0, int &y0, int &x1, int &y1);
 
-    /// \brief Popultes a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
+    /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
     void getROI(int *roi);
+
+    /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
+    void getROI(size_t *roi);
 
     /// \brief Set the title of the ROI widget frame
     /// \param lbl The name string

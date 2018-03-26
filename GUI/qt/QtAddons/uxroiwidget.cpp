@@ -79,6 +79,11 @@ void uxROIWidget::updateViewer()
     }
 }
 
+void uxROIWidget::setROI(size_t *roi)
+{
+    setROI((int)roi[0],(int)roi[1],(int)roi[2],(int)roi[3]);
+}
+
 void uxROIWidget::setROI(int *roi)
 {
     setROI(roi[0],roi[1],roi[2],roi[3]);
@@ -109,6 +114,13 @@ void uxROIWidget::getROI(int &x0, int &y0, int &x1, int &y1)
 void uxROIWidget::getROI(int *roi)
 {
     getROI(roi[0],roi[1],roi[2],roi[3]);
+}
+
+void uxROIWidget::getROI(size_t *roi)
+{
+    int iroi[4];
+    getROI(iroi);
+    std::copy(iroi,iroi+4,roi);
 }
 
 void uxROIWidget::setTitle(const QString &lbl)
