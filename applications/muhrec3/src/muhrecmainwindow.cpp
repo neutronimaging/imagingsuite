@@ -48,6 +48,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("MuhRec3MainWindow"),
     ui(new Ui::MuhRecMainWindow),
+    logdlg(new QtAddons::LoggingDialog(this)),
     m_QtApp(app),
     m_ModuleConfigurator(&m_Config),
     m_pEngine(nullptr),
@@ -61,9 +62,14 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 
     std::ostringstream msg;
     ui->setupUi(this);
-    kipl::logging::Logger::AddLogTarget(*(ui->logviewer));
+
+    // Setup logging dialog
+    logdlg->setModal(false);
+    kipl::logging::Logger::AddLogTarget(*logdlg);
+
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
 
+    // Prepare paths
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
     kipl::strings::filenames::CheckPathSlashes(m_sHomePath,true);
 
@@ -82,9 +88,10 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
       <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-//    ui->buttonGetPP->setEnabled(false);
 
     ui->projectionViewer->hold_annotations(true);
+
+    // Setup default module libs in the config
     std::string defaultmodules;
 #ifdef Q_OS_WIN
         defaultmodules=m_sApplicationPath+"\\StdBackProjectors.dll";
@@ -110,6 +117,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
     ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
     ui->moduleconfigurator->SetApplicationObject(this);
+
 
     LoadDefaults(true);
     UpdateDialog();
@@ -1338,14 +1346,14 @@ void MuhRecMainWindow::ExecuteReconstruction()
         }
     }
     else {
-        logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
-        if (m_pEngine!=nullptr)
-            m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
-        else {
-            logger(logger.LogError,"No engine allocated");
-            return;
-        }
-        bRerunBackproj=true;
+            logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
+            if (m_pEngine!=nullptr)
+                m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
+            else {
+                logger(logger.LogError,"No engine allocated");
+                return;
+            }
+            bRerunBackproj=true;
     }
 
 
@@ -2367,4 +2375,15 @@ void MuhRecMainWindow::on_comboRotateProjection_currentIndexChanged(int index)
 void MuhRecMainWindow::on_buttonPreview_clicked()
 {
     PreviewProjection();
+}
+
+void MuhRecMainWindow::on_pushButton_logging_clicked()
+{
+    if (logdlg->isHidden()) {
+
+        logdlg->show();
+    }
+    else {
+        logdlg->hide();
+    }
 }

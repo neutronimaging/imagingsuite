@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <logging/logger.h>
+#include <loggingdialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,8 @@ public:
     
 private:
     Ui::MainWindow *ui;
+    QtAddons::LoggingDialog *logdlg;
+
     float m_fScale;
 
         void on_roiwidget_getROIclicked();
@@ -37,6 +40,7 @@ private slots:
 
     void on_button_ListAllROIs_clicked();
     void on_button_ListSelectedROIs_clicked();
+    void on_pushButton_showLogger_clicked();
 };
 
 #endif // MAINWINDOW_H
