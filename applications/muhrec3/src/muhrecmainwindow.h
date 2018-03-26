@@ -14,6 +14,8 @@
 #include <ReconEngine.h>
 #include <logging/logger.h>
 
+#include <loggingdialog.h>
+
 namespace Ui {
 class MuhRecMainWindow;
 }
@@ -31,6 +33,7 @@ public:
 
 private:
     Ui::MuhRecMainWindow *ui;
+    QtAddons::LoggingDialog *logdlg;
     QApplication *m_QtApp;
     void SetApplicationPath(std::string path) {m_sApplicationPath=path;}
     void SlicesChanged(int x);
@@ -150,6 +153,8 @@ private slots:
     void on_comboRotateProjection_currentIndexChanged(int index);
 
     void on_buttonPreview_clicked();
+
+    void on_pushButton_logging_clicked();
 
 private:
     // Data members
