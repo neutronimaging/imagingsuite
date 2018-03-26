@@ -32,9 +32,11 @@ int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname,size_t *dims)
 	TIFF *image;
 	//TIFFErrorHandler warn = TIFFSetWarningHandler(0);
 	// Open the TIFF image
-	if((image = TIFFOpen(fname, "r")) == NULL){
-		TIFFClose(image);
-		throw kipl::base::KiplException("GetTIFFDims: Could not open image.",__FILE__,__LINE__);
+    if((image = TIFFOpen(fname, "r")) == nullptr){
+        std::stringstream msg;
+        msg.str("");
+        msg<<"GetTIFFDims: Could not open "<<fname;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 	// We need to set some values for basic tags before we can add any data
 	int nWidth=0;
@@ -55,7 +57,7 @@ int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,2> src,const char *fn
 	std::stringstream msg;
 
 	// Open the TIFF file
-	if((image = TIFFOpen(fname, "w")) == NULL){
+    if((image = TIFFOpen(fname, "w")) == nullptr){
 		msg.str("");
 		msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);

@@ -74,7 +74,21 @@ void ReconEngine::SetConfig(ReconConfig &config)
     kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
     msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
     logger(logger.LogMessage,msg.str());
-    m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning,m_Config.ProjectionInfo.nDims);
+    try {
+        m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning,m_Config.ProjectionInfo.nDims);
+    }
+    catch (ReconException &e) {
+        logger(logger.LogError,"Failed to get image size while configuring recon engine.");
+        throw ReconException(e.what());
+    }
+    catch (kipl::base::KiplException &e) {
+        logger(logger.LogError,"Failed to get image size while configuring recon engine.");
+        throw kipl::base::KiplException(e.what());
+    }
+    catch (exception &e) {
+        logger(logger.LogError,"Failed to get image size while configuring recon engine.");
+        throw std::runtime_error(e.what());
+    }
 }
 
 size_t ReconEngine::AddPreProcModule(ModuleItem *module)

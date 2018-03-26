@@ -32,8 +32,22 @@ ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::
 {
 	ReconEngine * engine=new ReconEngine("ReconEngine",interactor);
 
-	engine->SetConfig(config);
-	
+    try {
+        engine->SetConfig(config);
+    }
+    catch (ReconException &e) {
+        logger(logger.LogError,"Failed to get image size while building recon engine.");
+        throw ReconException(e.what());
+    }
+    catch (kipl::base::KiplException &e) {
+        logger(logger.LogError,"Failed to get image size while building recon engine.");
+        throw kipl::base::KiplException(e.what());
+    }
+    catch (exception &e) {
+        logger(logger.LogError,"Failed to get image size while building recon engine.");
+        throw std::runtime_error(e.what());
+    }
+
 
 	std::list<ModuleConfig>::iterator it;
 
