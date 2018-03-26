@@ -50,12 +50,12 @@ protected slots:
     void TakeProjectionPath();
     void GetSkipList();
 
-    void GetDoseROI();
+//    void GetDoseROI();
     void GetReconROI();
     void BinningChanged();
     void FlipChanged();
     void RotateChanged();
-    void DoseROIChanged(int x);
+//    void DoseROIChanged(int x);
     void ProjROIChanged(int x);
     void CenterOfRotationChanged(int x);
     void CenterOfRotationChanged(double x);
