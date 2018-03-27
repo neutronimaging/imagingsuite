@@ -145,8 +145,6 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetProjectionROI->setROIColor("orange");
     // Connecting buttons
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
-    connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
-
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
 
@@ -172,10 +170,6 @@ void MuhRecMainWindow::SetupCallBacks()
     // Display slices
     connect(ui->sliderSlices,SIGNAL(sliderMoved(int)),this,SLOT(DisplaySlice(int)));
 
-    connect(ui->dspinRotationCenter,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
-    connect(ui->dspinTiltAngle,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
-    connect(ui->dspinTiltPivot,SIGNAL(valueChanged(double)),this,SLOT(CenterOfRotationChanged(double)));
-    connect(ui->checkCorrectTilt,SIGNAL(stateChanged(int)),this,SLOT(CenterOfRotationChanged(int)));
     connect(ui->buttonConfigGeometry,SIGNAL(clicked()),this,SLOT(ConfigureGeometry()));
 
     // Menus
@@ -502,20 +496,6 @@ void MuhRecMainWindow::DisplaySlice()
     DisplaySlice(-1);
 }
 
-void MuhRecMainWindow::GetSkipList()
-{
-    UpdateConfig();
-
-    FindSkipListDialog dlg;
-
-    int res=dlg.exec(m_Config);
-
-    if (res==QDialog::Accepted)
-        ui->editProjectionSkipList->setText(dlg.getSkipList());
-
-}
-
-
 void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
 {
     ui->spinSlicesFirst->setMaximum(static_cast<int>(dims[1])-1);
@@ -550,18 +530,6 @@ void MuhRecMainWindow::ProjROIChanged(int x)
     if (ui->checkCBCT->isChecked()){
         ComputeVolumeSize(); // update the size of the output volume
     }
-}
-
-void MuhRecMainWindow::CenterOfRotationChanged(int x)
-{
-    (void)x;
-    CenterOfRotationChanged();
-}
-
-void  MuhRecMainWindow::CenterOfRotationChanged(double x)
-{
-    (void)x;
-    CenterOfRotationChanged();
 }
 
 void MuhRecMainWindow::CenterOfRotationChanged()
@@ -1506,7 +1474,7 @@ void MuhRecMainWindow::UpdateDialog()
         ui->checkCBCT->setChecked(false);
     }
 
-    CenterOfRotationChanged(0);
+    CenterOfRotationChanged();
     ProjROIChanged(0);
     SlicesChanged(0);
 }
@@ -1579,7 +1547,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
 
-    CenterOfRotationChanged(0);
+    CenterOfRotationChanged();
 
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
@@ -1983,8 +1951,6 @@ void MuhRecMainWindow::ComputeVoxelSpacing()
     m_Config.MatrixInfo.fVoxelSize[0] = m_Config.MatrixInfo.fVoxelSize[1] = m_Config.MatrixInfo.fVoxelSize[2] = m_Config.ProjectionInfo.fResolution[0]/magn;
 }
 
-
-
 void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
 {
     // probably this one is not needed
@@ -2219,22 +2185,6 @@ void MuhRecMainWindow::on_radioButton_customTurn_clicked()
 
 }
 
-void MuhRecMainWindow::on_checkCorrectTilt_clicked(bool checked)
-{
-    if (checked) {
-        ui->dspinTiltAngle->show();
-        ui->dspinTiltPivot->show();
-        ui->label_tiltAngle->show();
-        ui->label_tiltPivot->show();
-    }
-    else {
-        ui->dspinTiltAngle->hide();
-        ui->dspinTiltPivot->hide();
-        ui->label_tiltAngle->hide();
-        ui->label_tiltPivot->hide();
-    }
-}
-
 void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1)
 {
     (void) x0;
@@ -2247,7 +2197,7 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
     ui->spinSlicesLast->setValue(y1);
     on_spinSlicesLast_valueChanged(y1);
 
-
+    CenterOfRotationChanged();
 }
 
 void MuhRecMainWindow::on_buttonProjectionPath_clicked()
@@ -2339,4 +2289,49 @@ void MuhRecMainWindow::on_buttonTakePath_clicked()
 {
       ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
       repaint();
+}
+
+void MuhRecMainWindow::on_buttonGetSkipList_clicked()
+{
+    UpdateConfig();
+
+    FindSkipListDialog dlg;
+
+    int res=dlg.exec(m_Config);
+
+    if (res==QDialog::Accepted)
+        ui->editProjectionSkipList->setText(dlg.getSkipList());
+}
+
+void MuhRecMainWindow::on_dspinRotationCenter_valueChanged(double arg1)
+{
+    CenterOfRotationChanged();
+}
+
+void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double arg1)
+{
+    CenterOfRotationChanged();
+}
+
+void MuhRecMainWindow::on_dspinTiltPivot_valueChanged(double arg1)
+{
+    CenterOfRotationChanged();
+}
+
+void MuhRecMainWindow::on_checkCorrectTilt_clicked(bool checked)
+{
+    if (checked) {
+        ui->dspinTiltAngle->show();
+        ui->dspinTiltPivot->show();
+        ui->label_tiltAngle->show();
+        ui->label_tiltPivot->show();
+    }
+    else {
+        ui->dspinTiltAngle->hide();
+        ui->dspinTiltPivot->hide();
+        ui->label_tiltAngle->hide();
+        ui->label_tiltPivot->hide();
+    }
+
+    CenterOfRotationChanged();
 }

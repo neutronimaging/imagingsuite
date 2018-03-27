@@ -45,15 +45,12 @@ private:
     void ProjectionIndexChanged(int x);
 
 protected slots:
-    void GetSkipList();
-
     void BinningChanged();
     void FlipChanged();
     void RotateChanged();
 
     void ProjROIChanged(int x);
-    void CenterOfRotationChanged(int x);
-    void CenterOfRotationChanged(double x);
+
     void ConfigureGeometry();
     void StoreGeometrySetting();
     void ClearGeometrySettings();
@@ -171,6 +168,14 @@ private slots:
     void on_buttonBrowseDestinationPath_clicked();
 
     void on_buttonTakePath_clicked();
+
+    void on_buttonGetSkipList_clicked();
+
+    void on_dspinRotationCenter_valueChanged(double arg1);
+
+    void on_dspinTiltAngle_valueChanged(double arg1);
+
+    void on_dspinTiltPivot_valueChanged(double arg1);
 
 private:
     // Data members

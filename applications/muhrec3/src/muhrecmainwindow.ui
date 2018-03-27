@@ -41,7 +41,7 @@
          <string>Select projection and reference images. Add project meta data.</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <attribute name="title">
@@ -918,7 +918,7 @@
             <item>
              <widget class="QTabWidget" name="TabGeometry">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_geometry">
                <attribute name="title">
