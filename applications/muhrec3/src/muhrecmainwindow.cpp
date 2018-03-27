@@ -144,14 +144,8 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
     ui->widgetProjectionROI->setROIColor("orange");
     // Connecting buttons
-    connect(ui->buttonProjectionPath,SIGNAL(clicked()),this,SLOT(BrowseProjectionPath()));
-
-    connect(ui->buttonBrowseDestinationPath,SIGNAL(clicked()),this,SLOT(BrowseDestinationPath()));
-    connect(ui->buttonTakePath,SIGNAL(clicked()),this,SLOT(TakeProjectionPath()));
-
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
     connect(ui->buttonGetSkipList,SIGNAL(clicked()),this,SLOT(GetSkipList()));
-
 
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
@@ -198,80 +192,6 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->actionClear_list,SIGNAL(triggered()),this,SLOT(ClearGeometrySettings()));
 }
 
-void MuhRecMainWindow::BrowseProjectionPath()
-{
-    ostringstream msg;
-    QString oldmask=ui->editProjectionMask->text();
-    QString newmask;
-
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      tr("Select location of the projections"),
-                                      ui->editProjectionMask->text());
-
-
-    if (!projdir.isEmpty()) {
-
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi = da.GetFileMask(projdir.toStdString());
-
-        int c=0;
-        int f=0;
-        int l=0;
-
-        if (fi.m_sExt!="hdf") {
-            std::string pdir=projdir.toStdString();
-
-            kipl::io::DirAnalyzer da;
-            fi=da.GetFileMask(pdir);
-            newmask=QString::fromStdString(fi.m_sMask);
-
-            if ((fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
-                da.AnalyzeFileList(fi.m_sMask,c);
-                f=1;
-                l=c;
-            }
-            else
-                da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
-
-            msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
-            logger(logger.LogMessage,msg.str());
-        }
-        else {
-            newmask=projdir;
-            double angles[2];
-            size_t Nofimgs[2];
-            ProjectionReader reader;
-            reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
-            f=static_cast<int>(Nofimgs[0]);
-            l=static_cast<int>(Nofimgs[1]);
-            ui->dspinAngleStart->setValue(angles[0]);
-            ui->dspinAngleStop->setValue(angles[1]);
-        }
-
-
-        QSignalBlocker spinFirst(ui->spinFirstProjection);
-        ui->spinFirstProjection->setMaximum(l);
-        ui->spinFirstProjection->setMinimum(f);
-        ui->spinFirstProjection->setValue(f);
-
-        QSignalBlocker spinLast(ui->spinLastProjection);
-        ui->spinLastProjection->setMaximum(l);
-        ui->spinLastProjection->setMinimum(f);
-        ui->spinLastProjection->setValue(l);
-
-        ProjectionIndexChanged(0);
-        if (oldmask!=newmask)
-        {
-            ui->editProjectionMask->setText(newmask);
-
-            PreviewProjection(-1);
-            ui->projectionViewer->clear_rectangle(-1);
-            ui->projectionViewer->clear_plot(-1);
-        }
-
-        lookForReferences(fi.m_sPath);
-    }
-}
 
 void MuhRecMainWindow::lookForReferences(string &path)
 {
@@ -343,22 +263,6 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
             ui->spinOpenBeamCount->setValue(c);
         }
     }
-}
-
-void MuhRecMainWindow::BrowseDestinationPath()
-{
-    QString projdir=QFileDialog::getExistingDirectory(this,
-                                      "Select location the reconstructed slices",
-                                      ui->editDestPath->text());
-
-    if (!projdir.isEmpty())
-        ui->editDestPath->setText(projdir);
-}
-
-void MuhRecMainWindow::TakeProjectionPath()
-{
-
-    ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
 }
 
 void MuhRecMainWindow::ProjectionIndexChanged(int x)
@@ -1955,11 +1859,13 @@ bool MuhRecMainWindow::reconstructToDisk()
 
 void MuhRecMainWindow::on_spinSlicesFirst_valueChanged(int arg1)
 {
+    ui->spinSlicesLast->setMinimum(arg1+1);
     SlicesChanged(arg1);
 }
 
 void MuhRecMainWindow::on_spinSlicesLast_valueChanged(int arg1)
 {
+    ui->spinSlicesFirst->setMaximum(arg1-1);
     SlicesChanged(arg1);
 }
 
@@ -2237,11 +2143,13 @@ void MuhRecMainWindow::on_spinLastProjection_valueChanged(int arg1)
 
 void MuhRecMainWindow::on_comboFlipProjection_currentIndexChanged(int index)
 {
+    (void) index;
     PreviewProjection();
 }
 
 void MuhRecMainWindow::on_comboRotateProjection_currentIndexChanged(int index)
 {
+    (void) index;
     PreviewProjection();
 }
 
@@ -2259,4 +2167,176 @@ void MuhRecMainWindow::on_pushButton_logging_clicked()
     else {
         logdlg->hide();
     }
+}
+
+void MuhRecMainWindow::on_actionUser_manual_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec");
+        dlg.exec();
+    }
+
+}
+
+void MuhRecMainWindow::on_radioButton_fullTurn_clicked()
+{
+    ui->dspinAngleStart->setValue(0.0);
+    ui->dspinAngleStart->setEnabled(false);
+
+    ui->dspinAngleStop->setValue(360.0);
+    ui->dspinAngleStop->setEnabled(false);
+    repaint();
+}
+
+void MuhRecMainWindow::on_radioButton_halfTurn1_clicked()
+{
+    ui->dspinAngleStart->setValue(0.0);
+    ui->dspinAngleStart->setEnabled(false);
+
+    ui->dspinAngleStop->setValue(180.0);
+    ui->dspinAngleStop->setEnabled(false);
+    repaint();
+}
+
+void MuhRecMainWindow::on_radioButton_halfTurn2_clicked()
+{
+    ui->dspinAngleStart->setValue(180.0);
+    ui->dspinAngleStart->setEnabled(false);
+
+    ui->dspinAngleStop->setValue(360.0);
+    ui->dspinAngleStop->setEnabled(false);
+    repaint();
+}
+
+void MuhRecMainWindow::on_radioButton_customTurn_clicked()
+{
+    ui->dspinAngleStart->setEnabled(true);
+    ui->dspinAngleStop->setEnabled(true);
+
+    repaint();
+
+}
+
+void MuhRecMainWindow::on_checkCorrectTilt_clicked(bool checked)
+{
+    if (checked) {
+        ui->dspinTiltAngle->show();
+        ui->dspinTiltPivot->show();
+        ui->label_tiltAngle->show();
+        ui->label_tiltPivot->show();
+    }
+    else {
+        ui->dspinTiltAngle->hide();
+        ui->dspinTiltPivot->hide();
+        ui->label_tiltAngle->hide();
+        ui->label_tiltPivot->hide();
+    }
+}
+
+void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1)
+{
+    (void) x0;
+    (void) x1;
+    ui->spinSlicesFirst->setMinimum(y0);
+    ui->spinSlicesFirst->setValue(y0);
+    on_spinSlicesFirst_valueChanged(y0);
+
+    ui->spinSlicesLast->setMaximum(y1);
+    ui->spinSlicesLast->setValue(y1);
+    on_spinSlicesLast_valueChanged(y1);
+
+
+}
+
+void MuhRecMainWindow::on_buttonProjectionPath_clicked()
+{
+    ostringstream msg;
+    QString oldmask=ui->editProjectionMask->text();
+    QString newmask;
+
+    QString projdir=QFileDialog::getOpenFileName(this,
+                                      tr("Select location of the projections"),
+                                      ui->editProjectionMask->text());
+
+
+    if (!projdir.isEmpty()) {
+
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi = da.GetFileMask(projdir.toStdString());
+
+        int c=0;
+        int f=0;
+        int l=0;
+
+        if (fi.m_sExt!="hdf") {
+            std::string pdir=projdir.toStdString();
+
+            kipl::io::DirAnalyzer da;
+            fi=da.GetFileMask(pdir);
+            newmask=QString::fromStdString(fi.m_sMask);
+
+            if ((fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
+                da.AnalyzeFileList(fi.m_sMask,c);
+                f=1;
+                l=c;
+            }
+            else
+                da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+
+            msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
+            logger(logger.LogMessage,msg.str());
+        }
+        else {
+            newmask=projdir;
+            double angles[2];
+            size_t Nofimgs[2];
+            ProjectionReader reader;
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs,angles);
+            f=static_cast<int>(Nofimgs[0]);
+            l=static_cast<int>(Nofimgs[1]);
+            ui->dspinAngleStart->setValue(angles[0]);
+            ui->dspinAngleStop->setValue(angles[1]);
+        }
+
+
+        QSignalBlocker spinFirst(ui->spinFirstProjection);
+        ui->spinFirstProjection->setMaximum(l);
+        ui->spinFirstProjection->setMinimum(f);
+        ui->spinFirstProjection->setValue(f);
+
+        QSignalBlocker spinLast(ui->spinLastProjection);
+        ui->spinLastProjection->setMaximum(l);
+        ui->spinLastProjection->setMinimum(f);
+        ui->spinLastProjection->setValue(l);
+
+        ProjectionIndexChanged(0);
+        if (oldmask!=newmask)
+        {
+            ui->editProjectionMask->setText(newmask);
+
+            PreviewProjection(-1);
+            ui->projectionViewer->clear_rectangle(-1);
+            ui->projectionViewer->clear_plot(-1);
+        }
+
+        lookForReferences(fi.m_sPath);
+    }
+}
+
+void MuhRecMainWindow::on_buttonBrowseDestinationPath_clicked()
+{
+    QString projdir=QFileDialog::getExistingDirectory(this,
+                                      "Select location the reconstructed slices",
+                                      ui->editDestPath->text());
+
+    if (!projdir.isEmpty())
+        ui->editDestPath->setText(projdir);
+}
+
+void MuhRecMainWindow::on_buttonTakePath_clicked()
+{
+      ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
+      repaint();
 }

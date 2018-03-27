@@ -45,17 +45,12 @@ private:
     void ProjectionIndexChanged(int x);
 
 protected slots:
-    void BrowseProjectionPath();
-    void BrowseDestinationPath();
-    void TakeProjectionPath();
     void GetSkipList();
 
-//    void GetDoseROI();
-//    void GetReconROI();
     void BinningChanged();
     void FlipChanged();
     void RotateChanged();
-//    void DoseROIChanged(int x);
+
     void ProjROIChanged(int x);
     void CenterOfRotationChanged(int x);
     void CenterOfRotationChanged(double x);
@@ -156,6 +151,26 @@ private slots:
     void on_buttonPreview_clicked();
 
     void on_pushButton_logging_clicked();
+
+    void on_actionUser_manual_triggered();
+
+    void on_radioButton_fullTurn_clicked();
+
+    void on_radioButton_halfTurn1_clicked();
+
+    void on_radioButton_halfTurn2_clicked();
+
+    void on_radioButton_customTurn_clicked();
+
+    void on_checkCorrectTilt_clicked(bool checked);
+
+    void on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1);
+
+    void on_buttonProjectionPath_clicked();
+
+    void on_buttonBrowseDestinationPath_clicked();
+
+    void on_buttonTakePath_clicked();
 
 private:
     // Data members
