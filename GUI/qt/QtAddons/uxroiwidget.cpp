@@ -66,6 +66,7 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
     ui->spinY1->setMinimum(ui->spinY0->value()+1);
     ui->spinY0->setMaximum(ui->spinY1->value()-1);
 
+    emit valueChanged(x0,y0,x1,y1);
     updateViewer();
 }
 
