@@ -118,11 +118,18 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
     ui->moduleconfigurator->SetApplicationObject(this);
 
+    ui->widgetDoseROI->registerViewer(ui->projectionViewer);
+    ui->widgetDoseROI->setROIColor("green");
+
+    ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
+    ui->widgetProjectionROI->setROIColor("orange");
+
+    m_oldROI[0]=0; m_oldROI[1]=0; m_oldROI[2]=1; m_oldROI[3]=1;
 
     LoadDefaults(true);
     UpdateDialog();
+
     ProjectionIndexChanged(0);
-    ProjROIChanged(0);
     SlicesChanged(0);
     SetupCallBacks();
 
@@ -138,11 +145,8 @@ MuhRecMainWindow::~MuhRecMainWindow()
 
 void MuhRecMainWindow::SetupCallBacks()
 {
-    ui->widgetDoseROI->registerViewer(ui->projectionViewer);
-    ui->widgetDoseROI->setROIColor("green");
 
-    ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
-    ui->widgetProjectionROI->setROIColor("orange");
+
     // Connecting buttons
     connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
 
@@ -167,10 +171,6 @@ void MuhRecMainWindow::SetupCallBacks()
 //    connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
 //    connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
 
-    // Display slices
-    connect(ui->sliderSlices,SIGNAL(sliderMoved(int)),this,SLOT(DisplaySlice(int)));
-
-    connect(ui->buttonConfigGeometry,SIGNAL(clicked()),this,SLOT(ConfigureGeometry()));
 
     // Menus
     connect(ui->actionNew,SIGNAL(triggered()),this,SLOT(MenuFileNew()));
@@ -269,8 +269,6 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
     msg<<"New projection indices first="<<first<<", last="<<last;
     logger(logger.LogMessage,msg.str());
- //   qDebug() << QString::fromStdString(msg.str());
-
     if (last<first) {
         logger(logger.LogWarning,"Last<First index.");
 
@@ -278,7 +276,7 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
     }
     ui->sliderProjections->setMaximum(last);
     ui->sliderProjections->setMinimum(first);
-//    qDebug() << "Limits set";
+
     PreviewProjection();
 }
 
@@ -460,40 +458,9 @@ void MuhRecMainWindow::PreviewProjection()
     PreviewProjection(-1);
 }
 
-void MuhRecMainWindow::DisplaySlice(int x)
-{
-    QSignalBlocker blockSlider(ui->sliderSlices);
-    if (m_pEngine==nullptr)
-        return;
-
-    std::ostringstream msg;
-    int nSelectedSlice=x;
-
-    if (x<0) {
-        nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
-        ui->sliderSlices->setValue(nSelectedSlice);
-    }
-
-    try {
-        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
-        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
-                                   static_cast<float>(ui->dspinGrayLow->value()),
-                                   static_cast<float>(ui->dspinGrayHigh->value()));
-        msg.str("");
-        msg<<x<<" ("<<x+m_Config.ProjectionInfo.roi[1]<<")";
-        ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
-    }
-    catch (kipl::base::KiplException &e) {
-        msg.str("");
-        msg<<"Failed to display slice \n"<<e.what();
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-    }
-
-}
-
 void MuhRecMainWindow::DisplaySlice()
 {
-    DisplaySlice(-1);
+    on_sliderSlices_sliderMoved(-1);
 }
 
 void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
@@ -517,21 +484,6 @@ void MuhRecMainWindow::RotateChanged()
 
 }
 
-void MuhRecMainWindow::ProjROIChanged(int x)
-{ // TODO Fix callback for Projection roi changed
-    (void)x;
-
-    SlicesChanged(0);
-    CenterOfRotationChanged();
-    size_t roi[4];
-    ui->widgetProjectionROI->getROI(roi);
-    UpdateMemoryUsage(roi);
-
-    if (ui->checkCBCT->isChecked()){
-        ComputeVolumeSize(); // update the size of the output volume
-    }
-}
-
 void MuhRecMainWindow::CenterOfRotationChanged()
 {
     int roi[4];
@@ -550,22 +502,6 @@ void MuhRecMainWindow::CenterOfRotationChanged()
     }
 
     ui->projectionViewer->set_plot(coords,QColor("red").light(),0);
-}
-
-void MuhRecMainWindow::ConfigureGeometry()
-{
-    ConfigureGeometryDialog dlg;
-
-    UpdateConfig();
-
-    int res=dlg.exec(m_Config);
-
-    if (res==QDialog::Accepted)
-    {
-        dlg.GetConfig(m_Config);
-        UpdateDialog();
-        UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
-    }
 }
 
 void MuhRecMainWindow::StoreGeometrySetting()
@@ -1413,18 +1349,62 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
 
+    std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
+
+    on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
+                                        m_Config.ProjectionInfo.projection_roi[1],
+                                        m_Config.ProjectionInfo.projection_roi[2],
+                                        m_Config.ProjectionInfo.projection_roi[3]);
+
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
 
-    ui->dspinRotationCenter->setValue(m_Config.ProjectionInfo.fCenter);
+    // Scan arc settings
     ui->dspinAngleStart->setValue(m_Config.ProjectionInfo.fScanArc[0]);
     ui->dspinAngleStop->setValue(m_Config.ProjectionInfo.fScanArc[1]);
+    if ( m_Config.ProjectionInfo.fScanArc[0] == 0)
+    {
+        if (m_Config.ProjectionInfo.fScanArc[1] == 360)
+        {
+            ui->radioButton_fullTurn->setChecked(true);
+            on_radioButton_fullTurn_clicked();
+        }
+        else if (m_Config.ProjectionInfo.fScanArc[1] == 180)
+        {
+            ui->radioButton_halfTurn1->setChecked(true);
+            on_radioButton_halfTurn1_clicked();
+        }
+        else
+        {
+            ui->radioButton_customTurn->setChecked(true);
+            on_radioButton_customTurn_clicked();
+        }
+    }
+    else {
+        if (m_Config.ProjectionInfo.fScanArc[0] == 180) {
+            if (m_Config.ProjectionInfo.fScanArc[1] == 360) {
+                ui->radioButton_halfTurn2->setChecked(true);
+                on_radioButton_halfTurn2_clicked();
+            }
+            else {
+                ui->radioButton_customTurn->setChecked(true);
+                on_radioButton_customTurn_clicked();
+            }
+        }
+    }
+
     ui->comboDataSequence->setCurrentIndex(m_Config.ProjectionInfo.scantype);
     ui->dspinResolution->setValue(m_Config.ProjectionInfo.fResolution[0]);
+
+    // Set center of rotation
+    ui->dspinRotationCenter->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
     ui->checkCorrectTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
+    on_checkCorrectTilt_clicked(m_Config.ProjectionInfo.bCorrectTilt);
+    on_dspinRotationCenter_valueChanged(m_Config.ProjectionInfo.fCenter);
+
     ui->check_stitchprojections->setChecked(m_Config.ProjectionInfo.bTranslate);
     ui->moduleconfigurator->SetModules(m_Config.modules);
     ui->dspinRotateRecon->setValue(m_Config.MatrixInfo.fRotation);
@@ -1475,7 +1455,7 @@ void MuhRecMainWindow::UpdateDialog()
     }
 
     CenterOfRotationChanged();
-    ProjROIChanged(0);
+
     SlicesChanged(0);
 }
 
@@ -1733,7 +1713,7 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
         msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices;
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        DisplaySlice(maxslices/2);
+        on_sliderSlices_sliderMoved(maxslices/2);
 
         switch (m_eSlicePlane) {
             case kipl::base::ImagePlaneXY :
@@ -1839,6 +1819,8 @@ void MuhRecMainWindow::on_spinSlicesLast_valueChanged(int arg1)
 
 void MuhRecMainWindow::SlicesChanged(int arg1)
 {
+    (void) arg1;
+
     QRect rect;
     size_t * dims=m_Config.ProjectionInfo.roi;
 
@@ -2190,14 +2172,34 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
     (void) x0;
     (void) x1;
     ui->spinSlicesFirst->setMinimum(y0);
-    ui->spinSlicesFirst->setValue(y0);
-    on_spinSlicesFirst_valueChanged(y0);
-
     ui->spinSlicesLast->setMaximum(y1);
-    ui->spinSlicesLast->setValue(y1);
-    on_spinSlicesLast_valueChanged(y1);
 
+    if (ui->spinSlicesFirst->value()<y0) {
+        ui->spinSlicesFirst->setValue(y0);
+        on_spinSlicesFirst_valueChanged(y0);
+    }
+
+    if (y1<ui->spinSlicesLast->value()) {
+        ui->spinSlicesLast->setValue(y1);
+        on_spinSlicesLast_valueChanged(y1);
+    }
+
+    ui->dspinRotationCenter->setValue(ui->dspinRotationCenter->value()-(x0-m_oldROI[0]));
     CenterOfRotationChanged();
+    m_oldROI[0]=x0; m_oldROI[1]=y0; m_oldROI[2]=x1; m_oldROI[3]=y1;
+
+// Old code
+//        SlicesChanged(0);
+//        CenterOfRotationChanged();
+//        size_t roi[4];
+//        ui->widgetProjectionROI->getROI(roi);
+//        UpdateMemoryUsage(roi);
+
+//        if (ui->checkCBCT->isChecked()){
+//            ComputeVolumeSize(); // update the size of the output volume
+//        }
+
+
 }
 
 void MuhRecMainWindow::on_buttonProjectionPath_clicked()
@@ -2334,4 +2336,51 @@ void MuhRecMainWindow::on_checkCorrectTilt_clicked(bool checked)
     }
 
     CenterOfRotationChanged();
+}
+
+void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
+{
+    QSignalBlocker blockSlider(ui->sliderSlices);
+    if (m_pEngine==nullptr)
+        return;
+
+    std::ostringstream msg;
+    int nSelectedSlice=position;
+
+    if (position<0) {
+        nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
+        ui->sliderSlices->setValue(nSelectedSlice);
+    }
+
+    try {
+        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
+        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
+                                   static_cast<float>(ui->dspinGrayLow->value()),
+                                   static_cast<float>(ui->dspinGrayHigh->value()));
+        msg.str("");
+        msg<<position<<" ("<<position+m_Config.ProjectionInfo.roi[1]<<")";
+        ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
+        // TODO Add line to indicate location of slice (XY-slices)
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Failed to display slice \n"<<e.what();
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+}
+
+void MuhRecMainWindow::on_button_FindCenter_clicked()
+{
+    ConfigureGeometryDialog dlg;
+
+    UpdateConfig();
+
+    int res=dlg.exec(m_Config);
+
+    if (res==QDialog::Accepted)
+    {
+        dlg.GetConfig(m_Config);
+        UpdateDialog();
+        UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
+    }
 }

@@ -944,6 +944,9 @@
                          <height>0</height>
                         </size>
                        </property>
+                       <property name="toolTip">
+                        <string>Selects first and last slice to reconstruct. Coordinates are absolute to the image.</string>
+                       </property>
                        <property name="title">
                         <string>Slices to reconstruct</string>
                        </property>
@@ -992,6 +995,9 @@
                          <width>165</width>
                          <height>120</height>
                         </size>
+                       </property>
+                       <property name="toolTip">
+                        <string>Select the active region to reconstruct.</string>
                        </property>
                       </widget>
                      </item>
@@ -1353,7 +1359,7 @@
                     </widget>
                    </item>
                    <item row="3" column="5">
-                    <widget class="QPushButton" name="buttonConfigGeometry">
+                    <widget class="QPushButton" name="button_FindCenter">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>

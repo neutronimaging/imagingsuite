@@ -470,8 +470,6 @@ int ConfigureGeometryDialog::LoadImages()
         BuildFileList(&m_Config,&projlist);
         std::map<float,ProjectionInfo>::iterator it,marked;
 
-
-
         try
         {
             marked=projlist.begin();

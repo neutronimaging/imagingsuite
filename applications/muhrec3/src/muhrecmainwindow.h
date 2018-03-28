@@ -51,7 +51,6 @@ protected slots:
 
     void ProjROIChanged(int x);
 
-    void ConfigureGeometry();
     void StoreGeometrySetting();
     void ClearGeometrySettings();
     void ViewGeometryList();
@@ -64,7 +63,6 @@ protected slots:
     void PreviewProjection();
 
     void DisplaySlice();
-    void DisplaySlice(int x);
 
     // Menu slots
     void MenuFileNew();
@@ -177,6 +175,10 @@ private slots:
 
     void on_dspinTiltPivot_valueChanged(double arg1);
 
+    void on_sliderSlices_sliderMoved(int position);
+
+    void on_button_FindCenter_clicked();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
@@ -204,6 +206,7 @@ private:
     kipl::base::eImagePlanes m_eSlicePlane;
     size_t m_nSliceSizeX;
     size_t m_nSliceSizeY;
+    int m_oldROI[4];
 
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_StoredReconList;
     bool m_bCurrentReconStored;
