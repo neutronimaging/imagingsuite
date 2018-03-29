@@ -2,6 +2,7 @@
 #include "ui_uxroiwidget.h"
 
 #include <QColor>
+#include <QSignalBlocker>
 
 #include "imageviewerwidget.h"
 
@@ -57,6 +58,11 @@ void uxROIWidget::updateBounds()
 
 void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
 {
+    QSignalBlocker blockX0(ui->spinX0);
+    QSignalBlocker blockY0(ui->spinY0);
+    QSignalBlocker blockX1(ui->spinX1);
+    QSignalBlocker blockY1(ui->spinY1);
+
     ui->spinX0->setValue(std::min(x0,x1));
     ui->spinX1->setValue(std::max(x0,x1));
     ui->spinX1->setMinimum(ui->spinX0->value()+1);

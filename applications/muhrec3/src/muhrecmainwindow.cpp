@@ -63,6 +63,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     std::ostringstream msg;
     ui->setupUi(this);
 
+
     // Setup logging dialog
     logdlg->setModal(false);
     kipl::logging::Logger::AddLogTarget(*logdlg);
@@ -118,11 +119,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
     ui->moduleconfigurator->SetApplicationObject(this);
 
-    ui->widgetDoseROI->registerViewer(ui->projectionViewer);
-    ui->widgetDoseROI->setROIColor("green");
 
-    ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
-    ui->widgetProjectionROI->setROIColor("orange");
 
     m_oldROI[0]=0; m_oldROI[1]=0; m_oldROI[2]=1; m_oldROI[3]=1;
 
@@ -184,6 +181,14 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->actionStore_geometry,SIGNAL(triggered()),this,SLOT(StoreGeometrySetting()));
     connect(ui->actionView_geometry_list,SIGNAL(triggered()),this,SLOT(ViewGeometryList()));
     connect(ui->actionClear_list,SIGNAL(triggered()),this,SLOT(ClearGeometrySettings()));
+
+    ui->widgetDoseROI->registerViewer(ui->projectionViewer);
+    ui->widgetDoseROI->setROIColor("green");
+    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi);
+
+    ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
+    ui->widgetProjectionROI->setROIColor("orange");
+    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
 }
 
 
@@ -301,7 +306,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
      << ui->sliderProjections->value();
 
     logger(logger.LogVerbose,msg.str());
-   // qDebug()<<QString::fromStdString(msg.str());
 
     try {
         UpdateConfig();
@@ -310,10 +314,10 @@ void MuhRecMainWindow::PreviewProjection(int x)
         std::string name, ext;
         size_t found;
         int position=ui->sliderProjections->value();
-   //     qDebug()<<"Config: first="<<m_Config.ProjectionInfo.nFirstIndex<<", last="<<m_Config.ProjectionInfo.nLastIndex;
+
         std::map<float,ProjectionInfo> fileList;
         BuildFileList(&m_Config,&fileList);
-   //     qDebug()<<"BuildFileList ok";
+
         if (fileList.size()<position) // Workaround for bad BuildFileList implementation
         {
             logger(logger.LogWarning, "Projection slider out of list range.");
@@ -1935,6 +1939,7 @@ void MuhRecMainWindow::ComputeVoxelSpacing()
 
 void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
 {
+    (void) arg1;
     // probably this one is not needed
 
         if (ui->checkCBCT->isChecked()) {
@@ -2171,6 +2176,8 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
 {
     (void) x0;
     (void) x1;
+
+    qDebug()<<x0<<", "<<y0<<", "<<x1<<", "<<y1;
     ui->spinSlicesFirst->setMinimum(y0);
     ui->spinSlicesLast->setMaximum(y1);
 
@@ -2307,16 +2314,19 @@ void MuhRecMainWindow::on_buttonGetSkipList_clicked()
 
 void MuhRecMainWindow::on_dspinRotationCenter_valueChanged(double arg1)
 {
+    (void) arg1;
     CenterOfRotationChanged();
 }
 
 void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double arg1)
 {
+    (void) arg1;
     CenterOfRotationChanged();
 }
 
 void MuhRecMainWindow::on_dspinTiltPivot_valueChanged(double arg1)
 {
+    (void) arg1;
     CenterOfRotationChanged();
 }
 

@@ -49,8 +49,6 @@ protected slots:
     void FlipChanged();
     void RotateChanged();
 
-    void ProjROIChanged(int x);
-
     void StoreGeometrySetting();
     void ClearGeometrySettings();
     void ViewGeometryList();
