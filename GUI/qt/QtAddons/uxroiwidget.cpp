@@ -3,6 +3,7 @@
 
 #include <QColor>
 #include <QSignalBlocker>
+#include <QDebug>
 
 #include "imageviewerwidget.h"
 
@@ -31,17 +32,31 @@ uxROIWidget::~uxROIWidget()
 
 void uxROIWidget::setBoundingBox(int x0, int y0, int x1, int y1, bool updateFields)
 {
-    ui->spinX0->setMinimum(std::min(x0,x1));
-    ui->spinX0->setMaximum(std::max(x0,x1));
+    QSignalBlocker blockX0(ui->spinX0);
+    QSignalBlocker blockY0(ui->spinY0);
+    QSignalBlocker blockX1(ui->spinX1);
+    QSignalBlocker blockY1(ui->spinY1);
 
-    ui->spinX1->setMinimum(std::min(x0,x1));
-    ui->spinX1->setMaximum(std::max(x0,x1));
+    int maxx=std::max(x0,x1);
+    int minx=std::min(x0,x1);
+    ui->spinX1->setMinimum(minx+1);
+    ui->spinX0->setMaximum(maxx-1);
 
-    ui->spinY0->setMinimum(std::min(y0,y1));
-    ui->spinY0->setMaximum(std::max(y0,y1));
+    ui->spinX0->setMaximum(std::min(maxx,ui->spinX1->value()-1));
+    ui->spinX0->setMinimum(minx);
 
-    ui->spinY1->setMinimum(std::min(y0,y1));
-    ui->spinY1->setMaximum(std::max(y0,y1));
+    ui->spinX1->setMaximum(maxx);
+    ui->spinX1->setMinimum(std::max(minx,ui->spinX0->value()+1));
+
+    int maxy=std::max(y0,y1);
+    int miny=std::min(y0,y1);
+
+    ui->spinY0->setMaximum(std::min(maxy,ui->spinY1->value()-1));
+    ui->spinY0->setMinimum(miny);
+
+    ui->spinY1->setMaximum(maxy);
+    ui->spinY1->setMinimum(std::max(minx,ui->spinY0->value()+1));
+
     if (updateFields) {
         setROI(x0,y0,x1,y1);
     }
@@ -63,16 +78,25 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
     QSignalBlocker blockX1(ui->spinX1);
     QSignalBlocker blockY1(ui->spinY1);
 
-    ui->spinX0->setValue(std::min(x0,x1));
-    ui->spinX1->setValue(std::max(x0,x1));
-    ui->spinX1->setMinimum(ui->spinX0->value()+1);
-    ui->spinX0->setMaximum(ui->spinX1->value()-1);
-    ui->spinY0->setValue(std::min(y0,y1));
-    ui->spinY1->setValue(std::max(y0,y1));
-    ui->spinY1->setMinimum(ui->spinY0->value()+1);
-    ui->spinY0->setMaximum(ui->spinY1->value()-1);
+    int maxx=std::max(x0,x1);
+    int minx=std::min(x0,x1);
+    ui->spinX1->setMinimum(minx+1);
+    ui->spinX0->setMaximum(maxx-1);
+    ui->spinX0->setValue(minx);
+    ui->spinX1->setValue(maxx);
 
-    emit valueChanged(x0,y0,x1,y1);
+    int maxy=std::max(y0,y1);
+    int miny=std::min(y0,y1);
+    ui->spinY1->setMinimum(miny+1);
+    ui->spinY0->setMaximum(maxy-1);
+    ui->spinY0->setValue(miny);
+    ui->spinY1->setValue(maxy);
+
+
+   // qDebug("uxROIWidget::setROI");
+    qDebug()<<QString("uxROIWidget::setROI")<<minx<<", "<<miny<<", "<<maxx<<", "<<maxy;
+  //  emit valueChanged(x0,y0,x1,y1);
+    emit valueChanged(minx,miny,maxx,maxy);
     updateViewer();
 }
 
@@ -157,6 +181,7 @@ void uxROIWidget::on_spinX0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
+    qDebug("uxROIWidget::on_spinX0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -166,6 +191,7 @@ void uxROIWidget::on_spinY0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
+    qDebug("uxROIWidget::on_spinY0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -175,6 +201,7 @@ void uxROIWidget::on_spinY1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
+    qDebug("uxROIWidget::on_spinY1_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -184,6 +211,7 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
+    qDebug("uxROIWidget::on_spinX1_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 

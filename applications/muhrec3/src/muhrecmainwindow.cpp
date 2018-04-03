@@ -126,6 +126,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     LoadDefaults(true);
     UpdateDialog();
 
+
     ProjectionIndexChanged(0);
     SlicesChanged(0);
     SetupCallBacks();
@@ -184,11 +185,11 @@ void MuhRecMainWindow::SetupCallBacks()
 
     ui->widgetDoseROI->registerViewer(ui->projectionViewer);
     ui->widgetDoseROI->setROIColor("green");
-    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi);
+//    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi);
 
     ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
     ui->widgetProjectionROI->setROIColor("orange");
-    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
+//    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
 }
 
 
@@ -782,6 +783,9 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
         ui->sliceViewer->set_image(img.GetDataPtr(),img.Dims());
     }
+    std::copy(m_Config.ProjectionInfo.projection_roi,
+              m_Config.ProjectionInfo.projection_roi,
+              m_oldROI);
 
     UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
@@ -1354,6 +1358,7 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
+    qDebug("UpdateDialog");
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
 
     on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
@@ -2174,9 +2179,6 @@ void MuhRecMainWindow::on_radioButton_customTurn_clicked()
 
 void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1)
 {
-    (void) x0;
-    (void) x1;
-
     qDebug()<<x0<<", "<<y0<<", "<<x1<<", "<<y1;
     ui->spinSlicesFirst->setMinimum(y0);
     ui->spinSlicesLast->setMaximum(y1);
@@ -2195,18 +2197,13 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
     CenterOfRotationChanged();
     m_oldROI[0]=x0; m_oldROI[1]=y0; m_oldROI[2]=x1; m_oldROI[3]=y1;
 
-// Old code
-//        SlicesChanged(0);
-//        CenterOfRotationChanged();
-//        size_t roi[4];
-//        ui->widgetProjectionROI->getROI(roi);
-//        UpdateMemoryUsage(roi);
+    size_t roi[4];
+    ui->widgetProjectionROI->getROI(roi);
+    UpdateMemoryUsage(roi);
 
-//        if (ui->checkCBCT->isChecked()){
-//            ComputeVolumeSize(); // update the size of the output volume
-//        }
-
-
+    if (ui->checkCBCT->isChecked()){
+        ComputeVolumeSize(); // update the size of the output volume
+    }
 }
 
 void MuhRecMainWindow::on_buttonProjectionPath_clicked()

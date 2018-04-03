@@ -9,6 +9,7 @@
 #include <QToolTip>
 #include <QStylePainter>
 #include <QSignalBlocker>
+#include <QDebug>
 
 namespace QtAddons {
 
@@ -408,6 +409,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_ImagePainter.get_image_minmax(&mi,&ma);
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    qDebug("ImageViewerWidget::set_image1");
     emit newImageDims(rect);
 }
 
@@ -429,6 +431,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    qDebug()<<QString("ImageViewerWidget::set_image2 ")<<dims[0]<<" "<<dims[1];
     emit newImageDims(rect);
 }
 
