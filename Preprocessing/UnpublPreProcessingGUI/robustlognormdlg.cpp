@@ -186,18 +186,19 @@ void RobustLogNormDlg::ApplyParameters(){
     std::map<std::string, std::string> parameters;
     UpdateParameterList(parameters);
 
-    try {
-        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-    }
+    // commenting this, it did not really happend what I wish
+//    try {
+//        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+//    }
 
-    catch (kipl::base::KiplException &e) {
-        QMessageBox errdlg(this);
-        errdlg.setText("Failed to configure RobustLogNorm module.");
+//    catch (kipl::base::KiplException &e) {
+//        QMessageBox errdlg(this);
+//        errdlg.setText("Failed to configure RobustLogNorm module.");
 
-        logger(kipl::logging::Logger::LogWarning,e.what());
-        return ;
+//        logger(kipl::logging::Logger::LogWarning,e.what());
+//        return ;
 
-    }
+//    }
 
 
 }
