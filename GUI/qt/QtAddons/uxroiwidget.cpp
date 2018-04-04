@@ -103,10 +103,16 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
 void uxROIWidget::updateViewer()
 {
     if (hViewer!=nullptr) {
-        updateBounds();
-        QRect rect;
-        getROI(rect);
-        hViewer->set_rectangle(rect,QColor(roiColor),roiID);
+        if (isVisible()) {
+            updateBounds();
+            QRect rect;
+            getROI(rect);
+            hViewer->set_rectangle(rect,QColor(roiColor),roiID);
+        }
+        else {
+            hViewer->clear_rectangle(roiID);
+        }
+
     }
 }
 
@@ -254,4 +260,15 @@ void uxROIWidget::registerViewer(ImageViewerWidget *viewer)
     }
 }
 
+void uxROIWidget::hideEvent(QHideEvent *event) {
+    QWidget::hideEvent(event);
+
+    updateViewer();
+}
+
+void uxROIWidget::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+
+    updateViewer();
+}
 }

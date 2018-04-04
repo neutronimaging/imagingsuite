@@ -55,7 +55,6 @@ protected slots:
     void GrayLevelsChanged(double x);
     void GetMatrixROI();
     void MatrixROIChanged(int x);
-    void UseMatrixROI(int x);
     void SaveMatrix();
 
     void PreviewProjection();
@@ -75,7 +74,6 @@ protected:
     /// Sets up all call-back functions during the initialization.
     void SetupCallBacks();
     void lookForReferences(std::string &path);
-    void UpdateMatrixROI();
     void UpdateDoseROI();
     void SetImageDimensionLimits(size_t const * const dims);
     void CenterOfRotationChanged();
@@ -176,6 +174,8 @@ private slots:
     void on_sliderSlices_sliderMoved(int position);
 
     void on_button_FindCenter_clicked();
+
+    void on_checkUseMatrixROI_toggled(bool checked);
 
 private:
     // Data members

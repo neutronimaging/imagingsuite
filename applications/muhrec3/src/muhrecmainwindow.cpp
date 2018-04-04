@@ -59,7 +59,6 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sConfigFilename("noname.xml"),
     m_bCurrentReconStored(true)
 {
-
     std::ostringstream msg;
     ui->setupUi(this);
 
@@ -146,15 +145,10 @@ void MuhRecMainWindow::SetupCallBacks()
 
 
     // Connecting buttons
-    connect(ui->buttonGetMatrixROI,SIGNAL(clicked()),this,SLOT(GetMatrixROI()));
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
 
     // Matrix roi size
-    connect(ui->spinMatrixROI0,SIGNAL(valueChanged(int)),this,SLOT(MatrixROIChanged(int)));
-    connect(ui->spinMatrixROI1,SIGNAL(valueChanged(int)),this,SLOT(MatrixROIChanged(int)));
-    connect(ui->spinMatrixROI2,SIGNAL(valueChanged(int)),this,SLOT(MatrixROIChanged(int)));
-    connect(ui->spinMatrixROI3,SIGNAL(valueChanged(int)),this,SLOT(MatrixROIChanged(int)));
     connect(ui->checkUseMatrixROI,SIGNAL(stateChanged(int)),this,SLOT(UseMatrixROI(int)));
 
     // Graylevels
@@ -185,11 +179,15 @@ void MuhRecMainWindow::SetupCallBacks()
 
     ui->widgetDoseROI->registerViewer(ui->projectionViewer);
     ui->widgetDoseROI->setROIColor("green");
-//    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi);
+    ui->widgetDoseROI->setTitle("Dose ROI");
 
     ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
     ui->widgetProjectionROI->setROIColor("orange");
-//    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
+    ui->widgetProjectionROI->setTitle("Projection ROI");
+
+    ui->widgetMatrixROI->registerViewer(ui->sliceViewer);
+    ui->widgetMatrixROI->setROIColor("yellow");
+    ui->widgetMatrixROI->setTitle("Matrix ROI");
 }
 
 
@@ -565,15 +563,15 @@ void MuhRecMainWindow::ViewGeometryList()
                 ui->dspinRotationCenter->setValue(center);
             }
 
-            if (dlg.changedConfigFields() & ConfigField_ROI) {
+//            if (dlg.changedConfigFields() & ConfigField_ROI) {
 
-                dlg.getROI(m_Config.MatrixInfo.roi);
+//                dlg.getROI(m_Config.MatrixInfo.roi);
 
-                ui->spinMatrixROI0->setValue(m_Config.MatrixInfo.roi[0]);
-                ui->spinMatrixROI1->setValue(m_Config.MatrixInfo.roi[1]);
-                ui->spinMatrixROI2->setValue(m_Config.MatrixInfo.roi[2]);
-                ui->spinMatrixROI3->setValue(m_Config.MatrixInfo.roi[3]);
-            }
+//                ui->spinMatrixROI0->setValue(m_Config.MatrixInfo.roi[0]);
+//                ui->spinMatrixROI1->setValue(m_Config.MatrixInfo.roi[1]);
+//                ui->spinMatrixROI2->setValue(m_Config.MatrixInfo.roi[2]);
+//                ui->spinMatrixROI3->setValue(m_Config.MatrixInfo.roi[3]);
+//            }
         }
     }
 }
@@ -590,88 +588,42 @@ void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
 
 void MuhRecMainWindow::GetMatrixROI()
 {
-    QRect rect=ui->sliceViewer->get_marked_roi();
+    // todo Update the get roi call-back
+//    QRect rect=ui->sliceViewer->get_marked_roi();
 
-    if (rect.width()*rect.height()!=0)
-    {
-        ui->spinMatrixROI0->blockSignals(true);
-        ui->spinMatrixROI1->blockSignals(true);
-        ui->spinMatrixROI2->blockSignals(true);
-        ui->spinMatrixROI3->blockSignals(true);
-        if (m_Config.MatrixInfo.bUseROI) {
-            ui->spinMatrixROI0->setValue(rect.x()+m_Config.MatrixInfo.roi[0]);
-            ui->spinMatrixROI1->setValue(rect.y()+m_Config.MatrixInfo.roi[1]);
-            ui->spinMatrixROI2->setValue(rect.x()+rect.width()+m_Config.MatrixInfo.roi[0]);
-            ui->spinMatrixROI3->setValue(rect.y()+rect.height()+m_Config.MatrixInfo.roi[1]);
-        }
-        else {
-            ui->spinMatrixROI0->setValue(rect.x());
-            ui->spinMatrixROI1->setValue(rect.y());
-            ui->spinMatrixROI2->setValue(rect.x()+rect.width());
-            ui->spinMatrixROI3->setValue(rect.y()+rect.height());
-        }
-        ui->spinMatrixROI0->blockSignals(false);
-        ui->spinMatrixROI1->blockSignals(false);
-        ui->spinMatrixROI2->blockSignals(false);
-        ui->spinMatrixROI3->blockSignals(false);
-        UpdateMatrixROI();
-    }
+//    if (rect.width()*rect.height()!=0)
+//    {
+//        if (m_Config.MatrixInfo.bUseROI) {
+//            ui->spinMatrixROI0->setValue(rect.x()+m_Config.MatrixInfo.roi[0]);
+//            ui->spinMatrixROI1->setValue(rect.y()+m_Config.MatrixInfo.roi[1]);
+//            ui->spinMatrixROI2->setValue(rect.x()+rect.width()+m_Config.MatrixInfo.roi[0]);
+//            ui->spinMatrixROI3->setValue(rect.y()+rect.height()+m_Config.MatrixInfo.roi[1]);
+//        }
+//        else {
+//            ui->spinMatrixROI0->setValue(rect.x());
+//            ui->spinMatrixROI1->setValue(rect.y());
+//            ui->spinMatrixROI2->setValue(rect.x()+rect.width());
+//            ui->spinMatrixROI3->setValue(rect.y()+rect.height());
+//        }
+
+//        UpdateMatrixROI();
+//    }
 }
 
 void MuhRecMainWindow::MatrixROIChanged(int x)
 {
-    (void) x;
-    logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
-    UpdateMatrixROI();
+    // todo Update the matrix roi callback
+//    (void) x;
+//    logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
+//    UpdateMatrixROI();
 
-    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
-        ComputeVolumeSize(); // updated volume size
-        std::ostringstream msg;
-        msg.str("");
-        msg<<"Volume size update: "<<m_Config.MatrixInfo.nDims[0]<<" "<<m_Config.MatrixInfo.nDims[1]<<" "<<m_Config.MatrixInfo.nDims[2];
-        logger(logger.LogMessage,msg.str());
-    }
-}
-
-void MuhRecMainWindow::UpdateMatrixROI()
-{
-    logger(kipl::logging::Logger::LogMessage,"Update MatrixROI");
-    QRect rect;
-
-    rect.setCoords(ui->spinMatrixROI0->value(),
-                   ui->spinMatrixROI1->value(),
-                   ui->spinMatrixROI2->value(),
-                   ui->spinMatrixROI3->value());
-
-    ui->sliceViewer->set_rectangle(rect,QColor("green"),0);
-}
-
-void MuhRecMainWindow::UseMatrixROI(int x)
-{
-    if (x) {
-        ui->spinMatrixROI0->show();
-        ui->spinMatrixROI1->show();
-        ui->spinMatrixROI2->show();
-        ui->spinMatrixROI3->show();
-        ui->buttonGetMatrixROI->show();
-        ui->labelMX0->show();
-        ui->labelMX1->show();
-        ui->labelMX2->show();
-        ui->labelMX3->show();
-    }
-    else
-    {
-        ui->spinMatrixROI0->hide();
-        ui->spinMatrixROI1->hide();
-        ui->spinMatrixROI2->hide();
-        ui->spinMatrixROI3->hide();
-        ui->buttonGetMatrixROI->hide();
-        ui->labelMX0->hide();
-        ui->labelMX1->hide();
-        ui->labelMX2->hide();
-        ui->labelMX3->hide();
-
-    }
+//    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
+//        ComputeVolumeSize(); // updated volume size
+//        std::ostringstream msg;
+//        msg.str("");
+//        msg<<"Volume size update: "<<m_Config.MatrixInfo.nDims[0]<<" "<<m_Config.MatrixInfo.nDims[1]<<" "<<m_Config.MatrixInfo.nDims[2];
+//        logger(logger.LogMessage,msg.str());
+//    }
 }
 
 void MuhRecMainWindow::MenuFileNew()
@@ -1421,12 +1373,9 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinGrayLow->setValue(m_Config.MatrixInfo.fGrayInterval[0]);
     ui->dspinGrayHigh->setValue(m_Config.MatrixInfo.fGrayInterval[1]);
 
+    ui->widgetMatrixROI->setROI(m_Config.MatrixInfo.roi);
     ui->checkUseMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
-    UseMatrixROI(m_Config.MatrixInfo.bUseROI);
-    ui->spinMatrixROI0->setValue(static_cast<int>(m_Config.MatrixInfo.roi[0]));
-    ui->spinMatrixROI1->setValue(static_cast<int>(m_Config.MatrixInfo.roi[1]));
-    ui->spinMatrixROI2->setValue(static_cast<int>(m_Config.MatrixInfo.roi[2]));
-    ui->spinMatrixROI3->setValue(static_cast<int>(m_Config.MatrixInfo.roi[3]));
+    on_checkUseMatrixROI_toggled(m_Config.MatrixInfo.bUseROI);
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
@@ -1541,17 +1490,16 @@ void MuhRecMainWindow::UpdateConfig()
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
-        ui->TabGeometry->setTabEnabled(1,true);
+        //ui->TabGeometry->setTabEnabled(1,true);
         ui->checkUseMatrixROI->hide();
         SlicesChanged(0);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
-        ui->TabGeometry->setTabEnabled(1,false);
+        //ui->TabGeometry->setTabEnabled(1,false);
         ui->checkUseMatrixROI->show();
         SlicesChanged(0);
     }
-
 
 
     m_Config.MatrixInfo.voi[0] = 0;
@@ -1570,10 +1518,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();
     m_Config.MatrixInfo.fGrayInterval[1] = ui->dspinGrayHigh->value();
     m_Config.MatrixInfo.bUseROI = ui->checkUseMatrixROI->checkState();
-    m_Config.MatrixInfo.roi[0] = ui->spinMatrixROI0->value();
-    m_Config.MatrixInfo.roi[1] = ui->spinMatrixROI1->value();
-    m_Config.MatrixInfo.roi[2] = ui->spinMatrixROI2->value();
-    m_Config.MatrixInfo.roi[3] = ui->spinMatrixROI3->value();
+    ui->widgetMatrixROI->getROI(m_Config.MatrixInfo.roi);
+
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
 
@@ -1895,7 +1841,7 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
           <<" voxels with isotropic spacing: "<< m_Config.MatrixInfo.fVoxelSize[0];
         logger(logger.LogMessage,msg.str());
 
-        ui->TabGeometry->setTabEnabled(1,true);
+        ui->groupBox_ConeBeamGeometry->show();
         ui->checkUseMatrixROI->hide();
 
         SlicesChanged(0);
@@ -1909,14 +1855,8 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
 
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-        ui->TabGeometry->setTabEnabled(1,false);
-//        ui->spinSlicesFirst->show();
-//        ui->spinSlicesLast->show();
-//        ui->label_50->show();
-//        ui->label_51->show();
-//        ui->label_30->show();
         ui->checkUseMatrixROI->show();
-
+        ui->groupBox_ConeBeamGeometry->hide();
         SlicesChanged(0);
     }
 }
@@ -1950,24 +1890,11 @@ void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
         if (ui->checkCBCT->isChecked()) {
             m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
             ComputeVolumeSizeSpacing();
-            ui->TabGeometry->setTabEnabled(1,true);
-//            ui->spinSlicesFirst->setValue(ui->spinProjROIy0->value());
-//            ui->spinSlicesLast->setValue(ui->spinProjROIy1->value());
-//            ui->spinSlicesFirst->hide();
-//            ui->spinSlicesLast->hide();
-//            ui->label_50->hide();
-//            ui->label_51->hide();
-//            ui->label_30->hide();
-
+            ui->groupBox_ConeBeamGeometry->show();
         }
         else {
             m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-            ui->TabGeometry->setTabEnabled(1,false);
-//            ui->spinSlicesFirst->show();
-//            ui->spinSlicesLast->show();
-//            ui->label_50->show();
-//            ui->label_51->show();
-//            ui->label_30->show();
+            ui->groupBox_ConeBeamGeometry->hide();
         }
 
 }
@@ -2390,4 +2317,9 @@ void MuhRecMainWindow::on_button_FindCenter_clicked()
         UpdateDialog();
         UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     }
+}
+
+void MuhRecMainWindow::on_checkUseMatrixROI_toggled(bool checked)
+{
+    ui->widgetMatrixROI->setVisible(checked);
 }

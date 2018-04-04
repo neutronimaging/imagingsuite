@@ -79,6 +79,10 @@ public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.
     void on_viewerNewImageDims(const QRect &rect);
 
+protected slots:
+    virtual void hideEvent(QHideEvent *event);
+    virtual void showEvent(QShowEvent *event);
+
 private slots:
     void on_spinX0_valueChanged(int arg1); //< Slot for changed X0 value
 
