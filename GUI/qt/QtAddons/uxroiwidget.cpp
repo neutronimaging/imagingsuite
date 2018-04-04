@@ -71,7 +71,7 @@ void uxROIWidget::updateBounds()
     }
 }
 
-void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
+void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
 {
     QSignalBlocker blockX0(ui->spinX0);
     QSignalBlocker blockY0(ui->spinY0);
@@ -80,15 +80,23 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1)
 
     int maxx=std::max(x0,x1);
     int minx=std::min(x0,x1);
-    ui->spinX1->setMinimum(minx+1);
-    ui->spinX0->setMaximum(maxx-1);
-    ui->spinX0->setValue(minx);
-    ui->spinX1->setValue(maxx);
-
     int maxy=std::max(y0,y1);
     int miny=std::min(y0,y1);
     ui->spinY1->setMinimum(miny+1);
     ui->spinY0->setMaximum(maxy-1);
+    ui->spinX1->setMinimum(minx+1);
+    ui->spinX0->setMaximum(maxx-1);
+    if (ignoreBoundingBox) {
+        ui->spinY1->setMaximum(10000);
+        ui->spinY0->setMinimum(0);
+        ui->spinX1->setMaximum(10000);
+        ui->spinX0->setMinimum(0);
+    }
+
+    ui->spinX0->setValue(minx);
+    ui->spinX1->setValue(maxx);
+
+
     ui->spinY0->setValue(miny);
     ui->spinY1->setValue(maxy);
 
@@ -116,19 +124,19 @@ void uxROIWidget::updateViewer()
     }
 }
 
-void uxROIWidget::setROI(size_t *roi)
+void uxROIWidget::setROI(size_t *roi, bool ignoreBoundingBox)
 {
-    setROI((int)roi[0],(int)roi[1],(int)roi[2],(int)roi[3]);
+    setROI((int)roi[0],(int)roi[1],(int)roi[2],(int)roi[3],ignoreBoundingBox);
 }
 
-void uxROIWidget::setROI(int *roi)
+void uxROIWidget::setROI(int *roi, bool ignoreBoundingBox)
 {
-    setROI(roi[0],roi[1],roi[2],roi[3]);
+    setROI(roi[0],roi[1],roi[2],roi[3],ignoreBoundingBox);
 }
 
-void uxROIWidget::setROI(QRect rect)
+void uxROIWidget::setROI(QRect rect, bool ignoreBoundingBox)
 {
-    setROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.height());
+    setROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.height(),ignoreBoundingBox);
 }
 
 void uxROIWidget::getROI(QRect &rect)

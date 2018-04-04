@@ -30,19 +30,19 @@ public:
     /// \brief Set the ROI coordinates using two x/y pairs
     /// \param x0,y0 First corner
     /// \param x1,y1 Second corner
-    void setROI(int x0, int y0, int x1, int y1);
+    void setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox=false);
 
     /// \brief Set the ROI coordinates using an array with two x/y pairs
     /// \param roi Coordinates organized as x0,y0,x1,y1.
-    void setROI(int *roi);
+    void setROI(int *roi, bool ignoreBoundingBox=false);
 
     /// \brief Set the ROI coordinates using an array with two x/y pairs
     /// \param roi Coordinates organized as x0,y0,x1,y1.
-    void setROI(size_t *roi);
+    void setROI(size_t *roi, bool ignoreBoundingBox=false);
 
     /// \brief Set the ROI coordinates using a Qt rect
     /// \param rect The rectangle object describing the roi
-    void setROI(QRect rect);
+    void setROI(QRect rect, bool ignoreBoundingBox=false);
 
     /// \brief Sets the bounding box limiting the ROI
     /// \param x0,y0 First corner

@@ -177,6 +177,10 @@ private slots:
 
     void on_checkUseMatrixROI_toggled(bool checked);
 
+    void on_dspinRotateRecon_valueChanged(double arg1);
+
+    void on_dialRotateRecon_sliderMoved(int position);
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

@@ -38,12 +38,15 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Select projection and reference images. Add project meta data.</string>
+         <string/>
         </property>
         <property name="currentIndex">
          <number>3</number>
         </property>
         <widget class="QWidget" name="tabInformation">
+         <property name="toolTip">
+          <string>Select projection and reference images. Add project meta data.</string>
+         </property>
          <attribute name="title">
           <string>Projection data</string>
          </attribute>
@@ -909,6 +912,9 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tabProjInfo">
+         <property name="toolTip">
+          <string>Provide acquistion geometry for the reconstruction</string>
+         </property>
          <attribute name="title">
           <string>Reconstruction geometry</string>
          </attribute>
@@ -1035,6 +1041,9 @@
                  <layout class="QVBoxLayout" name="verticalLayout_14">
                   <item>
                    <widget class="QRadioButton" name="radioButton_fullTurn">
+                    <property name="toolTip">
+                     <string>Preset for full turn acquisition</string>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -1045,6 +1054,9 @@
                   </item>
                   <item>
                    <widget class="QRadioButton" name="radioButton_halfTurn1">
+                    <property name="toolTip">
+                     <string>Preset for first half turn acquisition. </string>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -1055,6 +1067,9 @@
                   </item>
                   <item>
                    <widget class="QRadioButton" name="radioButton_halfTurn2">
+                    <property name="toolTip">
+                     <string>Preset for second half turn acquisition.</string>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -1065,6 +1080,9 @@
                   </item>
                   <item>
                    <widget class="QRadioButton" name="radioButton_customTurn">
+                    <property name="toolTip">
+                     <string>Custom scan arc specification.</string>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -1174,6 +1192,9 @@
                    </item>
                    <item row="0" column="1">
                     <widget class="QComboBox" name="comboDataSequence">
+                     <property name="toolTip">
+                      <string>Selects the order in which the projections were acquired. Sequence is the typical CT scan, while golden ratio is a special acquisition case.</string>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true"/>
                      </property>
@@ -1205,7 +1226,7 @@
                       </sizepolicy>
                      </property>
                      <property name="toolTip">
-                      <string extracomment="select direction of rotation "/>
+                      <string extracomment="select direction of rotation ">Turning direction of the CT scan.</string>
                      </property>
                      <item>
                       <property name="text">
@@ -1245,6 +1266,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Opens a wizard to estimate the position of acquisition axis.</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
@@ -1255,6 +1279,9 @@
              </item>
              <item row="1" column="5">
               <widget class="QCheckBox" name="check_stitchprojections">
+               <property name="toolTip">
+                <string>Stitch projections in the center if the data was acquired with translated center of rotation.</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">font: 13pt;</string>
                </property>
@@ -1405,6 +1432,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkCBCT">
+            <property name="toolTip">
+             <string>Activate fields to specify cone beam geometry.</string>
+            </property>
             <property name="text">
              <string>Data is acquired with cone beam geometry</string>
             </property>
@@ -1430,6 +1460,9 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="dspinSOD">
+                 <property name="toolTip">
+                  <string>Cone beam reconstruction needs the distances from source to sample as part of the acquisiton geometry.</string>
+                 </property>
                  <property name="maximum">
                   <double>9999.989999999999782</double>
                  </property>
@@ -1447,6 +1480,9 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="dspinSDD">
+                 <property name="toolTip">
+                  <string>Cone beam reconstruction needs the distances from source to detector distance as part of the acquisiton geometry.</string>
+                 </property>
                  <property name="maximum">
                   <double>9999.989999999999782</double>
                  </property>
@@ -1561,6 +1597,9 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tabProcSettings">
+         <property name="toolTip">
+          <string>Configure the processing chain and select backprojector.</string>
+         </property>
          <attribute name="title">
           <string>Processing configuration</string>
          </attribute>
@@ -1629,6 +1668,9 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tabMatrix">
+         <property name="toolTip">
+          <string>Finalize results and save reconstructed data.</string>
+         </property>
          <attribute name="title">
           <string>Results</string>
          </attribute>
@@ -1639,6 +1681,148 @@
              <string>Matrix settings</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <layout class="QHBoxLayout" name="layoutMatrixROI">
+               <item>
+                <widget class="QGroupBox" name="groupBox_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>160</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>Rotate slice</string>
+                 </property>
+                 <widget class="QDial" name="dialRotateRecon">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>71</width>
+                    <height>71</height>
+                   </rect>
+                  </property>
+                  <property name="minimum">
+                   <number>0</number>
+                  </property>
+                  <property name="maximum">
+                   <number>360</number>
+                  </property>
+                  <property name="wrapping">
+                   <bool>true</bool>
+                  </property>
+                  <property name="notchesVisible">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                 <widget class="QDoubleSpinBox" name="dspinRotateRecon">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>100</y>
+                    <width>82</width>
+                    <height>24</height>
+                   </rect>
+                  </property>
+                  <property name="wrapping">
+                   <bool>true</bool>
+                  </property>
+                  <property name="minimum">
+                   <double>-360.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>360.000000000000000</double>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="label_66">
+                  <property name="geometry">
+                   <rect>
+                    <x>100</x>
+                    <y>100</y>
+                    <width>50</width>
+                    <height>20</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>degrees</string>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_16">
+                 <item>
+                  <widget class="QCheckBox" name="checkUseMatrixROI">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Crop slice</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QtAddons::uxROIWidget" name="widgetMatrixROI" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>165</width>
+                   <height>120</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupHistogram">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Gray levels</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
+             </item>
              <item>
               <layout class="QHBoxLayout" name="layoutGraylevels">
                <item>
@@ -1707,140 +1891,13 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13">
-               <item>
-                <widget class="QLabel" name="label_59">
-                 <property name="text">
-                  <string>Rotate matrix</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="dspinRotateRecon">
-                 <property name="minimum">
-                  <double>-360.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>360.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_66">
-                 <property name="text">
-                  <string>degrees</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="layoutMatrixROI">
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_16">
-                 <item>
-                  <widget class="QCheckBox" name="checkUseMatrixROI">
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>Reconstruct ROI</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="verticalSpacer_9">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QtAddons::uxROIWidget" name="widgetMatrixROI" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>165</width>
-                   <height>120</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_6">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
+              <widget class="QLabel" name="labelMatrixEntropy">
+               <property name="text">
+                <string>Entropy N/A</string>
+               </property>
+              </widget>
              </item>
             </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupHistogram">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Histogram</string>
-            </property>
-            <widget class="QLabel" name="labelMatrixEntropy">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>270</y>
-               <width>121</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Entropy N/A</string>
-             </property>
-            </widget>
-            <widget class="QtAddons::Plotter" name="plotHistogram" native="true">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>30</y>
-               <width>681</width>
-               <height>151</height>
-              </rect>
-             </property>
-            </widget>
            </widget>
           </item>
           <item>

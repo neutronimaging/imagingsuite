@@ -148,9 +148,6 @@ void MuhRecMainWindow::SetupCallBacks()
 
     connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
 
-    // Matrix roi size
-    connect(ui->checkUseMatrixROI,SIGNAL(stateChanged(int)),this,SLOT(UseMatrixROI(int)));
-
     // Graylevels
     connect(ui->dspinGrayLow,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
     connect(ui->dspinGrayHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
@@ -1304,14 +1301,14 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinFirstDark->setValue(static_cast<int>(m_Config.ProjectionInfo.nDCFirstIndex));
     ui->spinDarkCount->setValue(static_cast<int>(m_Config.ProjectionInfo.nDCCount));
 
-    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi);
+    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi,true);
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
     qDebug("UpdateDialog");
-    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi);
+    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
     on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
                                         m_Config.ProjectionInfo.projection_roi[1],
@@ -1373,7 +1370,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinGrayLow->setValue(m_Config.MatrixInfo.fGrayInterval[0]);
     ui->dspinGrayHigh->setValue(m_Config.MatrixInfo.fGrayInterval[1]);
 
-    ui->widgetMatrixROI->setROI(m_Config.MatrixInfo.roi);
+    ui->widgetMatrixROI->setROI(m_Config.MatrixInfo.roi,true);
     ui->checkUseMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
     on_checkUseMatrixROI_toggled(m_Config.MatrixInfo.bUseROI);
 
@@ -2322,4 +2319,14 @@ void MuhRecMainWindow::on_button_FindCenter_clicked()
 void MuhRecMainWindow::on_checkUseMatrixROI_toggled(bool checked)
 {
     ui->widgetMatrixROI->setVisible(checked);
+}
+
+void MuhRecMainWindow::on_dspinRotateRecon_valueChanged(double arg1)
+{
+
+}
+
+void MuhRecMainWindow::on_dialRotateRecon_sliderMoved(int position)
+{
+
 }
