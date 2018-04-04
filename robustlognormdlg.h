@@ -30,44 +30,28 @@ public:
 
 private slots:
     void on_button_OBBBpath_clicked();
-
     void on_buttonPreviewOBBB_clicked();
-
     void on_button_BBroi_clicked();
-
     void on_spinx0BBroi_valueChanged(int arg1);
     void on_spiny0BBroi_valueChanged(int arg1);
     void on_spinx1BBroi_valueChanged(int arg1);
     void on_spiny1BBroi_valueChanged(int arg1);
-
     void on_button_sampleBBpath_clicked();
-
     void on_buttonPreviewsampleBB_clicked();
-
     void on_button_BBdose_clicked();
-
     void on_spinx0BBdose_valueChanged(int arg1);
     void on_spinx1BBdose_valueChanged(int arg1);
     void on_spiny0BBdose_valueChanged(int arg1);
     void on_spiny1BBdose_valueChanged(int arg1);
-
-
-
     void on_errorButton_clicked();
     void on_combo_BBoptions_activated(const QString &arg1);
     void on_button_OB_BB_ext_clicked();
     void on_button_BBexternal_path_clicked();
-
-
     void on_combo_InterpolationMethod_activated(const QString &arg1);
     void on_checkBox_thresh_clicked(bool checked);
-
     void on_spinThresh_valueChanged(double arg1);
-
     void on_checkBox_thresh_stateChanged(int arg1);
-
     void on_pushButton_filenameOBBB_clicked();
-
     void on_pushButton_filenameBB_clicked();
 
 private:
@@ -109,11 +93,11 @@ private:
 
     float tau; /// mean pattern transmission, default 0.97
     float thresh; /// manual threshold
-    bool bPBvariante;
+    bool bPBvariante; /// boolean value on the use of PB formula (default now)
     bool bUseNormROI; /// boolean value on the use of the norm roi
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
-    bool bUseManualThresh; /// boolear value on the use of a manual threshold instead of Otsu
+    bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
