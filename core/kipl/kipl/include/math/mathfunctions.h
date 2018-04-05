@@ -51,6 +51,9 @@ T SigmoidWeights(T val,T a, T b, const float level, const float width);
 template <typename T>
 double Entropy(T const * const data, const size_t N);
 
+/// \brief Determines the sign of the argument
+/// \param x The number to define the sign for.
+/// \returns -1 for negative, 0 for zero, +1 for positive.
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
@@ -59,6 +62,9 @@ template <typename T> int sign(T val) {
 kipl::base::TImage<float,2> Unwrap(kipl::base::TImage<float,2> img);
 
 int pow(float *data, size_t N, float exponent);
+
+
+
 }}
 
 #include "core/mathfunctions.hpp"
