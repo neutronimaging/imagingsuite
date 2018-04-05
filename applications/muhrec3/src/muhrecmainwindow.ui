@@ -41,7 +41,7 @@
          <string/>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <property name="toolTip">
@@ -1353,7 +1353,7 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Activates axis tilt</string>
+                <string>Activates axis tilt correction.</string>
                </property>
                <property name="styleSheet">
                 <string notr="true"/>
@@ -1523,6 +1523,9 @@
                  </item>
                  <item>
                   <widget class="QDoubleSpinBox" name="dspinPiercPointX">
+                   <property name="toolTip">
+                    <string>x-coordinate of the piercing point. </string>
+                   </property>
                    <property name="decimals">
                     <number>2</number>
                    </property>
@@ -1546,6 +1549,9 @@
                  </item>
                  <item>
                   <widget class="QDoubleSpinBox" name="dspinPiercPointY">
+                   <property name="toolTip">
+                    <string>y-coordinate of the piercing point. </string>
+                   </property>
                    <property name="minimum">
                     <double>-1000.000000000000000</double>
                    </property>
@@ -1571,6 +1577,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="buttonGetPP">
+                 <property name="toolTip">
+                  <string>Estimate the position of the piercing point using the open beam image.</string>
+                 </property>
                  <property name="text">
                   <string>Get piercing point</string>
                  </property>
@@ -1630,11 +1639,17 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Defines the chain of preprocessing operation on the projection data.</string>
+             </property>
             </widget>
            </widget>
           </item>
           <item>
            <widget class="QGroupBox" name="groupBackProjConfig">
+            <property name="toolTip">
+             <string>Configures the back-projection module.</string>
+            </property>
             <property name="title">
              <string>Back-projector configuration</string>
             </property>
@@ -1688,8 +1703,11 @@
                  <property name="minimumSize">
                   <size>
                    <width>160</width>
-                   <height>0</height>
+                   <height>150</height>
                   </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Rotates the reconstructed slice.</string>
                  </property>
                  <property name="title">
                   <string>Rotate slice</string>
@@ -1697,8 +1715,8 @@
                  <widget class="QDial" name="dialRotateRecon">
                   <property name="geometry">
                    <rect>
-                    <x>10</x>
-                    <y>20</y>
+                    <x>40</x>
+                    <y>30</y>
                     <width>71</width>
                     <height>71</height>
                    </rect>
@@ -1707,10 +1725,13 @@
                    <number>0</number>
                   </property>
                   <property name="maximum">
-                   <number>360</number>
+                   <number>3600</number>
                   </property>
                   <property name="wrapping">
                    <bool>true</bool>
+                  </property>
+                  <property name="notchTarget">
+                   <double>30.000000000000000</double>
                   </property>
                   <property name="notchesVisible">
                    <bool>true</bool>
@@ -1720,7 +1741,7 @@
                   <property name="geometry">
                    <rect>
                     <x>10</x>
-                    <y>100</y>
+                    <y>110</y>
                     <width>82</width>
                     <height>24</height>
                    </rect>
@@ -1739,7 +1760,7 @@
                   <property name="geometry">
                    <rect>
                     <x>100</x>
-                    <y>100</y>
+                    <y>110</y>
                     <width>50</width>
                     <height>20</height>
                    </rect>
@@ -1759,6 +1780,9 @@
                      <width>150</width>
                      <height>0</height>
                     </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>Activates cropping of the reconstructed slice.</string>
                    </property>
                    <property name="text">
                     <string>Crop slice</string>
@@ -1787,6 +1811,9 @@
                    <width>165</width>
                    <height>120</height>
                   </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Cropping region for the reconstructed slice.</string>
                  </property>
                 </widget>
                </item>
@@ -1833,16 +1860,6 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="checkUseAutograyLevels">
-                 <property name="text">
-                  <string>Auto levels</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QLabel" name="label_41">
                  <property name="text">
                   <string>Low</string>
@@ -1854,6 +1871,9 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="dspinGrayLow">
+                 <property name="toolTip">
+                  <string>Lowest gray level of the reconstructed data</string>
+                 </property>
                  <property name="minimum">
                   <double>-1000.000000000000000</double>
                  </property>
@@ -1877,6 +1897,9 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="dspinGrayHigh">
+                 <property name="toolTip">
+                  <string>Highest gray level of the reconstructed data</string>
+                 </property>
                  <property name="minimum">
                   <double>-1000.000000000000000</double>
                  </property>
@@ -1887,6 +1910,39 @@
                   <double>0.100000000000000</double>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_levels95p">
+                 <property name="toolTip">
+                  <string>Preset for the 95% gray level interval.</string>
+                 </property>
+                 <property name="text">
+                  <string>95%</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_levels99p">
+                 <property name="toolTip">
+                  <string>Preset for the 99% gray level interval.</string>
+                 </property>
+                 <property name="text">
+                  <string>99%</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
@@ -1917,7 +1973,11 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="editDestPath"/>
+              <widget class="QLineEdit" name="editDestPath">
+               <property name="toolTip">
+                <string>Path to the destination folder of the reconstructed slices.</string>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_49">
@@ -1930,10 +1990,17 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="editSliceMask"/>
+              <widget class="QLineEdit" name="editSliceMask">
+               <property name="toolTip">
+                <string>File mask for the reconstructed slices</string>
+               </property>
+              </widget>
              </item>
              <item row="1" column="2">
               <widget class="QComboBox" name="comboDestFileType">
+               <property name="toolTip">
+                <string>Selects the file format of the reconstructed slices.</string>
+               </property>
                <property name="currentIndex">
                 <number>0</number>
                </property>
@@ -1964,6 +2031,9 @@
              </item>
              <item row="2" column="2">
               <widget class="QPushButton" name="buttonSaveMatrix">
+               <property name="toolTip">
+                <string>Saves the current stack of reconstructed slices.</string>
+               </property>
                <property name="text">
                 <string>Save matrix</string>
                </property>
@@ -1971,6 +2041,9 @@
              </item>
              <item row="0" column="2">
               <widget class="QPushButton" name="buttonBrowseDestinationPath">
+               <property name="toolTip">
+                <string>Browse for destination path</string>
+               </property>
                <property name="text">
                 <string>Browse</string>
                </property>
@@ -2392,6 +2465,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::Plotter</class>

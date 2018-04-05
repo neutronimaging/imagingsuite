@@ -52,10 +52,8 @@ protected slots:
     void StoreGeometrySetting();
     void ClearGeometrySettings();
     void ViewGeometryList();
-    void GrayLevelsChanged(double x);
     void GetMatrixROI();
     void MatrixROIChanged(int x);
-    void SaveMatrix();
 
     void PreviewProjection();
 
@@ -181,6 +179,18 @@ private slots:
 
     void on_dialRotateRecon_sliderMoved(int position);
 
+    void on_buttonSaveMatrix_clicked();
+
+    void on_dspinGrayLow_valueChanged(double low);
+
+    void on_dspinGrayHigh_valueChanged(double arg1);
+
+    void on_sliceViewer_levelsChanged(float low, float high);
+
+    void on_pushButton_levels95p_clicked();
+
+    void on_pushButton_levels99p_clicked();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
@@ -209,6 +219,8 @@ private:
     size_t m_nSliceSizeX;
     size_t m_nSliceSizeY;
     int m_oldROI[4];
+    int m_oldRotateDial;
+    double m_oldRotateSpin;
 
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_StoredReconList;
     bool m_bCurrentReconStored;

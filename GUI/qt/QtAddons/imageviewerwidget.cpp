@@ -42,6 +42,8 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));
+
+        connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
 }
 
 ImageViewerWidget::~ImageViewerWidget()
@@ -98,6 +100,11 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
         // nothing was chosen
         logger(kipl::logging::Logger::LogMessage,"Menu was canceled");
     }
+}
+
+void ImageViewerWidget::on_levelsChanged(float lo, float hi)
+{
+    qDebug()<<"levels signal";
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
@@ -495,6 +502,8 @@ void ImageViewerWidget::set_levels(const float level_low, const float level_high
     if (updatelinked) {
         UpdateLinkedViewers();
     }
+    qDebug()<<"Viewer::setLevels";
+    emit levelsChanged(level_low,level_high);
 }
 
 void ImageViewerWidget::get_levels(float *level_low, float *level_high)

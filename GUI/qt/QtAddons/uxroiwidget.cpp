@@ -21,8 +21,6 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     ui->setupUi(this);
     setROI(0,0,100,100);
     setROIColor("darkgray");
-
- //   connect(this,&QtAddons::uxROIWidget::valueChanged,this,&uxROIWidget::on_valueChanged);
 }
 
 uxROIWidget::~uxROIWidget()
@@ -100,10 +98,7 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
     ui->spinY0->setValue(miny);
     ui->spinY1->setValue(maxy);
 
-
-   // qDebug("uxROIWidget::setROI");
-    qDebug()<<QString("uxROIWidget::setROI")<<minx<<", "<<miny<<", "<<maxx<<", "<<maxy;
-  //  emit valueChanged(x0,y0,x1,y1);
+//    qDebug()<<QString("uxROIWidget::setROI")<<minx<<", "<<miny<<", "<<maxx<<", "<<maxy;
     emit valueChanged(minx,miny,maxx,maxy);
     updateViewer();
 }
@@ -225,7 +220,7 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinX1_valueChanged");
+ //   qDebug("uxROIWidget::on_spinX1_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -234,7 +229,7 @@ void uxROIWidget::on_buttonGetROI_clicked()
     if (hViewer != nullptr) {
         updateBounds();
         QRect rect=hViewer->get_marked_roi();
-        qDebug("%d, %d %d, %d",rect.x(),rect.y(),rect.width(),rect.height());
+   //     qDebug("%d, %d %d, %d",rect.x(),rect.y(),rect.width(),rect.height());
         setROI(rect);
     }
     emit getROIClicked();

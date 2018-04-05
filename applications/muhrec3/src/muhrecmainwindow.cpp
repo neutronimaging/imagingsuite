@@ -57,7 +57,9 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
-    m_bCurrentReconStored(true)
+    m_bCurrentReconStored(true),
+    m_oldRotateDial(0),
+    m_oldRotateSpin(0.0)
 {
     std::ostringstream msg;
     ui->setupUi(this);
@@ -142,25 +144,6 @@ MuhRecMainWindow::~MuhRecMainWindow()
 
 void MuhRecMainWindow::SetupCallBacks()
 {
-
-
-    // Connecting buttons
-
-    connect(ui->buttonSaveMatrix, SIGNAL(clicked()), this, SLOT(SaveMatrix()));
-
-    // Graylevels
-    connect(ui->dspinGrayLow,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
-    connect(ui->dspinGrayHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
-
-    // Display projections
-    //   connect(ui->sliderProjections,SIGNAL(sliderMoved(int)),this,SLOT(PreviewProjection(int)));
-    //  connect(ui->buttonPreview,SIGNAL(clicked()),this,SLOT(PreviewProjection()));
-//    connect(ui->spinFirstProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
-//    connect(ui->spinLastProjection,SIGNAL(valueChanged(int)),this,SLOT(ProjectionIndexChanged(int)));
-//    connect(ui->comboFlipProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
-//    connect(ui->comboRotateProjection,SIGNAL(currentIndexChanged(int)),this,SLOT(PreviewProjection(int)));
-
-
     // Menus
     connect(ui->actionNew,SIGNAL(triggered()),this,SLOT(MenuFileNew()));
     connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(MenuFileOpen()));
@@ -173,6 +156,8 @@ void MuhRecMainWindow::SetupCallBacks()
     connect(ui->actionStore_geometry,SIGNAL(triggered()),this,SLOT(StoreGeometrySetting()));
     connect(ui->actionView_geometry_list,SIGNAL(triggered()),this,SLOT(ViewGeometryList()));
     connect(ui->actionClear_list,SIGNAL(triggered()),this,SLOT(ClearGeometrySettings()));
+
+    connect(ui->sliceViewer,&QtAddons::ImageViewerWidget::levelsChanged,this,&MuhRecMainWindow::on_sliceViewer_levelsChanged);
 
     ui->widgetDoseROI->registerViewer(ui->projectionViewer);
     ui->widgetDoseROI->setROIColor("green");
@@ -571,16 +556,6 @@ void MuhRecMainWindow::ViewGeometryList()
 //            }
         }
     }
-}
-
-void MuhRecMainWindow::GrayLevelsChanged(double UNUSED(x))
-{
-    double low=ui->dspinGrayLow->value();
-    double high=ui->dspinGrayHigh->value();
-
-    ui->sliceViewer->set_levels(low,high);
-    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
-    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 }
 
 void MuhRecMainWindow::GetMatrixROI()
@@ -1034,23 +1009,12 @@ void MuhRecMainWindow::ExecuteReconstruction()
                 if (m_Config.MatrixInfo.bAutomaticSerialize==false) {
                     PreviewProjection(); // Display the projection if it was not done already
                     ui->tabMainControl->setCurrentIndex(3);
-                    if (ui->checkUseAutograyLevels->checkState()) {
-                        const int nBins=256;
-                        float x[nBins];
-                        size_t y[nBins];
-                        m_pEngine->GetHistogram(x,y,nBins);
-                        ui->plotHistogram->setCurveData(0,x,y,nBins);
 
-                        size_t lowlevel=0;
-                        size_t highlevel=0;
-                        kipl::base::FindLimits(y, nBins, 99.0, &lowlevel, &highlevel);
-                        ui->dspinGrayLow->setValue(x[lowlevel]);
-                        ui->dspinGrayHigh->setValue(x[highlevel]);
-
-                        msg.str("");
-                        msg<<kipl::math::Entropy(y+1,nBins-2);
-                        ui->labelMatrixEntropy->setText(QString::fromStdString(msg.str()));
-                    }
+                    const int nBins=256;
+                    float x[nBins];
+                    size_t y[nBins];
+                    m_pEngine->GetHistogram(x,y,nBins);
+                    ui->plotHistogram->setCurveData(0,x,y,nBins);
 
                     m_pEngine->GetMatrixDims(m_Config.MatrixInfo.nDims);
                     msg.str("");
@@ -1134,79 +1098,6 @@ void MuhRecMainWindow::ExecuteReconstruction()
     }
 }
 
-void MuhRecMainWindow::SaveMatrix()
-{
-    UpdateConfig();
-    std::ostringstream msg;
-    if (m_pEngine!=nullptr) {
-        try {
-            m_pEngine->Serialize(&m_Config.MatrixInfo);
-
-            std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
-            kipl::strings::filenames::CheckPathSlashes(fname,false);
-            std::ofstream configfile(fname.c_str());
-            configfile<<m_Config.WriteXML();
-            configfile.close();
-
-//			int repdims[2]={595,842};
-//			ReconReport report(repdims);
-
-//			const int nBins=256;
-//			float axis[nBins];
-//			size_t hist[nBins];
-//			engine->GetHistogram(axis,hist,nBins);
-//			kipl::base::TImage<float,2> xy;
-//			size_t dims[3];
-//			engine->GetMatrixDims(dims);
-//			xy=engine->GetSlice(dims[2]/2);
-//			ostringstream reportname;
-//			reportname<<config.MatrixInfo.sDestinationPath;
-//			if (!config_filename.empty()) {
-//				std::string path;
-//				std::string name;
-//				std::vector<std::string> extensions;
-//				kipl::strings::filenames::StripFileName(config_filename,
-//					path,name,extensions);
-//				reportname<<name<<".pdf";
-//			}
-//			else
-//				reportname<<"reconstruction_report.pdf";
-
-//			report.CreateReport(reportname.str(),&config,&xy,&xy,&xy,hist,axis,nBins);
-        }
-        catch (ReconException &e) {
-            msg<<"A recon exception occurred "<<e.what();
-        }
-        catch (kipl::base::KiplException &e) {
-            msg<<"A kipl exception occurred "<<e.what();
-        }
-        catch (std::exception &e) {
-            msg<<"A STL exception occurred "<<e.what();
-        }
-        catch (...) {
-            msg<<"An unknown exception occurred ";
-        }
-        if (!msg.str().empty()) {
-            QMessageBox msgdlg;
-
-            msgdlg.setWindowTitle("Error");
-            msgdlg.setText("Failed to save the reconstructed slices");
-            msgdlg.setDetailedText(QString::fromStdString(msg.str()));
-            msgdlg.exec();
-
-            logger(kipl::logging::Logger::LogError,msg.str());
-        }
-    }
-    else {
-        logger(kipl::logging::Logger::LogWarning,"There is no matrix to save yet.");
-        QMessageBox msgdlg;
-
-        msgdlg.setWindowTitle("Error");
-        msgdlg.setText("There is no matrix to save yet.");
-
-        msgdlg.exec();
-    }
-}
 
 void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
 {
@@ -1307,7 +1198,7 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
-    qDebug("UpdateDialog");
+ //   qDebug("UpdateDialog");
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
     on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
@@ -1403,10 +1294,14 @@ void MuhRecMainWindow::UpdateDialog()
 
     if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
         ui->checkCBCT->setChecked(true);
+        ui->groupBox_ConeBeamGeometry->setVisible(true);
+        ui->widgetMatrixROI->setVisible(true);
 //        ComputeVolumeSizeSpacing();
     }
     else{
         ui->checkCBCT->setChecked(false);
+        ui->groupBox_ConeBeamGeometry->setVisible(false);
+        ui->widgetMatrixROI->setVisible(false);
     }
 
     CenterOfRotationChanged();
@@ -2103,7 +1998,7 @@ void MuhRecMainWindow::on_radioButton_customTurn_clicked()
 
 void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1)
 {
-    qDebug()<<x0<<", "<<y0<<", "<<x1<<", "<<y1;
+  //  qDebug()<<x0<<", "<<y0<<", "<<x1<<", "<<y1;
     ui->spinSlicesFirst->setMinimum(y0);
     ui->spinSlicesLast->setMaximum(y1);
 
@@ -2323,10 +2218,178 @@ void MuhRecMainWindow::on_checkUseMatrixROI_toggled(bool checked)
 
 void MuhRecMainWindow::on_dspinRotateRecon_valueChanged(double arg1)
 {
+    QSignalBlocker blockDial(ui->dialRotateRecon);
+
+    if (0<=arg1) {
+        ui->dialRotateRecon->setValue(int(arg1*10.0));
+    }
+    else {
+        ui->dialRotateRecon->setValue(int((360+arg1)*10.0));
+    }
 
 }
 
 void MuhRecMainWindow::on_dialRotateRecon_sliderMoved(int position)
 {
+    QSignalBlocker blockSpin(ui->dspinRotateRecon);
 
+    int diff=(position-m_oldRotateDial);
+
+    if (0<=ui->dspinRotateRecon->value()) {
+        if (abs(diff)<1800)
+            ui->dspinRotateRecon->setValue(double(position)/10.0);
+        else {
+               ui->dspinRotateRecon->setValue(360-kipl::math::sign(diff)*double(position)/10.0);
+        }
+    }
+    else {
+        if (abs(diff)<1800)
+            ui->dspinRotateRecon->setValue(360.0-double(position)/10.0);
+        else {
+            ui->dspinRotateRecon->setValue(360-kipl::math::sign(diff)*double(position)/10.0);
+        }
+    }
+}
+
+
+void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
+{
+    UpdateConfig();
+    std::ostringstream msg;
+    if (m_pEngine!=nullptr) {
+        try {
+            m_pEngine->Serialize(&m_Config.MatrixInfo);
+
+            std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
+            kipl::strings::filenames::CheckPathSlashes(fname,false);
+            std::ofstream configfile(fname.c_str());
+            configfile<<m_Config.WriteXML();
+            configfile.close();
+
+//			int repdims[2]={595,842};
+//			ReconReport report(repdims);
+
+//			const int nBins=256;
+//			float axis[nBins];
+//			size_t hist[nBins];
+//			engine->GetHistogram(axis,hist,nBins);
+//			kipl::base::TImage<float,2> xy;
+//			size_t dims[3];
+//			engine->GetMatrixDims(dims);
+//			xy=engine->GetSlice(dims[2]/2);
+//			ostringstream reportname;
+//			reportname<<config.MatrixInfo.sDestinationPath;
+//			if (!config_filename.empty()) {
+//				std::string path;
+//				std::string name;
+//				std::vector<std::string> extensions;
+//				kipl::strings::filenames::StripFileName(config_filename,
+//					path,name,extensions);
+//				reportname<<name<<".pdf";
+//			}
+//			else
+//				reportname<<"reconstruction_report.pdf";
+
+//			report.CreateReport(reportname.str(),&config,&xy,&xy,&xy,hist,axis,nBins);
+        }
+        catch (ReconException &e) {
+            msg<<"A recon exception occurred "<<e.what();
+        }
+        catch (kipl::base::KiplException &e) {
+            msg<<"A kipl exception occurred "<<e.what();
+        }
+        catch (std::exception &e) {
+            msg<<"A STL exception occurred "<<e.what();
+        }
+        catch (...) {
+            msg<<"An unknown exception occurred ";
+        }
+        if (!msg.str().empty()) {
+            QMessageBox msgdlg;
+
+            msgdlg.setWindowTitle("Error");
+            msgdlg.setText("Failed to save the reconstructed slices");
+            msgdlg.setDetailedText(QString::fromStdString(msg.str()));
+            msgdlg.exec();
+
+            logger(kipl::logging::Logger::LogError,msg.str());
+        }
+    }
+    else {
+        logger(kipl::logging::Logger::LogWarning,"There is no matrix to save yet.");
+        QMessageBox msgdlg;
+
+        msgdlg.setWindowTitle("Error");
+        msgdlg.setText("There is no matrix to save yet.");
+
+        msgdlg.exec();
+    }
+}
+
+void MuhRecMainWindow::on_dspinGrayLow_valueChanged(double low)
+{
+    QSignalBlocker blockViewer(ui->sliceViewer);
+    double high=ui->dspinGrayHigh->value();
+
+    ui->sliceViewer->set_levels(low,high);
+    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+}
+
+void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
+{
+    QSignalBlocker blockViewer(ui->sliceViewer);
+    double low=ui->dspinGrayLow->value();
+
+    ui->sliceViewer->set_levels(low,high);
+    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
+
+}
+
+void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
+{
+    qDebug()<<"Main::levelsChanged";
+    QSignalBlocker blockLow(ui->dspinGrayLow);
+    QSignalBlocker blockHigh(ui->dspinGrayHigh);
+
+    ui->dspinGrayLow->setValue(low);
+    ui->dspinGrayHigh->setValue(high);
+
+    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
+}
+
+void MuhRecMainWindow::on_pushButton_levels95p_clicked()
+{
+    if (m_pEngine!=nullptr) {
+        const int nBins=256;
+        float x[nBins];
+        size_t y[nBins];
+        m_pEngine->GetHistogram(x,y,nBins);
+
+        size_t lowlevel=0;
+        size_t highlevel=0;
+        kipl::base::FindLimits(y, nBins, 95.0, &lowlevel, &highlevel);
+        ui->dspinGrayLow->setValue(x[lowlevel]);
+        ui->dspinGrayHigh->setValue(x[highlevel]);
+    }
+    else
+        logger(logger.LogMessage,"Level 95\%: Missing engine");
+}
+
+void MuhRecMainWindow::on_pushButton_levels99p_clicked()
+{
+    if (m_pEngine!=nullptr) {
+        const int nBins=256;
+        float x[nBins];
+        size_t y[nBins];
+        m_pEngine->GetHistogram(x,y,nBins);
+
+        size_t lowlevel=0;
+        size_t highlevel=0;
+        kipl::base::FindLimits(y, nBins, 99.0, &lowlevel, &highlevel);
+        ui->dspinGrayLow->setValue(x[lowlevel]);
+        ui->dspinGrayHigh->setValue(x[highlevel]);
+    }
+    else
+        logger(logger.LogMessage,"Level 99\%: Missing engine");
 }

@@ -11,6 +11,7 @@
 #include <filters/filter.h>
 #include <drawing/drawing.h>
 #include <math/statistics.h>
+#include <math/mathfunctions.h>
 
 #include <io/io_tiff.h>
 
@@ -31,6 +32,7 @@ private Q_SLOTS:
     void testNonLinFit_fitfunctions();
     void testNonLinFit_fitter();
     void testStatistics();
+    void testSignFunction();
 };
 
 TKiplMathTest::TKiplMathTest()
@@ -168,6 +170,44 @@ void TKiplMathTest::testStatistics()
 
 }
 
+void TKiplMathTest::testSignFunction()
+{
+    std::ostringstream msg;
+    for (int i=-10; i<10; ++i) {
+        msg.str("");
+        msg<<"Sign for "<<i<<" is "<<kipl::math::sign(i);
+        if (i<0)
+            QVERIFY2(kipl::math::sign(i)==int(-1),msg.str().c_str());
+        else {
+        if (i==0)
+            QVERIFY2(kipl::math::sign(i)==0,msg.str().c_str());
+        else {
+            if (i>0)
+                QVERIFY2(kipl::math::sign(i)==1,msg.str().c_str());
+            }
+        }
+    }
+
+    for (float f=-10.0f; f<10.0f; ++f) {
+        msg.str("");
+        msg<<"Sign for "<<f<<" is "<<kipl::math::sign(f);
+        if (f<0.0f)
+            QVERIFY2(kipl::math::sign(f)==-1,msg.str().c_str());
+        else {
+            if (f==0.0f)
+                QVERIFY2(kipl::math::sign(f)==0,msg.str().c_str());
+            else {
+                if (f>0.0f)
+                    QVERIFY2(kipl::math::sign(f)==1,msg.str().c_str());
+            }
+        }
+
+    }
+
+    QVERIFY2(kipl::math::sign(std::numeric_limits<float>::infinity())==1,"Plus inf");
+    QVERIFY2(kipl::math::sign(-std::numeric_limits<float>::infinity())==-1,"Minus inf");
+
+}
 
 QTEST_APPLESS_MAIN(TKiplMathTest)
 
