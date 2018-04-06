@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1285</width>
-    <height>917</height>
+    <width>1126</width>
+    <height>909</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
          <string/>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <property name="toolTip">
@@ -1722,10 +1722,10 @@
                    </rect>
                   </property>
                   <property name="minimum">
-                   <number>0</number>
+                   <number>-1800</number>
                   </property>
                   <property name="maximum">
-                   <number>3600</number>
+                   <number>1800</number>
                   </property>
                   <property name="wrapping">
                    <bool>true</bool>
@@ -1750,10 +1750,10 @@
                    <bool>true</bool>
                   </property>
                   <property name="minimum">
-                   <double>-360.000000000000000</double>
+                   <double>-180.000000000000000</double>
                   </property>
                   <property name="maximum">
-                   <double>360.000000000000000</double>
+                   <double>180.000000000000000</double>
                   </property>
                  </widget>
                  <widget class="QLabel" name="label_66">
@@ -1944,17 +1944,30 @@
                  </property>
                 </spacer>
                </item>
+               <item>
+                <widget class="QLabel" name="labelMatrixEntropy">
+                 <property name="text">
+                  <string>Entropy N/A</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
-             </item>
-             <item>
-              <widget class="QLabel" name="labelMatrixEntropy">
-               <property name="text">
-                <string>Entropy N/A</string>
-               </property>
-              </widget>
              </item>
             </layout>
            </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="QGroupBox" name="groupOutput">
@@ -2051,19 +2064,6 @@
              </item>
             </layout>
            </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>
@@ -2275,7 +2275,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1285</width>
+     <width>1126</width>
      <height>22</height>
     </rect>
    </property>

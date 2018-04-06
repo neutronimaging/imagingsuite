@@ -45,14 +45,9 @@ private:
     void ProjectionIndexChanged(int x);
 
 protected slots:
-    void BinningChanged();
-    void FlipChanged();
-    void RotateChanged();
-
     void StoreGeometrySetting();
     void ClearGeometrySettings();
     void ViewGeometryList();
-    void GetMatrixROI();
     void MatrixROIChanged(int x);
 
     void PreviewProjection();
@@ -190,6 +185,7 @@ private slots:
     void on_pushButton_levels95p_clicked();
 
     void on_pushButton_levels99p_clicked();
+
 
 private:
     // Data members

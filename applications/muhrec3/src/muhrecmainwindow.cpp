@@ -454,20 +454,6 @@ void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
     ui->spinSlicesLast->setMaximum(static_cast<int>(dims[1])-1);
 }
 
-void MuhRecMainWindow::BinningChanged()
-{
-
-}
-
-void MuhRecMainWindow::FlipChanged()
-{
-
-}
-
-void MuhRecMainWindow::RotateChanged()
-{
-
-}
 
 void MuhRecMainWindow::CenterOfRotationChanged()
 {
@@ -556,30 +542,6 @@ void MuhRecMainWindow::ViewGeometryList()
 //            }
         }
     }
-}
-
-void MuhRecMainWindow::GetMatrixROI()
-{
-    // todo Update the get roi call-back
-//    QRect rect=ui->sliceViewer->get_marked_roi();
-
-//    if (rect.width()*rect.height()!=0)
-//    {
-//        if (m_Config.MatrixInfo.bUseROI) {
-//            ui->spinMatrixROI0->setValue(rect.x()+m_Config.MatrixInfo.roi[0]);
-//            ui->spinMatrixROI1->setValue(rect.y()+m_Config.MatrixInfo.roi[1]);
-//            ui->spinMatrixROI2->setValue(rect.x()+rect.width()+m_Config.MatrixInfo.roi[0]);
-//            ui->spinMatrixROI3->setValue(rect.y()+rect.height()+m_Config.MatrixInfo.roi[1]);
-//        }
-//        else {
-//            ui->spinMatrixROI0->setValue(rect.x());
-//            ui->spinMatrixROI1->setValue(rect.y());
-//            ui->spinMatrixROI2->setValue(rect.x()+rect.width());
-//            ui->spinMatrixROI3->setValue(rect.y()+rect.height());
-//        }
-
-//        UpdateMatrixROI();
-//    }
 }
 
 void MuhRecMainWindow::MatrixROIChanged(int x)
@@ -2220,12 +2182,7 @@ void MuhRecMainWindow::on_dspinRotateRecon_valueChanged(double arg1)
 {
     QSignalBlocker blockDial(ui->dialRotateRecon);
 
-    if (0<=arg1) {
-        ui->dialRotateRecon->setValue(int(arg1*10.0));
-    }
-    else {
-        ui->dialRotateRecon->setValue(int((360+arg1)*10.0));
-    }
+    ui->dialRotateRecon->setValue(int(arg1*10.0));
 
 }
 
@@ -2233,22 +2190,8 @@ void MuhRecMainWindow::on_dialRotateRecon_sliderMoved(int position)
 {
     QSignalBlocker blockSpin(ui->dspinRotateRecon);
 
-    int diff=(position-m_oldRotateDial);
+    ui->dspinRotateRecon->setValue(double(position)/10.0);
 
-    if (0<=ui->dspinRotateRecon->value()) {
-        if (abs(diff)<1800)
-            ui->dspinRotateRecon->setValue(double(position)/10.0);
-        else {
-               ui->dspinRotateRecon->setValue(360-kipl::math::sign(diff)*double(position)/10.0);
-        }
-    }
-    else {
-        if (abs(diff)<1800)
-            ui->dspinRotateRecon->setValue(360.0-double(position)/10.0);
-        else {
-            ui->dspinRotateRecon->setValue(360-kipl::math::sign(diff)*double(position)/10.0);
-        }
-    }
 }
 
 
@@ -2393,3 +2336,4 @@ void MuhRecMainWindow::on_pushButton_levels99p_clicked()
     else
         logger(logger.LogMessage,"Level 99\%: Missing engine");
 }
+
