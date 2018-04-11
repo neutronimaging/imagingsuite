@@ -113,6 +113,7 @@ void FdkReconBase::SetROI(size_t *roi)
 //    std::cout << "CBCTroi in fdkReconBase: "  << roi[0] << " " << roi[1] << " " << roi[2] << " " << roi[3]<< std::endl;
     ProjCenter    = mConfig.ProjectionInfo.fCenter;
     SizeU         = roi[2]-roi[0];
+
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
         SizeV = roi[3];
     else
@@ -123,9 +124,16 @@ void FdkReconBase::SetROI(size_t *roi)
     mConfig.ProjectionInfo.roi[2]=roi[2];
     mConfig.ProjectionInfo.roi[3]=roi[3];
 
-    volume_size[0] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (x1-x0)
-    volume_size[1] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (y1-y0)
-    volume_size[2] = mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]; // (z1-z0)
+
+
+//    volume_size[0] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (x1-x0)
+//    volume_size[1] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (y1-y0)
+//    volume_size[2] = mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]; // (z1-z0)
+
+
+    volume_size[0] = mConfig.MatrixInfo.nDims[0];
+    volume_size[1] = mConfig.MatrixInfo.nDims[1];
+    volume_size[1] = mConfig.MatrixInfo.nDims[2];
 
 
         SizeProj      = SizeU*SizeV;
@@ -155,11 +163,17 @@ void FdkReconBase::SetROI(size_t *roi)
     cbct_volume.Resize(MatrixDims);
     cbct_volume=0.0f;
 
+//    volume.Resize(volume_size);
+//    volume=0.0f;
+
+//    cbct_volume.Resize(volume_size);
+//    cbct_volume=0.0f;
+
 
     stringstream msg;
     msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
     msg<<"Matrix dimensions "<<volume<<std::endl;
-    projections.Resize(projDims); // this is wrong, but I don-t use the projection buffer size anyway.. so maybe I don;t mind
+    projections.Resize(projDims); // this is wrong, but I don-t use the projection buffer size anyway.. so at this point I don't mind
     projections=0.0f;
     msg<<"Projection buffer dimensions "<<projections<<std::endl;
     logger(kipl::logging::Logger::LogVerbose,msg.str());

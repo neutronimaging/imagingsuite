@@ -174,6 +174,8 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setTitle("Matrix ROI");
     ui->widgetMatrixROI->setAutoHideROI(true);
     ui->widgetMatrixROI->updateViewer();
+
+    CenterOfRotationChanged();
 }
 
 
@@ -1220,6 +1222,7 @@ void MuhRecMainWindow::UpdateDialog()
     on_checkCorrectTilt_clicked(m_Config.ProjectionInfo.bCorrectTilt);
     on_dspinRotationCenter_valueChanged(m_Config.ProjectionInfo.fCenter);
 
+
     ui->check_stitchprojections->setChecked(m_Config.ProjectionInfo.bTranslate);
     ui->moduleconfigurator->SetModules(m_Config.modules);
     ui->dspinRotateRecon->setValue(m_Config.MatrixInfo.fRotation);
@@ -1261,13 +1264,11 @@ void MuhRecMainWindow::UpdateDialog()
     if(m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone) {
         ui->checkCBCT->setChecked(true);
         ui->groupBox_ConeBeamGeometry->setVisible(true);
-        ui->widgetMatrixROI->setVisible(true);
 //        ComputeVolumeSizeSpacing();
     }
     else{
         ui->checkCBCT->setChecked(false);
         ui->groupBox_ConeBeamGeometry->setVisible(false);
-        ui->widgetMatrixROI->setVisible(false);
     }
 
     CenterOfRotationChanged();
@@ -1348,14 +1349,13 @@ void MuhRecMainWindow::UpdateConfig()
     if (ui->checkCBCT->isChecked()) {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
-        //ui->TabGeometry->setTabEnabled(1,true);
-        ui->checkUseMatrixROI->hide();
+
+        ui->groupBox_ConeBeamGeometry->show();
         SlicesChanged(0);
     }
     else {
         m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
-        //ui->TabGeometry->setTabEnabled(1,false);
-        ui->checkUseMatrixROI->show();
+        ui->groupBox_ConeBeamGeometry->hide();
         SlicesChanged(0);
     }
 
@@ -1700,8 +1700,6 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         logger(logger.LogMessage,msg.str());
 
         ui->groupBox_ConeBeamGeometry->show();
-        ui->checkUseMatrixROI->hide();
-
         SlicesChanged(0);
 
         // add here the message
@@ -1713,8 +1711,8 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
 
     } else {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-        ui->checkUseMatrixROI->show();
         ui->groupBox_ConeBeamGeometry->hide();
+
         SlicesChanged(0);
     }
 }
@@ -1745,15 +1743,15 @@ void MuhRecMainWindow::on_checkCBCT_stateChanged(int arg1)
     (void) arg1;
     // probably this one is not needed
 
-        if (ui->checkCBCT->isChecked()) {
-            m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
-            ComputeVolumeSizeSpacing();
-            ui->groupBox_ConeBeamGeometry->show();
-        }
-        else {
-            m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
-            ui->groupBox_ConeBeamGeometry->hide();
-        }
+    if (ui->checkCBCT->isChecked()) {
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+        ComputeVolumeSizeSpacing();
+        ui->groupBox_ConeBeamGeometry->show();
+    }
+    else {
+        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
+        ui->groupBox_ConeBeamGeometry->hide();
+    }
 
 }
 
