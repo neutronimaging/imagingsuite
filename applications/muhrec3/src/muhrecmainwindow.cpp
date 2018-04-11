@@ -162,14 +162,18 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetDoseROI->registerViewer(ui->projectionViewer);
     ui->widgetDoseROI->setROIColor("green");
     ui->widgetDoseROI->setTitle("Dose ROI");
+    ui->widgetDoseROI->updateViewer();
 
     ui->widgetProjectionROI->registerViewer(ui->projectionViewer);
     ui->widgetProjectionROI->setROIColor("orange");
     ui->widgetProjectionROI->setTitle("Projection ROI");
+    ui->widgetProjectionROI->updateViewer();
 
     ui->widgetMatrixROI->registerViewer(ui->sliceViewer);
     ui->widgetMatrixROI->setROIColor("yellow");
     ui->widgetMatrixROI->setTitle("Matrix ROI");
+    ui->widgetMatrixROI->setAutoHideROI(true);
+    ui->widgetMatrixROI->updateViewer();
 }
 
 
