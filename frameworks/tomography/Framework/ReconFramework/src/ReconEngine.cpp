@@ -395,25 +395,6 @@ bool ReconEngine::TransferMatrix(size_t *dims)
             slice=m_BackProjector->GetModule()->GetSlice(i);
             float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
             memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-
-
-//        if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel ) {
-
-//                for (size_t i=0; i<(dims[3]-dims[1]); i++) {
-//                    slice=m_BackProjector->GetModule()->GetSlice(i);
-//                    float *pVol=m_Volume.GetLinePtr(0,dims[1]-m_FirstSlice+i);
-//                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-//                }
-//        }
-//        else if ( m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone ) {
-
-
-//             for (size_t i=0; i<m_Volume.Size(2); i++) {
-//                    slice=m_BackProjector->GetModule()->GetSlice(i);
-//                    float *pVol=m_Volume.GetLinePtr(0,i); // changed from parallel beam case
-//                    memcpy(pVol,slice.GetDataPtr(),slice.Size()*sizeof(float));
-//                }
-
         }
     }
     catch (ReconException &e) {
@@ -660,9 +641,6 @@ int ReconEngine::Run3DFull()
 
     size_t totalSlices=0;
 
-    switch (m_Config.ProjectionInfo.beamgeometry)
-    {
-    case ReconConfig::cProjections::BeamGeometry_Parallel:
         if (m_Config.MatrixInfo.bUseROI) {
             m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
             m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
@@ -681,31 +659,13 @@ int ReconEngine::Run3DFull()
         }
 
         totalSlices=m_Config.MatrixInfo.nDims[2];
-        break;
 
-    case ReconConfig::cProjections::BeamGeometry_Cone:
-            totalSlices = voi[5]-voi[4];
-//            std::cout << "totalslice: " << totalSlices << std::endl;
-            break;
-    }
 
 	msg.str("");
 	if (!m_Config.MatrixInfo.bAutomaticSerialize) {
 		try {
-            if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Cone) { // this is now most likely useless
-
-                size_t voi_dims[3] = {
-                    voi[1]-voi[0],
-                    voi[3]-voi[2],
-                    voi[5]-voi[4]
-                };
-                m_Volume.Resize(voi_dims);
-                m_Volume = 0.0f;
-            }
-            else {
                 m_Volume.Resize(m_Config.MatrixInfo.nDims);
                 m_Volume = 0.0f;
-            }
 		}
 		catch (kipl::base::KiplException &e) {
 			msg<<"Failed to allocate target matrix with dimensions "
@@ -721,14 +681,9 @@ int ReconEngine::Run3DFull()
     msg<<": ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-    if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
-    {
-        m_FirstSlice=roi[1];
-    }
-    else if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
-    {
-        m_FirstSlice=roi[3]-voi[5];
-    }
+
+     m_FirstSlice=roi[1];
+
 
 	kipl::profile::Timer totalTimer;
 
@@ -803,10 +758,10 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<float>(value2);
                }
 
-               if (CBCT_roi[1]-2>=0)
-                   CBCT_roi[1] -=2;
-               if (CBCT_roi[3]+2<=m_Config.ProjectionInfo.projection_roi[3])
-                   CBCT_roi[3] +=2;
+               if (CBCT_roi[1]-8>=0)
+                   CBCT_roi[1] -=8;
+               if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
+                   CBCT_roi[3] +=8;
 
 //                std::cout << CBCT_roi[1] << " " << CBCT_roi[3] << std::endl;
 
@@ -892,10 +847,10 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<float>(value2);
                }
 
-               if (CBCT_roi[1]-2>=0)
-                   CBCT_roi[1] -=2;
-               if (CBCT_roi[3]+2<=m_Config.ProjectionInfo.projection_roi[3])
-                   CBCT_roi[3] +=2;
+               if (CBCT_roi[1]-8>=0)
+                   CBCT_roi[1] -=8;
+               if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
+                   CBCT_roi[3] +=8;
 
 
                 msg.str("");

@@ -61,7 +61,7 @@
               <item>
                <widget class="QGroupBox" name="groupProjectionFiles">
                 <property name="styleSheet">
-                 <string notr="true"/>
+                 <string notr="true">QGroupBox#groupProjectionFiles { font-size:10}</string>
                 </property>
                 <property name="title">
                  <string>Projection images</string>

@@ -75,6 +75,13 @@ public:
     /// \param viewer A pointer to the viewer widget.
     void registerViewer(ImageViewerWidget *viewer);
 
+    /// \brief Toggles the auto hide ROI function
+    /// \param hide Auto hides the ROI in the viewer when the widget is hidden
+    void setAutoHideROI(bool hide);
+
+    /// \brief Updates the roi rectangle in the viewer
+    void updateViewer();
+
 public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.
     void on_viewerNewImageDims(const QRect &rect);
@@ -99,9 +106,6 @@ private slots:
     void on_valueChanged(int x0,int y0, int x1, int y1);
 
 private:
-    /// \brief Updates the roi rectangle in the viewer
-    void updateViewer();
-
     /// \brief Updates the max boundaries of the spin buttons to the size of the current image in the viewer
     void updateBounds();
 
@@ -109,6 +113,7 @@ private:
 
     ImageViewerWidget * hViewer;
     QString roiColor;
+    bool autoHideViewerROI;
 
 signals:
     void getROIClicked(void); //< signal emitted when the get ROI button is pressen, this can be used with other widgets.

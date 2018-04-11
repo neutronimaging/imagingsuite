@@ -16,7 +16,8 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     logger("uxROIWidget"),
     roiID(cnt++),
     ui(new Ui::uxROIWidget),
-    hViewer(nullptr)
+    hViewer(nullptr),
+    autoHideViewerROI(false)
 {
     ui->setupUi(this);
     setROI(0,0,100,100);
@@ -108,12 +109,14 @@ void uxROIWidget::updateViewer()
     if (hViewer!=nullptr) {
         if (isVisible()) {
             updateBounds();
+
             QRect rect;
             getROI(rect);
             hViewer->set_rectangle(rect,QColor(roiColor),roiID);
         }
         else {
-            hViewer->clear_rectangle(roiID);
+            if (autoHideViewerROI)
+                hViewer->clear_rectangle(roiID);
         }
 
     }
@@ -261,6 +264,12 @@ void uxROIWidget::registerViewer(ImageViewerWidget *viewer)
     if (hViewer!=nullptr) {
         connect(hViewer,&QtAddons::ImageViewerWidget::newImageDims,this,&uxROIWidget::on_viewerNewImageDims);
     }
+}
+
+void uxROIWidget::setAutoHideROI(bool hide)
+{
+    autoHideViewerROI=hide;
+    updateViewer();
 }
 
 void uxROIWidget::hideEvent(QHideEvent *event) {
