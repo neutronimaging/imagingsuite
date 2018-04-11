@@ -471,7 +471,7 @@ void MuhRecMainWindow::CenterOfRotationChanged()
     coords.push_back(QPointF(pos,m_PreviewImage.Size(1)));
 
 
-    if (ui->checkCorrectTilt->checkState()) {
+    if (ui->checkCorrectTilt->checkState()==Qt::Checked) {
         double pivot=ui->dspinTiltPivot->value();
         double tantilt=tan(ui->dspinTiltAngle->value()*3.1415/180.0);
         coords[0].setX(coords[0].x()-tantilt*pivot);
@@ -1963,18 +1963,23 @@ void MuhRecMainWindow::on_radioButton_customTurn_clicked()
 void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1)
 {
   //  qDebug()<<x0<<", "<<y0<<", "<<x1<<", "<<y1;
+    int oldFirstSlice=ui->spinSlicesFirst->value();
+    int oldLastSlice=ui->spinSlicesLast->value();
+    int sliceDiff=oldLastSlice-oldFirstSlice;
+
     ui->spinSlicesFirst->setMinimum(y0);
     ui->spinSlicesLast->setMaximum(y1);
 
-    if (ui->spinSlicesFirst->value()<y0) {
-        ui->spinSlicesFirst->setValue(y0);
-        on_spinSlicesFirst_valueChanged(y0);
+    if (oldLastSlice<y0) {
+        ui->spinSlicesLast->setValue(y0+sliceDiff);
     }
 
-    if (y1<ui->spinSlicesLast->value()) {
-        ui->spinSlicesLast->setValue(y1);
-        on_spinSlicesLast_valueChanged(y1);
+    on_spinSlicesFirst_valueChanged(y0);
+
+    if (y1<oldFirstSlice) {
+        ui->spinSlicesFirst->setValue(y1-sliceDiff);
     }
+    on_spinSlicesLast_valueChanged(y1);
 
     ui->dspinRotationCenter->setValue(ui->dspinRotationCenter->value()-(x0-m_oldROI[0]));
     CenterOfRotationChanged();
