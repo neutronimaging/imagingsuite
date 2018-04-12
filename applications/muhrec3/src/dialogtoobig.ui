@@ -34,10 +34,17 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_path"/>
+      <widget class="QLineEdit" name="lineEdit_path">
+       <property name="toolTip">
+        <string>Path to the destination folder for reconstructed data.</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="button_browse">
+       <property name="toolTip">
+        <string>Browse for the destination folder for the reconstructed data.</string>
+       </property>
        <property name="text">
         <string>Browse</string>
        </property>
@@ -55,7 +62,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_mask"/>
+      <widget class="QLineEdit" name="lineEdit_mask">
+       <property name="toolTip">
+        <string>File mask of the reconstructed slices.</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -63,6 +74,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QCheckBox" name="check_reconAll">
+       <property name="toolTip">
+        <string>Reconstruct all slices in the projection ROI if checked.</string>
+       </property>
        <property name="text">
         <string>Reconstruct all slices</string>
        </property>
@@ -96,6 +110,9 @@
      </item>
      <item>
       <widget class="QSpinBox" name="spin_firstSlice">
+       <property name="toolTip">
+        <string>Specifies the first slice to reconstruct</string>
+       </property>
        <property name="maximum">
         <number>9999</number>
        </property>
@@ -110,6 +127,9 @@
      </item>
      <item>
       <widget class="QSpinBox" name="spin_lastSlice">
+       <property name="toolTip">
+        <string>Specifies the last slice to reconstruct.</string>
+       </property>
        <property name="maximum">
         <number>9999</number>
        </property>

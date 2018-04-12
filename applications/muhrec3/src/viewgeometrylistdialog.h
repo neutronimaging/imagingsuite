@@ -47,6 +47,7 @@ private slots:
 
     void on_buttonSelectAll_clicked();
 
+
 private:
     void SetupCallbacks();
     QPixmap CreateIconFromImage(kipl::base::TImage<float,2> &img, float lo, float hi);

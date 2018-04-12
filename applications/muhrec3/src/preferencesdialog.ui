@@ -28,6 +28,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QSpinBox" name="spinBox_MemoryLimit">
+       <property name="toolTip">
+        <string>The memory limit set the limit for when data only can be reconstructed to disk.</string>
+       </property>
        <property name="minimum">
         <number>1000</number>
        </property>
@@ -48,6 +51,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QComboBox" name="comboBox_LogLevel">
+       <property name="toolTip">
+        <string>Set the default logging level at startup.</string>
+       </property>
        <item>
         <property name="text">
          <string>Error</string>

@@ -25,6 +25,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QPushButton" name="buttonClearSelected">
+           <property name="toolTip">
+            <string>Remove the checked items from the geometry list</string>
+           </property>
            <property name="text">
             <string>Clear selected</string>
            </property>
@@ -32,6 +35,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="buttonSelectAll">
+           <property name="toolTip">
+            <string>Select all stored geometry items</string>
+           </property>
            <property name="text">
             <string>Select all</string>
            </property>
@@ -127,24 +133,26 @@
        </item>
        <item>
         <widget class="QPushButton" name="buttonComputeTilt">
+         <property name="toolTip">
+          <string>Estimate acquisition axis tilt from the selected geometry items.</string>
+         </property>
          <property name="text">
           <string>Compute tilt</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelROI">
-         <property name="text">
-          <string>No ROI</string>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="buttonMaxROI">
-         <property name="text">
-          <string>Compute ROI</string>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -168,6 +176,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
