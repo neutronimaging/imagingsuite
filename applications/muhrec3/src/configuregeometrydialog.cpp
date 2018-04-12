@@ -7,6 +7,7 @@
 #include <numeric>
 
 #include <QMessageBox>
+#include <QSignalBlocker>
 
 #include <ProjectionReader.h>
 #include <ReconException.h>
@@ -31,7 +32,7 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
 
-    on_checkUseTilt_toggled(false);
+    on_groupUseTilt_toggled(false);
 }
 
 ConfigureGeometryDialog::~ConfigureGeometryDialog()
@@ -48,12 +49,14 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
         return QDialog::Rejected;
 
     ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims());
-    ui->spinSliceFirst->blockSignals(true);
-    ui->spinSliceLast->blockSignals(true);
-    ui->spinSliceFirst->setRange(m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-    ui->spinSliceLast->setRange(m_Config.ProjectionInfo.projection_roi[1],m_Config.ProjectionInfo.projection_roi[3]);
-    ui->spinSliceFirst->blockSignals(false);
-    ui->spinSliceLast->blockSignals(false);
+    ui->groupBoxSlices->setVisible(false);
+    ui->comboROISelection->setCurrentIndex(0);
+
+    QSignalBlocker firstSlice(ui->spinSliceFirst);
+    QSignalBlocker lastSlice(ui->spinSliceLast);
+
+    ui->spinSliceFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
+    ui->spinSliceLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
 
     UpdateDialog();
 
@@ -136,7 +139,7 @@ void ConfigureGeometryDialog::FindCenter()
 
     QVector<QPointF> plot_data;
 
-    if (ui->checkUseTilt->isChecked()) {
+    if (ui->groupUseTilt->isChecked()) {
         double k=1.0f,m=0.0f;
         double R2;
 
@@ -656,8 +659,8 @@ void ConfigureGeometryDialog::UpdateConfig()
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
-    m_Config.ProjectionInfo.bCorrectTilt = ui->checkUseTilt->isChecked();
-    if (ui->checkUseTilt->isChecked()) {
+    m_Config.ProjectionInfo.bCorrectTilt = ui->groupUseTilt->isChecked();
+    if (ui->groupUseTilt->isChecked()) {
         m_Config.ProjectionInfo.fTiltAngle   = ui->dspinTiltAngle->value();
         m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
     }
@@ -673,19 +676,21 @@ void ConfigureGeometryDialog::UpdateDialog()
          <<m_Config.ProjectionInfo.projection_roi[2]<<", "
          <<m_Config.ProjectionInfo.projection_roi[3]<<"]";
 
-    msg<<" ROI=["<<m_Config.ProjectionInfo.roi[0]<<", "
-         <<m_Config.ProjectionInfo.roi[1]<<", "
-         <<m_Config.ProjectionInfo.roi[2]<<", "
-         <<m_Config.ProjectionInfo.roi[3]<<"]";
+//    msg<<" ROI=["<<m_Config.ProjectionInfo.roi[0]<<", "
+//         <<m_Config.ProjectionInfo.roi[1]<<", "
+//         <<m_Config.ProjectionInfo.roi[2]<<", "
+//         <<m_Config.ProjectionInfo.roi[3]<<"]";
 
 
     ui->label_ProjROI->setText(QString::fromStdString(msg.str()));
 
     ui->spinSliceFirst->blockSignals(true);
     ui->spinSliceLast->blockSignals(true);
-    ui->checkUseTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
+    ui->groupUseTilt->setChecked(m_Config.ProjectionInfo.bCorrectTilt);
     ui->spinSliceFirst->setValue(m_Config.ProjectionInfo.roi[1]);
+    ui->spinSliceLast->setMinimum(m_Config.ProjectionInfo.roi[1]+1);
     ui->spinSliceLast->setValue(m_Config.ProjectionInfo.roi[3]);
+    ui->spinSliceFirst->setMaximum(m_Config.ProjectionInfo.roi[3]-1);
     ui->dspinAngleFirst->setValue(m_Config.ProjectionInfo.fScanArc[0]);
     ui->dspinAngleLast->setValue(m_Config.ProjectionInfo.fScanArc[1]);
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
@@ -693,29 +698,9 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
 
     ROIChanged(-1);
-    on_checkUseTilt_toggled(m_Config.ProjectionInfo.bCorrectTilt);
+    on_groupUseTilt_toggled(m_Config.ProjectionInfo.bCorrectTilt);
     ui->spinSliceFirst->blockSignals(false);
     ui->spinSliceLast->blockSignals(false);
-}
-
-
-void ConfigureGeometryDialog::on_checkUseTilt_toggled(bool checked)
-{
-    ui->gridTilt->setEnabled(checked);
-    if (checked) {
-        ui->dspinTiltAngle->show();
-        ui->dspinTiltPivot->show();
-        ui->labelTiltAngle->show();
-        ui->labelTiltPivot->show();
-        ui->checkBox_ManualTiltPivotEntry->show();
-    }
-    else {
-        ui->dspinTiltAngle->hide();
-        ui->dspinTiltPivot->hide();
-        ui->labelTiltAngle->hide();
-        ui->labelTiltPivot->hide();
-        ui->checkBox_ManualTiltPivotEntry->hide();
-    }
 }
 
 void ConfigureGeometryDialog::on_dspinCenterRotation_valueChanged(double arg1)
@@ -726,19 +711,39 @@ void ConfigureGeometryDialog::on_dspinCenterRotation_valueChanged(double arg1)
 void ConfigureGeometryDialog::on_comboROISelection_currentIndexChanged(int index)
 {
     QRect rect;
+    QString color;
     switch (index)
     {
        case 0 : rect.setCoords(m_Config.ProjectionInfo.projection_roi[0],
                 m_Config.ProjectionInfo.projection_roi[1],
                 m_Config.ProjectionInfo.projection_roi[2],
                 m_Config.ProjectionInfo.projection_roi[3]);
+                ui->groupBoxSlices->setVisible(false);
+                color="orange";
                 break;
        case 1: rect.setCoords(m_Config.ProjectionInfo.projection_roi[0],
                 ui->spinSliceFirst->value(),
                 m_Config.ProjectionInfo.projection_roi[2],
                 ui->spinSliceLast->value());
+                ui->groupBoxSlices->setVisible(true);
+                color="deepskyblue";
                 break;
     }
 
-    ui->viewerProjection->set_rectangle(rect,QColor("yellow"),1);
+    ui->viewerProjection->set_rectangle(rect,QColor(color),1);
+}
+
+void ConfigureGeometryDialog::on_groupUseTilt_toggled(bool arg1)
+{
+
+}
+
+void ConfigureGeometryDialog::on_spinSliceFirst_valueChanged(int arg1)
+{
+    ui->spinSliceLast->setMinimum(arg1+1);
+}
+
+void ConfigureGeometryDialog::on_spinSliceLast_valueChanged(int arg1)
+{
+    ui->spinSliceFirst->setMaximum(arg1-1);
 }
