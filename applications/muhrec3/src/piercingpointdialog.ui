@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
-    <height>578</height>
+    <width>681</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="doubleSpinBox_posX">
+           <property name="toolTip">
+            <string>X-position of the piercing point</string>
+           </property>
            <property name="maximum">
             <double>5000.000000000000000</double>
            </property>
@@ -46,6 +49,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="doubleSpinBox_posY">
+           <property name="toolTip">
+            <string>X-position of the piercing point</string>
+           </property>
            <property name="maximum">
             <double>5000.000000000000000</double>
            </property>
@@ -70,6 +76,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QCheckBox" name="checkBox_gainCorrection">
+           <property name="toolTip">
+            <string>The detector may have different gains in different regions. Gain correction removes this.</string>
+           </property>
            <property name="text">
             <string>Correct gain</string>
            </property>
@@ -87,67 +96,27 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_x0">
-           <property name="text">
-            <string>x0</string>
+          <widget class="QtAddons::uxROIWidget" name="widgetEstimationROI" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>160</width>
+             <height>120</height>
+            </size>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_roi0">
-           <property name="maximum">
-            <number>5000</number>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_y0">
-           <property name="text">
-            <string>y0</string>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_roi1">
-           <property name="maximum">
-            <number>5000</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_x1">
-           <property name="text">
-            <string>x1</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_roi2">
-           <property name="maximum">
-            <number>5000</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_y1">
-           <property name="text">
-            <string>y1</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_roi3">
-           <property name="maximum">
-            <number>5000</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_getROI">
-           <property name="text">
-            <string>Get ROI</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -193,6 +162,18 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>

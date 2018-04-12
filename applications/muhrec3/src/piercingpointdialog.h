@@ -25,8 +25,6 @@ public:
 private slots:
     void on_checkBox_useROI_toggled(bool checked);
 
-    void on_pushButton_getROI_clicked();
-
     void on_pushButton_estimate_clicked();
 
 private:
