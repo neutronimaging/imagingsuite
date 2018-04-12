@@ -52,6 +52,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QSpinBox" name="spinOrder">
+           <property name="toolTip">
+            <string>Sets the order of the correction polynomial</string>
+           </property>
            <property name="minimum">
             <number>1</number>
            </property>
@@ -69,6 +72,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QDoubleSpinBox" name="spinA0">
+           <property name="toolTip">
+            <string>The bias term of the polynomial.</string>
+           </property>
            <property name="decimals">
             <number>4</number>
            </property>
@@ -92,6 +98,9 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="spinA1">
+           <property name="toolTip">
+            <string>Coefficient of the first order term</string>
+           </property>
            <property name="decimals">
             <number>4</number>
            </property>
@@ -112,6 +121,9 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="spinA2">
+           <property name="toolTip">
+            <string>Coefficient of the second order term</string>
+           </property>
            <property name="decimals">
             <number>4</number>
            </property>
@@ -132,6 +144,9 @@
          </item>
          <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="spinA3">
+           <property name="toolTip">
+            <string>Coefficient of the third order term</string>
+           </property>
            <property name="decimals">
             <number>4</number>
            </property>
@@ -152,6 +167,9 @@
          </item>
          <item row="5" column="1">
           <widget class="QDoubleSpinBox" name="spinA4">
+           <property name="toolTip">
+            <string>Coefficient of the fourth order term</string>
+           </property>
            <property name="decimals">
             <number>4</number>
            </property>
@@ -176,6 +194,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QPushButton" name="button_apply">
+       <property name="toolTip">
+        <string>Test the current settings</string>
+       </property>
        <property name="text">
         <string>Apply</string>
        </property>
@@ -207,6 +228,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::Plotter</class>

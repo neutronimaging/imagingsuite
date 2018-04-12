@@ -139,6 +139,9 @@
      </item>
      <item>
       <widget class="QComboBox" name="combo_wavelets">
+       <property name="toolTip">
+        <string>Selects the wavelet base to use for the decomposition.</string>
+       </property>
        <item>
         <property name="text">
          <string>empty</string>
@@ -161,6 +164,9 @@
      </item>
      <item>
       <widget class="QSpinBox" name="entry_levels">
+       <property name="toolTip">
+        <string>Selects number of decomposition levels. This is usually a value between 2 and 5.</string>
+       </property>
        <property name="maximum">
         <number>10</number>
        </property>
@@ -181,6 +187,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="entry_cutoff">
+       <property name="toolTip">
+        <string>Cut-frequency for the high-pass filter, a higher value suppresses more details.</string>
+       </property>
        <property name="decimals">
         <number>4</number>
        </property>
@@ -204,6 +213,9 @@
      </item>
      <item>
       <widget class="QComboBox" name="combo_filtertype">
+       <property name="toolTip">
+        <string>Filter type selection.</string>
+       </property>
        <item>
         <property name="text">
          <string>Vertical zero</string>
@@ -222,6 +234,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QPushButton" name="button_apply">
+       <property name="toolTip">
+        <string>Tests the effect of the current settings.</string>
+       </property>
        <property name="text">
         <string>Apply</string>
        </property>
@@ -247,6 +262,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
