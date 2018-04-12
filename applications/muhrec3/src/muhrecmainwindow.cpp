@@ -131,6 +131,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ProjectionIndexChanged(0);
     SlicesChanged(0);
     SetupCallBacks();
+    ui->widgetProjectionROI->updateViewer();
 
 //    if (ui->checkCBCT->isChecked()) SlicesCBCTChanged(0);
 

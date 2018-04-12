@@ -1710,7 +1710,7 @@
                   </size>
                  </property>
                  <property name="toolTip">
-                  <string>Rotates the reconstructed slice.</string>
+                  <string>Rotates the reconstructed slice. Increase for clockwise rotation.</string>
                  </property>
                  <property name="title">
                   <string>Rotate slice</string>
@@ -2104,7 +2104,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Display the projection data</string>
+             <string/>
             </property>
            </widget>
           </item>
