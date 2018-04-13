@@ -1,6 +1,6 @@
 #ifndef LOGGINGDIALOG_H
 #define LOGGINGDIALOG_H
-
+#include "QtAddons_global.h"
 #include <QDialog>
 
 #include <logging/logger.h>
@@ -10,7 +10,7 @@ class LoggingDialog;
 }
 
 namespace QtAddons {
-class LoggingDialog : public QDialog, public kipl::logging::LogWriter
+class QTADDONSSHARED_EXPORT LoggingDialog : public QDialog, public kipl::logging::LogWriter
 {
     Q_OBJECT
     kipl::logging::Logger logger;
