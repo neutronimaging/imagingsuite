@@ -328,7 +328,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
         long int i, j, k;
 
-        float* img = cbct_volume.GetDataPtr();
+        float* img = cbct_volume.GetDataPtr();//TODO: work
         double *xip, *yip, *zip;
         double sad_sid_2;
 
