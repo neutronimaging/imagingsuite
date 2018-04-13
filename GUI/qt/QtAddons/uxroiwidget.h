@@ -1,6 +1,7 @@
 #ifndef UXROIWIDGET_H
 #define UXROIWIDGET_H
 
+#include "QtAddons_global.h"
 #include <QWidget>
 #include <QRect>
 #include <QString>
@@ -17,7 +18,7 @@ class ImageViewerWidget;
 /// \brief The widget provides the ability to handle ROIs in imageviewers.
 ///
 /// There is a tight connection with the ImageViewerWidget that allow to visualize ROIs and to obtain image dimensions.
-class uxROIWidget : public QWidget
+class QTADDONSSHARED_EXPORT uxROIWidget : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;

@@ -33,5 +33,5 @@ public:
     std::list<int> m_nSkipList;
 };
 
-std::ostream & operator<<(std::ostream &s, ImageLoader &il);
+std::ostream READERCONFIGSHARED_EXPORT & operator<<(std::ostream &s, ImageLoader &il);
 #endif // DATASETBASE_H
