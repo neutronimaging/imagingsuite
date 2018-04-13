@@ -21,7 +21,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">QWidget{background-color:gray} QDoubleSpinBox{background-color:white} QSpinBox{background-color:white} QLabel{color:#FFFFFF}QGroupBox{color:#FFFFFF}QRadioButton{color:white}QCheckBox{color:white}</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
@@ -47,7 +47,7 @@
          <string/>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <property name="toolTip">
@@ -64,7 +64,7 @@
               <item>
                <widget class="QGroupBox" name="groupProjectionFiles">
                 <property name="styleSheet">
-                 <string notr="true">QGroupBox#groupProjectionFiles { font-size:10}</string>
+                 <string notr="true">QGroupBox#groupProjectionFiles { font: bold 14px}</string>
                 </property>
                 <property name="title">
                  <string>Projection images</string>
@@ -448,7 +448,7 @@
               <item>
                <widget class="QGroupBox" name="groupReferenceImages">
                 <property name="styleSheet">
-                 <string notr="true"/>
+                 <string notr="true">QGroupBox#groupReferenceImages {font: bold 14px}</string>
                 </property>
                 <property name="title">
                  <string>Reference images</string>
@@ -719,7 +719,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QGroupBox {font: bold 14px}</string>
             </property>
             <property name="title">
              <string>Pixels</string>
@@ -804,7 +804,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QGroupBox {font: bold 14px}</string>
             </property>
             <property name="title">
              <string>Project description</string>
@@ -928,7 +928,7 @@
           <item>
            <widget class="QGroupBox" name="groupBox_AcquisitionArea">
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QGroupBox#groupBox_AcquisitionArea {font: bold 14px}</string>
             </property>
             <property name="title">
              <string>Acquisition area</string>
@@ -1028,7 +1028,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QGroupBox#groupBox_AcquisitionAngles {font: bold 14px}</string>
             </property>
             <property name="title">
              <string>Acquisition angles</string>
@@ -1258,7 +1258,7 @@
           <item>
            <widget class="QGroupBox" name="groupBox_AcquisitionAxis">
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QGroupBox#groupBox_AcquisitionAxis {font: bold 14px}</string>
             </property>
             <property name="title">
              <string>Acquisition axis</string>
@@ -1448,6 +1448,9 @@
           </item>
           <item>
            <widget class="QGroupBox" name="groupBox_ConeBeamGeometry">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox#groupBox_ConeBeamGeometry {font: bold 14px}</string>
+            </property>
             <property name="title">
              <string>Advanced geometry</string>
             </property>
@@ -1627,6 +1630,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {font: bold 14px}</string>
+            </property>
             <property name="title">
              <string>Preprocessing modules</string>
             </property>
@@ -1648,6 +1654,9 @@
              <property name="toolTip">
               <string>Defines the chain of preprocessing operation on the projection data.</string>
              </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
             </widget>
            </widget>
           </item>
@@ -1655,6 +1664,9 @@
            <widget class="QGroupBox" name="groupBackProjConfig">
             <property name="toolTip">
              <string>Configures the back-projection module.</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {font: bold 14px}</string>
             </property>
             <property name="title">
              <string>Back-projector configuration</string>
@@ -1698,6 +1710,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QGroupBox" name="groupMatrixSettings">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox#groupMatrixSettings {font: bold 14px}</string>
+            </property>
             <property name="title">
              <string>Matrix settings</string>
             </property>
@@ -1849,6 +1864,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox#groupHistogram {font: bold 14px}</string>
+            </property>
             <property name="title">
              <string>Gray levels</string>
             </property>
@@ -1977,6 +1995,9 @@
           </item>
           <item>
            <widget class="QGroupBox" name="groupOutput">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox#groupOutput {font: bold 14px}</string>
+            </property>
             <property name="title">
              <string>Output</string>
             </property>
