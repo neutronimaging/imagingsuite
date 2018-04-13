@@ -1,6 +1,8 @@
 #ifndef LOGGINGDIALOG_H
 #define LOGGINGDIALOG_H
+
 #include "QtAddons_global.h"
+
 #include <QDialog>
 
 #include <logging/logger.h>
