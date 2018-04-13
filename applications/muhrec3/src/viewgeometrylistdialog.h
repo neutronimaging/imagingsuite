@@ -48,6 +48,12 @@ private slots:
     void on_buttonSelectAll_clicked();
 
 
+    void on_buttonClearSelected_clicked();
+
+    void on_buttonComputeTilt_clicked();
+
+    void on_listWidget_itemClicked(QListWidgetItem *item);
+
 private:
     void SetupCallbacks();
     QPixmap CreateIconFromImage(kipl::base::TImage<float,2> &img, float lo, float hi);
