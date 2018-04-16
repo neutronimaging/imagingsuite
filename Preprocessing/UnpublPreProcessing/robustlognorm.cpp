@@ -433,7 +433,12 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 
     ob_bb_param = new float[6];
     memcpy(ob_bb_param, bb_ob_param, sizeof(float)*6);
-
+//    ob_bb_param[0] = 0.0f;
+//    ob_bb_param[1] = 0.0f;
+//    ob_bb_param[2] = 0.0f;
+//    ob_bb_param[3] = 0.0f;
+//    ob_bb_param[4] = 0.0f;
+//    ob_bb_param[5] = 0.0f;
 
 
     // load sample images with BBs and sample images
@@ -808,12 +813,27 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
      ob_bb_param = new float[values.size()+3];
      memcpy(ob_bb_param, bb_ob_param, sizeof(float)*(values.size()+3));
 
+//     for (size_t i=0; i <values.size()+3; i++) {
+//         ob_bb_param[i] = 0.0f;
+//     }
+
 
      // load sample images with BBs and sample images
 
      float *temp_parameters;
      size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
      size_t step = (nProj)/(nBBSampleCount);
+
+     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+
+     float *doselist = new float[nProj];
+     for (size_t i=0; i<nProj; i++) {
+         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
+     }
+
+     m_corrector.SetDoseList(doselist);
+     delete [] doselist;
 
 
      // here Exceptions need to be added to veirfy if the selected module is compatible with the number of loaded images
@@ -830,18 +850,18 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                           logger(kipl::logging::Logger::LogMessage,"Loading sample images with BB");
 
-                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
-                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+//                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+//                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
 //                          std::cout << "doselist: " << std::endl;
 
-                          float *doselist = new float[nProj];
-                          for (size_t i=0; i<nProj; i++) {
-                              doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
-                          }
+//                          float *doselist = new float[nProj];
+//                          for (size_t i=0; i<nProj; i++) {
+//                              doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
+//                          }
 
-                          m_corrector.SetDoseList(doselist);
-                          delete [] doselist;
+//                          m_corrector.SetDoseList(doselist);
+//                          delete [] doselist;
 
                           for (size_t i=0; i<nBBSampleCount; i++) {
 
@@ -950,18 +970,18 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                           temp_parameters = new float[values.size()+3];
                           float * mask_parameters = new float[values.size()+3];
 
-                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
-                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
+//                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
+//                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
 //                          std::cout << "doselist: " << std::endl;
 
-                          float *doselist = new float[nProj];
-                          for (size_t i=0; i<nProj; i++) {
-                              doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
-                          }
+//                          float *doselist = new float[nProj];
+//                          for (size_t i=0; i<nProj; i++) {
+//                              doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
+//                          }
 
-                          m_corrector.SetDoseList(doselist);
-                          delete [] doselist;
+//                          m_corrector.SetDoseList(doselist);
+//                          delete [] doselist;
 
 
                           kipl::base::TImage<float,2> samplebb_temp;
@@ -1040,6 +1060,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                      for (size_t i=0; i<nBBSampleCount; i++) {
 
+
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
                          sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
 
@@ -1064,7 +1085,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
                              }
 
                              if (bUseNormROIBB && bUseNormROI){
-             //                     prenormalize interpolation parameters with dose
+//                       prenormalize interpolation parameters with dose
 
                                  current_dose= fBlackDoseSample;
 
@@ -1118,29 +1139,22 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                          }
 
-//                         float dose = dosesample/(current_dose*tau);
+                         float dose = dosesample/(current_dose*tau);
 
-//                         ofstream spline_values;
-//                         spline_values.open(("tps_points_"+std::to_string(i)+".txt").c_str());
+                         ofstream spline_values;
+                         spline_values.open(("tps_points_"+std::to_string(i)+".txt").c_str());
+                           for (std::map<std::pair<int, int>, float>::const_iterator it = values_bb.begin(); it != values_bb.end();  ++it)
+                           {
+                               spline_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+                           }
 
-//         //                if (i==0){
-//         //                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
-//         //                    for(int j=0;j<spline_sample_values.size()+3;++j){
-//         //                        std::cout << current_param[j] << " ";
-//         //                    }
-//         //                    std::cout << std::endl;
-
-//         //               //     spline sample  values sembrano giusti..
-//         //                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
-//                           for (std::map<std::pair<int, int>, float>::const_iterator it = values_bb.begin(); it != values_bb.end();  ++it)
-//                           {
-//                               spline_values << it->first.first << " " << it->first.second << " " << it->second*dose << std::endl;
-//                           }
-
-//                           spline_values.close();
+                           spline_values.close();
+                         std::cout << "image #: " << i << std::endl;
                      }
 
+//                     std::cout << "before mempcy" << std::endl;
                      memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3)*nBBSampleCount);
+//                     std::cout << "after memcpy" << std::endl;
                      break;
                   }
 
