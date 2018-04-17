@@ -299,7 +299,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
 
 //                if (i==0)
-                  kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all! // UNCOMMENT THIS TO SAVE BACKGROUND RESULTS
+//                  kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all! // UNCOMMENT THIS TO SAVE BACKGROUND RESULTS
 
                 m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
                 delete[] current_param;
@@ -332,7 +332,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
                 m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
 //                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
-                kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all!
+//                kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all!
                     delete[] current_param;
                 break;
             }
