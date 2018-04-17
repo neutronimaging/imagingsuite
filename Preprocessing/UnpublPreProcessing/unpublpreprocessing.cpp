@@ -95,6 +95,5 @@ int GetModuleList(const char *application, void *listptr)
     modulelist->operator[]("RobustLogNorm")=robnorm.GetParameters();
 
 
-
     return 0;
 }
