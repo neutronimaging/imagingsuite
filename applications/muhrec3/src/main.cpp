@@ -8,6 +8,8 @@
 #include <QFileDialog>
 #include <QString>
 #include <QVector>
+#include <QDebug>
+#include <QStyleFactory>
 #include "muhrecmainwindow.h"
 #include <string>
 #include <strings/miscstring.h>
@@ -29,6 +31,10 @@ int main(int argc, char *argv[])
     std::ostringstream msg;
 
     QApplication app(argc, argv);
+
+    QApplication a(argc, argv);
+    qDebug() << QStyleFactory::keys();
+    a.setStyle(QStyleFactory::create("Macintosh"));
 
     std::string homedir = QDir::homePath().toStdString();
 
@@ -55,7 +61,7 @@ int RunGUI(QApplication *app)
 {
   std::ostringstream msg;
   kipl::logging::Logger logger("MuhRec3::RunGUI");
-
+  QApplication::setStyle("Windows style");
   try {
         MuhRecMainWindow w(app);
         w.show();

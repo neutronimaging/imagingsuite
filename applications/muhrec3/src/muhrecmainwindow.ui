@@ -21,7 +21,8 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
-    <string notr="true">QWidget{background-color:gray} QDoubleSpinBox{background-color:white} QSpinBox{background-color:white} QLabel{color:#FFFFFF}QGroupBox{color:#FFFFFF}QRadioButton{color:white}QCheckBox{color:white}</string>
+    <string notr="true">QWidget{background-color:gray} QDoubleSpinBox{background-color:white} QSpinBox{background-color:white} QLabel{color:#FFFFFF}QGroupBox{color:#FFFFFF}QRadioButton{color:white}QCheckBox{color:white}
+QComboBox{border-color:#555555;background-color:white}</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
@@ -64,7 +65,7 @@
               <item>
                <widget class="QGroupBox" name="groupProjectionFiles">
                 <property name="styleSheet">
-                 <string notr="true">QGroupBox#groupProjectionFiles { font: bold 14px}</string>
+                 <string notr="true">QGroupBox#groupProjectionFiles { font: bold 1.75em}</string>
                 </property>
                 <property name="title">
                  <string>Projection images</string>
@@ -448,7 +449,7 @@
               <item>
                <widget class="QGroupBox" name="groupReferenceImages">
                 <property name="styleSheet">
-                 <string notr="true">QGroupBox#groupReferenceImages {font: bold 14px}</string>
+                 <string notr="true">QGroupBox#groupReferenceImages {font: bold 1.75em}</string>
                 </property>
                 <property name="title">
                  <string>Reference images</string>
@@ -719,7 +720,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox {font: bold 14px}</string>
+             <string notr="true">QGroupBox {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Pixels</string>
@@ -804,7 +805,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox {font: bold 14px}</string>
+             <string notr="true">QGroupBox {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Project description</string>
@@ -928,7 +929,7 @@
           <item>
            <widget class="QGroupBox" name="groupBox_AcquisitionArea">
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupBox_AcquisitionArea {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupBox_AcquisitionArea {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Acquisition area</string>
@@ -992,8 +993,8 @@
                 <widget class="QtAddons::uxROIWidget" name="widgetProjectionROI" native="true">
                  <property name="minimumSize">
                   <size>
-                   <width>165</width>
-                   <height>120</height>
+                   <width>195</width>
+                   <height>125</height>
                   </size>
                  </property>
                  <property name="toolTip">
@@ -1028,7 +1029,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupBox_AcquisitionAngles {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupBox_AcquisitionAngles {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Acquisition angles</string>
@@ -1258,7 +1259,7 @@
           <item>
            <widget class="QGroupBox" name="groupBox_AcquisitionAxis">
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupBox_AcquisitionAxis {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupBox_AcquisitionAxis {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Acquisition axis</string>
@@ -1449,7 +1450,7 @@
           <item>
            <widget class="QGroupBox" name="groupBox_ConeBeamGeometry">
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupBox_ConeBeamGeometry {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupBox_ConeBeamGeometry {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Advanced geometry</string>
@@ -1631,7 +1632,7 @@
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox {font: bold 14px}</string>
+             <string notr="true">QGroupBox {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Preprocessing modules</string>
@@ -1666,7 +1667,7 @@
              <string>Configures the back-projection module.</string>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox {font: bold 14px}</string>
+             <string notr="true">QGroupBox {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Back-projector configuration</string>
