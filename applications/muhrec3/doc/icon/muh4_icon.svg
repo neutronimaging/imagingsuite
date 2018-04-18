@@ -9,13 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="121.65236mm"
-   height="129.59453mm"
-   viewBox="0 0 121.65236 129.59453"
+   width="130mm"
+   height="130mm"
+   viewBox="0 0 130 130"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="muh4_icon.svg">
+   sodipodi:docname="muh4_icon.svg"
+   inkscape:export-filename="/Users/kaestner/git/imagingsuite/applications/muhrec3/doc/icon/muh4_icon_256.png"
+   inkscape:export-xdpi="50.02"
+   inkscape:export-ydpi="50.02">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -69,8 +72,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.3870873"
-     inkscape:cx="176.37494"
-     inkscape:cy="271.30961"
+     inkscape:cx="147.53754"
+     inkscape:cy="155.95998"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -80,8 +83,8 @@
      fit-margin-bottom="2"
      inkscape:window-width="1867"
      inkscape:window-height="1155"
-     inkscape:window-x="419"
-     inkscape:window-y="56"
+     inkscape:window-x="101"
+     inkscape:window-y="196"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -99,11 +102,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-38.657345,-124.28992)">
+     transform="translate(-38.657345,-123.88445)">
     <g
        id="g943"
        inkscape:export-xdpi="215.9903"
-       inkscape:export-ydpi="215.9903">
+       inkscape:export-ydpi="215.9903"
+       transform="translate(4.2333334,-0.52916667)">
       <path
          sodipodi:nodetypes="cc"
          inkscape:connector-curvature="0"
