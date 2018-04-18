@@ -1,6 +1,7 @@
 #ifndef ROIMANAGER_H
 #define ROIMANAGER_H
 
+#include "QtAddons_global.h"
 #include <list>
 #include <QWidget>
 
@@ -16,7 +17,7 @@ class ROIManager;
 
 namespace QtAddons {
 
-class ROIManager : public QWidget
+class QTADDONSSHARED_EXPORT ROIManager : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;

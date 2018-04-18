@@ -61,10 +61,6 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="FullNorm")
             return new FullNorm;
-#ifdef USE_UNPUBLISHED
-        if (sName=="RobustLogNorm")
-            return new RobustLogNorm;
-#endif
 
 		if (sName=="LogProjection")
 			return new LogProjection;
