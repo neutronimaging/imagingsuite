@@ -77,6 +77,7 @@ std::vector<std::string> DirAnalyzer::GetDirList(std::string path)
 
 FileItem DirAnalyzer::GetFileMask(std::string str)
 {
+    kipl::strings::filenames::CheckPathSlashes(str,false);
     std::string::size_type p1=0;
     std::string::size_type p2=0;
     std::string::size_type p10=0;
