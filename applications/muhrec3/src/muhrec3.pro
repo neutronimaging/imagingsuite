@@ -8,7 +8,7 @@ QT       += core widgets printsupport concurrent
 
 TARGET = muhrec3
 TEMPLATE = app
-CONFIG += c++11
+CONFIG += c++11 console
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug

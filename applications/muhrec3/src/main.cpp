@@ -16,6 +16,7 @@
 #include <utilities/nodelocker.h>
 #include <ReconException.h>
 #include <ModuleException.h>
+#include <iostream>
 
 int RunGUI(QApplication *app);
 int RunOffline(QApplication *app);
@@ -134,6 +135,7 @@ int RunGUI(QApplication *app)
 int RunOffline(QApplication *app)
 {
     std::ostringstream msg;
+    kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
     kipl::logging::Logger logger("MuhRec3::RunOffline");
 
 #ifdef _OPENMP
@@ -142,12 +144,13 @@ int RunOffline(QApplication *app)
     QVector<QString> qargs=app->arguments().toVector();
     std::vector<std::string> args;
 
-    qDebug()<<"Arguments";
+    std::cout<<"Arguments"<<std::endl;
     for (int i=0; i<qargs.size(); i++) {
         args.push_back(qargs[i].toStdString());
-        qDebug()<<qargs[i].toStdString();
+        qDebug()<<args[i].c_str();
     }
 
+    std::cout<<args.size()<<", "<<qargs.size()<<", "<<args[1].c_str()<<std::endl;
     if (2<args.size()) {
         if (args[1]=="-f") {
           logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in offline mode");
@@ -158,8 +161,8 @@ int RunOffline(QApplication *app)
                   config.LoadConfigFile(args[2],"reconstructor");
                   config.GetCommandLinePars(args);
                   config.MatrixInfo.bAutomaticSerialize=true;
-                  ReconEngine *pEngine=factory.BuildEngine(config,NULL);
-                  if (pEngine!=NULL) {
+                  ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
+                  if (pEngine!=nullptr) {
                           logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
                           pEngine->Run3D();
                           logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
@@ -175,7 +178,7 @@ int RunOffline(QApplication *app)
                           conffile.close();
                   }
                   else {
-                          logger(kipl::logging::Logger::LogMessage, "There is no reconstruction engine, skipping reconstruction");
+                    logger(kipl::logging::Logger::LogMessage, "There is no reconstruction engine, skipping reconstruction");
                   }
               }  // Exception handling as last resort to report unhandled faults
               catch (ReconException &re) {
