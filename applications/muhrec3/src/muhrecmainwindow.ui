@@ -21,8 +21,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
-    <string notr="true">QWidget{background-color:gray} QDoubleSpinBox{background-color:white} QSpinBox{background-color:white} QLabel{color:#FFFFFF}QGroupBox{color:#FFFFFF}QRadioButton{color:white}QCheckBox{color:white}
-QComboBox{border-color:#555555;background-color:white}</string>
+    <string notr="true"/>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
@@ -48,7 +47,7 @@ QComboBox{border-color:#555555;background-color:white}</string>
          <string/>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <property name="toolTip">
@@ -685,8 +684,8 @@ QComboBox{border-color:#555555;background-color:white}</string>
                <widget class="QtAddons::uxROIWidget" name="widgetDoseROI" native="true">
                 <property name="minimumSize">
                  <size>
-                  <width>165</width>
-                  <height>120</height>
+                  <width>196</width>
+                  <height>123</height>
                  </size>
                 </property>
                 <property name="toolTip">
@@ -993,7 +992,7 @@ QComboBox{border-color:#555555;background-color:white}</string>
                 <widget class="QtAddons::uxROIWidget" name="widgetProjectionROI" native="true">
                  <property name="minimumSize">
                   <size>
-                   <width>195</width>
+                   <width>196</width>
                    <height>125</height>
                   </size>
                  </property>
@@ -1712,7 +1711,7 @@ QComboBox{border-color:#555555;background-color:white}</string>
           <item>
            <widget class="QGroupBox" name="groupMatrixSettings">
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupMatrixSettings {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupMatrixSettings{font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Matrix settings</string>
@@ -1830,8 +1829,8 @@ QComboBox{border-color:#555555;background-color:white}</string>
                 <widget class="QtAddons::uxROIWidget" name="widgetMatrixROI" native="true">
                  <property name="minimumSize">
                   <size>
-                   <width>165</width>
-                   <height>120</height>
+                   <width>196</width>
+                   <height>123</height>
                   </size>
                  </property>
                  <property name="toolTip">
@@ -1866,7 +1865,7 @@ QComboBox{border-color:#555555;background-color:white}</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupHistogram {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupHistogram {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Gray levels</string>
