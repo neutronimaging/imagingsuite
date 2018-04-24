@@ -355,6 +355,7 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
 void RobustLogNormDlg::on_button_OBBBpath_clicked()
 {
     BrowseOBBBPath();
+    ui->buttonPreviewOBBB->click();
 }
 
 void RobustLogNormDlg::BrowseOBBBPath(){
@@ -496,6 +497,7 @@ void RobustLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
 void RobustLogNormDlg::on_button_sampleBBpath_clicked()
 {
     BrowseSampleBBPath();
+    ui->buttonPreviewsampleBB->click();
 }
 
 void RobustLogNormDlg::BrowseSampleBBPath(){

@@ -1141,15 +1141,15 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
                          float dose = dosesample/(current_dose*tau);
 
-                         ofstream spline_values;
-                         spline_values.open(("tps_points_"+std::to_string(i)+".txt").c_str());
-                           for (std::map<std::pair<int, int>, float>::const_iterator it = values_bb.begin(); it != values_bb.end();  ++it)
-                           {
-                               spline_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-                           }
+//                         ofstream spline_values;
+//                         spline_values.open(("tps_points_"+std::to_string(i)+".txt").c_str());
+//                           for (std::map<std::pair<int, int>, float>::const_iterator it = values_bb.begin(); it != values_bb.end();  ++it)
+//                           {
+//                               spline_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//                           }
 
-                           spline_values.close();
-                         std::cout << "image #: " << i << std::endl;
+//                           spline_values.close();
+//                         std::cout << "image #: " << i << std::endl;
                      }
 
 //                     std::cout << "before mempcy" << std::endl;
