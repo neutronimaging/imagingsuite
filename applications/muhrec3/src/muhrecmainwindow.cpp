@@ -2047,13 +2047,13 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
 
 
         QSignalBlocker spinFirst(ui->spinFirstProjection);
-        ui->spinFirstProjection->setMaximum(l);
-        ui->spinFirstProjection->setMinimum(f);
+//        ui->spinFirstProjection->setMaximum(l);
+//        ui->spinFirstProjection->setMinimum(f);
         ui->spinFirstProjection->setValue(f);
 
         QSignalBlocker spinLast(ui->spinLastProjection);
-        ui->spinLastProjection->setMaximum(l);
-        ui->spinLastProjection->setMinimum(f);
+//        ui->spinLastProjection->setMaximum(l);
+//        ui->spinLastProjection->setMinimum(f);
         ui->spinLastProjection->setValue(l);
 
         ProjectionIndexChanged(0);

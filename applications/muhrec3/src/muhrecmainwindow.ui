@@ -530,7 +530,7 @@
                       <string>Number of dark current images</string>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">font: 13pt;</string>
+                      <string notr="true"/>
                      </property>
                      <property name="maximum">
                       <number>5000</number>
@@ -2303,7 +2303,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
