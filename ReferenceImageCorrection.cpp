@@ -169,7 +169,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
             m_OB_BB_Interpolated = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nROI); // now rois are in absolute coordinates , richtig?
             m_DoseBBflat_image = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nDoseROI);
 
-            ofstream spline_OB_values("tps_OB_points.txt");
+
 
 //                if (i==0){
 //                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
@@ -180,10 +180,13 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 ////                     spline sample  values sembrano giusti..
 //                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
-              for (std::map<std::pair<int, int>, float>::const_iterator it = spline_ob_values.begin(); it != spline_ob_values.end();  ++it)
-              {
-                  spline_OB_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-              }
+
+
+//            ofstream spline_OB_values("tps_OB_points.txt");
+//              for (std::map<std::pair<int, int>, float>::const_iterator it = spline_ob_values.begin(); it != spline_ob_values.end();  ++it)
+//              {
+//                  spline_OB_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//              }
 
 
 
@@ -1306,15 +1309,15 @@ int outlier = 0;
 
     }
 
-    ofstream int_points("poly_points.txt");
+//    ofstream int_points("poly_points.txt");
 
-    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-                it != values.end(); ++it) {
+//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
+//                it != values.end(); ++it) {
 
-           int_points << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//           int_points << it->first.first << " " << it->first.second << " " << it->second << std::endl;
 
 
-    }
+//    }
 
 
 
@@ -1792,7 +1795,7 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TI
 
     try{
         SegmentBlackBody(norm, normdc, mask, values);
-         kipl::io::WriteTIFF32(mask, "maskSpline.tif");
+//         kipl::io::WriteTIFF32(mask, "maskSpline.tif");
     }
     catch (...) {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
