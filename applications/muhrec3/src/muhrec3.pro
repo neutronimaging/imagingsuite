@@ -56,7 +56,7 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-ICON = muhrec3.icns
+ICON = muh4_icon.icns
 
 SOURCES += main.cpp\
         muhrecmainwindow.cpp \
