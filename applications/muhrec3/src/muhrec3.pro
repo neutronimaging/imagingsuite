@@ -57,6 +57,7 @@ win32 {
 }
 
 ICON = muh4_icon.icns
+RC_ICONS = muh4_icon.ico
 
 SOURCES += main.cpp\
         muhrecmainwindow.cpp \
