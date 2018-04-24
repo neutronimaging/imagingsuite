@@ -142,8 +142,10 @@ int RunOffline(QApplication *app)
     QVector<QString> qargs=app->arguments().toVector();
     std::vector<std::string> args;
 
+    qDebug()<<"Arguments";
     for (int i=0; i<qargs.size(); i++) {
         args.push_back(qargs[i].toStdString());
+        qDebug()<<qargs[i].toStdString();
     }
 
     if (2<args.size()) {
