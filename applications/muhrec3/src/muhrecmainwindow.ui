@@ -1289,7 +1289,7 @@
                 <string>Stitch projections in the center if the data was acquired with translated center of rotation.</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">font: 13pt;</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Stitch projections</string>
@@ -1996,7 +1996,7 @@
           <item>
            <widget class="QGroupBox" name="groupOutput">
             <property name="styleSheet">
-             <string notr="true">QGroupBox#groupOutput {font: bold 14px}</string>
+             <string notr="true">QGroupBox#groupOutput {font: bold 1.75em}</string>
             </property>
             <property name="title">
              <string>Output</string>
@@ -2191,7 +2191,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Displays the reconstructed slices.</string>
+             <string/>
             </property>
            </widget>
           </item>
