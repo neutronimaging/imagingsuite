@@ -121,8 +121,6 @@ double Entropy(T const * const data, const size_t N)
 }
 
 
-
-
 }}
 
 #endif

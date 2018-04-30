@@ -12,14 +12,18 @@ from math import fmod
 firstproj=1;
 firstframe=0
 lastframe=3
+framestep=180
+
+angles=180 # the length of the scan arc (degrees)
+
 for i in range(firstframe,lastframe) :
 	# select projection sub set
-	firstindex="projections:firstindex="+str(firstproj+i*180)
-	lastindex="projections:lastindex="+str(firstproj+(i+1)*180)
+	firstindex="projections:firstindex="+str(firstproj+i*framestep)
+	lastindex="projections:lastindex="+str(firstproj+(i+1)*framestep)
 	# set file mask for the slices
 	matrixname="matrix:matrixname=frame_"+("%04d" % i)+"-slice_####.tif"
 	# adjust the reconstruction angles to alternating between 0-180 and 180-360
-	angle=fmod(i,2)*180 
-	scanarc="'projections:scanarc="+str(angle)+" "+str(angle+180)+"'"
+	angle=fmod(i,2)*angles 
+	scanarc="'projections:scanarc="+str(angle)+" "+str(angle+angles)+"'"
 	# call the reconstruction
 	call([muhrec, "-f", cfgpath, firstindex, lastindex, matrixname, scanarc])

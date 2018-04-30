@@ -51,11 +51,6 @@ ViewGeometryListDialog::~ViewGeometryListDialog()
 }
 
 void ViewGeometryListDialog::SetupCallbacks(){
-    connect(ui->buttonClearSelected,SIGNAL(clicked()),this,SLOT(ClearAllChecked()));
-    connect(ui->buttonComputeTilt,SIGNAL(clicked()),this,SLOT(ComputeTilt()));
-    connect(ui->buttonMaxROI,SIGNAL(clicked()),this,SLOT(MaxROI()));
-
-    connect(ui->listWidget,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(ShowSelected(QListWidgetItem*)));
 }
 
 void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > >  &reconList)
@@ -298,7 +293,7 @@ void ViewGeometryListDialog::MaxROI()
             <<m_nMatrixROI[2]<<", "
             <<m_nMatrixROI[3]<<"]";
 
-        ui->labelROI->setText(QString::fromStdString(msg.str()));
+  //      ui->labelROI->setText(QString::fromStdString(msg.str()));
     }
 }
 
@@ -316,4 +311,19 @@ void ViewGeometryListDialog::on_buttonSelectAll_clicked()
         item->setCheckState(Qt::Checked);
     }
 
+}
+
+void ViewGeometryListDialog::on_buttonClearSelected_clicked()
+{
+    ClearAllChecked();
+}
+
+void ViewGeometryListDialog::on_buttonComputeTilt_clicked()
+{
+    ComputeTilt();
+}
+
+void ViewGeometryListDialog::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+    ShowSelected(item);
 }

@@ -116,6 +116,9 @@
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
           <widget class="QComboBox" name="comboCompare">
+           <property name="toolTip">
+            <string>Selects information to display</string>
+           </property>
            <item>
             <property name="text">
              <string>Difference</string>
@@ -241,6 +244,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::Plotter</class>

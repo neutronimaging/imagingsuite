@@ -12,10 +12,13 @@ PiercingPointDialog::PiercingPointDialog(QWidget *parent) :
     QDialog(parent),
     logger("PiercingPointDialog"),
     ui(new Ui::PiercingPointDialog),
-    useROI(false),
-    correctGain(false)
+    correctGain(false),
+    useROI(false)
 {
     ui->setupUi(this);
+    ui->widgetEstimationROI->setROIColor("limegreen");
+    ui->widgetEstimationROI->setAutoHideROI(true);
+    ui->widgetEstimationROI->registerViewer(ui->viewer);
 }
 
 PiercingPointDialog::~PiercingPointDialog()
@@ -61,16 +64,7 @@ int PiercingPointDialog::exec(ReconConfig &config)
 
 void PiercingPointDialog::on_checkBox_useROI_toggled(bool checked)
 {
-    ui->spinBox_roi0->setVisible(checked);
-    ui->spinBox_roi0->setVisible(checked);
-    ui->spinBox_roi1->setVisible(checked);
-    ui->spinBox_roi2->setVisible(checked);
-    ui->spinBox_roi3->setVisible(checked);
-    ui->label_x0->setVisible(checked);
-    ui->label_y0->setVisible(checked);
-    ui->label_x1->setVisible(checked);
-    ui->label_y1->setVisible(checked);
-    ui->pushButton_getROI->setVisible(checked);
+    ui->widgetEstimationROI->setVisible(checked);
     useROI=checked;
 }
 
@@ -78,10 +72,7 @@ void PiercingPointDialog::UpdateConfig()
 {
     useROI      = ui->checkBox_useROI->isChecked();
     correctGain = ui->checkBox_gainCorrection->isChecked();
-    roi[0]      = ui->spinBox_roi0->value();
-    roi[1]      = ui->spinBox_roi1->value();
-    roi[2]      = ui->spinBox_roi2->value();
-    roi[3]      = ui->spinBox_roi3->value();
+    ui->widgetEstimationROI->getROI(roi);
 
     position.first  = ui->doubleSpinBox_posX->value();
     position.second = ui->doubleSpinBox_posY->value();
@@ -92,25 +83,10 @@ void PiercingPointDialog::UpdateDialog()
     ui->checkBox_useROI->setChecked(useROI);
     on_checkBox_useROI_toggled(useROI);
     ui->checkBox_gainCorrection->setChecked(correctGain);
-    ui->spinBox_roi0->setValue(roi[0]);
-    ui->spinBox_roi1->setValue(roi[1]);
-    ui->spinBox_roi2->setValue(roi[2]);
-    ui->spinBox_roi3->setValue(roi[3]);
+    ui->widgetEstimationROI->setROI(roi);
 
     ui->doubleSpinBox_posX->setValue(position.first);
     ui->doubleSpinBox_posY->setValue(position.second);
-}
-
-void PiercingPointDialog::on_pushButton_getROI_clicked()
-{
-    QRect rect=ui->viewer->get_marked_roi();
-    ui->viewer->set_rectangle(rect,QColor("red"),0);
-
-    ui->spinBox_roi0->setValue(rect.x());
-    ui->spinBox_roi1->setValue(rect.y());
-    ui->spinBox_roi2->setValue(rect.x()+rect.width());
-    ui->spinBox_roi3->setValue(rect.y()+rect.height());
-
 }
 
 void PiercingPointDialog::on_pushButton_estimate_clicked()

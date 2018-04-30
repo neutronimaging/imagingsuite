@@ -83,6 +83,9 @@
         <height>22</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>A list of projection indices to skip in the reconstruction. The indices can be separated by spaces of commas.</string>
+      </property>
      </widget>
     </item>
    </layout>
@@ -106,6 +109,9 @@
     </item>
     <item>
      <widget class="QSpinBox" name="spinExpNumProj">
+      <property name="toolTip">
+       <string>The intended number of projections in the data set. Badly handled retakes may increase the number of acquired images.</string>
+      </property>
       <property name="minimum">
        <number>1</number>
       </property>

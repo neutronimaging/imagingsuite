@@ -27,6 +27,9 @@
        </item>
        <item>
         <widget class="QComboBox" name="combo_averagemethod">
+         <property name="toolTip">
+          <string>Selects image combination method</string>
+         </property>
          <item>
           <property name="text">
            <string>Sum</string>
@@ -63,6 +66,9 @@
      </item>
      <item>
       <widget class="QCheckBox" name="check_usedose">
+       <property name="toolTip">
+        <string>Estimate the acquistion dose using the intensity of the dose ROI.</string>
+       </property>
        <property name="text">
         <string>Use dose normalization</string>
        </property>
@@ -70,6 +76,9 @@
      </item>
      <item>
       <widget class="QCheckBox" name="check_useLut">
+       <property name="toolTip">
+        <string>Use a look-up table instead of computing the logarithm.</string>
+       </property>
        <property name="text">
         <string>Use look-up table (no recommended)</string>
        </property>

@@ -1,6 +1,6 @@
 ﻿@echo ----------------- Deploy copy --------------
-set REPOS=C:\%HOMEPATH%\git
-set DEST=C:\%HOMEPATH%\imagingscience
+set REPOS=%HOMEPATH%\Documents\git
+set DEST=%HOMEPATH%\imagingscience
 
 
 if not exist %DEST% mkdir %DEST%
@@ -53,6 +53,10 @@ copy %REPOS%\imagingsuite\applications\muhrec3\src\resources resources
 
 cd C:\Qt\5.9\msvc2015_64\bin
 
+rem cd C:\Qt\5.8\msvc2015_64\bin
+rem cd C:\Qt\5.9.3\msvc2015_64\bin
+rem cd C:\Qt\Qt5.9.3\5.9.3\msvc2015_64\bin
+rem cd C:\Qt\5.10.1\msvc2017_64\bin
 windeployqt %DEST%\muhrec3.exe
 copy Qt5PrintSupport.dll %DEST%
 

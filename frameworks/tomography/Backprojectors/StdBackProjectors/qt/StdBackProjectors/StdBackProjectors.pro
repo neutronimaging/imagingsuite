@@ -13,6 +13,7 @@ CONFIG += c++11
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
