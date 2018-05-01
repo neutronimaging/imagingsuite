@@ -17,6 +17,7 @@
 #include "QtModuleConfigure_global.h"
 #include "ModuleConfigurator.h"
 #include <ModuleException.h>
+#include <QMessageBox>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -41,7 +42,22 @@ ModuleConfigurator::~ModuleConfigurator()
 	
 bool ModuleConfigurator::configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters)
 {
-	ostringstream msg;
+
+    ostringstream msg;
+
+    std::string str = m_Config->SanitySlicesCheck();
+    if(!str.empty())
+    {
+        QMessageBox mbox;
+        mbox.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+        mbox.setDefaultButton(QMessageBox::Abort);
+        mbox.setText(QString::fromStdString(str));
+        mbox.setWindowTitle("Sanity check warning");
+        int res_msg=mbox.exec();
+        if (res_msg==QMessageBox::Abort)
+            return false;
+    }
+
 	try {
 		GetDialog(application,SharedObjectName,ModuleName);
 	}
@@ -65,25 +81,25 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 	if (m_Dialog!=NULL) {
 		msg.str("");
 
-		try {
+         try {
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
-		}
-		catch (ModuleException &e)
-		{
-			msg<<"Module exception: Failed to load projection data for "<<ModuleName<<".\n"<<e.what();
-		}
-		catch (kipl::base::KiplException & e) {
-			msg<<"kipl exception: Failed to load projection data for "<<ModuleName<<".\n"<<e.what();
-		}
-		catch (std::exception &e) {
-			msg<<"STL exception: Failed to load projection data for "<<ModuleName<<".\n"<<e.what();
-		}
-		catch (...) {
-			msg<<"Failed to load projection data with unhandled exception for "<<ModuleName<<".";
-		}
-		if (!msg.str().empty())
-			throw ModuleException(msg.str(),__FILE__,__LINE__);
+        }
+        catch (ModuleException &e)
+        {
+            msg<<"Module exception: Failed to load projection data for "<<ModuleName<<".\n"<<e.what();
+        }
+        catch (kipl::base::KiplException & e) {
+            msg<<"kipl exception: Failed to load projection data for "<<ModuleName<<".\n"<<e.what();
+        }
+        catch (std::exception &e) {
+            msg<<"STL exception: Failed to load projection data for "<<ModuleName<<".\n"<<e.what();
+        }
+        catch (...) {
+            msg<<"Failed to load projection data with unhandled exception for "<<ModuleName<<".";
+        }
+        if (!msg.str().empty())
+            throw ModuleException(msg.str(),__FILE__,__LINE__);
 
         res=m_Dialog->exec(m_Config, parameters, m_Image);
 

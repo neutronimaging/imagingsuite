@@ -195,6 +195,10 @@ protected:
     /// \param cName Name of the main block.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string cName);
 
+    virtual string SanitySlicesCheck();
+
+    virtual string SanityMessage(bool mess);
+
     /// Parse a list of arguments provided by the CLI
     /// \param args A list of arguments as they come from the CLI.
     virtual void ParseArgv(std::vector<std::string> &args);

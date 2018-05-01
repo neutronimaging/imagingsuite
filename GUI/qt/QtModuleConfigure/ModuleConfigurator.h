@@ -25,6 +25,7 @@
 #include <ConfigBase.h>
 #include <base/timage.h>
 #include <logging/logger.h>
+#include <uifovwidget.h>
 
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef void * (__cdecl *FACTORY)(const char *, const char *, void *);
@@ -39,6 +40,7 @@ typedef  void * HINSTANCE;
 class QTMODULECONFIGURESHARED_EXPORT ModuleConfigurator {
 protected:
 	kipl::logging::Logger logger;
+
 public:
 	ModuleConfigurator();
 	virtual ~ModuleConfigurator();
