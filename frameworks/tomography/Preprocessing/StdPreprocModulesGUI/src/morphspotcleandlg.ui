@@ -88,6 +88,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QComboBox" name="comboDetectionDisplay">
+         <property name="toolTip">
+          <string>Select different verification informations.</string>
+         </property>
          <item>
           <property name="text">
            <string>Difference</string>
@@ -141,6 +144,9 @@
      </item>
      <item row="4" column="1">
       <widget class="QSpinBox" name="spinArea">
+       <property name="toolTip">
+        <string>Sets the largest area that should considered being a spot.</string>
+       </property>
        <property name="maximum">
         <number>1000</number>
        </property>
@@ -148,6 +154,9 @@
      </item>
      <item row="1" column="3">
       <widget class="QComboBox" name="comboCleanMethod">
+       <property name="toolTip">
+        <string>Selects repair algorithm</string>
+       </property>
        <item>
         <property name="text">
          <string>Replace</string>
@@ -176,6 +185,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QDoubleSpinBox" name="spinSigma">
+       <property name="toolTip">
+        <string>Width of the mixing band, allows a fuzzy mix between smooth and orignal image.</string>
+       </property>
        <property name="decimals">
         <number>5</number>
        </property>
@@ -183,6 +195,9 @@
      </item>
      <item row="4" column="4">
       <widget class="QPushButton" name="buttonApply">
+       <property name="toolTip">
+        <string>Test the current settings.</string>
+       </property>
        <property name="text">
         <string>Apply</string>
        </property>
@@ -190,6 +205,9 @@
      </item>
      <item row="3" column="3">
       <widget class="QDoubleSpinBox" name="spinMaxValue">
+       <property name="toolTip">
+        <string>Additional value clamping, setting greatest value allowed.</string>
+       </property>
        <property name="decimals">
         <number>5</number>
        </property>
@@ -203,6 +221,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QDoubleSpinBox" name="spinThreshold">
+       <property name="toolTip">
+        <string>Threshold value to select the cleaning level.</string>
+       </property>
        <property name="decimals">
         <number>5</number>
        </property>
@@ -210,6 +231,9 @@
      </item>
      <item row="0" column="3">
       <widget class="QComboBox" name="comboDetectionMethod">
+       <property name="toolTip">
+        <string>Selects the type of outliers to remove.</string>
+       </property>
        <item>
         <property name="text">
          <string>Holes</string>
@@ -229,6 +253,9 @@
      </item>
      <item row="4" column="3">
       <widget class="QSpinBox" name="spinEdgeLenght">
+       <property name="toolTip">
+        <string>Length of an edge smothing filter. Improves the edge processing.</string>
+       </property>
        <property name="minimum">
         <number>1</number>
        </property>
@@ -266,6 +293,9 @@
      </item>
      <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="spinMinValue">
+       <property name="toolTip">
+        <string>Additional value clamping, setting lowest value allowed.</string>
+       </property>
        <property name="decimals">
         <number>5</number>
        </property>
@@ -299,6 +329,9 @@
      </item>
      <item row="2" column="3">
       <widget class="QComboBox" name="comboConnectivity">
+       <property name="toolTip">
+        <string>Selects morphological connectivity</string>
+       </property>
        <item>
         <property name="text">
          <string>4-connectivity</string>
@@ -331,6 +364,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::Plotter</class>

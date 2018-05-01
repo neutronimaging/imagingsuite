@@ -8,6 +8,8 @@
 #include <QFileDialog>
 #include <QString>
 #include <QVector>
+#include <QDebug>
+#include <QStyleFactory>
 #include "muhrecmainwindow.h"
 #include <string>
 #include <strings/miscstring.h>
@@ -53,45 +55,80 @@ int main(int argc, char *argv[])
 
 int RunGUI(QApplication *app)
 {
-  std::ostringstream msg;
-  kipl::logging::Logger logger("MuhRec3::RunGUI");
+    std::ostringstream msg;
+    kipl::logging::Logger logger("MuhRec3::RunGUI");
 
-  try {
+    app->setStyle(QStyleFactory::create("Fusion"));
+
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor(53,53,53));
+    palette.setColor(QPalette::WindowText, QColor(250,250,250));
+    palette.setColor(QPalette::Base, QColor(15,15,15));
+    palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+    palette.setColor(QPalette::ToolTipBase, QColor("lemonchiffon"));
+    palette.setColor(QPalette::ToolTipText, Qt::black);
+    palette.setColor(QPalette::Text, Qt::white);
+    palette.setColor(QPalette::Button, QColor(53,53,53));
+    palette.setColor(QPalette::ButtonText, Qt::white);
+    palette.setColor(QPalette::BrightText, Qt::red);
+    palette.setColor(QPalette::Background, QColor("darkgray").darker());
+    palette.setColor(QPalette::Highlight, QColor("#6db3f7"));
+    palette.setColor(QPalette::HighlightedText, Qt::white);
+    app->setPalette(palette);
+    app->setStyleSheet("QLineEdit {background : white; color:black}"
+                       "QSpinBox {background : white; color:black} "
+                       "QTextEdit {background : white; color:black} "
+                       "QDoubleSpinBox{background : white; color:black} "
+                       "QTabBar::tab {"
+                       "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #E1E1E1, stop: 1.0 #D3D3D3);"
+                       "border: 1px solid #C4C4C3;"
+                       "border-bottom-color: #C2C7CB; /* same as the pane color */"
+                       "border-top-left-radius: 4px;"
+                       "border-top-right-radius: 4px;"
+                       "min-width: 8ex; padding: 2px;}"
+                       "QTabBar::tab:selected, QTabBar::tab:hover {"
+                       "color:white;"
+                       "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6db3f7, stop: 1.0 #1b82fb);}"
+                       "QTabBar::tab:selected {"
+                       "border-color: #9B9B9B;"
+                       "border-bottom-color: #C2C7CB; /* same as pane color */}"
+                       "QTabBar::tab:!selected {color: #353535;margin-top: 2px; /* make non-selected tabs look smaller */}");
+    try {
         MuhRecMainWindow w(app);
         w.show();
 
         return app->exec();
-  }
-  catch (ReconException &e) {
+    }
+    catch (ReconException &e) {
       msg<<"A recon exception was thrown during the main window initialization\n"<<e.what();
       logger(kipl::logging::Logger::LogError,msg.str());
 
       return -1;
-  }
-  catch (ModuleException &e) {
+    }
+    catch (ModuleException &e) {
           msg<<"A module exception was thrown during the main window initialization\n"<<e.what();
           logger(kipl::logging::Logger::LogError,msg.str());
 
           return -6;
-  }
-  catch (kipl::base::KiplException &e) {
+    }
+    catch (kipl::base::KiplException &e) {
       msg<<"A kipl exception was thrown during the main window initialization\n"<<e.what();
       logger(kipl::logging::Logger::LogError,msg.str());
 
       return -2;
-  }
-  catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
     msg<<"An STL exception was thrown during the main window initialization\n"<<e.what();
     logger(kipl::logging::Logger::LogError,msg.str());
 
     return -3;
-  }
-  catch (...) {
+    }
+    catch (...) {
       msg<<"An unknown exception was thrown\n";
       logger(kipl::logging::Logger::LogError,msg.str());
       return -7;
-  }
-  return -100;
+    }
+    return -100;
 }
 
 int RunOffline(QApplication *app)

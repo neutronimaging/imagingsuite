@@ -32,11 +32,16 @@ private slots:
     void onROIButtonClicked();
     void ROIChanged(int x);
 
-    void on_checkUseTilt_toggled(bool checked);
 
     void on_dspinCenterRotation_valueChanged(double arg1);
 
     void on_comboROISelection_currentIndexChanged(int index);
+
+    void on_groupUseTilt_toggled(bool arg1);
+
+    void on_spinSliceFirst_valueChanged(int arg1);
+
+    void on_spinSliceLast_valueChanged(int arg1);
 
 private:
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);

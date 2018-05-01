@@ -110,6 +110,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="toolTip">
+          <string>Select which validation information to show.</string>
+         </property>
          <item>
           <property name="text">
            <string>Difference</string>
@@ -150,6 +153,9 @@
      </item>
      <item row="0" column="3">
       <widget class="QDoubleSpinBox" name="entry_sigma">
+       <property name="toolTip">
+        <string>A fuzziness factor to allow smooth mixing between original and correction data.</string>
+       </property>
        <property name="decimals">
         <number>4</number>
        </property>
@@ -164,6 +170,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QDoubleSpinBox" name="entry_gamma">
+       <property name="toolTip">
+        <string>Threshold to set the strength of the cleaning.</string>
+       </property>
        <property name="decimals">
         <number>4</number>
        </property>
@@ -177,7 +186,11 @@
       </widget>
      </item>
      <item row="0" column="5">
-      <widget class="QSpinBox" name="entry_iterations"/>
+      <widget class="QSpinBox" name="entry_iterations">
+       <property name="toolTip">
+        <string>Number of iterations to apply the filter. Usually, one iteration is sufficient.</string>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_7">
@@ -188,6 +201,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QDoubleSpinBox" name="entry_min">
+       <property name="toolTip">
+        <string>Data clamping to limit lower values.</string>
+       </property>
        <property name="decimals">
         <number>4</number>
        </property>
@@ -202,6 +218,9 @@
      </item>
      <item row="1" column="3">
       <widget class="QDoubleSpinBox" name="entry_max">
+       <property name="toolTip">
+        <string>Data clamping to limit higher values.</string>
+       </property>
        <property name="decimals">
         <number>4</number>
        </property>
@@ -215,7 +234,11 @@
       </widget>
      </item>
      <item row="1" column="5">
-      <widget class="QSpinBox" name="entry_maxarea"/>
+      <widget class="QSpinBox" name="entry_maxarea">
+       <property name="toolTip">
+        <string>Limits the size of features detected as outliers.</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -235,6 +258,9 @@
          <width>180</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Select the outlier detection method.</string>
        </property>
        <item>
         <property name="text">
@@ -282,6 +308,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QPushButton" name="button_apply">
+       <property name="toolTip">
+        <string>Test the current settings.</string>
+       </property>
        <property name="text">
         <string>Apply</string>
        </property>
@@ -310,6 +339,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::Plotter</class>

@@ -568,7 +568,6 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 				str.str(),
 				matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1],
 				0,nSlices,m_FirstSlice,matrixconfig->FileType,plane);
-
 	}
 
 	return bTransposed;

@@ -87,6 +87,7 @@ public slots:
 //    void zoomIn();
 //    void zoomOut();
     void ShowContextMenu(const QPoint& pos);
+    void on_levelsChanged(float lo, float hi);
 
 protected:
     virtual void paintEvent(QPaintEvent *event);
@@ -123,6 +124,7 @@ protected:
 
 signals:
     void newImageDims(const QRect &rect);
+    void levelsChanged(float lo, float hi);
 };
 
 class SetGrayLevelsDialog : public QDialog

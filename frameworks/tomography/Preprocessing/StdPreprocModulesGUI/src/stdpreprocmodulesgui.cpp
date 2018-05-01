@@ -18,7 +18,7 @@
 
 class ConfiguratorDialogBase;
 
-void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name, void *interactor)
+STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name, void *interactor)
 {
 	if (strcmp(application,"muhrec")!=0)
         return nullptr;
@@ -72,7 +72,7 @@ void STDPREPROCMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, 
 	return NULL;
 }
 
-STDPREPROCMODULESGUISHARED_EXPORT int DestroyGUIModule(const char * application, void *obj)
+STDPREPROCMODULESGUISHARED_EXPORT int DestroyGUIModule(const char *application, void *obj)
 {
 	if (strcmp(application,"muhrec")!=0)
 		return -1;

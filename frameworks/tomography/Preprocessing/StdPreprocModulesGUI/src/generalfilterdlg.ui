@@ -33,6 +33,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="toolTip">
+          <string>Select filter kernel to aplly on the projections</string>
+         </property>
          <property name="currentIndex">
           <number>1</number>
          </property>
@@ -61,6 +64,9 @@
        </item>
        <item>
         <widget class="QDoubleSpinBox" name="spinBox_FilterSize">
+         <property name="toolTip">
+          <string>Sets the kernel width</string>
+         </property>
          <property name="minimum">
           <double>0.500000000000000</double>
          </property>

@@ -55,10 +55,17 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editPath"/>
+       <widget class="QLineEdit" name="editPath">
+        <property name="toolTip">
+         <string>The folder where the inspection images are stored.</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="buttonBrowse">
+        <property name="toolTip">
+         <string>Browse for the destination path.</string>
+        </property>
         <property name="text">
          <string>Browse</string>
         </property>
@@ -76,7 +83,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editFileMask"/>
+       <widget class="QLineEdit" name="editFileMask">
+        <property name="toolTip">
+         <string>File mask of the stored images. Should be in the format name_####.ext.</string>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer">
@@ -107,6 +118,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="comboImageType">
+        <property name="toolTip">
+         <string>Selects to save either projections or sinograms.</string>
+        </property>
         <item>
          <property name="text">
           <string>Projections</string>
@@ -141,6 +155,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="comboFileType">
+        <property name="toolTip">
+         <string>File format to save.</string>
+        </property>
         <item>
          <property name="text">
           <string>8-bit TIFF</string>

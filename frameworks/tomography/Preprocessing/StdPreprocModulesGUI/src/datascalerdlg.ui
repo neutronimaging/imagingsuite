@@ -55,6 +55,9 @@
     </item>
     <item row="0" column="1">
      <widget class="QDoubleSpinBox" name="spinSlope">
+      <property name="toolTip">
+       <string>Set the k of the y=kx+m</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
@@ -68,6 +71,9 @@
     </item>
     <item row="1" column="1">
      <widget class="QDoubleSpinBox" name="spinOffset">
+      <property name="toolTip">
+       <string>Set the m of the y=kx+m</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>

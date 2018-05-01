@@ -45,34 +45,14 @@ private:
     void ProjectionIndexChanged(int x);
 
 protected slots:
-    void BrowseProjectionPath();
-    void BrowseDestinationPath();
-    void TakeProjectionPath();
-    void GetSkipList();
-
-    void GetDoseROI();
-    void GetReconROI();
-    void BinningChanged();
-    void FlipChanged();
-    void RotateChanged();
-    void DoseROIChanged(int x);
-    void ProjROIChanged(int x);
-    void CenterOfRotationChanged(int x);
-    void CenterOfRotationChanged(double x);
-    void ConfigureGeometry();
     void StoreGeometrySetting();
     void ClearGeometrySettings();
     void ViewGeometryList();
-    void GrayLevelsChanged(double x);
-    void GetMatrixROI();
     void MatrixROIChanged(int x);
-    void UseMatrixROI(int x);
-    void SaveMatrix();
 
     void PreviewProjection();
 
     void DisplaySlice();
-    void DisplaySlice(int x);
 
     // Menu slots
     void MenuFileNew();
@@ -87,7 +67,6 @@ protected:
     /// Sets up all call-back functions during the initialization.
     void SetupCallBacks();
     void lookForReferences(std::string &path);
-    void UpdateMatrixROI();
     void UpdateDoseROI();
     void SetImageDimensionLimits(size_t const * const dims);
     void CenterOfRotationChanged();
@@ -157,6 +136,57 @@ private slots:
 
     void on_pushButton_logging_clicked();
 
+    void on_actionUser_manual_triggered();
+
+    void on_radioButton_fullTurn_clicked();
+
+    void on_radioButton_halfTurn1_clicked();
+
+    void on_radioButton_halfTurn2_clicked();
+
+    void on_radioButton_customTurn_clicked();
+
+    void on_checkCorrectTilt_clicked(bool checked);
+
+    void on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1);
+
+    void on_buttonProjectionPath_clicked();
+
+    void on_buttonBrowseDestinationPath_clicked();
+
+    void on_buttonTakePath_clicked();
+
+    void on_buttonGetSkipList_clicked();
+
+    void on_dspinRotationCenter_valueChanged(double arg1);
+
+    void on_dspinTiltAngle_valueChanged(double arg1);
+
+    void on_dspinTiltPivot_valueChanged(double arg1);
+
+    void on_sliderSlices_sliderMoved(int position);
+
+    void on_button_FindCenter_clicked();
+
+    void on_checkUseMatrixROI_toggled(bool checked);
+
+    void on_dspinRotateRecon_valueChanged(double arg1);
+
+    void on_dialRotateRecon_sliderMoved(int position);
+
+    void on_buttonSaveMatrix_clicked();
+
+    void on_dspinGrayLow_valueChanged(double low);
+
+    void on_dspinGrayHigh_valueChanged(double arg1);
+
+    void on_sliceViewer_levelsChanged(float low, float high);
+
+    void on_pushButton_levels95p_clicked();
+
+    void on_pushButton_levels99p_clicked();
+
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
@@ -184,6 +214,9 @@ private:
     kipl::base::eImagePlanes m_eSlicePlane;
     size_t m_nSliceSizeX;
     size_t m_nSliceSizeY;
+    int m_oldROI[4];
+    int m_oldRotateDial;
+    double m_oldRotateSpin;
 
     std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > > m_StoredReconList;
     bool m_bCurrentReconStored;

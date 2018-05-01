@@ -9,6 +9,7 @@
 #include <QToolTip>
 #include <QStylePainter>
 #include <QSignalBlocker>
+#include <QDebug>
 
 namespace QtAddons {
 
@@ -41,6 +42,8 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));
+
+        connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
 }
 
 ImageViewerWidget::~ImageViewerWidget()
@@ -97,6 +100,11 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
         // nothing was chosen
         logger(kipl::logging::Logger::LogMessage,"Menu was canceled");
     }
+}
+
+void ImageViewerWidget::on_levelsChanged(float lo, float hi)
+{
+    qDebug()<<"levels signal";
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
@@ -408,6 +416,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_ImagePainter.get_image_minmax(&mi,&ma);
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    qDebug("ImageViewerWidget::set_image1");
     emit newImageDims(rect);
 }
 
@@ -429,6 +438,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+  //  qDebug()<<QString("ImageViewerWidget::set_image2 ")<<dims[0]<<" "<<dims[1];
     emit newImageDims(rect);
 }
 
@@ -492,6 +502,8 @@ void ImageViewerWidget::set_levels(const float level_low, const float level_high
     if (updatelinked) {
         UpdateLinkedViewers();
     }
+    qDebug()<<"Viewer::setLevels";
+    emit levelsChanged(level_low,level_high);
 }
 
 void ImageViewerWidget::get_levels(float *level_low, float *level_high)
