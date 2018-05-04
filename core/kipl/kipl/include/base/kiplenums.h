@@ -34,10 +34,11 @@ enum ePadType {
 
 /// \brief Image flip selector
 enum eImageFlip {
-    ImageFlipNone=0,            ///< No flipping
-    ImageFlipHorizontal,        ///< Flip about the vertical axis
-    ImageFlipVertical,          ///< Flip about the horizontal axis
-    ImageFlipHorizontalVertical ///< Flip both horizontal and vertial
+    ImageFlipNone=0,             ///< No flipping
+    ImageFlipHorizontal,         ///< Flip about the vertical axis
+    ImageFlipVertical,           ///< Flip about the horizontal axis
+    ImageFlipHorizontalVertical, ///< Flip both horizontal and vertial
+    ImageFlipDefault             ///< Use default Flip operation
 };
 
 /// \brief Image axis permutation selector
@@ -55,7 +56,8 @@ enum eImageRotate {
     ImageRotateNone=0,  ///< No rotation
     ImageRotate90,      ///< Rotate 90 degrees clockwise
     ImageRotate180,     ///< Rotate 180 degrees clockwise
-    ImageRotate270      ///< Rotate 270 degrees clockwise
+    ImageRotate270,     ///< Rotate 270 degrees clockwise
+    ImageRotateDefault  ///< Use default rotation operation
 };
 
 ///< Selector for the rotation direction

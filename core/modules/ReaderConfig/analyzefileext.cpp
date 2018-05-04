@@ -8,6 +8,7 @@
 #include "analyzefileext.h"
 #include <strings/filenames.h>
 #include <base/KiplException.h>
+#include <QDebug>
 
 namespace readers {
 
@@ -37,7 +38,7 @@ std::string KIPLSHARED_EXPORT enum2string(readers::eExtensionTypes et)
     case readers::ExtensionDAT:   ext="dat"; break;
     case readers::ExtensionXML:   ext="xml"; break;
     case readers::ExtensionRAW:   ext="raw";  break;
-    case readers::ExtensionFITS:  ext="fits"; break;
+    case readers::ExtensionFITS:  ext="fit"; break;
     case readers::ExtensionPNG:   ext="png"; break;
     case readers::ExtensionJPG:   ext="jpg"; break;
     case readers::ExtensionTIFF:  ext="tif"; break;
@@ -60,7 +61,7 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, readers::eExtensionTypes &et
 {
     std::ostringstream msg;
     std::string e=ext;
-    std::transform(e.begin(),e.begin(),e.end(),tolower);
+    std::transform(ext.begin(),ext.end(),e.begin(),tolower);
     if (e[0]=='.')
         e=e.substr(1);
 
@@ -81,7 +82,9 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, readers::eExtensionTypes &et
     extmap["tiff"]  = readers::ExtensionTIFF;
     extmap["mat"]   = readers::ExtensionMAT;
     extmap["hd4"]   = readers::ExtensionHDF4;
+    extmap["hdf4"]  = readers::ExtensionHDF4;
     extmap["hd5"]   = readers::ExtensionHDF5;
+    extmap["hdf5"]   = readers::ExtensionHDF5;
     extmap["hdf"]   = readers::ExtensionHDF;
     extmap["seq"]   = readers::ExtensionSEQ;
 
