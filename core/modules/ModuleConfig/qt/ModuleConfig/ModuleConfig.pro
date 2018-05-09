@@ -53,7 +53,8 @@ SOURCES += \
     ../../src/ModuleConfig.cpp \
     ../../src/dllmain.cpp \
     ../../src/ConfigBase.cpp \
-    ../../src/datamodulebase.cpp
+    ../../src/datamodulebase.cpp \
+    ../../src/applicationconfig.cpp
 
 HEADERS +=\
      ../../include/ModuleConfig_global.h \
@@ -64,7 +65,8 @@ HEADERS +=\
     ../../include/ModuleException.h \
     ../../include/ModuleConfig.h \
     ../../include/ConfigBase.h \
-    ../../include/datamodulebase.h
+    ../../include/datamodulebase.h\
+    ../../include/applicationconfig.h \
     ../../src/stdafx.h
 
 symbian {
