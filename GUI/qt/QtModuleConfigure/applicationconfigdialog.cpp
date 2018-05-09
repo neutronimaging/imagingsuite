@@ -36,7 +36,7 @@ int ApplicationConfigDialog::exec()
 
     int res=QDialog::exec();
 
-    if (res=QDialog::Accepted) {
+    if (res==QDialog::Accepted) {
         config->applicationPath=ui->lineEdit_AppPath->text().toStdString();
         config->dataPath= ui->lineEdit_DataPath->text().toStdString();
         config->memory = ui->spinBox->value();
