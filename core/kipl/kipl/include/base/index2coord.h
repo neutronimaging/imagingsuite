@@ -55,7 +55,7 @@ namespace kipl { namespace base {
         /// \param xx x coordinate
         /// \param yy y coordinate
         /// \param zz z coordinate
-        coords3Df(float xx,float yy, float zz) : x(xx), y(yy), z(zz) {}
+        coords3Df(float xx,float yy, float zz) : x(xx), y(yy), z(zz), reserved(0.0f) {}
 
         /// \param C'tor to set the struct to default values (all =0)
         coords3Df() : x(0.0f), y(0.0f), z(0.0f), reserved(0.0f) {}

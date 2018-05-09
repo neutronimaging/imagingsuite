@@ -8,9 +8,12 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = tst_configbasetest
+TARGET = tst_tModuleConfig
 CONFIG   += console
 CONFIG   -= app_bundle
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
