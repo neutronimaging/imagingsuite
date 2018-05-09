@@ -10,3 +10,10 @@ build*
 .DS-Store
 .ipynb_checkpoints
 *.sym
+*.aux
+*.bbl
+*.blg
+*.log
+*.toc
+*.gz
+*.pdf
