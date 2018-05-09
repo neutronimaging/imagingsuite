@@ -27,10 +27,8 @@ unix:!symbian {
 
     unix:macx {
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /usr/local/include
-        QMAKE_LIBDIR += /usr/local/lib
-        QMAKE_INFO_PLIST = Info.plist
-        ICON = muhrec3.icns
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -53,28 +51,23 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+GIT_VERSION = $$system(git describe --abbrev=4 --dirty --always --tags)
+QMAKE_CXXFLAGS += -DVERSION=\\\"$$GIT_VERSION\\\"
+
 SOURCES += tst_configbasetest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../../lib
+CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../../lib/debug/
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
+LIBS += -lkipl -lModuleConfig -lReconFramework
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/debug/ -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
+INCLUDEPATH += $$PWD/../../../kipl/kipl/include
+DEPENDPATH += $$PWD/../../../kipl/kipl/src
 
-INCLUDEPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/src
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/debug/ -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Debug/ -lModuleConfig
-INCLUDEPATH += $$PWD/../include
-DEPENDPATH += $$PWD/../src
+INCLUDEPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/include/
+DEPENDPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/src
+
+INCLUDEPATH += $$PWD/../../ModuleConfig/include
+DEPENDPATH += $$PWD/../../ModuleConfig/src

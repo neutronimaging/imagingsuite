@@ -310,7 +310,7 @@ void ConfigBase::ParseArgv(std::vector<std::string> &args)
 
     std::vector<std::string>::iterator it;//=args.begin(); it++;it++; it++;
     for (it=args.begin()+3 ; it!=args.end(); it++) {
-        std::clog<<*it<<std::endl;
+        std::clog<<*it;
         try {
             EvalArg(*it,group,var,value);
         }
@@ -318,6 +318,7 @@ void ConfigBase::ParseArgv(std::vector<std::string> &args)
             msg<<"Failed to parse argument "<<e.what();
             logger(kipl::logging::Logger::LogWarning,msg.str());
         }
+        std::clog<<" eval";
         if (group=="userinformation") {
             if (var=="operator")      UserInformation.sOperator=value;
             if (var=="instrument")    UserInformation.sInstrument=value;
@@ -325,7 +326,9 @@ void ConfigBase::ParseArgv(std::vector<std::string> &args)
             if (var=="sample")        UserInformation.sSample=value;
             if (var=="comment")       UserInformation.sComment=value;
         }
+        std::clog<<" done" <<std::endl;
     }
+    std::clog<<"CLP done"<<std::endl;
 }
 
 void ConfigBase::EvalArg(std::string arg, std::string &group, std::string &var, std::string &value)

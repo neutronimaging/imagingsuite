@@ -52,7 +52,8 @@ SOURCES += qtmoduleconfigure.cpp \
     ModuleConfigurator.cpp \
     AddModuleDialog.cpp \
     ConfiguratorDialogBase.cpp \
-    stdafx.cpp
+    stdafx.cpp \
+    applicationconfigdialog.cpp
 
 HEADERS += qtmoduleconfigure.h\
         QtModuleConfigure_global.h \
@@ -63,7 +64,8 @@ HEADERS += qtmoduleconfigure.h\
     AddModuleDialog.h \
     QListWidgetModuleItem.h \
     ConfiguratorDialogBase.h \
-    stdafx.h
+    stdafx.h \
+    applicationconfigdialog.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -95,3 +97,6 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
+
+FORMS += \
+    applicationconfigdialog.ui

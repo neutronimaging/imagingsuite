@@ -42,6 +42,10 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+GIT_VERSION = $$system(git describe --abbrev=4 --dirty --always --tags)
+QMAKE_CXXFLAGS += -DVERSION=\\\"$$GIT_VERSION\\\"
+message($$QMAKE_CXXFLAGS)
+
 DEFINES += MODULECONFIG_LIBRARY
 
 SOURCES += \
