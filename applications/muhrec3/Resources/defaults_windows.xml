@@ -1,10 +1,11 @@
 <reconstructor>
     <userinformation>
-        <operator>John Doe</operator>
-        <instrument>NI beamline</instrument>
-        <projectnumber>P20160000</projectnumber>
+        <operator>unknown</operator>
+        <instrument>beamline</instrument>
+        <projectnumber>P20yyxxxx</projectnumber>
         <sample>Unknown item</sample>
         <comment>No comment</comment>
+	    <date>20180509</date>
     </userinformation>
     <system>
         <memory>8000</memory>
@@ -48,16 +49,16 @@
         <flip>imageflipnone</flip>
     </projections>
     <matrix>
-        <dims>100 100 32</dims>
+        <dims>0 0 0</dims>
         <rotation>0</rotation>
         <serialize>false</serialize>
-        <path>C:\Users\kaestner\</path>
+        <path>/</path>
         <matrixname>slice_####.tif</matrixname>
         <filetype>TIFF16bits</filetype>
         <firstindex>0</firstindex>
-        <grayinterval>0 1</grayinterval>
+        <grayinterval>0 2</grayinterval>
         <useroi>false</useroi>
-        <roi>40 40 60 60</roi>
+        <roi>0 0 99 99</roi>
 	<voxelsize>0 0 0 </voxelsize>
 	<usevoi>false</usevoi>
 	<voi>0 0 0 0 0 0</voi>
@@ -74,27 +75,33 @@
                     <usenormregion>true</usenormregion>
                 </parameters>
             </module>
-              <module>
-                <modulename>SpotClean2</modulename>
+            <module>
+                <modulename>MorphSpotClean</modulename>
                 <sharedobject>@executable_path\StdPreprocModules.dll</sharedobject>
                 <active>false</active>
                 <parameters>
-                    <detectionmethod>ring</detectionmethod>
-                    <gamma>0.017</gamma>
-                    <iterations>1</iterations>
-                    <maxarea>20</maxarea>
-                    <maxlevel>5</maxlevel>
-                    <minlevel>0</minlevel>
-                    <sigma>0.0005</sigma>
+                    <cleanmethod>morphcleanreplace</cleanmethod>
+                    <connectivity>conn4</connectivity>
+                    <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <edgesmooth>5</edgesmooth>
+                    <maxarea>30</maxarea>
+                    <maxlevel>12</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <sigma>0.01</sigma>
+                    <threading>false</threading>
+                    <threshold>0.1</threshold>
                 </parameters>
             </module>
             <module>
-                <modulename>MedianMixRingClean</modulename>
+                <modulename>WaveletRingClean</modulename>
                 <sharedobject>@executable_path\StdPreprocModules.dll</sharedobject>
                 <active>false</active>
                 <parameters>
-                    <threshold>0.007</threshold>
-                    <width>0.0005</width>
+                    <decnum>4</decnum>
+                    <method>verticalfft</method>
+                    <parallel>false</parallel>
+                    <sigma>0.1</sigma>
+                    <wname>daub25</wname>
                 </parameters>
             </module>
             <module>

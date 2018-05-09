@@ -327,6 +327,42 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 
 }
 
+std::string ReconConfig::SanitySlicesCheck()
+{
+    int fS = ProjectionInfo.roi[1];
+    int lS = ProjectionInfo.roi[3];
+    string msg;
+
+    if ((lS-fS)>=200)
+    {
+        msg=SanityMessage(true);
+
+    }
+    else
+        msg="";
+
+
+    return(msg);
+
+}
+
+string ReconConfig::SanityMessage(bool mess)
+{
+    std::ostringstream msg;
+    if (mess)
+    {
+        msg<<"Trying to configure more than 200 slices. Continue?";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+    else
+        {
+        msg<<"";
+    }
+
+    return(msg.str());
+
+}
+
 void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 {
 	MatrixInfo.fGrayInterval[0]=0.0f;

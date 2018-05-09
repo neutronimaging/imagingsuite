@@ -1,22 +1,22 @@
 <reconstructor>
     <userinformation>
-        <operator>Anders Kaestner</operator>
-        <instrument>ICON</instrument>
-        <projectnumber>P11001</projectnumber>
+        <operator>unknown</operator>
+        <instrument>beamline</instrument>
+        <projectnumber>P20yyxxxx</projectnumber>
         <sample>Unknown item</sample>
         <comment>No comment</comment>
-	    <date>20131120</date>
+	    <date>20180509</date>
     </userinformation>
     <system>
-        <memory>6000</memory>
+        <memory>8000</memory>
         <loglevel>message</loglevel>
     </system>
     <projections>	
-        <dims>2048 2048</dims>
-	<beamgeometry>parallel</beamgeometry>
+        <dims>100 100</dims>
+	    <beamgeometry>parallel</beamgeometry>
         <resolution>0.1 0.1</resolution>
         <binning>1</binning>
-        <margin>0</margin>
+        <margin>2</margin>
         <firstindex>1</firstindex>
         <lastindex>100</lastindex>
         <projectionstep>1</projectionstep>
@@ -56,9 +56,9 @@
         <matrixname>slice_####.tif</matrixname>
         <filetype>TIFF16bits</filetype>
         <firstindex>0</firstindex>
-        <grayinterval>0 5</grayinterval>
+        <grayinterval>0 2</grayinterval>
         <useroi>false</useroi>
-        <roi>0 0 100 100 </roi>
+        <roi>0 0 99 99</roi>
 	<voxelsize>0 0 0 </voxelsize>
 	<usevoi>false</usevoi>
 	<voi>0 0 0 0 0 0</voi>
