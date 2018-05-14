@@ -83,6 +83,8 @@ public:
     /// \brief Updates the roi rectangle in the viewer
     void updateViewer();
 
+    void setAllowUpdateImageDims(bool allow);
+
 public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.
     void on_viewerNewImageDims(const QRect &rect);
@@ -115,6 +117,7 @@ private:
     ImageViewerWidget * hViewer;
     QString roiColor;
     bool autoHideViewerROI;
+    bool allowUpdateImageDims;
 
 signals:
     void getROIClicked(void); //< signal emitted when the get ROI button is pressen, this can be used with other widgets.

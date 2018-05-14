@@ -174,6 +174,7 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setROIColor("yellow");
     ui->widgetMatrixROI->setTitle("Matrix ROI");
     ui->widgetMatrixROI->setAutoHideROI(true);
+    ui->widgetMatrixROI->setAllowUpdateImageDims(false);
     ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
