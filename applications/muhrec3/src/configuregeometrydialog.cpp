@@ -405,7 +405,7 @@ int ConfigureGeometryDialog::LoadImages()
 
     // Load references
     try {
-        if (m_Config.ProjectionInfo.nOBCount) {
+        if (m_Config.ProjectionInfo.nOBCount!=0) {
             size_t found = m_Config.ProjectionInfo.sOBFileMask.find("hdf");
 
             if (found==std::string::npos) {
@@ -495,18 +495,22 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
                     NULL);
+            if (m_Config.ProjectionInfo.nOBCount!=0) {
+                if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                    float *pProj=m_Proj0Deg.GetDataPtr();
+                    float *pOB=m_ProjOB.GetDataPtr();
 
-            if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
-                float *pProj=m_Proj0Deg.GetDataPtr();
-                float *pOB=m_ProjOB.GetDataPtr();
-
-                for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
-                    pProj[i]=pProj[i]/pOB[i];
-                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                    for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                        pProj[i]=pProj[i]/pOB[i];
+                        pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                    }
+                }
+                else {
+                    logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection at 0 deg.");
                 }
             }
             else {
-                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+                logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
             }
             m_Proj0Deg=medfilt(m_Proj0Deg);
 
@@ -558,16 +562,21 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.fBinning,
                     NULL);
 
-            if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
-                float *pProj=m_Proj180Deg.GetDataPtr();
-                float *pOB=m_ProjOB.GetDataPtr();
-                for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
-                    pProj[i]=pProj[i]/pOB[i];
-                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+            if (m_Config.ProjectionInfo.nOBCount!=0) {
+                if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
+                    float *pProj=m_Proj180Deg.GetDataPtr();
+                    float *pOB=m_ProjOB.GetDataPtr();
+                    for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+                        pProj[i]=pProj[i]/pOB[i];
+                        pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                    }
+                }
+                else {
+                    logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection at 180deg");
                 }
             }
             else {
-                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+                logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
             }
 
             m_Proj180Deg=medfilt(m_Proj180Deg);
@@ -607,20 +616,25 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
                 NULL);
+        if (m_Config.ProjectionInfo.nOBCount!=0) {
+            if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                float *pProj=m_Proj0Deg.GetDataPtr();
+                float *pOB=m_ProjOB.GetDataPtr();
 
-        if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
-            float *pProj=m_Proj0Deg.GetDataPtr();
-            float *pOB=m_ProjOB.GetDataPtr();
-
-            for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
-                pProj[i]=pProj[i]/pOB[i];
-                pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                    pProj[i]=pProj[i]/pOB[i];
+                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                }
+            }
+            else {
+                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
             }
         }
         else {
-            logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+            logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
         }
         m_Proj0Deg=medfilt(m_Proj0Deg);
+
         int proj_180 = static_cast<int>(180.0f/((m_Config.ProjectionInfo.fScanArc[1]-m_Config.ProjectionInfo.fScanArc[0])/(static_cast<float>(m_Config.ProjectionInfo.nLastIndex)-static_cast<float>(m_Config.ProjectionInfo.nFirstIndex))));
 
         m_Proj180Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
@@ -630,22 +644,25 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.fBinning,
                 NULL);
 
-        if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
-            float *pProj=m_Proj180Deg.GetDataPtr();
-            float *pOB=m_ProjOB.GetDataPtr();
-            for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
-                pProj[i]=pProj[i]/pOB[i];
-                pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+        if (m_Config.ProjectionInfo.nOBCount!=0) {
+            if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
+                float *pProj=m_Proj180Deg.GetDataPtr();
+                float *pOB=m_ProjOB.GetDataPtr();
+                for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+                    pProj[i]=pProj[i]/pOB[i];
+                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                }
+            }
+            else {
+                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
             }
         }
-        else {
-            logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+        else
+        {
+            logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
         }
 
         m_Proj180Deg=medfilt(m_Proj180Deg);
-
-
-
 
         }
 
