@@ -27,8 +27,8 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     fraction(0.9f)
 {
     ui->setupUi(this);
-    connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
 
+    connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
     connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
 
@@ -42,6 +42,8 @@ ConfigureGeometryDialog::~ConfigureGeometryDialog()
 
 int ConfigureGeometryDialog::exec(ReconConfig &config)
 {
+    std::ostringstream msg;
+
     m_Config=config;
     int res=LoadImages();
 
@@ -61,6 +63,8 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     UpdateDialog();
 
     return QDialog::exec();
+
+
 }
 
 void ConfigureGeometryDialog::GetConfig(ReconConfig & config)
@@ -713,6 +717,7 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
+    ui->comboScanType->setCurrentIndex(m_Config.ProjectionInfo.scantype);
 
     ROIChanged(-1);
     on_groupUseTilt_toggled(m_Config.ProjectionInfo.bCorrectTilt);

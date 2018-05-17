@@ -176,6 +176,7 @@ public:
     const ReconConfig & operator=(const ReconConfig &config);
 
     bool SanityCheck();
+    bool SanityAnglesCheck();
 
     /// Destructor to clean up
 	~ReconConfig(void);
