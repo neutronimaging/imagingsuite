@@ -819,48 +819,92 @@ void MuhRecMainWindow::saveCurrentRecon()
 
 void MuhRecMainWindow::MenuReconstructStart()
 {
+    ostringstream msg;
+
     ui->tabMainControl->setCurrentIndex(4);
 
-    UpdateConfig();
-
-    ostringstream msg;
-    m_Config.MatrixInfo.bAutomaticSerialize=false;
-    if (m_Config.System.nMemory<m_nRequiredMemory) {
-
-        DialogTooBig largesize_dlg;
-        int roi[4];
-        ui->widgetProjectionROI->getROI(roi);
-        largesize_dlg.SetFields(ui->editDestPath->text(),
-                                ui->editSliceMask->text(),
-                                false,
-                                ui->spinSlicesFirst->value(),
-                                ui->spinSlicesLast->value(),
-                                roi[1],roi[3]);
-        int res=largesize_dlg.exec();
-
-        if (res!=QDialog::Accepted) {
-            logger(logger.LogMessage,"Reconstruction was aborted");
-            return;
-        }
-        m_Config.MatrixInfo.sDestinationPath = largesize_dlg.GetPath().toStdString();
-        kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
-        m_Config.MatrixInfo.sFileMask        = largesize_dlg.GetMask().toStdString();
-        ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
-        ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
-
-        msg.str("");
-        msg<<"Reconstructing direct to folder "<<m_Config.MatrixInfo.sDestinationPath
-          <<" using the mask "<< m_Config.MatrixInfo.sFileMask;
-        logger(logger.LogMessage,msg.str());
-
-        m_Config.MatrixInfo.bAutomaticSerialize=true;
+    try {
+        UpdateConfig();
     }
-    else
+    catch (ModuleException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
+        return ;
+    }
+    catch (ReconException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
+        return ;
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
+        return ;
+    }
+
+    try {
         m_Config.MatrixInfo.bAutomaticSerialize=false;
+        if (m_Config.System.nMemory<m_nRequiredMemory) {
 
-    saveCurrentRecon();
+            DialogTooBig largesize_dlg;
+            int roi[4];
+            ui->widgetProjectionROI->getROI(roi);
+            largesize_dlg.SetFields(ui->editDestPath->text(),
+                                    ui->editSliceMask->text(),
+                                    false,
+                                    ui->spinSlicesFirst->value(),
+                                    ui->spinSlicesLast->value(),
+                                    roi[1],roi[3]);
+            int res=largesize_dlg.exec();
 
-    ExecuteReconstruction();
+            if (res!=QDialog::Accepted) {
+                logger(logger.LogMessage,"Reconstruction was aborted");
+                return;
+            }
+            m_Config.MatrixInfo.sDestinationPath = largesize_dlg.GetPath().toStdString();
+            kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
+            m_Config.MatrixInfo.sFileMask        = largesize_dlg.GetMask().toStdString();
+            ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
+            ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
+
+            msg.str("");
+            msg<<"Reconstructing direct to folder "<<m_Config.MatrixInfo.sDestinationPath
+              <<" using the mask "<< m_Config.MatrixInfo.sFileMask;
+            logger(logger.LogMessage,msg.str());
+
+            m_Config.MatrixInfo.bAutomaticSerialize=true;
+        }
+        else
+            m_Config.MatrixInfo.bAutomaticSerialize=false;
+
+        saveCurrentRecon();
+    }
+    catch (ModuleException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
+        return ;
+    }
+    catch (ReconException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
+        return ;
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
+        return ;
+    }
+
+    try {
+        ExecuteReconstruction();
+    }
+    catch (ModuleException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
+        return ;
+    }
+    catch (ReconException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
+        return ;
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
+        return ;
+    }
+
 }
 
 void MuhRecMainWindow::ExecuteReconstruction()
@@ -1250,9 +1294,18 @@ void MuhRecMainWindow::UpdateDialog()
 
     str.str("");
     std::set<size_t>::iterator it;
-    for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
-        str<<*it<<" ";
-    ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
+    if (!m_Config.ProjectionInfo.nlSkipList.empty()) {
+        for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
+            str<<*it<<" ";
+        ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
+        ui->checkBoxUseSkipList->setChecked(true);
+        on_checkBoxUseSkipList_toggled(true);
+    }
+    else {
+        ui->checkBoxUseSkipList->setChecked(false);
+        ui->editProjectionSkipList->clear();
+        on_checkBoxUseSkipList_toggled(false);
+    }
     ui->ConfiguratorBackProj->SetModule(m_Config.backprojector);
 
     ui->dspinSDD->setValue(m_Config.ProjectionInfo.fSDD);
@@ -1293,8 +1346,7 @@ void MuhRecMainWindow::UpdateConfig()
         std::swap(m_Config.ProjectionInfo.nLastIndex,m_Config.ProjectionInfo.nFirstIndex);
         ui->spinFirstProjection->setValue(m_Config.ProjectionInfo.nFirstIndex);
         ui->spinLastProjection->setValue(m_Config.ProjectionInfo.nLastIndex);
-        QMessageBox dlg;
-        dlg.setText("Last<First projection, swapped values");
+        QMessageBox::information(this,"Last<First projection","Last<First projection, swapped values");
     }
 
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
@@ -1317,7 +1369,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.nDCFirstIndex = ui->spinFirstDark->value();
     m_Config.ProjectionInfo.nDCCount = ui->spinDarkCount->value();
     std::string str=ui->editProjectionSkipList->text().toStdString();
-    if (!str.empty())
+    if (!str.empty() && ui->checkBoxUseSkipList->isChecked())
         kipl::strings::String2Set(str,m_Config.ProjectionInfo.nlSkipList);
     else
         m_Config.ProjectionInfo.nlSkipList.clear();
@@ -2346,3 +2398,46 @@ void MuhRecMainWindow::on_pushButton_levels99p_clicked()
         logger(logger.LogMessage,"Level 99\%: Missing engine");
 }
 
+
+void MuhRecMainWindow::on_checkBoxUseSkipList_toggled(bool checked)
+{
+    ui->buttonGetSkipList->setVisible(checked);
+    ui->editProjectionSkipList->setVisible(checked);
+}
+
+void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
+{
+    QRect roi=ui->projectionViewer->get_marked_roi();
+    int first=roi.top();
+    int last=roi.bottom();
+
+    size_t projROI[4];
+    ui->widgetProjectionROI->getROI(projROI);
+
+    if (first<projROI[1]) {
+        first=projROI[1];
+        if (last<projROI[1]) {
+            QMessageBox::warning(this,"Invalid interval selected","Selected ROI is outside the marked projection.");
+            return;
+        }
+        if (projROI[3]<last) {
+            logger(logger.LogMessage,"Generous ROI selected, restricting to projection interval.");
+            last=projROI[3];
+        }
+    }
+
+    if (projROI[3]<last) {
+        last=projROI[3];
+        if (projROI[3]<first) {
+            QMessageBox::warning(this,"Invalid interval selected","Selected ROI is outside the marked projection.");
+            return;
+        }
+    }
+    QSignalBlocker b1(ui->spinSlicesFirst);
+    QSignalBlocker b2(ui->spinSlicesLast);
+
+    ui->spinSlicesFirst->setValue(first);
+    ui->spinSlicesLast->setValue(last);
+
+    SlicesChanged(0);
+}
