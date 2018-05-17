@@ -1165,7 +1165,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi,true);
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
-    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
+    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
  //   qDebug("UpdateDialog");
@@ -2188,9 +2188,7 @@ void MuhRecMainWindow::on_button_FindCenter_clicked()
     std::ostringstream msg;
     int res;
     ConfigureGeometryDialog dlg;
-
     UpdateConfig();
-
     res=dlg.exec(m_Config);
 
 

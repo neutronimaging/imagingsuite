@@ -54,11 +54,11 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     ui->groupBoxSlices->setVisible(false);
     ui->comboROISelection->setCurrentIndex(0);
 
-    QSignalBlocker firstSlice(ui->spinSliceFirst);
-    QSignalBlocker lastSlice(ui->spinSliceLast);
+//    QSignalBlocker firstSlice(ui->spinSliceFirst);
+//    QSignalBlocker lastSlice(ui->spinSliceLast);
 
-    ui->spinSliceFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
-    ui->spinSliceLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
+//    ui->spinSliceFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
+//    ui->spinSliceLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
 
     UpdateDialog();
 
@@ -675,8 +675,8 @@ int ConfigureGeometryDialog::LoadImages()
 
 void ConfigureGeometryDialog::UpdateConfig()
 {
-    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
-    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
+    m_Config.ProjectionInfo.roi[1]       = static_cast<size_t>(ui->spinSliceFirst->value());
+    m_Config.ProjectionInfo.roi[3]       = static_cast<size_t>(ui->spinSliceLast->value());
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
@@ -763,9 +763,12 @@ void ConfigureGeometryDialog::on_groupUseTilt_toggled(bool arg1)
 void ConfigureGeometryDialog::on_spinSliceFirst_valueChanged(int arg1)
 {
     ui->spinSliceLast->setMinimum(arg1+1);
+    UpdateConfig();
+
 }
 
 void ConfigureGeometryDialog::on_spinSliceLast_valueChanged(int arg1)
 {
     ui->spinSliceFirst->setMaximum(arg1-1);
+    UpdateConfig();
 }
