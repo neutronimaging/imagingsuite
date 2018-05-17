@@ -54,11 +54,11 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     ui->groupBoxSlices->setVisible(false);
     ui->comboROISelection->setCurrentIndex(0);
 
-//    QSignalBlocker firstSlice(ui->spinSliceFirst);
-//    QSignalBlocker lastSlice(ui->spinSliceLast);
+    QSignalBlocker firstSlice(ui->spinSliceFirst);
+    QSignalBlocker lastSlice(ui->spinSliceLast);
 
-//    ui->spinSliceFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
-//    ui->spinSliceLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
+    ui->spinSliceFirst->setMinimum(m_Config.ProjectionInfo.projection_roi[1]);
+    ui->spinSliceLast->setMaximum(m_Config.ProjectionInfo.projection_roi[3]);
 
     UpdateDialog();
 
