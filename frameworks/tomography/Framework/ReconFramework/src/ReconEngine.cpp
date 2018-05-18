@@ -549,13 +549,17 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	str<<matrixconfig->sDestinationPath<<matrixconfig->sFileMask;
 
 	bool bTransposed=false;
-	if (matrixconfig->FileType==kipl::io::MatlabVolume) {
+/*	if (matrixconfig->FileType==kipl::io::MatlabVolume) {
 		logger(kipl::logging::Logger::LogVerbose,"Serializing matrix");
 		std::string path,name;
 		std::vector<std::string> ext;
 		kipl::strings::filenames::StripFileName(str.str(),path,name,ext);
 		kipl::io::WriteMAT(m_Volume,str.str().c_str(),name.c_str());
 	}
+    else */
+    if (matrixconfig->FileType==kipl::io::NeXus){
+       kipl::io::WriteNexus(m_Volume,str.str().c_str());
+    }
 	else {
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
 		size_t nSlices=0;
