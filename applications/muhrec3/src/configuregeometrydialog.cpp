@@ -27,8 +27,8 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     fraction(0.9f)
 {
     ui->setupUi(this);
-    connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
 
+    connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
     connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
 
@@ -42,6 +42,8 @@ ConfigureGeometryDialog::~ConfigureGeometryDialog()
 
 int ConfigureGeometryDialog::exec(ReconConfig &config)
 {
+    std::ostringstream msg;
+
     m_Config=config;
     int res=LoadImages();
 
@@ -61,6 +63,8 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     UpdateDialog();
 
     return QDialog::exec();
+
+
 }
 
 void ConfigureGeometryDialog::GetConfig(ReconConfig & config)
@@ -671,8 +675,8 @@ int ConfigureGeometryDialog::LoadImages()
 
 void ConfigureGeometryDialog::UpdateConfig()
 {
-    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
-    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
+    m_Config.ProjectionInfo.roi[1]       = static_cast<size_t>(ui->spinSliceFirst->value());
+    m_Config.ProjectionInfo.roi[3]       = static_cast<size_t>(ui->spinSliceLast->value());
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
@@ -713,6 +717,7 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
+    ui->comboScanType->setCurrentIndex(m_Config.ProjectionInfo.scantype);
 
     ROIChanged(-1);
     on_groupUseTilt_toggled(m_Config.ProjectionInfo.bCorrectTilt);
@@ -758,9 +763,12 @@ void ConfigureGeometryDialog::on_groupUseTilt_toggled(bool arg1)
 void ConfigureGeometryDialog::on_spinSliceFirst_valueChanged(int arg1)
 {
     ui->spinSliceLast->setMinimum(arg1+1);
+    UpdateConfig();
+
 }
 
 void ConfigureGeometryDialog::on_spinSliceLast_valueChanged(int arg1)
 {
     ui->spinSliceFirst->setMaximum(arg1-1);
+    UpdateConfig();
 }
