@@ -3,7 +3,7 @@ pushd .
 
 set REPOSPATH=%WORKSPACE%\imagingsuite
 set DEST=%WORKSPACE%\builds
-set SPECSTR=-spec win32-msvc2015
+set SPECSTR=-spec win32-msvc
 
 mkdir %DEST%\build-QtAddons
 cd %DEST%\build-QtAddons
