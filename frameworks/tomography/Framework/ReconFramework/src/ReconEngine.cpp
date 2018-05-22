@@ -557,8 +557,11 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 		kipl::io::WriteMAT(m_Volume,str.str().c_str(),name.c_str());
 	}
     else */
-    if (matrixconfig->FileType==kipl::io::NeXus){
-       kipl::io::WriteNexus(m_Volume,str.str().c_str());
+    if (matrixconfig->FileType==kipl::io::NeXusfloat){
+       kipl::io::WriteNexusFloat(m_Volume,str.str().c_str());
+    }
+    else if (matrixconfig->FileType==kipl::io::NeXus16bits){
+        kipl::io::WriteNexus16bits(m_Volume, str.str().c_str(),matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1] );
     }
 	else {
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;

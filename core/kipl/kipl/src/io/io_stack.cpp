@@ -23,8 +23,11 @@ std::string enum2string(kipl::io::eFileType ft)
     case kipl::io::TIFF8bits    : s="TIFF8bits";    break;
     case kipl::io::TIFF16bits   : s="TIFF16bits";   break;
     case kipl::io::TIFFfloat    : s="TIFFfloat";    break;
+    case kipl::io::NeXusfloat   : s="NeXusfloat";   break;
+    case kipl::io::NeXus16bits  : s="NeXus16bits";  break;
     case kipl::io::PNG8bits     : s="PNG8bits";     break;
     case kipl::io::PNG16bits    : s="PNG16bits";    break;
+
     default : throw kipl::base::KiplException("Unknown file type",__FILE__,__LINE__); break;
     }
 
@@ -38,6 +41,8 @@ void string2enum(const std::string str, kipl::io::eFileType &ft)
 	else if (str=="TIFF8bits")    ft=kipl::io::TIFF8bits;
 	else if (str=="TIFF16bits")   ft=kipl::io::TIFF16bits; 
 	else if (str=="TIFFfloat")    ft=kipl::io::TIFFfloat;
+    else if (str=="NeXusfloat")   ft=kipl::io::NeXusfloat;
+    else if (str=="NeXus16bits")  ft=kipl::io::NeXus16bits;
 	else if (str=="PNG8bits")     ft=kipl::io::PNG8bits;
 	else if (str=="PNG16bits")    ft=kipl::io::PNG16bits;
 	else throw kipl::base::KiplException("Unknow matrix file type string",__FILE__,__LINE__);

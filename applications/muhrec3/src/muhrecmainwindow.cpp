@@ -1426,7 +1426,7 @@ void MuhRecMainWindow::UpdateConfig()
     {
         msg<<"Config sanity check failed in update config"<<std::endl<<e.what();
         logger(logger.LogError,msg.str());
-        throw ReconException(msg.str(),__FILE__,__LINE__);
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 
     try{
@@ -1442,7 +1442,7 @@ void MuhRecMainWindow::UpdateConfig()
     {
         msg<<"Config angle sanity check failed in update config"<<std::endl<<e.what();
         logger(logger.LogError,msg.str());
-        throw ReconException(msg.str(),__FILE__,__LINE__);
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 
 

@@ -25,9 +25,10 @@ enum eFileType {
 	TIFF8bits,
 	TIFF16bits,
 	TIFFfloat,
-    NeXus,
+    NeXusfloat,
+    NeXus16bits,
 	PNG8bits,
-	PNG16bits
+    PNG16bits
 };
 
 std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
@@ -176,7 +177,9 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 				ftmp[i]=tmp[i];
 			WriteTIFF32(ftmp,filename.c_str());
 			break;
-        case NeXus :
+        case NeXusfloat :
+            break; // it is handled somewhere else
+        case NeXus16bits :
             break; // it is handled somewhere else
 		case PNG8bits :
 			throw kipl::base::KiplException("8-bit png is not supported by slice writer",__FILE__,__LINE__);

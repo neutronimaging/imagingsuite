@@ -296,7 +296,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 }
 
 template <class ImgType, size_t NDim>
-int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
+int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
 
 
 
@@ -354,10 +354,21 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
                       try {
                         file.getData(result); // or it can be done with the std::vector (same result)
                       }
-                      catch (const std::bad_alloc & E) {
+                      catch(kipl::base::KiplException &e)
+                      {
+                          msg.str("");
+                          msg<<"ReadNexus file.getData caused a KiplException: "<<e.what();
+                          throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                      }
+                      catch (const std::bad_alloc & e) {
                               msg.str("");
-                              msg<<"ReadNexus file.getData caused an STL exception: "<<E.what();
+                              msg<<"ReadNexus file.getData caused an STL exception: "<<e.what();
                               throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                      }
+                      catch (...) {
+                          msg<<"An unknown exception occurred ";
+                          throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+
                       }
 
                       img.Resize(img_size);
@@ -384,17 +395,17 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
     return 1;
 }
 
-/// \brief Write the reconstructed data as NeXus file
+/// \brief Write the reconstructed data as NeXus file in float format
 ///	\param img the dataset to be written
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
 
-    int dims[NDim] = {img.Size(0), img.Size(1), img.Size(2)};
+    int dims[NDim] = {img.Size(2), img.Size(0), img.Size(1)};
 
     NXhandle file_id;
 /*
@@ -406,10 +417,10 @@ int WriteNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
  */
 /* Open output file and output global attributes */
     NXopen (fname, NXACC_CREATE5, &file_id);
-      NXputattr (file_id, "user_name", "Joe Bloggs", 10, NX_CHAR);
+      NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
 /* Open top-level NXentry group */
-      NXmakegroup (file_id, "Entry1", "NXentry");
-      NXopengroup (file_id, "Entry1", "NXentry");
+      NXmakegroup (file_id, "entry", "NXentry");
+      NXopengroup (file_id, "entry", "NXentry");
 /* Open NXdata group within NXentry group */
         NXmakegroup (file_id, "Data1", "NXdata");
         NXopengroup (file_id, "Data1", "NXdata");
@@ -436,6 +447,77 @@ int WriteNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname) {
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
 //            NXputattr (file_id, "axes",  "polar_angle:time_of_flight", 26, NX_CHAR);
           NXclosedata (file_id);
+/* Close NXentry and NXdata groups and close file */
+        NXclosegroup (file_id);
+      NXclosegroup (file_id);
+    NXclose (&file_id);
+
+    return 1;
+}
+
+/// \brief Write the reconstructed data as NeXus file in16 bit format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, ImgType lo, ImgType hi) {
+
+//    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
+//    float t[1000], phi[50];
+
+    int dims[NDim] = {img.Size(2), img.Size(0), img.Size(1)};
+
+    NXhandle file_id;
+/*
+ * Read in data using local routines to populate phi and counts
+ *
+ * for example you may create a getdata() function and call
+ *
+ *      getdata (n_t, t, n_p, phi, counts);
+ */
+/* Open output file and output global attributes */
+    NXopen (fname, NXACC_CREATE5, &file_id);
+      NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
+/* Open top-level NXentry group */
+      NXmakegroup (file_id, "entry", "NXentry");
+      NXopengroup (file_id, "entry", "NXentry");
+/* Open NXdata group within NXentry group */
+        NXmakegroup (file_id, "Data1", "NXdata");
+        NXopengroup (file_id, "Data1", "NXdata");
+
+        // commented stuff:
+///* Output time channels */
+//          NXmakedata (file_id, "time_of_flight", NX_FLOAT32, 1, &n_t);
+//          NXopendata (file_id, "time_of_flight");
+//            NXputdata (file_id, t);
+//            NXputattr (file_id, "units", "microseconds", 12, NX_CHAR);
+//          NXclosedata (file_id);
+///* Output detector angles */
+//          NXmakedata (file_id, "polar_angle", NX_FLOAT32, 1, &n_p);
+//          NXopendata (file_id, "polar_angle");
+//            NXputdata (file_id, phi);
+//            NXputattr (file_id, "units", "degrees", 7, NX_CHAR);
+//          NXclosedata (file_id);
+
+/* Output data */
+        kipl::base::TImage<unsigned short, NDim> img_int;
+
+       try {
+        img_int = kipl::base::ImageCaster<unsigned short, ImgType, NDim>::cast(img,lo,hi);
+        }
+        catch (kipl::base::KiplException &E) {
+            throw kipl::base::KiplException(E.what(),__FILE__,__LINE__);
+        }
+
+
+          NXmakedata (file_id, "signal", NX_UINT16, 3, dims);
+          NXopendata (file_id, "signal");
+            NXputdata (file_id, img_int.GetDataPtr());
+           int  i = 1; // not sure what that is
+            NXputattr (file_id, "signal", &i, 1, NX_INT32);
+//            NXputattr (file_id, "axes",  "polar_angle:time_of_flight", 26, NX_CHAR);
+          NXclosedata (file_id);
+
 /* Close NXentry and NXdata groups and close file */
         NXclosegroup (file_id);
       NXclosegroup (file_id);
