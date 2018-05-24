@@ -1388,10 +1388,6 @@ void MuhRecMainWindow::UpdateConfig()
 
     ptrdiff_t pos;
 
-    // ------------- TOMORROW.... GO ON FROM HERE.... -------------------------
-    // CEHECK THE NUMBERS
-    // fix THE CHANGE OF THE EXTENSIONS
-
     switch (ui->comboDestFileType->currentIndex())
     {
 
@@ -1415,26 +1411,7 @@ void MuhRecMainWindow::UpdateConfig()
             m_Config.MatrixInfo.sFileMask.insert(pos,"_####");
         }
         break;
-//    case 1:
-//        // Validity test of the slice file mask
-//        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
-//            logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
-//            m_Config.MatrixInfo.sFileMask.append(".tif");
-//        }
 
-//        pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
-
-//        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) == "hdf") {
-//            logger(logger.LogWarning,"Changing file extension to .tif");
-//            m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"tif");
-//        }
-
-
-//        if (m_Config.MatrixInfo.sFileMask.find('#')==std::string::npos) {
-//            logger(logger.LogWarning,"Destination file mask is missing an index mask. Adding '_####'' before file extension");
-//            m_Config.MatrixInfo.sFileMask.insert(pos,"_####");
-//        }
-//        break;
     case 2: case 3:
 
         if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
@@ -1449,19 +1426,7 @@ void MuhRecMainWindow::UpdateConfig()
              m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"hdf");
         }
         break;
-//    case 3:
 
-//        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
-//            logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .hdf");
-//            m_Config.MatrixInfo.sFileMask.append(".hdf");
-//        }
-
-//        pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
-//        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) == "tif") {
-//            logger(logger.LogWarning,"Changing file extension to .hdf");
-//            m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"hdf");
-//        }
-//        break;
     }
 
 
