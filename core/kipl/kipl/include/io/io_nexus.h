@@ -400,12 +400,14 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname, float p_size) {
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
 
     int dims[NDim] = {img.Size(2), img.Size(0), img.Size(1)};
+    int  i = 1; // not sure what that is
+    float *mysize = &p_size;
 
     NXhandle file_id;
 /*
@@ -443,10 +445,18 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
           NXmakedata (file_id, "signal", NX_FLOAT32, 3, dims);
           NXopendata (file_id, "signal");
             NXputdata (file_id, img.GetDataPtr());
-           int  i = 1; // not sure what that is
+
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
 //            NXputattr (file_id, "axes",  "polar_angle:time_of_flight", 26, NX_CHAR);
           NXclosedata (file_id);
+
+/*      Pixel spacing */
+         NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
+         NXopendata (file_id, "x_pixel_size");
+            NXputdata(file_id, mysize);
+            NXputattr(file_id,"units","mm",2,NX_CHAR);
+        NXclosedata(file_id);
+
 /* Close NXentry and NXdata groups and close file */
         NXclosegroup (file_id);
       NXclosegroup (file_id);
@@ -458,14 +468,17 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
 /// \brief Write the reconstructed data as NeXus file in16 bit format
 ///	\param img the dataset to be written
 ///	\param fname file name of the destination file (including extension .hdf)
+/// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, ImgType lo, ImgType hi) {
+int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, ImgType lo, ImgType hi, float p_size) {
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
 
     int dims[NDim] = {img.Size(2), img.Size(0), img.Size(1)};
+    float *mysize = &p_size;
+    int  i = 1;
 
     NXhandle file_id;
 /*
@@ -475,6 +488,7 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, I
  *
  *      getdata (n_t, t, n_p, phi, counts);
  */
+
 /* Open output file and output global attributes */
     NXopen (fname, NXACC_CREATE5, &file_id);
       NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
@@ -499,6 +513,10 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, I
 //            NXputattr (file_id, "units", "degrees", 7, NX_CHAR);
 //          NXclosedata (file_id);
 
+
+
+
+
 /* Output data */
         kipl::base::TImage<unsigned short, NDim> img_int;
 
@@ -513,10 +531,19 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, I
           NXmakedata (file_id, "signal", NX_UINT16, 3, dims);
           NXopendata (file_id, "signal");
             NXputdata (file_id, img_int.GetDataPtr());
-           int  i = 1; // not sure what that is
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
+//            NXputattr (file_id, "x_pixel_size", &p_size, 3, NX_FLOAT32);
+//            NXputattr (file_id, "y_pixel_size", &p_size, 3, NX_FLOAT32);
 //            NXputattr (file_id, "axes",  "polar_angle:time_of_flight", 26, NX_CHAR);
           NXclosedata (file_id);
+
+/*      Pixel spacing */
+       NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
+       NXopendata (file_id, "x_pixel_size");
+          NXputdata(file_id, mysize);
+          NXputattr(file_id,"units","mm",2,NX_CHAR);
+      NXclosedata(file_id);
+
 
 /* Close NXentry and NXdata groups and close file */
         NXclosegroup (file_id);

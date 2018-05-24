@@ -558,10 +558,10 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	}
     else */
     if (matrixconfig->FileType==kipl::io::NeXusfloat){
-       kipl::io::WriteNexusFloat(m_Volume,str.str().c_str());
+       kipl::io::WriteNexusFloat(m_Volume,str.str().c_str(),m_Volume.info.GetMetricX());
     }
     else if (matrixconfig->FileType==kipl::io::NeXus16bits){
-        kipl::io::WriteNexus16bits(m_Volume, str.str().c_str(),matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1] );
+        kipl::io::WriteNexus16bits(m_Volume, str.str().c_str(),matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1], m_Volume.info.GetMetricX());
     }
 	else {
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
@@ -1317,7 +1317,6 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     std::list<ProjectionBlock>::iterator it;
     int i=0;
     int res=0;
-    std::cout << "roi in ProcessExistingProjections3D" << std::endl;
 
     try {
         for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); ++it, ++i)
