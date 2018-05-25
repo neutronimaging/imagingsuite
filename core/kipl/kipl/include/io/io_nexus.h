@@ -499,23 +499,6 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, I
         NXmakegroup (file_id, "Data1", "NXdata");
         NXopengroup (file_id, "Data1", "NXdata");
 
-        // commented stuff:
-///* Output time channels */
-//          NXmakedata (file_id, "time_of_flight", NX_FLOAT32, 1, &n_t);
-//          NXopendata (file_id, "time_of_flight");
-//            NXputdata (file_id, t);
-//            NXputattr (file_id, "units", "microseconds", 12, NX_CHAR);
-//          NXclosedata (file_id);
-///* Output detector angles */
-//          NXmakedata (file_id, "polar_angle", NX_FLOAT32, 1, &n_p);
-//          NXopendata (file_id, "polar_angle");
-//            NXputdata (file_id, phi);
-//            NXputattr (file_id, "units", "degrees", 7, NX_CHAR);
-//          NXclosedata (file_id);
-
-
-
-
 
 /* Output data */
         kipl::base::TImage<unsigned short, NDim> img_int;
@@ -549,6 +532,157 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, I
         NXclosegroup (file_id);
       NXclosegroup (file_id);
     NXclose (&file_id);
+
+    return 1;
+}
+
+/// \brief Prepare the file to be used for NeXus saving reconstructed data
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param dims dimensions of the 3D image to be saved
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int PrepareNeXusFile(const char *fname, int *dims, float p_size) {
+    // I have to understand where to call it!
+
+
+    float *mysize = &p_size;
+    int  i = 1;
+
+    NXhandle file_id;
+
+/* Open output file and output global attributes */
+    NXopen (fname, NXACC_CREATE5, &file_id);
+      NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
+/* Open top-level NXentry group */
+      NXmakegroup (file_id, "entry", "NXentry");
+      NXopengroup (file_id, "entry", "NXentry");
+/* Open NXdata group within NXentry group */
+        NXmakegroup (file_id, "Data1", "NXdata");
+        NXopengroup (file_id, "Data1", "NXdata");
+
+
+kipl::base::TImage<ImgType, NDim> img(dims);
+ImgType *pImg = img.GetDataPtr();
+
+
+for (int i=0; i<img.Size(); i++)
+    pImg[i] = static_cast<ImgType>(0);
+
+          NXmakedata (file_id, "signal", NX_FLOAT32, 3, dims); // iniziamo con FLOAT32 e poi vediamo
+          NXopendata (file_id, "signal");
+            NXputdata (file_id, img.GetDataPtr());
+            NXputattr (file_id, "signal", &i, 1, NX_INT32);
+          NXclosedata (file_id);
+
+/*      Pixel spacing */
+       NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
+       NXopendata (file_id, "x_pixel_size");
+          NXputdata(file_id, mysize);
+          NXputattr(file_id,"units","mm",2,NX_CHAR);
+      NXclosedata(file_id);
+
+
+/* Close NXentry and NXdata groups and close file */
+        NXclosegroup (file_id);
+      NXclosegroup (file_id);
+    NXclose (&file_id);
+
+    return 1;
+}
+
+/// todo: Add Doxygen information
+template <class ImgType, size_t NDim>
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t end) {
+    std::stringstream msg;
+
+    NeXus::File file(fname);
+    vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
+
+
+
+    file.openGroup("entry", "NXentry");
+    attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one?
+    map<string, string> entries = file.getEntries();
+
+
+    for (map<string,string>::const_iterator it = entries.begin();it != entries.end(); ++it) {
+        if(it->second=="NXdata") {
+
+            file.openGroup(it->first, it->second);
+            attr_infos = file.getAttrInfos();
+
+
+            map<string, string> entries_data = file.getEntries();
+
+
+            for (map<string,string>::const_iterator it_data = entries_data.begin();
+                 it_data != entries_data.end(); it_data++) {
+
+                file.openData(it_data->first);
+                attr_infos = file.getAttrInfos();
+
+                for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin(); it_att != attr_infos.end(); it_att++) {
+
+
+                  if (it_att->name=="signal"){
+//                      std::cout << "found plottable data!!" << std::endl;
+
+                      size_t img_size[3];
+
+                      img_size[0] = file.getInfo().dims[2];
+                      img_size[1] = file.getInfo().dims[1];
+                      img_size[2] = file.getInfo().dims[0];
+
+
+                      ImgType *slab=new ImgType[img_size[0]*img_size[1]*(end-start)]; // assuming images are all int_16.. but possibly this can be read from nexus info..
+
+                      vector<int> slab_start;
+                      slab_start.push_back(start);
+                      slab_start.push_back(0);
+                      slab_start.push_back(0);
+
+                      vector<int> slab_size;
+                      slab_size.push_back(end-start);
+                      slab_size.push_back(img_size[1]);
+                      slab_size.push_back(img_size[0]);
+
+
+                      ImgType *pslice = img.GetDataPtr();
+
+                      // casting to ImgType
+                      for (size_t i=0; i<img.Size();++i){
+                          slab[i] = static_cast<ImgType>(pslice[i]);
+//                          pslice[i] = static_cast<ImgType>(slab[i]);
+                      }
+
+
+                      try{
+                        file.putSlab(slab, slab_start, slab_size); // slab_start should be the starting index to insert the data
+                      }
+                      catch (const std::bad_alloc & E) {
+                              msg.str("");
+                              msg<<"WriteNeXusStack file.getSlab caused an STL exception: "<<E.what();
+                              throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                      }
+                      catch (...){
+                          msg.str("");
+                          msg<<"WriteNeXusStack file.getSlab caused an unknown exception: ";
+                          throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                      }
+
+                      }
+                  }
+                file.closeData();
+                }
+
+            file.closeGroup();
+            }
+
+    }
+
+    file.close(); // close the file. hopefully
+
 
     return 1;
 }

@@ -385,8 +385,6 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 	bool bTransposed=false;
 
 
-    // the argument dims should be maybe changed before depending on parallel/cone beam
-
 	kipl::base::TImage<float,2> slice;
 
     try {
@@ -423,6 +421,9 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 
 bool ReconEngine::Serialize(size_t *dims)
 {
+
+    std::cout << "ReconEngine::Serialize(size_t *dims)" << std::endl;
+
 	std::stringstream msg;
 
 	std::stringstream str;
@@ -518,8 +519,12 @@ bool ReconEngine::Serialize(size_t *dims)
 
 	}
 
+
+
     if (dims!=nullptr)
 		memcpy(dims,img.Dims(),3*sizeof(size_t));
+
+    std::cout << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
 
 	return bTransposed;
 }

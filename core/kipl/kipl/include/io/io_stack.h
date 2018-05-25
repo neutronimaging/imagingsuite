@@ -178,7 +178,8 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 			WriteTIFF32(ftmp,filename.c_str());
 			break;
         case NeXusfloat :
-            break; // it is handled somewhere else
+//            WriteNeXusStack(tmp, filename.c_str(),start, stop); // still to verify its behavior
+            break; // to be handled here: open a pre-created file and save in the right position
         case NeXus16bits :
             break; // it is handled somewhere else
 		case PNG8bits :
