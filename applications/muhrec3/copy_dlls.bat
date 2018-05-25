@@ -44,12 +44,14 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\zlib.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
 copy %REPOS%\Applications\muhrec3.exe .
+copy %REPOS%\Applications\muhrecCLI.exe .
 
 copy %REPOS%\imagingsuite\applications\muhrec3\src\resources resources
 
 cd %QTBINPATH%
 
 windeployqt %DEST%\muhrec3.exe
+windeployqt %DEST%\muhrecCLI.exe
 copy Qt5PrintSupport.dll %DEST%
 
 popd
