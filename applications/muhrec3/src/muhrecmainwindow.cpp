@@ -1679,6 +1679,20 @@ bool MuhRecMainWindow::reconstructToDisk()
       <<" using the mask "<< m_Config.MatrixInfo.sFileMask;
     logger(logger.LogMessage,msg.str());
 
+        if (m_Config.MatrixInfo.FileType==kipl::io::NeXusfloat)
+        {
+            int roi[4];
+            ui->widgetProjectionROI->getROI(roi);
+            int *dims = new int[3];
+            dims[0] = static_cast<int>(roi[3]-roi[1]);
+            dims[1] = static_cast<int>(roi[2]-roi[0]);
+            dims[2] = dims[1];
+
+            std::cout << "dims before PrepareNeXusFile in MenuReconstructStart" << std::endl;
+            std::cout << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
+            kipl::io::PrepareNeXusFile(m_Config.MatrixInfo.sFileMask, dims, m_Config.ProjectionInfo.fResolution[0]); // to be updated in the case of CB
+        }
+
     m_Config.MatrixInfo.bAutomaticSerialize=true;
 
     return true;
