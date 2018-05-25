@@ -773,7 +773,8 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<float>(value2);
                }
 
-               if (CBCT_roi[1]-8>=0)
+
+               if (CBCT_roi[1]-8>=0 && CBCT_roi[1]!=0)
                    CBCT_roi[1] -=8;
                if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
                    CBCT_roi[3] +=8;
@@ -862,7 +863,7 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<float>(value2);
                }
 
-               if (CBCT_roi[1]-8>=0)
+               if (CBCT_roi[1]-8>=0 && CBCT_roi[1]!=0)
                    CBCT_roi[1] -=8;
                if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
                    CBCT_roi[3] +=8;
@@ -1061,11 +1062,13 @@ int ReconEngine::Process3D(size_t *roi)
 	logger(kipl::logging::Logger::LogMessage,msg.str());
     size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
 
-    if (m_ProjectionMargin<=roi[1])
-        extroi[1]-=m_ProjectionMargin;
+    if (m_Config.ProjectionInfo.beamgeometry!=m_Config.ProjectionInfo.BeamGeometry_Cone) {
+        if (m_ProjectionMargin<=roi[1])
+            extroi[1]-=m_ProjectionMargin;
 
-    extroi[3]  = m_ProjectionMargin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? m_ProjectionMargin+extroi[3] : extroi[3];
+        extroi[3]  = m_ProjectionMargin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? m_ProjectionMargin+extroi[3] : extroi[3];
     //extroi[3]+=m_ProjectionMargin;
+    }
 
     msg.str("");
     msg<<": Processing ext ROI ["<<extroi[0]<<", "<<extroi[1]<<", "<<extroi[2]<<", "<<extroi[3]<<"]";
