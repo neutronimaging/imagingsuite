@@ -66,6 +66,7 @@ public:
     /// \param config The instance to use for assignment
     virtual const ConfigBase & operator=(const ConfigBase &config);
 
+
     /// Destructor for cleaning up
 	virtual ~ConfigBase(void);
 
@@ -90,14 +91,24 @@ public:
     /// \param argv list of argument strings. The list starts at item 1 since 0 is taken by the application name.
     void GetCommandLinePars(int argc, char *argv[]);
 
+
     /// \brief Adopts the config using parameters provided form the CLI using an STL vector. This is used in combination with the QApplication object.
     /// \param args Number of arguments in the list
     void GetCommandLinePars(std::vector<std::string> &args);
+
+    /// Sanity check on the number of slices to be reconstruct during Config
+    virtual std::string SanitySlicesCheck()=0;
+
+
 protected:
     /// Parser for an opened XML formatted input file.
     /// \param reader Reference to an xml reader struct for the opened configuration file.
     /// \param sName Name of the config block to parse.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName)=0;
+
+    /// Sanity message that warns about the number of slices that are being configured
+    virtual std::string SanityMessage(bool mess)=0;
+
 
     /// Parse a list of arguments as they come from the CLI
     /// \param args The argument list

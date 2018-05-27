@@ -18,6 +18,7 @@ private Q_SLOTS:
     void testAssignment();
     void testScalarArithmetics();
     void testDataAccess();
+    void testClones();
 };
 
 TKIPLbaseTImageTest::TKIPLbaseTImageTest()
@@ -225,6 +226,35 @@ void TKIPLbaseTImageTest::testScalarArithmetics()
 
     for (size_t i=0; i<img.Size(); ++i)
         QVERIFY(res[i]==i/2.0f);
+
+}
+
+void TKIPLbaseTImageTest::testClones()
+{
+    size_t dims[]={100,110};
+
+    kipl::base::TImage<float,2> a(dims),b,c;
+    for (int i=0; i<a.Size(); i++)
+        a[i]=float(i);
+
+    a=b;
+
+    QVERIFY(a.GetDataPtr()==b.GetDataPtr());
+    b.Clone();
+    QVERIFY(a.GetDataPtr()!=b.GetDataPtr());
+
+    for (int i=0; i<a.Size(); i++)
+        QVERIFY(a[i]==b[i]);
+
+    c.Clone(a);
+
+    QVERIFY(a.GetDataPtr()!=c.GetDataPtr());
+    QVERIFY(a.Size()==c.Size());
+    QVERIFY(a.Size(0)==c.Size(0));
+    QVERIFY(a.Size(1)==c.Size(1));
+
+    for (int i=0; i<a.Size(); i++)
+        QVERIFY(a[i]==c[i]);
 
 }
 

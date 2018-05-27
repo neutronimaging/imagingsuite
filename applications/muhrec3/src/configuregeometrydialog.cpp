@@ -27,8 +27,8 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     fraction(0.9f)
 {
     ui->setupUi(this);
-    connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
 
+    connect(ui->buttonFindCenter,SIGNAL(clicked()),SLOT(FindCenter()));
     connect(ui->spinSliceFirst,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
     connect(ui->spinSliceLast,SIGNAL(valueChanged(int)),this,SLOT(ROIChanged(int)));
 
@@ -42,6 +42,8 @@ ConfigureGeometryDialog::~ConfigureGeometryDialog()
 
 int ConfigureGeometryDialog::exec(ReconConfig &config)
 {
+    std::ostringstream msg;
+
     m_Config=config;
     int res=LoadImages();
 
@@ -61,6 +63,8 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     UpdateDialog();
 
     return QDialog::exec();
+
+
 }
 
 void ConfigureGeometryDialog::GetConfig(ReconConfig & config)
@@ -405,7 +409,7 @@ int ConfigureGeometryDialog::LoadImages()
 
     // Load references
     try {
-        if (m_Config.ProjectionInfo.nOBCount) {
+        if (m_Config.ProjectionInfo.nOBCount!=0) {
             size_t found = m_Config.ProjectionInfo.sOBFileMask.find("hdf");
 
             if (found==std::string::npos) {
@@ -495,18 +499,22 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
                     NULL);
+            if (m_Config.ProjectionInfo.nOBCount!=0) {
+                if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                    float *pProj=m_Proj0Deg.GetDataPtr();
+                    float *pOB=m_ProjOB.GetDataPtr();
 
-            if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
-                float *pProj=m_Proj0Deg.GetDataPtr();
-                float *pOB=m_ProjOB.GetDataPtr();
-
-                for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
-                    pProj[i]=pProj[i]/pOB[i];
-                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                    for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                        pProj[i]=pProj[i]/pOB[i];
+                        pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                    }
+                }
+                else {
+                    logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection at 0 deg.");
                 }
             }
             else {
-                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+                logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
             }
             m_Proj0Deg=medfilt(m_Proj0Deg);
 
@@ -558,16 +566,21 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.fBinning,
                     NULL);
 
-            if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
-                float *pProj=m_Proj180Deg.GetDataPtr();
-                float *pOB=m_ProjOB.GetDataPtr();
-                for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
-                    pProj[i]=pProj[i]/pOB[i];
-                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+            if (m_Config.ProjectionInfo.nOBCount!=0) {
+                if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
+                    float *pProj=m_Proj180Deg.GetDataPtr();
+                    float *pOB=m_ProjOB.GetDataPtr();
+                    for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+                        pProj[i]=pProj[i]/pOB[i];
+                        pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                    }
+                }
+                else {
+                    logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection at 180deg");
                 }
             }
             else {
-                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+                logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
             }
 
             m_Proj180Deg=medfilt(m_Proj180Deg);
@@ -607,20 +620,25 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
                 NULL);
+        if (m_Config.ProjectionInfo.nOBCount!=0) {
+            if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                float *pProj=m_Proj0Deg.GetDataPtr();
+                float *pOB=m_ProjOB.GetDataPtr();
 
-        if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
-            float *pProj=m_Proj0Deg.GetDataPtr();
-            float *pOB=m_ProjOB.GetDataPtr();
-
-            for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
-                pProj[i]=pProj[i]/pOB[i];
-                pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                    pProj[i]=pProj[i]/pOB[i];
+                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                }
+            }
+            else {
+                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
             }
         }
         else {
-            logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+            logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
         }
         m_Proj0Deg=medfilt(m_Proj0Deg);
+
         int proj_180 = static_cast<int>(180.0f/((m_Config.ProjectionInfo.fScanArc[1]-m_Config.ProjectionInfo.fScanArc[0])/(static_cast<float>(m_Config.ProjectionInfo.nLastIndex)-static_cast<float>(m_Config.ProjectionInfo.nFirstIndex))));
 
         m_Proj180Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
@@ -630,22 +648,25 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.fBinning,
                 NULL);
 
-        if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
-            float *pProj=m_Proj180Deg.GetDataPtr();
-            float *pOB=m_ProjOB.GetDataPtr();
-            for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
-                pProj[i]=pProj[i]/pOB[i];
-                pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+        if (m_Config.ProjectionInfo.nOBCount!=0) {
+            if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
+                float *pProj=m_Proj180Deg.GetDataPtr();
+                float *pOB=m_ProjOB.GetDataPtr();
+                for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+                    pProj[i]=pProj[i]/pOB[i];
+                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                }
+            }
+            else {
+                logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
             }
         }
-        else {
-            logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
+        else
+        {
+            logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
         }
 
         m_Proj180Deg=medfilt(m_Proj180Deg);
-
-
-
 
         }
 
@@ -654,8 +675,8 @@ int ConfigureGeometryDialog::LoadImages()
 
 void ConfigureGeometryDialog::UpdateConfig()
 {
-    m_Config.ProjectionInfo.roi[1]       = ui->spinSliceFirst->value();
-    m_Config.ProjectionInfo.roi[3]       = ui->spinSliceLast->value();
+    m_Config.ProjectionInfo.roi[1]       = static_cast<size_t>(ui->spinSliceFirst->value());
+    m_Config.ProjectionInfo.roi[3]       = static_cast<size_t>(ui->spinSliceLast->value());
     m_Config.ProjectionInfo.fScanArc[0]  = ui->dspinAngleFirst->value();
     m_Config.ProjectionInfo.fScanArc[1]  = ui->dspinAngleLast->value();
     m_Config.ProjectionInfo.fCenter      = ui->dspinCenterRotation->value();
@@ -696,6 +717,7 @@ void ConfigureGeometryDialog::UpdateDialog()
     ui->dspinCenterRotation->setValue(m_Config.ProjectionInfo.fCenter);
     ui->dspinTiltAngle->setValue(m_Config.ProjectionInfo.fTiltAngle);
     ui->dspinTiltPivot->setValue(m_Config.ProjectionInfo.fTiltPivotPosition);
+    ui->comboScanType->setCurrentIndex(m_Config.ProjectionInfo.scantype);
 
     ROIChanged(-1);
     on_groupUseTilt_toggled(m_Config.ProjectionInfo.bCorrectTilt);
@@ -741,9 +763,12 @@ void ConfigureGeometryDialog::on_groupUseTilt_toggled(bool arg1)
 void ConfigureGeometryDialog::on_spinSliceFirst_valueChanged(int arg1)
 {
     ui->spinSliceLast->setMinimum(arg1+1);
+    UpdateConfig();
+
 }
 
 void ConfigureGeometryDialog::on_spinSliceLast_valueChanged(int arg1)
 {
     ui->spinSliceFirst->setMaximum(arg1-1);
+    UpdateConfig();
 }

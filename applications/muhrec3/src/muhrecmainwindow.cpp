@@ -174,6 +174,7 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setROIColor("yellow");
     ui->widgetMatrixROI->setTitle("Matrix ROI");
     ui->widgetMatrixROI->setAutoHideROI(true);
+    ui->widgetMatrixROI->setAllowUpdateImageDims(false);
     ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
@@ -1164,7 +1165,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi,true);
 
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
-    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);          
+    QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
  //   qDebug("UpdateDialog");
@@ -1427,6 +1428,23 @@ void MuhRecMainWindow::UpdateConfig()
         logger(logger.LogError,msg.str());
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
+
+    try{
+        m_Config.SanityAnglesCheck();
+    }
+    catch (ReconException & e)
+    {
+        msg<<"Config angle sanity check failed in update config"<<std::endl<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException & e)
+    {
+        msg<<"Config angle sanity check failed in update config"<<std::endl<<e.what();
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
 
 }
 
@@ -2167,11 +2185,12 @@ void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
 
 void MuhRecMainWindow::on_button_FindCenter_clicked()
 {
+    std::ostringstream msg;
+    int res;
     ConfigureGeometryDialog dlg;
-
     UpdateConfig();
+    res=dlg.exec(m_Config);
 
-    int res=dlg.exec(m_Config);
 
     if (res==QDialog::Accepted)
     {
@@ -2179,6 +2198,7 @@ void MuhRecMainWindow::on_button_FindCenter_clicked()
         UpdateDialog();
         UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     }
+
 }
 
 void MuhRecMainWindow::on_checkUseMatrixROI_toggled(bool checked)
@@ -2345,3 +2365,21 @@ void MuhRecMainWindow::on_pushButton_levels99p_clicked()
         logger(logger.LogMessage,"Level 99\%: Missing engine");
 }
 
+
+void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
+{
+    if (index==m_Config.ProjectionInfo.GoldenSectionScan)
+    {
+        if  (ui->radioButton_customTurn->isChecked()) {
+            ui->radioButton_customTurn->setCheckable(false);
+            ui->radioButton_halfTurn1->setChecked(true); // default value
+            on_radioButton_halfTurn1_clicked();
+        }
+
+        ui->radioButton_customTurn->setCheckable(false);
+    }
+    else
+    {
+        ui->radioButton_customTurn->setCheckable(true);
+    }
+}

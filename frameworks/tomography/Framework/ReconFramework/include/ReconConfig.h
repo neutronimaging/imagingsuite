@@ -176,6 +176,7 @@ public:
     const ReconConfig & operator=(const ReconConfig &config);
 
     bool SanityCheck();
+    bool SanityAnglesCheck();
 
     /// Destructor to clean up
 	~ReconConfig(void);
@@ -194,6 +195,10 @@ protected:
     /// \param reader A handle to the an opened xml reader.
     /// \param cName Name of the main block.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string cName);
+
+    virtual string SanitySlicesCheck();
+
+    virtual string SanityMessage(bool mess);
 
     /// Parse a list of arguments provided by the CLI
     /// \param args A list of arguments as they come from the CLI.
