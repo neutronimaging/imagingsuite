@@ -400,7 +400,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname, float p_size) {
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size) {
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
@@ -457,6 +457,93 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname, flo
             NXputattr(file_id,"units","mm",2,NX_CHAR);
         NXclosedata(file_id);
 
+
+
+/* Close NXentry and NXdata groups and close file */
+        NXclosegroup (file_id);
+      NXclosegroup (file_id);
+    NXclose (&file_id);
+
+    return 1;
+}
+
+/// \brief Write the reconstructed data as NeXus file in float format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice) {
+
+//    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
+//    float t[1000], phi[50];
+
+    int dims[NDim] = {img.Size(2), img.Size(0), img.Size(1)};
+    int  i = 1; // not sure what that is
+    float *mysize = &p_size;
+
+    NXhandle file_id;
+/*
+ * Read in data using local routines to populate phi and counts
+ *
+ * for example you may create a getdata() function and call
+ *
+ *      getdata (n_t, t, n_p, phi, counts);
+ */
+/* Open output file and output global attributes */
+    NXopen (fname, NXACC_CREATE5, &file_id);
+      NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
+/* Open top-level NXentry group */
+      NXmakegroup (file_id, "entry", "NXentry");
+      NXopengroup (file_id, "entry", "NXentry");
+/* Open NXdata group within NXentry group */
+        NXmakegroup (file_id, "Data1", "NXdata");
+        NXopengroup (file_id, "Data1", "NXdata");
+
+///* Output time channels */
+//          NXmakedata (file_id, "time_of_flight", NX_FLOAT32, 1, &n_t);
+//          NXopendata (file_id, "time_of_flight");
+//            NXputdata (file_id, t);
+//            NXputattr (file_id, "units", "microseconds", 12, NX_CHAR);
+//          NXclosedata (file_id);
+///* Output detector angles */
+//          NXmakedata (file_id, "polar_angle", NX_FLOAT32, 1, &n_p);
+//          NXopendata (file_id, "polar_angle");
+//            NXputdata (file_id, phi);
+//            NXputattr (file_id, "units", "degrees", 7, NX_CHAR);
+//          NXclosedata (file_id);
+
+/* Output data */
+
+          NXmakedata (file_id, "signal", NX_FLOAT32, 3, dims);
+          NXopendata (file_id, "signal");
+            NXputdata (file_id, img.GetDataPtr());
+
+            NXputattr (file_id, "signal", &i, 1, NX_INT32);
+//            NXputattr (file_id, "axes",  "polar_angle:time_of_flight", 26, NX_CHAR);
+          NXclosedata (file_id);
+
+/*      Pixel spacing */
+         NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
+         NXopendata (file_id, "x_pixel_size");
+            NXputdata(file_id, mysize);
+            NXputattr(file_id,"units","mm",2,NX_CHAR);
+        NXclosedata(file_id);
+
+    /*      First slice */
+             NXmakedata (file_id, "first_slice", NX_INT8, 1, &i);
+             NXopendata (file_id, "first_slice");
+                NXputdata(file_id, static_cast<int>(first_slice));
+                NXputattr(file_id,"units","mm",2,NX_CHAR);
+            NXclosedata(file_id);
+
+
+    /*      Last slice */
+             NXmakedata (file_id, "last_slice", NX_INT8, 1, &i);
+             NXopendata (file_id, "last_slice");
+                NXputdata(file_id, static_cast<int>(last_slice));
+                NXputattr(file_id,"units","mm",2,NX_CHAR);
+            NXclosedata(file_id);
+
 /* Close NXentry and NXdata groups and close file */
         NXclosegroup (file_id);
       NXclosegroup (file_id);
@@ -471,7 +558,7 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> img, const char *fname, flo
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, ImgType lo, ImgType hi, float p_size) {
+int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, ImgType lo, ImgType hi, float p_size) {
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
@@ -542,12 +629,19 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> &img, const char *fname, I
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFile(const char *fname, int *dims, float p_size) {
+int PrepareNeXusFile(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
     // I have to understand where to call it!
 
 
     float *mysize = &p_size;
     int  i = 1;
+    int mydims[NDim];
+    mydims[0] = static_cast<int> (dims[0]);
+    mydims[1] = static_cast<int> (dims[1]);
+    mydims[2] = static_cast<int> (dims[2]);
+
+//    std::cout << mydims[0] <<" " << mydims[1] << " " << mydims[2] << std::endl;
+//    std::cout << img.Size(0) << " " << img.Size(1)     << " "<< img.Size(2) << std::endl;
 
     NXhandle file_id;
 
@@ -560,20 +654,18 @@ int PrepareNeXusFile(const char *fname, int *dims, float p_size) {
 /* Open NXdata group within NXentry group */
         NXmakegroup (file_id, "Data1", "NXdata");
         NXopengroup (file_id, "Data1", "NXdata");
+        std::cout << "beforem make data " << std::endl;
 
-
-kipl::base::TImage<ImgType, NDim> img(dims);
-ImgType *pImg = img.GetDataPtr();
-
-
-for (int i=0; i<img.Size(); i++)
-    pImg[i] = static_cast<ImgType>(0);
-
-          NXmakedata (file_id, "signal", NX_FLOAT32, 3, dims); // iniziamo con FLOAT32 e poi vediamo
+          NXmakedata (file_id, "signal", NX_FLOAT32, 3, mydims); // iniziamo con FLOAT32 e poi vediamo
           NXopendata (file_id, "signal");
             NXputdata (file_id, img.GetDataPtr());
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
           NXclosedata (file_id);
+
+          std::cout << "after make data " << std::endl;
+          std::cout << mysize << std::endl;
+           std::cout << p_size << std::endl;
+           std::cout << *mysize << std::endl;
 
 /*      Pixel spacing */
        NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
@@ -586,7 +678,7 @@ for (int i=0; i<img.Size(); i++)
 /* Close NXentry and NXdata groups and close file */
         NXclosegroup (file_id);
       NXclosegroup (file_id);
-    NXclose (&file_id);
+    NXclose (&file_id); // this should close the file
 
     return 1;
 }
@@ -599,6 +691,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
     NeXus::File file(fname);
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 
+    std::cout << start << " " << end << std::endl;
 
 
     file.openGroup("entry", "NXentry");
@@ -630,35 +723,44 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
 
                       size_t img_size[3];
 
-                      img_size[0] = file.getInfo().dims[2];
+                      img_size[0] = file.getInfo().dims[0];
                       img_size[1] = file.getInfo().dims[1];
-                      img_size[2] = file.getInfo().dims[0];
+                      img_size[2] = file.getInfo().dims[2];
+
+                      std::cout << img_size[0] << " " << img_size[1] << " " << img_size[2] << std::endl;
+                      std::cout << img.Size(0) << " " << img.Size(1) << " " << img.Size(2) << std::endl;
 
 
-                      ImgType *slab=new ImgType[img_size[0]*img_size[1]*(end-start)]; // assuming images are all int_16.. but possibly this can be read from nexus info..
+//                      ImgType *slab=new ImgType[img_size[0]*img_size[1]*(end-start)]; // assuming images are all int_16.. but possibly this can be read from nexus info..
 
                       vector<int> slab_start;
-                      slab_start.push_back(start);
+                      slab_start.push_back(static_cast<int>(start));
                       slab_start.push_back(0);
                       slab_start.push_back(0);
 
                       vector<int> slab_size;
-                      slab_size.push_back(end-start);
-                      slab_size.push_back(img_size[1]);
-                      slab_size.push_back(img_size[0]);
+                      slab_size.push_back(static_cast<int>(end-start));
+                      slab_size.push_back(static_cast<int>(img_size[1]));
+                      slab_size.push_back(static_cast<int>(img_size[2]));
+
+                      std::cout << slab_start.at(0) << " " << slab_start.at(1) << " " << slab_start.at(2) << std::endl;
+                      std::cout << slab_size.at(0) << " " << slab_size.at(1) << " " << slab_size.at(2) << std::endl;
 
 
-                      ImgType *pslice = img.GetDataPtr();
+                      ImgType *pslab = img.GetDataPtr();
+                      vector<ImgType> slab;
 
-                      // casting to ImgType
-                      for (size_t i=0; i<img.Size();++i){
-                          slab[i] = static_cast<ImgType>(pslice[i]);
-//                          pslice[i] = static_cast<ImgType>(slab[i]);
+                      //putting in the vector...
+                      for (size_t i=0; i<img.Size();++i) {
+                          slab.push_back(pslab[i]);
                       }
 
 
+
+
                       try{
-                        file.putSlab(slab, slab_start, slab_size); // slab_start should be the starting index to insert the data
+                          file.putSlab((img.GetDataPtr()), slab_start, slab_size);
+//                        file.putSlab(slab, slab_start, slab_size); // slab_start should be the starting index to insert the data
                       }
                       catch (const std::bad_alloc & E) {
                               msg.str("");
