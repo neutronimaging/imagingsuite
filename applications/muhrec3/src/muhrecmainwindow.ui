@@ -47,7 +47,7 @@
          <string/>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <property name="toolTip">
@@ -2319,7 +2319,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

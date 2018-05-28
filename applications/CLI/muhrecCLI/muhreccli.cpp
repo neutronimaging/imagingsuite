@@ -1,3 +1,6 @@
+//<LICENSE>
+
+#include "stdafx.h"
 #include <iostream>
 #include <sstream>
 #include <vector>

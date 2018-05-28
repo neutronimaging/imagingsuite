@@ -1,4 +1,4 @@
-QT -= gui
+#QT -= gui
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -62,10 +62,12 @@ win32 {
 
 SOURCES += \
         main.cpp \
-    muhreccli.cpp
+    muhreccli.cpp \
+        stdafx.cpp
 
 HEADERS += \
-    muhreccli.h
+    muhreccli.h \
+    stdafx.h
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms

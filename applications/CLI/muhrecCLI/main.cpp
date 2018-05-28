@@ -1,3 +1,6 @@
+//<LICENSE>
+
+#include "stdafx.h"
 #include <QCoreApplication>
 
 #include "muhreccli.h"
@@ -8,7 +11,5 @@ int main(int argc, char *argv[])
 
     MuhRecCLI reconstructor(&a);
 
-    reconstructor.exec();
-
-    return a.exec();
+    return reconstructor.exec();
 }
