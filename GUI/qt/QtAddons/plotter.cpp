@@ -1,11 +1,20 @@
+//<LICENSE>
+
 #if QT_VERSION > 0x050000
 #include <QtGui>
 #else
 #include <QtWidgets>
 #endif
+
+#include <QFileDialog>
+#include <QDebug>
 #include <cmath>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
+
+#include <strings/filenames.h>
+
 #include "plotter.h"
 #include "qglyphs.h"
 #include "plotpainter.h"
@@ -271,6 +280,9 @@ void Plotter::keyPressEvent(QKeyEvent *event)
         zoomStack[curZoom].scroll(0, +1);
         refreshPixmap();
         break;
+    case Qt::Key_S:
+        savePlotData();
+        break;
     default:
         QWidget::keyPressEvent(event);
     }
@@ -287,6 +299,51 @@ void Plotter::wheelEvent(QWheelEvent *event)
         zoomStack[curZoom].scroll(0, numTicks);
     }
     refreshPixmap();
+}
+
+void Plotter::savePlotData()
+{
+    QFileDialog dlg;
+
+    QString fname=dlg.getSaveFileName(this,"Save plot to text file");
+
+    qDebug() <<fname;
+
+    if (fname.isEmpty())
+        return ;
+
+    std::string fname2=fname.toStdString();
+    std::string path;
+    std::string name;
+    std::vector<std::string> ext;
+    std::string extstr;
+
+    kipl::strings::filenames::StripFileName(fname2,path,name,ext);
+
+    std::ostringstream namemaker;
+
+    if (curveMap.isEmpty()==false) {
+        for (auto id: curveMap.keys()) {
+            namemaker.str("");
+            PlotData data=curveMap.value(id);
+            if (ext.empty()==true)
+                extstr=".csv";
+            else {
+                for (auto e: ext) {
+                    extstr+=e;
+                }
+            }
+
+            namemaker<<path<<name<<"_"<<id<<extstr;
+
+            std::ofstream plotfile(namemaker.str().c_str());
+
+            for (auto d :data.m_data) {
+                plotfile<<d.x()<<", "<<d.y()<<std::endl;
+            }
+
+        }
+    }
 }
 
 void Plotter::updateRubberBandRegion()
