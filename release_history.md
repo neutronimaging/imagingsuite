@@ -1,4 +1,34 @@
 # Release history
+## Release note MuhRec 3.15 - June 2018
+In this release we have revised the graphical user interface and added a new module for scattering correction.
+
+### New features:
+1. Revised GUI, 
+	1. Rearranged the views for a more logic workflow. 
+	2. Changed color scheme and started to use colors actively to guide the user.
+	3. Introduced an new widget to select ROIs.
+2. Added a normalization module that provides more accurate attenuation coefficients and reduces cupping radically.
+3. Improved CBCT quality and speed.
+4. Transferred the user documentation to the github wiki.
+5. The piercing point estimation dialog has been added for the CBCT paramterization.
+6. Added several automated code tests for quality assessment.
+7. The application now suggests reference images when a new projection is chosen.
+8. Logging now appears as a modeless dialog on the side of the main window.
+9. We have tried to reduce the height of the main window to allow smaller screens.
+10. The application is now compiled on windows 10. There may still be some widget scaling issues.
+11. A lot of stability fixes.
+
+### Fixed issues:
+1. Issue 8: The piercing point dialog crashes and was deactivated in the previous release.
+2. Issue 21: It is now possible open a config file.
+3. Issue 19: GUI size doesn't allow very small screens.
+4. Issue 42: The statistics calculations (in particular std dev didn't deliver correct values)
+5. Issue 59: Tool tips are added on all widgets.
+6. Issue 88: It is now possible to run muhrec on the command line with windows.
+7. Issue 92: The geometry dialog doesn't crash then the OB is missing.
+
+### Repository:
+1. Updated some build scripts.
 
 ## Release note MuhRec3 3.14 - December 2017
 In the current release we focussed on stability and the open source release including making automated build scripts.
