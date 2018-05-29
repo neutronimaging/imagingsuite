@@ -50,6 +50,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
+    void savePlotData();
 
 private:
     void updateRubberBandRegion();

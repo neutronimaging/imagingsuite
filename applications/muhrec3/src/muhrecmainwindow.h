@@ -190,6 +190,8 @@ private slots:
 
     void on_pushButtonGetSliceROI_clicked();
 
+    void on_comboDataSequence_currentIndexChanged(int index);
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

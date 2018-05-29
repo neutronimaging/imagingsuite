@@ -1,9 +1,9 @@
 #CPCMD="ln -s "
 CPCMD="cp "
 REPOSPATH="/home/`whoami`/git"
-QT_PATH=/home/`whoami`/Qt/5.8/gcc_64
+#QT_PATH=/home/`whoami`/Qt/5.8/gcc_64
 
-#QT_PATH=$QTBINPATH
+QT_PATH="$QTPATH"
 
 
 DEST="$HOME/muhrec3"

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1126</width>
-    <height>854</height>
+    <height>856</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@
          <string/>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabInformation">
          <property name="toolTip">
@@ -1711,6 +1711,130 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
+           <widget class="QGroupBox" name="groupHistogram">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox#groupHistogram {font: bold 1.75em}</string>
+            </property>
+            <property name="title">
+             <string>Gray levels</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="layoutGraylevels">
+               <item>
+                <widget class="QLabel" name="label_40">
+                 <property name="text">
+                  <string>Gray levels</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_41">
+                 <property name="text">
+                  <string>Low</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>dspinGrayLow</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="dspinGrayLow">
+                 <property name="toolTip">
+                  <string>Lowest gray level of the reconstructed data</string>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>5000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_42">
+                 <property name="text">
+                  <string>High</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>dspinGrayHigh</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="dspinGrayHigh">
+                 <property name="toolTip">
+                  <string>Highest gray level of the reconstructed data</string>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>5000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_levels95p">
+                 <property name="toolTip">
+                  <string>Preset for the 95% gray level interval.</string>
+                 </property>
+                 <property name="text">
+                  <string>95%</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_levels99p">
+                 <property name="toolTip">
+                  <string>Preset for the 99% gray level interval.</string>
+                 </property>
+                 <property name="text">
+                  <string>99%</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelMatrixEntropy">
+                 <property name="text">
+                  <string>Entropy N/A</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QGroupBox" name="groupMatrixSettings">
             <property name="styleSheet">
              <string notr="true">QGroupBox#groupMatrixSettings{font: bold 1.75em}</string>
@@ -1852,130 +1976,6 @@
                   </size>
                  </property>
                 </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupHistogram">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QGroupBox#groupHistogram {font: bold 1.75em}</string>
-            </property>
-            <property name="title">
-             <string>Gray levels</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_17">
-             <item>
-              <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="layoutGraylevels">
-               <item>
-                <widget class="QLabel" name="label_40">
-                 <property name="text">
-                  <string>Gray levels</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_41">
-                 <property name="text">
-                  <string>Low</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>dspinGrayLow</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="dspinGrayLow">
-                 <property name="toolTip">
-                  <string>Lowest gray level of the reconstructed data</string>
-                 </property>
-                 <property name="minimum">
-                  <double>-1000.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>5000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_42">
-                 <property name="text">
-                  <string>High</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>dspinGrayHigh</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="dspinGrayHigh">
-                 <property name="toolTip">
-                  <string>Highest gray level of the reconstructed data</string>
-                 </property>
-                 <property name="minimum">
-                  <double>-1000.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>5000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_levels95p">
-                 <property name="toolTip">
-                  <string>Preset for the 95% gray level interval.</string>
-                 </property>
-                 <property name="text">
-                  <string>95%</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_levels99p">
-                 <property name="toolTip">
-                  <string>Preset for the 99% gray level interval.</string>
-                 </property>
-                 <property name="text">
-                  <string>99%</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelMatrixEntropy">
-                 <property name="text">
-                  <string>Entropy N/A</string>
-                 </property>
-                </widget>
                </item>
               </layout>
              </item>
@@ -2321,7 +2321,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

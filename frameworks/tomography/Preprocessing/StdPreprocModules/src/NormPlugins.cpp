@@ -1,5 +1,7 @@
 //<LICENSE>
 
+#include <atomic>
+
 #include "../include/StdPreprocModules_global.h"
 
 
@@ -65,6 +67,7 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
 	nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
 
 	bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
+
     try {
         bUseLUT     = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
     }
@@ -289,128 +292,6 @@ void FullLogNorm::LoadReferenceImages(size_t *roi)
 //        dark = 0.0f;
 //    }
 
-    { // old code
-//	if (nOBCount!=0) {
-//		logger(kipl::logging::Logger::LogMessage,"Loading open beam images");
-		
-//        float *fFlatDoses=new float[nOBCount];
-//        float dose=0.0f;
-
-//		kipl::strings::filenames::MakeFileName(flatmask,nOBFirstIndex,filename,ext,'#','0');
-//		img = reader.Read(filename,
-//				m_Config.ProjectionInfo.eFlip,
-//				m_Config.ProjectionInfo.eRotate,
-//				m_Config.ProjectionInfo.fBinning,
-//				roi);
-
-//        dose=bUseNormROI ? reader.GetProjectionDose(filename,
-//					m_Config.ProjectionInfo.eFlip,
-//					m_Config.ProjectionInfo.eRotate,
-//					m_Config.ProjectionInfo.fBinning,
-//                    nOriginalNormRegion) : 1.0f;
-
-//        fFlatDose     = dose;
-//        fFlatDoses[0] = dose;
-
-//		size_t obdims[]={img.Size(0), img.Size(1),nOBCount};
-
-//		kipl::base::TImage<float,3> flat3D(obdims);
-//		memcpy(flat3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
-
-//		for (size_t i=1; i<nOBCount; i++) {
-//			kipl::strings::filenames::MakeFileName(flatmask,i+nOBFirstIndex,filename,ext,'#','0');
-//			img=reader.Read(filename,
-//					m_Config.ProjectionInfo.eFlip,
-//					m_Config.ProjectionInfo.eRotate,
-//					m_Config.ProjectionInfo.fBinning,
-//					roi);
-//			memcpy(flat3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
-//            dose = bUseNormROI ? reader.GetProjectionDose(filename,
-//						m_Config.ProjectionInfo.eFlip,
-//						m_Config.ProjectionInfo.eRotate,
-//						m_Config.ProjectionInfo.fBinning,
-//                        nOriginalNormRegion) : 1.0f;
-
-//            fFlatDose    += dose;
-//            fFlatDoses[i] = fFlatDoses[0]/dose;
-//		}
-//        fFlatDoses[0]=1.0f;
-
-//		fFlatDose/=static_cast<float>(nOBCount);
-
-//		float *tempdata=new float[nOBCount];
-//		flat.Resize(obdims);
-////		float *pFlat3D=flat3D.GetDataPtr();
-//		float *pFlat=flat.GetDataPtr();
-
-//        ImagingAlgorithms::AverageImage avg;
-
-//        flat=avg(flat3D,m_ReferenceAvagerage,fFlatDoses);
-
-//		delete [] tempdata;
-//        delete [] fFlatDoses;
-
-//		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-//			for (size_t i=1; i<flat.Size(1); i++) {
-//				memcpy(flat.GetLinePtr(i), pFlat, sizeof(float)*flat.Size(0));
-
-//			}
-//		}
-//	}
-//	else
-//		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
-
-//	if (nDCCount!=0) {
-//		logger(kipl::logging::Logger::LogMessage,"Loading dark images");
-//		kipl::strings::filenames::MakeFileName(darkmask,nDCFirstIndex,filename,ext,'#','0');
-//		dark = reader.Read(filename,
-//				m_Config.ProjectionInfo.eFlip,
-//				m_Config.ProjectionInfo.eRotate,
-//				m_Config.ProjectionInfo.fBinning,
-//				roi);
-//		if (bUseNormROI) {
-//			fDarkDose=reader.GetProjectionDose(filename,
-//					m_Config.ProjectionInfo.eFlip,
-//					m_Config.ProjectionInfo.eRotate,
-//					m_Config.ProjectionInfo.fBinning,
-//					nOriginalNormRegion);
-//		}
-//		else {
-//			fDarkDose=0.0f;
-//		}
-
-//		for (size_t i=1; i<nDCCount; i++) {
-//			kipl::strings::filenames::MakeFileName(darkmask,i+nDCFirstIndex,filename,ext,'#','0');
-//			img=reader.Read(filename,
-//					m_Config.ProjectionInfo.eFlip,
-//					m_Config.ProjectionInfo.eRotate,
-//					m_Config.ProjectionInfo.fBinning,
-//					roi);
-//			dark+=img;
-//			if (bUseNormROI) {
-//				fDarkDose+=reader.GetProjectionDose(filename,
-//						m_Config.ProjectionInfo.eFlip,
-//						m_Config.ProjectionInfo.eRotate,
-//						m_Config.ProjectionInfo.fBinning,
-//						nOriginalNormRegion);
-//			}
-//			else {
-//				fDarkDose=0.0f;
-//			}
-//		}
-//		fDarkDose/=static_cast<float>(nDCCount);
-//		dark/=static_cast<float>(nDCCount);
-//		if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-//			for (size_t i=1; i<dark.Size(1); i++) {
-//				memcpy(dark.GetLinePtr(i), dark.GetLinePtr(0), sizeof(float)*dark.Size(0));
-//			}
-//		}
-//	}
-//	else
-//		logger(kipl::logging::Logger::LogWarning,"Open beam image count is zero");
-
-    }
-
     msg.str(""); msg<<"Loaded reference images (flat dose="<<fFlatDose<<", dark dose="<<fDarkDose<<")";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 	SetReferenceImages(dark, flat);
@@ -421,8 +302,12 @@ void FullLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::bas
 	NormBase::SetReferenceImages(dark,flat);
 	
     float dose=1.0f/(fFlatDose);
+
 	if (dose!=dose)
 		throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
+
+    if (isinf(dose)==true)
+        throw ReconException("The reference dose is Inf",__FILE__,__LINE__);
 
 	const int N=static_cast<int>(flat.Size());
 	float *pFlat=flat.GetDataPtr();
@@ -461,8 +346,9 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 	float dose=1.0f;
 	if (bUseNormROI==true) {
 		dose=GetFloatParameter(coeff,"dose")-fDarkDose;
-		dose= dose<=0 ? 1.0f : dose;
+        dose= dose<=0.0f ? 1.0f : dose;
 	}
+
 	if (dose!=dose) 
 		throw ReconException("The projection dose is a NaN",__FILE__,__LINE__);
 
@@ -481,7 +367,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 		throw ReconException(msg.str(),__FILE__, __LINE__);
 	}
 
-	if (bUseLUT) {
+    if (bUseLUT == true) {
 		if (nDCCount!=0){
 			#pragma omp parallel for firstprivate(pImg,pDark)
 			for (int i=0; i<N; i++) {
@@ -541,9 +427,9 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		doselist[0]=0.0f;
 	}
 	
-	int N=static_cast<int>(img.Size(0)*img.Size(1));
+    int N=static_cast<int>(img.Size(0)*img.Size(1)); // Projection size
 
-	if ((nDCCount!=0) && (static_cast<int>(mFlatField.Size())!=N)) {
+    if ((nOBCount!=0) && (static_cast<int>(mFlatField.Size())!=N)) {
 		msg.str("");
 		msg<<"Flat field ("<<mFlatField.Size(0)<<", "<<mFlatField.Size(1)<<"),"
 			<<" does not match projection ("<<img.Size(0)<<", "<<img.Size(1)<<")"
@@ -552,12 +438,23 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		throw ReconException(msg.str(),__FILE__, __LINE__);
 	}
 
+    if ((nDCCount!=0) && (static_cast<int>(mDark.Size())!=N)) {
+        msg.str("");
+        msg<<"Dark field ("<<mDark.Size(0)<<", "<<mDark.Size(1)<<"),"
+            <<" does not match projection ("<<img.Size(0)<<", "<<img.Size(1)<<")"
+            <<"(N flat="<<mDark.Size()<<", N proj="<<img.Size()<<")";
+        logger(logger.LogError,msg.str());
+        throw ReconException(msg.str(),__FILE__, __LINE__);
+    }
+
     float *pFlat=mFlatField.GetDataPtr();
     float *pDark=mDark.GetDataPtr();
 
+    std::atomic<float> cnt;
+    cnt=0.0f;
 	if (bUseLUT) {
 		#pragma omp parallel for firstprivate(pDark, pFlat)
-		for (int j=0; j<img.Size(2); j++) {
+        for (size_t j=0; j<img.Size(2); j++) {
 			float *pImg=img.GetLinePtr(0,j);
 			float dose=nDose !=1 ? doselist[j] : doselist[0];
 
@@ -585,14 +482,14 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		if (nDCCount!=0) {
 			if (nOBCount!=0) {
 					#pragma omp parallel for firstprivate(pFlat,pDark)
-					for (int j=0; j<img.Size(2); j++) {
+                    for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1,++j) {
 						float *pImg=img.GetLinePtr(0,j);
 						float dose=nDose !=1 ? doselist[j] : doselist[0];
 						
 						for (int i=0; i<N; i++) {
 							float fProjPixel=(pImg[i]-pDark[i]);
-							if (fProjPixel<=0)
-								pImg[i]=0;
+                            if (fProjPixel<=0.0f)
+                                pImg[i]=0.0f;
 							else
 								pImg[i]=pFlat[i]-log(fProjPixel)+dose;
 						}
@@ -600,14 +497,14 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 			else {
 				#pragma omp parallel for firstprivate(pDark)
-				for (int j=0; j<img.Size(2); j++) {
+                for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1,++j) {
 					float *pImg=img.GetLinePtr(0,j);
 					float dose=nDose !=1 ? doselist[j] : doselist[0];
 					
 					for (int i=0; i<N; i++) {
 						float fProjPixel=(pImg[i]-pDark[i]);
-						if (fProjPixel<=0)
-							pImg[i]=0;
+                        if (fProjPixel<=0.0f)
+                            pImg[i]=0.0f;
 						else
 							pImg[i]=-log(fProjPixel)+dose;
 					}
@@ -617,13 +514,13 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		else {
 			if (nOBCount!=0) {
 				#pragma omp parallel for firstprivate(pFlat)
-				for (int j=0; j<img.Size(2); j++) {
+                for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1,++j) {
 					float *pImg=img.GetLinePtr(0,j);
 					float dose=nDose !=1 ? doselist[j] : doselist[0];
 					for (int i=0; i<N; i++) {
 						float fProjPixel=(pImg[i]);
-						if (fProjPixel<=0)
-							pImg[i]=0;
+                        if (fProjPixel<=0.0f)
+                            pImg[i]=0.0f;
 						else
 							pImg[i]=pFlat[i]-log(fProjPixel)+dose;
 					}	
@@ -631,13 +528,13 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 			else {
 				#pragma omp parallel for
-				for (int j=0; j<img.Size(2); j++) {
+                for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1, ++j) {
 					float *pImg=img.GetLinePtr(0,j);
 					float dose=nDose !=1 ? doselist[j] : doselist[0];
 					for (int i=0; i<N; i++) {
 						float fProjPixel=(pImg[i]);
-						if (fProjPixel<=0)
-							pImg[i]=0;
+                        if (fProjPixel<=0.0f)
+                            pImg[i]=0.0f;
 						else
 							pImg[i]=-log(fProjPixel)+dose;
 					}	

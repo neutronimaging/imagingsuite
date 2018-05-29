@@ -57,8 +57,76 @@ void TKIPLStringsTest::testGetStrNum()
 
 void TKIPLStringsTest::testStripFileName()
 {
+    std::string fname;
+    std::string name;
+    std::string path;
+    std::vector<std::string> ext;
+
+    fname="file01.txt";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("./"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+
+    fname="file01.txt.csv";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("./"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+    QCOMPARE(ext[1],std::string(".csv"));
+
+    fname="w/file01.txt";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+
+    fname="/w/file01.txt";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("/w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+
+    fname="q/w/file01.txt";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("q/w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+
+    fname="/q/w/file01.txt";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("/q/w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
 
 
+    fname="w/file01.txt.csv";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+    QCOMPARE(ext[1],std::string(".csv"));
+
+    fname="/w/file01.txt.csv";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("/w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+    QCOMPARE(ext[1],std::string(".csv"));
+
+    fname="q/w/file01.txt.csv";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("q/w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+    QCOMPARE(ext[1],std::string(".csv"));
+
+    fname="/q/w/file01.txt.csv";
+    kipl::strings::filenames::StripFileName(fname,path,name,ext);
+    QCOMPARE(path,std::string("/q/w/"));
+    QCOMPARE(name,std::string("file01"));
+    QCOMPARE(ext[0],std::string(".txt"));
+    QCOMPARE(ext[1],std::string(".csv"));
 }
 
 void TKIPLStringsTest::testExtractWildCard()
