@@ -93,6 +93,18 @@ void ReconEngine::SetConfig(ReconConfig &config)
     // check if I am writing to disk:
     if (m_Config.MatrixInfo.bAutomaticSerialize==true) {
 
+        float res;
+        if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
+        {
+            res = m_Config.ProjectionInfo.fResolution[0];
+        }
+
+        if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Cone)
+        {
+            res = m_Config.MatrixInfo.fVoxelSize[0];
+        }
+
+
         if (m_Config.MatrixInfo.FileType==kipl::io::NeXusfloat)
             {
 
@@ -110,7 +122,6 @@ void ReconEngine::SetConfig(ReconConfig &config)
             }
             dims[2] =  (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1]); // it is not necessarelly the entire dataset
 
-
                 kipl::base::TImage<float, 3> img;
 
 
@@ -120,7 +131,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
                 try{
 
-                    kipl::io::PrepareNeXusFileFloat(str.str().c_str(), dims, m_Config.ProjectionInfo.fResolution[0], img);
+                    kipl::io::PrepareNeXusFileFloat(str.str().c_str(), dims, res, img);
 
                    }
                 catch (ReconException &e) {
@@ -164,7 +175,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
                 try{
 
-                    kipl::io::PrepareNeXusFile16bit(str.str().c_str(), dims, m_Config.ProjectionInfo.fResolution[0], img);
+                    kipl::io::PrepareNeXusFile16bit(str.str().c_str(), dims, res, img);
 
                    }
                 catch (ReconException &e) {
@@ -703,11 +714,23 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 		kipl::io::WriteMAT(m_Volume,str.str().c_str(),name.c_str());
 	}
     else */
+
+    float res;
+    if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
+    {
+        res = m_Config.ProjectionInfo.fResolution[0];
+    }
+
+    if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Cone)
+    {
+        res = m_Config.MatrixInfo.fVoxelSize[0];
+    }
+
     if (matrixconfig->FileType==kipl::io::NeXusfloat){
-       kipl::io::WriteNexusFloat(m_Volume,str.str().c_str(),m_Volume.info.GetMetricX());
+       kipl::io::WriteNexusFloat(m_Volume,str.str().c_str(),res);
     }
     else if (matrixconfig->FileType==kipl::io::NeXus16bits){
-        kipl::io::WriteNexus16bits(m_Volume, str.str().c_str(),matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1], m_Volume.info.GetMetricX());
+        kipl::io::WriteNexus16bits(m_Volume, str.str().c_str(),matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1], res);
     }
 	else {
 		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
