@@ -406,7 +406,7 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, fl
 
 
 
-    int dims[NDim] = {img.Size(2), img.Size(1), img.Size(0)};
+    int dims[NDim] = {static_cast<int>(img.Size(2)), static_cast<int>(img.Size(1)), static_cast<int>(img.Size(0))};
     int  i = 1; // not sure what that is
     float *mysize = &p_size;
 
@@ -552,7 +552,7 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, Im
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
 
-    int dims[NDim] = {img.Size(2), img.Size(1), img.Size(0)};
+    int dims[NDim] = {static_cast<int>(img.Size(2)), static_cast<int>(img.Size(1)), static_cast<int>(img.Size(0))};
     float *mysize = &p_size;
     int  i = 1;
 

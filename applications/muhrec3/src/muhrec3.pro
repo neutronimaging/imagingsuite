@@ -116,3 +116,10 @@ DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
+
+
+macx: {
+INCLUDEPATH += $$PWD/../../../external/mac/include
+DEPENDPATH += $$PWD/../../../external/mac/include
+LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}

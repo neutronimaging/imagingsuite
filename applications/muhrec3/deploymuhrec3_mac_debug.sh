@@ -1,10 +1,10 @@
 DIRECTORY=~/Applications
-QTPATH=$QT_HOME
-#QTPATH=/Applications/QT/5.9.4/clang_64
+#QTPATH=$QTPATH
+#QTPATH=/Users/carminati/QT/5.9.4/clang_64
 
 DEST="$DIRECTORY/muhrec3.app"
-#REPOSPATH=$WORKSPACE
-REPOSPATH=~/git
+REPOSPATH=$WORKSPACE
+#REPOSPATH=/Users/carminati/git
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -126,6 +126,8 @@ install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frame
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib muhrec3
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib muhrec3
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib muhrec3
 
 # muhrecCLI
 if [ -e "muhrecCLI" ]; then
@@ -145,6 +147,9 @@ install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl
 # ReconFramework
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReconFramework.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libReconFramework.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReconFramework.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReconFramework.1.0.0.dylib
+
 
 # QtAddons
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtAddons.1.0.0.dylib
@@ -152,6 +157,7 @@ install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl
 # QtModuleConfigure
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtModuleConfigure.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libQtModuleConfigure.1.0.0.dylib
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libQtModuleConfigure.1.0.0.dylib
 
 # ImagingAlgorithms
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libImagingAlgorithms.1.0.0.dylib
@@ -195,11 +201,24 @@ install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/l
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libFDKBackProjectors.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libFDKBackProjectors.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libFDKBackProjectors.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libFDKBackProjectors.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libFDKBackProjectors.1.0.0.dylib
 
 # Inspectors
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libInspectorModules.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libInspectorModules.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libInspectorModules.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libInspectorModules.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libInspectorModules.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libInspectorModulesGUI.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libInspectorModulesGUI.1.0.0.dylib
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libInspectorModulesGUI.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib  @executable_path/../Frameworks/libModuleConfig.1.dylib  libInspectorModulesGUI.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib  @executable_path/../Frameworks/libModuleConfig.1.dylib  libInspectorModules.1.0.0.dylib
+install_name_tool -change libQtModuleConfigure.1.dylib  @executable_path/../Frameworks/libQtModuleConfigure.1.dylib  libInspectorModulesGUI.1.0.0.dylib
+install_name_tool -change libQtModuleConfigure.1.dylib  @executable_path/../Frameworks/libQtModuleConfigure.1.dylib  libInspectorModules.1.0.0.dylib
+install_name_tool -change libQtAddons.1.dylib  @executable_path/../Frameworks/libQtAddons.1.dylib  libInspectorModulesGUI.1.0.0.dylib
+install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libInspectorModulesGUI.1.0.0.dylib
 
 #ReconAlgorithms
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReconAlgorithms.1.0.0.dylib
@@ -208,12 +227,16 @@ install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdBackprojectors.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdBackprojectors.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libStdBackprojectors.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libStdBackprojectors.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libStdBackprojectors.1.0.0.dylib
 
 # Preprocessing
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdPreprocModules.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdPreprocModules.1.0.0.dylib
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdPreprocModules.1.0.0.dylib
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libStdPreprocModules.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libStdPreprocModules.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libStdPreprocModules.1.0.0.dylib
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
@@ -221,3 +244,5 @@ install_name_tool -change libReconFramework.1.dylib @executable_path/../Framewor
 install_name_tool -change libStdPreprocModules.1.dylib @executable_path/../Frameworks/libStdPreprocModules.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
