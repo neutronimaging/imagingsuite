@@ -548,31 +548,41 @@ bool ReconEngine::Serialize(size_t *dims)
 
    if (m_Config.MatrixInfo.FileType==kipl::io::NeXusfloat) {
 
+       kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
+
+       if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
+           plane=kipl::base::ImagePlaneYZ;
+
        size_t nSlices=0;
        nSlices=m_BackProjector->GetModule()->GetNSlices();
        size_t nSliceBlock=GetIntParameter(m_Config.backprojector.parameters,"SliceBlock");
 
        size_t Start = nSliceBlock*nProcessedBlocks;
        if (m_Config.MatrixInfo.bUseROI){
-            kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, m_Config.MatrixInfo.roi);
+            kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, plane, m_Config.MatrixInfo.roi);
        }
        else {
-            kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, NULL);
+            kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, plane, NULL);
        }
 
 	}
     else if (m_Config.MatrixInfo.FileType==kipl::io::NeXus16bits) {
 
+       kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
+
+       if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
+           plane=kipl::base::ImagePlaneYZ;
+
        size_t nSlices=0;
        nSlices=m_BackProjector->GetModule()->GetNSlices();
        size_t nSliceBlock=GetIntParameter(m_Config.backprojector.parameters,"SliceBlock");
 
        size_t Start = nSliceBlock*nProcessedBlocks;
        if (m_Config.MatrixInfo.bUseROI){
-            kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices, m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], m_Config.MatrixInfo.roi);
+            kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices, m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane, m_Config.MatrixInfo.roi);
        }
        else {
-            kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices,m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], NULL);
+            kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices,m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane, NULL);
        }
 
     }

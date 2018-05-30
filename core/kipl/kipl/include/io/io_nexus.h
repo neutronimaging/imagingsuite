@@ -721,60 +721,116 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, size_t *roi=NULL) {
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=NULL) {
 
 
     kipl::base::PermuteAxes<ImgType> permute;
     kipl::base::TImage<ImgType, NDim> permuted;
+    kipl::base::TImage<ImgType, NDim> tmp_vol;
 
     int slabstart[3] = {static_cast<int>(start), 0, 0};
     int slabsize[3];
 
     slabsize[0] = size;
 
-    size_t dims[3];
-    if (roi==nullptr) {
-        dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
+
+
+    if (imageplane==kipl::base::ImagePlaneYZ) {
+
+
+        size_t dims[3];
+        if (roi==nullptr) {
+            dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
+        }
+        else{
+            dims[0]=img.Size(0);
+            dims[1]=roi[3]-roi[1]+1;
+            dims[2]=roi[2]-roi[0]+1;
+        }
+
+        kipl::base::TImage<ImgType, NDim> tmp(dims);
+
+
+        if (roi==nullptr) {
+            tmp = img;
+            slabsize[1] = static_cast<int>(tmp.Size(1));
+            slabsize[2] = static_cast<int>(tmp.Size(2));
+
+
+           permuted = permute(tmp,kipl::base::PermuteZYX);
+           tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
+
+        }
+        else {
+
+            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
+            tmp_vol.Resize(dim_vol);
+
+            img =  permute(img,kipl::base::PermuteZYX);
+            img  = permute(img, kipl::base::PermuteYXZ);
+
+        kipl::base::TImage<ImgType, 2> tmp_slice;
+        for (size_t i=0; i<size; i++){
+
+            tmp_slice = kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,roi);
+            kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+
+        }
+
+
+        slabsize[1] = static_cast<int>(tmp_vol.Size(1));
+        slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+
+        }
     }
-    else{
-        dims[0]=img.Size(0);
-        dims[1]=roi[3]-roi[1]+1;
-        dims[2]=roi[2]-roi[0]+1;
-    }
 
-    kipl::base::TImage<ImgType, NDim> tmp(dims);
-    kipl::base::TImage<ImgType, NDim> tmp_vol;
+    if (imageplane==kipl::base::ImagePlaneXY){
 
-    if (roi==nullptr) {
-        tmp = img;
-        slabsize[1] = static_cast<int>(tmp.Size(1));
-        slabsize[2] = static_cast<int>(tmp.Size(2));
+        size_t dims[3];
+        if (roi==nullptr) {
+            dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
+        }
+        else{
+            dims[0]= roi[2]-roi[0]+1;
+            dims[1]= roi[3]-roi[1]+1;
+            dims[2]= img.Size(2);
+        }
 
-
-       permuted = permute(tmp,kipl::base::PermuteZYX);
-       tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
-
-    }
-    else {
-
-        size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
-        tmp_vol.Resize(dim_vol);
-
-        img =  permute(img,kipl::base::PermuteZYX);
-        img  = permute(img, kipl::base::PermuteYXZ);
-
-    kipl::base::TImage<ImgType, 2> tmp_slice;
-    for (size_t i=0; i<size; i++){
-
-        tmp_slice = kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,roi);
-        kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
-
-    }
+        kipl::base::TImage<ImgType, NDim> tmp(dims);
 
 
-    slabsize[1] = static_cast<int>(tmp_vol.Size(1));
-    slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+        if (roi==nullptr) {
+            tmp = img;
+            slabsize[1] = static_cast<int>(tmp.Size(1));
+            slabsize[2] = static_cast<int>(tmp.Size(0));
 
+            tmp_vol = img;
+//           permuted = permute(tmp,kipl::base::PermuteZYX);
+//           tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
+
+        }
+        else {
+
+            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
+            tmp_vol.Resize(dim_vol);
+
+            // no need to permute in this case then  because it is already x y z
+//            img =  permute(img,kipl::base::PermuteZYX);
+//            img  = permute(img, kipl::base::PermuteYXZ);
+
+        kipl::base::TImage<ImgType, 2> tmp_slice;
+        for (size_t i=0; i<size; i++){
+
+            tmp_slice = kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,roi);
+            kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+
+        }
+
+
+        slabsize[1] = static_cast<int>(tmp_vol.Size(1));
+        slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+
+        }
     }
 
 
@@ -795,7 +851,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, size_t *roi=NULL) {
+int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=NULL) {
 
 
     kipl::base::TImage<unsigned short, NDim> img_int;
@@ -806,61 +862,170 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
     catch (kipl::base::KiplException &E) {
         throw kipl::base::KiplException(E.what(),__FILE__,__LINE__);
     }
-
-
-
     kipl::base::PermuteAxes<unsigned short> permute;
     kipl::base::TImage<unsigned short, NDim> permuted;
+    kipl::base::TImage<unsigned short, NDim> tmp_vol;
 
     int slabstart[3] = {static_cast<int>(start), 0, 0};
     int slabsize[3];
 
     slabsize[0] = size;
 
-    size_t dims[3];
-    if (roi==nullptr) {
-        dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
+
+
+    if (imageplane==kipl::base::ImagePlaneYZ) {
+
+
+        size_t dims[3];
+        if (roi==nullptr) {
+            dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
+        }
+        else{
+            dims[0]=img.Size(0);
+            dims[1]=roi[3]-roi[1]+1;
+            dims[2]=roi[2]-roi[0]+1;
+        }
+
+        kipl::base::TImage<unsigned short, NDim> tmp(dims);
+
+
+        if (roi==nullptr) {
+            tmp = img_int;
+            slabsize[1] = static_cast<int>(tmp.Size(1));
+            slabsize[2] = static_cast<int>(tmp.Size(2));
+
+
+           permuted = permute(tmp,kipl::base::PermuteZYX);
+           tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
+
+        }
+        else {
+
+            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
+            tmp_vol.Resize(dim_vol);
+
+            img_int =  permute(img_int,kipl::base::PermuteZYX);
+            img_int  = permute(img_int, kipl::base::PermuteYXZ);
+
+        kipl::base::TImage<unsigned short, 2> tmp_slice;
+        for (size_t i=0; i<size; i++){
+
+            tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
+            kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+
+        }
+
+
+        slabsize[1] = static_cast<int>(tmp_vol.Size(1));
+        slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+
+        }
     }
-    else{
-        dims[0]=img.Size(0);
-        dims[1]=roi[3]-roi[1]+1;
-        dims[2]=roi[2]-roi[0]+1;
+
+    if (imageplane==kipl::base::ImagePlaneXY){
+
+        size_t dims[3];
+        if (roi==nullptr) {
+            dims[0]=img_int.Size(0); dims[1]=img_int.Size(1); dims[2] = img_int.Size(2);
+        }
+        else{
+            dims[0]= roi[2]-roi[0]+1;
+            dims[1]= roi[3]-roi[1]+1;
+            dims[2]= img_int.Size(2);
+        }
+
+        kipl::base::TImage<unsigned short, NDim> tmp(dims);
+
+
+        if (roi==nullptr) {
+            tmp = img_int;
+            slabsize[1] = static_cast<int>(tmp.Size(1));
+            slabsize[2] = static_cast<int>(tmp.Size(0));
+
+            tmp_vol = img_int;
+//           permuted = permute(tmp,kipl::base::PermuteZYX);
+//           tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
+
+        }
+        else {
+
+            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
+            tmp_vol.Resize(dim_vol);
+
+            // no need to permute in this case then  because it is already x y z
+//            img =  permute(img,kipl::base::PermuteZYX);
+//            img  = permute(img, kipl::base::PermuteYXZ);
+
+        kipl::base::TImage<unsigned short, 2> tmp_slice;
+        for (size_t i=0; i<size; i++){
+
+            tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
+            kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+
+        }
+
+
+        slabsize[1] = static_cast<int>(tmp_vol.Size(1));
+        slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+
+        }
     }
 
-    kipl::base::TImage<unsigned short, NDim> tmp(dims);
-    kipl::base::TImage<unsigned short, NDim> tmp_vol;
-
-    if (roi==nullptr) {
-        tmp = img_int;
-        slabsize[1] = static_cast<int>(tmp.Size(1));
-        slabsize[2] = static_cast<int>(tmp.Size(2));
 
 
-       permuted = permute(tmp,kipl::base::PermuteZYX);
-       tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
 
-    }
-    else {
+//    kipl::base::PermuteAxes<unsigned short> permute;
+//    kipl::base::TImage<unsigned short, NDim> permuted;
 
-        size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img_int.Size(0)};
-        tmp_vol.Resize(dim_vol);
+//    int slabstart[3] = {static_cast<int>(start), 0, 0};
+//    int slabsize[3];
 
-        img_int =  permute(img_int,kipl::base::PermuteZYX);
-        img_int  = permute(img_int, kipl::base::PermuteYXZ);
+//    slabsize[0] = size;
 
-    kipl::base::TImage<unsigned short, 2> tmp_slice;
-    for (size_t i=0; i<size; i++){
+//    size_t dims[3];
+//    if (roi==nullptr) {
+//        dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
+//    }
+//    else{
+//        dims[0]=img.Size(0);
+//        dims[1]=roi[3]-roi[1]+1;
+//        dims[2]=roi[2]-roi[0]+1;
+//    }
 
-        tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
-        kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+//    kipl::base::TImage<unsigned short, NDim> tmp(dims);
+//    kipl::base::TImage<unsigned short, NDim> tmp_vol;
 
-    }
+//    if (roi==nullptr) {
+//        tmp = img_int;
+//        slabsize[1] = static_cast<int>(tmp.Size(1));
+//        slabsize[2] = static_cast<int>(tmp.Size(2));
 
 
-    slabsize[1] = static_cast<int>(tmp_vol.Size(1));
-    slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+//       permuted = permute(tmp,kipl::base::PermuteZYX);
+//       tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
 
-    }
+//    }
+//    else {
+
+//        size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img_int.Size(0)};
+//        tmp_vol.Resize(dim_vol);
+
+//        img_int =  permute(img_int,kipl::base::PermuteZYX);
+//        img_int  = permute(img_int, kipl::base::PermuteYXZ);
+
+//    kipl::base::TImage<unsigned short, 2> tmp_slice;
+//    for (size_t i=0; i<size; i++){
+
+//        tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
+//        kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+
+//    }
+
+
+//    slabsize[1] = static_cast<int>(tmp_vol.Size(1));
+//    slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+
+//    }
 
 
      NXhandle file_id;
