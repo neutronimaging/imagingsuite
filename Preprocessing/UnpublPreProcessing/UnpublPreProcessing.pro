@@ -85,3 +85,10 @@ DEPENDPATH += $$PWD/../../../../../imagingsuite/frameworks/tomography/Framework/
 
 INCLUDEPATH += $$PWD/../../../../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModules/include
 DEPENDPATH += $$PWD/../../../../../imagingsuite/frameworks/tomography/Preprocessing/StdPreprocModules/src
+
+
+macx: {
+LIBS += -L$$PWD/../../../../../imagingsuite/external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/mac/include
+DEPENDPATH += $$PWD/../../../../../imagingsuite/external/mac/include
+}

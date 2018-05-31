@@ -97,5 +97,12 @@ INCLUDEPATH += $$PWD/../UnpublPreProcessing/
 DEPENDPATH += $$PWD/../UnpublPreProcessing/
 
 
+
 FORMS += \
     robustlognormdlg.ui
+
+macx: {
+LIBS += -L$$PWD/../../../../../imagingsuite/external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+INCLUDEPATH += $$PWD/../../../../../imagingsuite/external/mac/include
+DEPENDPATH += $$PWD/../../../../../imagingsuite/external/mac/include
+}
