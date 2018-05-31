@@ -15,6 +15,7 @@
 #include "io_tiff.h"
 #include "io_matlab.h"
 #include "io_fits.h"
+#include "io_nexus.h"
 
 namespace kipl { namespace io {
 
@@ -24,8 +25,10 @@ enum eFileType {
 	TIFF8bits,
 	TIFF16bits,
 	TIFFfloat,
+    NeXusfloat,
+    NeXus16bits,
 	PNG8bits,
-	PNG16bits
+    PNG16bits
 };
 
 std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
@@ -141,6 +144,12 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 #else
 	char slash='\\';
 #endif	
+
+//    if (filetype==NeXus) {
+//        WriteNeXus(img, filename.c_str());
+//        return 1;
+//    }
+
 	kipl::base::TImage<float,2> ftmp;
 	for (size_t i=start; i<stop; i++) {
 		kipl::strings::filenames::MakeFileName(fname,static_cast<int>(i+count_start),filename,ext,'#','0');	
@@ -168,6 +177,10 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 				ftmp[i]=tmp[i];
 			WriteTIFF32(ftmp,filename.c_str());
 			break;
+        case NeXusfloat :
+            break; // it is handled somewhere else
+        case NeXus16bits :
+            break; // it is handled somewhere else
 		case PNG8bits :
 			throw kipl::base::KiplException("8-bit png is not supported by slice writer",__FILE__,__LINE__);
 			//WritePNG8(tmp,filename,lo,hi);
@@ -180,6 +193,8 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 			throw kipl::base::KiplException("Unknown file type in slice writer",__FILE__,__LINE__);
 		}
 	}
+
+
 	
 
 	return 1;

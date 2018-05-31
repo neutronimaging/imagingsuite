@@ -221,10 +221,10 @@ Read(std::string filename,
 		throw ReconException(e.what(),__FILE__,__LINE__);
 	}
 	catch (std::exception &e) {
-		throw ReconException(e.what(),__FILE__,__LINE__);
+        throw kipl::base::KiplException(e.what(),__FILE__,__LINE__);
 	}
 	catch (kipl::base::KiplException &e) {
-		throw ReconException(e.what(),__FILE__,__LINE__);
+        throw kipl::base::KiplException(e.what(),__FILE__,__LINE__);
 	}
 	catch (...) {
 		throw ReconException("Unhandled exception",__FILE__,__LINE__);

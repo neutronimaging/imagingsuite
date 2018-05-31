@@ -454,7 +454,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
     cnt=0.0f;
 	if (bUseLUT) {
 		#pragma omp parallel for firstprivate(pDark, pFlat)
-        for (size_t j=0; j<img.Size(2); j++) {
+        for (int j=0; j<static_cast<int>(img.Size(2)); j++) {
 			float *pImg=img.GetLinePtr(0,j);
 			float dose=nDose !=1 ? doselist[j] : doselist[0];
 
@@ -481,8 +481,9 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 	else {
 		if (nDCCount!=0) {
 			if (nOBCount!=0) {
-					#pragma omp parallel for firstprivate(pFlat,pDark)
-                    for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1,++j) {
+                    #pragma omp parallel for firstprivate(pFlat,pDark)
+//                    for (int j=0; j<static_cast<int>(img.Size(2)) && (UpdateStatus(cnt/static_cast<int>(img.Size(2)),m_sModuleName)==false); cnt=cnt+1,++j) {
+                     for (int j=0; j<static_cast<int>(img.Size(2));++j) {
 						float *pImg=img.GetLinePtr(0,j);
 						float dose=nDose !=1 ? doselist[j] : doselist[0];
 						
@@ -497,7 +498,8 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 			else {
 				#pragma omp parallel for firstprivate(pDark)
-                for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1,++j) {
+//                for (int j=0; j<static_cast<int>(img.Size(2)) && (UpdateStatus(cnt/static_cast<int>(img.Size(2)),m_sModuleName)==false); cnt=cnt+1,++j) {
+                for (int j=0; j<static_cast<int>(img.Size(2)); ++j) {
 					float *pImg=img.GetLinePtr(0,j);
 					float dose=nDose !=1 ? doselist[j] : doselist[0];
 					
@@ -514,7 +516,8 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		else {
 			if (nOBCount!=0) {
 				#pragma omp parallel for firstprivate(pFlat)
-                for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1,++j) {
+//                for (int j=0; j<static_cast<int>(img.Size(2)) && (UpdateStatus(cnt/static_cast<int>(img.Size(2)),m_sModuleName)==false); cnt=cnt+1,++j) {
+                for (int j=0; j<static_cast<int>(img.Size(2)); ++j) {
 					float *pImg=img.GetLinePtr(0,j);
 					float dose=nDose !=1 ? doselist[j] : doselist[0];
 					for (int i=0; i<N; i++) {
@@ -528,7 +531,8 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 			else {
 				#pragma omp parallel for
-                for (size_t j=0; j<img.Size(2) && (UpdateStatus(cnt/img.Size(2),m_sModuleName)==false); cnt=cnt+1, ++j) {
+//                for (int j=0; j<static_cast<int>(img.Size(2)) && (UpdateStatus(cnt/static_cast<int>(img.Size(2)),m_sModuleName)==false); cnt=cnt+1, ++j) {
+                for (int j=0; j<static_cast<int>(img.Size(2)); ++j) {
 					float *pImg=img.GetLinePtr(0,j);
 					float dose=nDose !=1 ? doselist[j] : doselist[0];
 					for (int i=0; i<N; i++) {
