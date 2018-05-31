@@ -17,11 +17,9 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
 
 DEFINES += UNPUBLISHEDIMAGINGALGORITHMS_LIBRARY
 
-SOURCES += ReferenceImageCorrection.cpp\
-            detectorlagcorrection.cpp
+SOURCES += ReferenceImageCorrection.cpp
 
 HEADERS += ReferenceImageCorrection.h\
-            detectorlagcorrection.h
             unpublishedimagingalgorithms_global.h
 
 unix {
