@@ -1,10 +1,10 @@
 DIRECTORY=~/Applications
 #QTPATH=$QTPATH
-QTPATH=/Users/carminati/QT/5.9.4/clang_64
+#QTPATH=/Users/carminati/QT/5.9.4/clang_64
 
 DEST="$DIRECTORY/muhrec3.app"
-#REPOSPATH=$WORKSPACE
-REPOSPATH=/Users/carminati/git
+REPOSPATH=$WORKSPACE
+#REPOSPATH=/Users/carminati/git
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -274,3 +274,4 @@ install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frame
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libUnpublPreProcessingGUI.1.0.0.dylib
 install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libUnpublPreProcessingGUI.1.0.0.dylib
 install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libUnpublPreProcessingGUI.1.0.0.dylib
+

@@ -2054,6 +2054,16 @@
                  <string>Float TIFF (32-bit)</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>NeXus (32-bit)</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>NeXus (16-bit)</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item row="2" column="0" colspan="2">

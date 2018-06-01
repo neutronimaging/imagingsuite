@@ -859,7 +859,6 @@ void MuhRecMainWindow::MenuReconstructStart()
         m_Config.MatrixInfo.bAutomaticSerialize=false;
 
     saveCurrentRecon();
-
     ExecuteReconstruction();
 }
 
@@ -1386,17 +1385,50 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+3);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
 
-    // Validity test of the slice file mask
-    if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
-        logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
-        m_Config.MatrixInfo.sFileMask.append(".tif");
+    ptrdiff_t pos;
+
+    switch (ui->comboDestFileType->currentIndex())
+    {
+
+    case 0: case 1:
+        // Validity test of the slice file mask
+        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
+            logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
+            m_Config.MatrixInfo.sFileMask.append(".tif");
+        }
+
+        pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
+
+        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) == "hdf") {
+            logger(logger.LogWarning,"Changing file extension to .tif");
+            m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"tif");
+        }
+
+
+        if (m_Config.MatrixInfo.sFileMask.find('#')==std::string::npos) {
+            logger(logger.LogWarning,"Destination file mask is missing an index mask. Adding '_####'' before file extension");
+            m_Config.MatrixInfo.sFileMask.insert(pos,"_####");
+        }
+        break;
+
+    case 2: case 3:
+
+        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
+            logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .hdf");
+            m_Config.MatrixInfo.sFileMask.append(".hdf");
+        }
+
+        pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
+
+        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) == "tif") {
+            logger(logger.LogWarning,"Changing file extension to .hdf");
+             m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"hdf");
+        }
+        break;
+
     }
 
-    ptrdiff_t pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
-    if (m_Config.MatrixInfo.sFileMask.find('#')==std::string::npos) {
-        logger(logger.LogWarning,"Destination file mask is missing an index mask. Adding '_####'' before file extension");
-        m_Config.MatrixInfo.sFileMask.insert(pos,"_####");
-    }
+
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
     // +2 to skip the matlab file types
 
@@ -1426,7 +1458,7 @@ void MuhRecMainWindow::UpdateConfig()
     {
         msg<<"Config sanity check failed in update config"<<std::endl<<e.what();
         logger(logger.LogError,msg.str());
-        throw ReconException(msg.str(),__FILE__,__LINE__);
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 
     try{
@@ -1442,7 +1474,7 @@ void MuhRecMainWindow::UpdateConfig()
     {
         msg<<"Config angle sanity check failed in update config"<<std::endl<<e.what();
         logger(logger.LogError,msg.str());
-        throw ReconException(msg.str(),__FILE__,__LINE__);
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 
 
@@ -2229,8 +2261,8 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
     std::ostringstream msg;
     if (m_pEngine!=nullptr) {
         try {
-            m_pEngine->Serialize(&m_Config.MatrixInfo);
 
+            m_pEngine->Serialize(&m_Config.MatrixInfo);
             std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
             kipl::strings::filenames::CheckPathSlashes(fname,false);
             std::ofstream configfile(fname.c_str());
