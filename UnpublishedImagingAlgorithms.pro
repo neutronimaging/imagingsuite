@@ -21,7 +21,7 @@ SOURCES += ReferenceImageCorrection.cpp\
             detectorlagcorrection.cpp
 
 HEADERS += ReferenceImageCorrection.h\
-            detectorlagcorrection.h
+            detectorlagcorrection.h\
             unpublishedimagingalgorithms_global.h
 
 unix {
