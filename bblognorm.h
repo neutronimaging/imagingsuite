@@ -17,11 +17,11 @@
 
 //#include "../include/NormPlugins.h"
 
-class UNPUBLPREPROCESSINGSHARED_EXPORT RobustLogNorm : public PreprocModuleBase
+class UNPUBLPREPROCESSINGSHARED_EXPORT BBLogNorm : public PreprocModuleBase
 {
 public:
-    RobustLogNorm();
-    virtual ~RobustLogNorm();
+    BBLogNorm();
+    virtual ~BBLogNorm();
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();

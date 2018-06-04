@@ -8,9 +8,9 @@
 
 #include <ParameterHandling.h>
 
-#include "robustlognorm.h"
+#include "bblognorm.h"
 
-RobustLogNorm::RobustLogNorm() :
+BBLogNorm::BBLogNorm() :
     PreprocModuleBase("RobustLogNorm"),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     nOBCount(0),
@@ -61,13 +61,13 @@ RobustLogNorm::RobustLogNorm() :
 
 }
 
-RobustLogNorm::~RobustLogNorm()
+BBLogNorm::~BBLogNorm()
 {
 
 }
 
 
-int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
 
     m_Config    = config;
@@ -190,7 +190,7 @@ int RobustLogNorm::Configure(ReconConfig config, std::map<std::string, std::stri
     return 1;
 }
 
-bool RobustLogNorm::SetROI(size_t *roi) {
+bool BBLogNorm::SetROI(size_t *roi) {
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
@@ -202,7 +202,7 @@ bool RobustLogNorm::SetROI(size_t *roi) {
 }
 
 
-std::map<std::string, std::string> RobustLogNorm::GetParameters() {
+std::map<std::string, std::string> BBLogNorm::GetParameters() {
     std::map<std::string, std::string> parameters;
 
     parameters["window"] = kipl::strings::value2string(m_nWindow);
@@ -237,7 +237,7 @@ std::map<std::string, std::string> RobustLogNorm::GetParameters() {
     return parameters;
 }
 
-void RobustLogNorm::LoadReferenceImages(size_t *roi)
+void BBLogNorm::LoadReferenceImages(size_t *roi)
 {
 
     if (flatname.empty() && nOBCount!=0)
@@ -301,7 +301,7 @@ void RobustLogNorm::LoadReferenceImages(size_t *roi)
 
 }
 
-void RobustLogNorm::LoadExternalBBData(size_t *roi){
+void BBLogNorm::LoadExternalBBData(size_t *roi){
 
 
     if (blackbodyexternalname.empty())
@@ -324,7 +324,7 @@ void RobustLogNorm::LoadExternalBBData(size_t *roi){
 
 }
 
-void RobustLogNorm::PrepareBBData(){
+void BBLogNorm::PrepareBBData(){
 
     logger(kipl::logging::Logger::LogMessage,"PrepareBBData begin--");
     std::cout << "PrepareBBData begin--" << std::endl;
@@ -386,7 +386,7 @@ void RobustLogNorm::PrepareBBData(){
 
 }
 
-void RobustLogNorm::PreparePolynomialInterpolationParameters()
+void BBLogNorm::PreparePolynomialInterpolationParameters()
 {
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
@@ -757,7 +757,7 @@ void RobustLogNorm::PreparePolynomialInterpolationParameters()
 //         delete [] bb_sample_parameters;
 }
 
-int RobustLogNorm::PrepareSplinesInterpolationParameters() {
+int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 
@@ -1179,7 +1179,7 @@ int RobustLogNorm::PrepareSplinesInterpolationParameters() {
 
 }
 
-int RobustLogNorm::GetnProjwithAngle(float angle){
+int BBLogNorm::GetnProjwithAngle(float angle){
 
     // range of projection angles
     double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
@@ -1202,7 +1202,7 @@ int RobustLogNorm::GetnProjwithAngle(float angle){
     return index;
 }
 
-float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
+float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
 //    std::cout << "GetInterpolationError begin.." << std::endl;
     if (flatname.empty() && nOBCount!=0)
@@ -1262,11 +1262,11 @@ float RobustLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     return error;
 }
 
-kipl::base::TImage<float,2> RobustLogNorm::GetMaskImage(){
+kipl::base::TImage<float,2> BBLogNorm::GetMaskImage(){
     return mMaskBB;
 }
 
-float RobustLogNorm::computedose(kipl::base::TImage<float,2>&img){
+float BBLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
     float *pImg=img.GetDataPtr();
     float *means=new float[img.Size(1)];
@@ -1289,13 +1289,13 @@ float RobustLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
 }
 
-int RobustLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
 
     return 0;
 }
 
-int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) {
+int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) {
 
     int nDose=img.Size(2);
     float *doselist=nullptr;
@@ -1318,7 +1318,7 @@ int RobustLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
     return 0;
 }
 
-void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat)
+void BBLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat)
 {
 
     mdark = dark;
@@ -1339,7 +1339,7 @@ void RobustLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::b
 }
 
 
-kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
+kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
                                                       int firstIndex, int N, size_t *roi,
                                                       float initialDose,
                                                       float doseBias,
@@ -1478,7 +1478,7 @@ kipl::base::TImage<float,2> RobustLogNorm::ReferenceLoader(std::string fname,
 }
 
 
-kipl::base::TImage<float,2> RobustLogNorm::BBLoader(std::string fname,
+kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
                                                       int firstIndex, int N,
                                                       float initialDose,
                                                       float doseBias,
@@ -1611,7 +1611,7 @@ kipl::base::TImage<float,2> RobustLogNorm::BBLoader(std::string fname,
     return refimg;
 }
 
-float RobustLogNorm::DoseBBLoader(std::string fname,
+float BBLogNorm::DoseBBLoader(std::string fname,
                              int firstIndex,
                              float initialDose,
                              float doseBias,
@@ -1652,7 +1652,7 @@ float RobustLogNorm::DoseBBLoader(std::string fname,
 
 }
 
-kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, size_t *roi, float &dose){
+kipl::base::TImage <float,2> BBLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, size_t *roi, float &dose){
 
 
     kipl::base::TImage<float,2> img;
@@ -1679,7 +1679,7 @@ kipl::base::TImage <float,2> RobustLogNorm::BBExternalLoader(std::string fname, 
 
 }
 
-kipl::base::TImage <float,3> RobustLogNorm::BBExternalLoader(std::string fname, int N, size_t *roi, int firstIndex, ReconConfig &config, float *doselist){
+kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int N, size_t *roi, int firstIndex, ReconConfig &config, float *doselist){
 
 
     kipl::base::TImage <float, 2> tempimg;
