@@ -15,12 +15,12 @@
 
 #include <ProjectionReader.h>
 
-#include "robustlognormdlg.h"
-#include "ui_robustlognormdlg.h"
+#include "bblognormdlg.h"
+#include "ui_bblognormdlg.h"
 
-RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
+BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     ConfiguratorDialogBase("RobustLogNorm",true,false,true,parent),
-    ui(new Ui::RobustLogNormDlg),
+    ui(new Ui::BBLogNormDlg),
     nBBCount(0),
     nBBFirstIndex(1),
     nBBSampleCount(0),
@@ -68,13 +68,13 @@ RobustLogNormDlg::RobustLogNormDlg(QWidget *parent) :
 
 }
 
-RobustLogNormDlg::~RobustLogNormDlg()
+BBLogNormDlg::~BBLogNormDlg()
 {
     delete ui;
 }
 
 
-int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
+int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
 
     m_Config=dynamic_cast<ReconConfig *>(config);
 
@@ -171,7 +171,7 @@ int RobustLogNormDlg::exec(ConfigBase *config, std::map<string, string> &paramet
 
 }
 
-void RobustLogNormDlg::ApplyParameters(){
+void BBLogNormDlg::ApplyParameters(){
 
     //std::cout << "apply parameters" << std::endl;
 
@@ -203,7 +203,7 @@ void RobustLogNormDlg::ApplyParameters(){
 
 }
 
-void RobustLogNormDlg::UpdateDialog(){
+void BBLogNormDlg::UpdateDialog(){
 
     UpdateDoseROI();
     UpdateBBROI();
@@ -252,7 +252,7 @@ void RobustLogNormDlg::UpdateDialog(){
 
 }
 
-void RobustLogNormDlg::UpdateParameters(){
+void BBLogNormDlg::UpdateParameters(){
 
 
     nBBFirstIndex = ui->spinFirstOBBB->value();
@@ -306,7 +306,7 @@ void RobustLogNormDlg::UpdateParameters(){
 
 }
 
-void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
+void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
 
     parameters["BB_OB_name"] = blackbodyname;
     parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
@@ -352,13 +352,13 @@ void RobustLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
 
 }
 
-void RobustLogNormDlg::on_button_OBBBpath_clicked()
+void BBLogNormDlg::on_button_OBBBpath_clicked()
 {
     BrowseOBBBPath();
     ui->buttonPreviewOBBB->click();
 }
 
-void RobustLogNormDlg::BrowseOBBBPath(){
+void BBLogNormDlg::BrowseOBBBPath(){
 
     QString ob_bb_dir=QFileDialog::getOpenFileName(this,
                                       "Select location of the open beam images with BB",
@@ -403,7 +403,7 @@ void RobustLogNormDlg::BrowseOBBBPath(){
 }
 
 
-void RobustLogNormDlg::on_buttonPreviewOBBB_clicked()
+void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 {
 
     UpdateParameters();
@@ -449,7 +449,7 @@ void RobustLogNormDlg::on_buttonPreviewOBBB_clicked()
 
 }
 
-void RobustLogNormDlg::on_button_BBroi_clicked()
+void BBLogNormDlg::on_button_BBroi_clicked()
 {
     QRect rect=ui->ob_bb_Viewer->get_marked_roi();
 
@@ -471,7 +471,7 @@ void RobustLogNormDlg::on_button_BBroi_clicked()
     }
 }
 
-void RobustLogNormDlg::UpdateBBROI()
+void BBLogNormDlg::UpdateBBROI()
 {
     QRect rect;
 
@@ -483,24 +483,24 @@ void RobustLogNormDlg::UpdateBBROI()
     ui->ob_bb_Viewer->set_rectangle(rect,QColor("green").light(),0);
 }
 
-void RobustLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
+void BBLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
 {
     UpdateBBROI();
 }
 
-void RobustLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-void RobustLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-void RobustLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+void BBLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+void BBLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+void BBLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
 
 
 
-void RobustLogNormDlg::on_button_sampleBBpath_clicked()
+void BBLogNormDlg::on_button_sampleBBpath_clicked()
 {
     BrowseSampleBBPath();
     ui->buttonPreviewsampleBB->click();
 }
 
-void RobustLogNormDlg::BrowseSampleBBPath(){
+void BBLogNormDlg::BrowseSampleBBPath(){
 
     QString sample_bb_dir=QFileDialog::getOpenFileName(this,
                                       "Select location of the open beam images with BB",
@@ -545,7 +545,7 @@ void RobustLogNormDlg::BrowseSampleBBPath(){
 
 }
 
-void RobustLogNormDlg::on_buttonPreviewsampleBB_clicked()
+void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
 {
     UpdateParameters();
 
@@ -618,7 +618,7 @@ void RobustLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
 }
 
-void RobustLogNormDlg::on_button_BBdose_clicked()
+void BBLogNormDlg::on_button_BBdose_clicked()
 {
     QRect rect=ui->sample_bb_Viewer->get_marked_roi();
 
@@ -641,7 +641,7 @@ void RobustLogNormDlg::on_button_BBdose_clicked()
 }
 
 
-void RobustLogNormDlg::UpdateDoseROI(){
+void BBLogNormDlg::UpdateDoseROI(){
     QRect rect;
 
     rect.setCoords(ui->spinx0BBdose->value(),
@@ -653,28 +653,28 @@ void RobustLogNormDlg::UpdateDoseROI(){
 
 }
 
-void RobustLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
+void BBLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
-void RobustLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
+void BBLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
-void RobustLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
+void BBLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
-void RobustLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
+void BBLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
 {
     UpdateDoseROI();
 }
 
 
-void RobustLogNormDlg::on_errorButton_clicked()
+void BBLogNormDlg::on_errorButton_clicked()
 {
 
     // has to run only if bb ob image and bb roi are loaded
@@ -737,7 +737,7 @@ void RobustLogNormDlg::on_errorButton_clicked()
 
 }
 
-void RobustLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
+void BBLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
 {
 
 //    std::cout << "arg1: " << arg1.toStdString() << std::endl;
@@ -756,7 +756,7 @@ void RobustLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
     }
 }
 
-void RobustLogNormDlg::on_button_OB_BB_ext_clicked()
+void BBLogNormDlg::on_button_OB_BB_ext_clicked()
 {
     QString ob_bb_ext_dir=QFileDialog::getOpenFileName(this,
                                       "Select location of the open beam images with BB",
@@ -782,7 +782,7 @@ void RobustLogNormDlg::on_button_OB_BB_ext_clicked()
 
 }
 
-void RobustLogNormDlg::on_button_BBexternal_path_clicked()
+void BBLogNormDlg::on_button_BBexternal_path_clicked()
 {
     QString sample_bb_ext_dir=QFileDialog::getOpenFileName(this,
                                       "Select location of the open beam images with BB",
@@ -810,7 +810,7 @@ void RobustLogNormDlg::on_button_BBexternal_path_clicked()
 }
 
 
-void RobustLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
+void BBLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
 {
     if (arg1.toStdString()=="Polynomial") {
         ui->combo_IntMeth_X->setEnabled(true);
@@ -830,29 +830,29 @@ void RobustLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg
 
 }
 
-void RobustLogNormDlg::on_checkBox_thresh_clicked(bool checked)
+void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
 {
     bUseManualThresh = checked;
 
 }
 
 
-void RobustLogNormDlg::on_spinThresh_valueChanged(double arg1)
+void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
 {
     thresh = arg1;
 }
 
-void RobustLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
+void BBLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
 {
 
 }
 
-void RobustLogNormDlg::on_pushButton_filenameOBBB_clicked()
+void BBLogNormDlg::on_pushButton_filenameOBBB_clicked()
 {
     ui->edit_OB_BB_mask->setText(QString::fromStdString(m_Config->ProjectionInfo.sFileMask));
 }
 
-void RobustLogNormDlg::on_pushButton_filenameBB_clicked()
+void BBLogNormDlg::on_pushButton_filenameBB_clicked()
 {
     ui->edit_sample_BB_mask->setText(ui->edit_OB_BB_mask->text());
 }

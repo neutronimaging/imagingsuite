@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RobustLogNormDlg</class>
- <widget class="QDialog" name="RobustLogNormDlg">
+ <class>BBLogNormDlg</class>
+ <widget class="QDialog" name="BBLogNormDlg">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Configure robust log norm</string>
+   <string>Configure BB log norm</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -1188,7 +1188,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>RobustLogNormDlg</receiver>
+   <receiver>BBLogNormDlg</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1204,7 +1204,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>RobustLogNormDlg</receiver>
+   <receiver>BBLogNormDlg</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

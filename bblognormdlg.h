@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef ROBUSTLOGNORMDLG_H
-#define ROBUSTLOGNORMDLG_H
+#ifndef BBLOGNORMDLG_H
+#define BBLOGNORMDLG_H
 #include "unpublpreprocessinggui_global.h"
 
 #include <QDialog>
@@ -12,20 +12,20 @@
 #include <imageviewerwidget.h>
 #include <plotter.h>
 
-#include <robustlognorm.h>
+#include <bblognorm.h>
 
 
 namespace Ui {
-class RobustLogNormDlg;
+class BBLogNormDlg;
 }
 
-class RobustLogNormDlg : public ConfiguratorDialogBase
+class BBLogNormDlg : public ConfiguratorDialogBase
 {
     Q_OBJECT
 
 public:
-    explicit RobustLogNormDlg(QWidget *parent = NULL);
-     ~RobustLogNormDlg();
+    explicit BBLogNormDlg(QWidget *parent = NULL);
+     ~BBLogNormDlg();
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private slots:
@@ -67,7 +67,7 @@ private:
     void BrowseSampleBBPath();
     void UpdateDoseROI();
 
-    Ui::RobustLogNormDlg *ui;
+    Ui::BBLogNormDlg *ui;
     ReconConfig *m_Config;
 
     size_t nBBCount; /// number of open beam images with BB
@@ -108,7 +108,7 @@ private:
     ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod m_InterpMethod;
     int m_nWindow;
 
-    RobustLogNorm module;
+    BBLogNorm module;
 
 
 
@@ -119,4 +119,4 @@ private:
 
 };
 
-#endif // ROBUSTLOGNORMDLG_H
+#endif // BBLOGNORMDLG_H
