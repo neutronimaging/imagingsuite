@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <base/timage.h>
 #include <base/index2coord.h>
@@ -29,7 +30,7 @@ public:
 private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
-    void testNonLinFit_fitfunctions();
+    void testNonLinFit_GaussianFunction();
     void testNonLinFit_fitter();
     void testStatistics();
     void testSignFunction();
@@ -127,15 +128,84 @@ void TKiplMathTest::testCircularHoughTransform()
     kipl::io::WriteTIFF32(chm,"chtg_map.tif");
 }
 
-void TKiplMathTest::testNonLinFit_fitfunctions()
+void TKiplMathTest::testNonLinFit_GaussianFunction()
 {
- //   kipl::Nonlinear::SumOfGaussians sog;
+    Nonlinear::SumOfGaussians sog(1);
+    QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
+    QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
 
+    int lv[]={0,1,1};
+    sog.setLock(lv);
+    for (int i=0; i<sog.getNpars(); ++i)
+        QCOMPARE(sog.isLocked(i),lv[i]);
+    sog[0]=1;
+    sog[1]=0;
+    sog[2]=1;
+
+    QCOMPARE(sog(0.0),(long double)1.0);
+    QVERIFY(fabs(sog(1)-(long double)0.367879441171)<(long double)1.0e-7);
+
+    Nonlinear::SumOfGaussians sog2(2);
+    sog2[0]=1;
+    sog2[1]=0;
+    sog2[2]=1;
+    sog2[3]=2;
+    sog2[4]=0.5;
+    sog2[5]=0.5;
+    qDebug() << (double)sog2(0);
+    qDebug() << (double)sog2(1);
+    QVERIFY(fabs(sog2(0)-(long double)1.73575888234)<(long double)1.0e-7);
+    QVERIFY(fabs(sog2(1)-(long double)1.10363832351)<(long double)1.0e-7);
+
+    long double x=1;
+    long double y0=0;
+    long double y1=0;
+    Array1D<long double> dyda(3);
+
+    y0=sog(x);
+    sog(x,y1,dyda);
+    QCOMPARE(y0,y1);
 }
 
 void TKiplMathTest::testNonLinFit_fitter()
 {
+    int N=100;
+    long double *x=new long double[N];
+    long double *y=new long double[N];
+    long double *sig=new long double[N];
 
+    Nonlinear::SumOfGaussians sog0(1),sog(1);
+    sog0[0]=2; //A
+    sog0[1]=0; //m
+    sog0[2]=1; //s
+
+    for (int i=0; i<N; ++i)
+    {
+        x[i]=(N-N/2)*0.2;
+        y[i]=sog0(x[i]);
+        sig[i]=1.0;
+    }
+
+    sog[0]=0; //A
+    sog[1]=0; //m
+    sog[2]=0; //s
+    long double chisq=0.0;
+    long double alambda=-1.0;
+
+
+    Array2D<long double> alpha(sog.getNpars(),sog.getNpars());
+    Array2D<long double> covar(sog.getNpars(),sog.getNpars());
+ //   Nonlinear::LevenbergMarquardt(x,y,N,sog,1e-7);
+
+    Nonlinear::mrqmin(x,y,sig, N, covar, alpha, chisq, sog,alambda);
+    sog.printPars();
+    QCOMPARE(sog[0],sog0[0]);
+    QCOMPARE(sog[1],sog0[1]);
+    QCOMPARE(sog[2],sog0[2]);
+
+    delete [] x;
+    delete [] y;
+    delete [] sig;
 }
 
 void TKiplMathTest::testStatistics()
