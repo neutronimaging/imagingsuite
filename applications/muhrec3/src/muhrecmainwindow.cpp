@@ -1972,6 +1972,28 @@ void MuhRecMainWindow::on_actionUser_manual_triggered()
 
 }
 
+void MuhRecMainWindow::on_actionVideo_tutorials_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/wiki/Tutorial-videos");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec");
+        dlg.exec();
+    }
+
+}
+
+void MuhRecMainWindow::on_actionShow_repository_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite"
+                  "");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec");
+        dlg.exec();
+    }
+}
+
 void MuhRecMainWindow::on_radioButton_fullTurn_clicked()
 {
     ui->dspinAngleStart->setValue(0.0);
@@ -2415,3 +2437,5 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
         ui->radioButton_customTurn->setCheckable(true);
     }
 }
+
+

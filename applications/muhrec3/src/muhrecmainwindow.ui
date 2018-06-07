@@ -2329,7 +2329,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2348,6 +2348,8 @@
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionUser_manual"/>
+    <addaction name="actionVideo_tutorials"/>
+    <addaction name="actionShow_repository"/>
     <addaction name="actionReport_a_bug"/>
     <addaction name="actionRegister_for_news_letter"/>
    </widget>
@@ -2500,6 +2502,16 @@
   <action name="actionUser_manual">
    <property name="text">
     <string>User manual</string>
+   </property>
+  </action>
+  <action name="actionVideo_tutorials">
+   <property name="text">
+    <string>Video tutorials</string>
+   </property>
+  </action>
+  <action name="actionShow_repository">
+   <property name="text">
+    <string>Show repository</string>
    </property>
   </action>
  </widget>
