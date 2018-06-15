@@ -17,7 +17,8 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     roiID(cnt++),
     ui(new Ui::uxROIWidget),
     hViewer(nullptr),
-    autoHideViewerROI(false)
+    autoHideViewerROI(false),
+    allowUpdateImageDims(true)
 {
     ui->setupUi(this);
     setROI(0,0,100,100);
@@ -120,6 +121,11 @@ void uxROIWidget::updateViewer()
         }
 
     }
+}
+
+void uxROIWidget::setAllowUpdateImageDims(bool allow)
+{
+    allowUpdateImageDims=allow;
 }
 
 void uxROIWidget::setROI(size_t *roi, bool ignoreBoundingBox)
@@ -251,7 +257,7 @@ void uxROIWidget::on_valueChanged(int x0,int y0, int x1, int y1)
 
 void uxROIWidget::on_viewerNewImageDims(const QRect &rect)
 {
-    if (hViewer!=nullptr) {
+    if ((allowUpdateImageDims==true) && (hViewer!=nullptr)) {
         setBoundingBox(0,0,rect.width()-1,rect.height()-1);
     }
 
