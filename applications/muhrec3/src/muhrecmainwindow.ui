@@ -70,104 +70,7 @@
                  <string>Projection images</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_2">
-                 <item row="0" column="4">
-                  <widget class="QPushButton" name="buttonProjectionPath">
-                   <property name="toolTip">
-                    <string>Browse for the projection path</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="text">
-                    <string>Browse</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="3">
-                  <widget class="QComboBox" name="comboRotateProjection">
-                   <property name="toolTip">
-                    <string>Rotate the projection</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>No rotation</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>90 degrees CW</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>180 degrees CW</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>90 degrees CCW</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QSpinBox" name="spinProjectionBinning">
-                   <property name="toolTip">
-                    <string>Binning factor of the projections</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="minimum">
-                    <number>1</number>
-                   </property>
-                   <property name="maximum">
-                    <number>8</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="4">
-                  <widget class="QPushButton" name="buttonGetSkipList">
-                   <property name="toolTip">
-                    <string>Find the retake images in the projection data set</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="text">
-                    <string>Get skip list</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1" colspan="3">
-                  <widget class="QLineEdit" name="editProjectionMask">
-                   <property name="toolTip">
-                    <string>File mask of the projection images (Format: file_####.ext)</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1" colspan="3">
+                 <item row="1" column="2" colspan="3">
                   <layout class="QHBoxLayout" name="layoutFileIndex">
                    <item>
                     <widget class="QLabel" name="label_11">
@@ -280,6 +183,55 @@
                   </layout>
                  </item>
                  <item row="3" column="4">
+                  <widget class="QComboBox" name="comboRotateProjection">
+                   <property name="toolTip">
+                    <string>Rotate the projection</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>No rotation</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>90 degrees CW</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>180 degrees CW</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>90 degrees CCW</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_8">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string>File index</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="5">
                   <widget class="QPushButton" name="buttonPreview">
                    <property name="toolTip">
                     <string>Preview the projection</string>
@@ -298,6 +250,54 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="4" column="3">
+                  <spacer name="verticalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="0" column="5">
+                  <widget class="QPushButton" name="buttonProjectionPath">
+                   <property name="toolTip">
+                    <string>Browse for the projection path</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string>Browse</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="2">
+                  <widget class="QSpinBox" name="spinProjectionBinning">
+                   <property name="toolTip">
+                    <string>Binning factor of the projections</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>8</number>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="3" column="0">
                   <widget class="QLabel" name="label_10">
                    <property name="styleSheet">
@@ -309,39 +309,6 @@
                    <property name="buddy">
                     <cstring>spinProjectionBinning</cstring>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="4">
-                  <widget class="QComboBox" name="comboProjectionStyle">
-                   <property name="toolTip">
-                    <string>Data representation in the images</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>Projection</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Sinogram</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Same projection</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Same slice</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                  <item row="0" column="0">
@@ -357,7 +324,20 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="2">
+                 <item row="0" column="2" colspan="3">
+                  <widget class="QLineEdit" name="editProjectionMask">
+                   <property name="toolTip">
+                    <string>File mask of the projection images (Format: file_####.ext)</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="3">
                   <widget class="QComboBox" name="comboFlipProjection">
                    <property name="toolTip">
                     <string>Mirror the projection in different directions</string>
@@ -390,20 +370,40 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_9">
+                 <item row="1" column="5">
+                  <widget class="QComboBox" name="comboProjectionStyle">
+                   <property name="toolTip">
+                    <string>Data representation in the images</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
-                   <property name="text">
-                    <string>Skip list</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>editProjectionSkipList</cstring>
-                   </property>
+                   <item>
+                    <property name="text">
+                     <string>Projection</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Sinogram</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Same projection</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Same slice</string>
+                    </property>
+                   </item>
                   </widget>
                  </item>
-                 <item row="2" column="1" colspan="3">
+                 <item row="2" column="2" colspan="3">
                   <widget class="QLineEdit" name="editProjectionSkipList">
                    <property name="toolTip">
                     <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
@@ -413,32 +413,29 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="2">
-                  <spacer name="verticalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
+                 <item row="2" column="5">
+                  <widget class="QPushButton" name="buttonGetSkipList">
+                   <property name="toolTip">
+                    <string>Find the retake images in the projection data set</string>
                    </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_8">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                   <property name="whatsThis">
+                    <string/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>File index</string>
+                    <string>Get skip list</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QCheckBox" name="checkBoxUseSkipList">
+                   <property name="toolTip">
+                    <string>The skip list allows you sort out bad projections that were retaken but remained in the image sequence.</string>
+                   </property>
+                   <property name="text">
+                    <string>Use skip list</string>
                    </property>
                   </widget>
                  </item>
@@ -680,6 +677,19 @@
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QtAddons::uxROIWidget" name="widgetProjectionROI" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>196</width>
+                  <height>125</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Select the active region to reconstruct.</string>
+                </property>
+               </widget>
+              </item>
               <item>
                <widget class="QtAddons::uxROIWidget" name="widgetDoseROI" native="true">
                 <property name="minimumSize">
@@ -931,73 +941,53 @@
              <string notr="true">QGroupBox#groupBox_AcquisitionArea {font: bold 1.75em}</string>
             </property>
             <property name="title">
-             <string>Acquisition area</string>
+             <string>Slices to reconstruct</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_15">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0">
                <item>
-                <widget class="QGroupBox" name="groupBox">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Selects first and last slice to reconstruct. Coordinates are absolute to the image.</string>
-                 </property>
-                 <property name="title">
-                  <string>Slices to reconstruct</string>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_4">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_50">
-                    <property name="text">
-                     <string>First</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QSpinBox" name="spinSlicesFirst">
-                    <property name="toolTip">
-                     <string>This is the first slice to reconstruct</string>
-                    </property>
-                    <property name="maximum">
-                     <number>10000</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_51">
-                    <property name="text">
-                     <string>Last</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QSpinBox" name="spinSlicesLast">
-                    <property name="toolTip">
-                     <string>This is the last slice to reconstruct.</string>
-                    </property>
-                    <property name="maximum">
-                     <number>10000</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
+                <layout class="QFormLayout" name="formLayout_3">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_50">
+                   <property name="text">
+                    <string>First</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QSpinBox" name="spinSlicesFirst">
+                   <property name="toolTip">
+                    <string>This is the first slice to reconstruct</string>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QSpinBox" name="spinSlicesLast">
+                   <property name="toolTip">
+                    <string>This is the last slice to reconstruct.</string>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_51">
+                   <property name="text">
+                    <string>Last</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
-                <widget class="QtAddons::uxROIWidget" name="widgetProjectionROI" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>196</width>
-                   <height>125</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Select the active region to reconstruct.</string>
+                <widget class="QPushButton" name="pushButtonGetSliceROI">
+                 <property name="text">
+                  <string>Get slice interval</string>
                  </property>
                 </widget>
                </item>
@@ -1170,7 +1160,7 @@
                 </layout>
                </item>
                <item>
-                <spacer name="horizontalSpacer_9">
+                <spacer name="horizontalSpacer_7">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -1183,72 +1173,84 @@
                 </spacer>
                </item>
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_8">
-                 <item>
-                  <layout class="QFormLayout" name="formLayout_2">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_7">
-                     <property name="styleSheet">
-                      <string notr="true"/>
-                     </property>
-                     <property name="text">
-                      <string>Acquisition scheme</string>
-                     </property>
-                    </widget>
+                <layout class="QFormLayout" name="formLayout_2">
+                 <property name="formAlignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_7">
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string>Acquisition scheme</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="comboDataSequence">
+                   <property name="toolTip">
+                    <string>Selects the order in which the projections were acquired. Sequence is the typical CT scan, while golden ratio is a special acquisition case.</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>Sequence</string>
+                    </property>
                    </item>
-                   <item row="0" column="1">
-                    <widget class="QComboBox" name="comboDataSequence">
-                     <property name="toolTip">
-                      <string>Selects the order in which the projections were acquired. Sequence is the typical CT scan, while golden ratio is a special acquisition case.</string>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true"/>
-                     </property>
-                     <item>
-                      <property name="text">
-                       <string>Sequence</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Golden ratio</string>
-                      </property>
-                     </item>
-                    </widget>
+                   <item>
+                    <property name="text">
+                     <string>Golden ratio</string>
+                    </property>
                    </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_33">
-                     <property name="text">
-                      <string>Direction of rotation</string>
-                     </property>
-                    </widget>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_33">
+                   <property name="text">
+                    <string>Direction of rotation</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QComboBox" name="comboDirRotation">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string extracomment="select direction of rotation ">Turning direction of the CT scan.</string>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>ClockWise</string>
+                    </property>
                    </item>
-                   <item row="1" column="1">
-                    <widget class="QComboBox" name="comboDirRotation">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="toolTip">
-                      <string extracomment="select direction of rotation ">Turning direction of the CT scan.</string>
-                     </property>
-                     <item>
-                      <property name="text">
-                       <string>ClockWise</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>CounterClockWise</string>
-                      </property>
-                     </item>
-                    </widget>
+                   <item>
+                    <property name="text">
+                     <string>CounterClockWise</string>
+                    </property>
                    </item>
-                  </layout>
+                  </widget>
                  </item>
                 </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
@@ -1709,6 +1711,130 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
+           <widget class="QGroupBox" name="groupHistogram">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox#groupHistogram {font: bold 1.75em}</string>
+            </property>
+            <property name="title">
+             <string>Gray levels</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="layoutGraylevels">
+               <item>
+                <widget class="QLabel" name="label_40">
+                 <property name="text">
+                  <string>Gray levels</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_41">
+                 <property name="text">
+                  <string>Low</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>dspinGrayLow</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="dspinGrayLow">
+                 <property name="toolTip">
+                  <string>Lowest gray level of the reconstructed data</string>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>5000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_42">
+                 <property name="text">
+                  <string>High</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>dspinGrayHigh</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="dspinGrayHigh">
+                 <property name="toolTip">
+                  <string>Highest gray level of the reconstructed data</string>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>5000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_levels95p">
+                 <property name="toolTip">
+                  <string>Preset for the 95% gray level interval.</string>
+                 </property>
+                 <property name="text">
+                  <string>95%</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_levels99p">
+                 <property name="toolTip">
+                  <string>Preset for the 99% gray level interval.</string>
+                 </property>
+                 <property name="text">
+                  <string>99%</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelMatrixEntropy">
+                 <property name="text">
+                  <string>Entropy N/A</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QGroupBox" name="groupMatrixSettings">
             <property name="styleSheet">
              <string notr="true">QGroupBox#groupMatrixSettings{font: bold 1.75em}</string>
@@ -1850,130 +1976,6 @@
                   </size>
                  </property>
                 </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupHistogram">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QGroupBox#groupHistogram {font: bold 1.75em}</string>
-            </property>
-            <property name="title">
-             <string>Gray levels</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_17">
-             <item>
-              <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="layoutGraylevels">
-               <item>
-                <widget class="QLabel" name="label_40">
-                 <property name="text">
-                  <string>Gray levels</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_41">
-                 <property name="text">
-                  <string>Low</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>dspinGrayLow</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="dspinGrayLow">
-                 <property name="toolTip">
-                  <string>Lowest gray level of the reconstructed data</string>
-                 </property>
-                 <property name="minimum">
-                  <double>-1000.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>5000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_42">
-                 <property name="text">
-                  <string>High</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>dspinGrayHigh</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="dspinGrayHigh">
-                 <property name="toolTip">
-                  <string>Highest gray level of the reconstructed data</string>
-                 </property>
-                 <property name="minimum">
-                  <double>-1000.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>5000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_levels95p">
-                 <property name="toolTip">
-                  <string>Preset for the 95% gray level interval.</string>
-                 </property>
-                 <property name="text">
-                  <string>95%</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_levels99p">
-                 <property name="toolTip">
-                  <string>Preset for the 99% gray level interval.</string>
-                 </property>
-                 <property name="text">
-                  <string>99%</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelMatrixEntropy">
-                 <property name="text">
-                  <string>Entropy N/A</string>
-                 </property>
-                </widget>
                </item>
               </layout>
              </item>
