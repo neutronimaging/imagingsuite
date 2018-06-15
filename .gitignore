@@ -1,4 +1,5 @@
 .DS_Store
+core/algorithms/ImagingAlgorithms/.DS_Store
 build*
 *.user
 *.stash
@@ -10,10 +11,4 @@ build*
 .DS-Store
 .ipynb_checkpoints
 *.sym
-*.aux
-*.bbl
-*.blg
-*.log
-*.pdf
-*.synctex.gz
-*.toc
+
