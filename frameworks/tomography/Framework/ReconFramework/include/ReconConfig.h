@@ -153,7 +153,7 @@ public:
         float fGrayInterval[2];         ///< Interval in which the graylevels are represented.
         bool bUseROI;                   ///< Reconstruct the data in the defined region of interest.
         size_t roi[4];                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1). Relevant for parallel beam
-        size_t voi[6];                  ///< Subvolume to reconstruct (volume coordinates x0, x1, y0, y1, z0, z1). Relevant for divergent beam
+        size_t voi[6];                  ///< Subvolume to reconstruct (volume coordinates x0, x1, y0, y1, z0, z1). Relevant for divergent beam NOT USED ANYMORE
 //        bool bUseVOI;                   ///< Reconstruct the data in the defined volume of interest. Relevant for divergent beam
         kipl::io::eFileType FileType;   ///< File type of the reconstructed slices.
         float fVoxelSize[3];            ///< Voxel size of the reconstructed volume, relevant for divergent beam only
@@ -176,6 +176,7 @@ public:
     const ReconConfig & operator=(const ReconConfig &config);
 
     bool SanityCheck();
+    bool SanityAnglesCheck();
 
     /// Destructor to clean up
 	~ReconConfig(void);
@@ -194,6 +195,10 @@ protected:
     /// \param reader A handle to the an opened xml reader.
     /// \param cName Name of the main block.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string cName);
+
+    virtual string SanitySlicesCheck();
+
+    virtual string SanityMessage(bool mess);
 
     /// Parse a list of arguments provided by the CLI
     /// \param args A list of arguments as they come from the CLI.

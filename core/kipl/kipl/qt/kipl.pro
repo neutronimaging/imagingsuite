@@ -380,6 +380,8 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
 
+#    QMAKE_CXXFLAGS += --coverage
+#    QMAKE_LFLAGS += --coverage
 }
 else {
 message("-lNeXus does not exists $$HEADERS")

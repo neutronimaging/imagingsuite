@@ -84,11 +84,14 @@ unix:!symbian {
     INSTALLS += target
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig
-else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lQtAddons
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons

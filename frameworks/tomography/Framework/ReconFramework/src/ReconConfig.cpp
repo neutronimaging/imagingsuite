@@ -59,6 +59,18 @@ bool ReconConfig::SanityCheck()
     return true;
 }
 
+bool ReconConfig::SanityAnglesCheck()
+{
+    std::ostringstream msg;
+
+    if (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f)) {
+        msg<<"Incorrect angles configuration " ;
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
+
+    return true;
+}
+
 std::string ReconConfig::WriteXML()
 {
 	std::ostringstream str;
@@ -324,6 +336,42 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
         if (xmlTextReaderDepth(reader)<depth)
         	ret=0;
     }
+
+}
+
+std::string ReconConfig::SanitySlicesCheck()
+{
+    int fS = ProjectionInfo.roi[1];
+    int lS = ProjectionInfo.roi[3];
+    string msg;
+
+    if ((lS-fS)>=200)
+    {
+        msg=SanityMessage(true);
+
+    }
+    else
+        msg="";
+
+
+    return(msg);
+
+}
+
+string ReconConfig::SanityMessage(bool mess)
+{
+    std::ostringstream msg;
+    if (mess)
+    {
+        msg<<"Trying to configure more than 200 slices. Continue?";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+    else
+        {
+        msg<<"";
+    }
+
+    return(msg.str());
 
 }
 

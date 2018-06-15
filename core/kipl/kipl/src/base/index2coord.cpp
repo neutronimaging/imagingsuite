@@ -17,16 +17,34 @@ namespace kipl { namespace base {
 
 	}
 	bool Index2Coordinates::operator () (size_t pos, coords3D *c){
-		c->z=static_cast<size_t>(floor(pos * dInvSXY));
-		size_t diff=pos - nSX*c->z;
-		c->y=static_cast<size_t>(floor(0.5+diff*dInvSX));
-		c->x=diff-c->y;
+        size_t diff=0UL;
+        if (pos<nSXY) {
+            c->z=0;
+            diff=pos;
+        }
+        else {
+            c->z=static_cast<size_t>(pos/ nSXY);
+            diff=pos % nSXY;
+        }
+        c->y=static_cast<size_t>(diff /nSX);
+        c->x=diff % nSX;
 
 		return true;
 	}
 		
 	bool Index2Coordinates::operator () (size_t pos, coords2D *c)
 	{
+        size_t diff=0UL;
+
+        if (pos<nSXY) {
+            diff=pos;
+        }
+        else {
+            diff=pos % nSXY;
+        }
+
+        c->y=static_cast<size_t>(diff /nSX);
+        c->x=diff % nSX;
 
 		return true;
 	}

@@ -105,3 +105,10 @@ DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include
+DEPENDPATH += $$PWD/../../../../../../external/mac/include
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
+
+

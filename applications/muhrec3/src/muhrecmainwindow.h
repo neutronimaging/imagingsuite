@@ -106,6 +106,8 @@ private slots:
 
     void on_actionReport_a_bug_triggered();
 
+    void on_actionVideo_tutorials_triggered();
+
     void on_checkCBCT_clicked(bool checked);
 
     void on_checkCBCT_stateChanged(int arg1);
@@ -186,6 +188,13 @@ private slots:
 
     void on_pushButton_levels99p_clicked();
 
+    void on_checkBoxUseSkipList_toggled(bool checked);
+
+    void on_pushButtonGetSliceROI_clicked();
+
+    void on_comboDataSequence_currentIndexChanged(int index);
+
+    void on_actionShow_repository_triggered();
 
 private:
     // Data members

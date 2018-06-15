@@ -1,6 +1,7 @@
 //<LICENCE>
 
 #include <../include/kipl_global.h>
+#include <QDebug>
 
 #include <cstring>
 #include <cstdlib>
@@ -31,11 +32,11 @@ void KIPLSHARED_EXPORT StripFileName(const std::string filestr,
 				path=path+slash;
 #endif
                 pos=0;
-                pos2=filestr.find_last_of('.',pos);
+                pos2=filestr.find_first_of('.',pos);
                 name=filestr.substr(0,pos2-pos);
         }
         else {
-                pos2=filestr.find_last_of('.',pos);
+                pos2=filestr.find_first_of('.',pos);
                 path=filestr.substr(0,pos+1);
                 name=filestr.substr(pos+1,pos2-pos-1);
         }

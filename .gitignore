@@ -15,5 +15,5 @@ build*
 *.blg
 *.log
 *.toc
-*.gz
 *.pdf
+*.synctex.gz

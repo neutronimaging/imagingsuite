@@ -4,6 +4,7 @@
 #define IMAGEOPERATORS_H_
 
 #include "timage.h"
+// todo Check redundancy of these functions in math
 
 namespace kipl { namespace base {
 
