@@ -8,7 +8,7 @@
 
 #include <ParameterHandling.h>
 
-#include "bblognorm.h"
+#include "../include/bblognorm.h"
 
 BBLogNorm::BBLogNorm() :
     PreprocModuleBase("RobustLogNorm"),

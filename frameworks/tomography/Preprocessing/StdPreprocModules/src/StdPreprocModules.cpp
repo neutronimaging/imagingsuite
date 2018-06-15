@@ -31,6 +31,7 @@
 #include "../include/MorphSpotCleanModule.h"
 #include "../include/GammaSpotCleanModule.h"
 #include "../include/CameraStripeClean.h"
+#include "../include/bblognorm.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>
@@ -55,6 +56,9 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
 	if (name!=NULL) {
 		std::string sName=name;
+
+        if (sName=="BBLogNorm")
+            return new BBLogNorm;
 
         if (sName=="FullLogNorm")
             return new FullLogNorm;
@@ -186,10 +190,9 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
     FullNorm fnorm;
     modulelist->operator []("FullNorm")=fnorm.GetParameters();
 
-#ifdef USE_UNPUBLISHED
-    RobustLogNorm robnorm;
-    modulelist->operator[]("RobustLogNorm")=robnorm.GetParameters();
-#endif
+    BBLogNorm bbnorm;
+    modulelist->operator[]("BBLogNorm")=bbnorm.GetParameters();
+
 
 	LogProjection lproj;
 	modulelist->operator []("LogProjection")=lproj.GetParameters();

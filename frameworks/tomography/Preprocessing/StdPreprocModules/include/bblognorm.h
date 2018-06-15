@@ -1,7 +1,7 @@
 #ifndef ROBUSTLOGNORM_H_
 #define ROBUSTLOGNORM_H_
 
-#include "unpublpreprocessing_global.h"
+#include "StdPreprocModules_global.h"
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -12,12 +12,12 @@
 #include <PreprocModuleBase.h>
 #include <ReconConfig.h>
 
-#include <PreprocEnums.h>
+#include "PreprocEnums.h"
 #include <averageimage.h>
 
 //#include "../include/NormPlugins.h"
 
-class UNPUBLPREPROCESSINGSHARED_EXPORT BBLogNorm : public PreprocModuleBase
+class STDPREPROCMODULESSHARED_EXPORT BBLogNorm : public PreprocModuleBase
 {
 public:
     BBLogNorm();
