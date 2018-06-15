@@ -20,8 +20,8 @@
 #include <strings/miscstring.h>
 #include <morphology/label.h>
 
-#include "ReferenceImageCorrection.h"
-#include <ImagingException.h>
+#include "../include/ReferenceImageCorrection.h"
+#include "../include/ImagingException.h"
 
 using namespace TNT;
 
