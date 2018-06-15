@@ -138,6 +138,8 @@ void TKiplMathTest::testNonLinFit_GaussianFunction()
     sog.setLock(lv);
     for (int i=0; i<sog.getNpars(); ++i)
         QCOMPARE(sog.isLocked(i),lv[i]);
+
+    QCOMPARE(sog.getNpars2fit(),1);
     sog[0]=1;
     sog[1]=0;
     sog[2]=1;
@@ -152,8 +154,8 @@ void TKiplMathTest::testNonLinFit_GaussianFunction()
     sog2[3]=2;
     sog2[4]=0.5;
     sog2[5]=0.5;
-    qDebug() << (double)sog2(0);
-    qDebug() << (double)sog2(1);
+//    qDebug() << (double)sog2(0);
+//    qDebug() << (double)sog2(1);
     QVERIFY(fabs(sog2(0)-(long double)1.73575888234)<(long double)1.0e-7);
     QVERIFY(fabs(sog2(1)-(long double)1.10363832351)<(long double)1.0e-7);
 
@@ -170,9 +172,12 @@ void TKiplMathTest::testNonLinFit_GaussianFunction()
 void TKiplMathTest::testNonLinFit_fitter()
 {
     int N=100;
-    long double *x=new long double[N];
-    long double *y=new long double[N];
-    long double *sig=new long double[N];
+//    long double *x=new long double[N];
+//    long double *y=new long double[N];
+//    long double *sig=new long double[N];
+    double *x=new double[N];
+    double *y=new double[N];
+    double *sig=new double[N];
 
     Nonlinear::SumOfGaussians sog0(1),sog(1);
     sog0[0]=2; //A
@@ -186,18 +191,15 @@ void TKiplMathTest::testNonLinFit_fitter()
         sig[i]=1.0;
     }
 
-    sog[0]=0; //A
-    sog[1]=0; //m
-    sog[2]=0; //s
-    long double chisq=0.0;
-    long double alambda=-1.0;
-
+    sog[0]=2.1; //A
+    sog[1]=.1; //m
+    sog[2]=0.9; //s
 
     Array2D<long double> alpha(sog.getNpars(),sog.getNpars());
     Array2D<long double> covar(sog.getNpars(),sog.getNpars());
- //   Nonlinear::LevenbergMarquardt(x,y,N,sog,1e-7);
+    Nonlinear::LevenbergMarquardt(x,y,N,sog,1e-7);
 
-    Nonlinear::mrqmin(x,y,sig, N, covar, alpha, chisq, sog,alambda);
+ //   Nonlinear::mrqmin(x,y,sig, N, covar, alpha, chisq, sog,alambda);
     sog.printPars();
     QCOMPARE(sog[0],sog0[0]);
     QCOMPARE(sog[1],sog0[1]);
