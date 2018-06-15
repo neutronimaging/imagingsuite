@@ -188,6 +188,9 @@ private slots:
 
     void on_pushButton_levels99p_clicked();
 
+    void on_checkBoxUseSkipList_toggled(bool checked);
+
+    void on_pushButtonGetSliceROI_clicked();
 
     void on_comboDataSequence_currentIndexChanged(int index);
 
