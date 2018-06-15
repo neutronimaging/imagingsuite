@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 
 #include <tnt.h>
 #include <jama_qr.h>
@@ -17,179 +18,267 @@
 using namespace TNT;
 using namespace JAMA;
 namespace NonlinearDev {
-struct Fitmrq {
-//Object for nonlinear least-squares fitting by the Levenberg-Marquardt method, also including
-//the ability to hold specified parameters at fixed, specified values. Call constructor to bind data
-//vectors and fitting functions and to input an initial parameter guess. Then call any combination
-//of hold, free, and fit as often as desired. fit sets the output quantities a, covar, alpha,
-//and chisq.
-    static const int NDONE=4, ITMAX=1000; //Convergence parameters.
-    int ndat, ma, mfit;
-    VecDoub_I &x,&y,&sig;
-    double tol;
-    void (*funcs)(const Doub, VecDoub_I &, Doub &, VecDoub_O &);
-    VecBool ia;
-    VecDoub a; //Output values. a is the vector of fitted coefficients, covar is its covariance matrix, alpha is the curvature matrix, and chisq is the value of 2 fothe fit.
-    MatDoub covar;
-    MatDoub alpha;
-    double chisq;
 
-    void Fitmrq(VecDoub_I &xx, VecDoub_I &yy, VecDoub_I &ssig,
-                VecDoub_I &aa,
-                void funks(const Doub, VecDoub_I &, Doub &, VecDoub_O &),
-                const double TOL=1.e-3) :
-        ndat(xx.size()),
-        ma(aa.size()),
-        x(xx),
-        y(yy),
-        sig(ssig),
-        tol(TOL),
-        funcs(funks),
-        ia(ma),
-        alpha(ma,ma),
-        a(aa),
-        covar(ma,ma)
-    {
-        // Constructor.
-        // Binds references to the data arrays xx, yy, and ssig, and to a user-supplied
-        // function funks that calculates the nonlinear fitting function and its derivatives. Also inputs
-        // the initial parameters guess aa (which is copied, not modified) and an optional convergence
-        // tolerance TOL. Initializes all parameters as free (not held).
-        for (int i=0;i<ma;i++)
-            ia[i] = true;
-     }
+LevenbergMarquardt::LevenbergMarquardt(Array1D<double> &xx, Array1D<double> &yy, Array1D<double> &ssig,
+            Array1D<double> &aa,
+            void funks(const double, Array1D<double> &, double &, Array1D<double> &),
+            const double TOL) :
+    ndat(xx.dim()),
+    ma(aa.dim()),
+    mfit(ma),
+    x(xx),
+    y(yy),
+    sig(ssig),
+    tol(TOL),
+    funcs(funks),
+    ia(ma),
+    alpha(ma,ma),
+    a(aa),
+    covar(ma,ma)
+{
+    // Constructor.
+    // Binds references to the data arrays xx, yy, and ssig, and to a user-supplied
+    // function funks that calculates the nonlinear fitting function and its derivatives. Also inputs
+    // the initial parameters guess aa (which is copied, not modified) and an optional convergence
+    // tolerance TOL. Initializes all parameters as free (not held).
+    for (int i= 0; i<ma; ++i) ia[i]=true;
+ //   std::fill_n(ia,ma,true);
+}
 
-    void hold(const int i, const doub val)
-    {
-        ia[i]=false;
-        a[i]=val;
-    }
+void LevenbergMarquardt::hold(const int i, const double val)
+{
+    if (ia[i]==true) mfit--;
 
-    void free(const Int i)
-    {
-        ia[i]=true;
-    }
+    ia[i]=false;
+    a[i]=val;
 
-    void fit()
-    {
-        //    Iterate to reduce the 2 of a fit between a set of data points x[0..ndat-1], y[0..ndat-1]
-        //    with individual standard deviations sig[0..ndat-1], and a nonlinear function that depends
-        //    on ma coefficients a[0..ma-1]. When 2 is no longer decreasing, set best-fit values
-        //    for the parameters a[0..ma-1], and chisq D 2, covar[0..ma-1][0..ma-1], and
-        //    alpha[0..ma-1][0..ma-1]. (Parameters held fixed will return zero covariances.)
+}
 
-        int j,k,l,iter,done=0;
-        double alamda=.001,ochisq;
-        VecDoub atry(ma),beta(ma),da(ma);
-        mfit=0;
-        for ( j=0; j<ma; j++)
-            if (ia[j]) mfit++;
+void LevenbergMarquardt::free(const int i)
+{
+    if (ia[i]==false) mfit++;
 
-        MatDoub oneda(mfit,1), temp(mfit,mfit);
+    ia[i]=true;
+}
 
-        mrqcof(a,alpha,beta); // Initialization.
+void LevenbergMarquardt::fit()
+{
+    //    Iterate to reduce the 2 of a fit between a set of data points x[0..ndat-1], y[0..ndat-1]
+    //    with individual standard deviations sig[0..ndat-1], and a nonlinear function that depends
+    //    on ma coefficients a[0..ma-1]. When 2 is no longer decreasing, set best-fit values
+    //    for the parameters a[0..ma-1], and chisq D 2, covar[0..ma-1][0..ma-1], and
+    //    alpha[0..ma-1][0..ma-1]. (Parameters held fixed will return zero covariances.)
 
-        for (j=0;j<ma;j++)
-            atry[j]=a[j];
+    int j,k,l,iter,done=0;
+    double alamda=.001,ochisq;
+    Array1D<double> atry(ma),beta(ma),da(ma);
+//    mfit=0;
+//    for ( j=0; j<ma; j++)
+//        if (ia[j]) mfit++;
 
-        ochisq=chisq;
+    Array2D<double> oneda(mfit,1), temp(mfit,mfit);
 
-        for (iter=0;iter<ITMAX;iter++) {
-            if (done==NDONE) alamda=0.; //Last pass. Use zero alamda.
-                for (j=0;j<mfit;j++) { //Alter linearized fitting matrix, by augmenting diagonal elements.
-                    for (k=0;k<mfit;k++) covar[j][k]=alpha[j][k];
-                covar[j][j]=alpha[j][j]*(1.0+alamda);
-                for (k=0;k<mfit;k++)
-                    temp[j][k]=covar[j][k];
-                oneda[j][0]=beta[j];
-            }
+    mrqcof(a,alpha,beta); // Initialization.
 
-            gaussj(temp,oneda); //Matrix solution.
+    for (j=0;j<ma;j++)
+        atry[j]=a[j];
 
+    ochisq=chisq;
+
+    for (iter=0;iter<ITMAX;iter++) {
+        qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
+        if (done==NDONE)
+            alamda=0.; //Last pass. Use zero alamda.
+
+        for (j=0;j<mfit;j++) { //Alter linearized fitting matrix, by augmenting diagonal elements.
+            for (k=0;k<mfit;k++)
+                covar[j][k]=alpha[j][k];
+
+            covar[j][j]=alpha[j][j]*(1.0+alamda);
+
+            for (k=0;k<mfit;k++)
+                temp[j][k]=covar[j][k];
+
+            oneda[j][0]=beta[j];
+        }
+
+        gaussj(temp,oneda); //Matrix solution.
+
+        for (j=0;j<mfit;j++) {
+            for (k=0;k<mfit;k++)
+                covar[j][k]=temp[j][k];
+            da[j]=oneda[j][0];
+        }
+
+        if (done==NDONE) { //Converged. Clean up and return.
+            covsrt(covar);
+            covsrt(alpha);
+            return;
+        }
+
+        for (j=0,l=0;l<ma;l++) //Did the trial succeed?
+            if (ia[l]) atry[l]=a[l]+da[j++];
+
+        mrqcof(atry,covar,da);
+
+        if (abs(chisq-ochisq) < std::max(tol,tol*chisq)) done++;
+
+        if (chisq < ochisq) { //Success, accept the new solution.
+            alamda *= 0.1;
+            ochisq=chisq;
             for (j=0;j<mfit;j++) {
-                for (k=0;k<mfit;k++) covar[j][k]=temp[j][k];
-                    da[j]=oneda[j][0];
+                for (k=0;k<mfit;k++) alpha[j][k]=covar[j][k];
+                beta[j]=da[j];
             }
+            for (l=0;l<ma;l++)
+                a[l]=atry[l];
+        }
+        else { //Failure, increase alamda.
+            alamda *= 10.0;
+            chisq=ochisq;
+        }
+    }
+    throw("Fitmrq too many iterations");
+}
 
-            if (done==NDONE) { //Converged. Clean up and return.
-                covsrt(covar);
-                covsrt(alpha);
-                return;
+void LevenbergMarquardt::mrqcof(Array1D<double> &a, Array2D<double> &alpha, Array1D<double> &beta)
+{
+//Used by fit to evaluate the linearized fitting matrix alpha, and vector beta as in (15.5.8), and to calculate 2.
+    int i,j,k,l,m;
+    double ymod,wt,sig2i,dy;
+    Array1D<double> dyda(ma);
+    for (j=0; j<mfit; j++) { //Initialize (symmetric) alpha, beta.
+        for (k=0; k<=j; k++) alpha[j][k]=0.0;
+            beta[j]=0.;
+    }
+
+    chisq=0.;
+
+    for (i=0; i<ndat; i++) { //Summation loop over all data.
+        funcs(x[i],a,ymod,dyda);
+        sig2i=1.0/(sig[i]*sig[i]);
+        dy=y[i]-ymod;
+        for (j=0,l=0;l<ma;l++) {
+            if (ia[l]) {
+                wt=dyda[l]*sig2i;
+                for (k=0,m=0;m<l+1;m++)
+                    if (ia[m]) alpha[j][k++] += wt*dyda[m];
+                beta[j++] += dy*wt;
             }
+        }
+        chisq += dy*dy*sig2i; // And find 2.
+    }
+    for (j=1;j<mfit;j++) //Fill in the symmetric side.
+        for (k=0;k<j;k++) alpha[k][j]=alpha[j][k];
+}
 
-            for (j=0,l=0;l<ma;l++) //Did the trial succeed?
-                if (ia[l]) atry[l]=a[l]+da[j++];
+void LevenbergMarquardt::covsrt(Array2D<double> &covar)
+{
+//Expand in storage the covariance matrix covar, so as to take into account parameters that
+//are being held fixed. (For the latter, return zero covariances.)
+    int i,j,k;
+    for (i=mfit;i<ma;i++)
+    for (j=0;j<i+1;j++) covar[i][j]=covar[j][i]=0.0;
+    k=mfit-1;
+    for (j=ma-1;j>=0;j--) {
+        if (ia[j]) {
+            for (i=0;i<ma;i++) std::swap(covar[i][k],covar[i][j]);
+            for (i=0;i<ma;i++) std::swap(covar[k][i],covar[j][i]);
+            k--;
+        }
+    }
+}
 
-            mrqcof(atry,covar,da);
+void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
+//Linear equation solution by Gauss-Jordan elimination, equation (2.1.1) above. The input matrix
+//is a[0..n-1][0..n-1]. b[0..n-1][0..m-1] is input containing the m right-hand side vectors.
+//On output, a is replaced by its matrix inverse, and b is replaced by the corresponding set of
+//solution vectors.
+{
+    int i,icol,irow,j,k,l,ll,n=a.dim1(),m=b.dim2();
+    double big,dum,pivinv;
+    Array1D<int> indxc(n),indxr(n),ipiv(n); //These integer arrays are used for bookkeeping on
+    for (j=0;j<n;j++)
+        ipiv[j]=0; // the pivoting.
 
-            if (abs(chisq-ochisq) < MAX(tol,tol*chisq)) done++;
-
-            if (chisq < ochisq) { //Success, accept the new solution.
-                alamda *= 0.1;
-                ochisq=chisq;
-                for (j=0;j<mfit;j++) {
-                    for (k=0;k<mfit;k++) alpha[j][k]=covar[j][k];
-                    beta[j]=da[j];
+    for (i=0;i<n;i++) { //This is the main loop over the columns to be reduced
+        big=0.0;
+        for (j=0;j<n;j++) //This is the outer loop of the search for a pivot element
+            if (ipiv[j] != 1)
+                for (k=0;k<n;k++) {
+                    if (ipiv[k] == 0) {
+                        if (abs(a[j][k]) >= big) {
+                            big=abs(a[j][k]);
+                            irow=j;
+                            icol=k;
+                        }
+                    }
                 }
-                for (l=0;l<ma;l++)
-                    a[l]=atry[l];
-            }
-            else { //Failure, increase alamda.
-                alamda *= 10.0;
-                chisq=ochisq;
-            }
+        ++(ipiv[icol]);
+//We now have the pivot element, so we interchange rows, if needed, to put the pivot
+//element on the diagonal. The columns are not physically interchanged, only relabeled:
+//indxc[i], the column of the .iC1/th pivot element, is the .iC1/th column that is
+//reduced, while indxr[i] is the row in which that pivot element was originally located.
+//If indxr[i] ¤ indxc[i], there is an implied column interchange. With this form of
+//bookkeeping, the solution b’s will end up in the correct order, and the inverse matrix
+//will be scrambled by columns.
+        if (irow != icol) {
+            for (l=0;l<n;l++) std::swap(a[irow][l],a[icol][l]);
+            for (l=0;l<m;l++) std::swap(b[irow][l],b[icol][l]);
         }
-        throw("Fitmrq too many iterations");
-    }
+        indxr[i]=irow;
+        indxc[i]=icol;
 
-    void mrqcof(VecDoub_I &a, MatDoub_O &alpha, VecDoub_O &beta)
-    {
-    //Used by fit to evaluate the linearized fitting matrix alpha, and vector beta as in (15.5.8), and to calculate 2.
-        int i,j,k,l,m;
-        double ymod,wt,sig2i,dy;
-        VecDoub dyda(ma);
-        for (j=0; j<mfit; j++) { //Initialize (symmetric) alpha, beta.
-            for (k=0; k<=j; k++) alpha[j][k]=0.0;
-                beta[j]=0.;
-        }
+        if (a[icol][icol] == 0.0)
+            throw("gaussj: Singular Matrix");
 
-        chisq=0.;
+        pivinv=1.0/a[icol][icol];
+        a[icol][icol]=1.0;
 
-        for (i=0; i<ndat; i++) { //Summation loop over all data.
-            funcs(x[i],a,ymod,dyda);
-            sig2i=1.0/(sig[i]*sig[i]);
-            dy=y[i]-ymod;
-            for (j=0,l=0;l<ma;l++) {
-                if (ia[l]) {
-                    wt=dyda[l]*sig2i;
-                    for (k=0,m=0;m<l+1;m++)
-                        if (ia[m]) alpha[j][k++] += wt*dyda[m];
-                    beta[j++] += dy*wt;
-                }
-            }
-            chisq += dy*dy*sig2i; // And find 2.
-        }
-        for (j=1;j<mfit;j++) //Fill in the symmetric side.
-            for (k=0;k<j;k++) alpha[k][j]=alpha[j][k];
-    }
+        for (l=0;l<n;l++)
+            a[icol][l] *= pivinv;
 
-    void covsrt(MatDoub_IO &covar)
-    {
-    //Expand in storage the covariance matrix covar, so as to take into account parameters that
-    //are being held fixed. (For the latter, return zero covariances.)
-        int i,j,k;
-        for (i=mfit;i<ma;i++)
-        for (j=0;j<i+1;j++) covar[i][j]=covar[j][i]=0.0;
-        k=mfit-1;
-        for (j=ma-1;j>=0;j--) {
-            if (ia[j]) {
-                for (i=0;i<ma;i++) SWAP(covar[i][k],covar[i][j]);
-                for (i=0;i<ma;i++) SWAP(covar[k][i],covar[j][i]);
-                k--;
-            }
+        for (l=0;l<m;l++)
+            b[icol][l] *= pivinv;
+
+        for (ll=0;ll<n;ll++) // Next, we reduce the rows...
+            if (ll != icol) { //...except for the pivot one, of course.
+                dum=a[ll][icol];
+                a[ll][icol]=0.0;
+                for (l=0;l<n;l++)
+                    a[ll][l] -= a[icol][l]*dum;
+                for (l=0;l<m;l++)
+                    b[ll][l] -= b[icol][l]*dum;
         }
     }
-};
+//        This is the end of the main loop over columns of the reduction. It only remains to unscramble
+//        the solution in view of the column interchanges. We do this by interchanging pairs of
+//        columns in the reverse order that the permutation was built up.
+    for (l=n-1;l>=0;l--) {
+        if (indxr[l] != indxc[l])
+            for (k=0;k<n;k++)
+                std::swap(a[k][indxr[l]],a[k][indxc[l]]);
+    }
+}
+
+void fgauss(const double x, Array1D<double> &a, double &y, Array1D<double> &dyda)
+{
+    // y.xI a/ is the sum of na/3 Gaussians (15.5.16). The amplitude, center, and width of the
+    // Gaussians are stored in consecutive locations of a: a[3k] D Bk, a[3kC1] D Ek, a[3kC2] D
+    //Gk, k D 0; :::; na/3  1. The dimensions of the arrays are a[0..na-1], dyda[0..na-1].
+    int i,na=a.dim();
+    double fac,ex,arg;
+    y=0.;
+    for (i=0;i<na-1;i+=3) {
+        arg=(x-a[i+1])/a[i+2];
+        ex=exp(-arg*arg);
+        fac=a[i]*ex*2.*arg;
+        y += a[i]*ex;
+        dyda[i]=ex;
+        dyda[i+1]=fac/a[i+2];
+        dyda[i+2]=fac*arg/a[i+2];
+    }
+}
 
 }
 

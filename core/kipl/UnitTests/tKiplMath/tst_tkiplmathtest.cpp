@@ -32,6 +32,8 @@ private Q_SLOTS:
     void testCircularHoughTransform();
     void testNonLinFit_GaussianFunction();
     void testNonLinFit_fitter();
+
+    void testNonLinFit_fitter2();
     void testStatistics();
     void testSignFunction();
 };
@@ -186,7 +188,7 @@ void TKiplMathTest::testNonLinFit_fitter()
 
     for (int i=0; i<N; ++i)
     {
-        x[i]=(N-N/2)*0.2;
+        x[i]=(i-N/2)*0.2;
         y[i]=sog0(x[i]);
         sig[i]=1.0;
     }
@@ -195,9 +197,7 @@ void TKiplMathTest::testNonLinFit_fitter()
     sog[1]=.1; //m
     sog[2]=0.9; //s
 
-    Array2D<long double> alpha(sog.getNpars(),sog.getNpars());
-    Array2D<long double> covar(sog.getNpars(),sog.getNpars());
-    Nonlinear::LevenbergMarquardt(x,y,N,sog,1e-7);
+    Nonlinear::LevenbergMarquardt(x,y,N,sog,1e-15);
 
  //   Nonlinear::mrqmin(x,y,sig, N, covar, alpha, chisq, sog,alambda);
     sog.printPars();
@@ -208,6 +208,54 @@ void TKiplMathTest::testNonLinFit_fitter()
     delete [] x;
     delete [] y;
     delete [] sig;
+}
+
+void TKiplMathTest::testNonLinFit_fitter2()
+{
+    int N=100;
+
+    Array1D<double> x(N);
+    Array1D<double> y(N);
+    Array1D<double> sig(N);
+    Array1D<double> aa(3);
+    Array1D<double> aa0(3);
+    Array1D<double> dyda(3);
+
+//    Nonlinear::SumOfGaussians sog0(1);
+//    sog0[0]=2; //A
+//    sog0[1]=0; //m
+//    sog0[2]=1; //s
+
+        aa0[0]=2; //A
+        aa0[1]=0; //m
+        aa0[2]=1; //s
+
+
+    for (int i=0; i<N; ++i)
+    {
+        x[i]=(i-N/2)*0.2;
+        NonlinearDev::fgauss(x[i],aa0,y[i],dyda);
+      //  qDebug() << "Data: x="<<x[i]<<", y="<<y[i];
+        sig[i]=1.0;
+    }
+
+    aa[0]=2; //A
+    aa[1]=1; //m
+    aa[2]=0.1; //s
+
+    NonlinearDev::LevenbergMarquardt mrq(x,y,sig,aa,&NonlinearDev::fgauss,1e-15);
+
+    mrq.fit();
+
+    qDebug() <<aa[0]<<", "<<aa[1]<<", "<<aa[2];
+
+    QCOMPARE(aa[0], aa0[0]);
+    QCOMPARE(aa[1], aa0[1]);
+    QCOMPARE(aa[2], aa0[2]);
+//    QVERIFY(qFuzzyCompare(aa[0], aa0[0]));
+//    QVERIFY(qFuzzyCompare(aa[1], aa0[1]));
+//    QVERIFY(qFuzzyCompare(aa[2], aa0[2]));
+
 }
 
 void TKiplMathTest::testStatistics()

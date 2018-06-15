@@ -7,6 +7,51 @@
 
 using namespace TNT;
 
+namespace NonlinearDev {
+class LevenbergMarquardt {
+//Object for nonlinear least-squares fitting by the Levenberg-Marquardt method, also including
+//the ability to hold specified parameters at fixed, specified values. Call constructor to bind data
+//vectors and fitting functions and to input an initial parameter guess. Then call any combination
+//of hold, free, and fit as often as desired. fit sets the output quantities a, covar, alpha,
+//and chisq.
+
+public:
+    LevenbergMarquardt(Array1D<double> &xx, Array1D<double> &yy, Array1D<double> &ssig,
+                Array1D<double> &aa,
+                void funks(const double, Array1D<double> &, double &, Array1D<double> &),
+                const double TOL=1.e-3) ;
+
+    void setTolerance(double t) {tol=fabs(t);}
+    double getTolerance() {return tol;}
+
+    void hold(const int i, const double val);
+
+    void free(const int i);
+
+    void fit();
+private:
+
+
+    static const int NDONE=4, ITMAX=1000; //Convergence parameters.
+    int ndat, ma, mfit;
+    Array1D<double> &x,&y,&sig;
+    double tol;
+    void (*funcs)(const double, Array1D<double> &, double &, Array1D<double> &);
+    std::vector<bool> ia;
+    Array1D<double> a; //Output values. a is the vector of fitted coefficients, covar is its covariance matrix, alpha is the curvature matrix, and chisq is the value of 2 fothe fit.
+    Array2D<double> covar;
+    Array2D<double> alpha;
+    double chisq;
+
+    void mrqcof(Array1D<double> &a, Array2D<double> &alpha, Array1D<double> &beta);
+    void covsrt(Array2D<double> &covar);
+    void gaussj(Array2D<double> &a, Array2D<double> &b);
+
+};
+
+void fgauss(const double x, Array1D<double> &a, double &y, Array1D<double> &dyda);
+}
+
 namespace Nonlinear {
 /// \brief Base class for mathematical function classes
 ///
