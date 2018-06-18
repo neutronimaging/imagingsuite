@@ -1,65 +1,155 @@
+//<LICENSE>
+
+#include <map>
+#include <string>
+
+#include <QDebug>
+
 #include "resolutionestimators.h"
+
+#include <strings/miscstring.h>
 
 namespace ImagingQAAlgorithms {
 
-ResolutionEstimators::ResolutionEstimators() :
-    profileFunction(ResolutionEstimators::LorenzProfile),
-    pixelSize(0.1f),
+ResolutionEstimator::ResolutionEstimator() :
+    profileFunction(ResolutionEstimator::LorenzProfile),
+    pixelSize(0.1),
     profileSize(0),
-    dx(1.0f),
     profile(nullptr)
 {
 
 }
 
-ResolutionEstimators::~ResolutionEstimators()
+ResolutionEstimator::~ResolutionEstimator()
 {
     removeAllocation();
 }
 
-
-void ResolutionEstimators::setProfile(float *p, int N, float d)
+void ResolutionEstimator::setPixelSize(double s)
 {
-
+    pixelSize=fabs(s);
 }
 
-float ResolutionEstimators::getFWHM()
+double ResolutionEstimator::getPixelSize()
+{
+    return getPixelSize();
+}
+
+void ResolutionEstimator::setProfile(float *p, int N, double d)
+{
+    (void)p;
+    (void)N;
+    (void)d;
+}
+
+void ResolutionEstimator::setProfile(double *p, int N, double d)
+{
+    (void)p;
+    (void)N;
+    (void)d;
+}
+
+void ResolutionEstimator::setProfile(std::vector<double> &p, double d)
+{
+    (void)p;
+    (void)d;
+}
+
+void ResolutionEstimator::setProfile(TNT::Array1D<double> &p, double d)
+{
+    (void)p;
+    (void)d;
+}
+
+
+float ResolutionEstimator::getFWHM()
 {
     return -1.0f;
 }
 
-float ResolutionEstimators::getMTFresolution(float level)
+float ResolutionEstimator::getMTFresolution(float level)
 {
+    (void)level;
+
     return -1.0f;
 }
 
-vector<pair<float,float> > ResolutionEstimators::getEdgeDerivative(float smooth)
+void ResolutionEstimator::getEdgeDerivative(std::vector<double> &x, std::vector<double> &y, float smooth)
+{
+
+}
+
+vector<pair<float,float> > ResolutionEstimator::getMTF()
 {
     vector<pair<float,float> > d;
 
     return d;
 }
 
-vector<pair<float,float> > ResolutionEstimators::getMTF()
-{
-    vector<pair<float,float> > d;
-
-    return d;
-}
-
-void ResolutionEstimators::createAllocation(int N)
+void ResolutionEstimator::createAllocation(int N)
 {
     removeAllocation();
 
-    profile=new float[N];
+    profile=new double[N];
     profileSize=N;
 }
 
-void ResolutionEstimators::removeAllocation()
+void ResolutionEstimator::removeAllocation()
 {
     if (profile!=nullptr) {
         delete [] profile;
         profileSize=0;
     }
 }
+}
+
+void string2enum(string &str, ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction &e)
+{
+    std::string lowstr=kipl::strings::toLower(str);
+
+    std::map<std::string,ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction> convmap;
+
+    convmap["bestprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile;
+    convmap["gaussprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile;
+    convmap["lorenzprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile;
+    convmap["voightprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile;
+
+    auto it=convmap.find(lowstr);
+
+    if (it==convmap.end())
+        throw kipl::base::KiplException("Profile function does not exist",__FILE__,__LINE__);
+
+    e=it->second;
+
+
+}
+
+std::string enum2string(ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction e)
+{
+    switch(e) {
+    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile:
+        return "BestProfile";
+        break;
+    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile:
+        return "GaussProfile";
+        break;
+    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile:
+        return "LorenzProfile";
+        break;
+    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile:
+        return "VoightProfile";
+        break;
+    }
+
+    return "GaussProfile";
+}
+
+ostream &operator<<(ostream &s, ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction e)
+{
+    std::string str;
+    str=enum2string(e);
+
+    s<<str;
+
+    return s;
 }
