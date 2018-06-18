@@ -8,14 +8,16 @@
 #include "resolutionestimators.h"
 
 #include <strings/miscstring.h>
+#include <math/nonlinfit.h>
 
 namespace ImagingQAAlgorithms {
 
 ResolutionEstimator::ResolutionEstimator() :
     profileFunction(ResolutionEstimator::LorenzProfile),
-    pixelSize(0.1),
     profileSize(0),
-    profile(nullptr)
+    pixelSize(0.1),
+    profile(nullptr),
+    dprofile(nullptr)
 {
 
 }
@@ -32,7 +34,7 @@ void ResolutionEstimator::setPixelSize(double s)
 
 double ResolutionEstimator::getPixelSize()
 {
-    return getPixelSize();
+    return pixelSize;
 }
 
 void ResolutionEstimator::setProfile(float *p, int N, double d)
@@ -94,6 +96,7 @@ void ResolutionEstimator::createAllocation(int N)
     removeAllocation();
 
     profile=new double[N];
+    dprofile=new double[N];
     profileSize=N;
 }
 
@@ -101,9 +104,45 @@ void ResolutionEstimator::removeAllocation()
 {
     if (profile!=nullptr) {
         delete [] profile;
+        profile=nullptr;
         profileSize=0;
     }
+
+    if (dprofile!=nullptr) {
+        delete [] dprofile;
+        dprofile=nullptr;
+    }
+
 }
+
+void ResolutionEstimator::analysis()
+{
+   diffProfile();
+
+   analyzeLineSpread();
+
+   analyzeMTF();
+}
+
+void ResolutionEstimator::analyzeLineSpread()
+{
+    NonlinearDev::LevenbergMarquardt mrq;
+
+
+}
+
+void ResolutionEstimator::analyzeMTF()
+{
+
+}
+
+void ResolutionEstimator::diffProfile()
+{
+    for (int i=0; i<profileSize-1; ++i)
+        dprofile[i]=profile[i+1]-profile[i];
+    dprofile[profileSize-1]=dprofile[profileSize-2];
+}
+
 }
 
 void string2enum(string &str, ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction &e)

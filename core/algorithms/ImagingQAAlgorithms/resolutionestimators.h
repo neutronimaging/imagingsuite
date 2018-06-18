@@ -41,9 +41,14 @@ public:
 protected:
     void createAllocation(int N);
     void removeAllocation();
+    void analysis();
+    void analyzeLineSpread();
+    void analyzeMTF();
+    void diffProfile();
     int profileSize;
     double pixelSize;
     double *profile;
+    double *dprofile;
 };
 }
 
