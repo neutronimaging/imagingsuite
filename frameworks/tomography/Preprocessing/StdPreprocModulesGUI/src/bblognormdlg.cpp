@@ -1,7 +1,5 @@
 //<LICENSE>
 
-#include "unpublpreprocessinggui_global.h"
-
 #include <QFileDialog>
 #include <QImage>
 #include <QMessageBox>

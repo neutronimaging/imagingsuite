@@ -2,7 +2,7 @@
 
 #ifndef BBLOGNORMDLG_H
 #define BBLOGNORMDLG_H
-#include "unpublpreprocessinggui_global.h"
+#include "StdPreprocModulesGUI_global.h"
 
 #include <QDialog>
 
