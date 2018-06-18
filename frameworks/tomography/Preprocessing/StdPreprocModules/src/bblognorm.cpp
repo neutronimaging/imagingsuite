@@ -10,8 +10,9 @@
 
 #include "../include/bblognorm.h"
 
-BBLogNorm::BBLogNorm() :
-    PreprocModuleBase("RobustLogNorm"),
+
+BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     nOBCount(0),
     nOBFirstIndex(1),
@@ -52,6 +53,7 @@ BBLogNorm::BBLogNorm() :
     min_area(20),
     thresh(0)
 {
+
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
     blackbodyname = "./";
@@ -178,7 +180,7 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
         bUseExternalBB = true;
         break;
     }
-    default: throw ReconException("Unknown BBOption method in RobustLogNorm::Configure",__FILE__,__LINE__);
+    default: throw ReconException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
 
     }
 
@@ -379,7 +381,7 @@ void BBLogNorm::PrepareBBData(){
             }
             break;
         }
-        default: throw ReconException("Unknown m_InterpMethod in RobustLogNorm::PrepareBBData()", __FILE__, __LINE__);
+        default: throw ReconException("Unknown m_InterpMethod in BBLogNorm::PrepareBBData()", __FILE__, __LINE__);
         }
 
 

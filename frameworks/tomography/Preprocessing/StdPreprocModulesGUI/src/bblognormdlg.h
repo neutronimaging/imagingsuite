@@ -24,7 +24,7 @@ class BBLogNormDlg : public ConfiguratorDialogBase
     Q_OBJECT
 
 public:
-    explicit BBLogNormDlg(QWidget *parent = NULL);
+    explicit BBLogNormDlg(QWidget *parent = 0);
      ~BBLogNormDlg();
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 

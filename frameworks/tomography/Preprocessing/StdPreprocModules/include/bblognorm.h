@@ -1,5 +1,5 @@
-#ifndef ROBUSTLOGNORM_H_
-#define ROBUSTLOGNORM_H_
+#ifndef BBLOGNORM_H
+#define BBLOGNORM_H
 
 #include "StdPreprocModules_global.h"
 
@@ -20,7 +20,7 @@
 class STDPREPROCMODULESSHARED_EXPORT BBLogNorm : public PreprocModuleBase
 {
 public:
-    BBLogNorm();
+    BBLogNorm(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~BBLogNorm();
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
@@ -152,4 +152,4 @@ private:
 
 
 
-#endif // ROBUSTLOGNORM_H
+#endif // BBLOGNORM_H

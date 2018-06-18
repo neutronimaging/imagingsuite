@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef IMGALG_REFERENCEIMAGECORRECTION_H_
-#define IMGALG_REFERENCEIMAGECORRECTION_H_
+#ifndef REFERENCEIMAGECORRECTION_H
+#define REFERENCEIMAGECORRECTION_H
 #include "ImagingAlgorithms_global.h"
 
 #include <map>
@@ -16,7 +16,7 @@
 
 namespace ImagingAlgorithms {
 
-class ReferenceImageCorrection {
+class IMAGINGALGORITHMSSHARED_EXPORT ReferenceImageCorrection {
 protected:
 	kipl::logging::Logger logger;
 public:
@@ -53,7 +53,7 @@ public:
 
 
 	ReferenceImageCorrection();
-	virtual ~ReferenceImageCorrection();
+    virtual ~ReferenceImageCorrection();
 
     void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
             std::string dcname, size_t firstdc, size_t dccnt,

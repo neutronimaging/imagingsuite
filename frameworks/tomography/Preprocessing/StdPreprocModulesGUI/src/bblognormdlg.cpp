@@ -17,7 +17,7 @@
 #include "ui_bblognormdlg.h"
 
 BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
-    ConfiguratorDialogBase("RobustLogNorm",true,false,true,parent),
+    ConfiguratorDialogBase("BBLogNorm",true,false,true,parent),
     ui(new Ui::BBLogNormDlg),
     nBBCount(0),
     nBBFirstIndex(1),
