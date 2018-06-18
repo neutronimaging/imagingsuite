@@ -37,30 +37,35 @@ double ResolutionEstimator::getPixelSize()
 
 void ResolutionEstimator::setProfile(float *p, int N, double d)
 {
-    (void)p;
-    (void)N;
     (void)d;
+    createAllocation(N);
+    std::copy_n(p,N,profile);
 }
 
 void ResolutionEstimator::setProfile(double *p, int N, double d)
 {
-    (void)p;
-    (void)N;
     (void)d;
+    createAllocation(N);
+    std::copy_n(p,N,profile);
 }
 
 void ResolutionEstimator::setProfile(std::vector<double> &p, double d)
 {
-    (void)p;
     (void)d;
+    size_t N=p.size();
+    createAllocation(N);
+    for (size_t i=0; i<N; ++i)
+        profile[i]=p[i];
 }
 
 void ResolutionEstimator::setProfile(TNT::Array1D<double> &p, double d)
 {
-    (void)p;
     (void)d;
+    size_t N=p.dim1();
+    createAllocation(N);
+    for (size_t i=0; i<N; ++i)
+        profile[i]=p[i];
 }
-
 
 float ResolutionEstimator::getFWHM()
 {
@@ -79,11 +84,9 @@ void ResolutionEstimator::getEdgeDerivative(std::vector<double> &x, std::vector<
 
 }
 
-vector<pair<float,float> > ResolutionEstimator::getMTF()
+void ResolutionEstimator::getMTF(std::vector<double> &w, std::vector<double> &a)
 {
-    vector<pair<float,float> > d;
 
-    return d;
 }
 
 void ResolutionEstimator::createAllocation(int N)

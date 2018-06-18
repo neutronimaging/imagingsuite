@@ -36,7 +36,7 @@ public:
     float getFWHM();
     float getMTFresolution(float level=0.1f);
     void getEdgeDerivative(std::vector<double> &x, std::vector<double> &y, float smooth=0.0f);
-    vector<pair<float,float> > getMTF();
+    void getMTF(std::vector<double> &w, std::vector<double> &a);
 
 protected:
     void createAllocation(int N);
