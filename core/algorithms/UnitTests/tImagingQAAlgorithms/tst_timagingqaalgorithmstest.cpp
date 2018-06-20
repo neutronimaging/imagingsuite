@@ -61,45 +61,7 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 
 }
 
-void TImagingQAAlgorithmsTest::testResEstAdmin()
-{
-    std::string val;
-    ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction e;
 
-    val="BestProfile";
-    string2enum(val,e);
-    QCOMPARE(e,ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile);
-    val="GaussProfile";
-    string2enum(val,e);
-    QCOMPARE(e,ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile);
-    val="LorenzProfile";
-    string2enum(val,e);
-    QCOMPARE(e,ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile);
-    val="VoightProfile";
-    string2enum(val,e);
-    QCOMPARE(e,ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile);
-
-    QCOMPARE(enum2string(ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile),std::string("BestProfile"));
-    QCOMPARE(enum2string(ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile),std::string("GaussProfile"));
-    QCOMPARE(enum2string(ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile),std::string("LorenzProfile"));
-    QCOMPARE(enum2string(ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile),std::string("VoightProfile"));
-
-    ostringstream msg;
-    msg.str("");
-    msg<<ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile;
-    qDebug()<< msg.str().c_str();
-    QCOMPARE(msg.str(),std::string("BestProfile"));
-    msg.str("");
-    msg<<ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile;
-    QCOMPARE(msg.str(),std::string("GaussProfile"));
-    msg.str("");
-    msg<<ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile;
-    QCOMPARE(msg.str(),std::string("LorenzProfile"));
-    msg.str("");
-    msg<<ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile;
-    QCOMPARE(msg.str(),std::string("VoightProfile"));
-
-}
 
 void TImagingQAAlgorithmsTest::testResEstAlg()
 {

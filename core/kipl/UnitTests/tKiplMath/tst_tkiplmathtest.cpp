@@ -30,6 +30,7 @@ public:
 private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
+    void testNonLinFit_enums();
     void testNonLinFit_GaussianFunction();
     void testNonLinFit_fitter();
 
@@ -129,6 +130,38 @@ void TKiplMathTest::testCircularHoughTransform()
     kipl::io::WriteTIFF32(chm,"chtg_map.tif");
 }
 
+void TKiplMathTest::testNonLinFit_enums()
+{
+    std::string val;
+    Nonlinear::eProfileFunction e;
+
+    val="GaussProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnSumOfGaussians);
+    val="LorenzProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnLorenzian);
+    val="VoightProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnVoight);
+
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnSumOfGaussians),std::string("GaussProfile"));
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnLorenzian),std::string("LorenzProfile"));
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnVoight),std::string("VoightProfile"));
+
+    ostringstream msg;
+
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnSumOfGaussians;
+    QCOMPARE(msg.str(),std::string("GaussProfile"));
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnLorenzian;
+    QCOMPARE(msg.str(),std::string("LorenzProfile"));
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnVoight;
+    QCOMPARE(msg.str(),std::string("VoightProfile"));
+
+}
 void TKiplMathTest::testNonLinFit_GaussianFunction()
 {
     Nonlinear::SumOfGaussians sog(1);

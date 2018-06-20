@@ -9,12 +9,19 @@ using namespace TNT;
 
 namespace Nonlinear {
 
+enum eProfileFunction {
+    fnSumOfGaussians,
+    fnLorenzian,
+    fnVoight
+};
+
 /// \brief Base class for mathematical function classes
 ///
 ///  The children of this class are intended to be used as target functions for non-linear curvefitting.
 class FitFunctionBase
 {
 public:
+
     /// \brief Constructor
     ///
     ///	  \param n The number of parameters needed to describe the target function
@@ -257,5 +264,8 @@ int LeastMedianSquared(double *x, double *y, FitFunctionBase &fn);
 
 } // End namespace nonlinear
 
+void string2enum(std::string &str, Nonlinear::eProfileFunction &e);
+std::string enum2string(Nonlinear::eProfileFunction e);
 
+std::ostream & operator<<(std::ostream &s, Nonlinear::eProfileFunction e);
 #endif

@@ -7,17 +7,21 @@
 
 #include "resolutionestimators.h"
 
+#include <tnt.h>
 #include <strings/miscstring.h>
 #include <math/nonlinfit.h>
 
 namespace ImagingQAAlgorithms {
 
 ResolutionEstimator::ResolutionEstimator() :
-    profileFunction(ResolutionEstimator::LorenzProfile),
+    profileFunction(Nonlinear::fnSumOfGaussians),
     profileSize(0),
     pixelSize(0.1),
     profile(nullptr),
-    dprofile(nullptr)
+    dprofile(nullptr),
+    xaxis(nullptr),
+    fwhm(-1.0),
+    fn(Nonlinear::SumOfGaussians)
 {
 
 }
@@ -42,6 +46,7 @@ void ResolutionEstimator::setProfile(float *p, int N, double d)
     (void)d;
     createAllocation(N);
     std::copy_n(p,N,profile);
+    analysis();
 }
 
 void ResolutionEstimator::setProfile(double *p, int N, double d)
@@ -49,6 +54,7 @@ void ResolutionEstimator::setProfile(double *p, int N, double d)
     (void)d;
     createAllocation(N);
     std::copy_n(p,N,profile);
+    analysis();
 }
 
 void ResolutionEstimator::setProfile(std::vector<double> &p, double d)
@@ -58,6 +64,17 @@ void ResolutionEstimator::setProfile(std::vector<double> &p, double d)
     createAllocation(N);
     for (size_t i=0; i<N; ++i)
         profile[i]=p[i];
+    analysis();
+}
+
+void ResolutionEstimator::setProfile(std::vector<float> &p, double d)
+{
+    (void)d;
+    size_t N=p.size();
+    createAllocation(N);
+    for (size_t i=0; i<N; ++i)
+        profile[i]=p[i];
+    analysis();
 }
 
 void ResolutionEstimator::setProfile(TNT::Array1D<double> &p, double d)
@@ -67,11 +84,12 @@ void ResolutionEstimator::setProfile(TNT::Array1D<double> &p, double d)
     createAllocation(N);
     for (size_t i=0; i<N; ++i)
         profile[i]=p[i];
+    analysis();
 }
 
 float ResolutionEstimator::getFWHM()
 {
-    return -1.0f;
+    return fwhm;
 }
 
 float ResolutionEstimator::getMTFresolution(float level)
@@ -81,9 +99,23 @@ float ResolutionEstimator::getMTFresolution(float level)
     return -1.0f;
 }
 
-void ResolutionEstimator::getEdgeDerivative(std::vector<double> &x, std::vector<double> &y, float smooth)
+void ResolutionEstimator::getEdgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit, float smooth)
 {
-
+    (void) smooth;
+    x.clear();
+    y.clear();
+    if (returnFit==true) {
+        for (int i=0; i<profileSize; ++i) {
+            x.push_back(i*pixelSize);
+            y.push_back(fn(x[i]));
+        }
+    }
+    else {
+        for (int i=0; i<profileSize; ++i) {
+            x.push_back(i*pixelSize);
+            y.push_back(dprofile[i]);
+        }
+    }
 }
 
 void ResolutionEstimator::getMTF(std::vector<double> &w, std::vector<double> &a)
@@ -97,6 +129,7 @@ void ResolutionEstimator::createAllocation(int N)
 
     profile=new double[N];
     dprofile=new double[N];
+    xaxis=new double[N];
     profileSize=N;
 }
 
@@ -113,6 +146,17 @@ void ResolutionEstimator::removeAllocation()
         dprofile=nullptr;
     }
 
+    if (xaxis!=nullptr) {
+        delete [] xaxis;
+        xaxis=nullptr;
+    }
+}
+
+void ResolutionEstimator::prepareXAxis()
+{
+    for (int i=0; i<profileSize; ++i) {
+        xaxis[i]=pixelSize*i;
+    }
 }
 
 void ResolutionEstimator::analysis()
@@ -126,7 +170,35 @@ void ResolutionEstimator::analysis()
 
 void ResolutionEstimator::analyzeLineSpread()
 {
-    NonlinearDev::LevenbergMarquardt mrq;
+    Nonlinear::LevenbergMarquardt mrq;
+
+    switch (profileFunction) {
+    case Nonlinear::fnSumOfGaussians :
+        fn=Nonlinear::SumOfGaussians;
+        fn[0]=profileSize/2.0;
+        fn[1]=*std::max_element(dprofile,dprofile+profileSize);
+        fn[2]=profileSize/6.0;
+        break;
+    case Nonlinear::fnLorenzian :
+        fn=Nonlinear::Lorenzian;
+        break;
+    case Nonlinear::fnVoight :
+        fn=Nonlinear::Voight;
+        break;
+    default :
+        throw kipl::base::KiplException("Unsupported profile fit function in resolution estimator",__FILE__,__LINE__);
+    }
+
+    TNT::Array1D<double> x(profileSize);
+    TNT::Array1D<double> y(profileSize);
+    TNT::Array1D<double> sig(profileSize);
+
+    for (int i=0; i<x.dim1(); ++i) {
+        x[i]=xaxis[i];
+        y[i]=dprofile[i];
+        sig[i]=1.0;
+    }
+    mrq.fit(x,y,sig,fn);
 
 
 }
@@ -145,53 +217,4 @@ void ResolutionEstimator::diffProfile()
 
 }
 
-void string2enum(string &str, ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction &e)
-{
-    std::string lowstr=kipl::strings::toLower(str);
 
-    std::map<std::string,ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction> convmap;
-
-    convmap["bestprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile;
-    convmap["gaussprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile;
-    convmap["lorenzprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile;
-    convmap["voightprofile"]=ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile;
-
-    auto it=convmap.find(lowstr);
-
-    if (it==convmap.end())
-        throw kipl::base::KiplException("Profile function does not exist",__FILE__,__LINE__);
-
-    e=it->second;
-
-
-}
-
-std::string enum2string(ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction e)
-{
-    switch(e) {
-    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::BestProfile:
-        return "BestProfile";
-        break;
-    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::GaussProfile:
-        return "GaussProfile";
-        break;
-    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::LorenzProfile:
-        return "LorenzProfile";
-        break;
-    case ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction::VoightProfile:
-        return "VoightProfile";
-        break;
-    }
-
-    return "GaussProfile";
-}
-
-ostream &operator<<(ostream &s, ImagingQAAlgorithms::ResolutionEstimator::eProfileFunction e)
-{
-    std::string str;
-    str=enum2string(e);
-
-    s<<str;
-
-    return s;
-}

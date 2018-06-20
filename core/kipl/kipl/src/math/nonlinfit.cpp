@@ -15,6 +15,7 @@
 #include "../../include/math/mathconstants.h"
 #include "../../include/logging/logger.h"
 #include "../../include/base/KiplException.h"
+#include "../../include/strings/miscstring.h"
 
 using namespace TNT;
 using namespace JAMA;
@@ -492,4 +493,51 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         cout<<est<<"gamma="<<m_pars[0];
     }
 
+}
+
+void string2enum(string &str, Nonlinear::eProfileFunction &e)
+{
+    std::string lowstr=kipl::strings::toLower(str);
+
+    std::map<std::string,Nonlinear::eProfileFunction> convmap;
+
+    convmap["gaussprofile"]=Nonlinear::eProfileFunction::fnSumOfGaussians;
+    convmap["lorenzprofile"]=Nonlinear::eProfileFunction::fnLorenzian;
+    convmap["voightprofile"]=Nonlinear::eProfileFunction::fnVoight;
+
+    auto it=convmap.find(lowstr);
+
+    if (it==convmap.end())
+        throw kipl::base::KiplException("Profile function does not exist",__FILE__,__LINE__);
+
+    e=it->second;
+
+
+}
+
+std::string enum2string(Nonlinear::eProfileFunction e)
+{
+    switch(e) {
+    case Nonlinear::fnSumOfGaussians:
+        return "GaussProfile";
+        break;
+    case Nonlinear::fnLorenzian:
+        return "LorenzProfile";
+        break;
+    case Nonlinear::fnVoight:
+        return "VoightProfile";
+        break;
+    }
+
+    return "GaussProfile";
+}
+
+ostream &operator<<(ostream &s, Nonlinear::eProfileFunction e)
+{
+    std::string str;
+    str=enum2string(e);
+
+    s<<str;
+
+    return s;
 }
