@@ -25,7 +25,8 @@ SOURCES += ../../src/stdpreprocmodulesgui.cpp \
     ../../src/adaptivefilterdlg.cpp \
     ../../src/SpotClean2Dlg.cpp \
     ../../src/medianmixringcleandlg.cpp \
-    ../../src/generalfilterdlg.cpp
+    ../../src/generalfilterdlg.cpp \
+    ../../src/bblognormdlg.cpp
 
 HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/StdPreprocModulesGUI_global.h \
@@ -38,7 +39,8 @@ HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/adaptivefilterdlg.h \
     ../../src/SpotClean2Dlg.h \
     ../../src/medianmixringcleandlg.h \
-    ../../src/generalfilterdlg.h
+    ../../src/generalfilterdlg.h \
+    ../../src/bblognormdlg.h
 
 
 symbian {
@@ -132,5 +134,6 @@ FORMS += \
     ../../src/projectionfilterdlg.ui \
     ../../src/WaveletRingCleanDlg.ui \
     ../../src/generalfilterdlg.ui \
-    ../../src/FullLogNormDlg.ui
+    ../../src/FullLogNormDlg.ui \
+    ../../src/bblognormdlg.ui
 
