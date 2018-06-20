@@ -64,7 +64,8 @@ SOURCES += \
     ../../src/pixelinfo.cpp \
     ../../src/gammaclean.cpp \
     ../../src/averageimage.cpp \
-    ../../src/piercingpointestimator.cpp
+    ../../src/piercingpointestimator.cpp \
+    ../../src/ReferenceImageCorrection.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -77,7 +78,8 @@ HEADERS += \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \
     ../../include/averageimage.h \
-    ../../include/piercingpointestimator.h
+    ../../include/piercingpointestimator.h \
+    ../../include/ReferenceImageCorrection.h
 
 
 symbian {

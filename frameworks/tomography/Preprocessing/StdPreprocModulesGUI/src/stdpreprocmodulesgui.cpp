@@ -15,6 +15,7 @@
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
 #include "generalfilterdlg.h"
+#include "bblognormdlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -28,6 +29,10 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
 
         if (sName=="FullLogNorm")
             return new FullLogNormDlg;
+
+
+        if (sName=="BBLogNorm")
+            return new BBLogNormDlg;
 
 //        if (sName=="LogProjection")
 //            return new LogProjection;

@@ -21,9 +21,9 @@ copy %REPOS%\lib\StdPreprocModulesGUI.dll .
 copy %REPOS%\lib\InspectorModulesGUI.dll .
 copy %REPOS%\lib\InspectorModules.dll .
 copy %REPOS%\lib\FDKBackProjectors.dll .
-copy %REPOS%\lib\UnpublishedImagingAlgorithms.dll .
-copy %REPOS%\lib\UnpublPreProcessing.dll .
-copy %REPOS%\lib\UnpublPreProcessingGUI.dll .
+#copy %REPOS%\lib\UnpublishedImagingAlgorithms.dll .
+#copy %REPOS%\lib\UnpublPreProcessing.dll .
+#copy %REPOS%\lib\UnpublPreProcessingGUI.dll .
 copy %REPOS%\lib\ReaderConfig.dll .
 copy %REPOS%\lib\ReaderGUI.dll .
 #copy %REPOS%\lib\ReconAlgorithms.dll .
