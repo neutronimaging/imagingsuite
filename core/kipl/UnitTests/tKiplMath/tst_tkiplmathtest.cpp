@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <base/timage.h>
 #include <base/index2coord.h>
@@ -29,8 +30,10 @@ public:
 private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
-    void testNonLinFit_fitfunctions();
+    void testNonLinFit_enums();
+    void testNonLinFit_GaussianFunction();
     void testNonLinFit_fitter();
+
     void testStatistics();
     void testSignFunction();
 };
@@ -127,14 +130,111 @@ void TKiplMathTest::testCircularHoughTransform()
     kipl::io::WriteTIFF32(chm,"chtg_map.tif");
 }
 
-void TKiplMathTest::testNonLinFit_fitfunctions()
+void TKiplMathTest::testNonLinFit_enums()
 {
- //   kipl::Nonlinear::SumOfGaussians sog;
+    std::string val;
+    Nonlinear::eProfileFunction e;
 
+    val="GaussProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnSumOfGaussians);
+    val="LorenzProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnLorenzian);
+    val="VoightProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnVoight);
+
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnSumOfGaussians),std::string("GaussProfile"));
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnLorenzian),std::string("LorenzProfile"));
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnVoight),std::string("VoightProfile"));
+
+    ostringstream msg;
+
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnSumOfGaussians;
+    QCOMPARE(msg.str(),std::string("GaussProfile"));
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnLorenzian;
+    QCOMPARE(msg.str(),std::string("LorenzProfile"));
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnVoight;
+    QCOMPARE(msg.str(),std::string("VoightProfile"));
+
+}
+void TKiplMathTest::testNonLinFit_GaussianFunction()
+{
+    Nonlinear::SumOfGaussians sog(1);
+    QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
+    QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
+
+    bool lv[]={false,true,true};
+    sog.setLock(lv);
+    for (int i=0; i<sog.getNpars(); ++i)
+        QCOMPARE(sog.isFree(i),lv[i]);
+
+    QCOMPARE(sog.getNpars2fit(),1);
+    sog[0]=1;
+    sog[1]=0;
+    sog[2]=1;
+
+    QCOMPARE(sog(0.0),(double)1.0);
+    QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
+
+    Nonlinear::SumOfGaussians sog2(2);
+    sog2[0]=1;
+    sog2[1]=0;
+    sog2[2]=1;
+    sog2[3]=2;
+    sog2[4]=0.5;
+    sog2[5]=0.5;
+//    qDebug() << (double)sog2(0);
+//    qDebug() << (double)sog2(1);
+    QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
+    QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
+
+    double x=1;
+    double y0=0;
+    double y1=0;
+    Array1D<double> dyda(3);
+
+    y0=sog(x);
+    sog(x,y1,dyda);
+    QCOMPARE(y0,y1);
 }
 
 void TKiplMathTest::testNonLinFit_fitter()
 {
+    int N=100;
+
+    Array1D<double> x(N);
+    Array1D<double> y(N);
+    Array1D<double> sig(N);
+
+    Nonlinear::SumOfGaussians sog0(1),sog(1);
+    sog0[0]=2; //A
+    sog0[1]=0; //m
+    sog0[2]=1; //s
+
+    sog[0]=1; //A
+    sog[1]=0.5; //m
+    sog[2]=1.5; //s
+
+    for (int i=0; i<N; ++i)
+    {
+        x[i]=(i-N/2)*0.2;
+        y[i]=sog0(x[i]);
+      //  qDebug() << "Data: x="<<x[i]<<", y="<<y[i];
+        sig[i]=1.0;
+    }
+
+    Nonlinear::LevenbergMarquardt mrq(1e-15);
+
+    mrq.fit(x,y,sig,sog);
+
+    QCOMPARE(sog[0], sog0[0]);
+    QCOMPARE(sog[1], sog0[1]);
+    QCOMPARE(sog[2], sog0[2]);
 
 }
 

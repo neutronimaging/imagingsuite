@@ -10,6 +10,7 @@
 #include <math/statistics.h>
 
 #include <contrastsampleanalysis.h>
+#include <resolutionestimators.h>
 
 class TImagingQAAlgorithmsTest : public QObject
 {
@@ -20,6 +21,8 @@ public:
 
 private Q_SLOTS:
     void testContrastSampleAnalysis();
+    void testResEstAdmin();
+    void testResEstAlg();
 };
 
 TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
@@ -55,6 +58,13 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
     csa.setImage(orig);
 
     csa.analyzeContrast(resolution);
+
+}
+
+
+
+void TImagingQAAlgorithmsTest::testResEstAlg()
+{
 
 }
 
