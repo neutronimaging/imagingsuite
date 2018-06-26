@@ -760,7 +760,7 @@ void MuhRecMainWindow::MenuHelpAbout()
     QMessageBox dlg;
     std::ostringstream msg;
 
-    msg<<"MuhRec 3\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
+    msg<<"MuhRec 4\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
 
     msg<<"Using \nQt version: "<<qVersion()<<"\n"
       <<"LibTIFF, zLib, fftw3, libcfitsio";
