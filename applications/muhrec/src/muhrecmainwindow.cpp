@@ -14,6 +14,7 @@
 #include <QUrl>
 #include <QSignalBlocker>
 #include <QDebug>
+#include <QVersionNumber>
 
 #include <base/timage.h>
 #include <base/KiplException.h>
@@ -759,8 +760,9 @@ void MuhRecMainWindow::MenuHelpAbout()
 {
     QMessageBox dlg;
     std::ostringstream msg;
+    QVersionNumber ver;
 
-    msg<<"MuhRec 4\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
+    msg<<"MuhRec "<<m_QtApp->applicationVersion().toStdString()<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
 
     msg<<"Using \nQt version: "<<qVersion()<<"\n"
       <<"LibTIFF, zLib, fftw3, libcfitsio";

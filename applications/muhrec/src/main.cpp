@@ -24,13 +24,14 @@ void TestConfig();
 
 int main(int argc, char *argv[])
 {
-    std::cout<<"Starting muhrec3"<<std::endl;
-    kipl::logging::Logger logger("MuhRec3");
+    std::cout<<"Starting MuhRec"<<std::endl;
+    kipl::logging::Logger logger("MuhRec");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
 
     std::ostringstream msg;
 
     QApplication app(argc, argv);
+    app.setApplicationVersion(VERSION);
 
     std::string homedir = QDir::homePath().toStdString();
 
