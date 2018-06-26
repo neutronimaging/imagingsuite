@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MuhRec 4</string>
+   <string>MuhRec</string>
   </property>
   <property name="toolTip">
    <string/>
@@ -2331,7 +2331,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
