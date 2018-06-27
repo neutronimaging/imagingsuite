@@ -92,7 +92,7 @@ cd $DEST/bin/platforms
 
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/Applications/muhrec .`
+`$CPCMD $REPOSPATH/Applications/MuhRec .`
 cd ..
 `$CPCMD $REPOSPATH/imagingsuite/applications/muhrec/scripts/muhrec .`
 chmod +x muhrec

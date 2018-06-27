@@ -951,7 +951,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
         catch (std::exception &e) {
-            msg<<"Reconstructor initialization failed with an STL exception: "<<endl
+            msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
@@ -961,12 +961,12 @@ void MuhRecMainWindow::ExecuteReconstruction()
             bBuildFailure=true;
         }
         catch (ReconException &e) {
-            msg<<"Reconstructor initialization failed with a recon exception: "<<endl
+            msg<<"Reconstructor initialization failed with a recon exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (kipl::base::KiplException &e) {
-            msg<<"Reconstructor initialization failed a Kipl exception: "<<endl
+            msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
@@ -1074,7 +1074,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
         }
     }
     catch (std::exception &e) {
-        msg<<"Reconstruction failed: "<<endl
+        msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
@@ -1084,12 +1084,12 @@ void MuhRecMainWindow::ExecuteReconstruction()
         bRunFailure=true;
     }
     catch (ReconException &e) {
-        msg<<"Reconstruction failed: "<<endl
+        msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
     catch (kipl::base::KiplException &e) {
-        msg<<"Reconstruction failed: "<<endl
+        msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
