@@ -266,7 +266,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
     int FitFunctionBase::getPars(Array1D<double> &pars)
     {
-
+        return 0;
     }
 	
 	int FitFunctionBase::getNpars() 
@@ -439,7 +439,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
     int Voight::Jacobian(double x, Array2D<double> &jac)
     {
-
+        return 0;
     }
 
     int Voight::printPars()
@@ -491,6 +491,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         char est=m_lock[0] ? ' ' : '*';
 
         cout<<est<<"gamma="<<m_pars[0];
+        return 0;
     }
 
 }

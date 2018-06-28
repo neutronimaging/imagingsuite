@@ -14,5 +14,5 @@ do
 	args=$args" "$arg
 done
 
-$BASEPATH/bin/muhrec3 $args
+$BASEPATH/bin/MuhRec $args
 

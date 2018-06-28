@@ -1,5 +1,8 @@
 //<LICENSE>
 
+#include <string>
+#include <iostream>
+
 #include <QtWidgets/QApplication>
 #include <QDesktopServices>
 #include <QPushButton>
@@ -10,12 +13,14 @@
 #include <QVector>
 #include <QDebug>
 #include <QStyleFactory>
-#include "muhrecmainwindow.h"
-#include <string>
+
 #include <strings/miscstring.h>
 #include <utilities/nodelocker.h>
+
 #include <ReconException.h>
 #include <ModuleException.h>
+
+#include "muhrecmainwindow.h"
 
 int RunGUI(QApplication *app);
 int RunOffline(QApplication *app);
@@ -24,13 +29,14 @@ void TestConfig();
 
 int main(int argc, char *argv[])
 {
-    std::cout<<"Starting muhrec3"<<std::endl;
-    kipl::logging::Logger logger("MuhRec3");
+    std::cout<<"Starting MuhRec"<<std::endl;
+    kipl::logging::Logger logger("MuhRec");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
 
     std::ostringstream msg;
 
     QApplication app(argc, argv);
+    app.setApplicationVersion(VERSION);
 
     std::string homedir = QDir::homePath().toStdString();
 
@@ -148,7 +154,7 @@ int RunOffline(QApplication *app)
 
     if (2<args.size()) {
         if (args[1]=="-f") {
-          logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in offline mode");
+          logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in CLI mode");
           try {
                   ReconFactory factory;
                   logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
@@ -156,8 +162,8 @@ int RunOffline(QApplication *app)
                   config.LoadConfigFile(args[2],"reconstructor");
                   config.GetCommandLinePars(args);
                   config.MatrixInfo.bAutomaticSerialize=true;
-                  ReconEngine *pEngine=factory.BuildEngine(config,NULL);
-                  if (pEngine!=NULL) {
+                  ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
+                  if (pEngine!=nullptr) {
                           logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
                           pEngine->Run3D();
                           logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
@@ -177,8 +183,8 @@ int RunOffline(QApplication *app)
                   }
               }  // Exception handling as last resort to report unhandled faults
               catch (ReconException &re) {
-                  cerr<<"An unhandled reconstructor exception occurred"<<endl;
-                  cerr<<"Trace :"<<endl<<re.what()<<endl;
+                  std::cerr<<"An unhandled reconstructor exception occurred"<<std::endl;
+                  std::cerr<<"Trace :"<<std::endl<<re.what()<<std::endl;
                   return -1;
               }
               catch (ModuleException &e) {
@@ -188,19 +194,19 @@ int RunOffline(QApplication *app)
                     return -3;
                 }
               catch (kipl::base::KiplException &ke) {
-                  cerr<<"An unhandled kipl exception occurred"<<endl;
-                  cerr<<"Trace :"<<endl<<ke.what()<<endl;
+                  std::cerr<<"An unhandled kipl exception occurred"<<std::endl;
+                  std::cerr<<"Trace :"<<std::endl<<ke.what()<<std::endl;
                   return -2;
               }
 
               catch (std::exception &e) {
-                  cerr<<"An unhandled STL exception occurred"<<endl;
-                  cerr<<"Trace :"<<endl<<e.what()<<endl;
+                  std::cerr<<"An unhandled STL exception occurred"<<std::endl;
+                  std::cerr<<"Trace :"<<std::endl<<e.what()<<std::endl;
                   return -4;
               }
 
               catch (...) {
-                  cerr<<"An unknown exception occurred"<<endl;
+                  std::cerr<<"An unknown exception occurred"<<std::endl;
                   return -5;
               }
           }

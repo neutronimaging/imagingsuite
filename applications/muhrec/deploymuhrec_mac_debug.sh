@@ -1,10 +1,7 @@
 DIRECTORY=~/Applications
-#QTPATH=$QTPATH
-#QTPATH=/Users/carminati/QT/5.9.4/clang_64
 
-DEST="$DIRECTORY/muhrec3.app"
+DEST="$DIRECTORY/MuhRec.app"
 REPOSPATH=$WORKSPACE
-#REPOSPATH=/Users/carminati/git
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -15,7 +12,7 @@ echo $QTPATH
 echo $DEST
 echo $REPOSPATH
 
-cp -r $REPOSPATH/Applications/muhrec3.app $DIRECTORY
+cp -r $REPOSPATH/Applications/MuhRec.app $DIRECTORY
 
 pushd .
 CPCMD="cp"
@@ -52,12 +49,6 @@ if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
 	`$CPCMD $REPOSPATH/Applications/muhrecCLI $DEST/Contents/MacOS`
 fi
 
-
-# if [ ! -d "./Resources" ]; then
-#  mkdir ./Resources
-# fi 
-# `$CPCMD $REPOSPATH/tomography/trunk/src/muhrec3/resources/muh_icon.icns $DEST/Contents/Resources`
-
 rm -f ./MacOS/*.dylib
 
 cd Frameworks
@@ -76,8 +67,7 @@ if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
 
-#cp ~/repos/tomography/trunk/src/muhrec3/resources/* ./Resources #this must be mistaken
-cp $REPOSPATH/imagingsuite/applications/muhrec3/Resources/* ./Resources
+cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/* ./Resources
 
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 echo "copy plugins"
@@ -118,16 +108,16 @@ echo "Do deploy..."
 ./macdeployqt $DEST #-dmg
 
 cd $DEST/Contents/MacOS
-# muhrec3
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib muhrec3
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib muhrec3
-install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib muhrec3
-install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib muhrec3
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib muhrec3
-install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
-install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrec3
-install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib muhrec3
-install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib muhrec3
+# muhrec
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib MuhRec
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib MuhRec
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib MuhRec
+install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib MuhRec
+install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib MuhRec
+install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
+install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib MuhRec
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib MuhRec
 
 # muhrecCLI
 if [ -e "muhrecCLI" ]; then
