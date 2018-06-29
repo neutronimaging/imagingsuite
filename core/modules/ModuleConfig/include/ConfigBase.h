@@ -97,7 +97,7 @@ public:
     void GetCommandLinePars(std::vector<std::string> &args);
 
     /// Sanity check on the number of slices to be reconstruct during Config
-    virtual std::string SanitySlicesCheck();
+    virtual std::string SanitySlicesCheck()=0;
 
 
 protected:
@@ -107,7 +107,7 @@ protected:
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName)=0;
 
     /// Sanity message that warns about the number of slices that are being configured
-    virtual std::string SanityMessage(bool mess);
+    virtual std::string SanityMessage(bool mess)=0;
 
 
     /// Parse a list of arguments as they come from the CLI
