@@ -32,9 +32,9 @@ rm -f *.1.0.0.dylib
 `$CPCMD $REPOSPATH/lib/libStdPreprocModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libStdPreprocModulesGUI.so.1.0.0 .`
 
-`$CPCMD $REPOSPATH/lib/libUnpublPreProcessing.so.1.0.0 .`
-`$CPCMD $REPOSPATH/lib/libUnpublPreProcessingGUI.so.1.0.0 .`
-`$CPCMD $REPOSPATH/lib/libUnpublishedImagingAlgorithms.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libUnpublPreProcessing.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libUnpublPreProcessingGUI.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libUnpublishedImagingAlgorithms.so.1.0.0 .`
 
 `$CPCMD $REPOSPATH/lib/libInspectorModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libInspectorModulesGUI.so.1.0.0 .`

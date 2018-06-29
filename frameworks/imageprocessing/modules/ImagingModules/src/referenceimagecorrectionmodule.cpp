@@ -1,4 +1,4 @@
-#include <referenceimagecorrection.h>
+//#include <referenceimagecorrection.h>
 
 #include "referenceimagecorrectionmodule.h"
 #include <base/textractor.h>
