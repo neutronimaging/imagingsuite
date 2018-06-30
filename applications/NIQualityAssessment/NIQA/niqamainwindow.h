@@ -63,6 +63,8 @@ private slots:
 
     void on_check_3DBallsCrop_toggled(bool checked);
 
+    void on_pushButton_contrast_pixelSize_clicked();
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
