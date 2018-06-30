@@ -11,6 +11,7 @@
 #include <imagereader.h>
 #include <math/statistics.h>
 #include <math/findpeaks.h>
+#include <io/io_serializecontainers.h>
 
 PixelSizeDlg::PixelSizeDlg(QWidget *parent) :
     QDialog(parent),
@@ -20,6 +21,7 @@ PixelSizeDlg::PixelSizeDlg(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->roi->registerViewer(ui->viewer);
+    ui->roi->setROIColor("red");
 }
 
 PixelSizeDlg::~PixelSizeDlg()
@@ -38,10 +40,11 @@ float PixelSizeDlg::getDistance(kipl::base::TImage<float, 2> &im, size_t *roi)
     size_t h=roi[3]-roi[1];
     size_t N=max(w,h);
     float *profile=new float [N+1];
-    std::fill_n(roi,N,0.0f);
+    std::fill_n(profile,N,0.0f);
 
-    if (roi[2]-roi[0]<roi[3]-roi[1]) { // get vertical profile
+    if (w<h) { // get vertical profile
         logger(logger.LogMessage,"Using vertical profile");
+        qDebug() << "Vertical (N="<<N<<",w="<<w<<", h="<<h<<")";
         for (size_t i=roi[1]; i<roi[3]; ++i) {
             float *pLine=im.GetLinePtr(i);
             float sum=0.0f;
@@ -53,6 +56,7 @@ float PixelSizeDlg::getDistance(kipl::base::TImage<float, 2> &im, size_t *roi)
     }
     else { // get horizontal profile
         logger(logger.LogMessage,"Using horizontal profile");
+        qDebug() << "Horizontal (N="<<N<<", w="<<w<<", h="<<h<<")";
         for (size_t i=roi[1]; i<roi[3]; ++i) {
             float *pLine=im.GetLinePtr(i);
             for (size_t j=roi[0]; j<roi[2]; j++) {
@@ -62,11 +66,13 @@ float PixelSizeDlg::getDistance(kipl::base::TImage<float, 2> &im, size_t *roi)
         }
     }
 
+    kipl::io::serializeContainer(profile,profile+N,"extracted_profile.txt");
     if (ui->radioButton_Edges->isChecked()) {
-        for (size_t i=1; i<N; ++i)
-            profile[i]=profile[i]-profile[i-1];
+        for (size_t i=N-1; 1<=i; --i)
+            profile[i]=fabs(profile[i]-profile[i-1]);
 
         profile[0]=profile[1];
+        kipl::io::serializeContainer(profile,profile+N,"diff_profile.txt");
     }
 
     kipl::math::Statistics stat;
@@ -74,8 +80,14 @@ float PixelSizeDlg::getDistance(kipl::base::TImage<float, 2> &im, size_t *roi)
     stat.put(profile,N);
 
     std::list<size_t> peaks;
+    qDebug()<< stat.E() << stat.s();
     kipl::math::findPeaks(profile,N,stat.E(),stat.s(),peaks);
 
+    if (peaks.size()<2) {
+        QMessageBox::warning(this,"Warning","Could not find two edges.",QMessageBox::Ok);
+        return 0.0f;
+    }
+    qDebug() << peaks.front() << peaks.back();
     pixelDistance=peaks.back()-peaks.front();
     delete [] profile;
     return pixelDistance;
@@ -112,9 +124,13 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
     pixelDistance=getDistance(img,roi);
     qDebug() << "Post get distance";
     pixelSize=ui->doubleSpinBox_Distance->value()/pixelDistance;
-//    std::ostringstream msg;
-//    msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<"mm/"<<pixelDistance<<"px, pixelSize: "<<pixelSize;
-//    ui->label_results->setText(QString::fromStdString(msg.str()));
+    std::ostringstream msg;
+    msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<"mm/"<<pixelDistance<<"px, pixelSize: "<<pixelSize;
+    QString str;
+    str.setNum(pixelDistance,'g',4);
+    ui->label_edgeDistance->setText(str);
+    str.setNum(pixelSize,'g',5);
+    ui->label_pixelSize->setText(str);
 
 }
 
