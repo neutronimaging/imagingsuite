@@ -21,6 +21,8 @@ public:
     ImageLoader getReaderConfig();
     void setReaderConfig(ImageLoader &cfg);
 
+    void setLabel(QString str);
+
 private slots:
     void on_button_browse_clicked();
 

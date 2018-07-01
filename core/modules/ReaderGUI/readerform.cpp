@@ -76,3 +76,8 @@ void ReaderForm::setReaderConfig(ImageLoader &cfg)
     ui->spinBox_last->setValue(cfg.m_nLast);
     ui->spinBox_step->setValue(cfg.m_nStep);
 }
+
+void ReaderForm::setLabel(QString str)
+{
+    ui->label_fileMask->setText(str);
+}
