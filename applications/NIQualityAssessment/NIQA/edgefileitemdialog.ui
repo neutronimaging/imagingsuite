@@ -42,7 +42,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Distance</string>
+          <string>Distance from edge to detector</string>
          </property>
         </widget>
        </item>

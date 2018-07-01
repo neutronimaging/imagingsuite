@@ -69,6 +69,10 @@ private slots:
 
     void on_pushButton_logging_clicked();
 
+    void on_pushButton_2dEdge_pixelSize_clicked();
+
+    void on_pushButton_analyzSingleEdge_clicked();
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();

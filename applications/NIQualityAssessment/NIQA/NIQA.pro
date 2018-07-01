@@ -63,10 +63,12 @@ win32 {
 
 SOURCES += main.cpp\
         niqamainwindow.cpp \
-    edgefileitemdialog.cpp
+    edgefileitemdialog.cpp \
+    niqaconfig.cpp
 
 HEADERS  += niqamainwindow.h \
-    edgefileitemdialog.h
+    edgefileitemdialog.h \
+    niqaconfig.h
 
 FORMS    += niqamainwindow.ui \
     edgefileitemdialog.ui

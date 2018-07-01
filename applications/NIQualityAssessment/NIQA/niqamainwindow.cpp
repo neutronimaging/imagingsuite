@@ -48,8 +48,13 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     ui->widget_roiEdge2D->registerViewer(ui->viewer_edgeimages);
     ui->widget_roiEdge2D->setROIColor("red");
 
-    ui->check_edge2dcrop->setChecked(false);
-    on_check_edge2dcrop_toggled(false);
+    ui->groupBox_2DCrop->setChecked(false);
+    //on_check_edge2dcrop_toggled(false);
+
+    ui->widget_openBeamReader->setLabel("Open beam mask");
+    ui->widget_darkCurrentReader->setLabel("Dark current mask");
+
+
 
     connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roi3DBalls_getROIclicked);
     connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roi3DBalls_valueChanged);
@@ -316,7 +321,7 @@ void NIQAMainWindow::on_listEdgeFiles_clicked(const QModelIndex &index)
     img=reader.Read(item->filename.toStdString(),kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
 
     ui->viewer_edgeimages->set_image(img.GetDataPtr(),img.Dims());
-    on_check_edge2dcrop_toggled(ui->check_edge2dcrop->isEnabled());
+   // on_check_edge2dcrop_toggled(ui->check_edge2dcrop->isEnabled());
 
 }
 
@@ -494,7 +499,7 @@ void NIQAMainWindow::getEdge2Dprofiles()
     size_t crop[4];
     ui->widget_roiEdge2D->getROI(crop);
     m_Edges.clear();
-    size_t *pCrop= ui->check_edge2dcrop->isChecked() ? crop : nullptr;
+    size_t *pCrop= ui->groupBox_2DCrop->isChecked() ? crop : nullptr;
 
     float *profile=nullptr;
     for (int i=0; i<ui->listEdgeFiles->count(); ++i) {
@@ -607,4 +612,29 @@ void NIQAMainWindow::on_pushButton_logging_clicked()
     else {
         logdlg->hide();
     }
+}
+
+void NIQAMainWindow::on_pushButton_2dEdge_pixelSize_clicked()
+{
+    PixelSizeDlg dlg(this);
+
+    int res=0;
+    try {
+        res=dlg.exec();
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
+
+        logger.warning(e.what());
+        return;
+    }
+
+    if (res==dlg.Accepted) {
+        ui->doubleSpinBox_2dEdge_pixelSize->setValue(dlg.getPixelSize());
+    }
+}
+
+void NIQAMainWindow::on_pushButton_analyzSingleEdge_clicked()
+{
+
 }
