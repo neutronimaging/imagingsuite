@@ -42,6 +42,12 @@ unix:macx {
     QMAKE_LIBDIR += /opt/local/lib
 }
 
+macx: {
+    INCLUDEPATH += $$PWD/../../../external/mac/include
+    DEPENDPATH += $$PWD/../../../external/mac/include
+    LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
+
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
