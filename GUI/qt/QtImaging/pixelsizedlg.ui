@@ -80,6 +80,9 @@
             <property name="text">
              <string>Edges</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>

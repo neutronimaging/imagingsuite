@@ -13,6 +13,8 @@
 #include <math/findpeaks.h>
 #include <io/io_serializecontainers.h>
 
+#include <readerexception.h>
+
 PixelSizeDlg::PixelSizeDlg(QWidget *parent) :
     QDialog(parent),
     logger("PixelSizeDlg"),
@@ -140,6 +142,21 @@ void PixelSizeDlg::loadImage(QString fn)
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     ImageReader reader;
 
-    img=reader.Read(fname);
+    try {
+        img=reader.Read(fname);
+    }
+    catch (ReaderException &e) {
+        QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
+
+        logger.warning(e.what());
+        return;
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
+
+        logger.warning(e.what());
+        return;
+    }
+
     ui->viewer->set_image(img.GetDataPtr(),img.Dims());
 }
