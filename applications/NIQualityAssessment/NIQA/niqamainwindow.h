@@ -6,6 +6,8 @@
 #include <base/timage.h>
 #include <logging/logger.h>
 
+#include <loggingdialog.h>
+
 #include <ballanalysis.h>
 #include <contrastsampleanalysis.h>
 #include <ballassemblyanalysis.h>
@@ -65,6 +67,8 @@ private slots:
 
     void on_pushButton_contrast_pixelSize_clicked();
 
+    void on_pushButton_logging_clicked();
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
@@ -79,6 +83,7 @@ private:
     void plotPackingStatistics(std::list<kipl::math::Statistics> &roiStats);
 
     Ui::NIQAMainWindow *ui;
+    QtAddons::LoggingDialog *logdlg;
 
     kipl::base::TImage<float,3> m_BigBall;
     kipl::base::TImage<float,3> m_BallAssembly;

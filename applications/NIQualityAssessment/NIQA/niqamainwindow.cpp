@@ -36,13 +36,18 @@ public:
 NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("NIQAMainWindow"),
-    ui(new Ui::NIQAMainWindow)
+    ui(new Ui::NIQAMainWindow),
+    logdlg(new QtAddons::LoggingDialog(this))
 {
     ui->setupUi(this);
-    logger.AddLogTarget(*ui->widget_logger);
 
-    connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roiEdge2D_getROIclicked);
-    connect(ui->widget_roiEdge2D,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roiEdge2D_valueChanged);
+    // Setup logging dialog
+    logdlg->setModal(false);
+    kipl::logging::Logger::AddLogTarget(*logdlg);
+
+    ui->widget_roiEdge2D->registerViewer(ui->viewer_edgeimages);
+    ui->widget_roiEdge2D->setROIColor("red");
+
     ui->check_edge2dcrop->setChecked(false);
     on_check_edge2dcrop_toggled(false);
 
@@ -461,11 +466,9 @@ void NIQAMainWindow::on_check_edge2dcrop_toggled(bool checked)
 {
     if (checked) {
         ui->widget_roiEdge2D->show();
-        ui->viewer_edgeimages->set_rectangle(ui->widget_roiEdge2D->getROI(),QColor("red"),0);
     }
     else {
         ui->widget_roiEdge2D->hide();
-        ui->viewer_edgeimages->clear_rectangle(0);
     }
 }
 
@@ -575,13 +578,33 @@ void NIQAMainWindow::on_widget_roi3DBalls_valueChanged(int x0, int y0, int x1, i
 
 void NIQAMainWindow::on_pushButton_contrast_pixelSize_clicked()
 {
-    PixelSizeDlg dlg;
+    PixelSizeDlg dlg(this);
 
-    int res=dlg.exec();
+    int res=0;
+    try {
+        res=dlg.exec();
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
+
+        logger.warning(e.what());
+        return;
+    }
 
     if (res==dlg.Accepted) {
         ui->spin_contrast_pixelsize->setValue(dlg.getPixelSize());
     }
 
 
+}
+
+void NIQAMainWindow::on_pushButton_logging_clicked()
+{
+    if (logdlg->isHidden()) {
+
+        logdlg->show();
+    }
+    else {
+        logdlg->hide();
+    }
 }

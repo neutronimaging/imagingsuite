@@ -259,6 +259,13 @@
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>Preview</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -269,11 +276,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QtAddons::ROIWidget" name="widget_roiEdge2D" native="true">
+           <widget class="QtAddons::uxROIWidget" name="widget_roiEdge2D" native="true">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>45</height>
+              <height>123</height>
              </size>
             </property>
            </widget>
@@ -829,17 +839,31 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Messages</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_12">
-        <item>
-         <widget class="QtAddons::QtLogViewer" name="widget_logger" native="true"/>
-        </item>
-       </layout>
-      </widget>
      </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_logging">
+        <property name="text">
+         <string>Logging</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -893,16 +917,19 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header>qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ROIManager</class>
    <extends>QWidget</extends>
    <header location="global">roimanager.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
