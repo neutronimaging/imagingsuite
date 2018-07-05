@@ -13,6 +13,9 @@ TEMPLATE = app
 
 CONFIG += c++11
 
+VERSION = 1.0.0
+DEFINES += VERSION=\\\"$$VERSION\\\"
+
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
 

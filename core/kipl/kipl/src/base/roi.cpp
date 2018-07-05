@@ -1,4 +1,5 @@
 #include "../../include/base/roi.h"
+#include <sstream>
 
 namespace kipl {
 namespace base {
@@ -62,6 +63,21 @@ int RectROI::getDimensions()
 int RectROI::getID()
 {
     return id;
+}
+
+std::string RectROI::toString()
+{
+    std::ostringstream str;
+
+    str<<coords[0]<<" "<<coords[1]<<" "<<coords[2]<<" "<<coords[3];
+
+    return str.str();
+}
+
+void RectROI::fromString(std::string str)
+{
+    size_t pos0=str.find_first_of(" ,;\t");
+
 }
 
 std::string RectROI::getName()

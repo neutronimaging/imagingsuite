@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -230,7 +230,7 @@
           <item>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab_singleEdge">
              <attribute name="title">
@@ -829,11 +829,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QtAddons::ROIWidget" name="widget_roi3DBalls" native="true">
+             <widget class="QtAddons::uxROIWidget" name="widget_roi3DBalls" native="true">
               <property name="minimumSize">
                <size>
-                <width>0</width>
-                <height>45</height>
+                <width>200</width>
+                <height>123</height>
                </size>
               </property>
              </widget>
@@ -846,7 +846,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QtAddons::ROIManager" name="widget_bundleroi0" native="true">
+             <widget class="QtAddons::ROIManager" name="widget_bundleroi" native="true">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -964,64 +964,188 @@
        <attribute name="title">
         <string>Report</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Select the items to include in the report</string>
-          </property>
-         </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_17">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_20">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Select the items to include in the report</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_reportContrast">
+            <property name="text">
+             <string>Contrast analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_report2DEdge">
+            <property name="text">
+             <string>2D Edge analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_reportBallPacking">
+            <property name="text">
+             <string>3D Ball packing analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_report3DEdge">
+            <property name="text">
+             <string>3D Edge analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Save the report to </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="SingleFileForm" name="widget" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>35</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>Create report</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_11">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox">
-          <property name="text">
-           <string>Contrast analysis</string>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>User information</string>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_2">
-          <property name="text">
-           <string>2D Edge analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_3">
-          <property name="text">
-           <string>3D Edge analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_4">
-          <property name="text">
-           <string>3D Ball packing analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Save the report to </string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="lineEdit"/>
-        </item>
-        <item row="7" column="0">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>Create report</string>
-          </property>
+          <layout class="QFormLayout" name="formLayout_4">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_userName"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Institute</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_institute"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>Instrument</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_instrument"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Country</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Experiment date</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>Analysis date</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>Version</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLabel" name="label_version">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEdit_country"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QDateEdit" name="dateEdit_experimentDate">
+             <property name="displayFormat">
+              <string>yy.MM.dd</string>
+             </property>
+             <property name="calendarPopup">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QDateEdit" name="dateEdit_analysisDate">
+             <property name="displayFormat">
+              <string>yy.MM.dd</string>
+             </property>
+             <property name="calendarPopup">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_12">
+             <property name="text">
+              <string>Comment</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QPlainTextEdit" name="plainTextEdit_comment"/>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -1099,12 +1223,6 @@
    <slots>
     <signal>valueChanged(int,int,int,int)</signal>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::ROIWidget</class>
-   <extends>QWidget</extends>
-   <header>roiwidget.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ReaderForm</class>

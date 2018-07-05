@@ -12,6 +12,8 @@
 #include <contrastsampleanalysis.h>
 #include <ballassemblyanalysis.h>
 
+#include "niqaconfig.h"
+
 namespace Ui {
 class NIQAMainWindow;
 }
@@ -57,8 +59,6 @@ private slots:
 
     void on_combo_PackingImage_currentIndexChanged(int index);
 
-    void on_check_edge2dcrop_toggled(bool checked);
-
     void on_button_get2Dedges_clicked();
 
     void on_button_estimateCollimation_clicked();
@@ -86,8 +86,13 @@ private:
     void plotEdgeProfiles();
     void plotPackingStatistics(std::list<kipl::math::Statistics> &roiStats);
 
+    void updateConfig();
+    void updateDialog();
+
     Ui::NIQAMainWindow *ui;
     QtAddons::LoggingDialog *logdlg;
+
+    NIQAConfig config;
 
     kipl::base::TImage<float,3> m_BigBall;
     kipl::base::TImage<float,3> m_BallAssembly;

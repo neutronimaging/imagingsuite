@@ -54,14 +54,12 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     ui->widget_openBeamReader->setLabel("Open beam mask");
     ui->widget_darkCurrentReader->setLabel("Dark current mask");
 
+    ui->widget_roi3DBalls->registerViewer(ui->viewer_Packing);
 
-
-    connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::getROIClicked,this,&NIQAMainWindow::on_widget_roi3DBalls_getROIclicked);
-    connect(ui->widget_roi3DBalls,&QtAddons::ROIWidget::valueChanged,this,&NIQAMainWindow::on_widget_roi3DBalls_valueChanged);
     ui->check_3DBallsCrop->setChecked(false);
     on_check_3DBallsCrop_toggled(false);
-    ui->widget_bundleroi0->setViewer(ui->viewer_Packing);
-
+    ui->widget_bundleroi->setViewer(ui->viewer_Packing);
+    updateDialog();
 }
 
 NIQAMainWindow::~NIQAMainWindow()
@@ -351,7 +349,7 @@ void NIQAMainWindow::on_button_LoadPacking_clicked()
 void NIQAMainWindow::on_button_AnalyzePacking_clicked()
 {
     std::ostringstream msg;
-    std::list<kipl::base::RectROI> roiList=ui->widget_bundleroi0->getSelectedROIs();
+    std::list<kipl::base::RectROI> roiList=ui->widget_bundleroi->getSelectedROIs();
 
     msg<<"Have "<<roiList.size()<<" ROIs";
     logger(logger.LogMessage,msg.str());
@@ -403,6 +401,155 @@ void NIQAMainWindow::plotPackingStatistics(std::list<kipl::math::Statistics> &ro
 
 }
 
+void NIQAMainWindow::updateConfig()
+{
+    // User information
+    config.userInformation.userName  = ui->lineEdit_userName->text().toStdString();
+    config.userInformation.institute = ui->lineEdit_institute->text().toStdString();
+    config.userInformation.instrument = ui->lineEdit_instrument->text().toStdString();
+    QDate date;
+    date = ui->dateEdit_experimentDate->date();
+    config.userInformation.experimentDate[0] = date.year();
+    config.userInformation.experimentDate[1] = date.month();
+    config.userInformation.experimentDate[2] = date.day();
+    config.userInformation.comment = ui->plainTextEdit_comment->
+
+    date = ui->dateEdit_analysisDate->date();
+    config.userInformation.analysisDate[0] = date.year();
+    config.userInformation.analysisDate[1] = date.month();
+    config.userInformation.analysisDate[2] = date.day();
+
+    config.userInformation.country = ui->lineEdit_country->text().toStdString();
+
+    // Contrast analysis
+    ImageLoader loader;
+    loader=ui->ImageLoader_contrast->getReaderConfig();
+    config.contrastAnalysis.fileMask = loader.m_sFilemask;
+    config.contrastAnalysis.first    = loader.m_nFirst;
+    config.contrastAnalysis.last     = loader.m_nLast;
+    config.contrastAnalysis.step     = loader.m_nStep;
+    config.contrastAnalysis.intensitySlope     = ui->spin_contrast_slope->value();
+    config.contrastAnalysis.intensityIntercept = ui->spin_contrast_intercept->value();
+    config.contrastAnalysis.pixelSize          = ui->spin_contrast_pixelsize->value();
+    config.contrastAnalysis.makeReport         = ui->checkBox_reportContrast->isChecked();
+
+    config.edgeAnalysis2D.singleImageFileName = ui->widget_singleedge->getFileName();
+    //todo implement list transfer
+//    config.edgeAnalysis2D.multiImageList = ui->;
+
+    config.edgeAnalysis2D.normalize = ui->groupBox_2Dreferences->isChecked();
+
+    loader = ui->widget_openBeamReader->getReaderConfig();
+    config.edgeAnalysis2D.obMask = loader.m_sFilemask;
+    config.edgeAnalysis2D.obFirst = loader.m_nFirst;
+    config.edgeAnalysis2D.obLast = loader.m_nLast;
+    config.edgeAnalysis2D.obStep = loader.m_nStep;
+
+    loader = ui->widget_darkCurrentReader->getReaderConfig();
+    config.edgeAnalysis2D.dcMask = loader.m_sFilemask;
+    config.edgeAnalysis2D.dcFirst = loader.m_nFirst;
+    config.edgeAnalysis2D.dcLast = loader.m_nLast;
+    config.edgeAnalysis2D.dcStep = loader.m_nStep;
+    config.edgeAnalysis2D.pixelSize = ui->doubleSpinBox_2dEdge_pixelSize->value();
+    config.edgeAnalysis2D.useROI = ui->groupBox_2DCrop->isChecked();
+    ui->widget_roiEdge2D->getROI(config.edgeAnalysis2D.roi);
+    config.edgeAnalysis2D.makeReport = ui->checkBox_report2DEdge->isChecked();
+
+    loader = ui->ImageLoader_bigball->getReaderConfig();
+    config.edgeAnalysis3D.fileMask = loader.m_sFilemask;
+    config.edgeAnalysis3D.first = loader.m_nFirst;
+    config.edgeAnalysis3D.last  = loader.m_nLast;
+    config.edgeAnalysis3D.step  = loader.m_nStep;
+    config.edgeAnalysis3D.pixelSize = ui->dspin_bigball_pixelsize->value();
+    config.edgeAnalysis3D.precision = ui->spin_bigball_precision->value();
+    config.edgeAnalysis3D.radius = ui->dspin_bigball_radius->value();
+    config.edgeAnalysis3D.makeReport =ui->checkBox_report3DEdge->isChecked();
+
+    loader = ui->imageloader_packing->getReaderConfig();
+    config.ballPackingAnalysis.fileMask = loader.m_sFilemask;
+    config.ballPackingAnalysis.first    = loader.m_nFirst;
+    config.ballPackingAnalysis.last     = loader.m_nLast;
+    config.ballPackingAnalysis.step     = loader.m_nStep;
+    config.ballPackingAnalysis.useCrop  = ui->check_3DBallsCrop->isChecked();
+    config.ballPackingAnalysis.analysisROIs = ui->widget_bundleroi->getROIs();
+    ui->widget_roi3DBalls->getROI(config.ballPackingAnalysis.roi);
+    config.ballPackingAnalysis.makeReport = ui->checkBox_reportBallPacking->isChecked();
+
+}
+
+void NIQAMainWindow::updateDialog()
+{
+    // User information
+    ui->lineEdit_userName->setText(QString::fromStdString(config.userInformation.userName));
+    ui->lineEdit_institute->setText(QString::fromStdString(config.userInformation.institute));
+    ui->lineEdit_instrument->setText(QString::fromStdString(config.userInformation.instrument));
+    ui->dateEdit_experimentDate->setDate(QDate(config.userInformation.experimentDate[0],config.userInformation.experimentDate[1],config.userInformation.experimentDate[2]));
+    ui->dateEdit_analysisDate->setDate(QDate(config.userInformation.analysisDate[0],config.userInformation.analysisDate[1],config.userInformation.analysisDate[2]));
+    ui->label_version->setText(QString::fromStdString(config.userInformation.softwareVersion));
+    ui->lineEdit_country->setText(QString::fromStdString(config.userInformation.country));
+
+    // Contrast analysis
+    ImageLoader loader;
+    loader=ui->ImageLoader_contrast->getReaderConfig();
+    loader.m_sFilemask = config.contrastAnalysis.fileMask;
+    loader.m_nFirst    = config.contrastAnalysis.first;
+    loader.m_nLast     = config.contrastAnalysis.last;
+    loader.m_nStep     = config.contrastAnalysis.step;
+    ui->ImageLoader_contrast->setReaderConfig(loader);
+
+    ui->spin_contrast_slope->setValue(config.contrastAnalysis.intensitySlope);
+    ui->spin_contrast_intercept->setValue(config.contrastAnalysis.intensityIntercept);
+    ui->spin_contrast_pixelsize->setValue(config.contrastAnalysis.pixelSize);
+    ui->checkBox_reportContrast->setChecked(config.contrastAnalysis.makeReport);
+
+    ui->widget_singleedge->setFileName(config.edgeAnalysis2D.singleImageFileName);
+    //todo implement list transfer
+//    config.edgeAnalysis2D.multiImageList = ui->;
+
+    ui->groupBox_2Dreferences->setChecked(config.edgeAnalysis2D.normalize);
+
+
+    loader.m_sFilemask = config.edgeAnalysis2D.obMask;
+    loader.m_nFirst    = config.edgeAnalysis2D.obFirst;
+    loader.m_nLast     = config.edgeAnalysis2D.obLast;
+    loader.m_nStep     = config.edgeAnalysis2D.obStep;
+    ui->widget_openBeamReader->setReaderConfig(loader);
+
+
+    loader.m_sFilemask = config.edgeAnalysis2D.dcMask;
+    loader.m_nFirst    = config.edgeAnalysis2D.dcFirst;
+    loader.m_nLast     = config.edgeAnalysis2D.dcLast;
+    loader.m_nStep     = config.edgeAnalysis2D.dcStep;
+    ui->widget_darkCurrentReader->setReaderConfig(loader);
+
+    ui->doubleSpinBox_2dEdge_pixelSize->setValue(config.edgeAnalysis2D.pixelSize);
+    ui->groupBox_2DCrop->setChecked(config.edgeAnalysis2D.useROI);
+    ui->widget_roiEdge2D->setROI(config.edgeAnalysis2D.roi);
+    ui->checkBox_report2DEdge->setChecked(config.edgeAnalysis2D.makeReport);
+
+    loader.m_sFilemask = config.edgeAnalysis3D.fileMask;
+    loader.m_nFirst = config.edgeAnalysis3D.first;
+    loader.m_nLast = config.edgeAnalysis3D.last;
+    loader.m_nStep = config.edgeAnalysis3D.step;
+    ui->ImageLoader_bigball->setReaderConfig(loader);
+
+    ui->dspin_bigball_pixelsize->setValue(config.edgeAnalysis3D.pixelSize);
+    ui->spin_bigball_precision->setValue(config.edgeAnalysis3D.precision);
+    ui->dspin_bigball_radius->setValue(config.edgeAnalysis3D.radius);
+    ui->checkBox_report3DEdge->setChecked(config.edgeAnalysis3D.makeReport);
+
+    loader = ui->imageloader_packing->getReaderConfig();
+    loader.m_sFilemask = config.ballPackingAnalysis.fileMask;
+    loader.m_nFirst = config.ballPackingAnalysis.first;
+    loader.m_nLast = config.ballPackingAnalysis.last;
+    loader.m_nStep = config.ballPackingAnalysis.step;
+    ui->check_3DBallsCrop->setChecked(config.ballPackingAnalysis.useCrop);
+    ui->widget_bundleroi->setROIs(config.ballPackingAnalysis.analysisROIs);
+    ui->widget_roi3DBalls->setROI(config.ballPackingAnalysis.roi);
+    ui->checkBox_reportBallPacking->setChecked(config.ballPackingAnalysis.makeReport);
+
+}
+
 void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
 {
 
@@ -410,8 +557,11 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
         case 0: ui->slider_PackingImages->setEnabled(true);
                 ui->viewer_Packing->set_image(m_BallAssembly.GetLinePtr(0,position),
                                               m_BallAssembly.Dims());
-                if (ui->check_3DBallsCrop->isChecked())
-                    ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
+                if (ui->check_3DBallsCrop->isChecked()) {
+                    QRect roi;
+                    ui->widget_roi3DBalls->getROI(roi);
+                    ui->viewer_Packing->set_rectangle(roi,QColor("red"),0);
+                }
 
                 break;
 
@@ -463,18 +613,6 @@ void NIQAMainWindow::on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, in
 {
     QRect rect(x0,y0,x1-x0+1,y1-y0+1);
     ui->viewer_edgeimages->set_rectangle(rect,QColor("red"),0);
-}
-
-
-
-void NIQAMainWindow::on_check_edge2dcrop_toggled(bool checked)
-{
-    if (checked) {
-        ui->widget_roiEdge2D->show();
-    }
-    else {
-        ui->widget_roiEdge2D->hide();
-    }
 }
 
 void NIQAMainWindow::on_button_get2Dedges_clicked()
@@ -555,7 +693,9 @@ void NIQAMainWindow::plotEdgeProfiles()
 void NIQAMainWindow::on_check_3DBallsCrop_toggled(bool checked)
 {
     if (checked) {
-        ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
+        QRect roi;
+        ui->widget_roi3DBalls->getROI(roi);
+        ui->viewer_Packing->set_rectangle(roi,QColor("red"),0);
         ui->widget_roi3DBalls->show();
     }
     else {
@@ -577,8 +717,10 @@ void NIQAMainWindow::on_widget_roi3DBalls_valueChanged(int x0, int y0, int x1, i
     (void) y0;
     (void) x1;
     (void) y1;
+    QRect roi;
+    ui->widget_roi3DBalls->getROI(roi);
 
-    ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
+    ui->viewer_Packing->set_rectangle(roi,QColor("red"),0);
 }
 
 void NIQAMainWindow::on_pushButton_contrast_pixelSize_clicked()

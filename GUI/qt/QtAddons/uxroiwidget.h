@@ -6,6 +6,7 @@
 #include <QRect>
 #include <QString>
 
+#include <base/roi.h>
 #include <logging/logger.h>
 
 namespace Ui {
@@ -45,6 +46,8 @@ public:
     /// \param rect The rectangle object describing the roi
     void setROI(QRect rect, bool ignoreBoundingBox=false);
 
+    void setROI(kipl::base::RectROI roi, bool ignoreBoundingBox=false);
+
     /// \brief Sets the bounding box limiting the ROI
     /// \param x0,y0 First corner
     /// \param x1,y1 Second corner
@@ -62,6 +65,8 @@ public:
 
     /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
     void getROI(size_t *roi);
+
+    void getROI(kipl::base::RectROI &roi);
 
     /// \brief Set the title of the ROI widget frame
     /// \param lbl The name string
@@ -84,6 +89,8 @@ public:
     void updateViewer();
 
     void setAllowUpdateImageDims(bool allow);
+
+
 
 public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.
