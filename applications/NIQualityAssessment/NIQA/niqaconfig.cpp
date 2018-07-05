@@ -1,6 +1,11 @@
+//<LICENSE>
+
 #include "niqaconfig.h"
 
+#include <iomanip>
 #include <strings/miscstring.h>
+#include <strings/string2array.h>
+#include <base/KiplException.h>
 
 NIQAConfig::NIQAConfig() :
     logger("NIQAConfig")
@@ -29,12 +34,17 @@ const NIQAConfig & NIQAConfig::operator=(const NIQAConfig &c)
 
 std::string NIQAConfig::WriteXML()
 {
-    userInformation.WriteXML(4);
-    contrastAnalysis.WriteXML(4);
-    edgeAnalysis2D.WriteXML(4);
-    edgeAnalysis3D.WriteXML(4);
-    ballPackingAnalysis.WriteXML(4);
+    std::ostringstream str;
 
+    str<<"<niqa>\n";
+    str<<userInformation.WriteXML(4);
+    str<<contrastAnalysis.WriteXML(4);
+    str<<edgeAnalysis2D.WriteXML(4);
+    str<<edgeAnalysis3D.WriteXML(4);
+    str<<ballPackingAnalysis.WriteXML(4);
+    str<<"</niqa>\n";
+
+    return str.str();
 }
 
 void NIQAConfig::LoadConfigFile(std::string configfile, std::string ProjectName)
@@ -42,20 +52,274 @@ void NIQAConfig::LoadConfigFile(std::string configfile, std::string ProjectName)
 
 }
 
-void NIQAConfig::ParseConfig(xmlTextReaderPtr reader, std::string sName)
+void NIQAConfig::parseConfig(xmlTextReaderPtr reader, std::string sName)
 {
 
-//    str<<setw(indent)  <<" "<<"<userinformation>"<<endl;
-//        str<<setw(indent+4)  <<" "<<"<operator>"<<userName<<"</operator>\n";
-//        str<<setw(indent+4)  <<" "<<"<institute>"<<institute<<"</institute>\n";
-//        str<<setw(indent+4)  <<" "<<"<instrument>"<<instrument<<"</instrument>\n";
-//        str<<setw(indent+4)  <<" "<<"<country>"<<country<<"</country>\n";
-//        str<<setw(indent+4)  <<" "<<"<experimentdate>"<<experimentDate[0]<<" "<<experimentDate[1]<<" "<<experimentDate[2]<<" "<<"</experimentdate>\n";
-//        str<<setw(indent+4)  <<" "<<"<analysisdate>"<<analysisDate[0]<<" "<<analysisDate[1]<<" "<<analysisDate[2]<<" "<<"</analysisdate>\n";
-//        str<<setw(indent+4)  <<" "<<"<version>"<<softwareVersion<<"</version>\n";
-//        str<<setw(indent+4)  <<" "<<"<comment>"<<comment<<"</comment>\n";
-//    str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
+    if (sName=="userinformation")
+        parseUserInformation(reader);
 
+    if (sName=="contrastanalysis")
+        ParseContrastAnalysis(reader);
+
+    if (sName=="edgeanalysis2d")
+        parseEdgeAnalysis2D(reader);
+
+    if (sName=="edgeanalysis3d")
+        parseEdgeAnalysis3D(reader);
+
+    if (sName=="ballpacking")
+        parseBallPackingAnalysis(reader);
+}
+
+void NIQAConfig::parseUserInformation(xmlTextReaderPtr reader)
+{
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
+
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                logger.error("Unexpected contents in parameter file");
+                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="operator") {
+                userInformation.userName=sValue;
+            }
+
+            if (sName=="institute") {
+                userInformation.institute=sValue;
+            }
+
+            if (sName=="instrument") {
+                userInformation.instrument=sValue;
+            }
+            if (sName=="country") {
+                userInformation.country=sValue;
+            }
+            if (sName=="experimentdate") {
+                kipl::strings::String2Array(std::string(sValue),userInformation.experimentDate,3);
+            }
+
+            if (sName=="analysisdate") {
+                kipl::strings::String2Array(std::string(sValue),userInformation.analysisDate,3);
+            }
+
+            if (sName=="version") {
+                if (sValue!=std::string(VERSION))
+                    logger.warning("Software version missmatch");
+                userInformation.softwareVersion=VERSION;
+            }
+
+            if (sName=="comment") {
+                userInformation.comment=sValue;
+            }
+        }
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
+}
+
+void NIQAConfig::ParseContrastAnalysis(xmlTextReaderPtr reader)
+{
+
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
+
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                logger.error("Unexpected contents in parameter file");
+                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="filemask") {
+                contrastAnalysis.fileMask=sValue;
+            }
+
+            if (sName=="first") {
+                contrastAnalysis.first=std::stoi(sValue);
+            }
+
+            if (sName=="last") {
+                contrastAnalysis.last=std::stoi(sValue);
+            }
+
+            if (sName=="step") {
+                contrastAnalysis.step=std::stoi(sValue);
+            }
+
+            if (sName=="pixelsize") {
+                contrastAnalysis.pixelSize= std::stod(sValue);
+            }
+
+            if (sName=="intensityslope") {
+                contrastAnalysis.intensitySlope= std::stod(sValue);
+            }
+
+            if (sName=="intensityintercept") {
+                contrastAnalysis.intensityIntercept = std::stod(sValue);
+            }
+
+            if (sName=="makereport") {
+                contrastAnalysis.makeReport = kipl::strings::string2bool(sValue);
+            }
+
+        }
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
+}
+
+void NIQAConfig::parseEdgeAnalysis2D(xmlTextReaderPtr reader)
+{
+    //    str<<std::setw(indent)  <<" "<<"<edgeanalysis2d>"<<std::endl;
+    //        str<<std::setw(indent+4)  <<" "<<"<singlefilemask>"<<singleImageFileName<<"</singlefilemask>\n";
+    //        if (multiImageList.empty()==false) {
+    //            str<<std::setw(indent+4)  <<" "<<"<multiimagelist>";
+    //            for (auto it=multiImageList.begin(); it!=multiImageList.end(); ++it)
+    //                str<<" "<<it->first<<" "<<it->second;
+
+    //            str<<"</multiimagelist>\n";
+    //        }
+    //        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<normalize>"<<kipl::strings::bool2string(normalize)<<"</normalize>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<obmask>"<<obMask<<"</obmask>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<obfirst>"<<obFirst<<"</obfirst>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<oblast>"<<obLast<<"</oblast>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<obstep>"<<obStep<<"</obstep>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<dcmask>"<<dcMask<<"</dcmask>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<dcfirst>"<<first<<"</dcfirst>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<dclast>"<<last<<"</dclast>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<dcstep>"<<step<<"</dcstep>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(useROI)<<"</useroi>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<roi>"<<roi.toString()<<"</roi>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
+    //    str<<std::setw(indent)  <<" "<<"</edgeanalysis2d>"<<std::endl;
+}
+
+void NIQAConfig::parseEdgeAnalysis3D(xmlTextReaderPtr reader)
+{
+    //    str<<std::setw(indent)  <<" "<<"<edgeanalysis3d>"<<std::endl;
+    //        str<<std::setw(indent+4)  <<" "<<"<filemask>"<<fileMask<<"</filemask>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<radius>"<<kipl::strings::value2string(radius)<<"</radius>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<precision>"<<kipl::strings::value2string(precision)<<"</precision>\n";
+    //        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
+        //    str<<std::setw(indent)  <<" "<<"</edgeanalysis3d>"<<std::endl;
+}
+
+void NIQAConfig::parseBallPackingAnalysis(xmlTextReaderPtr reader)
+{
+
+
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
+
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                logger.error("Unexpected contents in parameter file");
+                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="filemask") {
+                ballPackingAnalysis.fileMask=sValue;
+            }
+
+            if (sName=="first") {
+                ballPackingAnalysis.first=std::stoi(sValue);
+            }
+
+            if (sName=="last") {
+                ballPackingAnalysis.last=std::stoi(sValue);
+            }
+
+            if (sName=="step") {
+                ballPackingAnalysis.step=std::stoi(sValue);
+            }
+
+            if (sName=="usecrop") {
+                ballPackingAnalysis.useCrop = kipl::strings::string2bool(sValue);
+            }
+
+            if (sName=="crop") {
+                ballPackingAnalysis.roi.fromString(sValue);
+            }
+
+            if (sName=="roilist") {
+                std::list<std::string> strlist;
+                // todo roi list
+                //kipl::strings::String2List(sValue,strlist);
+
+                ballPackingAnalysis.analysisROIs.clear();
+
+                if ((strlist.size() % 4 != 0) || (strlist.empty()==true)){
+                    logger.error("Incomplete roi list");
+                    throw kipl::base::KiplException("Incomplete ROI list",__FILE__,__LINE__);
+                }
+
+                for (auto it=strlist.begin(); it!=strlist.end(); ) {
+                    kipl::base::RectROI roi(std::stoul(*it),std::stoul(*(++it)),std::stoul(*(++it)),std::stoul(*(++it)));
+                    ballPackingAnalysis.analysisROIs.push_back(roi);
+                }
+
+            }
+            if (sName=="makereport") {
+                contrastAnalysis.makeReport = kipl::strings::string2bool(sValue);
+            }
+
+        }
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
+
+    //        str<<std::setw(indent+4)  <<" "<<"<roilist>";
+    //        for (auto it=analysisROIs.begin(); it!=analysisROIs.end(); ++it)
+    //            str<<" "<<it->toString();
+    //        str<<"</roilist>\n";
 }
 
 NIQAConfig::UserInformation::UserInformation() :
@@ -165,7 +429,20 @@ const NIQAConfig::ContrastAnalysis & NIQAConfig::ContrastAnalysis::operator=(con
 
 std::string NIQAConfig::ContrastAnalysis::WriteXML(size_t indent)
 {
+    std::ostringstream str;
 
+    str<<std::setw(indent)  <<" "<<"<contrastanalysis>"<<std::endl;
+        str<<std::setw(indent+4)  <<" "<<"<filemask>"<<fileMask<<"</filemask>\n";
+        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
+        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
+        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
+        str<<std::setw(indent+4)  <<" "<<"<intensityslope>"<<kipl::strings::value2string(intensitySlope)<<"</intensityslope>\n";
+        str<<std::setw(indent+4)  <<" "<<"<intensityintercept>"<<kipl::strings::value2string(intensityIntercept)<<"</intensityintercept>\n";
+        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
+    str<<std::setw(indent)  <<" "<<"</contrastanalysis>"<<std::endl;
+
+    return str.str();
 }
 
 NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D() :
@@ -194,6 +471,7 @@ NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D() :
 NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D(const NIQAConfig::EdgeAnalysis2D &e) :
                    logger("EdgeAnalysisConfig"),
                    singleImageFileName(e.singleImageFileName),
+                   multiImageList(e.multiImageList),
                    first(e.first),
                    last(e.last),
                    step(e.step),
@@ -211,12 +489,12 @@ NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D(const NIQAConfig::EdgeAnalysis2D &e) 
                    pixelSize(e.pixelSize),
                    makeReport(e.makeReport)
 {
-//    std::copy(e.multiImageList.begin(),e.multiImageList.end(),multiImageList.begin());
 }
 
 const NIQAConfig::EdgeAnalysis2D & NIQAConfig::EdgeAnalysis2D::operator=(const NIQAConfig::EdgeAnalysis2D &e)
 {
     singleImageFileName = e.singleImageFileName;
+    multiImageList = e.multiImageList;
     first     = e.first;
     last      = e.last;
     step      = e.step;
@@ -234,14 +512,41 @@ const NIQAConfig::EdgeAnalysis2D & NIQAConfig::EdgeAnalysis2D::operator=(const N
     pixelSize = e.pixelSize;
     makeReport= e.makeReport;
 
-  //  std::copy(e.multiImageList.begin(),e.multiImageList.end(),multiImageList.begin());
-
     return *this;
 }
 
 std::string NIQAConfig::EdgeAnalysis2D::WriteXML(size_t indent)
 {
+    std::ostringstream str;
 
+    str<<std::setw(indent)  <<" "<<"<edgeanalysis2d>"<<std::endl;
+        str<<std::setw(indent+4)  <<" "<<"<singlefilemask>"<<singleImageFileName<<"</singlefilemask>\n";
+        if (multiImageList.empty()==false) {
+            str<<std::setw(indent+4)  <<" "<<"<multiimagelist>";
+            for (auto it=multiImageList.begin(); it!=multiImageList.end(); ++it)
+                str<<" "<<it->first<<" "<<it->second;
+
+            str<<"</multiimagelist>\n";
+        }
+        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
+        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
+        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+        str<<std::setw(indent+4)  <<" "<<"<normalize>"<<kipl::strings::bool2string(normalize)<<"</normalize>\n";
+        str<<std::setw(indent+4)  <<" "<<"<obmask>"<<obMask<<"</obmask>\n";
+        str<<std::setw(indent+4)  <<" "<<"<obfirst>"<<obFirst<<"</obfirst>\n";
+        str<<std::setw(indent+4)  <<" "<<"<oblast>"<<obLast<<"</oblast>\n";
+        str<<std::setw(indent+4)  <<" "<<"<obstep>"<<obStep<<"</obstep>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dcmask>"<<dcMask<<"</dcmask>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dcfirst>"<<first<<"</dcfirst>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dclast>"<<last<<"</dclast>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dcstep>"<<step<<"</dcstep>\n";
+        str<<std::setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(useROI)<<"</useroi>\n";
+        str<<std::setw(indent+4)  <<" "<<"<roi>"<<roi.toString()<<"</roi>\n";
+        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
+        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
+    str<<std::setw(indent)  <<" "<<"</edgeanalysis2d>"<<std::endl;
+
+    return str.str();
 }
 
 NIQAConfig::EdgeAnalysis3D::EdgeAnalysis3D() :
@@ -289,7 +594,20 @@ const NIQAConfig::EdgeAnalysis3D & NIQAConfig::EdgeAnalysis3D::operator=(const N
 
 std::string NIQAConfig::EdgeAnalysis3D::WriteXML(size_t indent)
 {
+    std::ostringstream str;
 
+    str<<std::setw(indent)  <<" "<<"<edgeanalysis3d>"<<std::endl;
+        str<<std::setw(indent+4)  <<" "<<"<filemask>"<<fileMask<<"</filemask>\n";
+        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
+        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
+        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
+        str<<std::setw(indent+4)  <<" "<<"<radius>"<<kipl::strings::value2string(radius)<<"</radius>\n";
+        str<<std::setw(indent+4)  <<" "<<"<precision>"<<kipl::strings::value2string(precision)<<"</precision>\n";
+        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
+    str<<std::setw(indent)  <<" "<<"</edgeanalysis3d>"<<std::endl;
+
+    return str.str();
 }
 
 
@@ -333,23 +651,22 @@ const NIQAConfig::BallPackingAnalysis & NIQAConfig::BallPackingAnalysis::operato
 
 std::string NIQAConfig::BallPackingAnalysis::WriteXML(size_t indent)
 {
-//    std::string fileMask;
-//    int first;
-//    int last;
-//    int step;
-//    bool useCrop;
-//    kipl::base::RectROI roi;
-//    std::list<kipl::base::RectROI> analysisROIs;
-//    bool makeReport;
-    str<<setw(indent)  <<" "<<"<ballpacking>"<<endl;
-        str<<setw(indent+4)  <<" "<<"<filemask>"<<fileMask<<"</filemask>\n";
-        str<<setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
-        str<<setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
-        str<<setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
-        str<<setw(indent+4)  <<" "<<"<usecrop>"<<experimentDate[0]<<" "<<experimentDate[1]<<" "<<experimentDate[2]<<" "<<"</experimentdate>\n";
-        str<<setw(indent+4)  <<" "<<"<analysisdate>"<<analysisDate[0]<<" "<<analysisDate[1]<<" "<<analysisDate[2]<<" "<<"</analysisdate>\n";
-        str<<setw(indent+4)  <<" "<<"<version>"<<softwareVersion<<"</version>\n";
-        str<<setw(indent+4)  <<" "<<"<report>"<<kipl::strings::bool2string(makeReport)<<"</report>\n";
-    str<<setw(indent)  <<" "<<"</ballpacking>"<<endl;
+    std::ostringstream str;
+
+    str<<std::setw(indent)  <<" "<<"<ballpacking>"<<std::endl;
+        str<<std::setw(indent+4)  <<" "<<"<filemask>"<<fileMask<<"</filemask>\n";
+        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
+        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
+        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+        str<<std::setw(indent+4)  <<" "<<"<usecrop>"<<kipl::strings::bool2string(useCrop)<<"</usecrop>\n";
+        str<<std::setw(indent+4)  <<" "<<"<crop>"<<roi.toString()<<"</crop>\n";
+        str<<std::setw(indent+4)  <<" "<<"<roilist>";
+        for (auto it=analysisROIs.begin(); it!=analysisROIs.end(); ++it)
+            str<<" "<<it->toString();
+        str<<"</roilist>\n";
+        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
+    str<<std::setw(indent)  <<" "<<"</ballpacking>"<<std::endl;
+
+    return str.str();
 }
 

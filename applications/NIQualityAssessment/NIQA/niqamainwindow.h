@@ -73,6 +73,16 @@ private slots:
 
     void on_pushButton_analyzSingleEdge_clicked();
 
+    void on_actionNew_triggered();
+
+    void on_actionLoad_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionSave_as_triggered();
+
+    void on_actionQuit_triggered();
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
@@ -88,9 +98,12 @@ private:
 
     void updateConfig();
     void updateDialog();
+    void saveConfig(std::string fname);
 
     Ui::NIQAMainWindow *ui;
     QtAddons::LoggingDialog *logdlg;
+
+    std::string configFileName;
 
     NIQAConfig config;
 

@@ -133,7 +133,12 @@ public:
     BallPackingAnalysis ballPackingAnalysis;
 
 protected:
-    virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName);
+    virtual void parseConfig(xmlTextReaderPtr reader, std::string sName);
+    void parseUserInformation(xmlTextReaderPtr reader);
+    void ParseContrastAnalysis(xmlTextReaderPtr reader);
+    void parseEdgeAnalysis2D(xmlTextReaderPtr reader);
+    void parseEdgeAnalysis3D(xmlTextReaderPtr reader);
+    void parseBallPackingAnalysis(xmlTextReaderPtr reader);
 
 };
 

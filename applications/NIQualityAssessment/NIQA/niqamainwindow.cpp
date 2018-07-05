@@ -37,7 +37,8 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("NIQAMainWindow"),
     ui(new Ui::NIQAMainWindow),
-    logdlg(new QtAddons::LoggingDialog(this))
+    logdlg(new QtAddons::LoggingDialog(this)),
+    configFileName("niqaconfig.xml")
 {
     ui->setupUi(this);
 
@@ -264,9 +265,6 @@ void NIQAMainWindow::on_button_addEdgeFile_clicked()
 
         if (res==dlg.Accepted) {
             dlg.getInfo(item->distance,item->filename);
-            std::ostringstream msg;
-            msg<<item->filename.toStdString()<<std::endl<<"Edge distance="<<item->distance;
-            item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
         }
 
         msg<<it->toStdString()<<std::endl<<"Edge distance="<<item->distance;
@@ -412,7 +410,7 @@ void NIQAMainWindow::updateConfig()
     config.userInformation.experimentDate[0] = date.year();
     config.userInformation.experimentDate[1] = date.month();
     config.userInformation.experimentDate[2] = date.day();
-    config.userInformation.comment = ui->plainTextEdit_comment->
+    config.userInformation.comment = ui->plainTextEdit_comment->toPlainText().toStdString();
 
     date = ui->dateEdit_analysisDate->date();
     config.userInformation.analysisDate[0] = date.year();
@@ -435,7 +433,13 @@ void NIQAMainWindow::updateConfig()
 
     config.edgeAnalysis2D.singleImageFileName = ui->widget_singleedge->getFileName();
     //todo implement list transfer
-//    config.edgeAnalysis2D.multiImageList = ui->;
+    config.edgeAnalysis2D.multiImageList.clear();
+    for(int i = 0; i < ui->listEdgeFiles->count(); ++i)
+    {
+        EdgeFileListItem *item = dynamic_cast<EdgeFileListItem *>(ui->listEdgeFiles->item(i));
+
+        config.edgeAnalysis2D.multiImageList.insert(make_pair(item->distance,item->filename.toStdString()));
+    }
 
     config.edgeAnalysis2D.normalize = ui->groupBox_2Dreferences->isChecked();
 
@@ -479,6 +483,7 @@ void NIQAMainWindow::updateConfig()
 
 void NIQAMainWindow::updateDialog()
 {
+    std::ostringstream msg;
     // User information
     ui->lineEdit_userName->setText(QString::fromStdString(config.userInformation.userName));
     ui->lineEdit_institute->setText(QString::fromStdString(config.userInformation.institute));
@@ -505,6 +510,22 @@ void NIQAMainWindow::updateDialog()
     ui->widget_singleedge->setFileName(config.edgeAnalysis2D.singleImageFileName);
     //todo implement list transfer
 //    config.edgeAnalysis2D.multiImageList = ui->;
+
+    if (config.edgeAnalysis2D.multiImageList.empty()==false) {
+        for (auto it=config.edgeAnalysis2D.multiImageList.begin(); it!=config.edgeAnalysis2D.multiImageList.end(); ++it) {
+            EdgeFileListItem *item = new EdgeFileListItem;
+
+            item->distance  = it->first;
+            item->filename  = QString::fromStdString(it->second);
+            msg.str("");
+            msg<<it->second<<std::endl<<"Edge distance="<<it->first;
+            item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+            item->setData(Qt::CheckStateRole,Qt::Unchecked);
+
+            item->setCheckState(Qt::CheckState::Checked);
+            ui->listEdgeFiles->addItem(item);
+        }
+    }
 
     ui->groupBox_2Dreferences->setChecked(config.edgeAnalysis2D.normalize);
 
@@ -548,6 +569,15 @@ void NIQAMainWindow::updateDialog()
     ui->widget_roi3DBalls->setROI(config.ballPackingAnalysis.roi);
     ui->checkBox_reportBallPacking->setChecked(config.ballPackingAnalysis.makeReport);
 
+}
+
+void NIQAMainWindow::saveConfig(std::string fname)
+{
+    updateConfig();
+    configFileName=fname;
+    std::ofstream conffile(configFileName.c_str());
+
+    conffile<<config.WriteXML();
 }
 
 void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
@@ -777,6 +807,40 @@ void NIQAMainWindow::on_pushButton_2dEdge_pixelSize_clicked()
 }
 
 void NIQAMainWindow::on_pushButton_analyzSingleEdge_clicked()
+{
+
+}
+
+void NIQAMainWindow::on_actionNew_triggered()
+{
+    NIQAConfig conf;
+    config = conf;
+    updateDialog();
+}
+
+void NIQAMainWindow::on_actionLoad_triggered()
+{
+
+}
+
+void NIQAMainWindow::on_actionSave_triggered()
+{
+    if (configFileName=="niqaconfig.xml") {
+        on_actionSave_as_triggered();
+    }
+    else {
+        saveConfig(configFileName);
+    }
+}
+
+void NIQAMainWindow::on_actionSave_as_triggered()
+{
+    QString fname=QFileDialog::getSaveFileName(this,"Save configuration file",QDir::homePath());
+
+    saveConfig(fname.toStdString());
+}
+
+void NIQAMainWindow::on_actionQuit_triggered()
 {
 
 }

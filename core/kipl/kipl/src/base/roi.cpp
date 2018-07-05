@@ -1,6 +1,8 @@
 #include "../../include/base/roi.h"
 #include <sstream>
 
+#include "../../include/strings/string2array.h"
+
 namespace kipl {
 namespace base {
 
@@ -76,8 +78,7 @@ std::string RectROI::toString()
 
 void RectROI::fromString(std::string str)
 {
-    size_t pos0=str.find_first_of(" ,;\t");
-
+    kipl::strings::String2Array(str,coords,4);
 }
 
 std::string RectROI::getName()
