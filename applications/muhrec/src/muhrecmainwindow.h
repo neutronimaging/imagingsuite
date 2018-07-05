@@ -37,7 +37,7 @@ private:
     QApplication *m_QtApp;
     void SetApplicationPath(std::string path) {m_sApplicationPath=path;}
     void SlicesChanged(int x);
-    void SlicesCBCTChanged(int x);
+//    void SlicesCBCTChanged(int x);
 
 
     // Collection of call-backs
