@@ -1,7 +1,8 @@
-#ifndef REFERENCEIMAGECORRECTION_H
-#define REFERENCEIMAGECORRECTION_H
+#ifndef REFERENCEIMAGECORRECTIONMODULE_H
+#define REFERENCEIMAGECORRECTIONOMDULE_H
 
 #include "ImagingModules_global.h"
+#include "imagingmodules.h"
 #include <string>
 #include <map>
 
@@ -14,7 +15,7 @@ class IMAGINGMODULESSHARED_EXPORT ReferenceImageCorrectionModule : public KiplPr
 {
 public:
     ReferenceImageCorrectionModule();
-    ~ReferenceImageCorrectionModule();
+    virtual ~ReferenceImageCorrectionModule();
 
     virtual int Configure(std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();

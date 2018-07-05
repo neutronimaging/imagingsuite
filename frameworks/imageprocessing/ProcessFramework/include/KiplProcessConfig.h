@@ -78,6 +78,8 @@ public:
 private:
     virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName);
     virtual void ParseProcessChain(xmlTextReaderPtr reader);
+    virtual std::string SanitySlicesCheck() {}
+    virtual std::string SanityMessage(bool mess){}
 };
 
 #endif
