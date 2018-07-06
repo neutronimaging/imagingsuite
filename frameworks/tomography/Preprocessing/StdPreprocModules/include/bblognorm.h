@@ -24,6 +24,7 @@ public:
     virtual ~BBLogNorm();
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
+    virtual int ConfigureDLG(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
     virtual bool SetROI(size_t *roi); /// set the current roi to be processed
