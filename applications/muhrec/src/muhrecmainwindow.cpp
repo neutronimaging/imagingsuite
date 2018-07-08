@@ -2497,20 +2497,20 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
 
 void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
 {
-    if (index==m_Config.ProjectionInfo.GoldenSectionScan)
-    {
-        if  (ui->radioButton_customTurn->isChecked()) {
-            ui->radioButton_customTurn->setCheckable(false);
-            ui->radioButton_halfTurn1->setChecked(true); // default value
-            on_radioButton_halfTurn1_clicked();
-        }
+//    if (index==m_Config.ProjectionInfo.GoldenSectionScan)
+//    {
+//        if  (ui->radioButton_customTurn->isChecked()) {
+//            ui->radioButton_customTurn->setCheckable(false);
+//            ui->radioButton_halfTurn1->setChecked(true); // default value
+//            on_radioButton_halfTurn1_clicked();
+//        }
 
-        ui->radioButton_customTurn->setCheckable(false);
-    }
-    else
-    {
-        ui->radioButton_customTurn->setCheckable(true);
-    }
+//        ui->radioButton_customTurn->setCheckable(false);
+//    }
+//    else
+//    {
+//        ui->radioButton_customTurn->setCheckable(true);
+//    }
 }
 
 

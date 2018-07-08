@@ -107,9 +107,10 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 				break;
 			case ReconConfig::cProjections::GoldenSectionScan : {
 					const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
-					float arc=config->ProjectionInfo.fScanArc[1];
+                    float arc=config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0];
 					if ((arc!=180.0f) && (arc!=360.0f))
-						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
+                        logger(logger.LogWarning,"The golden ratio reconstruction works best when the arc is 180 or 360 degrees");
+                        //throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
 
 					for (size_t i=0; i<config->ProjectionInfo.nFirstIndex; i++) {
                         if (!ignore_skiplist) {
