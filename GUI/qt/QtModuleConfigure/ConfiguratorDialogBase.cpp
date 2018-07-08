@@ -30,8 +30,11 @@ ConfiguratorDialogBase::~ConfiguratorDialogBase()
 {
 }
 
-int ConfiguratorDialogBase::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &UNUSED(img))
+int ConfiguratorDialogBase::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img)
 {
+    (void) config;
+    (void) parameters;
+    (void) img;
     return QDialog::exec();
 }
 

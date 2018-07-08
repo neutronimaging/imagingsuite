@@ -74,8 +74,8 @@ int MuhRecCLI::exec()
                 }
             }  // Exception handling as last resort to report unhandled faults
             catch (ReconException &re) {
-                cerr<<"An unhandled reconstructor exception occurred"<<endl;
-                cerr<<"Trace :"<<endl<<re.what()<<endl;
+                std::cerr<<"An unhandled reconstructor exception occurred"<<std::endl;
+                std::cerr<<"Trace :"<<std::endl<<re.what()<<std::endl;
                 return -2;
             }
             catch (ModuleException &e) {
@@ -85,18 +85,18 @@ int MuhRecCLI::exec()
                 return -3;
             }
             catch (kipl::base::KiplException &ke) {
-                cerr<<"An unhandled kipl exception occurred"<<endl;
-                cerr<<"Trace :"<<endl<<ke.what()<<endl;
+                std::cerr<<"An unhandled kipl exception occurred"<<std::endl;
+                std::cerr<<"Trace :"<<std::endl<<ke.what()<<std::endl;
                 return -4;
             }
             catch (std::exception &e) {
-                cerr<<"An unhandled STL exception occurred"<<endl;
-                cerr<<"Trace :"<<endl<<e.what()<<endl;
+                std::cerr<<"An unhandled STL exception occurred"<<std::endl;
+                std::cerr<<"Trace :"<<std::endl<<e.what()<<std::endl;
                 return -5;
             }
 
             catch (...) {
-                cerr<<"An unknown exception occurred"<<endl;
+                std::cerr<<"An unknown exception occurred"<<std::endl;
                 return -6;
             }
         }

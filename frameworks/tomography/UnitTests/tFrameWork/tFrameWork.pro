@@ -42,6 +42,35 @@ unix {
     }
 }
 
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+    QMAKE_LFLAGS += /MACHINE:X64
+    }
+
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../../external/include
+    INCLUDEPATH += $$PWD/../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+
+    LIBS +=  -llibxml2_dll
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
+win32 {
+exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES *= HAVE_NEXUS
+    INCLUDEPATH += $$PWD/../../../../../../external/include/nexus $$PWD/../../../../../../external/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64/nexus $$PWD/../../../../../../external/lib64/hdf5
+
+    LIBS += -lNeXus -lNeXusCPP
+
+#    SOURCES += $$PWD/../../../../../../core/kipl/kipl/src/io/io_nexus.cpp
+#    HEADERS += $$PWD/../../../../../../core/kipl/kipl/include/io/io_nexus.h
+}
+}
+
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio

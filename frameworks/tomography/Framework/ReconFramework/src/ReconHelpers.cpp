@@ -2,9 +2,12 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <map>
+#include <array>
+#include <list>
 
 #include <strings/string2array.h>
 
@@ -52,13 +55,14 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
         while ((line_cnt <= config->ProjectionInfo.nLastIndex) && !listfile.eof()) {
             line_cnt++;
             line=cline;
-            float angle=static_cast<float>(atof(line.c_str()));
 
-            std::string fname=line.substr(line.find_first_of(",\t")+1);
-            fname=fname.substr(fname.find_first_not_of(" "));
-            fname=fname.substr(0,fname.find_first_of("\n\r"));
 
-            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sPath+fname,angle)));
+            std::istringstream iss(cline);
+            std::list<std::string> items {std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+            auto item=items.begin();
+            float angle=std::stof(*item); ++item;
+
+            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(*item,angle)));
             listfile.getline(cline,2048,eolchar);
         }
         listfile.close();
