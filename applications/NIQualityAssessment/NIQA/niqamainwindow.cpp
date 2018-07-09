@@ -529,7 +529,6 @@ void NIQAMainWindow::updateDialog()
 
     ui->groupBox_2Dreferences->setChecked(config.edgeAnalysis2D.normalize);
 
-
     loader.m_sFilemask = config.edgeAnalysis2D.obMask;
     loader.m_nFirst    = config.edgeAnalysis2D.obFirst;
     loader.m_nLast     = config.edgeAnalysis2D.obLast;
@@ -559,16 +558,15 @@ void NIQAMainWindow::updateDialog()
     ui->dspin_bigball_radius->setValue(config.edgeAnalysis3D.radius);
     ui->checkBox_report3DEdge->setChecked(config.edgeAnalysis3D.makeReport);
 
-    loader = ui->imageloader_packing->getReaderConfig();
     loader.m_sFilemask = config.ballPackingAnalysis.fileMask;
     loader.m_nFirst = config.ballPackingAnalysis.first;
     loader.m_nLast = config.ballPackingAnalysis.last;
     loader.m_nStep = config.ballPackingAnalysis.step;
+    ui->imageloader_packing->setReaderConfig(loader);
     ui->check_3DBallsCrop->setChecked(config.ballPackingAnalysis.useCrop);
     ui->widget_bundleroi->setROIs(config.ballPackingAnalysis.analysisROIs);
     ui->widget_roi3DBalls->setROI(config.ballPackingAnalysis.roi);
     ui->checkBox_reportBallPacking->setChecked(config.ballPackingAnalysis.makeReport);
-
 }
 
 void NIQAMainWindow::saveConfig(std::string fname)
@@ -820,7 +818,34 @@ void NIQAMainWindow::on_actionNew_triggered()
 
 void NIQAMainWindow::on_actionLoad_triggered()
 {
+    logger.message("Load config");
+    QString fname=QFileDialog::getOpenFileName(this,"Load configuration file",QDir::homePath());
 
+    bool fail=false;
+    std::string failmessage;
+
+    try {
+        config.LoadConfigFile(fname.toStdString(),"niqa");
+    }
+    catch (kipl::base::KiplException &e) {
+        fail=true;
+        failmessage=e.what();
+    }
+    catch (std::exception &e) {
+        fail=true;
+        failmessage=e.what();
+    }
+
+    if (fail==true) {
+        std::ostringstream msg;
+        msg<<"Could not load config file\n"<<failmessage;
+        logger.warning(msg.str());
+        QMessageBox::warning(this,"Warning","Could not open specified config file",QMessageBox::Ok);
+        return;
+    }
+
+    logger.message(config.WriteXML());
+    updateDialog();
 }
 
 void NIQAMainWindow::on_actionSave_triggered()

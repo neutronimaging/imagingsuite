@@ -115,22 +115,22 @@
            </layout>
           </item>
           <item>
+           <spacer name="verticalSpacer_12">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QPushButton" name="button_AnalyzeContrast">
             <property name="text">
              <string>Analyze</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>- Load contrast sample images
-- Set pixel size
-- Set gray scaling
-- Segment regions
-- Compute stats
-- Present results
-- Generate report as PDF</string>
             </property>
            </widget>
           </item>
@@ -344,7 +344,7 @@
                 <item>
                  <widget class="QPushButton" name="button_get2Dedges">
                   <property name="text">
-                   <string>Get edges</string>
+                   <string>Analyze edges</string>
                   </property>
                  </widget>
                 </item>
@@ -371,7 +371,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_2dEdge_pixelSize"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_2dEdge_pixelSize">
+              <property name="decimals">
+               <number>4</number>
+              </property>
+              <property name="maximum">
+               <double>9999.999900000000707</double>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_2">
@@ -587,7 +594,14 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="dspin_bigball_pixelsize"/>
+               <widget class="QDoubleSpinBox" name="dspin_bigball_pixelsize">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
+                <property name="maximum">
+                 <double>9999.999900000000707</double>
+                </property>
+               </widget>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_6">
@@ -856,13 +870,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_AnalyzePacking">
-              <property name="text">
-               <string>Analyze</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer name="verticalSpacer_7">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -874,6 +881,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_AnalyzePacking">
+              <property name="text">
+               <string>Analyze</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

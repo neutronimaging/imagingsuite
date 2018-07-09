@@ -30,6 +30,8 @@ const NIQAConfig & NIQAConfig::operator=(const NIQAConfig &c)
     edgeAnalysis2D      = c.edgeAnalysis2D;
     edgeAnalysis3D      = c.edgeAnalysis3D;
     ballPackingAnalysis = c.ballPackingAnalysis;
+
+    return *this;
 }
 
 std::string NIQAConfig::WriteXML()
@@ -49,7 +51,61 @@ std::string NIQAConfig::WriteXML()
 
 void NIQAConfig::LoadConfigFile(std::string configfile, std::string ProjectName)
 {
+    xmlTextReaderPtr reader;
+    const xmlChar *name;
+    int ret;
+    std::string sName;
+    std::ostringstream msg;
 
+    reader = xmlReaderForFile(configfile.c_str(), nullptr, 0);
+    if (reader != nullptr) {
+        ret = xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+
+
+        if (name==nullptr) {
+            throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+        }
+
+        sName=reinterpret_cast<const char *>(name);
+        msg.str(""); msg<<"Found "<<sName<<" expect "<<ProjectName;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        if (std::string(sName)!=ProjectName) {
+            msg.str();
+            msg<<"Unexpected project contents in parameter file ("<<sName<<"!="<<ProjectName<<")";
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+        }
+
+        logger(kipl::logging::Logger::LogVerbose,"Got project");
+
+        ret = xmlTextReaderRead(reader);
+
+        while (ret == 1) {
+            if (xmlTextReaderNodeType(reader)==1) {
+                name = xmlTextReaderConstName(reader);
+
+                if (name==nullptr) {
+                    throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+                }
+                sName=reinterpret_cast<const char *>(name);
+
+                parseConfig(reader,sName);
+            }
+            ret = xmlTextReaderRead(reader);
+        }
+        xmlFreeTextReader(reader);
+        if (ret != 0) {
+            std::stringstream str;
+            str<<"Module config failed to parse "<<configfile;
+            throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+        }
+    } else {
+        std::stringstream str;
+        str<<"Module config could not open "<<configfile;
+        throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+    }
+    logger(kipl::logging::Logger::LogVerbose,"Parsing parameter file done");
 }
 
 void NIQAConfig::parseConfig(xmlTextReaderPtr reader, std::string sName)
@@ -265,15 +321,15 @@ void NIQAConfig::parseEdgeAnalysis2D(xmlTextReaderPtr reader)
             }
 
             if (sName=="dcfirst") {
-                edgeAnalysis2D.obFirst=std::stoi(sValue);
+                edgeAnalysis2D.dcFirst=std::stoi(sValue);
             }
 
             if (sName=="dclast") {
-                edgeAnalysis2D.obLast=std::stoi(sValue);
+                edgeAnalysis2D.dcLast=std::stoi(sValue);
             }
 
             if (sName=="dcstep") {
-                edgeAnalysis2D.obStep=std::stoi(sValue);
+                edgeAnalysis2D.dcStep=std::stoi(sValue);
             }
 
 
@@ -353,7 +409,7 @@ void NIQAConfig::parseEdgeAnalysis3D(xmlTextReaderPtr reader)
             }
 
             if (sName=="makereport") {
-                edgeAnalysis2D.makeReport=kipl::strings::string2bool(sValue);
+                edgeAnalysis3D.makeReport=kipl::strings::string2bool(sValue);
             }
         }
 
@@ -369,22 +425,32 @@ void NIQAConfig::parseBallPackingAnalysis(xmlTextReaderPtr reader)
     int ret = xmlTextReaderRead(reader);
     std::string sName, sValue;
     int depth=xmlTextReaderDepth(reader);
-
+    std::ostringstream msg;
     while (ret == 1) {
         if (xmlTextReaderNodeType(reader)==1) {
             name = xmlTextReaderConstName(reader);
             ret=xmlTextReaderRead(reader);
 
             value = xmlTextReaderConstValue(reader);
+
             if (name==nullptr) {
                 logger.error("Unexpected contents in parameter file");
                 throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
             }
-            if (value!=nullptr)
-                sValue=reinterpret_cast<const char *>(value);
-            else
-                sValue="Empty";
             sName=reinterpret_cast<const char *>(name);
+
+            if (value!=nullptr) {
+                sValue=reinterpret_cast<const char *>(value);
+//                msg.str("");
+//                msg<<"Got value "<<sValue<<" for field "<<sName;
+//                logger.message(msg.str());
+            }
+            else {
+                sValue="Empty";
+                msg.str("");
+                msg<<"Empty value for field "<<sName;
+                logger.warning(msg.str());
+            }
 
             if (sName=="filemask") {
                 ballPackingAnalysis.fileMask=sValue;
@@ -412,24 +478,30 @@ void NIQAConfig::parseBallPackingAnalysis(xmlTextReaderPtr reader)
 
             if (sName=="roilist") {
                 std::list<std::string> strlist;
-                // todo roi list
-                //kipl::strings::String2List(sValue,strlist);
-
+                kipl::strings::String2List(sValue,strlist);
+                std::ostringstream msg;
                 ballPackingAnalysis.analysisROIs.clear();
 
+                msg<<"strlist.size: "<<strlist.size()<<", sValue: "<<sValue;
+                logger.message(msg.str());
                 if ((strlist.size() % 4 != 0) || (strlist.empty()==true)){
                     logger.error("Incomplete roi list");
                     throw kipl::base::KiplException("Incomplete ROI list",__FILE__,__LINE__);
                 }
 
-                for (auto it=strlist.begin(); it!=strlist.end(); ) {
-                    kipl::base::RectROI roi(std::stoul(*it),std::stoul(*(++it)),std::stoul(*(++it)),std::stoul(*(++it)));
+                for (auto it=strlist.begin(); it!=strlist.end(); ++it) {
+                    size_t temproi[4];
+                    temproi[0] = std::stoi(*it); ++it;
+                    temproi[1] = std::stoi(*it); ++it;
+                    temproi[2] = std::stoi(*it); ++it;
+                    temproi[3] = std::stoi(*it);
+                    kipl::base::RectROI roi(temproi);
                     ballPackingAnalysis.analysisROIs.push_back(roi);
                 }
 
             }
             if (sName=="makereport") {
-                contrastAnalysis.makeReport = kipl::strings::string2bool(sValue);
+                ballPackingAnalysis.makeReport = kipl::strings::string2bool(sValue);
             }
 
         }
@@ -437,11 +509,6 @@ void NIQAConfig::parseBallPackingAnalysis(xmlTextReaderPtr reader)
         if (xmlTextReaderDepth(reader)<depth)
             ret=0;
     }
-
-    //        str<<std::setw(indent+4)  <<" "<<"<roilist>";
-    //        for (auto it=analysisROIs.begin(); it!=analysisROIs.end(); ++it)
-    //            str<<" "<<it->toString();
-    //        str<<"</roilist>\n";
 }
 
 NIQAConfig::UserInformation::UserInformation() :
@@ -784,7 +851,7 @@ std::string NIQAConfig::BallPackingAnalysis::WriteXML(size_t indent)
         str<<std::setw(indent+4)  <<" "<<"<crop>"<<roi.toString()<<"</crop>\n";
         str<<std::setw(indent+4)  <<" "<<"<roilist>";
         for (auto it=analysisROIs.begin(); it!=analysisROIs.end(); ++it)
-            str<<" "<<it->toString();
+            str<<(it==analysisROIs.begin() ? "":" ")<<it->toString();
         str<<"</roilist>\n";
         str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
     str<<std::setw(indent)  <<" "<<"</ballpacking>"<<std::endl;
