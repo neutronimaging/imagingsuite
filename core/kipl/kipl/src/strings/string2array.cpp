@@ -164,10 +164,17 @@ size_t String2Array(std::string str, std::vector<size_t> &v)
     return 0;
 }
 
-size_t String2Array(std::string str, std::vector<int> &v)
+size_t String2Array(std::string str, std::vector<std::string> &v)
 {
-    throw kipl::base::KiplException("String2Array is not implemented for vector<int>",__FILE__,__LINE__);
-    return 0;
+    v.clear();
+
+    std::istringstream iss(str);
+    std::vector<std::string> tokens{std::istream_iterator<std::string>{iss},
+                      std::istream_iterator<std::string>{}};
+
+    v=tokens;
+
+    return v.size();
 }
 
 
@@ -221,6 +228,19 @@ std::string Array2String(int *v, size_t N)
         s<<v[i]<<(i<(N-1) ? " " : "");
     }
     return s.str();
+}
+
+size_t String2List(std::string str, std::list<std::string> &slist)
+{
+    slist.clear();
+
+    std::istringstream iss(str);
+    std::list<std::string> tokens{std::istream_iterator<std::string>{iss},
+                      std::istream_iterator<std::string>{}};
+
+    slist=tokens;
+
+    return slist.size();
 }
 
 

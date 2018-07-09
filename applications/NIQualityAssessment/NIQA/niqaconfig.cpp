@@ -197,52 +197,174 @@ void NIQAConfig::ParseContrastAnalysis(xmlTextReaderPtr reader)
 
 void NIQAConfig::parseEdgeAnalysis2D(xmlTextReaderPtr reader)
 {
-    //    str<<std::setw(indent)  <<" "<<"<edgeanalysis2d>"<<std::endl;
-    //        str<<std::setw(indent+4)  <<" "<<"<singlefilemask>"<<singleImageFileName<<"</singlefilemask>\n";
-    //        if (multiImageList.empty()==false) {
-    //            str<<std::setw(indent+4)  <<" "<<"<multiimagelist>";
-    //            for (auto it=multiImageList.begin(); it!=multiImageList.end(); ++it)
-    //                str<<" "<<it->first<<" "<<it->second;
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
 
-    //            str<<"</multiimagelist>\n";
-    //        }
-    //        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<normalize>"<<kipl::strings::bool2string(normalize)<<"</normalize>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<obmask>"<<obMask<<"</obmask>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<obfirst>"<<obFirst<<"</obfirst>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<oblast>"<<obLast<<"</oblast>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<obstep>"<<obStep<<"</obstep>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<dcmask>"<<dcMask<<"</dcmask>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<dcfirst>"<<first<<"</dcfirst>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<dclast>"<<last<<"</dclast>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<dcstep>"<<step<<"</dcstep>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(useROI)<<"</useroi>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<roi>"<<roi.toString()<<"</roi>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
-    //    str<<std::setw(indent)  <<" "<<"</edgeanalysis2d>"<<std::endl;
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                logger.error("Unexpected contents in parameter file");
+                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="singlefilename") {
+                edgeAnalysis2D.singleImageFileName=sValue;
+            }
+
+            if (sName=="multiimagelist"){
+                std::list<std::string> sl;
+                kipl::strings::String2List(sValue,sl);
+                for (auto it=sl.begin(); it!=sl.end(); ++it) {
+                    float pos=std::stof(*it); ++it;
+                    std::string &fname=*it;
+                    edgeAnalysis2D.multiImageList.insert(std::make_pair(pos,fname));
+                }
+            }
+
+            if (sName=="first") {
+                edgeAnalysis2D.first=std::stoi(sValue);
+            }
+
+            if (sName=="last") {
+                edgeAnalysis2D.last=std::stoi(sValue);
+            }
+
+            if (sName=="step") {
+                edgeAnalysis2D.step=std::stoi(sValue);
+            }
+
+            if (sName=="obmask") {
+                edgeAnalysis2D.obMask=sValue;
+            }
+
+            if (sName=="obfirst") {
+                edgeAnalysis2D.obFirst=std::stoi(sValue);
+            }
+
+            if (sName=="oblast") {
+                edgeAnalysis2D.obLast=std::stoi(sValue);
+            }
+
+            if (sName=="obstep") {
+                edgeAnalysis2D.obStep=std::stoi(sValue);
+            }
+
+            if (sName=="dcmask") {
+                edgeAnalysis2D.dcMask=sValue;
+            }
+
+            if (sName=="dcfirst") {
+                edgeAnalysis2D.obFirst=std::stoi(sValue);
+            }
+
+            if (sName=="dclast") {
+                edgeAnalysis2D.obLast=std::stoi(sValue);
+            }
+
+            if (sName=="dcstep") {
+                edgeAnalysis2D.obStep=std::stoi(sValue);
+            }
+
+
+            if (sName=="pixelsize") {
+                edgeAnalysis2D.pixelSize= std::stod(sValue);
+            }
+
+            if (sName=="normalize") {
+                edgeAnalysis2D.normalize=kipl::strings::string2bool(sValue);
+            }
+
+            if (sName=="useroi") {
+                edgeAnalysis2D.useROI=kipl::strings::string2bool(sValue);
+            }
+
+            if (sName=="roi") {
+                edgeAnalysis2D.roi.fromString(sValue);
+            }
+
+            if (sName=="makereport") {
+                edgeAnalysis2D.makeReport=kipl::strings::string2bool(sValue);
+            }
+        }
+
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
+
 }
 
 void NIQAConfig::parseEdgeAnalysis3D(xmlTextReaderPtr reader)
 {
-    //    str<<std::setw(indent)  <<" "<<"<edgeanalysis3d>"<<std::endl;
-    //        str<<std::setw(indent+4)  <<" "<<"<filemask>"<<fileMask<<"</filemask>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<radius>"<<kipl::strings::value2string(radius)<<"</radius>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<precision>"<<kipl::strings::value2string(precision)<<"</precision>\n";
-    //        str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
-        //    str<<std::setw(indent)  <<" "<<"</edgeanalysis3d>"<<std::endl;
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
+
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                logger.error("Unexpected contents in parameter file");
+                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="filemask") {
+                edgeAnalysis3D.fileMask=sValue;
+            }
+
+            if (sName=="first") {
+                edgeAnalysis3D.first=std::stoi(sValue);
+            }
+
+            if (sName=="last") {
+                edgeAnalysis3D.last=std::stoi(sValue);
+            }
+
+            if (sName=="step") {
+                edgeAnalysis3D.step=std::stoi(sValue);
+            }
+
+            if (sName=="pixelsize") {
+                edgeAnalysis3D.pixelSize= std::stod(sValue);
+            }
+
+            if (sName=="precision") {
+                edgeAnalysis3D.precision = std::stod(sValue);
+            }
+
+            if (sName=="makereport") {
+                edgeAnalysis2D.makeReport=kipl::strings::string2bool(sValue);
+            }
+        }
+
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
 }
 
 void NIQAConfig::parseBallPackingAnalysis(xmlTextReaderPtr reader)
 {
-
-
     const xmlChar *name, *value;
     int ret = xmlTextReaderRead(reader);
     std::string sName, sValue;
@@ -520,7 +642,7 @@ std::string NIQAConfig::EdgeAnalysis2D::WriteXML(size_t indent)
     std::ostringstream str;
 
     str<<std::setw(indent)  <<" "<<"<edgeanalysis2d>"<<std::endl;
-        str<<std::setw(indent+4)  <<" "<<"<singlefilemask>"<<singleImageFileName<<"</singlefilemask>\n";
+        str<<std::setw(indent+4)  <<" "<<"<singlefilename>"<<singleImageFileName<<"</singlefilename>\n";
         if (multiImageList.empty()==false) {
             str<<std::setw(indent+4)  <<" "<<"<multiimagelist>";
             for (auto it=multiImageList.begin(); it!=multiImageList.end(); ++it)
@@ -537,9 +659,9 @@ std::string NIQAConfig::EdgeAnalysis2D::WriteXML(size_t indent)
         str<<std::setw(indent+4)  <<" "<<"<oblast>"<<obLast<<"</oblast>\n";
         str<<std::setw(indent+4)  <<" "<<"<obstep>"<<obStep<<"</obstep>\n";
         str<<std::setw(indent+4)  <<" "<<"<dcmask>"<<dcMask<<"</dcmask>\n";
-        str<<std::setw(indent+4)  <<" "<<"<dcfirst>"<<first<<"</dcfirst>\n";
-        str<<std::setw(indent+4)  <<" "<<"<dclast>"<<last<<"</dclast>\n";
-        str<<std::setw(indent+4)  <<" "<<"<dcstep>"<<step<<"</dcstep>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dcfirst>"<<dcFirst<<"</dcfirst>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dclast>"<<dcLast<<"</dclast>\n";
+        str<<std::setw(indent+4)  <<" "<<"<dcstep>"<<dcStep<<"</dcstep>\n";
         str<<std::setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(useROI)<<"</useroi>\n";
         str<<std::setw(indent+4)  <<" "<<"<roi>"<<roi.toString()<<"</roi>\n";
         str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
