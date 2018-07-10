@@ -43,6 +43,9 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="maximum">
+     <number>9999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinX1">
     <property name="geometry">
@@ -81,6 +84,9 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="maximum">
+     <number>9999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinY0">
     <property name="geometry">
@@ -96,6 +102,9 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="maximum">
+     <number>9999</number>
     </property>
    </widget>
    <widget class="QPushButton" name="buttonGetROI">
@@ -120,20 +129,20 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_x0y0">
+   <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>51</width>
-      <height>20</height>
+      <width>60</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>(x0,y0)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_x1y1">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>130</x>
