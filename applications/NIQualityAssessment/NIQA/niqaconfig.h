@@ -66,11 +66,7 @@ public:
 
         std::string WriteXML(size_t indent=0);
 
-        std::string singleImageFileName;
         std::map<double,std::string> multiImageList;
-        int first;
-        int last;
-        int step;
         bool normalize;
         std::string obMask;
         int obFirst;
@@ -80,6 +76,7 @@ public:
         int dcFirst;
         int dcLast;
         int dcStep;
+        int fitFunction;
         bool useROI;
         kipl::base::RectROI roi;
         double pixelSize;
@@ -124,7 +121,7 @@ public:
     };
 
     std::string WriteXML();
-    void LoadConfigFile(std::string configfile, std::string ProjectName);
+    void loadConfigFile(std::string configfile, std::string ProjectName);
 
     UserInformation userInformation;
     ContrastAnalysis contrastAnalysis;

@@ -71,8 +71,6 @@ private slots:
 
     void on_pushButton_2dEdge_pixelSize_clicked();
 
-    void on_pushButton_analyzSingleEdge_clicked();
-
     void on_actionNew_triggered();
 
     void on_actionLoad_triggered();
@@ -82,6 +80,12 @@ private slots:
     void on_actionSave_as_triggered();
 
     void on_actionQuit_triggered();
+
+    void on_pushButton_createReport_clicked();
+
+    void on_comboBox_edgeFitFunction_currentIndexChanged(int index);
+
+    void on_comboBox_edgePlotType_currentIndexChanged(int index);
 
 private:
     void showContrastBoxPlot();
@@ -95,6 +99,8 @@ private:
     void estimateResolutions();
     void plotEdgeProfiles();
     void plotPackingStatistics(std::list<kipl::math::Statistics> &roiStats);
+    void saveCurrent();
+    void loadCurrent();
 
     void updateConfig();
     void updateDialog();

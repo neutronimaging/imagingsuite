@@ -65,7 +65,7 @@ void uxROIWidget::setBoundingBox(int x0, int y0, int x1, int y1, bool updateFiel
 
 void uxROIWidget::updateBounds()
 {
-    if (hViewer!=nullptr) {
+    if ((hViewer!=nullptr) && (allowUpdateImageDims==true)) {
         int x,y;
         hViewer->getImageDims(x,y);
         setBoundingBox(0,0,x-1,y-1);

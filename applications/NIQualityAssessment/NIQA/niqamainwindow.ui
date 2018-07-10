@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -228,138 +228,62 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
-           <widget class="QTabWidget" name="tabWidget_2">
-            <property name="currentIndex">
-             <number>1</number>
-            </property>
-            <widget class="QWidget" name="tab_singleEdge">
-             <attribute name="title">
-              <string>Single edge image</string>
-             </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_18">
-              <item>
-               <widget class="SingleFileForm" name="widget_singleedge" native="true">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>30</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_16">
-                <item>
-                 <spacer name="horizontalSpacer_4">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_4">
-                  <property name="text">
-                   <string>Preview</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton_analyzSingleEdge">
-                <property name="text">
-                 <string>Analyze edge</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_9">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="tab_multiEdge">
-             <attribute name="title">
-              <string>Multiple edges (L/D)</string>
-             </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_17">
-              <item>
-               <widget class="QListWidget" name="listEdgeFiles"/>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
-                <item>
-                 <widget class="QPushButton" name="button_addEdgeFile">
-                  <property name="text">
-                   <string>Add</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="button_deleteEdgeFile">
-                  <property name="text">
-                   <string>Delete</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_3">
-                  <property name="text">
-                   <string>Preview</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11">
-                <item>
-                 <widget class="QPushButton" name="button_get2Dedges">
-                  <property name="text">
-                   <string>Analyze edges</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="button_estimateCollimation">
-                  <property name="text">
-                   <string>Estimate collimation</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_21"/>
+          </item>
+          <item>
+           <widget class="QListWidget" name="listEdgeFiles"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QPushButton" name="button_addEdgeFile">
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_deleteEdgeFile">
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_get2Dedges">
+              <property name="text">
+               <string>Analyze edges</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_estimateCollimation">
+              <property name="text">
+               <string>Estimate collimation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>Preview</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_15">
@@ -505,7 +429,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_edge2D">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_preview">
            <attribute name="title">
@@ -534,7 +458,69 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
-             <widget class="QChartView" name="chart_2Dedges" native="true"/>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QComboBox" name="comboBox_edgePlotType">
+                <item>
+                 <property name="text">
+                  <string>Edge plot</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Edge derivative plot</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MTF plot</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_edgeFitFunction">
+                <item>
+                 <property name="text">
+                  <string>No fit</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Gauss fit</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Lorentz fit</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QChartView" name="chart_2Dedges" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>378</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -1034,7 +1020,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="pushButton_createReport">
             <property name="text">
              <string>Create report</string>
             </property>

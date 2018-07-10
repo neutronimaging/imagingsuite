@@ -19,6 +19,7 @@
 #include <base/tprofile.h>
 #include <math/basicprojector.h>
 #include <pixelsizedlg.h>
+#include <strings/filenames.h>
 
 #include "edgefileitemdialog.h"
 
@@ -46,6 +47,7 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     logdlg->setModal(false);
     kipl::logging::Logger::AddLogTarget(*logdlg);
 
+    ui->widget_roiEdge2D->setAllowUpdateImageDims(false);
     ui->widget_roiEdge2D->registerViewer(ui->viewer_edgeimages);
     ui->widget_roiEdge2D->setROIColor("red");
 
@@ -60,6 +62,7 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     ui->check_3DBallsCrop->setChecked(false);
     on_check_3DBallsCrop_toggled(false);
     ui->widget_bundleroi->setViewer(ui->viewer_Packing);
+    loadCurrent();
     updateDialog();
 }
 
@@ -70,6 +73,7 @@ NIQAMainWindow::~NIQAMainWindow()
 
 void NIQAMainWindow::on_button_bigball_load_clicked()
 {
+    saveCurrent();
     ImageLoader loader=ui->ImageLoader_bigball->getReaderConfig();
 
     ImageReader reader;
@@ -135,6 +139,7 @@ void NIQAMainWindow::on_spin_bigball_slice_valueChanged(int arg1)
 
 void NIQAMainWindow::on_button_contrast_load_clicked()
 {
+    saveCurrent();
     std::ostringstream msg;
 
     ImageLoader loader=ui->ImageLoader_contrast->getReaderConfig();
@@ -240,6 +245,7 @@ void NIQAMainWindow::showContrastHistogram()
 
 void NIQAMainWindow::on_button_AnalyzeContrast_clicked()
 {
+    saveCurrent();
     m_ContrastSampleAnalyzer.analyzeContrast(ui->spin_contrast_pixelsize->value());
 }
 
@@ -323,6 +329,7 @@ void NIQAMainWindow::on_listEdgeFiles_clicked(const QModelIndex &index)
 
 void NIQAMainWindow::on_button_LoadPacking_clicked()
 {
+    saveCurrent();
     ImageLoader loader=ui->imageloader_packing->getReaderConfig();
 
     ImageReader reader;
@@ -346,6 +353,7 @@ void NIQAMainWindow::on_button_LoadPacking_clicked()
 
 void NIQAMainWindow::on_button_AnalyzePacking_clicked()
 {
+    saveCurrent();
     std::ostringstream msg;
     std::list<kipl::base::RectROI> roiList=ui->widget_bundleroi->getSelectedROIs();
 
@@ -399,6 +407,89 @@ void NIQAMainWindow::plotPackingStatistics(std::list<kipl::math::Statistics> &ro
 
 }
 
+void NIQAMainWindow::saveCurrent()
+{
+    ostringstream confpath;
+    ostringstream msg;
+    // Save current recon settings
+    QDir dir;
+
+    QString path=dir.homePath()+"/.imagingtools";
+
+    logger.message(path.toStdString());
+    if (!dir.exists(path)) {
+        dir.mkdir(path);
+    }
+    std::string sPath=path.toStdString();
+    kipl::strings::filenames::CheckPathSlashes(sPath,true);
+    confpath<<sPath<<"CurrentNIQA.xml";
+
+    try {
+        updateConfig();
+        ofstream of(confpath.str().c_str());
+        if (!of.is_open()) {
+            msg.str("");
+            msg<<"Failed to open config file: "<<confpath.str()<<" for writing.";
+            logger.error(msg.str());
+            return ;
+        }
+
+        of<<config.WriteXML();
+        of.flush();
+        logger.message("Saved current recon config");
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Saving current config failed with exception: "<<e.what();
+        logger.error(msg.str());
+        return;
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Saving current config failed with exception: "<<e.what();
+        logger.error(msg.str());
+        return;
+    }
+
+}
+
+void NIQAMainWindow::loadCurrent()
+{
+    std::ostringstream msg;
+
+    QDir dir;
+
+    std::string dname=dir.homePath().toStdString()+"/.imagingtools/CurrentNIQA.xml";
+    kipl::strings::filenames::CheckPathSlashes(dname,false);
+
+    QString defaultsname=QString::fromStdString(dname);
+    msg.str("");
+    msg<<"The config file "<<(dir.exists(defaultsname)==true ? "exists." : "doesn't exist.");
+    logger(logger.LogMessage,msg.str());
+    bool bUseDefaults=true;
+    if (dir.exists(defaultsname)==true) { // is there a previous recon?
+        bUseDefaults=false;
+
+        try {
+            config.loadConfigFile(dname.c_str(),"niqa");
+            msg.str("");
+            msg<<config.WriteXML();
+            logger.message(msg.str());
+        }
+        catch (kipl::base::KiplException &e) {
+            msg.str("");
+            msg<<"Loading defaults failed :\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+        }
+        catch (std::exception &e) {
+            msg.str("");
+            msg<<"Loading defaults failed :\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+
+        }
+    }
+}
+
 void NIQAMainWindow::updateConfig()
 {
     // User information
@@ -431,7 +522,6 @@ void NIQAMainWindow::updateConfig()
     config.contrastAnalysis.pixelSize          = ui->spin_contrast_pixelsize->value();
     config.contrastAnalysis.makeReport         = ui->checkBox_reportContrast->isChecked();
 
-    config.edgeAnalysis2D.singleImageFileName = ui->widget_singleedge->getFileName();
     //todo implement list transfer
     config.edgeAnalysis2D.multiImageList.clear();
     for(int i = 0; i < ui->listEdgeFiles->count(); ++i)
@@ -456,6 +546,7 @@ void NIQAMainWindow::updateConfig()
     config.edgeAnalysis2D.dcStep = loader.m_nStep;
     config.edgeAnalysis2D.pixelSize = ui->doubleSpinBox_2dEdge_pixelSize->value();
     config.edgeAnalysis2D.useROI = ui->groupBox_2DCrop->isChecked();
+    config.edgeAnalysis2D.fitFunction = ui->comboBox_edgeFitFunction->currentIndex();
     ui->widget_roiEdge2D->getROI(config.edgeAnalysis2D.roi);
     config.edgeAnalysis2D.makeReport = ui->checkBox_report2DEdge->isChecked();
 
@@ -507,7 +598,6 @@ void NIQAMainWindow::updateDialog()
     ui->spin_contrast_pixelsize->setValue(config.contrastAnalysis.pixelSize);
     ui->checkBox_reportContrast->setChecked(config.contrastAnalysis.makeReport);
 
-    ui->widget_singleedge->setFileName(config.edgeAnalysis2D.singleImageFileName);
     //todo implement list transfer
 //    config.edgeAnalysis2D.multiImageList = ui->;
 
@@ -545,6 +635,7 @@ void NIQAMainWindow::updateDialog()
     ui->doubleSpinBox_2dEdge_pixelSize->setValue(config.edgeAnalysis2D.pixelSize);
     ui->groupBox_2DCrop->setChecked(config.edgeAnalysis2D.useROI);
     ui->widget_roiEdge2D->setROI(config.edgeAnalysis2D.roi);
+    ui->comboBox_edgeFitFunction->setCurrentIndex(config.edgeAnalysis2D.fitFunction);
     ui->checkBox_report2DEdge->setChecked(config.edgeAnalysis2D.makeReport);
 
     loader.m_sFilemask = config.edgeAnalysis3D.fileMask;
@@ -645,6 +736,7 @@ void NIQAMainWindow::on_widget_roiEdge2D_valueChanged(int x0, int y0, int x1, in
 
 void NIQAMainWindow::on_button_get2Dedges_clicked()
 {
+    saveCurrent();
     getEdge2Dprofiles();
     plotEdgeProfiles();
 
@@ -661,6 +753,7 @@ void NIQAMainWindow::getEdge2Dprofiles()
     kipl::base::TImage<float,2> img;
     EdgeFileListItem *item = nullptr;
 
+    saveCurrent();
     ImageReader reader;
     size_t crop[4];
     ui->widget_roiEdge2D->getROI(crop);
@@ -804,11 +897,6 @@ void NIQAMainWindow::on_pushButton_2dEdge_pixelSize_clicked()
     }
 }
 
-void NIQAMainWindow::on_pushButton_analyzSingleEdge_clicked()
-{
-
-}
-
 void NIQAMainWindow::on_actionNew_triggered()
 {
     NIQAConfig conf;
@@ -825,7 +913,7 @@ void NIQAMainWindow::on_actionLoad_triggered()
     std::string failmessage;
 
     try {
-        config.LoadConfigFile(fname.toStdString(),"niqa");
+        config.loadConfigFile(fname.toStdString(),"niqa");
     }
     catch (kipl::base::KiplException &e) {
         fail=true;
@@ -866,6 +954,22 @@ void NIQAMainWindow::on_actionSave_as_triggered()
 }
 
 void NIQAMainWindow::on_actionQuit_triggered()
+{
+
+}
+
+
+void NIQAMainWindow::on_pushButton_createReport_clicked()
+{
+    saveCurrent();
+}
+
+void NIQAMainWindow::on_comboBox_edgeFitFunction_currentIndexChanged(int index)
+{
+
+}
+
+void NIQAMainWindow::on_comboBox_edgePlotType_currentIndexChanged(int index)
 {
 
 }

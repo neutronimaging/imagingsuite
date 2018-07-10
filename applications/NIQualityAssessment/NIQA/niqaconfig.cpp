@@ -49,7 +49,7 @@ std::string NIQAConfig::WriteXML()
     return str.str();
 }
 
-void NIQAConfig::LoadConfigFile(std::string configfile, std::string ProjectName)
+void NIQAConfig::loadConfigFile(std::string configfile, std::string ProjectName)
 {
     xmlTextReaderPtr reader;
     const xmlChar *name;
@@ -274,8 +274,8 @@ void NIQAConfig::parseEdgeAnalysis2D(xmlTextReaderPtr reader)
                 sValue="Empty";
             sName=reinterpret_cast<const char *>(name);
 
-            if (sName=="singlefilename") {
-                edgeAnalysis2D.singleImageFileName=sValue;
+            if (sName=="fitfunction") {
+                edgeAnalysis2D.fitFunction=std::stoi(sValue);
             }
 
             if (sName=="multiimagelist"){
@@ -286,18 +286,6 @@ void NIQAConfig::parseEdgeAnalysis2D(xmlTextReaderPtr reader)
                     std::string &fname=*it;
                     edgeAnalysis2D.multiImageList.insert(std::make_pair(pos,fname));
                 }
-            }
-
-            if (sName=="first") {
-                edgeAnalysis2D.first=std::stoi(sValue);
-            }
-
-            if (sName=="last") {
-                edgeAnalysis2D.last=std::stoi(sValue);
-            }
-
-            if (sName=="step") {
-                edgeAnalysis2D.step=std::stoi(sValue);
             }
 
             if (sName=="obmask") {
@@ -636,10 +624,6 @@ std::string NIQAConfig::ContrastAnalysis::WriteXML(size_t indent)
 
 NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D() :
     logger("EdgeAnalysisConfig"),
-    singleImageFileName("image.fits"),
-    first(0),
-    last(1),
-    step(1),
     normalize(false),
     obMask("ob_#####.fits"),
     obFirst(0),
@@ -649,6 +633,7 @@ NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D() :
     dcFirst(0),
     dcLast(1),
     dcStep(1),
+    fitFunction(0),
     useROI(false),
     roi(0,0,1,1),
     pixelSize(0.1),
@@ -659,11 +644,7 @@ NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D() :
 
 NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D(const NIQAConfig::EdgeAnalysis2D &e) :
                    logger("EdgeAnalysisConfig"),
-                   singleImageFileName(e.singleImageFileName),
                    multiImageList(e.multiImageList),
-                   first(e.first),
-                   last(e.last),
-                   step(e.step),
                    normalize(e.normalize),
                    obMask(e.obMask),
                    obFirst(e.obFirst),
@@ -673,6 +654,7 @@ NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D(const NIQAConfig::EdgeAnalysis2D &e) 
                    dcFirst(e.dcFirst),
                    dcLast(e.dcLast),
                    dcStep(e.dcStep),
+                   fitFunction(e.fitFunction),
                    useROI(e.useROI),
                    roi(e.roi),
                    pixelSize(e.pixelSize),
@@ -682,11 +664,7 @@ NIQAConfig::EdgeAnalysis2D::EdgeAnalysis2D(const NIQAConfig::EdgeAnalysis2D &e) 
 
 const NIQAConfig::EdgeAnalysis2D & NIQAConfig::EdgeAnalysis2D::operator=(const NIQAConfig::EdgeAnalysis2D &e)
 {
-    singleImageFileName = e.singleImageFileName;
     multiImageList = e.multiImageList;
-    first     = e.first;
-    last      = e.last;
-    step      = e.step;
     normalize = e.normalize;
     obMask    = e.obMask;
     obFirst   = e.obFirst;
@@ -696,6 +674,7 @@ const NIQAConfig::EdgeAnalysis2D & NIQAConfig::EdgeAnalysis2D::operator=(const N
     dcFirst   = e.dcFirst;
     dcLast    = e.dcLast;
     dcStep    = e.dcStep;
+    fitFunction = e.fitFunction;
     useROI    = e.useROI;
     roi       = e.roi;
     pixelSize = e.pixelSize;
@@ -709,7 +688,7 @@ std::string NIQAConfig::EdgeAnalysis2D::WriteXML(size_t indent)
     std::ostringstream str;
 
     str<<std::setw(indent)  <<" "<<"<edgeanalysis2d>"<<std::endl;
-        str<<std::setw(indent+4)  <<" "<<"<singlefilename>"<<singleImageFileName<<"</singlefilename>\n";
+
         if (multiImageList.empty()==false) {
             str<<std::setw(indent+4)  <<" "<<"<multiimagelist>";
             for (auto it=multiImageList.begin(); it!=multiImageList.end(); ++it)
@@ -717,9 +696,7 @@ std::string NIQAConfig::EdgeAnalysis2D::WriteXML(size_t indent)
 
             str<<"</multiimagelist>\n";
         }
-        str<<std::setw(indent+4)  <<" "<<"<first>"<<first<<"</first>\n";
-        str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
-        str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
+
         str<<std::setw(indent+4)  <<" "<<"<normalize>"<<kipl::strings::bool2string(normalize)<<"</normalize>\n";
         str<<std::setw(indent+4)  <<" "<<"<obmask>"<<obMask<<"</obmask>\n";
         str<<std::setw(indent+4)  <<" "<<"<obfirst>"<<obFirst<<"</obfirst>\n";
@@ -729,6 +706,7 @@ std::string NIQAConfig::EdgeAnalysis2D::WriteXML(size_t indent)
         str<<std::setw(indent+4)  <<" "<<"<dcfirst>"<<dcFirst<<"</dcfirst>\n";
         str<<std::setw(indent+4)  <<" "<<"<dclast>"<<dcLast<<"</dclast>\n";
         str<<std::setw(indent+4)  <<" "<<"<dcstep>"<<dcStep<<"</dcstep>\n";
+        str<<std::setw(indent+4)  <<" "<<"<fitfunction>"<<fitFunction<<"</fitfunction>\n";
         str<<std::setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(useROI)<<"</useroi>\n";
         str<<std::setw(indent+4)  <<" "<<"<roi>"<<roi.toString()<<"</roi>\n";
         str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
