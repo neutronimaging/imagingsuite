@@ -110,16 +110,18 @@ class LevenbergMarquardt {
 //and chisq.
 
 public:
-    LevenbergMarquardt(const double TOL=1.e-3) ;
+    LevenbergMarquardt(const double TOL=1.e-3, int iterations=2500) ;
 
-    void setTolerance(double t) {tol=fabs(t);}
+    void setTolerance(double t) { tol=fabs(t); }
+    void setIterations(int N) { maxIterations=N; }
     double getTolerance() {return tol;}
 
     void fit(Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Nonlinear::FitFunctionBase &fn);
 private:
 
 
-    static const int NDONE=4, ITMAX=1000; //Convergence parameters.
+    static const int NDONE=4; //Convergence parameters.
+    int maxIterations;
     int ndat, ma, mfit;
 
     double tol;

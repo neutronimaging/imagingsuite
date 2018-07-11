@@ -12,6 +12,8 @@
 #include <QChart>
 #include <QListWidgetItem>
 
+#include <tnt.h>
+
 #include <base/index2coord.h>
 
 #include <datasetbase.h>
@@ -20,6 +22,9 @@
 #include <math/basicprojector.h>
 #include <pixelsizedlg.h>
 #include <strings/filenames.h>
+#include <math/nonlinfit.h>
+#include <math/sums.h>
+#include <io/io_serializecontainers.h>
 
 #include "edgefileitemdialog.h"
 
@@ -779,6 +784,12 @@ void NIQAMainWindow::getEdge2Dprofiles()
             profile=new float[img.Size(0)];
 
         kipl::base::HorizontalProjection2D(img.GetDataPtr(), img.Dims(), profile, true);
+        size_t profileWidth2=img.Size(0)/2;
+        float s0=kipl::math::sum(profile,profileWidth2-1);
+        float s1=kipl::math::sum(profile+profileWidth2,profileWidth2-1);
+        if (s1<s0)
+            for (size_t i=0; i<img.Size(0); ++i)
+                profile[i]=-profile[i];
         std::vector<float> pvec;
         std::copy(profile,profile+img.Size(0),std::back_inserter(pvec));
         m_Edges[item->distance]=pvec;
@@ -794,13 +805,68 @@ void NIQAMainWindow::estimateResolutions()
 
 void NIQAMainWindow::plotEdgeProfiles()
 {
+    std::ostringstream msg;
     QChart *chart = new QChart(); // Life time
-
-    for (auto it = m_Edges.begin(); it!=m_Edges.end(); ++it) {
+    int idx=0;
+    for (auto it = m_Edges.begin(); it!=m_Edges.end(); ++it,++idx) {
         QLineSeries *series = new QLineSeries(); //Life time
         auto edge=it->second;
-        for (size_t i=0; i<edge.size(); ++i) {
-            series->append(QPointF(i,float(edge[i])));
+        if (ui->comboBox_edgePlotType->currentIndex()==0) {
+            for (size_t i=0; i<edge.size(); ++i) {
+                series->append(QPointF(i,float(edge[i])));
+            }
+        }
+        else {
+            Array1D<double> x(edge.size()-1);
+            Array1D<double> y(edge.size()-1);
+            Array1D<double> sig(edge.size()-1);
+            qDebug() << "edge size "<<edge.size();
+            std::list<double> dedge;
+            for (size_t i=1; i<edge.size(); ++i) {
+                series->append(QPointF(i,float(edge[i]-edge[i-1])));
+                x[i]=double(i);
+                y[i]=double(edge[i]-edge[i-1]);
+                sig[i]=1.0;
+                dedge.push_back(y[i]);
+            }
+            std::string fname="/Users/kaestner/edge_"+std::to_string(idx)+".txt";
+
+            kipl::io::serializeContainer(dedge.begin(),dedge.end(),fname);
+            x[0]=x[1];
+            y[0]=y[1];
+            if (ui->comboBox_edgeFitFunction->currentIndex()!=0) {
+                Nonlinear::LevenbergMarquardt mrqfit(0.01,10000);
+                Nonlinear::SumOfGaussians sog(1);
+                try {
+                    double maxval=-std::numeric_limits<double>::max();
+                    int maxpos=0;
+                    int idx=0;
+                    for (auto item : dedge) {
+                        if (maxval<item) {
+                            maxval=item;
+                            maxpos=idx;
+                        }
+                        idx++;
+                    }
+                    //auto pos=std::max_element(dedge.begin(),dedge.end());
+
+                    sog[0]=maxval;
+                    sog[1]=maxpos;
+                    sog[2]=y.dim1()/5.0;
+
+                    mrqfit.fit(x,y,sig,sog);
+
+                }
+                catch (kipl::base::KiplException &e) {
+                    logger.error(e.what());
+                }
+                catch (std::exception &e) {
+                    logger.message(msg.str());
+                }
+                msg.str("");
+                msg<<sog[0]<<", "<<sog[1]<<", "<<sog[2];
+                logger.message(msg.str());
+            }
         }
 
         chart->addSeries(series);
@@ -971,5 +1037,5 @@ void NIQAMainWindow::on_comboBox_edgeFitFunction_currentIndexChanged(int index)
 
 void NIQAMainWindow::on_comboBox_edgePlotType_currentIndexChanged(int index)
 {
-
+    plotEdgeProfiles();
 }

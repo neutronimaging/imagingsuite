@@ -22,7 +22,8 @@ using namespace JAMA;
 
 namespace Nonlinear {
 
-LevenbergMarquardt::LevenbergMarquardt(const double TOL) :
+LevenbergMarquardt::LevenbergMarquardt(const double TOL, int iterations) :
+    maxIterations(iterations),
     tol(TOL)
 {
     // Constructor.
@@ -43,6 +44,7 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
         throw kipl::base::KiplException("Array size missmatch for the fitter",__FILE__,__LINE__);
 
     ndat=x.dim1();
+    qDebug()<< "ndat:"<<ndat;
 
     covar=Array2D<double>(ma,ma);
     alpha=Array2D<double>(ma,ma);
@@ -58,11 +60,17 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
 
     mrqcof(fn,x,y,sig,alpha,beta); // Initialization.
 
+//    for (int i=0; i<temp.dim1(); ++i) {
+//        for (int j=0; j<temp.dim2(); ++j) {
+//            qDebug() << "i="<<i<<", j="<<j<<"="<<alpha[i][j];
+//        }
+//    }
+
     fn.getPars(atry);
 
     ochisq=chisq;
 
-    for (iter=0;iter<ITMAX;iter++) {
+    for (iter=0;iter<maxIterations;iter++) {
         qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
 
         if (done==NDONE) {
@@ -83,6 +91,7 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
 
         gaussj(temp,oneda); //Matrix solution.
 
+        qDebug() << "GaussJ done";
         for (j=0;j<mfit;j++) {
             for (k=0;k<mfit;k++)
                 covar[j][k]=temp[j][k];
@@ -206,7 +215,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         indxc[i]=icol;
 
         if (a[icol][icol] == 0.0)
-            throw("gaussj: Singular Matrix");
+            throw kipl::base::KiplException("gaussj: Singular Matrix");
 
         pivinv=1.0/a[icol][icol];
         a[icol][icol]=1.0;

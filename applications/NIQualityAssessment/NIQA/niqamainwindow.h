@@ -118,7 +118,6 @@ private:
     kipl::base::TImage<float,2> m_BallAssemblyProjection;
     kipl::base::TImage<float,3> m_Contrast;
 
-//    std::map<float, kipl::base::TImage<float,2>> m_Edges;
     map<float,std::vector<float>> m_Edges;
 
     ImagingQAAlgorithms::BallAnalysis m_BallAnalyzer;
