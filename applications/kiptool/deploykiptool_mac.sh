@@ -1,6 +1,8 @@
 DIRECTORY=~/Applications
-REPOSPATH=~/repos
-QTPATH=$QT_HOME
+REPOSPATH=$WORKSPACE
+QTPATH=$QTBINPATH/..
+DEST="$DIRECTORY/QtKipTool.app"
+
 echo "start"
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -11,7 +13,7 @@ cp -r $REPOSPATH/Applications/QtKipTool.app $DIRECTORY
 
 pushd .
 CPCMD="cp"
-DEST="$DIRECTORY/QtKipTool.app"
+
 cd $DEST/Contents
 pwd
 if [ ! -d "./Frameworks" ]; then
@@ -51,7 +53,7 @@ cd ..
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
-cp $REPOSPATH/kiptool/trunk/QtKipTool/resources/* ./Resources
+cp $REPOSPATH/imagingsuite/applications/resources/* ./Resources
 
 echo "copy plugins"
 pwd

@@ -171,7 +171,7 @@ void ResolutionEstimator::analysis()
 
 void ResolutionEstimator::analyzeLineSpread()
 {
-    Nonlinear::LevenbergMarquardt mrq;
+    Nonlinear::LevenbergMarquardt mrq(0.1,5000);
 
     switch (profileFunction) {
     case Nonlinear::fnSumOfGaussians :

@@ -428,8 +428,14 @@
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget_edge2D">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_preview">
            <attribute name="title">
@@ -510,6 +516,33 @@
              </widget>
             </item>
             <item>
+             <widget class="QListWidget" name="listWidget_edgeInfo"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_collimation">
+           <attribute name="title">
+            <string>Collimation estimate</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_13">
+            <item>
+             <widget class="QChartView" name="chart_collimation" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>300</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_collimationFit">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_9">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -521,16 +554,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_collimation">
-           <attribute name="title">
-            <string>Collimation estimate</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_13">
-            <item>
-             <widget class="QChartView" name="chart_collimation" native="true"/>
             </item>
            </layout>
           </widget>

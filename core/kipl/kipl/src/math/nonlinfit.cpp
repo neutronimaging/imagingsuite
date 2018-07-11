@@ -71,7 +71,8 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
     ochisq=chisq;
 
     for (iter=0;iter<maxIterations;iter++) {
-        qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
+        if ((iter % 100)==0)
+            qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
 
         if (done==NDONE) {
             alamda=0.; //Last pass. Use zero alamda.
@@ -91,7 +92,6 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
 
         gaussj(temp,oneda); //Matrix solution.
 
-        qDebug() << "GaussJ done";
         for (j=0;j<mfit;j++) {
             for (k=0;k<mfit;k++)
                 covar[j][k]=temp[j][k];
