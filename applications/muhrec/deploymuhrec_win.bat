@@ -43,10 +43,10 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\hdf5_cpp.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\zlib.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
-copy %REPOS%\Applications\muhrec.exe .
-copy %REPOS%\Applications\muhrecCLI.exe .
+copy %REPOS%\Applications\MuhRec.exe .
+copy %REPOS%\Applications\MuhRecCLI.exe .
 
-copy %REPOS%\imagingsuite\applications\muhrec\src\resources resources
+copy %REPOS%\imagingsuite\applications\muhrec\Resources resources
 
 cd %QTBINPATH%
 
