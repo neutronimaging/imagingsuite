@@ -44,7 +44,7 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
         throw kipl::base::KiplException("Array size missmatch for the fitter",__FILE__,__LINE__);
 
     ndat=x.dim1();
-    qDebug()<< "ndat:"<<ndat;
+ //   qDebug()<< "ndat:"<<ndat;
 
     covar=Array2D<double>(ma,ma);
     alpha=Array2D<double>(ma,ma);

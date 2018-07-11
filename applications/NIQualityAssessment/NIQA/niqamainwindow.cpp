@@ -820,7 +820,7 @@ void NIQAMainWindow::plotEdgeProfiles()
             Array1D<double> x(edge.size()-1);
             Array1D<double> y(edge.size()-1);
             Array1D<double> sig(edge.size()-1);
-            qDebug() << "edge size "<<edge.size();
+
             std::list<double> dedge;
             for (size_t i=1; i<edge.size(); ++i) {
                 series->append(QPointF(i,float(edge[i]-edge[i-1])));
@@ -848,10 +848,10 @@ void NIQAMainWindow::plotEdgeProfiles()
                         }
                         idx++;
                     }
-                    //auto pos=std::max_element(dedge.begin(),dedge.end());
 
                     sog[0]=maxval;
-                    sog[1]=maxpos;
+                    //sog[1]=maxpos;
+                    sog[1]=y.dim1()/2.0;
                     sog[2]=y.dim1()/5.0;
 
                     mrqfit.fit(x,y,sig,sog);
