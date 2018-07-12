@@ -76,6 +76,9 @@ HEADERS  += niqamainwindow.h \
 FORMS    += niqamainwindow.ui \
     edgefileitemdialog.ui
 
+ICON = NIQAIcon.icns
+RC_ICONS = NIQAIcon.ico
+
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
 
