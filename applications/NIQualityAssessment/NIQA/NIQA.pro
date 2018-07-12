@@ -67,14 +67,17 @@ win32 {
 SOURCES += main.cpp\
         niqamainwindow.cpp \
     edgefileitemdialog.cpp \
-    niqaconfig.cpp
+    niqaconfig.cpp \
+    edgefittingdialog.cpp
 
 HEADERS  += niqamainwindow.h \
     edgefileitemdialog.h \
-    niqaconfig.h
+    niqaconfig.h \
+    edgefittingdialog.h
 
 FORMS    += niqamainwindow.ui \
-    edgefileitemdialog.ui
+    edgefileitemdialog.ui \
+    edgefittingdialog.ui
 
 ICON = NIQAIcon.icns
 RC_ICONS = NIQAIcon.ico

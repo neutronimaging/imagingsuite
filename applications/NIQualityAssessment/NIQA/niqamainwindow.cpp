@@ -12,6 +12,8 @@
 #include <QChart>
 #include <QListWidgetItem>
 #include <QTableWidgetItem>
+#include <QDesktopServices>
+#include <QMessageBox>
 
 #include <tnt.h>
 
@@ -1239,5 +1241,26 @@ void NIQAMainWindow::on_spin_contrast_intensity1_valueChanged(double arg1)
     }
     if (ui->radioButton_contrast_scaling->isChecked()==true) {
         config.contrastAnalysis.intensityIntercept=ui->spin_contrast_intensity1->value();
+    }
+}
+
+void NIQAMainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::information(this,"About NIQA","Developer: Anders Kaestner");
+}
+
+void NIQAMainWindow::on_actionUser_manual_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/wiki/User-manual-NIQA");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox::critical(this,"Could not open user manual","NIQA could not open your web browser with the link https://github.com/neutronimaging/imagingsuite/wiki/User-manual-NIQA",QMessageBox::Ok);
+    }
+}
+
+void NIQAMainWindow::on_actionReport_a_bug_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/issues");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox::critical(this,"Could not open repository","MuhRec could not open your web browser with the link https://github.com/neutronimaging/tools/issues",QMessageBox::Ok);
     }
 }

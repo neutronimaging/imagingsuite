@@ -95,6 +95,12 @@ private slots:
 
     void on_spin_contrast_intensity1_valueChanged(double arg1);
 
+    void on_actionAbout_triggered();
+
+    void on_actionUser_manual_triggered();
+
+    void on_actionReport_a_bug_triggered();
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
