@@ -122,9 +122,13 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
 
         return;
     }
-    qDebug() << "Pre get distance";
+    if (ui->doubleSpinBox_Distance->value()<=0.0) {
+        QMessageBox::warning(this,"Missing distance","You have to provide the length of the object before you can analyse.",QMessageBox::Ok);
+        logger.message("Missing distance.");
+
+        return;
+    }
     pixelDistance=getDistance(img,roi);
-    qDebug() << "Post get distance";
     pixelSize=ui->doubleSpinBox_Distance->value()/pixelDistance;
     std::ostringstream msg;
     msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<"mm/"<<pixelDistance<<"px, pixelSize: "<<pixelSize;
@@ -133,7 +137,6 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
     ui->label_edgeDistance->setText(str);
     str.setNum(pixelSize,'g',5);
     ui->label_pixelSize->setText(str);
-
 }
 
 void PixelSizeDlg::loadImage(QString fn)

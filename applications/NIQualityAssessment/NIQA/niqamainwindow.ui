@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1160</width>
+    <width>1170</width>
     <height>778</height>
    </rect>
   </property>
@@ -45,21 +45,15 @@
            </widget>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="spin_contrast_intercept">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-              <property name="maximum">
-               <double>99999.000000000000000</double>
+           <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <item>
+             <widget class="QPushButton" name="pushButton_contrast_pixelSize">
+              <property name="text">
+               <string>Pixel size</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item>
              <widget class="QDoubleSpinBox" name="spin_contrast_pixelsize">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pixel size is needed to define the size of the insets.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -75,44 +69,110 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Intensity slope</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Intensity intercept</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="spin_contrast_slope">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-              <property name="maximum">
-               <double>9999.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="pushButton_contrast_pixelSize">
-              <property name="text">
-               <string>Pixel size</string>
-              </property>
-             </widget>
-            </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_contrast_intensityMapping">
+            <property name="title">
+             <string>Gray level mapping</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
+               <item>
+                <widget class="QRadioButton" name="radioButton_contrast_interval">
+                 <property name="text">
+                  <string>Map levels to interval</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_contrast_scaling">
+                 <property name="text">
+                  <string>Map levels by scaling</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QFormLayout" name="formLayout">
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="spin_contrast_intensity0">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="maximum">
+                  <double>9999.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_contrast_intensity0">
+                 <property name="text">
+                  <string>Min</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_contrast_intensity1">
+                 <property name="text">
+                  <string>Max</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="spin_contrast_intensity1">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="maximum">
+                  <double>99999.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>65535.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="button_AnalyzeContrast">
+            <property name="text">
+             <string>Analyze</string>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer_12">
@@ -126,13 +186,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="button_AnalyzeContrast">
-            <property name="text">
-             <string>Analyze</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>
@@ -1206,7 +1259,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1160</width>
+     <width>1170</width>
      <height>22</height>
     </rect>
    </property>

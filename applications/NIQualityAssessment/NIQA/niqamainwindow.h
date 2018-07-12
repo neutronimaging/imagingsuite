@@ -87,6 +87,14 @@ private slots:
 
     void on_comboBox_edgePlotType_currentIndexChanged(int index);
 
+    void on_radioButton_contrast_interval_toggled(bool checked);
+
+    void on_radioButton_contrast_scaling_toggled(bool checked);
+
+    void on_spin_contrast_intensity0_valueChanged(double arg1);
+
+    void on_spin_contrast_intensity1_valueChanged(double arg1);
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();

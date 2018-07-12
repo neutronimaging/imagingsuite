@@ -54,6 +54,9 @@ public:
         double pixelSize;
         double intensitySlope;
         double intensityIntercept;
+        double intensityMin;
+        double intensityMax;
+
         bool makeReport;
     };
 

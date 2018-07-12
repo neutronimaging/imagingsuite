@@ -240,6 +240,14 @@ void NIQAConfig::ParseContrastAnalysis(xmlTextReaderPtr reader)
                 contrastAnalysis.intensityIntercept = std::stod(sValue);
             }
 
+            if (sName=="intensitymin") {
+                contrastAnalysis.intensityMin= std::stod(sValue);
+            }
+
+            if (sName=="intensitymax") {
+                contrastAnalysis.intensityMax = std::stod(sValue);
+            }
+
             if (sName=="makereport") {
                 contrastAnalysis.makeReport = kipl::strings::string2bool(sValue);
             }
@@ -616,6 +624,8 @@ std::string NIQAConfig::ContrastAnalysis::WriteXML(size_t indent)
         str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
         str<<std::setw(indent+4)  <<" "<<"<intensityslope>"<<kipl::strings::value2string(intensitySlope)<<"</intensityslope>\n";
         str<<std::setw(indent+4)  <<" "<<"<intensityintercept>"<<kipl::strings::value2string(intensityIntercept)<<"</intensityintercept>\n";
+        str<<std::setw(indent+4)  <<" "<<"<intensitymin>"<<kipl::strings::value2string(intensityMin)<<"</intensitymin>\n";
+        str<<std::setw(indent+4)  <<" "<<"<intensitymax>"<<kipl::strings::value2string(intensityMax)<<"</intensitymax>\n";
         str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
     str<<std::setw(indent)  <<" "<<"</contrastanalysis>"<<std::endl;
 

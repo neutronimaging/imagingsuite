@@ -26,6 +26,7 @@
 #include <math/nonlinfit.h>
 #include <math/sums.h>
 #include <io/io_serializecontainers.h>
+#include <profile/MicroTimer.h>
 
 #include "edgefileitemdialog.h"
 
@@ -61,6 +62,7 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     configFileName("niqaconfig.xml")
 {
     ui->setupUi(this);
+    ui->groupBox_2Dreferences->hide(); // TODO implement normalization of edge images
 
     // Setup logging dialog
     logdlg->setModal(false);
@@ -175,6 +177,7 @@ void NIQAMainWindow::on_button_contrast_load_clicked()
 
     ui->slider_contrast_images->setMinimum(0);
     ui->spin_contrast_images->setMaximum(m_Contrast.Size(2)-1);
+    on_slider_contrast_images_sliderMoved(m_Contrast.Size(2)/2);
 
     m_ContrastSampleAnalyzer.setImage(m_Contrast);
 
@@ -220,11 +223,26 @@ void NIQAMainWindow::showContrastBoxPlot()
         msg<<"Inset "<<i+1;
         QBoxSet *set = new QBoxSet(QString::fromStdString(msg.str()));
 
-        set->setValue(QBoxSet::LowerExtreme,stats[i].Min());
-        set->setValue(QBoxSet::UpperExtreme,stats[i].Max());
-        set->setValue(QBoxSet::LowerQuartile,stats[i].E()-stats[i].s()*1.96f);
-        set->setValue(QBoxSet::UpperQuartile,stats[i].E()+stats[i].s()*1.96f);
-        set->setValue(QBoxSet::Median,stats[i].E());
+        double slope=1.0;
+        double intercept=0.0;
+
+        if (ui->groupBox_contrast_intensityMapping->isChecked()==true) {
+            if (ui->radioButton_contrast_scaling->isChecked()==true) {
+                slope=ui->spin_contrast_intensity0->value();
+                intercept=ui->spin_contrast_intensity1->value();
+            }
+            if (ui->radioButton_contrast_interval->isChecked()==true) {
+                double a=ui->spin_contrast_intensity0->value();
+                double b=ui->spin_contrast_intensity1->value();
+                slope=(b-a)/65535;
+                intercept=a;
+            }
+        }
+        set->setValue(QBoxSet::LowerExtreme,(stats[i].Min())*slope+intercept);
+        set->setValue(QBoxSet::UpperExtreme,(stats[i].Max())*slope+intercept);
+        set->setValue(QBoxSet::LowerQuartile,(stats[i].E()-stats[i].s()*1.96f)*slope+intercept);
+        set->setValue(QBoxSet::UpperQuartile,(stats[i].E()+stats[i].s()*1.96f)*slope+intercept);
+        set->setValue(QBoxSet::Median,(stats[i].E())*slope+intercept);
         insetSeries->append(set);
 
         chart->addSeries(insetSeries);
@@ -247,8 +265,24 @@ void NIQAMainWindow::showContrastHistogram()
 
     QLineSeries *series0 = new QLineSeries(); //Life time
 
+    double slope=1.0;
+    double intercept=0.0;
+
+    if (ui->groupBox_contrast_intensityMapping->isChecked()==true) {
+        if (ui->radioButton_contrast_scaling->isChecked()==true) {
+            slope=ui->spin_contrast_intensity0->value();
+            intercept=ui->spin_contrast_intensity1->value();
+        }
+        if (ui->radioButton_contrast_interval->isChecked()==true) {
+            double a=ui->spin_contrast_intensity0->value();
+            double b=ui->spin_contrast_intensity1->value();
+            slope=(b-a)/65535;
+            intercept=a;
+        }
+    }
+
     for (int i=0; i<histsize; ++i) {
-        series0->append(QPointF(axis[i],float(bins[i])));
+        series0->append(QPointF(axis[i]*slope+intercept,float(bins[i])));
     }
 
     QChart *chart = new QChart(); // Life time
@@ -265,7 +299,15 @@ void NIQAMainWindow::showContrastHistogram()
 void NIQAMainWindow::on_button_AnalyzeContrast_clicked()
 {
     saveCurrent();
+
+    kipl::profile::MicroTimer timer;
+    timer.Tic();
     m_ContrastSampleAnalyzer.analyzeContrast(ui->spin_contrast_pixelsize->value());
+    timer.Toc();
+    std::ostringstream msg;
+    msg<<timer;
+    logger.message(msg.str());
+    on_combo_contrastplots_currentIndexChanged(1);
 }
 
 void NIQAMainWindow::on_button_addEdgeFile_clicked()
@@ -536,12 +578,18 @@ void NIQAMainWindow::updateConfig()
     config.contrastAnalysis.first    = loader.m_nFirst;
     config.contrastAnalysis.last     = loader.m_nLast;
     config.contrastAnalysis.step     = loader.m_nStep;
-    config.contrastAnalysis.intensitySlope     = ui->spin_contrast_slope->value();
-    config.contrastAnalysis.intensityIntercept = ui->spin_contrast_intercept->value();
+    if (ui->radioButton_contrast_scaling) {
+        config.contrastAnalysis.intensitySlope     = ui->spin_contrast_intensity0->value();
+        config.contrastAnalysis.intensityIntercept = ui->spin_contrast_intensity1->value();
+    }
+    if (ui->radioButton_contrast_interval) {
+        config.contrastAnalysis.intensityMin     = ui->spin_contrast_intensity0->value();
+        config.contrastAnalysis.intensityMax     = ui->spin_contrast_intensity1->value();
+    }
+
     config.contrastAnalysis.pixelSize          = ui->spin_contrast_pixelsize->value();
     config.contrastAnalysis.makeReport         = ui->checkBox_reportContrast->isChecked();
 
-    //todo implement list transfer
     config.edgeAnalysis2D.multiImageList.clear();
     for(int i = 0; i < ui->listEdgeFiles->count(); ++i)
     {
@@ -612,13 +660,17 @@ void NIQAMainWindow::updateDialog()
     loader.m_nStep     = config.contrastAnalysis.step;
     ui->ImageLoader_contrast->setReaderConfig(loader);
 
-    ui->spin_contrast_slope->setValue(config.contrastAnalysis.intensitySlope);
-    ui->spin_contrast_intercept->setValue(config.contrastAnalysis.intensityIntercept);
+    if (ui->radioButton_contrast_scaling) {
+        ui->spin_contrast_intensity0->setValue(config.contrastAnalysis.intensitySlope);
+        ui->spin_contrast_intensity1->setValue(config.contrastAnalysis.intensityIntercept);
+    }
+    if (ui->radioButton_contrast_interval) {
+        ui->spin_contrast_intensity0->setValue(config.contrastAnalysis.intensityMin);
+        ui->spin_contrast_intensity1->setValue(config.contrastAnalysis.intensityMax);
+    }
     ui->spin_contrast_pixelsize->setValue(config.contrastAnalysis.pixelSize);
     ui->checkBox_reportContrast->setChecked(config.contrastAnalysis.makeReport);
 
-    //todo implement list transfer
-//    config.edgeAnalysis2D.multiImageList = ui->;
 
     if (config.edgeAnalysis2D.multiImageList.empty()==false) {
         for (auto it=config.edgeAnalysis2D.multiImageList.begin(); it!=config.edgeAnalysis2D.multiImageList.end(); ++it) {
@@ -875,9 +927,9 @@ void NIQAMainWindow::plotEdgeProfiles()
             }
         }
         else {
-            Array1D<double> x(edge.size()-1);
-            Array1D<double> y(edge.size()-1);
-            Array1D<double> sig(edge.size()-1);
+            Array1D<double> x(edge.size());
+            Array1D<double> y(edge.size());
+            Array1D<double> sig(edge.size());
 
             std::list<double> dedge;
             for (size_t i=1; i<edge.size(); ++i) {
@@ -887,30 +939,31 @@ void NIQAMainWindow::plotEdgeProfiles()
                 sig[i]=1.0;
                 dedge.push_back(y[i]);
             }
-            std::string fname="/Users/kaestner/edge_"+std::to_string(idx)+".txt";
+//            std::string fname="/Users/kaestner/edge_"+std::to_string(idx)+".txt";
 
-            kipl::io::serializeContainer(dedge.begin(),dedge.end(),fname);
+//            kipl::io::serializeContainer(dedge.begin(),dedge.end(),fname);
             x[0]=x[1];
             y[0]=y[1];
             sig[0]=1.0;
+            qDebug() << "Pre fitting";
             if (ui->comboBox_edgeFitFunction->currentIndex()!=0) {
                 EdgeInfoListItem *item = new EdgeInfoListItem;
 
-                Nonlinear::LevenbergMarquardt mrqfit(0.01,5000);
-
+                Nonlinear::LevenbergMarquardt mrqfit(0.001,5000);
+                qDebug() << "Starting fitter";
                 try {
                     double maxval=-std::numeric_limits<double>::max();
                     double minval=std::numeric_limits<double>::max();
                     int maxpos=0;
                     int minpos=0;
                     int idx=0;
-                    for (auto item : dedge) {
-                        if (maxval<item) {
-                            maxval=item;
+                    for (auto eitem : dedge) {
+                        if (maxval<eitem) {
+                            maxval=eitem;
                             maxpos=idx;
                         }
-                        if (item< minval) {
-                            minval=item;
+                        if (eitem< minval) {
+                            minval=eitem;
                             minpos=idx;
                         }
                         idx++;
@@ -926,17 +979,24 @@ void NIQAMainWindow::plotEdgeProfiles()
                     item->fitModel[0]=maxval;
                     item->fitModel[1]=maxpos;
                     item->fitModel[2]=(HWHM-maxpos)*2;
+                    if (item->fitModel[2]<2) {
+                        logger.warning("Could not find FWHM, using constant =10");
+                        item->fitModel[2]=10.0;
+                    }
                     qDebug() << "width "<<item->fitModel[2];
-
+                    qDebug() << "Fitter initialized";
                     mrqfit.fit(x,y,sig,item->fitModel);
-
+                    qDebug() << "Fitter done";
                 }
                 catch (kipl::base::KiplException &e) {
                     logger.error(e.what());
+                    return ;
                 }
                 catch (std::exception &e) {
                     logger.message(msg.str());
+                    return ;
                 }
+                qDebug() << "post fit";
                 msg.str("");
                 msg<<item->fitModel[0]<<", "<<item->fitModel[1]<<", "<<item->fitModel[2];
 
@@ -1139,4 +1199,45 @@ EdgeInfoListItem::EdgeInfoListItem(const EdgeInfoListItem &item) :
     FWHMmetric(item.FWHMmetric)
 {
 
+}
+
+void NIQAMainWindow::on_radioButton_contrast_interval_toggled(bool checked)
+{
+    if (checked==true) {
+        ui->label_contrast_intensity0->setText("Min");
+        ui->label_contrast_intensity1->setText("Max");
+        ui->spin_contrast_intensity0->setValue(config.contrastAnalysis.intensityMin);
+        ui->spin_contrast_intensity1->setValue(config.contrastAnalysis.intensityMax);
+    }
+}
+
+void NIQAMainWindow::on_radioButton_contrast_scaling_toggled(bool checked)
+{
+    if (checked==true) {
+        ui->label_contrast_intensity0->setText("Slope");
+        ui->label_contrast_intensity1->setText("Intercept");
+        ui->spin_contrast_intensity0->setValue(config.contrastAnalysis.intensitySlope);
+        ui->spin_contrast_intensity1->setValue(config.contrastAnalysis.intensityIntercept);
+    }
+}
+
+
+void NIQAMainWindow::on_spin_contrast_intensity0_valueChanged(double arg1)
+{
+    if (ui->radioButton_contrast_interval->isChecked()==true) {
+        config.contrastAnalysis.intensityMin=ui->spin_contrast_intensity0->value();
+    }
+    if (ui->radioButton_contrast_scaling->isChecked()==true) {
+        config.contrastAnalysis.intensitySlope=ui->spin_contrast_intensity0->value();
+    }
+}
+
+void NIQAMainWindow::on_spin_contrast_intensity1_valueChanged(double arg1)
+{
+    if (ui->radioButton_contrast_interval->isChecked()==true) {
+        config.contrastAnalysis.intensityMax=ui->spin_contrast_intensity1->value();
+    }
+    if (ui->radioButton_contrast_scaling->isChecked()==true) {
+        config.contrastAnalysis.intensityIntercept=ui->spin_contrast_intensity1->value();
+    }
 }
