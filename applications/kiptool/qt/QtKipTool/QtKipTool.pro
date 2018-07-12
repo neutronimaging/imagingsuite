@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport concurrent
+QT       += core widgets  concurrent # printsupport
 
 TARGET = QtKipTool
 TEMPLATE = app
@@ -48,6 +48,26 @@ win32 {
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
+}
+
+unix:mac {
+exists($$PWD/../../../../external/mac/lib/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES *= HAVE_NEXUS
+
+    INCLUDEPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../external/mac/include/ $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../external/mac/lib/
+
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+
+
+}
+else {
+message("-lNeXus does not exist $$HEADERS")
+}
+
 }
 
 ICON = kip_icon.icns
