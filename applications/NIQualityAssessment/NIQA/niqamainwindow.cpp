@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <array>
+#include <numeric>
 
 #include <QSignalBlocker>
 #include <QLineSeries>
@@ -113,33 +114,69 @@ void NIQAMainWindow::on_button_bigball_load_clicked()
     m_BallAnalyzer.setImage(m_BigBall);
     float R=m_BallAnalyzer.getRadius();
 
-    ui->dspin_bigball_radius->setValue(R);
-
     kipl::base::coords3Df center=m_BallAnalyzer.getCenter();
 
     std::ostringstream msg;
     msg<<"["<<center.x<<", "<<center.y<<", "<<center.z<<"]";
     ui->label_bigball_center->setText(QString::fromStdString(msg.str()));
 
-    std::vector<float> distance;
-    std::vector<float> profile;
-    std::vector<float> stddev;
-    m_BallAnalyzer.getEdgeProfile(R-20.0f,R+20.0f,distance,profile,stddev);
+    msg.str("");
+    msg<<R<<" pixels = "<<R*ui->dspin_bigball_pixelsize->value();
+    ui->label_bigball_radius->setText(QString::fromStdString(msg.str()));
 
+    float width2=ui->dspin_bigball_profileWidth->value()*0.5;
+    m_BallAnalyzer.getEdgeProfile(R-width2,R+width2,m_edge3DDistance,m_edge3DProfile,m_edge3DStdDev);
+
+    size_t profileWidth2=m_edge3DProfile.size()/2;
+    float s0=std::accumulate(m_edge3DProfile.begin(),m_edge3DProfile.begin()+profileWidth2-1,0.0f);
+    float s1=std::accumulate(m_edge3DProfile.begin()+profileWidth2,m_edge3DProfile.end(),0.0f);
+
+    float sign= s0<s1 ? 1.0f : -1.0f;
+    m_edge3DDprofile.clear();
+
+    for (size_t i=1; i<m_edge3DProfile.size(); ++i)
+        m_edge3DDprofile.push_back(sign*(m_edge3DProfile[i]-m_edge3DProfile[i-1]));
+
+    m_edge3DDprofile.push_back(m_edge3DDprofile.back());
+
+    Nonlinear::SumOfGaussians sog;
+    std::vector<float> sig;
+
+    fitEdgeProfile(m_edge3DDistance,m_edge3DDprofile,sig,sog);
+    msg.str("");
+    msg<<sog[2]*2<<"pixels, "<<sog[2]*2*ui->dspin_bigball_pixelsize->value()<<" mm";
+    ui->label_bigball_FWHM->setText(QString::fromStdString(msg.str()));
+
+    plot3DEdgeProfiles(ui->comboBox_bigball_plotinformation->currentIndex());
+
+}
+
+void NIQAMainWindow::on_comboBox_bigball_plotinformation_currentIndexChanged(int index)
+{
+    plot3DEdgeProfiles(index);
+}
+
+void NIQAMainWindow::plot3DEdgeProfiles(int index)
+{
     QLineSeries *series0 = new QLineSeries(); //Life time
 
-    for (auto dit=distance.begin(), pit=profile.begin(); dit!=distance.end(); ++dit, ++pit) {
+    std::vector<float> profile;
+
+    switch (index) {
+    case 0: profile=m_edge3DProfile; break;
+    case 1: profile=m_edge3DDprofile; break;
+    }
+
+    qDebug() << "plot 3d edge" <<index;
+    for (auto dit=m_edge3DDistance.begin(), pit=profile.begin(); pit!=profile.end(); ++dit, ++pit) {
         series0->append(QPointF(*dit,*pit));
     }
 
-    QChart *chart = new QChart(); // Life time
-
+    QChart *chart = new QChart();
 
     chart->addSeries(series0);
     chart->legend()->hide();
     chart->createDefaultAxes();
-//    chart->axisX()->setRange(0, 20);
-//    chart->axisY()->setRange(0, 10);
 
     ui->chart_bigball->setChart(chart);
 }
@@ -470,6 +507,8 @@ void NIQAMainWindow::plotPackingStatistics(std::list<kipl::math::Statistics> &ro
 
 }
 
+
+
 void NIQAMainWindow::saveCurrent()
 {
     ostringstream confpath;
@@ -626,7 +665,7 @@ void NIQAMainWindow::updateConfig()
     config.edgeAnalysis3D.step  = loader.m_nStep;
     config.edgeAnalysis3D.pixelSize = ui->dspin_bigball_pixelsize->value();
     config.edgeAnalysis3D.precision = ui->spin_bigball_precision->value();
-    config.edgeAnalysis3D.radius = ui->dspin_bigball_radius->value();
+    config.edgeAnalysis3D.profileWidth = ui->dspin_bigball_profileWidth->value();
     config.edgeAnalysis3D.makeReport =ui->checkBox_report3DEdge->isChecked();
 
     loader = ui->imageloader_packing->getReaderConfig();
@@ -719,7 +758,7 @@ void NIQAMainWindow::updateDialog()
 
     ui->dspin_bigball_pixelsize->setValue(config.edgeAnalysis3D.pixelSize);
     ui->spin_bigball_precision->setValue(config.edgeAnalysis3D.precision);
-    ui->dspin_bigball_radius->setValue(config.edgeAnalysis3D.radius);
+    ui->dspin_bigball_profileWidth->setValue(config.edgeAnalysis3D.profileWidth);
     ui->checkBox_report3DEdge->setChecked(config.edgeAnalysis3D.makeReport);
 
     loader.m_sFilemask = config.ballPackingAnalysis.fileMask;
@@ -872,7 +911,7 @@ void NIQAMainWindow::getEdge2Dprofiles()
     ImageReader reader;
     size_t crop[4];
     ui->widget_roiEdge2D->getROI(crop);
-    m_Edges.clear();
+    m_Edges2D.clear();
     size_t *pCrop= ui->groupBox_2DCrop->isChecked() ? crop : nullptr;
 
     float *profile=nullptr;
@@ -902,7 +941,7 @@ void NIQAMainWindow::getEdge2Dprofiles()
                 profile[i]=-profile[i];
         std::vector<float> pvec;
         std::copy(profile,profile+img.Size(0),std::back_inserter(pvec));
-        m_Edges[item->distance]=pvec;
+        m_Edges2D[item->distance]=pvec;
     }
 
     delete [] profile;
@@ -913,6 +952,83 @@ void NIQAMainWindow::estimateResolutions()
 
 }
 
+void NIQAMainWindow::fitEdgeProfile(std::vector<float> &dataX, std::vector<float> &dataY, std::vector<float> &dataSig, Nonlinear::FitFunctionBase &fitFunction)
+{
+    TNT::Array1D<double> x(dataX.size());
+    TNT::Array1D<double> y(dataY.size());
+    TNT::Array1D<double> sig(dataY.size());
+
+    for (size_t i=0; i<dataY.size(); ++i) {
+        x[i]=dataX[i];
+        y[i]=dataY[i];
+        if (dataSig.empty()==true)
+            sig[i]=1.0;
+        else
+            sig[i]=dataSig[i];
+    }
+
+    fitEdgeProfile(x,y,sig,fitFunction);
+
+}
+
+void NIQAMainWindow::fitEdgeProfile(TNT::Array1D<double> &dataX, TNT::Array1D<double> &dataY, TNT::Array1D<double> &dataSig, Nonlinear::FitFunctionBase &fitFunction)
+{
+    std::ostringstream msg;
+    Nonlinear::LevenbergMarquardt mrqfit(0.001,5000);
+    qDebug() << "Starting fitter";
+    try {
+        double maxval=-std::numeric_limits<double>::max();
+        double minval=std::numeric_limits<double>::max();
+        int maxpos=0;
+        int minpos=0;
+        int idx=0;
+        for (int i=0; i<dataY.dim1() ; ++i) {
+            if (maxval<dataY[i]) {
+                maxval=dataY[i];
+                maxpos=idx;
+            }
+            if (dataY[i]< minval) {
+                minval=dataY[i];
+                minpos=idx;
+            }
+            idx++;
+        }
+
+        double halfmax=(maxval-minval)/2+minval;
+        int HWHM=maxpos;
+
+        for (; HWHM<dataY.dim1(); ++HWHM) {
+            if (dataY[HWHM]<halfmax)
+                break;
+        }
+        fitFunction[0]=maxval;
+        fitFunction[1]=dataX[maxpos];
+        fitFunction[2]=(dataX[HWHM]-dataX[maxpos])*2;
+        double d=dataX[1]-dataX[0];
+        if (fitFunction[2]<d) {
+            logger.warning("Could not find FWHM, using constant 3*dx");
+            fitFunction[2]=3*d;
+        }
+        qDebug() << "width "<<fitFunction[2];
+        qDebug() << "Fitter initialized";
+        mrqfit.fit(dataX,dataY,dataSig,fitFunction);
+        qDebug() << "Fitter done";
+    }
+    catch (kipl::base::KiplException &e) {
+        logger.error(e.what());
+        return ;
+    }
+    catch (std::exception &e) {
+        logger.message(msg.str());
+        return ;
+    }
+    qDebug() << "post fit";
+    msg.str("");
+    msg<<"Fitted data to "<<fitFunction[0]<<", "<<fitFunction[1]<<", "<<fitFunction[2];
+
+    logger.message(msg.str());
+}
+
 void NIQAMainWindow::plotEdgeProfiles()
 {
     std::ostringstream msg;
@@ -920,7 +1036,7 @@ void NIQAMainWindow::plotEdgeProfiles()
     int idx=0;
     ui->listWidget_edgeInfo->clear();
 
-    for (auto it = m_Edges.begin(); it!=m_Edges.end(); ++it,++idx) {
+    for (auto it = m_Edges2D.begin(); it!=m_Edges2D.end(); ++it,++idx) {
         QLineSeries *series = new QLineSeries(); //Life time
         auto edge=it->second;
         if (ui->comboBox_edgePlotType->currentIndex()==0) {
@@ -1264,3 +1380,25 @@ void NIQAMainWindow::on_actionReport_a_bug_triggered()
         QMessageBox::critical(this,"Could not open repository","MuhRec could not open your web browser with the link https://github.com/neutronimaging/tools/issues",QMessageBox::Ok);
     }
 }
+
+void NIQAMainWindow::on_pushButton_bigball_pixelsize_clicked()
+{
+    PixelSizeDlg dlg(this);
+
+    int res=0;
+    try {
+        res=dlg.exec();
+    }
+    catch (kipl::base::KiplException &e) {
+        QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
+
+        logger.warning(e.what());
+        return;
+    }
+
+    if (res==dlg.Accepted) {
+        ui->dspin_bigball_pixelsize->setValue(dlg.getPixelSize());
+    }
+}
+
+
