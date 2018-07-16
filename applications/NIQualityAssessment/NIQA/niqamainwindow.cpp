@@ -31,7 +31,7 @@
 #include <profile/MicroTimer.h>
 
 #include "edgefileitemdialog.h"
-
+#include "reportmaker.h"
 
 class EdgeFileListItem : public QListWidgetItem
 {
@@ -1172,7 +1172,11 @@ void NIQAMainWindow::on_actionQuit_triggered()
 
 void NIQAMainWindow::on_pushButton_createReport_clicked()
 {
-    saveCurrent();
+    updateConfig();
+    ReportMaker report;
+
+    report.makeReport(QString::fromStdString(ui->widget_reportName->getFileName()),config);
+
 }
 
 void NIQAMainWindow::on_comboBox_edgeFitFunction_currentIndexChanged(int index)

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts
+QT       += core gui charts printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -68,12 +68,14 @@ SOURCES += main.cpp\
         niqamainwindow.cpp \
     edgefileitemdialog.cpp \
     niqaconfig.cpp \
-    edgefittingdialog.cpp
+    edgefittingdialog.cpp \
+    reportmaker.cpp
 
 HEADERS  += niqamainwindow.h \
     edgefileitemdialog.h \
     niqaconfig.h \
-    edgefittingdialog.h
+    edgefittingdialog.h \
+    reportmaker.h
 
 FORMS    += niqamainwindow.ui \
     edgefileitemdialog.ui \

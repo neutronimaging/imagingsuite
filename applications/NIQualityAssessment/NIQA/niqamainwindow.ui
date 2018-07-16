@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -1086,7 +1086,7 @@
            </widget>
           </item>
           <item>
-           <widget class="SingleFileForm" name="widget" native="true">
+           <widget class="SingleFileForm" name="widget_reportName" native="true">
             <property name="minimumSize">
              <size>
               <width>400</width>
@@ -1337,12 +1337,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QChartView</class>
-   <extends>QWidget</extends>
-   <header location="global">QtCharts</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
@@ -1352,13 +1346,10 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>QtAddons::uxROIWidget</class>
+   <class>QChartView</class>
    <extends>QWidget</extends>
-   <header location="global">uxroiwidget.h</header>
+   <header location="global">QtCharts</header>
    <container>1</container>
-   <slots>
-    <signal>valueChanged(int,int,int,int)</signal>
-   </slots>
   </customwidget>
   <customwidget>
    <class>ReaderForm</class>
@@ -1371,6 +1362,15 @@
    <extends>QWidget</extends>
    <header location="global">roimanager.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>SingleFileForm</class>
