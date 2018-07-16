@@ -1298,6 +1298,7 @@ void NIQAMainWindow::on_pushButton_createReport_clicked()
     saveCurrent();
     ReportMaker report;
 
+    report.addEdge2DInfo(ui->chart_2Dedges);
     report.makeReport(QString::fromStdString(config.userInformation.reportName),config);
 
 }

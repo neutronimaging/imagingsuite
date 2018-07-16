@@ -3,13 +3,19 @@
 #include <QDebug>
 #include <sstream>
 
-#include <qtextdocument.h>
+#include <QTextDocument>
+#include <QTextCursor>
+#include <QPixmap>
+#include <QImage>
+
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
 #include <QMarginsF>
 #endif
 
-ReportMaker::ReportMaker()
+ReportMaker::ReportMaker() :
+    edgechart(nullptr),
+    cursor(&doc)
 {
 
 }
@@ -23,40 +29,31 @@ void ReportMaker::makeReport(QString reportName, NIQAConfig &config)
    printer.setOutputFileName(reportName);
    printer.setPageMargins(QMarginsF(25.0,25.0,25.0,25.0));
 
-//   QString svgfname="/Users/kaestner/test.svg";
-//   QSvgGenerator generator;
-//   generator.setFileName(svgfname);
-//   generator.setSize(QSize(1024, 1024));
-//   generator.setViewBox(QRect(0, 0, 1024, 1024));
-//   generator.setTitle(tr("SVG Generator Example Drawing"));
+   doc.clear();
+   doc.setDefaultFont(QFont("Helvetica",11));
 
-//   QPainter painter;
-//   painter.begin(&generator);
-//   ui->widget->render(&painter);
-//   painter.end();
+   makeInfoSection();
+   makeContrastSection(mConfig.contrastAnalysis.makeReport);
+   makeEdge2DSection(mConfig.edgeAnalysis2D.makeReport);
+   makeEdge3DSection(mConfig.edgeAnalysis3D.makeReport);
+   makeBallsSection(mConfig.ballPackingAnalysis.makeReport);
 
-    std::ostringstream text;
-
-
-   text<<makeInfoSection();
-   text<<makeContrastSection(mConfig.contrastAnalysis.makeReport);
-   text<<makeEdge2DSection(mConfig.edgeAnalysis2D.makeReport);
-   text<<makeEdge3DSection(mConfig.edgeAnalysis3D.makeReport);
-   text<<makeBallsSection(mConfig.ballPackingAnalysis.makeReport);
-
-//   doc.setPageSize(printer.pageRect().size()); // This is necessary if you want to hide the page number
-   QTextDocument doc;
-   doc.setHtml(QString::fromStdString(text.str()));
    doc.print(&printer);
 }
 
-std::string ReportMaker::makeInfoSection()
+void ReportMaker::addEdge2DInfo(QtCharts::QChartView *c)
+{
+    edgechart=c;
+
+}
+
+void ReportMaker::makeInfoSection()
 {
     std::ostringstream text;
 
-    text<<"<H1>NIQA Report</H1>"<<std::endl;
+    text<<"<h1>NIQA Report</h1>"<<std::endl;
     text<<"Report date: "<<mConfig.userInformation.analysisDate[0]<<"-"<<mConfig.userInformation.analysisDate[1]<<"-"<<mConfig.userInformation.analysisDate[2]<<"<br/>";
-    text<<"<H2>User information</H2>"<<std::endl;
+    text<<"<h2>User information</h2>"<<std::endl;
 
     text<<"<table style=\"padding: 5px\">"
         <<"<tr><td>Operator</td><td>"<<mConfig.userInformation.userName<<"</td></tr>"
@@ -74,16 +71,17 @@ std::string ReportMaker::makeInfoSection()
             <<"<p>"<<mConfig.userInformation.comment<<"</p>"<<std::endl;
     }
 
-    return text.str();
+    cursor.insertHtml(QString::fromStdString(text.str()));
 }
 
-std::string ReportMaker::makeContrastSection(bool active)
+void ReportMaker::makeContrastSection(bool active)
 {
-    std::ostringstream text;
+
 
     if (active==true) {
-        text<<"<p style=\"page-break-after: always;\">&nbsp;</p>"<<std::endl;
-        text<<"<h2>Contrast sample</h2>"<<std::endl;
+        std::ostringstream text;
+        insertPageBreak();
+        text<<"<h2 style=\"page-break-before: always;\">Contrast sample</h2>"<<std::endl;
         text<<"<h3>Image description</h3>";
         text<<"<table style=\"padding: 10px\">"
              <<"<tr><td>File mask:</td><td>"<<mConfig.contrastAnalysis.fileMask<<"</td></tr>"
@@ -94,47 +92,65 @@ std::string ReportMaker::makeContrastSection(bool active)
              <<"</table>"<<std::endl;
 
         text<<"<h3>Analysis results</h3>";
+        cursor.insertHtml(QString::fromStdString(text.str()));
+    }
+}
+
+void ReportMaker::makeEdge2DSection(bool active)
+{
+
+
+    if (active==true) {
+        std::ostringstream text;
+        insertPageBreak();
+        text<<"<h2>2D edge sample</h2>"<<std::endl;
+        text<<"<h3>Image description</h3>";
+        text<<"<table style=\"padding: 10px\">"
+             <<"<tr><td>File mask:</td><td>"<<mConfig.contrastAnalysis.fileMask<<"</td></tr>"
+             <<"<tr><td>First:</td><td>"<<mConfig.contrastAnalysis.first<<"</td></tr>"
+             <<"<tr><td>Last:</td><td>"<<mConfig.contrastAnalysis.last<<"</td></tr>"
+             <<"<tr><td>Step:</td><td>"<<mConfig.contrastAnalysis.step<<"</td></tr>"
+             <<"<tr><td>Pixel size:</td><td>"<<mConfig.contrastAnalysis.pixelSize<<" mm</td></tr>"
+             <<"</table>"<<std::endl;
+
+        text<<"<h3>Analysis results</h3><br/>";
+        cursor.insertHtml(QString::fromStdString(text.str()));
+        cursor.insertText("\n");
+        insertFigure(edgechart,400,true);
 
     }
-
-    return text.str();
 }
 
-std::string ReportMaker::makeEdge2DSection(bool active)
+void ReportMaker::makeEdge3DSection(bool active)
 {
-    std::ostringstream text;
 
-//    text<<"<H1>Neutron Imaging Quality Asssessment Report</H1>"<<std::endl;
-//    text<<"<H2>User information</H2>"<<std::endl;
-//    text<<"<p>";
-//    text<<"User"<<mConfig.userInformation.userName<<std::endl;
-//    text<<"</p>";
-
-    return text.str();
 }
 
-std::string ReportMaker::makeEdge3DSection(bool active)
+void ReportMaker::makeBallsSection(bool active)
 {
-    std::ostringstream text;
 
-//    text<<"<H1>Neutron Imaging Quality Asssessment Report</H1>"<<std::endl;
-//    text<<"<H2>User information</H2>"<<std::endl;
-//    text<<"<p>";
-//    text<<"User"<<mConfig.userInformation.userName<<std::endl;
-//    text<<"</p>";
-
-    return text.str();
 }
 
-std::string ReportMaker::makeBallsSection(bool active)
+void ReportMaker::insertFigure(QtCharts::QChartView *cv, int width, bool nl)
 {
-    std::ostringstream text;
+    QImage img(1024,768,QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&img);
+    cv->render(&painter);
+    painter.end();
 
-//    text<<"<H1>Neutron Imaging Quality Asssessment Report</H1>"<<std::endl;
-//    text<<"<H2>User information</H2>"<<std::endl;
-//    text<<"<p>";
-//    text<<"User"<<mConfig.userInformation.userName<<std::endl;
-//    text<<"</p>";
+    if (0<width)
+        img = img.scaledToWidth(width, Qt::SmoothTransformation );
 
-    return text.str();
+    cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+    cursor.insertImage(img);
+    if (nl==true)
+        cursor.insertHtml("<br>");
+}
+
+void ReportMaker::insertPageBreak()
+{
+     cursor.insertHtml("<div class=\"page-break\"></div> ");
+  //  cursor.movePosition(QTextCursor::End);
+ //   cursor.insertHtml("<p style=\"page-break-after: always;\"> .</p>");
+    cursor.insertText("\n");
 }
