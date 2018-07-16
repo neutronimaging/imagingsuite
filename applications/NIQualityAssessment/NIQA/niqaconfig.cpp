@@ -396,6 +396,10 @@ void NIQAConfig::parseEdgeAnalysis3D(xmlTextReaderPtr reader)
                 edgeAnalysis3D.step=std::stoi(sValue);
             }
 
+            if (sName=="profilewidth") {
+                edgeAnalysis3D.profileWidth = std::stod(sValue);
+            }
+
             if (sName=="pixelsize") {
                 edgeAnalysis3D.pixelSize= std::stod(sValue);
             }
@@ -733,7 +737,7 @@ NIQAConfig::EdgeAnalysis3D::EdgeAnalysis3D() :
     last(1),
     step(1),
     pixelSize(0.1),
-    radius(10.0),
+    profileWidth(40.0),
     precision(0.1),
     makeReport(false)
 {
@@ -747,7 +751,7 @@ NIQAConfig::EdgeAnalysis3D::EdgeAnalysis3D(const NIQAConfig::EdgeAnalysis3D &e):
     last(e.last),
     step(e.step),
     pixelSize(e.pixelSize),
-    radius(e.radius),
+    profileWidth(e.profileWidth),
     precision(e.precision),
     makeReport(e.makeReport)
 {
@@ -762,7 +766,7 @@ const NIQAConfig::EdgeAnalysis3D & NIQAConfig::EdgeAnalysis3D::operator=(const N
     last=e.last;
     step=e.step;
     pixelSize=e.pixelSize;
-    radius=e.radius;
+    profileWidth=e.profileWidth;
     precision=e.precision;
     makeReport=e.makeReport;
 
@@ -779,7 +783,7 @@ std::string NIQAConfig::EdgeAnalysis3D::WriteXML(size_t indent)
         str<<std::setw(indent+4)  <<" "<<"<last>"<<last<<"</last>\n";
         str<<std::setw(indent+4)  <<" "<<"<step>"<<step<<"</step>\n";
         str<<std::setw(indent+4)  <<" "<<"<pixelsize>"<<kipl::strings::value2string(pixelSize)<<"</pixelsize>\n";
-        str<<std::setw(indent+4)  <<" "<<"<radius>"<<kipl::strings::value2string(radius)<<"</radius>\n";
+        str<<std::setw(indent+4)  <<" "<<"<profilewidth>"<<kipl::strings::value2string(profileWidth)<<"</profilewidth>\n";
         str<<std::setw(indent+4)  <<" "<<"<precision>"<<kipl::strings::value2string(precision)<<"</precision>\n";
         str<<std::setw(indent+4)  <<" "<<"<makereport>"<<kipl::strings::bool2string(makeReport)<<"</makereport>\n";
     str<<std::setw(indent)  <<" "<<"</edgeanalysis3d>"<<std::endl;

@@ -488,7 +488,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_preview">
            <attribute name="title">
@@ -530,11 +530,6 @@
                   <string>Edge derivative plot</string>
                  </property>
                 </item>
-                <item>
-                 <property name="text">
-                  <string>MTF plot</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>
@@ -547,11 +542,6 @@
                 <item>
                  <property name="text">
                   <string>Gauss fit</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Lorentz fit</string>
                  </property>
                 </item>
                </widget>
@@ -649,7 +639,7 @@
             <item>
              <layout class="QFormLayout" name="formLayout_2">
               <item row="1" column="0">
-               <widget class="QLabel" name="label_5">
+               <widget class="QPushButton" name="pushButton_bigball_pixelsize">
                 <property name="text">
                  <string>Pixel size</string>
                 </property>
@@ -668,39 +658,49 @@
               <item row="2" column="0">
                <widget class="QLabel" name="label_6">
                 <property name="text">
-                 <string>Radius [pixels]</string>
+                 <string>Profile width [pixels]</string>
                 </property>
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QDoubleSpinBox" name="dspin_bigball_radius">
+               <widget class="QDoubleSpinBox" name="dspin_bigball_profileWidth">
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
                 <property name="maximum">
                  <double>9999.899999999999636</double>
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="4" column="0">
                <widget class="QLabel" name="label_7">
                 <property name="text">
                  <string>Ball center</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
+              <item row="4" column="1">
                <widget class="QLabel" name="label_bigball_center">
                 <property name="text">
                  <string>N/A</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_11">
+              <item row="5" column="0">
+               <widget class="QLabel" name="label">
                 <property name="text">
-                 <string>Precision</string>
+                 <string>Ball radius</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="1">
+              <item row="5" column="1">
+               <widget class="QLabel" name="label_bigball_radius">
+                <property name="text">
+                 <string>N/A</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
                <widget class="QDoubleSpinBox" name="spin_bigball_precision">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets how small steps to sample the radia profile. Default is 0.1 pixels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -710,6 +710,27 @@
                 </property>
                 <property name="value">
                  <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Precision [pixles]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLabel" name="label_bigball_FWHM">
+                <property name="text">
+                 <string>N/A</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Peak width</string>
                 </property>
                </widget>
               </item>
@@ -750,31 +771,6 @@
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QComboBox" name="comb_bigballsliceplane">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>XY plane</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>XZ plane</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>YZ plane</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
               <item>
                <widget class="QSlider" name="slider_bigball_slice">
                 <property name="sizePolicy">
@@ -830,15 +826,6 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QComboBox" name="combo_bigball_edgeselector">
-                <item>
-                 <property name="text">
-                  <string>Global edge</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
                <widget class="QComboBox" name="comboBox_bigball_plotinformation">
                 <item>
                  <property name="text">
@@ -848,11 +835,6 @@
                 <item>
                  <property name="text">
                   <string>Edge derivative</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>MTF</string>
                  </property>
                 </item>
                </widget>

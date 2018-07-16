@@ -99,7 +99,7 @@ public:
         int last;
         int step;
         double pixelSize;
-        double radius;
+        double profileWidth;
         double precision;
         bool makeReport;
     };

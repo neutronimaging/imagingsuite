@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include <tnt.h>
 #include <base/timage.h>
 #include <logging/logger.h>
 
@@ -11,6 +12,7 @@
 #include <ballanalysis.h>
 #include <contrastsampleanalysis.h>
 #include <ballassemblyanalysis.h>
+#include <math/nonlinfit.h>
 
 #include "niqaconfig.h"
 
@@ -101,6 +103,10 @@ private slots:
 
     void on_actionReport_a_bug_triggered();
 
+    void on_pushButton_bigball_pixelsize_clicked();
+
+    void on_comboBox_bigball_plotinformation_currentIndexChanged(int index);
+
 private:
     void showContrastBoxPlot();
     void showContrastHistogram();
@@ -111,8 +117,11 @@ private:
     void on_widget_roi3DBalls_valueChanged(int x0, int y0, int x1, int y1);
     void getEdge2Dprofiles();
     void estimateResolutions();
+    void fitEdgeProfile(std::vector<float> &dataX, std::vector<float> &dataY, std::vector<float> &dataSig, Nonlinear::FitFunctionBase &fitFunction);
+    void fitEdgeProfile(TNT::Array1D<double> &dataX, TNT::Array1D<double> &dataY, TNT::Array1D<double> &dataSig, Nonlinear::FitFunctionBase &fitFunction);
     void plotEdgeProfiles();
     void plotPackingStatistics(std::list<kipl::math::Statistics> &roiStats);
+    void plot3DEdgeProfiles(int index);
     void saveCurrent();
     void loadCurrent();
 
@@ -132,7 +141,12 @@ private:
     kipl::base::TImage<float,2> m_BallAssemblyProjection;
     kipl::base::TImage<float,3> m_Contrast;
 
-    map<float,std::vector<float>> m_Edges;
+    map<float,std::vector<float>> m_Edges2D;
+    // 3D Edge
+    std::vector<float> m_edge3DDistance;
+    std::vector<float> m_edge3DProfile;
+    std::vector<float> m_edge3DDprofile;
+    std::vector<float> m_edge3DStdDev;
 
     ImagingQAAlgorithms::BallAnalysis m_BallAnalyzer;
     ImagingQAAlgorithms::ContrastSampleAnalysis m_ContrastSampleAnalyzer;
