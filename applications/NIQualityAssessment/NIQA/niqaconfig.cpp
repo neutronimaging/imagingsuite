@@ -181,6 +181,10 @@ void NIQAConfig::parseUserInformation(xmlTextReaderPtr reader)
             if (sName=="comment") {
                 userInformation.comment=sValue;
             }
+
+            if (sName=="reportname") {
+                userInformation.reportName=sValue;
+            }
         }
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -517,7 +521,8 @@ NIQAConfig::UserInformation::UserInformation() :
         institute("Institute"),
         instrument("beamline"),
         country("Universe"),
-        softwareVersion(VERSION)
+        softwareVersion(VERSION),
+        reportName("report.pdf")
 {
     experimentDate[0]=2018;
     experimentDate[1]=7;
@@ -535,7 +540,9 @@ NIQAConfig::UserInformation::UserInformation(const NIQAConfig::UserInformation &
     institute(c.institute),
     instrument(c.instrument),
     country(c.country),
-    softwareVersion(c.softwareVersion)
+    softwareVersion(c.softwareVersion),
+    comment(c.comment),
+    reportName(c.reportName)
 {
     std::copy_n(c.experimentDate,3,experimentDate);
     std::copy_n(c.analysisDate,3,analysisDate);
@@ -550,6 +557,8 @@ const NIQAConfig::UserInformation & NIQAConfig::UserInformation::operator=(const
     std::copy_n(c.experimentDate,3,experimentDate);
     std::copy_n(c.analysisDate,3,analysisDate);
     softwareVersion = c.softwareVersion;
+    comment         = c.comment;
+    reportName      = c.reportName;
 
     return *this;
 }
@@ -568,6 +577,8 @@ std::string NIQAConfig::UserInformation::WriteXML(size_t indent)
         str<<setw(indent+4)  <<" "<<"<analysisdate>"<<analysisDate[0]<<" "<<analysisDate[1]<<" "<<analysisDate[2]<<" "<<"</analysisdate>\n";
         str<<setw(indent+4)  <<" "<<"<version>"<<softwareVersion<<"</version>\n";
         str<<setw(indent+4)  <<" "<<"<comment>"<<comment<<"</comment>\n";
+        str<<setw(indent+4)  <<" "<<"<reportname>"<<reportName<<"</reportname>\n";
+
     str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
 
     return str.str();

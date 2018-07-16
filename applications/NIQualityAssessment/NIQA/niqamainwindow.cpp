@@ -86,6 +86,7 @@ NIQAMainWindow::NIQAMainWindow(QWidget *parent) :
     ui->check_3DBallsCrop->setChecked(false);
     on_check_3DBallsCrop_toggled(false);
     ui->widget_bundleroi->setViewer(ui->viewer_Packing);
+    ui->widget_reportName->setFileOperation(false);
     loadCurrent();
     updateDialog();
 }
@@ -603,7 +604,10 @@ void NIQAMainWindow::updateConfig()
     config.userInformation.experimentDate[0] = date.year();
     config.userInformation.experimentDate[1] = date.month();
     config.userInformation.experimentDate[2] = date.day();
-    config.userInformation.comment = ui->plainTextEdit_comment->toPlainText().toStdString();
+
+    QString str=ui->plainTextEdit_comment->toPlainText();
+    qDebug() << str;
+    config.userInformation.comment = str.toStdString();
 
     date = ui->dateEdit_analysisDate->date();
     config.userInformation.analysisDate[0] = date.year();
@@ -611,6 +615,7 @@ void NIQAMainWindow::updateConfig()
     config.userInformation.analysisDate[2] = date.day();
 
     config.userInformation.country = ui->lineEdit_country->text().toStdString();
+    config.userInformation.reportName = ui->widget_reportName->getFileName();
 
     // Contrast analysis
     ImageLoader loader;
@@ -691,6 +696,7 @@ void NIQAMainWindow::updateDialog()
     ui->dateEdit_analysisDate->setDate(QDate(config.userInformation.analysisDate[0],config.userInformation.analysisDate[1],config.userInformation.analysisDate[2]));
     ui->label_version->setText(QString::fromStdString(config.userInformation.softwareVersion));
     ui->lineEdit_country->setText(QString::fromStdString(config.userInformation.country));
+    ui->widget_reportName->setFileName(config.userInformation.reportName);
 
     // Contrast analysis
     ImageLoader loader;
@@ -1289,9 +1295,10 @@ void NIQAMainWindow::on_actionQuit_triggered()
 void NIQAMainWindow::on_pushButton_createReport_clicked()
 {
     updateConfig();
+    saveCurrent();
     ReportMaker report;
 
-    report.makeReport(QString::fromStdString(ui->widget_reportName->getFileName()),config);
+    report.makeReport(QString::fromStdString(config.userInformation.reportName),config);
 
 }
 

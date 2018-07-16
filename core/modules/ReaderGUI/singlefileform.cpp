@@ -5,9 +5,10 @@
 
 #include <strings/filenames.h>
 
-SingleFileForm::SingleFileForm(QWidget *parent) :
+SingleFileForm::SingleFileForm(QWidget *parent, bool _load) :
     QWidget(parent),
-    ui(new Ui::SingleFileForm)
+    ui(new Ui::SingleFileForm),
+    load(_load)
 {
     ui->setupUi(this);
 }
@@ -37,13 +38,25 @@ void SingleFileForm::setLabel(QString str)
     ui->label_fileName->setText(str);
 }
 
+void SingleFileForm::setFileOperation(bool _load)
+{
+    load=_load;
+}
+
 void SingleFileForm::on_pushButton_browse_clicked()
 {
     std::string sPath, sFname;
     std::vector<std::string> exts;
     kipl::strings::filenames::StripFileName(ui->lineEdit_fileName->text().toStdString(),sPath,sFname,exts);
-    QString projdir=QFileDialog::getOpenFileName(this,
+    QString projdir="";
+
+    if (load==true)
+        projdir=QFileDialog::getOpenFileName(this,
                                       "Select a file",
+                                      QString::fromStdString(sPath));
+    else
+        projdir=QFileDialog::getSaveFileName(this,
+                                      "Save to ",
                                       QString::fromStdString(sPath));
 
    sFname=projdir.toStdString();

@@ -36,6 +36,7 @@ public:
         int analysisDate[3];
         std::string softwareVersion;
         std::string comment;
+        std::string reportName;
     };
 
     class ContrastAnalysis {
