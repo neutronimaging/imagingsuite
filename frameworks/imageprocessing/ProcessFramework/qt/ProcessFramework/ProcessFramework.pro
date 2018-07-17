@@ -27,8 +27,8 @@ unix:!symbian {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
-        ICON = muhrec3.icns
+ #       QMAKE_INFO_PLIST = Info.plist
+ #       ICON = muhrec3.icns
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -49,6 +49,26 @@ win32 {
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
+}
+
+unix:mac {
+exists($$PWD/../../../../../external/mac/lib/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES *= HAVE_NEXUS
+
+    INCLUDEPATH += $$PWD/../../../../../external/mac/include/ $$PWD/../../../../../external/mac/include/nexus $$PWD/../../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../../external/mac/include/ $$PWD/../../../../../external/mac/include/nexus $$PWD/../../../../../external/mac/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../../external/mac/lib/
+
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+
+
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
+
 }
 
 DEFINES += PROCESSFRAMEWORK_LIBRARY

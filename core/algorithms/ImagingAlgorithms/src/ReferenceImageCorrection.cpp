@@ -1236,14 +1236,14 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     // this should be the correct way of removing element (STL book, page 205)
 
-//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
-//        if(it->second >= (mean_value+2*std_dev)){
-//            values.erase(it++);
-//        }
-//        else{
-//            ++it;
-//        }
-//    }
+    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
+        if(it->second >= (mean_value+2*std_dev)){
+            values.erase(it++);
+        }
+        else{
+            ++it;
+        }
+    }
 
     float *myparam = new float[6];
     float error;
@@ -1295,18 +1295,27 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     std_dev=sqrt(std_dev/values.size());
 
-int outlier = 0;
-    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-                it != values.end(); ++it) {
+//int outlier = 0;
+//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
+//                it != values.end(); ++it) {
 
-        if(it->second >= (mean_value+2*std_dev)) {
-//            std::cout << "found outlier value" << std::endl;
-//            std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-            values.erase(it); // not sure it won't cause problems
-            outlier++;
+//        if(it->second >= (mean_value+2*std_dev)) {
+////            std::cout << "found outlier value" << std::endl;
+////            std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+//            values.erase(it); // not sure it won't cause problems
+//            outlier++;
 
+//        }
+
+//    }
+
+    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
+        if(it->second >= (mean_value+2*std_dev)){
+            values.erase(it++);
         }
-
+        else{
+            ++it;
+        }
     }
 
 //    ofstream int_points("poly_points.txt");

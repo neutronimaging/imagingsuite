@@ -686,7 +686,7 @@ void BBLogNormDlg::on_errorButton_clicked()
         }
         catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpoltion error.");
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
             logger(kipl::logging::Logger::LogWarning,e.what());
             errdlg.exec();
