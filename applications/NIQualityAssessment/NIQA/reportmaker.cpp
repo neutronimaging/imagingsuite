@@ -7,6 +7,8 @@
 #include <QTextCursor>
 #include <QPixmap>
 #include <QImage>
+#include <QSvgGenerator>
+#include <QDir>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -14,7 +16,7 @@
 #endif
 
 ReportMaker::ReportMaker() :
-    edgechart(nullptr),
+    edge2d_edgeplots(nullptr),
     cursor(&doc)
 {
 
@@ -23,14 +25,15 @@ ReportMaker::ReportMaker() :
 void ReportMaker::makeReport(QString reportName, NIQAConfig &config)
 {
    mConfig=config;
-   QPrinter printer(QPrinter::PrinterResolution);
+   QPrinter printer(QPrinter::HighResolution);
    printer.setOutputFormat(QPrinter::PdfFormat);
+   printer.setResolution(1200);
    printer.setPaperSize(QPrinter::A4);
    printer.setOutputFileName(reportName);
-   printer.setPageMargins(QMarginsF(25.0,25.0,25.0,25.0));
+   printer.setPageMargins(QMarginsF(10.0,10.0,10.0,10.0));
 
    doc.clear();
-   doc.setDefaultFont(QFont("Helvetica",11));
+   doc.setDefaultFont(QFont("Helvetica",10));
 
    makeInfoSection();
    makeContrastSection(mConfig.contrastAnalysis.makeReport);
@@ -41,11 +44,26 @@ void ReportMaker::makeReport(QString reportName, NIQAConfig &config)
    doc.print(&printer);
 }
 
-void ReportMaker::addEdge2DInfo(QtCharts::QChartView *c)
+void ReportMaker::addContrastInfo(QtCharts::QChartView *c, std::vector<kipl::math::Statistics> insets)
 {
-    edgechart=c;
-
+    contrast_plot=c;
+    contrast_insets=insets;
 }
+
+void ReportMaker::addEdge2DInfo(QtCharts::QChartView *c, QtCharts::QChartView *d,std::map<double,double> edges)
+{
+    edge2d_edgeplots=c;
+    edge2d_collimation=d;
+    edge2d_edges=edges;
+}
+
+void ReportMaker::addEdge3DInfo(QtCharts::QChartView *c, double FWHM, double radius)
+{
+    edge3d_edgeplot=c;
+    edge3d_FWHM=FWHM;
+    edge3d_radius=radius;
+}
+
 
 void ReportMaker::makeInfoSection()
 {
@@ -64,7 +82,6 @@ void ReportMaker::makeInfoSection()
         <<"<tr><td>Software version</td><td>"<<mConfig.userInformation.softwareVersion<<"</td></tr>"
         <<"</table>"<<std::endl;
 
-    qDebug() << QString::fromStdString(mConfig.userInformation.comment);
     if (mConfig.userInformation.comment.empty()==false) {
 
         text<<"<h3>Commment</h3>"
@@ -93,6 +110,15 @@ void ReportMaker::makeContrastSection(bool active)
 
         text<<"<h3>Analysis results</h3>";
         cursor.insertHtml(QString::fromStdString(text.str()));
+        insertFigure(contrast_plot,"/Users/kaestner/niqacontrast.svg",200,true);
+        text.str("");
+        text<<"<table style=\"padding: 10px\">"
+             <<"<tr><th>Average</th><th>StdDev</th></tr>"<<std::endl;
+        for (auto item : contrast_insets) {
+            text<<"<tr><td>"<<item.E()<<"</td><td>"<<item.s()<<"</td></tr>"<<std::endl;
+        }
+        text<<"</table><br/>"<<std::endl;
+        cursor.insertHtml(QString::fromStdString(text.str()));
     }
 }
 
@@ -106,24 +132,61 @@ void ReportMaker::makeEdge2DSection(bool active)
         text<<"<h2>2D edge sample</h2>"<<std::endl;
         text<<"<h3>Image description</h3>";
         text<<"<table style=\"padding: 10px\">"
-             <<"<tr><td>File mask:</td><td>"<<mConfig.contrastAnalysis.fileMask<<"</td></tr>"
-             <<"<tr><td>First:</td><td>"<<mConfig.contrastAnalysis.first<<"</td></tr>"
-             <<"<tr><td>Last:</td><td>"<<mConfig.contrastAnalysis.last<<"</td></tr>"
-             <<"<tr><td>Step:</td><td>"<<mConfig.contrastAnalysis.step<<"</td></tr>"
+             <<"<tr><th>Distance</th><th>File name</th></tr>"<<std::endl;
+        for (auto item : mConfig.edgeAnalysis2D.multiImageList) {
+            text<<"<tr><td>"<<item.first<<"</td><td>"<<item.second<<"</td></tr>"<<std::endl;
+        }
+        text<<"</table><br/>"<<std::endl;
+
+        text<<"<table style=\"padding: 10px\">"
              <<"<tr><td>Pixel size:</td><td>"<<mConfig.contrastAnalysis.pixelSize<<" mm</td></tr>"
              <<"</table>"<<std::endl;
 
         text<<"<h3>Analysis results</h3><br/>";
         cursor.insertHtml(QString::fromStdString(text.str()));
         cursor.insertText("\n");
-        insertFigure(edgechart,400,true);
+        insertFigure(edge2d_edgeplots,"/Users/kaestner/niqaedge2da.svg",200,true);
+        insertFigure(edge2d_collimation,"/Users/kaestner/niqaedge2db.svg",200,true);
+        text.str("");
+        text<<"<table style=\"padding: 10px\">"
+             <<"<tr><th>Distance [mm]</th><th>FWHM [mm]</th></tr>"<<std::endl;
+        for (auto item : edge2d_edges) {
+            text<<"<tr><td>"<<item.first<<"</td><td>"<<item.second<<"</td></tr>"<<std::endl;
+        }
+        text<<"</table><br/>"<<std::endl;
+        cursor.insertHtml(QString::fromStdString(text.str()));
+
 
     }
 }
 
 void ReportMaker::makeEdge3DSection(bool active)
 {
+    if (active==true) {
+        std::ostringstream text;
+        insertPageBreak();
+        text<<"<h2 style=\"page-break-before: always;\">3D edge sample</h2>"<<std::endl;
+        text<<"<h3>Image description</h3>";
+        text<<"<table style=\"padding: 10px\">"
+             <<"<tr><td>File mask:</td><td>"<<mConfig.edgeAnalysis3D.fileMask<<"</td></tr>"
+             <<"<tr><td>First:</td><td>"<<mConfig.edgeAnalysis3D.first<<"</td></tr>"
+             <<"<tr><td>Last:</td><td>"<<mConfig.edgeAnalysis3D.last<<"</td></tr>"
+             <<"<tr><td>Step:</td><td>"<<mConfig.edgeAnalysis3D.step<<"</td></tr>"
+             <<"<tr><td>Pixel size:</td><td>"<<mConfig.edgeAnalysis3D.pixelSize<<" mm</td></tr>"
+             <<"<tr><td>Sampling precision:</td><td>"<<mConfig.edgeAnalysis3D.precision<<" pixels</td></tr>"
+             <<"</table>"<<std::endl;
 
+        text<<"<h3>Analysis results</h3>";
+        cursor.insertHtml(QString::fromStdString(text.str()));
+
+        insertFigure(edge3d_edgeplot,"/Users/kaestner/niqaedge3d.svg",200,true);
+        text.str("");
+        text<<"<table style=\"padding: 10px\">"
+             <<"<tr><td>Ball radius:</td><td>"<<edge3d_radius<<" mm</td></tr>"
+             <<"<tr><td>FWHM:</td><td>"<<edge3d_FWHM<<" mm</td></tr>"
+             <<"</table>"<<std::endl;
+        cursor.insertHtml(QString::fromStdString(text.str()));
+    }
 }
 
 void ReportMaker::makeBallsSection(bool active)
@@ -131,20 +194,23 @@ void ReportMaker::makeBallsSection(bool active)
 
 }
 
-void ReportMaker::insertFigure(QtCharts::QChartView *cv, int width, bool nl)
+void ReportMaker::insertFigure(QtCharts::QChartView *cv, QString imgname, int width, bool nl)
 {
-    QImage img(1024,768,QImage::Format_ARGB32_Premultiplied);
-    QPainter painter(&img);
+    QString svgfname=imgname;
+    QSvgGenerator generator;
+    generator.setFileName(svgfname);
+    float aspectratio=float(cv->geometry().height())/float(cv->geometry().width());
+    generator.setSize(QSize(1024, int(1024*aspectratio)));
+    generator.setViewBox(QRect(0, 0, 1024, int(1024*aspectratio)));
+    generator.setTitle("SVG Generator Example Drawing");
+
+    QPainter painter(&generator);
     cv->render(&painter);
     painter.end();
 
-    if (0<width)
-        img = img.scaledToWidth(width, Qt::SmoothTransformation );
-
+    cursor.insertHtml("<img src=\""+imgname+"\" width=\""+QString::number(width)+"\" alt=\"Kiwi standing on oval\" />");
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
-    cursor.insertImage(img);
-    if (nl==true)
-        cursor.insertHtml("<br>");
+
 }
 
 void ReportMaker::insertPageBreak()

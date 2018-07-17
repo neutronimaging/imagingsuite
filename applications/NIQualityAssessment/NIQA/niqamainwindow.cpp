@@ -606,7 +606,6 @@ void NIQAMainWindow::updateConfig()
     config.userInformation.experimentDate[2] = date.day();
 
     QString str=ui->plainTextEdit_comment->toPlainText();
-    qDebug() << str;
     config.userInformation.comment = str.toStdString();
 
     date = ui->dateEdit_analysisDate->date();
@@ -926,7 +925,6 @@ void NIQAMainWindow::getEdge2Dprofiles()
         if (item->checkState()==Qt::CheckState::Unchecked)
             continue;
 
-        qDebug() <<item->filename;
         try {
             img=reader.Read(item->filename.toStdString(),kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,pCrop);
         }
@@ -981,7 +979,6 @@ void NIQAMainWindow::fitEdgeProfile(TNT::Array1D<double> &dataX, TNT::Array1D<do
 {
     std::ostringstream msg;
     Nonlinear::LevenbergMarquardt mrqfit(0.001,5000);
-    qDebug() << "Starting fitter";
     try {
         double maxval=-std::numeric_limits<double>::max();
         double minval=std::numeric_limits<double>::max();
@@ -1015,10 +1012,8 @@ void NIQAMainWindow::fitEdgeProfile(TNT::Array1D<double> &dataX, TNT::Array1D<do
             logger.warning("Could not find FWHM, using constant 3*dx");
             fitFunction[2]=3*d;
         }
-        qDebug() << "width "<<fitFunction[2];
-        qDebug() << "Fitter initialized";
         mrqfit.fit(dataX,dataY,dataSig,fitFunction);
-        qDebug() << "Fitter done";
+
     }
     catch (kipl::base::KiplException &e) {
         logger.error(e.what());
@@ -1120,7 +1115,7 @@ void NIQAMainWindow::plotEdgeProfiles()
                     logger.message(msg.str());
                     return ;
                 }
-                qDebug() << "post fit";
+
                 msg.str("");
                 msg<<item->fitModel[0]<<", "<<item->fitModel[1]<<", "<<item->fitModel[2];
 
@@ -1298,7 +1293,14 @@ void NIQAMainWindow::on_pushButton_createReport_clicked()
     saveCurrent();
     ReportMaker report;
 
-    report.addEdge2DInfo(ui->chart_2Dedges);
+    report.addContrastInfo(ui->chart_contrast,m_ContrastSampleAnalyzer.getStatistics());
+    std::map<double,double> edges;
+
+    for (int i=0; i<ui->listWidget_edgeInfo->count(); ++i) {
+        EdgeInfoListItem *item=dynamic_cast<EdgeInfoListItem *>(ui->listWidget_edgeInfo->item(i));
+        edges.insert(std::make_pair(item->distance,item->FWHMmetric));
+    }
+    report.addEdge2DInfo(ui->chart_2Dedges,ui->chart_collimation,edges);
     report.makeReport(QString::fromStdString(config.userInformation.reportName),config);
 
 }
