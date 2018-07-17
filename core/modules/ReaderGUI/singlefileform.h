@@ -1,13 +1,15 @@
 #ifndef SINGLEFILEFORM_H
 #define SINGLEFILEFORM_H
 
+#include "readergui_global.h"
+
 #include <QWidget>
 
 namespace Ui {
 class SingleFileForm;
 }
 
-class SingleFileForm : public QWidget
+class READERGUISHARED_EXPORT SingleFileForm : public QWidget
 {
     Q_OBJECT
 

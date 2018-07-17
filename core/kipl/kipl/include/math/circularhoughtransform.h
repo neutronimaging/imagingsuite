@@ -1,12 +1,13 @@
 #ifndef CIRCULARHOUGHTRANSFORM_H
 #define CIRCULARHOUGHTRANSFORM_H
 
+#include "../kipl_global.h"
 #include "../base/timage.h"
 #include "../logging/logger.h"
 
 namespace kipl { namespace math {
 
-class CircularHoughTransform
+class KIPLSHARED_EXPORT CircularHoughTransform
 {
     kipl::logging::Logger logger;
 public:

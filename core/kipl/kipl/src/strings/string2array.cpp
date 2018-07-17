@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+#include <iterator>
 
 #include "../../include/strings/string2array.h"
 #include "../../include/base/KiplException.h"

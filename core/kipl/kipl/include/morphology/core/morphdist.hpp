@@ -300,7 +300,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 template<class MaskType>
 int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
 		kipl::base::TImage<float,3> &dist,
-		CMetricBase &metric, bool complement)
+        kipl::morphology::CMetricBase &metric, bool complement)
 {
 	kipl::logging::Logger logger("DistanceTransform3D");
 
@@ -308,14 +308,14 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
 	const float object=10000.0f;
     if (metric.dim()!=3) {
     	msg.str("");
-    	msg<<"The selected metric ("<<metric<<") does not have 3D support.";
+        msg<<"The selected metric ("<<metric.getName()<<") does not have 3D support.";
     	logger(kipl::logging::Logger::LogError,msg.str());
 
     	throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 
     msg.str("");
-    msg<<"using metric "<<metric;
+    msg<<"using metric "<<metric.getName();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     size_t const * const dims=img.Dims();

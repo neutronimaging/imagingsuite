@@ -816,7 +816,7 @@ void NIQAMainWindow::on_slider_PackingImages_sliderMoved(int position)
                     ui->slider_PackingImages->setEnabled(true);
                     kipl::base::TImage<float,2> slice(m_BallAssembly.Dims());
                     int *pSlice=m_BallAssemblyAnalyzer.getLabels().GetLinePtr(0,position);
-                    std::copy(pSlice,pSlice+slice.Size(),slice.GetDataPtr());
+                    std::copy_n(pSlice,slice.Size(),slice.GetDataPtr());
                     ui->viewer_Packing->set_image(slice.GetDataPtr(),slice.Dims());
                     break;
                 }
