@@ -6,9 +6,12 @@
 
 QT       += core widgets printsupport concurrent
 
-TARGET = muhrec3
+TARGET = MuhRec
+VERSION = 4.0.0
 TEMPLATE = app
 CONFIG += c++11
+
+DEFINES += VERSION=\\\"$$VERSION\\\"
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
@@ -22,16 +25,11 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-#        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
-#        INCLUDEPATH += $$PWD/../../../gui/qt/QtAddons # due to strange ordering during ui build...
         INCLUDEPATH += /opt/local/include
 
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-
-#        QMAKE_INFO_PLIST = Info.plist
-
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2

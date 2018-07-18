@@ -14,6 +14,7 @@
 #include <QUrl>
 #include <QSignalBlocker>
 #include <QDebug>
+#include <QVersionNumber>
 
 #include <base/timage.h>
 #include <base/KiplException.h>
@@ -132,8 +133,6 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     SlicesChanged(0);
     SetupCallBacks();
     ui->widgetProjectionROI->updateViewer();
-
-//    if (ui->checkCBCT->isChecked()) SlicesCBCTChanged(0);
 
 }
 
@@ -759,8 +758,9 @@ void MuhRecMainWindow::MenuHelpAbout()
 {
     QMessageBox dlg;
     std::ostringstream msg;
+    QVersionNumber ver;
 
-    msg<<"MuhRec 3\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
+    msg<<"MuhRec "<<m_QtApp->applicationVersion().toStdString()<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
 
     msg<<"Using \nQt version: "<<qVersion()<<"\n"
       <<"LibTIFF, zLib, fftw3, libcfitsio";
@@ -949,7 +949,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
         catch (std::exception &e) {
-            msg<<"Reconstructor initialization failed with an STL exception: "<<endl
+            msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
@@ -959,12 +959,12 @@ void MuhRecMainWindow::ExecuteReconstruction()
             bBuildFailure=true;
         }
         catch (ReconException &e) {
-            msg<<"Reconstructor initialization failed with a recon exception: "<<endl
+            msg<<"Reconstructor initialization failed with a recon exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (kipl::base::KiplException &e) {
-            msg<<"Reconstructor initialization failed a Kipl exception: "<<endl
+            msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
@@ -1072,7 +1072,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
         }
     }
     catch (std::exception &e) {
-        msg<<"Reconstruction failed: "<<endl
+        msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
@@ -1082,12 +1082,12 @@ void MuhRecMainWindow::ExecuteReconstruction()
         bRunFailure=true;
     }
     catch (ReconException &e) {
-        msg<<"Reconstruction failed: "<<endl
+        msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
     catch (kipl::base::KiplException &e) {
-        msg<<"Reconstruction failed: "<<endl
+        msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
@@ -1731,7 +1731,7 @@ void MuhRecMainWindow::on_spinSlicesFirst_valueChanged(int arg1)
 
 void MuhRecMainWindow::on_spinSlicesLast_valueChanged(int arg1)
 {
-    ui->spinSlicesFirst->setMaximum(arg1-1);
+//    ui->spinSlicesFirst->setMaximum(arg1-1);
     SlicesChanged(arg1);
 }
 
@@ -1891,28 +1891,6 @@ void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 }
 
 
-
-
-//void MuhRecMainWindow::on_spinSubVolumeSizeZ0_valueChanged(int arg1)
-//{
-//    SlicesCBCTChanged(arg1);
-//}
-
-//void MuhRecMainWindow::on_spinSubVolumeSizeZ1_valueChanged(int arg1)
-//{
-//    SlicesCBCTChanged(arg1);
-//}
-
-//void MuhRecMainWindow::SlicesCBCTChanged(int x)
-//{
-//    QRect rect;
-//    rect.setCoords(ui->spinProjROIx0->value(),
-//                   ui->spinSubVolumeSizeZ0->value(),
-//                   ui->spinProjROIx1->value(),
-//                   ui->spinSubVolumeSizeZ1->value());
-
-//    ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
-//}
 
 void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
 {
@@ -2508,8 +2486,8 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
             return;
         }
     }
-    QSignalBlocker b1(ui->spinSlicesFirst);
-    QSignalBlocker b2(ui->spinSlicesLast);
+//    QSignalBlocker b1(ui->spinSlicesFirst);
+//    QSignalBlocker b2(ui->spinSlicesLast);
 
     ui->spinSlicesFirst->setValue(first);
     ui->spinSlicesLast->setValue(last);

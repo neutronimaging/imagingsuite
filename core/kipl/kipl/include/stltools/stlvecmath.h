@@ -200,13 +200,18 @@ vector<T> FillVecSeries(T start, T stop, T step=(T)1)
 	return tmp;
 }
 
-/** \brief Returns a vector with n-1 elements containing v[i]-v[i-1] 
-
-  \todo Implement the code
-*/
+/// \brief Returns a vector with n-1 elements containing v[i]-v[i-1]
 template<class T>
 vector<T> DiffVec(vector<T> &v)
 {
+    std::vector<T> res;
+    auto i0=v.begin();
+    auto i1=i0;
+    ++i1;
+
+    for ( ; i1!=v.begin(); ++i0,++i1)
+        res.push_back(*i1-*i0);
+
 	return v;
 }
 

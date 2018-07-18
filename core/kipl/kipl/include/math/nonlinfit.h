@@ -8,85 +8,133 @@
 using namespace TNT;
 
 namespace Nonlinear {
+
+enum eProfileFunction {
+    fnSumOfGaussians,
+    fnLorenzian,
+    fnVoight
+};
+
 /// \brief Base class for mathematical function classes
 ///
 ///  The children of this class are intended to be used as target functions for non-linear curvefitting.
-class CBaseFunction
+class FitFunctionBase
 {
 public:
+
     /// \brief Constructor
     ///
     ///	  \param n The number of parameters needed to describe the target function
     ///	  The contructor initializes and allocated the parameter value and lock vectors
-	CBaseFunction(int n=1);
+    FitFunctionBase(int n=1);
 
     /// \brief Computes the value of the target function
     ///
     ///\param x Input argument
-	virtual long double operator() (long double x)=0;
+    virtual double operator() (double x)=0;
 
     /// \brief Computes information needed by the LevenbergMarquardt fitting
     ///
     /// \param x Input argument
     /// \param y Function value
     /// \param dyda partial derivatives of the target function at x
-	virtual int operator()(long double x, long double &y, Array1D<long double> & dyda)=0;
+    virtual int operator()(double x, double &y, Array1D<double> & dyda)=0;
 
     /// \brief Parameter access
     /// \param n index of the parameter to ba accessed
     /// \note If n>#pars will par[0] be returned
-	long double & operator[](int n); 
+    double & operator[](int n);
 
     /// \brief Computes the numerical Hessian
     ///
     /// \param x The input argument
     /// \param hes The numerical Hessian at x
-	virtual int Hessian(long double x, Array2D<long double> &hes)=0;
+    virtual int Hessian(double x, Array2D<double> &hes)=0;
 
     /// \brief Computes the numerical Jacobian
     ///
     ///	\param x The input argument
     ///	\param jac The numerical Jacobian at x
-	virtual int Jacobian(long double x, Array2D<long double> &jac)=0;
+    virtual int Jacobian(double x, Array2D<double> &jac)=0;
 
     /// \brief Updates the parameters with a new set
     ///	\param pars Array with the new parameters
-	int UpdatePars(long double *pars);
+    int setPars(Array1D<double> &pars);
+
+    int getPars(Array1D<double> &pars);
+
+
 
     /// \brief Returns the number of parameters stored by the instance
-	int getNpars();
+    int getNpars();
+
+    /// \brief Returns the number of parameters to be fitted
+    int getNpars2fit();
 
     /// \brief Sets the lock vector
     ///	\param lv Array containing the lock values (0/1=estimate/lock).
-	int setLock(int *lv); 
+    int setLock(bool *lv);
+
+    void hold(const int i, const double val);
+
+    void free(const int i);
 
     /// \brief Returns the lock status of a parameter
     ///	\param n Index of parameter to be tested
     /// \note If n>#pars will 1 be returned
-	int IsLocked(int n);
+    bool isFree(int n);
 
-    /// \brief Returns the number of parameters to be fitted
-	int getNpars2fit();
-	virtual ~CBaseFunction();
+
+    virtual ~FitFunctionBase();
 
     /// \brief Prints the values of the parameters stored by the instance
     ///		Estimated parameters are marked by a *
-	virtual int PrintPars()=0;
+    virtual int printPars()=0;
 protected:
-	/// \brief Parameter array
-	long double *m_pars;
-	/// \brief Parameter lock array
-	int *m_lock;
-	/// \brief The number of parameters
-	int m_Npars;
-	/// \brief The number of parameters to be fitted
-	int m_pars2fit;
+    /// \brief Parameter array
+    Array1D<double> m_pars;
+    /// \brief Parameter lock array
+    bool *m_lock;
+    /// \brief The number of parameters
+    int m_Npars;
+    /// \brief The number of parameters to be fitted
+    int m_pars2fit;
 
 };
 
+class LevenbergMarquardt {
+//Object for nonlinear least-squares fitting by the Levenberg-Marquardt method, also including
+//the ability to hold specified parameters at fixed, specified values. Call constructor to bind data
+//vectors and fitting functions and to input an initial parameter guess. Then call any combination
+//of hold, free, and fit as often as desired. fit sets the output quantities a, covar, alpha,
+//and chisq.
+
+public:
+    LevenbergMarquardt(const double TOL=1.e-3) ;
+
+    void setTolerance(double t) {tol=fabs(t);}
+    double getTolerance() {return tol;}
+
+    void fit(Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Nonlinear::FitFunctionBase &fn);
+private:
+
+
+    static const int NDONE=4, ITMAX=1000; //Convergence parameters.
+    int ndat, ma, mfit;
+
+    double tol;
+    Array2D<double> covar;
+    Array2D<double> alpha;
+    double chisq;
+
+    void mrqcof(Nonlinear::FitFunctionBase &fn, Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Array2D<double> &alpha, Array1D<double> &beta);
+    void covsrt(Array2D<double> &covar, FitFunctionBase &fn);
+    void gaussj(Array2D<double> &a, Array2D<double> &b);
+
+};
 
 /// \brief Function implementation of a sum of Gaussians
-class SumOfGaussians: public CBaseFunction
+class SumOfGaussians: public FitFunctionBase
 {
 public:
     /// \brief Constructor
@@ -99,97 +147,125 @@ public:
     ///
     /// \param x The argument
     /// \retval The method returns \f$\sum_{i=1}^{N}\exp{-\frac{(x-\mu)^2}{\sigma^2}}\f$
-	virtual long double operator()(long double x);
+    virtual double operator()(double x);
 
     /// \brief Computes information needed by the LevenbergMarquardt fitting
     ///
     /// \param x Input argument
     /// \param y Function value
     /// \param dyda partial derivatives of the target function at x
-	virtual int operator()(long double x, long double &y, Array1D<long double> & dyda);
+    virtual int operator()(double x, double &y, Array1D<double> & dyda);
 
     /// \brief Computes the numerical Hessian
     ///
     ///	\param x The input argument
     ///	\param hes The numerical Hessian at x
-	virtual int Hessian(long double x, Array2D<long double> &hes);
+    virtual int Hessian(double x, Array2D<double> &hes);
 	
     /// \brief Computes the numerical Jacobian
     ///
     ///	\param x The input argument
     ///	\param jac The numerical Jacobian at x
-	virtual int Jacobian(long double x, Array2D<long double> &jac);
+    virtual int Jacobian(double x, Array2D<double> &jac);
 
     /// \brief Prints the parameters stored by the instance
     ///
     ///	The estimated parameters are marked by a *
-	virtual int PrintPars();
+    virtual int printPars();
 	virtual ~SumOfGaussians() {}
 
 };
 
 /// \brief Function implementation of a sum of Lorenzians
-class Lorenzian: public CBaseFunction
+class Lorenzian: public FitFunctionBase
 {
 public:
     /// \brief Constructor
     /// \param n Number of Lorenzians in the sum
     ///
     /// \note The number of parameters stored by the instance are 3*n
-    Lorenzian(int n=1) ;
+    Lorenzian() ;
 
     /// \brief Computes the function value
     ///
     /// \param x The argument
     /// \retval The method returns \f$\sum_{i=1}^{N}A_i*\frac{1}{\pi}\frac{1/2 \Gamma}{(x-x_i)^2+(1/2 \Gamma)^2}$
-    virtual long double operator()(long double x);
+    virtual double operator()(double x);
 
     /// \brief Computes information needed by the LevenbergMarquardt fitting
     ///
     /// \param x Input argument
     /// \param y Function value
     /// \param dyda partial derivatives of the target function at x
-    virtual int operator()(long double x, long double &y, Array1D<long double> & dyda);
+    virtual int operator()(double x, double &y, Array1D<double> & dyda);
 
     /// \brief Computes the numerical Hessian
     ///
     ///	\param x The input argument
     ///	\param hes The numerical Hessian at x
-    virtual int Hessian(long double x, Array2D<long double> &hes);
+    virtual int Hessian(double x, Array2D<double> &hes);
 
     /// \brief Computes the numerical Jacobian
     ///
     ///	\param x The input argument
     ///	\param jac The numerical Jacobian at x
-    virtual int Jacobian(long double x, Array2D<long double> &jac);
+    virtual int Jacobian(double x, Array2D<double> &jac);
 
     /// \brief Prints the parameters stored by the instance
     ///
     ///	The estimated parameters are marked by a *
-    virtual int PrintPars();
+    virtual int printPars();
     virtual ~Lorenzian() {}
 
 };
 
-/// \brief Estimates the parameters of a targefunction using Levenberg-Marquardt algorithm
-///
-///  \param x Array containing the x data
-///  \param y Array containing the y data
-///  \param n length of the data vector
-///  \param fn Instance of a target function
-///  \param eps minimum error epsilon
-///  \param s predefined standard deviation of the data
+class Voight : public FitFunctionBase
+{
+public:
+    /// \brief Constructor
+    ///
+    Voight() ;
 
-///  \author Numerical recipes
-///  Provide the main structure of the code
-///  \author Anders Kaestner
-///  Change the code to use TNT and class based target functions.
+    /// \brief Computes the function value
+    ///
+    /// \param x The argument
+    /// \retval The method returns \f$\sum_{i=1}^{N}A_i*\frac{1}{\pi}\frac{1/2 \Gamma}{(x-x_i)^2+(1/2 \Gamma)^2}$
+    virtual double operator()(double x);
 
-int LevenbergMarquardt(double *x, double *y, int n, CBaseFunction &fn, double eps, double *s=NULL);
+    /// \brief Computes information needed by the LevenbergMarquardt fitting
+    ///
+    /// \param x Input argument
+    /// \param y Function value
+    /// \param dyda partial derivatives of the target function at x
+    virtual int operator()(double x, double &y, Array1D<double> & dyda);
 
-int LeastMedianSquared(double *x, double *y, CBaseFunction &fn);
+    /// \brief Computes the numerical Hessian
+    ///
+    ///	\param x The input argument
+    ///	\param hes The numerical Hessian at x
+    virtual int Hessian(double x, Array2D<double> &hes);
+
+    /// \brief Computes the numerical Jacobian
+    ///
+    ///	\param x The input argument
+    ///	\param jac The numerical Jacobian at x
+    virtual int Jacobian(double x, Array2D<double> &jac);
+
+    /// \brief Prints the parameters stored by the instance
+    ///
+    ///	The estimated parameters are marked by a *
+    virtual int printPars();
+    virtual ~Voight() {}
+};
+
+int LeastMedianSquared(double *x, double *y, FitFunctionBase &fn);
+
+
 
 } // End namespace nonlinear
 
+void string2enum(std::string &str, Nonlinear::eProfileFunction &e);
+std::string enum2string(Nonlinear::eProfileFunction e);
 
+std::ostream & operator<<(std::ostream &s, Nonlinear::eProfileFunction e);
 #endif

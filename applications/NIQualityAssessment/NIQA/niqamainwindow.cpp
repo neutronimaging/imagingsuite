@@ -18,6 +18,7 @@
 #include <imagereader.h>
 #include <base/tprofile.h>
 #include <math/basicprojector.h>
+#include <pixelsizedlg.h>
 
 #include "edgefileitemdialog.h"
 
@@ -570,4 +571,17 @@ void NIQAMainWindow::on_widget_roi3DBalls_valueChanged(int x0, int y0, int x1, i
     (void) y1;
 
     ui->viewer_Packing->set_rectangle(ui->widget_roi3DBalls->getROI(),QColor("red"),0);
+}
+
+void NIQAMainWindow::on_pushButton_contrast_pixelSize_clicked()
+{
+    PixelSizeDlg dlg;
+
+    int res=dlg.exec();
+
+    if (res==dlg.Accepted) {
+        ui->spin_contrast_pixelsize->setValue(dlg.getPixelSize());
+    }
+
+
 }

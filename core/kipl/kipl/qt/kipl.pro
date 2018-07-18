@@ -121,7 +121,8 @@ SOURCES += \
     ../src/math/tcenterofgravity.cpp \
     ../src/math/statistics.cpp \
     ../src/math/circularhoughtransform.cpp \
-    ../src/base/roi.cpp
+    ../src/base/roi.cpp \
+    ../src/math/findpeaks.cpp
 
 
 
@@ -330,7 +331,8 @@ HEADERS +=\
     ../include/base/core/marginsetter.hpp \
     ../include/base/roi.h \
     ../include/math/core/statistics.hpp \
-    ../include/io/io_serializecontainers.h
+    ../include/io/io_serializecontainers.h \
+    ../include/math/findpeaks.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

@@ -1,294 +1,255 @@
 //<LICENCE>
 
+#include <QDebug>
 #include <cstring>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
+#include <vector>
 
 #include <tnt.h>
-#include <jama_lu.h>
+#include <jama_qr.h>
 
 #include "../../include/math/nonlinfit.h"
 #include "../../include/math/jama_inverses.h"
+#include "../../include/math/mathconstants.h"
 #include "../../include/logging/logger.h"
+#include "../../include/base/KiplException.h"
+#include "../../include/strings/miscstring.h"
 
 using namespace TNT;
 using namespace JAMA;
 
 namespace Nonlinear {
-	int stddev(long double *x,long double *y,int ndata,CBaseFunction &fn,long double *sig);
 
-	void mrqmin(long double *x,long double *y,long double *sig,int ndata,
-		Array2D<long double> &covar, Array2D<long double> &alpha,
-		long double &chisq,
-		CBaseFunction &fn,
-		long double &alamda);
+LevenbergMarquardt::LevenbergMarquardt(const double TOL) :
+    tol(TOL)
+{
+    // Constructor.
+}
 
-	void mrqcof(long double *x,long double *y,long double *sig,int ndata, 
-		Array2D<long double> &alpha,
-		Array1D<long double> &beta,
-		long double &chisq,
-		CBaseFunction &fn);
+void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
+                             Array1D<double> &sig,
+                             Nonlinear::FitFunctionBase &fn)
+{
+    //    Iterate to reduce the 2 of a fit between a set of data points x[0..ndat-1], y[0..ndat-1]
+    //    with individual standard deviations sig[0..ndat-1], and a nonlinear function that depends
+    //    on ma coefficients a[0..ma-1]. When 2 is no longer decreasing, set best-fit values
+    //    for the parameters a[0..ma-1], and chisq D 2, covar[0..ma-1][0..ma-1], and
+    //    alpha[0..ma-1][0..ma-1]. (Parameters held fixed will return zero covariances.)
+    ma=fn.getNpars();
+    mfit=fn.getNpars2fit();
+    if ((x.dim1()!=y.dim1()) || (x.dim1()!=sig.dim1()))
+        throw kipl::base::KiplException("Array size missmatch for the fitter",__FILE__,__LINE__);
 
-	void covsrt(Array2D<long double> &covar, CBaseFunction &fn);
+    ndat=x.dim1();
 
-	//######################################
+    covar=Array2D<double>(ma,ma);
+    alpha=Array2D<double>(ma,ma);
 
-	int LevenbergMarquardt(double *_x,double *_y, int ndata, CBaseFunction &fn, double eps,double *s)
-	{
-		kipl::logging::Logger logger("LevenbergMarquardt");
-		std::stringstream msg;
+    int j,k,l,iter,done=0;
+    double alamda=.001,ochisq;
 
-	//	int npars=fn.getNpars();
-		int mfit=fn.getNpars2fit();
-		Array2D<long double> covar(mfit,mfit),alpha(mfit,mfit);
-		long double chisq,chiold,alambda;
-		long double *x=new long double[ndata];
-		long double *y=new long double[ndata];
-		
+    Array1D<double> beta(ma),da(ma);
+    Array1D<double> a(ma),atry(ma);
+    Array2D<double> oneda(mfit,1), temp(mfit,mfit);
 
-		long double *sig=new long double[ndata];
-		
-		int i,n;
-		
-		for (i=0; i<ndata; i++) {
-			x[i]=_x[i];
-			y[i]=_y[i];
-			}
+    fn.getPars(a);
 
-		fn.PrintPars();
-		if (s) {
-			logger(kipl::logging::Logger::LogVerbose,"Have s");
-			for (i=0; i<ndata; i++)
-				sig[i]=s[i];
-		}	
-		else {
-			logger(kipl::logging::Logger::LogVerbose,"Initialize s");
-			for (i=0; i<ndata; i++)
-				sig[i]=1;
-			stddev(x,y,ndata,fn,sig);
-		}
+    mrqcof(fn,x,y,sig,alpha,beta); // Initialization.
 
-		logger(kipl::logging::Logger::LogVerbose,"Initialize mrqmin");
-					
-		alambda=-1;
-		chisq=0.0;
-		mrqmin(x,y,sig,ndata,covar,alpha,chisq,fn,alambda);
-		n=0;
-		i=0;
-		chiold=0.0;
+    fn.getPars(atry);
 
+    ochisq=chisq;
 
-		// get the solution by iterations
-		logger(kipl::logging::Logger::LogVerbose,"Iterate mrqmin toward the solution.");
-		while ((n<3) && (i<2000)) {
-			msg.str("");
+    for (iter=0;iter<ITMAX;iter++) {
+        qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
 
-			if ((fabs(chisq-chiold)<eps) && ((chisq-chiold)<=0))// && (chisq!=chiold))
-				n++;
-			else
-				n=0;
+        if (done==NDONE) {
+            alamda=0.; //Last pass. Use zero alamda.
+        }
 
-			msg<<"Iteration:"<<i<<", termination count:"<<n<<", chisq:"<<chisq;
-			logger(kipl::logging::Logger::LogVerbose,msg.str());
-			if (!s)
-				stddev(x,y,ndata,fn,sig);
+        for (j=0;j<mfit;j++) { //Alter linearized fitting matrix, by augmenting diagonal elements.
+            for (k=0;k<mfit;k++)
+                covar[j][k]=alpha[j][k];
 
-			chiold=chisq;
+            covar[j][j]=alpha[j][j]*(1.0+alamda);
 
-			mrqmin(x,y,sig,ndata,covar,alpha,chisq,fn,alambda);
-			msg.str("");
-			msg<<"mrqmin gives alambda:"<<alambda<<" chisq:"<<chisq<<" eps"<<fabs(chisq-chiold);
-			logger(kipl::logging::Logger::LogVerbose,msg.str());
-			fn.PrintPars();
-			i++;
-		}
+            for (k=0;k<mfit;k++)
+                temp[j][k]=covar[j][k];
 
-		// solve the final parameter-set
-		alambda=0;
-		if (!s)
-			stddev(x,y,ndata,fn,sig);
-		mrqmin(x,y,sig,ndata,covar,alpha,chisq,fn,alambda);
-		delete [] sig;
-		delete [] x;
-		delete [] y;
-		return 1;
-	}
+            oneda[j][0]=beta[j];
+        }
 
+        gaussj(temp,oneda); //Matrix solution.
 
-	int stddev(long double *x,long double *y,int ndata,
-		CBaseFunction &fn,
-		long double *sig)
-	{
-		long double yest,sigma;
+        for (j=0;j<mfit;j++) {
+            for (k=0;k<mfit;k++)
+                covar[j][k]=temp[j][k];
+            da[j]=oneda[j][0];
+        }
 
-		sigma=0;
+        if (done==NDONE) { //Converged. Clean up and return.
+            covsrt(covar,fn);
+            covsrt(alpha,fn);
 
-        int i;
-		for (i=0; i<ndata; i++) {
-			yest=fn(x[i]);
-			sigma+=(y[i]-yest)*(y[i]-yest);
-		}
-		//sigma=sqrt(sigma/(ndata-na));
-		sigma=sqrt(sigma/(ndata-1));
+            return;
+        }
 
-		for (i=0; i<ndata; i++)
-			sig[i]=sigma;
+        for (j=0,l=0;l<ma;l++) //Did the trial succeed?
+            if (fn.isFree(l)) atry[l]=fn[l]+da[j++];
 
-		return 1;
-	}
+        fn.setPars(atry);
+        mrqcof(fn,x,y,sig,covar,da);
 
-	void mrqmin(long double *x,long double *y,long  double *sig,int ndata,
-			Array2D<long double> &covar,Array2D<long double> &alpha,
-		long double &chisq,
-		CBaseFunction &fn,
-		long double &alamda)
-	{
-		kipl::logging::Logger logger("mrqmin");
-		std::stringstream msg;
-		int j,k,l;
-		int ma=fn.getNpars();
-		static int mfit;
-		static long double ochisq;
-		static Array1D<long double> atry,beta,da,oneda;
+        if (abs(chisq-ochisq) < std::max(tol,tol*chisq)) done++;
 
-		if (alamda < 0.0) {
-			logger(kipl::logging::Logger::LogVerbose,"Initializing vectors");
+        if (chisq < ochisq) { //Success, accept the new solution.
+            alamda *= 0.1;
+            ochisq=chisq;
+            for (j=0;j<mfit;j++) {
+                for (k=0;k<mfit;k++) alpha[j][k]=covar[j][k];
+                beta[j]=da[j];
+            }
 
-			atry=Array1D<long double>(ma);
-			beta=Array1D<long double>(ma);
-			da=Array1D<long double>(ma);
-			mfit=fn.getNpars2fit();
-			oneda=Array1D<long double>(mfit);
-			alamda=0.001;
-			mrqcof(x,y,sig,ndata,alpha,beta,chisq,fn);
-			ochisq=(chisq);
-			for (j=0;j<ma;j++) atry[j]=fn[j];
-		}
-		
-		for (j=0;j<mfit;j++) {
-			for (k=0;k<mfit;k++)
-				covar[j][k]=alpha[j][k];
+            fn.setPars(atry);
+        }
+        else { //Failure, increase alamda.
+            alamda *= 10.0;
+            chisq=ochisq;
+        }
+    }
+    throw kipl::base::KiplException("Fitmrq too many iterations",__FILE__,__LINE__);
+}
 
-			covar[j][j]=alpha[j][j]*(1.0+(alamda));
-			oneda[j]=beta[j];
-		}
-		logger(kipl::logging::Logger::LogVerbose,"Solving equation system with LU");
-		LU<long double> X(covar);
-		oneda=X.solve(oneda);
+void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, Array1D<double> &x, Array1D<double> &y,
+                                Array1D<double> &sig, Array2D<double> &alpha, Array1D<double> &beta)
+{
+//Used by fit to evaluate the linearized fitting matrix alpha, and vector beta as in (15.5.8), and to calculate 2.
+    int i,j,k,l,m;
+    double ymod,wt,sig2i,dy;
+    Array1D<double> dyda(ma);
+    for (j=0; j<mfit; j++) { //Initialize (symmetric) alpha, beta.
+        for (k=0; k<=j; k++) alpha[j][k]=0.0;
+            beta[j]=0.;
+    }
 
-		//TSVD<long double> X(covar); logger(kipl::logging::Logger::LogVerbose,"Solving equation system with SVD");
+    chisq=0.;
 
+    for (i=0; i<ndat; i++) { //Summation loop over all data.
+        fn(x[i],ymod,dyda);
+        sig2i=1.0/(sig[i]*sig[i]);
+        dy=y[i]-ymod;
+        for (j=0,l=0;l<ma;l++) {
+            if (fn.isFree(l)) {
+                wt=dyda[l]*sig2i;
+                for (k=0,m=0;m<l+1;m++)
+                    if (fn.isFree(m)) alpha[j][k++] += wt*dyda[m];
+                beta[j++] += dy*wt;
+            }
+        }
+        chisq += dy*dy*sig2i; // And find 2.
+    }
+    for (j=1;j<mfit;j++) //Fill in the symmetric side.
+        for (k=0;k<j;k++) alpha[k][j]=alpha[j][k];
+}
 
-		for (j=0;j<mfit;j++) da[j]=oneda[j];
-		if (alamda == 0.0) {
-			covsrt(covar,fn);
-			return;
-		}
+void LevenbergMarquardt::covsrt(Array2D<double> &covar, Nonlinear::FitFunctionBase &fn)
+{
+//Expand in storage the covariance matrix covar, so as to take into account parameters that
+//are being held fixed. (For the latter, return zero covariances.)
+    int i,j,k;
+    for (i=mfit;i<ma;i++)
+        for (j=0;j<i+1;j++) covar[i][j]=covar[j][i]=0.0;
+    k=mfit-1;
+    for (j=ma-1;j>=0;j--) {
+        if (fn.isFree(j)) {
+            for (i=0;i<ma;i++) std::swap(covar[i][k],covar[i][j]);
+            for (i=0;i<ma;i++) std::swap(covar[k][i],covar[j][i]);
+            k--;
+        }
+    }
+}
 
-		Array1D<long double> tmp(ma);
+void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
+//Linear equation solution by Gauss-Jordan elimination, equation (2.1.1) above. The input matrix
+//is a[0..n-1][0..n-1]. b[0..n-1][0..m-1] is input containing the m right-hand side vectors.
+//On output, a is replaced by its matrix inverse, and b is replaced by the corresponding set of
+//solution vectors.
+{
+    int i,icol,irow,j,k,l,ll,n=a.dim1(),m=b.dim2();
+    double big,dum,pivinv;
+    Array1D<int> indxc(n),indxr(n),ipiv(n); //These integer arrays are used for bookkeeping on
+    for (j=0;j<n;j++)
+        ipiv[j]=0; // the pivoting.
 
-		for (j=0,l=0;l<ma;l++) {
-			tmp[l]=fn[l];
-			if (!fn.IsLocked(l)) fn[l]=fn[l]+da[j++];
-		}
+    for (i=0;i<n;i++) { //This is the main loop over the columns to be reduced
+        big=0.0;
+        for (j=0;j<n;j++) //This is the outer loop of the search for a pivot element
+            if (ipiv[j] != 1)
+                for (k=0;k<n;k++) {
+                    if (ipiv[k] == 0) {
+                        if (abs(a[j][k]) >= big) {
+                            big=abs(a[j][k]);
+                            irow=j;
+                            icol=k;
+                        }
+                    }
+                }
+        ++(ipiv[icol]);
 
-		logger(kipl::logging::Logger::LogVerbose,"Calling mrqcof");
-		mrqcof(x,y,sig,ndata,covar,da,chisq,fn);
-		if (chisq < ochisq) {
-			alamda *= 0.1;
-			ochisq=chisq;
-			for (j=0;j<mfit;j++) {
-				for (k=0;k<mfit;k++)
-					alpha[j][k]=covar[j][k];
+        if (irow != icol) {
+            for (l=0;l<n;l++) std::swap(a[irow][l],a[icol][l]);
+            for (l=0;l<m;l++) std::swap(b[irow][l],b[icol][l]);
+        }
+        indxr[i]=irow;
+        indxc[i]=icol;
 
-				beta[j]=da[j];
-			}
-		} else {
-			alamda *= 10.0;
-			chisq=ochisq;
-			for (j=0; j<ma; j++) fn[j]=tmp[j]; //restore old info
-		}
-	}
+        if (a[icol][icol] == 0.0)
+            throw("gaussj: Singular Matrix");
 
-	void mrqcof(long double *x, long double *y,long double *sig, int ndata, 
-		Array2D<long double> &alpha, 
-		Array1D<long double> &beta,
-		long double &chisq, 
-		CBaseFunction &fn)
-	{
-		int i,j,k,l,m,mfit=0;
-		long double ymod,wt,sig2i,dy;
-		int ma=fn.getNpars();
+        pivinv=1.0/a[icol][icol];
+        a[icol][icol]=1.0;
 
-		Array1D<long double> dyda(ma);
+        for (l=0;l<n;l++)
+            a[icol][l] *= pivinv;
 
-		mfit=fn.getNpars2fit();
+        for (l=0;l<m;l++)
+            b[icol][l] *= pivinv;
 
-		for (j=0;j<mfit;j++) {
-			for (k=0;k<j;k++)
-				alpha[j][k]=0.0;
-			beta[j]=0.0;
-		}
-		chisq=0.0;
-
-		for (i=0;i<ndata;i++) {
-			fn(x[i],ymod,dyda);
-			sig2i=1.0/(sig[i]*sig[i]);
-			
-
-			dy=y[i]-ymod;
-			
-			for (j=-1,l=0;l<ma;l++) {
-				if (!fn.IsLocked(l)) {
-					wt=dyda[l]*sig2i;
-					for (j++,k=-1,m=0 ; m<l ; m++) {
-					//	std::cout<<"j="<<j<<", k="<<k<<", m="<<m<<", l="<<l<<std::endl;
-						if (!fn.IsLocked(m))
-							alpha[j][++k] += wt*dyda[m];
-					}
-					beta[j] += dy*wt;
-				}
-			}
-			//dy=log(y[i-1])-log(ymod);
-			chisq += dy*dy*sig2i;
-		}
-		for (j=0;j<mfit;j++)
-			for (k=0;k<j;k++) alpha[k][j]=alpha[j][k];
-
-	}
-
-	void covsrt(Array2D<long double> &covar, CBaseFunction &fn)
-	{
-		int i,j,k, mfit=fn.getNpars2fit();
-
-		int ma=covar.dim2();
-
-		for (i=mfit+1;i<=ma;i++)
-			for (j=1;j<=i;j++) covar[i-1][j-1]=covar[j-1][i-1]=0.0;
-		k=mfit-1;
-		for (j=ma-1;j>=0;j--) {
-			if (fn.IsLocked(j)) {
-				for (i=0;i<ma;i++) swap(covar[i][k],covar[i][j]);
-				for (i=0;i<ma;i++) swap(covar[k][i],covar[j][i]);
-				k--;
-			}
-		}
-	}
+        for (ll=0;ll<n;ll++) // Next, we reduce the rows...
+            if (ll != icol) { //...except for the pivot one, of course.
+                dum=a[ll][icol];
+                a[ll][icol]=0.0;
+                for (l=0;l<n;l++)
+                    a[ll][l] -= a[icol][l]*dum;
+                for (l=0;l<m;l++)
+                    b[ll][l] -= b[icol][l]*dum;
+        }
+    }
+//        This is the end of the main loop over columns of the reduction. It only remains to unscramble
+//        the solution in view of the column interchanges. We do this by interchanging pairs of
+//        columns in the reverse order that the permutation was built up.
+    for (l=n-1;l>=0;l--) {
+        if (indxr[l] != indxc[l])
+            for (k=0;k<n;k++)
+                std::swap(a[k][indxr[l]],a[k][indxc[l]]);
+    }
+}
 
 	//#####################################
 
-	CBaseFunction::CBaseFunction(int n) 
+	FitFunctionBase::FitFunctionBase(int n) 
 	{
-		m_pars=new long double[n]; 
-		m_lock=new int[n];
-		for (int i=0; i<n; i++)
-			m_lock[i]=0;
+        m_pars=Array1D<double>(n);
+        m_lock=new bool[n];
+        std::fill(m_lock,m_lock+n,true);
 
 		m_pars2fit=n;
 		m_Npars=n;
 	}	
 	
-	long double & CBaseFunction::operator[](int n)
+    double & FitFunctionBase::operator[](int n)
 	{
 		if (n<m_Npars)
 			return m_pars[n];
@@ -296,91 +257,117 @@ namespace Nonlinear {
 			return m_pars[0];
 	}
 	
-	int CBaseFunction::UpdatePars(long double *pars)
+    int FitFunctionBase::setPars(Array1D<double> &pars)
 	{
-		memcpy(m_pars,pars,sizeof(long double)*m_Npars);
+        m_pars=pars;
 
-		return 1;
-	}
+        return m_pars.dim1();
+    }
+
+    int FitFunctionBase::getPars(Array1D<double> &pars)
+    {
+        return 0;
+    }
 	
-	int CBaseFunction::getNpars() 
+	int FitFunctionBase::getNpars() 
 	{
 		return m_Npars;
 	}
 	
-	int CBaseFunction::setLock(int *lv)
+    int FitFunctionBase::setLock(bool *lv)
 	{
 		m_pars2fit=0;
+        std::copy(lv,lv+m_Npars,m_lock);
+
 		for (int i=0; i<m_Npars; i++) 
-			m_pars2fit+=!(m_lock[i]=lv[i]);
+            m_pars2fit+=(m_lock[i]==0);
 
-		return m_pars2fit;
-	}
+        return m_pars2fit;
+    }
 
-	int CBaseFunction::IsLocked(int n) 
+    void FitFunctionBase::hold(const int i, const double val)
+    {
+        if (m_lock[i]==true) m_pars2fit--;
+
+        m_lock[i]=false;
+        m_pars[i]=val;
+
+    }
+
+    void FitFunctionBase::free(const int i)
+    {
+        if (m_lock[i]==false) m_pars2fit++;
+
+        m_lock[i]=true;
+    }
+
+    bool FitFunctionBase::isFree(int n)
 	{
 		if (n<m_Npars)
 			return m_lock[n];
 		else 
-			return 1;
+            return true;
 	}
 	
-	int CBaseFunction::getNpars2fit()
+	int FitFunctionBase::getNpars2fit()
 	{
 		return m_pars2fit;
 	}
 	
-	CBaseFunction::~CBaseFunction() 
+	FitFunctionBase::~FitFunctionBase() 
 	{
-		delete [] m_pars;
 		delete [] m_lock;
 	}
 	
 
-	SumOfGaussians::SumOfGaussians(int n) : CBaseFunction(3*n)
+	SumOfGaussians::SumOfGaussians(int n) : FitFunctionBase(3*n)
 	{
 
 	}
 
-	long double SumOfGaussians::operator()(long double x)
+    double SumOfGaussians::operator()(double x)
 	{
 		int i;
-		long double fac,ex,arg;
+        double arg,ex;
 
-		long double y=0.0;
+        double y=0.0;
 		for (i=0;i<m_Npars;i+=3) {
+//            arg=(x-m_pars[i+1])/m_pars[i+2];
+//            y+=m_pars[i]*exp(-0.5*arg*arg);
+//			arg=(x-m_pars[i+1])/m_pars[i+2]; This is the derivative code!
+//			ex=exp(-arg*arg);
+//			fac=m_pars[i]*ex*2.0*arg;
+//			y += m_pars[i]*ex;
 
-			arg=(x-m_pars[i+1])/m_pars[i+2];
-			ex=exp(-arg*arg);
-			fac=m_pars[i]*ex*2.0*arg;
-			y += m_pars[i]*ex;
+            arg=(x-m_pars[i+1])/m_pars[i+2];
+            ex=exp(-arg*arg);
+            y += m_pars[i]*ex;
 		}
 		return y;
 	}
 
-	int SumOfGaussians::operator()(long double x, long double &y, Array1D<long double> & dyda)
+    int SumOfGaussians::operator()(double x, double &y, Array1D<double> & dyda)
 	{
 		int i;
 		long double fac,ex,arg;
 
 		if (dyda.dim()!=m_Npars)
-			dyda=Array1D<long double>(m_Npars);
+            dyda=Array1D<double>(m_Npars);
 
 		y=0.0;
 		for (i=0;i<m_Npars;i+=3) {
-
-			arg=(x-m_pars[i+1])/m_pars[i+2];
-			ex=exp(-arg*arg);
-			fac=m_pars[i]*ex*2.0*arg;
-			y += m_pars[i]*ex;
-			dyda[i]=ex;
-			dyda[i+1]=fac/m_pars[i+2];
-			dyda[i+2]=fac*arg/m_pars[i+2];
+            arg=(x-m_pars[i+1])/m_pars[i+2];
+            ex=exp(-arg*arg);
+            fac=m_pars[i]*ex*2.*arg;
+            y += m_pars[i]*ex;
+            dyda[i]=ex;
+            dyda[i+1]=fac/m_pars[i+2];
+            dyda[i+2]=fac*arg/m_pars[i+2];
 		}
 		return 1;
 	}
 
-    int SumOfGaussians::Hessian(long double UNUSED(x), Array2D<long double> & UNUSED(hes))
+    int SumOfGaussians::Hessian(double UNUSED(x), Array2D<double> & UNUSED(hes))
 	{
 
 		cerr<<"The Hessian is not available"<<endl;
@@ -394,7 +381,7 @@ namespace Nonlinear {
 		*/
 	}
 
-    int SumOfGaussians::Jacobian(long double UNUSED(x), Array2D<long double> & UNUSED(jac))
+    int SumOfGaussians::Jacobian(double UNUSED(x), Array2D<double> & UNUSED(jac))
 	{
 		cerr<<"The Jacobian is not available"<<endl;
 		return 1;
@@ -406,7 +393,7 @@ namespace Nonlinear {
 		*/
 	}
 
-	int SumOfGaussians::PrintPars()
+    int SumOfGaussians::printPars()
 	{
 		int i;
 		char *est=new char[m_Npars];
@@ -414,17 +401,144 @@ namespace Nonlinear {
 		for (i=0; i<m_Npars; i++)
 			est[i]=m_lock[i] ? ' ': '*';
 
-
-		for (i=0; i<m_Npars; i+=3) {
-
-			cout<<est[i]<<"A="<<m_pars[i]<<
-				" "<<est[i+1]<<"m="<<m_pars[i+1]<<
-				" "<<est[i+2]<<"s="<<m_pars[i+2]<<endl;
-
-		}
+        for (i=0; i<m_Npars; i+=3)
+        {
+            cout<<est[i]  <<"A="<<m_pars[i]  <<" "
+                <<est[i+1]<<"m="<<m_pars[i+1]<<" "
+                <<est[i+2]<<"s="<<m_pars[i+2]<<endl;
+        }
 
 		delete [] est;
-		return 1;
-	}
+        return 1;
+    }
 
+    Voight::Voight() : FitFunctionBase(4)
+    {
+
+    }
+
+    double Voight::operator()(double x)
+    {
+        long double diff=x-m_pars[1];
+        return m_pars[0]*exp(-m_pars[2]*diff-(m_pars[3]*diff*diff*0.5));
+    }
+
+    int Voight::operator()(double x, double &y, Array1D<double> &dyda)
+    {
+        long double diff=x-m_pars[1];
+        x=m_pars[0]*exp(-m_pars[2]*fabs(diff)-(m_pars[3]*diff*diff*0.5));
+
+        return 0;
+    }
+
+    int Voight::Hessian(double x, Array2D<double> &hes)
+    {
+
+        return -1;
+    }
+
+    int Voight::Jacobian(double x, Array2D<double> &jac)
+    {
+        return 0;
+    }
+
+    int Voight::printPars()
+    {
+        int i;
+        char *est=new char[m_Npars];
+
+        for (i=0; i<m_Npars; i++)
+            est[i]=m_lock[i] ? ' ': '*';
+
+        cout<<est[0]<<"A="<<m_pars[0]<<
+            " "<<est[1]<<"m="<<m_pars[1]<<
+            " "<<est[2]<<"gamma="<<m_pars[2]<<
+            " "<<est[3]<<"sigma="<<m_pars[3]<<endl;
+
+        delete [] est;
+        return 1;
+    }
+
+    Lorenzian::Lorenzian() : FitFunctionBase(1)
+    {
+
+    }
+
+    double Lorenzian::operator()(double x)
+    {
+       return m_pars[0]/(dPi*(x*x+m_pars[0]*m_pars[0]));
+    }
+
+    int Lorenzian::operator()(double x, double &y, Array1D<double> &dyda)
+    {
+        y=m_pars[0]/(dPi*(x*x+m_pars[0]*m_pars[0]));
+
+        return 1;
+    }
+
+    int Lorenzian::Hessian(double x, Array2D<double> &hes)
+    {
+        return -1;
+    }
+
+    int Lorenzian::Jacobian(double x, Array2D<double> &jac)
+    {
+        return -1;
+    }
+
+    int Lorenzian::printPars()
+    {
+        char est=m_lock[0] ? ' ' : '*';
+
+        cout<<est<<"gamma="<<m_pars[0];
+        return 0;
+    }
+
+}
+
+void string2enum(string &str, Nonlinear::eProfileFunction &e)
+{
+    std::string lowstr=kipl::strings::toLower(str);
+
+    std::map<std::string,Nonlinear::eProfileFunction> convmap;
+
+    convmap["gaussprofile"]=Nonlinear::eProfileFunction::fnSumOfGaussians;
+    convmap["lorenzprofile"]=Nonlinear::eProfileFunction::fnLorenzian;
+    convmap["voightprofile"]=Nonlinear::eProfileFunction::fnVoight;
+
+    auto it=convmap.find(lowstr);
+
+    if (it==convmap.end())
+        throw kipl::base::KiplException("Profile function does not exist",__FILE__,__LINE__);
+
+    e=it->second;
+
+
+}
+
+std::string enum2string(Nonlinear::eProfileFunction e)
+{
+    switch(e) {
+    case Nonlinear::fnSumOfGaussians:
+        return "GaussProfile";
+        break;
+    case Nonlinear::fnLorenzian:
+        return "LorenzProfile";
+        break;
+    case Nonlinear::fnVoight:
+        return "VoightProfile";
+        break;
+    }
+
+    return "GaussProfile";
+}
+
+ostream &operator<<(ostream &s, Nonlinear::eProfileFunction e)
+{
+    std::string str;
+    str=enum2string(e);
+
+    s<<str;
+
+    return s;
 }
