@@ -341,3 +341,17 @@ KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eEdgeSt
 
     return s;
 }
+
+std::string enum2string(kipl::base::eImageRotate &rot)
+{
+    switch (rot) {
+    case kipl::base::ImageRotateNone: return "imagerotatenone"; break;
+    case kipl::base::ImageRotate90: return "imagerotate90"; break;
+    case kipl::base::ImageRotate180: return "imagerotate180"; break;
+    case kipl::base::ImageRotate270: return "imagerotate270"; break;
+    case kipl::base::ImageRotateDefault: return "imagerotatedefault"; break;
+    default: throw kipl::base::KiplException("Unknown rotate type", __FILE__, __LINE__);
+    }
+
+    return "imagerotatenone";
+}

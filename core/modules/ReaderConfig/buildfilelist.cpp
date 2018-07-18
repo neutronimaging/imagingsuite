@@ -15,7 +15,7 @@ std::list<std::string> BuildFileList(ImageLoader &il)
    ImageLoader &loader = il;
    auto skipit=loader.m_nSkipList.begin();
    for (int i=loader.m_nFirst; i<=loader.m_nLast; i++, fcnt++) {
-       if ((!skiplist.empty()) && (skipit!=skiplist.end())) {
+       if ((!loader.m_nSkipList.empty()) && (skipit!=loader.m_nSkipList.end())) {
            if (fcnt==*skipit) {
                skipit++;
                continue;

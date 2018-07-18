@@ -250,12 +250,12 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     msg.str("");
     msg<<"Failed to resample or rotate the projection with a ";
     try {
-        if (1<binning)
-            kipl::base::ReBin(img,binned,bins);
-        else
+//        if (1<binning)
+//            kipl::base::ReBin(img,binned,bins);
+//        else
             binned=img;
 
-        img=RotateProjection(binned,flip,rotate);
+    //    img=RotateProjection(binned,flip,rotate);
     }
     catch (kipl::base::KiplException &e) {
         msg<<"KiplException: \n"<<e.what();
