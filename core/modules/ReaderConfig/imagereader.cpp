@@ -418,6 +418,7 @@ kipl::base::TImage<float,2> ImageReader::ReadHDF(std::string filename, size_t co
 kipl::base::TImage<float,2> ImageReader::ReadSEQ(std::string filename, size_t const * const nCrop, size_t idx)
 {
     kipl::base::TImage<float,2> img;
+    kipl::io::ReadViVaSEQ(filename, img, idx, nCrop);
 
     return img;
 }
