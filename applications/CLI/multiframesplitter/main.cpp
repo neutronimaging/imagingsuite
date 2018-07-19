@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <iostream>
 #include <sstream>
 #include <map>
@@ -20,23 +21,23 @@
 
 kipl::logging::Logger logger("MultiFrameSplitter");
 
-int process(QCoreApplication &a);
+int process(int argc, char *argv[]);
 
-int parseArguments(QVector<QString> qargs, std::map<string, string> &pars);
+int showHelp();
+
+int parseArguments(vector<std::string> qargs, std::map<string, string> &pars);
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
-
-    process(a);
-
-    return a.exec();
+    process(argc,argv);
+    return 0;
 }
 
-int process(QCoreApplication &a)
+int process(int argc, char *argv[])
 {
     std::ostringstream msg;
-    QVector<QString> qargs=a.arguments().toVector();
+    vector<std::string> qargs;
+    copy_n(argv,argc,std::back_inserter(qargs));
 
     std::map<std::string,std::string> args;
     parseArguments(qargs,args);
@@ -45,7 +46,7 @@ int process(QCoreApplication &a)
     int cnt=qargs.size();
     if (cnt==1) {
         logger(logger.LogMessage,"No arguments");
-        qDebug() << "No arguments";
+        showHelp();
         return 0;
     }
 
@@ -124,7 +125,7 @@ int process(QCoreApplication &a)
     return cnt;
 }
 
-int parseArguments(QVector<QString> qargs, std::map<std::string,std::string> &pars)
+int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars)
 {
     auto item=qargs.begin();
     ++item;
@@ -136,7 +137,7 @@ int parseArguments(QVector<QString> qargs, std::map<std::string,std::string> &pa
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
 
-            pars.insert(std::make_pair("infile",item->toStdString()));
+            pars.insert(std::make_pair("infile",*item));
         }
 
         if (*item=="-o") {
@@ -144,7 +145,7 @@ int parseArguments(QVector<QString> qargs, std::map<std::string,std::string> &pa
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
 
-            pars.insert(std::make_pair("outfile",item->toStdString()));
+            pars.insert(std::make_pair("outfile",*item));
         }
 
         if (*item=="-first") {
@@ -152,7 +153,7 @@ int parseArguments(QVector<QString> qargs, std::map<std::string,std::string> &pa
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
 
-            pars.insert(std::make_pair("first",item->toStdString()));
+            pars.insert(std::make_pair("first",*item));
         }
 
         if (*item=="-last") {
@@ -160,14 +161,14 @@ int parseArguments(QVector<QString> qargs, std::map<std::string,std::string> &pa
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
 
-            pars.insert(std::make_pair("last",item->toStdString()));
+            pars.insert(std::make_pair("last",*item));
         }
 
         if (*item=="-rot") {
             ++item;
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
-            std::string rotstring="ImageRotate"+(*item == "0" ? "None" : item->toStdString());
+            std::string rotstring="ImageRotate"+(*item == "0" ? "None" : *item);
             pars.insert(std::make_pair(std::string("rotate"),rotstring));
         }
     }
@@ -177,4 +178,19 @@ int parseArguments(QVector<QString> qargs, std::map<std::string,std::string> &pa
     }
 
     return pars.size();
+}
+
+int showHelp()
+{
+    std::cout<<"Multi-frame image splitter\n";
+    std::cout<<"Usage: multiframesplitter [args] \n";
+    std::cout<<"(c) Anders Kaestner, 2018\n";
+    std::cout<<"Arguments:\n";
+    std::cout<<"-i <file name> : The image file to split can be either a multi-frame fits or vivaseq\n";
+    std::cout<<"-o <file_#####.tif> : The file mask of the output images. If skiped the base name of the input is used with index. \n";
+    std::cout<<"-first <value> : first frame default is first=0\n";
+    std::cout<<"-last <value> : last frame, default is the last available frame\n";
+    std::cout<<"-rot <0/90/180/270> : clockwise rotate the image, default=0\n\n";
+
+    return 0;
 }
