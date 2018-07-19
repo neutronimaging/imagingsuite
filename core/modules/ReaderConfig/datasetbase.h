@@ -12,7 +12,6 @@
 #include <base/timage.h>
 
 #include "readerconfig_global.h"
-#include <averageimage.h>
 
 
 class READERCONFIGSHARED_EXPORT ImageLoader

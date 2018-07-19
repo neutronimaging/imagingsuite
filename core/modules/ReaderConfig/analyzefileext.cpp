@@ -28,7 +28,7 @@ eExtensionTypes GetFileExtensionType(std::string fname)
 /// \brief Translates the value of an extension enum to a string
 /// \param et The enum value to translate
 /// \returns A string with the value
-std::string KIPLSHARED_EXPORT enum2string(readers::eExtensionTypes et)
+std::string READERCONFIGSHARED_EXPORT enum2string(readers::eExtensionTypes et)
 {
     std::string ext;
 
@@ -57,7 +57,7 @@ std::string KIPLSHARED_EXPORT enum2string(readers::eExtensionTypes et)
 /// \brief Translates a string to an extension enum
 /// \param ext a string containing a file extension
 /// \param et target enum variable
-void KIPLSHARED_EXPORT string2enum(std::string ext, readers::eExtensionTypes &et)
+void READERCONFIGSHARED_EXPORT string2enum(std::string ext, readers::eExtensionTypes &et)
 {
     std::ostringstream msg;
     std::string e=ext;
