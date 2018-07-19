@@ -91,8 +91,14 @@ int process(QCoreApplication &a)
 
     kipl::base::eImageRotate rotate=kipl::base::ImageRotateNone;
 
+    try {
     if (args["rotate"].empty()==false)
         string2enum(args["rotate"],rotate);
+    }
+    catch (kipl::base::KiplException &e) {
+        qDebug() << QString::fromStdString(e.what());
+        return -1;
+    }
 
     qDebug() << QString::fromStdString(fmask) << ", first="<<first<<", last="<<last<<QString::fromStdString(enum2string(rotate));
 
@@ -109,9 +115,11 @@ int process(QCoreApplication &a)
     }
     catch (ReaderException &e) {
         qDebug() << QString::fromStdString(e.what());
+        return -1;
     }
     catch (kipl::base::KiplException &e) {
         qDebug() << QString::fromStdString(e.what());
+        return -1;
     }
     return cnt;
 }

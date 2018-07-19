@@ -255,7 +255,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
 //        else
             binned=img;
 
-    //    img=RotateProjection(binned,flip,rotate);
+        img=RotateProjection(binned,flip,rotate);
     }
     catch (kipl::base::KiplException &e) {
         msg<<"KiplException: \n"<<e.what();

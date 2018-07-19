@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <algorithm>
 
 #include "../../../include/base/kiplenums.h"
 #include "../../../include/base/KiplException.h"
@@ -75,10 +76,11 @@ void  string2enum(std::string str, kipl::base::eImageFlip &flip)
 
 void  string2enum(std::string str, kipl::base::eImageRotate &rot)
 {
-	if (str=="imagerotatenone") rot=kipl::base::ImageRotateNone;
-	else if (str=="imagerotate90") rot=kipl::base::ImageRotate90;
-	else if (str=="imagerotate180") rot=kipl::base::ImageRotate180;
-	else if (str=="imagerotate270") rot=kipl::base::ImageRotate270;
+    std::transform(str.begin(),str.end(),str.begin(),::tolower);
+    if (str=="imagerotatenone") rot=kipl::base::ImageRotateNone;
+    else if (str=="imagerotate90") rot=kipl::base::ImageRotate90;
+    else if (str=="imagerotate180") rot=kipl::base::ImageRotate180;
+    else if (str=="imagerotate270") rot=kipl::base::ImageRotate270;
     else if (str=="imagerotatedefault") rot=kipl::base::ImageRotateDefault;
 	else throw kipl::base::KiplException("Could not transform string to rotation type", __FILE__, __LINE__);
 }
