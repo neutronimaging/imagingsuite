@@ -153,13 +153,15 @@ exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 }
 
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig -lImagingAlgorithms
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig -lImagingAlgorithms
 
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include/
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include/
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
