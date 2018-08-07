@@ -917,11 +917,13 @@ void NIQAMainWindow::getEdge2Dprofiles()
     size_t crop[4];
     ui->widget_roiEdge2D->getROI(crop);
     m_Edges2D.clear();
+    m_DEdges2D.clear();
     size_t *pCrop= ui->groupBox_2DCrop->isChecked() ? crop : nullptr;
 
     float *profile=nullptr;
     for (int i=0; i<ui->listEdgeFiles->count(); ++i) {
         item = dynamic_cast<EdgeFileListItem *>(ui->listEdgeFiles->item(i));
+
         if (item->checkState()==Qt::CheckState::Unchecked)
             continue;
 
@@ -946,7 +948,9 @@ void NIQAMainWindow::getEdge2Dprofiles()
         std::vector<float> pvec;
         std::copy(profile,profile+img.Size(0),std::back_inserter(pvec));
         m_Edges2D[item->distance]=pvec;
+
     }
+
 
     delete [] profile;
 }
@@ -1283,7 +1287,8 @@ void NIQAMainWindow::on_actionSave_as_triggered()
 
 void NIQAMainWindow::on_actionQuit_triggered()
 {
-
+    saveCurrent();
+    close();
 }
 
 

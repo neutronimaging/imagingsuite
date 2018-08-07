@@ -142,6 +142,7 @@ private:
     kipl::base::TImage<float,3> m_Contrast;
 
     map<float,std::vector<float>> m_Edges2D;
+    map<float,std::vector<float>> m_DEdges2D;
     // 3D Edge
     std::vector<float> m_edge3DDistance;
     std::vector<float> m_edge3DProfile;

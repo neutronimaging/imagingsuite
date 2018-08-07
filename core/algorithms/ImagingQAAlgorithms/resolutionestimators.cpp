@@ -15,6 +15,7 @@ namespace ImagingQAAlgorithms {
 Nonlinear::SumOfGaussians sog_dummy(1);
 
 ResolutionEstimator::ResolutionEstimator() :
+    logger("ResolutionEstimator"),
     profileFunction(Nonlinear::fnSumOfGaussians),
     profileSize(0),
     pixelSize(0.1),
@@ -22,7 +23,7 @@ ResolutionEstimator::ResolutionEstimator() :
     dprofile(nullptr),
     xaxis(nullptr),
     fwhm(-1.0),
-    fn(sog_dummy)
+    fitFunction(1)
 {
 
 }
@@ -108,7 +109,7 @@ void ResolutionEstimator::getEdgeDerivative(std::vector<double> &x, std::vector<
     if (returnFit==true) {
         for (int i=0; i<profileSize; ++i) {
             x.push_back(i*pixelSize);
-            y.push_back(fn(x[i]));
+            y.push_back(fitFunction(x[i]));
         }
     }
     else {
@@ -122,6 +123,11 @@ void ResolutionEstimator::getEdgeDerivative(std::vector<double> &x, std::vector<
 void ResolutionEstimator::getMTF(std::vector<double> &w, std::vector<double> &a)
 {
 
+}
+
+Nonlinear::SumOfGaussians ResolutionEstimator::getFitFunction()
+{
+    return fitFunction;
 }
 
 void ResolutionEstimator::createAllocation(int N)
@@ -166,47 +172,83 @@ void ResolutionEstimator::analysis()
 
    analyzeLineSpread();
 
-   analyzeMTF();
+ //  analyzeMTF();
 }
 
 void ResolutionEstimator::analyzeLineSpread()
 {
-    Nonlinear::LevenbergMarquardt mrq(0.1,5000);
+    std::ostringstream msg;
 
-    switch (profileFunction) {
-    case Nonlinear::fnSumOfGaussians :
-        fn=Nonlinear::SumOfGaussians(1);
-        fn[0]=profileSize/2.0;
-        fn[1]=*std::max_element(dprofile,dprofile+profileSize);
-        fn[2]=profileSize/6.0;
-        break;
-    case Nonlinear::fnLorenzian :
-        fn=Nonlinear::Lorenzian();
-        break;
-    case Nonlinear::fnVoight :
-        fn=Nonlinear::Voight();
-        break;
-    default :
-        throw kipl::base::KiplException("Unsupported profile fit function in resolution estimator",__FILE__,__LINE__);
+    TNT::Array1D<double> dataX(profileSize);
+    TNT::Array1D<double> dataY(profileSize);
+    TNT::Array1D<double> dataSig(profileSize);
+
+    for (int i=0; i<dataX.dim1(); ++i) {
+        dataX[i]=xaxis[i];
+        dataY[i]=dprofile[i];
+        dataSig[i]=1.0;
     }
 
-    TNT::Array1D<double> x(profileSize);
-    TNT::Array1D<double> y(profileSize);
-    TNT::Array1D<double> sig(profileSize);
+    double maxval=-std::numeric_limits<double>::max();
+    double minval=std::numeric_limits<double>::max();
 
-    for (int i=0; i<x.dim1(); ++i) {
-        x[i]=xaxis[i];
-        y[i]=dprofile[i];
-        sig[i]=1.0;
+    int maxpos=0;
+    int minpos=0;
+    int idx=0;
+    for (int i=0; i<dataY.dim1() ; ++i) {
+        if (maxval<dataY[i]) {
+            maxval=dataY[i];
+            maxpos=idx;
+        }
+        if (dataY[i]< minval) {
+            minval=dataY[i];
+            minpos=idx;
+        }
+        idx++;
     }
-    mrq.fit(x,y,sig,fn);
+
+    double halfmax=(maxval-minval)/2+minval;
+    int HWHM=maxpos;
+
+    for (; HWHM<dataY.dim1(); ++HWHM) {
+        if (dataY[HWHM]<halfmax)
+            break;
+    }
+
+    fitFunction[0]=maxval;
+    fitFunction[1]=dataX[maxpos];
+    fitFunction[2]=(dataX[HWHM]-dataX[maxpos])*2;
+    double d=dataX[1]-dataX[0];
+    if (fitFunction[2]<d) {
+        logger.warning("Could not find FWHM, using constant 3*dx");
+        fitFunction[2]=3*d;
+    }
+
+    Nonlinear::LevenbergMarquardt mrqfit(0.001,5000);
+    try {
 
 
+        mrqfit.fit(dataX,dataY,dataSig,fitFunction);
+
+    }
+    catch (kipl::base::KiplException &e) {
+        logger.error(e.what());
+        return ;
+    }
+    catch (std::exception &e) {
+        logger.message(msg.str());
+        return ;
+    }
+    qDebug() << "post fit";
+    msg.str("");
+    msg<<"Fitted data to "<<fitFunction[0]<<", "<<fitFunction[1]<<", "<<fitFunction[2];
+
+    logger.message(msg.str());
 }
 
 void ResolutionEstimator::analyzeMTF()
 {
-
+    // TODO Implement MTF
 }
 
 void ResolutionEstimator::diffProfile()
