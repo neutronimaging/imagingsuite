@@ -196,6 +196,8 @@ private slots:
 
     void on_actionShow_repository_triggered();
 
+    void on_spinBox_projPerView_valueChanged(int arg1);
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
