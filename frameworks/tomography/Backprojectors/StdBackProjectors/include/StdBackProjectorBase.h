@@ -1,13 +1,4 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-07-14 16:28:45 +0200 (Mi, 14 Jul 2010) $
-// $Rev: 657 $
-//
+//<LICENSE>
 
 #ifndef _BACKPROJECTORBASE_H_
 #define _BACKPROJECTORBASE_H_

@@ -153,8 +153,8 @@ exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 }
 
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl  -lImagingAlgorithms -lModuleConfig
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl  -lImagingAlgorithms -lModuleConfig
 
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include

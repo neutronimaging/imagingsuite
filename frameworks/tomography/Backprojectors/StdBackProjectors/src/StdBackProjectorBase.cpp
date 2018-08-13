@@ -145,7 +145,10 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 
 void StdBackProjectorBase::SetROI(size_t *roi)
 {
+
 	ClearAll();
+
+    QThread::msleep(500);
 	ProjCenter    = mConfig.ProjectionInfo.fCenter;
 	SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
@@ -179,19 +182,21 @@ void StdBackProjectorBase::SetROI(size_t *roi)
 		MatrixDims[2]=SizeV;
 	}
 
+
 	volume.Resize(MatrixDims);
 	volume=0.0f;
-
 	stringstream msg;
 	
 	msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
 	msg<<"Matrix dimensions "<<volume<<std::endl;
 	projections.Resize(projDims);
+
 	projections=0.0f;
 	msg<<"Projection buffer dimensions "<<projections<<std::endl;
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
 	BuildCircleMask();
+
     MatrixCenterX = volume.Size(1)/2;
 }
 
