@@ -32,6 +32,7 @@ size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<int> &v);
 
 size_t KIPLSHARED_EXPORT String2Set(std::string str, std::set<size_t> &v);
 size_t KIPLSHARED_EXPORT String2List(std::string str, std::list<int> &v);
+std::string KIPLSHARED_EXPORT List2String(std::list<int> &v);
 
 template <typename T>
 std::string Set2String(std::set<T> &v)

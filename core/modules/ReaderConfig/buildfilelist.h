@@ -7,7 +7,7 @@
 
 #include "readerconfig_global.h"
 #include "datasetbase.h"
-
+std::list<std::string> READERCONFIGSHARED_EXPORT BuildFileList(ImageLoader &il);
 std::list<std::string> READERCONFIGSHARED_EXPORT BuildFileList(std::list<ImageLoader> &il);
 std::list<std::string> READERCONFIGSHARED_EXPORT BuildFileList(std::list<ImageLoader> &il, std::list<int> &skiplist);
 std::map<float,std::string> READERCONFIGSHARED_EXPORT BuildProjectionFileList(std::list<ImageLoader> &il, int sequence, double arc);
