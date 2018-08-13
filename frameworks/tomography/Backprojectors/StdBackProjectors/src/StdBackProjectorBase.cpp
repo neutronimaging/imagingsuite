@@ -1,13 +1,4 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-07-10 20:08:51 +0200 (Sa, 10 Jul 2010) $
-// $Rev: 652 $
-//
+//<LICENSE>
 
 //#include "stdafx.h"
 #include "../include/StdBackProjectorBase.h"
@@ -60,7 +51,7 @@ void StdBackProjectorBase::ClearAll()
 	SizeProj=0;
 	MatrixCenterX=0;
 
-	ProjCenter=0.0;
+    ProjCenter=0.0f;
 	memset(fWeights,0,sizeof(float)*1024);
 	memset(fSin,0,sizeof(float)*1024);
 	memset(fCos,0,sizeof(float)*1024);

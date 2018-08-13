@@ -65,7 +65,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework
+LIBS += -lkipl -lModuleConfig -lQtModuleConfigure -lQtAddons -lReconFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
@@ -81,6 +81,9 @@ DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../core/kipl/kipl/src
+
+INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../core//algorithms/ImagingAlgorithms/src
 
 macx: {
 
