@@ -64,7 +64,7 @@ void uxROIWidget::setBoundingBox(int x0, int y0, int x1, int y1, bool updateFiel
 
 void uxROIWidget::updateBounds()
 {
-    if (hViewer!=nullptr) {
+    if ((allowUpdateImageDims==true) && (hViewer!=nullptr)) {
         int x,y;
         hViewer->getImageDims(x,y);
         setBoundingBox(0,0,x-1,y-1);
@@ -229,7 +229,7 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
- //   qDebug("uxROIWidget::on_spinX1_valueChanged");
+
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -238,7 +238,7 @@ void uxROIWidget::on_buttonGetROI_clicked()
     if (hViewer != nullptr) {
         updateBounds();
         QRect rect=hViewer->get_marked_roi();
-   //     qDebug("%d, %d %d, %d",rect.x(),rect.y(),rect.width(),rect.height());
+
         setROI(rect);
     }
     emit getROIClicked();
