@@ -150,7 +150,7 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         std::cout<<par.first<<"="<<par.second<<std::endl;
     }
 
-    return pars.size();
+    return (int)pars.size();
 }
 
 int showHelp()

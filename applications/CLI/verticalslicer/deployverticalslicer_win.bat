@@ -1,13 +1,13 @@
 ﻿@echo ----------------- Deploy copy --------------
 set REPOS=%WORKSPACE%
-set DEST=%HOMEPATH%\framesplitter
+set DEST=%HOMEPATH%\verticalslicer
 
 
 if not exist %DEST% mkdir %DEST%
 
 pushd .
 cd %DEST%
-copy %REPOS%\lib\multiframesplitter.exe .
+copy %REPOS%\lib\verticalslicer.exe .
 copy %REPOS%\lib\ImagingAlgorithms.dll .
 copy %REPOS%\lib\kipl.dll .
 copy %REPOS%\lib\ReaderConfig.dll .
@@ -33,4 +33,4 @@ popd
 
 cd %QTBINPATH%
 
-windeployqt %DEST%\multiframesplitter.exe
+windeployqt %DEST%\verticalslicer.exe
