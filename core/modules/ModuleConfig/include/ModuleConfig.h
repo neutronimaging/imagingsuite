@@ -22,6 +22,7 @@ public:
     std::string m_sSharedObject;  ///< File name of the shared object file containing the module
     std::string m_sModule;        ///< Name of the module
 	bool m_bActive;
+    bool m_bThreading;
 
     std::map<std::string,std::string> parameters; ///< List of parameters to configure the module
 

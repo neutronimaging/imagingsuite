@@ -91,6 +91,7 @@ protected:
     virtual int SourceVersion(); ///< \returns the value of the repository version of the source code.
 
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
+    bool bThreaded;
 };
 
 

@@ -14,7 +14,8 @@ ModuleConfig::ModuleConfig(void) :
 	logger("ModuleConfig"),
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
-    m_bActive(true)
+    m_bActive(true),
+    m_bThreading(false)
 {
 }
 
@@ -25,7 +26,8 @@ std::string ModuleConfig::WriteXML(int indent)
 	str<<std::setw(indent)<<" "<<"<module>\n"
 		<<std::setw(indent+4)<<" "<<"<modulename>"<<m_sModule<<"</modulename>\n"
 		<<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_sSharedObject<<"</sharedobject>\n"
-		<<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n";
+        <<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n"
+        <<std::setw(indent+4)<<" "<<"<threading>"<<(m_bThreading ? "true":"false")<<"</threading>\n";
 	if (!parameters.empty()) {
 		str<<std::setw(indent+4)<<" "<<"<parameters>\n";
 		std::map<std::string,std::string>::iterator it;
@@ -59,10 +61,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 			ret=xmlTextReaderRead(reader);
 
 			value = xmlTextReaderConstValue(reader);
-			if (name==NULL) {
+            if (name==nullptr) {
 				throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 			}
-			if (value!=NULL)
+            if (value!=nullptr)
 				sValue=reinterpret_cast<const char *>(value);
 			else {
 				msg.str("");
@@ -80,6 +82,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 			if (sName=="active") {
 				m_bActive=kipl::strings::string2bool(sValue);
 			}
+
+            if (sName=="threading") {
+                m_bThreading=kipl::strings::string2bool(sValue);
+            }
 			if (sName=="parameters") {
 				int depth2=xmlTextReaderDepth(reader);
 				while (ret == 1) {
@@ -88,10 +94,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 						ret=xmlTextReaderRead(reader);
 
 						value = xmlTextReaderConstValue(reader);
-						if (name==NULL) {
+                        if (name==nullptr) {
 							throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 						}
-						if (value!=NULL)
+                        if (value!=nullptr)
 							sValue=reinterpret_cast<const char *>(value);
 						else
 							sValue="Empty";
