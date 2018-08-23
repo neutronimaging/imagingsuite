@@ -43,7 +43,7 @@ int process(int argc, char *argv[])
     parseArguments(qargs,args);
 
 
-    int cnt=qargs.size();
+    int cnt=static_cast<int>(qargs.size());
     if (cnt==1) {
         logger(logger.LogMessage,"No arguments");
         showHelp();
@@ -63,7 +63,7 @@ int process(int argc, char *argv[])
         return 0;
     }
 
-    cnt=dims[2];
+    cnt=static_cast<int>(dims[2]);
 
     msg.str("");
     msg<<srcfname<<" has "<<cnt<<" slices";
@@ -177,7 +177,7 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         std::cout<<par.first<<"="<<par.second<<std::endl;
     }
 
-    return pars.size();
+    return static_cast<int>(pars.size());
 }
 
 int showHelp()

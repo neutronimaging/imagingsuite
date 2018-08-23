@@ -357,7 +357,7 @@ int ReconEngine::Run()
 
 	totalTimer.Toc();
 	msg.str("");
-	msg<<"Totals for "<<totalSlices<<" slices"<<endl
+    msg<<"Totals for "<<totalSlices<<" slices"<<std::endl
 		<<totalTimer<<" ("<<totalTimer.WallTime()/static_cast<double>(totalSlices)<<" s/slice)";
 
 	logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -502,22 +502,22 @@ bool ReconEngine::TransferMatrix(size_t *dims)
     }
     catch (ReconException &e) {
         msg.str("");
-        msg<<"Transfer matrix from backprojector failed with ReconException ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl<<e.what();
+        msg<<"Transfer matrix from backprojector failed with ReconException ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
 
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
-        msg<<"Transfer matrix from backprojector failed with KiplException ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl<<e.what();
+        msg<<"Transfer matrix from backprojector failed with KiplException ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (std::exception &e) {
         msg.str("");
-        msg<<"Transfer matrix from backprojector failed stl exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl<<e.what();
+        msg<<"Transfer matrix from backprojector failed stl exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (...) {
-        msg<<"Transfer matrix from backprojector failed with unhandled exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<endl;
+        msg<<"Transfer matrix from backprojector failed with unhandled exception ("<<m_Config.ProjectionInfo.beamgeometry<<")"<<std::endl;
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
@@ -1075,7 +1075,7 @@ int ReconEngine::Run3DFull()
 	if (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Finished")) {
 		totalTimer.Toc();
 		msg.str("");
-        msg<<": Totals for "<<totalSlices<<" slices"<<endl
+        msg<<": Totals for "<<totalSlices<<" slices"<<std::endl
 			<<totalTimer<<" ("<<totalTimer.ElapsedSeconds()/static_cast<double>(totalSlices)<<" s/slice)";
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
