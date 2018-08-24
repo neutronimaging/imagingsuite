@@ -2094,9 +2094,9 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
     ui->widgetProjectionROI->getROI(roi);
     UpdateMemoryUsage(roi);
 
-    if (ui->checkCBCT->isChecked()){
-        ComputeVolumeSize(); // update the size of the output volume
-    }
+//    if (ui->checkCBCT->isChecked()){
+//        ComputeVolumeSize(); // update the size of the output volume
+//    }
 }
 
 void MuhRecMainWindow::on_buttonProjectionPath_clicked()
