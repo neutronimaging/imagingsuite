@@ -12,6 +12,7 @@
 #include <math/nonlinfit.h>
 
 namespace ImagingQAAlgorithms {
+Nonlinear::SumOfGaussians sog_dummy(1);
 
 ResolutionEstimator::ResolutionEstimator() :
     profileFunction(Nonlinear::fnSumOfGaussians),
@@ -21,7 +22,7 @@ ResolutionEstimator::ResolutionEstimator() :
     dprofile(nullptr),
     xaxis(nullptr),
     fwhm(-1.0),
-    fn(Nonlinear::SumOfGaussians)
+    fn(sog_dummy)
 {
 
 }
@@ -174,16 +175,16 @@ void ResolutionEstimator::analyzeLineSpread()
 
     switch (profileFunction) {
     case Nonlinear::fnSumOfGaussians :
-        fn=Nonlinear::SumOfGaussians;
+        fn=Nonlinear::SumOfGaussians(1);
         fn[0]=profileSize/2.0;
         fn[1]=*std::max_element(dprofile,dprofile+profileSize);
         fn[2]=profileSize/6.0;
         break;
     case Nonlinear::fnLorenzian :
-        fn=Nonlinear::Lorenzian;
+        fn=Nonlinear::Lorenzian();
         break;
     case Nonlinear::fnVoight :
-        fn=Nonlinear::Voight;
+        fn=Nonlinear::Voight();
         break;
     default :
         throw kipl::base::KiplException("Unsupported profile fit function in resolution estimator",__FILE__,__LINE__);

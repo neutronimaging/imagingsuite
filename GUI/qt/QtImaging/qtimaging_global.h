@@ -1,0 +1,12 @@
+#ifndef QTIMAGING_GLOBAL_H
+#define QTIMAGING_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(QTIMAGING_LIBRARY)
+#  define QTIMAGINGSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define QTIMAGINGSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // QTIMAGING_GLOBAL_H

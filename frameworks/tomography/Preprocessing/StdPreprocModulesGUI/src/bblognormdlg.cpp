@@ -175,8 +175,8 @@ void BBLogNormDlg::ApplyParameters(){
 
     ui->buttonPreviewOBBB->click();
     ui->buttonPreviewsampleBB->click();
-//    ui->errorButton->click();
-    //    UpdateParameters();
+
+
     UpdateDoseROI();
     UpdateBBROI();
 
@@ -184,19 +184,6 @@ void BBLogNormDlg::ApplyParameters(){
     std::map<std::string, std::string> parameters;
     UpdateParameterList(parameters);
 
-    // commenting this, it did not really happend what I wish
-//    try {
-//        module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-//    }
-
-//    catch (kipl::base::KiplException &e) {
-//        QMessageBox errdlg(this);
-//        errdlg.setText("Failed to configure RobustLogNorm module.");
-
-//        logger(kipl::logging::Logger::LogWarning,e.what());
-//        return ;
-
-//    }
 
 
 }
@@ -222,7 +209,7 @@ void BBLogNormDlg::UpdateDialog(){
     ui->spiny0BBdose->setValue(doseBBroi[1]);
     ui->spiny1BBdose->setValue(doseBBroi[3]);
 
-    ui->spinRadius->setValue(radius);
+    ui->spinRadius->setValue(static_cast<int>(radius));
     ui->combo_averagingMethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceAverageMethod)));
     ui->combo_referencingmethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceMethod)));
     ui->combo_BBoptions->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
@@ -277,7 +264,7 @@ void BBLogNormDlg::UpdateParameters(){
 //        std::cout << "---------------------" << bUseNormROIBB << std::endl;
 //    }
 
-    radius = ui->spinRadius->value();
+    radius = static_cast<size_t>(ui->spinRadius->value());
     string2enum(ui->combo_averagingMethod->currentText().toStdString(), m_ReferenceAverageMethod);
     string2enum(ui->combo_referencingmethod->currentText().toStdString(), m_ReferenceMethod);
     string2enum(ui->combo_BBoptions->currentText().toStdString(), m_BBOptions);
@@ -694,12 +681,12 @@ void BBLogNormDlg::on_errorButton_clicked()
         float error;
 
         try {
-            module.Configure(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+            module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
             error = module.GetInterpolationError(mymask);
         }
         catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpoltion error.");
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
             logger(kipl::logging::Logger::LogWarning,e.what());
             errdlg.exec();

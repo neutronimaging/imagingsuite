@@ -1,4 +1,5 @@
 #include <sstream>
+#include <list>
 
 #include <QString>
 #include <QtTest>
@@ -13,6 +14,7 @@
 #include <drawing/drawing.h>
 #include <math/statistics.h>
 #include <math/mathfunctions.h>
+#include <math/findpeaks.h>
 
 #include <io/io_tiff.h>
 
@@ -33,6 +35,7 @@ private Q_SLOTS:
     void testNonLinFit_enums();
     void testNonLinFit_GaussianFunction();
     void testNonLinFit_fitter();
+    void testFindPeaks();
 
     void testStatistics();
     void testSignFunction();
@@ -236,6 +239,24 @@ void TKiplMathTest::testNonLinFit_fitter()
     QCOMPARE(sog[1], sog0[1]);
     QCOMPARE(sog[2], sog0[2]);
 
+}
+
+void TKiplMathTest::testFindPeaks()
+{
+    const size_t N=100;
+    float x[N];
+    float y[N];
+
+    for (size_t i=0; i<N; ++i) {
+        x[i]=float(i)/10.0f;
+        y[i]=sin(x[i])+5;
+    }
+
+    std::list<size_t> peaks;
+    size_t cnt=kipl::math::findPeaks(y,N,5.0f,0.5f,peaks);
+
+    QCOMPARE(cnt,2UL);
+    QCOMPARE(cnt,peaks.size());
 }
 
 void TKiplMathTest::testStatistics()

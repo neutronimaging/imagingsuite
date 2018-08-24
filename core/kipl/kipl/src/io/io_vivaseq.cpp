@@ -44,7 +44,7 @@ int GetViVaSEQDims(std::string fname,size_t *dims)
     return dims[2]==1 ? 2 : 3;
 }
 
-int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t *roi, int first_frame, int last_frame, int frame_step)
+int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t const * const roi, int first_frame, int last_frame, int frame_step)
 {
     std::ifstream file(fname.c_str(),ios::binary | ios::in);
     if (file.bad()) {
@@ -118,7 +118,7 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t *roi
     return 0;
 }
 
-int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t *roi)
+int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t  const * const roi)
 {
     std::ifstream file(fname.c_str(),ios::binary | ios::in);
     if (file.bad()) {

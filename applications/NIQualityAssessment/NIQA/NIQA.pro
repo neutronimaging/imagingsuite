@@ -74,13 +74,16 @@ FORMS    += niqamainwindow.ui \
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
 
-LIBS += -lkipl -lQtAddons -lImagingAlgorithms -lImagingQAAlgorithms -lReaderConfig -lReaderGUI
+LIBS += -lkipl -lQtAddons -lImagingAlgorithms -lImagingQAAlgorithms -lReaderConfig -lReaderGUI -lQtImaging
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../gui/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../gui/qt/QtModuleConfigure
+
+INCLUDEPATH += $$PWD/../../../gui/qt/QtImaging
+DEPENDPATH += $$PWD/../../../gui/qt/QtImaging
 
 INCLUDEPATH += $$PWD/../../../gui/qt/QtAddons
 DEPENDPATH += $$PWD/../../../gui/qt/QtAddons

@@ -134,8 +134,6 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     SetupCallBacks();
     ui->widgetProjectionROI->updateViewer();
 
-//    if (ui->checkCBCT->isChecked()) SlicesCBCTChanged(0);
-
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
@@ -1733,7 +1731,7 @@ void MuhRecMainWindow::on_spinSlicesFirst_valueChanged(int arg1)
 
 void MuhRecMainWindow::on_spinSlicesLast_valueChanged(int arg1)
 {
-    ui->spinSlicesFirst->setMaximum(arg1-1);
+//    ui->spinSlicesFirst->setMaximum(arg1-1);
     SlicesChanged(arg1);
 }
 
@@ -1893,28 +1891,6 @@ void MuhRecMainWindow::on_dspinResolution_valueChanged(double arg1)
 }
 
 
-
-
-//void MuhRecMainWindow::on_spinSubVolumeSizeZ0_valueChanged(int arg1)
-//{
-//    SlicesCBCTChanged(arg1);
-//}
-
-//void MuhRecMainWindow::on_spinSubVolumeSizeZ1_valueChanged(int arg1)
-//{
-//    SlicesCBCTChanged(arg1);
-//}
-
-//void MuhRecMainWindow::SlicesCBCTChanged(int x)
-//{
-//    QRect rect;
-//    rect.setCoords(ui->spinProjROIx0->value(),
-//                   ui->spinSubVolumeSizeZ0->value(),
-//                   ui->spinProjROIx1->value(),
-//                   ui->spinSubVolumeSizeZ1->value());
-
-//    ui->projectionViewer->set_rectangle(rect,QColor("lightblue"),2);
-//}
 
 void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
 {
@@ -2510,8 +2486,8 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
             return;
         }
     }
-    QSignalBlocker b1(ui->spinSlicesFirst);
-    QSignalBlocker b2(ui->spinSlicesLast);
+//    QSignalBlocker b1(ui->spinSlicesFirst);
+//    QSignalBlocker b2(ui->spinSlicesLast);
 
     ui->spinSlicesFirst->setValue(first);
     ui->spinSlicesLast->setValue(last);

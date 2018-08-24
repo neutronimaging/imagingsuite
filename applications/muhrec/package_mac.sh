@@ -1,8 +1,8 @@
 #!/bin/sh
 
-mkdir /tmp/muhrec3
-ln -s /Applications /tmp/muhrec3/Applications
-cp -r ~/Applications/muhrec3.app /tmp/muhrec3
+mkdir /tmp/MuhRec
+ln -s /Applications /tmp/muhrec/Applications
+cp -r ~/Applications/MuhRec.app /tmp/MuhRec
 
-hdiutil create -volname MuhRec3 -srcfolder /tmp/muhrec3 -ov -format UDZO ~/MuhRec3_`date +%Y%m%d`.dmg
+hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO ~/MuhRec_`date +%Y%m%d`.dmg
 

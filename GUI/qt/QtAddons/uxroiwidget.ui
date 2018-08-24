@@ -43,6 +43,9 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="maximum">
+     <number>9999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinX1">
     <property name="geometry">
@@ -81,6 +84,9 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="maximum">
+     <number>9999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinY0">
     <property name="geometry">
@@ -96,6 +102,9 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="maximum">
+     <number>9999</number>
     </property>
    </widget>
    <widget class="QPushButton" name="buttonGetROI">
@@ -120,25 +129,20 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>50</y>
       <width>60</width>
       <height>16</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
     <property name="text">
      <string>(x0,y0)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -147,22 +151,10 @@
       <height>16</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
     <property name="text">
      <string>(x1,y1)</string>
     </property>
    </widget>
-   <zorder>label_2</zorder>
-   <zorder>label</zorder>
-   <zorder>spinY1</zorder>
-   <zorder>spinX1</zorder>
-   <zorder>spinX0</zorder>
-   <zorder>spinY0</zorder>
-   <zorder>buttonGetROI</zorder>
   </widget>
  </widget>
  <resources/>

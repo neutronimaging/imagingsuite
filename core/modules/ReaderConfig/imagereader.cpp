@@ -250,9 +250,9 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     msg.str("");
     msg<<"Failed to resample or rotate the projection with a ";
     try {
-        if (1<binning)
-            kipl::base::ReBin(img,binned,bins);
-        else
+//        if (1<binning)
+//            kipl::base::ReBin(img,binned,bins);
+//        else
             binned=img;
 
         img=RotateProjection(binned,flip,rotate);
@@ -418,6 +418,7 @@ kipl::base::TImage<float,2> ImageReader::ReadHDF(std::string filename, size_t co
 kipl::base::TImage<float,2> ImageReader::ReadSEQ(std::string filename, size_t const * const nCrop, size_t idx)
 {
     kipl::base::TImage<float,2> img;
+    kipl::io::ReadViVaSEQ(filename, img, idx, nCrop);
 
     return img;
 }

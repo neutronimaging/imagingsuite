@@ -78,8 +78,10 @@ public:
 private:
     virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName);
     virtual void ParseProcessChain(xmlTextReaderPtr reader);
-    virtual std::string SanitySlicesCheck() {}
-    virtual std::string SanityMessage(bool mess){}
+    /// Sanity check on the number of slices to be reconstruct during Config
+    virtual std::string SanitySlicesCheck() {return "";}
+    /// Sanity message that warns about the number of slices that are being configured
+    virtual std::string SanityMessage(bool mess) {return "";}
 };
 
 #endif
