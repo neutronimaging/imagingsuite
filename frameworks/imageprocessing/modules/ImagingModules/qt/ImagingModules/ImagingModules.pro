@@ -19,7 +19,7 @@ SOURCES +=  ../../src/imagingmodules.cpp \
             ../../src/translateprojectionmodule.cpp \
             ../../src/stripefiltermodule.cpp \
             ../../src/ringcleanmodule.cpp \
-            ../../src/referenceimagecorrectionmodule.cpp
+#            ../../src/referenceimagecorrectionmodule.cpp
 
 HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/imagingmodules.h\
@@ -27,7 +27,7 @@ HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/translateprojectionmodule.h \
             ../../src/stripefiltermodule.h \
             ../../src/ringcleanmodule.h \
-            ../../src/referenceimagecorrectionmodule.h
+#            ../../src/referenceimagecorrectionmodule.h
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
@@ -81,7 +81,8 @@ INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/Unpublishe
 DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/src
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+
 
 INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
