@@ -322,10 +322,10 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
             std::cout << " found data!"<< std::endl;
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
-            cout << "Number of group attributes for "<< it->second <<": " << attr_infos.size() << endl;
+            std::cout << "Number of group attributes for "<< it->second <<": " << attr_infos.size() << std::endl;
 
             map<string, string> entries_data = file.getEntries();
-            cout << "Group contains " << entries_data.size() << " items" << endl;
+            std::cout << "Group contains " << entries_data.size() << " items" << std::endl;
 
             for (map<string,string>::const_iterator it_data = entries_data.begin();
                  it_data != entries_data.end(); it_data++)
@@ -333,14 +333,14 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
                 std::cout << it_data->first << ": " << it_data->second << std::endl;
                 file.openData(it_data->first);
                 attr_infos = file.getAttrInfos();
-                cout << "Number of data attributes for " << it_data->first <<  ": "<< attr_infos.size() <<std::endl;
+                std::cout << "Number of data attributes for " << it_data->first <<  ": "<< attr_infos.size() <<std::endl;
                 for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin();
                      it_att != attr_infos.end(); it_att++) {
-                  cout << "   " << it_att->name << " = ";
+                  std::cout << "   " << it_att->name << " = ";
                   if (it_att->type == NeXus::CHAR) {
-                    cout << file.getStrAttr(*it_att);
+                    std::cout << file.getStrAttr(*it_att);
                   }
-                  cout << endl;
+                  std::cout << std::endl;
 
                   if (it_att->name=="signal"){
                       std::cout << "found plottable data!!" << std::endl;

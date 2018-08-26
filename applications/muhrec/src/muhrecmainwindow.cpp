@@ -125,14 +125,30 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 
     m_oldROI[0]=0; m_oldROI[1]=0; m_oldROI[2]=1; m_oldROI[3]=1;
 
+    QSignalBlocker a(ui->spinSlicesFirst);
+    QSignalBlocker b(ui->spinSlicesLast);
+
     LoadDefaults(true);
+    size_t firstSlice=m_Config.ProjectionInfo.roi[1];
+    size_t lastSlice=m_Config.ProjectionInfo.roi[3];
+
     UpdateDialog();
 
-
     ProjectionIndexChanged(0);
-    SlicesChanged(0);
+
     SetupCallBacks();
     ui->widgetProjectionROI->updateViewer();
+    size_t roi[4];
+
+    ui->widgetProjectionROI->getROI(roi);
+
+    ui->spinSlicesFirst->setMinimum(roi[1]);
+    ui->spinSlicesFirst->setMaximum(roi[3]);
+    ui->spinSlicesFirst->setValue(firstSlice);
+    ui->spinSlicesLast->setMinimum(roi[1]);
+    ui->spinSlicesLast->setMaximum(roi[3]);
+    ui->spinSlicesLast->setValue(lastSlice);
+    SlicesChanged(0);
 
 }
 
@@ -537,16 +553,6 @@ void MuhRecMainWindow::ViewGeometryList()
                 ui->dspinTiltPivot->setValue(pivot);
                 ui->dspinRotationCenter->setValue(center);
             }
-
-//            if (dlg.changedConfigFields() & ConfigField_ROI) {
-
-//                dlg.getROI(m_Config.MatrixInfo.roi);
-
-//                ui->spinMatrixROI0->setValue(m_Config.MatrixInfo.roi[0]);
-//                ui->spinMatrixROI1->setValue(m_Config.MatrixInfo.roi[1]);
-//                ui->spinMatrixROI2->setValue(m_Config.MatrixInfo.roi[2]);
-//                ui->spinMatrixROI3->setValue(m_Config.MatrixInfo.roi[3]);
-//            }
         }
     }
 }
@@ -680,7 +686,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
               m_Config.ProjectionInfo.projection_roi,
               m_oldROI);
 
-    UpdateDialog();
+//    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename=m_sHomePath+"noname.xml";
 }
@@ -1744,7 +1750,6 @@ void MuhRecMainWindow::SlicesChanged(int arg1)
 
     size_t roi[4];
     ui->widgetProjectionROI->getROI(roi);
-
     rect.setCoords(dims[0]=roi[0],
                    dims[1]=ui->spinSlicesFirst->value(),
                    dims[2]=roi[2],
@@ -2067,7 +2072,6 @@ void MuhRecMainWindow::on_radioButton_customTurn_clicked()
 
 void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x1, int y1)
 {
-  //  qDebug()<<x0<<", "<<y0<<", "<<x1<<", "<<y1;
     int oldFirstSlice=ui->spinSlicesFirst->value();
     int oldLastSlice=ui->spinSlicesLast->value();
     int sliceDiff=oldLastSlice-oldFirstSlice;
@@ -2092,6 +2096,9 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
 
     size_t roi[4];
     ui->widgetProjectionROI->getROI(roi);
+    int width=abs(x1-x0-1);
+    width = width < 1 ? 1 : width;
+    ui->widgetMatrixROI->setBoundingBox(0,0,width,width);
     UpdateMemoryUsage(roi);
 
 //    if (ui->checkCBCT->isChecked()){
@@ -2486,8 +2493,6 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
             return;
         }
     }
-//    QSignalBlocker b1(ui->spinSlicesFirst);
-//    QSignalBlocker b2(ui->spinSlicesLast);
 
     ui->spinSlicesFirst->setValue(first);
     ui->spinSlicesLast->setValue(last);

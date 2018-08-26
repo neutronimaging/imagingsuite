@@ -529,13 +529,13 @@ std::string ReconConfig::cUserInformation::WriteXML(size_t indent)
 	using namespace std;
 	ostringstream str;
 
-	str<<setw(indent)  <<" "<<"<userinformation>"<<endl;
-		str<<setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
-		str<<setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
-		str<<setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
-		str<<setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
-		str<<setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
-	str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
+    str<<std::setw(indent)  <<" "<<"<userinformation>"<<std::endl;
+        str<<std::setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
+        str<<std::setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
+        str<<std::setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
+        str<<std::setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
+        str<<std::setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
+    str<<std::setw(indent)  <<" "<<"</userinformation>"<<std::endl;
 
 	return str.str();
 }
@@ -926,19 +926,19 @@ std::string ReconConfig::cMatrix::WriteXML(size_t indent)
 	ostringstream str;
 
 	str<<setw(indent)  <<" "<<"<matrix>"<<std::endl;
-	str<<setw(indent+4)  <<" "<<"<dims>"<<nDims[0]<<" "<<nDims[1]<<" "<<nDims[2]<<"</dims>"<<endl;
-	str<<setw(indent+4)  <<" "<<"<rotation>"<<fRotation<<"</rotation>"<<endl;
-	str<<setw(indent+4)  <<" "<<"<serialize>"<<(bAutomaticSerialize==true ? "true" : "false")<<"</serialize>"<<endl;	
-	str<<setw(indent+4)  <<" "<<"<path>"<<sDestinationPath<<"</path>"<<endl;	
-	str<<setw(indent+4)  <<" "<<"<matrixname>"<<sFileMask<<"</matrixname>"<<endl;	
-	str<<setw(indent+4)  <<" "<<"<filetype>"<<FileType<<"</filetype>"<<endl;	
-	str<<setw(indent+4)  <<" "<<"<firstindex>"<<nFirstIndex<<"</firstindex>"<<endl;	
-	str<<setw(indent+4)  <<" "<<"<grayinterval>"<<fGrayInterval[0]<<" "<<fGrayInterval[1]<<"</grayinterval>"<<endl;	
-	str<<setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(bUseROI)<<"</useroi>"<<endl;
-	str<<setw(indent+4)  <<" "<<"<roi>"<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<" "<<"</roi>"<<endl;
-    str<<setw(indent+4)  <<" "<<"<voxelsize>"<< fVoxelSize[0] << " "<< fVoxelSize[1] <<" " <<fVoxelSize[2] << " " << "</voxelsize>"<< endl;
-//    str<<setw(indent+4)  <<" "<<"<usevoi>"<<kipl::strings::bool2string(bUseVOI)<<"</usevoi>"<< endl;
-    str<<setw(indent+4)  <<" "<<"<voi>"<< voi[0]<<" "<<voi[1] << " " << voi[2] << " " << voi[3] << " " << voi[4] <<" " << voi[5] << "</voi>" << endl;
+    str<<setw(indent+4)  <<" "<<"<dims>"<<nDims[0]<<" "<<nDims[1]<<" "<<nDims[2]<<"</dims>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<rotation>"<<fRotation<<"</rotation>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<serialize>"<<(bAutomaticSerialize==true ? "true" : "false")<<"</serialize>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<path>"<<sDestinationPath<<"</path>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<matrixname>"<<sFileMask<<"</matrixname>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<filetype>"<<FileType<<"</filetype>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<firstindex>"<<nFirstIndex<<"</firstindex>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<grayinterval>"<<fGrayInterval[0]<<" "<<fGrayInterval[1]<<"</grayinterval>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<useroi>"<<kipl::strings::bool2string(bUseROI)<<"</useroi>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<roi>"<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<" "<<"</roi>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<voxelsize>"<< fVoxelSize[0] << " "<< fVoxelSize[1] <<" " <<fVoxelSize[2] << " " << "</voxelsize>"<< std::endl;
+//    str<<setw(indent+4)  <<" "<<"<usevoi>"<<kipl::strings::bool2string(bUseVOI)<<"</usevoi>"<< std::endl;
+    str<<setw(indent+4)  <<" "<<"<voi>"<< voi[0]<<" "<<voi[1] << " " << voi[2] << " " << voi[3] << " " << voi[4] <<" " << voi[5] << "</voi>" << std::endl;
 	str<<setw(indent)  <<" "<<"</matrix>"<<std::endl;
 
 	return str.str();

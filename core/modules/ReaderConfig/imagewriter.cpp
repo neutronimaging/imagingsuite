@@ -33,13 +33,13 @@ void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname)
             case kipl::io::ExtensionFITS:
                 kipl::io::WriteFITS(img,fname.c_str());
                 msg.str("");
-                msg<<"Wrote "<<fname<<" using WriteFITS.";
+                msg<<"Wrote image "<<img<<" as "<<fname<<" using WriteFITS ";
                 logger(logger.LogDebug,msg.str());
                 break;
             case kipl::io::ExtensionTIFF:
                 kipl::io::WriteTIFF(img,fname.c_str());
                 msg.str("");
-                msg<<"Wrote "<<fname<<" using WriteTIFF.";
+                msg<<"Wrote image "<<img<<" as "<<fname<<" using WriteTIFF ";
                 logger(logger.LogDebug,msg.str());
                 break;
             case kipl::io::ExtensionTXT : throw ReaderException("Saving image as txt is not supported",__FILE__,__LINE__);

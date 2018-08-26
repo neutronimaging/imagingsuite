@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef __IO_TIFF_H
 #define __IO_TIFF_H
@@ -53,7 +53,7 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname)
 		
 //	TIFFErrorHandler warn = TIFFSetWarningHandler(0);
 	// Open the TIFF file
-	if((image = TIFFOpen(fname, "w")) == NULL){
+    if((image = TIFFOpen(fname, "w")) == nullptr){
 		msg.str("");
 		msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -142,7 +142,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 
 	TIFFSetWarningHandler(0);
 	// Open the TIFF image
-	if((image = TIFFOpen(fname, "r")) == NULL){
+    if((image = TIFFOpen(fname, "r")) == nullptr){
 		msg.str();
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -167,7 +167,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 
 	bufferSize = TIFFNumberOfStrips (image) * stripSize;
 	try {
-		if((buffer = new unsigned char[bufferSize]) == NULL){
+        if((buffer = new unsigned char[bufferSize]) == nullptr){
 			msg.str("");
 			msg<<"Could not allocate"<<bufferSize<<" bytes for the uncompressed image";
 			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -206,7 +206,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 	
 	if(photo == PHOTOMETRIC_MINISWHITE){
 		// Flip bits
-		clog<<"Fixing the photometric interpretation"<<endl;
+        std::clog<<"Fixing the photometric interpretation"<<std::endl;
 		
 		for(count = 0; count < bufferSize; count++)
 			buffer[count] = ~buffer[count];
@@ -219,7 +219,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 	
 	if(fillorder != FILLORDER_MSB2LSB){
 		// We need to swap bits -- ABCDEFGH becomes HGFEDCBA
-		clog<<"Fixing the fillorder"<<endl;
+        std::clog<<"Fixing the fillorder"<<std::endl;
 		
 		for(count = 0; count < bufferSize; count++){
 			tempbyte = 0;
@@ -322,7 +322,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 {
     (void)idx; // Terminating unused parameter warning
 
-	if (crop==NULL) {
+    if (crop==nullptr) {
 		return ReadTIFF(src,fname);
 	}
 	std::stringstream msg;
@@ -337,7 +337,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 
 	TIFFSetWarningHandler(0);
 	// Open the TIFF image
-	if((image = TIFFOpen(fname, "r")) == NULL){
+    if((image = TIFFOpen(fname, "r")) == nullptr){
 		msg.str();
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -374,7 +374,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 
 	bufferSize = TIFFScanlineSize(image);
 	try {
-        if((buffer = new unsigned char[bufferSize]) == NULL) {
+        if((buffer = new unsigned char[bufferSize]) == nullptr) {
 			msg.str("");
 			msg<<"Could not allocate"<<bufferSize<<" bytes for the uncompressed image";
 			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -404,7 +404,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 		
 		if(photo == PHOTOMETRIC_MINISWHITE){
 			// Flip bits
-			clog<<"Fixing the photometric interpretation"<<endl;
+            std::clog<<"Fixing the photometric interpretation"<<std::endl;
 			
 			for(count = 0; count < bufferSize; count++)
 				buffer[count] = ~buffer[count];
@@ -417,7 +417,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 		
 		if(fillorder != FILLORDER_MSB2LSB){
 			// We need to swap bits -- ABCDEFGH becomes HGFEDCBA
-			clog<<"Fixing the fillorder"<<endl;
+            std::clog<<"Fixing the fillorder"<<std::endl;
 			
 			for(count = 0; count < bufferSize; count++){
 				tempbyte = 0;
@@ -534,7 +534,7 @@ int ReadTIFFLine(ImgType *data,uint32 row, const char *fname)
 	TIFF *image;
 //	 TIFFErrorHandler warn = 
 	TIFFSetWarningHandler(0);
-	if((image = TIFFOpen(fname, "r")) == NULL){
+    if((image = TIFFOpen(fname, "r")) == nullptr){
 		msg.str("");
 		msg<<"ReadTIFFLine: Could not open "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
