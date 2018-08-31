@@ -19,6 +19,7 @@ SOURCES +=  ../../src/imagingmodules.cpp \
             ../../src/translateprojectionmodule.cpp \
             ../../src/stripefiltermodule.cpp \
             ../../src/ringcleanmodule.cpp \
+            ../../src/bblognorm.cpp
 #            ../../src/referenceimagecorrectionmodule.cpp
 
 HEADERS +=  ../../src/ImagingModules_global.h \
@@ -27,6 +28,7 @@ HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/translateprojectionmodule.h \
             ../../src/stripefiltermodule.h \
             ../../src/ringcleanmodule.h \
+            ../../src/bblognorm.h
 #            ../../src/referenceimagecorrectionmodule.h
 
 unix:!macx {
@@ -40,7 +42,16 @@ unix:macx {
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib
+    INCLUDEPATH += /opt/local/include/libxml2
+
 }
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
+
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -75,7 +86,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms -lReaderConfig
 
 INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
@@ -92,3 +103,6 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../../../../core/modules/ReaderConfig
+DEPENDPATH += $$PWD/../../../../../../core/modules/ReaderConfig

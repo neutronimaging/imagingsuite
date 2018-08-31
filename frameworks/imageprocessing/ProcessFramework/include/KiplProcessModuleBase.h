@@ -26,14 +26,16 @@
 #include <list>
 
 #include <ProcessModuleBase.h>
+#include "KiplProcessConfig.h"
 
 class PROCESSFRAMEWORKSHARED_EXPORT KiplProcessModuleBase : public ProcessModuleBase
 {
 public:
-	KiplProcessModuleBase(std::string name="KiplProcessModuleBase", bool bComputeHistogram=false);
+    KiplProcessModuleBase(std::string name="KiplProcessModuleBase", bool bComputeHistogram=false);
 	virtual int Process(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
 	virtual ~KiplProcessModuleBase(void);
 	virtual int Configure(std::map<std::string, std::string> parameters)=0;
+//    virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)=0;
 	bool HavePlots() { return !m_PlotList.empty(); }
     std::map<std::string, kipl::containers::PlotData<float,float> > & Plots() { return m_PlotList; }
 	bool HaveHistogram() { return (m_bComputeHistogram && (m_Histogram.Size()!=0)); }
