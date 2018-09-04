@@ -128,8 +128,6 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname, ImgType lo, I
 template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L)
 {
-    (void)idx; // Terminating unused parameter
-
     std::stringstream msg;
 	TIFF *image;
 	uint16 photo, spp, fillorder,bps, sformat;
@@ -148,6 +146,18 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 	
+    int framecnt=0;
+    while ((framecnt<idx) && (image!=nullptr)){
+        TIFFReadDirectory(image);
+        framecnt++;
+    }
+
+    if(image == nullptr) {
+        msg.str("");
+        msg<<"ReadTIFF: Frame index exceeds the available frame in the file"<<fname;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
 	// Check that it is of a type that we support
 	if((TIFFGetField(image, TIFFTAG_BITSPERSAMPLE, &bps) == 0) ){
 		throw kipl::base::KiplException("ReadTIFF: Either undefined or unsupported number of bits per pixel",__FILE__,__LINE__);
@@ -320,10 +330,10 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const * const crop, size_t idx=0L)
 {
-    (void)idx; // Terminating unused parameter warning
+    kipl::logging::Logger logger("ReadTIFF");
 
     if (crop==nullptr) {
-		return ReadTIFF(src,fname);
+        return ReadTIFF(src,fname,idx);
 	}
 	std::stringstream msg;
 	TIFF *image;
@@ -338,11 +348,22 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 	TIFFSetWarningHandler(0);
 	// Open the TIFF image
     if((image = TIFFOpen(fname, "r")) == nullptr){
-		msg.str();
+        msg.str("");
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
-	
+    int framecnt=0;
+    while ((framecnt<idx) && (image!=nullptr)){
+        TIFFReadDirectory(image);
+        framecnt++;
+    }
+
+    if(image == nullptr){
+        msg.str("");
+        msg<<"ReadTIFF: Frame index exceeds the available frame in the file"<<fname;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
 	// Check that it is of a type that we support
 	if((TIFFGetField(image, TIFFTAG_BITSPERSAMPLE, &bps) == 0) ){
 		throw kipl::base::KiplException("ReadTIFF: Either undefined or unsupported number of bits per pixel",__FILE__,__LINE__);
@@ -417,7 +438,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 		
 		if(fillorder != FILLORDER_MSB2LSB){
 			// We need to swap bits -- ABCDEFGH becomes HGFEDCBA
-            std::clog<<"Fixing the fillorder"<<std::endl;
+            logger(logger.LogVerbose,"Fixing the fillorder");
 			
 			for(count = 0; count < bufferSize; count++){
 				tempbyte = 0;

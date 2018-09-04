@@ -9,6 +9,7 @@
 #include <io/io_fits.h>
 #include <io/DirAnalyzer.h>
 #include <io/io_vivaseq.h>
+#include <io/io_tiff.h>
 #include <strings/filenames.h>
 
 class kiplIOTest : public QObject
@@ -20,13 +21,15 @@ public:
 
 private:
     void MakeFiles(std::string mask, int N, int first=0);
-
+    QDir dir;
 private Q_SLOTS:
 
     void testFITSreadwrite();
     void testCroppedFITSreading();
     void testSEQHeader();
     void testSEQRead();
+    void testTIFFBasicReadWrite();
+    void testTIFFMultiFrame();
 };
 
 kiplIOTest::kiplIOTest()
@@ -67,14 +70,14 @@ void kiplIOTest::testSEQHeader()
    std::ostringstream msg;
    kipl::io::ViVaSEQHeader header;
 
+   if (dir.exists("/Users/kaestner/Desktop/Video1.seq")==false)
+       QSKIP( "Test data is missing");
+
    msg<<"sizeof(header)=="<<sizeof(header);
    QVERIFY2(sizeof(header)==2048,msg.str().c_str());
 
    kipl::io::GetViVaSEQHeader("/Users/kaestner/Desktop/Video1.seq",&header);
-//   std::cout << header.headerSize  << ", "
-//             << header.imageWidth  << ", "
-//             << header.imageHeight << ", "
-//             << header.numberOfFrames<<std::endl;
+
    size_t dims[2]={0,0};
    int numframes=0;
    numframes=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims);
@@ -86,6 +89,11 @@ void kiplIOTest::testSEQHeader()
 
 void kiplIOTest::testSEQRead()
 {
+
+
+    if (dir.exists("/Users/kaestner/Desktop/Video1.seq")==false)
+        QSKIP( "Test data is missing");
+
     kipl::base::TImage<float,3> img;
     kipl::io::ViVaSEQHeader header;
 
@@ -104,6 +112,89 @@ void kiplIOTest::testSEQRead()
     QVERIFY(img.Size(1)==(roi[3]-roi[1]));
     QVERIFY(img.Size(2)==header.numberOfFrames);
 
+
+}
+
+void kiplIOTest::testTIFFBasicReadWrite()
+{
+    size_t dims[2]={100,50};
+
+    kipl::base::TImage<float,2> fimg(dims);
+    fimg.info.sArtist="UnitTest";
+    fimg.info.sCopyright="none";
+    fimg.info.sDescription="slope = 1.0E0 \noffset = 0.0E0";
+    fimg.info.SetDPCMX(123.0f);
+    fimg.info.SetDPCMY(321.0f);
+
+    for (size_t i=0; i<fimg.Size(); i++)
+        fimg[i]=static_cast<float>(i);
+
+    kipl::io::WriteTIFF(fimg,"basicRW.tif");
+
+    kipl::base::TImage<float,2> resimg;
+
+    kipl::io::ReadTIFF(resimg,"basicRW.tif");
+    std::ostringstream msg;
+    QVERIFY2(fimg.Size(0)==resimg.Size(0),"X size missmatch");
+    QVERIFY2(fimg.Size(1)==resimg.Size(1),"Y size missmatch");
+
+    QVERIFY2(fimg.info.sArtist==resimg.info.sArtist,"Artist information error");
+    QVERIFY2(fimg.info.sDescription==resimg.info.sDescription,"Description error");
+    QVERIFY2(fimg.info.sCopyright==resimg.info.sCopyright,"Copyright error");
+    QVERIFY2(fimg.info.GetDPCMX()==resimg.info.GetDPCMX(),"X Resolution error");
+    msg<<"Y resolution error: fimg="<<fimg.info.GetDPCMY()<<", resimg="<<resimg.info.GetDPCMY();
+    QVERIFY2(fimg.info.GetDPCMY()==resimg.info.GetDPCMY(),msg.str().c_str());
+
+    for (size_t i=0; i<fimg.Size(); ++i) {
+        QVERIFY2(fimg[i]==resimg[i],"Pixels not similar");
+    }
+
+}
+
+void kiplIOTest::testTIFFMultiFrame()
+{
+    std::string fname="../imagingsuite/core/kipl/UnitTests/data/multiframe.tif";
+    if (dir.exists(QString::fromStdString(fname))==false)
+        QSKIP("Test data is missing");
+
+    size_t dims[3]={0,0,0};
+    int nframes=kipl::io::GetTIFFDims(fname.c_str(),dims);
+
+    QCOMPARE(dims[0],145UL);
+    QCOMPARE(dims[1],249UL);
+    QCOMPARE(nframes,5);
+
+    float minvals[5]={4032.0f,4443.0f,5244.0f,5849.0f,3687.0f};
+    float maxvals[5]={65192.0f,65534.0f,65534.0f,57957.0f,42548.0f};
+
+    size_t crop[4]={10,10,100,100};
+
+    kipl::base::TImage<float,2> img, img_crop;
+    for (int i = 0 ; i<nframes; ++i) {
+        kipl::io::ReadTIFF(img,fname.c_str(),nullptr,i);
+        QCOMPARE(img.Size(0),145UL);
+        QCOMPARE(img.Size(1),249UL);
+
+        float *mi=std::min_element(img.GetDataPtr(),img.GetDataPtr()+img.Size());
+        QCOMPARE(*mi,minvals[i]);
+
+        float *ma=std::max_element(img.GetDataPtr(),img.GetDataPtr()+img.Size());
+        QCOMPARE(*ma,maxvals[i]);
+
+        kipl::io::ReadTIFF(img_crop,fname.c_str(),crop,i);
+        QCOMPARE(img_crop.Size(0),90UL);
+        QCOMPARE(img_crop.Size(1),90UL);
+
+        for (size_t y=0; y<img_crop.Size(1); ++y) {
+            float *pLine0=img.GetLinePtr(y+crop[1])+crop[0];
+            float *pLine1=img_crop.GetLinePtr(y);
+
+            for (size_t x=0; x<img_crop.Size(0); x++)
+                QCOMPARE(pLine1[x],pLine0[x]);
+        }
+
+
+    }
 
 }
 

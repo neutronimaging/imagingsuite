@@ -46,9 +46,13 @@ int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname,size_t *dims)
 	
 	dims[0]=static_cast<size_t>(nWidth);
 	dims[1]=static_cast<size_t>(nLength);
+    int frames=0;
+    do {
+            frames++;
+    } while (TIFFReadDirectory(image));
 	TIFFClose(image);
 
-	return 0;
+    return frames;
 }
 
 int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname)
