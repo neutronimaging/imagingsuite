@@ -64,6 +64,13 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
 
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
+
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 

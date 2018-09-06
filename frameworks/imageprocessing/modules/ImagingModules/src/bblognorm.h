@@ -27,7 +27,8 @@ public:
     BBLogNorm();
     virtual ~BBLogNorm();
 
-    virtual int Configure(std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
+//    virtual int Configure(std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
+    virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual int ConfigureDLG(std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
@@ -42,7 +43,6 @@ public:
     virtual void LoadExternalBBData(size_t *roi); /// load BB images pre-processed elsewhere
 
 protected:
-//    ReconConfig m_Config;
 
     KiplProcessConfig m_Config;
     std::string path; /// path, maybe not used

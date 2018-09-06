@@ -24,7 +24,7 @@ DoubleThreshold::~DoubleThreshold() {
 	// TODO Auto-generated destructor stub
 }
 
-int DoubleThreshold::Configure(std::map<std::string, std::string> parameters)
+int DoubleThreshold::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fHighThreshold      = GetFloatParameter(parameters,"highthreshold");
 	m_fLowThreshold       = GetFloatParameter(parameters,"lowthreshold");

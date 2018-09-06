@@ -24,7 +24,7 @@ ScaleData::~ScaleData() {
 }
 
 
-int ScaleData::Configure(std::map<std::string, std::string> parameters)
+int ScaleData::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fSlope = GetFloatParameter(parameters,"slope");
 	m_fIntercept = GetFloatParameter(parameters,"intercept");

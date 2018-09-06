@@ -35,6 +35,11 @@ unix:!symbian {
         target.path = /usr/lib
     }
     INSTALLS += target
+
+    LIBS += -ltiff -lxml2
+    INCLUDEPATH += /usr/include/libxml2
+
+
 }
 
 win32 {
@@ -91,4 +96,10 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
 

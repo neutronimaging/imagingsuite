@@ -40,7 +40,7 @@ KiplEngine * KiplFactory::BuildEngine(KiplProcessConfig &config)
 			try {
 				module=new KiplModuleItem(it->m_sSharedObject,it->m_sModule);
 
-				module->GetModule()->Configure(it->parameters);
+                module->GetModule()->Configure(it->parameters);
 				engine->AddProcessingModule(module);
 			}
 			catch (ModuleException &e) {

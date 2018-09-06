@@ -26,7 +26,7 @@ DoseCorrection::~DoseCorrection()
 {
 }
 
-int DoseCorrection::Configure(std::map<std::string, std::string> parameters)
+int DoseCorrection::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fSlope = GetFloatParameter(parameters,"slope");
 	m_fIntercept = GetFloatParameter(parameters,"intercept");

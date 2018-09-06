@@ -58,6 +58,7 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
+    dose_roi[0] = dose_roi[1] = dose_roi[2] = dose_roi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
     fScanArc[0] = 0.0;
     fScanArc[1] = 360.0;
@@ -74,10 +75,14 @@ BBLogNorm::~BBLogNorm()
 }
 
 
-int BBLogNorm::Configure(std::map<std::string, std::string> parameters)
+int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
 
-//    m_Config    = config;
+    std::stringstream msg;
+    msg<<"beginnig of BBLogNorm::Configure";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+    m_Config    = config;
 //    path        = config.ProjectionInfo.sReferencePath;
 //    flatname    = config.ProjectionInfo.sOBFileMask;
 //    darkname    = config.ProjectionInfo.sDCFileMask;
@@ -204,6 +209,10 @@ int BBLogNorm::Configure(std::map<std::string, std::string> parameters)
             PrepareBBData();
     }
 
+//    std::stringstream msg;
+    msg<<"end of BBLogNorm::Configure";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
 
     return 1;
 }
@@ -324,6 +333,9 @@ int BBLogNorm::ConfigureDLG(std::map<std::string, std::string> parameters)
 
 //    }
 
+    std::stringstream msg;
+    msg<<"end of BBLogNorm::ConfigureDlg, empty for now";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     return 1;
 }
@@ -342,6 +354,10 @@ bool BBLogNorm::SetROI(size_t *roi) {
 
 std::map<std::string, std::string> BBLogNorm::GetParameters() {
     std::map<std::string, std::string> parameters;
+
+    std::stringstream msg;
+    msg<<"begin of BBLogNorm::GetParameters";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
@@ -380,6 +396,9 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     parameters["DC_first_index"] = kipl::strings::value2string(nDCFirstIndex);
     parameters["dose_roi"] =  kipl::strings::value2string(dose_roi[0])+" "+kipl::strings::value2string(dose_roi[1])+" "+kipl::strings::value2string(dose_roi[2])+" "+kipl::strings::value2string(dose_roi[3]);
     parameters["fScanArc"] =  kipl::strings::value2string(fScanArc[0])+" "+kipl::strings::value2string(fScanArc[1]);
+
+    msg<<"end of BBLogNorm::GetParameters";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     return parameters;
 }

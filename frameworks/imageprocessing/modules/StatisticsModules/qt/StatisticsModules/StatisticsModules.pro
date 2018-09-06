@@ -41,7 +41,16 @@ unix:macx {
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib
+    LIBS += -ltiff -lxml2
+    INCLUDEPATH += /usr/include/libxml2
 }
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
+
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
