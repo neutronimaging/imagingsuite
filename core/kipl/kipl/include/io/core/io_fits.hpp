@@ -3,6 +3,8 @@
 #ifndef IO_FITS_HPP_
 #define IO_FITS_HPP_
 
+#include <QDebug>
+
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -32,8 +34,7 @@ int KIPLSHARED_EXPORT FITSDataType(double x);
 template <typename ImgType>
 int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop, size_t idx)
 {
-    (void) idx;
-	using namespace std; 
+    using namespace std;
     ostringstream msg;
 	fitsfile *fptr;
 	int status=0;
@@ -68,8 +69,9 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 	
+
 	size_t dims[3];
-	long coord[3]={1,0,1};
+    long coord[3]={1,0,long(naxis == 3 ? idx +1: 1)};
     if (nCrop==nullptr) {
 		dims[0]=static_cast<size_t>(naxes[0]);
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
@@ -102,7 +104,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 	
     const size_t cnStart = nCrop==nullptr ? 0 : min(static_cast<size_t>(naxes[1]),nCrop[1]);
     const size_t cnStop  = nCrop==nullptr ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
-	
+
     ImgType *pLine=new ImgType[naxes[0]+16];
 	for (size_t i=cnStart, j=0; i<cnStop; i++,j++) {
 		coord[1]=i+1;
@@ -111,13 +113,12 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
                 nullptr, pLine, nullptr, &status))
 		{
 			char err_text[512];
-					fits_get_errstatus(status, err_text);
-					std::stringstream msg;
-					msg<<"ReadFITS: "<<err_text<<" ("<<fname<<")";
-					throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+            fits_get_errstatus(status, err_text);
+            std::stringstream msg;
+            msg<<"ReadFITS: "<<err_text<<" ("<<fname<<")";
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 		}
-		
-        //memcpy(src.GetLinePtr(j),pLine,src.Size(0)*sizeof(ImgType));
+
         std::copy(pLine, pLine+src.Size(0), src.GetLinePtr(j));
 	}
 

@@ -262,7 +262,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 //       float *weights=new float[nProj];
        GetFloatParameterVector(parameters,"weights",weights,nProj);
 
-
        float *angles=new float[nProj];
        GetFloatParameterVector(parameters,"angles",angles,nProj);
 
@@ -274,15 +273,13 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 //        kipl::profile::Timer fdkTimer;
 //        fdkTimer.Tic();
         InitializeBuffers(img.Size(0),img.Size(1));
-        for (int i=0; (i<nProj) && (!m_Interactor->SetProgress(float(i)/nProj,"FDK back-projection")); i++) {
-
+        for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); i++) {
            pProj=projections.GetLinePtr(0,i);
            memcpy(pImg,pProj,sizeof(float)*img.Size());
 
            img *= weights[i];
-//           std::cout << "weigth: " << weights[i] << std::endl;
-//           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
 
+//           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
           this->reconstruct(img, angles[i], nProj);
 
 

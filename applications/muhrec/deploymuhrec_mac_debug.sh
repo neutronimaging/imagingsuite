@@ -103,7 +103,7 @@ fi
 pwd
 ls PlugIns
 
-cd $QTPATH/bin/
+cd $QTBINPATH
 echo "Do deploy..."
 ./macdeployqt $DEST #-dmg
 

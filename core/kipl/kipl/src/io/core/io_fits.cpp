@@ -44,10 +44,10 @@ int KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
 	}
 	int bitpix=0;
 	int naxis;
-	long naxes[3];
+    long naxes[8];
 
 	try {
-		fits_get_img_param(fptr, 2,  &bitpix, &naxis, naxes, &status);
+        fits_get_img_param(fptr, 8,  &bitpix, &naxis, naxes, &status);
 	}
 	catch (std::exception &e) {
 		fits_close_file(fptr,&status);

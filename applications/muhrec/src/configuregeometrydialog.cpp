@@ -168,7 +168,7 @@ void ConfigureGeometryDialog::FindCenter()
 
         ui->labelR2->setText(QString::number(R2,'g',3));
         msg.str("");
-        msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<endl;
+        msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<std::endl;
         logger(kipl::logging::Logger::LogMessage,msg.str());
         plot_data.clear();
         plot_data.append(QPointF(k*roi[1]+m+roi[0],0.0f));

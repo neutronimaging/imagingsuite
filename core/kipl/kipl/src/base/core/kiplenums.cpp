@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <algorithm>
 
 #include "../../../include/base/kiplenums.h"
 #include "../../../include/base/KiplException.h"
@@ -37,10 +38,11 @@ void string2enum(std::string str, kipl::base::eImagePlanes & plane)
 std::ostream &operator<<(std::ostream & s, kipl::base::eImageFlip flip)
 {
 	switch (flip) {
-	case kipl::base::ImageFlipNone: s<<"imageflipnone"; break;
-	case kipl::base::ImageFlipHorizontal: s<<"imagefliphorizontal"; break;
-	case kipl::base::ImageFlipVertical: s<<"imageflipvertical"; break;
+    case kipl::base::ImageFlipNone:               s<<"imageflipnone"; break;
+    case kipl::base::ImageFlipHorizontal:         s<<"imagefliphorizontal"; break;
+    case kipl::base::ImageFlipVertical:           s<<"imageflipvertical"; break;
 	case kipl::base::ImageFlipHorizontalVertical: s<<"imagefliphorizontalvertical"; break;
+    case kipl::base::ImageFlipDefault:            s<<"imageflipdefault"; break;
 	default: throw kipl::base::KiplException("Unknown flip type", __FILE__, __LINE__);
 	}
 
@@ -54,6 +56,7 @@ std::ostream &operator<<(std::ostream & s, kipl::base::eImageRotate rot)
 	case kipl::base::ImageRotate90: s<<"imagerotate90"; break;
 	case kipl::base::ImageRotate180: s<<"imagerotate180"; break;
 	case kipl::base::ImageRotate270: s<<"imagerotate270"; break;
+    case kipl::base::ImageRotateDefault: s<<"imagerotatedefault"; break;
 	default: throw kipl::base::KiplException("Unknown rotate type", __FILE__, __LINE__);
 	}
 
@@ -66,16 +69,19 @@ void  string2enum(std::string str, kipl::base::eImageFlip &flip)
 	else if (str=="imagefliphorizontal") flip=kipl::base::ImageFlipHorizontal;
 	else if (str=="imageflipvertical")   flip=kipl::base::ImageFlipVertical;
 	else if (str=="imagefliphorizontalvertical") flip=kipl::base::ImageFlipHorizontalVertical;
+    else if (str=="imageflipdefault")    flip=kipl::base::ImageFlipDefault;
 	else throw kipl::base::KiplException("Could not transform string to flip type", __FILE__, __LINE__);
 
 }
 
 void  string2enum(std::string str, kipl::base::eImageRotate &rot)
 {
-	if (str=="imagerotatenone") rot=kipl::base::ImageRotateNone;
-	else if (str=="imagerotate90") rot=kipl::base::ImageRotate90;
-	else if (str=="imagerotate180") rot=kipl::base::ImageRotate180;
-	else if (str=="imagerotate270") rot=kipl::base::ImageRotate270;
+    std::transform(str.begin(),str.end(),str.begin(),::tolower);
+    if (str=="imagerotatenone") rot=kipl::base::ImageRotateNone;
+    else if (str=="imagerotate90") rot=kipl::base::ImageRotate90;
+    else if (str=="imagerotate180") rot=kipl::base::ImageRotate180;
+    else if (str=="imagerotate270") rot=kipl::base::ImageRotate270;
+    else if (str=="imagerotatedefault") rot=kipl::base::ImageRotateDefault;
 	else throw kipl::base::KiplException("Could not transform string to rotation type", __FILE__, __LINE__);
 }
 
@@ -336,4 +342,18 @@ KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eEdgeSt
     s<<enum2string(edge);
 
     return s;
+}
+
+std::string enum2string(kipl::base::eImageRotate &rot)
+{
+    switch (rot) {
+    case kipl::base::ImageRotateNone: return "imagerotatenone"; break;
+    case kipl::base::ImageRotate90: return "imagerotate90"; break;
+    case kipl::base::ImageRotate180: return "imagerotate180"; break;
+    case kipl::base::ImageRotate270: return "imagerotate270"; break;
+    case kipl::base::ImageRotateDefault: return "imagerotatedefault"; break;
+    default: throw kipl::base::KiplException("Unknown rotate type", __FILE__, __LINE__);
+    }
+
+    return "imagerotatenone";
 }

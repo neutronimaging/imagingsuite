@@ -5,35 +5,43 @@
 
 #include "buildfilelist.h"
 
-std::list<std::string> BuildFileList(std::list<ImageLoader> &il)
+std::list<std::string> BuildFileList(ImageLoader &il)
 {
-    std::list<int> skiplist;
+   std::list<std::string> flist;
 
-    return BuildFileList(il,skiplist);
+   std::string fname,ext;
+   int fcnt=0;
+
+   ImageLoader &loader = il;
+   auto skipit=loader.m_nSkipList.begin();
+   for (int i=loader.m_nFirst; i<=loader.m_nLast; i++, fcnt++) {
+       if ((!loader.m_nSkipList.empty()) && (skipit!=loader.m_nSkipList.end())) {
+           if (fcnt==*skipit) {
+               skipit++;
+               continue;
+           }
+       }
+       kipl::strings::filenames::MakeFileName(loader.m_sFilemask,i,fname,ext,'#','0');
+       flist.push_back(fname);
+   }
+
+   return flist;
 }
 
-std::list<std::string> BuildFileList(std::list<ImageLoader> &il, std::list<int> &skiplist)
+std::list<std::string> BuildFileList(std::list<ImageLoader> &il)
 {
-    std::list<std::string> flist;
+    std::list<std::string> flist,tmplist;
     std::string fname,ext;
     int fcnt=0;
-    auto skipit=skiplist.begin();
+
 
     for (auto ilit=il.begin(); ilit!=il.end(); ilit++ ) {
         ImageLoader &loader = *ilit;
-
-        for (int i=loader.m_nFirst; i<=loader.m_nLast; i++, fcnt++) {
-            if ((!skiplist.empty()) && (skipit!=skiplist.end())) {
-                if (fcnt==*skipit) {
-                    skipit++;
-                    continue;
-                }
-            }
-            kipl::strings::filenames::MakeFileName(loader.m_sFilemask,i,fname,ext,'#','0');
-            flist.push_back(fname);
-        }
+        tmplist=BuildFileList(loader);
+        flist.insert(flist.end(),tmplist.begin(),tmplist.end());
     }
     return flist;
+
 }
 
 std::map<float,std::string> BuildProjectionFileList(std::list<ImageLoader> &il, int sequence, double arc)

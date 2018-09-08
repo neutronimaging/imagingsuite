@@ -244,6 +244,14 @@ size_t String2List(std::string str, std::list<std::string> &slist)
     return slist.size();
 }
 
-
+std::string List2String(std::list<int> &v)
+{
+    std::ostringstream s;
+    int i=0;
+    for (auto it=v.begin(); it!=v.end(); ++it, ++i) {
+        s<<(*it)<<(i<(v.size()-1) ? " " : "");
+    }
+    return s.str();
+}
 
 }}

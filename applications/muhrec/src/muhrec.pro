@@ -7,7 +7,7 @@
 QT       += core widgets printsupport concurrent
 
 TARGET = MuhRec
-VERSION = 4.0.0
+VERSION = 4.0.1
 TEMPLATE = app
 CONFIG += c++11
 
