@@ -222,7 +222,6 @@ void kiplIOTest::testTIFFMultiFrame()
     for (size_t i=0; i<img3.Size(); ++i) {
         QCOMPARE(img3[i],img3ref[i]);
     }
-
 }
 
 void kiplIOTest::testTIFF32()
