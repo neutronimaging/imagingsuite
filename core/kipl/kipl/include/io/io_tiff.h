@@ -20,6 +20,67 @@
 
 namespace kipl { namespace io {
 
+/// \brief Writes an uncompressed TIFF image from any image data type (grayscale)
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .tif)
+///
+///	\return Error code
+///	\retval 0 The writing failed
+///	\retval 1 Successful
+template <size_t N>
+int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,N> src,const char *fname)
+{
+    TIFF *image;
+    std::stringstream msg;
+
+    // Open the TIFF file
+    if((image = TIFFOpen(fname, "w")) == nullptr){
+        msg.str("");
+        msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
+    size_t nSlices = N == 2 ? 1UL : src.Size(2);
+    size_t sliceSize=src.Size(0)*src.Size(1);
+
+    for (size_t i=0; i<nSlices; ++i) {
+        // We need to set some values for basic tags before we can add any data
+        TIFFSetField(image, TIFFTAG_IMAGEWIDTH, static_cast<int>(src.Size(0)));
+        TIFFSetField(image, TIFFTAG_IMAGELENGTH, static_cast<int>(src.Size(1)));
+        TIFFSetField(image, TIFFTAG_BITSPERSAMPLE, 32); // 32bits
+        TIFFSetField(image, TIFFTAG_SAMPLEFORMAT, 3);   // IEEE floating point
+        TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL, 1);
+        TIFFSetField(image, TIFFTAG_ROWSPERSTRIP, src.Size(1));
+
+        TIFFSetField(image, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
+        TIFFSetField(image, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+        TIFFSetField(image, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
+        TIFFSetField(image, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+
+        TIFFSetField(image, TIFFTAG_XRESOLUTION, src.info.GetDPCMX());
+        TIFFSetField(image, TIFFTAG_YRESOLUTION, src.info.GetDPCMY());
+        TIFFSetField(image, TIFFTAG_RESOLUTIONUNIT, RESUNIT_CENTIMETER);
+        if (src.info.sDescription.empty()==false) {
+            TIFFSetField(image, 270, src.info.sDescription.c_str());
+        }
+
+        // Write the information to the file
+        TIFFWriteEncodedStrip(image, 0, src.GetLinePtr(0,i), sliceSize*sizeof(float));
+
+        if (nSlices!=1)
+            TIFFWriteDirectory(image);
+    }
+    // Close the file
+    TIFFClose(image);
+
+    return 1;
+}
+
+/// \brief Gets the dimensions of a tiff image without reading the image
+/// \param fname file name of the image file
+/// \param dims array with the dimensions
+int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname, size_t *dims);
+
 /// \brief Parses a string to find slope and offset.
 ///
 /// This string could come the comment field in a tiff file created by the Octopus CT recontruction software.
@@ -93,6 +154,78 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname)
 	TIFFClose(image);
 	
 	return 1;
+}
+
+/// \brief Writes an uncompressed TIFF image from any image data type (grayscale)
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .tif)
+///	\param lo lower limit on the data dynamics
+///	\param hi upper limit on the data dynamics
+///
+///	Setting both bounds to zero results in full dynamics rescaled in the interval [0,255].
+///
+///	\return Error code
+///	\retval 0 The writing failed
+///	\retval 1 Successful
+template <class ImgType>
+int WriteTIFF(kipl::base::TImage<ImgType,3> src,const char *fname)
+{
+    TIFF *image;
+
+    std::stringstream msg;
+
+    // Open the TIFF file
+    if((image = TIFFOpen(fname, "w")) == nullptr){
+        msg.str("");
+        msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
+
+    // Write the information to the file
+    kipl::base::TImage<unsigned short,2> tmp(src.Dims());
+
+    for (size_t i=0; i<src.Size(2); ++i) {
+        // We need to set some values for basic tags before we can add any data
+        TIFFSetField(image, TIFFTAG_IMAGEWIDTH,         static_cast<int>(src.Size(0)));
+        TIFFSetField(image, TIFFTAG_IMAGELENGTH,        static_cast<int>(src.Size(1)));
+        TIFFSetField(image, TIFFTAG_BITSPERSAMPLE,      16);
+        TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL,    1);
+        TIFFSetField(image, TIFFTAG_SAMPLEFORMAT,       1);
+        TIFFSetField(image, TIFFTAG_ROWSPERSTRIP,       src.Size(1));
+
+        TIFFSetField(image, TIFFTAG_COMPRESSION,        COMPRESSION_NONE);
+        TIFFSetField(image, TIFFTAG_PHOTOMETRIC,        PHOTOMETRIC_MINISBLACK);
+        TIFFSetField(image, TIFFTAG_FILLORDER,          FILLORDER_MSB2LSB);
+        TIFFSetField(image, TIFFTAG_PLANARCONFIG,       PLANARCONFIG_CONTIG);
+
+        TIFFSetField(image, TIFFTAG_RESOLUTIONUNIT,     RESUNIT_CENTIMETER);
+        TIFFSetField(image, TIFFTAG_XRESOLUTION,        src.info.GetDPCMX());
+        TIFFSetField(image, TIFFTAG_YRESOLUTION,        src.info.GetDPCMY());
+
+        TIFFSetField(image, TIFFTAG_COPYRIGHT,          src.info.sCopyright.c_str());
+        TIFFSetField(image, TIFFTAG_ARTIST,             src.info.sArtist.c_str());
+        TIFFSetField(image, TIFFTAG_SOFTWARE,           src.info.sSoftware.c_str());
+        if (src.info.sDescription.empty()) {
+
+            TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, "slope = 1.0E0\noffset = 0.0E0");
+        }
+        else
+            TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, src.info.sDescription.c_str());
+
+
+        ImgType *pSlice=src.GetLinePtr(0,i);
+        for (size_t j=0; j<tmp.Size(); ++j)
+            tmp[j]=static_cast<unsigned short>(pSlice[j]);
+
+        TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), src.Size()*sizeof(unsigned short));
+
+        TIFFWriteDirectory(image);
+    }
+    // Close the file
+    TIFFClose(image);
+
+    return 1;
 }
 
 template <class ImgType>
@@ -529,20 +662,51 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 	return bps;
 }
 
-
-/// \brief Writes an uncompressed TIFF image from any image data type (grayscale)
+/// \brief Reads the contents of a tiff file and stores the contents in the data type specified by the image
 ///	\param src the image to be stored
-///	\param fname file name of the destination file (including extension .tif)
+///	\param fname file name of the destination file (including extension .bmp)
 ///
 ///	\return Error code
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
-int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname);
+template <class ImgType>
+int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const char *fname, size_t const * const crop=nullptr)
+{
+    std::ostringstream msg;
+    size_t dims[3];
+    int nframes=GetTIFFDims(fname,dims);
 
-/// \brief Gets the dimensions of a tiff image without reading the image
-/// \param fname file name of the image file
-/// \param dims array with the dimensions
-int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname, size_t *dims);
+    dims[2]=nframes;
+
+    try {
+        src.Resize(dims);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Failed to allocate 3D image for "<<fname<<"\n"<<e.what();
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Failed to allocate 3D image for "<<fname<<"\n"<<e.what();
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg.str("");
+        msg<<"Failed to allocate 3D image for "<<fname<<" with an unhandled exception";
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+    kipl::base::TImage<float,2> img;
+    int res=0;
+    for (size_t i=0; i< static_cast<size_t>(nframes); ++i) {
+        res=ReadTIFF(img,fname,crop,i);
+        std::copy_n(img.GetDataPtr(),img.Size(),src.GetLinePtr(0,i));
+    }
+
+    return res;
+}
+
+
 
 /// \brief Reads a single line out of a tiff file
 /// \param data buffer array for the data

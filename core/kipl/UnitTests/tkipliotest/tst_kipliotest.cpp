@@ -30,6 +30,7 @@ private Q_SLOTS:
     void testSEQRead();
     void testTIFFBasicReadWrite();
     void testTIFFMultiFrame();
+    void testTIFF32();
 };
 
 kiplIOTest::kiplIOTest()
@@ -170,8 +171,13 @@ void kiplIOTest::testTIFFMultiFrame()
     size_t crop[4]={10,10,100,100};
 
     kipl::base::TImage<float,2> img, img_crop;
+
+    dims[2]=nframes;
+    kipl::base::TImage<float,3> img3ref(dims);
     for (int i = 0 ; i<nframes; ++i) {
         kipl::io::ReadTIFF(img,fname.c_str(),nullptr,i);
+        std::copy_n(img.GetDataPtr(),img.Size(),img3ref.GetLinePtr(0,i));
+
         QCOMPARE(img.Size(0),145UL);
         QCOMPARE(img.Size(1),249UL);
 
@@ -192,8 +198,68 @@ void kiplIOTest::testTIFFMultiFrame()
             for (size_t x=0; x<img_crop.Size(0); x++)
                 QCOMPARE(pLine1[x],pLine0[x]);
         }
+    }
 
+    kipl::base::TImage<float,3> img3;
+    kipl::io::ReadTIFF(img3,fname.c_str());
 
+    QCOMPARE(img3.Size(0),img3ref.Size(0));
+    QCOMPARE(img3.Size(1),img3ref.Size(1));
+    QCOMPARE(img3.Size(2),img3ref.Size(2));
+
+    for (size_t i=0; i<img3.Size(); ++i) {
+        QCOMPARE(img3[i],img3ref[i]);
+    }
+
+    kipl::io::WriteTIFF(img3ref,"test.tif");
+    img3.FreeImage();
+    kipl::io::ReadTIFF(img3,"test.tif");
+
+    QCOMPARE(img3.Size(0),img3ref.Size(0));
+    QCOMPARE(img3.Size(1),img3ref.Size(1));
+    QCOMPARE(img3.Size(2),img3ref.Size(2));
+
+    for (size_t i=0; i<img3.Size(); ++i) {
+        QCOMPARE(img3[i],img3ref[i]);
+    }
+
+}
+
+void kiplIOTest::testTIFF32()
+{
+    size_t dims[3]={100,110,120};
+
+    kipl::base::TImage<float,2> imgref2d(dims);
+    kipl::base::TImage<float,3> imgref3d(dims);
+
+    float scale=1.0f/static_cast<float>(imgref2d.Size());
+    for (size_t i=0; i<imgref2d.Size(); ++i)
+        imgref2d[i]=static_cast<float>(i)*scale;
+    kipl::io::WriteTIFF32(imgref2d,"tiff32_2D.tif");
+
+    scale=1.0f/static_cast<float>(imgref3d.Size());
+    for (size_t i=0; i<imgref3d.Size(); ++i)
+        imgref3d[i]=static_cast<float>(i)*scale;
+    kipl::io::WriteTIFF32(imgref3d,"tiff32_3D.tif");
+
+    kipl::base::TImage<float,2> img2d(dims);
+    kipl::io::ReadTIFF(img2d,"tiff32_2D.tif");
+    QCOMPARE(img2d.Size(0),imgref2d.Size(0));
+    QCOMPARE(img2d.Size(1),imgref2d.Size(1));
+
+    for (size_t i=0; i<img2d.Size(); ++i) {
+        QCOMPARE(img2d[i],imgref2d[i]);
+    }
+
+    kipl::base::TImage<float,3> img3d(dims);
+    kipl::io::ReadTIFF(img3d,"tiff32_3D.tif");
+
+    QCOMPARE(img3d.Size(0),imgref3d.Size(0));
+    QCOMPARE(img3d.Size(1),imgref3d.Size(1));
+    QCOMPARE(img3d.Size(2),imgref3d.Size(2));
+
+    for (size_t i=0; i<img3d.Size(); ++i) {
+        QCOMPARE(img3d[i],imgref3d[i]);
     }
 
 }
