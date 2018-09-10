@@ -1507,12 +1507,29 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
     float *doselist=nullptr;
 
 
+    ImageReader reader;
+
 
     if (bUseNormROI==true) {
         doselist=new float[nDose];
-        GetFloatParameterVector(coeff,"dose",doselist,nDose);
+//        GetFloatParameterVector(coeff,"dose",doselist,nDose); // i don't have this fucking parameter
+        std:: string filename,ext;
+        std::string fmask = m_Config.mImageInformation.sSourceFileMask;
+        int firstIndex = m_Config.mImageInformation.nFirstFileIndex;
+
+
         for (int i=0; i<nDose; i++) {
-            doselist[i] = doselist[i]-fDarkDose;
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex+i,filename,ext,'#','0');
+
+            msg.str(""); msg<<"Reading dose for: " << filename;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+
+            float dose = reader.GetProjectionDose(filename,
+                                                   kipl::base::ImageFlipNone,
+                                                  kipl::base::ImageRotateNone,
+                                                  1.0f,
+                                                  dose_roi);
+            doselist[i] = dose-fDarkDose;
         }
     }
 
