@@ -14,6 +14,10 @@ public:
 
     std::vector<float> getProfile(kipl::base::TImage<float,2> &img);
 
+private:
+    void makeRawProfiles(kipl::base::TImage<float,2> &img);
+
+
 };
 
 }

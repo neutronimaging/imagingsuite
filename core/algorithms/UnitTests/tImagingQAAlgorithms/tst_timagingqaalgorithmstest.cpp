@@ -11,6 +11,7 @@
 
 #include <contrastsampleanalysis.h>
 #include <resolutionestimators.h>
+#include <profileextractor.h>
 
 class TImagingQAAlgorithmsTest : public QObject
 {
@@ -23,6 +24,7 @@ private Q_SLOTS:
     void testContrastSampleAnalysis();
     void testResEstAdmin();
     void testResEstAlg();
+    void testProfileExtractor();
 };
 
 TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
@@ -61,9 +63,12 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 
 }
 
-
-
 void TImagingQAAlgorithmsTest::testResEstAlg()
+{
+
+}
+
+void TImagingQAAlgorithmsTest::testProfileExtractor()
 {
 
 }

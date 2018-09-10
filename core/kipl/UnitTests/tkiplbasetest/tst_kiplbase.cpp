@@ -11,6 +11,7 @@
 #include <base/tsubimage.h>
 #include <base/trotate.h>
 #include <base/marginsetter.h>
+#include <base/tprofile.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -40,6 +41,9 @@ private Q_SLOTS:
 
     /// Tests margin setter
     void testMarginSetter();
+
+    /// Tests vertical and horizsontal profiles
+    void testProfiles();
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -442,6 +446,19 @@ void TkiplbasetestTest::testMarginSetter()
                 QVERIFY(pLine[i]==val);
         }
     }
+}
+
+void TkiplbasetestTest::testProfiles()
+{
+    size_t dims[2]={4,3};
+    kipl::base::TImage<float,2> img(dims);
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+    float *vp=new float[dims[0]];
+    float *hp=new float[dims[1]];
+    kipl::base::VerticalProjection2D(img.GetDataPtr(), img.Dims(), vp);
+    kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
 }
 
 QTEST_APPLESS_MAIN(TkiplbasetestTest)
