@@ -66,6 +66,10 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     blackbodysamplename = "./";
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
+    path="./";
+    flatname="";
+    darkname="";
+
 
 }
 
@@ -79,7 +83,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 {
 
     std::stringstream msg;
-    msg<<"beginnig of BBLogNorm::Configure";
+    msg<<"Configuring BBLogNorm::Configure";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     m_Config    = config;
@@ -209,8 +213,9 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
             PrepareBBData();
     }
 
+    SetROI(m_Config.mImageInformation.nROI);
 //    std::stringstream msg;
-    msg<<"end of BBLogNorm::Configure";
+    msg<<"Configuring done";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
 
@@ -340,23 +345,24 @@ int BBLogNorm::ConfigureDLG(std::map<std::string, std::string> parameters)
     return 1;
 }
 
-bool BBLogNorm::SetROI(size_t *roi) {
+bool BBLogNorm::SetROI(size_t *roi) { // that is not loaded.
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
+    memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t)); //nNormRegion seems not used
 
     LoadReferenceImages(roi);
-    memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t)); //nNormRegion seems not used
     return true;
 }
 
 
 std::map<std::string, std::string> BBLogNorm::GetParameters() {
+
     std::map<std::string, std::string> parameters;
 
     std::stringstream msg;
-    msg<<"begin of BBLogNorm::GetParameters";
+    msg<<"Getting Parameters for BBLogNorm";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     parameters["window"] = kipl::strings::value2string(m_nWindow);
@@ -396,6 +402,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     parameters["DC_first_index"] = kipl::strings::value2string(nDCFirstIndex);
     parameters["dose_roi"] =  kipl::strings::value2string(dose_roi[0])+" "+kipl::strings::value2string(dose_roi[1])+" "+kipl::strings::value2string(dose_roi[2])+" "+kipl::strings::value2string(dose_roi[3]);
     parameters["fScanArc"] =  kipl::strings::value2string(fScanArc[0])+" "+kipl::strings::value2string(fScanArc[1]);
+    parameters["path"]= path;
 
     msg<<"end of BBLogNorm::GetParameters";
     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -405,6 +412,10 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
 
 void BBLogNorm::LoadReferenceImages(size_t *roi)
 {
+
+    std::stringstream msg;
+    msg<<"Loading reference images with roi: "<< roi[0] << " " << roi[1] << " " << roi[2] <<" " << roi[3];
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if (flatname.empty() && nOBCount!=0)
         throw ImagingException("The flat field image mask is empty",__FILE__,__LINE__);
@@ -416,11 +427,11 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
 
     fDarkDose=0.0f;
     fFlatDose=1.0f;
-    std::string flatmask=path+flatname;
-    std::string darkmask=path+darkname;
+    std::string flatmask=flatname;
+    std::string darkmask=darkname;
 
-    mydark = ReferenceLoader(darkmask,nDCFirstIndex,nDCCount,roi,0.0f,0.0f,m_Config, fDarkDose);
     myflat = ReferenceLoader(flatmask,nOBFirstIndex,nOBCount,roi,1.0f,0.0f,m_Config, fFlatDose); // i don't use the bias.. beacuse i think i use it later on
+    mydark = ReferenceLoader(darkmask,nDCFirstIndex,nDCCount,roi,0.0f,0.0f,m_Config, fDarkDose);
     SetReferenceImages(mydark,myflat);
 
 //    switch (m_BBOptions){
@@ -464,6 +475,9 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
 //    }
 
      m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, dose_roi);
+
+     msg<<"References loaded";
+     logger(kipl::logging::Logger::LogMessage,msg.str());
 
 }
 
@@ -1481,10 +1495,18 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 
 int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) {
 
+    // here I should call as well the SetRoi
+
+    std::stringstream msg;
+    msg.str(""); msg<<"ProcessCore";
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+
+
     int nDose=img.Size(2);
     float *doselist=nullptr;
 
-    std::stringstream msg;
+
 
     if (bUseNormROI==true) {
         doselist=new float[nDose];
@@ -1557,12 +1579,19 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 //         if (found==std::string::npos ) {
 
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+
+            msg.str(""); msg<<"Reading images with name: " << filename << " and roi: "<< roi[0] <<
+                              " " << roi[1] << " " << roi[2] << " " << roi[3];
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+
             img = reader.Read(filename,
                                kipl::base::ImageFlipNone,
                               kipl::base::ImageRotateNone,
                               1.0f,
                               roi);
 
+            msg.str(""); msg<<"Reading dose";
+            logger(kipl::logging::Logger::LogMessage,msg.str());
             tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
                                                            kipl::base::ImageFlipNone,
                                                           kipl::base::ImageRotateNone,

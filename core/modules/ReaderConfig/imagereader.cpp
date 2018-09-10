@@ -233,7 +233,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
         }
     }
     catch (ReaderException &e) {
-        msg<<"Failed to read "<<filename<<" recon exception:\n"<<e.what();
+        msg<<"Failed to read "<<filename<<" reader exception:\n"<<e.what();
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
     catch (kipl::base::KiplException &e) {
