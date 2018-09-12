@@ -43,13 +43,9 @@ TImage<T1,N> ImageCaster<T1,T2,N>::cast(const TImage<T2,N> & img, T2 lo, T2 hi)
 #undef max
 	const float scale=static_cast<float>(std::numeric_limits<T1>::max())/(hi-lo);
     for (size_t i=0; i<nData; i++) {
-		val=pImg[i];
-		if (val<lo)
-			val=lo;
-		else if (hi<val)
-			val=hi;
+        val=(min(max(pImg[i],lo),hi)-lo)*scale;
 		
-		pRes[i]=static_cast<T1>(scale*(val-lo));
+        pRes[i]=static_cast<T1>(val);
 	}
 
 	res.info=img.info;

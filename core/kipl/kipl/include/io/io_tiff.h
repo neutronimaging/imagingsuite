@@ -175,12 +175,12 @@ int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname)
 ///	\return Error code
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
-template <class ImgType>
-int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname, ImgType lo, ImgType hi)
+template <class ImgType,size_t N>
+int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname, ImgType lo, ImgType hi)
 {
-	kipl::base::TImage<unsigned short,2> img;
+    kipl::base::TImage<unsigned short,N> img;
 	try {
-		img=kipl::base::ImageCaster<unsigned short, ImgType, 2>::cast(src,lo,hi);
+        img=kipl::base::ImageCaster<unsigned short, ImgType, N>::cast(src,lo,hi);
 		if (src.info.sDescription.empty()) {
 			std::stringstream msg;
 

@@ -31,6 +31,7 @@ private Q_SLOTS:
     void testTIFFBasicReadWrite();
     void testTIFFMultiFrame();
     void testTIFF32();
+    void testTIFFclamp();
 };
 
 kiplIOTest::kiplIOTest()
@@ -269,6 +270,51 @@ void kiplIOTest::testTIFF32()
 
     kipl::base::TImage<float,3> img3d(dims);
     kipl::io::ReadTIFF(img3d,"tiff32_3D.tif");
+
+    QCOMPARE(img3d.Size(0),imgref3d.Size(0));
+    QCOMPARE(img3d.Size(1),imgref3d.Size(1));
+    QCOMPARE(img3d.Size(2),imgref3d.Size(2));
+
+    for (size_t i=0; i<img3d.Size(); ++i) {
+        QCOMPARE(img3d[i],imgref3d[i]);
+    }
+
+}
+
+void kiplIOTest::testTIFFclamp()
+{
+    size_t dims[3]={100,110,120};
+
+    kipl::base::TImage<float,2> imgref2d(dims);
+    kipl::base::TImage<float,3> imgref3d(dims);
+
+    float clampmin=0.1f;
+    float clampmax=0.9f;
+
+    float scale=1.0f/static_cast<float>(imgref2d.Size());
+    for (size_t i=0; i<imgref2d.Size(); ++i)
+        imgref2d[i]=static_cast<float>(i)*scale;
+    kipl::io::WriteTIFF(imgref2d,"tiffclamp_2D.tif",clampmin,clampmax);
+
+    scale=1.0f/static_cast<float>(imgref3d.Size());
+    for (size_t i=0; i<imgref3d.Size(); ++i)
+        imgref3d[i]=static_cast<float>(i)*scale;
+    kipl::io::WriteTIFF(imgref3d,"tiffclamp_3D.tif",clampmin,clampmax);
+
+    kipl::base::TImage<float,2> img2d(dims);
+    kipl::io::ReadTIFF(img2d,"tiffclamp_2D.tif");
+    QCOMPARE(img2d.Size(0),imgref2d.Size(0));
+    QCOMPARE(img2d.Size(1),imgref2d.Size(1));
+
+    for (size_t i=0; i<img2d.Size(); ++i) {
+
+        float val=(min(max(imgref2d[i],clampmin),clampmax)-clampmin)*65535;
+        qDebug() << i<<", " <<imgref2d[i]<<", "<<val<<", "<< img2d[i];
+        QCOMPARE(img2d[i],val);
+    }
+
+    kipl::base::TImage<float,3> img3d(dims);
+    kipl::io::ReadTIFF(img3d,"tiffclamp_3D.tif");
 
     QCOMPARE(img3d.Size(0),imgref3d.Size(0));
     QCOMPARE(img3d.Size(1),imgref3d.Size(1));
