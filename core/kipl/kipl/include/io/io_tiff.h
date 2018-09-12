@@ -198,6 +198,81 @@ int WriteTIFF(kipl::base::TImage<ImgType,2> src,const char *fname, ImgType lo, I
 	return WriteTIFF(img,fname);
 }
 
+/// \brief Writes an uncompressed TIFF image from any image data type (grayscale)
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .tif)
+///	\param lo lower limit on the data dynamics
+///	\param hi upper limit on the data dynamics
+///
+///	Setting both bounds to zero results in full dynamics rescaled in the interval [0,255].
+///
+///	\return Error code
+///	\retval 0 The writing failed
+///	\retval 1 Successful
+template <class ImgType, size_t N>
+int AppendTIFF(kipl::base::TImage<ImgType,N> src,const char *fname) {
+    TIFF *image;
+    kipl::base::TImage<unsigned short,2> tmp(src.Dims());
+    std::stringstream msg;
+
+    // Open the TIFF file
+    if((image = TIFFOpen(fname, "a")) == nullptr){
+        msg.str("");
+        msg<<"WriteTIFF: Could not open "<<fname<<" for appending";
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
+    int framecnt=0;
+    while (TIFFLastDirectory(image)==false){
+        TIFFReadDirectory(image);
+        framecnt++;
+    }
+    size_t nSlices= N==2 ? 1 : src.Size(2);
+    size_t sliceSize=src.Size(0)*src.Size(1);
+
+    for (size_t i=0; i<nSlices; ++i) {
+        // We need to set some values for basic tags before we can add any data
+        TIFFSetField(image, TIFFTAG_IMAGEWIDTH,         static_cast<int>(src.Size(0)));
+        TIFFSetField(image, TIFFTAG_IMAGELENGTH,        static_cast<int>(src.Size(1)));
+        TIFFSetField(image, TIFFTAG_BITSPERSAMPLE,      16);
+        TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL,    1);
+        TIFFSetField(image, TIFFTAG_SAMPLEFORMAT,       1);
+        TIFFSetField(image, TIFFTAG_ROWSPERSTRIP,       src.Size(1));
+
+        TIFFSetField(image, TIFFTAG_COMPRESSION,        COMPRESSION_NONE);
+        TIFFSetField(image, TIFFTAG_PHOTOMETRIC,        PHOTOMETRIC_MINISBLACK);
+        TIFFSetField(image, TIFFTAG_FILLORDER,          FILLORDER_MSB2LSB);
+        TIFFSetField(image, TIFFTAG_PLANARCONFIG,       PLANARCONFIG_CONTIG);
+
+        TIFFSetField(image, TIFFTAG_RESOLUTIONUNIT,     RESUNIT_CENTIMETER);
+        TIFFSetField(image, TIFFTAG_XRESOLUTION,        src.info.GetDPCMX());
+        TIFFSetField(image, TIFFTAG_YRESOLUTION,        src.info.GetDPCMY());
+
+        TIFFSetField(image, TIFFTAG_COPYRIGHT,          src.info.sCopyright.c_str());
+        TIFFSetField(image, TIFFTAG_ARTIST,             src.info.sArtist.c_str());
+        TIFFSetField(image, TIFFTAG_SOFTWARE,           src.info.sSoftware.c_str());
+        if (src.info.sDescription.empty()) {
+
+            TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, "slope = 1.0E0\noffset = 0.0E0");
+        }
+        else
+            TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, src.info.sDescription.c_str());
+
+        // Write the information to the file
+        ImgType *pSlice=src.GetLinePtr(0,i);
+        for (size_t j=0; j<tmp.Size(); ++j)
+            tmp[j]=static_cast<unsigned short>(pSlice[j]);
+
+        TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned short));
+        if (N!=2)
+            TIFFWriteDirectory(image);
+    }
+    // Close the file
+    TIFFClose(image);
+
+    return 1;
+}
+
 /// \brief Reads the contents of a tiff file and stores the contents in the data type specified by the image
 ///	\param src the image to be stored
 ///	\param fname file name of the destination file

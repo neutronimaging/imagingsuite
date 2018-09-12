@@ -222,6 +222,23 @@ void kiplIOTest::testTIFFMultiFrame()
     for (size_t i=0; i<img3.Size(); ++i) {
         QCOMPARE(img3[i],img3ref[i]);
     }
+
+    kipl::base::TImage<float,3> img3ref2=img3ref;
+    img3ref2+=1.0f;
+
+    kipl::io::AppendTIFF(img3ref2,"test.tif");
+
+    img3.FreeImage();
+    kipl::io::ReadTIFF(img3,"test.tif");
+
+    QCOMPARE(img3.Size(0),img3ref.Size(0));
+    QCOMPARE(img3.Size(1),img3ref.Size(1));
+    QCOMPARE(img3.Size(2),2*img3ref.Size(2));
+
+    for (size_t i=0; i<img3ref.Size(); ++i) {
+        QCOMPARE(img3[i],img3ref[i]);
+        QCOMPARE(img3[i+img3ref.Size()],img3ref2[i]);
+    }
 }
 
 void kiplIOTest::testTIFF32()
