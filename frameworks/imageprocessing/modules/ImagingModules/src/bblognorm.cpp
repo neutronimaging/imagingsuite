@@ -573,8 +573,8 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 
-    std::string flatmask=path+flatname;
-    std::string darkmask=path+darkname;
+    std::string flatmask=flatname;
+    std::string darkmask=darkname;
 
 
     fdarkBBdose=0.0f;
@@ -944,8 +944,8 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 
-    std::string flatmask=path+flatname;
-    std::string darkmask=path+darkname;
+    std::string flatmask=flatname;
+    std::string darkmask=darkname;
 
 
     fdarkBBdose=0.0f;
@@ -1402,8 +1402,8 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     kipl::base::TImage<float,2> flat, dark, bb;
 
-    std::string flatmask=path+flatname;
-    std::string darkmask=path+darkname;
+    std::string flatmask=flatname;
+    std::string darkmask=darkname;
 
 
 

@@ -206,7 +206,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 	
 	if(photo == PHOTOMETRIC_MINISWHITE){
 		// Flip bits
-		clog<<"Fixing the photometric interpretation"<<endl;
+        std::clog<<"Fixing the photometric interpretation"<<std::endl;
 		
 		for(count = 0; count < bufferSize; count++)
 			buffer[count] = ~buffer[count];
@@ -219,7 +219,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 	
 	if(fillorder != FILLORDER_MSB2LSB){
 		// We need to swap bits -- ABCDEFGH becomes HGFEDCBA
-		clog<<"Fixing the fillorder"<<endl;
+        std::clog<<"Fixing the fillorder"<<std::endl;
 		
 		for(count = 0; count < bufferSize; count++){
 			tempbyte = 0;
@@ -404,7 +404,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 		
 		if(photo == PHOTOMETRIC_MINISWHITE){
 			// Flip bits
-			clog<<"Fixing the photometric interpretation"<<endl;
+            std::clog<<"Fixing the photometric interpretation"<<std::endl;
 			
 			for(count = 0; count < bufferSize; count++)
 				buffer[count] = ~buffer[count];
@@ -417,7 +417,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 		
 		if(fillorder != FILLORDER_MSB2LSB){
 			// We need to swap bits -- ABCDEFGH becomes HGFEDCBA
-			clog<<"Fixing the fillorder"<<endl;
+            std::clog<<"Fixing the fillorder"<<std::endl;
 			
 			for(count = 0; count < bufferSize; count++){
 				tempbyte = 0;

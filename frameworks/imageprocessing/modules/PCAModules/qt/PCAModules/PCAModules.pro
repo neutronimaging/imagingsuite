@@ -42,6 +42,13 @@ HEADERS += \
 
 unix:INCLUDEPATH += $$PWD/../../../../../../external/src/linalg
 
+win32 {
+
+    INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+}
+
 symbian {
     MMP_RULES += EXPORTUNFROZEN
     TARGET.UID3 = 0xEFEEBACE

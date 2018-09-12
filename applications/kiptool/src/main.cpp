@@ -96,15 +96,15 @@ int RunOffline(QApplication * a)
             engine=factory.BuildEngine(config);
         }
         catch (ModuleException & e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -1;
         }
         catch (KiplFrameworkException &e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -2;
         }
         catch (kipl::base::KiplException &e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -3;
         }
 
@@ -114,23 +114,23 @@ int RunOffline(QApplication * a)
             engine->SaveImage();
         }
         catch (ModuleException &e) {
-            cerr<<"ModuleException: "<<e.what();
+            std::cerr<<"ModuleException: "<<e.what();
             return -4;
         }
         catch (KiplFrameworkException &e) {
-            cerr<<"KiplFrameworkException: "<<e.what();
+            std::cerr<<"KiplFrameworkException: "<<e.what();
             return -5;
         }
         catch (kipl::base::KiplException &e) {
-            cerr<<"KiplException: "<<e.what();
+            std::cerr<<"KiplException: "<<e.what();
             return -6;
         }
         catch (std::exception &e) {
-            cerr<<"STL Exception: "<<e.what();
+            std::cerr<<"STL Exception: "<<e.what();
             return -7;
         }
         catch (...) {
-            cerr<<"Unhandled exception";
+            std::cerr<<"Unhandled exception";
             return -8;
         }
     }
