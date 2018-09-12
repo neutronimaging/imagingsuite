@@ -4,6 +4,7 @@
 #define FINDPEAKS_H
 
 #include <list>
+#include "../kipl_global.h"
 
 namespace kipl {
 namespace math {

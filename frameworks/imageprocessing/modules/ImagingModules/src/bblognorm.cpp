@@ -13,7 +13,7 @@
 
 #include "bblognorm.h"
 #include "../include/ImagingException.h"
-#include <ImageReader.h>
+#include <imagereader.h>
 
 BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
@@ -84,7 +84,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     std::stringstream msg;
     msg<<"Configuring BBLogNorm::Configure";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
     m_Config    = config;
 //    path        = config.ProjectionInfo.sReferencePath;
@@ -216,7 +216,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     SetROI(m_Config.mImageInformation.nROI);
 //    std::stringstream msg;
     msg<<"Configuring done";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
 
     return 1;
@@ -340,7 +340,7 @@ int BBLogNorm::ConfigureDLG(std::map<std::string, std::string> parameters)
 
     std::stringstream msg;
     msg<<"end of BBLogNorm::ConfigureDlg, empty for now";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
     return 1;
 }
@@ -349,7 +349,7 @@ bool BBLogNorm::SetROI(size_t *roi) { // that is not loaded.
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
     memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t)); //nNormRegion seems not used
 
     LoadReferenceImages(roi);
@@ -363,7 +363,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
 
     std::stringstream msg;
     msg<<"Getting Parameters for BBLogNorm";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
@@ -405,7 +405,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     parameters["path"]= path;
 
     msg<<"end of BBLogNorm::GetParameters";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
     return parameters;
 }
@@ -415,7 +415,7 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
 
     std::stringstream msg;
     msg<<"Loading reference images with roi: "<< roi[0] << " " << roi[1] << " " << roi[2] <<" " << roi[3];
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
     if (flatname.empty() && nOBCount!=0)
         throw ImagingException("The flat field image mask is empty",__FILE__,__LINE__);
@@ -477,7 +477,7 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
      m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, dose_roi);
 
      msg<<"References loaded";
-     logger(kipl::logging::Logger::LogMessage,msg.str());
+     logger(kipl::logging::Logger::LogDebug,msg.str());
 
 }
 
@@ -506,7 +506,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
 
 void BBLogNorm::PrepareBBData(){
 
-    logger(kipl::logging::Logger::LogMessage,"PrepareBBData begin--");
+    logger(kipl::logging::Logger::LogDebug,"PrepareBBData begin--");
     std::cout << "PrepareBBData begin--" << std::endl;
     if (flatname.empty() && nOBCount!=0)
         throw ImagingException("The flat field image mask is empty",__FILE__,__LINE__);
@@ -550,11 +550,11 @@ void BBLogNorm::PrepareBBData(){
         }
         case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
             std::cout << "ThinPlateSplines" << std::endl;
-             logger(kipl::logging::Logger::LogMessage,"ThinPlateSplines");
+             logger(kipl::logging::Logger::LogDebug,"ThinPlateSplines");
 
             int nBBs = PrepareSplinesInterpolationParameters();
 
-             logger(kipl::logging::Logger::LogMessage,"After PrepareSplinesInterpolationParameters ");
+             logger(kipl::logging::Logger::LogDebug,"After PrepareSplinesInterpolationParameters ");
 
             if (nBBCount!=0 && nBBSampleCount!=0) {
                 m_corrector.SetSplinesParameters(ob_bb_param, sample_bb_param, nBBSampleCount, nProj, m_BBOptions, nBBs); // i also need the coordinates.
@@ -654,7 +654,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
                  if (nBBSampleCount!=0) {
 
-                     logger(kipl::logging::Logger::LogMessage,"Loading sample images with BB");
+                     logger(kipl::logging::Logger::LogDebug,"Loading sample images with BB");
 
 //                     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
 //                     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1032,7 +1032,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
                       if (nBBSampleCount!=0) {
 
-                          logger(kipl::logging::Logger::LogMessage,"Loading sample images with BB");
+                          logger(kipl::logging::Logger::LogDebug,"Loading sample images with BB");
 
 //                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
 //                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1445,7 +1445,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     std::stringstream msg;
     msg.str(""); msg<<"Min area set to  "<<min_area;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
@@ -1499,7 +1499,7 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
     std::stringstream msg;
     msg.str(""); msg<<"ProcessCore";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
 
 
 
@@ -1522,7 +1522,7 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
             kipl::strings::filenames::MakeFileName(fmask,firstIndex+i,filename,ext,'#','0');
 
             msg.str(""); msg<<"Reading dose for: " << filename;
-            logger(kipl::logging::Logger::LogMessage,msg.str());
+            logger(kipl::logging::Logger::LogDebug,msg.str());
 
             float dose = reader.GetProjectionDose(filename,
                                                    kipl::base::ImageFlipNone,
@@ -1589,7 +1589,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
     if (N!=0) {
         msg.str(""); msg<<"Loading "<<N<<" reference images";
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger(kipl::logging::Logger::LogDebug,msg.str());
 
         //TODO: handle NeXus in the future
 //        found = fmask.find("hdf");
@@ -1599,7 +1599,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
             msg.str(""); msg<<"Reading images with name: " << filename << " and roi: "<< roi[0] <<
                               " " << roi[1] << " " << roi[2] << " " << roi[3];
-            logger(kipl::logging::Logger::LogMessage,msg.str());
+            logger(kipl::logging::Logger::LogDebug,msg.str());
 
             img = reader.Read(filename,
                                kipl::base::ImageFlipNone,
@@ -1608,7 +1608,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
                               roi);
 
             msg.str(""); msg<<"Reading dose";
-            logger(kipl::logging::Logger::LogMessage,msg.str());
+            logger(kipl::logging::Logger::LogDebug,msg.str());
             tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
                                                            kipl::base::ImageFlipNone,
                                                           kipl::base::ImageRotateNone,
@@ -1681,7 +1681,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
         dose/=static_cast<float>(N);
         msg.str(""); msg<<"Dose="<<dose;
-        logger(logger.LogMessage,msg.str());
+        logger(logger.LogDebug,msg.str());
 
         float *tempdata=new float[N];
         refimg.Resize(img.Dims());
@@ -1705,7 +1705,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         logger(kipl::logging::Logger::LogWarning,"Reference image count is zero");
 
     msg.str(""); msg<<"Loaded reference image (dose="<<dose<<")";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
     return refimg;
 }
 
@@ -1735,7 +1735,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
     if (N!=0) {
         msg.str(""); msg<<"Loading "<<N<<" reference images";
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger(kipl::logging::Logger::LogDebug,msg.str());
 
         found = fmask.find("hdf");
 
@@ -1816,7 +1816,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
         dose/=static_cast<float>(N);
         msg.str(""); msg<<"Dose="<<dose;
-        logger(logger.LogMessage,msg.str());
+        logger(logger.LogDebug,msg.str());
 
         refimg.Resize(img.Dims());
 
@@ -1838,7 +1838,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         logger(kipl::logging::Logger::LogWarning,"Reference image count is zero");
 
     msg.str(""); msg<<"Loaded reference image (dose="<<dose<<")";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger(kipl::logging::Logger::LogDebug,msg.str());
     return refimg;
 }
 

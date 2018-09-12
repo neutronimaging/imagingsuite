@@ -35,6 +35,7 @@ unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+    INCLUDEPATH += /usr/include/libxml2
 }
 
 unix:macx {
@@ -45,6 +46,7 @@ unix:macx {
     INCLUDEPATH += /opt/local/include/libxml2
 
 }
+
 
 macx: {
 INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
