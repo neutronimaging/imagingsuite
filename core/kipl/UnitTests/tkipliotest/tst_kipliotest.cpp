@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <limits>
 
 #include <QString>
 #include <QtTest>
@@ -283,6 +284,8 @@ void kiplIOTest::testTIFF32()
 
 void kiplIOTest::testTIFFclamp()
 {
+    QWARN("Test accepts a difference of +-1");
+    std::ostringstream msg;
     size_t dims[3]={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
@@ -306,11 +309,22 @@ void kiplIOTest::testTIFFclamp()
     QCOMPARE(img2d.Size(0),imgref2d.Size(0));
     QCOMPARE(img2d.Size(1),imgref2d.Size(1));
 
+    float slope=0.0f;
+    float intercept=0.0f;
+    kipl::io::GetSlopeOffset(img2d.info.sDescription,slope,intercept);
+
+//    QCOMPARE(slope,static_cast<float>(std::numeric_limits<unsigned short>::max())/(clampmax-clampmin));
+//    QCOMPARE(intercept,clampmin);
+
     for (size_t i=0; i<img2d.Size(); ++i) {
 
-        float val=(min(max(imgref2d[i],clampmin),clampmax)-clampmin)*65535;
-        qDebug() << i<<", " <<imgref2d[i]<<", "<<val<<", "<< img2d[i];
-        QCOMPARE(img2d[i],val);
+        float val=(min(max(imgref2d[i],clampmin),clampmax)-clampmin)*static_cast<float>(std::numeric_limits<unsigned short>::max())/(clampmax-clampmin);
+        float diff=fabs(img2d[i]-static_cast<float>(static_cast<unsigned short>(val)));
+
+        msg.str("");
+        msg<<"i="<<i<<", val="<<val<<", img2d[i]="<<img2d[i]<<", diff="<<diff;
+
+        QVERIFY2(fabs(img2d[i]-val)<=1.0f,msg.str().c_str());
     }
 
     kipl::base::TImage<float,3> img3d(dims);
@@ -321,7 +335,14 @@ void kiplIOTest::testTIFFclamp()
     QCOMPARE(img3d.Size(2),imgref3d.Size(2));
 
     for (size_t i=0; i<img3d.Size(); ++i) {
-        QCOMPARE(img3d[i],imgref3d[i]);
+        float val=(min(max(imgref3d[i],clampmin),clampmax)-clampmin)*static_cast<float>(std::numeric_limits<unsigned short>::max())/(clampmax-clampmin);
+        float diff=fabs(img2d[i]-static_cast<float>(static_cast<unsigned short>(val)));
+
+        msg.str("");
+        msg<<"i="<<i<<", val="<<val<<", img3d[i]="<<img3d[i]<<", diff="<<diff;
+
+        QVERIFY2(fabs(img3d[i]-val)<=1.0f,msg.str().c_str());
+
     }
 
 }

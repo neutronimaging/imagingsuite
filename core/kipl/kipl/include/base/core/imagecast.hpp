@@ -1,17 +1,16 @@
 //<LICENCE>
 
-#ifndef _IMAGECAST_HPP_
-#define _IMAGECAST_HPP_
+#ifndef IMAGECAST_HPP
+#define IMAGECAST_HPP
 
 #include <limits>
-
 #include "../../logging/logger.h"
 
 
 namespace kipl { namespace base {
 
 template <typename T1, typename T2 , size_t N>
-TImage<T1,N> ImageCaster<T1,T2,N>::cast(const TImage<T2,N> & img)
+kipl::base::TImage<T1,N> ImageCaster<T1,T2,N>::cast(const kipl::base::TImage<T2,N> & img)
 {
 //	if (typeid(T1)==typeid(T2)) {
 //		kipl::logging::Logger logger("ImageCaster",std::cout);

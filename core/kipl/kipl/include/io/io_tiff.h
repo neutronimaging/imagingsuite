@@ -186,7 +186,7 @@ int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname, ImgType lo, I
 
 			float slope = (static_cast<float>(hi)-static_cast<float>(lo))/std::numeric_limits<unsigned short>::max();
 
-			msg.precision(5);
+            //msg.precision(5);
             msg<<"slope = "<<scientific<<slope<<"\noffset = "<<scientific<<lo;
 			src.info.sDescription=msg.str();
 		}
@@ -500,14 +500,14 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 	unsigned char *buffer, tempbyte;
 	unsigned long bufferSize, count;
 
-	TIFFSetWarningHandler(0);
+    TIFFSetWarningHandler(nullptr);
 	// Open the TIFF image
     if((image = TIFFOpen(fname, "r")) == nullptr){
         msg.str("");
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
-    int framecnt=0;
+    size_t framecnt=0;
     while ((framecnt<idx) && (image!=nullptr)){
         TIFFReadDirectory(image);
         framecnt++;
@@ -567,7 +567,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 
 	src.Resize(imgdims);
 	for (int row=adjcrop[1]; row<adjcrop[3]; row++) {
- 		if (TIFFReadScanline(image,(tdata_t) buffer, row, 0)!=1) {
+        if (TIFFReadScanline(image,static_cast<tdata_t>(buffer), row, 0)!=1) {
 			msg.str("");
 			msg<<"ReadTIFFLine: an error occurred during reading scan line "<<row;
 			TIFFClose(image);
@@ -597,14 +597,14 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 			
 			for(count = 0; count < bufferSize; count++){
 				tempbyte = 0;
-				if(buffer[count] & 128) tempbyte += (char)1;
-				if(buffer[count] & 64) tempbyte += (char)2;
-				if(buffer[count] & 32) tempbyte += (char)4;
-				if(buffer[count] & 16) tempbyte += (char)8;
-				if(buffer[count] & 8) tempbyte += (char)16;
-				if(buffer[count] & 4) tempbyte += (char)32;
-				if(buffer[count] & 2) tempbyte += (char)64;
-				if(buffer[count] & 1) tempbyte += (char)128;
+                if(buffer[count] & 128) tempbyte += 1;
+                if(buffer[count] & 64) tempbyte += 2;
+                if(buffer[count] & 32) tempbyte += 4;
+                if(buffer[count] & 16) tempbyte += 8;
+                if(buffer[count] & 8) tempbyte += 16;
+                if(buffer[count] & 4) tempbyte += 32;
+                if(buffer[count] & 2) tempbyte += 64;
+                if(buffer[count] & 1) tempbyte += 128;
 				buffer[count] = tempbyte;
 			}
 		}
@@ -698,7 +698,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const char *fname, size_t const 
     size_t dims[3];
     int nframes=GetTIFFDims(fname,dims);
 
-    dims[2]=nframes;
+    dims[2]=static_cast<size_t>(nframes);
 
     try {
         src.Resize(dims);
@@ -738,14 +738,14 @@ int ReadTIFFLine(ImgType *data,uint32 row, const char *fname)
 	std::stringstream msg;
 	TIFF *image;
 //	 TIFFErrorHandler warn = 
-	TIFFSetWarningHandler(0);
+    TIFFSetWarningHandler(nullptr);
     if((image = TIFFOpen(fname, "r")) == nullptr){
 		msg.str("");
 		msg<<"ReadTIFFLine: Could not open "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 	
- 	if (TIFFReadScanline(image,(tdata_t) data, row, 0)!=1) {
+    if (TIFFReadScanline(image,static_cast<tdata_t>(data), row, 0)!=1) {
 		msg.str("");
 		msg<<"ReadTIFFLine: an error occured during reading scan line "<<row;
 		TIFFClose(image);
