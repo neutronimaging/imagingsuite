@@ -147,14 +147,36 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     memcpy(nOriginalNormRegion,dose_roi,4*sizeof(size_t));
 
+    if ( m_Config.mImageInformation.bUseROI) {
+        msg<<"using image roi";
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+    }
+    else {
+        kipl::base::TImage<float,2 > myimg;
+        ImageReader reader;
+        std:: string filename,ext;
+        std::string fmask = m_Config.mImageInformation.sSourceFileMask;
+        int firstIndex = m_Config.mImageInformation.nFirstFileIndex;
+        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+        myimg = reader.Read(filename, kipl::base::ImageFlipNone, kipl::base::ImageRotateNone, 1.0f, nullptr,0L);
+        m_Config.mImageInformation.nROI[0]=m_Config.mImageInformation.nROI[1]=1;
+        m_Config.mImageInformation.nROI[2]=myimg.Size(0)-1;
+        m_Config.mImageInformation.nROI[3]=myimg.Size(1)-1;
+
+        msg<<"not using image roi. Reading original image size: " << m_Config.mImageInformation.nROI[1] << " " << m_Config.mImageInformation.nROI[2];
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+
+    }
+
+    SetROI(m_Config.mImageInformation.nROI);
+
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
 
-//TODO for now commented: to understand later, what is the equivalent of the projection roi
-//    if (roi_bb_x>0 && roi_bb_y>0) {}
-//    else {
-//        memcpy(BBroi, m_Config.ProjectionInfo.projection_roi, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
-//    }
+    if (roi_bb_x>0 && roi_bb_y>0) {}
+    else {
+        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+    }
 
     //check on dose BB roi size
     if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
@@ -213,7 +235,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
             PrepareBBData();
     }
 
-    SetROI(m_Config.mImageInformation.nROI);
+
 //    std::stringstream msg;
     msg<<"Configuring done";
     logger(kipl::logging::Logger::LogDebug,msg.str());
