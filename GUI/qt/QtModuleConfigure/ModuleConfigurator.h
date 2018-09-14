@@ -63,6 +63,7 @@ protected:
 	ConfigBase  *m_Config;
 
 	kipl::base::TImage<float,3> m_Image;
+    kipl::base::TImage<float,3> m_OriginalImage;
 };
 
 #endif

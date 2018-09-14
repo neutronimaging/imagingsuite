@@ -83,7 +83,8 @@ SOURCES +=  ../../src/main.cpp\
     ../../src/mergevolumesdialog.cpp \
     ../../src/ImagingToolConfig.cpp \
     ../../src/fileconversiondialog.cpp \
-    ../../src/Fits2Tif.cpp
+    ../../src/Fits2Tif.cpp \
+    ../../src/imagingmoduleconfigurator.cpp
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/ImageIO.h \
@@ -95,7 +96,8 @@ HEADERS  += ../../src/kiptoolmainwindow.h \
     ../../src/mergevolumesdialog.h \
     ../../src/ImagingToolConfig.h \
     ../../src/fileconversiondialog.h \
-    ../../src/Fits2Tif.h
+    ../../src/Fits2Tif.h \
+    ../../src/imagingmoduleconfigurator.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
             ../../src/confighistorydialog.ui \

@@ -19,6 +19,7 @@ class KiplModuleItem : public ModuleItemBase
 {
 public:
 	KiplModuleItem(std::string sharedobject, std::string modulename);
+
 	~KiplModuleItem(void);
 
     /// Gets a reference to the processing module the held by the item.

@@ -32,22 +32,27 @@
 #include "fileconversiondialog.h"
 
 #include "ImageIO.h"
+using namespace std;
 
-KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
+KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("KipToolMainWindow"),
     ui(new Ui::KipToolMainWindow),
     m_Engine(NULL),
+    m_QtApp(app),
     m_OriginalHistogram(1024),
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
     m_bJustLoaded(false),
-    m_eSlicePlane(kipl::base::ImagePlaneXY)
+    m_eSlicePlane(kipl::base::ImagePlaneXY),
+    m_ModuleConfigurator(&m_config)
 {
     ui->setupUi(this);
     logger.AddLogTarget(*(ui->widget_logviewer));
 
-    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
+    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString(),&m_ModuleConfigurator);
+    ui->widget_moduleconfigurator->SetApplicationObject(this);
+    //    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
     LoadDefaults();
     UpdateDialog();
     SetupCallbacks();
@@ -140,6 +145,8 @@ void KipToolMainWindow::UpdateDialog()
 
 void KipToolMainWindow::UpdateConfig()
 {
+
+    std::cout << "KipToolMainWindow UpdateConfig" << std::endl;
     m_config.mImageInformation.sSourcePath.clear();
     kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
     m_config.mImageInformation.sSourceFileMask = ui->edit_datafilemask->text().toStdString();

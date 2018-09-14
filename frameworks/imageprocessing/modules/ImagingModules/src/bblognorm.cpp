@@ -152,6 +152,8 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
         logger(kipl::logging::Logger::LogDebug,msg.str());
     }
     else {
+
+        msg<<"image roi not checked: " << m_Config.mImageInformation.nROI[0] << " " << m_Config.mImageInformation.nROI[1]<< " " << m_Config.mImageInformation.nROI[2] << " " << m_Config.mImageInformation.nROI[3]<<endl;
         kipl::base::TImage<float,2 > myimg;
         ImageReader reader;
         std:: string filename,ext;
@@ -159,11 +161,12 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
         int firstIndex = m_Config.mImageInformation.nFirstFileIndex;
         kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
         myimg = reader.Read(filename, kipl::base::ImageFlipNone, kipl::base::ImageRotateNone, 1.0f, nullptr,0L);
-        m_Config.mImageInformation.nROI[0]=m_Config.mImageInformation.nROI[1]=1;
+        m_Config.mImageInformation.nROI[0]=m_Config.mImageInformation.nROI[1]=0;
         m_Config.mImageInformation.nROI[2]=myimg.Size(0)-1;
         m_Config.mImageInformation.nROI[3]=myimg.Size(1)-1;
+        m_Config.mImageInformation.bUseROI=true;
 
-        msg<<"not using image roi. Reading original image size: " << m_Config.mImageInformation.nROI[1] << " " << m_Config.mImageInformation.nROI[2];
+        msg<<"not using image roi. Reading original image size: " << m_Config.mImageInformation.nROI[2] << " " << m_Config.mImageInformation.nROI[3];
         logger(kipl::logging::Logger::LogDebug,msg.str());
 
     }
@@ -240,6 +243,8 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     msg<<"Configuring done";
     logger(kipl::logging::Logger::LogDebug,msg.str());
 
+
+    std::cout << "Configuring done"<< std::endl;
 
     return 1;
 }
@@ -360,9 +365,9 @@ int BBLogNorm::ConfigureDLG(std::map<std::string, std::string> parameters)
 
 //    }
 
-    std::stringstream msg;
-    msg<<"end of BBLogNorm::ConfigureDlg, empty for now";
-    logger(kipl::logging::Logger::LogDebug,msg.str());
+
+    std::cout<<"end of BBLogNorm::ConfigureDlg, empty for now"<<std::endl;
+
 
     return 1;
 }
@@ -501,6 +506,8 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
      msg<<"References loaded";
      logger(kipl::logging::Logger::LogDebug,msg.str());
 
+     std::cout << "References loaded" << std::endl;
+
 }
 
 void BBLogNorm::LoadExternalBBData(size_t *roi){
@@ -585,6 +592,9 @@ void BBLogNorm::PrepareBBData(){
         }
         default: throw ImagingException("Unknown m_InterpMethod in BBLogNorm::PrepareBBData()", __FILE__, __LINE__);
         }
+
+
+        std::cout << "end of prepare BB data" << std::endl;
 
 
 

@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
 int RunGUI(QApplication * a)
 {
-    KipToolMainWindow w;
+    KipToolMainWindow w(a);
     w.show();
 
     return a->exec();
