@@ -1,5 +1,6 @@
 //<LICENCE>
 
+#include <QDebug>
 #include "../../include/kipl_global.h"
 #include "../include/interactors/interactionbase.h"
 
@@ -41,6 +42,7 @@ bool InteractionBase::SetProgress(float progress, std::string msg)
 	m_fProgress=progress;
 	m_sMessage=msg;
 
+    qDebug() << progress << ", " << msg.c_str();
     return m_Status == interactorAborted;
 }
 

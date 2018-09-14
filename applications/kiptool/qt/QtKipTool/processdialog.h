@@ -1,29 +1,30 @@
-#ifndef RECONDIALOG_H
-#define RECONDIALOG_H
+#ifndef PROCESSDIALOG_H
+#define PROCESSDIALOG_H
 
 #include <QDialog>
-#include <ReconEngine.h>
+
 #include <logging/logger.h>
+#include <base/timage.h>
+#include <KiplEngine.h>
 #include <interactors/interactionbase.h>
 
 namespace Ui {
-class ReconDialog;
+class ProcessDialog;
 }
 
-class ReconDialog : public QDialog
+class ProcessDialog : public QDialog
 {
     Q_OBJECT
     kipl::logging::Logger logger;
-
 public:
-    explicit ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent = nullptr);
-    ~ReconDialog();
+    explicit ProcessDialog(kipl::interactors::InteractionBase *interactor,QWidget *parent = nullptr);
+    ~ProcessDialog();
     int progress();
     int process();
-    virtual int exec(ReconEngine *engine, bool bRerunBackProj);
+    virtual int exec(KiplEngine *engine, kipl::base::TImage<float, 3> *img);
 
 private:
-    Ui::ReconDialog *ui;
+    Ui::ProcessDialog *ui;
 
     virtual int exec() { return QDialog::exec(); }
 protected:
@@ -32,9 +33,10 @@ protected:
 
     float fraction;
     bool finish;
-    ReconEngine * m_Engine;
+    KiplEngine * m_Engine;
+    kipl::base::TImage<float,3> * m_img;
     kipl::interactors::InteractionBase * m_Interactor;
-    bool m_bRerunBackproj;
+
 private slots:
     void on_buttonCancel_clicked();
     void on_processFailure(QString msg);
@@ -45,4 +47,4 @@ signals:
     void processFailure(QString msg);
 };
 
-#endif // RECONDIALOG_H
+#endif // PROCESSDIALOG_H

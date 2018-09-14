@@ -13,8 +13,8 @@
 #include <scalespace/ISSfilterQ3D.h>
 #include <containers/PlotData.h>
 
-ISSfilterModule::ISSfilterModule() :
-KiplProcessModuleBase("ISSfilterModule", true),
+ISSfilterModule::ISSfilterModule(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("ISSfilterModule", true,interactor),
     m_bAutoScale(true),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),

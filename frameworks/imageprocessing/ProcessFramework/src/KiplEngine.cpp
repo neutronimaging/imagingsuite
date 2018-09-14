@@ -24,16 +24,17 @@
 
 #include <ModuleException.h>
 
-KiplEngine::KiplEngine(std::string name) : 
- logger(name),
-	 m_InputImage(NULL)
+KiplEngine::KiplEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
+    logger(name),
+    m_Interactor(interactor),
+    m_InputImage(nullptr)
 {
 }
 
 KiplEngine::~KiplEngine(void)
 {
 	while (!m_ProcessList.empty()) {
-		if (m_ProcessList.front()!=NULL) {
+        if (m_ProcessList.front()!=nullptr) {
 			delete m_ProcessList.front();
 		}
 		m_ProcessList.pop_front();
@@ -47,7 +48,7 @@ void KiplEngine::SetConfig(KiplProcessConfig &config)
 
 size_t KiplEngine::AddProcessingModule(KiplModuleItem *module) 
 {
-	if (module!=NULL) {
+    if (module!=nullptr) {
 		if (module->Valid())
 			m_ProcessList.push_back(module);
 	}
@@ -68,8 +69,10 @@ int KiplEngine::Run(kipl::base::TImage<float,3> * img)
 	std::map<std::string, std::string> parameters;
 
 	std::list<KiplModuleItem *>::iterator it_Module;
+    float cnt=1;
+    float nModules=static_cast<float>(m_ProcessList.size());
 	try {
-		for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
+        for (it_Module=m_ProcessList.begin(); (it_Module!=m_ProcessList.end()) && (updateStatus(float(cnt)/nModules)==false) ; ++cnt,++it_Module) {
 			msg.str("");
 			msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -121,7 +124,7 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 	std::ostringstream msg;
 	std::string fname;
 
-	KiplProcessConfig::cOutImageInformation *config= info==NULL ? &m_Config.mOutImageInformation : info;
+    KiplProcessConfig::cOutImageInformation *config= info==nullptr ? &m_Config.mOutImageInformation : info;
 
     m_Config.mOutImageInformation=*config;
 
@@ -207,7 +210,7 @@ std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,flo
 	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
-	KiplProcessModuleBase *module=NULL;
+    KiplProcessModuleBase *module=nullptr;
 
 	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
 		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
@@ -232,7 +235,7 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
-	KiplProcessModuleBase *module=NULL;
+    KiplProcessModuleBase *module=nullptr;
 
 	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
 		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
@@ -249,4 +252,13 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	}
 
 	return histlist;
+}
+
+bool KiplEngine::updateStatus(float val)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetOverallProgress(val);
+    }
+
+    return false;
 }

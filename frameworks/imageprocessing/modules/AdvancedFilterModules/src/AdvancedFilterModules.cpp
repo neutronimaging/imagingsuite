@@ -11,16 +11,18 @@
 #include <logging/logger.h>
 
 
-ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const char * name)
+ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="ISSfilter")
-            return new ISSfilterModule;
+            return new ISSfilterModule(interactor);
 
         if (sName=="NonLinDiffusion")
             return new NonLinDiffusionModule;
@@ -30,7 +32,7 @@ ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const cha
 
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 ADVANCEDFILTERMODULES_EXPORT int Destroy(const char *application, void *obj)
@@ -42,7 +44,7 @@ ADVANCEDFILTERMODULES_EXPORT int Destroy(const char *application, void *obj)
 	kipl::logging::Logger logger("AdvancedFilterModules destroy");
 	std::ostringstream msg;
 
-	if (obj!=NULL) {
+    if (obj!=nullptr) {
 		KiplProcessModuleBase * module = reinterpret_cast<KiplProcessModuleBase *>(obj);
 		msg<<"Destroying "<<module->ModuleName();
 		logger(kipl::logging::Logger::LogMessage,msg.str());

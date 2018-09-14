@@ -13,7 +13,13 @@
 #define KIPTOOLMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
+
+#include <loggingdialog.h>
+
 #include <logging/logger.h>
+#include <interactors/interactionbase.h>
+
 #include <KiplProcessConfig.h>
 #include <KiplEngine.h>
 #include <KiplFactory.h>
@@ -30,12 +36,11 @@ class KipToolMainWindow : public QMainWindow
     kipl::logging::Logger logger;
 
 public:
-    explicit KipToolMainWindow(QWidget *parent = 0);
+    explicit KipToolMainWindow(QWidget *parent = nullptr);
     ~KipToolMainWindow();
     
 protected slots:
     void on_button_browsedatapath_clicked();
-    void on_button_getROI_clicked();
     void on_button_loaddata_clicked();
     void on_button_browsedestination_clicked();
     void on_check_crop_stateChanged(int arg1);
@@ -52,6 +57,7 @@ protected slots:
     void on_actionProcessing_history_triggered();
     void on_actionClear_History_triggered();
     void on_actionAbout_triggered();
+    void button_toggleLoggerDlg_clicked();
 
 private slots:
     void on_combo_sliceplane_activated(int index);
@@ -92,6 +98,10 @@ private:
     void LoadConfiguration(QString qfname);
 
     Ui::KipToolMainWindow *ui;
+    QtAddons::LoggingDialog *logdlg;
+    QPushButton *button_toggleLoggerDlg;
+
+    kipl::interactors::InteractionBase m_Interactor;
     KiplEngine *m_Engine;
     KiplFactory m_Factory;
 
