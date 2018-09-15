@@ -24,7 +24,6 @@ unix:!symbian {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -34,6 +33,9 @@ unix:!symbian {
     } else {
         target.path = /usr/lib
     }
+
+    LIBS += -ltiff -lxml2
+
     INSTALLS += target
 }
 

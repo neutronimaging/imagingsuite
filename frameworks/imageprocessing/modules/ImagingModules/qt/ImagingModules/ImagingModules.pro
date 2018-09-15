@@ -75,7 +75,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lUnpublishedImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms #-lUnpublishedImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms

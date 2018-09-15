@@ -1,14 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2011-08-09 19:55:32 +0200 (Di, 09 Aug 2011) $
-// $Rev: 998 $
-// $Id: StdPreprocModules.cpp 998 2011-08-09 17:55:32Z kaestner $
-//
+//<LICENSE>
 
 // ClassificationModules.cpp : Defines the exported functions for the DLL application.
 //
@@ -32,12 +22,14 @@
 
 
 
-void * GetModule(const char * application, const char * name)
+void * GetModule(const char * application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="BasicThreshold")
@@ -58,7 +50,7 @@ void * GetModule(const char * application, const char * name)
 
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 int Destroy(const char * application, void *obj)
