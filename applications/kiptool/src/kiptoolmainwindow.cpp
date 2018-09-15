@@ -708,7 +708,6 @@ void KipToolMainWindow::on_actionAbout_triggered()
 
 void KipToolMainWindow::button_toggleLoggerDlg_clicked()
 {
-    qDebug() << "Button pressed";
     if (logdlg->isHidden()) {
 
         logdlg->show();

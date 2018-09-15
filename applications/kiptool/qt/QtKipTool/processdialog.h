@@ -38,9 +38,10 @@ protected:
     kipl::interactors::InteractionBase * m_Interactor;
 
 private slots:
-    void on_buttonCancel_clicked();
     void on_processFailure(QString msg);
     void changedProgress(float progress, float overallProgress, QString msg);
+
+    void on_buttonBox_rejected();
 
 signals:
     void updateProgress(float progress, float overallProgress, QString msg);

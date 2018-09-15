@@ -17,15 +17,14 @@
 
 #include <KiplProcessModuleBase.h>
 
-
-
-
-BASEMODULES_EXPORT void * GetModule(const char *application, const char * name)
+BASEMODULES_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="scaledata")
@@ -38,7 +37,7 @@ BASEMODULES_EXPORT void * GetModule(const char *application, const char * name)
 			return new VolumeProject;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 BASEMODULES_EXPORT int Destroy(const char *application, void *obj)

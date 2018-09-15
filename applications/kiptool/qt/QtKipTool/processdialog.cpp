@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QtConcurrent>
 #include <QFuture>
-#include <QDebug>
 
 #include "processdialog.h"
 #include "ui_processdialog.h"
@@ -22,6 +21,9 @@ ProcessDialog::ProcessDialog(kipl::interactors::InteractionBase *interactor, QWi
     ui->setupUi(this);
     if (interactor==nullptr)
         throw KiplFrameworkException("Progress dialog can't open without valid interactor");
+
+    connect(this,&ProcessDialog::updateProgress,this,&ProcessDialog::changedProgress);
+    connect(this,&ProcessDialog::processFailure,this,&ProcessDialog::on_processFailure);
 }
 
 ProcessDialog::~ProcessDialog()
@@ -64,7 +66,6 @@ int ProcessDialog::exec(KiplEngine * engine, kipl::base::TImage<float,3> *img)
 
     finish=true;
     if (res==QDialog::Rejected) {
-        qDebug() <<"calling abort process";
         logger(kipl::logging::Logger::LogVerbose,"Cancel requested by user");
         Abort();
     }
@@ -146,7 +147,7 @@ int ProcessDialog::process()
         emit processFailure(QString::fromStdString(msg.str()));
         return 0;
     }
-    logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
+    logger(kipl::logging::Logger::LogMessage,"Processing done");
 
     finish=true;
     m_Interactor->Done();
@@ -183,7 +184,8 @@ void ProcessDialog::on_processFailure(QString msg)
     Abort();
 }
 
-void ProcessDialog::on_buttonCancel_clicked()
+void ProcessDialog::on_buttonBox_rejected()
 {
+    Abort();
     this->reject();
 }

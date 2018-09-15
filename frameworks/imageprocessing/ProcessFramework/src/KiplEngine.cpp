@@ -257,8 +257,12 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 bool KiplEngine::updateStatus(float val)
 {
     if (m_Interactor!=nullptr) {
+        qDebug() << "engine update "<<val;
         return m_Interactor->SetOverallProgress(val);
     }
+    else
+        qDebug() << "engine update - interactor missing";
+
 
     return false;
 }
