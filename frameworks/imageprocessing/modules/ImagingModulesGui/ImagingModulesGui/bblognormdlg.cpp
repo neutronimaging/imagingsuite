@@ -245,6 +245,16 @@ void BBLogNormDlg::UpdateDialog(){
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
 
+    ui->edit_OBfilename->setText(QString::fromStdString(flatname));
+    ui->spinBox_firstOB->setValue(nOBFirstIndex);
+    ui->spinBox_OBCounts->setValue(nOBCount);
+
+    ui->edit_DCfilename->setText(QString::fromStdString(darkname));
+    ui->spinBox_firstDC->setValue(nDCFirstIndex);
+    ui->spinBox_CountDC->setValue(nDCCount);
+
+    ui->doubleSpinBox_firstangle->setValue(fScanArc[0]);
+    ui->doubleSpinBox_lastangle->setValue(fScanArc[1]);
 
 //    std::cout << "update dialog" << std::endl;
 
@@ -268,6 +278,11 @@ void BBLogNormDlg::UpdateParameters(){
     doseBBroi[1] = ui->spiny0BBdose->value();
     doseBBroi[2] = ui->spinx1BBdose->value();
     doseBBroi[3] = ui->spiny1BBdose->value();
+
+    dose_roi[0] = doseBBroi[0];
+    dose_roi[1] = doseBBroi[1];
+    dose_roi[2] = doseBBroi[2];
+    dose_roi[3] = doseBBroi[3];
 
 //    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
 //        bUseNormROIBB = true;
@@ -298,6 +313,18 @@ void BBLogNormDlg::UpdateParameters(){
     bUseManualThresh = ui->checkBox_thresh->isChecked();
     thresh = ui->spinThresh->value();
 
+    flatname = ui->edit_OBfilename->text().toStdString();
+    nOBFirstIndex = ui->spinBox_firstOB->value();
+    nOBCount = ui->spinBox_OBCounts->value();
+
+    darkname = ui->edit_DCfilename->text().toStdString();
+    nDCFirstIndex = ui->spinBox_firstDC->value();
+    nDCCount = ui->spinBox_CountDC->value();
+
+    fScanArc[0] = ui->doubleSpinBox_firstangle->value();
+    fScanArc[1] = ui->doubleSpinBox_lastangle->value();
+
+
 //    std::cout << "update parameters " << std::endl;
 //    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
 //    std::cout << blackbodyname << std::endl;
@@ -315,6 +342,7 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
     parameters["BB_sample_firstindex"] = kipl::strings::value2string(nBBSampleFirstIndex);
     parameters["doseBBroi"] = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
+    parameters["dose_roi"] = kipl::strings::value2string(dose_roi[0])+" "+kipl::strings::value2string(dose_roi[1])+" "+kipl::strings::value2string(dose_roi[2])+" "+kipl::strings::value2string(dose_roi[3]);
 
     parameters["radius"] = kipl::strings::value2string(radius);
 
@@ -551,6 +579,98 @@ void BBLogNormDlg::BrowseSampleBBPath(){
             ui->spinCountsampleBB->setValue(c);
 //        }
     }
+
+}
+
+void BBLogNormDlg::BrowseOBPath(){
+
+    QString ob_dir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the open beam images",
+                                                   ui->edit_OBfilename->text());
+
+    if (!ob_dir.isEmpty()) {
+        std::string pdir=ob_dir.toStdString();
+
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
+
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+//        if (fi.m_sExt=="hdf"){
+//            ui->edit_sample_BB_mask->setText(QString::fromStdString(pdir));
+//            ProjectionReader reader;
+//            size_t Nofimgs[2];
+//            double Angles[2];
+//            reader.GetNexusInfo(pdir, Nofimgs, Angles);
+//            ui->spinFirstsampleBB->setValue(Nofimgs[0]);
+//            ui->spinCountsampleBB->setValue(Nofimgs[1]);
+//            ui->spinFirstAngle->setValue(Angles[0]);
+//            ui->spinLastAngle->setValue(Angles[1]);
+//        }
+//        else {
+            ui->edit_OBfilename->setText(QString::fromStdString(fi.m_sMask));
+            int c=0;
+            int f=0;
+            int l=0;
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            ui->spinBox_firstOB->setValue(f);
+            ui->spinBox_OBCounts->setValue(c);
+//        }
+    }
+
+
+}
+
+void BBLogNormDlg::BrowseDCPath(){
+
+    QString dc_dir=QFileDialog::getOpenFileName(this,
+                                      "Select location of the open beam images",
+                                                   ui->edit_DCfilename->text());
+
+    if (!dc_dir.isEmpty()) {
+        std::string pdir=dc_dir.toStdString();
+
+        #ifdef _MSC_VER
+        const char slash='\\';
+        #else
+        const char slash='/';
+        #endif
+        ptrdiff_t pos=pdir.find_last_of(slash);
+
+        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+        std::string fname=pdir.substr(pos+1);
+        kipl::io::DirAnalyzer da;
+        kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+//        if (fi.m_sExt=="hdf"){
+//            ui->edit_sample_BB_mask->setText(QString::fromStdString(pdir));
+//            ProjectionReader reader;
+//            size_t Nofimgs[2];
+//            double Angles[2];
+//            reader.GetNexusInfo(pdir, Nofimgs, Angles);
+//            ui->spinFirstsampleBB->setValue(Nofimgs[0]);
+//            ui->spinCountsampleBB->setValue(Nofimgs[1]);
+//            ui->spinFirstAngle->setValue(Angles[0]);
+//            ui->spinLastAngle->setValue(Angles[1]);
+//        }
+//        else {
+            ui->edit_DCfilename->setText(QString::fromStdString(fi.m_sMask));
+            int c=0;
+            int f=0;
+            int l=0;
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            ui->spinBox_firstDC->setValue(f);
+            ui->spinBox_CountDC->setValue(c);
+//        }
+    }
+
 
 }
 
@@ -864,4 +984,24 @@ void BBLogNormDlg::on_pushButton_filenameOBBB_clicked()
 void BBLogNormDlg::on_pushButton_filenameBB_clicked()
 {
     ui->edit_sample_BB_mask->setText(ui->edit_OB_BB_mask->text());
+}
+
+void BBLogNormDlg::on_pushButton_OB_clicked()
+{
+    ui->edit_OBfilename->setText(QString::fromStdString(m_Config->mImageInformation.sSourceFileMask));
+}
+
+void BBLogNormDlg::on_pushButton_DC_clicked()
+{
+    ui->edit_DCfilename->setText(QString::fromStdString(m_Config->mImageInformation.sSourceFileMask));
+}
+
+void BBLogNormDlg::on_pushButton_browseOB_clicked()
+{
+    BrowseOBPath();
+}
+
+void BBLogNormDlg::on_pushButton_browseDC_clicked()
+{
+    BrowseDCPath();
 }

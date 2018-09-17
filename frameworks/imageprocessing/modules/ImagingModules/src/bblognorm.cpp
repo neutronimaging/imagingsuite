@@ -173,66 +173,66 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
 //    SetROI(m_Config.mImageInformation.nROI);
 
-//    size_t roi_bb_x= BBroi[2]-BBroi[0];
-//    size_t roi_bb_y = BBroi[3]-BBroi[1];
+    size_t roi_bb_x= BBroi[2]-BBroi[0];
+    size_t roi_bb_y = BBroi[3]-BBroi[1];
 
-//    if (roi_bb_x>0 && roi_bb_y>0) {}
-//    else {
-//        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
-//    }
+    if (roi_bb_x>0 && roi_bb_y>0) {}
+    else {
+        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+    }
 
-//    //check on dose BB roi size
-//    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
-//        bUseNormROIBB=false;
-//    }
-//    else {
-//        bUseNormROIBB = true;
-//    }
+    //check on dose BB roi size
+    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
+        bUseNormROIBB=false;
+    }
+    else {
+        bUseNormROIBB = true;
+    }
 
-//    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
-//        bUseNormROI=false;
-//        throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
-//    }
-//    else{
-//        bUseNormROI=true;
-//    }
+    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
+        bUseNormROI=false;
+        throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
+    }
+    else{
+        bUseNormROI=true;
+    }
 
-//    if (enum2string(m_ReferenceMethod)=="LogNorm"){
-//        m_corrector.SetComputeMinusLog(true);
-//    }
-//    else {
-//        m_corrector.SetComputeMinusLog(false);
-//    }
+    if (enum2string(m_ReferenceMethod)=="LogNorm"){
+        m_corrector.SetComputeMinusLog(true);
+    }
+    else {
+        m_corrector.SetComputeMinusLog(false);
+    }
 
-//    switch (m_BBOptions){
-//    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
-//        bUseBB = false;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
-//        bUseBB = false; // to evaluate
-//        bUseExternalBB = true;
-//        break;
-//    }
-//    default: throw ImagingException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
+    switch (m_BBOptions){
+    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+        bUseBB = false;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+        bUseBB = false; // to evaluate
+        bUseExternalBB = true;
+        break;
+    }
+    default: throw ImagingException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
 
-//    }
+    }
 
 //    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
 //            PrepareBBData();
@@ -1534,66 +1534,66 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
     SetROI(m_Config.mImageInformation.nROI);
 
-    size_t roi_bb_x= BBroi[2]-BBroi[0];
-    size_t roi_bb_y = BBroi[3]-BBroi[1];
+//    size_t roi_bb_x= BBroi[2]-BBroi[0];
+//    size_t roi_bb_y = BBroi[3]-BBroi[1];
 
-    if (roi_bb_x>0 && roi_bb_y>0) {}
-    else {
-        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
-    }
+//    if (roi_bb_x>0 && roi_bb_y>0) {}
+//    else {
+//        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+//    }
 
-    //check on dose BB roi size
-    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
-        bUseNormROIBB=false;
-    }
-    else {
-        bUseNormROIBB = true;
-    }
+//    //check on dose BB roi size
+//    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
+//        bUseNormROIBB=false;
+//    }
+//    else {
+//        bUseNormROIBB = true;
+//    }
 
-    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
-        bUseNormROI=false;
-        throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
-    }
-    else{
-        bUseNormROI=true;
-    }
+//    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
+//        bUseNormROI=false;
+//        throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
+//    }
+//    else{
+//        bUseNormROI=true;
+//    }
 
-    if (enum2string(m_ReferenceMethod)=="LogNorm"){
-        m_corrector.SetComputeMinusLog(true);
-    }
-    else {
-        m_corrector.SetComputeMinusLog(false);
-    }
+//    if (enum2string(m_ReferenceMethod)=="LogNorm"){
+//        m_corrector.SetComputeMinusLog(true);
+//    }
+//    else {
+//        m_corrector.SetComputeMinusLog(false);
+//    }
 
-    switch (m_BBOptions){
-    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
-        bUseBB = false;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-        bUseBB = true;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-        bUseBB = true;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
-        bUseBB = true;
-        bUseExternalBB = false;
-        break;
-    }
-    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
-        bUseBB = false; // to evaluate
-        bUseExternalBB = true;
-        break;
-    }
-    default: throw ImagingException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
+//    switch (m_BBOptions){
+//    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+//        bUseBB = false;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+//        bUseBB = false; // to evaluate
+//        bUseExternalBB = true;
+//        break;
+//    }
+//    default: throw ImagingException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
 
-    }
+//    }
 
     if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
             PrepareBBData();

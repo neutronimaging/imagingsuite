@@ -54,6 +54,14 @@ private slots:
     void on_pushButton_filenameOBBB_clicked();
     void on_pushButton_filenameBB_clicked();
 
+    void on_pushButton_OB_clicked();
+
+    void on_pushButton_DC_clicked();
+
+    void on_pushButton_browseOB_clicked();
+
+    void on_pushButton_browseDC_clicked();
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -66,6 +74,9 @@ private:
 
     void BrowseSampleBBPath();
     void UpdateDoseROI();
+
+    void BrowseOBPath();
+    void BrowseDCPath();
 
     Ui::BBLogNormDlg *ui;
     KiplProcessConfig *m_Config;
