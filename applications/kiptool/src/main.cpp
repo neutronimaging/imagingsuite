@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <QtWidgets/QApplication>
 #include <QDir>
@@ -96,15 +87,15 @@ int RunOffline(QApplication * a)
             engine=factory.BuildEngine(config);
         }
         catch (ModuleException & e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -1;
         }
         catch (KiplFrameworkException &e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -2;
         }
         catch (kipl::base::KiplException &e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -3;
         }
 
