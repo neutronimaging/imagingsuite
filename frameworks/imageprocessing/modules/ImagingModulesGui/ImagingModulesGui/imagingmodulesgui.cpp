@@ -10,7 +10,7 @@ class ConfiguratorDialogBase;
 
 IMAGINGMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name,void *interactor)
 {
-    std::cout<< "getGUIModule" << std::endl;
+//    std::cout<< "getGUIModule" << std::endl;
 
     if (strcmp(application,"kiptool")!=0)
         return nullptr;
@@ -18,10 +18,10 @@ IMAGINGMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const
     if (name!=nullptr){
         std::string sName=name;
 
-         std::cout<< "module name: " << sName <<  std::endl;
+//         std::cout<< "module name: " << sName <<  std::endl;
 
         if (sName=="BBLogNorm")
-            return new bblognormDlg;
+            return new BBLogNormDlg;
     }
 
     return NULL;

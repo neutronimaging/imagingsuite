@@ -67,8 +67,8 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
     path="./";
-    flatname="";
-    darkname="";
+    flatname="./";
+    darkname="./";
 
 
 }
@@ -171,14 +171,148 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     }
 
-    SetROI(m_Config.mImageInformation.nROI);
+//    SetROI(m_Config.mImageInformation.nROI);
+
+//    size_t roi_bb_x= BBroi[2]-BBroi[0];
+//    size_t roi_bb_y = BBroi[3]-BBroi[1];
+
+//    if (roi_bb_x>0 && roi_bb_y>0) {}
+//    else {
+//        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+//    }
+
+//    //check on dose BB roi size
+//    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
+//        bUseNormROIBB=false;
+//    }
+//    else {
+//        bUseNormROIBB = true;
+//    }
+
+//    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
+//        bUseNormROI=false;
+//        throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
+//    }
+//    else{
+//        bUseNormROI=true;
+//    }
+
+//    if (enum2string(m_ReferenceMethod)=="LogNorm"){
+//        m_corrector.SetComputeMinusLog(true);
+//    }
+//    else {
+//        m_corrector.SetComputeMinusLog(false);
+//    }
+
+//    switch (m_BBOptions){
+//    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+//        bUseBB = false;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+//        bUseBB = true;
+//        bUseExternalBB = false;
+//        break;
+//    }
+//    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+//        bUseBB = false; // to evaluate
+//        bUseExternalBB = true;
+//        break;
+//    }
+//    default: throw ImagingException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
+
+//    }
+
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//            PrepareBBData();
+//    }
+
+
+//    std::stringstream msg;
+    msg<<"Configuring done";
+    logger(kipl::logging::Logger::LogDebug,msg.str());
+
+
+//    std::cout << "Configuring done"<< std::endl;
+
+    return 1;
+}
+
+// TODO for now I don't think that I need the dialog
+int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters)
+{
+
+    m_Config    = config;
+    path        = config.mImageInformation.sSourcePath;
+    flatname    = GetStringParameter(parameters, "OB_PATH");
+    darkname    = GetStringParameter(parameters, "DC_PATH");
+
+    nOBCount      = GetIntParameter(parameters,"OB_counts");
+    nOBFirstIndex = GetIntParameter(parameters, "OB_first_index");
+
+    nDCCount      = GetIntParameter(parameters,"DC_counts");
+    nDCFirstIndex = GetIntParameter(parameters, "DC_first_index");
+
+    GetUIntParameterVector(parameters, "dose_roi", dose_roi, 4);
+    GetFloatParameterVector(parameters, "fScanArc", fScanArc, 2);
+
+
+    m_nWindow = GetIntParameter(parameters,"window");
+    string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
+    string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
+    string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
+    string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
+    string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
+    string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
+    bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
+
+
+    blackbodyname = GetStringParameter(parameters,"BB_OB_name");
+    nBBCount = GetIntParameter(parameters,"BB_counts");
+    nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
+    blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
+    nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
+    nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
+
+    blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
+    blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
+    nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
+    nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
+
+    tau = GetFloatParameter(parameters, "tau");
+    radius = GetIntParameter(parameters, "radius");
+    min_area = GetIntParameter(parameters, "min_area");
+    GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
+    GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
+    ffirstAngle = GetFloatParameter(parameters, "firstAngle");
+    flastAngle = GetFloatParameter(parameters, "lastAngle");
+    bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+    bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+    thresh = GetFloatParameter(parameters,"thresh");
+
+    m_corrector.SetManualThreshold(bUseManualThresh,thresh);
+//    std::cout << bUseManualThresh << " " << thresh << std::endl;
+
+    memcpy(nOriginalNormRegion,dose_roi,4*sizeof(size_t));
 
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
 
+    // do i need this here?
     if (roi_bb_x>0 && roi_bb_y>0) {}
     else {
-        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+        memcpy(BBroi, m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
     }
 
     //check on dose BB roi size
@@ -234,139 +368,8 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     }
 
-    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-            PrepareBBData();
-    }
 
-
-//    std::stringstream msg;
-    msg<<"Configuring done";
-    logger(kipl::logging::Logger::LogDebug,msg.str());
-
-
-    std::cout << "Configuring done"<< std::endl;
-
-    return 1;
-}
-
-// TODO for now I don't think that I need the dialog
-int BBLogNorm::ConfigureDLG(std::map<std::string, std::string> parameters)
-{
-
-//    m_Config    = config;
-//    path        = config.ProjectionInfo.sReferencePath;
-//    flatname    = config.ProjectionInfo.sOBFileMask;
-//    darkname    = config.ProjectionInfo.sDCFileMask;
-
-//    nOBCount      = config.ProjectionInfo.nOBCount;
-//    nOBFirstIndex = config.ProjectionInfo.nOBFirstIndex;
-
-//    nDCCount      = config.ProjectionInfo.nDCCount;
-//    nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
-
-
-//    m_nWindow = GetIntParameter(parameters,"window");
-//    string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
-//    string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
-//    string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
-//    string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
-//    string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
-//    string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
-//    bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
-
-
-//    blackbodyname = GetStringParameter(parameters,"BB_OB_name");
-//    nBBCount = GetIntParameter(parameters,"BB_counts");
-//    nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
-//    blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
-//    nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
-//    nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
-
-//    blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
-//    blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
-//    nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
-//    nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
-
-//    tau = GetFloatParameter(parameters, "tau");
-//    radius = GetIntParameter(parameters, "radius");
-//    min_area = GetIntParameter(parameters, "min_area");
-//    GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
-//    GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
-//    ffirstAngle = GetFloatParameter(parameters, "firstAngle");
-//    flastAngle = GetFloatParameter(parameters, "lastAngle");
-//    bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-//    bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
-//    thresh = GetFloatParameter(parameters,"thresh");
-
-//    m_corrector.SetManualThreshold(bUseManualThresh,thresh);
-////    std::cout << bUseManualThresh << " " << thresh << std::endl;
-
-//    memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
-
-//    size_t roi_bb_x= BBroi[2]-BBroi[0];
-//    size_t roi_bb_y = BBroi[3]-BBroi[1];
-
-//    // do i need this here?
-//    if (roi_bb_x>0 && roi_bb_y>0) {}
-//    else {
-//        memcpy(BBroi, m_Config.ProjectionInfo.projection_roi, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
-//    }
-
-//    //check on dose BB roi size
-//    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
-//        bUseNormROIBB=false;
-//    }
-//    else {
-//        bUseNormROIBB = true;
-//    }
-
-//    if ((m_Config.ProjectionInfo.dose_roi[2]-m_Config.ProjectionInfo.dose_roi[0])<=0 || (m_Config.ProjectionInfo.dose_roi[3]-m_Config.ProjectionInfo.dose_roi[1])<=0 ){
-//        bUseNormROI=false;
-//        throw ReconException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
-//    }
-//    else{
-//        bUseNormROI=true;
-//    }
-
-//    if (enum2string(m_ReferenceMethod)=="LogNorm"){
-//        m_corrector.SetComputeMinusLog(true);
-//    }
-//    else {
-//        m_corrector.SetComputeMinusLog(false);
-//    }
-
-//    switch (m_BBOptions){
-//    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
-//        bUseBB = false;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
-//        bUseBB = false; // to evaluate
-//        bUseExternalBB = true;
-//        break;
-//    }
-//    default: throw ReconException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
-
-//    }
-
-
-    std::cout<<"end of BBLogNorm::ConfigureDlg, empty for now"<<std::endl;
+//    std::cout<<"end of BBLogNorm::ConfigureDlg, empty for now"<<std::endl;
 
 
     return 1;
@@ -506,7 +509,7 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
      msg<<"References loaded";
      logger(kipl::logging::Logger::LogDebug,msg.str());
 
-     std::cout << "References loaded" << std::endl;
+//     std::cout << "References loaded" << std::endl;
 
 }
 
@@ -594,7 +597,7 @@ void BBLogNorm::PrepareBBData(){
         }
 
 
-        std::cout << "end of prepare BB data" << std::endl;
+//        std::cout << "end of prepare BB data" << std::endl;
 
 
 
@@ -1528,6 +1531,74 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) {
 
     // here I should call as well the SetRoi
+
+    SetROI(m_Config.mImageInformation.nROI);
+
+    size_t roi_bb_x= BBroi[2]-BBroi[0];
+    size_t roi_bb_y = BBroi[3]-BBroi[1];
+
+    if (roi_bb_x>0 && roi_bb_y>0) {}
+    else {
+        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+    }
+
+    //check on dose BB roi size
+    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
+        bUseNormROIBB=false;
+    }
+    else {
+        bUseNormROIBB = true;
+    }
+
+    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
+        bUseNormROI=false;
+        throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
+    }
+    else{
+        bUseNormROI=true;
+    }
+
+    if (enum2string(m_ReferenceMethod)=="LogNorm"){
+        m_corrector.SetComputeMinusLog(true);
+    }
+    else {
+        m_corrector.SetComputeMinusLog(false);
+    }
+
+    switch (m_BBOptions){
+    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+        bUseBB = false;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
+        bUseBB = true;
+        bUseExternalBB = false;
+        break;
+    }
+    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
+        bUseBB = false; // to evaluate
+        bUseExternalBB = true;
+        break;
+    }
+    default: throw ImagingException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
+
+    }
+
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+            PrepareBBData();
+    }
+
 
     std::stringstream msg;
     msg.str(""); msg<<"ProcessCore";

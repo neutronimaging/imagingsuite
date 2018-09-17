@@ -28,11 +28,11 @@ public:
     virtual ~BBLogNorm();
 
 //    virtual int Configure(std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
-    virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
-    virtual int ConfigureDLG(std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
+    virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls SetRoi and PrepareBBData
+    virtual int ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
-    virtual bool SetROI(size_t *roi); /// set the current roi to be processed
+    virtual bool SetROI(size_t *roi); /// set the current roi to be processed and calls LoadReferenceImages
 
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);

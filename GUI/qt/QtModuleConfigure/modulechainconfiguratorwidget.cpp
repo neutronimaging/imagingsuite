@@ -114,21 +114,14 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
 
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 {
-    std::cout<<"Configure module"<< std::endl;
 
     if (m_pConfigurator!=nullptr) {
-        std::cout<<"m_pConfigurator!=nullptr"<< std::endl;
         if (m_pCurrentModule!=nullptr) {
-            std::cout<< "m_pCurrentModule!=nullptr"<< std::endl;
             std::ostringstream msg;
             QListWidgetModuleItem *pCurrentModule=dynamic_cast<QListWidgetModuleItem *>(m_pCurrentModule);
             //UpdateCurrentModuleParameters();
 
-            std::cout<< "before m_pApplication UpdateConfig()"<< std::endl;
-
             m_pApplication->UpdateConfig();
-
-            std::cout<< "after m_pApplication UpdateConfig()"<< std::endl;
             std::string modulename = pCurrentModule->m_Module.m_sModule;
             std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
             size_t      pos        = soname.find_last_of('.');

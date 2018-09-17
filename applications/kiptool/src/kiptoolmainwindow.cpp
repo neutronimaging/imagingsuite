@@ -145,8 +145,6 @@ void KipToolMainWindow::UpdateDialog()
 
 void KipToolMainWindow::UpdateConfig()
 {
-
-    std::cout << "KipToolMainWindow UpdateConfig" << std::endl;
     m_config.mImageInformation.sSourcePath.clear();
     kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
     m_config.mImageInformation.sSourceFileMask = ui->edit_datafilemask->text().toStdString();
