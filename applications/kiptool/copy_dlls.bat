@@ -38,10 +38,6 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\hdf5_cpp.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\zlib.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
-
-#rem cd C:\Qt\Qt5.2.1\5.2.1\msvc2012_64_opengl\bin
-#cd C:\Qt\5.8\msvc2015_64\bin
-
 cd %QTBINPATH%
 
 windeployqt %DEST%\QtKipTool.exe

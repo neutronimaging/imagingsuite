@@ -28,7 +28,7 @@ namespace kipl { namespace io {
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <size_t N>
-int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,N> src,const char *fname)
+int WriteTIFF32(kipl::base::TImage<float,N> src,const char *fname)
 {
     TIFF *image;
     std::stringstream msg;
@@ -79,7 +79,7 @@ int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,N> src,const char *fn
 /// \brief Gets the dimensions of a tiff image without reading the image
 /// \param fname file name of the image file
 /// \param dims array with the dimensions
-int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname, size_t *dims);
+int GetTIFFDims(char const * const fname, size_t *dims);
 
 /// \brief Parses a string to find slope and offset.
 ///
