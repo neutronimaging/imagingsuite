@@ -171,7 +171,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     }
 
-//    SetROI(m_Config.mImageInformation.nROI);
+    SetROI(m_Config.mImageInformation.nROI);
 
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
@@ -234,9 +234,9 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     }
 
-//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-//            PrepareBBData();
-//    }
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+            PrepareBBData();
+    }
 
 
 //    std::stringstream msg;
@@ -249,7 +249,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     return 1;
 }
 
-// TODO for now I don't think that I need the dialog
+
 int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
 
@@ -306,14 +306,14 @@ int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std:
 
     memcpy(nOriginalNormRegion,dose_roi,4*sizeof(size_t));
 
-    size_t roi_bb_x= BBroi[2]-BBroi[0];
-    size_t roi_bb_y = BBroi[3]-BBroi[1];
+//    size_t roi_bb_x= BBroi[2]-BBroi[0];
+//    size_t roi_bb_y = BBroi[3]-BBroi[1];
 
-    // do i need this here?
-    if (roi_bb_x>0 && roi_bb_y>0) {}
-    else {
-        memcpy(BBroi, m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
-    }
+//    // do i need this here?
+//    if (roi_bb_x>0 && roi_bb_y>0) {}
+//    else {
+//        memcpy(BBroi, m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+//    }
 
     //check on dose BB roi size
     if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
@@ -334,7 +334,8 @@ int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std:
     if (enum2string(m_ReferenceMethod)=="LogNorm"){
         m_corrector.SetComputeMinusLog(true);
     }
-    else {
+
+    if (enum2string(m_ReferenceMethod)=="Norm") {
         m_corrector.SetComputeMinusLog(false);
     }
 
@@ -1532,7 +1533,7 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
     // here I should call as well the SetRoi
 
-    SetROI(m_Config.mImageInformation.nROI);
+//    SetROI(m_Config.mImageInformation.nROI);
 
 //    size_t roi_bb_x= BBroi[2]-BBroi[0];
 //    size_t roi_bb_y = BBroi[3]-BBroi[1];
@@ -1595,9 +1596,9 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
 //    }
 
-    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-            PrepareBBData();
-    }
+    //    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+    //            PrepareBBData();
+    //    }
 
 
     std::stringstream msg;
