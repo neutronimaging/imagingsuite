@@ -1,6 +1,7 @@
 //<LICENSE>
 
 #include "stdafx.h"
+#include <QDebug>
 #include "ISSfilterModule.h"
 
 #ifdef _OPENMP
@@ -13,8 +14,8 @@
 #include <scalespace/ISSfilterQ3D.h>
 #include <containers/PlotData.h>
 
-ISSfilterModule::ISSfilterModule() :
-KiplProcessModuleBase("ISSfilterModule", true),
+ISSfilterModule::ISSfilterModule(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("ISSfilterModule", true,interactor),
     m_bAutoScale(true),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
@@ -27,7 +28,6 @@ KiplProcessModuleBase("ISSfilterModule", true),
     m_eRegularization(akipl::scalespace::RegularizationTV2),
     m_eInitialImage(akipl::scalespace::InitialImageOriginal)
 {
-
 }
 
 ISSfilterModule::~ISSfilterModule() {
@@ -76,7 +76,7 @@ int ISSfilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 {
 	ScaleImage(img,true);
 
-	akipl::scalespace::ISSfilterQ3D<float> filter;
+    akipl::scalespace::ISSfilterQ3D<float> filter(m_Interactor);
 
     filter.eInitialImage = m_eInitialImage;
     filter.m_eRegularization = m_eRegularization;

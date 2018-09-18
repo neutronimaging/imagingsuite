@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2011-08-17 16:22:51 +0200 (Mi, 17 Aug 2011) $
-// $Rev: 1020 $
-// $Id: KiplProcessModuleBase.cpp 1020 2011-08-17 14:22:51Z kaestner $
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include "../include/KiplProcessModuleBase.h"
@@ -22,10 +11,10 @@
 #include <base/thistogram.h>
 
 
-KiplProcessModuleBase::KiplProcessModuleBase(std::string name,bool bComputeHistogram) :
-	ProcessModuleBase(name),
-	m_bComputeHistogram(bComputeHistogram), 
-	m_Histogram(1024)
+KiplProcessModuleBase::KiplProcessModuleBase(std::string name,bool bComputeHistogram, kipl::interactors::InteractionBase *interactor) :
+    ProcessModuleBase(name,interactor),
+    m_Histogram(1024),
+    m_bComputeHistogram(bComputeHistogram)
 {
 }
 
