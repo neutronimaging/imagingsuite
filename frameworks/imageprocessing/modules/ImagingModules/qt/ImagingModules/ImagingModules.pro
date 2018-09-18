@@ -93,8 +93,8 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debu
 LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lReaderConfig
 #LIBS += -lUnpublishedImagingAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
-DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
+#INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
+#DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include

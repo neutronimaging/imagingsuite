@@ -279,10 +279,13 @@ void BBLogNormDlg::UpdateParameters(){
     doseBBroi[2] = ui->spinx1BBdose->value();
     doseBBroi[3] = ui->spiny1BBdose->value();
 
-    dose_roi[0] = doseBBroi[0];
-    dose_roi[1] = doseBBroi[1];
-    dose_roi[2] = doseBBroi[2];
-    dose_roi[3] = doseBBroi[3];
+    if ((dose_roi[2]-dose_roi[0]<=0) ||(dose_roi[3]-dose_roi[0]<=1))
+    {
+        dose_roi[0] = doseBBroi[0];
+        dose_roi[1] = doseBBroi[1];
+        dose_roi[2] = doseBBroi[2];
+        dose_roi[3] = doseBBroi[3];
+    }
 
 //    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
 //        bUseNormROIBB = true;

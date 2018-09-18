@@ -171,8 +171,6 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     }
 
-    SetROI(m_Config.mImageInformation.nROI);
-
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
 
@@ -184,6 +182,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     //check on dose BB roi size
     if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
         bUseNormROIBB=false;
+//        throw ImagingException("No roi is selected for dose BB correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
     }
     else {
         bUseNormROIBB = true;
@@ -200,7 +199,10 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     if (enum2string(m_ReferenceMethod)=="LogNorm"){
         m_corrector.SetComputeMinusLog(true);
     }
-    else {
+
+    if (enum2string(m_ReferenceMethod)=="Norm")
+    {
+//        std::cout << "(enum2string(m_ReferenceMethod)==Norm)" << std::endl;
         m_corrector.SetComputeMinusLog(false);
     }
 
@@ -237,6 +239,8 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
             PrepareBBData();
     }
+
+     SetROI(m_Config.mImageInformation.nROI);
 
 
 //    std::stringstream msg;
@@ -318,6 +322,7 @@ int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std:
     //check on dose BB roi size
     if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
         bUseNormROIBB=false;
+//        throw ImagingException("No roi is selected for dose BB correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
     }
     else {
         bUseNormROIBB = true;
@@ -336,6 +341,7 @@ int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std:
     }
 
     if (enum2string(m_ReferenceMethod)=="Norm") {
+//        std::cout << "enum2string(m_ReferenceMethod)==Norm" << std::endl;
         m_corrector.SetComputeMinusLog(false);
     }
 
@@ -540,7 +546,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
 void BBLogNorm::PrepareBBData(){
 
     logger(kipl::logging::Logger::LogDebug,"PrepareBBData begin--");
-    std::cout << "PrepareBBData begin--" << std::endl;
+//    std::cout << "PrepareBBData begin--" << std::endl;
     if (flatname.empty() && nOBCount!=0)
         throw ImagingException("The flat field image mask is empty",__FILE__,__LINE__);
     if (darkname.empty() && nDCCount!=0)
@@ -1596,9 +1602,12 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
 //    }
 
-    //    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-    //            PrepareBBData();
-    //    }
+
+//    SetROI(m_Config.mImageInformation.nROI);
+
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//            PrepareBBData();
+//    }
 
 
     std::stringstream msg;

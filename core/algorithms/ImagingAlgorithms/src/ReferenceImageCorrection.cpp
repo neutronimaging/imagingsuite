@@ -141,6 +141,8 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 
     if (useBB) {
+
+//        std::cout << "case useBB" << std::endl;
 		m_bHaveBlackBody=true;
 
         // these images are used to compute the dose in the PB variante
@@ -190,12 +192,16 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 
 
-            break;}
+            break;
+        }
 //        default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
         }
 
 
 //    std::cout   << "before PrepareReferencesBB" << std::endl;
+
+        // HERE SAVE OB_BB INTERPOLATED
+
 //        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_backgroundimage.tif"); // seem correct
 //        kipl::io::WriteTIFF32(m_DoseBBflat_image,"dose_bb.tif");
         PrepareReferencesBB();
@@ -272,13 +278,17 @@ void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
 
 kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage<float,2> &img, float dose)
 {
-    if (m_bComputeLogarithm) {
+    if (m_bComputeLogarithm)
+    {
 //        kipl::io::WriteTIFF32(img,"prelogimg.tif");
         ComputeLogNorm(img,dose);
 //        kipl::io::WriteTIFF32(img,"img.tif");
     }
-	else
+    else
+    {
+//        std::cout << "ComputeNorm" << std::endl;
 		ComputeNorm(img,dose);
+    }
 
     return img;
 
@@ -292,6 +302,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
     for (size_t i=0; i<img.Size(2); i++) {
 
         if (m_bHaveBlackBody) {
+
+//            std::cout << "m_bHaveBlackBody" << std::endl;
 
             float *current_param;
 
@@ -346,6 +358,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
         }
 
         if (m_bHaveExternalBlackBody){
+
+//             std::cout << "m_bHaveExternalBlackBody" << std::endl;
 
             if (m_BB_sample_ext.Size(2)!=img.Size(2)){
                 throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
@@ -2366,11 +2380,15 @@ void ReferenceImageCorrection::PrepareReferences()
                     if (fProjPixel<=0)
                         pFlat[i]=0;
                     else {
-                        if (m_bComputeLogarithm) {
+                        if (m_bComputeLogarithm)
+                        {
                             pFlat[i]=log(fProjPixel)+log(dose);
                         }
                         else
+                        {
+//                            std::cout << "Prepare References without log" << std::endl;
                             pFlat[i]=fProjPixel*dose;
+                        }
                     }
 
                 }
@@ -2383,9 +2401,13 @@ void ReferenceImageCorrection::PrepareReferences()
                         pFlat[i]=0;
                     else {
                         if (m_bComputeLogarithm)
-                            pFlat[i]=log(fProjPixel*dose);
+                        {
+                            pFlat[i]=log(fProjPixel)+log(dose);
+                        }
                         else
+                        {
                             pFlat[i] = fProjPixel*dose;
+                        }
                         }
                 }
             }
@@ -2433,9 +2455,13 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                     pFlat[i]=0;
                 else {
                     if (m_bComputeLogarithm)
-                        pFlat[i]=log(fProjPixel*(dose));
+                    {
+                        pFlat[i]=log(fProjPixel)+log(dose);
+                    }
                     else
+                    {
                         pFlat[i]=fProjPixel*(dose);
+                    }
                 }
 
             }
@@ -2450,9 +2476,13 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                         pFlat[i]=0;
                     else {
                         if (m_bComputeLogarithm)
-                             pFlat[i]=log(fProjPixel*dose);
+                        {
+                             pFlat[i]=log(fProjPixel)+log(dose);
+                        }
                         else
+                        {
                              pFlat[i]=(fProjPixel*dose);
+                        }
                     }
                 }
 
@@ -2697,6 +2727,8 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 //    dose = dose - m_fDarkDose;
     float Pdose = 0.0f;
 
+//    std::cout << "inside ComputeNorm" << std::endl;
+
 
 
 //    float logdose = log(dose<1 ? 1.0f : dose);
@@ -2811,6 +2843,8 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
         if (m_bHaveDarkCurrent) {
             if (m_bHaveOpenBeam) {
     //                #pragma omp parallel for firstprivate(pFlat,pDark)
+
+//                std::cout << "computing values" << std::endl;
 
                         float *pImg=img.GetDataPtr();
 
