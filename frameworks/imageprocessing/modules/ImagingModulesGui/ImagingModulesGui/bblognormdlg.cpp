@@ -4,6 +4,12 @@
 #include <QImage>
 #include <QMessageBox>
 
+//#ifndef _WINDOWS_
+//#include <Windows.h>
+//#include <winnt.h>
+//#endif
+
+
 #include <strings/miscstring.h>
 #include <base/thistogram.h>
 #include <io/DirAnalyzer.h>

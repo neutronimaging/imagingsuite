@@ -159,9 +159,10 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
         msg<<"using image roi";
         logger(kipl::logging::Logger::LogDebug,msg.str());
     }
-    else {
+    else
+    {
 
-        msg<<"image roi not checked: " << m_Config.mImageInformation.nROI[0] << " " << m_Config.mImageInformation.nROI[1]<< " " << m_Config.mImageInformation.nROI[2] << " " << m_Config.mImageInformation.nROI[3]<<endl;
+//        msg<<"image roi not checked: " << m_Config.mImageInformation.nROI[0] << " " << m_Config.mImageInformation.nROI[1]<< " " << m_Config.mImageInformation.nROI[2] << " " << m_Config.mImageInformation.nROI[3]<<endl;
         kipl::base::TImage<float,2 > myimg;
         ImageReader reader;
         std:: string filename,ext;

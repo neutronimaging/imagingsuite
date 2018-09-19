@@ -3,6 +3,12 @@
 
 #include <QtCore/qglobal.h>
 
+#ifndef _WINDOWS_
+#include <Windows.h>
+#include <winnt.h>
+#endif
+
+
 #if defined(IMAGINGMODULESGUI_LIBRARY)
 #  define IMAGINGMODULESGUISHARED_EXPORT Q_DECL_EXPORT
 #else

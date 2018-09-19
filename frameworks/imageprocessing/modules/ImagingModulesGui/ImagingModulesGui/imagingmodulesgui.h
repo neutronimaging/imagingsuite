@@ -3,6 +3,7 @@
 
 #include "imagingmodulesgui_global.h"
 
+
 extern "C" {
 void IMAGINGMODULESGUISHARED_EXPORT * GetGUIModule(const char *application, const char *name,void *interactor);
 int IMAGINGMODULESGUISHARED_EXPORT DestroyGUIModule(const char *application, void *obj);

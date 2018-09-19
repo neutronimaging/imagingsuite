@@ -22,6 +22,7 @@ copy %REPOS%\lib\ProcessFramework.dll
 copy %REPOS%\lib\AdvancedFilterModules.dll
 copy %REPOS%\lib\BaseModules.dll
 copy %REPOS%\lib\ClassificationModules.dll
+copy %REPOS%\lib\ImagingModulesGUI.dll
 
 copy %REPOS%\imagingsuite\external\lib64\libtiff.dll .
 copy %REPOS%\imagingsuite\external\lib64\libjpeg-62.dll .
@@ -43,6 +44,7 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 #cd C:\Qt\5.8\msvc2015_64\bin
 
 cd %QTBINPATH%
+#cd C:\Qt\5.11.1\msvc2017_64\bin
 
 windeployqt %DEST%\QtKipTool.exe
 copy Qt5PrintSupport.dll %DEST%

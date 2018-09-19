@@ -14,6 +14,10 @@
 
 #include <bblognorm.h>
 
+//#include <windowsx.h>
+//#include <Windows.h>
+//#include <winnt.h>
+
 
 namespace Ui {
 class BBLogNormDlg;
@@ -66,7 +70,6 @@ private slots:
 
     void on_pushButton_browseDest_clicked();
 
-    void on_pushButton_2_clicked();
 
 private:
     virtual void ApplyParameters();
