@@ -3,7 +3,7 @@
 
 #include <QtCore/qglobal.h>
 
-#ifndef _WINDOWS_
+#ifdef _MSC_VER
 #include <Windows.h>
 #include <winnt.h>
 #endif
