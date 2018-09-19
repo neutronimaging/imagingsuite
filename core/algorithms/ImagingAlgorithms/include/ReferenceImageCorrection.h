@@ -108,6 +108,7 @@ public:
 
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
     void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
+    void SaveBG(bool value, string path, string obname, string filemask);
 
 
 protected:
@@ -139,13 +140,19 @@ protected:
     bool m_bHaveExternalBlackBody;
 	bool m_bComputeLogarithm;
     bool bUseManualThresh;
+    bool bSaveBG;
+
+    std::string pathBG; /// path for saving BGs
+    std::string flatname_BG; /// filename for saving the open beam BG
+    std::string filemask_BG; /// filemask for saving the computed sample BGs
+
 
     kipl::base::TImage<float,2> m_OpenBeam;
     kipl::base::TImage<float,2> m_OpenBeamforBB;
 	kipl::base::TImage<float,2> m_DarkCurrent;
 	kipl::base::TImage<float,2> m_BlackBody;
     kipl::base::TImage<float,2> m_OB_BB_Interpolated;
-    kipl::base::TImage<float,2> m_BB_sample_Interpolated; // computed in process 3d every time. but in the right way!
+    kipl::base::TImage<float,2> m_BB_sample_Interpolated;
     kipl::base::TImage<float,2> m_DoseBBsample_image;
     kipl::base::TImage<float,2> m_DoseBBflat_image;
 

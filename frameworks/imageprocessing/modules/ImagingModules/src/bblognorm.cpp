@@ -54,7 +54,8 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     bSameMask(true),
     bUseManualThresh(false),
     min_area(20),
-    thresh(0)
+    thresh(0),
+    bSaveBG(false)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -69,7 +70,9 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     path="./";
     flatname="./";
     darkname="./";
-
+    pathBG="./";
+    flatname_BG="flat_background.tif";
+    filemask_BG="sample_background_####.tif";
 
 }
 
@@ -141,6 +144,11 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh = GetFloatParameter(parameters,"thresh");
+
+    bSaveBG = kipl::strings::string2bool(GetStringParameter(parameters,"SaveBG"));
+    pathBG = GetStringParameter(parameters,"path_BG");
+    flatname_BG=GetStringParameter(parameters,"flatname_BG");
+    filemask_BG=GetStringParameter(parameters,"filemask_BG");
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;
@@ -236,6 +244,10 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 
     }
 
+    if (bSaveBG){
+        m_corrector.SaveBG(bSaveBG,pathBG,flatname_BG,filemask_BG);
+    }
+
     if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
             PrepareBBData();
     }
@@ -304,6 +316,11 @@ int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std:
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh = GetFloatParameter(parameters,"thresh");
+
+    bSaveBG = kipl::strings::string2bool(GetStringParameter(parameters,"SaveBG"));
+    pathBG = GetStringParameter(parameters,"path_BG");
+    flatname_BG=GetStringParameter(parameters,"flatname_BG");
+    filemask_BG=GetStringParameter(parameters,"filemask_BG");
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;
@@ -440,6 +457,10 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     parameters["dose_roi"] =  kipl::strings::value2string(dose_roi[0])+" "+kipl::strings::value2string(dose_roi[1])+" "+kipl::strings::value2string(dose_roi[2])+" "+kipl::strings::value2string(dose_roi[3]);
     parameters["fScanArc"] =  kipl::strings::value2string(fScanArc[0])+" "+kipl::strings::value2string(fScanArc[1]);
     parameters["path"]= path;
+    parameters["SaveBG"] = kipl::strings::bool2string(bSaveBG);
+    parameters["path_BG"] = pathBG;
+    parameters["flatname_BG"] = flatname_BG;
+    parameters["filemask_BG"] = filemask_BG;
 
     msg<<"end of BBLogNorm::GetParameters";
     logger(kipl::logging::Logger::LogDebug,msg.str());

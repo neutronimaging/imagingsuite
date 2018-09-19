@@ -62,6 +62,12 @@ private slots:
 
     void on_pushButton_browseDC_clicked();
 
+    void on_checkBox_saveBG_clicked(bool checked);
+
+    void on_pushButton_browseDest_clicked();
+
+    void on_pushButton_2_clicked();
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -112,6 +118,11 @@ private:
     std::string blackbodyexternalname;
     std::string blackbodysampleexternalname;
 
+    std::string pathBG; /// path for saving BGs
+    std::string flatname_BG; /// filename for saving the open beam BG
+    std::string filemask_BG; /// filemask for saving the computed sample BGs
+
+
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
 
@@ -122,6 +133,7 @@ private:
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
     bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
+    bool bSaveBG; /// triggers the saving of computed BGs
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;

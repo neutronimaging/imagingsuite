@@ -42,7 +42,8 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     nBBextCount(0),
     nBBextFirstIndex(0),
     min_area(20),
-    thresh(0)
+    thresh(0),
+    bSaveBG(false)
 {
 
     blackbodyname = "somename";
@@ -54,6 +55,11 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
 
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
+
+    pathBG="./";
+    flatname_BG="flat_background.tif";
+    filemask_BG="sample_background_####.tif";
+
 
     try{
             ui->setupUi(this);
@@ -121,6 +127,12 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
         thresh = GetFloatParameter(parameters,"thresh");
         min_area = GetIntParameter(parameters, "min_area");
+
+        bSaveBG = kipl::strings::string2bool(GetStringParameter(parameters,"SaveBG"));
+        pathBG = GetStringParameter(parameters,"path_BG");
+        flatname_BG=GetStringParameter(parameters,"flatname_BG");
+        filemask_BG=GetStringParameter(parameters,"filemask_BG");
+
 
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
 //        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
@@ -256,6 +268,23 @@ void BBLogNormDlg::UpdateDialog(){
     ui->doubleSpinBox_firstangle->setValue(fScanArc[0]);
     ui->doubleSpinBox_lastangle->setValue(fScanArc[1]);
 
+    if (bSaveBG==false){
+        ui->checkBox_saveBG->setChecked(false);
+        ui->Qwidget_names->setVisible(false);
+        ui->Qwidget_path->setVisible(false);
+    }
+    else
+    {
+        ui->checkBox_saveBG->setChecked(true);
+        ui->Qwidget_names->setVisible(true);
+        ui->Qwidget_path->setVisible(true);
+    }
+
+    ui->lineEdit_pathBG->setText(QString::fromStdString(pathBG));
+    ui->lineEdit_flatBG->setText(QString::fromStdString(flatname_BG));
+    ui->lineEdit_sampleBG->setText(QString::fromStdString(filemask_BG));
+
+
 //    std::cout << "update dialog" << std::endl;
 
 }
@@ -286,6 +315,31 @@ void BBLogNormDlg::UpdateParameters(){
         dose_roi[2] = doseBBroi[2];
         dose_roi[3] = doseBBroi[3];
     }
+
+    if (ui->checkBox_saveBG->isChecked())
+    {
+        bSaveBG = true;
+        pathBG = ui->lineEdit_pathBG->text().toStdString();
+        flatname_BG = ui->lineEdit_flatBG->text().toStdString();
+        filemask_BG  = ui->lineEdit_sampleBG->text().toStdString();
+    }
+    else
+    {
+        bSaveBG = false;
+    }
+
+//    if (bSaveBG==false){
+//        ui->checkBox_saveBG->setChecked(false);
+//        ui->Qwidget_names->setVisible(false);
+//        ui->Qwidget_path->setVisible(false);
+//    }
+//    else
+//    {
+//        ui->checkBox_saveBG->setChecked(true);
+//        ui->Qwidget_names->setVisible(true);
+//        ui->Qwidget_path->setVisible(true);
+
+//    }
 
 //    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
 //        bUseNormROIBB = true;
@@ -381,6 +435,11 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["dose_roi"] =  kipl::strings::value2string(dose_roi[0])+" "+kipl::strings::value2string(dose_roi[1])+" "+kipl::strings::value2string(dose_roi[2])+" "+kipl::strings::value2string(dose_roi[3]);
     parameters["fScanArc"] =  kipl::strings::value2string(fScanArc[0])+" "+kipl::strings::value2string(fScanArc[1]);
     parameters["path"]= path;
+
+    parameters["SaveBG"] = kipl::strings::bool2string(bSaveBG);
+    parameters["path_BG"] = pathBG;
+    parameters["flatname_BG"] = flatname_BG;
+    parameters["filemask_BG"] = filemask_BG;
 
 
 //    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
@@ -1008,3 +1067,36 @@ void BBLogNormDlg::on_pushButton_browseDC_clicked()
 {
     BrowseDCPath();
 }
+
+//void BBLogNormDlg::on_checkBox_saveBG_clicked()
+//{
+//    bSaveBG=true;
+//    ui->Qwidget_path->setVisible(true);
+//    ui->Qwidget_names->setVisible(true);
+//}
+
+void BBLogNormDlg::on_checkBox_saveBG_clicked(bool checked)
+{
+    if (checked){
+        bSaveBG=true;
+        ui->Qwidget_path->setVisible(true);
+        ui->Qwidget_names->setVisible(true);
+    }
+    else{
+        bSaveBG=false;
+        ui->Qwidget_path->setVisible(false);
+        ui->Qwidget_names->setVisible(false);
+    }
+
+}
+
+void BBLogNormDlg::on_pushButton_browseDest_clicked()
+{
+    QString projdir=QFileDialog::getExistingDirectory(this,
+                                      "Select location for the computed backgrounds",
+                                      ui->lineEdit_pathBG->text());
+
+    if (!projdir.isEmpty())
+        ui->lineEdit_pathBG->setText(projdir);
+}
+

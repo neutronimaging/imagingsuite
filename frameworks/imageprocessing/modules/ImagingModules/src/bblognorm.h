@@ -47,12 +47,16 @@ protected:
     KiplProcessConfig m_Config;
     std::string path; /// path, maybe not used
     std::string flatname; /// name mask for OB image
-    std::string darkname; /// name mask for DC imagef
+    std::string darkname; /// name mask for DC image
     std::string blackbodyname; /// name mask for OB image with BBs
     std::string blackbodysamplename; /// name mask for sample image with BBs
 
-    std::string blackbodyexternalname;
-    std::string blackbodysampleexternalname;
+    std::string blackbodyexternalname; /// name of the externally computed background for the OB
+    std::string blackbodysampleexternalname; /// names of the externally computed backgrounds for the sample
+
+    std::string pathBG; /// path for saving BGs
+    std::string flatname_BG; /// filename for saving the open beam BG
+    std::string filemask_BG; /// filemask for saving the computed sample BGs
 
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
@@ -84,7 +88,8 @@ protected:
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     bool bSameMask; /// boolean value on the use of the same mask computed for OB images with BB also for sample image with BB, in case of false the mask is recomputed on the first available image with BB. This implies that exists an image with the sample and without BB and the sample is in the exact same position
     bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
-    bool bPBvariante;
+    bool bPBvariante; /// boolean value to enable the full formulation of the correction by PB. It is actually the only one used
+    bool bSaveBG; /// boolean value to enable the option of saving the computed BGs
 
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
