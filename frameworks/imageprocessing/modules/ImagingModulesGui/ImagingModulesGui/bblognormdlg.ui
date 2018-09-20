@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1267</width>
+    <width>1201</width>
     <height>1144</height>
    </rect>
   </property>
@@ -1434,6 +1434,12 @@
           </item>
           <item>
            <widget class="QWidget" name="Qwidget_path" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_28">
              <item>
               <widget class="QLabel" name="label_39">
@@ -1443,7 +1449,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_pathBG"/>
+              <widget class="QLineEdit" name="lineEdit_pathBG">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_browseDest">
@@ -1457,6 +1470,12 @@
           </item>
           <item>
            <widget class="QWidget" name="Qwidget_names" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_29">
              <item>
               <widget class="QLabel" name="label_40">
@@ -1466,7 +1485,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_flatBG"/>
+              <widget class="QLineEdit" name="lineEdit_flatBG">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_41">
