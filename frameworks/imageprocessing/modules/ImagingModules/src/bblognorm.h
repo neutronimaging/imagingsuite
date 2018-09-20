@@ -13,6 +13,7 @@
 #include <KiplProcessModuleBase.h>
 
 #include <KiplProcessConfig.h>
+#include <interactors/interactionbase.h>
 
 //#include <PreprocModuleBase.h>
 //#include <ReconConfig.h>
@@ -24,7 +25,7 @@
 
 class IMAGINGMODULESSHARED_EXPORT BBLogNorm: public KiplProcessModuleBase {
 public:
-    BBLogNorm();
+    BBLogNorm(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~BBLogNorm();
 
 //    virtual int Configure(std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
@@ -154,6 +155,7 @@ protected:
 
 private:
     int m_nWindow; /// apparentely not used
+//    kipl::interactors::InteractionBase *m_Interactor;
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)

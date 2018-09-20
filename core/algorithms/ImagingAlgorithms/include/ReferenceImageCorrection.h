@@ -11,7 +11,7 @@
 #include <logging/logger.h>
 #include "../include/averageimage.h"
 #include <QTextStream>
-
+#include <interactors/interactionbase.h>
 
 
 namespace ImagingAlgorithms {
@@ -52,8 +52,8 @@ public:
 
 
 
-	ReferenceImageCorrection();
-    virtual ~ReferenceImageCorrection();
+    ReferenceImageCorrection();
+    ~ReferenceImageCorrection();
 
     void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
             std::string dcname, size_t firstdc, size_t dccnt,
@@ -109,6 +109,7 @@ public:
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
     void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
     void SaveBG(bool value, string path, string obname, string filemask);
+    void SetInteractor(kipl::interactors::InteractionBase *interactor);
 
 
 protected:
@@ -203,6 +204,11 @@ protected:
 
     std::map<std::pair<int, int>, float> spline_ob_values; /// map to be used for interpolation with splines and ob image. should be in principle the same number of images with BB, i start now with 1
     std::map<std::pair<int, int>, float> spline_sample_values; /// map to be used for interpolation with splines and sample image
+
+
+
+    kipl::interactors::InteractionBase *m_Interactor;
+    bool updateStatus(float val, std::string msg);
 };
 
 }

@@ -15,7 +15,7 @@
 #include "../include/ImagingException.h"
 #include <imagereader.h>
 
-BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
+BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("BBLogNorm", false, interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     nOBCount(0),
     nOBFirstIndex(1),
@@ -56,6 +56,7 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     min_area(20),
     thresh(0),
     bSaveBG(false)
+//    m_Interactor(interactor)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -74,6 +75,9 @@ BBLogNorm::BBLogNorm() : KiplProcessModuleBase("BBLogNorm", false),
     flatname_BG="flat_background.tif";
     filemask_BG="sample_background_####.tif";
 
+    m_corrector.SetInteractor(interactor);
+
+
 }
 
 BBLogNorm::~BBLogNorm()
@@ -90,6 +94,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     logger(kipl::logging::Logger::LogDebug,msg.str());
 
     m_Config    = config;
+
 //    path        = config.ProjectionInfo.sReferencePath;
 //    flatname    = config.ProjectionInfo.sOBFileMask;
 //    darkname    = config.ProjectionInfo.sDCFileMask;
@@ -149,6 +154,8 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     pathBG = GetStringParameter(parameters,"path_BG");
     flatname_BG=GetStringParameter(parameters,"flatname_BG");
     filemask_BG=GetStringParameter(parameters,"filemask_BG");
+
+
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;

@@ -34,7 +34,7 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
             return new StripeFilterModule;
 
         if (sName=="BBLogNorm")
-            return new BBLogNorm;
+            return new BBLogNorm(interactor);
     }
 
     return nullptr;

@@ -20,6 +20,7 @@
 #include <strings/miscstring.h>
 #include <morphology/label.h>
 
+
 #include "../include/ReferenceImageCorrection.h"
 #include "../include/ImagingException.h"
 
@@ -102,6 +103,16 @@ void ReferenceImageCorrection::SaveBG(bool value, std::string path, std::string 
     pathBG = path;
     flatname_BG = obname;
     filemask_BG = filemask;
+}
+
+void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase *interactor){
+    if (interactor!=nullptr){
+        m_Interactor=interactor;
+    }
+    else{
+        m_Interactor=nullptr;
+    }
+
 }
 
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
@@ -314,7 +325,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 	kipl::base::TImage<float, 2> slice(img.Dims());
 
 
-    for (size_t i=0; i<img.Size(2); i++) {
+    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"Referencing iteration")==false)); i++) {
 
         if (m_bHaveBlackBody) {
 
@@ -2949,6 +2960,15 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     fdose_ext_list = new float[bb_sample_ext.Size(2)];
     memcpy(fdose_ext_list, doselist, sizeof(float)*bb_sample_ext.Size(2));
 
+}
+
+bool ReferenceImageCorrection::updateStatus(float val, std::string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
 
 }
