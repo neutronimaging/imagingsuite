@@ -50,11 +50,11 @@
 STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
-		return NULL;
+        return nullptr;
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 
-	if (name!=NULL) {
+    if (name!=nullptr) {
 		std::string sName=name;
 
         if (sName=="BBLogNorm")
@@ -136,7 +136,7 @@ STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)
 	std::ostringstream msg;
 	std::string name="No name";
 	try {
-		if (obj!=NULL) {
+        if (obj!=nullptr) {
 			PreprocModuleBase *module=reinterpret_cast<PreprocModuleBase *>(obj);
 			name=module->ModuleName();
 			msg<<"Destroying "<<name;

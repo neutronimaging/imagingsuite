@@ -136,8 +136,8 @@ int ReconDialog::progress()
 
 void ReconDialog::changedProgress(float progress, float overallProgress, QString msg)
 {
-    ui->progressBar->setValue(progress*100);
-    ui->progressBar_overall->setValue(overallProgress*100);
+    ui->progressBar->setValue(static_cast<int>(progress*100));
+    ui->progressBar_overall->setValue(static_cast<int>(overallProgress*100));
 
     ui->label_message->setText(msg);
 }
@@ -145,7 +145,7 @@ void ReconDialog::changedProgress(float progress, float overallProgress, QString
 int ReconDialog::process()
 {
     logger(kipl::logging::Logger::LogMessage,"Process thread is started");
-    ostringstream msg;
+    std::ostringstream msg;
 
     bool failed=false;
     try {

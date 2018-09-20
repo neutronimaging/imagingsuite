@@ -10,6 +10,7 @@ namespace kipl { namespace base {
 /// \param dims array with image dimensions
 /// \param pProfile array to contain the projection
 /// \param bMeanProjection switch to select if the average projection is to be computed instead of the sum
+/// \test TkiplbasetestTest::testProfiles() in tkiplbasetest.pro
 template <typename T, typename S>
 void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
 
@@ -18,6 +19,7 @@ void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool 
 /// \param dims array with image dimensions
 /// \param pProfile array to contain the projection
 /// \param bMeanProjection switch to select if the average projection is to be computed instead of the sum
+/// \test TkiplbasetestTest::testProfiles() in tkiplbasetest.pro
 template <typename T, typename S>
 void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
 

@@ -68,23 +68,23 @@ std::map<std::string, std::string> ReferenceImageCorrectionModule::GetParameters
 
 int ReferenceImageCorrectionModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-    ImagingAlgorithms::ReferenceImageCorrection ric;
-    size_t N=img.Size(2);
+//    ImagingAlgorithms::ReferenceImageCorrection ric;
+//    size_t N=img.Size(2);
 
-    float *dose=new float[N];
-    std::fill_n(dose,N,1.0f);
-    GetDose(img,dose);
+//    float *dose=new float[N];
+//    std::fill_n(dose,N,1.0f);
+//    GetDose(img,dose);
 
-    ric.LoadReferenceImages("",m_OBname,m_OBfirst,m_OBcount,
-                               m_DCname,m_DCfirst,m_DCcount,
-                               m_BBname,m_BBfirst,m_BBcount,nullptr,m_doseROI);
+//    ric.LoadReferenceImages("",m_OBname,m_OBfirst,m_OBcount,
+//                               m_DCname,m_DCfirst,m_DCcount,
+//                               m_BBname,m_BBfirst,m_BBcount,nullptr,m_doseROI);
 
-    // ric.setDiffRoi();
-    ric.ComputeLogartihm(m_computeLogarithm);
-    ric.SetTau(m_tau);
-    ric.Process(img,dose);
+//    // ric.setDiffRoi();
+//    ric.ComputeLogartihm(m_computeLogarithm);
+//    ric.SetTau(m_tau);
+//    ric.Process(img,dose);
 
-    delete [] dose;
+//    delete [] dose;
 
     return 0;
 }

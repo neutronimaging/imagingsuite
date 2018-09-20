@@ -119,7 +119,7 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 
     msg.str("");
     msg<<"File list size="<<plist.size();
-    ui->progressBar->setMaximum(flist.size());
+    ui->progressBar->setMaximum(static_cast<int>(flist.size()));
     ui->progressBar->setValue(0);
     logger(logger.LogMessage,msg.str());
 

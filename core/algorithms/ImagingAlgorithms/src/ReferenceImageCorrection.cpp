@@ -373,7 +373,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             if (bSaveBG){
                 std::string filename, ext;
                 kipl::strings::filenames::MakeFileName(filemask_BG,static_cast<int>(i),filename,ext,'#','0');
-                std::cout << filename << std::endl;
+//                std::cout << filename << std::endl;
                 std::string fname=pathBG+"/"+filename;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
                 kipl::io::WriteTIFF32(m_BB_sample_Interpolated,fname.c_str()); // seem correct

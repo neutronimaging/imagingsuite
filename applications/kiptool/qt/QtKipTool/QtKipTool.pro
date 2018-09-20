@@ -84,7 +84,9 @@ SOURCES +=  ../../src/main.cpp\
     ../../src/ImagingToolConfig.cpp \
     ../../src/fileconversiondialog.cpp \
     ../../src/Fits2Tif.cpp \
-    ../../src/imagingmoduleconfigurator.cpp
+    ../../src/imagingmoduleconfigurator.cpp \
+    processdialog.cpp
+
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/ImageIO.h \
@@ -97,14 +99,16 @@ HEADERS  += ../../src/kiptoolmainwindow.h \
     ../../src/ImagingToolConfig.h \
     ../../src/fileconversiondialog.h \
     ../../src/Fits2Tif.h \
-    ../../src/imagingmoduleconfigurator.h
+    ../../src/imagingmoduleconfigurator.h \
+    processdialog.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
             ../../src/confighistorydialog.ui \
             ../../src/genericconversion.ui \
     ../../src/reslicerdialog.ui \
     ../../src/mergevolumesdialog.ui \
-    ../../src/fileconversiondialog.ui
+    ../../src/fileconversiondialog.ui \
+    processdialog.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/

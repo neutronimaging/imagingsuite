@@ -11,4 +11,4 @@ rem call build_applications_imageviewer.bat
 rem call build_applications_kipltool.bat
 call build_applications_muhrec.bat
 call build_applications_muhrecCLI.bat
-
+call build_applications_CLItools.bat
