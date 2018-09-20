@@ -55,8 +55,8 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProce
     bUseManualThresh(false),
     min_area(20),
     thresh(0),
-    bSaveBG(false)
-//    m_Interactor(interactor)
+    bSaveBG(false),
+    m_Interactor(interactor)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -85,6 +85,14 @@ BBLogNorm::~BBLogNorm()
 
 }
 
+bool BBLogNorm::updateStatus(float val, string msg){
+
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
+
+}
 
 int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
@@ -256,11 +264,11 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
         m_corrector.SaveBG(bSaveBG,pathBG,flatname_BG,filemask_BG);
     }
 
-    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-            PrepareBBData();
-    }
+//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+//            PrepareBBData();
+//    }
 
-     SetROI(m_Config.mImageInformation.nROI);
+//     SetROI(m_Config.mImageInformation.nROI);
 
 
 //    std::stringstream msg;
@@ -706,7 +714,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 //                          std::cout << "doselist: " << std::endl;
 
     float *doselist = new float[nProj];
-    for (size_t i=0; i<nProj; i++) {
+    for (size_t i=0; (i<nProj && (updateStatus(float(i)/nProj,"Loading dose for BB images")==false) ) ; i++) {
         doselist[i] = DoseBBLoader(m_Config.mImageInformation.sSourceFileMask, m_Config.mImageInformation.nFirstFileIndex+i, 1.0f, fdarkBBdose); // D(I*n-Idc) in the doseBBroi
     }
 
@@ -740,7 +748,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 //                     m_corrector.SetDoseList(doselist);
 //                     delete [] doselist;
 
-                     for (size_t i=0; i<nBBSampleCount; i++) {
+                     for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating Polynomial interpolation")==false)); i++) {
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, fBlackDoseSample);
 
                          float dosesample; // used for the correct dose roi computation (doseBBroi)
@@ -914,7 +922,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
                 float dosesample;
                 float current_dose;
 
-                for (size_t i=0; i<nBBSampleCount; i++) {
+                for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating Polynomial interpolation")==false)); i++) {
 
 
                     samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, fBlackDoseSample);
@@ -1082,7 +1090,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
      m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
      float *doselist = new float[nProj];
-     for (size_t i=0; i<nProj; i++) {
+     for (size_t i=0; (i<nProj && (updateStatus(float(i)/nProj,"Loading dose for BB images")==false) ); i++) {
          doselist[i] = DoseBBLoader(m_Config.mImageInformation.sSourceFileMask, m_Config.mImageInformation.nFirstFileIndex+i,
                                     1.0f, fdarkBBdose); // D(I*n-Idc) in the doseBBroi
      }
@@ -1118,7 +1126,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 //                          m_corrector.SetDoseList(doselist);
 //                          delete [] doselist;
 
-                          for (size_t i=0; i<nBBSampleCount; i++) {
+                          for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating ThinPlateSplines interpolation")==false)); i++) {
 
 
                               samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, fBlackDoseSample);
@@ -1315,7 +1323,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
                      float dosesample;
                      float current_dose;
 
-                     for (size_t i=0; i<nBBSampleCount; i++) {
+                     for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating ThinPlateSplines interpolation")==false)); i++) {
 
 
                          samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, fBlackDoseSample);
@@ -1642,6 +1650,13 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
     std::stringstream msg;
     msg.str(""); msg<<"ProcessCore";
     logger(kipl::logging::Logger::LogDebug,msg.str());
+
+    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
+            PrepareBBData();
+    }
+
+     SetROI(m_Config.mImageInformation.nROI);
+
 
 
 
