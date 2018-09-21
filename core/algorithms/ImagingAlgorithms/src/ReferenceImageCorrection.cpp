@@ -326,7 +326,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 	kipl::base::TImage<float, 2> slice(img.Dims());
 
 
-    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"Referencing iteration")==false)); i++) {
+    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
 
         if (m_bHaveBlackBody) {
 

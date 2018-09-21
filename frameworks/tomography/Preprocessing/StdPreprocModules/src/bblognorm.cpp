@@ -464,7 +464,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
 void BBLogNorm::PrepareBBData(){
 
     logger(kipl::logging::Logger::LogMessage,"PrepareBBData begin--");
-    std::cout << "PrepareBBData begin--" << std::endl;
+//    std::cout << "PrepareBBData begin--" << std::endl;
     if (flatname.empty() && nOBCount!=0)
         throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
     if (darkname.empty() && nDCCount!=0)
@@ -504,7 +504,7 @@ void BBLogNorm::PrepareBBData(){
             break;
         }
         case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
-            std::cout << "ThinPlateSplines" << std::endl;
+//            std::cout << "ThinPlateSplines" << std::endl;
              logger(kipl::logging::Logger::LogMessage,"ThinPlateSplines");
 
             int nBBs = PrepareSplinesInterpolationParameters();
@@ -525,6 +525,7 @@ void BBLogNorm::PrepareBBData(){
 
 void BBLogNorm::PreparePolynomialInterpolationParameters()
 {
+//    std::cout << "Preparing Polynomial interpolation parameters" << std::endl;
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 
