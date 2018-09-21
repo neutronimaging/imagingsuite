@@ -50,7 +50,8 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     min_area(0),
     bUseManualThresh(false),
     thresh(0.0f),
-    bSaveBG(false)
+    bSaveBG(false),
+    m_Interactor(nullptr)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;

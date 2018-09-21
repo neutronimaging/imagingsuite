@@ -62,8 +62,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
 
-    m_corrector.SetInteractor(interactor);
-    m_corrector.SaveBG(false, nullptr, nullptr, nullptr);
+
 
 }
 
@@ -80,6 +79,7 @@ bool BBLogNorm::updateStatus(float val, string msg){
     return false;
 
 }
+
 
 
 int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
@@ -129,6 +129,9 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh = GetFloatParameter(parameters,"thresh");
+
+    m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
+    m_corrector.SetInteractor(m_Interactor);
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;

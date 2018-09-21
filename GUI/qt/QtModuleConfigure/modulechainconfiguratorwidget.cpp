@@ -55,8 +55,8 @@ void ModuleChainConfiguratorWidget::configure(std::string application, std::stri
     m_sApplicationPath = applicationpath;
     m_pConfigurator    = pConfigurator;
 
-    std:cout << m_sApplication << std::endl;
-    std::cout << m_sApplicationPath << std::endl;
+//    std:cout << m_sApplication << std::endl;
+//    std::cout << m_sApplicationPath << std::endl;
 
 }
 
@@ -73,6 +73,7 @@ QSize ModuleChainConfiguratorWidget::sizeHint() const
 void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 {
     ostringstream msg;
+    std::cout << "trying to add module" << std::endl;
 
     AddModuleDialog dlg(this);
 

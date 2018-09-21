@@ -75,7 +75,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProce
     flatname_BG="flat_background.tif";
     filemask_BG="sample_background_####.tif";
 
-    m_corrector.SetInteractor(interactor);
+
 
 
 }
@@ -102,6 +102,8 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
     logger(kipl::logging::Logger::LogDebug,msg.str());
 
     m_Config    = config;
+
+    m_corrector.SetInteractor(m_Interactor); // outside the constructor.. to check if still OK.
 
 //    path        = config.ProjectionInfo.sReferencePath;
 //    flatname    = config.ProjectionInfo.sOBFileMask;
