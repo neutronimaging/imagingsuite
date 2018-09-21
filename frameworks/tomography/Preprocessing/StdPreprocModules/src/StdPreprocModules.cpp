@@ -58,7 +58,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 		std::string sName=name;
 
         if (sName=="BBLogNorm")
-            return new BBLogNorm;
+            return new BBLogNorm(interactor);
 
         if (sName=="FullLogNorm")
             return new FullLogNorm;

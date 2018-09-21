@@ -51,7 +51,8 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     bSameMask(true),
     bUseManualThresh(false),
     min_area(20),
-    thresh(0)
+    thresh(0),
+    m_Interactor(interactor)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -61,10 +62,22 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
 
+    m_corrector.SetInteractor(interactor);
+    m_corrector.SaveBG(false, nullptr, nullptr, nullptr);
+
 }
 
 BBLogNorm::~BBLogNorm()
 {
+
+}
+
+bool BBLogNorm::updateStatus(float val, string msg){
+
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
 
 }
 
