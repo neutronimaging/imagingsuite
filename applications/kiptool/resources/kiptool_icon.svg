@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="kiptool_icon.svg">
+   sodipodi:docname="kiptool_icon.svg"
+   inkscape:export-filename="/Users/kaestner/git/imagingsuite/applications/kiptool/resources/kiptool_icon.png"
+   inkscape:export-xdpi="306"
+   inkscape:export-ydpi="306">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -280,16 +283,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.1868452"
-     inkscape:cx="216.49514"
-     inkscape:cy="91.945897"
+     inkscape:cx="182.79234"
+     inkscape:cy="125.64869"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1870"
-     inkscape:window-height="1155"
-     inkscape:window-x="50"
-     inkscape:window-y="1"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1265"
+     inkscape:window-height="732"
+     inkscape:window-x="279"
+     inkscape:window-y="124"
+     inkscape:window-maximized="0"
      fit-margin-top="5"
      fit-margin-left="5"
      fit-margin-right="5"
