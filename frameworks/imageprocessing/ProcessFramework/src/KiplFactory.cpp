@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
+//<LICENSE>
 
 #include "stdafx.h"
 #include "../include/KiplFactory.h"
@@ -25,9 +16,9 @@ KiplFactory::~KiplFactory(void)
 }
 
 
-KiplEngine * KiplFactory::BuildEngine(KiplProcessConfig &config)
+KiplEngine * KiplFactory::BuildEngine(KiplProcessConfig &config, kipl::interactors::InteractionBase *interactor)
 {
-	KiplEngine * engine=new KiplEngine;
+    KiplEngine * engine=new KiplEngine("KiplEngine",interactor);
 
 	engine->SetConfig(config);
 	
@@ -36,9 +27,9 @@ KiplEngine * KiplFactory::BuildEngine(KiplProcessConfig &config)
 	// Setting up the processing modules
 	for (it=config.modules.begin(); it!=config.modules.end(); it++) {
 		if (it->m_bActive==true) {
-			KiplModuleItem *module=NULL;
+            KiplModuleItem *module=nullptr;
 			try {
-				module=new KiplModuleItem(it->m_sSharedObject,it->m_sModule);
+                module=new KiplModuleItem(it->m_sSharedObject,it->m_sModule,interactor);
 
 				module->GetModule()->Configure(it->parameters);
 				engine->AddProcessingModule(module);

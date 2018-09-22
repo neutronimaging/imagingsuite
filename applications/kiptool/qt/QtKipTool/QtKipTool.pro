@@ -43,8 +43,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio $$PWD/../../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -83,7 +83,8 @@ SOURCES +=  ../../src/main.cpp\
     ../../src/mergevolumesdialog.cpp \
     ../../src/ImagingToolConfig.cpp \
     ../../src/fileconversiondialog.cpp \
-    ../../src/Fits2Tif.cpp
+    ../../src/Fits2Tif.cpp \
+    processdialog.cpp
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/ImageIO.h \
@@ -95,14 +96,16 @@ HEADERS  += ../../src/kiptoolmainwindow.h \
     ../../src/mergevolumesdialog.h \
     ../../src/ImagingToolConfig.h \
     ../../src/fileconversiondialog.h \
-    ../../src/Fits2Tif.h
+    ../../src/Fits2Tif.h \
+    processdialog.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
             ../../src/confighistorydialog.ui \
             ../../src/genericconversion.ui \
     ../../src/reslicerdialog.ui \
     ../../src/mergevolumesdialog.ui \
-    ../../src/fileconversiondialog.ui
+    ../../src/fileconversiondialog.ui \
+    processdialog.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/

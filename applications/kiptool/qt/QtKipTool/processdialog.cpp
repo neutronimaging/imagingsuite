@@ -3,37 +3,45 @@
 #include <QMessageBox>
 #include <QtConcurrent>
 #include <QFuture>
-#include "recondialog.h"
-#include "ui_recondialog.h"
 
-
-#include <iostream>
-#include <ReconException.h>
+#include "processdialog.h"
+#include "ui_processdialog.h"
+#include <KiplFrameworkException.h>
 #include <ModuleException.h>
 #include <base/KiplException.h>
 
-ReconDialog::ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent) :
+ProcessDialog::ProcessDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent) :
     QDialog(parent),
-    logger("ReconDialog"),
-    ui(new Ui::ReconDialog),
+    logger("ProcessDialog"),
+    ui(new Ui::ProcessDialog),
     fraction(0.0f),
     finish(false),
-    m_Engine(nullptr),
-    m_Interactor(interactor),
-    m_bRerunBackproj(false)
+    m_Interactor(interactor)
 {
     ui->setupUi(this);
-    connect(this,&ReconDialog::updateProgress,this,&ReconDialog::changedProgress);
-    connect(this,&ReconDialog::processFailure,this,&ReconDialog::on_processFailure);
+    if (interactor==nullptr)
+        throw KiplFrameworkException("Progress dialog can't open without valid interactor");
+
+    connect(this,&ProcessDialog::updateProgress,this,&ProcessDialog::changedProgress);
+    connect(this,&ProcessDialog::processFailure,this,&ProcessDialog::on_processFailure);
 }
 
-ReconDialog::~ReconDialog()
+ProcessDialog::~ProcessDialog()
 {
     delete ui;
 }
 
-int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
+
+int ProcessDialog::exec(KiplEngine * engine, kipl::base::TImage<float,3> *img)
 {
+    if (img==nullptr)
+    {
+        logger(logger.LogError,"Called recon dialog with uninitialized image");
+        return Rejected;
+    }
+
+    m_img=img;
+
     if (engine==nullptr)
     {
         logger(logger.LogError,"Called recon dialog with unallocated engine");
@@ -41,32 +49,23 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     }
 
     m_Engine=engine;
-    m_bRerunBackproj=bRerunBackProj;
+
     finish=false;
     logger(kipl::logging::Logger::LogMessage,"Start");
 
     m_Interactor->Reset();
 
-#ifdef NEVER//_MSC_VER
-    #undef USEDIALOG
-//    #define USEDIALOG
-#else
-    #define USEDIALOG
-#endif
-
-#ifdef USEDIALOG
     logger(logger.LogMessage,"Starting with threads");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(this,&ReconDialog::process);
-    QFuture<int> progress_thread=QtConcurrent::run(this,&ReconDialog::progress);
+    QFuture<int> proc_thread=QtConcurrent::run(this,&ProcessDialog::process);
+    QFuture<int> progress_thread=QtConcurrent::run(this,&ProcessDialog::progress);
 
     int res=exec();
 
     finish=true;
     if (res==QDialog::Rejected) {
-        std::cout<<"calling abort process"<<std::endl;
         logger(kipl::logging::Logger::LogVerbose,"Cancel requested by user");
         Abort();
     }
@@ -75,46 +74,10 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     progress_thread.waitForFinished();
     logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
     return res;
-#else
-    bool bFailure=false;
 
-    ostringstream msg;
-    try {
-        process();
-    }
-    catch (std::exception &e) {
-        msg<<"Reconstruction failed: "<<endl
-            <<e.what();
-        bFailure=true;
-    }
-    catch (ReconException &e) {
-        msg<<"Reconstruction failed: "<<endl
-            <<e.what();
-        bFailure=true;
-    }
-    catch (kipl::base::KiplException &e) {
-        msg<<"Reconstruction failed: "<<endl
-            <<e.what();
-        bFailure=true;
-    }
-    catch (...) {
-        msg<<"Reconstruction failed";
-        bFailure=true;
-    }
-
-    if (bFailure) {
-        QMessageBox error_dlg(this);
-        error_dlg.setText("Reconstruction failed");
-        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        error_dlg.exec();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        return Rejected;
-    }
-    return Accepted;
-#endif
 }
 
-int ReconDialog::progress()
+int ProcessDialog::progress()
 {
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
     QThread::msleep(250);
@@ -122,10 +85,6 @@ int ReconDialog::progress()
         emit updateProgress(m_Interactor->CurrentProgress(),
                             m_Interactor->CurrentOverallProgress(),
                             QString::fromStdString(m_Interactor->CurrentMessage()));
-//        ui->progressBar->setValue(m_Interactor->CurrentProgress()*100);
-//        ui->progressBar_overall->setValue(m_Interactor->CurrentOverallProgress()*100);
-
-//        ui->label_message->setText(QString::fromStdString(m_Interactor->CurrentMessage()));
 
         QThread::msleep(50);
     }
@@ -134,7 +93,7 @@ int ReconDialog::progress()
     return 0;
 }
 
-void ReconDialog::changedProgress(float progress, float overallProgress, QString msg)
+void ProcessDialog::changedProgress(float progress, float overallProgress, QString msg)
 {
     ui->progressBar->setValue(static_cast<int>(progress*100));
     ui->progressBar_overall->setValue(static_cast<int>(overallProgress*100));
@@ -142,21 +101,21 @@ void ReconDialog::changedProgress(float progress, float overallProgress, QString
     ui->label_message->setText(msg);
 }
 
-int ReconDialog::process()
+int ProcessDialog::process()
 {
     logger(kipl::logging::Logger::LogMessage,"Process thread is started");
-    std::ostringstream msg;
+    ostringstream msg;
 
     bool failed=false;
     try {
         if (m_Engine!=nullptr)
-            m_Engine->Run3D(m_bRerunBackproj);
+            m_Engine->Run(m_img);
         else {
             logger(logger.LogError,"Trying to start an unallocated engine.");
             failed=true;
         }
     }
-    catch (ReconException &e)
+    catch (KiplFrameworkException &e)
     {
         msg<<"ReconException with message: "<<e.what();
         failed =true;
@@ -188,7 +147,7 @@ int ReconDialog::process()
         emit processFailure(QString::fromStdString(msg.str()));
         return 0;
     }
-    logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
+    logger(kipl::logging::Logger::LogMessage,"Processing done");
 
     finish=true;
     m_Interactor->Done();
@@ -197,7 +156,7 @@ int ReconDialog::process()
     return 0;
 }
 
-void ReconDialog::Abort()
+void ProcessDialog::Abort()
 {
     if (m_Interactor!=nullptr) {
         m_Interactor->Abort();
@@ -205,7 +164,7 @@ void ReconDialog::Abort()
     this->reject();
 }
 
-bool ReconDialog::Finished()
+bool ProcessDialog::Finished()
 {
     if (m_Interactor!=nullptr) {
         return m_Interactor->Finished();
@@ -214,7 +173,7 @@ bool ReconDialog::Finished()
     return true;
 }
 
-void ReconDialog::on_processFailure(QString msg)
+void ProcessDialog::on_processFailure(QString msg)
 {
     QMessageBox dlg;
     dlg.setWindowTitle("Reconstruction error");
@@ -225,7 +184,8 @@ void ReconDialog::on_processFailure(QString msg)
     Abort();
 }
 
-void ReconDialog::on_buttonCancel_clicked()
+void ProcessDialog::on_buttonBox_rejected()
 {
+    Abort();
     this->reject();
 }

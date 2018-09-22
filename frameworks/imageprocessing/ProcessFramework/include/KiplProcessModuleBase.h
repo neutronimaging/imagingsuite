@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2011-08-17 16:22:51 +0200 (Mi, 17 Aug 2011) $
-// $Rev: 1020 $
-// $Id: PreprocModuleBase.h 1020 2011-08-17 14:22:51Z kaestner $
-//
+//<LICENSE>
 
-#ifndef __PREPROCMODULEBASE_H
-#define __PREPROCMODULEBASE_H
+#ifndef PREPROCMODULEBASE_H
+#define PREPROCMODULEBASE_H
 
 #include "ProcessFramework_global.h"
 //#include "../src/stdafx.h"
@@ -30,7 +19,7 @@
 class PROCESSFRAMEWORKSHARED_EXPORT KiplProcessModuleBase : public ProcessModuleBase
 {
 public:
-	KiplProcessModuleBase(std::string name="KiplProcessModuleBase", bool bComputeHistogram=false);
+    KiplProcessModuleBase(std::string name="KiplProcessModuleBase", bool bComputeHistogram=false, kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual int Process(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
 	virtual ~KiplProcessModuleBase(void);
 	virtual int Configure(std::map<std::string, std::string> parameters)=0;

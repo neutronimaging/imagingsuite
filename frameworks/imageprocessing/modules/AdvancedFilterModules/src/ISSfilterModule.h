@@ -4,12 +4,14 @@
 #define ISSFILTERMODULE_H_
 
 #include "AdvancedFilterModules_global.h"
+
+#include <interactors/interactionbase.h>
 #include <KiplProcessModuleBase.h>
 #include <scalespace/filterenums.h>
 
 class ADVANCEDFILTERMODULES_EXPORT ISSfilterModule: public KiplProcessModuleBase {
 public:
-    ISSfilterModule();
+    ISSfilterModule(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~ISSfilterModule();
 	
 	virtual int Configure(std::map<std::string, std::string> parameters);

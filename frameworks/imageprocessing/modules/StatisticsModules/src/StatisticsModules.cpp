@@ -1,3 +1,5 @@
+//<LICENSE>
+
 // BaseModules.cpp : Defines the exported functions for the DLL application.
 //
 
@@ -12,26 +14,29 @@
 #include <string>
 
 
-STATISTICSMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name)
+STATISTICSMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+        kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="ImageHistogram")
 			return new ImageHistogram;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 STATISTICSMODULESSHARED_EXPORT  int Destroy(const char *application, void *obj)
 {
 	if (strcmp(application,"kiptool")!=0)
 		return -1;
-	delete reinterpret_cast<KiplProcessModuleBase *>(obj);
+
+    if (obj!=nullptr)
+        delete reinterpret_cast<KiplProcessModuleBase *>(obj);
 
 	return 0;
 }

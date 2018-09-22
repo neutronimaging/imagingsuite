@@ -45,11 +45,15 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
 copy %REPOS%\Applications\MuhRec.exe .
 copy %REPOS%\Applications\MuhRecCLI.exe .
+copy %REPOS%\lib\verticalslicer.exe
+copy %REPOS%\lib\multiframesplitter.exe
 
 copy %REPOS%\imagingsuite\applications\muhrec\Resources resources
 
 cd %QTBINPATH%
 
+windeployqt %DEST%\verticalslicer.exe
+windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
 windeployqt %DEST%\muhrecCLI.exe
 copy Qt5PrintSupport.dll %DEST%

@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008,2009,2010,2011,2012,2013 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2013-08-15 21:58:23 +0200 (Thu, 15 Aug 2013) $
-// $Rev: 1481 $
-//
+//<LICENSE>
 
 #include "ImagingModules_global.h"
 
@@ -25,12 +16,14 @@
 
 
 
-void * GetModule(const char *application, const char * name)
+void * GetModule(const char *application, const char * name, void *vinteractor)
 {
     if (strcmp(application,"kiptool")!=0)
-        return NULL;
+        return nullptr;
 
-    if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
         std::string sName=name;
 
         if (sName=="TranslateProjections")

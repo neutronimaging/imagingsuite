@@ -61,6 +61,17 @@ unix:!symbian {
     INSTALLS += target
 }
 
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
+
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
+}
+
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
