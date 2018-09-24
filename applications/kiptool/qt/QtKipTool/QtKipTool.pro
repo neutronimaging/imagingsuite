@@ -70,7 +70,7 @@ message("-lNeXus does not exist $$HEADERS")
 
 }
 
-ICON = kip_icon.icns
+ICON = kiptool_icon.icns
 
 SOURCES +=  ../../src/main.cpp\
             ../../src/kiptoolmainwindow.cpp \

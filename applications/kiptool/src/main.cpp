@@ -79,7 +79,7 @@ int RunOffline(QApplication * a)
         std::string fname(args[2].toStdString());
 
         KiplProcessConfig config;
-        KiplEngine *engine=NULL;
+        KiplEngine *engine=nullptr;
         KiplFactory factory;
 
         try {
