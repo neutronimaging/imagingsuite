@@ -683,12 +683,14 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings(dims,2.0f);
         ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
         ui->sliceViewer->set_image(img.GetDataPtr(),img.Dims());
+
+         UpdateDialog();
     }
     std::copy(m_Config.ProjectionInfo.projection_roi,
               m_Config.ProjectionInfo.projection_roi,
               m_oldROI);
 
-    UpdateDialog();
+//    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename=m_sHomePath+"noname.xml";
 }
