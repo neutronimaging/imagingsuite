@@ -9,6 +9,8 @@
 #include <base/kiplenums.h>
 
 #include <KiplProcessModuleBase.h>
+#include <MorphSpotClean.h>
+#include <morphology/morphology.h>
 
 class IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule : public KiplProcessModuleBase
 {
@@ -20,6 +22,17 @@ public:
     virtual std::map<std::string, std::string> GetParameters();
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
+
+    kipl::morphology::MorphConnect m_eConnectivity;
+    ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
+    ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
+    float m_fThreshold;
+    float m_fSigma;
+    int m_nEdgeSmoothLength;
+    int m_nMaxArea;
+    float m_fMinLevel;
+    float m_fMaxLevel;
+    bool m_bThreading;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H
