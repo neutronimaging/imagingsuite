@@ -24,7 +24,7 @@ TranslateProjectionModule::TranslateProjectionModule() : KiplProcessModuleBase("
 TranslateProjectionModule::~TranslateProjectionModule()
 {}
 
-int TranslateProjectionModule::Configure(std::map<std::string, std::string> parameters)
+int TranslateProjectionModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
     m_fSlope          = GetFloatParameter(parameters,"slope");
     m_fIntercept      = GetFloatParameter(parameters,"intercept");

@@ -39,3 +39,10 @@ void KiplProcessModuleBase::ComputeHistogram(kipl::base::TImage<float,3> &img, s
 	m_Histogram.Clear();
 	kipl::base::Histogram(img.GetDataPtr(), img.Size(), m_Histogram.GetY(), m_Histogram.Size(), 0.0f, 0.0f, m_Histogram.GetX());
 }
+
+
+int KiplProcessModuleBase::Configure(std::map<std::string, std::string> parameters)
+{
+    return parameters.size();
+}
+

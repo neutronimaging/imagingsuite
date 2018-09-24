@@ -28,7 +28,7 @@ RemoveBackground::RemoveBackground()  :
 RemoveBackground::~RemoveBackground() {
 }
 
-int RemoveBackground::Configure(std::map<std::string, std::string> parameters)
+int RemoveBackground::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fThreshold   = GetFloatParameter(parameters,"threshold");
 	m_bDoMasking   = kipl::strings::string2bool(GetStringParameter(parameters,"domasking"));

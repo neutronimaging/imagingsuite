@@ -21,8 +21,9 @@ RingCleanModule::RingCleanModule() : KiplProcessModuleBase("RingCleanModule",fal
 RingCleanModule::~RingCleanModule()
 {}
 
-int RingCleanModule::Configure(std::map<std::string, std::string> parameters)
+int RingCleanModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
+    m_Config=config;
     wname=GetStringParameter(parameters,"waveletname");
     scale=GetIntParameter(parameters,"scale");
     sigma=GetFloatParameter(parameters,"sigma");

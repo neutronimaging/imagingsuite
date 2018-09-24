@@ -9,6 +9,7 @@
 #include <base/kiplenums.h>
 
 #include <KiplProcessModuleBase.h>
+#include <KiplProcessConfig.h>
 
 #include <StripeFilter.h>
 
@@ -17,9 +18,10 @@ public:
     StripeFilterModule();
     virtual ~StripeFilterModule();
 
-    virtual int Configure(std::map<std::string, std::string> parameters);
+    virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
 protected:
+    KiplProcessConfig m_Config;
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
     ImagingAlgorithms::StripeFilter *m_StripeFilter;
 

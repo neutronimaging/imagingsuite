@@ -37,6 +37,11 @@ unix:!symbian {
     LIBS += -ltiff -lxml2
 
     INSTALLS += target
+
+    LIBS += -ltiff -lxml2
+    INCLUDEPATH += /usr/include/libxml2
+
+
 }
 
 win32 {
@@ -45,7 +50,6 @@ win32 {
     }
     INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
-
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
 }
@@ -93,4 +97,10 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
 

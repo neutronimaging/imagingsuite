@@ -21,7 +21,7 @@ StripeFilterModule::StripeFilterModule() : KiplProcessModuleBase("StripeFilterMo
 StripeFilterModule::~StripeFilterModule()
 {}
 
-int StripeFilterModule::Configure(std::map<std::string, std::string> parameters)
+int StripeFilterModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
     wname=GetStringParameter(parameters,"waveletname");
     scale=GetIntParameter(parameters,"scale");

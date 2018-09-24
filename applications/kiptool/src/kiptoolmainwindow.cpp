@@ -33,11 +33,13 @@
 #include "processdialog.h"
 
 #include "ImageIO.h"
+using namespace std;
 
-KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
+KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("KipToolMainWindow"),
     ui(new Ui::KipToolMainWindow),
+    m_QtApp(app),
     logdlg(new QtAddons::LoggingDialog(this)),
     button_toggleLoggerDlg(new QPushButton("Logger",this)),
     m_Engine(nullptr),
@@ -45,14 +47,18 @@ KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
     m_bJustLoaded(false),
-    m_eSlicePlane(kipl::base::ImagePlaneXY)
+    m_eSlicePlane(kipl::base::ImagePlaneXY),
+    m_ModuleConfigurator(&m_config)
 {
     ui->setupUi(this);
     //logger.AddLogTarget(*(ui->widget_logviewer));
     logger.AddLogTarget(*logdlg);
 
-    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
+    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString(),&m_ModuleConfigurator);
+    ui->widget_moduleconfigurator->SetApplicationObject(this);
+    //    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
     ui->statusBar->addPermanentWidget(button_toggleLoggerDlg);
+
     LoadDefaults();
     UpdateDialog();
     SetupCallbacks();
