@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "issfilterdlg.h"
+
 class ConfiguratorDialogBase;
 
 ADVANCEDFILTERMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name, void *interactor)
@@ -12,10 +14,8 @@ ADVANCEDFILTERMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application
     if (name!=nullptr) {
         std::string sName=name;
 
-//        if (sName=="FullLogNorm")
-//            return new FullLogNormDlg;
-
-
+        if (sName=="ISSfilter")
+            return new ISSFilterDlg;
     }
     return nullptr;
 }
