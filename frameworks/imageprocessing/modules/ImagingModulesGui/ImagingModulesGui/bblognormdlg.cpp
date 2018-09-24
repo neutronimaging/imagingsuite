@@ -69,6 +69,13 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
 
     try{
             ui->setupUi(this);
+            ui->roiwidget_BB->registerViewer(ui->ob_bb_Viewer);
+            ui->roiwidget_BB->setTitle("BB ROI");
+            ui->roiwidget_BB->setROIColor("green");
+
+            ui->roiwidget_doseROI->registerViewer(ui->sample_bb_Viewer);
+            ui->roiwidget_doseROI->setTitle("dose ROI");
+            ui->roiwidget_doseROI->setROIColor("red");
     }
 
     catch (ModuleException & e)
@@ -208,8 +215,8 @@ void BBLogNormDlg::ApplyParameters(){
     ui->buttonPreviewsampleBB->click();
 
 
-    UpdateDoseROI();
-    UpdateBBROI();
+//    UpdateDoseROI();
+//    UpdateBBROI();
 
 
     std::map<std::string, std::string> parameters;
@@ -221,24 +228,28 @@ void BBLogNormDlg::ApplyParameters(){
 
 void BBLogNormDlg::UpdateDialog(){
 
-    UpdateDoseROI();
-    UpdateBBROI();
+//    UpdateDoseROI();
+//    UpdateBBROI();
 
     ui->spinFirstOBBB->setValue(nBBFirstIndex);
     ui->spinCountsOBBB->setValue(nBBCount);
     ui->edit_OB_BB_mask->setText(QString::fromStdString(blackbodyname));
-    ui->spinx0BBroi->setValue(BBroi[0]);
-    ui->spinx1BBroi->setValue(BBroi[2]);
-    ui->spiny0BBroi->setValue(BBroi[1]);
-    ui->spiny1BBroi->setValue(BBroi[3]);
+//    ui->spinx0BBroi->setValue(BBroi[0]);
+//    ui->spinx1BBroi->setValue(BBroi[2]);
+//    ui->spiny0BBroi->setValue(BBroi[1]);
+//    ui->spiny1BBroi->setValue(BBroi[3]);
+    ui->roiwidget_BB->setROI(BBroi);
+
 
     ui->spinFirstsampleBB->setValue(nBBSampleFirstIndex);
     ui->spinCountsampleBB->setValue(nBBSampleCount);
     ui->edit_sample_BB_mask->setText(QString::fromStdString(blackbodysamplename));
-    ui->spinx0BBdose->setValue(doseBBroi[0]);
-    ui->spinx1BBdose->setValue(doseBBroi[2]);
-    ui->spiny0BBdose->setValue(doseBBroi[1]);
-    ui->spiny1BBdose->setValue(doseBBroi[3]);
+//    ui->spinx0BBdose->setValue(doseBBroi[0]);
+//    ui->spinx1BBdose->setValue(doseBBroi[2]);
+//    ui->spiny0BBdose->setValue(doseBBroi[1]);
+//    ui->spiny1BBdose->setValue(doseBBroi[3]);
+
+    ui->roiwidget_doseROI->setROI(doseBBroi);
 
     ui->spinRadius->setValue(static_cast<int>(radius));
     ui->combo_averagingMethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceAverageMethod)));
@@ -301,26 +312,29 @@ void BBLogNormDlg::UpdateParameters(){
     nBBFirstIndex = ui->spinFirstOBBB->value();
     nBBCount = ui->spinCountsOBBB->value();
     blackbodyname = ui->edit_OB_BB_mask->text().toStdString();
-    BBroi[0] = ui->spinx0BBroi->value();
-    BBroi[1] = ui->spiny0BBroi->value();
-    BBroi[2] = ui->spinx1BBroi->value();
-    BBroi[3] = ui->spiny1BBroi->value();
+//    BBroi[0] = ui->spinx0BBroi->value();
+//    BBroi[1] = ui->spiny0BBroi->value();
+//    BBroi[2] = ui->spinx1BBroi->value();
+//    BBroi[3] = ui->spiny1BBroi->value();
+    ui->roiwidget_BB->getROI(BBroi);
 
     nBBSampleFirstIndex =ui->spinFirstsampleBB->value();
     nBBSampleCount = ui->spinCountsampleBB->value();
     blackbodysamplename = ui->edit_sample_BB_mask->text().toStdString();
-    doseBBroi[0] = ui->spinx0BBdose->value();
-    doseBBroi[1] = ui->spiny0BBdose->value();
-    doseBBroi[2] = ui->spinx1BBdose->value();
-    doseBBroi[3] = ui->spiny1BBdose->value();
+//    doseBBroi[0] = ui->spinx0BBdose->value();
+//    doseBBroi[1] = ui->spiny0BBdose->value();
+//    doseBBroi[2] = ui->spinx1BBdose->value();
+//    doseBBroi[3] = ui->spiny1BBdose->value();
 
-    if ((dose_roi[2]-dose_roi[0]<=0) ||(dose_roi[3]-dose_roi[0]<=1))
-    {
+    ui->roiwidget_doseROI->getROI(doseBBroi);
+
+//    if ((dose_roi[2]-dose_roi[0]<=0) ||(dose_roi[3]-dose_roi[0]<=1))
+//    {
         dose_roi[0] = doseBBroi[0];
         dose_roi[1] = doseBBroi[1];
         dose_roi[2] = doseBBroi[2];
         dose_roi[3] = doseBBroi[3];
-    }
+//    }
 
     if (ui->checkBox_saveBG->isChecked())
     {
@@ -554,48 +568,48 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
 }
 
-void BBLogNormDlg::on_button_BBroi_clicked()
-{
-    QRect rect=ui->ob_bb_Viewer->get_marked_roi();
+//void BBLogNormDlg::on_button_BBroi_clicked()
+//{
+//    QRect rect=ui->ob_bb_Viewer->get_marked_roi();
 
-    if (rect.width()*rect.height()!=0)
-    {
-//        ui->spinx0BBroi->blockSignals(true);
-//        ui->spiny0BBroi->blockSignals(true);
-//        ui->spinx1BBroi->blockSignals(true);
-//        ui->spiny1BBroi->blockSignals(true);
-        ui->spinx0BBroi->setValue(rect.x());
-        ui->spiny0BBroi->setValue(rect.y());
-        ui->spinx1BBroi->setValue(rect.x()+rect.width());
-        ui->spiny1BBroi->setValue(rect.y()+rect.height());
-//        ui->spinx0BBroi->blockSignals(false);
-//        ui->spiny0BBroi->blockSignals(false);
-//        ui->spinx1BBroi->blockSignals(false);
-//        ui->spiny1BBroi->blockSignals(false);
-        UpdateBBROI();
-    }
-}
+//    if (rect.width()*rect.height()!=0)
+//    {
+////        ui->spinx0BBroi->blockSignals(true);
+////        ui->spiny0BBroi->blockSignals(true);
+////        ui->spinx1BBroi->blockSignals(true);
+////        ui->spiny1BBroi->blockSignals(true);
+//        ui->spinx0BBroi->setValue(rect.x());
+//        ui->spiny0BBroi->setValue(rect.y());
+//        ui->spinx1BBroi->setValue(rect.x()+rect.width());
+//        ui->spiny1BBroi->setValue(rect.y()+rect.height());
+////        ui->spinx0BBroi->blockSignals(false);
+////        ui->spiny0BBroi->blockSignals(false);
+////        ui->spinx1BBroi->blockSignals(false);
+////        ui->spiny1BBroi->blockSignals(false);
+//        UpdateBBROI();
+//    }
+//}
 
-void BBLogNormDlg::UpdateBBROI()
-{
-    QRect rect;
+//void BBLogNormDlg::UpdateBBROI()
+//{
+//    QRect rect;
 
-    rect.setCoords(ui->spinx0BBroi->value(),
-                   ui->spiny0BBroi->value(),
-                   ui->spinx1BBroi->value(),
-                   ui->spiny1BBroi->value());
+//    rect.setCoords(ui->spinx0BBroi->value(),
+//                   ui->spiny0BBroi->value(),
+//                   ui->spinx1BBroi->value(),
+//                   ui->spiny1BBroi->value());
 
-    ui->ob_bb_Viewer->set_rectangle(rect,QColor("green").light(),0);
-}
+//    ui->ob_bb_Viewer->set_rectangle(rect,QColor("green").light(),0);
+//}
 
-void BBLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
-{
-    UpdateBBROI();
-}
+//void BBLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
+//{
+//    UpdateBBROI();
+//}
 
-void BBLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-void BBLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-void BBLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+//void BBLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+//void BBLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
+//void BBLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
 
 
 
@@ -815,60 +829,60 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
 }
 
-void BBLogNormDlg::on_button_BBdose_clicked()
-{
-    QRect rect=ui->sample_bb_Viewer->get_marked_roi();
+//void BBLogNormDlg::on_button_BBdose_clicked()
+//{
+//    QRect rect=ui->sample_bb_Viewer->get_marked_roi();
 
-    if (rect.width()*rect.height()!=0)
-    {
-        ui->spinx0BBdose->blockSignals(true);
-        ui->spiny0BBdose->blockSignals(true);
-        ui->spinx1BBdose->blockSignals(true);
-        ui->spiny1BBdose->blockSignals(true);
-        ui->spinx0BBdose->setValue(rect.x());
-        ui->spiny0BBdose->setValue(rect.y());
-        ui->spinx1BBdose->setValue(rect.x()+rect.width());
-        ui->spiny1BBdose->setValue(rect.y()+rect.height());
-        ui->spinx0BBdose->blockSignals(false);
-        ui->spiny0BBdose->blockSignals(false);
-        ui->spinx1BBdose->blockSignals(false);
-        ui->spiny1BBdose->blockSignals(false);
-        UpdateDoseROI();
-    }
-}
+//    if (rect.width()*rect.height()!=0)
+//    {
+//        ui->spinx0BBdose->blockSignals(true);
+//        ui->spiny0BBdose->blockSignals(true);
+//        ui->spinx1BBdose->blockSignals(true);
+//        ui->spiny1BBdose->blockSignals(true);
+//        ui->spinx0BBdose->setValue(rect.x());
+//        ui->spiny0BBdose->setValue(rect.y());
+//        ui->spinx1BBdose->setValue(rect.x()+rect.width());
+//        ui->spiny1BBdose->setValue(rect.y()+rect.height());
+//        ui->spinx0BBdose->blockSignals(false);
+//        ui->spiny0BBdose->blockSignals(false);
+//        ui->spinx1BBdose->blockSignals(false);
+//        ui->spiny1BBdose->blockSignals(false);
+//        UpdateDoseROI();
+//    }
+//}
 
 
-void BBLogNormDlg::UpdateDoseROI(){
-    QRect rect;
+//void BBLogNormDlg::UpdateDoseROI(){
+//    QRect rect;
 
-    rect.setCoords(ui->spinx0BBdose->value(),
-                   ui->spiny0BBdose->value(),
-                   ui->spinx1BBdose->value(),
-                   ui->spiny1BBdose->value());
+//    rect.setCoords(ui->spinx0BBdose->value(),
+//                   ui->spiny0BBdose->value(),
+//                   ui->spinx1BBdose->value(),
+//                   ui->spiny1BBdose->value());
 
-    ui->sample_bb_Viewer->set_rectangle(rect,QColor("red"),0);
+//    ui->sample_bb_Viewer->set_rectangle(rect,QColor("red"),0);
 
-}
+//}
 
-void BBLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
-{
-    UpdateDoseROI();
-}
+//void BBLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
+//{
+//    UpdateDoseROI();
+//}
 
-void BBLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
-{
-    UpdateDoseROI();
-}
+//void BBLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
+//{
+//    UpdateDoseROI();
+//}
 
-void BBLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
-{
-    UpdateDoseROI();
-}
+//void BBLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
+//{
+//    UpdateDoseROI();
+//}
 
-void BBLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
-{
-    UpdateDoseROI();
-}
+//void BBLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
+//{
+//    UpdateDoseROI();
+//}
 
 
 void BBLogNormDlg::on_errorButton_clicked()

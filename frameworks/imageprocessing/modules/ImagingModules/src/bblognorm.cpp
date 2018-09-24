@@ -187,7 +187,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
         int firstIndex = m_Config.mImageInformation.nFirstFileIndex;
         kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
         myimg = reader.Read(filename, kipl::base::ImageFlipNone, kipl::base::ImageRotateNone, 1.0f, nullptr,0L);
-        m_Config.mImageInformation.nROI[0]=m_Config.mImageInformation.nROI[1]=0;
+        m_Config.mImageInformation.nROI[0]=m_Config.mImageInformation.nROI[1]=1;
         m_Config.mImageInformation.nROI[2]=myimg.Size(0)-1;
         m_Config.mImageInformation.nROI[3]=myimg.Size(1)-1;
         m_Config.mImageInformation.bUseROI=true;
