@@ -579,6 +579,8 @@ void MuhRecMainWindow::MenuFileNew()
         delete m_pEngine;
         m_pEngine=nullptr;
     }
+
+
     LoadDefaults(false);
 }
 
@@ -670,7 +672,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
             logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
         }
 
-        logger(logger.LogMessage,"Updating path of preprocessing modules");
+        logger(logger.LogMessage,"Updating path of back projector");
         pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
         if (pos!=std::string::npos)
             m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
@@ -681,6 +683,8 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings(dims,2.0f);
         ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
         ui->sliceViewer->set_image(img.GetDataPtr(),img.Dims());
+
+         UpdateDialog();
     }
     std::copy(m_Config.ProjectionInfo.projection_roi,
               m_Config.ProjectionInfo.projection_roi,

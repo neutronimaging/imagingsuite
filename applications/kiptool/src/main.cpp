@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 
 int RunGUI(QApplication * a)
 {
-    KipToolMainWindow w;
+    KipToolMainWindow w(a);
     w.show();
 
     return a->exec();
@@ -105,23 +105,23 @@ int RunOffline(QApplication * a)
             engine->SaveImage();
         }
         catch (ModuleException &e) {
-            cerr<<"ModuleException: "<<e.what();
+            std::cerr<<"ModuleException: "<<e.what();
             return -4;
         }
         catch (KiplFrameworkException &e) {
-            cerr<<"KiplFrameworkException: "<<e.what();
+            std::cerr<<"KiplFrameworkException: "<<e.what();
             return -5;
         }
         catch (kipl::base::KiplException &e) {
-            cerr<<"KiplException: "<<e.what();
+            std::cerr<<"KiplException: "<<e.what();
             return -6;
         }
         catch (std::exception &e) {
-            cerr<<"STL Exception: "<<e.what();
+            std::cerr<<"STL Exception: "<<e.what();
             return -7;
         }
         catch (...) {
-            cerr<<"Unhandled exception";
+            std::cerr<<"Unhandled exception";
             return -8;
         }
     }

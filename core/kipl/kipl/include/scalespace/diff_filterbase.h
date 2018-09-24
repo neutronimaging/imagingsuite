@@ -14,7 +14,6 @@
 #include "lambdaest.h"
 //#include "../math/mathmisc.h"
 
-
 namespace akipl { namespace scalespace {
 	const float NumLimitDiffusivity=numeric_limits<float>::min();
 	
@@ -803,7 +802,7 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 				
 			//NGauss=int(ceil(s*1.96))*2+1;	// This must be made flexible depending on the value of sigma.
 			NGauss=int(ceil(s*2))*2+1;
-			cout<<"Gaussian kernel sigma:"<<s<<" size: "<<NGauss<<endl;
+            std::cout<<"Gaussian kernel sigma:"<<s<<" size: "<<NGauss<<std::endl;
 	
             if (GaussKernel)
                 delete [] GaussKernel;
@@ -844,24 +843,24 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 	{
 		switch (GradType) {
 			case Jahne_Grad:
-				cout<<"Using Jahne gradient"<<endl;
+                std::cout<<"Using Jahne gradient"<<std::endl;
 				initJahne(sx,sxy);
 				break;
 			case Simple_Grad_Minus:
-				cout<<"Using simple gradient minus (x[i]-x[i-1])/2"<<endl;
+                std::cout<<"Using simple gradient minus (x[i]-x[i-1])/2"<<std::endl;
 				initDiff2(sx,sxy);
 				break;
 			case Diff_Grad_Minus:
-				cout<<"Using simple gradient minus (x[i]-x[i-1])"<<endl;
+                std::cout<<"Using simple gradient minus (x[i]-x[i-1])"<<std::endl;
 				initDiff(sx,sxy);
 				break;
 			case BinDiff_Grad:
-				cout<<"Using binomial filtered gradient Bz*By*Dx"<<endl;
+                std::cout<<"Using binomial filtered gradient Bz*By*Dx"<<std::endl;
 				initBinDiff(sx,sxy);
 				break;
 			default:
 			case Simple_Grad_Centered:
-				cout<<"Using simple centered gradient (x[i+1]-x[i-1])/2"<<endl;
+                std::cout<<"Using simple centered gradient (x[i+1]-x[i-1])/2"<<std::endl;
 				initDiffCentered(sx,sxy);
 				break;
 				

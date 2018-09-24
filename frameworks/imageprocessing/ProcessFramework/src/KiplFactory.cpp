@@ -5,6 +5,7 @@
 #include "../include/KiplFrameworkException.h"
 #include "../include/KiplModuleItem.h"
 #include <ModuleException.h>
+#include "../include/KiplProcessModuleBase.h"
 
 
 KiplFactory::KiplFactory(void)
@@ -31,7 +32,7 @@ KiplEngine * KiplFactory::BuildEngine(KiplProcessConfig &config, kipl::interacto
 			try {
                 module=new KiplModuleItem(it->m_sSharedObject,it->m_sModule,interactor);
 
-				module->GetModule()->Configure(it->parameters);
+                module->GetModule()->Configure(config, it->parameters);
 				engine->AddProcessingModule(module);
 			}
 			catch (ModuleException &e) {

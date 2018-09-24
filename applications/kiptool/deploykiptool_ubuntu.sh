@@ -31,6 +31,7 @@ rm -f *.so.1.0.0
 `$CPCMD $REPOSPATH/lib/libImagingModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libPCAModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libStatisticsModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libImagingModulesGUI.so.1.0.0 .`
 
 
 rm -f *.so

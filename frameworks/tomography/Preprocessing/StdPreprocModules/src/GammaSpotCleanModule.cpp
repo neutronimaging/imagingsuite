@@ -55,7 +55,7 @@ bool GammaSpotCleanModule::SetROI(size_t * UNUSED(roi))
 
 int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-    clog<<"ProcessCore"<<endl;
+//    clog<<"ProcessCore"<<endl;
 #ifdef __APPLE__
     return ProcessSingle(img);
 #else

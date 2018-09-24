@@ -74,17 +74,28 @@ unix:!symbian {
         target.path = /usr/lib
     }
     INSTALLS += target
+
+    LIBS += -ltiff -lxml2
+    INCLUDEPATH += /usr/include/libxml2
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio $$PWD/../../../../../external/include/libxml2
+
+    INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
+}
+
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib

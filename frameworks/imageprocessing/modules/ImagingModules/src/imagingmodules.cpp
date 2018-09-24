@@ -13,6 +13,7 @@
 #include "imagingmodules.h"
 #include "translateprojectionmodule.h"
 #include "stripefiltermodule.h"
+#include "bblognorm.h"
 
 
 
@@ -31,6 +32,9 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
 
         if (sName=="StripeFilter")
             return new StripeFilterModule;
+
+        if (sName=="BBLogNorm")
+            return new BBLogNorm(interactor);
     }
 
     return nullptr;
@@ -74,6 +78,9 @@ int GetModuleList(const char *application, void *listptr)
     StripeFilterModule sfm;
 
     modulelist->operator []("StripeFilter")=sfm.GetParameters();
+
+    BBLogNorm bblognorm;
+    modulelist->operator []("BBLogNorm")=bblognorm.GetParameters();
 
     return 0;
 }

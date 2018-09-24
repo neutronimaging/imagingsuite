@@ -45,7 +45,7 @@ namespace akipl { namespace scalespace {
 //
 //				}
 				update(img);
-				cout<<" lambda="<<lambda<<endl;
+                std::cout<<" lambda="<<lambda<<std::endl;
 			}
 			call_cnt++;
 			return lambda;

@@ -55,6 +55,9 @@ void ModuleChainConfiguratorWidget::configure(std::string application, std::stri
     m_sApplicationPath = applicationpath;
     m_pConfigurator    = pConfigurator;
 
+//    std:cout << m_sApplication << std::endl;
+//    std::cout << m_sApplicationPath << std::endl;
+
 }
 
 QSize ModuleChainConfiguratorWidget::minimumSizeHint() const
@@ -70,6 +73,7 @@ QSize ModuleChainConfiguratorWidget::sizeHint() const
 void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 {
     ostringstream msg;
+    std::cout << "trying to add module" << std::endl;
 
     AddModuleDialog dlg(this);
 
@@ -111,11 +115,10 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
 
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 {
-    logger(kipl::logging::Logger::LogMessage,"Configure module");
-    std::ostringstream msg;
 
     if (m_pConfigurator!=nullptr) {
         if (m_pCurrentModule!=nullptr) {
+            std::ostringstream msg;
             QListWidgetModuleItem *pCurrentModule=dynamic_cast<QListWidgetModuleItem *>(m_pCurrentModule);
             //UpdateCurrentModuleParameters();
 
