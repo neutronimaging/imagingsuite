@@ -19,7 +19,8 @@ SOURCES +=  ../../src/imagingmodules.cpp \
             ../../src/translateprojectionmodule.cpp \
             ../../src/stripefiltermodule.cpp \
             ../../src/ringcleanmodule.cpp \
-            ../../src/referenceimagecorrectionmodule.cpp
+            ../../src/referenceimagecorrectionmodule.cpp \
+    ../../src/morphspotcleanmodule.cpp
 
 HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/imagingmodules.h\
@@ -27,7 +28,8 @@ HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/translateprojectionmodule.h \
             ../../src/stripefiltermodule.h \
             ../../src/ringcleanmodule.h \
-            ../../src/referenceimagecorrectionmodule.h
+            ../../src/referenceimagecorrectionmodule.h \
+    ../../src/morphspotcleanmodule.h
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
