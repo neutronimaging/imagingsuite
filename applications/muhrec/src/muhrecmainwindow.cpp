@@ -579,6 +579,8 @@ void MuhRecMainWindow::MenuFileNew()
         delete m_pEngine;
         m_pEngine=nullptr;
     }
+
+
     LoadDefaults(false);
 }
 
@@ -670,7 +672,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
             logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
         }
 
-        logger(logger.LogMessage,"Updating path of preprocessing modules");
+        logger(logger.LogMessage,"Updating path of back projector");
         pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
         if (pos!=std::string::npos)
             m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
@@ -686,7 +688,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
               m_Config.ProjectionInfo.projection_roi,
               m_oldROI);
 
-//    UpdateDialog();
+    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename=m_sHomePath+"noname.xml";
 }
