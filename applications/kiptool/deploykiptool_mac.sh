@@ -82,19 +82,19 @@ cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
 if [ ! -d "./PlugIns/printsupport" ]; then
  mkdir ./PlugIns/printsupport
 fi
-cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+cp $QT_HOME/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
 
 if [ ! -d "./PlugIns/accessible" ]; then
  mkdir ./PlugIns/accessible
 fi
-cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+cp $QT_HOME/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
 pwd
 ls PlugIns
 
 popd
 sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 
-cd $QTPATH/bin/
+cd $QTBINPATH
 echo "Do deploy ..."
 ./macdeployqt $DEST
 
