@@ -131,7 +131,7 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     thresh = GetFloatParameter(parameters,"thresh");
 
     m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
-    m_corrector.SetInteractor(m_Interactor);
+//    m_corrector.SetInteractor(m_Interactor);
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;
@@ -1459,6 +1459,7 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
         }
     }
 
+        m_corrector.SetInteractor(m_Interactor);
         m_corrector.Process(img,doselist);
 
     if (doselist!=nullptr)
