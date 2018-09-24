@@ -59,8 +59,8 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\hdf5_cpp.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\zlib.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
-#cd %QTBINPATH%
-cd C:\Qt\5.11.1\msvc2017_64\bin
+cd %QTBINPATH%
+#cd C:\Qt\5.11.1\msvc2017_64\bin
 
 windeployqt %DEST%\QtKipTool.exe
 copy Qt5PrintSupport.dll %DEST%
