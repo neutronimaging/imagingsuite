@@ -38,7 +38,6 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
