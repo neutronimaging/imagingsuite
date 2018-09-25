@@ -1,14 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
-
+//<LICENSE>
 
 #include "stdafx.h"
 
@@ -260,17 +250,19 @@ kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> *
 
     std::ostringstream msg;
     m_InputImage=img;
-    m_ResultImage=*m_InputImage;
-    m_ResultImage.Clone();
+    m_ResultImage.Clone(*m_InputImage);
 
     std::map<std::string, std::string> parameters;
 
     std::list<KiplModuleItem *>::iterator it_Module;
+
     try {
-        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++) {
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; ++it_Module)
+        {
             msg.str("");
             msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
             logger(kipl::logging::Logger::LogMessage,msg.str());
+
             (*it_Module)->GetModule()->Process(m_ResultImage,parameters);
         }
 
