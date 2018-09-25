@@ -137,3 +137,8 @@ DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/src
+
+DISTFILES += \
+    ../../deploykiptool_mac.sh \
+    ../../deploykiptool_ubuntu.sh \
+    ../../deploykiptool_win.bat

@@ -79,7 +79,7 @@ FORMS += \
 
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtModuleConfigure -lQtAddons -lAdvancedFilterModules
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtModuleConfigure -lQtAddons -lBaseModules
 
 INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include

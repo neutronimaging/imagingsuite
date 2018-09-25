@@ -7,7 +7,7 @@
 #include <ParameterHandling.h>
 
 ScaleDataDlg::ScaleDataDlg(QWidget *parent) :
-    ConfiguratorDialogBase("ScaleData", false, false, false,parent),
+    ConfiguratorDialogBase("ScaleData", true, false, false,parent),
     ui(new Ui::ScaleDataDlg)
 {
     ui->setupUi(this);
