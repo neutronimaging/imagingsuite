@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>KipTool</Name>
+    <Version>1.0.0</Version>
+    <Title>KipTool Installer</Title>
+    <Publisher>Anders Kaestner, Paul Scherrer Institute</Publisher>
+    <StartMenuDir>Super App</StartMenuDir>
+    <TargetDir>@HomeDir@/InstallationDirectory</TargetDir>
+</Installer>
