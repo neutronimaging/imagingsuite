@@ -29,6 +29,12 @@ public:
 	int Run(kipl::base::TImage<float,3> * img);
 	void SetConfig(KiplProcessConfig & config) ;
 
+
+    /// \brief Starts the preprocessing chain including loading the projection data. This function is called by the user interface to provide data to the configuration dialogs.
+    /// \param roi The region of interest to process
+    /// \param sLastModule The chain shall only process until this module is reached
+    kipl::base::TImage<float,3> RunPreproc(kipl::base::TImage<float,3> * img, std::string sLastModule);
+
     bool SaveImage(KiplProcessConfig::cOutImageInformation * info=nullptr);
 
 //	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);

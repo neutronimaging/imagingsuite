@@ -254,6 +254,63 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	return histlist;
 }
 
+
+kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> * img, std::string sLastModule)
+{
+
+    std::ostringstream msg;
+    m_InputImage=img;
+    m_ResultImage=*m_InputImage;
+    m_ResultImage.Clone();
+
+    std::map<std::string, std::string> parameters;
+
+    std::list<KiplModuleItem *>::iterator it_Module;
+    try {
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++) {
+            msg.str("");
+            msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+            (*it_Module)->GetModule()->Process(m_ResultImage,parameters);
+        }
+
+
+        msg.str("");
+        msg<<"Execution times :\n";
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++) {
+            msg<<"Module "<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
+        }
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+    catch (KiplFrameworkException &e) {
+        throw KiplFrameworkException(e.what(),__FILE__,__LINE__);
+    }
+    catch (ModuleException &e) {
+        msg.str("");
+        msg<<"Got a ModuleException during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Got a KiplException during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Got a STL Exception during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg.str("");
+        msg<<"Got an unknown exception during execution of the process chain\n";
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+
+    }
+
+    return m_ResultImage;
+}
+
+
 bool KiplEngine::updateStatus(float val)
 {
     if (m_Interactor!=nullptr) {

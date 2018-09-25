@@ -549,7 +549,7 @@ template <class ImgType, int NDim>
 		this->LUTindStep=(this->LUTindMax-this->LUTindMin)/(N-1);
         if (this->gLUT)
             delete [] this->gLUT;
-		cout<<"G(min)="<<this->LUTindMin<<" G(max)="<<this->LUTindMax<<endl;
+        std::cout<<"G(min)="<<this->LUTindMin<<" G(max)="<<this->LUTindMax<<std::endl;
 		this->gLUT=new float[N];
 
 		this->NLut=N;

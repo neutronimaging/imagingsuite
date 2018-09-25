@@ -11,7 +11,7 @@
 #include <logging/logger.h>
 #include "../include/averageimage.h"
 #include <QTextStream>
-
+#include <interactors/interactionbase.h>
 
 
 namespace ImagingAlgorithms {
@@ -52,8 +52,8 @@ public:
 
 
 
-	ReferenceImageCorrection();
-    virtual ~ReferenceImageCorrection();
+    ReferenceImageCorrection();
+    ~ReferenceImageCorrection();
 
     void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
             std::string dcname, size_t firstdc, size_t dccnt,
@@ -108,6 +108,8 @@ public:
 
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
     void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
+    void SaveBG(bool value, string path, string obname, string filemask);
+    void SetInteractor(kipl::interactors::InteractionBase *interactor);
 
 
 protected:
@@ -139,13 +141,19 @@ protected:
     bool m_bHaveExternalBlackBody;
 	bool m_bComputeLogarithm;
     bool bUseManualThresh;
+    bool bSaveBG;
+
+    std::string pathBG; /// path for saving BGs
+    std::string flatname_BG; /// filename for saving the open beam BG
+    std::string filemask_BG; /// filemask for saving the computed sample BGs
+
 
     kipl::base::TImage<float,2> m_OpenBeam;
     kipl::base::TImage<float,2> m_OpenBeamforBB;
 	kipl::base::TImage<float,2> m_DarkCurrent;
 	kipl::base::TImage<float,2> m_BlackBody;
     kipl::base::TImage<float,2> m_OB_BB_Interpolated;
-    kipl::base::TImage<float,2> m_BB_sample_Interpolated; // computed in process 3d every time. but in the right way!
+    kipl::base::TImage<float,2> m_BB_sample_Interpolated;
     kipl::base::TImage<float,2> m_DoseBBsample_image;
     kipl::base::TImage<float,2> m_DoseBBflat_image;
 
@@ -196,6 +204,11 @@ protected:
 
     std::map<std::pair<int, int>, float> spline_ob_values; /// map to be used for interpolation with splines and ob image. should be in principle the same number of images with BB, i start now with 1
     std::map<std::pair<int, int>, float> spline_sample_values; /// map to be used for interpolation with splines and sample image
+
+
+
+    kipl::interactors::InteractionBase *m_Interactor;
+    bool updateStatus(float val, std::string msg);
 };
 
 }

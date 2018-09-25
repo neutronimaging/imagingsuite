@@ -8,13 +8,14 @@
 #include <interactors/interactionbase.h>
 #include <KiplProcessModuleBase.h>
 #include <scalespace/filterenums.h>
+#include <KiplProcessConfig.h>
 
 class ADVANCEDFILTERMODULES_EXPORT ISSfilterModule: public KiplProcessModuleBase {
 public:
     ISSfilterModule(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~ISSfilterModule();
 	
-	virtual int Configure(std::map<std::string, std::string> parameters);
+    virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
 protected:
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);

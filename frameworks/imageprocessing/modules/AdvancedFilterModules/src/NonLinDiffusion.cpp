@@ -32,7 +32,7 @@ NonLinDiffusionModule::~NonLinDiffusionModule() {
 }
 
 
-int NonLinDiffusionModule::Configure(std::map<std::string, std::string> parameters)
+int NonLinDiffusionModule::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
     m_bAutoScale      = kipl::strings::string2bool(GetStringParameter(parameters,"autoscale"));;
     m_fSlope          = GetFloatParameter(parameters,"slope") ;

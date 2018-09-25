@@ -27,7 +27,7 @@ VolumeProject::~VolumeProject() {
 }
 
 
-int VolumeProject::Configure(std::map<std::string, std::string> parameters)
+int VolumeProject::Configure(KiplProcessConfig m_Config,std::map<std::string, std::string> parameters)
 {
 	string2enum(GetStringParameter(parameters,"plane"),m_Plane);
 	string2enum(GetStringParameter(parameters,"method"),m_ProjectionMethod);

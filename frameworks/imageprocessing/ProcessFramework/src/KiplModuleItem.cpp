@@ -12,3 +12,4 @@ KiplModuleItem::KiplModuleItem(std::string sharedobject, std::string modulename,
 KiplModuleItem::~KiplModuleItem(void)
 {
 }
+

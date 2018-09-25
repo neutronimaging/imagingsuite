@@ -51,7 +51,8 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     bSameMask(true),
     bUseManualThresh(false),
     min_area(20),
-    thresh(0)
+    thresh(0),
+    m_Interactor(interactor)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -61,12 +62,24 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
 
+
+
 }
 
 BBLogNorm::~BBLogNorm()
 {
 
 }
+
+bool BBLogNorm::updateStatus(float val, string msg){
+
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
+
+}
+
 
 
 int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
@@ -116,6 +129,9 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh = GetFloatParameter(parameters,"thresh");
+
+    m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
+//    m_corrector.SetInteractor(m_Interactor);
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;
@@ -448,7 +464,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
 void BBLogNorm::PrepareBBData(){
 
     logger(kipl::logging::Logger::LogMessage,"PrepareBBData begin--");
-    std::cout << "PrepareBBData begin--" << std::endl;
+//    std::cout << "PrepareBBData begin--" << std::endl;
     if (flatname.empty() && nOBCount!=0)
         throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
     if (darkname.empty() && nDCCount!=0)
@@ -488,7 +504,7 @@ void BBLogNorm::PrepareBBData(){
             break;
         }
         case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
-            std::cout << "ThinPlateSplines" << std::endl;
+//            std::cout << "ThinPlateSplines" << std::endl;
              logger(kipl::logging::Logger::LogMessage,"ThinPlateSplines");
 
             int nBBs = PrepareSplinesInterpolationParameters();
@@ -509,6 +525,7 @@ void BBLogNorm::PrepareBBData(){
 
 void BBLogNorm::PreparePolynomialInterpolationParameters()
 {
+//    std::cout << "Preparing Polynomial interpolation parameters" << std::endl;
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 
@@ -1442,6 +1459,7 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
         }
     }
 
+        m_corrector.SetInteractor(m_Interactor);
         m_corrector.Process(img,doselist);
 
     if (doselist!=nullptr)
