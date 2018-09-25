@@ -62,12 +62,16 @@ win32 {
 
 SOURCES += \
         ../../src/basemodulesgui.cpp \
-    ../../src/scaledatadlg.cpp
+    ../../src/scaledatadlg.cpp \
+    ../../src/clampdatadlg.cpp \
+    ../../src/dosecorrectiondlg.cpp
 
 HEADERS += \
         ../../src/basemodulesgui.h \
         ../../src/basemodulesgui_global.h \
-    ../../src/scaledatadlg.h
+    ../../src/scaledatadlg.h \
+    ../../src/clampdatadlg.h \
+    ../../src/dosecorrectiondlg.h
 
 unix {
     target.path = /usr/lib
@@ -75,7 +79,9 @@ unix {
 }
 
 FORMS += \
-    ../../src/scaledatadlg.ui
+    ../../src/scaledatadlg.ui \
+    ../../src/clampdatadlg.ui \
+    ../../src/dosecorrectiondlg.ui
 
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
@@ -89,6 +95,9 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../GUI/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../../../../GUI/qt/QtModuleConfigure
+
+INCLUDEPATH += $$PWD/../../../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

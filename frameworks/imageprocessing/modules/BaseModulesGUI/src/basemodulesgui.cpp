@@ -7,7 +7,8 @@
 
 
 #include "scaledatadlg.h"
-
+#include "clampdatadlg.h"
+#include "dosecorrectiondlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -25,10 +26,10 @@ BASEMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const ch
 
         if (sName=="scaledata")
             return new ScaleDataDlg;
-//		if (sName=="DoseCorrection")
-//			return new DoseCorrectionDlg;
-//		if (sName=="ClampData")
-//			return new ClampDataDlg;
+        if (sName=="DoseCorrection")
+            return new DoseCorrectionDlg;
+        if (sName=="ClampData")
+            return new ClampDataDlg;
 //		if (sName=="VolumeProject")
 //			return new VolumeProjectDlg;
     }

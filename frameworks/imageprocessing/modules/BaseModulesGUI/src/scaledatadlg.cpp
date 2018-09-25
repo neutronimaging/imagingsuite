@@ -20,8 +20,8 @@ ScaleDataDlg::~ScaleDataDlg()
 
 int ScaleDataDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
 {
-    m_fSlope = GetFloatParameter(parameters,"slope");
-    m_fIntercept = GetFloatParameter(parameters,"intercept");
+    m_fSlope = static_cast<double>(GetFloatParameter(parameters,"slope"));
+    m_fIntercept = static_cast<double>(GetFloatParameter(parameters,"intercept"));
     m_bAutoScale = kipl::strings::string2bool(GetStringParameter(parameters,"autoscale"));
 
     UpdateDialog();
