@@ -37,6 +37,10 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -82,6 +86,9 @@ CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 LIBS += -lkipl -lModuleConfig -lProcessFramework -lQtModuleConfigure -lQtAddons -lAdvancedFilterModules
 
+INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/modules/AdvancedFilterModules/src
+DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/modules/AdvancedFilterModules/src
+
 INCLUDEPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 DEPENDPATH += $$PWD/../../../../../../frameworks/imageprocessing/ProcessFramework/include
 
@@ -90,6 +97,9 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../GUI/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../../../../GUI/qt/QtModuleConfigure
+
+INCLUDEPATH += $$PWD/../../../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include

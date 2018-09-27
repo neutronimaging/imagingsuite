@@ -1,6 +1,7 @@
 #include "advancedfiltermodulesgui.h"
 
 #include <string>
+#include <sstream>
 
 #include "issfilterdlg.h"
 
@@ -8,11 +9,18 @@ class ConfiguratorDialogBase;
 
 ADVANCEDFILTERMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name, void *interactor)
 {
-    if (strcmp(application,"kipltool")!=0)
+    (void)interactor;
+
+    kipl::logging::Logger logger("GetGUIModule");
+    std::ostringstream msg;
+
+    logger.message("Fetching Advanced Filter GUI");
+    if (strcmp(application,"kiptool")!=0)
         return nullptr;
 
     if (name!=nullptr) {
         std::string sName=name;
+        logger.message(sName);
 
         if (sName=="ISSfilter")
             return new ISSFilterDlg;
