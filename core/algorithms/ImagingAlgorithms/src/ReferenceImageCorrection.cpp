@@ -2230,37 +2230,85 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
     float curr_angle;
     float *small_a;
     float *big_a;
-    float *bb_angles = new float[m_nBBimages];
+    float *bb_angles;
     float step;
     int index_1;
     int index_2;
 
 
-    for (size_t i=0; i<m_nBBimages; i++){
-        bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+    std::cout << "bb_angles" << std::endl;
+
+    if(angles[0]<angles[2]) {
+        bb_angles = new float[m_nBBimages+1];
+        bb_angles[0] = angles[3]-angles[1];
+         std::cout << bb_angles[0] << " ";
+
+        for (size_t i=0; i<m_nBBimages; i++){
+            bb_angles[i+1]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+            std::cout << bb_angles[i+1] << " ";
+        }
+        std::cout << std::endl;
+
+         index_1=m_nBBimages*6-6;
+         index_2=0;
+
+//          std::cout << "index_2: " << index_2 << std::endl;
+//          std::cout << bb_angles[0] << " " << bb_angles[1] << std::endl;
+
+    }
+    else {
+
+        bb_angles = new float[m_nBBimages];
+
+       for (size_t i=0; i<m_nBBimages; i++){
+           bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+           std::cout << bb_angles[i] << " ";
+           index_1=0;
+           index_2=6;
+       }
+       std::cout << std::endl;
+
+       std::cout << "index_2: " << index_2 << std::endl;
     }
 
+    small_a = &bb_angles[0];
+    big_a = &bb_angles[1];
+
+
+//std::cout << bb_angles[0] << " " << bb_angles[1] << std::endl;
 
     for (size_t i=0; i<m_nProj; i++){
     //1. compute current angle for projection
 
         curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
+        std::cout << "curr angle: " << curr_angle << std::endl;
 
 
     //2. find two closest projection in BB data
-        if (i==0){
-            small_a = &bb_angles[0];
-            big_a = &bb_angles[1];
-            index_1=0;
-            index_2=6;
-        }
+//        if (i==0){
 
-        if(curr_angle<*small_a) {
-            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
-        }
-        else {
+
+
+//            small_a = &bb_angles[0];
+//            big_a = &bb_angles[1];
+////            index_1=0;
+////            index_2=6;
+
+//            std::cout << bb_angles[0] << " " << bb_angles[1] << std::endl;
+//            std::cout << *small_a << " " << *big_a << std::endl;
+//        }
+
+        std::cout << "small and big angles:" << std::endl;
+        std::cout << *small_a << " " << *big_a << std::endl;
+
+//        if(curr_angle<*small_a) {
+//            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
+//            std::cout << "ora qst non accade mai" << std::endl;
+//        }
+//        else {
             step = (curr_angle-*small_a)/(*big_a-*small_a);
-        }
+//        }
+            std::cout << "step: " << step << std::endl;
 
 
         float *temp_param = new float[6];
@@ -2277,26 +2325,37 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
         if (curr_angle>=*big_a){ // se esco dal range incremento di 1
 
+            std::cout << bb_angles[m_nBBimages-1] << " " << bb_angles[m_nBBimages] << std::endl;
 
+            if(curr_angle>=angles[3]) {
 
-            if(curr_angle>=bb_angles[m_nBBimages-1]) {
-
-                if (*big_a==bb_angles[m_nBBimages-1]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+                if (*big_a==angles[3]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
                     index_1=index_2;
                     index_2 =0;
                 }
 
-                small_a = &bb_angles[m_nBBimages-1];
-                big_a = &bb_angles[0];
-                step = (curr_angle-*small_a)/(360.0f-*small_a);
+//                small_a = &bb_angles[m_nBBimages-1];
+
+//                big_a = &bb_angles[0];
+//                small_a++;
+                small_a = &angles[3];
+                *big_a = (angles[1]+angles[2]);
+//                step = (curr_angle-*small_a)/(angles[1]-*small_a);
+                std::cout << "small angle: " << *small_a << " " << bb_angles[m_nBBimages-1] << std::endl;
+                std::cout << "big angle: " << *big_a << std::endl;
 
 
 
             }
             else {
 
-                index_1=index_2;
+                std::cout << "sono nell'else" << std::endl;
+
+                index_1 =index_2;
                 index_2 +=6;
+
+                std::cout << "index_1 and index_2:" << std::endl;
+                std::cout << index_1 << " " << index_2 << std::endl;
 
                 small_a++;
                 big_a++;
