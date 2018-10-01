@@ -2145,34 +2145,43 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     int index_1;
     int index_2;
 
+    if(angles[0]<angles[2]) {
+        bb_angles = new float[m_nBBimages+1];
+        bb_angles[0] = angles[3]-angles[1];
 
-    for (size_t i=0; i<m_nBBimages; i++){
-        bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+        for (size_t i=0; i<m_nBBimages; i++){
+            bb_angles[i+1]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+        }
+
+         index_1=m_nBBimages*(nBBs+3)-(nBBs+3);
+         index_2=0;
+
+    }
+    else {
+
+        bb_angles = new float[m_nBBimages];
+
+       for (size_t i=0; i<m_nBBimages; i++){
+           bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+           index_1=0;
+           index_2=(nBBs+3);
+       }
     }
 
+    small_a = &bb_angles[0];
+    big_a = &bb_angles[1];
 
     for (size_t i=0; i<m_nProj; i++){
     //1. compute current angle for projection
 
-        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
+        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i; // that is the current projection angle
 
 
-    //2. find two closest projection in BB data
-        if (i==0){
-            small_a = &bb_angles[0];
-            big_a = &bb_angles[1];
-            index_1=0;
-            index_2=(nBBs+3);
-        }
+    //2. compute step for linear interpolation
 
-        if(curr_angle<*small_a) {
-            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
-        }
-        else {
-            step = (curr_angle-*small_a)/(*big_a-*small_a);
-        }
+         step = (curr_angle-*small_a)/(*big_a-*small_a);
 
-
+     // 3. interpolate for missing angles
         float *temp_param = new float[nBBs+3];
 
         for (size_t k=0; k<(nBBs+3);k++){
@@ -2187,27 +2196,20 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
 
         if (curr_angle>=*big_a){ // se esco dal range incremento di 1
 
+            if(curr_angle>=angles[3]) {
 
-
-            if(curr_angle>=bb_angles[m_nBBimages-1]) {
-
-                if (*big_a==bb_angles[m_nBBimages-1]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+                if (*big_a==angles[3]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
                     index_1=index_2;
                     index_2 =0;
                 }
-
-                small_a = &bb_angles[m_nBBimages-1];
-                big_a = &bb_angles[0];
-                step = (curr_angle-*small_a)/(360.0f-*small_a);
-
+                small_a = &angles[3];
+                *big_a = (angles[1]+angles[2]);
 
 
             }
             else {
-
-                index_1=index_2;
+                index_1 =index_2;
                 index_2 +=(nBBs+3);
-
                 small_a++;
                 big_a++;
             }
@@ -2221,6 +2223,7 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     delete [] bb_angles;
 
     return interpolated_param;
+
 }
 
 float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
