@@ -6,8 +6,8 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // STDPREPROCMODULESGUI_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#ifndef __STDPREPROCMODULESGUI_H
-#define __STDPREPROCMODULESGUI_H
+#ifndef STDPREPROCMODULESGUI_H
+#define STDPREPROCMODULESGUI_H
 
 #include "StdPreprocModulesGUI_global.h"
 //#ifdef _MSC_VER
