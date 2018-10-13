@@ -11,6 +11,6 @@
 ./build_applications_imageviewer.sh
 ./build_applications_kipltool.sh
 ./build_applications_muhrec.sh
-./build_CLI_framesplitter.sh
-./build_CLI_muhrec.sh
+#./build_CLI_framesplitter.sh
+#./build_CLI_muhrec.sh
 
