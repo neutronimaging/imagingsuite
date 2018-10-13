@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef _INSPECTORMODULES_H
-#define _INSPECTORMODULES_H
+#ifndef INSPECTORMODULES_H
+#define INSPECTORMODULES_H
 
 #include "stdafx.h"
 
