@@ -158,5 +158,6 @@ void ISSFilterDlg::on_horizontalSlider_slice_sliderMoved(int position)
 
 void ISSFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
 {
+
     ConfiguratorDialogBase::on_ButtonBox_Clicked(button);
 }
