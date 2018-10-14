@@ -12,6 +12,7 @@
 #include <scalespace/ISSfilter.h>
 #include <scalespace/filterenums.h>
 #include <math/image_statistics.h>
+#include <base/thistogram.h>
 
 #include <ISSfilterModule.h>
 
@@ -47,6 +48,11 @@ int ISSFilterDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
     UpdateDialog();
 
     ui->volumesViewer->setImages(pOriginal,nullptr);
+    const size_t N=512;
+    float axis[N];
+    size_t hist[N];
+    kipl::base::Histogram(pOriginal->GetDataPtr(),pOriginal->Size(),hist,N,0.0f,0.0f,axis);
+    ui->plotHistogram->setCurveData(0,axis,hist,N,"Original");
 
     int res=QDialog::exec();
 
@@ -126,6 +132,19 @@ void ISSFilterDlg::ApplyParameters()
     normalizeImage(filtered,false);
 
     ui->volumesViewer->setImages(pOriginal,&filtered);
+
+    const size_t N=512;
+    float axis[N];
+    size_t hist[N];
+    kipl::base::Histogram(filtered.GetDataPtr(),filtered.Size(),hist,N,0.0f,0.0f,axis);
+    ui->plotHistogram->setCurveData(1,axis,hist,N,"Filtered");
+
+    float x[4096];
+
+    for (int i=0; i<m_nIterations; ++i)
+        x[i]=i+1;
+    ui->plotError->hideLegend();
+    ui->plotError->setCurveData(0,x,iss.GetErrorArray(), m_nIterations);
 }
 
 void ISSFilterDlg::UpdateParameterList(std::map<string, string> &parameters)

@@ -262,6 +262,40 @@
       <attribute name="title">
        <string>Plots</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Image histogram</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QtAddons::PlotWidget" name="plotHistogram" native="true"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Error plot</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QtAddons::PlotWidget" name="plotError" native="true"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -285,6 +319,12 @@
    <class>QtAddons::CompareVolumeViewer</class>
    <extends>QWidget</extends>
    <header location="global">comparevolumeviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

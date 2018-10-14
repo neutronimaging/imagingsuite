@@ -27,6 +27,8 @@ public:
     void clearAllCurves();
     void showLegend();
     void hideLegend();
+    void setTitle(QString title);
+    void hideTitle();
 
 //    void setPlotCursor(int id, PlotCursor c);
 //    void clearPlotCursor(int id);

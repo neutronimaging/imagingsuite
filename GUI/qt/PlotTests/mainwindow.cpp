@@ -52,3 +52,13 @@ void MainWindow::on_pushButton_5_clicked()
 {
     ui->widget->hideLegend();
 }
+
+void MainWindow::on_pushButton_6_clicked()
+{
+   ui->widget->setTitle("Hepp");
+}
+
+void MainWindow::on_pushButton_7_clicked()
+{
+    ui->widget->hideTitle();
+}

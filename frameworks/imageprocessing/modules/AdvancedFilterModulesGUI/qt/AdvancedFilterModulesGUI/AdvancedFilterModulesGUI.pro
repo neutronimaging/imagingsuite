@@ -3,7 +3,7 @@
 # Project created by QtCreator 2018-09-21T07:14:35
 #
 #-------------------------------------------------
-QT       += core widgets
+QT       += core widgets charts
 
 TARGET = AdvancedFilterModulesGUI
 TEMPLATE = lib

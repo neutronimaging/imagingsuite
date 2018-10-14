@@ -95,8 +95,17 @@ void PlotWidget::showLegend()
 
 void PlotWidget::hideLegend()
 {
-      ui->chart->chart()->legend()->setVisible(false);
+    ui->chart->chart()->legend()->setVisible(false);
 }
 
+void PlotWidget::setTitle(QString title)
+{
+    ui->chart->chart()->setTitle(title);
+}
+
+void PlotWidget::hideTitle()
+{
+    ui->chart->chart()->setTitle("");
+}
 
 }
