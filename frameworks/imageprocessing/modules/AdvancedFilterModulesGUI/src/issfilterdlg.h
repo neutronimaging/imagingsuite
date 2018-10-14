@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef ISSFILTERDLG_H
 #define ISSFILTERDLG_H
 
@@ -26,17 +27,9 @@ public:
 private slots:
     void on_pushButton_browseIterationPath_clicked();
 
-    void on_spinBox_slice_valueChanged(int arg1);
-
-    void on_horizontalSlider_slice_sliderMoved(int position);
-
-    void on_buttonBox_clicked(QAbstractButton *button);
-
     void on_pushButton_Apply_clicked();
 
-    void on_checkBox_linkLevels_toggled(bool checked);
-
-private:
+ private:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog();
     virtual void UpdateParameters();

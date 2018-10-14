@@ -47,8 +47,8 @@ public:
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
-public slots:
-    void on_ButtonBox_Clicked(QAbstractButton *button);
+//public slots:
+//    void on_ButtonBox_Clicked(QAbstractButton *button);
 protected:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog() = 0;

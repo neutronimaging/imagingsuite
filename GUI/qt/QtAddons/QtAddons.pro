@@ -50,7 +50,8 @@ SOURCES += plotter.cpp \
     roiwidget.cpp \
     roimanager.cpp \
     uxroiwidget.cpp \
-    loggingdialog.cpp
+    loggingdialog.cpp \
+    comparevolumeviewer.cpp
 
 
 
@@ -68,7 +69,8 @@ HEADERS += QtAddons_global.h \
     roiwidget.h \
     roimanager.h \
     uxroiwidget.h \
-    loggingdialog.h
+    loggingdialog.h \
+    comparevolumeviewer.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -101,4 +103,5 @@ FORMS += \
     roiwidget.ui \
     roimanager.ui \
     uxroiwidget.ui \
-    loggingdialog.ui
+    loggingdialog.ui \
+    comparevolumeviewer.ui

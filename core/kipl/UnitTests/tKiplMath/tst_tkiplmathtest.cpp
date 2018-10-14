@@ -15,6 +15,7 @@
 #include <math/statistics.h>
 #include <math/mathfunctions.h>
 #include <math/findpeaks.h>
+#include <math/image_statistics.h>
 
 #include <io/io_tiff.h>
 
@@ -38,6 +39,7 @@ private Q_SLOTS:
     void testFindPeaks();
 
     void testStatistics();
+    void testImageStats();
     void testSignFunction();
 };
 
@@ -288,6 +290,21 @@ void TKiplMathTest::testStatistics()
     QVERIFY(fabs(stats.Max()==5.1032863747302493)<eps);
     QVERIFY(fabs(stats.V()==3.1454089765655291)<eps);
 
+
+}
+
+void TKiplMathTest::testImageStats()
+{
+    double data[10]={ 4.49201549,  3.63910658,  1.14245381,  2.42364998,  2.12082273,
+                     -0.89899808,  2.27052317,  0.62877943,  5.10328637,  4.0204556};
+
+    double eps=0.0001;
+    std::pair<double,double> stat=kipl::math::statistics(data,10);
+
+    QVERIFY(fabs(stat.first-2.4942095070011741)<eps);
+
+    qDebug() << stat.second ;
+    QVERIFY(fabs(stat.second-1.7735300889935668)<eps);
 
 }
 

@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "issfilterdlg.h"
 #include "ui_issfilterdlg.h"
 
@@ -44,12 +45,8 @@ int ISSFilterDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
     pOriginal=&img;
     UpdateDialog();
-    ui->spinBox_slice->setMinimum(0);
-    ui->spinBox_slice->setMaximum(static_cast<int>(img.Size(2))-1);
-    ui->horizontalSlider_slice->setMinimum(0);
-    ui->horizontalSlider_slice->setMaximum(static_cast<int>(img.Size(2))-1);
-    ui->horizontalSlider_slice->setValue(static_cast<int>((img.Size(2)-1)/2));
-    on_horizontalSlider_slice_sliderMoved(static_cast<int>((img.Size(2)-1)/2));
+
+    ui->volumesViewer->setImages(pOriginal,nullptr);
 
     int res=QDialog::exec();
 
@@ -112,6 +109,9 @@ void ISSFilterDlg::ApplyParameters()
     filtered.Clone(*pOriginal);
 
     normalizeImage(filtered,true);
+    iss.eInitialImage = m_eInitialImage;
+    iss.m_eRegularization = m_eRegularization;
+
     iss.Process(    filtered,
                     m_fTau,
                     m_fLambda,
@@ -125,8 +125,7 @@ void ISSFilterDlg::ApplyParameters()
     }
     normalizeImage(filtered,false);
 
-    on_horizontalSlider_slice_sliderMoved(ui->horizontalSlider_slice->value());
-
+    ui->volumesViewer->setImages(pOriginal,&filtered);
 }
 
 void ISSFilterDlg::UpdateParameterList(std::map<string, string> &parameters)
@@ -158,54 +157,10 @@ void ISSFilterDlg::on_pushButton_browseIterationPath_clicked()
     ui->lineEdit_iterationPath->setText(fname);
 }
 
-void ISSFilterDlg::on_spinBox_slice_valueChanged(int arg1)
-{
-    QSignalBlocker blocker(ui->horizontalSlider_slice);
-    ui->horizontalSlider_slice->setValue(arg1);
-    on_horizontalSlider_slice_sliderMoved(arg1);
-}
-
-void ISSFilterDlg::on_horizontalSlider_slice_sliderMoved(int position)
-{
-    QSignalBlocker blocker(ui->spinBox_slice);
-
-    ui->spinBox_slice->setValue(position);
-    size_t lPos=static_cast<size_t>(position);
-
-    float *pOrig=pOriginal->GetLinePtr(0UL,lPos);
-    ui->image_original->set_image(pOrig,pOriginal->Dims());
-
-    if (filtered.Size() == pOriginal->Size()) {
-
-        float *pFilt=filtered.GetLinePtr(0,lPos);
-        ui->image_filtered->set_image(pFilt,filtered.Dims());
-
-        kipl::base::TImage<float,2> diff(pOriginal->Dims());
-
-        for (size_t i=0; i<diff.Size(); ++i) {
-            diff[i]=pFilt[i]-pOrig[i];
-        }
-        ui->image_diff->set_image(diff.GetDataPtr(),diff.Dims());
-    }
-
-}
-
-void ISSFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
-{
-
-}
 
 void ISSFilterDlg::on_pushButton_Apply_clicked()
 {
     ApplyParameters();
-}
-
-void ISSFilterDlg::on_checkBox_linkLevels_toggled(bool checked)
-{
-    if (checked)
-        ui->image_original->LinkImageViewer(ui->image_filtered);
-    else
-        ui->image_original->ClearLinkedImageViewers();
 }
 
 void ISSFilterDlg::normalizeImage(kipl::base::TImage<float,3> & img, bool forward)
