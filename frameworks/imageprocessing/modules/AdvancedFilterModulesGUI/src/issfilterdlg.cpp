@@ -3,11 +3,14 @@
 
 #include <QDebug>
 #include <QSignalBlocker>
+#include <QFileDialog>
+
 #include <ParameterHandling.h>
 
 #include <strings/miscstring.h>
 #include <scalespace/ISSfilter.h>
 #include <scalespace/filterenums.h>
+#include <math/image_statistics.h>
 
 #include <ISSfilterModule.h>
 
@@ -99,7 +102,31 @@ void ISSFilterDlg::UpdateParameters()
 
 void ISSFilterDlg::ApplyParameters()
 {
-    qDebug() << "Hepp";
+    logger.message("Applying current parameters");
+    UpdateParameters();
+    std::map<string, string> parameters;
+    UpdateParameterList(parameters);
+
+
+    akipl::scalespace::ISSfilterQ3D<float> iss(nullptr);
+    filtered.Clone(*pOriginal);
+
+    normalizeImage(filtered,true);
+    iss.Process(    filtered,
+                    m_fTau,
+                    m_fLambda,
+                    m_fAlpha,
+                    m_nIterations,
+                    m_bSaveIterations,
+                    m_sIterationPath);
+    if (m_bAutoScale) {
+        ui->doubleSpinBox_slope->setValue(m_fSlope);
+        ui->doubleSpinBox_intercept->setValue(m_fIntercept);
+    }
+    normalizeImage(filtered,false);
+
+    on_horizontalSlider_slice_sliderMoved(ui->horizontalSlider_slice->value());
+
 }
 
 void ISSFilterDlg::UpdateParameterList(std::map<string, string> &parameters)
@@ -121,7 +148,14 @@ void ISSFilterDlg::UpdateParameterList(std::map<string, string> &parameters)
 
 void ISSFilterDlg::on_pushButton_browseIterationPath_clicked()
 {
+    QString fname=QFileDialog::getSaveFileName(this,"Select iteration file name",QDir::homePath(),"*.tif");
 
+    if (fname.contains('#')==false) {
+        int pos=fname.lastIndexOf('.');
+        fname=fname.insert(pos,"_####");
+    }
+
+    ui->lineEdit_iterationPath->setText(fname);
 }
 
 void ISSFilterDlg::on_spinBox_slice_valueChanged(int arg1)
@@ -159,5 +193,65 @@ void ISSFilterDlg::on_horizontalSlider_slice_sliderMoved(int position)
 void ISSFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
 {
 
-    ConfiguratorDialogBase::on_ButtonBox_Clicked(button);
+}
+
+void ISSFilterDlg::on_pushButton_Apply_clicked()
+{
+    ApplyParameters();
+}
+
+void ISSFilterDlg::on_checkBox_linkLevels_toggled(bool checked)
+{
+    if (checked)
+        ui->image_original->LinkImageViewer(ui->image_filtered);
+    else
+        ui->image_original->ClearLinkedImageViewers();
+}
+
+void ISSFilterDlg::normalizeImage(kipl::base::TImage<float,3> & img, bool forward)
+{
+    double slope=1.0, intercept=0.0;
+
+    std::ostringstream msg;
+
+    if (forward) {
+        if (m_bAutoScale) {
+            std::pair<double,double> stats=kipl::math::statistics(img.GetDataPtr(),img.Size());
+
+            m_fIntercept=stats.first;
+            m_fSlope=1.0f/stats.second;
+        }
+
+        msg<<"Scaling image with slope="<<m_fSlope<<" and intercept="<<m_fIntercept;
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        #pragma omp parallel
+        {
+            float *pImg = img.GetDataPtr();
+            ptrdiff_t N=static_cast<ptrdiff_t>(img.Size());
+
+            #pragma omp for
+            for (ptrdiff_t i=0; i<N; i++) {
+                pImg[i]=m_fSlope*(pImg[i]-m_fIntercept);
+            }
+        }
+
+    }
+    else {
+        slope=1.0/m_fSlope;
+        intercept=m_fIntercept;
+
+        #pragma omp parallel
+        {
+            float *pImg = img.GetDataPtr();
+            ptrdiff_t N=static_cast<ptrdiff_t>(img.Size());
+
+            #pragma omp for
+            for (ptrdiff_t i=0; i<N; i++) {
+                pImg[i]=slope*pImg[i]+intercept;
+            }
+        }
+
+    }
+
+
 }

@@ -32,12 +32,17 @@ private slots:
 
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_pushButton_Apply_clicked();
+
+    void on_checkBox_linkLevels_toggled(bool checked);
+
 private:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog();
     virtual void UpdateParameters();
     virtual void ApplyParameters() ;
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
+    void normalizeImage(kipl::base::TImage<float,3> & img, bool forward);
 
     Ui::ISSFilterDlg *ui;
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
+    <width>862</width>
     <height>654</height>
    </rect>
   </property>
@@ -189,6 +189,13 @@
        </item>
       </layout>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_Apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -311,13 +318,13 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -329,6 +336,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
