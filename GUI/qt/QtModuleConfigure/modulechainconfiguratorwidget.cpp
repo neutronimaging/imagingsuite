@@ -64,7 +64,6 @@ QSize ModuleChainConfiguratorWidget::sizeHint() const
 void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 {
     ostringstream msg;
-    std::cout << "trying to add module" << std::endl;
 
     AddModuleDialog dlg(this);
 
@@ -140,6 +139,9 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
                 logger(kipl::logging::Logger::LogWarning,msg.str());
             }
         }
+        else {
+            logger.warning("Current module variable void.");
+        }
     }
 }
 
@@ -192,7 +194,7 @@ std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
     std::list<ModuleConfig> modulelist;
 
     QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
-    if (item!=NULL)
+    if (item!=nullptr)
         item->m_Module.parameters=GetParameterList();
 
     for (int i=0; i<m_ModuleListView.count(); i++) {
@@ -215,6 +217,7 @@ void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
     m_ModuleListView.setCurrentItem(item);
 
     UpdateCurrentModuleParameters();
+    m_pCurrentModule=item;
 }
 
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )
