@@ -10,8 +10,10 @@ PlotWidget::PlotWidget(QWidget *parent) :
     ui(new Ui::PlotWidget)
 {
     ui->setupUi(this);
+
     QChart *chart = new QChart();
     ui->chart->setChart(chart);
+    chart->layout()->setContentsMargins(4,4,4,4);
 }
 
 PlotWidget::~PlotWidget()
@@ -59,16 +61,29 @@ void PlotWidget::setCurveData(int id, const float * const x, const size_t * cons
 
 }
 
-void PlotWidget::setCurveData(int id, QLineSeries *series)
+void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 {
     auto it=seriesmap.find(id);
     if ( it != seriesmap.end()) {
-        ui->chart->chart()->removeSeries(it->second);
+        QLineSeries *line=dynamic_cast<QLineSeries *>(it->second);
+        line->replace(series->points());
+        line->setName(series->name());
+        if (deleteData == true)
+            delete series;
+    } else {
+        seriesmap[id]=series;
+
+        ui->chart->chart()->addSeries(series);
     }
 
-    seriesmap[id]=series;
+    QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
+    if (series->points().size()<25) {
+        line->setPointsVisible(true);
+    }
+    else {
+        line->setPointsVisible(false);
+    }
 
-    ui->chart->chart()->addSeries(series);
     ui->chart->chart()->createDefaultAxes();
 
 }

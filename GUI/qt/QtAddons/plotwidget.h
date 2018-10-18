@@ -22,7 +22,11 @@ public:
     void setCurveData(int id, const QVector<QPointF> &data, QString name = "");
     void setCurveData(int id, float const * const x, float const * const y, const int N, QString name = "");
     void setCurveData(int id, float const * const x, size_t const * const y, const int N, QString name ="");
-    void setCurveData(int id, QtCharts::QLineSeries *series);
+    /// \brief Sets a plot line using the QLineSeries object
+    /// \param id The index number of the plot to set
+    /// \param series the plot data
+    /// \param deleteData A flag to indicate that the series container shall be deleted in the method. This is in particular necessary for the update case.
+    void setCurveData(int id, QtCharts::QLineSeries *series, bool deleteData=true);
     void clearCurve(int id);
     void clearAllCurves();
     void showLegend();
