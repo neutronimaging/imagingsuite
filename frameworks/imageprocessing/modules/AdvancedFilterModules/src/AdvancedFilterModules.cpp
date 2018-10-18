@@ -27,8 +27,8 @@ ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const cha
         if (sName=="NonLinDiffusion")
             return new NonLinDiffusionModule;
 
-        if (sName=="NonLocalMeansFilter")
-            return new NonLocalMeansModule;
+//        if (sName=="NonLocalMeansFilter")
+//            return new NonLocalMeansModule;
 	}
 
     return nullptr;

@@ -44,8 +44,8 @@ void * GetModule(const char * application, const char * name, void *vinteractor)
 //		if (sName=="KernelFuzzyCMeans")
 //			return new KernelFuzzyCMeans;
 
-		if (sName=="RemoveBackground")
-			return new RemoveBackground;
+//		if (sName=="RemoveBackground")
+//			return new RemoveBackground;
 
 
 	}

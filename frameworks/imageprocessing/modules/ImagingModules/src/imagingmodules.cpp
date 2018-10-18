@@ -27,8 +27,8 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
     if (name!=nullptr) {
         std::string sName=name;
 
-        if (sName=="TranslateProjections")
-            return new TranslateProjectionModule;
+//        if (sName=="TranslateProjections")
+//            return new TranslateProjectionModule;
 
         if (sName=="StripeFilter")
             return new StripeFilterModule;
