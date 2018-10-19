@@ -26,6 +26,12 @@ public:
 private slots:
     void on_checkBox_background_toggled(bool checked);
 
+    void on_doubleSpinBox_upper_valueChanged(double arg1);
+
+    void on_doubleSpinBox_lower_valueChanged(double arg1);
+
+    void on_doubleSpinBox_background_valueChanged(double arg1);
+
 private:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog();

@@ -26,7 +26,12 @@ DoubleThresholdDlg::~DoubleThresholdDlg()
 
 void DoubleThresholdDlg::UpdateDialog()
 {
+    ui->doubleSpinBox_lower->setValue(m_fLowThreshold);
+    ui->doubleSpinBox_upper->setValue(m_fHighThreshold);
 
+    ui->doubleSpinBox_background->setValue(m_fBackgroundValue);
+    ui->checkBox_background->setChecked(m_bUseBackgroundValue);
+    on_checkBox_background_toggled(m_bUseBackgroundValue);
 }
 
 void DoubleThresholdDlg::UpdateParameters()
@@ -73,9 +78,7 @@ int DoubleThresholdDlg::exec(ConfigBase *config, std::map<string, string> &param
     ui->doubleSpinBox_upper->setMinimum(m_fLowThreshold);
 
     try {
- //       qDebug() << "Plotting treshold";
         ui->plot_histogram->setCurveData(0,axis,bins,N,"Histogram");
- //       qDebug() <<"Histogram plotted";
     }
     catch (std::bad_alloc & e) {
         QString msg="Failed to allocate series: ";
@@ -106,4 +109,20 @@ int DoubleThresholdDlg::exec(ConfigBase *config, std::map<string, string> &param
 void DoubleThresholdDlg::on_checkBox_background_toggled(bool checked)
 {
     ui->doubleSpinBox_background->setVisible(checked);
+    ApplyParameters();
+}
+
+void DoubleThresholdDlg::on_doubleSpinBox_upper_valueChanged(double arg1)
+{
+    ApplyParameters();
+}
+
+void DoubleThresholdDlg::on_doubleSpinBox_lower_valueChanged(double arg1)
+{
+    ApplyParameters();
+}
+
+void DoubleThresholdDlg::on_doubleSpinBox_background_valueChanged(double arg1)
+{
+    ApplyParameters();
 }
