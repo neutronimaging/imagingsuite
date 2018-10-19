@@ -2,12 +2,14 @@
 #include "ui_plotwidget.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 namespace QtAddons {
 
 PlotWidget::PlotWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::PlotWidget)
+    ui(new Ui::PlotWidget),
+    m_nPointsVisible(25)
 {
     ui->setupUi(this);
 
@@ -65,19 +67,29 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 {
     auto it=seriesmap.find(id);
     if ( it != seriesmap.end()) {
+//        qDebug() << "Replacing curve";
         QLineSeries *line=dynamic_cast<QLineSeries *>(it->second);
         line->replace(series->points());
         line->setName(series->name());
         if (deleteData == true)
-            delete series;
+            try {
+                delete series;
+            } catch (std::exception &e) {
+                QString msg="Failed to delete series:";
+                msg=msg+QString::fromStdString(e.what());
+                QMessageBox::warning(this,"Exception",msg);
+            }
+
     } else {
+//        qDebug()<<"New curve";
         seriesmap[id]=series;
 
         ui->chart->chart()->addSeries(series);
     }
 
+//    qDebug() << "Show points";
     QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
-    if (series->points().size()<25) {
+    if (line->points().size()<=m_nPointsVisible) {
         line->setPointsVisible(true);
     }
     else {
@@ -101,6 +113,11 @@ void PlotWidget::clearAllCurves()
 {
     seriesmap.clear();
     ui->chart->chart()->removeAllSeries();
+}
+
+void PlotWidget::setPointsVisible(int n)
+{
+    m_nPointsVisible=n;
 }
 
 void PlotWidget::showLegend()

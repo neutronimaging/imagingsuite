@@ -13,7 +13,8 @@ CompareVolumeViewer::CompareVolumeViewer(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CompareVolumeViewer),
     pOriginal(nullptr),
-    pProcessed(nullptr)
+    pProcessed(nullptr),
+    bShowDifference(true)
 {
     ui->setupUi(this);
 }
@@ -44,6 +45,15 @@ void CompareVolumeViewer::setImageLabel(QString lbl, int idx)
     }
 }
 
+void CompareVolumeViewer::showDifference(bool show)
+{
+    bShowDifference = show;
+    if (show==true)
+        ui->groupBox_difference->show();
+    else
+        ui->groupBox_difference->hide();
+}
+
 
 void CompareVolumeViewer::on_checkBox_linkIntensity_toggled(bool checked)
 {
@@ -71,23 +81,25 @@ void CompareVolumeViewer::on_spinBox_slices_valueChanged(int arg1)
 void CompareVolumeViewer::updateViews(int idx)
 {
     try {
-    kipl::base::eImagePlanes plane=static_cast<kipl::base::eImagePlanes>(1<<(ui->comboBox_imagePlanes->currentIndex()));
+        kipl::base::eImagePlanes plane=static_cast<kipl::base::eImagePlanes>(1<<(ui->comboBox_imagePlanes->currentIndex()));
 
 
-    kipl::base::TImage<float,2> orig = kipl::base::ExtractSlice(*pOriginal,idx,plane);
+        kipl::base::TImage<float,2> orig = kipl::base::ExtractSlice(*pOriginal,idx,plane);
 
-    if ((pProcessed==nullptr) || (pOriginal->Size()!=pProcessed->Size())) {
         ui->originalImage->set_image(orig.GetDataPtr(),orig.Dims());
-    }
-    else {
-        kipl::base::TImage<float,2> proc = kipl::base::ExtractSlice(*pProcessed,idx,plane);
 
-        ui->processedImage->set_image(proc.GetDataPtr(),proc.Dims());
+        if ((pProcessed!=nullptr) && (pOriginal->Size()==pProcessed->Size())) {
+            kipl::base::TImage<float,2> proc = kipl::base::ExtractSlice(*pProcessed,idx,plane);
 
-        kipl::base::TImage<float,2> diffimg=proc-orig;
+            ui->processedImage->set_image(proc.GetDataPtr(),proc.Dims());
 
-        ui->differenceImage->set_image(diffimg.GetDataPtr(),diffimg.Dims());
-    }
+            if (bShowDifference == true)
+            {
+                kipl::base::TImage<float,2> diffimg=proc-orig;
+
+                ui->differenceImage->set_image(diffimg.GetDataPtr(),diffimg.Dims());
+            }
+        }
     }
     catch (kipl::base::KiplException & e) {
         QMessageBox::warning(this,"Display problems",QString::fromStdString(e.what()));

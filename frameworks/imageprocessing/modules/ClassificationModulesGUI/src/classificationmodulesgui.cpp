@@ -2,8 +2,8 @@
 
 #include <string>
 #include <sstream>
-
-#include "classificationmodulesgui_global.h"
+#include "classificationmodulesgui.h"
+//#include "classificationmodulesgui_global.h"
 #include "basicthresholddlg.h"
 #include "doublethresholddlg.h"
 #include "removebackgrounddlg.h"
@@ -12,16 +12,18 @@
 
 class ConfiguratorDialogBase;
 
-CLASSIFICATIONMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name, void *interactor)
+CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *application, const char *name, void *interactor)
 {
     (void)interactor;
+
+    if (strcmp(application,"kiptool")!=0)
+        return nullptr;
 
     kipl::logging::Logger logger("GetGUIModule");
     std::ostringstream msg;
 
-    logger.message("Fetching Advanced Filter GUI");
-    if (strcmp(application,"kiptool")!=0)
-        return nullptr;
+    logger.message("Fetching Classification GUI");
+
 
     if (name!=nullptr) {
         std::string sName=name;

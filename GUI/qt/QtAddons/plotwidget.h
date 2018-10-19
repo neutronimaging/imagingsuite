@@ -29,6 +29,7 @@ public:
     void setCurveData(int id, QtCharts::QLineSeries *series, bool deleteData=true);
     void clearCurve(int id);
     void clearAllCurves();
+    void setPointsVisible(int n=-1);
     void showLegend();
     void hideLegend();
     void setTitle(QString title);
@@ -41,6 +42,7 @@ public:
 private:
     Ui::PlotWidget *ui;
     std::map<int, QtCharts::QAbstractSeries *> seriesmap;
+    int m_nPointsVisible;
 };
 
 }

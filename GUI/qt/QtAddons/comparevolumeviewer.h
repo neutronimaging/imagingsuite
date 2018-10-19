@@ -19,6 +19,7 @@ public:
 
     void setImages(kipl::base::TImage<float,3> *pOrig, kipl::base::TImage<float,3> *pProc);
     void setImageLabel(QString lbl,int idx);
+    void showDifference(bool show);
 
 private slots:
     void on_checkBox_linkIntensity_toggled(bool checked);
@@ -34,6 +35,7 @@ private:
 
     kipl::base::TImage<float,3> *pOriginal;
     kipl::base::TImage<float,3> *pProcessed;
+    bool bShowDifference;
     void updateViews(int idx);
     void updateBounds();
 };

@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "advancedfiltermodulesgui.h"
 
 #include <string>
