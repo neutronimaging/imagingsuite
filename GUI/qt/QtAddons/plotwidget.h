@@ -34,6 +34,7 @@ public:
     void hideLegend();
     void setTitle(QString title);
     void hideTitle();
+    void updateAxes();
 
 //    void setPlotCursor(int id, PlotCursor c);
 //    void clearPlotCursor(int id);

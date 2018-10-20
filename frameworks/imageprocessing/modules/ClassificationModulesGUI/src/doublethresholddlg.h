@@ -9,6 +9,7 @@
 #include <ConfiguratorDialogBase.h>
 
 #include <base/timage.h>
+#include <segmentation/thresholds.h>
 
 namespace Ui {
 class DoubleThresholdDlg;
@@ -24,13 +25,13 @@ public:
 
     virtual int exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img);
 private slots:
-    void on_checkBox_background_toggled(bool checked);
-
     void on_doubleSpinBox_upper_valueChanged(double arg1);
 
     void on_doubleSpinBox_lower_valueChanged(double arg1);
 
-    void on_doubleSpinBox_background_valueChanged(double arg1);
+    void on_comboBox_currentIndexChanged(int index);
+
+    void on_pushButton_apply_clicked();
 
 private:
     virtual int exec() { return QDialog::exec(); }
@@ -44,10 +45,9 @@ private:
     kipl::base::TImage<float,3> * pOriginal;
     kipl::base::TImage<float,3> bilevelImg;
 
-    double m_fHighThreshold;
-    double m_fLowThreshold ;
-    double m_fBackgroundValue;
-    bool m_bUseBackgroundValue;
+    float m_fHighThreshold;
+    float m_fLowThreshold ;
+    kipl::segmentation::CmpType m_compare;
 
     size_t m_nHistMax;
 };

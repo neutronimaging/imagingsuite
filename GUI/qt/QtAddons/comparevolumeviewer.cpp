@@ -68,7 +68,6 @@ void CompareVolumeViewer::on_horizontalSlider_slices_sliderMoved(int position)
     QSignalBlocker block(ui->spinBox_slices);
     ui->spinBox_slices->setValue(position);
     updateViews(position);
-
 }
 
 void CompareVolumeViewer::on_spinBox_slices_valueChanged(int arg1)
@@ -80,29 +79,31 @@ void CompareVolumeViewer::on_spinBox_slices_valueChanged(int arg1)
 
 void CompareVolumeViewer::updateViews(int idx)
 {
-    try {
-        kipl::base::eImagePlanes plane=static_cast<kipl::base::eImagePlanes>(1<<(ui->comboBox_imagePlanes->currentIndex()));
+    if (pOriginal!=nullptr) {
+        try {
+            kipl::base::eImagePlanes plane=static_cast<kipl::base::eImagePlanes>(1<<(ui->comboBox_imagePlanes->currentIndex()));
 
 
-        kipl::base::TImage<float,2> orig = kipl::base::ExtractSlice(*pOriginal,idx,plane);
+            kipl::base::TImage<float,2> orig = kipl::base::ExtractSlice(*pOriginal,idx,plane);
 
-        ui->originalImage->set_image(orig.GetDataPtr(),orig.Dims());
+            ui->originalImage->set_image(orig.GetDataPtr(),orig.Dims());
 
-        if ((pProcessed!=nullptr) && (pOriginal->Size()==pProcessed->Size())) {
-            kipl::base::TImage<float,2> proc = kipl::base::ExtractSlice(*pProcessed,idx,plane);
+            if ((pProcessed!=nullptr) && (pOriginal->Size()==pProcessed->Size())) {
+                kipl::base::TImage<float,2> proc = kipl::base::ExtractSlice(*pProcessed,idx,plane);
 
-            ui->processedImage->set_image(proc.GetDataPtr(),proc.Dims());
+                ui->processedImage->set_image(proc.GetDataPtr(),proc.Dims());
 
-            if (bShowDifference == true)
-            {
-                kipl::base::TImage<float,2> diffimg=proc-orig;
+                if (bShowDifference == true)
+                {
+                    kipl::base::TImage<float,2> diffimg=proc-orig;
 
-                ui->differenceImage->set_image(diffimg.GetDataPtr(),diffimg.Dims());
+                    ui->differenceImage->set_image(diffimg.GetDataPtr(),diffimg.Dims());
+                }
             }
         }
-    }
-    catch (kipl::base::KiplException & e) {
-        QMessageBox::warning(this,"Display problems",QString::fromStdString(e.what()));
+        catch (kipl::base::KiplException & e) {
+            QMessageBox::warning(this,"Display problems",QString::fromStdString(e.what()));
+        }
     }
 }
 

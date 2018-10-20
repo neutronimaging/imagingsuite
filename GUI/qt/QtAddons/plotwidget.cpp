@@ -140,4 +140,9 @@ void PlotWidget::hideTitle()
     ui->chart->chart()->setTitle("");
 }
 
+void PlotWidget::updateAxes()
+{
+    ui->chart->chart()->createDefaultAxes();
+}
+
 }

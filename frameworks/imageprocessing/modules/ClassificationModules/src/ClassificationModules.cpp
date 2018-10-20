@@ -78,7 +78,7 @@ int GetModuleList(const char * application, void *listptr)
 	BasicThreshold bt;
 	modulelist->operator []("BasicThreshold")=bt.GetParameters();
 
-	BasicThreshold dt;
+    DoubleThreshold dt;
 	modulelist->operator []("DoubleThreshold")=dt.GetParameters();
 
 //	FuzzyCMeans fcm;

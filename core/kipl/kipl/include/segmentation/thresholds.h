@@ -178,9 +178,8 @@ namespace kipl { namespace segmentation {
 ///		\param conn morphological connectivity selector
 ///		\param mask ROI mask for the processing. If mask=NULL, mask processing will be skipped
 template <typename T,size_t NDim>
-int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDim> &bilevel, T lo, T hi, kipl::segmentation::CmpType cmp, kipl::morphology::MorphConnect conn, kipl::base::TImage<char,NDim> *mask=reinterpret_cast<kipl::base::TImage<char,NDim> *>(NULL))
+int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDim> &bilevel, T lo, T hi, kipl::segmentation::CmpType cmp, kipl::morphology::MorphConnect conn, kipl::base::TImage<char,NDim> *mask=nullptr)
 {
-	//kipl::base::TImage<char,NDim> *mask=NULL;
 	kipl::logging::Logger logger("kipl::segmentation::DoubleThreshold");
 	std::ostringstream msg;
 
@@ -201,7 +200,7 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 	std::deque<int> posQ;
 		
 	kipl::morphology::CNeighborhood NG(dims,NDim,conn);
-	int Nng=NG.N();
+    ptrdiff_t Nng=NG.N();
 
 	T *pImg=img.GetDataPtr();
 	char *pTmp=bilevel.GetDataPtr();
@@ -498,6 +497,10 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 	///	\param median_filter_len Length of the median filter
     int KIPLSHARED_EXPORT Threshold_Rosin(size_t const * const hist, const TailType tail=tail_left, const size_t median_filter_len=0);
 }}
+
+std::string KIPLSHARED_EXPORT enum2string(kipl::segmentation::CmpType cmp);
+void KIPLSHARED_EXPORT string2enum(std::string str, kipl::segmentation::CmpType &cmp);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::segmentation::CmpType c);
 
 
 #endif
