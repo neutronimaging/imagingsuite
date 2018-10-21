@@ -1,6 +1,7 @@
 #include "plotwidget.h"
 #include "ui_plotwidget.h"
 
+#include <limits>
 #include <QDebug>
 #include <QMessageBox>
 
@@ -67,7 +68,6 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 {
     auto it=seriesmap.find(id);
     if ( it != seriesmap.end()) {
-//        qDebug() << "Replacing curve";
         QLineSeries *line=dynamic_cast<QLineSeries *>(it->second);
         line->replace(series->points());
         line->setName(series->name());
@@ -81,14 +81,13 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
             }
 
     } else {
-//        qDebug()<<"New curve";
         seriesmap[id]=series;
 
         ui->chart->chart()->addSeries(series);
     }
 
-//    qDebug() << "Show points";
     QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
+
     if (line->points().size()<=m_nPointsVisible) {
         line->setPointsVisible(true);
     }
@@ -97,6 +96,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
     }
 
     ui->chart->chart()->createDefaultAxes();
+    updateAxes();
 
 }
 
@@ -141,8 +141,37 @@ void PlotWidget::hideTitle()
 }
 
 void PlotWidget::updateAxes()
+{ 
+    findMinMax();
+    ui->chart->chart()->axisX()->setMin(minX);
+    ui->chart->chart()->axisX()->setMax(maxX);
+    ui->chart->chart()->axisY()->setMin(minY);
+    ui->chart->chart()->axisY()->setMax(maxY);
+}
+
+void PlotWidget::findMinMax()
 {
-    ui->chart->chart()->createDefaultAxes();
+    minX=std::numeric_limits<double>::max();
+    maxX=-std::numeric_limits<double>::max();
+    minY=std::numeric_limits<double>::max();
+    maxY=-std::numeric_limits<double>::max();
+
+    if (seriesmap.empty()==true)
+        return;
+
+    for (auto it=seriesmap.begin(); it!=seriesmap.end(); ++it)
+    {
+        QLineSeries *series=dynamic_cast<QLineSeries *>(it->second);
+
+        QVector<QPointF> points=series->pointsVector();
+        for (auto point=points.begin(); point!=points.end(); ++point)
+        {
+            minX = std::min(minX,point->x());
+            maxX = std::max(maxX,point->x());
+            minY = std::min(minY,point->y());
+            maxY = std::max(maxY,point->y());
+        }
+    }
 }
 
 }

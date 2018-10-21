@@ -41,9 +41,14 @@ public:
 //    void clearAllPlotCursors();
 
 private:
+    void findMinMax();
     Ui::PlotWidget *ui;
     std::map<int, QtCharts::QAbstractSeries *> seriesmap;
     int m_nPointsVisible;
+    double minX=std::numeric_limits<double>::max();
+    double maxX=-std::numeric_limits<double>::max();
+    double minY=std::numeric_limits<double>::max();
+    double maxY=-std::numeric_limits<double>::max();
 };
 
 }

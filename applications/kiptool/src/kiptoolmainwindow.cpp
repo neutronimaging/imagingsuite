@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <QDir>
 #include <QFileDialog>
@@ -43,7 +34,7 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     logdlg(new QtAddons::LoggingDialog(this)),
     button_toggleLoggerDlg(new QPushButton("Logger",this)),
     m_Engine(nullptr),
-    m_OriginalHistogram(1024),
+    m_OriginalHistogram(1024UL,"Original histogram"),
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
     m_bJustLoaded(false),
@@ -62,6 +53,9 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     LoadDefaults();
     UpdateDialog();
     SetupCallbacks();
+
+    ui->plotter_hprofile->hideLegend();
+    ui->plotter_vprofile->hideLegend();
 }
 
 KipToolMainWindow::~KipToolMainWindow()
@@ -244,14 +238,17 @@ void KipToolMainWindow::UpdateHistogramView()
     if (!m_HistogramList.empty()) {
 
         for (it=m_HistogramList.begin(); it!=m_HistogramList.end(); it++, idx++) {
-            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),it->second.Size(),QColor("red"));
+            QString lbl;
+            lbl.sprintf("Hist ",idx);
+            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),static_cast<int>(it->second.Size()),lbl);
         }
 
-        ui->plotter_histogram->setCurveData(0,m_OriginalHistogram.GetX(), m_OriginalHistogram.GetY(),m_OriginalHistogram.Size());
+
     }
     else {
         ui->plotter_histogram->clearAllCurves();
     }
+    ui->plotter_histogram->setCurveData(0,m_OriginalHistogram.GetX(), m_OriginalHistogram.GetY(),m_OriginalHistogram.Size(),QString::fromStdString(m_OriginalHistogram.name()));
 }
 
 void KipToolMainWindow::UpdatePlotView()
@@ -265,7 +262,7 @@ void KipToolMainWindow::UpdatePlotView()
             ui->plotter_plots->clearAllCurves();
             idx=0;
             for (plot_it=module_it->second.begin(); plot_it!=module_it->second.end(); plot_it++,idx++) {
-                ui->plotter_plots->setCurveData(idx,plot_it->second.GetX(),plot_it->second.GetY(),plot_it->second.Size());
+                ui->plotter_plots->setCurveData(idx,plot_it->second.GetX(),plot_it->second.GetY(),plot_it->second.Size(),QString::fromStdString(plot_it->second.name()));
             }
         }
     }
@@ -308,6 +305,7 @@ void KipToolMainWindow::on_button_loaddata_clicked()
         kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),bins,m_OriginalHistogram.Size(),0,0,axis);
 
         m_OriginalHistogram.SetData(axis,bins,m_OriginalHistogram.Size());
+        UpdateHistogramView();
         delete [] axis;
         delete [] bins;
     }
@@ -797,20 +795,20 @@ void KipToolMainWindow::on_slider_hprofile_sliderMoved(int position)
         ui->imageviewer_original->set_plot(cursor,QColor("red"),0);
 
         QVector<QPointF> data;
-        float *pImg=m_SliceOriginal.GetLinePtr(position);
-        for (int i=0; i<m_SliceOriginal.Size(0); i++)
+        float *pImg=m_SliceOriginal.GetLinePtr(static_cast<size_t>(position));
+        for (size_t i=0; i<m_SliceOriginal.Size(0); i++)
             data.append(QPointF(i,static_cast<double>(pImg[i])));
 
-        ui->plotter_hprofile->setCurveData(0,data,QColor("blue"));
+        ui->plotter_hprofile->setCurveData(0,data,"Original");
 
         if (m_Engine!=nullptr) {
             ui->imageviewer_processed->set_plot(cursor,QColor("red"),0);
             data.clear();
-            pImg=m_SliceResult.GetLinePtr(position);
-            for (int i=0; i<m_SliceResult.Size(0); i++)
+            pImg=m_SliceResult.GetLinePtr(static_cast<size_t>(position));
+            for (size_t i=0; i<m_SliceResult.Size(0); i++)
                 data.append(QPointF(i,static_cast<double>(pImg[i])));
 
-            ui->plotter_hprofile->setCurveData(1,data,QColor("red"));
+            ui->plotter_hprofile->setCurveData(1,data,"Processed");
         }
     }
 }
@@ -825,20 +823,20 @@ void KipToolMainWindow::on_slider_vprofile_sliderMoved(int position)
 
         QVector<QPointF> data;
         float *pImg=m_SliceOriginal.GetDataPtr()+position;
-        int sx=m_SliceOriginal.Size(0);
-        for (int i=0; i<m_SliceOriginal.Size(1); i++)
+        size_t sx=m_SliceOriginal.Size(0);
+        for (size_t i=0; i<m_SliceOriginal.Size(1); i++)
             data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
 
-        ui->plotter_vprofile->setCurveData(0,data,QColor("blue"));
+        ui->plotter_vprofile->setCurveData(0,data,"Original");
 
         if (m_Engine!=nullptr) {
             ui->imageviewer_processed->set_plot(cursor,QColor("red"),1);
             data.clear();
             pImg=m_SliceResult.GetDataPtr()+position;
-            for (int i=0; i<m_SliceResult.Size(1); i++)
+            for (size_t i=0; i<m_SliceResult.Size(1); i++)
                 data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
 
-            ui->plotter_vprofile->setCurveData(1,data,QColor("red"));
+            ui->plotter_vprofile->setCurveData(1,data,"Processed");
         }
     }
 }
@@ -902,6 +900,16 @@ void KipToolMainWindow::on_actionRegister_for_news_letter_triggered()
     if (!QDesktopServices::openUrl(url)) {
         QMessageBox dlg;
         dlg.setText("KipTool could not open your web browser with the link http://www.imagingscience.ch/newsletter/");
+        dlg.exec();
+    }
+}
+
+void KipToolMainWindow::on_actionUser_manual_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool");
         dlg.exec();
     }
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets  concurrent # printsupport
+QT       += core widgets charts concurrent # printsupport
 
 TARGET = QtKipTool
 TEMPLATE = app
