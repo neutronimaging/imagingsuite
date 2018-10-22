@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NonLinDiffusionDlg</class>
+ <widget class="QDialog" name="NonLinDiffusionDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>840</width>
+    <height>654</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>lambda</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>sigma</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>tau</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>iterations</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBox_iterations">
+           <property name="toolTip">
+            <string>Number of filter iterations</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>999</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_lambda">
+           <property name="toolTip">
+            <string>Threshold of the diffusivity function. Controls the edge sensitivity.</string>
+           </property>
+           <property name="decimals">
+            <number>4</number>
+           </property>
+           <property name="maximum">
+            <double>9999.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_sigma">
+           <property name="toolTip">
+            <string>Width of the gradient smoothing function. Greater values makes the filter less sensitive to noise but weak edges may be smoothed.</string>
+           </property>
+           <property name="decimals">
+            <number>4</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_tau">
+           <property name="toolTip">
+            <string>Integration time step. Small values are more accurate but it requires more iterations to reach the result.</string>
+           </property>
+           <property name="decimals">
+            <number>4</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="pushButton_apply">
+           <property name="text">
+            <string>Apply</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_normalize">
+         <property name="title">
+          <string>Normalize image</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Slope</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_slope">
+              <property name="decimals">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <double>999999.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_intercept">
+              <property name="decimals">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <double>999999.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Intercept</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QtAddons::PlotWidget" name="plot_histogram" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>192</width>
+           <height>192</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Diffusivity</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QtAddons::ImageViewerWidget" name="view_diffusion" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>192</width>
+             <height>192</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_saveIterations">
+       <property name="title">
+        <string>Save iterations</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Iteration file mask</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_iterationPath"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_browseIterations">
+            <property name="text">
+             <string>Browse</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QtAddons::CompareVolumeViewer" name="viewer" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>256</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::CompareVolumeViewer</class>
+   <extends>QWidget</extends>
+   <header location="global">comparevolumeviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>NonLinDiffusionDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>NonLinDiffusionDlg</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -65,12 +65,14 @@ win32 {
 
 SOURCES += \
         ../../src/advancedfiltermodulesgui.cpp \
-    ../../src/issfilterdlg.cpp
+    ../../src/issfilterdlg.cpp \
+    ../../src/nonlindiffusiondlg.cpp
 
 HEADERS += \
         ../../src/advancedfiltermodulesgui.h \
         ../../src/advancedfiltermodulesgui_global.h \
-        ../../src/issfilterdlg.h
+        ../../src/issfilterdlg.h \
+    ../../src/nonlindiffusiondlg.h
 
 unix {
     target.path = /usr/lib
@@ -78,7 +80,8 @@ unix {
 }
 
 FORMS += \
-    ../../src/issfilterdlg.ui
+    ../../src/issfilterdlg.ui \
+    ../../src/nonlindiffusiondlg.ui
 
 
 
