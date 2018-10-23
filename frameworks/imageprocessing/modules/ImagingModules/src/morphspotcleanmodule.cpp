@@ -69,5 +69,5 @@ std::map<string, string> MorphSpotCleanModule::GetParameters()
 
 int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float, 3> &img, std::map<string, string> &coeff)
 {
-
+ return 0;
 }

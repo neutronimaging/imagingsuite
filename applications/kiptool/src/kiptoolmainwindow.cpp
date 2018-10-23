@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSignalBlocker>
 #include <QDesktopServices>
+#include <QVersionNumber>
 
 #include <KiplFrameworkException.h>
 #include <ModuleException.h>
@@ -707,7 +708,18 @@ void KipToolMainWindow::on_actionClear_History_triggered()
 
 void KipToolMainWindow::on_actionAbout_triggered()
 {
-    logger(kipl::logging::Logger::LogMessage,"About");
+    QMessageBox dlg;
+    std::ostringstream msg;
+    QVersionNumber ver;
+
+    msg<<"KipTool "<<m_QtApp->applicationVersion().toStdString()<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
+
+    msg<<"Using \nQt version: "<<qVersion()<<"\n"
+      <<"LibTIFF, zLib, fftw3, libcfitsio";
+
+    dlg.setText(QString::fromStdString(msg.str()));
+
+    dlg.exec();
 }
 
 void KipToolMainWindow::button_toggleLoggerDlg_clicked()
