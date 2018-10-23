@@ -1,6 +1,8 @@
 #ifndef COMPAREVOLUMEVIEWER_H
 #define COMPAREVOLUMEVIEWER_H
 
+#include "QtAddons_global.h"
+
 #include <QWidget>
 
 #include <base/timage.h>
@@ -9,7 +11,7 @@ namespace Ui {
 class CompareVolumeViewer;
 }
 namespace QtAddons {
-class CompareVolumeViewer : public QWidget
+class  QTADDONSSHARED_EXPORT CompareVolumeViewer : public QWidget
 {
     Q_OBJECT
 

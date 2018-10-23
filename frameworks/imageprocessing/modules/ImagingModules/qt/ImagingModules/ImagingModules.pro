@@ -92,11 +92,8 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lReaderConfig #-lUnpublishedImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lReaderConfig
 
-
-#INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
-#DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include

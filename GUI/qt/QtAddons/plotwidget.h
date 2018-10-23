@@ -1,6 +1,8 @@
 #ifndef PLOTWIDGET_H
 #define PLOTWIDGET_H
 
+#include "QtAddons_global.h"
+
 #include <map>
 #include <QWidget>
 #include <QLineSeries>
@@ -11,7 +13,7 @@ namespace Ui {
 class PlotWidget;
 }
 namespace QtAddons {
-class PlotWidget : public QWidget
+class QTADDONSSHARED_EXPORT PlotWidget : public QWidget
 {
     Q_OBJECT
 
