@@ -25,7 +25,7 @@ ADVANCEDFILTERMODULES_EXPORT void * GetModule(const char *application, const cha
             return new ISSfilterModule(interactor);
 
         if (sName=="NonLinDiffusion")
-            return new NonLinDiffusionModule;
+            return new NonLinDiffusionModule(interactor);
 
 //        if (sName=="NonLocalMeansFilter")
 //            return new NonLocalMeansModule;

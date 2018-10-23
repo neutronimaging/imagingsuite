@@ -1,17 +1,19 @@
-//<LICENCE>
-
-#ifndef __DIFF_FILTERBASE_H
-#define __DIFF_FILTERBASE_H
+//<LICENSE>
+#ifndef ADIFF_FILTERBASE_H
+#define ADIFF_FILTERBASE_H
 #include <iostream>
 #include <ios>
 #include <string>
 #include <limits>
 #include <deque>
+#include <vector>
 
-#include <base/timage.h>
-#include <io/io_matlab.h>
-#include <profile/Timer.h>
-#include "lambdaest.h"
+#include <cmath>
+#include "../base/timage.h"
+#include "../profile/Timer.h"
+#include "../logging/logger.h"
+#include "../interactors/interactionbase.h"
+//#include "lambdaest.h"
 //#include "../math/mathmisc.h"
 
 namespace akipl { namespace scalespace {
@@ -30,33 +32,33 @@ const GradientType DefaultGrad=Jahne_Grad;
 //const GradientType DefaultGrad=BinDiff_Grad;
 
 	/// An abstract base class for the family of diffusion related filters
-	template <class ImgType, int NDim>
+    template <typename T, size_t NDim>
 	class DiffusionBaseFilter
 	{
+    protected:
+        kipl::logging::Logger logger;
 	public:
 		/// Base constructor
-		DiffusionBaseFilter();
+        DiffusionBaseFilter(kipl::interactors::InteractionBase *interactor=nullptr);
 		
-		/** \brief Constructor to set Regularization parameters
-		\param Sigma Width of the smoothing filter
-		\param Tau time increment for each iteration
-		\param It number of iterations to repeat the filter
-		*/
-		DiffusionBaseFilter(float Sigma, float Tau, int It=10);
+        /// \brief Constructor to set Regularization parameters
+        /// \param Sigma Width of the smoothing filter
+        /// \param Tau time increment for each iteration
+        /// \param It number of iterations to repeat the filter
+        DiffusionBaseFilter(float Sigma, float Tau, int It=10,kipl::interactors::InteractionBase *interactor=nullptr);
 		
-		/** \brief Constructor to set Regularization parameters
-		\param Sigma vector with widths of the smoothing filter
-		\param Tau time increment for each iteration
-		\param It number of iterations to repeat the filter
-		*/
-		DiffusionBaseFilter(vector<float> &Sigma,float Tau, int It=10);
+        /// \brief Constructor to set Regularization parameters
+        /// \param Sigma vector with widths of the smoothing filter
+        /// \param Tau time increment for each iteration
+        /// \param It number of iterations to repeat the filter
+        DiffusionBaseFilter(vector<float> &Sigma,float Tau, int It=10,kipl::interactors::InteractionBase *interactor=nullptr);
 
 		/// destructor to clean up allocated kernel memory
 		virtual ~DiffusionBaseFilter();
 
-		/** Activity function, applies the filter on an image
-		\param img the image to filtered, the result is returned though this parameter
-		*/
+        /// Activity function, applies the filter on an image
+        /// \param img the image to filtered, the result is returned though this parameter
+        ///
 		virtual int operator()(kipl::base::TImage<float,NDim> &img);
 		int RegularizationParameters(float Sigma, float Tau,int It=10);
 		int RegularizationParameters(vector<float> & Sigma, float Tau,int It=10);
@@ -76,21 +78,20 @@ const GradientType DefaultGrad=Jahne_Grad;
 		/// Compute the Laplacian of the input image
 		int Laplacian();
 
-		/** \brief Compute |grad(img)|
-			\param img input image
-			\param ag resulting gradient image
-			\param squared switch to chose if |grad|^2 will be returned
-		*/
-		int AbsGradient(kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> & ag, bool squared=false);
+        /// \brief Compute |grad(img)|
+        ///	\param img input image
+        ///	\param ag resulting gradient image
+        ///	\param squared switch to chose if |grad|^2 will be returned
+        int AbsGradient(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<T,NDim> & ag, bool squared=false);
 		
 		/// Compute the individual partial gradients
-		int Gradient(kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &d , 
+        int Gradient(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<T,NDim> &d ,
 					int order, bool reset=true, bool squared=false);
-		int DiffGradient(kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &d , 
+        int DiffGradient(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<T,NDim> &d ,
 					int order, bool reset=true, bool squared=false);
 		
 		/// Compute the partial gradients
-		int Gradient(kipl::base::TImage<ImgType,NDim> &img);
+        int Gradient(kipl::base::TImage<T,NDim> &img);
 
 		/// Apply a Gauss filter to the input image 
 		int Regularization(kipl::base::TImage<float,NDim> &img, kipl::base::TImage<float,NDim> &res);
@@ -100,23 +101,17 @@ const GradientType DefaultGrad=Jahne_Grad;
 		virtual int Diffusivity() {return 0;}
 		
 
-		/** \brief allocates memory for the filter kernel
-			\param N the longest side of the image
-			*/
+        /// \brief allocates memory for the filter kernel
+        ///	\param N the longest side of the image
 		int AllocateKernel(int N);
-		/** \brief Deallocation of the kernel memory
 
-			*/
+        /// \brief Deallocation of the kernel memory
 		int DeAllocateKernel();
 
-		/** \brief Intializes the filters 
-
-			Sets the filter weights and the position reference vector
-
-			\param sx Length of the x axis
-			\param sxy Length of the xy plane
-			*/
-		virtual int InitFilters(int sx,int sxy);
+        /// \brief Intializes the filters. Sets the filter weights and the position reference vector
+        ///	\param sx Length of the x axis
+        ///	\param sxy Length of the xy plane
+        virtual int InitFilters(size_t sx, size_t sxy);
 		
 		int initDiffCentered(int sx, int sxy);
 
@@ -130,133 +125,102 @@ const GradientType DefaultGrad=Jahne_Grad;
 		
 //		int splitKernelIndex(int ind,int &d, int &dx, int &dxy);
 
-
-		int SaveSlice(kipl::base::TImage<ImgType,NDim> & img,int i ,const std::string &suffix="");
+        int SaveSlice(kipl::base::TImage<T,NDim> & img,int i ,const std::string suffix="");
 		
-		/** \brief Update control information for Gaussian filters
-			\param sx length of the x-dimension
-			\param sxy length of a xy-plane
-			\param cnt index of the sigma vector
-		*/
+        /// \brief Update control information for Gaussian filters
+        ///	\param sx length of the x-dimension
+        ///	\param sxy length of a xy-plane
+        ///	\param cnt index of the sigma vector
 		virtual int UpdateGaussianFilter(unsigned int sx,unsigned int sxy,int cnt);
 
-		/// Number of iterations to repeat the filter
-		int Nit;
+        bool updateStatus(float val, std::string msg);
 
-		/// Vector containing scale parameters
-		vector<float> sigma;
-
-		/// Time increment per iteration
-		float tau;
-	
-		/// Length of the LUT
-		int NLut;
-		/// Smallest index value to the LUT 
-		float LUTindMin;
-
-		/// Largest index value to the LUT
-		float LUTindMax;
-
-		/// Pointer to the LUT vector
-		float *gLUT;
-
-		/// Index increment for the access of the LUT
-		float LUTindStep;
-
-		/// vector containing the weights of the gradient kernel
-		float GradKernel[27];
-		/// index vector for the gradient, one set of indices per dimension to compute
-		int IndGradKernel[81];
-		/// Pointer to the 1D Gaussian filter kernel
-		float *GaussKernel;
-		
+        kipl::interactors::InteractionBase *m_interactor;
+        int Nit;             //< Number of iterations to repeat the filter
+        std::vector<float> sigma; //< Vector containing scale parameters
+        float tau;           //< Time increment per iteration
+        int NLut;            //< Length of the LUT
+        float LUTindMin;     //< Smallest index value to the LUT
+        float LUTindMax;     //< Largest index value to the LUT
+        float *gLUT;         //< Pointer to the LUT vector
+        float LUTindStep;    //< Index increment for the access of the LUT
+        float GradKernel[27]; //< vector containing the weights of the gradient kernel
+        int IndGradKernel[81]; //< index vector for the gradient, one set of indices per dimension to compute
+        float *GaussKernel;        //< Pointer to the 1D Gaussian filter kernel
 		int *IndGaussKernel;
-		/// Number of gradient directions to compute
-		int NGrad;
-		/// NUmber of elements in the gradient kernel
-		int NGradInd;
-		/// NUmber of elements in the Gaussian kernel
-		int NGauss;
-
+        int NGrad; 		//< Number of gradient directions to compute
+        int NGradInd;   //< NUmber of elements in the gradient kernel
+        int NGauss;     //< NUmber of elements in the Gaussian kernel
 		int Nlvec[2];
-
 		int OffsetStepvec[2];
-
 		int Stepvec[2];
 		
 
-		/// Input and output image from the iteration
-		kipl::base::TImage<float,NDim> u;
-		/// Gradient image
-		kipl::base::TImage<float,NDim> v;
-		/// Indicator to tell that derivatives are computed
-		bool haveDerivatives;
-		/// Partial derivative df/dx
-		kipl::base::TImage<float,NDim> dx;
-		/// Partial derivative df/dy
-		kipl::base::TImage<float,NDim> dy;
-		/// Partial derivative df/dz
-		kipl::base::TImage<float,NDim> dz;
-		/// Temporary original image
-		kipl::base::TImage<float,NDim> f;
-		/// Control image
-		kipl::base::TImage<float,NDim> g;
 
-		/// Help image for the visualization
-		kipl::base::TImage<float,2> slice;
+        kipl::base::TImage<float,NDim> u; 		//< Input and output image from the iteration
+        kipl::base::TImage<float,NDim> v;		//< Gradient image
 
-		/// index to a horizontal slice of 3D image to display
-		int displayslice;
-		/// index to a horizontal slice of 3D image to save
-		int saveslice;
-		/// Save image for each iteration
-		bool save;
-		/// Basename of the filename when iterations are saved
-		char basename[512];
+        bool haveDerivatives;                   //< Indicator to tell that derivatives are computed
+        kipl::base::TImage<float,NDim> dx;      //< Partial derivative df/dx
+        kipl::base::TImage<float,NDim> dy;		//< Partial derivative df/dy
+        kipl::base::TImage<float,NDim> dz;		//< Partial derivative df/dz
+        kipl::base::TImage<float,NDim> f;		//< Temporary original image
+        kipl::base::TImage<float,NDim> g;		//< Control image
+        kipl::base::TImage<float,2> slice;		//< Help image for the visualization
+        int displayslice;		//< index to a horizontal slice of 3D image to display
+        int saveslice;		//< index to a horizontal slice of 3D image to save
+        bool save;		//< Save image for each iteration
+        char basename[512];		//< Basename of the filename when iterations are saved
 		string iteration_filename;
 	};
 
-	template <class ImgType, int NDim>
-		DiffusionBaseFilter<ImgType,NDim>::DiffusionBaseFilter()
+    template <typename T, size_t NDim>
+        DiffusionBaseFilter<T,NDim>::DiffusionBaseFilter(kipl::interactors::InteractionBase *interactor) :
+            logger("DiffusionFilter"),
+            GradType(DefaultGrad),
+            m_interactor(interactor),
+            gLUT(nullptr),
+            GaussKernel(nullptr),
+            IndGaussKernel(nullptr),
+            save(false)
 	{
-		gLUT=NULL;
-		
-		//GradType=Jahne_Grad;
-		GradType=DefaultGrad;
-		GaussKernel=NULL;
-		IndGaussKernel=NULL;
 		RegularizationParameters(1.0f,0.25f,10);
-		save=false;
 	}
 
-	template <class ImgType, int NDim>
-		DiffusionBaseFilter<ImgType,NDim>::DiffusionBaseFilter(float Sigma, float Tau, int It)
+    template <typename T, size_t NDim>
+        DiffusionBaseFilter<T,NDim>::DiffusionBaseFilter(float Sigma,
+                                                               float Tau,
+                                                               int It,
+                                                               kipl::interactors::InteractionBase *interactor) :
+        logger("DiffusionFilter"),
+        GradType(DefaultGrad),
+        m_interactor(interactor),
+        gLUT(nullptr),
+        GaussKernel(nullptr),
+        IndGaussKernel(nullptr),
+        save(false)
 	{
-		gLUT=NULL;
-		
-		GaussKernel=NULL;
-		IndGaussKernel=NULL;
-		//GradType=Jahne_Grad;
-		GradType=DefaultGrad;
 		RegularizationParameters(Sigma,Tau,It);
-		save=false;
 	}
 
-	template <class ImgType, int NDim>
-	DiffusionBaseFilter<ImgType,NDim>::DiffusionBaseFilter(vector<float> & Sigma, float Tau, int It)
+    template <typename T, size_t NDim>
+    DiffusionBaseFilter<T,NDim>::DiffusionBaseFilter(vector<float> & Sigma,
+                                                           float Tau,
+                                                           int It,
+                                                           kipl::interactors::InteractionBase *interactor) :
+        logger("DiffusionFilter"),
+        GradType(DefaultGrad),
+        m_interactor(interactor),
+        gLUT(nullptr),
+        GaussKernel(nullptr),
+        IndGaussKernel(nullptr),
+        save(false)
 	{
-		gLUT=NULL;
-	
-		GaussKernel=NULL;
-		IndGaussKernel=NULL;
-		//GradType=Jahne_Grad;
-		GradType=DefaultGrad;
 		RegularizationParameters(Sigma,Tau,It);
-		save=false;
 	}
 
-	template <class ImgType, int NDim>
-		DiffusionBaseFilter<ImgType,NDim>::~DiffusionBaseFilter()
+    template <typename T, size_t NDim>
+        DiffusionBaseFilter<T,NDim>::~DiffusionBaseFilter()
 	{
 
 		if (gLUT) delete [] gLUT;
@@ -264,14 +228,16 @@ const GradientType DefaultGrad=Jahne_Grad;
 		if (IndGaussKernel) delete [] IndGaussKernel;
 	}
 
-	template <class ImgType, int NDim>
-	int DiffusionBaseFilter<ImgType,NDim>::ShowIterations(bool selection, int slicenum)
+    template <typename T, size_t NDim>
+    int DiffusionBaseFilter<T,NDim>::ShowIterations(bool selection, int slicenum)
 	{
+        (void)selection;
+        (void)slicenum;
 		return 1;
 	}
 	
-	template <class ImgType, int NDim>
-	int DiffusionBaseFilter<ImgType,NDim>::SaveIterations(bool selection,const string &fname)
+    template <typename T, size_t NDim>
+    int DiffusionBaseFilter<T,NDim>::SaveIterations(bool selection,const std::string &fname)
 	{
 		if (selection) {
 			iteration_filename=fname;
@@ -286,11 +252,9 @@ const GradientType DefaultGrad=Jahne_Grad;
 	}
 	
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::operator()(kipl::base::TImage<float,NDim> &img)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::operator()(kipl::base::TImage<float,NDim> &img)
 	{
-		
-
 		u=img;
 		img.FreeImage();
 
@@ -330,8 +294,8 @@ const GradientType DefaultGrad=Jahne_Grad;
 	
 
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::RegularizationParameters(float Sigma, float Tau,int It)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::RegularizationParameters(float Sigma, float Tau,int It)
 	{
 		this->sigma.clear();
 		this->sigma.push_back(Sigma);
@@ -342,8 +306,8 @@ const GradientType DefaultGrad=Jahne_Grad;
 		return 1;
 	}
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::RegularizationParameters(vector<float> & Sigma, float Tau,int It)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::RegularizationParameters(vector<float> & Sigma, float Tau,int It)
 	{
 		this->sigma=Sigma;
 		
@@ -353,8 +317,8 @@ const GradientType DefaultGrad=Jahne_Grad;
 		return 1;
 	}
 	
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::FreeMem()
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::FreeMem()
 	{
 		int dims[]={1,1,1};
 
@@ -369,9 +333,9 @@ const GradientType DefaultGrad=Jahne_Grad;
 		return 1;
 	}
 
-template <class ImgType, int NDim>
-int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,NDim> &img, 
-													kipl::base::TImage<ImgType,NDim> &ag, 
+template <typename T, size_t NDim>
+int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
+                                                    kipl::base::TImage<T,NDim> &ag,
 													bool squared)
 	{
 		const size_t * dims=img.Dims();
@@ -389,8 +353,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 1;
 	}
 	
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::Gradient(kipl::base::TImage<ImgType,NDim> &img)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::Gradient(kipl::base::TImage<T,NDim> &img)
 	{
 		Gradient(img,dx,0);
 		Gradient(img,dy,1);
@@ -400,12 +364,12 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 		
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::DiffGradient(kipl::base::TImage<ImgType, NDim> & img, 
-														kipl::base::TImage<ImgType,NDim> &d, 
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::DiffGradient(kipl::base::TImage<T, NDim> & img,
+                                                        kipl::base::TImage<T,NDim> &d,
 														int order, bool reset, bool squared)
 	{
-		ImgType *pA,*pB, *pD;
+        T *pA,*pB, *pD;
 		int offset;
         const size_t * dims=img.Dims();
 		int startx,starty,startz;
@@ -422,7 +386,7 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 			d=0;
 		}
 		
-		ImgType dtmp;
+        T dtmp;
 
         for (z=startz; z<static_cast<int>(dims[2]); z++) {
             for (y=starty; y<static_cast<int>(dims[1]); y++) {
@@ -440,9 +404,9 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 	}
 	
 	
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::Gradient(kipl::base::TImage<ImgType, NDim> & img, 
-														kipl::base::TImage<ImgType,NDim> &d, 
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::Gradient(kipl::base::TImage<T, NDim> & img,
+                                                        kipl::base::TImage<T,NDim> &d,
 														int order, bool reset, bool squared) 
 	{
 		if (GradType==Diff_Grad_Minus) {
@@ -600,11 +564,11 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 	}
 
 		
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::Regularization(kipl::base::TImage<float,NDim> &img,kipl::base::TImage<float,NDim> &res)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::Regularization(kipl::base::TImage<float,NDim> &img,kipl::base::TImage<float,NDim> &res)
 	{
 	
-        std::deque<ImgType *> lineQ;
+        std::deque<T *> lineQ;
 				
 		float *pV, *pU,*pFilt;
 		int *pIndFilt;
@@ -793,8 +757,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 
 	
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::UpdateGaussianFilter(unsigned int sx,unsigned int sxy,int cnt)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::UpdateGaussianFilter(unsigned int sx,unsigned int sxy,int cnt)
 	{
 		float s;
 		if (cnt<sigma.size()) {
@@ -838,8 +802,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 	
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::InitFilters(int sx,int sxy)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::InitFilters(size_t sx,size_t sxy)
 	{
 		switch (GradType) {
 			case Jahne_Grad:
@@ -878,8 +842,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 1;
 	}
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::initJahne(int sx, int sxy)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::initJahne(int sx, int sxy)
 	{
 		NGradInd=6;
 		switch (NDim) {
@@ -914,8 +878,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::initDiff2(int sx, int sxy)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::initDiff2(int sx, int sxy)
 	{
 		NGradInd=2; 
 		switch (NDim) {
@@ -931,8 +895,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 	
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::initDiff(int sx, int sxy)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::initDiff(int sx, int sxy)
 	{
 		NGradInd=2; 
 		switch (NDim) {
@@ -948,8 +912,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::initDiffCentered(int sx, int sxy)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::initDiffCentered(int sx, int sxy)
 	{
 		NGradInd=2;
 		switch (NDim) {
@@ -964,8 +928,8 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 
-	template <class ImgType, int NDim>
-		int DiffusionBaseFilter<ImgType,NDim>::initBinDiff(int sx, int sxy)
+    template <typename T, size_t NDim>
+        int DiffusionBaseFilter<T,NDim>::initBinDiff(int sx, int sxy)
 	{
 		
 		int scale;
@@ -1033,18 +997,18 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
 		return 0;
 	}
 	
-/*	template <class ImgType, int NDim>
-	int DiffusionBaseFilter<ImgType,NDim>::splitKernelIndex(int ind, int sx,int sxy, int &d, int &dx, int &dxy)
-	{
-		int tmp;
+//	template <typename T, size_t NDim>
+//	int DiffusionBaseFilter<T,NDim>::splitKernelIndex(int ind, int sx,int sxy, int &d, int &dx, int &dxy)
+//	{
+//		int tmp;
 		
 		
-		return 0;
-	}
-*/
+//		return 0;
+//	}
+
 	
-	template <class ImgType, int NDim>
-	int DiffusionBaseFilter<ImgType,NDim>::SaveSlice(kipl::base::TImage<ImgType,NDim> & img, int i, const string &suffix)
+    template <typename T, size_t NDim>
+    int DiffusionBaseFilter<T,NDim>::SaveSlice(kipl::base::TImage<T,NDim> & img, int i, const string suffix)
 	{
 
 //		if (!iteration_filename.empty()) {
@@ -1058,6 +1022,17 @@ int DiffusionBaseFilter<ImgType,NDim>::AbsGradient(kipl::base::TImage<ImgType,ND
     return 0;
 		
 	}
+
+    template <typename T, size_t NDim>
+    bool DiffusionBaseFilter<T,NDim>::updateStatus(float val, std::string msg)
+    {
+        if (m_interactor!=nullptr) {
+            logger.message("update status");
+            return m_interactor->SetProgress(val,msg);
+        }
+
+        return false;
+    }
 }
 }
 #endif

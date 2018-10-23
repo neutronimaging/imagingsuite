@@ -22,6 +22,11 @@ public:
 
 
 
+private slots:
+    void on_pushButton_apply_clicked();
+
+    void on_pushButton_browseIterations_clicked();
+
 private:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog();

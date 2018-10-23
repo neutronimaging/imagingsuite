@@ -11,12 +11,14 @@
 #include <math/image_statistics.h>
 #include <math/normalizeimage.h>
 #include <base/thistogram.h>
+#include <scalespace/NonLinDiffAOS.h>
 
 NonLinDiffusionDlg::NonLinDiffusionDlg(QWidget *parent) :
     ConfiguratorDialogBase("NonLinDiffusion", true, false, true,parent),
     ui(new Ui::NonLinDiffusionDlg)
 {
     ui->setupUi(this);
+    ui->plot_histogram->hideLegend();
 }
 
 NonLinDiffusionDlg::~NonLinDiffusionDlg()
@@ -110,6 +112,9 @@ void NonLinDiffusionDlg::ApplyParameters()
         ui->doubleSpinBox_intercept->setValue(m_fIntercept);
     }
 
+    akipl::scalespace::NonLinDiffusionFilter<float,3> nld(m_fSigma, m_fTau, m_fLambda, m_nIterations,nullptr);
+
+    nld(filtered);
     normalizeImage(filtered,false);
 
     ui->viewer->setImages(pOriginal,&filtered);
@@ -141,25 +146,24 @@ void NonLinDiffusionDlg::UpdateParameterList(std::map<string, string> &parameter
     parameters["iterationpath"]  = m_sIterationPath;
 }
 
-//void NonLinDiffusionDlg::on_pushButton_browseIterationPath_clicked()
-//{
-//    QString fname=QFileDialog::getSaveFileName(this,"Select iteration file name",QDir::homePath(),"*.tif");
-
-//    if (fname.contains('#')==false) {
-//        int pos=fname.lastIndexOf('.');
-//        fname=fname.insert(pos,"_####");
-//    }
-
-//    ui->lineEdit_iterationPath->setText(fname);
-//}
-
-
-//void NonLinDiffusionDlg::on_pushButton_Apply_clicked()
-//{
-//    ApplyParameters();
-//}
-
 void NonLinDiffusionDlg::normalizeImage(kipl::base::TImage<float,3> & img, bool forward)
 {
     kipl::math::normalizeData(img.GetDataPtr(),img.Size(),m_fSlope,m_fIntercept,forward,m_bAutoScale);
+}
+
+void NonLinDiffusionDlg::on_pushButton_apply_clicked()
+{
+    ApplyParameters();
+}
+
+void NonLinDiffusionDlg::on_pushButton_browseIterations_clicked()
+{
+    QString fname=QFileDialog::getSaveFileName(this,"Select iteration file name",QDir::homePath(),"*.tif");
+
+    if (fname.contains('#')==false) {
+        int pos=fname.lastIndexOf('.');
+        fname=fname.insert(pos,"_####");
+    }
+
+    ui->lineEdit_iterationPath->setText(fname);
 }

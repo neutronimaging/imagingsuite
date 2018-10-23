@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "issfilterdlg.h"
+#include "nonlindiffusiondlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -25,6 +26,9 @@ ADVANCEDFILTERMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application
 
         if (sName=="ISSfilter")
             return new ISSFilterDlg;
+
+        if (sName=="NonLinDiffusion")
+            return new NonLinDiffusionDlg;
     }
     return nullptr;
 }

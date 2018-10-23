@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>654</height>
+    <width>904</width>
+    <height>766</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -157,7 +157,7 @@
         <widget class="QtAddons::PlotWidget" name="plot_histogram" native="true">
          <property name="minimumSize">
           <size>
-           <width>192</width>
+           <width>256</width>
            <height>192</height>
           </size>
          </property>
@@ -227,7 +227,7 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>256</height>
+         <height>368</height>
         </size>
        </property>
       </widget>
