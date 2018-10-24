@@ -1,0 +1,62 @@
+<niqa>
+    <userinformation>
+        <operator>Jane Doe</operator>
+        <institute>PSI</institute>
+        <instrument>ICON</instrument>
+        <country>Switzerland</country>
+        <experimentdate>2019 8 3 </experimentdate>
+        <analysisdate>2020 9 4 </analysisdate>
+        <version>2.3.4</version>
+        <comment></comment>
+    </userinformation>
+    <contrastanalysis>
+        <filemask>slices_####.tif</filemask>
+        <first>10</first>
+        <last>100</last>
+        <step>2</step>
+        <pixelsize>0.125</pixelsize>
+        <intensityslope>0.01</intensityslope>
+        <intensityintercept>10.3</intensityintercept>
+        <makereport>true</makereport>
+    </contrastanalysis>
+    <edgeanalysis2d>
+        <singlefilename>proj.fits</singlefilename>
+        ﻿<multiimagelist>1.0 file0.tif 2.0 file1.tif 3.0 file2.tif</multiimagelist>
+        <first>5</first>
+        <last>6</last>
+        <step>2</step>
+        <normalize>true</normalize>
+        <obmask>obe_####.tif</obmask>
+        <obfirst>2</obfirst>
+        <oblast>4</oblast>
+        <obstep>2</obstep>
+        <dcmask>dce_#####.tif</dcmask>
+        <dcfirst>3</dcfirst>
+        <dclast>6</dclast>
+        <dcstep>3</dcstep>
+        <useroi>true</useroi>
+        <roi>10 20 30 40</roi>
+        <pixelsize>0.134</pixelsize>
+        <makereport>true</makereport>
+    </edgeanalysis2d>
+    <edgeanalysis3d>
+        <filemask>slices_#####.tif</filemask>
+        <first>123</first>
+        <last>234</last>
+        <step>3</step>
+        <pixelsize>0.145</pixelsize>
+        <radius>20</radius>
+        <precision>0.125</precision>
+        <makereport>true</makereport>
+    </edgeanalysis3d>
+    <ballpacking>
+        <filemask>/Users/kaestner/git/Applications/debug/NIQA.app/Contents/Info.plist</filemask>
+        <first>0</first>
+        <last>10</last>
+        <step>1</step>
+        <usecrop>false</usecrop>
+        <crop>1 2 3 4</crop>
+        <roilist>1 2 3 4 5 6 7 8</roilist>
+        <makereport>true</makereport>
+    </ballpacking>
+</niqa>

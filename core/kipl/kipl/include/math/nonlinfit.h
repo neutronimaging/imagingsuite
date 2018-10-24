@@ -2,7 +2,7 @@
 
 #ifndef __NONLINFIT_H
 #define __NONLINFIT_H
-
+#include "../kipl_global.h"
 #include <tnt.h>
 
 using namespace TNT;
@@ -18,7 +18,7 @@ enum eProfileFunction {
 /// \brief Base class for mathematical function classes
 ///
 ///  The children of this class are intended to be used as target functions for non-linear curvefitting.
-class FitFunctionBase
+class KIPLSHARED_EXPORT FitFunctionBase
 {
 public:
 
@@ -102,7 +102,7 @@ protected:
 
 };
 
-class LevenbergMarquardt {
+class KIPLSHARED_EXPORT LevenbergMarquardt {
 //Object for nonlinear least-squares fitting by the Levenberg-Marquardt method, also including
 //the ability to hold specified parameters at fixed, specified values. Call constructor to bind data
 //vectors and fitting functions and to input an initial parameter guess. Then call any combination
@@ -110,16 +110,18 @@ class LevenbergMarquardt {
 //and chisq.
 
 public:
-    LevenbergMarquardt(const double TOL=1.e-3) ;
+    LevenbergMarquardt(const double TOL=1.e-3, int iterations=2500) ;
 
-    void setTolerance(double t) {tol=fabs(t);}
+    void setTolerance(double t) { tol=fabs(t); }
+    void setIterations(int N) { maxIterations=N; }
     double getTolerance() {return tol;}
 
     void fit(Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Nonlinear::FitFunctionBase &fn);
 private:
 
 
-    static const int NDONE=4, ITMAX=1000; //Convergence parameters.
+    static const int NDONE=4; //Convergence parameters.
+    int maxIterations;
     int ndat, ma, mfit;
 
     double tol;
@@ -134,7 +136,7 @@ private:
 };
 
 /// \brief Function implementation of a sum of Gaussians
-class SumOfGaussians: public FitFunctionBase
+class KIPLSHARED_EXPORT SumOfGaussians: public FitFunctionBase
 {
 public:
     /// \brief Constructor
@@ -177,7 +179,7 @@ public:
 };
 
 /// \brief Function implementation of a sum of Lorenzians
-class Lorenzian: public FitFunctionBase
+class KIPLSHARED_EXPORT Lorenzian: public FitFunctionBase
 {
 public:
     /// \brief Constructor
@@ -219,7 +221,7 @@ public:
 
 };
 
-class Voight : public FitFunctionBase
+class KIPLSHARED_EXPORT Voight : public FitFunctionBase
 {
 public:
     /// \brief Constructor
@@ -258,14 +260,14 @@ public:
     virtual ~Voight() {}
 };
 
-int LeastMedianSquared(double *x, double *y, FitFunctionBase &fn);
+int KIPLSHARED_EXPORT LeastMedianSquared(double *x, double *y, FitFunctionBase &fn);
 
 
 
 } // End namespace nonlinear
 
-void string2enum(std::string &str, Nonlinear::eProfileFunction &e);
-std::string enum2string(Nonlinear::eProfileFunction e);
+void KIPLSHARED_EXPORT string2enum(std::string &str, Nonlinear::eProfileFunction &e);
+std::string KIPLSHARED_EXPORT enum2string(Nonlinear::eProfileFunction e);
 
-std::ostream & operator<<(std::ostream &s, Nonlinear::eProfileFunction e);
+std::ostream KIPLSHARED_EXPORT &  operator<<(std::ostream &s, Nonlinear::eProfileFunction e);
 #endif

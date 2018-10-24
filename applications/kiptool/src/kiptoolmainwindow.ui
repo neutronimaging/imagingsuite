@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1088</width>
-    <height>850</height>
+    <height>1022</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -383,7 +383,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QtAddons::Plotter" name="plotter_histogram" native="true"/>
+               <widget class="QtAddons::PlotWidget" name="plotter_histogram" native="true"/>
               </item>
              </layout>
             </item>
@@ -414,7 +414,7 @@
                <widget class="QComboBox" name="combo_plotselector"/>
               </item>
               <item>
-               <widget class="QtAddons::Plotter" name="plotter_plots" native="true"/>
+               <widget class="QtAddons::PlotWidget" name="plotter_plots" native="true"/>
               </item>
              </layout>
             </item>
@@ -441,7 +441,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QtAddons::Plotter" name="plotter_hprofile" native="true"/>
+               <widget class="QtAddons::PlotWidget" name="plotter_hprofile" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>192</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QSlider" name="slider_hprofile">
@@ -464,7 +471,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QtAddons::Plotter" name="plotter_vprofile" native="true"/>
+               <widget class="QtAddons::PlotWidget" name="plotter_vprofile" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>192</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QSlider" name="slider_vprofile">
@@ -631,6 +645,7 @@
     <addaction name="actionAbout"/>
     <addaction name="actionReport_a_bug"/>
     <addaction name="actionRegister_for_news_letter"/>
+    <addaction name="actionUser_manual"/>
    </widget>
    <widget class="QMenu" name="menuFile_processing">
     <property name="title">
@@ -643,8 +658,8 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuProcess"/>
-   <addaction name="menuHelp"/>
    <addaction name="menuFile_processing"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -734,9 +749,20 @@
     <string>Register for news letter</string>
    </property>
   </action>
+  <action name="actionUser_manual">
+   <property name="text">
+    <string>User manual</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
@@ -745,12 +771,6 @@
    <slots>
     <signal>levelsChanged(float,float)</signal>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ModuleChainConfiguratorWidget</class>

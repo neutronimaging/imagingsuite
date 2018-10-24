@@ -1,6 +1,7 @@
 #ifndef READERFORM_H
 #define READERFORM_H
 
+#include "readergui_global.h"
 #include <QWidget>
 
 #include <logging/logger.h>
@@ -10,7 +11,7 @@ namespace Ui {
 class ReaderForm;
 }
 
-class ReaderForm : public QWidget
+class READERGUISHARED_EXPORT ReaderForm : public QWidget
 {
     Q_OBJECT
     kipl::logging::Logger logger;
@@ -20,6 +21,8 @@ public:
 
     ImageLoader getReaderConfig();
     void setReaderConfig(ImageLoader &cfg);
+
+    void setLabel(QString str);
 
 private slots:
     void on_button_browse_clicked();

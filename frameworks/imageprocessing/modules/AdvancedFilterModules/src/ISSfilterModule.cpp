@@ -84,7 +84,7 @@ int ISSfilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 	filter.Process(img,m_fTau,m_fLambda,m_fAlpha,m_nIterations,m_bSaveIterations,m_sIterationPath);
 
 	ScaleImage(img,false);
-	kipl::containers::PlotData<float,float> errplot(m_nIterations);
+    kipl::containers::PlotData<float,float> errplot(m_nIterations,"ISS error");
 	for (int i=0; i<m_nIterations; i++) {
 		errplot.GetX()[i]=i;
 		errplot.GetY()[i]=filter.GetErrorArray()[i];

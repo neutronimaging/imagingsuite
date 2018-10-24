@@ -1,82 +1,177 @@
 #include "plotwidget.h"
+#include "ui_plotwidget.h"
+
+#include <limits>
+#include <QDebug>
+#include <QMessageBox>
+
 namespace QtAddons {
 
 PlotWidget::PlotWidget(QWidget *parent) :
     QWidget(parent),
-    logger("PlotWidget")
+    ui(new Ui::PlotWidget),
+    m_nPointsVisible(25)
 {
+    ui->setupUi(this);
+
+    QChart *chart = new QChart();
+    ui->chart->setChart(chart);
+    chart->layout()->setContentsMargins(4,4,4,4);
 }
 
-void PlotWidget::setPlotSettings(const PlotSettings &settings)
+PlotWidget::~PlotWidget()
 {
-    m_PlotPainter.setPlotSettings(settings);
+    delete ui;
 }
 
-void PlotWidget::setCurveData(int id, const QVector<QPointF> &data)
+void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name)
 {
-    m_PlotPainter.setCurveData(id,data);
+    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    int i=0;
+    for (auto it=data.begin(); it!=data.end(); ++it, ++i)
+        series->append(it->x(),it->y());
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
 }
 
-void PlotWidget::setCurveData(int id, float const * const x, float const * const y, const int N)
+void PlotWidget::setCurveData(int id, const float * const x, const float * const y, const int N, QString name)
 {
-    m_PlotPainter.setCurveData(id,x,y,N);
+    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+
+    for (int i=0; i<N ; ++i)
+        series->append(qreal(x[i]),qreal(y[i]));
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
 }
 
-void PlotWidget::setCurveData(int id, float const * const x, size_t const * const y, const int N)
+void PlotWidget::setCurveData(int id, const float * const x, const size_t * const y, const int N, QString name)
 {
-    m_PlotPainter.setCurveData(id,x,y,N);
+    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+
+    for (int i=0; i<N ; ++i)
+        series->append(qreal(x[i]),qreal(y[i]));
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+
+}
+
+void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
+{
+    auto it=seriesmap.find(id);
+    if ( it != seriesmap.end()) {
+        QLineSeries *line=dynamic_cast<QLineSeries *>(it->second);
+        line->replace(series->points());
+        line->setName(series->name());
+        if (deleteData == true)
+            try {
+                delete series;
+            } catch (std::exception &e) {
+                QString msg="Failed to delete series:";
+                msg=msg+QString::fromStdString(e.what());
+                QMessageBox::warning(this,"Exception",msg);
+            }
+
+    } else {
+        seriesmap[id]=series;
+
+        ui->chart->chart()->addSeries(series);
+    }
+
+    QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
+
+    if (line->points().size()<=m_nPointsVisible) {
+        line->setPointsVisible(true);
+    }
+    else {
+        line->setPointsVisible(false);
+    }
+
+    ui->chart->chart()->createDefaultAxes();
+    updateAxes();
+
 }
 
 void PlotWidget::clearCurve(int id)
 {
-    m_PlotPainter.clearCurve(id);
+    auto it=seriesmap.find(id);
+    if ( it != seriesmap.end()) {
+        ui->chart->chart()->removeSeries(it->second);
+        seriesmap.erase(it);
+    }
 }
 
 void PlotWidget::clearAllCurves()
 {
-    m_PlotPainter.clearAllCurves();
+    seriesmap.clear();
+    ui->chart->chart()->removeAllSeries();
 }
 
-void PlotWidget::setPlotCursor(int id, PlotCursor c)
+void PlotWidget::setPointsVisible(int n)
 {
-    m_PlotPainter.setPlotCursor(id,c);
+    m_nPointsVisible=n;
 }
 
-void PlotWidget::clearPlotCursor(int id)
+void PlotWidget::showLegend()
 {
-    m_PlotPainter.clearPlotCursor(id);
+    ui->chart->chart()->legend()->setVisible(true);
 }
 
-void PlotWidget::clearAllPlotCursors()
+void PlotWidget::hideLegend()
 {
-    m_PlotPainter.clearAllPlotCursors();
+    ui->chart->chart()->legend()->setVisible(false);
 }
 
-void PlotWidget::paintEvent(QPaintEvent *event)
-{}
+void PlotWidget::setTitle(QString title)
+{
+    ui->chart->chart()->setTitle(title);
+}
 
-void PlotWidget::resizeEvent(QResizeEvent *event)
-{}
+void PlotWidget::hideTitle()
+{
+    ui->chart->chart()->setTitle("");
+}
 
-void PlotWidget::mousePressEvent(QMouseEvent *event)
-{}
+void PlotWidget::updateAxes()
+{ 
+    findMinMax();
+    ui->chart->chart()->axisX()->setMin(minX);
+    ui->chart->chart()->axisX()->setMax(maxX);
+    ui->chart->chart()->axisY()->setMin(minY);
+    ui->chart->chart()->axisY()->setMax(maxY);
+}
 
-void PlotWidget::mouseMoveEvent(QMouseEvent *event)
-{}
+void PlotWidget::findMinMax()
+{
+    minX=std::numeric_limits<double>::max();
+    maxX=-std::numeric_limits<double>::max();
+    minY=std::numeric_limits<double>::max();
+    maxY=-std::numeric_limits<double>::max();
 
-void PlotWidget::mouseReleaseEvent(QMouseEvent *event)
-{}
+    if (seriesmap.empty()==true)
+        return;
 
-void PlotWidget::keyPressEvent(QKeyEvent *event)
-{}
+    for (auto it=seriesmap.begin(); it!=seriesmap.end(); ++it)
+    {
+        QLineSeries *series=dynamic_cast<QLineSeries *>(it->second);
 
-void PlotWidget::wheelEvent(QWheelEvent *event)
-{}
-
-void PlotWidget::zoomIn()
-{}
-
-void PlotWidget::zoomOut()
-{}
+        QVector<QPointF> points=series->pointsVector();
+        for (auto point=points.begin(); point!=points.end(); ++point)
+        {
+            minX = std::min(minX,point->x());
+            maxX = std::max(maxX,point->x());
+            minY = std::min(minY,point->y());
+            maxY = std::max(maxY,point->y());
+        }
+    }
+}
 
 }

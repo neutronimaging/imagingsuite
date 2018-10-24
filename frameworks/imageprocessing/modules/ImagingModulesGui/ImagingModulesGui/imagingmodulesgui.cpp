@@ -27,7 +27,7 @@ IMAGINGMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const
             return new BBLogNormDlg;
     }
 
-    return NULL;
+    return nullptr;
 
 }
 

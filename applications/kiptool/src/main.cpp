@@ -35,6 +35,7 @@ int RunOffline(QApplication * a);
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationVersion(VERSION);
     QDir dir;
     kipl::logging::Logger logger("KipTool");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
@@ -79,7 +80,7 @@ int RunOffline(QApplication * a)
         std::string fname(args[2].toStdString());
 
         KiplProcessConfig config;
-        KiplEngine *engine=NULL;
+        KiplEngine *engine=nullptr;
         KiplFactory factory;
 
         try {

@@ -64,7 +64,7 @@ int DoseCorrection::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std:
 
 	//#pragma omp parallel 
 	{
-		float *pSlice=NULL;
+        float *pSlice=nullptr;
 		float dose=1.0f;
 	//	#pragma omp for
 		for (ptrdiff_t slice=0; slice<slices; slice++) 

@@ -1,15 +1,4 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-10-18 21:06:50 +0200 (Thu, 18 Oct 2012) $
-// $Rev: 1380 $
-// $Id: ModuleConfigurator.cpp 1380 2012-10-18 19:06:50Z kaestner $
-//
-
+//<LICENSE>
 
 // ModuleConfigurator.cpp : Defines the exported functions for the DLL application.
 //
@@ -26,11 +15,11 @@
 // see ModuleConfigurator.h for the class definition
 ModuleConfigurator::ModuleConfigurator() :
 	logger("ModuleConfigurator"),
-	hinstLib(NULL),
-    m_fnModuleFactory(NULL),
-	m_fnDestroyer(NULL),
-	m_Dialog(NULL),
-	m_Config(NULL)
+    hinstLib(nullptr),
+    m_fnModuleFactory(nullptr),
+    m_fnDestroyer(nullptr),
+    m_Dialog(nullptr),
+    m_Config(nullptr)
 {
 
 }
@@ -78,7 +67,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		throw ModuleException(msg.str(),__FILE__,__LINE__);
 
 	bool res=false;
-	if (m_Dialog!=NULL) {
+    if (m_Dialog!=nullptr) {
 		msg.str("");
 
          try {
@@ -130,7 +119,7 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 	hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
-	if (hinstLib != NULL)
+    if (hinstLib != nullptr)
     {
 #ifdef _MSC_VER
 		m_fnModuleFactory = reinterpret_cast<FACTORY>(GetProcAddress(hinstLib, "GetGUIModule"));
@@ -138,10 +127,10 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 		m_fnModuleFactory = reinterpret_cast<FACTORY>(dlsym(hinstLib, "GetGUIModule"));
 #endif
 		 // If the function address is valid, call the function.
-		if (NULL != m_fnModuleFactory)
+        if (nullptr != m_fnModuleFactory)
         {
             m_Dialog=reinterpret_cast<ConfiguratorDialogBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str(),nullptr));
-			if (m_Dialog==NULL) {
+            if (m_Dialog==nullptr) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;
 				throw ModuleException(msg.str(),__FILE__,__LINE__);
@@ -167,7 +156,7 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 		m_fnDestroyer = reinterpret_cast<DESTROYER>(dlsym(hinstLib, "DestroyGUIModule"));
 #endif
 
-		if (m_fnDestroyer==NULL) {
+        if (m_fnDestroyer==nullptr) {
 			msg.str("");
 			msg<<"Failed to get the destroyer from "<<m_sSharedObject<<" (Error: "
 #ifdef _MSC_VER
@@ -195,10 +184,10 @@ void ModuleConfigurator::Destroy()
 {
 	logger(kipl::logging::Logger::LogMessage,"Destroying");
 
-	if (m_Dialog!=NULL)
+    if (m_Dialog!=nullptr)
 		m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
 
-	if (hinstLib!=NULL) {
+    if (hinstLib!=nullptr) {
 	#ifdef _MSC_VER
 		FreeLibrary(hinstLib);
 	#else

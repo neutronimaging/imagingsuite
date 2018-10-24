@@ -29,9 +29,12 @@ std::string KIPLSHARED_EXPORT Array2String(int *v, size_t N);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<float> &v);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<size_t> &v);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<int> &v);
+size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<std::string> &v);
 
 size_t KIPLSHARED_EXPORT String2Set(std::string str, std::set<size_t> &v);
 size_t KIPLSHARED_EXPORT String2List(std::string str, std::list<int> &v);
+
+size_t KIPLSHARED_EXPORT String2List(std::string str, std::list<std::string> &slist);
 std::string KIPLSHARED_EXPORT List2String(std::list<int> &v);
 
 template <typename T>

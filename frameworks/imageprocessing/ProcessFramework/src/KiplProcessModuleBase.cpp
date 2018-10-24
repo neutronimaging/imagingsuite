@@ -13,7 +13,7 @@
 
 KiplProcessModuleBase::KiplProcessModuleBase(std::string name,bool bComputeHistogram, kipl::interactors::InteractionBase *interactor) :
     ProcessModuleBase(name,interactor),
-    m_Histogram(1024),
+    m_Histogram(1024UL,"Histogram"),
     m_bComputeHistogram(bComputeHistogram)
 {
 }

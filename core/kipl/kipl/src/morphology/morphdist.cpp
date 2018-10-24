@@ -129,9 +129,10 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 }
 */
 
-    CMetricBase::CMetricBase() :
+    CMetricBase::CMetricBase(string _name) :
     		ndata(0),
     		NDim(0),
+            name(_name),
     		edge_dist(0)
     {
          this->w_fwd=NULL;
@@ -141,6 +142,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
          size=0;
 		 index_start=0;
+
     }
 
     float CMetricBase::forward(float *p)
@@ -201,7 +203,13 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
      }
 
-      CMetric26conn::CMetric26conn()
+     std::string CMetricBase::getName()
+     {
+         return name;
+     }
+
+      CMetric26conn::CMetric26conn() :
+          CMetricBase("CMetric26conn")
       {
     	  NDim=3;
     	  edge_dist=1;
@@ -210,7 +218,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
     	  this->i_fwd=new int[size];
           this->w_fwd=new float[size];
 
-		 strcpy(name,"CMetric26conn");
+
       }
       int CMetric26conn::initialize(size_t const * const dim)
       {
@@ -238,7 +246,8 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
       }
 
 
-      CMetricSvensson::CMetricSvensson()
+      CMetricSvensson::CMetricSvensson() :
+          CMetricBase("CMetricSvensson")
       {
           i_fwd=new int[50];
           w_fwd=new float[50];
@@ -246,7 +255,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 	      edge_dist=3;
           index_start=2;
 		  NDim=3;
-		  strcpy(name,"CMetricSvensson");
+
       }
 
       int CMetricSvensson::initialize(size_t const * const dim)
@@ -300,14 +309,15 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
       {}
 
 
-	CMetric4connect::CMetric4connect()
+    CMetric4connect::CMetric4connect() :
+        CMetricBase("CMetric4connect")
 	{
 		i_fwd=new int[3];
 		w_fwd=new float[3];
 		size=3;
 		index_start=1;
 		NDim=2;
-		strcpy(name,"CMetric4connect");
+
 	}
 
 	int CMetric4connect::initialize(size_t const * const d)
@@ -323,14 +333,15 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 	CMetric4connect::~CMetric4connect()
 	{ }
 
-	CMetric8connect::CMetric8connect()
+    CMetric8connect::CMetric8connect() :
+        CMetricBase("CMetric8connect")
 	{
 		i_fwd=new int[5];
 		w_fwd=new float[5];
 		size=5;
 		index_start=1;
 		NDim=2;
-		strcpy(name,"CMetric8connect");
+
 	}
 
 	int CMetric8connect::initialize(size_t const * const d)
@@ -346,14 +357,15 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 	CMetric8connect::~CMetric8connect()
 	{ }
 
-	CMetric3x3w::CMetric3x3w()
+    CMetric3x3w::CMetric3x3w() :
+        CMetricBase("CMetric3x3w")
 	{
 		i_fwd=new int[5];
 		w_fwd=new float[5];
 		size=5;
 		index_start=1;
 		NDim=2;
-		strcpy(name,"CMetric3x3w");
+
 	}
 
 	int CMetric3x3w::initialize(size_t const * const d)
@@ -369,9 +381,11 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 	CMetric3x3w::~CMetric3x3w()
 	{ }
 
-	ostream & operator<<(ostream &os,CMetricBase &mb)
-	{
-		return os<<mb.name;
-	}
+
 
 }}
+
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &os,kipl::morphology::CMetricBase &mb)
+{
+    return os<<mb.getName();
+}

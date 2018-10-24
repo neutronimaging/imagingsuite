@@ -1,3 +1,6 @@
+//<LICENSE>
+
+#include "ImagingModules_global.h"
 #include <strings/miscstring.h>
 
 //#include <ReconException.h>
@@ -5,17 +8,18 @@
 //#include <ReconConfig.h>
 #include <math/image_statistics.h>
 #include <math/median.h>
-#include <ParameterHandling.h>
-
 #include <base/textractor.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 
-#include "bblognorm.h"
-#include "../include/ImagingException.h"
+#include <ParameterHandling.h>
+
 #include <imagereader.h>
 
-BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("BBLogNorm", false, interactor),
+#include "bblognorm.h"
+#include "../include/ImagingException.h"
+
+IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("BBLogNorm", false, interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     nOBCount(0),
     nOBFirstIndex(1),
@@ -55,8 +59,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProce
     bUseManualThresh(false),
     min_area(20),
     thresh(0),
-    bSaveBG(false),
-    m_Interactor(interactor)
+    bSaveBG(false)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -80,12 +83,12 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProce
 
 }
 
-BBLogNorm::~BBLogNorm()
+IMAGINGMODULESSHARED_EXPORT BBLogNorm::~BBLogNorm()
 {
 
 }
 
-bool BBLogNorm::updateStatus(float val, string msg){
+bool IMAGINGMODULESSHARED_EXPORT  BBLogNorm::updateStatus(float val, string msg){
 
     if (m_Interactor!=nullptr) {
         return m_Interactor->SetProgress(val,msg);
@@ -94,7 +97,7 @@ bool BBLogNorm::updateStatus(float val, string msg){
 
 }
 
-int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
+int IMAGINGMODULESSHARED_EXPORT BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
 
     std::stringstream msg;
@@ -284,7 +287,7 @@ int BBLogNorm::Configure(KiplProcessConfig config, std::map<std::string, std::st
 }
 
 
-int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters)
+int IMAGINGMODULESSHARED_EXPORT BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
 
     m_Config    = config;
@@ -417,7 +420,7 @@ int BBLogNorm::ConfigureDLG(KiplProcessConfig config, std::map<std::string, std:
     return 1;
 }
 
-bool BBLogNorm::SetROI(size_t *roi) { // that is not loaded.
+bool IMAGINGMODULESSHARED_EXPORT BBLogNorm::SetROI(size_t *roi) { // that is not loaded.
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
@@ -429,7 +432,7 @@ bool BBLogNorm::SetROI(size_t *roi) { // that is not loaded.
 }
 
 
-std::map<std::string, std::string> BBLogNorm::GetParameters() {
+std::map<std::string, std::string> IMAGINGMODULESSHARED_EXPORT   BBLogNorm::GetParameters() {
 
     std::map<std::string, std::string> parameters;
 
@@ -486,7 +489,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     return parameters;
 }
 
-void BBLogNorm::LoadReferenceImages(size_t *roi)
+void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::LoadReferenceImages(size_t *roi)
 {
 
     std::stringstream msg;
@@ -559,7 +562,7 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
 
 }
 
-void BBLogNorm::LoadExternalBBData(size_t *roi){
+void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::LoadExternalBBData(size_t *roi){
 
 
     if (blackbodyexternalname.empty())
@@ -582,7 +585,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
 
 }
 
-void BBLogNorm::PrepareBBData(){
+void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareBBData(){
 
     logger(kipl::logging::Logger::LogDebug,"PrepareBBData begin--");
 //    std::cout << "PrepareBBData begin--" << std::endl;
@@ -649,7 +652,7 @@ void BBLogNorm::PrepareBBData(){
 
 }
 
-void BBLogNorm::PreparePolynomialInterpolationParameters()
+void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParameters()
 {
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
@@ -1021,7 +1024,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 //         delete [] bb_sample_parameters;
 }
 
-int BBLogNorm::PrepareSplinesInterpolationParameters() {
+int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameters() {
 
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 

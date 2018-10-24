@@ -36,6 +36,8 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     on_checkCollate_toggled(false);
     ui->comboAverageMethod->setCurrentIndex(3);
     ui->progressBar->setValue(0);
+    ui->comboBox_ScanOrder->setCurrentIndex(0);
+    on_comboBox_ScanOrder_currentIndexChanged(0);
 }
 
 FileConversionDialog::~FileConversionDialog()
@@ -384,4 +386,16 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
 void FileConversionDialog::on_spinCollationSize_editingFinished()
 {
     on_spinCollationSize_valueChanged(ui->spinCollationSize->value());
+}
+
+void FileConversionDialog::on_comboBox_ScanOrder_currentIndexChanged(int index)
+{
+    if (0<index) {
+        ui->label_scanlength->show();
+        ui->comboBox_ScanLength->show();
+    }
+    else {
+        ui->label_scanlength->hide();
+        ui->comboBox_ScanLength->hide();
+    }
 }

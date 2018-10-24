@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <KiplProcessConfig.h>
 #include <KiplFrameworkException.h>
@@ -36,7 +27,7 @@ kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config)
 				config.mImageInformation.nFirstFileIndex,
                 config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
                 config.mImageInformation.nStepFileIndex,
-				NULL);
+                nullptr);
 		}
 	}
 	catch (kipl::base::KiplException &e) {
