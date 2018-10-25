@@ -27,7 +27,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_original">
          <property name="title">
-          <string>Orignial</string>
+          <string>Original</string>
          </property>
          <property name="flat">
           <bool>false</bool>
