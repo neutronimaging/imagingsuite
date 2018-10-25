@@ -61,6 +61,7 @@ private:
     std::string m_sWaveletName;
     bool        m_bParallel;
     ImagingAlgorithms::StripeFilterOperation op;
+    kipl::base::eImagePlanes plane;
 };
 
 #endif // WAVELETRINGCLEANDLG_H

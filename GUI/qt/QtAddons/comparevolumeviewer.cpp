@@ -6,7 +6,7 @@
 #include <QSignalBlocker>
 #include <QMessageBox>
 
-#include <base/kiplenums.h>
+
 #include <base/textractor.h>
 namespace QtAddons {
 CompareVolumeViewer::CompareVolumeViewer(QWidget *parent) :
@@ -105,6 +105,10 @@ void CompareVolumeViewer::updateViews(int idx)
             QMessageBox::warning(this,"Display problems",QString::fromStdString(e.what()));
         }
     }
+}
+
+kipl::base::eImagePlanes CompareVolumeViewer::getImagePlane(){
+    return static_cast<kipl::base::eImagePlanes>(1<<(ui->comboBox_imagePlanes->currentIndex()));
 }
 
 void CompareVolumeViewer::updateBounds()

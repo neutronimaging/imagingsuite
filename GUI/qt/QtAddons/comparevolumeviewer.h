@@ -6,6 +6,7 @@
 #include <QWidget>
 
 #include <base/timage.h>
+#include <base/kiplenums.h>
 
 namespace Ui {
 class CompareVolumeViewer;
@@ -22,6 +23,7 @@ public:
     void setImages(kipl::base::TImage<float,3> *pOrig, kipl::base::TImage<float,3> *pProc);
     void setImageLabel(QString lbl,int idx);
     void showDifference(bool show);
+    kipl::base::eImagePlanes getImagePlane();
 
 private slots:
     void on_checkBox_linkIntensity_toggled(bool checked);

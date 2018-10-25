@@ -26,7 +26,8 @@ WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent) :
     m_nLevels(3),
     m_fSigma(0.05f),
     m_sWaveletName("daub15"),
-    op(ImagingAlgorithms::VerticalComponentFFT)
+    op(ImagingAlgorithms::VerticalComponentFFT),
+    plane(kipl::base::ImagePlaneXY)
 {
     ui->setupUi(this);
     PrepareWaveletComboBox();
@@ -40,8 +41,9 @@ WaveletRingCleanDlg::~WaveletRingCleanDlg()
 int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img)
 {
     m_Projections=img;
+//    memcpy(m_Projections.GetDataPtr(), img.GetDataPtr(), img.Dims()*sizeof(float));
 
-    ui->volumeviewer->setImages(&m_Projections, nullptr);
+//    ui->volumeviewer->setImages(&m_Projections, nullptr);
 
     m_Config=dynamic_cast<KiplProcessConfig *>(config);
 
@@ -50,6 +52,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
         m_fSigma  = GetFloatParameter(parameters,"sigma");
         m_sWaveletName = GetStringParameter(parameters, "waveletname");
         string2enum(GetStringParameter(parameters,"filtertype"),op);
+        string2enum(GetStringParameter(parameters,"plane"), plane);
         m_bParallel = kipl::strings::string2bool(GetStringParameter(parameters,"parallel"));
     }
     catch (ModuleException & e)
@@ -59,6 +62,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
     }
 
     UpdateDialog();
+
 
     try {
         ApplyParameters();
@@ -91,11 +95,8 @@ void WaveletRingCleanDlg::ApplyParameters()
     std::map<string, string> parameters;
     UpdateParameterList(parameters);
 
-    size_t dims[3]={m_Projections.Size(0), m_Projections.Size(1),m_Projections.Size(2)};
     kipl::base::TImage<float,3> img(m_Projections.Dims());
 
-    std::cout << m_Projections.Size(0) << " " << m_Projections.Size(1) << " " << m_Projections.Size(2) << std::endl;
-    std::cout << m_Projections.Dims() << std::endl;
 
     const size_t N=512;
     size_t hist[N];
@@ -103,21 +104,11 @@ void WaveletRingCleanDlg::ApplyParameters()
     size_t nLo, nHi;
 
 
-    std::cout << "before memcpy" << std::endl;
-
     m_OriginalImg.Clone(m_Projections);
     img.Clone(m_Projections);
 
-
-//    memcpy(m_OriginalImg.GetDataPtr(),m_Projections.GetDataPtr(), m_Projections.Size()*sizeof(float));
-//    memcpy(img.GetDataPtr(),m_OriginalImg.GetDataPtr(),m_OriginalImg.Size()*sizeof(float));
-
-    std::cout << "after memcpy" << std::endl;
-
-
     std::map<std::string,std::string> pars;
 
-    std::cout << "before try " << std::endl;
 
     try {
         m_Cleaner.Configure(*m_Config, parameters);
@@ -131,10 +122,9 @@ void WaveletRingCleanDlg::ApplyParameters()
         return ;
     }
 
-    std::cout << "after try:" << std::endl;
 
     m_ProcessedImg.Resize(m_OriginalImg.Dims());
-    memcpy(m_ProcessedImg.GetDataPtr(),img.GetDataPtr(), m_ProcessedImg.Size()*sizeof(float));
+    memcpy(m_ProcessedImg.GetDataPtr(),img.GetDataPtr(), img.Size()*sizeof(float));
 
 
     ui->volumeviewer->setImages(&m_OriginalImg, &m_ProcessedImg);
@@ -182,6 +172,7 @@ void WaveletRingCleanDlg::UpdateParameters()
     m_fSigma          = ui->entry_cutoff->value();
     m_bParallel       = false;
     op = static_cast<ImagingAlgorithms::StripeFilterOperation>(ui->combo_filtertype->currentIndex());
+    plane = ui->volumeviewer->getImagePlane();
 }
 
 void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -191,6 +182,7 @@ void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string>
     parameters["waveletname"]    = m_sWaveletName;
     parameters["parallel"] = m_bParallel ? "true" : "false";
     parameters["filtertype"]   = enum2string(op);
+    parameters["plane"] = enum2string(plane);
 }
 
 void WaveletRingCleanDlg::PrepareWaveletComboBox()
