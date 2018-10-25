@@ -43,7 +43,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
     m_Projections=img;
 //    memcpy(m_Projections.GetDataPtr(), img.GetDataPtr(), img.Dims()*sizeof(float));
 
-//    ui->volumeviewer->setImages(&m_Projections, nullptr);
+
 
     m_Config=dynamic_cast<KiplProcessConfig *>(config);
 
@@ -64,13 +64,15 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
     UpdateDialog();
 
 
-    try {
-        ApplyParameters();
-    }
-    catch (kipl::base::KiplException &e) {
-        logger(kipl::logging::Logger::LogError,e.what());
-        return false;
-    }
+    ui->volumeviewer->setImages(&m_Projections, nullptr);
+
+//    try {
+//        ApplyParameters();
+//    }
+//    catch (kipl::base::KiplException &e) {
+//        logger(kipl::logging::Logger::LogError,e.what());
+//        return false;
+//    }
 
     int res=QDialog::exec();
 
@@ -142,7 +144,7 @@ void WaveletRingCleanDlg::ApplyParameters()
 
     std::ostringstream msg;
     msg<<"(MSE = "<<sum2/m_DifferenceSino.Size();
-//    ui->label_mse->setText(QString::fromStdString(msg.str()));
+//    ui->label_mse->setText(QString::fromStdString(msg.str())); // TODO: add this label somewhere in the UI
 }
 
 void WaveletRingCleanDlg::UpdateDialog()
