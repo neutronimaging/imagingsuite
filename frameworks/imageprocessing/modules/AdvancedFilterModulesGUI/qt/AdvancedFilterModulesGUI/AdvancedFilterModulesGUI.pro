@@ -35,7 +35,7 @@ unix:!symbian {
 
     unix:macx {
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
 
 INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
@@ -46,10 +46,11 @@ LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     LIBS += -ltiff -lxml2
-    INCLUDEPATH += /usr/include/libxml2
+
 }
 
 win32 {

@@ -26,7 +26,7 @@ unix:!symbian {
 
     unix:macx {
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
 
     }
@@ -34,10 +34,11 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
-    INCLUDEPATH += /usr/include/libxml2
+
 }
 
 win32 {

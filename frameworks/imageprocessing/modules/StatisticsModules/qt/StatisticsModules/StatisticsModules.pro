@@ -43,7 +43,7 @@ unix:macx {
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib
     LIBS += -ltiff -lxml2
-    INCLUDEPATH += /usr/include/libxml2
+    INCLUDEPATH += /opt/local/include/libxml2
 }
 
 macx: {
