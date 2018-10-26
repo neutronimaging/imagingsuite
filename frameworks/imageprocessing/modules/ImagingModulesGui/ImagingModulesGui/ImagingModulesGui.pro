@@ -30,13 +30,16 @@ DEFINES += IMAGINGMODULESGUI_LIBRARY
 
 
 SOURCES += imagingmodulesgui.cpp \
-           bblognormdlg.cpp
+           bblognormdlg.cpp \
+           WaveletRingCleanDlg.cpp
 
 HEADERS  += imagingmodulesgui.h \
             bblognormdlg.h \
-            imagingmodulesgui_global.h
+            imagingmodulesgui_global.h \
+            WaveletRingCleanDlg.h
 
-FORMS    += bblognormdlg.ui
+FORMS    += bblognormdlg.ui \
+             WaveletRingCleanDlg.ui
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2

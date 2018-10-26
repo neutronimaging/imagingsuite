@@ -8,6 +8,7 @@
 #include "imagingmodulesgui.h"
 
 #include "bblognormdlg.h"
+#include "WaveletRingCleanDlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -25,6 +26,9 @@ IMAGINGMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const
 
         if (sName=="BBLogNorm")
             return new BBLogNormDlg;
+
+        if (sName=="StripeFilter")
+            return new WaveletRingCleanDlg;
     }
 
     return nullptr;
