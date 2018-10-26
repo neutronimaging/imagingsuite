@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport
+QT       += core widgets charts printsupport
 
 TARGET = QtAddons
 TEMPLATE = lib
@@ -38,11 +38,10 @@ win32 {
 DEFINES += QTADDONS_LIBRARY
 
 SOURCES += plotter.cpp \
+    plotpainter.cpp \
     imagepainter.cpp \
     imageviewerwidget.cpp \
     qglyphs.cpp \
-    plotpainter.cpp \
-    plotwidget.cpp \
     reportgeneratorbase.cpp \
     imageviewerinfodialog.cpp \
     qmarker.cpp \
@@ -50,17 +49,18 @@ SOURCES += plotter.cpp \
     roiwidget.cpp \
     roimanager.cpp \
     uxroiwidget.cpp \
-    loggingdialog.cpp
+    loggingdialog.cpp \
+    comparevolumeviewer.cpp \
+    plotwidget.cpp
 
 
 
 HEADERS += QtAddons_global.h \
     plotter.h \
+    plotpainter.h \
     imagepainter.h \
     imageviewerwidget.h \
     qglyphs.h \
-    plotpainter.h \
-    plotwidget.h \
     reportgeneratorbase.h \
     imageviewerinfodialog.h \
     qmarker.h \
@@ -68,7 +68,9 @@ HEADERS += QtAddons_global.h \
     roiwidget.h \
     roimanager.h \
     uxroiwidget.h \
-    loggingdialog.h
+    loggingdialog.h \
+    comparevolumeviewer.h \
+    plotwidget.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -101,4 +103,6 @@ FORMS += \
     roiwidget.ui \
     roimanager.ui \
     uxroiwidget.ui \
-    loggingdialog.ui
+    loggingdialog.ui \
+    comparevolumeviewer.ui \
+    plotwidget.ui

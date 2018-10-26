@@ -3,6 +3,7 @@
 #ifndef MICROTIMER_H_
 #define MICROTIMER_H_
 
+#include "../kipl_global.h"
 #include <sys/types.h>
 #include <iostream>
 
@@ -11,7 +12,7 @@ typedef unsigned long long u_int64_t;
 #endif
 
 namespace kipl { namespace profile {
-class MicroTimer {
+class KIPLSHARED_EXPORT MicroTimer {
 public :
   /// \brief Default c'tor which calibrates all timers upon first call
 	MicroTimer();
@@ -49,7 +50,7 @@ private :
 };
 
 /// \breif Formatted output of the timer to an ostream.
-std::ostream & operator<<(std::ostream &s, MicroTimer &t);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, MicroTimer &t);
 
 }}
 

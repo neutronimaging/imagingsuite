@@ -23,7 +23,7 @@ ClampData::~ClampData() {
 }
 
 
-int ClampData::Configure(std::map<std::string, std::string> parameters)
+int ClampData::Configure(KiplProcessConfig m_Config,std::map<std::string, std::string> parameters)
 {
 	m_fMin = GetFloatParameter(parameters,"min");
 	m_fMax = GetFloatParameter(parameters,"max");
@@ -35,8 +35,8 @@ std::map<std::string, std::string> ClampData::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
 
-	parameters["min"] = kipl::strings::value2string(m_fMin);
-	parameters["max"] = kipl::strings::value2string(m_fMax);
+    parameters["min"] = kipl::strings::value2string(m_fMin);
+    parameters["max"] = kipl::strings::value2string(m_fMax);
 
 	return parameters;
 }

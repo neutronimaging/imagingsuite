@@ -22,6 +22,7 @@ private Q_SLOTS:
     void testDoubleThreshold();
     void testMultiThreshold();
     void testGradientGuidedThreshold();
+    void testCmpType();
 };
 
 kiplSegmentationTest::kiplSegmentationTest()
@@ -138,6 +139,46 @@ void kiplSegmentationTest::testGradientGuidedThreshold()
     QVERIFY2(img.Size(1)==res.Size(1),"y-size error");
 
     kipl::io::WriteTIFF(res,"gradientseg.tif");
+}
+
+void kiplSegmentationTest::testCmpType()
+{
+    kipl::segmentation::CmpType c;
+
+    string2enum("cmp_less",c);
+    QCOMPARE(c,kipl::segmentation::cmp_less);
+
+    string2enum("cmp_greater",c);
+    QCOMPARE(c,kipl::segmentation::cmp_greater);
+
+    string2enum("cmp_less_equal",c);
+    QCOMPARE(c,kipl::segmentation::cmp_lesseq);
+
+    string2enum("cmp_greater_equal",c);
+    QCOMPARE(c,kipl::segmentation::cmp_greatereq);
+
+    string2enum("cmp_not_equal",c);
+    QCOMPARE(c,kipl::segmentation::cmp_noteq);
+
+    string2enum("cmp_equal",c);
+    QCOMPARE(c,kipl::segmentation::cmp_eq);
+
+    QVERIFY_EXCEPTION_THROWN (string2enum("cmp",c), kipl::base::KiplException);
+
+    QCOMPARE(enum2string(kipl::segmentation::cmp_less),std::string("cmp_less"));
+    QCOMPARE(enum2string(kipl::segmentation::cmp_greater),std::string("cmp_greater"));
+    QCOMPARE(enum2string(kipl::segmentation::cmp_greatereq),std::string("cmp_greater_equal"));
+    QCOMPARE(enum2string(kipl::segmentation::cmp_lesseq),std::string("cmp_less_equal"));
+    QCOMPARE(enum2string(kipl::segmentation::cmp_noteq),std::string("cmp_not_equal"));
+    QCOMPARE(enum2string(kipl::segmentation::cmp_eq),std::string("cmp_equal"));
+    QVERIFY_EXCEPTION_THROWN(enum2string(static_cast<kipl::segmentation::CmpType>(20)),kipl::base::KiplException);
+
+    std::ostringstream s;
+
+    s<<kipl::segmentation::cmp_eq;
+
+    QCOMPARE(s.str().c_str(),"cmp_equal");
+
 }
 
 QTEST_APPLESS_MAIN(kiplSegmentationTest)

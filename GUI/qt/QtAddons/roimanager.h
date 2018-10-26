@@ -26,6 +26,7 @@ public:
     ~ROIManager();
 
     void setViewer(QtAddons::ImageViewerWidget *v);
+    void setROIs(std::list<kipl::base::RectROI> &rois);
     std::list<kipl::base::RectROI> getROIs();
     std::list<kipl::base::RectROI> getSelectedROIs();
 

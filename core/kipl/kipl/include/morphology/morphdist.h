@@ -3,8 +3,10 @@
 #ifndef __MORPHDIST_H
 #define __MORPHDIST_H
 
+#include "../kipl_global.h"
 #include <limits>
 #include <deque>
+#include <iostream>
 
 #include "../base/timage.h"
 #include "morphology.h"
@@ -14,11 +16,11 @@ using namespace std;
 namespace kipl { namespace morphology {
 
 /// \brief Base class for the implementation of distance metrics used by the distance transform
-class CMetricBase
+class KIPLSHARED_EXPORT CMetricBase
 {
  public:
  	/// Initialization of the metric
-     CMetricBase();
+     CMetricBase(std::string _name="MetricBase");
      /// \brief Forward scanning distance
      /// \param p pointer to a pixel
      ///	
@@ -61,12 +63,7 @@ class CMetricBase
      /// returns the dimension rank of the image
      int dim() {return NDim;}
      
-     /// Interface to print metric name with ostreams
-     /// \param os target stream
-     /// \param mb the metric object to reveal its name
-     ///
-     /// \returns the updated stream
-	 friend ostream & operator<<(ostream &os,CMetricBase &mb);
+     std::string getName();
  protected:
  	 /// Keeps the edge distance
      int index_start;
@@ -87,13 +84,13 @@ class CMetricBase
      /// \brief dimension supported by the metric
      int NDim;
      /// \brief string to describe the metric
-     char name[256];
+     std::string name;
      /// Keeps the edge distance
      int edge_dist;
 };
 
 /// \brief Implementation of the 2D chessboard metric
-class CMetric8connect: public CMetricBase
+class KIPLSHARED_EXPORT CMetric8connect: public kipl::morphology::CMetricBase
 {
 	public:
 		/// Constructor for the chessboard metric
@@ -108,7 +105,7 @@ class CMetric8connect: public CMetricBase
 };
 
 /// \brief Class that implements a 3x3 window metric
-class CMetric3x3w: public CMetricBase
+class KIPLSHARED_EXPORT CMetric3x3w: public kipl::morphology::CMetricBase
 {
 	public:
 		/// \brief Base constructor
@@ -121,7 +118,7 @@ class CMetric3x3w: public CMetricBase
 };
 
 /// \brief Implementation of the 3D chessboard metric
-class CMetric26conn: public CMetricBase
+class KIPLSHARED_EXPORT CMetric26conn: public kipl::morphology::CMetricBase
 {
     public:
     	/// Constructor for the chessboard metric
@@ -136,7 +133,7 @@ class CMetric26conn: public CMetricBase
 
 /// Distance metric according to Svensson-Borgefors. 
 /// Chamfer metric that well approximates the Euclidean distance
-class CMetricSvensson: public CMetricBase
+class KIPLSHARED_EXPORT CMetricSvensson: public kipl::morphology::CMetricBase
 {
     public:
     	/// Constructor for the Svensson metric
@@ -149,7 +146,7 @@ class CMetricSvensson: public CMetricBase
 };
 
 /// \brief Implementation of the 2D cityblock metric
-class CMetric4connect: public CMetricBase
+class KIPLSHARED_EXPORT CMetric4connect: public kipl::morphology::CMetricBase
 {
 	public:
 		/// Constructor for the cityblock metric
@@ -182,7 +179,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 template<typename MaskType>
 int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img, 
 		kipl::base::TImage<float,3> &dist,
-		CMetricBase &metric, bool complement=false);
+        kipl::morphology::CMetricBase &metric, bool complement=false);
 
 /// Computes a 2D distance map using different metrics
 /// \param img mask image
@@ -191,8 +188,10 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
 template<typename ImgType, typename DistType>
 int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img, 
 		kipl::base::TImage<DistType,2> &dist, 
-		CMetricBase &metric);
+        kipl::morphology::CMetricBase &metric);
 }}
+
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &os, kipl::morphology::CMetricBase &mb);
 
 #include "core/morphdist.hpp" 
 #endif

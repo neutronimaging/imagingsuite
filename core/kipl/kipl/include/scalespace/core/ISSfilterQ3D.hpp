@@ -3,6 +3,7 @@
 #ifndef ISSFILTERQ3D_HPP_
 #define ISSFILTERQ3D_HPP_
 
+#include "../ISSfilterQ3D.h"
 #include "../../base/timage.h"
 #include "../../base/tsubimage.h"
 #include "../../base/thistogram.h"
@@ -11,6 +12,7 @@
 #include "../../base/core/quad.h"
 #include "../../io/io_tiff.h"
 #include "../../strings/filenames.h"
+#include "../../interactors/interactionbase.h"
 
 #include <iomanip>
 #include <sstream>
@@ -30,30 +32,31 @@ inline __m128 sign(__m128 m) {
 }
 
 template <typename T>
-ISSfilterQ3D<T>::ISSfilterQ3D() :
+ISSfilterQ3D<T>::ISSfilterQ3D(kipl::interactors::InteractionBase *interactor) :
 	logger("ISSfilterQ3D"),
+    m_Interactor(interactor),
 	eInitialImage(InitialImageOriginal),
-	error(NULL),
-	entropy(NULL)
+    error(nullptr),
+    entropy(nullptr)
 {
 	m_dEpsilon=1e-7;
 }
 
 template <typename T>
 ISSfilterQ3D<T>::~ISSfilterQ3D() {
-	if (error!=NULL) delete [] error;
-	if (entropy!=NULL) delete [] entropy;
+    if (error!=nullptr) delete [] error;
+    if (entropy!=nullptr) delete [] entropy;
 }
 
 template <typename T>
 int ISSfilterQ3D<T>::Process(kipl::base::TImage<T,3> &img, double dTau, double dLambda, double dAlpha, int nN, bool saveiterations, std::string itpath)
 {
-    if (error!=NULL)
+    if (error!=nullptr)
         delete [] error;
     
     error=new T[nN];
 
-    if (entropy!=NULL)
+    if (entropy!=nullptr)
             delete [] entropy;
 
     entropy=new T[nN];
@@ -79,9 +82,7 @@ int ISSfilterQ3D<T>::Process(kipl::base::TImage<T,3> &img, double dTau, double d
             break;
     }
 
-	
-	//img=0.0f;
-	for (int i=0; i<nN	; i++) {	
+    for (int i=0; (i<nN) && (updateStatus(float(i)/nN,"ISS 3D filter iteration")==false)	; ++i) {
 		msg.str("");
 		msg<<"Processing iteration "<<i+1;
 		logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1003,6 +1004,16 @@ double ISSfilterQ3D<T>::_ComputeEntropy(kipl::base::TImage<T,3> &img)
 	msg<<"Entropy = "<<e;
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	return e;
+}
+
+template <typename T>
+bool ISSfilterQ3D<T>::updateStatus(float val, std::string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
 
 }}

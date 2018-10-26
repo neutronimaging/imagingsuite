@@ -20,6 +20,7 @@
 #include <strings/miscstring.h>
 #include <morphology/label.h>
 
+
 #include "../include/ReferenceImageCorrection.h"
 #include "../include/ImagingException.h"
 
@@ -48,7 +49,9 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     fdose_ext_slice(0.0f),
     min_area(0),
     bUseManualThresh(false),
-    thresh(0.0f)
+    thresh(0.0f),
+    bSaveBG(false),
+    m_Interactor(nullptr)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -92,6 +95,24 @@ void ReferenceImageCorrection::LoadReferenceImages(std::string path, std::string
 {
 
     std::cout << "ciao process " << std::endl;
+
+}
+
+void ReferenceImageCorrection::SaveBG(bool value, std::string path, std::string obname, std::string filemask)
+{
+    bSaveBG = value;
+    pathBG = path;
+    flatname_BG = obname;
+    filemask_BG = filemask;
+}
+
+void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase *interactor){
+    if (interactor!=nullptr){
+        m_Interactor=interactor;
+    }
+    else{
+        m_Interactor=nullptr;
+    }
 
 }
 
@@ -141,6 +162,8 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 
     if (useBB) {
+
+//        std::cout << "case useBB" << std::endl;
 		m_bHaveBlackBody=true;
 
         // these images are used to compute the dose in the PB variante
@@ -190,12 +213,22 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 
 
-            break;}
+            break;
+        }
 //        default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
         }
 
 
 //    std::cout   << "before PrepareReferencesBB" << std::endl;
+
+        // HERE SAVE OB_BB INTERPOLATED
+
+        if (bSaveBG){
+                std::string fname=pathBG+"/"+flatname_BG;
+                kipl::strings::filenames::CheckPathSlashes(fname,false);
+                kipl::io::WriteTIFF32(m_OB_BB_Interpolated,fname.c_str()); // seem correct
+        }
+
 //        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_backgroundimage.tif"); // seem correct
 //        kipl::io::WriteTIFF32(m_DoseBBflat_image,"dose_bb.tif");
         PrepareReferencesBB();
@@ -272,13 +305,17 @@ void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
 
 kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage<float,2> &img, float dose)
 {
-    if (m_bComputeLogarithm) {
+    if (m_bComputeLogarithm)
+    {
 //        kipl::io::WriteTIFF32(img,"prelogimg.tif");
         ComputeLogNorm(img,dose);
 //        kipl::io::WriteTIFF32(img,"img.tif");
     }
-	else
+    else
+    {
+//        std::cout << "ComputeNorm" << std::endl;
 		ComputeNorm(img,dose);
+    }
 
     return img;
 
@@ -289,9 +326,11 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 	kipl::base::TImage<float, 2> slice(img.Dims());
 
 
-    for (size_t i=0; i<img.Size(2); i++) {
+    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
 
         if (m_bHaveBlackBody) {
+
+//            std::cout << "m_bHaveBlackBody" << std::endl;
 
             float *current_param;
 
@@ -322,7 +361,6 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 //                    }
 //                    std::cout << std::endl;
 
-////                     spline sample  values sembrano giusti..
 //                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
 //                  for (std::map<std::pair<int, int>, float>::const_iterator it = spline_sample_values.begin(); it != spline_sample_values.end();  ++it)
 //                  {
@@ -342,10 +380,24 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
             }
 
+            // here to save the BG
+
+            if (bSaveBG){
+                std::string filename, ext;
+                kipl::strings::filenames::MakeFileName(filemask_BG,static_cast<int>(i),filename,ext,'#','0');
+//                std::cout << filename << std::endl;
+                std::string fname=pathBG+"/"+filename;
+                kipl::strings::filenames::CheckPathSlashes(fname,false);
+                kipl::io::WriteTIFF32(m_BB_sample_Interpolated,fname.c_str()); // seem correct
+
+            }
+
 
         }
 
         if (m_bHaveExternalBlackBody){
+
+//             std::cout << "m_bHaveExternalBlackBody" << std::endl;
 
             if (m_BB_sample_ext.Size(2)!=img.Size(2)){
                 throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
@@ -354,6 +406,10 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
             fdose_ext_slice = fdose_ext_list[i];
         }
+
+
+
+
 
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
 //        std::cout << "before Process: " << i << std::endl;
@@ -2089,34 +2145,43 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     int index_1;
     int index_2;
 
+    if(angles[0]<angles[2]) {
+        bb_angles = new float[m_nBBimages+1];
+        bb_angles[0] = angles[3]-angles[1];
 
-    for (size_t i=0; i<m_nBBimages; i++){
-        bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+        for (size_t i=0; i<m_nBBimages; i++){
+            bb_angles[i+1]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+        }
+
+         index_1=m_nBBimages*(nBBs+3)-(nBBs+3);
+         index_2=0;
+
+    }
+    else {
+
+        bb_angles = new float[m_nBBimages];
+
+       for (size_t i=0; i<m_nBBimages; i++){
+           bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+           index_1=0;
+           index_2=(nBBs+3);
+       }
     }
 
+    small_a = &bb_angles[0];
+    big_a = &bb_angles[1];
 
     for (size_t i=0; i<m_nProj; i++){
     //1. compute current angle for projection
 
-        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
+        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i; // that is the current projection angle
 
 
-    //2. find two closest projection in BB data
-        if (i==0){
-            small_a = &bb_angles[0];
-            big_a = &bb_angles[1];
-            index_1=0;
-            index_2=(nBBs+3);
-        }
+    //2. compute step for linear interpolation
 
-        if(curr_angle<*small_a) {
-            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
-        }
-        else {
-            step = (curr_angle-*small_a)/(*big_a-*small_a);
-        }
+         step = (curr_angle-*small_a)/(*big_a-*small_a);
 
-
+     // 3. interpolate for missing angles
         float *temp_param = new float[nBBs+3];
 
         for (size_t k=0; k<(nBBs+3);k++){
@@ -2131,27 +2196,20 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
 
         if (curr_angle>=*big_a){ // se esco dal range incremento di 1
 
+            if(curr_angle>=angles[3]) {
 
-
-            if(curr_angle>=bb_angles[m_nBBimages-1]) {
-
-                if (*big_a==bb_angles[m_nBBimages-1]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+                if (*big_a==angles[3]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
                     index_1=index_2;
                     index_2 =0;
                 }
-
-                small_a = &bb_angles[m_nBBimages-1];
-                big_a = &bb_angles[0];
-                step = (curr_angle-*small_a)/(360.0f-*small_a);
-
+                small_a = &angles[3];
+                *big_a = (angles[1]+angles[2]);
 
 
             }
             else {
-
-                index_1=index_2;
+                index_1 =index_2;
                 index_2 +=(nBBs+3);
-
                 small_a++;
                 big_a++;
             }
@@ -2165,6 +2223,7 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     delete [] bb_angles;
 
     return interpolated_param;
+
 }
 
 float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
@@ -2174,39 +2233,53 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
     float curr_angle;
     float *small_a;
     float *big_a;
-    float *bb_angles = new float[m_nBBimages];
+    float *bb_angles;
     float step;
     int index_1;
     int index_2;
 
 
-    for (size_t i=0; i<m_nBBimages; i++){
-        bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+
+    if(angles[0]<angles[2]) {
+        bb_angles = new float[m_nBBimages+1];
+        bb_angles[0] = angles[3]-angles[1];
+
+        for (size_t i=0; i<m_nBBimages; i++){
+            bb_angles[i+1]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+        }
+
+         index_1=m_nBBimages*6-6;
+         index_2=0;
+
     }
+    else {
+
+        bb_angles = new float[m_nBBimages];
+
+       for (size_t i=0; i<m_nBBimages; i++){
+           bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
+           index_1=0;
+           index_2=6;
+       }
+    }
+
+    small_a = &bb_angles[0];
+    big_a = &bb_angles[1];
+
+
 
 
     for (size_t i=0; i<m_nProj; i++){
     //1. compute current angle for projection
 
-        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i;
+        curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i; // that is the current projection angle
 
 
-    //2. find two closest projection in BB data
-        if (i==0){
-            small_a = &bb_angles[0];
-            big_a = &bb_angles[1];
-            index_1=0;
-            index_2=6;
-        }
+    //2. compute step for linear interpolation
 
-        if(curr_angle<*small_a) {
-            step = (curr_angle-0.0f)/(*small_a-0.0f); // case in which the BB angles do not start from zero
-        }
-        else {
-            step = (curr_angle-*small_a)/(*big_a-*small_a);
-        }
+         step = (curr_angle-*small_a)/(*big_a-*small_a);
 
-
+     // 3. interpolate for missing angles
         float *temp_param = new float[6];
 
         for (size_t k=0; k<6;k++){
@@ -2221,27 +2294,20 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
         if (curr_angle>=*big_a){ // se esco dal range incremento di 1
 
+            if(curr_angle>=angles[3]) {
 
-
-            if(curr_angle>=bb_angles[m_nBBimages-1]) {
-
-                if (*big_a==bb_angles[m_nBBimages-1]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+                if (*big_a==angles[3]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
                     index_1=index_2;
                     index_2 =0;
                 }
-
-                small_a = &bb_angles[m_nBBimages-1];
-                big_a = &bb_angles[0];
-                step = (curr_angle-*small_a)/(360.0f-*small_a);
-
+                small_a = &angles[3];
+                *big_a = (angles[1]+angles[2]);
 
 
             }
             else {
-
-                index_1=index_2;
+                index_1 =index_2;
                 index_2 +=6;
-
                 small_a++;
                 big_a++;
             }
@@ -2366,11 +2432,15 @@ void ReferenceImageCorrection::PrepareReferences()
                     if (fProjPixel<=0)
                         pFlat[i]=0;
                     else {
-                        if (m_bComputeLogarithm) {
+                        if (m_bComputeLogarithm)
+                        {
                             pFlat[i]=log(fProjPixel)+log(dose);
                         }
                         else
+                        {
+//                            std::cout << "Prepare References without log" << std::endl;
                             pFlat[i]=fProjPixel*dose;
+                        }
                     }
 
                 }
@@ -2383,9 +2453,13 @@ void ReferenceImageCorrection::PrepareReferences()
                         pFlat[i]=0;
                     else {
                         if (m_bComputeLogarithm)
-                            pFlat[i]=log(fProjPixel*dose);
+                        {
+                            pFlat[i]=log(fProjPixel)+log(dose);
+                        }
                         else
+                        {
                             pFlat[i] = fProjPixel*dose;
+                        }
                         }
                 }
             }
@@ -2433,9 +2507,13 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                     pFlat[i]=0;
                 else {
                     if (m_bComputeLogarithm)
-                        pFlat[i]=log(fProjPixel*(dose));
+                    {
+                        pFlat[i]=log(fProjPixel)+log(dose);
+                    }
                     else
+                    {
                         pFlat[i]=fProjPixel*(dose);
+                    }
                 }
 
             }
@@ -2450,9 +2528,13 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                         pFlat[i]=0;
                     else {
                         if (m_bComputeLogarithm)
-                             pFlat[i]=log(fProjPixel*dose);
+                        {
+                             pFlat[i]=log(fProjPixel)+log(dose);
+                        }
                         else
+                        {
                              pFlat[i]=(fProjPixel*dose);
+                        }
                     }
                 }
 
@@ -2697,6 +2779,8 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 //    dose = dose - m_fDarkDose;
     float Pdose = 0.0f;
 
+//    std::cout << "inside ComputeNorm" << std::endl;
+
 
 
 //    float logdose = log(dose<1 ? 1.0f : dose);
@@ -2812,6 +2896,8 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
             if (m_bHaveOpenBeam) {
     //                #pragma omp parallel for firstprivate(pFlat,pDark)
 
+//                std::cout << "computing values" << std::endl;
+
                         float *pImg=img.GetDataPtr();
 
                         #pragma omp parallel for firstprivate(pFlat,pDark)
@@ -2885,6 +2971,15 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     fdose_ext_list = new float[bb_sample_ext.Size(2)];
     memcpy(fdose_ext_list, doselist, sizeof(float)*bb_sample_ext.Size(2));
 
+}
+
+bool ReferenceImageCorrection::updateStatus(float val, std::string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
 
 }

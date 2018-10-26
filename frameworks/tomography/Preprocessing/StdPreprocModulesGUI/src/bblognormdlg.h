@@ -11,6 +11,7 @@
 #include <ReconConfig.h>
 #include <imageviewerwidget.h>
 #include <plotter.h>
+#include <roiwidget.h>
 
 #include <bblognorm.h>
 
@@ -31,18 +32,18 @@ public:
 private slots:
     void on_button_OBBBpath_clicked();
     void on_buttonPreviewOBBB_clicked();
-    void on_button_BBroi_clicked();
-    void on_spinx0BBroi_valueChanged(int arg1);
-    void on_spiny0BBroi_valueChanged(int arg1);
-    void on_spinx1BBroi_valueChanged(int arg1);
-    void on_spiny1BBroi_valueChanged(int arg1);
+//    void on_button_BBroi_clicked();
+//    void on_spinx0BBroi_valueChanged(int arg1);
+//    void on_spiny0BBroi_valueChanged(int arg1);
+//    void on_spinx1BBroi_valueChanged(int arg1);
+//    void on_spiny1BBroi_valueChanged(int arg1);
     void on_button_sampleBBpath_clicked();
     void on_buttonPreviewsampleBB_clicked();
-    void on_button_BBdose_clicked();
-    void on_spinx0BBdose_valueChanged(int arg1);
-    void on_spinx1BBdose_valueChanged(int arg1);
-    void on_spiny0BBdose_valueChanged(int arg1);
-    void on_spiny1BBdose_valueChanged(int arg1);
+//    void on_button_BBdose_clicked();
+//    void on_spinx0BBdose_valueChanged(int arg1);
+//    void on_spinx1BBdose_valueChanged(int arg1);
+//    void on_spiny0BBdose_valueChanged(int arg1);
+//    void on_spiny1BBdose_valueChanged(int arg1);
     void on_errorButton_clicked();
     void on_combo_BBoptions_activated(const QString &arg1);
     void on_button_OB_BB_ext_clicked();

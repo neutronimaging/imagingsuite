@@ -35,6 +35,8 @@ private slots:
 
     void on_spinCollationSize_editingFinished();
 
+    void on_comboBox_ScanOrder_currentIndexChanged(int index);
+
 private:
     int CopyImages();
     int ConvertImages();

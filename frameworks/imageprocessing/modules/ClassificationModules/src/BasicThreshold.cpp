@@ -23,7 +23,7 @@ BasicThreshold::~BasicThreshold() {
 }
 
 
-int BasicThreshold::Configure(std::map<std::string, std::string> parameters)
+int BasicThreshold::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fThreshold = GetFloatParameter(parameters,"threshold");
 

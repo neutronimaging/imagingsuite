@@ -50,15 +50,15 @@
 STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
-		return NULL;
+        return nullptr;
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 
-	if (name!=NULL) {
+    if (name!=nullptr) {
 		std::string sName=name;
 
         if (sName=="BBLogNorm")
-            return new BBLogNorm;
+            return new BBLogNorm(interactor);
 
         if (sName=="FullLogNorm")
             return new FullLogNorm;
@@ -136,7 +136,7 @@ STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)
 	std::ostringstream msg;
 	std::string name="No name";
 	try {
-		if (obj!=NULL) {
+        if (obj!=nullptr) {
 			PreprocModuleBase *module=reinterpret_cast<PreprocModuleBase *>(obj);
 			name=module->ModuleName();
 			msg<<"Destroying "<<name;
@@ -179,10 +179,13 @@ STDPREPROCMODULESSHARED_EXPORT int LibVersion()
 
 STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *listptr)
 {
+    std::cout << application << std::endl;
 	if (strcmp(application,"muhrec")!=0)
 		return -1;
 
 	std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
+
+     std::cout << "after module list" << std::endl;
 
     FullLogNorm flnorm;
     modulelist->operator []("FullLogNorm")=flnorm.GetParameters();
@@ -247,6 +250,8 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
     CameraStripeClean csc;
     modulelist->operator []("CameraStripeClean")=csc.GetParameters();
+
+    std::cout << "end of GetModuleList" << std::endl;
 
 	return 0;
 }

@@ -1,6 +1,8 @@
+//<LICENSE>
 #include <sstream>
 #include <string>
 #include <numeric>
+#include <limits>
 
 #include <QString>
 #include <QtTest>
@@ -11,6 +13,8 @@
 #include <base/tsubimage.h>
 #include <base/trotate.h>
 #include <base/marginsetter.h>
+#include <base/tprofile.h>
+#include <base/imagecast.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -40,6 +44,14 @@ private Q_SLOTS:
 
     /// Tests margin setter
     void testMarginSetter();
+
+<<<<<<< HEAD
+    /// Tests vertical and horizsontal profiles
+    void testProfiles();
+=======
+    /// Test image casting
+    void testImageCaster();
+>>>>>>> master
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -243,7 +255,7 @@ void TkiplbasetestTest::testRotateImage()
 
     size_t dims[2]={4,5};
     kipl::base::TImage<float,2> img(dims);
-    for (int i=0; i<img.Size(); ++i)
+    for (size_t i=0; i<img.Size(); ++i)
         img[i]=static_cast<float>(i);
 
     // 0  1  2  3
@@ -266,7 +278,7 @@ void TkiplbasetestTest::testRotateImage()
         QVERIFY2(res.Size(0)==img.Size(1),"Dim x error rot 90");
         QVERIFY2(res.Size(1)==img.Size(0),"Dim y error rot 90");
 
-        for (int i=0; i<res.Size(); ++i) {
+        for (size_t i=0; i<res.Size(); ++i) {
             msg.str("");
             msg<<"i="<<i;
             QVERIFY2(res[i]==rot90ref[i], msg.str().c_str());
@@ -291,7 +303,7 @@ void TkiplbasetestTest::testRotateImage()
         QVERIFY2(res.Size(0)==img.Size(0),"Dim x error rot 180");
         QVERIFY2(res.Size(1)==img.Size(1),"Dim y error rot 180");
 
-        for (int i=0; i<res.Size(); ++i) {
+        for (size_t i=0; i<res.Size(); ++i) {
             msg.str("");
             msg<<"i="<<i;
             QVERIFY2(res[i]==rot180ref[i], msg.str().c_str());
@@ -309,7 +321,7 @@ void TkiplbasetestTest::testRotateImage()
         QVERIFY2(res.Size(0)==img.Size(1),"Dim x error rot 270");
         QVERIFY2(res.Size(1)==img.Size(0),"Dim y error rot 270");
 
-        for (int i=0; i<res.Size(); ++i) {
+        for (size_t i=0; i<res.Size(); ++i) {
             msg.str("");
             msg<<"i="<<i;
             QVERIFY2(res[i]==rot270ref[i], msg.str().c_str());
@@ -328,7 +340,7 @@ void TkiplbasetestTest::testRotateImage()
         QVERIFY2(res.Size(0)==img.Size(0),"Dim x error vert mirror");
         QVERIFY2(res.Size(1)==img.Size(1),"Dim y error vert mirror");
 
-        for (int i=0; i<res.Size(); ++i) {
+        for (size_t i=0; i<res.Size(); ++i) {
             msg.str("");
             msg<<"i="<<i;
             QVERIFY2(res[i]==vertref[i], msg.str().c_str());
@@ -348,7 +360,7 @@ void TkiplbasetestTest::testRotateImage()
         QVERIFY2(res.Size(0)==img.Size(0),"Dim x error hor mirror");
         QVERIFY2(res.Size(1)==img.Size(1),"Dim y error hor mirror");
 
-        for (int i=0; i<res.Size(); ++i) {
+        for (size_t i=0; i<res.Size(); ++i) {
             msg.str("");
             msg<<"i="<<i;
             QVERIFY2(res[i]==horref[i], msg.str().c_str());
@@ -442,6 +454,57 @@ void TkiplbasetestTest::testMarginSetter()
                 QVERIFY(pLine[i]==val);
         }
     }
+}
+
+void TkiplbasetestTest::testProfiles()
+{
+    size_t dims[2]={4,3};
+    kipl::base::TImage<float,2> img(dims);
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+    float *vp=new float[dims[0]];
+    float *hp=new float[dims[1]];
+    kipl::base::VerticalProjection2D(img.GetDataPtr(), img.Dims(), vp);
+    kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+}
+
+void TkiplbasetestTest::testImageCaster()
+{
+    size_t dims[3]={50,60,1};
+
+    kipl::base::TImage<float,2> imgref2d(dims);
+
+
+
+    float scale=1.0f/static_cast<float>(imgref2d.Size());
+    for (size_t i=0; i<imgref2d.Size(); ++i)
+        imgref2d[i]=static_cast<float>(i);
+
+    kipl::base::TImage<unsigned short,2> casted1=kipl::base::ImageCaster<unsigned short,float,2>::cast(imgref2d);
+
+    QCOMPARE(casted1.Size(0),imgref2d.Size(0));
+    QCOMPARE(casted1.Size(1),imgref2d.Size(1));
+
+    for (size_t i=0; i<casted1.Size(); ++i) {
+        QCOMPARE(casted1[i],static_cast<unsigned short>(i));
+        QCOMPARE(casted1[i],static_cast<unsigned short>(imgref2d[i]));
+    }
+
+
+    for (size_t i=0; i<imgref2d.Size(); ++i)
+        imgref2d[i]=static_cast<float>(i)*scale;
+
+    float clampmin=0.1f;
+    float clampmax=0.9f;
+    kipl::base::TImage<unsigned short,2> casted2=kipl::base::ImageCaster<unsigned short,float,2>::cast(imgref2d,clampmin, clampmax);
+    float transformScale=static_cast<float>(std::numeric_limits<unsigned short>::max())/(clampmax-clampmin);
+    for (size_t i=0; i<casted1.Size(); ++i) {
+        float val=(min(max(imgref2d[i],clampmin),clampmax)-clampmin)*transformScale;
+
+        QCOMPARE(casted2[i],static_cast<unsigned short>(val));
+    }
+
 }
 
 QTEST_APPLESS_MAIN(TkiplbasetestTest)

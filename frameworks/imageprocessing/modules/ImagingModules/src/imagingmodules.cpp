@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008,2009,2010,2011,2012,2013 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2013-08-15 21:58:23 +0200 (Thu, 15 Aug 2013) $
-// $Rev: 1481 $
-//
+//<LICENSE>
 
 #include "ImagingModules_global.h"
 
@@ -22,22 +13,28 @@
 #include "imagingmodules.h"
 #include "translateprojectionmodule.h"
 #include "stripefiltermodule.h"
+#include "bblognorm.h"
 
 
 
-void * GetModule(const char *application, const char * name)
+void * GetModule(const char *application, const char * name, void *vinteractor)
 {
     if (strcmp(application,"kiptool")!=0)
-        return NULL;
+        return nullptr;
 
-    if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
         std::string sName=name;
 
-        if (sName=="TranslateProjections")
-            return new TranslateProjectionModule;
+//        if (sName=="TranslateProjections")
+//            return new TranslateProjectionModule;
 
         if (sName=="StripeFilter")
-            return new StripeFilterModule;
+            return new StripeFilterModule(interactor);
+
+        if (sName=="BBLogNorm")
+            return new BBLogNorm(interactor);
     }
 
     return nullptr;
@@ -81,6 +78,9 @@ int GetModuleList(const char *application, void *listptr)
     StripeFilterModule sfm;
 
     modulelist->operator []("StripeFilter")=sfm.GetParameters();
+
+    BBLogNorm bblognorm;
+    modulelist->operator []("BBLogNorm")=bblognorm.GetParameters();
 
     return 0;
 }

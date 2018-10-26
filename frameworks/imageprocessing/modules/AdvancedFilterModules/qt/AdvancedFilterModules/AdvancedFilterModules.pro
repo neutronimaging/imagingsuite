@@ -40,8 +40,8 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
-        ICON = muhrec3.icns
+#        QMAKE_INFO_PLIST = Info.plist
+#        ICON = muhrec3.icns
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -57,11 +57,21 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio $$PWD/../../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../../../../external/include
+    INCLUDEPATH += $$PWD/../../../../../../external/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2 /DNOMINMAX
+}
+
+
+macx: {
+INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/hdf5 $$PWD/../../../../../../external/mac/include/nexus
+LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
 
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib

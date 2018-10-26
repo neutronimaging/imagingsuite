@@ -19,6 +19,7 @@
 #include <string>
 #include <math/covariance.h>
 #include <pca/pca.h>
+#include <KiplProcessConfig.h>
 
 class PCAFilterModule: public KiplProcessModuleBase
 {
@@ -26,7 +27,7 @@ public:
     PCAFilterModule();
     virtual ~PCAFilterModule();
 	
-	virtual int Configure(std::map<std::string, std::string> parameters);
+    virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
 protected:
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);

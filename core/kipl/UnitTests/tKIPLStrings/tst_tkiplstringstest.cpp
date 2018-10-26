@@ -20,6 +20,8 @@ private Q_SLOTS:
     void testExtractWildCard();
     void testCheckPathSlashes();
     void testGetFileExtension();
+    void testString2List_strings();
+    void testString2Array_strings();
 };
 
 TKIPLStringsTest::TKIPLStringsTest()
@@ -145,6 +147,40 @@ void TKIPLStringsTest::testGetFileExtension()
 {
 
 
+}
+
+void TKIPLStringsTest::testString2List_strings()
+{
+    std::string str="hej hopp hopsan testing";
+
+    std::list<std::string> sl;
+
+    size_t n=kipl::strings::String2List(str,sl);
+
+    QCOMPARE(n,4UL);
+    auto it=sl.begin();
+    QCOMPARE(*it,std::string("hej")); ++it;
+    QCOMPARE(*it,std::string("hopp")); ++it;
+    QCOMPARE(*it,std::string("hopsan")); ++it;
+    QCOMPARE(*it,std::string("testing"));
+
+
+}
+
+void TKIPLStringsTest::testString2Array_strings()
+{
+    std::string str="hej hopp hopsan testing";
+
+    std::vector<std::string> sl;
+
+    size_t n=kipl::strings::String2Array(str,sl);
+
+    QCOMPARE(n,4UL);
+    auto it=sl.begin();
+    QCOMPARE(*it,std::string("hej")); ++it;
+    QCOMPARE(*it,std::string("hopp")); ++it;
+    QCOMPARE(*it,std::string("hopsan")); ++it;
+    QCOMPARE(*it,std::string("testing"));
 }
 
 QTEST_APPLESS_MAIN(TKIPLStringsTest)

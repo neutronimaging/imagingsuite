@@ -11,13 +11,14 @@
 #include "ClassificationModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <segmentation/thresholds.h>
+#include <KiplProcessConfig.h>
 
 class CLASSIFICATIONMODULES_EXPORT DoubleThreshold: public KiplProcessModuleBase {
 public:
 	DoubleThreshold();
 	virtual ~DoubleThreshold();
 
-	virtual int Configure(std::map<std::string, std::string> parameters);
+    virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
 
 protected:
@@ -26,8 +27,7 @@ protected:
 	float m_fHighThreshold;
 	float m_fLowThreshold;
 
-	float m_fBackgroundValue;
-	bool  m_bUseBackgroundValue;
+    kipl::segmentation::CmpType m_Compare;
 };
 
 #endif /* DOUBLETHRESHOLD_H_ */

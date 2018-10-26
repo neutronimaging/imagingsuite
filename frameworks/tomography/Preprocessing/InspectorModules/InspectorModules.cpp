@@ -14,9 +14,9 @@
 INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name,void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="ProjectionInspector")
@@ -32,7 +32,7 @@ INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const ch
             return new GetImageSize;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 INSPECTORMODULESSHARED_EXPORT int Destroy(const char *application, void *obj)
@@ -40,7 +40,7 @@ INSPECTORMODULESSHARED_EXPORT int Destroy(const char *application, void *obj)
 	if (strcmp(application,"muhrec")!=0)
 		return -1;
 
-	if (obj!=NULL)
+    if (obj!=nullptr)
 		delete reinterpret_cast<PreprocModuleBase *>(obj);
 
 	return 0;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1160</width>
-    <height>626</height>
+    <width>1170</width>
+    <height>778</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tab_ContrastAnalysis">
        <attribute name="title">
@@ -45,21 +45,15 @@
            </widget>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="spin_contrast_intercept">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-              <property name="maximum">
-               <double>99999.000000000000000</double>
+           <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <item>
+             <widget class="QPushButton" name="pushButton_contrast_pixelSize">
+              <property name="text">
+               <string>Pixel size</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item>
              <widget class="QDoubleSpinBox" name="spin_contrast_pixelsize">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pixel size is needed to define the size of the insets.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -75,44 +69,103 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Intensity slope</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Intensity intercept</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="spin_contrast_slope">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-              <property name="maximum">
-               <double>9999.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="pushButton_contrast_pixelSize">
-              <property name="text">
-               <string>Pixel size</string>
-              </property>
-             </widget>
-            </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_contrast_intensityMapping">
+            <property name="title">
+             <string>Gray level mapping</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
+               <item>
+                <widget class="QRadioButton" name="radioButton_contrast_interval">
+                 <property name="text">
+                  <string>Map levels to interval</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_contrast_scaling">
+                 <property name="text">
+                  <string>Map levels by scaling</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QFormLayout" name="formLayout">
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="spin_contrast_intensity0">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="maximum">
+                  <double>9999.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_contrast_intensity0">
+                 <property name="text">
+                  <string>Min</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_contrast_intensity1">
+                 <property name="text">
+                  <string>Max</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="spin_contrast_intensity1">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intensity slope and intercept are used to scale the gray levels to attenuation coefficients. If you only have gray min and max you have to calculate the slope and intercept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="maximum">
+                  <double>99999.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>65535.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="button_AnalyzeContrast">
@@ -122,17 +175,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>- Load contrast sample images
-- Set pixel size
-- Set gray scaling
-- Segment regions
-- Compute stats
-- Present results
-- Generate report as PDF</string>
+           <spacer name="verticalSpacer_12">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -228,6 +281,9 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
+           <layout class="QVBoxLayout" name="verticalLayout_21"/>
+          </item>
+          <item>
            <widget class="QListWidget" name="listEdgeFiles"/>
           </item>
           <item>
@@ -247,7 +303,69 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="button_get2Dedges">
+              <property name="text">
+               <string>Analyze edges</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_estimateCollimation">
+              <property name="text">
+               <string>Estimate collimation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>Preview</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QPushButton" name="pushButton_2dEdge_pixelSize">
+              <property name="text">
+               <string>Pixel size</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_2dEdge_pixelSize">
+              <property name="decimals">
+               <number>4</number>
+              </property>
+              <property name="maximum">
+               <double>9999.999900000000707</double>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>mm</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -262,46 +380,115 @@
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="check_edge2dcrop">
-            <property name="text">
-             <string>Crop images</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QtAddons::ROIWidget" name="widget_roiEdge2D" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>45</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
             <item>
-             <widget class="QPushButton" name="button_get2Dedges">
-              <property name="text">
-               <string>Get edges</string>
+             <widget class="QGroupBox" name="groupBox_2Dreferences">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>150</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>Normalize projections</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_19">
+               <item>
+                <widget class="ReaderForm" name="widget_openBeamReader" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>57</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ReaderForm" name="widget_darkCurrentReader" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>57</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_estimateCollimation">
-              <property name="text">
-               <string>Estimate collimation</string>
+             <widget class="QGroupBox" name="groupBox_2DCrop">
+              <property name="title">
+               <string>Crop images</string>
               </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QtAddons::uxROIWidget" name="widget_roiEdge2D" native="true">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>123</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_10">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget_edge2D">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_preview">
            <attribute name="title">
@@ -330,7 +517,49 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
-             <widget class="QChartView" name="chart_2Dedges" native="true"/>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QComboBox" name="comboBox_edgePlotType">
+                <item>
+                 <property name="text">
+                  <string>Edge plot</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Edge derivative plot</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_edgeFitFunction">
+                <item>
+                 <property name="text">
+                  <string>No fit</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Gauss fit</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QChartView" name="chart_2Dedges" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>378</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QListWidget" name="listWidget_edgeInfo"/>
             </item>
            </layout>
           </widget>
@@ -340,7 +569,34 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_13">
             <item>
-             <widget class="QChartView" name="chart_collimation" native="true"/>
+             <widget class="QChartView" name="chart_collimation" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>300</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_collimationFit">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -383,51 +639,68 @@
             <item>
              <layout class="QFormLayout" name="formLayout_2">
               <item row="1" column="0">
-               <widget class="QLabel" name="label_5">
+               <widget class="QPushButton" name="pushButton_bigball_pixelsize">
                 <property name="text">
                  <string>Pixel size</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="dspin_bigball_pixelsize"/>
+               <widget class="QDoubleSpinBox" name="dspin_bigball_pixelsize">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
+                <property name="maximum">
+                 <double>9999.999900000000707</double>
+                </property>
+               </widget>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_6">
                 <property name="text">
-                 <string>Radius [pixels]</string>
+                 <string>Profile width [pixels]</string>
                 </property>
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QDoubleSpinBox" name="dspin_bigball_radius">
+               <widget class="QDoubleSpinBox" name="dspin_bigball_profileWidth">
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
                 <property name="maximum">
                  <double>9999.899999999999636</double>
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="4" column="0">
                <widget class="QLabel" name="label_7">
                 <property name="text">
                  <string>Ball center</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
+              <item row="4" column="1">
                <widget class="QLabel" name="label_bigball_center">
                 <property name="text">
                  <string>N/A</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_11">
+              <item row="5" column="0">
+               <widget class="QLabel" name="label">
                 <property name="text">
-                 <string>Precision</string>
+                 <string>Ball radius</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="1">
+              <item row="5" column="1">
+               <widget class="QLabel" name="label_bigball_radius">
+                <property name="text">
+                 <string>N/A</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
                <widget class="QDoubleSpinBox" name="spin_bigball_precision">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets how small steps to sample the radia profile. Default is 0.1 pixels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -437,6 +710,27 @@
                 </property>
                 <property name="value">
                  <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Precision [pixles]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLabel" name="label_bigball_FWHM">
+                <property name="text">
+                 <string>N/A</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Peak width</string>
                 </property>
                </widget>
               </item>
@@ -477,31 +771,6 @@
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QComboBox" name="comb_bigballsliceplane">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>XY plane</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>XZ plane</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>YZ plane</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
               <item>
                <widget class="QSlider" name="slider_bigball_slice">
                 <property name="sizePolicy">
@@ -557,15 +826,6 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QComboBox" name="combo_bigball_edgeselector">
-                <item>
-                 <property name="text">
-                  <string>Global edge</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
                <widget class="QComboBox" name="comboBox_bigball_plotinformation">
                 <item>
                  <property name="text">
@@ -575,11 +835,6 @@
                 <item>
                  <property name="text">
                   <string>Edge derivative</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>MTF</string>
                  </property>
                 </item>
                </widget>
@@ -632,11 +887,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QtAddons::ROIWidget" name="widget_roi3DBalls" native="true">
+             <widget class="QtAddons::uxROIWidget" name="widget_roi3DBalls" native="true">
               <property name="minimumSize">
                <size>
-                <width>0</width>
-                <height>45</height>
+                <width>200</width>
+                <height>123</height>
                </size>
               </property>
              </widget>
@@ -649,19 +904,12 @@
              </widget>
             </item>
             <item>
-             <widget class="QtAddons::ROIManager" name="widget_bundleroi0" native="true">
+             <widget class="QtAddons::ROIManager" name="widget_bundleroi" native="true">
               <property name="minimumSize">
                <size>
                 <width>0</width>
                 <height>125</height>
                </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="button_AnalyzePacking">
-              <property name="text">
-               <string>Analyze</string>
               </property>
              </widget>
             </item>
@@ -677,6 +925,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_AnalyzePacking">
+              <property name="text">
+               <string>Analyze</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -767,79 +1022,217 @@
        <attribute name="title">
         <string>Report</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Select the items to include in the report</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox">
-          <property name="text">
-           <string>Contrast analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_2">
-          <property name="text">
-           <string>2D Edge analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_3">
-          <property name="text">
-           <string>3D Edge analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_4">
-          <property name="text">
-           <string>3D Ball packing analysis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Save the report to </string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="lineEdit"/>
-        </item>
-        <item row="7" column="0">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>Create report</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Messages</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <layout class="QHBoxLayout" name="horizontalLayout_17">
         <item>
-         <widget class="QtAddons::QtLogViewer" name="widget_logger" native="true"/>
+         <layout class="QVBoxLayout" name="verticalLayout_20">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Select the items to include in the report</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_reportContrast">
+            <property name="text">
+             <string>Contrast analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_report2DEdge">
+            <property name="text">
+             <string>2D Edge analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_reportBallPacking">
+            <property name="text">
+             <string>3D Ball packing analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_report3DEdge">
+            <property name="text">
+             <string>3D Edge analysis</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Save the report to </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="SingleFileForm" name="widget_reportName" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>35</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_createReport">
+            <property name="text">
+             <string>Create report</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_11">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>User information</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_4">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_userName"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Institute</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_institute"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>Instrument</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_instrument"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Country</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Experiment date</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>Analysis date</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>Version</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLabel" name="label_version">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEdit_country"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QDateEdit" name="dateEdit_experimentDate">
+             <property name="displayFormat">
+              <string>yy.MM.dd</string>
+             </property>
+             <property name="calendarPopup">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QDateEdit" name="dateEdit_analysisDate">
+             <property name="displayFormat">
+              <string>yy.MM.dd</string>
+             </property>
+             <property name="calendarPopup">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_12">
+             <property name="text">
+              <string>Comment</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QPlainTextEdit" name="plainTextEdit_comment"/>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
      </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_logging">
+        <property name="text">
+         <string>Logging</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -848,10 +1241,30 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1160</width>
+     <width>1170</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionUser_manual"/>
+    <addaction name="actionReport_a_bug"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -862,6 +1275,46 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionUser_manual">
+   <property name="text">
+    <string>User manual</string>
+   </property>
+  </action>
+  <action name="actionReport_a_bug">
+   <property name="text">
+    <string>Report a bug</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -873,12 +1326,6 @@
    <slots>
     <signal>levelsChanged(float,float)</signal>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::ROIWidget</class>
-   <extends>QWidget</extends>
-   <header>roiwidget.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>QChartView</class>
@@ -893,15 +1340,24 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::QtLogViewer</class>
-   <extends>QWidget</extends>
-   <header>qtlogviewer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ROIManager</class>
    <extends>QWidget</extends>
    <header location="global">roimanager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>SingleFileForm</class>
+   <extends>QWidget</extends>
+   <header location="global">singlefileform.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

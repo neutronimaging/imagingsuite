@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008,2009,2010,2011,2012,2013 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2013-08-15 21:58:23 +0200 (Thu, 15 Aug 2013) $
-// $Rev: 1481 $
-//
+//<LICENSE>
 
 #include "modulechainconfiguratorwidget.h"
 #include "QListWidgetModuleItem.h"
@@ -25,11 +16,11 @@
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     QWidget(parent),
     logger("ModuleChainConfiguratorWidget"),
-    m_pCurrentModule(NULL),
+    m_pCurrentModule(nullptr),
     m_sApplication("muhrec"),
     m_sApplicationPath(""),
-    m_pApplication(NULL),
-    m_pConfigurator(NULL)
+    m_pApplication(nullptr),
+    m_pConfigurator(nullptr)
 {
     this->setLayout(&m_MainBox);
     m_MainBox.addLayout(&m_ModuleBox);
@@ -54,6 +45,9 @@ void ModuleChainConfiguratorWidget::configure(std::string application, std::stri
     m_sApplication     = application;
     m_sApplicationPath = applicationpath;
     m_pConfigurator    = pConfigurator;
+
+//    std:cout << m_sApplication << std::endl;
+//    std::cout << m_sApplicationPath << std::endl;
 
 }
 
@@ -111,11 +105,10 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
 
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 {
-    logger(kipl::logging::Logger::LogMessage,"Configure module");
-    std::ostringstream msg;
 
     if (m_pConfigurator!=nullptr) {
         if (m_pCurrentModule!=nullptr) {
+            std::ostringstream msg;
             QListWidgetModuleItem *pCurrentModule=dynamic_cast<QListWidgetModuleItem *>(m_pCurrentModule);
             //UpdateCurrentModuleParameters();
 
@@ -145,6 +138,9 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
                 msg<<"Failed to open dialog: "<<e.what();
                 logger(kipl::logging::Logger::LogWarning,msg.str());
             }
+        }
+        else {
+            logger.warning("Current module variable void.");
         }
     }
 }
@@ -198,7 +194,7 @@ std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
     std::list<ModuleConfig> modulelist;
 
     QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
-    if (item!=NULL)
+    if (item!=nullptr)
         item->m_Module.parameters=GetParameterList();
 
     for (int i=0; i<m_ModuleListView.count(); i++) {
@@ -221,6 +217,7 @@ void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
     m_ModuleListView.setCurrentItem(item);
 
     UpdateCurrentModuleParameters();
+    m_pCurrentModule=item;
 }
 
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )

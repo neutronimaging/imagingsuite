@@ -25,6 +25,8 @@ class KIPLSHARED_EXPORT RectROI
         virtual int getBox(size_t *roi);
         int getDimensions();
         int getID();
+        std::string toString();
+        void fromString(std::string str);
         std::string getName();
      protected:
         static int cnt;

@@ -34,6 +34,7 @@
 #include "../include/SpotClean.h"
 #include <ReconException.h>
 #include <ReconConfig.h>
+using namespace std;
 
 SpotClean::SpotClean(void) : PreprocModuleBase("SpotClean"),
 	pKernel(NULL), 
@@ -381,7 +382,7 @@ kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img
 			}
 			else{
 				// This shouldn't happen...
-				cout<<"missed pixel"<<endl;
+//                cout<<"missed pixel"<<endl;
 			}
 		}
 

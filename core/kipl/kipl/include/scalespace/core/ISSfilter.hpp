@@ -3,7 +3,9 @@
 #ifndef ISSFILTER_HPP_
 #define ISSFILTER_HPP_
 #include <iomanip>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 #include "../../base/timage.h"
 #include "../../base/imageoperators.h"

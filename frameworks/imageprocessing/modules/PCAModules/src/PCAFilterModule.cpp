@@ -36,7 +36,7 @@ PCAFilterModule::~PCAFilterModule()
 }
 
 
-int PCAFilterModule::Configure(std::map<std::string, std::string> parameters)
+int PCAFilterModule::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 
 //	m_bComplement = kipl::strings::string2bool(GetStringParameter(parameters,"complement"));

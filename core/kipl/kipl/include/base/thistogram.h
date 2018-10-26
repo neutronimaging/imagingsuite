@@ -118,6 +118,7 @@ private:
 };
 
 /// \brief Computes a bivariate histogram from two data sets and provides access methods
+/// \test TkiplbasetestTest::testBivariateHistogramInitialize() in tkiplbasetest.pro
 class KIPLSHARED_EXPORT BivariateHistogram
 {
     kipl::logging::Logger logger;

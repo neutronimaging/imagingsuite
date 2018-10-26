@@ -13,29 +13,39 @@
 #define KIPTOOLMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
+
+#include <loggingdialog.h>
+
 #include <logging/logger.h>
+#include <interactors/interactionbase.h>
+
 #include <KiplProcessConfig.h>
 #include <KiplEngine.h>
 #include <KiplFactory.h>
 
+#include <ApplicationBase.h>
 #include <list>
+#include "imagingmoduleconfigurator.h"
 
 namespace Ui {
 class KipToolMainWindow;
 }
 
-class KipToolMainWindow : public QMainWindow
+class KipToolMainWindow : public QMainWindow, public ApplicationBase
 {
     Q_OBJECT
     kipl::logging::Logger logger;
 
 public:
-    explicit KipToolMainWindow(QWidget *parent = 0);
+
+    explicit KipToolMainWindow(QApplication *app, QWidget *parent = 0);
     ~KipToolMainWindow();
+    void UpdateDialog();
+    void UpdateConfig();
     
 protected slots:
     void on_button_browsedatapath_clicked();
-    void on_button_getROI_clicked();
     void on_button_loaddata_clicked();
     void on_button_browsedestination_clicked();
     void on_check_crop_stateChanged(int arg1);
@@ -52,6 +62,7 @@ protected slots:
     void on_actionProcessing_history_triggered();
     void on_actionClear_History_triggered();
     void on_actionAbout_triggered();
+    void button_toggleLoggerDlg_clicked();
 
 private slots:
     void on_combo_sliceplane_activated(int index);
@@ -80,9 +91,10 @@ private slots:
 
     void on_actionRegister_for_news_letter_triggered();
 
+    void on_actionUser_manual_triggered();
+
 private:
-    void UpdateDialog();
-    void UpdateConfig();
+
     void SetupCallbacks();
     void UpdateMatrixROI();
     void LoadDefaults();
@@ -92,6 +104,10 @@ private:
     void LoadConfiguration(QString qfname);
 
     Ui::KipToolMainWindow *ui;
+    QtAddons::LoggingDialog *logdlg;
+    QPushButton *button_toggleLoggerDlg;
+
+    kipl::interactors::InteractionBase m_Interactor;
     KiplEngine *m_Engine;
     KiplFactory m_Factory;
 
@@ -99,6 +115,7 @@ private:
     std::map<std::string, kipl::containers::PlotData<float,size_t> > m_HistogramList;
     kipl::containers::PlotData<float,size_t> m_OriginalHistogram;
 
+    ImagingModuleConfigurator m_ModuleConfigurator;
 
     QString m_sFileName;
     KiplProcessConfig m_config;
@@ -110,6 +127,8 @@ private:
     kipl::base::TImage<float,2> m_SliceResult;
     int m_nSliceSizeX;
     int m_nSliceSizeY;
+
+    QApplication *m_QtApp;
 
     std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };

@@ -1,16 +1,7 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
+//<LICENSE>
 
-#ifndef __KIPLENGINE_H
-#define __KIPLENGINE_H
+#ifndef KIPLENGINE_H
+#define KIPLENGINE_H
 
 #include "ProcessFramework_global.h"
 #include <map>
@@ -22,6 +13,7 @@
 
 #include "../include/KiplProcessConfig.h"
 #include "../include/KiplModuleItem.h"
+#include <interactors/interactionbase.h>
 
 class PROCESSFRAMEWORKSHARED_EXPORT KiplEngine
 {
@@ -29,7 +21,7 @@ protected:
 	kipl::logging::Logger logger;
 
 public:
-	KiplEngine(std::string name="KiplEngine");
+    KiplEngine(std::string name="KiplEngine", kipl::interactors::InteractionBase *interactor=nullptr);
 
 	~KiplEngine(void);
 
@@ -37,7 +29,13 @@ public:
 	int Run(kipl::base::TImage<float,3> * img);
 	void SetConfig(KiplProcessConfig & config) ;
 
-	bool SaveImage(KiplProcessConfig::cOutImageInformation * info=NULL);
+
+    /// \brief Starts the preprocessing chain including loading the projection data. This function is called by the user interface to provide data to the configuration dialogs.
+    /// \param roi The region of interest to process
+    /// \param sLastModule The chain shall only process until this module is reached
+    kipl::base::TImage<float,3> RunPreproc(kipl::base::TImage<float,3> * img, std::string sLastModule);
+
+    bool SaveImage(KiplProcessConfig::cOutImageInformation * info=nullptr);
 
 //	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
 	void GetMatrixDims(size_t *dims) {dims[0]=m_ResultImage.Size(0); dims[1]=m_ResultImage.Size(1); dims[2]=m_ResultImage.Size(2);}
@@ -47,7 +45,13 @@ public:
 
 protected:
 	int Process();
+    /// \param val a fraction value 0.0-1.0 to tell the progress of the back-projection.
+    /// \param msg a message string to add information to the progress bar.
+    /// \returns The abort status of interactor object. True means abort back-projection and false continue.
+    bool updateStatus(float val);
 
+
+    kipl::interactors::InteractionBase *m_Interactor;
 	KiplProcessConfig m_Config;
 
 	size_t m_FirstSlice;

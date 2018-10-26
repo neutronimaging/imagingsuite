@@ -1,14 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2011-06-11 20:01:04 +0200 (Sa, 11 Jun 2011) $
-// $Rev: 957 $
-// $Id: StdPreprocModules.h 957 2011-06-11 18:01:04Z kaestner $
-//
+//<LICENSE>
 
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the CLASSIFICATIONMODULES_EXPORTS
@@ -22,7 +12,7 @@
 #include "ClassificationModules_global.h"
 
 extern "C" {
-CLASSIFICATIONMODULES_EXPORT void * GetModule(const char * application, const char * name);
+CLASSIFICATIONMODULES_EXPORT void * GetModule(const char * application, const char * name, void *vinteractor);
 CLASSIFICATIONMODULES_EXPORT int Destroy(const char * application, void *obj);
 CLASSIFICATIONMODULES_EXPORT int LibVersion();
 CLASSIFICATIONMODULES_EXPORT int GetModuleList(const char * application, void *listptr);
