@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>940</width>
+    <width>958</width>
     <height>394</height>
    </rect>
   </property>
@@ -121,6 +121,13 @@
          <string>Vertical FFT</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_mse">
+       <property name="text">
+        <string/>
+       </property>
       </widget>
      </item>
     </layout>

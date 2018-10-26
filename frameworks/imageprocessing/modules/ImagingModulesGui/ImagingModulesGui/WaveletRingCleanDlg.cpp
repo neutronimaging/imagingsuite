@@ -64,7 +64,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
     UpdateDialog();
 
 
-    ui->volumeviewer->setImages(&m_Projections, nullptr);
+    ui->volumeviewer->setImages(&img, nullptr);
 
 //    try {
 //        ApplyParameters();
@@ -143,8 +143,8 @@ void WaveletRingCleanDlg::ApplyParameters()
         sum2+=pDiff[i]*pDiff[i];
 
     std::ostringstream msg;
-    msg<<"(MSE = "<<sum2/m_DifferenceSino.Size();
-//    ui->label_mse->setText(QString::fromStdString(msg.str())); // TODO: add this label somewhere in the UI
+    msg<<"MSE = "<<sum2/m_DifferenceSino.Size();
+    ui->label_mse->setText(QString::fromStdString(msg.str())); // TODO: add this label somewhere in the UI
 }
 
 void WaveletRingCleanDlg::UpdateDialog()
