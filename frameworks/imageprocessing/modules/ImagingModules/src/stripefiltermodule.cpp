@@ -15,7 +15,7 @@
 #endif
 
 
-StripeFilterModule::StripeFilterModule() : KiplProcessModuleBase("StripeFilterModule",false),
+IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("StripeFilterModule",false, interactor),
     m_StripeFilter(nullptr),
     m_sWaveletName("daub15"),
     m_nLevels(3),
@@ -28,10 +28,19 @@ StripeFilterModule::StripeFilterModule() : KiplProcessModuleBase("StripeFilterMo
 
 }
 
-StripeFilterModule::~StripeFilterModule()
+IMAGINGMODULESSHARED_EXPORT StripeFilterModule::~StripeFilterModule()
 {}
 
-int StripeFilterModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
+
+bool IMAGINGMODULESSHARED_EXPORT StripeFilterModule::updateStatus(float val, std::string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
+}
+
+int IMAGINGMODULESSHARED_EXPORT StripeFilterModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
     m_sWaveletName=GetStringParameter(parameters,"waveletname");
 //    scale=GetIntParameter(parameters,"scale");
@@ -44,7 +53,7 @@ int StripeFilterModule::Configure(KiplProcessConfig config, std::map<std::string
     return 0;
 }
 
-std::map<std::string, std::string> StripeFilterModule::GetParameters()
+std::map<std::string, std::string> IMAGINGMODULESSHARED_EXPORT StripeFilterModule::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
@@ -59,7 +68,7 @@ std::map<std::string, std::string> StripeFilterModule::GetParameters()
     return parameters;
 }
 
-int StripeFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int IMAGINGMODULESSHARED_EXPORT StripeFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
     size_t Nslices=0;
 
@@ -82,8 +91,8 @@ int StripeFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<
 
     m_StripeFilter = new ImagingAlgorithms::StripeFilter(slice.Dims(),m_sWaveletName,m_nLevels,m_fSigma);
 
-    #pragma omp for
-    for (size_t i=0; i<Nslices; i++) {
+//    #pragma omp for
+    for (size_t i=0; (i<Nslices && (updateStatus(float(i)/Nslices,"Processing Stripe Filter")==false) ); i++) {
         slice=kipl::base::ExtractSlice(img,i,plane,nullptr);
         m_StripeFilter->Process(slice,op);
         kipl::base::InsertSlice(slice,img,i,plane);

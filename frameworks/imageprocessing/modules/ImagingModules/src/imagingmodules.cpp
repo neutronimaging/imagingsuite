@@ -31,7 +31,7 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
 //            return new TranslateProjectionModule;
 
         if (sName=="StripeFilter")
-            return new StripeFilterModule;
+            return new StripeFilterModule(interactor);
 
         if (sName=="BBLogNorm")
             return new BBLogNorm(interactor);

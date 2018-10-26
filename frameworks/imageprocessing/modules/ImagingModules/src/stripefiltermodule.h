@@ -16,7 +16,7 @@
 
 class IMAGINGMODULESSHARED_EXPORT StripeFilterModule: public KiplProcessModuleBase {
 public:
-    StripeFilterModule();
+    StripeFilterModule(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~StripeFilterModule();
 
     virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters);
@@ -38,5 +38,8 @@ protected:
     bool m_bParallelProcessing;
     ImagingAlgorithms::StripeFilterOperation op;
     kipl::base::eImagePlanes plane;
+
+private:
+    bool updateStatus(float val, std::string msg);
 };
 #endif // WAVELETRINGCLEANMODULE_H
