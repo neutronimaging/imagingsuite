@@ -9,6 +9,7 @@
 
 #include "bblognormdlg.h"
 #include "WaveletRingCleanDlg.h"
+#include "morphspotcleandlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -29,6 +30,9 @@ IMAGINGMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const
 
         if (sName=="StripeFilter")
             return new WaveletRingCleanDlg;
+
+        if (sName=="MorphSpotClean")
+            return new MorphSpotCleanDlg;
     }
 
     return nullptr;
