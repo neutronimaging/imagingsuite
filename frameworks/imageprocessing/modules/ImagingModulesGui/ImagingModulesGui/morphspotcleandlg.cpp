@@ -1,9 +1,15 @@
 //<LICENSE>
 
 #include "morphspotcleandlg.h"
-#undef None
 #include "ui_morphspotcleandlg.h"
+
+#undef None
 #define None 0L
+
+
+#include <QDebug>
+#include <QSignalBlocker>
+#include <QFileDialog>
 
 #include <strings/miscstring.h>
 #include <base/thistogram.h>
@@ -79,6 +85,7 @@ void MorphSpotCleanDlg::ApplyParameters()
 //    m_DetectionImage=m_Cleaner.DetectionImage(m_OriginalImage);
 
     m_DetectionImage = kipl::base::ExtractSlice(m_OriginalImage,0,kipl::base::ImagePlaneXY,nullptr); // I start by taking the first image
+    m_DetectionImage=m_Cleaner.DetectionImage(m_DetectionImage);
 
     for (size_t i=0; i<m_DetectionImage.Size(); i++)
         if (m_DetectionImage[i]!=m_DetectionImage[i]) m_DetectionImage[i]=0;
@@ -93,26 +100,28 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     float fcumhist[N];
     size_t ii=0;
-    for (ii=0;ii<N;ii++) {
+    for (ii=0;ii<N;++ii) {
         fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
         if (0.99f<fcumhist[ii])
             break;
     }
 
     size_t N99=ii;
-    ui->plotDetection->setCurveData(0,axis,fcumhist,N99);
+    ui->plotDetection->setCurveData(0,axis,fcumhist,N99, QString("Cumulative histogram"));
     float threshold[N];
     if (m_fSigma!=0.0f)
     { // In case of sigmoid mixing
         for (size_t i=0; i<N99; i++) {
             threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
         }
-        ui->plotDetection->setCurveData(1,axis,threshold,N99,Qt::red);
+        ui->plotDetection->setCurveData(1,axis,threshold,N99, QString("threshold"));
     }
     else
     {
-            ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+//            ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
     }
+
+
 
     std::map<std::string,std::string> pars;
     m_ProcessedImage=m_OriginalImage;

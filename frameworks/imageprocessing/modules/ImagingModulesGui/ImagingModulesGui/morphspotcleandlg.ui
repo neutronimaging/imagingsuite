@@ -34,7 +34,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::Plotter" name="plotDetection" native="true"/>
+          <widget class="QtAddons::PlotWidget" name="plotDetection" native="true"/>
          </item>
         </layout>
        </item>
@@ -155,6 +155,9 @@
        </property>
        <property name="decimals">
         <number>5</number>
+       </property>
+       <property name="maximum">
+        <double>9999.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -295,9 +298,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
+   <class>QtAddons::PlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
