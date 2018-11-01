@@ -34,6 +34,8 @@ public:
     void setPointsVisible(int n=-1);
     void showLegend();
     void hideLegend();
+    void showCurve(int n);
+    void hideCurve(int n);
     void setTitle(QString title);
     void hideTitle();
     void updateAxes();

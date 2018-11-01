@@ -127,30 +127,6 @@ signals:
     void levelsChanged(float lo, float hi);
 };
 
-class SetGrayLevelsDialog : public QDialog
-{
-    Q_OBJECT
-    kipl::logging::Logger logger;
-
-public:
-    SetGrayLevelsDialog(QWidget *parent);
-
-protected slots:
-    void GrayLevelsChanged(double x);
-
-protected:
-    QtAddons::Plotter m_Plotter;
-    QDoubleSpinBox m_spinLow;
-    QDoubleSpinBox m_spinHigh;
-    QLabel m_label1;
-    QLabel m_label2;
-    QVBoxLayout m_VerticalLayout;
-    QHBoxLayout m_HorizontalLayout;
-    QPushButton m_buttonClose;
-
-    ImageViewerWidget *m_pParent;
-
-};
 
 }
 

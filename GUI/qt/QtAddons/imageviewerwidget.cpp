@@ -11,6 +11,7 @@
 #include <QSignalBlocker>
 #include <QDebug>
 
+#include "setgraylevelsdlg.h"
 namespace QtAddons {
 
 int ImageViewerWidget::m_nViewerCounter = -1;
@@ -168,7 +169,7 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
         break;
     case 'l':
     case 'L': {
-            SetGrayLevelsDialog dlg(this);
+            SetGrayLevelsDlg dlg(this);
             dlg.exec();
             break;
         }
@@ -566,56 +567,6 @@ void ImageViewerWidget::UpdateLinkedViewers()
     }
 }
 
-SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
-    QDialog(parent),
-    logger("SetGrayLevelsDialog"),
-    m_label1("Low value"),
-    m_label2("High value"),
-    m_buttonClose("Close"),
-    m_pParent(dynamic_cast<ImageViewerWidget*>(parent))
 
-{
-    m_HorizontalLayout.insertWidget(0,&m_label1);
-    m_HorizontalLayout.insertWidget(1,&m_spinLow);
-    m_HorizontalLayout.insertWidget(2,&m_label2);
-    m_HorizontalLayout.insertWidget(3,&m_spinHigh);
-    m_VerticalLayout.insertWidget(0,&m_Plotter);
-    m_VerticalLayout.insertLayout(1,&m_HorizontalLayout);
-    m_VerticalLayout.insertWidget(2,&m_buttonClose);
-    this->setLayout(&m_VerticalLayout);
-    this->setWindowTitle(tr("Set viewer gray levels"));
-    float fMin=0.0f;
-    float fMax=0.0f;
-    m_pParent->get_minmax(&fMin,&fMax);
-    double step=pow(10.0,floor(log10(fabs(fMax-fMin))-2.0));
-    m_spinLow.setMaximum(fMax);
-    m_spinLow.setMinimum(fMin);
-    m_spinLow.setSingleStep(step);
-    m_spinHigh.setMaximum(fMax);
-    m_spinHigh.setMinimum(fMin);
-    m_spinHigh.setSingleStep(step);
-    m_pParent->get_levels(&fMin,&fMax);
-    m_spinLow.setValue(fMin);
-    m_spinHigh.setValue(fMax);
-    QVector<QPointF> hist=m_pParent->get_histogram();
-    m_Plotter.setCurveData(0,hist);
-    GrayLevelsChanged(0.0);
-
-
-    connect(&m_spinLow,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
-    connect(&m_spinHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
-    connect(&m_buttonClose,SIGNAL(clicked()),this,SLOT(accept()));
-}
-
-void SetGrayLevelsDialog::GrayLevelsChanged(double x)
-{
-    double low=m_spinLow.value();
-    double high=m_spinHigh.value();
-    m_pParent->set_levels(low,high);
-
-    m_Plotter.setPlotCursor(0,PlotCursor(low,QColor("green"),PlotCursor::Vertical));
-    m_Plotter.setPlotCursor(1,PlotCursor(high,QColor("blue"),PlotCursor::Vertical));
-
-}
 
 }

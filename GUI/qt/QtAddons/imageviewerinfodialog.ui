@@ -6,33 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>281</height>
+    <width>616</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Image information</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_all">
-     <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="">
       <layout class="QVBoxLayout" name="verticalLayout_histogram">
        <item>
-        <widget class="QLabel" name="label_histogram">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Histograms</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QtAddons::Plotter" name="histogramplot" native="true"/>
+        <widget class="QtAddons::PlotWidget" name="histogramplot" native="true"/>
        </item>
        <item>
         <widget class="QCheckBox" name="check_showglobal">
@@ -42,8 +32,8 @@
         </widget>
        </item>
       </layout>
-     </item>
-     <item>
+     </widget>
+     <widget class="QWidget" name="">
       <layout class="QVBoxLayout" name="verticalLayout_info">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_roi">
@@ -167,8 +157,8 @@
         </spacer>
        </item>
       </layout>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -184,9 +174,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::Plotter</class>
+   <class>QtAddons::PlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
