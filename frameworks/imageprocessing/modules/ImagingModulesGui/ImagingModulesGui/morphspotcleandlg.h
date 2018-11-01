@@ -41,23 +41,22 @@ private slots:
 private:
     Ui::MorphSpotCleanDlg *ui;
 
-private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     KiplProcessConfig *m_Config;
-//    MorphSpotCleanModule m_Cleaner;
+    MorphSpotCleanModule m_Cleaner;
     kipl::base::TImage<float,3> m_Projections;
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
-    ImagingAlgorithms::MorphSpotClean m_Cleaner;
+//    ImagingAlgorithms::MorphSpotClean m_Cleaner;
 
-    kipl::base::TImage<float,2> m_OriginalImage;
-    kipl::base::TImage<float,2> m_ProcessedImage;
-    kipl::base::TImage<float,2> m_DetectionImage;
+    kipl::base::TImage<float,3> m_OriginalImage;
+    kipl::base::TImage<float,3> m_ProcessedImage;
+    kipl::base::TImage<float,3> m_DetectionImage;
 
     float m_fThreshold;
     float m_fSigma;

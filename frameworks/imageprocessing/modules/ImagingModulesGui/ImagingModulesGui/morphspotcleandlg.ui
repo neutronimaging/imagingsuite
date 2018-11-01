@@ -19,26 +19,6 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Original</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QtAddons::ImageViewerWidget" name="viewerOrignal" native="true"/>
-         </item>
-        </layout>
-       </item>
-       <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <widget class="QLabel" name="label_11">
@@ -65,58 +45,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Processed</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QtAddons::ImageViewerWidget" name="viewerProcessed" native="true"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <widget class="QComboBox" name="comboDetectionDisplay">
-         <property name="toolTip">
-          <string>Select different verification informations.</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>Difference</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Differnce (Percentage)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Detection image</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Hit map</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QtAddons::ImageViewerWidget" name="viewerDifference" native="true"/>
-       </item>
-      </layout>
+      <widget class="QtAddons::CompareVolumeViewer" name="widget_VolumeViewer" native="true"/>
      </item>
     </layout>
    </item>
@@ -360,13 +289,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::ImageViewerWidget</class>
+   <class>QtAddons::CompareVolumeViewer</class>
    <extends>QWidget</extends>
-   <header location="global">imageviewerwidget.h</header>
+   <header location="global">comparevolumeviewer.h</header>
    <container>1</container>
-   <slots>
-    <signal>levelsChanged(float,float)</signal>
-   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::Plotter</class>

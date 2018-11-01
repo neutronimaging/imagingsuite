@@ -38,9 +38,12 @@ void MorphSpotCleanDlg::ApplyParameters()
 {
     //kipl::base::TImage<float,2> img(m_Projections.Dims());
 //    m_OriginalImage=GetProjection(m_Projections,m_Projections.Size(2)/2);
+
     // inizio a prendere la prima slide
-    m_OriginalImage=kipl::base::ExtractSlice(m_Projections,0,kipl::base::ImagePlaneXY,nullptr);
+//    m_OriginalImage=kipl::base::ExtractSlice(m_Projections,0,kipl::base::ImagePlaneXY,nullptr);
     // I take the first image, for my first check
+
+    m_OriginalImage = m_Projections;
 
     const size_t N=512;
     size_t hist[N];
@@ -49,7 +52,7 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
+//    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -96,8 +99,8 @@ void MorphSpotCleanDlg::ApplyParameters()
     std::map<std::string,std::string> pars;
     m_ProcessedImage=m_OriginalImage;
     m_ProcessedImage.Clone();
-    m_Cleaner.Process(m_ProcessedImage,m_fThreshold, m_fSigma);
-//    m_Cleaner.Process(m_ProcessedImage, pars);
+//    m_Cleaner.Process(m_ProcessedImage,m_fThreshold, m_fSigma);
+    m_Cleaner.Process(m_ProcessedImage, pars);
 
     std::ostringstream msg;
     msg.str(""); msg<<"Processed image"<<m_ProcessedImage;
@@ -107,9 +110,10 @@ void MorphSpotCleanDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
+    ui->widget_VolumeViewer->setImages(&m_OriginalImage, &m_ProcessedImage);
+//    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
 
-    on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
+//    on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
@@ -118,6 +122,8 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
     std::ostringstream msg;
 
     m_Projections=img;
+
+    ui->widget_VolumeViewer->setImages(&m_Projections, nullptr);
 
     m_Config=dynamic_cast<KiplProcessConfig *>(config);
 
@@ -153,7 +159,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
 
 
     UpdateDialog();
-    ApplyParameters();
+//    ApplyParameters(); // I don't want to apply the parameters when I run the config
 
     int res=QDialog::exec();
 
@@ -237,7 +243,7 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
         return;
     }
 
-    kipl::base::TImage<float,2> dimg=m_ProcessedImage;
+    kipl::base::TImage<float,3> dimg=m_ProcessedImage;
 
     logger(kipl::logging::Logger::LogMessage,"Start switching");
     switch (index) {
@@ -272,5 +278,5 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
     kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
+//    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
 }
