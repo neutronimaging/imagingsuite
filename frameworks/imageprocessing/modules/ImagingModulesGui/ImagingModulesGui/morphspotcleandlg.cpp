@@ -27,6 +27,21 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
 //    float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
 //    size_t dims[2]={4,4};
 
+    // here I hide stuff that is not used
+    ui->comboCleanMethod->hide();
+    ui->comboConnectivity->hide();
+    ui->label_10->hide();
+    ui->label_13->hide();
+    ui->label_6->hide();
+    ui->label_7->hide();
+    ui->label_8->hide();
+    ui->label_7->hide();
+    ui->label_8->hide();
+    ui->label_9->hide();
+    ui->spinArea->hide();
+    ui->spinEdgeLenght->hide();
+    ui->spinMaxValue->hide();
+    ui->spinMinValue->hide();
 }
 
 MorphSpotCleanDlg::~MorphSpotCleanDlg()
@@ -50,20 +65,23 @@ void MorphSpotCleanDlg::ApplyParameters()
     float axis[N];
     size_t nLo, nHi;
 
-    kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
+//    kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
+//    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
 //    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
     UpdateParameterList(parameters);
 
-//    m_Cleaner.Configure(*m_Config, parameters);
+    m_Cleaner.Configure(*m_Config, parameters);
 
 
 //    m_DetectionImage=m_Cleaner.DetectionImage(m_OriginalImage);
-//    for (size_t i=0; i<m_DetectionImage.Size(); i++)
-//        if (m_DetectionImage[i]!=m_DetectionImage[i]) m_DetectionImage[i]=0;
+
+    m_DetectionImage = kipl::base::ExtractSlice(m_OriginalImage,0,kipl::base::ImagePlaneXY,nullptr); // I start by taking the first image
+
+    for (size_t i=0; i<m_DetectionImage.Size(); i++)
+        if (m_DetectionImage[i]!=m_DetectionImage[i]) m_DetectionImage[i]=0;
 
     size_t cumhist[N];
     memset(hist,0,N*sizeof(size_t));
@@ -223,60 +241,61 @@ void MorphSpotCleanDlg::on_buttonApply_clicked()
 }
 
 
+// I don't think I need this now
 void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
 {
-    std::ostringstream msg;
+//    std::ostringstream msg;
 
-    msg<<"Change display index to "<<index;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+//    msg<<"Change display index to "<<index;
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if (m_OriginalImage.Size()==0) {
-        msg.str(""); msg<<"Original image void";
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+//    if (m_OriginalImage.Size()==0) {
+//        msg.str(""); msg<<"Original image void";
+//        logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        return;
-    }
-    if (m_OriginalImage.Size()!=m_ProcessedImage.Size()) {
-        msg.str(""); msg<<"Original image: "<<m_OriginalImage<<std::endl<<"Processed image: "<<m_ProcessedImage;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+//        return;
+//    }
+//    if (m_OriginalImage.Size()!=m_ProcessedImage.Size()) {
+//        msg.str(""); msg<<"Original image: "<<m_OriginalImage<<std::endl<<"Processed image: "<<m_ProcessedImage;
+//        logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        return;
-    }
+//        return;
+//    }
 
-    kipl::base::TImage<float,3> dimg=m_ProcessedImage;
+//    kipl::base::TImage<float,3> dimg=m_ProcessedImage;
 
-    logger(kipl::logging::Logger::LogMessage,"Start switching");
-    switch (index) {
-    case 0: // Difference
-        dimg=m_OriginalImage-m_ProcessedImage;
-        break;
-    case 1:
-        for (size_t i=0; i<dimg.Size(); i++) {
-            if (m_OriginalImage[i]!=0.0f)
-                dimg[i] = 100*(m_OriginalImage[i]-m_ProcessedImage[i])/m_OriginalImage[i];
-            else
-                dimg[i]=0.0f;
-        }
-    case 2: // Detection image
-        dimg=m_DetectionImage;
-        break;
-    case 3: // Hit map
-        dimg=m_OriginalImage-m_ProcessedImage;
-        for (size_t i=0; i<dimg.Size(); i++)
-            dimg[i] = dimg[i]!=0 ? 1.0f : 0.0f;
-        break;
-    }
-    size_t nLo,nHi;
+//    logger(kipl::logging::Logger::LogMessage,"Start switching");
+//    switch (index) {
+//    case 0: // Difference
+//        dimg=m_OriginalImage-m_ProcessedImage;
+//        break;
+//    case 1:
+//        for (size_t i=0; i<dimg.Size(); i++) {
+//            if (m_OriginalImage[i]!=0.0f)
+//                dimg[i] = 100*(m_OriginalImage[i]-m_ProcessedImage[i])/m_OriginalImage[i];
+//            else
+//                dimg[i]=0.0f;
+//        }
+//    case 2: // Detection image
+//        dimg=m_DetectionImage;
+//        break;
+//    case 3: // Hit map
+//        dimg=m_OriginalImage-m_ProcessedImage;
+//        for (size_t i=0; i<dimg.Size(); i++)
+//            dimg[i] = dimg[i]!=0 ? 1.0f : 0.0f;
+//        break;
+//    }
+//    size_t nLo,nHi;
 
-    const size_t N=512;
-    float axis[N];
-    size_t hist[N];
+//    const size_t N=512;
+//    float axis[N];
+//    size_t hist[N];
 
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
+//    memset(hist,0,N*sizeof(size_t));
+//    memset(axis,0,N*sizeof(float));
 
-    kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    logger(kipl::logging::Logger::LogMessage,"Start display");
+//    kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
+//    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
+//    logger(kipl::logging::Logger::LogMessage,"Start display");
 //    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
 }

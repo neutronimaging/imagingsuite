@@ -21,6 +21,8 @@ public:
 
     virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
+    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
+
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
 

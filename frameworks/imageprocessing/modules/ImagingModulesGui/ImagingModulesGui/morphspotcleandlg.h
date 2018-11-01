@@ -56,7 +56,7 @@ private:
 
     kipl::base::TImage<float,3> m_OriginalImage;
     kipl::base::TImage<float,3> m_ProcessedImage;
-    kipl::base::TImage<float,3> m_DetectionImage;
+    kipl::base::TImage<float,2> m_DetectionImage;
 
     float m_fThreshold;
     float m_fSigma;

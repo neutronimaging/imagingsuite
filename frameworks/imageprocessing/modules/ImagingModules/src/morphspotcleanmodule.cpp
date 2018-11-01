@@ -141,3 +141,10 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     return 0;
 }
 
+kipl::base::TImage<float,2> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img)
+{
+    ImagingAlgorithms::MorphSpotClean cleaner;
+    cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
+    return cleaner.DetectionImage(img);
+}
+
