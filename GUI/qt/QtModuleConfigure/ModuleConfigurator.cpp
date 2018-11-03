@@ -48,7 +48,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
     }
 
 	try {
-		GetDialog(application,SharedObjectName,ModuleName);
+        loadDialog(application,SharedObjectName,ModuleName);
 	}
 	catch (ModuleException &e)
 	{
@@ -93,7 +93,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
         res=m_Dialog->exec(m_Config, parameters, m_Image);
 
 		m_Image.FreeImage();
-        Destroy();
+        destroy();
 	}
 	else {
 		msg.str("");
@@ -104,7 +104,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 	return res;
 }
 
-void ModuleConfigurator::GetDialog(std::string application, std::string sharedobjectname, std::string objectname)
+void ModuleConfigurator::loadDialog(std::string application, std::string sharedobjectname, std::string objectname)
 {
 	std::ostringstream msg;
 
@@ -181,7 +181,7 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 	}
 }
 
-void ModuleConfigurator::Destroy()
+void ModuleConfigurator::destroy()
 {
 	logger(kipl::logging::Logger::LogMessage,"Destroying");
 
@@ -190,12 +190,13 @@ void ModuleConfigurator::Destroy()
 
     m_Dialog=nullptr;
 
-    if (hinstLib!=nullptr) {
-	#ifdef _MSC_VER
+    if (hinstLib!=nullptr)
+    {
+#ifdef _MSC_VER
 		FreeLibrary(hinstLib);
-	#else
-		 dlclose(hinstLib);
-	#endif
+#else
+        dlclose(hinstLib);
+#endif
 	}
 
 }
