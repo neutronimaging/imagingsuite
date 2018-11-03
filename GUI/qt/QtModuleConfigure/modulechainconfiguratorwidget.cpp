@@ -124,7 +124,6 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 
             try {
                 std::map<std::string, std::string> parameters=GetParameterList();
-                //std::map<std::string, std::string> parameters=pCurrentModule->m_Module.parameters;
 
                 int res=m_pConfigurator->configure(m_sApplication,guisoname,modulename,parameters);
                 if (res==QDialog::Accepted) {

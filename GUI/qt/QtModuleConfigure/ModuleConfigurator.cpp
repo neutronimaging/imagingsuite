@@ -26,7 +26,7 @@ ModuleConfigurator::ModuleConfigurator() :
 
 ModuleConfigurator::~ModuleConfigurator()
 {
-	Destroy();
+
 }
 	
 bool ModuleConfigurator::configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters)
@@ -93,6 +93,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
         res=m_Dialog->exec(m_Config, parameters, m_Image);
 
 		m_Image.FreeImage();
+        Destroy();
 	}
 	else {
 		msg.str("");
@@ -186,6 +187,8 @@ void ModuleConfigurator::Destroy()
 
     if (m_Dialog!=nullptr)
 		m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
+
+    m_Dialog=nullptr;
 
     if (hinstLib!=nullptr) {
 	#ifdef _MSC_VER
