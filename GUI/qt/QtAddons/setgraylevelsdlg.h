@@ -31,12 +31,21 @@ private slots:
 
     void on_doubleSpinBox_levelWindow_valueChanged(double arg1);
 
+    void on_pushButton_95pc_clicked();
+
+    void on_pushButton_99pc_clicked();
+
 private:
     void updateLevels(bool interval, double a, double b);
     Ui::SetGrayLevelsDlg *ui;
     ImageViewerWidget * m_parent;
     double histMin;
     double histMax;
+
+    double q95lo;
+    double q95hi;
+    double q99lo;
+    double q99hi;
 
 };
 }

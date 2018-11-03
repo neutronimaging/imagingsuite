@@ -28,6 +28,13 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>High</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_levelLow">
          <property name="decimals">
@@ -38,13 +45,6 @@
          </property>
          <property name="maximum">
           <double>9999999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>High</string>
          </property>
         </widget>
        </item>
@@ -76,6 +76,9 @@
          <property name="minimum">
           <double>-9999999.000000000000000</double>
          </property>
+         <property name="maximum">
+          <double>99999999.000000000000000</double>
+         </property>
          <property name="value">
           <double>0.000000000000000</double>
          </property>
@@ -101,6 +104,20 @@
          </property>
          <property name="value">
           <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="pushButton_95pc">
+         <property name="text">
+          <string>95%</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QPushButton" name="pushButton_99pc">
+         <property name="text">
+          <string>99%</string>
          </property>
         </widget>
        </item>

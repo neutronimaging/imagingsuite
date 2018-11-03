@@ -5,11 +5,18 @@
 #include <QSignalBlocker>
 #include <QLineSeries>
 #include <QPen>
+#include <QDebug>
 
 namespace QtAddons {
 SetGrayLevelsDlg::SetGrayLevelsDlg(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SetGrayLevelsDlg)
+    ui(new Ui::SetGrayLevelsDlg),
+    histMin(std::numeric_limits<double>::max()),
+    histMax(-std::numeric_limits<double>::max()),
+    q95lo(0.0),
+    q95hi(0.0),
+    q99lo(0.0),
+    q99hi(0.0)
 {
     m_parent = dynamic_cast<QtAddons::ImageViewerWidget *>(parent);
 
@@ -22,13 +29,31 @@ SetGrayLevelsDlg::SetGrayLevelsDlg(QWidget *parent) :
 
     QVector<QPointF> hist=m_parent->get_histogram();
 
-    histMin = std::numeric_limits<double>::max(); // everything is <= this
-    histMax = -std::numeric_limits<double>::max(); // everything is >= this
-
+    QVector<QPointF> cumhist;
+    double cumsum=0.0;
     foreach (QPointF p, hist) {
         histMin = qMin(histMin, p.y());
         histMax = qMax(histMax, p.y());
+        cumsum+= p.y();
+        cumhist.append(QPointF(p.x(),cumsum));
     }
+
+    double c95lo=0.025*cumsum;
+    double c95hi=0.975*cumsum;
+    double c99lo=0.005*cumsum;
+    double c99hi=0.995*cumsum;
+
+//    qDebug() << "quantile counts "<<c95lo<<", "<<c95hi<<" and "<<c99lo<<", "<<c99hi;
+
+    foreach (QPointF p, cumhist) {
+        q95lo=p.y() <= c95lo ? p.x() : q95lo;
+        q95hi=p.y() <= c95hi ? p.x() : q95hi;
+        q99lo=p.y() <= c99lo ? p.x() : q99lo;
+        q99hi=p.y() <= c99hi ? p.x() : q99hi;
+    }
+
+//    qDebug() << "quantile limits "<<q95lo<<", "<<q95hi<<" and "<<q99lo<<", "<<q99hi;
+
     ui->histogram->setCurveData(0,hist,"Histogram");
     ui->histogram->setPointsVisible(0);
     m_parent->get_levels(&fMin,&fMax);
@@ -84,8 +109,8 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
     }
     else
     {
-        lo=a-b;
-        hi=a+b;
+        lo=a-b/2;
+        hi=a+b/2;
     }
 
     ui->doubleSpinBox_levelLow->setMaximum(hi);
@@ -110,4 +135,15 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
     ui->histogram->setCurveData(1,line);
 }
 
+}
+
+
+void QtAddons::SetGrayLevelsDlg::on_pushButton_95pc_clicked()
+{
+    updateLevels(true,q95lo,q95hi);
+}
+
+void QtAddons::SetGrayLevelsDlg::on_pushButton_99pc_clicked()
+{
+    updateLevels(true,q99lo, q99hi);
 }

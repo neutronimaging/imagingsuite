@@ -105,7 +105,7 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
 
 void ImageViewerWidget::on_levelsChanged(float lo, float hi)
 {
-    qDebug()<<"levels signal";
+ //   qDebug()<<"levels signal";
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
