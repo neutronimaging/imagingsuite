@@ -105,7 +105,6 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
 
 void ImageViewerWidget::on_levelsChanged(float lo, float hi)
 {
- //   qDebug()<<"levels signal";
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
@@ -139,9 +138,9 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
     ostringstream msg;
 
     msg<<"Got key "<<keyvalue;
-    std::cout<<msg.str()<<std::endl;
+    qDebug() <<msg.str().c_str();
 
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+  //  logger(kipl::logging::Logger::LogMessage,msg.str());
 
     switch (keyvalue) {
     case 'm':
@@ -168,11 +167,21 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
         m_MouseMode=ViewerPan;
         break;
     case 'l':
-    case 'L': {
-            SetGrayLevelsDlg dlg(this);
-            dlg.exec();
-            break;
+    case 'L':
+    {
+        float lo;
+        float hi;
+
+        get_levels(&lo, &hi);
+
+        SetGrayLevelsDlg dlg(this);
+        int res=dlg.exec();
+
+        if (res==QDialog::Rejected) {
+            set_levels(lo,hi);
         }
+        break;
+    }
     case 'k':
     case 'K':
         setCursor(Qt::PointingHandCursor);
