@@ -14,6 +14,7 @@
 #include "translateprojectionmodule.h"
 #include "stripefiltermodule.h"
 #include "bblognorm.h"
+#include "morphspotcleanmodule.h"
 
 
 
@@ -35,6 +36,9 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
 
         if (sName=="BBLogNorm")
             return new BBLogNorm(interactor);
+
+        if (sName=="MorphSpotClean")
+            return new MorphSpotCleanModule(interactor);
     }
 
     return nullptr;
@@ -76,8 +80,10 @@ int GetModuleList(const char *application, void *listptr)
     modulelist->operator []("TranslateProjections")=tpm.GetParameters();
 
     StripeFilterModule sfm;
-
     modulelist->operator []("StripeFilter")=sfm.GetParameters();
+
+    MorphSpotCleanModule msc;
+    modulelist->operator []("MorphSpotClean")=msc.GetParameters();
 
     BBLogNorm bblognorm;
     modulelist->operator []("BBLogNorm")=bblognorm.GetParameters();
