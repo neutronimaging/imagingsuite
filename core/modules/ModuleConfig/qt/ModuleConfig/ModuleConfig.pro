@@ -28,7 +28,7 @@ unix {
         QMAKE_CXXFLAGS += -fPIC -O2
         QMAKE_LIBDIR += /opt/local/lib
         LIBS += -L/opt/local/lib -lxml2
-        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2/libxml
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
     }
 }
 
