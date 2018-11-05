@@ -17,6 +17,7 @@ ImageViewerInfoDialog::ImageViewerInfoDialog(QWidget *parent) :
     ui(new Ui::ImageViewerInfoDialog)
 {
     ui->setupUi(this);
+    ui->histogramplot->hideTitle();
 }
 
 ImageViewerInfoDialog::~ImageViewerInfoDialog()
@@ -78,6 +79,7 @@ void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect ro
         m_LocalHistogram.append(QPointF(axis[i],static_cast<float>(hist[i])/(maxval)));
     }
 
+    ui->histogramplot->setCurveData(1,m_LocalHistogram,"Local");
     on_check_showglobal_toggled(ui->check_showglobal->isChecked());
 }
 
@@ -93,16 +95,17 @@ void ImageViewerInfoDialog::setHistogram(const QVector<QPointF> &hist)
     for (auto it=hist.begin(); it!=hist.end(); it++) {
         m_GlobalHistogram.append(QPointF(it->x(),it->y()/maxval));
     }
+
+    ui->histogramplot->setCurveData(0,m_GlobalHistogram,"Global");
+    on_check_showglobal_toggled(ui->check_showglobal->isChecked());
 }
 
 void ImageViewerInfoDialog::on_check_showglobal_toggled(bool checked)
 {
     if (checked) {
-        ui->histogramplot->setCurveData(1,m_GlobalHistogram,QColor("lightgreen"));
+        ui->histogramplot->showCurve(0);
     }
     else {
-        ui->histogramplot->clearCurve(1);
+        ui->histogramplot->hideCurve(0);
     }
-
-    ui->histogramplot->setCurveData(0,m_LocalHistogram,QColor("red"));
 }
