@@ -51,7 +51,8 @@ SOURCES += plotter.cpp \
     uxroiwidget.cpp \
     loggingdialog.cpp \
     comparevolumeviewer.cpp \
-    plotwidget.cpp
+    plotwidget.cpp \
+    setgraylevelsdlg.cpp
 
 
 
@@ -70,7 +71,8 @@ HEADERS += QtAddons_global.h \
     uxroiwidget.h \
     loggingdialog.h \
     comparevolumeviewer.h \
-    plotwidget.h
+    plotwidget.h \
+    setgraylevelsdlg.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -105,4 +107,5 @@ FORMS += \
     uxroiwidget.ui \
     loggingdialog.ui \
     comparevolumeviewer.ui \
-    plotwidget.ui
+    plotwidget.ui \
+    setgraylevelsdlg.ui

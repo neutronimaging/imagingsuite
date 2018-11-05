@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets
+QT       += core widgets charts
 
 #greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,15 +31,18 @@ DEFINES += IMAGINGMODULESGUI_LIBRARY
 
 SOURCES += imagingmodulesgui.cpp \
            bblognormdlg.cpp \
-           WaveletRingCleanDlg.cpp
+           WaveletRingCleanDlg.cpp \
+           morphspotcleandlg.cpp
 
 HEADERS  += imagingmodulesgui.h \
             bblognormdlg.h \
             imagingmodulesgui_global.h \
-            WaveletRingCleanDlg.h
+            WaveletRingCleanDlg.h \
+            morphspotcleandlg.h
 
 FORMS    += bblognormdlg.ui \
-             WaveletRingCleanDlg.ui
+             WaveletRingCleanDlg.ui \
+            morphspotcleandlg.ui
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
