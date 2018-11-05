@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1053</width>
-    <height>565</height>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::PlotWidget" name="plotDetection" native="true"/>
+          <widget class="QtAddons::PlotWidget" name="plotDetection" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>192</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -45,7 +52,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QtAddons::CompareVolumeViewer" name="widget_VolumeViewer" native="true"/>
+      <widget class="QtAddons::CompareVolumeViewer" name="widget_VolumeViewer" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>256</height>
+        </size>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
