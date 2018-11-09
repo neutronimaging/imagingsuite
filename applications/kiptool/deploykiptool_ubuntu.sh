@@ -1,11 +1,14 @@
 #CPCMD="ln -s "
 CPCMD="cp "
 REPOSPATH=$WORKSPACE
+QT_PATH="$QTPATH"
 
-DEST="$REPOSPATH/deploy/kiptool"
+DEST="$REPOSPATH/kiptool"
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
+mkdir --parent $DEST/bin/platforms
 mkdir --parent $DEST/Frameworks
+
 
 pushd .
 cd $DEST/Frameworks
@@ -25,13 +28,29 @@ rm -f *.so.1.0.0
 
 # Module libs
 `$CPCMD $REPOSPATH/lib/libAdvancedFilterModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libAdvancedFilterModulesGUI.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libBaseModules.so.1.0.0  .`
-`$CPCMD $REPOSPATH/lib/libPorespaceModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libBaseModulesGUI.so.1.0.0  .`
 `$CPCMD $REPOSPATH/lib/libClassificationModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libClassificationModulesGUI.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libImagingModules.so.1.0.0 .`
-`$CPCMD $REPOSPATH/lib/libPCAModules.so.1.0.0 .`
-`$CPCMD $REPOSPATH/lib/libStatisticsModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libImagingModulesGUI.so.1.0.0 .`
+
+#`$CPCMD $REPOSPATH/lib/libPCAModules.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libStatisticsModules.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libPorespaceModules.so.1.0.0 .`
+
+#Qt stuff
+`$CPCMD $QT_PATH/lib/libQt5Core.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libQt5Gui.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libQt5Widgets.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libQt5PrintSupport.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libQt5XcbQpa.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.8.0 .`
+`$CPCMD $QT_PATH/lib/libicui18n.so.56.1 .`
+`$CPCMD $QT_PATH/lib/libicudata.so.56.1 .`
+`$CPCMD $QT_PATH/lib/libicuuc.so.56.1 .`
 
 
 rm -f *.so
@@ -45,6 +64,9 @@ for f in `ls *.so.1.0.0`; do
         ln -s $bn.so.1.0 $bn.so.1
 	ln -s $bn.so.1 $bn.so
 done
+
+cd $DEST/bin/platforms
+`$CPCMD $QT_PATH/plugins/platforms/libqxcb.so .`
 
 cd $DEST/bin
 `$CPCMD $REPOSPATH/Applications/QtKipTool .`
