@@ -91,6 +91,8 @@ private slots:
 
     void on_actionRegister_for_news_letter_triggered();
 
+    void on_actionUser_manual_triggered();
+
 private:
 
     void SetupCallbacks();

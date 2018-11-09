@@ -1,9 +1,8 @@
 #ifndef BBLOGNORM_H
 #define BBLOGNORM_H
 
-//#include "StdPreprocModules_global.h"
-
 #include "ImagingModules_global.h"
+
 #include "imagingmodules.h"
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -13,10 +12,8 @@
 #include <KiplProcessModuleBase.h>
 
 #include <KiplProcessConfig.h>
-#include <interactors/interactionbase.h>
 
 //#include <PreprocModuleBase.h>
-//#include <ReconConfig.h>
 
 //#include "PreprocEnums.h"
 #include <averageimage.h>
@@ -155,7 +152,7 @@ protected:
 
 private:
     int m_nWindow; /// apparentely not used
-    kipl::interactors::InteractionBase *m_Interactor;
+   // kipl::interactors::InteractionBase *m_Interactor;
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)

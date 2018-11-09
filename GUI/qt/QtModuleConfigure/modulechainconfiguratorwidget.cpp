@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008,2009,2010,2011,2012,2013 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2013-08-15 21:58:23 +0200 (Thu, 15 Aug 2013) $
-// $Rev: 1481 $
-//
+//<LICENSE>
 
 #include "modulechainconfiguratorwidget.h"
 #include "QListWidgetModuleItem.h"
@@ -25,11 +16,11 @@
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     QWidget(parent),
     logger("ModuleChainConfiguratorWidget"),
-    m_pCurrentModule(NULL),
+    m_pCurrentModule(nullptr),
     m_sApplication("muhrec"),
     m_sApplicationPath(""),
-    m_pApplication(NULL),
-    m_pConfigurator(NULL)
+    m_pApplication(nullptr),
+    m_pConfigurator(nullptr)
 {
     this->setLayout(&m_MainBox);
     m_MainBox.addLayout(&m_ModuleBox);
@@ -73,7 +64,6 @@ QSize ModuleChainConfiguratorWidget::sizeHint() const
 void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 {
     ostringstream msg;
-    std::cout << "trying to add module" << std::endl;
 
     AddModuleDialog dlg(this);
 
@@ -149,6 +139,9 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
                 logger(kipl::logging::Logger::LogWarning,msg.str());
             }
         }
+        else {
+            logger.warning("Current module variable void.");
+        }
     }
 }
 
@@ -201,7 +194,7 @@ std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
     std::list<ModuleConfig> modulelist;
 
     QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
-    if (item!=NULL)
+    if (item!=nullptr)
         item->m_Module.parameters=GetParameterList();
 
     for (int i=0; i<m_ModuleListView.count(); i++) {
@@ -224,6 +217,7 @@ void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
     m_ModuleListView.setCurrentItem(item);
 
     UpdateCurrentModuleParameters();
+    m_pCurrentModule=item;
 }
 
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )

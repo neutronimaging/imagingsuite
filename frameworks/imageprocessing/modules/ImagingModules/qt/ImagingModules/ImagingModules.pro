@@ -19,6 +19,7 @@ SOURCES +=  ../../src/imagingmodules.cpp \
             ../../src/translateprojectionmodule.cpp \
             ../../src/stripefiltermodule.cpp \
             ../../src/ringcleanmodule.cpp \
+            ../../src/morphspotcleanmodule.cpp\
             ../../src/bblognorm.cpp
 #            ../../src/referenceimagecorrectionmodule.cpp
 
@@ -28,6 +29,7 @@ HEADERS +=  ../../src/ImagingModules_global.h \
             ../../src/translateprojectionmodule.h \
             ../../src/stripefiltermodule.h \
             ../../src/ringcleanmodule.h \
+            ../../src/morphspotcleanmodule.h \
             ../../src/bblognorm.h
 #            ../../src/referenceimagecorrectionmodule.h
 
@@ -90,11 +92,8 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lReaderConfig #-lUnpublishedImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lProcessFramework -lImagingAlgorithms -lReaderConfig
 
-
-#INCLUDEPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
-#DEPENDPATH += $$PWD/../../../../../../../unpublished/core/algorithms/UnpublishedImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include

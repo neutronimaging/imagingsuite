@@ -11,6 +11,7 @@
 #include <QSignalBlocker>
 #include <QDebug>
 
+#include "setgraylevelsdlg.h"
 namespace QtAddons {
 
 int ImageViewerWidget::m_nViewerCounter = -1;
@@ -104,7 +105,6 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
 
 void ImageViewerWidget::on_levelsChanged(float lo, float hi)
 {
-    qDebug()<<"levels signal";
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
@@ -138,9 +138,9 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
     ostringstream msg;
 
     msg<<"Got key "<<keyvalue;
-    std::cout<<msg.str()<<std::endl;
+    qDebug() <<msg.str().c_str();
 
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+  //  logger(kipl::logging::Logger::LogMessage,msg.str());
 
     switch (keyvalue) {
     case 'm':
@@ -167,11 +167,21 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
         m_MouseMode=ViewerPan;
         break;
     case 'l':
-    case 'L': {
-            SetGrayLevelsDialog dlg(this);
-            dlg.exec();
-            break;
+    case 'L':
+    {
+        float lo;
+        float hi;
+
+        get_levels(&lo, &hi);
+
+        SetGrayLevelsDlg dlg(this);
+        int res=dlg.exec();
+
+        if (res==QDialog::Rejected) {
+            set_levels(lo,hi);
         }
+        break;
+    }
     case 'k':
     case 'K':
         setCursor(Qt::PointingHandCursor);
@@ -416,7 +426,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_ImagePainter.get_image_minmax(&mi,&ma);
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
-    qDebug("ImageViewerWidget::set_image1");
+
     emit newImageDims(rect);
 }
 
@@ -438,7 +448,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
-  //  qDebug()<<QString("ImageViewerWidget::set_image2 ")<<dims[0]<<" "<<dims[1];
+
     emit newImageDims(rect);
 }
 
@@ -502,7 +512,7 @@ void ImageViewerWidget::set_levels(const float level_low, const float level_high
     if (updatelinked) {
         UpdateLinkedViewers();
     }
-    qDebug()<<"Viewer::setLevels";
+
     emit levelsChanged(level_low,level_high);
 }
 
@@ -566,56 +576,6 @@ void ImageViewerWidget::UpdateLinkedViewers()
     }
 }
 
-SetGrayLevelsDialog::SetGrayLevelsDialog(QWidget *parent) :
-    QDialog(parent),
-    logger("SetGrayLevelsDialog"),
-    m_label1("Low value"),
-    m_label2("High value"),
-    m_buttonClose("Close"),
-    m_pParent(dynamic_cast<ImageViewerWidget*>(parent))
 
-{
-    m_HorizontalLayout.insertWidget(0,&m_label1);
-    m_HorizontalLayout.insertWidget(1,&m_spinLow);
-    m_HorizontalLayout.insertWidget(2,&m_label2);
-    m_HorizontalLayout.insertWidget(3,&m_spinHigh);
-    m_VerticalLayout.insertWidget(0,&m_Plotter);
-    m_VerticalLayout.insertLayout(1,&m_HorizontalLayout);
-    m_VerticalLayout.insertWidget(2,&m_buttonClose);
-    this->setLayout(&m_VerticalLayout);
-    this->setWindowTitle(tr("Set viewer gray levels"));
-    float fMin=0.0f;
-    float fMax=0.0f;
-    m_pParent->get_minmax(&fMin,&fMax);
-    double step=pow(10.0,floor(log10(fabs(fMax-fMin))-2.0));
-    m_spinLow.setMaximum(fMax);
-    m_spinLow.setMinimum(fMin);
-    m_spinLow.setSingleStep(step);
-    m_spinHigh.setMaximum(fMax);
-    m_spinHigh.setMinimum(fMin);
-    m_spinHigh.setSingleStep(step);
-    m_pParent->get_levels(&fMin,&fMax);
-    m_spinLow.setValue(fMin);
-    m_spinHigh.setValue(fMax);
-    QVector<QPointF> hist=m_pParent->get_histogram();
-    m_Plotter.setCurveData(0,hist);
-    GrayLevelsChanged(0.0);
-
-
-    connect(&m_spinLow,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
-    connect(&m_spinHigh,SIGNAL(valueChanged(double)),this,SLOT(GrayLevelsChanged(double)));
-    connect(&m_buttonClose,SIGNAL(clicked()),this,SLOT(accept()));
-}
-
-void SetGrayLevelsDialog::GrayLevelsChanged(double x)
-{
-    double low=m_spinLow.value();
-    double high=m_spinHigh.value();
-    m_pParent->set_levels(low,high);
-
-    m_Plotter.setPlotCursor(0,PlotCursor(low,QColor("green"),PlotCursor::Vertical));
-    m_Plotter.setPlotCursor(1,PlotCursor(high,QColor("blue"),PlotCursor::Vertical));
-
-}
 
 }

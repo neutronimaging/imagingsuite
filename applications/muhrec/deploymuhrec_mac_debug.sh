@@ -2,6 +2,7 @@ DIRECTORY=~/Applications
 
 DEST="$DIRECTORY/MuhRec.app"
 REPOSPATH=$WORKSPACE
+QTPATH=$QTBINPATH
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY

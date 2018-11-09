@@ -27,8 +27,7 @@ protected:
 	float m_fHighThreshold;
 	float m_fLowThreshold;
 
-	float m_fBackgroundValue;
-	bool  m_bUseBackgroundValue;
+    kipl::segmentation::CmpType m_Compare;
 };
 
 #endif /* DOUBLETHRESHOLD_H_ */

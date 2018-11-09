@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets
+QT       += core widgets charts
 
 #greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,13 +30,19 @@ DEFINES += IMAGINGMODULESGUI_LIBRARY
 
 
 SOURCES += imagingmodulesgui.cpp \
-           bblognormdlg.cpp
+           bblognormdlg.cpp \
+           WaveletRingCleanDlg.cpp \
+           morphspotcleandlg.cpp
 
 HEADERS  += imagingmodulesgui.h \
             bblognormdlg.h \
-            imagingmodulesgui_global.h
+            imagingmodulesgui_global.h \
+            WaveletRingCleanDlg.h \
+            morphspotcleandlg.h
 
-FORMS    += bblognormdlg.ui
+FORMS    += bblognormdlg.ui \
+             WaveletRingCleanDlg.ui \
+            morphspotcleandlg.ui
 
 unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
@@ -79,7 +85,11 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../../../external/include
+    INCLUDEPATH += $$PWD/../../../../../external/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../../external/include/libxml2
+
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio

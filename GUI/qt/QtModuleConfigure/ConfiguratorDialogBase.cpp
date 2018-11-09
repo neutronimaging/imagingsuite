@@ -16,14 +16,14 @@ ConfiguratorDialogBase::ConfiguratorDialogBase(std::string name, bool emptyDialo
     m_ControlButtons(hasApply ? (QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply) : (QDialogButtonBox::Ok | QDialogButtonBox::Cancel)),
     m_bNeedImages(needImages)
 {
-    if (!emptyDialog) {
-        setWindowTitle(QString::fromStdString(name));
-        this->setLayout(&m_LayoutMain);
-        m_LayoutMain.addWidget(&m_FrameMain);
-        m_LayoutMain.addWidget(&m_ControlButtons);
+//    if (!emptyDialog) {
+//        setWindowTitle(QString::fromStdString(name));
+//        this->setLayout(&m_LayoutMain);
+//        m_LayoutMain.addWidget(&m_FrameMain);
+//        m_LayoutMain.addWidget(&m_ControlButtons);
 
-        connect(&m_ControlButtons,SIGNAL(clicked(QAbstractButton*)),this,SLOT(on_ButtonBox_Clicked(QAbstractButton*)));
-    }
+//        connect(&m_ControlButtons,SIGNAL(clicked(QAbstractButton*)),this,SLOT(on_ButtonBox_Clicked(QAbstractButton*)));
+//    }
 }
 
 ConfiguratorDialogBase::~ConfiguratorDialogBase()
@@ -35,29 +35,29 @@ int ConfiguratorDialogBase::exec(ConfigBase * config, std::map<std::string, std:
     return QDialog::exec();
 }
 
-void ConfiguratorDialogBase::on_ButtonBox_Clicked(QAbstractButton *button)
-{
-    std::ostringstream msg;
-    QDialogButtonBox::StandardButton standardButton = m_ControlButtons.standardButton(button);
+//void ConfiguratorDialogBase::on_ButtonBox_Clicked(QAbstractButton *button)
+//{
+//    std::ostringstream msg;
+//    QDialogButtonBox::StandardButton standardButton = m_ControlButtons.standardButton(button);
 
-    logger(kipl::logging::Logger::LogMessage,"Clicked");
-    switch(standardButton) {
-        // Standard buttons:
-        case QDialogButtonBox::Ok:
-            logger(kipl::logging::Logger::LogMessage,"Ok");
-            UpdateParameters();
-            accept();
-            break;
-        case QDialogButtonBox::Cancel:
-        logger(kipl::logging::Logger::LogMessage,"Cancel");
-            reject();
-            break;
-        case QDialogButtonBox::Apply:
-        logger(kipl::logging::Logger::LogMessage,"Apply");
-            ApplyParameters();
-            break;
-        }
-}
+//    logger(kipl::logging::Logger::LogMessage,"Clicked");
+//    switch(standardButton) {
+//        // Standard buttons:
+//        case QDialogButtonBox::Ok:
+//            logger(kipl::logging::Logger::LogMessage,"Ok");
+//            UpdateParameters();
+//            accept();
+//            break;
+//        case QDialogButtonBox::Cancel:
+//        logger(kipl::logging::Logger::LogMessage,"Cancel");
+//            reject();
+//            break;
+//        case QDialogButtonBox::Apply:
+//        logger(kipl::logging::Logger::LogMessage,"Apply");
+//            ApplyParameters();
+//            break;
+//        }
+//}
 
 kipl::base::TImage<float,2> ConfiguratorDialogBase::GetProjection(kipl::base::TImage<float,3> img, size_t n)
 {

@@ -1,5 +1,6 @@
 #include <math/tcenterofgravity.h>
 #include <base/index2coord.h>
+#include <io/io_serializecontainers.h>
 
 #include "ballanalysis.h"
 
@@ -71,6 +72,7 @@ void BallAnalysis::getEdgeProfile(float r0, float r1, vector<float> &distance, v
 
 void BallAnalysis::computeSphereGeometry()
 {
+    std::ostringstream msg;
     kipl::math::CenterOfGravity cog;
 
     center = cog.findCenter(img,true);
@@ -81,25 +83,30 @@ void BallAnalysis::computeSphereGeometry()
     float *pImgCL = img.GetLinePtr(static_cast<size_t>(center.y+0.5f),static_cast<size_t>(center.z+0.5));
 
     std::copy(pImgCL,pImgCL+N,cl);
+    kipl::io::serializeContainer(pImgCL,pImgCL+N,"/Users/kaestner/profile.txt");
 
     float maxVal = *std::max_element(cl,cl+N);
     float minVal = *std::min_element(cl,cl+N);
 
-    float th = (minVal+maxVal)*0.5f;
+    float th = (maxVal+minVal)*0.5f;
 
-    size_t pos0=static_cast<size_t>(center.x+0.5f);
-    for (; 0<=pos0; --pos0) {
-        if (cl[pos0]<th)
+    size_t pos0=0;
+    for (pos0=0; pos0<static_cast<size_t>(center.x+0.5f); ++pos0) {
+        if (th<cl[pos0])
             break;
     }
 
-    size_t pos1=static_cast<size_t>(center.x+0.5f);
-    for (; pos1<N; ++pos1) {
-        if (cl[pos1]<th)
+    size_t pos1=N-1;
+    for (pos1=N-1; static_cast<size_t>(center.x+0.5f)<pos1; --pos1) {
+        if (th<cl[pos1])
             break;
     }
+
+
 
     radius = (static_cast<float>(pos1)-static_cast<float>(pos0))*0.5f;
+//    msg<<"Threshold:"<<th<<", min:"<<minVal<<", max:"<<maxVal<<", pos0:"<<pos0<<", pos1:"<<pos1<<", radius:"<<radius;
+//    logger.message(msg.str());
 
     delete [] cl;
 }

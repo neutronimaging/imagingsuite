@@ -10,7 +10,7 @@
 
 class ADVANCEDFILTERMODULES_EXPORT NonLinDiffusionModule: public KiplProcessModuleBase {
 public:
-    NonLinDiffusionModule();
+    NonLinDiffusionModule(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~NonLinDiffusionModule();
 
     virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);

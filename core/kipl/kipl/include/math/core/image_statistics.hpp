@@ -213,7 +213,7 @@ std::pair<double,double> statistics(T const * const x, const size_t N)
 		var  += delta*(value-mean);
 	}
 
-	var=var/(N-1);
+    var=var/(N);
 
 	return std::pair<double,double>(mean,std::sqrt(static_cast<double>(var)));
 }

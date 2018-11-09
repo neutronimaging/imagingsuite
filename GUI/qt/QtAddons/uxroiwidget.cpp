@@ -5,6 +5,7 @@
 #include <QSignalBlocker>
 #include <QDebug>
 
+#include <base/roi.h>
 #include "imageviewerwidget.h"
 
 namespace QtAddons {
@@ -143,6 +144,14 @@ void uxROIWidget::setROI(QRect rect, bool ignoreBoundingBox)
     setROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.height(),ignoreBoundingBox);
 }
 
+void uxROIWidget::setROI(kipl::base::RectROI roi, bool ignoreBoundingBox)
+{
+    size_t iroi[4];
+
+   roi.getBox(iroi);
+   setROI((int)iroi[0],(int)iroi[1],(int)iroi[2],(int)iroi[3],ignoreBoundingBox);
+}
+
 void uxROIWidget::getROI(QRect &rect)
 {
     rect=QRect(ui->spinX0->value(),
@@ -170,6 +179,13 @@ void uxROIWidget::getROI(size_t *roi)
     int iroi[4];
     getROI(iroi);
     std::copy(iroi,iroi+4,roi);
+}
+
+void uxROIWidget::getROI(kipl::base::RectROI & roi)
+{
+    size_t iroi[4];
+    getROI(iroi);
+    roi = kipl::base::RectROI(iroi);
 }
 
 void uxROIWidget::setTitle(const QString &lbl)

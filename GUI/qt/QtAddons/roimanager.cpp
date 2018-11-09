@@ -38,6 +38,32 @@ void ROIManager::setViewer(QtAddons::ImageViewerWidget *v)
     viewer=v;
 }
 
+void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
+{
+    ostringstream msg;
+    size_t roi[4];
+
+    ui->listROI->clear();
+    for (auto it = rois.begin(); it!=rois.end(); ++it) {
+        ROIListItem *item = new ROIListItem;
+
+        item->roi=*it;
+        it->getBox(roi);
+        msg.str("");
+        msg<<item->roi.getName()
+          <<": [x0: "<<roi[0]<<", y0: "<<roi[1]
+          <<", x1: "<<roi[2]<<", y1: "<<roi[3]<<"]";
+
+        item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+        item->setData(Qt::CheckStateRole,Qt::Unchecked);
+
+        item->setCheckState(Qt::CheckState::Checked);
+        ui->listROI->addItem(item);
+        QRect rect=QRect(roi[0],roi[1],roi[0]-roi[2],roi[3]-roi[1]);
+        viewer->set_rectangle(rect,QColor("green"),item->roi.getID());
+    }
+}
+
 std::list<kipl::base::RectROI> ROIManager::getROIs()
 {
     std::list<kipl::base::RectROI> roiList;

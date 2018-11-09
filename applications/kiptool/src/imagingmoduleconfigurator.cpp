@@ -1,3 +1,4 @@
+//<LICENSE>
 
 #include "imagingmoduleconfigurator.h"
 #include <sstream>
@@ -21,7 +22,7 @@ ImagingModuleConfigurator::~ImagingModuleConfigurator(){
 
 int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
 {
-    KiplEngine *engine=NULL;
+    KiplEngine *engine=nullptr;
     KiplFactory factory;
 
     KiplProcessConfig * config=dynamic_cast<KiplProcessConfig *>(m_Config);
@@ -53,15 +54,9 @@ int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
 
     m_OriginalImage = LoadVolumeImage(*config);
 
-    if (engine!=NULL) {
-        delete engine;
-        engine = NULL;
-    }
-
     m_Image=engine->RunPreproc(&m_OriginalImage,sSelectedModule);
 
-
-    if (engine!=NULL)
+    if (engine!=nullptr)
         delete engine;
     return 0;
 }

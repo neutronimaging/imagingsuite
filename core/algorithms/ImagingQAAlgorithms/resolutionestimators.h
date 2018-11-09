@@ -10,10 +10,12 @@
 
 #include <base/timage.h>
 #include <math/nonlinfit.h>
+#include <logging/logger.h>
 
 namespace ImagingQAAlgorithms {
 class  IMAGINGQAALGORITHMSSHARED_EXPORT ResolutionEstimator
 {
+    kipl::logging::Logger logger;
 public:
 
     ResolutionEstimator();
@@ -33,6 +35,7 @@ public:
     float getMTFresolution(float level=0.1f);
     void getEdgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit=false, float smooth=0.0f);
     void getMTF(std::vector<double> &w, std::vector<double> &a);
+    Nonlinear::SumOfGaussians getFitFunction();
 
 protected:
     void createAllocation(int N);
@@ -48,7 +51,7 @@ protected:
     double *dprofile;
     double *xaxis;
     double fwhm;
-    Nonlinear::FitFunctionBase &fn;
+    Nonlinear::SumOfGaussians fitFunction;
 };
 }
 

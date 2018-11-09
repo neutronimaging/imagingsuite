@@ -37,7 +37,7 @@ namespace kipl {namespace morphology {
 		
 
 		CNeighborhood NG(img.Dims(),NDim,conn);
-		int cNG=NG.N();
+        int cNG=static_cast<int>(NG.N());
 		
 		size_t cnt=0, N=img.Size();
 		ptrdiff_t pp,q,qq;

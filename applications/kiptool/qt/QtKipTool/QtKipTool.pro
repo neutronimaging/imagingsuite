@@ -4,11 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets  concurrent # printsupport
+QT       += core widgets charts concurrent # printsupport
 
-TARGET = QtKipTool
+TARGET = KipTool
+VERSION = 2.7.0.pre
 TEMPLATE = app
 CONFIG += c++11
+
+DEFINES += VERSION=\\\"$$VERSION\\\"
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../Applications/debug
@@ -22,21 +25,20 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-     #   QMAKE_INFO_PLIST = Info.plist
 
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
-    INCLUDEPATH += /usr/include/libxml2
+
 }
 
 win32 {
@@ -70,7 +72,8 @@ message("-lNeXus does not exist $$HEADERS")
 
 }
 
-ICON = kip_icon.icns
+ICON = kiptool_icon.icns
+RC_ICONS = kiptool_icon.ico
 
 SOURCES +=  ../../src/main.cpp\
             ../../src/kiptoolmainwindow.cpp \
@@ -137,3 +140,8 @@ DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/src
+
+DISTFILES += \
+    ../../deploykiptool_mac.sh \
+    ../../deploykiptool_ubuntu.sh \
+    ../../deploykiptool_win.bat

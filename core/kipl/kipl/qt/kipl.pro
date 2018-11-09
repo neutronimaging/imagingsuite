@@ -122,7 +122,8 @@ SOURCES += \
     ../src/math/statistics.cpp \
     ../src/math/circularhoughtransform.cpp \
     ../src/base/roi.cpp \
-    ../src/math/findpeaks.cpp
+    ../src/math/findpeaks.cpp \
+    ../src/math/normalizeimage.cpp
 
 
 
@@ -332,7 +333,8 @@ HEADERS +=\
     ../include/base/roi.h \
     ../include/math/core/statistics.hpp \
     ../include/io/io_serializecontainers.h \
-    ../include/math/findpeaks.h
+    ../include/math/findpeaks.h \
+    ../include/math/normalizeimage.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

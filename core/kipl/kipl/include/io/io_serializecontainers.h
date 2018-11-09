@@ -11,12 +11,9 @@ template<typename T>
 void serializeContainer(T a, T b, std::string fname)
 {
     std::ofstream f(fname.c_str());
-    for (T it=a; it<b; ++it) {
+    for (T it=a; it!=b; ++it) {
         f<<(*it)<<std::endl;
-     //   cout<<(*it)<<std::endl;
     }
-
-
 }
 
 }
