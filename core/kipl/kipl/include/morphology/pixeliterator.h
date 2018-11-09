@@ -77,19 +77,19 @@ public:
     int backwardSize();
 
     /// \brief Returns the pixel index of the current pixel position
-    ptrdiff_t getCurrentPosition() ;
+    ptrdiff_t currentPosition() ;
 
     /// \brief Returns the pixel index of the current pixel position
-    int getCurrentX() ;
+    int currentX() ;
 
     /// \brief Returns the pixel index of the current pixel position
-    int getCurrentY() ;
+    int currentY() ;
 
     /// \brief Returns the connectivity used to investigate the neighborhood.
-    kipl::base::eConnectivity getConnectivity();
+    kipl::base::eConnectivity connectivity();
 
     /// \brief determines of current position is on an edge
-    kipl::base::eEdgeStatus getEdgeStatus();
+    kipl::base::eEdgeStatus edgeStatus();
 
 protected:
     void setupNeighborhoods();

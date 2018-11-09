@@ -67,20 +67,26 @@ void PlotWidget::setCurveData(int id, const float * const x, const size_t * cons
 void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 {
     auto it=seriesmap.find(id);
-    if ( it != seriesmap.end()) {
+    if ( it != seriesmap.end())
+    {
         QLineSeries *line=dynamic_cast<QLineSeries *>(it->second);
         line->replace(series->points());
         line->setName(series->name());
         if (deleteData == true)
-            try {
+            try
+            {
                 delete series;
-            } catch (std::exception &e) {
+            }
+            catch (std::exception &e)
+            {
                 QString msg="Failed to delete series:";
                 msg=msg+QString::fromStdString(e.what());
                 QMessageBox::warning(this,"Exception",msg);
             }
 
-    } else {
+    }
+    else
+    {
         seriesmap[id]=series;
 
         ui->chart->chart()->addSeries(series);
@@ -88,10 +94,12 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 
     QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
 
-    if (line->points().size()<=m_nPointsVisible) {
+    if (line->points().size()<=m_nPointsVisible)
+    {
         line->setPointsVisible(true);
     }
-    else {
+    else
+    {
         line->setPointsVisible(false);
     }
 
@@ -103,7 +111,8 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 void PlotWidget::clearCurve(int id)
 {
     auto it=seriesmap.find(id);
-    if ( it != seriesmap.end()) {
+    if ( it != seriesmap.end())
+    {
         ui->chart->chart()->removeSeries(it->second);
         seriesmap.erase(it);
     }
@@ -128,6 +137,24 @@ void PlotWidget::showLegend()
 void PlotWidget::hideLegend()
 {
     ui->chart->chart()->legend()->setVisible(false);
+}
+
+void PlotWidget::showCurve(int n)
+{
+    auto it=seriesmap.find(n);
+    if ( it != seriesmap.end())
+    {
+        it->second->show();
+    }
+}
+
+void PlotWidget::hideCurve(int n)
+{
+    auto it=seriesmap.find(n);
+    if ( it != seriesmap.end())
+    {
+        it->second->hide();
+    }
 }
 
 void PlotWidget::setTitle(QString title)
