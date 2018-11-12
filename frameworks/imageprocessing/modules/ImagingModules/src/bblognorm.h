@@ -43,7 +43,7 @@ public:
 protected:
 
     KiplProcessConfig m_Config;
-//    std::string path; /// path, maybe not used
+    std::string path; /// path, maybe not used
     std::string flatname; /// name mask for OB image
     std::string darkname; /// name mask for DC image
     std::string blackbodyname; /// name mask for OB image with BBs
