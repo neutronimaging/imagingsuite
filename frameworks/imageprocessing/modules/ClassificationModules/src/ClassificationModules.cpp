@@ -33,10 +33,10 @@ void * GetModule(const char * application, const char * name, void *vinteractor)
 		std::string sName=name;
 
 		if (sName=="BasicThreshold")
-			return new BasicThreshold;
+            return new BasicThreshold (interactor);
 
 		if (sName=="DoubleThreshold")
-			return new DoubleThreshold;
+            return new DoubleThreshold (interactor);
 
 //		if (sName=="FuzzyCMeans")
 //			return new FuzzyCMeans;

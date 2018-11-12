@@ -9,8 +9,8 @@
 
 #include <ParameterHandling.h>
 
-DoubleThreshold::DoubleThreshold():
-	KiplProcessModuleBase("DoubleThreshold"),
+DoubleThreshold::DoubleThreshold(kipl::interactors::InteractionBase *interactor):
+    KiplProcessModuleBase("DoubleThreshold", false, interactor),
 	m_fHighThreshold(1000.0f),
 	m_fLowThreshold(500.0f),
     m_Compare(kipl::segmentation::cmp_greatereq)
@@ -55,4 +55,3 @@ int DoubleThreshold::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
     std::copy_n(mask.GetDataPtr(),mask.Size(),img.GetDataPtr());
 	return 0;
 }
-
