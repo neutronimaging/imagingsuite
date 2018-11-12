@@ -101,6 +101,7 @@ int RunOffline(QApplication * a)
         }
 
         try {
+            std::cout << "before load images" << std::endl;
             kipl::base::TImage<float,3> img = LoadVolumeImage(config);
             engine->Run(&img);
             engine->SaveImage();

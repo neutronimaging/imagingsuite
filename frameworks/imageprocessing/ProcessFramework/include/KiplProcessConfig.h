@@ -43,7 +43,7 @@ public:
 		std::string WriteXML(size_t indent=0);
 		void ParseXML(xmlTextReaderPtr reader);
 
-		std::string sSourcePath;
+        std::string sSourcePath;
 		std::string sSourceFileMask;
 
 		bool bUseROI;
