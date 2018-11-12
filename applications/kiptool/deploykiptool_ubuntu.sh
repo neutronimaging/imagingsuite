@@ -1,9 +1,11 @@
 #CPCMD="ln -s "
 CPCMD="cp "
-REPOSPATH=$WORKSPACE
+REPOSPATH="/home/`whoami`/git"
+
 QT_PATH="$QTPATH"
 
-DEST="$REPOSPATH/kiptool"
+#DEST="$REPOSPATH/kiptool"
+DEST="$HOME/kiptool"
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
 mkdir --parent $DEST/bin/platforms
@@ -13,6 +15,7 @@ mkdir --parent $DEST/Frameworks
 pushd .
 cd $DEST/Frameworks
 rm -f *.so.1.0.0
+rm -f *.1.0.0.dylib
 
 `$CPCMD $REPOSPATH/lib/libQtAddons.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libQtModuleConfigure.so.1.0.0 .`
@@ -64,6 +67,25 @@ for f in `ls *.so.1.0.0`; do
         ln -s $bn.so.1.0 $bn.so.1
 	ln -s $bn.so.1 $bn.so
 done
+
+rm -f *.so.5.8
+rm -f *.so.5
+for f in `ls *.so.5.8.0`; do
+	bn=`basename $f .so.5.8.0`
+	echo $bn
+	ln -s $f $bn.so.5.8
+        ln -s $bn.so.5.8 $bn.so.5
+	ln -s $bn.so.5 $bn.so
+done
+
+rm -f *.so.56
+for f in `ls *.so.56.1`; do
+	bn=`basename $f .so.56.1`
+	echo $bn
+	ln -s $bn.so.56.1 $bn.so.56
+	ln -s $bn.so.56 $bn.so
+done
+
 
 cd $DEST/bin/platforms
 `$CPCMD $QT_PATH/plugins/platforms/libqxcb.so .`

@@ -91,7 +91,7 @@ void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
 	        if (value!=NULL)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
-	        	sValue="Empty";
+                sValue="";
 	        sName=reinterpret_cast<const char *>(name);
 
 			
@@ -164,7 +164,7 @@ void KiplProcessConfig::cSystemInformation::ParseXML(xmlTextReaderPtr reader)
 	        if (value!=NULL)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
-	        	sValue="Empty";
+                sValue="";
 	        sName=reinterpret_cast<const char *>(name);
 
 	        if (sName=="memory") {
@@ -185,8 +185,8 @@ void KiplProcessConfig::cSystemInformation::ParseXML(xmlTextReaderPtr reader)
 // Image information methods
 
 KiplProcessConfig::cImageInformation::cImageInformation() :
-		sSourcePath("./"),
-		sSourceFileMask("slice_####.tif"),
+        sSourcePath("/"),
+        sSourceFileMask("/slice_####.tif"),
 		bUseROI(false),
 		nFirstFileIndex(1),
         nLastFileIndex(100),
@@ -197,7 +197,7 @@ KiplProcessConfig::cImageInformation::cImageInformation() :
 }
 
 KiplProcessConfig::cImageInformation::cImageInformation(const cImageInformation &a) :
-	sSourcePath(a.sSourcePath),
+    sSourcePath(a.sSourcePath),
 	sSourceFileMask(a.sSourceFileMask),
 	bUseROI(a.bUseROI),
 	nFirstFileIndex(a.nFirstFileIndex),
@@ -212,7 +212,7 @@ KiplProcessConfig::cImageInformation::cImageInformation(const cImageInformation 
 
 KiplProcessConfig::cImageInformation & KiplProcessConfig::cImageInformation::operator=(const cImageInformation &a) 
 {
-	sSourcePath          = a.sSourcePath;
+    sSourcePath          = a.sSourcePath;
 	sSourceFileMask      = a.sSourceFileMask;
 	bUseROI              = a.bUseROI;
 	nFirstFileIndex      = a.nFirstFileIndex;
@@ -232,7 +232,7 @@ std::string KiplProcessConfig::cImageInformation::WriteXML(size_t indent)
 	ostringstream str;
 	
 	str<<setw(indent)  <<" "<<"<image>"<<std::endl;
-	str<<setw(indent+4)<<" "<<"<srcpath>"<<sSourcePath<<"</srcpath>"<<std::endl;
+    str<<setw(indent+4)<<" "<<"<srcpath>"<<sSourcePath<<"</srcpath>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<srcfilemask>"<<sSourceFileMask<<"</srcfilemask>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<firstfileindex>"<<nFirstFileIndex<<"</firstfileindex>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<lastfileindex>"<<nLastFileIndex<<"</lastfileindex>"<<std::endl;
@@ -262,12 +262,12 @@ void KiplProcessConfig::cImageInformation::ParseXML(xmlTextReaderPtr reader)
 	        if (value!=NULL)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
-	        	sValue="Empty";
+                sValue="";
 	        sName=reinterpret_cast<const char *>(name);
 
-	        if (sName=="srcpath") {
-				sSourcePath=sValue;
-	        }
+            if (sName=="srcpath") {
+                sSourcePath=sValue;
+            }
 
 			if (sName=="srcfilemask") {
 				sSourceFileMask=sValue;
@@ -358,7 +358,7 @@ void KiplProcessConfig::cOutImageInformation::ParseXML(xmlTextReaderPtr reader)
 	        if (value!=NULL)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
-	        	sValue="Empty";
+                sValue="";
 	        sName=reinterpret_cast<const char *>(name);
 
 	        if (sName=="dstpath") {

@@ -338,7 +338,7 @@ void ImagingToolConfig::ResliceConfig::ParseXML(xmlTextReaderPtr reader)
 }
 
 ImagingToolConfig::FileConversionConfig::FileConversionConfig() :
-    sSourcePath(""),
+    sSourcePath("/"),
     sSourceMask("file_####.fts"),
     nFirstSrc(1),
     nLastSrc(100),

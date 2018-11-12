@@ -111,7 +111,7 @@ void KipToolMainWindow::LoadDefaults()
 
 void KipToolMainWindow::UpdateDialog()
 {
-    m_config.mImageInformation.sSourcePath.clear();
+//    m_config.mImageInformation.sSourcePath.clear();
     ui->edit_datafilemask->setText(QString::fromStdString(m_config.mImageInformation.sSourceFileMask));
 
     ui->edit_destinationpath->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationPath));
@@ -144,7 +144,7 @@ void KipToolMainWindow::UpdateDialog()
 
 void KipToolMainWindow::UpdateConfig()
 {
-    m_config.mImageInformation.sSourcePath.clear();
+//    m_config.mImageInformation.sSourcePath.clear();
     kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
     m_config.mImageInformation.sSourceFileMask = ui->edit_datafilemask->text().toStdString();
 

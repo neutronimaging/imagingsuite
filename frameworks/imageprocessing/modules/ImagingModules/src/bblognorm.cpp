@@ -71,7 +71,7 @@ IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionB
     blackbodysamplename = "./";
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
-    path="./";
+//    path="./";
     flatname="./";
     darkname="./";
     pathBG="./";
@@ -118,7 +118,7 @@ int IMAGINGMODULESSHARED_EXPORT BBLogNorm::Configure(KiplProcessConfig config, s
 //    nDCCount      = config.ProjectionInfo.nDCCount;
 //    nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
 
-    path = GetStringParameter(parameters,"path"); // not sure it is used
+//    path = GetStringParameter(parameters,"path"); // not sure it is used
     flatname = GetStringParameter(parameters, "OB_PATH");
     darkname = GetStringParameter(parameters, "DC_PATH");
     nOBFirstIndex = GetIntParameter(parameters, "OB_first_index");
@@ -291,7 +291,7 @@ int IMAGINGMODULESSHARED_EXPORT BBLogNorm::ConfigureDLG(KiplProcessConfig config
 {
 
     m_Config    = config;
-    path        = config.mImageInformation.sSourcePath;
+//    path        = config.mImageInformation.sSourcePath;
     flatname    = GetStringParameter(parameters, "OB_PATH");
     darkname    = GetStringParameter(parameters, "DC_PATH");
 
@@ -477,7 +477,7 @@ std::map<std::string, std::string> IMAGINGMODULESSHARED_EXPORT   BBLogNorm::GetP
     parameters["DC_first_index"] = kipl::strings::value2string(nDCFirstIndex);
     parameters["dose_roi"] =  kipl::strings::value2string(dose_roi[0])+" "+kipl::strings::value2string(dose_roi[1])+" "+kipl::strings::value2string(dose_roi[2])+" "+kipl::strings::value2string(dose_roi[3]);
     parameters["fScanArc"] =  kipl::strings::value2string(fScanArc[0])+" "+kipl::strings::value2string(fScanArc[1]);
-    parameters["path"]= path;
+//    parameters["path"]= path;
     parameters["SaveBG"] = kipl::strings::bool2string(bSaveBG);
     parameters["path_BG"] = pathBG;
     parameters["flatname_BG"] = flatname_BG;
