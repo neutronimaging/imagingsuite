@@ -26,7 +26,7 @@ ModuleConfigurator::ModuleConfigurator() :
 
 ModuleConfigurator::~ModuleConfigurator()
 {
-
+   // destroy();
 }
 	
 bool ModuleConfigurator::configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters)
@@ -73,6 +73,11 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
          try {
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
+
+            res=m_Dialog->exec(m_Config, parameters, m_Image);
+
+            m_Image.FreeImage();
+        //    destroy();
         }
         catch (ModuleException &e)
         {
@@ -90,10 +95,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
         if (!msg.str().empty())
             throw ModuleException(msg.str(),__FILE__,__LINE__);
 
-        res=m_Dialog->exec(m_Config, parameters, m_Image);
 
-		m_Image.FreeImage();
-        destroy();
 	}
 	else {
 		msg.str("");
@@ -198,5 +200,7 @@ void ModuleConfigurator::destroy()
         dlclose(hinstLib);
 #endif
 	}
+
+    hinstLib=nullptr;
 
 }
