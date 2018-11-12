@@ -13,7 +13,7 @@ class ScaleDataDlg : public ConfiguratorDialogBase
 
 public:
     explicit ScaleDataDlg(QWidget *parent = nullptr);
-    ~ScaleDataDlg();
+    virtual ~ScaleDataDlg();
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 private:
     virtual int exec() { return QDialog::exec(); }

@@ -7,6 +7,7 @@
 #include "ModuleConfigurator.h"
 #include <ModuleException.h>
 #include <QMessageBox>
+#include <QDebug>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -77,7 +78,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
             res=m_Dialog->exec(m_Config, parameters, m_Image);
 
             m_Image.FreeImage();
-        //    destroy();
+            destroy();
         }
         catch (ModuleException &e)
         {
