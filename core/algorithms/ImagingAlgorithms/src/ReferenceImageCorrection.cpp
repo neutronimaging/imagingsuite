@@ -639,8 +639,9 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
               float sum_roi = 0.0f;
 
               // weighted center of mass:
-              for (size_t x=0; x<roi.Size(0); x++) {
-                  for (size_t y=0; y<roi.Size(1); y++) {
+              for (size_t y=0; y<roi.Size(1); y++) {
+                for (size_t x=0; x<roi.Size(0); x++) {
+
                       if(roi(x,y)==0) {
                           x_com += (roi_im(x,y)*float(x));
                           y_com += (roi_im(x,y)*float(y));
@@ -661,8 +662,9 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
                   x_com /=sum_roi;
                   y_com /=sum_roi;
 
-                      for (size_t x=0; x<roi.Size(0); x++) {
-                          for (size_t y=0; y<roi.Size(1); y++) {
+                      for (size_t y=0; y<roi.Size(1); y++) {
+                            for (size_t x=0; x<roi.Size(0); x++) {
+
                               if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
     //                              roi(x,y)=1; // this one actually I don't need
                                   mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
@@ -823,8 +825,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           int size = 0;
 
           // old implementation with geometrical mean:
-          for (size_t x=0; x<roi.Size(0); x++) {
-              for (size_t y=0; y<roi.Size(1); y++) {
+          for (size_t y=0; y<roi.Size(1); y++) {
+            for (size_t x=0; x<roi.Size(0); x++) {
                   if(roi(x,y)==0) {
                       x_com +=x;
                       y_com +=y;
@@ -873,9 +875,9 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
               float mean_value =0.0f;
 
 //              std::cout << floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0] << " " << floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1] << std::endl;
+                  for (size_t y=0; y<roi.Size(1); y++) {
+                        for (size_t x=0; x<roi.Size(0); x++) {
 
-                  for (size_t x=0; x<roi.Size(0); x++) {
-                      for (size_t y=0; y<roi.Size(1); y++) {
 
 
                           if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) { // and also this one is useless
@@ -1140,8 +1142,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                   int size = 0;
 
                   // old implementation with geometrical mean:
-                  for (size_t x=0; x<roi.Size(0); x++) {
-                      for (size_t y=0; y<roi.Size(1); y++) {
+                  for (size_t y=0; y<roi.Size(1); y++) {
+                    for (size_t x=0; x<roi.Size(0); x++) {
                           if(roi(x,y)==0) {
                               x_com +=x;
                               y_com +=y;
@@ -1186,8 +1188,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                       std::vector<float> grayvalues;
                       float mean_value =0.0f;
 
-                          for (size_t x=0; x<roi.Size(0); x++) {
-                              for (size_t y=0; y<roi.Size(1); y++) {
+                         for (size_t y=0; y<roi.Size(1); y++) {
+                              for (size_t x=0; x<roi.Size(0); x++) {
 
                                    if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
             //                              roi(x,y)=1; // this one actually I don't need
@@ -1244,8 +1246,9 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     float mean_value = 0.0f;
     int value_size = 0;
-    for (int x=0; x<mask.Size(0); x++) {
-        for (int y=0; y<mask.Size(1); y++) {
+
+    for (int y=0; y<mask.Size(1); ++y) {
+        for (int x=0; x<mask.Size(0); ++x) {
             if (mask(x,y)==1){
                 std::pair<int, int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images 
@@ -1321,8 +1324,9 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
 
     float mean_value = 0.0f;
-    for (int x=0; x<mask.Size(0); x++) {
-        for (int y=0; y<mask.Size(1); y++) {
+
+    for (int y=0; y<mask.Size(1); y++) {
+        for (int x=0; x<mask.Size(0); x++) {
             if (mask(x,y)==1){
                 std::pair<int,int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images. now it should be in absolute coordinates
