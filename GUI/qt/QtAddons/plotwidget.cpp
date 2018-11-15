@@ -10,13 +10,16 @@ namespace QtAddons {
 PlotWidget::PlotWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PlotWidget),
-    m_nPointsVisible(25)
+    m_nPointsVisible(25),
+    m_tooltip(nullptr)
 {
     ui->setupUi(this);
 
     QChart *chart = new QChart();
     ui->chart->setChart(chart);
     chart->layout()->setContentsMargins(4,4,4,4);
+    ui->chart->chart()->setAcceptHoverEvents(true);
+
 }
 
 PlotWidget::~PlotWidget()
@@ -93,6 +96,8 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
     }
 
     QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
+//    connect(line, &QLineSeries::clicked, this, &PlotWidget::keepCallout);
+    connect(line, &QLineSeries::hovered, this, &PlotWidget::tooltip);
 
     if (line->points().size()<=m_nPointsVisible)
     {
@@ -201,4 +206,25 @@ void PlotWidget::findMinMax()
     }
 }
 
+void PlotWidget::keepCallout()
+{
+    m_callouts.append(m_tooltip);
+    m_tooltip = new Callout(ui->chart->chart());
+}
+
+void PlotWidget::tooltip(QPointF point, bool state)
+{
+    if (m_tooltip == nullptr)
+        m_tooltip = new Callout(ui->chart->chart());
+
+    if (state) {
+        m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
+        m_tooltip->setAnchor(point);
+        m_tooltip->setZValue(11);
+        m_tooltip->updateGeometry();
+        m_tooltip->show();
+    } else {
+        m_tooltip->hide();
+    }
+}
 }
