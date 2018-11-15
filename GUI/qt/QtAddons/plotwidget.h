@@ -7,6 +7,8 @@
 #include <QWidget>
 #include <QLineSeries>
 
+#include "callout.h"
+
 
 
 namespace Ui {
@@ -46,6 +48,9 @@ public:
 
 private:
     void findMinMax();
+    void keepCallout();
+    void tooltip(QPointF point, bool state);
+
     Ui::PlotWidget *ui;
     std::map<int, QtCharts::QAbstractSeries *> seriesmap;
     int m_nPointsVisible;
@@ -53,6 +58,9 @@ private:
     double maxX=-std::numeric_limits<double>::max();
     double minY=std::numeric_limits<double>::max();
     double maxY=-std::numeric_limits<double>::max();
+
+    QList<Callout *> m_callouts;
+    Callout *m_tooltip;
 };
 
 }

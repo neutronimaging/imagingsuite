@@ -15,7 +15,7 @@
 
 class CLASSIFICATIONMODULES_EXPORT DoubleThreshold: public KiplProcessModuleBase {
 public:
-	DoubleThreshold();
+    DoubleThreshold(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~DoubleThreshold();
 
     virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);
@@ -28,6 +28,7 @@ protected:
 	float m_fLowThreshold;
 
     kipl::segmentation::CmpType m_Compare;
+
 };
 
 #endif /* DOUBLETHRESHOLD_H_ */
