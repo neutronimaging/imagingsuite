@@ -18,7 +18,7 @@ enum eProjectionMethod {
 
 class BASEMODULES_EXPORT VolumeProject: public KiplProcessModuleBase {
 public:
-	VolumeProject();
+    VolumeProject(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~VolumeProject();
 	
     virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);

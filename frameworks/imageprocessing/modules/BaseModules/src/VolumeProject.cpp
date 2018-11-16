@@ -14,7 +14,7 @@
 #include <io/io_tiff.h>
 #include <base/KiplException.h>
 
-VolumeProject::VolumeProject() :
+VolumeProject::VolumeProject(kipl::interactors::InteractionBase *interactor) :
 KiplProcessModuleBase("VolumeProject"),
 	m_Plane(kipl::base::ImagePlaneXY),
 	m_sFileName("./projection.tif"),
