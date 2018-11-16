@@ -35,7 +35,8 @@ protected:
 	kipl::base::eImagePlanes m_Plane;
 	std::string m_sFileName;
 	eProjectionMethod m_ProjectionMethod;
-
+private:
+    bool updateStatus(float val, std::string msg);
 };
 
 std::string enum2string(eProjectionMethod method);

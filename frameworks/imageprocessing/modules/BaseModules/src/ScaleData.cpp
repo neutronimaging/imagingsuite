@@ -12,7 +12,7 @@
 #include <math/image_statistics.h>
 
 ScaleData::ScaleData(kipl::interactors::InteractionBase *interactor) :
-KiplProcessModuleBase("ScaleData"),
+KiplProcessModuleBase("ScaleData", false, interactor),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
 	m_bAutoScale(false)
