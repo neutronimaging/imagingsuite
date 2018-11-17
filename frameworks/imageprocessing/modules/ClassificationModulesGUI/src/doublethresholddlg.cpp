@@ -35,6 +35,7 @@ void DoubleThresholdDlg::UpdateDialog()
 {
     ui->doubleSpinBox_lower->setValue(m_fLowThreshold);
     ui->doubleSpinBox_upper->setValue(m_fHighThreshold);
+    ui->comboBox->setCurrentIndex(static_cast<int>(m_compare));
 
 }
 

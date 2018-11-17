@@ -1,9 +1,10 @@
 //<LICENSE>
 
+#include "classificationmodulesgui.h"
+
 #include <string>
 #include <sstream>
-#include "classificationmodulesgui.h"
-//#include "classificationmodulesgui_global.h"
+
 #include "basicthresholddlg.h"
 #include "doublethresholddlg.h"
 #include "removebackgrounddlg.h"
@@ -16,14 +17,12 @@ CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *applicatio
 {
     (void)interactor;
 
-    if (strcmp(application,"kiptool")!=0)
-        return nullptr;
-
     kipl::logging::Logger logger("GetGUIModule");
     std::ostringstream msg;
 
     logger.message("Fetching Classification GUI");
-
+    if (strcmp(application,"kiptool")!=0)
+        return nullptr;
 
     if (name!=nullptr) {
         std::string sName=name;
@@ -41,8 +40,8 @@ CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *applicatio
 //		if (sName=="KernelFuzzyCMeans")
 //			return new KernelFuzzyCMeans;
 
-        if (sName=="RemoveBackground")
-            return new RemoveBackgroundDlg;
+//        if (sName=="RemoveBackground")
+//            return new RemoveBackgroundDlg;
     }
     return nullptr;
 }
