@@ -21,7 +21,7 @@ class DoubleThresholdDlg : public ConfiguratorDialogBase
 
 public:
     explicit DoubleThresholdDlg(QWidget *parent = nullptr);
-    ~DoubleThresholdDlg();
+    virtual ~DoubleThresholdDlg();
 
     virtual int exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img);
 private slots:

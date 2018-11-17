@@ -19,7 +19,7 @@ class BasicThresholdDlg : public ConfiguratorDialogBase
 
 public:
     explicit BasicThresholdDlg(QWidget *parent = nullptr);
-    ~BasicThresholdDlg();
+    virtual ~BasicThresholdDlg();
     virtual int exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> &img);
 private slots:
     void on_doubleSpinBox_threshold_valueChanged(double arg1);

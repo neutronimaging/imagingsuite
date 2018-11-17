@@ -7,7 +7,7 @@
 QT       += core widgets charts concurrent # printsupport
 
 TARGET = KipTool
-VERSION = 2.7.0.pre
+VERSION = 2.7.0
 TEMPLATE = app
 CONFIG += c++11
 

@@ -188,9 +188,14 @@ void ModuleConfigurator::destroy()
 {
 	logger(kipl::logging::Logger::LogMessage,"Destroying");
 
-    if (m_Dialog!=nullptr)
-		m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
+    if (m_Dialog!=nullptr) {
+        int res=m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
 
+        if (res!=0) {
+            logger.error("Something went really wrong");
+            return;
+        }
+    }
     m_Dialog=nullptr;
 
     if (hinstLib!=nullptr)

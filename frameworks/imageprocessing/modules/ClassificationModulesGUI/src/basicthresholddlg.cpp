@@ -45,7 +45,6 @@ void BasicThresholdDlg::ApplyParameters()
     size_t N=pOriginal->Size();
     float th=static_cast<float>(m_fThreshold);
 
-  //  qDebug() << "Apply "<<m_fThreshold;
     for (size_t i=0; i<N; i++) {
         bilevelImg[i]=static_cast<float>(th<pImg[i]);
     }
@@ -76,9 +75,7 @@ int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parame
     ui->doubleSpinBox_threshold->setMinimum(axis[0]);
     ui->doubleSpinBox_threshold->setMaximum(axis[N-1]);
     try {
- //       qDebug() << "Plotting treshold";
         ui->plot_histogram->setCurveData(0,axis,bins,N,"Histogram");
- //       qDebug() <<"Histogram plotted";
     }
     catch (std::bad_alloc & e) {
         QString msg="Failed to allocate series: ";
@@ -89,7 +86,6 @@ int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parame
     UpdateDialog();
 
     on_doubleSpinBox_threshold_valueChanged(m_fThreshold);
-  //  ApplyParameters();
 
     int res=QDialog::exec();
 
@@ -109,7 +105,7 @@ int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parame
 
 void BasicThresholdDlg::on_doubleSpinBox_threshold_valueChanged(double arg1)
 {
- //   qDebug() << "Plotting Threshold";
+
     QtCharts::QLineSeries *series=nullptr;
     try {
         series=new QtCharts::QLineSeries();
@@ -128,5 +124,4 @@ void BasicThresholdDlg::on_doubleSpinBox_threshold_valueChanged(double arg1)
     ui->plot_histogram->setCurveData(1,series);
     m_fThreshold=arg1;
     ApplyParameters();
-  //  qDebug() << "Threshold plotted";
 }

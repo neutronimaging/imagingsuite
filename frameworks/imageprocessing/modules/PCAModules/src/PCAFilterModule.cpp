@@ -1,15 +1,4 @@
-//
-// This file is part of the kiptool library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2011-08-17 16:22:51 +0200 (Mi, 17 Aug 2011) $
-// $Rev: 1020 $
-// $Id: KiplProcessModuleBase.cpp 1020 2011-08-17 14:22:51Z kaestner $
-//
+//<LICENSE>
 #include "stdafx.h"
 #include "PCAFilterModule.h"
 
