@@ -21,10 +21,14 @@ public:
     kiplMorphologyTest();
 
 private Q_SLOTS:
-    void testPixelIteratorSetup();
-    void testPixelIteratorMoving();
-    void testPixelIteratorNeighborhood();
-    void testPixelIteratorHalfNeighborhood();
+    void testPixelIteratorSetup2D();
+    void testPixelIteratorMoving2D();
+    void testPixelIteratorNeighborhood2D();
+    void testPixelIteratorHalfNeighborhood2D();
+    void testPixelIteratorSetup3D();
+    void testPixelIteratorMoving3D();
+    void testPixelIteratorNeighborhood3D();
+    void testPixelIteratorHalfNeighborhood3D();
     void testErosion2D();
     void testDilation2D();
     void testErosion3D();
@@ -37,7 +41,7 @@ kiplMorphologyTest::kiplMorphologyTest()
 
 }
 
-void kiplMorphologyTest::testPixelIteratorSetup()
+void kiplMorphologyTest::testPixelIteratorSetup2D()
 {
     // Tests with 4-connectivity
     size_t dims4[2]={11,5};
@@ -87,7 +91,7 @@ void kiplMorphologyTest::testPixelIteratorSetup()
 
 }
 
-void kiplMorphologyTest::testPixelIteratorMoving()
+void kiplMorphologyTest::testPixelIteratorMoving2D()
 {
     size_t dims4u[2]={11,5};
     ptrdiff_t dims4[2];
@@ -167,7 +171,70 @@ void kiplMorphologyTest::testPixelIteratorMoving()
 
 }
 
-void kiplMorphologyTest::testPixelIteratorNeighborhood()
+void kiplMorphologyTest::testPixelIteratorSetup3D()
+{
+    // Tests with 6-connectivity
+    size_t dims6[3]={11,5,7};
+
+    kipl::base::PixelIterator it6(dims6,kipl::base::conn6);
+
+    QVERIFY2(it6.getCurrentPosition() == 0,"Initialize to wrong start position");
+    QVERIFY2(it6.getEdgeStatus()      == kipl::base::cornerX0Y0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize()   == 2, "Wrong neighborhood size for corner x0y0 (conn4)");
+
+    QVERIFY2(it6.forwardSize()        == 2, "Wrong sub neighborhood size (conn4)");
+    QVERIFY2(it6.getConnectivity()    == kipl::base::conn4, "Wrong connectivity (conn4)");
+    QVERIFY2(it6.end()==static_cast<ptrdiff_t>(dims6[0]*dims6[1]*dims6[2]), "Wrong end position");
+    QVERIFY2(it6.begin()              == 0UL,"Wrong start position");
+
+    kipl::base::PixelIterator itcpctor(it6);
+    QVERIFY2(itcpctor.neighborhoodSize()    == it6.neighborhoodSize(), "Neighborhood size miss match");
+    QVERIFY2(itcpctor.forwardSize()         == it6.forwardSize()     , "Neighborhood size miss match");
+    QVERIFY2(itcpctor.getConnectivity()     == it6.getConnectivity() , "Copy connectivity failed");
+    QVERIFY2(itcpctor.getCurrentPosition()  == it6.getCurrentPosition(), "Copy position failed");
+
+    kipl::base::PixelIterator iteq(it6);
+    ++it6;
+    iteq=it6;
+
+    QVERIFY2(iteq.neighborhoodSize()    == it6.neighborhoodSize(),"Neighborhood size miss match");
+    QVERIFY2(iteq.forwardSize()         == it6.forwardSize(),"Neighborhood size miss match");
+    QVERIFY2(iteq.getConnectivity()     == it6.getConnectivity(),"Copy connectivity failed");
+    QVERIFY2(iteq.getCurrentPosition()  == it6.getCurrentPosition(),"Copy position failed");
+
+
+    QVERIFY_EXCEPTION_THROWN(it6.setPosition(-1,0),kipl::base::KiplException);
+    // Tests with 8-connectivity
+    size_t dims18[3]={9,7,5};
+
+    kipl::base::PixelIterator it18(dims18,kipl::base::conn18);
+
+    QVERIFY2(it18.neighborhoodSize()   == 3, "Wrong neighborhood size (conn8)");
+    QVERIFY2(it18.forwardSize()        == 3, "Wrong sub neighborhood size (conn8)");
+    QVERIFY2(it18.getConnectivity()    == kipl::base::conn18, "Wrong connectivity (conn8)");
+    QVERIFY2(it18.end() == static_cast<ptrdiff_t>(dims18[0]*dims18[1]*dims18[2]), "Wrong end position");
+    QVERIFY2(it18.begin()              == 0UL,"Wrong start position");
+    QVERIFY2(it18.getCurrentPosition() == 0,"Initialize to wrong start position");
+
+    // Test assign
+}
+
+void kiplMorphologyTest::testPixelIteratorMoving3D()
+{
+
+}
+
+void kiplMorphologyTest::testPixelIteratorNeighborhood3D()
+{
+
+}
+
+void kiplMorphologyTest::testPixelIteratorHalfNeighborhood3D()
+{
+
+}
+
+void kiplMorphologyTest::testPixelIteratorNeighborhood2D()
 {
     size_t dims4[2]={11,5};
     kipl::base::PixelIterator it4(dims4,kipl::base::conn4);
@@ -273,7 +340,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood()
     QVERIFY2(it8.neighborhood(7) == 39,"NoEdge");
 }
 
-void kiplMorphologyTest::testPixelIteratorHalfNeighborhood()
+void kiplMorphologyTest::testPixelIteratorHalfNeighborhood2D()
 {
     size_t dims4[2]={11,5};
 
