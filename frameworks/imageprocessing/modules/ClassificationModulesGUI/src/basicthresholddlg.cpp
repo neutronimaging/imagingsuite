@@ -54,15 +54,13 @@ void BasicThresholdDlg::ApplyParameters()
 
 void BasicThresholdDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {
-//    parameters.clear();
-//    UpdateParameters();
+    parameters.clear();
+
     parameters["threshold"]=kipl::strings::value2string(m_fThreshold);
 }
 
 int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
 {
-//    m_fThreshold = GetFloatParameter(parameters,"threshold");
-
     pOriginal = &img;
     bilevelImg.Resize(img.Dims());
 
@@ -72,11 +70,10 @@ int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parame
 
     kipl::base::Histogram(img.GetDataPtr(),img.Size(),bins,N,0.0f,0.0f,axis);
     m_nHistMax = *std::max_element(bins,bins+N);
-    ui->doubleSpinBox_threshold->setMinimum(axis[0]);
-    ui->doubleSpinBox_threshold->setMaximum(axis[N-1]);
+    ui->doubleSpinBox_threshold->setMinimum(static_cast<double>(axis[0]));
+    ui->doubleSpinBox_threshold->setMaximum(static_cast<double>(axis[N-1]));
     try {
- //       qDebug() << "Plotting treshold";
-        m_fThreshold = GetFloatParameter(parameters,"threshold");
+        m_fThreshold = static_cast<double>(GetFloatParameter(parameters,"threshold"));
 
         ui->plot_histogram->setCurveData(0,axis,bins,N,"Histogram");
     }
@@ -120,8 +117,8 @@ void BasicThresholdDlg::on_doubleSpinBox_threshold_valueChanged(double arg1)
         return;
     }
 
-    series->append((qreal)arg1,(qreal)0);
-    series->append((qreal)arg1,(qreal)m_nHistMax);
+    series->append(static_cast<qreal>(arg1),static_cast<qreal>(0));
+    series->append(static_cast<qreal>(arg1),static_cast<qreal>(m_nHistMax));
     series->setName("Threshold");
 
     ui->plot_histogram->setCurveData(1,series);

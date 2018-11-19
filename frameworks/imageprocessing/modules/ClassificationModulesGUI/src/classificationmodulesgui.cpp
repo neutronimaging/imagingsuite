@@ -1,6 +1,8 @@
 //<LICENSE>
+#include "classificationmodulesgui.h"
 
 #include <QDebug>
+#include <QThread>
 #include <string>
 #include <sstream>
 
@@ -12,7 +14,7 @@
 
 class ConfiguratorDialogBase;
 
-CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *application, const char *name, void *interactor)
+CLASSIFICATIONMODULESGUISHARED_EXPORT void  * GetGUIModule(const char *application, const char *name, void *interactor)
 {
     (void)interactor;
 
@@ -25,7 +27,9 @@ CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *applicatio
 
     if (name!=nullptr) {
         std::string sName=name;
-        logger.message(sName);
+        msg.str();
+        msg<<"Looking for "<<sName;
+        logger.message(msg.str());
 
         if (sName=="BasicThreshold")
             return new BasicThresholdDlg;
@@ -47,16 +51,17 @@ CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *applicatio
 
 CLASSIFICATIONMODULESGUISHARED_EXPORT int DestroyGUIModule(const char *application, void *obj)
 {
-    qDebug()<<"destroy module 1 "<<application;
+//    kipl::logging::Logger logger("DestroyGUIModule");
+
+//    logger.message(application);
     if (strcmp(application,"kiptool")!=0)
         return -1;
 
-     qDebug()<<"destroy module 2";
     if (obj!=nullptr) {
         ConfiguratorDialogBase *dlg=reinterpret_cast<ConfiguratorDialogBase *>(obj);
         delete dlg;
     }
 
-     qDebug()<<"destroy module 3";
+
     return 0;
 }
