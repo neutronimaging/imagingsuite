@@ -816,24 +816,24 @@ int ReconEngine::Run3DFull()
 
     size_t totalSlices=0;
 
-        if (m_Config.MatrixInfo.bUseROI) {
-            m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
-            m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
-        }
-        else {
-            m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
-            m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
-        }
+    if (m_Config.MatrixInfo.bUseROI) {
+        m_Config.MatrixInfo.nDims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
+        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
+    }
+    else {
+        m_Config.MatrixInfo.nDims[0] = roi[2]-roi[0];
+        m_Config.MatrixInfo.nDims[1] = m_Config.MatrixInfo.nDims[0];
+    }
 
-        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-            m_Config.MatrixInfo.nDims[2] = roi[3];
-            totalSlices=roi[3];
-        }
-        else {
-            m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1];
-        }
+    if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+        m_Config.MatrixInfo.nDims[2] = roi[3];
+        totalSlices=roi[3];
+    }
+    else {
+        m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1];
+    }
 
-        totalSlices=m_Config.MatrixInfo.nDims[2];
+    totalSlices=m_Config.MatrixInfo.nDims[2];
 
 
 	msg.str("");
@@ -1005,7 +1005,7 @@ int ReconEngine::Run3DFull()
                      if (value2>=m_Config.ProjectionInfo.projection_roi[3])
                          CBCT_roi[3] = m_Config.ProjectionInfo.projection_roi[3];
                      else
-                         CBCT_roi[3] = static_cast<float>(value2);
+                         CBCT_roi[3] = static_cast<size_t>(value2);
                 }
 
                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1]) && m_Config.ProjectionInfo.fpPoint[1]<static_cast<float>(m_Config.ProjectionInfo.roi[3]))
@@ -1020,7 +1020,7 @@ int ReconEngine::Run3DFull()
                    if (value2>=m_Config.ProjectionInfo.projection_roi[3])
                        CBCT_roi[3] = m_Config.ProjectionInfo.projection_roi[3];
                    else
-                       CBCT_roi[3] = static_cast<float>(value2);
+                       CBCT_roi[3] = static_cast<size_t>(value2);
                }
 
                if (CBCT_roi[1]-8>=0 && CBCT_roi[1]!=0)
