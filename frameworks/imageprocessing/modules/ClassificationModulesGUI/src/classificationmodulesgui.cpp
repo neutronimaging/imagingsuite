@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <string>
 #include <sstream>
-#include "classificationmodulesgui.h"
+
 #include "basicthresholddlg.h"
 #include "doublethresholddlg.h"
 #include "removebackgrounddlg.h"
@@ -16,14 +16,12 @@ CLASSIFICATIONMODULESGUISHARED_EXPORT void * GetGUIModule(const char *applicatio
 {
     (void)interactor;
 
-    if (strcmp(application,"kiptool")!=0)
-        return nullptr;
-
     kipl::logging::Logger logger("GetGUIModule");
     std::ostringstream msg;
 
     logger.message("Fetching Classification GUI");
-
+    if (strcmp(application,"kiptool")!=0)
+        return nullptr;
 
     if (name!=nullptr) {
         std::string sName=name;

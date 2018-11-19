@@ -54,14 +54,14 @@ void BasicThresholdDlg::ApplyParameters()
 
 void BasicThresholdDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {
-    parameters.clear();
-    UpdateParameters();
+//    parameters.clear();
+//    UpdateParameters();
     parameters["threshold"]=kipl::strings::value2string(m_fThreshold);
 }
 
 int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
 {
-    m_fThreshold = GetFloatParameter(parameters,"threshold");
+//    m_fThreshold = GetFloatParameter(parameters,"threshold");
 
     pOriginal = &img;
     bilevelImg.Resize(img.Dims());
@@ -75,6 +75,9 @@ int BasicThresholdDlg::exec(ConfigBase *config, std::map<string, string> &parame
     ui->doubleSpinBox_threshold->setMinimum(axis[0]);
     ui->doubleSpinBox_threshold->setMaximum(axis[N-1]);
     try {
+ //       qDebug() << "Plotting treshold";
+        m_fThreshold = GetFloatParameter(parameters,"threshold");
+
         ui->plot_histogram->setCurveData(0,axis,bins,N,"Histogram");
     }
     catch (std::bad_alloc & e) {

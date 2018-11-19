@@ -4,6 +4,7 @@
 
 #include <string>
 #include <map>
+
 #include <QDialog>
 
 #include <ConfiguratorDialogBase.h>

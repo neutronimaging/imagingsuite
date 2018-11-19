@@ -52,7 +52,8 @@ SOURCES += plotter.cpp \
     loggingdialog.cpp \
     comparevolumeviewer.cpp \
     plotwidget.cpp \
-    setgraylevelsdlg.cpp
+    setgraylevelsdlg.cpp \
+    callout.cpp
 
 
 
@@ -72,7 +73,8 @@ HEADERS += QtAddons_global.h \
     loggingdialog.h \
     comparevolumeviewer.h \
     plotwidget.h \
-    setgraylevelsdlg.h
+    setgraylevelsdlg.h \
+    callout.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
