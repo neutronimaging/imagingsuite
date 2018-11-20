@@ -67,13 +67,25 @@ void ReconEngine::SetConfig(ReconConfig &config)
     std::ostringstream msg;
     config.SanityCheck();
 
+
+
 	m_Config=config;
+
+
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
     std::string fname,ext;
 
+    msg.str(""); msg<<"set config.roi=["<<m_Config.ProjectionInfo.roi[0]<<","
+                <<m_Config.ProjectionInfo.roi[1]<<","
+                <<m_Config.ProjectionInfo.roi[2]<<","
+                <<m_Config.ProjectionInfo.roi[3]<<"]";
+    logger.message(msg.str());
+
     kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
-    msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
+
+    msg.str(""); msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
     logger(logger.LogMessage,msg.str());
+
     try {
         m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning,m_Config.ProjectionInfo.nDims);
     }
@@ -93,7 +105,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
     // check if I am writing to disk:
     if (m_Config.MatrixInfo.bAutomaticSerialize==true) {
 
-        float res;
+        float res=0.0f;
         if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
         {
             res = m_Config.ProjectionInfo.fResolution[0];
@@ -122,39 +134,44 @@ void ReconEngine::SetConfig(ReconConfig &config)
             }
             dims[2] =  (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1]); // it is not necessarelly the entire dataset
 
-                kipl::base::TImage<float, 3> img;
+            kipl::base::TImage<float, 3> img;
 
 
-                std::stringstream str;
-                str.str("");
-                str<<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
+            std::stringstream str;
+            str.str("");
+            str<<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
 
-                try{
+            try
+            {
 
-                    kipl::io::PrepareNeXusFileFloat(str.str().c_str(), dims, res, img);
+                kipl::io::PrepareNeXusFileFloat(str.str().c_str(), dims, res, img);
 
-                   }
-                catch (ReconException &e) {
-                    logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
-                    throw ReconException(e.what());
-                }
-                catch (kipl::base::KiplException &e) {
-                    logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
-                    throw kipl::base::KiplException(e.what());
-                }
-                catch (exception &e) {
-                    logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
-                    throw std::runtime_error(e.what());
-                }
+            }
+            catch (ReconException &e)
+            {
+                logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
+                throw ReconException(e.what());
+            }
+            catch (kipl::base::KiplException &e)
+            {
+                logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
+                throw kipl::base::KiplException(e.what());
+            }
+            catch (exception &e)
+            {
+                logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
+                throw std::runtime_error(e.what());
+            }
          }
 
         if (m_Config.MatrixInfo.FileType==kipl::io::NeXus16bits)
-            {
+        {
 
             // todo here: add the MatrixRoi option
             size_t dims[3];
 
-            if (m_Config.MatrixInfo.bUseROI){
+            if (m_Config.MatrixInfo.bUseROI)
+            {
                 dims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
                 dims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
             }
@@ -163,33 +180,37 @@ void ReconEngine::SetConfig(ReconConfig &config)
                 dims[0] = (m_Config.ProjectionInfo.projection_roi[2]-m_Config.ProjectionInfo.projection_roi[0]);
                 dims[1] = dims[0];
             }
+
             dims[2] =  (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1]); // it is not necessarelly the entire dataset
 
+            kipl::base::TImage<float, 3> img;
 
-                kipl::base::TImage<float, 3> img;
 
+            std::stringstream str;
+            str.str("");
+            str<<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
 
-                std::stringstream str;
-                str.str("");
-                str<<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
+            try
+            {
 
-                try{
+                kipl::io::PrepareNeXusFile16bit(str.str().c_str(), dims, res, img);
 
-                    kipl::io::PrepareNeXusFile16bit(str.str().c_str(), dims, res, img);
-
-                   }
-                catch (ReconException &e) {
-                    logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
-                    throw ReconException(e.what());
-                }
-                catch (kipl::base::KiplException &e) {
-                    logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
-                    throw kipl::base::KiplException(e.what());
-                }
-                catch (exception &e) {
-                    logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
-                    throw std::runtime_error(e.what());
-                }
+            }
+            catch (ReconException &e)
+            {
+                logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
+                throw ReconException(e.what());
+            }
+            catch (kipl::base::KiplException &e)
+            {
+                logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
+                throw kipl::base::KiplException(e.what());
+            }
+            catch (exception &e)
+            {
+                logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
+                throw std::runtime_error(e.what());
+            }
          }
 
     }
@@ -197,7 +218,8 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
 size_t ReconEngine::AddPreProcModule(ModuleItem *module)
 {
-    if (module!=nullptr) {
+    if (module!=nullptr)
+    {
 		if (module->Valid())
 			m_PreprocList.push_back(module);
 	}
@@ -212,7 +234,8 @@ void ReconEngine::SetBackProjector(BackProjItem *module)
     if (m_BackProjector!=nullptr)
         delete m_BackProjector;
 
-    if (module!=nullptr) {
+    if (module!=nullptr)
+    {
 		if (module->Valid())
 			m_BackProjector=module;
 	}
@@ -303,8 +326,10 @@ int ReconEngine::Run()
                 m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
                 msg.str("");
-                msg<<"Processing block "<<nProcessedBlocks<<" ["
+                msg<<__FUNCTION__<<" Fk "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[0]<<", "
                     <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[2]<<", "
                     <<m_Config.ProjectionInfo.roi[3]<<"]";
                 logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -318,8 +343,10 @@ int ReconEngine::Run()
                 nProcessedProjections=0;
                 m_Config.ProjectionInfo.roi[3]=roi[3];
                 msg.str("");
-                msg<<"Processing block "<<nProcessedBlocks<<" ["
+                msg<<__FUNCTION__<<" Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[0]<<", "
                     <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[2]<<", "
                     <<m_Config.ProjectionInfo.roi[3]<<"]";
                 logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -333,7 +360,7 @@ int ReconEngine::Run()
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 	catch (ModuleException &e) {
-			msg.str("");
+            msg.str("");
 			msg<<"The reconstruction failed with "<<e.what();
 			throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
@@ -634,14 +661,14 @@ bool ReconEngine::Serialize(size_t *dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,NULL);
+                        0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,nullptr);
                 }
                 else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
                 {
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices, CBroi[1], m_Config.MatrixInfo.FileType,plane,NULL);
+                        0,nSlices, CBroi[1], m_Config.MatrixInfo.FileType,plane,nullptr);
                 }
             }
         }
@@ -715,7 +742,7 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	}
     else */
 
-    float res;
+    float res=0.0f;
     if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
     {
         res = m_Config.ProjectionInfo.fResolution[0];
@@ -757,6 +784,8 @@ int ReconEngine::Run3D(bool bRerunBackproj)
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
     logger(kipl::logging::Logger::LogMessage,msg.str());
     try {
+        msg.str(""); msg<<"run3d "<<m_Config.ProjectionInfo.beamgeometry;
+        logger.message(msg.str());
         if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
             res=Run3DBackProjOnly();
         else
@@ -880,12 +909,22 @@ int ReconEngine::Run3DFull()
 	int result=0;
     float radius = static_cast<float>(m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])*m_Config.MatrixInfo.fVoxelSize[0]/2;
 
+    msg.str("");
 
+    msg<<"Run3DFull beam geometry: "<<m_Config.ProjectionInfo.beamgeometry;
+    logger.message(msg.str());
     try {
         for (nProcessedBlocks=0;
              (nProcessedBlocks<nTotalBlocks) && (!UpdateProgress(static_cast<float>(nProcessedBlocks)/nTotalBlocks, "Blocks"));
              ++nProcessedBlocks)
         {
+            msg.str("");
+            msg<<__FUNCTION__<<"Run3DFull Processing block "<<nProcessedBlocks<<" ["
+                <<m_Config.ProjectionInfo.roi[0]<<", "
+                <<m_Config.ProjectionInfo.roi[1]<<", "
+                <<m_Config.ProjectionInfo.roi[2]<<", "
+                <<m_Config.ProjectionInfo.roi[3]<<"]";
+            logger.message(msg.str());
             if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
                 if (m_Interactor!=nullptr)
                     m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
@@ -898,7 +937,9 @@ int ReconEngine::Run3DFull()
                 m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
 
-                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1]) && m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[3])) {
+                if (m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[1])
+                        && m_Config.ProjectionInfo.fpPoint[1]>=static_cast<float>(m_Config.ProjectionInfo.roi[3]))
+                {
                     CBCT_roi[3] = static_cast<size_t>(m_Config.ProjectionInfo.fpPoint[1]-((m_Config.ProjectionInfo.fpPoint[1]-static_cast<float>(m_Config.ProjectionInfo.roi[3]))*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD+radius))/m_Config.ProjectionInfo.fResolution[0]);
                     float value = m_Config.ProjectionInfo.fpPoint[1]-((m_Config.ProjectionInfo.fpPoint[1]-static_cast<float>(m_Config.ProjectionInfo.roi[1]))*m_Config.MatrixInfo.fVoxelSize[0]*m_Config.ProjectionInfo.fSDD/(m_Config.ProjectionInfo.fSOD-radius))/m_Config.ProjectionInfo.fResolution[0];
                     if(value<=0)
@@ -942,8 +983,10 @@ int ReconEngine::Run3DFull()
 //                std::cout << CBCT_roi[1] << " " << CBCT_roi[3] << std::endl;
 
                 msg.str("");
-                msg<<": Processing block "<<nProcessedBlocks<<" ["
+                msg<<__FUNCTION__<<" CBCT Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[0]<<", "
                     <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[2]<<", "
                     <<m_Config.ProjectionInfo.roi[3]<<"]";
                 logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -962,16 +1005,22 @@ int ReconEngine::Run3DFull()
                     m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
                     msg.str("");
-                    msg<<": Processing block "<<nProcessedBlocks<<" ["
+                    msg<<__FUNCTION__<<" Processing block "<<nProcessedBlocks<<" ["
+                        <<m_Config.ProjectionInfo.roi[0]<<", "
                         <<m_Config.ProjectionInfo.roi[1]<<", "
+                        <<m_Config.ProjectionInfo.roi[2]<<", "
                         <<m_Config.ProjectionInfo.roi[3]<<"]";
-                    logger(kipl::logging::Logger::LogMessage,msg.str());
+
+                    logger.message(msg.str());
+
 
                     result=Process3D(m_Config.ProjectionInfo.roi);
                     m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
             }
 		}
 
+        msg.str(""); msg<<"pre call proc3d "<<m_Config.ProjectionInfo.beamgeometry;
+        logger.message(msg.str());
         if ((totalSlices!=nSliceBlock*nTotalBlocks) && !UpdateProgress(1.0f, "Last block"))
         {
             if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
@@ -1042,9 +1091,12 @@ int ReconEngine::Run3DFull()
                 nProcessedProjections=0;
                 m_Config.ProjectionInfo.roi[3]=roi[3];
                 msg.str("");
-                msg<<": Processing block "<<nProcessedBlocks<<" ["
+                msg<<__FUNCTION__<<" Processing block "<<nProcessedBlocks<<" ["
+                    <<m_Config.ProjectionInfo.roi[0]<<", "
                     <<m_Config.ProjectionInfo.roi[1]<<", "
+                    <<m_Config.ProjectionInfo.roi[2]<<", "
                     <<m_Config.ProjectionInfo.roi[3]<<"]";
+
                 logger(kipl::logging::Logger::LogMessage,msg.str());
 
                 result=Process3D(m_Config.ProjectionInfo.roi);
