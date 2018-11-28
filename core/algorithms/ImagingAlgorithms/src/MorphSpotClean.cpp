@@ -15,8 +15,8 @@ MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_eConnectivity(kipl::morphology::conn8),
-    m_eMorphDetect(MorphDetectHoles),
     m_eMorphClean(MorphCleanReplace),
+    m_eMorphDetect(MorphDetectHoles),
     m_nEdgeSmoothLength(5),
     m_nPadMargin(1),
     m_nMaxArea(100),
@@ -407,7 +407,7 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
             removelist.push_back(it->second);
     }
     msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
-    logger(kipl::logging::Logger::LogVerbose,msg.str());
+    logger.message(msg.str());
 
     RemoveConnectedRegion(lbl, removelist, m_eConnectivity);
 

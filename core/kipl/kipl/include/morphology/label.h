@@ -119,9 +119,8 @@ namespace kipl {namespace morphology {
 		deque<long> remove_queue;
 		
         copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
-	//	ImgType val;
+
 		deque<long>::iterator it;
-	//	const long inqueue=-1;
 		
 		for (it=remove_queue.begin(); it!=remove_queue.end(); it++) {
 			pTmp[*it]=replaceval; 
