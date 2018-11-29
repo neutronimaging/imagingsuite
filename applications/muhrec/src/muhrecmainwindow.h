@@ -196,6 +196,8 @@ private slots:
 
     void on_actionShow_repository_triggered();
 
+    void on_actionSettings_triggered();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

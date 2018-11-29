@@ -69,7 +69,8 @@ SOURCES += main.cpp\
     preferencesdialog.cpp \
     dialogtoobig.cpp \
     piercingpointdialog.cpp \
-    referencefiledlg.cpp
+    referencefiledlg.cpp \
+    globalsettingsdialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
@@ -82,7 +83,8 @@ HEADERS  += muhrecmainwindow.h \
     preferencesdialog.h \
     dialogtoobig.h \
     piercingpointdialog.h \
-    referencefiledlg.h
+    referencefiledlg.h \
+    globalsettingsdialog.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
@@ -92,7 +94,8 @@ FORMS    += muhrecmainwindow.ui \
     preferencesdialog.ui \
     dialogtoobig.ui \
     piercingpointdialog.ui \
-    referencefiledlg.ui
+    referencefiledlg.ui \
+    globalsettingsdialog.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms

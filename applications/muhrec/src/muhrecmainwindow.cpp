@@ -43,6 +43,7 @@
 #include "dialogtoobig.h"
 #include "piercingpointdialog.h"
 #include "referencefiledlg.h"
+#include "globalsettingsdialog.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -2523,3 +2524,16 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
 }
 
 
+
+void MuhRecMainWindow::on_actionSettings_triggered()
+{
+    GlobalSettingsDialog dlg;
+
+    dlg.setConfig(m_Config);
+    int res=dlg.exec();
+
+    if (res == QDialog::Accepted)
+    {
+        dlg.updateConfig(m_Config);
+    }
+}
