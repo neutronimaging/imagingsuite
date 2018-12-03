@@ -18,7 +18,6 @@ public:
     std::map<float,float> getProfile(kipl::base::TImage<float,2> &img, size_t *roi=nullptr);
 
 private:
-    void makeRawProfiles(kipl::base::TImage<float,2> &img);
     kipl::base::TImage<float,2> diffEdge(kipl::base::TImage<float,2> &img);
     void computeEdgeEquation(kipl::base::TImage<float,2> &img);
 

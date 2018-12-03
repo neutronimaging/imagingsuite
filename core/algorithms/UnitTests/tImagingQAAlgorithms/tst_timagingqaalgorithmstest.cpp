@@ -164,7 +164,7 @@ void TImagingQAAlgorithmsTest::testResEstAlg()
 void TImagingQAAlgorithmsTest::testProfileExtractor()
 {
 
-    kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,2.0f);
+    kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,1.5f);
 
     kipl::io::WriteTIFF32(img,"slantededge.tif");
 
@@ -172,7 +172,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
     auto profile=p.getProfile(img);
 
-    kipl::io::serializeContainer(profile.begin(),profile.end(),"profile.txt");
+  //  kipl::io::serializeContainer(profile.begin(),profile.end(),"profile.txt");
 
 }
 
