@@ -37,7 +37,7 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
 
 kipl::base::TImage<float, 2> ProfileExtractor::diffEdge(kipl::base::TImage<float, 2> &img)
 {
-
+    return img;
 }
 
 float ProfileExtractor::distanceToLine(int x, int y)
