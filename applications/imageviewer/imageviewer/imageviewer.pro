@@ -25,13 +25,13 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-   #     QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
- #       QMAKE_INFO_PLIST = Info.plist
-  #      ICON = muhrec3.icns
+        INCLUDEPATH += $$PWD/../../../external/mac/include
+        DEPENDPATH += $$PWD/../../../external/mac/include
+        LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
