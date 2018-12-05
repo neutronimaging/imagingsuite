@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = imageviewer
+TARGET = ImageViewer
 TEMPLATE = app
 
 CONFIG += c++11
@@ -54,6 +54,9 @@ win32 {
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
+
+ICON = viewer_icon.icns
+RC_ICONS = viewer_icon.ico
 
 SOURCES += main.cpp\
         viewermainwindow.cpp \
