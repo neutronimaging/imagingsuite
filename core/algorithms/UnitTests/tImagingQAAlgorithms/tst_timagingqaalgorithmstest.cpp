@@ -172,7 +172,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
     auto profile=p.getProfile(img);
 
-    kipl::io::serializeContainer(profile.begin(),profile.end(),"profile.txt");
+  //  kipl::io::serializeContainer(profile.begin(),profile.end(),"profile.txt");
 
 }
 

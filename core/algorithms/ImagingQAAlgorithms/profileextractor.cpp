@@ -62,7 +62,7 @@ kipl::base::TImage<float, 2> ProfileExtractor::diffEdge(kipl::base::TImage<float
     kipl::base::TImage<float,2> dimg(img.Dims());
     for (size_t i=0; i<img.Size(); ++i)
     {
-        dimg[i]=
+        dimg[i]=sqrt(dximg[i]*dximg[i]+dyimg[i]*dyimg[i]);
     }
 }
 
