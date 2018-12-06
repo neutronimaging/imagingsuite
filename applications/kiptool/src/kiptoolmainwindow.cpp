@@ -57,6 +57,8 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
 
     ui->plotter_hprofile->hideLegend();
     ui->plotter_vprofile->hideLegend();
+
+    ui->roi_image->setCheckable(true);
 }
 
 KipToolMainWindow::~KipToolMainWindow()
@@ -121,8 +123,8 @@ void KipToolMainWindow::UpdateDialog()
     ui->spin_idxlast->setValue(static_cast<int>(m_config.mImageInformation.nLastFileIndex));
     ui->spin_idxstep->setValue(static_cast<int>(m_config.mImageInformation.nStepFileIndex));
 
-    ui->check_crop->setChecked(m_config.mImageInformation.bUseROI);
-    on_check_crop_stateChanged(ui->check_crop->checkState());
+    ui->roi_image->setChecked(m_config.mImageInformation.bUseROI);
+    //on_check_crop_stateChanged(ui->check_crop->checkState());
     ui->roi_image->setROI(m_config.mImageInformation.nROI);
     int idx=0;
     switch (m_config.mOutImageInformation.eResultImageType) {
@@ -156,7 +158,7 @@ void KipToolMainWindow::UpdateConfig()
     m_config.mImageInformation.nLastFileIndex  = static_cast<size_t>(ui->spin_idxlast->value());
     m_config.mImageInformation.nStepFileIndex  = static_cast<size_t>(ui->spin_idxstep->value());
 
-    m_config.mImageInformation.bUseROI = ui->check_crop->checkState();
+    m_config.mImageInformation.bUseROI = ui->roi_image->isChecked();
     ui->roi_image->getROI(m_config.mImageInformation.nROI);
 
     m_config.modules = ui->widget_moduleconfigurator->GetModules();
@@ -328,15 +330,6 @@ void KipToolMainWindow::on_button_browsedestination_clicked()
 
     if (!projdir.isEmpty())
         ui->edit_destinationpath->setText(projdir);
-}
-
-void KipToolMainWindow::on_check_crop_stateChanged(int arg1)
-{
-    logger(kipl::logging::Logger::LogMessage,"crop state changed");
-    if (arg1==0)
-        ui->roi_image->hide();
-    else
-        ui->roi_image->show();
 }
 
 void KipToolMainWindow::on_button_savedata_clicked()
