@@ -7,7 +7,7 @@
 ./build_frameworks_tomography.sh
 ./build_frameworks_imageprocessing.sh
 
-./build_applications_NIQA.sh
+../../ImagingQuality/build/build_applications_NIQA.sh
 ./build_applications_imageviewer.sh
 ./build_applications_kipltool.sh
 ./build_applications_muhrec.sh

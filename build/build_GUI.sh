@@ -26,6 +26,14 @@ make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
 
+mkdir -p $DEST/build-QtImaging
+cd $DEST/build-QtImaging
+
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/GUI/qt/QtImaging/QtImaging.pro
+
+make -f Makefile clean
+make -f Makefile mocables all
+make -f Makefile
 
 if [ -e "$REPOSPATH/GUI/qt/UnitTests" ]
 then

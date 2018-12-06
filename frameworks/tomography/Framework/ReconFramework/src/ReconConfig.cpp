@@ -656,8 +656,8 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 {
 	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
 	fResolution[0]=a.fResolution[0]; fResolution[1]=a.fResolution[1];
-	roi[0]=a.roi[0]; roi[2]=a.roi[2];
-	roi[1]=a.roi[1]; roi[3]=a.roi[3];
+    std::copy_n(a.roi,4,roi);
+
 	fScanArc[0]=a.fScanArc[0]; fScanArc[1]=a.fScanArc[1];
 
     fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
@@ -701,14 +701,15 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nOBCount	    = a.nOBCount;
 	sDCFileMask     = a.sDCFileMask;
 	nDCFirstIndex   = a.nDCFirstIndex;
-	nDCCount    = a.nDCCount;
+    nDCCount        = a.nDCCount;
 
 	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
 	fResolution[0]  = a.fResolution[0];
 	fResolution[1]  = a.fResolution[1];
-	roi[0]=a.roi[0]; roi[2]=a.roi[2];
-	roi[1]=a.roi[1]; roi[3]=a.roi[3];
-	fScanArc[0]     = a.fScanArc[0];
+
+    std::copy_n(a.roi,4,roi);
+
+    fScanArc[0]     = a.fScanArc[0];
 	fScanArc[1]     = a.fScanArc[1];
 
     fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
