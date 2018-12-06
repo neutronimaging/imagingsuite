@@ -90,7 +90,9 @@ public:
 
     void setAllowUpdateImageDims(bool allow);
 
-
+    virtual void setCheckable(bool x);
+    virtual bool isChecked();
+    virtual void setChecked(bool x);
 
 public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.

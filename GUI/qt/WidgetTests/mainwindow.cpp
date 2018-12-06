@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->uxROI3->registerViewer(ui->ImageView);
     ui->uxROI3->setROIColor("deepskyblue");
     ui->uxROI3->setTitle("My ROI");
+    ui->uxROI3->setCheckable(true);
 
 }
 
