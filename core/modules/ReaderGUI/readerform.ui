@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>95</height>
+    <width>581</width>
+    <height>304</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -124,6 +124,37 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="label_repeat">
+         <property name="text">
+          <string>Repeat</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_repeat">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_stride">
+         <property name="text">
+          <string>Stride</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_stride">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -138,10 +169,101 @@
        </item>
       </layout>
      </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_rotate">
+           <property name="text">
+            <string>Rotation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_mirror">
+           <property name="text">
+            <string>Mirroring</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_mirror">
+           <item>
+            <property name="text">
+             <string>No mirror</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Horizontal</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Vertical</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Horizontal and Vertical</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBox_rotate">
+           <item>
+            <property name="text">
+             <string>No rotation</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>90 degrees</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>180 degrees</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>270 degrees</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QtAddons::uxROIWidget" name="widget_roi" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>150</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

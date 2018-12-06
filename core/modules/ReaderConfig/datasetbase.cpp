@@ -17,9 +17,15 @@ ImageLoader::ImageLoader() :
     m_nLast(99),
     m_nRepeat(1),
     m_nStride(1),
-    m_nStep(1)
-
+    m_nStep(1),
+    m_Flip(kipl::base::ImageFlipNone),
+    m_Rotate(kipl::base::ImageRotateNone),
+    m_bUseROI(false)
 {
+    m_ROI[0]=0;
+    m_ROI[1]=0;
+    m_ROI[2]=100;
+    m_ROI[3]=100;
 }
 
 ImageLoader::~ImageLoader()
@@ -89,35 +95,6 @@ int ImageLoader::ParseXML(std::string xml)
          }
      }
      return 0;
-}
-
-kipl::base::TImage<float,2> ImageLoader::Load(int idx,kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop)
-{
-    kipl::base::TImage<float,2> img;
-
-    std::string fname;
-//    kipl::strings::filenames::MakeFileName()
-    return img;
-}
-
-kipl::base::TImage<float,3> ImageLoader::Load(kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop)
-{
-    kipl::base::TImage<float,3> volume;
-    kipl::base::TImage<float,2> slice;
-
-    size_t dims[3]={0,0,0};
-    for (int i=m_nFirst; i<=m_nLast; i+=m_nStep) {\
-        slice=Load(i,rot,flip,crop);
-        if (i==m_nFirst) {
-            dims[0]=slice.Size(0);
-            dims[1]=slice.Size(1);
-            dims[2]=(m_nLast-m_nFirst+1)/m_nStep;
-            volume.Resize(dims);
-        }
-        memcpy(volume.GetLinePtr(i-m_nFirst),slice.GetDataPtr(),slice.Size()*sizeof(float));
-    }
-
-    return volume;
 }
 
 std::ostream & operator<<(std::ostream &s, ImageLoader &il)

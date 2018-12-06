@@ -16,13 +16,19 @@ class READERGUISHARED_EXPORT ReaderForm : public QWidget
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit ReaderForm(QWidget *parent = 0);
+    explicit ReaderForm(QWidget *parent = nullptr);
     ~ReaderForm();
 
     ImageLoader getReaderConfig();
     void setReaderConfig(ImageLoader &cfg);
 
     void setLabel(QString str);
+    void showMinimalForm();
+    void showFullForm();
+    void setHideRepeat(bool x);
+    void setHideStride(bool x);
+    void showMirrorRotate(bool x);
+    void showROI(bool x);
 
 private slots:
     void on_button_browse_clicked();
