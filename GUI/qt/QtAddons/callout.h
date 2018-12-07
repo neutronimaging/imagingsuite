@@ -29,7 +29,7 @@
 
 #ifndef CALLOUT_H
 #define CALLOUT_H
-
+#include "QtAddons_global.h"
 #include <QtCharts/QChartGlobal>
 #include <QtWidgets/QGraphicsItem>
 #include <QtGui/QFont>
@@ -44,7 +44,7 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-class Callout : public QGraphicsItem
+class QTADDONSSHARED_EXPORT Callout : public QGraphicsItem
 {
 public:
     Callout(QChart *parent);

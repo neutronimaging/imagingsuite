@@ -14,7 +14,7 @@
 #include <containers/PlotData.h>
 
 NonLinDiffusionModule::NonLinDiffusionModule(kipl::interactors::InteractionBase *interactor) :
-KiplProcessModuleBase("NonLinDiffusionModule", true,interactor),
+KiplProcessModuleBase("NonLinDiffusion", true,interactor),
     m_bAutoScale(false),
     m_fSlope(1.0f),
     m_fIntercept(0.0f),

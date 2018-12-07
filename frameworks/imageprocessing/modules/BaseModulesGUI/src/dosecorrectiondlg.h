@@ -13,7 +13,7 @@ class DoseCorrectionDlg : public ConfiguratorDialogBase
 
 public:
     explicit DoseCorrectionDlg(QWidget *parent = nullptr);
-    ~DoseCorrectionDlg();
+    virtual ~DoseCorrectionDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 private:

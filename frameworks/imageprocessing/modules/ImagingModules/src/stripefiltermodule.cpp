@@ -15,7 +15,7 @@
 #endif
 
 
-IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("StripeFilterModule",false, interactor),
+IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("StripeFilter",false, interactor),
     m_StripeFilter(nullptr),
     m_sWaveletName("daub15"),
     m_nLevels(3),
