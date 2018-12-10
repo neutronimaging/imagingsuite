@@ -12,3 +12,4 @@ call build_applications_kipltool.bat
 call build_applications_muhrec.bat
 call build_applications_muhrecCLI.bat
 call build_applications_CLItools.bat
+call build_application_kiptoolCLI.bat
