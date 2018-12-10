@@ -832,6 +832,8 @@ void MuhRecMainWindow::MenuReconstructStart()
     ostringstream msg;
 
     ui->tabMainControl->setCurrentIndex(4);
+    msg.str(""); msg<<"Pre update "<<m_Config.ProjectionInfo.beamgeometry;
+    logger.message(msg.str());
 
     try {
         UpdateConfig();
@@ -931,7 +933,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
     freelist.push_back("projectnumber");
     freelist.push_back("sample");
     freelist.push_back("comment");
-    freelist.push_back("rotation");
+    freelist.push_back("rotate");
     freelist.push_back("tiltangle");
     freelist.push_back("tiltpivot");
     freelist.push_back("correcttilt");
@@ -955,30 +957,41 @@ void MuhRecMainWindow::ExecuteReconstruction()
             }
 
             m_pEngine=nullptr;
+            msg.str("");
+            msg<<"pre build config.roi=["<<m_Config.ProjectionInfo.roi[0]<<","
+                        <<m_Config.ProjectionInfo.roi[1]<<","
+                        <<m_Config.ProjectionInfo.roi[2]<<","
+                        <<m_Config.ProjectionInfo.roi[3]<<"]";
+            logger.message(msg.str());
 
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
         catch (std::exception &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (ModuleException &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with a ModuleException: \n"
                 <<e.what();
             bBuildFailure=true;
         }
         catch (ReconException &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with a recon exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (kipl::base::KiplException &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (...) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with an unknown exception";
             bBuildFailure=true;
         }
@@ -1016,8 +1029,17 @@ void MuhRecMainWindow::ExecuteReconstruction()
     bool bRunFailure=false;
     try {
         if (m_pEngine!=nullptr) {
+            msg<<"pre run config.roi=["<<m_Config.ProjectionInfo.roi[0]<<","
+                        <<m_Config.ProjectionInfo.roi[1]<<","
+                        <<m_Config.ProjectionInfo.roi[2]<<","
+                        <<m_Config.ProjectionInfo.roi[3]<<"]";
+            logger.message(msg.str());
+
             int res=0;
             ui->tabMainControl->setCurrentIndex(3);
+
+            logger.message(msg.str());
+
             res=dlg.exec(m_pEngine,bRerunBackproj);
 
             if (res==QDialog::Accepted) {

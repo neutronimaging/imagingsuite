@@ -1,62 +1,106 @@
-#!/bin/bash
-if [ `uname` == 'Linux' ]; then
-    SPECSTR="-spec linux-g++"
-else
-    SPECSTR="-spec macx-clang CONFIG+=x86_64"
-fi
+call set_vars.bat
+pushd .
 
-REPOSPATH=$WORKSPACE/imagingsuite
+set REPOSPATH=%WORKSPACE%\imagingsuite
+set DEST=%WORKSPACE%\builds
+set SPECSTR=-spec win32-msvc
 
-DEST=$WORKSPACE/builds
+mkdir %DEST%\build-ProcessFramework
+cd %DEST%\build-ProcessFramework
 
-mkdir -p $DEST/build-QtAddons
-cd $DEST/build-QtAddons
-
-$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/ProcessFramework/qt/ProcessFramework/ProcessFramework.pro
-make -f Makefile clean
-make -f Makefile mocables all
-make -f Makefile
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\ProcessFramework\qt\ProcessFramework\ProcessFramework.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
 echo "Build modules"
 
-for f in `ls $REPOSPATH/frameworks/imageprocessing/modules`
-do
-    echo "$REPOSPATH/frameworks/imageprocessing/modules/$f/qt/$f/$f.pro"
-    if [ -e "$REPOSPATH/frameworks/imageprocessing/modules/$f/qt/$f/$f.pro" ]
-    then
-        mkdir -p $DEST/build-$f
-        cd $DEST/build-$f
+mkdir %DEST%\build-AdvancedFilterModules
+cd %DEST%\build-AdvancedFilterModules
 
-        $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/modules/$f/qt/$f/$f.pro
-        make -f Makefile clean
-        make -f Makefile mocables all
-        make -f Makefile
-fi
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\AdvancedFilterModules\qt\AdvancedFilterModules\AdvancedFilterModules.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-done
+mkdir %DEST%\build-AdvancedFilterModulesGUI
+cd %DEST%\build-AdvancedFilterModulesGUI
 
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\AdvancedFilterModulesGUI\qt\AdvancedFilterModulesGUI\AdvancedFilterModulesGUI.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+
+
+mkdir %DEST%\build-BaseModules
+cd %DEST%\build-BaseFilterModules
+
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\BaseModules\qt\BaseModules\BaseModules.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+
+mkdir %DEST%\build-BaseModulesGUI
+cd %DEST%\build-BaseModulesGUI
+
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\BaseModulesGUI\qt\BaseModulesGUI\BaseModulesGUI.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 echo "Modules built"
 
+mkdir %DEST%\build-ClassificationModules
+cd %DEST%\build-ClassificationModules
 
-if [ -e "$REPOSPATH/frameworks/imageprocessing/UnitTests" ]
-then
-    echo "Build tests"
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\ClassificationModules\qt\ClassificationModules\ClassificationModules.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-    for f in `ls $REPOSPATH/frameworks/imageprocessing/UnitTests`
-    do
-        echo "$REPOSPATHGUI/frameworks/imageprocessing/UnitTests/$f/$f.pro"
-        if [ -e "$REPOSPATH/frameworks/imageprocessing/UnitTests/$f/$f.pro" ]
-        then
-            mkdir -p $DEST/build-$f
-            cd $DEST/build-$f
+mkdir %DEST%\build-ClassificationModulesGUI
+cd %DEST%\build-ClassificationModulesGUI
 
-            $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/UnitTests/$f/$f.pro
-            make -f Makefile clean
-            make -f Makefile mocables all
-            make -f Makefile
-        fi
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\ClassificationModulesGUI\qt\ClassificationModulesGUI\ClassificationModulesGUI.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-    done
+mkdir %DEST%\build-ImagingModules
+cd %DEST%\build-ImagingModules
 
-    echo "Tests built"
-fi
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\ImagingModules\qt\ImagingModules\ImagingModules.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+
+mkdir %DEST%\build-ImagingModulesGUI
+cd %DEST%\build-ImagingModulesGUI
+
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\ImagingModulesGui\ImagingModulesGui\ImagingModulesGui.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+
+echo "Build tests"
+
+cd %REPOSPATH%\frameworks\imageprocesing\UnitTests
+
+FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
+
+echo "Tests built"
+popd 
+
+goto :eof
+
+:testloopbody
+echo %2
+if exist "%1\frameworks\imageprocessing\UnitTests\%2\%2.pro" (
+	mkdir %3\%2
+	cd %3\%2
+
+	%QTBINPATH%\qmake.exe -makefile ..\..\imagingsuite\frameworks\imageprocessing\UnitTests\%2\%2.pro -o Makefile
+	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+)
+goto :eof

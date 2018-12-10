@@ -74,7 +74,7 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
             return new MorphSpotCleanDlg;
 
 	}	
-	return NULL;
+    return nullptr;
 }
 
 STDPREPROCMODULESGUISHARED_EXPORT int DestroyGUIModule(const char *application, void *obj)

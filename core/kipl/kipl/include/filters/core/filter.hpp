@@ -2,6 +2,7 @@
 
 #ifndef FILTER_HPP_
 #define FILTER_HPP_
+#include "../filter.h"
 
 namespace kipl { namespace filters {
 

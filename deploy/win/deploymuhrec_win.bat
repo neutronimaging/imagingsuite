@@ -57,6 +57,7 @@ windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
 windeployqt %DEST%\muhrecCLI.exe
 copy Qt5PrintSupport.dll %DEST%
+copy Qt5Charts.dll %DEST%
 
 popd
 

@@ -15,7 +15,7 @@
 #include <containers/PlotData.h>
 
 ISSfilterModule::ISSfilterModule(kipl::interactors::InteractionBase *interactor) :
-KiplProcessModuleBase("ISSfilterModule", true,interactor),
+KiplProcessModuleBase("ISSfilter", true,interactor),
     m_bAutoScale(true),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),

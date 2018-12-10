@@ -176,7 +176,7 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
 
-    if (hinstLib != NULL)
+    if (hinstLib != nullptr)
     {
         MODULELIST fnGetModuleList;
 #ifdef _MSC_VER
@@ -185,10 +185,10 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
         fnGetModuleList = reinterpret_cast<MODULELIST>(dlsym(hinstLib, "GetModuleList"));
 #endif
         msg.str("");
-        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == NULL ? "no" : "yes");
+        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == nullptr ? "no" : "yes");
         logger(kipl::logging::Logger::LogMessage,msg.str());
          // If the function address is valid, call the function.
-        if (NULL != fnGetModuleList)
+        if (fnGetModuleList !=nullptr)
         {
 
             if (fnGetModuleList(m_sApplication.c_str(),&modulelist)!=0) {
