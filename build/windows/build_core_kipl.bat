@@ -36,3 +36,4 @@ if exist "%1\core\kipl\UnitTests\%2\%2.pro" (
 	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 )
 goto :eof
+PAUSE
