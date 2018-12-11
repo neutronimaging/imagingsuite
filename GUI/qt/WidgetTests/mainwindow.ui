@@ -14,332 +14,458 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QtAddons::QtLogViewer" name="LogView" native="true">
-    <property name="geometry">
-     <rect>
-      <x>19</x>
-      <y>9</y>
-      <width>381</width>
-      <height>181</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="TestButton">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>190</y>
-      <width>141</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Test message</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="PlotButton">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>380</y>
-      <width>85</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Plot</string>
-    </property>
-   </widget>
-   <widget class="QtAddons::Plotter" name="CurvePlotter" native="true">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>220</y>
-      <width>191</width>
-      <height>161</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QtAddons::ImageViewerWidget" name="ImageView" native="true">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>220</y>
-      <width>271</width>
-      <height>151</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>380</y>
-      <width>332</width>
-      <height>37</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="GetROIButton">
-       <property name="text">
-        <string>ROI</string>
-       </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Viewers</string>
+       </attribute>
+       <widget class="QtAddons::uxROIWidget" name="uxROI1" native="true">
+        <property name="geometry">
+         <rect>
+          <x>900</x>
+          <y>350</y>
+          <width>220</width>
+          <height>140</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>220</width>
+          <height>140</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QtAddons::Plotter" name="CurvePlotter" native="true">
+        <property name="geometry">
+         <rect>
+          <x>580</x>
+          <y>20</y>
+          <width>256</width>
+          <height>256</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>256</width>
+          <height>256</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>466</y>
+          <width>221</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="ShowImageButton">
+           <property name="text">
+            <string>Show image</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="check_linkimages">
+           <property name="text">
+            <string>Link images</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QtAddons::uxROIWidget" name="uxROI2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>900</x>
+          <y>30</y>
+          <width>220</width>
+          <height>140</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>220</width>
+          <height>140</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QtAddons::ImageViewerWidget" name="ImageView" native="true">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>256</width>
+          <height>256</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>256</width>
+          <height>256</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="PlotButton">
+        <property name="geometry">
+         <rect>
+          <x>14</x>
+          <y>300</y>
+          <width>66</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Plot</string>
+        </property>
+       </widget>
+       <widget class="QtAddons::uxROIWidget" name="uxROI3" native="true">
+        <property name="geometry">
+         <rect>
+          <x>900</x>
+          <y>190</y>
+          <width>220</width>
+          <height>140</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>220</width>
+          <height>140</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>338</y>
+          <width>271</width>
+          <height>33</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="GetROIButton">
+           <property name="text">
+            <string>ROI</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="roi_x0"/>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="roi_y0"/>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="roi_x1"/>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="roi_y1"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QPushButton" name="button_ListSelectedROIs">
+        <property name="geometry">
+         <rect>
+          <x>14</x>
+          <y>594</y>
+          <width>153</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>List selected ROIs</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_listdata">
+        <property name="geometry">
+         <rect>
+          <x>14</x>
+          <y>526</y>
+          <width>124</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>List data sets</string>
+        </property>
+       </widget>
+       <widget class="QtAddons::ROIManager" name="widgetROImanager" native="true">
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>350</y>
+          <width>331</width>
+          <height>231</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="button_ListAllROIs">
+        <property name="geometry">
+         <rect>
+          <x>14</x>
+          <y>560</y>
+          <width>114</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>List all ROIs</string>
+        </property>
+       </widget>
+       <widget class="QtAddons::ROIWidget" name="roiWidget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>347</y>
+          <width>471</width>
+          <height>50</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QtAddons::ImageViewerWidget" name="ImageView_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>300</x>
+          <y>20</y>
+          <width>256</width>
+          <height>256</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>256</width>
+          <height>256</height>
+         </size>
+        </property>
+       </widget>
       </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="roi_x0"/>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="roi_y0"/>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="roi_x1"/>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="roi_y1"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QPushButton" name="GetModulesButton">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>190</y>
-      <width>114</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Get Modules</string>
-    </property>
-   </widget>
-   <widget class="ModuleChainConfiguratorWidget" name="ModuleConf" native="true">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>10</y>
-      <width>451</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>80</height>
-     </size>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="GetSingleModuleButton">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>480</y>
-      <width>114</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Get Module</string>
-    </property>
-   </widget>
-   <widget class="SingleModuleConfiguratorWidget" name="singlemodule" native="true">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>470</y>
-      <width>400</width>
-      <height>40</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>380</y>
-      <width>291</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Modules</string>
+       </attribute>
+       <widget class="QPushButton" name="TestButton">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>190</y>
+          <width>141</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Test message</string>
+        </property>
+       </widget>
+       <widget class="SingleModuleConfiguratorWidget" name="singlemodule" native="true">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>420</y>
+          <width>400</width>
+          <height>40</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QtAddons::QtLogViewer" name="LogView" native="true">
+        <property name="geometry">
+         <rect>
+          <x>-1</x>
+          <y>9</y>
+          <width>381</width>
+          <height>181</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="GetSingleModuleButton">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>430</y>
+          <width>114</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Get Module</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_showLogger">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>190</y>
+          <width>113</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Show logger</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="GetModulesButton">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>190</y>
+          <width>114</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Get Modules</string>
+        </property>
+       </widget>
+       <widget class="ModuleChainConfiguratorWidget" name="ModuleConf" native="true">
+        <property name="geometry">
+         <rect>
+          <x>390</x>
+          <y>10</y>
+          <width>451</width>
+          <height>181</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>80</height>
+         </size>
+        </property>
+       </widget>
       </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
+      <widget class="QWidget" name="Readers">
+       <attribute name="title">
+        <string>Readers</string>
+       </attribute>
+       <widget class="ReaderConfigListWidget" name="ImageLoaders" native="true">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>10</y>
+          <width>541</width>
+          <height>171</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="horizontalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>650</x>
+          <y>80</y>
+          <width>291</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="ReaderForm" name="widget_readerform" native="true">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>220</y>
+          <width>531</width>
+          <height>201</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>210</y>
+          <width>160</width>
+          <height>83</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QCheckBox" name="checkBox_stride">
+           <property name="text">
+            <string>Stride</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_repeat">
+           <property name="text">
+            <string>Repeat</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_roi">
+           <property name="text">
+            <string>ROI</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_fliprot">
+           <property name="text">
+            <string>FlipRot</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QPushButton" name="pushButton_getFormInfo">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>310</y>
+          <width>114</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Get form info</string>
+        </property>
+       </widget>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QtAddons::ImageViewerWidget" name="ImageView_2" native="true">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>220</y>
-      <width>271</width>
-      <height>151</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>430</y>
-      <width>225</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="ShowImageButton">
-       <property name="text">
-        <string>Show image</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="check_linkimages">
-       <property name="text">
-        <string>Link images</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="ReaderConfigListWidget" name="ImageLoaders" native="true">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>520</y>
-      <width>541</width>
-      <height>171</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_listdata">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>490</y>
-      <width>115</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>List data sets</string>
-    </property>
-   </widget>
-   <widget class="QtAddons::ROIWidget" name="roiWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>630</y>
-      <width>461</width>
-      <height>61</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QtAddons::ROIManager" name="widgetROImanager" native="true">
-    <property name="geometry">
-     <rect>
-      <x>760</x>
-      <y>490</y>
-      <width>281</width>
-      <height>121</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_ListAllROIs">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>520</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>List all ROIs</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_ListSelectedROIs">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>560</y>
-      <width>141</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>List selected ROIs</string>
-    </property>
-   </widget>
-   <widget class="QtAddons::uxROIWidget" name="uxROI1" native="true">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>10</y>
-      <width>220</width>
-      <height>141</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QtAddons::uxROIWidget" name="uxROI2" native="true">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>170</y>
-      <width>220</width>
-      <height>141</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QtAddons::uxROIWidget" name="uxROI3" native="true">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>330</y>
-      <width>220</width>
-      <height>141</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_showLogger">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>190</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Show logger</string>
-    </property>
-   </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -421,6 +547,12 @@
    <class>QtAddons::ROIManager</class>
    <extends>QWidget</extends>
    <header location="global">roimanager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReaderForm</class>
+   <extends>QWidget</extends>
+   <header location="global">readerform.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

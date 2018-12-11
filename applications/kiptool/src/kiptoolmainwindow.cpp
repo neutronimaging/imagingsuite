@@ -14,6 +14,7 @@
 #include <base/thistogram.h>
 #include <base/textractor.h>
 #include <io/DirAnalyzer.h>
+#include <datasetbase.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -58,7 +59,6 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     ui->plotter_hprofile->hideLegend();
     ui->plotter_vprofile->hideLegend();
 
-    ui->roi_image->setCheckable(true);
 }
 
 KipToolMainWindow::~KipToolMainWindow()
@@ -114,18 +114,19 @@ void KipToolMainWindow::LoadDefaults()
 void KipToolMainWindow::UpdateDialog()
 {
     m_config.mImageInformation.sSourcePath.clear();
-    ui->edit_datafilemask->setText(QString::fromStdString(m_config.mImageInformation.sSourceFileMask));
+    ImageLoader loadInfo;
+
+    loadInfo.m_sFilemask = m_config.mImageInformation.sSourceFileMask;
+    loadInfo.m_nFirst    = m_config.mImageInformation.nFirstFileIndex;
+    loadInfo.m_nLast     = m_config.mImageInformation.nLastFileIndex;
+    loadInfo.m_nStep     = m_config.mImageInformation.nStepFileIndex;
+    loadInfo.m_bUseROI   = m_config.mImageInformation.bUseROI;
+    std::copy_n(m_config.mImageInformation.nROI, 4, loadInfo.m_ROI);
+    ui->widget_loadForm->setReaderConfig(loadInfo);
 
     ui->edit_destinationpath->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationPath));
     ui->edit_destinationmask->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationFileMask));
 
-    ui->spin_idxfirst->setValue(static_cast<int>(m_config.mImageInformation.nFirstFileIndex));
-    ui->spin_idxlast->setValue(static_cast<int>(m_config.mImageInformation.nLastFileIndex));
-    ui->spin_idxstep->setValue(static_cast<int>(m_config.mImageInformation.nStepFileIndex));
-
-    ui->roi_image->setChecked(m_config.mImageInformation.bUseROI);
-    //on_check_crop_stateChanged(ui->check_crop->checkState());
-    ui->roi_image->setROI(m_config.mImageInformation.nROI);
     int idx=0;
     switch (m_config.mOutImageInformation.eResultImageType) {
         case kipl::io::TIFF8bits  : idx=1; break;
@@ -146,20 +147,23 @@ void KipToolMainWindow::UpdateDialog()
 
 void KipToolMainWindow::UpdateConfig()
 {
-    m_config.mImageInformation.sSourcePath.clear();
-    kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
-    m_config.mImageInformation.sSourceFileMask = ui->edit_datafilemask->text().toStdString();
+
 
     m_config.mOutImageInformation.sDestinationPath     = ui->edit_destinationpath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_config.mOutImageInformation.sDestinationPath,true);
     m_config.mOutImageInformation.sDestinationFileMask = ui->edit_destinationmask->text().toStdString();
 
-    m_config.mImageInformation.nFirstFileIndex = static_cast<size_t>(ui->spin_idxfirst->value());
-    m_config.mImageInformation.nLastFileIndex  = static_cast<size_t>(ui->spin_idxlast->value());
-    m_config.mImageInformation.nStepFileIndex  = static_cast<size_t>(ui->spin_idxstep->value());
+    ImageLoader readerInfo=ui->widget_loadForm->getReaderConfig();
+    m_config.mImageInformation.sSourcePath.clear();
+    kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
 
-    m_config.mImageInformation.bUseROI = ui->roi_image->isChecked();
-    ui->roi_image->getROI(m_config.mImageInformation.nROI);
+    m_config.mImageInformation.sSourceFileMask = readerInfo.m_sFilemask;
+    m_config.mImageInformation.nFirstFileIndex = static_cast<size_t>(readerInfo.m_nFirst);
+    m_config.mImageInformation.nLastFileIndex  = static_cast<size_t>(readerInfo.m_nLast);
+    m_config.mImageInformation.nStepFileIndex  = static_cast<size_t>(readerInfo.m_nStep);
+
+    m_config.mImageInformation.bUseROI = readerInfo.m_bUseROI;
+    std::copy_n(readerInfo.m_ROI,4,m_config.mImageInformation.nROI);
 
     m_config.modules = ui->widget_moduleconfigurator->GetModules();
     switch (ui->combo_FileType->currentIndex()) {
@@ -186,51 +190,20 @@ void KipToolMainWindow::UpdateConfig()
 
 void KipToolMainWindow::SetupCallbacks()
 {
-    ui->roi_image->registerViewer(ui->imageviewer_original);
-    ui->roi_image->setROIColor("green");
-    ui->roi_image->setTitle("Crop region");
-    ui->roi_image->updateViewer();
-    ui->roi_image->setAllowUpdateImageDims(false);
+    ui->widget_loadForm->setHideROI(false);
+    ui->widget_loadForm->setHideMirrorRotate(false);
+
+    QtAddons::uxROIWidget * roiw=ui->widget_loadForm->roiWidget();
+
+    roiw->registerViewer(ui->imageviewer_original);
+    roiw->setROIColor("green");
+    roiw->setTitle("Crop region");
+    roiw->updateViewer();
+    roiw->setAllowUpdateImageDims(false);
 
     // BUtton in status bar needs to be manually connected
     connect(button_toggleLoggerDlg,SIGNAL(clicked()),this,SLOT(button_toggleLoggerDlg_clicked()));
 
-}
-
-void KipToolMainWindow::on_button_browsedatapath_clicked()
-{
-    std::ostringstream msg;
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the images",
-                                      ui->edit_datafilemask->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        int c=0;
-        int f=0;
-        int l=0;
-
-        da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
-        msg.str("");
-        msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
-
-        ui->edit_datafilemask->setText(QString::fromStdString(fi.m_sMask));
-
-        QSignalBlocker blockIdx0(ui->spin_idxfirst);
-        ui->spin_idxfirst->setMinimum(f);
-        ui->spin_idxfirst->setMaximum(l);
-        ui->spin_idxfirst->setValue(f);
-
-        QSignalBlocker blockIdx1(ui->spin_idxlast);
-        ui->spin_idxlast->setMinimum(f);
-        ui->spin_idxlast->setMaximum(l);
-        ui->spin_idxlast->setValue(l);
-
-        ui->spin_idxstep->setValue(1);
-    }
 }
 
 void KipToolMainWindow::UpdateHistogramView()

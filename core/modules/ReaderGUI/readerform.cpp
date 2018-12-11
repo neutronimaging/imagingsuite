@@ -11,6 +11,8 @@
 #include <strings/filenames.h>
 #include <io/DirAnalyzer.h>
 
+#include <uxroiwidget.h>
+
 ReaderForm::ReaderForm(QWidget *parent) :
     QWidget(parent),
     logger("ReaderForm"),
@@ -18,6 +20,7 @@ ReaderForm::ReaderForm(QWidget *parent) :
 {
     ui->setupUi(this);
     showMinimalForm();
+    ui->widget_roi->setCheckable(true);
 }
 
 ReaderForm::~ReaderForm()
@@ -100,18 +103,18 @@ void ReaderForm::setLabel(QString str)
 
 void ReaderForm::showMinimalForm()
 {
-    setHidden(true);
+    setHideRepeat(true);
     setHideStride(true);
-    showMirrorRotate(true);
-    showROI(true);
+    setHideMirrorRotate(true);
+    setHideROI(true);
 }
 
 void ReaderForm::showFullForm()
 {
     setHideRepeat(false);
     setHideStride(false);
-    showMirrorRotate(false);
-    showROI(false);
+    setHideMirrorRotate(false);
+    setHideROI(false);
 }
 
 void ReaderForm::setHideRepeat(bool x)
@@ -126,7 +129,7 @@ void ReaderForm::setHideStride(bool x)
     ui->label_stride->setHidden(x);
 }
 
-void ReaderForm::showMirrorRotate(bool x)
+void ReaderForm::setHideMirrorRotate(bool x)
 {
     ui->comboBox_mirror->setHidden(x);
     ui->comboBox_rotate->setHidden(x);
@@ -134,7 +137,17 @@ void ReaderForm::showMirrorRotate(bool x)
     ui->label_rotate->setHidden(x);
 }
 
-void ReaderForm::showROI(bool x)
+void ReaderForm::setHideROI(bool x)
 {
     ui->widget_roi->setHidden(x);
+}
+
+void ReaderForm::registerViewer(QtAddons::ImageViewerWidget *viewer)
+{
+    ui->widget_roi->registerViewer(viewer);
+}
+
+QtAddons::uxROIWidget * ReaderForm::roiWidget()
+{
+    return ui->widget_roi;
 }

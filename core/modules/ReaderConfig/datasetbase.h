@@ -21,6 +21,9 @@ class READERCONFIGSHARED_EXPORT ImageLoader
 public:
     ImageLoader();
     ~ImageLoader();
+    ImageLoader(const ImageLoader & cfg);
+    const ImageLoader & operator=(const ImageLoader & cfg);
+
     int getId();
     std::string WriteXML(int indent=4);
     int ParseXML(std::string xml);

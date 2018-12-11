@@ -45,7 +45,6 @@ public:
     void UpdateConfig();
     
 protected slots:
-    void on_button_browsedatapath_clicked();
     void on_button_loaddata_clicked();
     void on_button_browsedestination_clicked();
     void on_button_savedata_clicked();

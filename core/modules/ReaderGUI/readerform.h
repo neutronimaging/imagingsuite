@@ -6,6 +6,8 @@
 
 #include <logging/logger.h>
 #include <datasetbase.h>
+#include <imageviewerwidget.h>
+#include <uxroiwidget.h>
 
 namespace Ui {
 class ReaderForm;
@@ -27,9 +29,14 @@ public:
     void showFullForm();
     void setHideRepeat(bool x);
     void setHideStride(bool x);
-    void showMirrorRotate(bool x);
-    void showROI(bool x);
+    void setHideMirrorRotate(bool x);
+    void setHideROI(bool x);
 
+    /// \brief Registers a handle to the viewer which will be used for selection and visualization of ROIs.
+    /// \param viewer A pointer to the viewer widget.
+    void registerViewer(QtAddons::ImageViewerWidget *viewer);
+
+    QtAddons::uxROIWidget * roiWidget();
 private slots:
     void on_button_browse_clicked();
 

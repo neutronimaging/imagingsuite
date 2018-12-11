@@ -3,7 +3,9 @@
 #include <regex>
 
 #include <strings/filenames.h>
+#include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <base/kiplenums.h>
 
 #include "datasetbase.h"
 
@@ -28,9 +30,43 @@ ImageLoader::ImageLoader() :
     m_ROI[3]=100;
 }
 
+ImageLoader::ImageLoader(const ImageLoader &cfg) :
+    id(cnt++),
+    m_sFilemask(cfg.m_sFilemask),
+    m_sVariableName(cfg.m_sVariableName),
+    m_nFirst(cfg.m_nFirst),
+    m_nLast(cfg.m_nLast),
+    m_nRepeat(cfg.m_nRepeat),
+    m_nStride(cfg.m_nStride),
+    m_nStep(cfg.m_nStep),
+    m_Flip(cfg.m_Flip),
+    m_Rotate(cfg.m_Rotate),
+    m_bUseROI(cfg.m_bUseROI)
+{
+    std::copy_n(cfg.m_ROI,4,m_ROI);
+}
+
 ImageLoader::~ImageLoader()
 {
 
+}
+
+const ImageLoader &ImageLoader::operator=(const ImageLoader &cfg)
+{
+    m_sFilemask=cfg.m_sFilemask;
+    m_sVariableName=cfg.m_sVariableName;
+    m_nFirst=cfg.m_nFirst;
+    m_nLast=cfg.m_nLast;
+    m_nRepeat=cfg.m_nRepeat;
+    m_nStride=cfg.m_nStride;
+    m_nStep=cfg.m_nStep;
+    m_Flip=cfg.m_Flip;
+    m_Rotate=cfg.m_Rotate;
+    m_bUseROI=cfg.m_bUseROI;
+
+    std::copy_n(cfg.m_ROI,4,m_ROI);
+
+    return *this;
 }
 
 int ImageLoader::getId() {
@@ -48,6 +84,11 @@ std::string ImageLoader::WriteXML(int indent)
     xml<<std::setw(indent+4)<<"<repeat>"       << m_nRepeat       << "</repeat>\n";
     xml<<std::setw(indent+4)<<"<stride>"       << m_nStride       << "</stride>\n";
     xml<<std::setw(indent+4)<<"<step>"         << m_nStep         << "</step>\n";
+    xml<<std::setw(indent+4)<<"<flip>"         << enum2string(m_Flip)   <<"</flip>\n";
+    xml<<std::setw(indent+4)<<"<rotate>"       << enum2string(m_Rotate) <<"</flip>\n";
+    xml<<std::setw(indent+4)<<"<useroi>"       << kipl::strings::bool2string(m_bUseROI)<<"</useroi>\n";
+    xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
+
     xml<<std::setw(indent+4)<<"<skiplist>"     << kipl::strings::List2String(m_nSkipList)     << "</skiplist>\n";
 
     return xml.str();
@@ -90,6 +131,22 @@ int ImageLoader::ParseXML(std::string xml)
          if (tag=="step") {
             m_nStep=std::atoi(value.c_str());
          }
+
+         if (tag=="flip") {
+            string2enum(value.c_str(),m_Flip);
+         }
+
+         if (tag=="rotate") {
+            string2enum(value.c_str(),m_Rotate);
+         }
+
+         if (tag=="useroi") {
+            m_bUseROI=kipl::strings::string2bool(value.c_str());
+         }
+//         xml<<std::setw(indent+4)<<"<flip>"<< m_Flip<<"</flip>\n";
+//         xml<<std::setw(indent+4)<<"<rotate>"<< m_Rotate<<"</flip>\n";
+//         xml<<std::setw(indent+4)<<"<useroi>"<< kipl::strings::bool2string(m_bUseROI)<<"</useroi>\n";
+//         xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
          if (tag=="skiplist") {
             kipl::strings::String2List(value,m_nSkipList);
          }
@@ -99,7 +156,9 @@ int ImageLoader::ParseXML(std::string xml)
 
 std::ostream & operator<<(std::ostream &s, ImageLoader &il)
 {
-    s<<"FileMask:"<<il.m_sFilemask<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]";
+    s<<"FileMask:"<<il.m_sFilemask<<", variable name="<<il.m_sVariableName<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]\n"
+    << il.m_Flip<<" " << il.m_Rotate << "\n"
+    << "Use roi "<<kipl::strings::bool2string(il.m_bUseROI)<<" ["<< il.m_ROI[0]<<" "<< il.m_ROI[1]<<" "<< il.m_ROI[2]<<" "<< il.m_ROI[3]<<"]\n";
 
     return s;
 }
