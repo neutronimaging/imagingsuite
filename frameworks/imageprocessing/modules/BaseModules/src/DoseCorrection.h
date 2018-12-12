@@ -9,7 +9,7 @@
 
 class BASEMODULES_EXPORT DoseCorrection: public KiplProcessModuleBase {
 public:
-	DoseCorrection();
+    DoseCorrection(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~DoseCorrection();
 	
     virtual int Configure(KiplProcessConfig m_Config,std::map<std::string, std::string> parameters);
@@ -21,6 +21,8 @@ protected:
 	float m_fIntercept;
 
 	int m_nROI[4];
+private:
+    bool updateStatus(float val, std::string msg);
 };
 
 #endif /* DATASCALER_H_ */
