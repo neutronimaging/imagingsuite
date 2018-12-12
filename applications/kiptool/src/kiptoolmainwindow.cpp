@@ -121,6 +121,11 @@ void KipToolMainWindow::UpdateDialog()
     loadInfo.m_nLast     = m_config.mImageInformation.nLastFileIndex;
     loadInfo.m_nStep     = m_config.mImageInformation.nStepFileIndex;
     loadInfo.m_bUseROI   = m_config.mImageInformation.bUseROI;
+    loadInfo.m_Flip      = m_config.mImageInformation.eFlip;
+    loadInfo.m_Rotate    = m_config.mImageInformation.eRotate;
+    loadInfo.m_nRepeat   = m_config.mImageInformation.nRepeat;
+    loadInfo.m_nStride   = m_config.mImageInformation.nStride;
+
     std::copy_n(m_config.mImageInformation.nROI, 4, loadInfo.m_ROI);
     ui->widget_loadForm->setReaderConfig(loadInfo);
 
@@ -161,6 +166,10 @@ void KipToolMainWindow::UpdateConfig()
     m_config.mImageInformation.nFirstFileIndex = static_cast<size_t>(readerInfo.m_nFirst);
     m_config.mImageInformation.nLastFileIndex  = static_cast<size_t>(readerInfo.m_nLast);
     m_config.mImageInformation.nStepFileIndex  = static_cast<size_t>(readerInfo.m_nStep);
+    m_config.mImageInformation.nStride         = static_cast<size_t>(readerInfo.m_nStride);
+    m_config.mImageInformation.nRepeat         = static_cast<size_t>(readerInfo.m_nRepeat);
+    m_config.mImageInformation.eFlip           = readerInfo.m_Flip;
+    m_config.mImageInformation.eRotate         = readerInfo.m_Rotate;
 
     m_config.mImageInformation.bUseROI = readerInfo.m_bUseROI;
     std::copy_n(readerInfo.m_ROI,4,m_config.mImageInformation.nROI);
@@ -199,6 +208,7 @@ void KipToolMainWindow::SetupCallbacks()
     roiw->setROIColor("green");
     roiw->setTitle("Crop region");
     roiw->updateViewer();
+    roiw->setAutoHideROI(true);
     roiw->setAllowUpdateImageDims(false);
 
     // BUtton in status bar needs to be manually connected
@@ -425,12 +435,13 @@ void KipToolMainWindow::on_actionSave_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"save config");
 
-    UpdateConfig();
+
 
     if (m_sFileName == "noname.xml") {
         on_actionSave_as_triggered();
     }
     else {
+        UpdateConfig();
         SaveConfiguration(m_sFileName);
     }
 }
@@ -439,6 +450,7 @@ void KipToolMainWindow::on_actionSave_as_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"Save config as");
 
+    UpdateConfig();
     QString qfname=QDir::homePath()+"/"+m_sFileName;
 
     qfname=QFileDialog::getSaveFileName(this,"Select location to save the configuration",qfname,"*.xml");
