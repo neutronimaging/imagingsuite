@@ -14,8 +14,8 @@
 #include <io/io_tiff.h>
 #include <base/KiplException.h>
 
-VolumeProject::VolumeProject() :
-KiplProcessModuleBase("VolumeProject"),
+VolumeProject::VolumeProject(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("VolumeProject", false, interactor),
 	m_Plane(kipl::base::ImagePlaneXY),
 	m_sFileName("./projection.tif"),
 	m_ProjectionMethod(ProjectMean)
@@ -116,7 +116,7 @@ kipl::base::TImage<float,2> VolumeProject::MinProject(kipl::base::TImage<float,3
 
 	memcpy(pProj,pSlice,sizeof(float)*proj.Size());
 
-	for (ptrdiff_t slice=1; slice<slices; slice++) {
+    for (ptrdiff_t slice=1; (slice<slices && (updateStatus(float(slice)/slices,"Processing Volume Project")==false) ); slice++) {
 		pSlice=img.GetLinePtr(0,slice);
 		for (size_t i=0; i<proj.Size(); i++) {
 			pProj[i]=min(pProj[i],pSlice[i]);
@@ -181,4 +181,12 @@ void string2enum(std::string str, eProjectionMethod &method)
 	else throw kipl::base::KiplException("Failed to interpret string",__FILE__,__LINE__);
 
 
+}
+
+bool VolumeProject::updateStatus(float val, string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
 }
