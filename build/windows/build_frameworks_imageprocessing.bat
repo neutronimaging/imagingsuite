@@ -33,7 +33,7 @@ cd %DEST%\build-AdvancedFilterModulesGUI
 
 
 mkdir %DEST%\build-BaseModules
-cd %DEST%\build-BaseFilterModules
+cd %DEST%\build-BaseModules
 
 %QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\BaseModules\qt\BaseModules\BaseModules.pro -o Makefile
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
@@ -76,7 +76,7 @@ cd %DEST%\build-ImagingModules
 mkdir %DEST%\build-ImagingModulesGUI
 cd %DEST%\build-ImagingModulesGUI
 
-%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\ImagingModulesGui\ImagingModulesGui\ImagingModulesGui.pro -o Makefile
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\frameworks\imageprocessing\modules\ImagingModulesGui\qt\ImagingModulesGui\ImagingModulesGui.pro -o Makefile
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
