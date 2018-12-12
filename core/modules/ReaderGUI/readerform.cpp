@@ -74,6 +74,7 @@ ImageLoader ReaderForm::getReaderConfig()
     cfg.m_Rotate = static_cast<kipl::base::eImageRotate>(ui->comboBox_rotate->currentIndex());
     cfg.m_Flip = static_cast<kipl::base::eImageFlip>(ui->comboBox_mirror->currentIndex());
 
+    cfg.m_bUseROI = ui->widget_roi->isChecked();
     ui->widget_roi->getROI(cfg.m_ROI);
 
     return cfg;
@@ -93,7 +94,6 @@ void ReaderForm::setReaderConfig(ImageLoader &cfg)
     ui->widget_roi->setROI(cfg.m_ROI);
     ui->widget_roi->setCheckable(true);
     ui->widget_roi->setChecked(cfg.m_bUseROI);
-
 }
 
 void ReaderForm::setLabel(QString str)

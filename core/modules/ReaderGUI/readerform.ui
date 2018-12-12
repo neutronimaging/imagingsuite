@@ -282,8 +282,8 @@
         <widget class="QtAddons::uxROIWidget" name="widget_roi" native="true">
          <property name="minimumSize">
           <size>
-           <width>200</width>
-           <height>140</height>
+           <width>220</width>
+           <height>135</height>
           </size>
          </property>
          <property name="toolTip">

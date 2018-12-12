@@ -35,6 +35,7 @@ public:
     int m_nRepeat;  //< Number of repeated images for the same position
     int m_nStride;  //< Index step to obtain the next observation in the series
     int m_nStep;    //< Sample every m_nStep images given the previous
+    float m_fBinning;
 
     kipl::base::eImageFlip m_Flip;
     kipl::base::eImageRotate m_Rotate;

@@ -6,6 +6,7 @@
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <base/kiplenums.h>
+#include <strings/xmlstrings.h>
 
 #include "datasetbase.h"
 
@@ -20,8 +21,10 @@ ImageLoader::ImageLoader() :
     m_nRepeat(1),
     m_nStride(1),
     m_nStep(1),
+    m_fBinning(1.0f),
     m_Flip(kipl::base::ImageFlipNone),
     m_Rotate(kipl::base::ImageRotateNone),
+
     m_bUseROI(false)
 {
     m_ROI[0]=0;
@@ -39,6 +42,7 @@ ImageLoader::ImageLoader(const ImageLoader &cfg) :
     m_nRepeat(cfg.m_nRepeat),
     m_nStride(cfg.m_nStride),
     m_nStep(cfg.m_nStep),
+    m_fBinning(cfg.m_fBinning),
     m_Flip(cfg.m_Flip),
     m_Rotate(cfg.m_Rotate),
     m_bUseROI(cfg.m_bUseROI)
@@ -53,16 +57,17 @@ ImageLoader::~ImageLoader()
 
 const ImageLoader &ImageLoader::operator=(const ImageLoader &cfg)
 {
-    m_sFilemask=cfg.m_sFilemask;
-    m_sVariableName=cfg.m_sVariableName;
-    m_nFirst=cfg.m_nFirst;
-    m_nLast=cfg.m_nLast;
-    m_nRepeat=cfg.m_nRepeat;
-    m_nStride=cfg.m_nStride;
-    m_nStep=cfg.m_nStep;
-    m_Flip=cfg.m_Flip;
-    m_Rotate=cfg.m_Rotate;
-    m_bUseROI=cfg.m_bUseROI;
+    m_sFilemask     = cfg.m_sFilemask;
+    m_sVariableName = cfg.m_sVariableName;
+    m_nFirst        = cfg.m_nFirst;
+    m_nLast         = cfg.m_nLast;
+    m_nRepeat       = cfg.m_nRepeat;
+    m_nStride       = cfg.m_nStride;
+    m_nStep         = cfg.m_nStep;
+    m_fBinning      = cfg.m_fBinning;
+    m_Flip          = cfg.m_Flip;
+    m_Rotate        = cfg.m_Rotate;
+    m_bUseROI       = cfg.m_bUseROI;
 
     std::copy_n(cfg.m_ROI,4,m_ROI);
 
@@ -77,16 +82,18 @@ std::string ImageLoader::WriteXML(int indent)
 {
     ostringstream xml;
 
-    xml<<std::setw(indent+4)<<"<filemask>"     << m_sFilemask     << "</filemask>\n";
-    xml<<std::setw(indent+4)<<"<variablename>" << m_sVariableName << "</variablename>\n";
-    xml<<std::setw(indent+4)<<"<first>"        << m_nFirst        << "</first>\n";
-    xml<<std::setw(indent+4)<<"<last>"         << m_nLast         << "</last>\n";
-    xml<<std::setw(indent+4)<<"<repeat>"       << m_nRepeat       << "</repeat>\n";
-    xml<<std::setw(indent+4)<<"<stride>"       << m_nStride       << "</stride>\n";
-    xml<<std::setw(indent+4)<<"<step>"         << m_nStep         << "</step>\n";
-    xml<<std::setw(indent+4)<<"<flip>"         << enum2string(m_Flip)   <<"</flip>\n";
-    xml<<std::setw(indent+4)<<"<rotate>"       << enum2string(m_Rotate) <<"</flip>\n";
-    xml<<std::setw(indent+4)<<"<useroi>"       << kipl::strings::bool2string(m_bUseROI)<<"</useroi>\n";
+    xml<<kipl::strings::xmlString("filemask",     m_sFilemask,           indent+4);
+    xml<<kipl::strings::xmlString("variablename", m_sVariableName,       indent+4);
+    xml<<kipl::strings::xmlString("first",        m_nFirst,              indent+4);
+    xml<<kipl::strings::xmlString("last",         m_nLast,               indent+4);
+    xml<<kipl::strings::xmlString("repeat",       m_nRepeat,             indent+4);
+    xml<<kipl::strings::xmlString("stride",       m_nStride,             indent+4);
+    xml<<kipl::strings::xmlString("step",         m_nStep,               indent+4);
+    xml<<kipl::strings::xmlString("binning",      m_fBinning,            indent+4);
+    xml<<kipl::strings::xmlString("flip",         enum2string(m_Flip),   indent+4);
+    xml<<kipl::strings::xmlString("rotate",       enum2string(m_Rotate), indent+4);
+    xml<<kipl::strings::xmlString("useroi",       m_bUseROI,             indent+4);
+
     xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
 
     xml<<std::setw(indent+4)<<"<skiplist>"     << kipl::strings::List2String(m_nSkipList)     << "</skiplist>\n";

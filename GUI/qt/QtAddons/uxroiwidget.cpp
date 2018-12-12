@@ -101,7 +101,6 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
     ui->spinY0->setValue(miny);
     ui->spinY1->setValue(maxy);
 
-//    qDebug()<<QString("uxROIWidget::setROI")<<minx<<", "<<miny<<", "<<maxx<<", "<<maxy;
     emit valueChanged(minx,miny,maxx,maxy);
     updateViewer();
 }
@@ -109,7 +108,7 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
 void uxROIWidget::updateViewer()
 {
     if (hViewer!=nullptr) {
-        if (isVisible()) {
+        if (isVisible() && ui->groupROI->isChecked()) {
             updateBounds();
 
             QRect rect;
@@ -142,6 +141,7 @@ bool uxROIWidget::isChecked()
 void uxROIWidget::setChecked(bool x)
 {
     ui->groupROI->setChecked(x);
+    updateViewer();
 }
 
 void uxROIWidget::setROI(size_t *roi, bool ignoreBoundingBox)
@@ -328,4 +328,10 @@ void uxROIWidget::showEvent(QShowEvent *event) {
 }
 
 
+}
+
+void QtAddons::uxROIWidget::on_groupROI_toggled(bool arg1)
+{
+    updateViewer();
+    emit toggled(arg1);
 }
