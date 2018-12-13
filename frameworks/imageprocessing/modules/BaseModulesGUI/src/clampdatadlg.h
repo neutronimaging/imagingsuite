@@ -13,7 +13,7 @@ class ClampDataDlg : public ConfiguratorDialogBase
 
 public:
     explicit ClampDataDlg(QWidget *parent = nullptr);
-    ~ClampDataDlg();
+    virtual ~ClampDataDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 private:

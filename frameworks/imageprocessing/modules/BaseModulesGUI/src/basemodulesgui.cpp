@@ -3,6 +3,8 @@
 #include <string>
 #include <sstream>
 
+#include <QDebug>
+
 #include <logging/logger.h>
 
 
@@ -38,13 +40,16 @@ BASEMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const ch
 
 BASEMODULESGUISHARED_EXPORT int DestroyGUIModule(const char *application, void *obj)
 {
-    if (strcmp(application,"kipltool")!=0)
+    qDebug()<<"destroy module 1 "<<application;
+    if (strcmp(application,"kiptool")!=0)
         return -1;
 
+    qDebug()<<"destroy module 2";
     if (obj!=nullptr) {
         ConfiguratorDialogBase *dlg=reinterpret_cast<ConfiguratorDialogBase *>(obj);
         delete dlg;
     }
 
+    qDebug()<<"destroy module 3";
     return 0;
 }

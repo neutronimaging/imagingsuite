@@ -7,6 +7,7 @@
 #include "ModuleConfigurator.h"
 #include <ModuleException.h>
 #include <QMessageBox>
+#include <QDebug>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -26,7 +27,7 @@ ModuleConfigurator::ModuleConfigurator() :
 
 ModuleConfigurator::~ModuleConfigurator()
 {
-	Destroy();
+   // destroy();
 }
 	
 bool ModuleConfigurator::configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters)
@@ -48,7 +49,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
     }
 
 	try {
-		GetDialog(application,SharedObjectName,ModuleName);
+        loadDialog(application,SharedObjectName,ModuleName);
 	}
 	catch (ModuleException &e)
 	{
@@ -73,6 +74,11 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
          try {
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
+
+            res=m_Dialog->exec(m_Config, parameters, m_Image);
+
+            m_Image.FreeImage();
+            destroy();
         }
         catch (ModuleException &e)
         {
@@ -90,9 +96,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
         if (!msg.str().empty())
             throw ModuleException(msg.str(),__FILE__,__LINE__);
 
-        res=m_Dialog->exec(m_Config, parameters, m_Image);
 
-		m_Image.FreeImage();
 	}
 	else {
 		msg.str("");
@@ -103,7 +107,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 	return res;
 }
 
-void ModuleConfigurator::GetDialog(std::string application, std::string sharedobjectname, std::string objectname)
+void ModuleConfigurator::loadDialog(std::string application, std::string sharedobjectname, std::string objectname)
 {
 	std::ostringstream msg;
 
@@ -180,19 +184,29 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 	}
 }
 
-void ModuleConfigurator::Destroy()
+void ModuleConfigurator::destroy()
 {
 	logger(kipl::logging::Logger::LogMessage,"Destroying");
 
-    if (m_Dialog!=nullptr)
-		m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
+    if (m_Dialog!=nullptr) {
+        int res=m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
 
-    if (hinstLib!=nullptr) {
-	#ifdef _MSC_VER
+        if (res!=0) {
+            logger.error("Something went really wrong");
+            return;
+        }
+    }
+    m_Dialog=nullptr;
+
+    if (hinstLib!=nullptr)
+    {
+#ifdef _MSC_VER
 		FreeLibrary(hinstLib);
-	#else
-		 dlclose(hinstLib);
-	#endif
+#else
+        dlclose(hinstLib);
+#endif
 	}
+
+    hinstLib=nullptr;
 
 }

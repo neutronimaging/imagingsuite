@@ -9,7 +9,7 @@
 
 class BASEMODULES_EXPORT ClampData: public KiplProcessModuleBase {
 public:
-	ClampData();
+    ClampData(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~ClampData();
 	
     virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);
@@ -19,6 +19,9 @@ protected:
 
 	float m_fMin;
 	float m_fMax;
+
+private:
+    bool updateStatus(float val, std::string msg);
 };
 
 #endif /* DATASCALER_H_ */

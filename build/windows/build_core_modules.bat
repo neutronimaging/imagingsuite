@@ -9,7 +9,7 @@ mkdir %DEST%\build-moduleconfig
 cd %DEST%\build-moduleconfig
 
 
-%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ../../imagingsuite/core/modules/ModuleConfig/qt/ModuleConfig/ModuleConfig.pro -o Makefile
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\core\modules\ModuleConfig\qt\ModuleConfig\ModuleConfig.pro -o Makefile
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
@@ -17,7 +17,7 @@ cd %DEST%\build-moduleconfig
 mkdir %DEST%/build-readerconfig
 cd %DEST%/build-readerconfig
 
-%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ../../imagingsuite/core/modules/ReaderConfig/ReaderConfig.pro -o Makefile
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\core\modules\ReaderConfig\ReaderConfig.pro -o Makefile
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release

@@ -11,8 +11,8 @@
 #include <strings/miscstring.h>
 #include <math/image_statistics.h>
 
-ClampData::ClampData() :
-KiplProcessModuleBase("ClampData"),
+ClampData::ClampData(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("ClampData",false, interactor),
 	m_fMin(0.0f),
 	m_fMax(1.0f)
 {
@@ -53,8 +53,10 @@ int ClampData::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 		bool lo=false;
 		bool hi=false;
 
-		#pragma omp for
-		for (ptrdiff_t i=0; i<N; i++) {
+        #pragma omp for
+//        for (ptrdiff_t i=0; (i<N && (updateStatus(float(i)/N,"Processing ClampData")==false)); i++)
+        for (ptrdiff_t i=0; (i<N); i++)
+        {
 			lo=pImg[i]<m_fMin;
 			hi=m_fMax<pImg[i];
 			pImg[i]=lo*m_fMin + hi*m_fMax + pImg[i]*!(lo || hi);
@@ -62,4 +64,12 @@ int ClampData::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 	}
 
 	return 0;
+}
+
+bool ClampData::updateStatus(float val, std::string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
 }
