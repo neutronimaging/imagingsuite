@@ -12,6 +12,7 @@
 
 ImagingModuleConfigurator::ImagingModuleConfigurator(KiplProcessConfig *config)
 {
+    std::cout << "ImagingModuleConfigurator::ImagingModuleConfigurator" << std::endl;
     ModuleConfigurator::m_Config=dynamic_cast<ConfigBase *>(config);
 }
 
@@ -22,6 +23,7 @@ ImagingModuleConfigurator::~ImagingModuleConfigurator(){
 
 int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
 {
+    std::cout << "ImagingModuleConfigurator::GetImage" << std::endl;
     KiplEngine *engine=nullptr;
     KiplFactory factory;
 
@@ -31,7 +33,7 @@ int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
         engine=factory.BuildEngine(*dynamic_cast<KiplProcessConfig *>(m_Config));
     }
     catch (ImagingException &e) {
-        msg<<"Failed to build the configuration engine with a ReconException: "<<e.what();
+        msg<<"Failed to build the configuration engine with a ImagingException: "<<e.what();
     }
     catch (ModuleException &e){
         msg<<"Failed to build the configuration engine with a ModuleException: "<<e.what();
@@ -52,9 +54,13 @@ int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
 
     logger(kipl::logging::Logger::LogMessage,"Engine successfully built");
 
+    std::cout << "before load volume image" << std::endl;
     m_OriginalImage = LoadVolumeImage(*config);
 
+    std::cout << "before run preproc" << std::endl;
     m_Image=engine->RunPreproc(&m_OriginalImage,sSelectedModule);
+
+    std::cout << "before delete engin" << std::endl;
 
     if (engine!=nullptr)
         delete engine;

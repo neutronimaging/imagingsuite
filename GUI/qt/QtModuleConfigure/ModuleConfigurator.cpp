@@ -48,7 +48,8 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
             return false;
     }
 
-	try {
+    try {
+        std::cout << "before loadDialog" << std::endl;
         loadDialog(application,SharedObjectName,ModuleName);
 	}
 	catch (ModuleException &e)
@@ -72,13 +73,17 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		msg.str("");
 
          try {
+
+           std::cout << "before GetImage" << std::endl;
+           std::cout << ModuleName << std::endl;
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
 
-            res=m_Dialog->exec(m_Config, parameters, m_Image);
+            std::cout << "after GetImage" << std::endl;
+//            res=m_Dialog->exec(m_Config, parameters, m_Image);
 
-            m_Image.FreeImage();
-            destroy();
+//            m_Image.FreeImage();
+//            destroy();
         }
         catch (ModuleException &e)
         {
@@ -96,6 +101,29 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
         if (!msg.str().empty())
             throw ModuleException(msg.str(),__FILE__,__LINE__);
 
+
+        try {
+            res=m_Dialog->exec(m_Config, parameters, m_Image);
+        }
+        catch (ModuleException &e)
+        {
+            msg<<"Module exception: Failed to exec Dlg for "<<ModuleName<<".\n"<<e.what();
+        }
+        catch (kipl::base::KiplException & e) {
+            msg<<"Module exception: Failed to exec Dlg for  "<<ModuleName<<".\n"<<e.what();
+        }
+        catch (std::exception &e) {
+            msg<<"Module exception: Failed to exec Dlg for "<<ModuleName<<".\n"<<e.what();
+        }
+        catch (...) {
+            msg<<"Module exception: Failed to exec Dlg for  "<<ModuleName<<".";
+        }
+        if (!msg.str().empty())
+            throw ModuleException(msg.str(),__FILE__,__LINE__);
+
+
+        m_Image.FreeImage();
+        destroy();
 
 	}
 	else {

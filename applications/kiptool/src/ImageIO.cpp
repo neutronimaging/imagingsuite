@@ -11,7 +11,7 @@ kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config)
 {
 
 	std::ostringstream msg;
-	std::string fname=config.mImageInformation.sSourcePath+config.mImageInformation.sSourceFileMask;
+    std::string fname=config.mImageInformation.sSourceFileMask;
 
 	kipl::base::TImage<float,3> img;
 	try {	

@@ -29,9 +29,13 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_fThreshold(0.05f),
     m_bThreading(false)
 {
+
+    std::cout << "before SetupUI" << std::endl;
     ui->setupUi(this);
 //    float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
 //    size_t dims[2]={4,4};
+
+    std::cout << "after SetupUI" << std::endl;
 
     // here I hide stuff that is not used
     ui->comboCleanMethod->hide();
@@ -48,6 +52,9 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ui->spinEdgeLenght->hide();
     ui->spinMaxValue->hide();
     ui->spinMinValue->hide();
+
+    std::cout << "after hiding stuff" << std::endl;
+
 }
 
 MorphSpotCleanDlg::~MorphSpotCleanDlg()
@@ -63,6 +70,8 @@ void MorphSpotCleanDlg::ApplyParameters()
     // inizio a prendere la prima slide
 //    m_OriginalImage=kipl::base::ExtractSlice(m_Projections,0,kipl::base::ImagePlaneXY,nullptr);
     // I take the first image, for my first check
+
+     std::cout << "ApplyParameters" << std::endl;
 
     m_OriginalImage = m_Projections;
 
@@ -146,6 +155,8 @@ void MorphSpotCleanDlg::ApplyParameters()
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
 {
 
+    std::cout << "int MorphSpotCleanDlg::exec" << std::endl;
+
     std::ostringstream msg;
 
     m_Projections=img;
@@ -205,6 +216,8 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
 
 void MorphSpotCleanDlg::UpdateDialog()
 {
+
+     std::cout << "UpdateDialog" << std::endl;
     ui->spinThreshold->setValue(m_fThreshold);
     ui->spinSigma->setValue(m_fSigma);
     ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
@@ -218,6 +231,7 @@ void MorphSpotCleanDlg::UpdateDialog()
 
 void MorphSpotCleanDlg::UpdateParameters()
 {
+    std::cout << "UpdateParameters()" << std::endl;
     m_eCleanMethod      = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
     m_eDetectionMethod  = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
     m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
