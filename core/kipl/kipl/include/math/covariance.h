@@ -3,6 +3,7 @@
 #ifndef COVARIANCE_H
 #define COVARIANCE_H
 
+#include "../kipl_global.h"
 #include <tnt_array2d.h>
 
 #include "../logging/logger.h"
@@ -66,8 +67,8 @@ protected:
 
 #include "core/covariance.hpp"
 
-std::string enum2string(kipl::math::eCovarianceType ct);
-void string2enum(std::string str, kipl::math::eCovarianceType &dt);
-std::ostream & operator<<(std::ostream &s, kipl::math::eCovarianceType dt);
+std::string KIPLSHARED_EXPORT enum2string(kipl::math::eCovarianceType ct);
+void KIPLSHARED_EXPORT string2enum(std::string str, kipl::math::eCovarianceType &dt);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::math::eCovarianceType dt);
 
 #endif // COVARIANCE_H
