@@ -1,14 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #include "../include/StdPreprocModules_global.h"
 
@@ -28,10 +18,11 @@
 #include <sstream>
 #include <iostream>
 #include <map>
+#include <algorithm>
 
 #include "../include/ProjectionFilter.h"
 
-ostream & operator<<(ostream & s, ProjectionFilterBase::FilterType ft)
+std::ostream & operator<<(std::ostream & s, ProjectionFilterBase::FilterType ft)
 {
     s<<enum2string(ft);
 
@@ -72,8 +63,8 @@ STDPREPROCMODULESSHARED_EXPORT std::string enum2string(const ProjectionFilterBas
 
 
 // Projection filter base
-ProjectionFilterBase::ProjectionFilterBase(std::string name) : 
-	PreprocModuleBase(name),
+ProjectionFilterBase::ProjectionFilterBase(std::string name,kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase(name,interactor),
     m_FilterType(FilterHamming),
     m_fCutOff(0.5f),
     m_fOrder(1),
@@ -148,15 +139,15 @@ std::map<std::string, std::string> ProjectionFilterBase::GetParameters()
 }
 
 // Projection filter w. double
-ProjectionFilter::ProjectionFilter(void) : 
-	ProjectionFilterBase("ProjectionFilter"),
-	fft(NULL)
+ProjectionFilter::ProjectionFilter(kipl::interactors::InteractionBase *interactor) :
+    ProjectionFilterBase("ProjectionFilter",interactor),
+    fft(nullptr)
 {
 }
 
 ProjectionFilter::~ProjectionFilter(void)
 {
-	if (fft!=NULL)
+    if (fft!=nullptr)
 		delete fft;
 }
 
@@ -200,7 +191,7 @@ void ProjectionFilter::BuildFilter(const size_t N)
     //	mFilter[0]=m_fBiasWeight/N2;
             mFilter[0]=m_fBiasWeight*mFilter[1];
 
-	if (fft!=NULL)
+    if (fft!=nullptr)
 		delete fft;
 
     fft=new kipl::math::fft::FFTBase(&nFFTsize,1);
@@ -221,8 +212,9 @@ void ProjectionFilter::FilterProjection(kipl::base::TImage<float,2> & img)
 	complex<double> *pFTLine=ft1Dimg.GetDataPtr();
 
 	double *pLine=new double[nFFTsize*2];
+//    for (size_t line=0; line<nLines; line++) {
+    for (size_t line=0; (line<nLines) && (UpdateStatus(float(line)/nLines,m_sModuleName)==false); ++line) {
 
-	for (size_t line=0; line<nLines; line++) {
 		memset(pLine,0,2*sizeof(double)*nFFTsize);
 		memcpy(pLine,dimg.GetLinePtr(line),sizeof(double)*dimg.Size(0));
 		fft->operator()(pLine,pFTLine);
@@ -243,15 +235,15 @@ void ProjectionFilter::FilterProjection(kipl::base::TImage<float,2> & img)
 
 //------------------------------------------------------------
 // Projection filter w. float
-ProjectionFilterSingle::ProjectionFilterSingle(void) : 
-	ProjectionFilterBase("ProjectionFilterSingle"),
-	fft(NULL)
+ProjectionFilterSingle::ProjectionFilterSingle(kipl::interactors::InteractionBase *interactor) :
+    ProjectionFilterBase("ProjectionFilterSingle",interactor),
+    fft(nullptr)
 {
 }
 
 ProjectionFilterSingle::~ProjectionFilterSingle(void)
 {
-	if (fft!=NULL)
+    if (fft!=nullptr)
 		delete fft;
 }
 
@@ -296,7 +288,7 @@ void ProjectionFilterSingle::BuildFilter(const size_t N)
 	if (m_bUseBias==true)
         mFilter[0]=m_fBiasWeight*mFilter[1];
 
-	if (fft!=NULL)
+    if (fft!=nullptr)
 		delete fft;
 
     fft=new kipl::math::fft::FFTBaseFloat(&nFFTsize,1);
@@ -318,8 +310,11 @@ void ProjectionFilterSingle::FilterProjection(kipl::base::TImage<float,2> & img)
 	const size_t nLenPad=nFFTsize+16;
 	float *pLine=new float[nLenPad];
 
-	for (size_t line=0; line<(nLines); line++) {
-        memset(pLine,0,sizeof(float)*nLenPad);
+//	for (size_t line=0; line<(nLines); line++) {
+    for (size_t line=0; (line<nLines) && (UpdateStatus(float(line)/nLines,m_sModuleName)==false); ++line) {
+        std::fill_n(pLine,0,nLenPad);
+        std::fill_n(pFTLine,0,nLenPad);
+        //memset(pLine,0,sizeof(float)*nLenPad);
 		size_t insert=Pad(img.GetLinePtr(line),img.Size(0),pLine,nLenPad);
 		fft->operator()(pLine,pFTLine);
 

@@ -1,34 +1,28 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
-
+//<LICENSE>
 
 #ifndef _PROJECTIONFILTER_H_
 #define _PROJECTIONFILTER_H_
 
 #include "StdPreprocModules_global.h"
-#include <PreprocModuleBase.h>
-#include "../../kipl/include/logging/logger.h"
-#include "../../kipl/include/base/timage.h"
-#include "../../kipl/include/fft/fftbase.h"
+
 #include <map>
 #include <string>
 #include <vector>
 #include <iostream>
 
-class STDPREPROCMODULESSHARED_EXPORT ProjectionFilterBase :
-	public PreprocModuleBase
+#include <PreprocModuleBase.h>
+
+#include <logging/logger.h>
+#include <base/timage.h>
+#include <fft/fftbase.h>
+#include <interactors/interactionbase.h>
+
+
+class STDPREPROCMODULESSHARED_EXPORT ProjectionFilterBase:
+    public PreprocModuleBase
 {
 public:
-	ProjectionFilterBase(std::string name="ProjectionFilterBase");
+    ProjectionFilterBase(std::string name="ProjectionFilterBase", kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~ProjectionFilterBase(void) {};
 	enum FilterType {
         FilterRamLak=0,
@@ -66,7 +60,7 @@ class STDPREPROCMODULESSHARED_EXPORT ProjectionFilter :
 	public ProjectionFilterBase
 {
 public:
-	ProjectionFilter();
+    ProjectionFilter(kipl::interactors::InteractionBase *interactor);
 	virtual ~ProjectionFilter(void);
 
 	const kipl::base::TImage<double,1> GetFilterArray() {return mFilter;}
@@ -82,7 +76,7 @@ class STDPREPROCMODULESSHARED_EXPORT ProjectionFilterSingle :
 	public ProjectionFilterBase
 {
 public:
-	ProjectionFilterSingle();
+    ProjectionFilterSingle(kipl::interactors::InteractionBase *interactor);
 	virtual ~ProjectionFilterSingle(void);
 
 	const kipl::base::TImage<float,1> GetFilterArray() {return mFilter;}

@@ -70,7 +70,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 			return new LogProjection;
 
 		if (sName=="ProjectionFilterSingle")
-			return new ProjectionFilterSingle;
+            return new ProjectionFilterSingle(interactor);
 
 		if (sName=="SpotClean")
 			return new SpotClean;
@@ -200,7 +200,7 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 	LogProjection lproj;
 	modulelist->operator []("LogProjection")=lproj.GetParameters();
 
-	ProjectionFilterSingle filter;
+    ProjectionFilterSingle filter(nullptr);
 	modulelist->operator []("ProjectionFilterSingle")=filter.GetParameters();
 	
 	SpotClean2 sc2;
