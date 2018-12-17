@@ -89,7 +89,7 @@ cd $DEST/bin/platforms
 
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/Applications/QtKipTool .`
+`$CPCMD $REPOSPATH/Applications/KipTool .`
 cd ..
 `$CPCMD $REPOSPATH/imagingsuite/applications/kiptool/scripts/kiptool .`
 chmod +x kiptool

@@ -14,5 +14,5 @@ do
 	args=$args" "$arg
 done
 
-$BASEPATH/bin/QtKipTool $args
+$BASEPATH/bin/KipTool $args
 
