@@ -10,11 +10,15 @@
 #include <cstdlib>
 #include <string>
 
+#include <interactors/interactionbase.h>
+
 
 INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name,void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
         return nullptr;
+
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 
     if (name!=nullptr) {
 		std::string sName=name;
@@ -23,7 +27,7 @@ INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const ch
 			return new ProjectionInspector;
 
 		if (sName=="SaveProjections")
-			return new SaveProjections;
+            return new SaveProjections(interactor);
 
 		if (sName=="CountNANs")
 			return new CountNANs;
