@@ -58,9 +58,9 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
-    m_bCurrentReconStored(true),
     m_oldRotateDial(0),
-    m_oldRotateSpin(0.0)
+    m_oldRotateSpin(0.0),
+    m_bCurrentReconStored(true)
 {
     std::ostringstream msg;
     ui->setupUi(this);
@@ -246,7 +246,7 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
             ui->editOpenBeamMask->setText(projdir);
             ProjectionReader reader;
             size_t Nofimgs[2];
-            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, NULL);
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, nullptr);
             ui->spinFirstOpenBeam->setValue(static_cast<int>(Nofimgs[0]));
             ui->spinOpenBeamCount->setValue(static_cast<int>(Nofimgs[1]+1));
         }
