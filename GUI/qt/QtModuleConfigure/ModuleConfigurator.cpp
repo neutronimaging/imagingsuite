@@ -48,7 +48,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
             return false;
     }
 
-	try {
+    try {
         loadDialog(application,SharedObjectName,ModuleName);
 	}
 	catch (ModuleException &e)
@@ -72,6 +72,8 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		msg.str("");
 
          try {
+
+
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
 
@@ -94,8 +96,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
             msg<<"Failed to load projection data with unhandled exception for "<<ModuleName<<".";
         }
         if (!msg.str().empty())
-            throw ModuleException(msg.str(),__FILE__,__LINE__);
-
+            throw ModuleException(msg.str(),__FILE__,__LINE__);;
 
 	}
 	else {
