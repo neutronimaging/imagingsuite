@@ -35,7 +35,7 @@ FFTBaseFloat::FFTBaseFloat(size_t const * const Dims, size_t const NDim) :
 		Ndata*=Dims[i];
 		
 	for (size_t i=0; i<NDim; i++)
-		dims[i]=Dims[i];
+        dims[i]=static_cast<int>(Dims[i]);
 
 	for (size_t i=NDim; i<8; i++)
 		dims[i]=1;
