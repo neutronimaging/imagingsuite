@@ -8,6 +8,7 @@
 #include <io/io_tiff.h>
 #include <base/tprofile.h>
 #include <math/mathconstants.h>
+#include <math/findpeaks.h>
 
 namespace ImagingQAAlgorithms {
 ProfileExtractor::ProfileExtractor()
@@ -29,9 +30,6 @@ std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2>
 {
     (void)roi;
     std::map<float, float> profile;
-    computeEdgeEquation(img);
-
-
 
     auto de=diffEdge(img);
 
@@ -63,7 +61,8 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
     for (size_t yy=1; yy<Ny; ++yy)
     {
         float *pLine=img.GetLinePtr(yy);
-        float maxpos=static_cast<float>(std::max_element(pLine,pLine+Nx)-pLine);
+     //   float maxpos=static_cast<float>(std::max_element(pLine,pLine+Nx)-pLine);
+        float maxpos=kipl::math::findPeakCOG(pLine,Nx,true,false);
         x  += maxpos;
         x2 += maxpos*maxpos;
         y  += yy;

@@ -2,6 +2,7 @@
 
 #include "../../include/math/findpeaks.h"
 #include <cmath>
+#include "../../include/math/statistics.h"
 
 #include <QDebug>
 
@@ -43,6 +44,31 @@ size_t findPeaks(float *data, size_t N, float m, float level, std::list<size_t> 
     }
 
     return peaks.size();
+}
+
+float findPeakCOG(float *data, size_t N, bool useUnBias, bool useNegative)
+{
+
+    float bias = 0.0f;
+    if (useUnBias) {
+        kipl::math::Statistics stat;
+        stat.put(data,N);
+        bias=static_cast<float>(stat.E()+stat.s());
+    }
+
+    float cog=0.0f;
+    float valsum=0.0f;
+    for (size_t i=0; i<N; ++i) {
+        float val=data[i]-bias;
+        if (!useNegative)
+            val=val < 0.0f ? 0.0f : val;
+        valsum+=val;
+        cog += static_cast<float>(i)*val;
+    }
+
+    cog/=valsum;
+
+    return cog;
 }
 
 }
