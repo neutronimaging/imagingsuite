@@ -47,8 +47,6 @@ public:
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
-//public slots:
-//    void on_ButtonBox_Clicked(QAbstractButton *button);
 protected:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog() = 0;
@@ -58,9 +56,6 @@ protected:
 	kipl::base::TImage<float,2> GetProjection(kipl::base::TImage<float,3> img, size_t n);
 	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> img, size_t n);
 
-    QVBoxLayout m_LayoutMain;
-    QFrame m_FrameMain;
-    QDialogButtonBox m_ControlButtons;
     bool m_bNeedImages;
 
 	ConfigBase * m_Config;

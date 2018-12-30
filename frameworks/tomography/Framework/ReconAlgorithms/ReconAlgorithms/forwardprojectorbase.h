@@ -1,13 +1,14 @@
 #ifndef FORWARDPROJECTORBASE_H
 #define FORWARDPROJECTORBASE_H
 
+#include "reconalgorithms_global.h"
 #include <string>
 #include <list>
 
 #include <logging/logger.h>
 #include <base/timage.h>
 
-class ForwardProjectorBase
+class RECONALGORITHMSSHARED_EXPORT ForwardProjectorBase
 {
 protected:
     kipl::logging::Logger logger;

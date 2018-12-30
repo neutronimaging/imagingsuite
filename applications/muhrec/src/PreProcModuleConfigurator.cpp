@@ -1,10 +1,5 @@
-/*
- * PreProcModuleConfigurator.cpp
- *
- *  Created on: Jan 21, 2012
- *      Author: anders
- */
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "PreProcModuleConfigurator.h"
 #include <sstream>
 #include <ConfigBase.h>
@@ -25,13 +20,13 @@ PreProcModuleConfigurator::~PreProcModuleConfigurator() {
 
 int PreProcModuleConfigurator::GetImage(std::string sSelectedModule)
 {
-	ReconEngine *engine=NULL;
+    ReconEngine *engine=nullptr;
 	ReconFactory factory;
 
 	ReconConfig * config=dynamic_cast<ReconConfig *>(m_Config);
 	std::ostringstream msg;
 	try {
-		engine=factory.BuildEngine(*dynamic_cast<ReconConfig *>(m_Config),NULL);
+        engine=factory.BuildEngine(*dynamic_cast<ReconConfig *>(m_Config),nullptr);
 	}
 	catch (ReconException &e) {
 		msg<<"Failed to build the configuration engine with a ReconException: "<<e.what();
@@ -58,7 +53,7 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule)
 	size_t roi[4]={r[0],r[1],r[2],r[3]};
 	m_Image=engine->RunPreproc(roi,sSelectedModule);
 
-	if (engine!=NULL)
+    if (engine!=nullptr)
 		delete engine;
 	return 0;
 }

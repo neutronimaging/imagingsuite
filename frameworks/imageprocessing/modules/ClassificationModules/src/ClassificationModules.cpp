@@ -87,8 +87,8 @@ int GetModuleList(const char * application, void *listptr)
 //	KernelFuzzyCMeans kfcm;
 //	modulelist->operator []("KernelFuzzyCMeans")=kfcm.GetParameters();
 
-	RemoveBackground rb;
-	modulelist->operator []("RemoveBackground")=rb.GetParameters();
+//	RemoveBackground rb;
+//	modulelist->operator []("RemoveBackground")=rb.GetParameters();
 
 	return 0;
 }

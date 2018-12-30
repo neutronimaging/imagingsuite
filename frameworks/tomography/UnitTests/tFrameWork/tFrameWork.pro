@@ -35,11 +35,19 @@ unix {
     }
 
     unix:macx {
-    #    QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH  += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
         INCLUDEPATH  += /opt/local/include/libxml2
     }
+}
+
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+    QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
+    QMAKE_LIBDIR += ../../../../external/lib64
+    QMAKE_CXXFLAGS += /openmp /O2
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi

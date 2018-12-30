@@ -11,8 +11,8 @@
 #include <strings/miscstring.h>
 #include <math/image_statistics.h>
 
-ScaleData::ScaleData() :
-KiplProcessModuleBase("ScaleData"),
+ScaleData::ScaleData(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("ScaleData", false, interactor),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
 	m_bAutoScale(false)

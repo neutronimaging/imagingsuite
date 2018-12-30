@@ -1,9 +1,10 @@
 #ifndef RECONALGORITHMEXCEPTION_H
 #define RECONALGORITHMEXCEPTION_H
 
+#include "reconalgorithms_global.h"
 #include <base/KiplException.h>
 
-class ReconAlgorithmException : public kipl::base::KiplException
+class RECONALGORITHMSSHARED_EXPORT ReconAlgorithmException : public kipl::base::KiplException
 {
 public:
     ~ReconAlgorithmException();
