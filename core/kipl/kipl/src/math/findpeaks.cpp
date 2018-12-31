@@ -63,12 +63,12 @@ float findPeakCOG(float *data, size_t N, bool useUnBias, bool useNegative)
         if (!useNegative)
             val=val < 0.0f ? 0.0f : val;
         valsum+=val;
-        cog += static_cast<float>(i)*val;
+        cog += static_cast<float>(i+1)*val;
     }
 
     cog/=valsum;
 
-    return cog;
+    return cog-1;
 }
 
 }

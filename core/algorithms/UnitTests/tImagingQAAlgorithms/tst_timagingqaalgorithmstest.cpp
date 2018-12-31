@@ -41,7 +41,7 @@ kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, fl
 
     float center=dims[0]/2.0f;
     float ycenter=dims[1]/2.0f;
-    float k=-tan(angle*fPi/180.0f);
+    float k=tan(angle*fPi/180.0f);
     for (size_t y=0; y<dims[1]; ++y)
     {
         for (size_t x=0; x<dims[0]; ++x)
@@ -164,7 +164,7 @@ void TImagingQAAlgorithmsTest::testResEstAlg()
 void TImagingQAAlgorithmsTest::testProfileExtractor()
 {
 
-    kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,1.0f);
+    kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,3.0f);
 
     kipl::io::WriteTIFF32(img,"slantededge.tif");
 
@@ -175,8 +175,11 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
     kipl::base::TImage<float,2> img2;
     kipl::io::ReadTIFF(img2,"../imagingsuite/core/algorithms/UnitTests/data/raw_edge.tif");
 
+
     profile=p.getProfile(img2);
-  //  kipl::io::serializeContainer(profile.begin(),profile.end(),"profile.txt");
+
+    qDebug() << "Profile length = "<<profile.size();
+    kipl::io::serializeMap(profile,"profile.txt");
 
 }
 

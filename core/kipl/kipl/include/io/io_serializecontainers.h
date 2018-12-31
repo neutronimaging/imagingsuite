@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <map>
 
 namespace kipl {
 namespace io {
@@ -16,6 +17,14 @@ void serializeContainer(T a, T b, std::string fname)
     }
 }
 
+template<typename T, typename S>
+void serializeMap(std::map<T,S> &m, std::string fname)
+{
+    std::ofstream f(fname.c_str());
+    for (auto it=m.begin(); it!=m.end(); ++it) {
+        f<<(it->first)<<"\t"<<(it->second)<<std::endl;
+    }
+}
 }
 }
 
