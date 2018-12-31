@@ -4,6 +4,7 @@
 #define __stlvecmath_h
 
 #include <vector>
+#include <map>
 #include <iostream>
 
 #include "../math/median.h"
@@ -363,6 +364,7 @@ T cumsum(const ForwardIterator &begin,const ForwardIterator &end, vector<T> &tv)
 	return tv.back();
 }
 
+std::map<float,float> diff(std::map<float,float> data);
 /*
 /// \brief Find the first occurance of the test becoming true
 ///
@@ -451,40 +453,5 @@ int vechist(vector<T> &data, vector<int> &hist, vector<T> & interval, int N)
     	return 0;
 }
 
-template<class T>
-Math::Statistics vecstats(vector<T> &v, double outliers, int N=256) 
-{
-	Math::Statistics stat;
-	if ((outliers>=1) || (outliers<0)) 
-		outliers=0;
-	
-//	Gnuplot fig("test");
-	
-	if (outliers) {
-		vector<int> hist;
-		vector<double> interval;
-		vector<double> cumhist;
-		int a,b;	
-		vechist(v,hist,interval,N);
-		//fig.plot(hist);
-		hist=cumsum(hist);
-		//fig.plot(hist);
-		double low_tail, high_tail;
-		a=Find(hist,int(outliers*0.5*v.size()),cmp_greater);
-		low_tail=interval[a];
-		b=Find(hist,int((1-outliers*0.5)*v.size()),cmp_greater);
-		high_tail=interval[b];
-		
-		for (size_t i=0; i<v.size(); i++)
-			if ((v[i]>=low_tail) && (v[i]<=high_tail))
-				stat.add(v[i]);
-	}
-	else {
-		for (size_t i=0; i<v.size(); i++)
-			stat.add(v[i]);
-	}
-
-	return stat;
-}
 */
 #endif
