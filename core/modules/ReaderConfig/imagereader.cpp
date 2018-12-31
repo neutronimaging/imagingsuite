@@ -316,6 +316,18 @@ kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader,
                 nCrop);
 }
 
+kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader)
+{
+    return Read(loader.m_sFilemask,
+                loader.m_nFirst,
+                loader.m_nLast,
+                loader.m_nStep,
+                loader.m_Flip,
+                loader.m_Rotate,
+                loader.m_fBinning,
+                loader.m_ROI);
+}
+
 kipl::base::TImage<float,3> ImageReader::Read(string fname,
                                               size_t first,
                                               size_t last,

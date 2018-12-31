@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets
+QT       += widgets charts
 
 TARGET = ReaderGUI
 TEMPLATE = lib

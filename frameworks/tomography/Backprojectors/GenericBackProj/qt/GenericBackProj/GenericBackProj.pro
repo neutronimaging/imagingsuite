@@ -31,13 +31,10 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-      #  QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
-        ICON = muhrec3.icns
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -50,6 +47,22 @@ unix:!symbian {
 
 }
 
+unix:mac {
+exists($$PWD/../../../../../../external/mac/lib/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
+
+    INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+
+    LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
+}
+
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
@@ -59,8 +72,21 @@ win32 {
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
-}
 
+    exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
+
+        message("-lNeXus exists")
+        DEFINES += HAVE_NEXUS
+        INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
+        QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
+
+        LIBS +=  -lNeXus -lNeXusCPP
+
+        SOURCES += ../src/io/io_nexus.cpp
+        HEADERS += ../include/io/io_nexus.h
+    }
+
+}
 
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/

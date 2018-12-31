@@ -75,6 +75,8 @@ public:
                                       float binning=1.0f,
                                       size_t const * const nCrop=nullptr);
 
+    kipl::base::TImage<float,3> Read(ImageLoader &loader);
+
     /// Get the image dimensions for an image file using a file mask
     /// \param path The path where image is stored
     /// \param filemask Mask of the images, # are used as placeholders for the index numbers.

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>95</height>
+    <width>540</width>
+    <height>265</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>450</width>
-    <height>0</height>
+    <width>540</width>
+    <height>265</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -44,10 +44,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="edit_fileMask"/>
+        <widget class="QLineEdit" name="edit_fileMask">
+         <property name="toolTip">
+          <string>File mask of the files to be loaded. The name should contain a number of # as wild cards for the padded index number.</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="button_browse">
+         <property name="toolTip">
+          <string>Browse for files. Select a single file and the mask including first and last image will be generated.</string>
+         </property>
          <property name="text">
           <string>Browse</string>
          </property>
@@ -72,26 +79,9 @@
        </item>
        <item>
         <widget class="QSpinBox" name="spinBox_first">
-         <property name="maximum">
-          <number>9999</number>
+         <property name="toolTip">
+          <string>Index of the first image in the sequence</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Last</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="spinBox_last">
          <property name="maximum">
           <number>9999</number>
          </property>
@@ -112,8 +102,71 @@
        </item>
        <item>
         <widget class="QSpinBox" name="spinBox_step">
+         <property name="toolTip">
+          <string>Increment step</string>
+         </property>
          <property name="whatsThis">
           <string extracomment="File increment"/>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Last</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_last">
+         <property name="toolTip">
+          <string>Last image to read in the sequence.</string>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_repeat">
+         <property name="text">
+          <string>Repeat</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_repeat">
+         <property name="toolTip">
+          <string>Number of repeated acquisition per view</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_stride">
+         <property name="text">
+          <string>Stride</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_stride">
+         <property name="toolTip">
+          <string>Increment step between two adjacent observations.</string>
          </property>
          <property name="minimum">
           <number>1</number>
@@ -138,10 +191,123 @@
        </item>
       </layout>
      </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_mirror">
+           <property name="text">
+            <string>Mirroring</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_mirror">
+           <property name="toolTip">
+            <string>Select how to mirror the image upon loading</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>No mirror</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Horizontal</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Vertical</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Horizontal and Vertical</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_rotate">
+           <property name="text">
+            <string>Rotation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBox_rotate">
+           <property name="toolTip">
+            <string>Select how to rotate the image upon loading</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>No rotation</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>90 degrees</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>180 degrees</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>270 degrees</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QtAddons::uxROIWidget" name="widget_roi" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>220</width>
+           <height>135</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Select crop region </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

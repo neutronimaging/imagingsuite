@@ -9,6 +9,7 @@
 #include <base/kiplenums.h>
 #include <strings/string2array.h>
 
+#include <plotcursor.h>
 #include <imagereader.h>
 #include <buildfilelist.h>
 #include <datasetbase.h>
@@ -167,14 +168,14 @@ void FindSkipListDialog::ChangedNumberOfProjections(int x)
 {
     std::ostringstream skipstr;
     int nSkipCnt=m_nMaxNumberProjections-x;
-    ui->skip_plot->clearAllPlotCursors();
+    ui->skip_plot->clearAllCursors();
     std::multimap<float,int>::iterator it=m_SortedDoses.begin();
 
     m_sortedSkip.clear();
 
     for (int i=0; i<nSkipCnt; i++, it++) {
         m_sortedSkip.insert(it->second);
-        ui->skip_plot->setPlotCursor(i,QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
+        ui->skip_plot->setCursor(i,new QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
     }
     // Todo: Sort the list
    std::set<int>::iterator it2;

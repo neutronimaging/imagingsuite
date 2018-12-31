@@ -492,8 +492,8 @@
              <widget class="QtAddons::uxROIWidget" name="roiwidget_BB" native="true">
               <property name="minimumSize">
                <size>
-                <width>200</width>
-                <height>130</height>
+                <width>220</width>
+                <height>140</height>
                </size>
               </property>
              </widget>
@@ -685,8 +685,8 @@
              <widget class="QtAddons::uxROIWidget" name="roiwidget_dose" native="true">
               <property name="minimumSize">
                <size>
-                <width>200</width>
-                <height>150</height>
+                <width>220</width>
+                <height>140</height>
                </size>
               </property>
              </widget>
@@ -1013,12 +1013,18 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>QtAddons::uxROIWidget</class>
    <extends>QWidget</extends>
    <header location="global">uxroiwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
