@@ -125,6 +125,7 @@ SOURCES += \
     ../src/math/findpeaks.cpp \
     ../src/math/normalizeimage.cpp \
     ../src/stltools/stlvecmath.cpp
+    ../src/strings/xmlstrings.cpp
 
 
 
@@ -335,7 +336,8 @@ HEADERS +=\
     ../include/math/core/statistics.hpp \
     ../include/io/io_serializecontainers.h \
     ../include/math/findpeaks.h \
-    ../include/math/normalizeimage.h
+    ../include/math/normalizeimage.h \
+    ../include/strings/xmlstrings.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

@@ -190,6 +190,7 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setTitle("Matrix ROI");
     ui->widgetMatrixROI->setAutoHideROI(true);
     ui->widgetMatrixROI->setAllowUpdateImageDims(false);
+    ui->widgetMatrixROI->setCheckable(true);
     ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
@@ -1310,8 +1311,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinGrayHigh->setValue(m_Config.MatrixInfo.fGrayInterval[1]);
 
     ui->widgetMatrixROI->setROI(m_Config.MatrixInfo.roi,true);
-    ui->checkUseMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
-    on_checkUseMatrixROI_toggled(m_Config.MatrixInfo.bUseROI);
+    ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
@@ -1462,7 +1462,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
     m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();
     m_Config.MatrixInfo.fGrayInterval[1] = ui->dspinGrayHigh->value();
-    m_Config.MatrixInfo.bUseROI = ui->checkUseMatrixROI->checkState();
+    m_Config.MatrixInfo.bUseROI = ui->widgetMatrixROI->isChecked();
     ui->widgetMatrixROI->getROI(m_Config.MatrixInfo.roi);
 
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
@@ -2320,11 +2320,6 @@ void MuhRecMainWindow::on_button_FindCenter_clicked()
 
 }
 
-void MuhRecMainWindow::on_checkUseMatrixROI_toggled(bool checked)
-{
-    ui->widgetMatrixROI->setVisible(checked);
-}
-
 void MuhRecMainWindow::on_dspinRotateRecon_valueChanged(double arg1)
 {
     QSignalBlocker blockDial(ui->dialRotateRecon);
@@ -2543,5 +2538,4 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
         ui->radioButton_customTurn->setCheckable(true);
     }
 }
-
 

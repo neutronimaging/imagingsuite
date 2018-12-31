@@ -90,7 +90,9 @@ public:
 
     void setAllowUpdateImageDims(bool allow);
 
-
+    virtual void setCheckable(bool x);
+    virtual bool isChecked();
+    virtual void setChecked(bool x);
 
 public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.
@@ -115,6 +117,8 @@ private slots:
     /// \brief Slot to update the value boxes when a spin button value is changed
     void on_valueChanged(int x0,int y0, int x1, int y1);
 
+    void on_groupROI_toggled(bool arg1);
+
 private:
     /// \brief Updates the max boundaries of the spin buttons to the size of the current image in the viewer
     void updateBounds();
@@ -129,6 +133,7 @@ private:
 signals:
     void getROIClicked(void); //< signal emitted when the get ROI button is pressen, this can be used with other widgets.
     void valueChanged(int x0,int y0, int x1, int y1); // signal emitted when one of the spin buttons change value.
+    void toggled(bool x);
 };
 
 }

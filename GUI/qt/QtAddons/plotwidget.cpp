@@ -24,6 +24,7 @@ PlotWidget::PlotWidget(QWidget *parent) :
 
 PlotWidget::~PlotWidget()
 {
+    clearAllCursors();
     delete ui;
 }
 
@@ -203,6 +204,37 @@ void PlotWidget::findMinMax()
             minY = std::min(minY,point->y());
             maxY = std::max(maxY,point->y());
         }
+    }
+}
+
+void PlotWidget::setCursor(int id, PlotCursor *c)
+{
+    auto it=cursors.find(id);
+    if ( it != cursors.end())
+    {
+        *cursors[id]=*c;
+        delete c;
+    }
+    else {
+        cursors[id]=c;
+    }
+}
+
+void PlotWidget::clearCursors(int id)
+{
+    auto it=cursors.find(id);
+    if ( it != cursors.end())
+    {
+        delete it->second;
+        cursors.erase(it);
+    }
+}
+
+void PlotWidget::clearAllCursors()
+{
+    while (!cursors.empty()) {
+        delete cursors.begin()->second;
+        cursors.erase(cursors.begin());
     }
 }
 
