@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "../math/median.h"
+#include "../kipl_global.h"
 //#include "statistics.h"
 //#include "../misc/sortalg.h"
 //#include "../image/imagethres.h"
@@ -364,7 +365,7 @@ T cumsum(const ForwardIterator &begin,const ForwardIterator &end, vector<T> &tv)
 	return tv.back();
 }
 
-std::map<float,float> diff(std::map<float,float> data);
+std::map<float,float> KIPLSHARED_EXPORT diff(std::map<float,float> data);
 /*
 /// \brief Find the first occurance of the test becoming true
 ///
