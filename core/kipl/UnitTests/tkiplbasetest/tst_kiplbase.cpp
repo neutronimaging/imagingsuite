@@ -45,13 +45,11 @@ private Q_SLOTS:
     /// Tests margin setter
     void testMarginSetter();
 
-<<<<<<< HEAD
     /// Tests vertical and horizsontal profiles
     void testProfiles();
-=======
+
     /// Test image casting
     void testImageCaster();
->>>>>>> master
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -466,7 +464,7 @@ void TkiplbasetestTest::testProfiles()
     float *vp=new float[dims[0]];
     float *hp=new float[dims[1]];
     kipl::base::VerticalProjection2D(img.GetDataPtr(), img.Dims(), vp);
-    kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+    //kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
 }
 
 void TkiplbasetestTest::testImageCaster()
