@@ -69,7 +69,7 @@
         <widget class="QtAddons::uxROIWidget" name="roi_widget" native="true">
          <property name="minimumSize">
           <size>
-           <width>200</width>
+           <width>220</width>
            <height>150</height>
           </size>
          </property>
@@ -120,15 +120,18 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::uxROIWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">uxroiwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -679,8 +679,8 @@
              <widget class="QtAddons::uxROIWidget" name="widgetProjectionROI" native="true">
               <property name="minimumSize">
                <size>
-                <width>196</width>
-                <height>125</height>
+                <width>220</width>
+                <height>130</height>
                </size>
               </property>
               <property name="toolTip">
@@ -692,8 +692,8 @@
              <widget class="QtAddons::uxROIWidget" name="widgetDoseROI" native="true">
               <property name="minimumSize">
                <size>
-                <width>196</width>
-                <height>123</height>
+                <width>220</width>
+                <height>130</height>
                </size>
               </property>
               <property name="toolTip">
@@ -1917,44 +1917,11 @@
               </widget>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_16">
-               <item>
-                <widget class="QCheckBox" name="checkUseMatrixROI">
-                 <property name="minimumSize">
-                  <size>
-                   <width>150</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Activates cropping of the reconstructed slice.</string>
-                 </property>
-                 <property name="text">
-                  <string>Crop slice</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_9">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
               <widget class="QtAddons::uxROIWidget" name="widgetMatrixROI" native="true">
                <property name="minimumSize">
                 <size>
-                 <width>196</width>
-                 <height>123</height>
+                 <width>220</width>
+                 <height>130</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -2318,7 +2285,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2516,6 +2483,16 @@
    </slots>
   </customwidget>
   <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+    <signal>toggled(bool)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
    <class>QtAddons::Plotter</class>
    <extends>QWidget</extends>
    <header location="global">plotter.h</header>
@@ -2532,15 +2509,6 @@
    <extends>QWidget</extends>
    <header location="global">singlemoduleconfiguratorwidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::uxROIWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">uxroiwidget.h</header>
-   <container>1</container>
-   <slots>
-    <signal>valueChanged(int,int,int,int)</signal>
-   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
