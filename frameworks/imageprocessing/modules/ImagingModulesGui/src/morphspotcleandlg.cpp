@@ -145,7 +145,6 @@ void MorphSpotCleanDlg::ApplyParameters()
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
 {
-
     std::ostringstream msg;
 
     m_Projections=img;

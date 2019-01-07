@@ -29,12 +29,15 @@ rm -f *.so.1.0.0
 
 # Module libs
 `$CPCMD $REPOSPATH/lib/libAdvancedFilterModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libAdvancedFilterModulesGUI.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libBaseModules.so.1.0.0  .`
+`$CPCMD $REPOSPATH/lib/libBaseModulesGUI.so.1.0.0  .`
 `$CPCMD $REPOSPATH/lib/libPorespaceModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libClassificationModules.so.1.0.0 .`
+`$CPCMD $REPOSPATH/lib/libClassificationModulesGUI.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libImagingModules.so.1.0.0 .`
-`$CPCMD $REPOSPATH/lib/libPCAModules.so.1.0.0 .`
-`$CPCMD $REPOSPATH/lib/libStatisticsModules.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libPCAModules.so.1.0.0 .`
+#`$CPCMD $REPOSPATH/lib/libStatisticsModules.so.1.0.0 .`
 `$CPCMD $REPOSPATH/lib/libImagingModulesGUI.so.1.0.0 .`
 
 #qt stuff
@@ -86,7 +89,7 @@ cd $DEST/bin/platforms
 
 
 cd $DEST/bin
-`$CPCMD $REPOSPATH/Applications/QtKipTool .`
+`$CPCMD $REPOSPATH/Applications/KipTool .`
 cd ..
 `$CPCMD $REPOSPATH/imagingsuite/applications/kiptool/scripts/kiptool .`
 chmod +x kiptool

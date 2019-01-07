@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include <facestyles.h>
 
 int main(int argc, char *argv[])
 {
@@ -7,5 +8,6 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
+   // QtAddons::setDarkFace(&a);
     return a.exec();
 }

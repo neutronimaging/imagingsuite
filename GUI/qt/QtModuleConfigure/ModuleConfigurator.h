@@ -40,7 +40,7 @@ protected:
     void loadDialog(std::string application, std::string sharedobjectname, std::string objectname);
 
     void destroy();
-	virtual int GetImage(std::string sSelectedModule)=0;
+    virtual int GetImage(std::string sSelectedModule)=0;
 	HINSTANCE hinstLib;
     FACTORY m_fnModuleFactory;
 	DESTROYER m_fnDestroyer;

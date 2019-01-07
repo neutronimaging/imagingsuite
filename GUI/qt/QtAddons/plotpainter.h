@@ -6,6 +6,7 @@
 #include <QMap>
 #include <logging/logger.h>
 #include "qglyphs.h"
+#include "plotcursor.h"
 
 class QWidget;
 //struct QPointF;
@@ -102,22 +103,7 @@ public :
     QtAddons::ePlotGlyph glyph;
 };
 
-class QTADDONSSHARED_EXPORT PlotCursor
-{
-public:
-    enum Orientation {
-        Horizontal = 0,
-        Vertical   = 1
-    };
 
-    PlotCursor();
-    PlotCursor(const PlotCursor & c);
-    PlotCursor(double pos, QColor color, Orientation o);
-    const PlotCursor & operator=(const PlotCursor & c);
-    double m_fPosition;
-    QColor m_Color;
-    Orientation m_Orientation;
-};
 
 }
 #endif // PLOTPAINTER_H

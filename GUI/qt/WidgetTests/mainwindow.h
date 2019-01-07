@@ -41,6 +41,12 @@ private slots:
     void on_button_ListAllROIs_clicked();
     void on_button_ListSelectedROIs_clicked();
     void on_pushButton_showLogger_clicked();
+    void on_pushButton_clicked();
+    void on_checkBox_stride_toggled(bool checked);
+    void on_checkBox_repeat_toggled(bool checked);
+    void on_checkBox_roi_toggled(bool checked);
+    void on_checkBox_fliprot_toggled(bool checked);
+    void on_pushButton_getFormInfo_clicked();
 };
 
 #endif // MAINWINDOW_H
