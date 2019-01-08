@@ -111,7 +111,7 @@ vector<double> operator/(vector<T1> & a, vector<T2> &b)
 	
 	for (size_t i=0; i<a.size(); i++) 
 		if (b[i])
-			tmp[i]=a[i]/(double)b[i];
+            tmp[i]=a[i]/static_cast<double>(b[i]);
 		else {
 			cerr<<"stlvec math op/ : div by zero at i="<<i<<endl;
 		}
@@ -179,7 +179,7 @@ vector<T> FillVec(int n, T val=0)
 {
 	vector<T> tmp(n);
 
-	for (size_t i=0; i<n; i++) {
+    for (int i=0; i<n; i++) {
 		tmp[i]=val;
 	}
 
@@ -190,7 +190,7 @@ vector<T> FillVec(int n, T val=0)
 template<class T>
 vector<T> FillVecSeries(T start, T stop, T step=(T)1)
 {
-	int n=1+(stop-start)/step;
+    size_t n=1+(stop-start)/step;
 
 	vector<T> tmp(n);
 	size_t i;
@@ -218,7 +218,7 @@ vector<T> DiffVec(vector<T> &v)
 }
 
 template <class T>
-T Min(vector<T> &v,int *pos=NULL)
+T Min(vector<T> &v,int *pos=nullptr)
 {
 	T m=v[0];
 	int ptmp=0;
@@ -237,7 +237,7 @@ T Min(vector<T> &v,int *pos=NULL)
 }
 
 template <class T>
-T Max(vector<T> &v,int *pos=NULL)
+T Max(vector<T> &v,int *pos=nullptr)
 {
 	T m=v[0];
 	int ptmp=0;
@@ -262,7 +262,7 @@ double median(vector<T> &v)
 	double m;
 	double *tmp;
 	
-	int N=v.size();
+    size_t N=v.size();
 	tmp=new double[N];
 
 
@@ -285,7 +285,7 @@ template <class T>
 double mean(vector<T> &v)
 {
 	double sum=0;
-	int N=v.size();
+    size_t N=v.size();
 	
 	for (size_t i=0; i<N; i++)
 		sum+=v[i];
@@ -334,7 +334,7 @@ vector<T> cumsum(vector<T> &v, bool norm=false)
 	if (norm) {
 	double scale=1/ tv[tv.size()-1];
 	for (size_t i=0; i<tv.size(); i++)
-	tv[i]=(T)(tv[i]*scale);
+    tv[i]=static_cast<T>(tv[i]*scale);
 	}
 
 	return tv;
