@@ -3,6 +3,8 @@
 
 #include <list>
 #include <limits>
+
+#include "../base/kiplenums.h"
 #include "../base/timage.h"
 #include "morphology.h"
 
@@ -11,7 +13,7 @@ namespace kipl {
 namespace morphology {
 
 template <class T>
-void RepairHoles(kipl::base::TImage<T> &img, std::list<size_t> &holelist, kipl::morphology::MorphConnect connect);
+void RepairHoles(kipl::base::TImage<T> &img, std::list<size_t> &holelist, kipl::base::eConnectivity connect);
 }
 
 }

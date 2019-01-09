@@ -541,7 +541,7 @@ void kiplMorphologyTest::testRepairHoles()
     }
 
     kipl::io::WriteTIFF(img,"preRepair.tiff");
-    kipl::morphology::RepairHoles(img,plist,kipl::morphology::conn8);
+    kipl::morphology::RepairHoles(img,plist,kipl::base::conn4);
     kipl::io::WriteTIFF(img,"repaired.tiff");
 }
 
