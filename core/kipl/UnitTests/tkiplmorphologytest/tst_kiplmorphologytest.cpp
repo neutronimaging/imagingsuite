@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <list>
 
 #include <QString>
 #include <QtTest>
@@ -9,6 +10,7 @@
 #include <base/KiplException.h>
 #include <morphology/morphextrema.h>
 #include <morphology/morphfilters.h>
+#include <morphology/repairhole.h>
 #include <io/io_tiff.h>
 
 using namespace std;
@@ -30,6 +32,7 @@ private Q_SLOTS:
     void testErosion3D();
     void testDilation3D();
     void testhMax();
+    void testRepairHoles();
 };
 
 kiplMorphologyTest::kiplMorphologyTest()
@@ -511,6 +514,35 @@ void kiplMorphologyTest::testErosion3D()
 void kiplMorphologyTest::testDilation3D()
 {
 
+}
+
+void kiplMorphologyTest::testRepairHoles()
+{
+    size_t dims[2]={10,10};
+    kipl::base::TImage<float,2> img(dims);
+
+    for (size_t i=0; i<dims[1]; ++i)
+    {
+        for (size_t j=0; j<dims[0]; ++j)
+        {
+          img(j,i)=i*dims[0]+j;
+        }
+    }
+
+    std::list<size_t> plist;
+
+    for (size_t i=3; i<7; ++i)
+    {
+        for (size_t j=4; j<8; ++j)
+        {
+          img(j,i)=-1;
+          plist.push_back(i*dims[0]+j);
+        }
+    }
+
+    kipl::io::WriteTIFF(img,"preRepair.tiff");
+    kipl::morphology::RepairHoles(img,plist,kipl::morphology::conn8);
+    kipl::io::WriteTIFF(img,"repaired.tiff");
 }
 
 QTEST_APPLESS_MAIN(kiplMorphologyTest)
