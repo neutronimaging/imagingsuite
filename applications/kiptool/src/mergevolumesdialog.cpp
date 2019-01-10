@@ -187,6 +187,12 @@ void MergeVolumesDialog::on_pushButton_startmerge_clicked()
 
 void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
 {
+    if (m_VerticalImgResult.Size()==0)
+    {
+        logger.warning("No image is available");
+        return;
+    }
+
     switch (index) {
     case 0 :
         logger(kipl::logging::Logger::LogMessage,"Display local vertical");
