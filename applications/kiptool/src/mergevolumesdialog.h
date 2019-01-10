@@ -18,7 +18,7 @@ class MergeVolumesDialog : public QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit MergeVolumesDialog(QWidget *parent = 0);
+    explicit MergeVolumesDialog(QWidget *parent = nullptr);
     ~MergeVolumesDialog();
 
 private slots:
@@ -40,9 +40,15 @@ private slots:
 
     void on_comboBox_result_currentIndexChanged(int index);
 
-    void on_checkBox_crop_toggled(bool checked);
-
     void on_pushButton_TestMix_clicked();
+
+    void on_spinBox_firstA_valueChanged(int arg1);
+
+    void on_spinBox_lastA_valueChanged(int arg1);
+
+    void on_spinBox_firstB_valueChanged(int arg1);
+
+    void on_spinBox_lastB_valueChanged(int arg1);
 
 protected:
     void UpdateDialog();
