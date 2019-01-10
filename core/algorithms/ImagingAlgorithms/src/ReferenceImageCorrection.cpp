@@ -2614,10 +2614,11 @@ void ReferenceImageCorrection::PrepareReferencesExtBB(){
 
 int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose)
 {
-
+    std::ostringstream msg;
     float Pdose = 0.0f;
 
     float defaultdose=-log(1.0f/(m_fOpenBeamDose-m_fDarkDose));
+    const float transmissionTreshold=0.005f;
 //    float defaultdose= 0.0f;
 
 
@@ -2649,7 +2650,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                         for (int i=0; i<N; i++) {
 
                             float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                            if (fProjPixel<=0){
+                            if (fProjPixel<=transmissionTreshold){
                                 pImg[i] = defaultdose;
 
                                 #pragma omp critical
@@ -2674,7 +2675,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                     for (int i=0; i<N; i++) {
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
-                        if (fProjPixel<=0){
+                        if (fProjPixel<=transmissionTreshold){
 //                            pImg[i]=0;
                             pImg[i] = defaultdose;
                             #pragma omp critical
@@ -2706,7 +2707,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                         for (int i=0; i<N; i++) {
 
                             float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                            if (fProjPixel<=0){
+                            if (fProjPixel<=transmissionTreshold){
     //                                pImg[i]=0;
                                 pImg[i] = defaultdose;
                                 #pragma omp critical
@@ -2731,7 +2732,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                     for (int i=0; i<N; i++) {
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                        if (fProjPixel<=0) {
+                        if (fProjPixel<=transmissionTreshold) {
 //                            pImg[i]=0;
                             pImg[i]= defaultdose;
                             #pragma omp critical
@@ -2762,7 +2763,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                         for (int i=0; i<N; i++) {
 
                             float fProjPixel=(pImg[i]-pDark[i]);
-                            if (fProjPixel<=0){
+                            if (fProjPixel<=transmissionTreshold){
 //                                pImg[i]=0;
                                 pImg[i]= defaultdose;
                                 #pragma omp critical
@@ -2784,7 +2785,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                     #pragma omp parallel for firstprivate(pDark)
                     for (int i=0; i<N; i++) {
                         float fProjPixel=(pImg[i]-pDark[i]);
-                        if (fProjPixel<=0){
+                        if (fProjPixel<=transmissionTreshold){
 //                            pImg[i]=0;
                             pImg[i]= defaultdose;
                             #pragma omp critical
@@ -2800,8 +2801,9 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
         }
     }
 
-
-    kipl::morphology::RepairHoles(img,negPixelList,kipl::morphology::conn8);
+    msg<<"Correcting "<<negPixelList.size()<<" pixels with negative values using repairHoles.";
+    logger.message(msg.str());
+    kipl::morphology::RepairHoles(img,negPixelList,kipl::base::conn8);
 
 
     return 1;

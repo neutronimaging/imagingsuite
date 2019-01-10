@@ -31,7 +31,7 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
     int loopCnt=0;
     while (!edgePixels.empty())
     {
-        qDebug() << "Loop count" << loopCnt++ << "list size "<< edgePixels.size();
+//        qDebug() << "Loop count" << loopCnt++ << "list size "<< edgePixels.size();
         while (!edgePixels.empty())
         {
             size_t pixPos=edgePixels.front();
@@ -51,7 +51,7 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
                 }
             }
 
-            qDebug() << "hit cnt"<<hitcnt<<" isedge"<<isEdge;
+//            qDebug() << "hit cnt"<<hitcnt<<" isedge"<<isEdge;
             if (isEdge)
             {
                 processedPixels.push_back(std::make_pair(pixPos,static_cast<T>(sum/hitcnt)));
@@ -62,7 +62,7 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             }
         }
 
-        qDebug() << "Size processed:" << processedPixels.size() <<" remaining "<< remainingPixels.size();
+//        qDebug() << "Size processed:" << processedPixels.size() <<" remaining "<< remainingPixels.size();
         for (auto p=processedPixels.begin(); p!=processedPixels.end(); ++p)
             img[p->first]=p->second;
 
@@ -70,7 +70,7 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
 
         edgePixels.clear();
         edgePixels=remainingPixels;
-        qDebug() << "Loop count" << loopCnt << "list size "<< edgePixels.size();
+//        qDebug() << "Loop count" << loopCnt << "list size "<< edgePixels.size();
         remainingPixels.clear();
 
     }
