@@ -6,6 +6,7 @@
 
 CONFIG += c++11 console
 CONFIG -=app_bundle
+CONFIG += no_batch
 
 TARGET = KipToolCLI
 #VERSION = 2.7.0
@@ -84,13 +85,13 @@ message("-lNeXus does not exist $$HEADERS")
 
 SOURCES +=  main.cpp \
             qtkiptoolcli.cpp \
-            ImageIO.cpp \
+            ../../../kiptool/src/ImageIO.cpp
+#            ImageIO.cpp
 #            stdafx.cpp \
 #            ImagingToolConfig.cpp \
 #            genericconversion.cpp \
 #            Reslicer.cpp \
 #            mergevolume.cpp \
-#            ../../../kiptool/src/ImageIO.cpp \
 #            $$PWD/../../../kiptool/src/Fits2Tif.cpp \
 #            ../../../kiptool/src/stdafx.cpp \
 #            ../../../kiptool/src/ImagingToolConfig.cpp
@@ -100,14 +101,14 @@ SOURCES +=  main.cpp \
 
 
 HEADERS  += qtkiptoolcli.h \
-            ImageIO.h \
+            ../../../kiptool/src/ImageIO.h
+#            ImageIO.h
 #            stdafx.h \
 #            targetver.h \
 #            ImagingToolConfig.h \
 #            genericconversion.h \
 #            Reslicer.h \
 #            mergevolume.h \
-#            ../../../kiptool/src/ImageIO.h \
 #            $$PWD/../../../kiptool/src/Fits2Tif.h  \
 #            ../../../kiptool/src/stdafx.h \
 #            ../../../kiptool/src/targetver.h \
