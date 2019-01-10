@@ -26,138 +26,44 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="4">
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
-             <widget class="QLabel" name="label_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>First</string>
+             <widget class="ReaderForm" name="widget_readerFormA" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>130</height>
+               </size>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox_firstA">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximum">
-               <number>9999</number>
+             <widget class="QPushButton" name="pushButton_loadA">
+              <property name="text">
+               <string>Load Data A</string>
               </property>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="0" column="5">
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <widget class="QLabel" name="label_3">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="ReaderForm" name="widget_readerFormB" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>130</height>
+               </size>
               </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_loadB">
               <property name="text">
-               <string>Last</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_lastA">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximum">
-               <number>9999</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Data A</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit_pathA"/>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pushButton_browseA">
-            <property name="text">
-             <string>Browse</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Data B</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit_pathB"/>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pushButton_browseB">
-            <property name="text">
-             <string>Browse</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>First</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_firstB">
-              <property name="maximum">
-               <number>9999</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="5">
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Last</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBox_lastB">
-              <property name="maximum">
-               <number>9999</number>
+               <string>Load Data B</string>
               </property>
              </widget>
             </item>
@@ -166,29 +72,11 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QPushButton" name="pushButton_loaddata">
-            <property name="text">
-             <string>Load data sets</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_loadA">
-            <property name="text">
-             <string>Load Data A</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_loadB">
-            <property name="text">
-             <string>Load Data B</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QPushButton" name="pushButton_loaddata">
+          <property name="text">
+           <string>Load data sets</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -345,6 +233,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimum">
+               <number>1</number>
               </property>
               <property name="maximum">
                <number>9999</number>
@@ -584,6 +475,12 @@
    <slots>
     <signal>levelsChanged(float,float)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>ReaderForm</class>
+   <extends>QWidget</extends>
+   <header location="global">readerform.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>QtAddons::uxROIWidget</class>

@@ -22,10 +22,6 @@ public:
     ~MergeVolumesDialog();
 
 private slots:
-    void on_pushButton_browseA_clicked();
-
-    void on_pushButton_browseB_clicked();
-
     void on_pushButton_loaddata_clicked();
 
     void on_pushButton_loadA_clicked();
@@ -41,14 +37,6 @@ private slots:
     void on_comboBox_result_currentIndexChanged(int index);
 
     void on_pushButton_TestMix_clicked();
-
-    void on_spinBox_firstA_valueChanged(int arg1);
-
-    void on_spinBox_lastA_valueChanged(int arg1);
-
-    void on_spinBox_firstB_valueChanged(int arg1);
-
-    void on_spinBox_lastB_valueChanged(int arg1);
 
 protected:
     void UpdateDialog();

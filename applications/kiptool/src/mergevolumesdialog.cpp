@@ -33,16 +33,20 @@ MergeVolumesDialog::~MergeVolumesDialog()
 
 void MergeVolumesDialog::UpdateDialog()
 {
-    ui->spinBox_firstA->setValue(m_merger.m_nFirstA);
-    ui->spinBox_lastA->setValue(m_merger.m_nLastA);
+    ImageLoader loader;
+    loader.m_nFirst=m_merger.m_nFirstA;
+    loader.m_nLast = m_merger.m_nLastA;
+    loader.m_sFilemask = m_merger.m_sPathA;
 
-    ui->spinBox_firstB->setValue(m_merger.m_nFirstB);
-    ui->spinBox_lastB->setValue(m_merger.m_nLastB);
+    ui->widget_readerFormA->setReaderConfig(loader);
+
+    loader.m_nFirst=m_merger.m_nFirstB;
+    loader.m_nLast = m_merger.m_nLastB;
+    loader.m_sFilemask = m_merger.m_sPathB;
+    ui->widget_readerFormB->setReaderConfig(loader);
 
     ui->spinBox_firstout->setValue(m_merger.m_nFirstDest);
 
-    ui->lineEdit_pathA->setText(QString::fromStdString(m_merger.m_sPathA));
-    ui->lineEdit_pathB->setText(QString::fromStdString(m_merger.m_sPathB));
     ui->lineEdit_pathout->setText(QString::fromStdString(m_merger.m_sPathOut));
 
     ui->spinBox_mixstart->setValue(m_merger.m_nStartOverlapA);
@@ -58,74 +62,33 @@ void MergeVolumesDialog::UpdateDialog()
 
 void MergeVolumesDialog::UpdateConfig()
 {
-        m_merger.m_nFirstA = ui->spinBox_firstA->value();
-        m_merger.m_nLastA = ui->spinBox_lastA->value();
+    ImageLoader loader;
+    loader=ui->widget_readerFormA->getReaderConfig();
 
-        m_merger.m_nFirstB = ui->spinBox_firstB->value();
-        m_merger.m_nLastB = ui->spinBox_lastB->value();
+    m_merger.m_nFirstA = loader.m_nFirst;
+    m_merger.m_nLastA  = loader.m_nLast;
+    m_merger.m_sPathA  = loader.m_sFilemask;
 
-        m_merger.m_nFirstDest = ui->spinBox_firstout->value();
+    loader=ui->widget_readerFormB->getReaderConfig();
 
-        m_merger.m_sPathA = ui->lineEdit_pathA->text().toStdString();
-        m_merger.m_sPathB = ui->lineEdit_pathB->text().toStdString();
-        m_merger.m_sPathOut = ui->lineEdit_pathout->text().toStdString();
-        m_merger.m_sMaskOut = ui->lineEdit_OutMask->text().toStdString();
+    m_merger.m_nFirstB = loader.m_nFirst;
+    m_merger.m_nLastB  = loader.m_nLast;
+    m_merger.m_sPathB  = loader.m_sFilemask;
 
-        m_merger.m_nStartOverlapA = ui->spinBox_mixstart->value();
-        m_merger.m_nOverlapLength = ui->spinBox_mixlength->value();
-        m_merger.m_nMergeOrder = ui->comboBox_mixorder->currentIndex();
+    m_merger.m_nFirstDest = ui->spinBox_firstout->value();
 
-        m_merger.m_bCropSlices = ui->groupBox_cropImages->isChecked();
-        m_merger.m_nCropOffset[0] = ui->spinBox_offsetx->value();
-        m_merger.m_nCropOffset[1] = ui->spinBox_offsety->value();
+    m_merger.m_sPathOut = ui->lineEdit_pathout->text().toStdString();
+    m_merger.m_sMaskOut = ui->lineEdit_OutMask->text().toStdString();
 
-        ui->widget_cropROI->getROI(m_merger.m_nCrop);
-}
+    m_merger.m_nStartOverlapA = ui->spinBox_mixstart->value();
+    m_merger.m_nOverlapLength = ui->spinBox_mixlength->value();
+    m_merger.m_nMergeOrder = ui->comboBox_mixorder->currentIndex();
 
-void MergeVolumesDialog::on_pushButton_browseA_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of date set A",
-                                      ui->lineEdit_pathA->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
+    m_merger.m_bCropSlices = ui->groupBox_cropImages->isChecked();
+    m_merger.m_nCropOffset[0] = ui->spinBox_offsetx->value();
+    m_merger.m_nCropOffset[1] = ui->spinBox_offsety->value();
 
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->lineEdit_pathA->setText(QString::fromStdString(fi.m_sMask));
-    }
-}
-
-void MergeVolumesDialog::on_pushButton_browseB_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of date set B",
-                                      ui->lineEdit_pathB->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->lineEdit_pathB->setText(QString::fromStdString(fi.m_sMask));
-    }
+    ui->widget_cropROI->getROI(m_merger.m_nCrop);
 }
 
 void MergeVolumesDialog::on_pushButton_loaddata_clicked()
@@ -137,12 +100,10 @@ void MergeVolumesDialog::on_pushButton_loaddata_clicked()
 void MergeVolumesDialog::on_pushButton_loadA_clicked()
 {
     std::ostringstream msg;
-    int first=ui->spinBox_firstA->value();
-    int last=ui->spinBox_lastA->value();
-    std::string fmask=ui->lineEdit_pathA->text().toStdString();
+    ImageLoader loader=ui->widget_readerFormA->getReaderConfig();
 
     try {
-        m_merger.LoadVerticalSlice(fmask,first,last,&m_VerticalImgA);
+        m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgA);
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
@@ -154,17 +115,17 @@ void MergeVolumesDialog::on_pushButton_loadA_clicked()
         return;
     }
     ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.Dims());
+    on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
 }
 
 void MergeVolumesDialog::on_pushButton_loadB_clicked()
 {
     std::ostringstream msg;
-    int first=ui->spinBox_firstB->value();
-    int last=ui->spinBox_lastB->value();
-    std::string fmask=ui->lineEdit_pathB->text().toStdString();
+
+    ImageLoader loader=ui->widget_readerFormB->getReaderConfig();
 
     try {
-        m_merger.LoadVerticalSlice(fmask,first,last,&m_VerticalImgB);
+        m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgB);
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
@@ -177,25 +138,22 @@ void MergeVolumesDialog::on_pushButton_loadB_clicked()
         return;
     }
     ui->viewer_dataB->set_image(m_VerticalImgB.GetDataPtr(),m_VerticalImgB.Dims());
+    on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
 }
 
 void MergeVolumesDialog::on_comboBox_mixorder_currentIndexChanged(int index)
 {
-    int minval=0;
-    int maxval=0;
-
+    ImageLoader loader;
     switch (index) {
     case 0:
-        minval=ui->spinBox_firstA->value();
-        maxval=ui->spinBox_lastA->value();
+        loader=ui->widget_readerFormA->getReaderConfig();
         break;
     case 1:
-        minval=ui->spinBox_firstB->value();
-        maxval=ui->spinBox_lastB->value();
+        loader=ui->widget_readerFormB->getReaderConfig();
     }
 
-    ui->spinBox_mixstart->setMinimum(minval);
-    ui->spinBox_mixstart->setMaximum(maxval);
+    ui->spinBox_mixstart->setMinimum(loader.m_nFirst);
+    ui->spinBox_mixstart->setMaximum(loader.m_nLast);
 }
 
 void MergeVolumesDialog::on_pushButton_browseout_clicked()
@@ -288,6 +246,7 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
         size_t dims[2]={static_cast<size_t>(m_VerticalImgA.Size(0)),
                         static_cast<size_t>(m_merger.m_nStartOverlapA+m_merger.m_nLastB+1-m_merger.m_nFirstA-m_merger.m_nFirstB)};
         m_VerticalImgResult.Resize(dims);
+        m_VerticalImgResult=0.0f;
         memcpy(m_VerticalImgResult.GetDataPtr(),
             m_VerticalImgA.GetDataPtr(),
             (m_merger.m_nStartOverlapA-m_merger.m_nFirstA)*m_VerticalImgA.Size(0)*sizeof(float));
@@ -369,26 +328,3 @@ void MergeVolumesDialog::LoadConfig()
     }
 }
 
-void MergeVolumesDialog::on_spinBox_firstA_valueChanged(int arg1)
-{
-    if (ui->comboBox_mixorder->currentIndex()==0)
-        ui->spinBox_mixstart->setMinimum(arg1);
-}
-
-void MergeVolumesDialog::on_spinBox_lastA_valueChanged(int arg1)
-{
-    if (ui->comboBox_mixorder->currentIndex()==0)
-        ui->spinBox_mixstart->setMaximum(arg1);
-}
-
-void MergeVolumesDialog::on_spinBox_firstB_valueChanged(int arg1)
-{
-    if (ui->comboBox_mixorder->currentIndex()==1)
-        ui->spinBox_mixstart->setMinimum(arg1);
-}
-
-void MergeVolumesDialog::on_spinBox_lastB_valueChanged(int arg1)
-{
-    if (ui->comboBox_mixorder->currentIndex()==1)
-        ui->spinBox_mixstart->setMaximum(arg1);
-}
