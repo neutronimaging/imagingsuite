@@ -19,8 +19,7 @@
 #include <base/KiplException.h>
 #include <utilities/nodelocker.h>
 
-#include "ImageIO.h"
-
+#include "../../../kiptool/src/ImageIO.h"
 
 #include <iostream>
 #include <sstream>

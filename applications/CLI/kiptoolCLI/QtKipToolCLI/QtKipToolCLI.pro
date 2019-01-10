@@ -85,7 +85,8 @@ message("-lNeXus does not exist $$HEADERS")
 
 SOURCES +=  main.cpp \
             qtkiptoolcli.cpp \
-            ../../../kiptool/src/ImageIO.cpp
+            ../../../kiptool/src/ImageIO.cpp \
+            ../../../kiptool/src/stdafx.cpp
 #            ImageIO.cpp
 #            stdafx.cpp \
 #            ImagingToolConfig.cpp \
@@ -93,7 +94,6 @@ SOURCES +=  main.cpp \
 #            Reslicer.cpp \
 #            mergevolume.cpp \
 #            $$PWD/../../../kiptool/src/Fits2Tif.cpp \
-#            ../../../kiptool/src/stdafx.cpp \
 #            ../../../kiptool/src/ImagingToolConfig.cpp
 #            Fits2Tif.cpp \
 
@@ -101,7 +101,8 @@ SOURCES +=  main.cpp \
 
 
 HEADERS  += qtkiptoolcli.h \
-            ../../../kiptool/src/ImageIO.h
+            ../../../kiptool/src/ImageIO.h \
+            ../../../kiptool/src/stdafx.h
 #            ImageIO.h
 #            stdafx.h \
 #            targetver.h \
