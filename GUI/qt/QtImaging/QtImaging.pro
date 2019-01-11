@@ -83,5 +83,5 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig/
 DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig/
 
-INCLUDEPATH += $$PWD/../../../gui/qt/QtAddons
-DEPENDPATH += $$PWD/../../../gui/qt/QtAddons
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons

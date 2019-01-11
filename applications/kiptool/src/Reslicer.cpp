@@ -126,7 +126,7 @@ int TIFFReslicer::process()
     return 0;
 }
 
-int TIFFReslicer::process(std::string sSrcMask, size_t nFirst, size_t nLast, std::string sDstMask, kipl::base::eImagePlanes plane)
+int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::string sDstMask, kipl::base::eImagePlanes plane)
 {
 	std::ostringstream msg;
 	std::string fname, ext;

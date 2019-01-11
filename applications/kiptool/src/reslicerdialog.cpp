@@ -20,35 +20,22 @@ ReslicerDialog::ReslicerDialog(QWidget *parent) :
     ui(new Ui::ReslicerDialog)
 {
     ui->setupUi(this);
+    ui->label_lastXZ->hide();
+    ui->label_lastYZ->hide();
+    ui->label_firstXZ->hide();
+    ui->label_firstYZ->hide();
+    ui->spinBox_lastXZ->hide();
+    ui->spinBox_lastYZ->hide();
+    ui->spinBox_firstXZ->hide();
+    ui->spinBox_firstYZ->hide();
+    ui->pushButton_getROI->hide();
+
     UpdateDialog();
 }
 
 ReslicerDialog::~ReslicerDialog()
 {
     delete ui;
-}
-
-void ReslicerDialog::on_pushButton_browsein_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select a file from data set",
-                                      ui->lineEdit_infilemask->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->lineEdit_infilemask->setText(QString::fromStdString(fi.m_sMask));
-    }
 }
 
 void ReslicerDialog::on_pushButton_browsout_clicked()
@@ -69,12 +56,16 @@ void ReslicerDialog::on_pushButton_startreslice_clicked()
 
 void ReslicerDialog::UpdateDialog()
 {
-    ui->lineEdit_infilemask->setText(QString::fromStdString(m_reslicer.m_sSourceMask));
+    ImageLoader infiles;
+    infiles.m_sFilemask = m_reslicer.m_sSourceMask;
+    infiles.m_nFirst    = m_reslicer.m_nFirst;
+    infiles.m_nLast     = m_reslicer.m_nLast;
+
+    ui->widget_inputFiles->setReaderConfig(infiles);
+
     ui->lineEdit_PathOut->setText(QString::fromStdString(m_reslicer.m_sDestinationPath));
     ui->lineEdit_MaskOut->setText(QString::fromStdString(m_reslicer.m_sDestinationMask));
 
-    ui->spinBox_firstslice->setValue(m_reslicer.m_nFirst);
-    ui->spinBox_lastslice->setValue(m_reslicer.m_nLast);
     ui->spinBox_firstXZ->setValue(m_reslicer.m_nFirstXZ);
     ui->spinBox_lastXZ->setValue(m_reslicer.m_nLastXZ);
     ui->spinBox_firstYZ->setValue(m_reslicer.m_nFirstYZ);
@@ -86,12 +77,14 @@ void ReslicerDialog::UpdateDialog()
 
 void ReslicerDialog::UpdateConfig()
 {
-    m_reslicer.m_sSourceMask      = ui->lineEdit_infilemask->text().toStdString();
+    ImageLoader infiles = ui->widget_inputFiles->getReaderConfig();
+    m_reslicer.m_sSourceMask = infiles.m_sFilemask;
+    m_reslicer.m_nFirst      = infiles.m_nFirst;
+    m_reslicer.m_nLast       = infiles.m_nLast;
+
     m_reslicer.m_sDestinationPath = ui->lineEdit_PathOut->text().toStdString();
     m_reslicer.m_sDestinationMask = ui->lineEdit_MaskOut->text().toStdString();
 
-    m_reslicer.m_nFirst           = ui->spinBox_firstslice->value();
-    m_reslicer.m_nLast            = ui->spinBox_lastslice->value();
     m_reslicer.m_nFirstXZ         = ui->spinBox_firstXZ->value();
     m_reslicer.m_nLastXZ          = ui->spinBox_lastXZ->value();
     m_reslicer.m_nFirstYZ         = ui->spinBox_firstYZ->value();
@@ -103,11 +96,11 @@ void ReslicerDialog::UpdateConfig()
 
 void ReslicerDialog::on_pushButton_preview_clicked()
 {
-    int idx=ui->spinBox_firstslice->value()+(ui->spinBox_lastslice->value()-ui->spinBox_firstslice->value())/2;
+    ImageLoader infiles = ui->widget_inputFiles->getReaderConfig();
+    int idx=infiles.m_nFirst+(infiles.m_nLast-infiles.m_nFirst)/2;
 
-    std::string fmask=ui->lineEdit_infilemask->text().toStdString();
     std::string fname,ext;
-    kipl::strings::filenames::MakeFileName(fmask,idx,fname,ext,'#','0');
+    kipl::strings::filenames::MakeFileName(infiles.m_sFilemask,idx,fname,ext,'#','0');
 
     kipl::base::TImage<float,2> img;
 
