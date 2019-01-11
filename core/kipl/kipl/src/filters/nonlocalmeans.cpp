@@ -443,6 +443,8 @@ void NonLocalMeans::nlm_hist_sum_single(float *f, float *ff, float *ff2, float *
 /// \param N number of pixels
 void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *ff2, float *g, size_t N)
 {
+
+    throw kipl::base::KiplException("threaded histogram is not implemented",__FILE__,__LINE__);
     std::ostringstream msg;
 
     ComputeHistogramSum(f,ff,ff2,N);
@@ -466,9 +468,9 @@ void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *ff2, float
                                                              M + rest); }));
     }
 
-    // call join() on each thread in turn
-    for_each(threads.begin(), threads.end(),
-        std::mem_fn(&std::thread::join));
+    // call join() on each thread in turn this doesn't compile on ubuntu 18.04
+//    for_each(threads.begin(), threads.end(),
+//        std::mem_fn(&std::thread::join));
 }
 
 void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g, size_t N)
