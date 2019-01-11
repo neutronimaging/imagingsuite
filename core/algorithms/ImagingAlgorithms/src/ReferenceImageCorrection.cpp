@@ -3,6 +3,7 @@
 #include <map>
 #include <math.h>
 #include <sstream>
+#include <list>
 
 #include <tnt_array1d.h>
 #include <tnt_array2d.h>
@@ -19,6 +20,7 @@
 #include <base/tsubimage.h>
 #include <strings/miscstring.h>
 #include <morphology/label.h>
+#include <morphology/repairhole.h>
 
 
 #include "../include/ReferenceImageCorrection.h"
@@ -2612,10 +2614,11 @@ void ReferenceImageCorrection::PrepareReferencesExtBB(){
 
 int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose)
 {
-
+    std::ostringstream msg;
     float Pdose = 0.0f;
 
     float defaultdose=-log(1.0f/(m_fOpenBeamDose-m_fDarkDose));
+    const float transmissionTreshold=0.005f;
 //    float defaultdose= 0.0f;
 
 
@@ -2627,6 +2630,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
     float *pFlat=m_OpenBeam.GetDataPtr();
     float *pDark=m_DarkCurrent.GetDataPtr();
 
+    std::list<size_t> negPixelList;
 
     if (m_bHaveBlackBody) {
         if (m_bHaveDarkCurrent) {
@@ -2646,8 +2650,13 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                         for (int i=0; i<N; i++) {
 
                             float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                            if (fProjPixel<=0){
+                            if (fProjPixel<=transmissionTreshold){
                                 pImg[i] = defaultdose;
+
+                                #pragma omp critical
+                                {
+                                    negPixelList.push_back(static_cast<size_t>(i));
+                                }
                             }
                             else
                                 pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose));
@@ -2666,9 +2675,13 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                     for (int i=0; i<N; i++) {
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);// to add dose normalization in pImgBB - done
-                        if (fProjPixel<=0){
+                        if (fProjPixel<=transmissionTreshold){
 //                            pImg[i]=0;
                             pImg[i] = defaultdose;
+                            #pragma omp critical
+                            {
+                                negPixelList.push_back(static_cast<size_t>(i));
+                            }
                         }
                         else
                            pImg[i]=-log(fProjPixel)+log((dose-Pdose)<1 ? 1.0f : (dose-Pdose)); // yes but what is logdose if there is no open beam?
@@ -2694,9 +2707,13 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                         for (int i=0; i<N; i++) {
 
                             float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                            if (fProjPixel<=0){
+                            if (fProjPixel<=transmissionTreshold){
     //                                pImg[i]=0;
                                 pImg[i] = defaultdose;
+                                #pragma omp critical
+                                {
+                                    negPixelList.push_back(static_cast<size_t>(i));
+                                }
                             }
                             else
                                 pImg[i]=pFlat[i]-log(fProjPixel)+log((dose-fdose_ext_slice)<1 ? 1.0f : (dose-fdose_ext_slice));
@@ -2715,9 +2732,13 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                     for (int i=0; i<N; i++) {
 
                         float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                        if (fProjPixel<=0) {
+                        if (fProjPixel<=transmissionTreshold) {
 //                            pImg[i]=0;
                             pImg[i]= defaultdose;
+                            #pragma omp critical
+                            {
+                                negPixelList.push_back(static_cast<size_t>(i));
+                            }
                         }
                         else
                            pImg[i]=-log(fProjPixel)+log((dose-fdose_ext_slice)<1 ? 1.0f : (dose-fdose_ext_slice)); // yes but what is logdose if there is no open beam?
@@ -2742,9 +2763,13 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                         for (int i=0; i<N; i++) {
 
                             float fProjPixel=(pImg[i]-pDark[i]);
-                            if (fProjPixel<=0){
+                            if (fProjPixel<=transmissionTreshold){
 //                                pImg[i]=0;
                                 pImg[i]= defaultdose;
+                                #pragma omp critical
+                                {
+                                    negPixelList.push_back(static_cast<size_t>(i));
+                                }
                             }
                             else
                                 pImg[i]=pFlat[i]-log(fProjPixel)+log(dose<=0 ? 1.0f : dose);
@@ -2760,9 +2785,13 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
                     #pragma omp parallel for firstprivate(pDark)
                     for (int i=0; i<N; i++) {
                         float fProjPixel=(pImg[i]-pDark[i]);
-                        if (fProjPixel<=0){
+                        if (fProjPixel<=transmissionTreshold){
 //                            pImg[i]=0;
                             pImg[i]= defaultdose;
+                            #pragma omp critical
+                            {
+                                negPixelList.push_back(static_cast<size_t>(i));
+                            }
                         }
                         else
                            pImg[i]=-log(fProjPixel)+log(dose<=0 ? 1.0f : dose);
@@ -2772,6 +2801,9 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
         }
     }
 
+    msg<<"Correcting "<<negPixelList.size()<<" pixels with negative values using repairHoles.";
+    logger.message(msg.str());
+    kipl::morphology::RepairHoles(img,negPixelList,kipl::base::conn8);
 
 
     return 1;

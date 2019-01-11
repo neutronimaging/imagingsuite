@@ -336,7 +336,9 @@ HEADERS +=\
     ../include/io/io_serializecontainers.h \
     ../include/math/findpeaks.h \
     ../include/math/normalizeimage.h \
-    ../include/strings/xmlstrings.h
+    ../include/strings/xmlstrings.h \
+    ../include/morphology/repairhole.h \
+    ../include/morphology/core/repairhole.hpp
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
