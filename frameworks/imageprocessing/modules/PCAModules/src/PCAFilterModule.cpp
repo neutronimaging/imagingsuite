@@ -64,14 +64,9 @@ int PCAFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 
     pca.filter(img,img,m_nLevel);
 
-<<<<<<< HEAD
     kipl::containers::PlotData<float,float> eigplot(img.Size(2),"Eigen values");
     kipl::containers::PlotData<float,float> normeigplot(img.Size(2),"Normalized eigen values");
 
-=======
-    kipl::containers::PlotData<float,float> eigplot(img.Size(2),"Eigen plot");
-    kipl::containers::PlotData<float,float> normeigplot(img.Size(2),"Normalized eigen plot");
->>>>>>> 7da90c281f4dff3c0d27d5a17ca0e62e67fdb86b
     TNT::Array1D<double> eigval=pca.eigenvalues();
 
     for (size_t i=0; i<eigplot.Size(); i++) {
