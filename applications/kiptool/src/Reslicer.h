@@ -20,7 +20,7 @@ private:
 public:
 	TIFFReslicer();
 	virtual ~TIFFReslicer();
-	int process(std::string sSrcMask, size_t nFirst, size_t nLast, std::string sDstMask, kipl::base::eImagePlanes plane);
+    int process(std::string sSrcMask, int nFirst, int nLast, std::string sDstMask, kipl::base::eImagePlanes plane);
     int process();
 	float progress();
 
