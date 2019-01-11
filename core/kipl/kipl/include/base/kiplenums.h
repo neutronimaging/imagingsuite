@@ -144,6 +144,11 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eImageFlip &fli
 /// \brief Converts an image rotation enum to a string
 /// \param str a string containing the name to convert
 /// \param rot the enum result
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eImageFlip flip);
+
+/// \brief Converts an image rotation enum to a string
+/// \param str a string containing the name to convert
+/// \param rot the enum result
 KIPLSHARED_EXPORT std::string enum2string(kipl::base::eImageRotate &rot);
 
 

@@ -54,7 +54,8 @@ SOURCES += plotter.cpp \
     plotwidget.cpp \
     setgraylevelsdlg.cpp \
     callout.cpp \
-    facestyles.cpp
+    facestyles.cpp \
+    plotcursor.cpp
 
 
 
@@ -76,7 +77,8 @@ HEADERS += QtAddons_global.h \
     plotwidget.h \
     setgraylevelsdlg.h \
     callout.h \
-    facestyles.h
+    facestyles.h \
+    plotcursor.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
