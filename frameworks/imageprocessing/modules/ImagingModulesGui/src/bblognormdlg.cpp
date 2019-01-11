@@ -537,8 +537,8 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 //            if (found==std::string::npos )
 //            {
                 m_Preview_OBBB = reader.Read(filename,
-                                             kipl::base::ImageFlipNone,
-                                             kipl::base::ImageRotateNone,
+                                             m_Config->mImageInformation.eFlip,
+                                             m_Config->mImageInformation.eRotate,
                                              1.0f,
                                              NULL);
 //            }
@@ -768,8 +768,8 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
     if (QFile::exists(QString::fromStdString(filename)))
     {
         m_Preview_sampleBB = reader.Read(filename,
-                                     kipl::base::ImageFlipNone,
-                                     kipl::base::ImageRotateNone,
+                                         m_Config->mImageInformation.eFlip,
+                                         m_Config->mImageInformation.eRotate,
                                      1.0f,
                                      NULL);
 
