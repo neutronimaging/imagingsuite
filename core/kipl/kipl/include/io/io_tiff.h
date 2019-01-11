@@ -302,7 +302,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 	}
 	
     int framecnt=0;
-    while ((framecnt<idx) && (image!=nullptr)){
+    while ((framecnt<static_cast<int>(idx)) && (image!=nullptr)){
         TIFFReadDirectory(image);
         framecnt++;
     }

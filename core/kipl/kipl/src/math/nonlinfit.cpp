@@ -275,6 +275,8 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
     int FitFunctionBase::getPars(Array1D<double> &pars)
     {
+        pars=m_pars;
+
         return 0;
     }
 	
@@ -434,7 +436,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
     int Voight::operator()(double x, double &y, Array1D<double> &dyda)
     {
-        long double diff=x-m_pars[1];
+        long double diff=static_cast<long double>(x-m_pars[1]);
         x=m_pars[0]*exp(-m_pars[2]*fabs(diff)-(m_pars[3]*diff*diff*0.5));
 
         return 0;
