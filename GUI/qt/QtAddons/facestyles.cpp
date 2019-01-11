@@ -28,11 +28,24 @@ void QTADDONSSHARED_EXPORT setDarkFace(QApplication *app) {
     palette.setColor(QPalette::Background, QColor("darkgray").darker());
     palette.setColor(QPalette::Highlight, QColor("#6db3f7"));
     palette.setColor(QPalette::HighlightedText, Qt::white);
+
+    QBrush brush = palette.background();
+    brush.setColor(brush.color().dark());
+    palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush);
+    palette.setBrush(QPalette::Disabled, QPalette::Text, brush);
+    palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush);
+    palette.setBrush(QPalette::Disabled, QPalette::Base, brush);
+    palette.setBrush(QPalette::Disabled, QPalette::Button, brush);
+    palette.setBrush(QPalette::Disabled, QPalette::Mid, brush);
+
     app->setPalette(palette);
     app->setStyleSheet("QLineEdit {background : white; color:black}"
                        "QSpinBox {background : white; color:black} "
+                       "QSpinBox:disabled {background : #808080; color:#101010} "
                        "QTextEdit {background : white; color:black} "
+                       "QTextEdit:disabled {background : #808080; color:#101010} "
                        "QDoubleSpinBox{background : white; color:black} "
+                       "QDoubleSpinBox:disabled {background : #808080; color:#101010} "
                        "QTabBar::tab {"
                        "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #E1E1E1, stop: 1.0 #D3D3D3);"
                        "border: 1px solid #C4C4C3;"

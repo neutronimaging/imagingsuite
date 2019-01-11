@@ -18,7 +18,7 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     roiID(cnt++),
     ui(new Ui::uxROIWidget),
     hViewer(nullptr),
-    autoHideViewerROI(true),
+    autoHideViewerROI(false),
     allowUpdateImageDims(true)
 {
     ui->setupUi(this);
