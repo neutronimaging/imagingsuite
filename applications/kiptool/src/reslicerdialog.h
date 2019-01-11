@@ -16,11 +16,10 @@ class ReslicerDialog : public QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit ReslicerDialog(QWidget *parent = 0);
+    explicit ReslicerDialog(QWidget *parent = nullptr);
     ~ReslicerDialog();
 
 private slots:
-    void on_pushButton_browsein_clicked();
 
     void on_pushButton_browsout_clicked();
 

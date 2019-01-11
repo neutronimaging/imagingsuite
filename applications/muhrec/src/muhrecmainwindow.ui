@@ -1539,10 +1539,10 @@
                   <number>2</number>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-1000000000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>9999.989999999999782</double>
+                  <double>9999990000.000000000000000</double>
                  </property>
                  <property name="singleStep">
                   <double>1.000000000000000</double>
@@ -1562,10 +1562,10 @@
                   <string>y-coordinate of the piercing point. </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-1000000000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>9999.989999999999782</double>
+                  <double>9999990000.000000000000000</double>
                  </property>
                 </widget>
                </item>

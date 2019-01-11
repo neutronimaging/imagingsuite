@@ -10,6 +10,7 @@ pushd .
 cd %DEST%
 
 copy %REPOS%\Applications\KipTool.exe .
+copy %REPOS%\Applications\KipToolCLI.exe .
 copy %REPOS%\lib\ImagingAlgorithms.dll .
 copy %REPOS%\lib\ModuleConfig.dll .
 copy %REPOS%\lib\ReaderConfig.dll .
@@ -61,6 +62,7 @@ cd %QTBINPATH%
 #cd C:\Qt\5.11.1\msvc2017_64\bin
 
 windeployqt %DEST%\KipTool.exe
+windeployqt %DEST%\KipToolCLI.exe
 copy Qt5PrintSupport.dll %DEST%
 copy Qt5Charts.dll %DEST%
 
