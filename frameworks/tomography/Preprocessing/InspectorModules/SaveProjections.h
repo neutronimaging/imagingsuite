@@ -8,10 +8,12 @@
 #include <PreprocModuleBase.h>
 #include <ReconConfig.h>
 
+#include <interactors/interactionbase.h>
+
 class SaveProjections : public PreprocModuleBase
 {
 public:
-	SaveProjections();
+    SaveProjections(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~SaveProjections();
 
 	virtual std::map<std::basic_string<char>, std::basic_string<char> > GetParameters();
