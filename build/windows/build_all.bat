@@ -10,8 +10,8 @@ rem call build_applications_NIQA.bat
 rem call build_applications_imageviewer.bat
 call build_applications_kiptool.bat
 call build_applications_muhrec.bat
-call build_applications_muhrecCLI.bat
+rem call build_applications_muhrecCLI.bat
 
-call build_application_kiptoolCLI.bat
+rem call build_application_kiptoolCLI.bat
 
 rem call build_applications_CLItools.bat
