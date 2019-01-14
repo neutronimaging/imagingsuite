@@ -27,7 +27,7 @@ private slots:
 
     void on_pushButton_preview_clicked();
 
-    void on_pushButton_getROI_clicked();
+//    void on_pushButton_getROI_clicked();
 
     void on_spinBox_firstXZ_valueChanged(int arg1);
 

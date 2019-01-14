@@ -161,33 +161,33 @@ void ReslicerDialog::on_pushButton_preview_clicked()
                 logger(logger.LogError, msg.str());
             }
             ui->viewer_slice->set_image(img.GetDataPtr(),img.Dims());
-            m_currentROI=QRect(0,0,img.Size(0)-1,img.Size(1)-1);
+//            m_currentROI=QRect(0,0,img.Size(0)-1,img.Size(1)-1);
 
-            ui->spinBox_firstXZ->setMaximum(m_currentROI.right());
-            ui->spinBox_lastXZ->setMaximum(m_currentROI.right());
-            ui->spinBox_firstYZ->setMaximum(m_currentROI.bottom());
-            ui->spinBox_lastYZ->setMaximum(m_currentROI.bottom());
+//            ui->spinBox_firstXZ->setMaximum(m_currentROI.right());
+//            ui->spinBox_lastXZ->setMaximum(m_currentROI.right());
+//            ui->spinBox_firstYZ->setMaximum(m_currentROI.bottom());
+//            ui->spinBox_lastYZ->setMaximum(m_currentROI.bottom());
 
-            ui->spinBox_firstXZ->setValue(m_currentROI.left());
-            ui->spinBox_lastXZ->setValue(m_currentROI.right());
-            ui->spinBox_firstYZ->setValue(m_currentROI.top());
-            ui->spinBox_lastYZ->setValue(m_currentROI.bottom());
+//            ui->spinBox_firstXZ->setValue(m_currentROI.left());
+//            ui->spinBox_lastXZ->setValue(m_currentROI.right());
+//            ui->spinBox_firstYZ->setValue(m_currentROI.top());
+//            ui->spinBox_lastYZ->setValue(m_currentROI.bottom());
             }
 
 }
 
-void ReslicerDialog::on_pushButton_getROI_clicked()
-{
-    QRect roi=ui->viewer_slice->get_marked_roi();
+//void ReslicerDialog::on_pushButton_getROI_clicked()
+//{
+//    QRect roi=ui->viewer_slice->get_marked_roi();
 
-    ui->spinBox_firstXZ->setValue(roi.left());
-    ui->spinBox_firstYZ->setValue(roi.top());
-    ui->spinBox_lastXZ->setValue(roi.right());
-    ui->spinBox_lastYZ->setValue(roi.bottom());
+//    ui->spinBox_firstXZ->setValue(roi.left());
+//    ui->spinBox_firstYZ->setValue(roi.top());
+//    ui->spinBox_lastXZ->setValue(roi.right());
+//    ui->spinBox_lastYZ->setValue(roi.bottom());
 
-    ui->viewer_slice->set_rectangle(roi,QColor("red"),0);
-    m_currentROI=roi;
-}
+//    ui->viewer_slice->set_rectangle(roi,QColor("red"),0);
+//    m_currentROI=roi;
+//}
 
 void ReslicerDialog::on_spinBox_firstXZ_valueChanged(int arg1)
 {
