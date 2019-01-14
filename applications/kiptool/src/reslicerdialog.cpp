@@ -53,6 +53,12 @@ void ReslicerDialog::on_pushButton_startreslice_clicked()
 {
     UpdateConfig();
     m_reslicer.process();
+
+    QString fname = QDir::homePath()+"/.imagingtools/CurrentResliceConfig.xml";
+//    kipl::strings::filenames::CheckPathSlashes(fname.toStdString(),false);
+    std::ofstream cfgfile(fname.toStdString());
+    cfgfile<<m_reslicer.WriteXML(4);
+
 }
 
 void ReslicerDialog::UpdateDialog()

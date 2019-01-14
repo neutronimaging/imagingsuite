@@ -123,6 +123,9 @@ int TIFFReslicer::process()
         logger(kipl::logging::Logger::LogMessage,"Reslice YZ done.");
     }
 
+
+
+
     return 0;
 }
 
