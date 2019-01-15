@@ -53,7 +53,10 @@ void ReaderForm::on_button_browse_clicked()
 
         msg<<"Found "<<count<<" files for mask "<<fi.m_sMask<<" in the interval "<<first<<" to "<<last;
         logger(logger.LogMessage,msg.str());
-
+//        ui->spinBox_first->setMinimun(first);
+//        ui->spinBox_first->setMaximum(first);
+//        ui->spinBox_last->setMinimun(first);
+//        ui->spinBox_last->setMaximum(first);
         ui->spinBox_first->setValue(first);
         ui->spinBox_last->setValue(last);
     }
