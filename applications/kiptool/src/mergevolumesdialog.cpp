@@ -48,6 +48,7 @@ void MergeVolumesDialog::UpdateDialog()
     ui->spinBox_firstout->setValue(m_merger.m_nFirstDest);
 
     ui->lineEdit_pathout->setText(QString::fromStdString(m_merger.m_sPathOut));
+    ui->lineEdit_OutMask->setText(QString::fromStdString(m_merger.m_sMaskOut));
 
     ui->spinBox_mixstart->setValue(m_merger.m_nStartOverlapA);
     ui->spinBox_mixlength->setValue(m_merger.m_nOverlapLength);
@@ -58,6 +59,8 @@ void MergeVolumesDialog::UpdateDialog()
 
     ui->widget_cropROI->setROI(m_merger.m_nCrop[0],m_merger.m_nCrop[1],m_merger.m_nCrop[2],m_merger.m_nCrop[3]);
     ui->comboBox_mixorder->setCurrentIndex(m_merger.m_nMergeOrder);
+
+
 }
 
 void MergeVolumesDialog::UpdateConfig()

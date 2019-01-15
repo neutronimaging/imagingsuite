@@ -10,8 +10,8 @@
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <libxml/xmlreader.h>
-
 #include "mergevolume.h"
+
 
 #ifdef __GNUC__
     const std::string copystring = "cp";
@@ -298,22 +298,58 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
 
     img->Resize(dims);
 
+    // here I check the image type
+    TIFF *image= TIFFOpen(fname.c_str(),"r");
+    unsigned short BitPerSample;
+    TIFFGetField(image, TIFFTAG_BITSPERSAMPLE, &BitPerSample); // here I now which type it is
+    TIFFClose(image);
+
+
     float *pLine;
-    float * data = new float [slice.Size(0)];
 
-    for (int i=first; i<=last; i++) {
-        kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
-        logger(kipl::logging::Logger::LogVerbose,fname);
-        kipl::io::ReadTIFFLine(data,line,fname.c_str()); // THIS IS THE ERROR.. GO ON FROM THERE. READTIFFLINE
-        pLine=img->GetLinePtr(i-first);
-        for (size_t j=0; j<=img->Size(0); j++) {
-            pLine[j]=static_cast<float>(data[j+total_offset]);
+
+    if (BitPerSample==32)
+    {
+        float *data = new float[slice.Size(0)];
+
+
+        for (int i=first; i<=last; i++) {
+            kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
+            logger(kipl::logging::Logger::LogVerbose,fname);
+            kipl::io::ReadTIFFLine(data,line,fname.c_str()); // THIS IS THE ERROR.. GO ON FROM THERE. READTIFFLINE
+            pLine=img->GetLinePtr(i-first);
+            for (size_t j=0; j<=img->Size(0); j++) {
+                pLine[j]=static_cast<float>(data[j+total_offset]);
+            }
+     //       progress->set_fraction(static_cast<double>(i-first)/total_images);
+
         }
- //       progress->set_fraction(static_cast<double>(i-first)/total_images);
 
+        delete [] data;
     }
 
-    delete [] data;
+    if (BitPerSample==16)
+    {
+        unsigned short *data = new unsigned short[slice.Size(0)];
+
+
+        for (int i=first; i<=last; i++) {
+            kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
+            logger(kipl::logging::Logger::LogVerbose,fname);
+            kipl::io::ReadTIFFLine(data,line,fname.c_str()); // THIS IS THE ERROR.. GO ON FROM THERE. READTIFFLINE
+            pLine=img->GetLinePtr(i-first);
+            for (size_t j=0; j<=img->Size(0); j++) {
+                pLine[j]=static_cast<float>(data[j+total_offset]);
+            }
+     //       progress->set_fraction(static_cast<double>(i-first)/total_images);
+
+        }
+
+        delete [] data;
+    }
+
+
+
 }
 
 std::string MergeVolume::WriteXML(size_t indent)

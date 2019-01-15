@@ -56,6 +56,7 @@ protected:
     kipl::base::TImage<float,2> m_VerticalImgLocalResult;
     kipl::base::TImage<float,2> m_HorizontalSliceResult;
 
+
 private:
     Ui::MergeVolumesDialog *ui;
 };
