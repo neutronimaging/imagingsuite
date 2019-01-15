@@ -9,6 +9,7 @@
 #include <strings/filenames.h>
 #include <base/timage.h>
 #include <io/io_tiff.h>
+#include <ImagingException.h>
 
 #include "reslicerdialog.h"
 #include "ui_reslicerdialog.h"
@@ -157,16 +158,35 @@ void ReslicerDialog::on_pushButton_preview_clicked()
         {
 
             kipl::base::TImage<float,2> img;
+//            kipl::io::ReadTIFF(img,fname.c_str());
 
+            std::ostringstream msg;
+            msg.str("");
             try {
-                kipl::io::ReadTIFF(img,fname.c_str());
+                kipl::io::ReadTIFF(img,fname.c_str()); // the exception thrown from here makes the program crash.
             }
             catch (kipl::base::KiplException &e) {
-                std::ostringstream msg;
+
                 msg<<"Failed to load preview image: "<<fname<<std::endl<<e.what();
                 logger(logger.LogError, msg.str());
+                throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+
             }
-            ui->viewer_slice->set_image(img.GetDataPtr(),img.Dims());
+            catch (ImagingException &e) {
+                msg<<"Failed to load preview image: "<<fname<<std::endl<<e.what();
+                logger(logger.LogError, msg.str());
+                throw ImagingException(msg.str(),__FILE__,__LINE__);
+
+            }
+            catch(...)
+            {
+                msg<<"Failed to load preview image: "<<fname<<std::endl;
+                logger(logger.LogError, msg.str());
+                throw ImagingException(msg.str(),__FILE__,__LINE__);
+            }
+
+
+             ui->viewer_slice->set_image(img.GetDataPtr(),img.Dims());
 //            m_currentROI=QRect(0,0,img.Size(0)-1,img.Size(1)-1);
 
 //            ui->spinBox_firstXZ->setMaximum(m_currentROI.right());

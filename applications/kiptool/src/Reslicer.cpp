@@ -204,8 +204,10 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
                         for (int i=0; i<m_nImageDims[1]; i++) {
                             for (int j=0; j<m_nBytesPerPixel; j++) {
                                // pLineBuffer[i*m_nBytesPerPixel+j]=255; //buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
-                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
 //                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+//                                std::cout << i*m_nBytesPerPixel+j << std::endl;
+//                                std::cout << idx*m_nBytesPerPixel+i*m_nBytesPerLine+j << std::endl;
 
                             }
                         }
@@ -236,7 +238,18 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
         if (nBlockRest!=0) {
             nFirstSlice = nSliceBlocks*m_nMaxBlock;
             nLastSlice  = nFirstSlice+nBlockRest;
-            CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[0],nImages);
+
+            switch (plane) {
+            case kipl::base::ImagePlaneXY : logger(kipl::logging::Logger::LogWarning,"Plane XY is irrelevant for the reslicer."); return -1;
+            case kipl::base::ImagePlaneXZ :
+                CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[0],nImages);
+                std::cout << nFirstSlice << " " << nLastSlice << " " << m_nImageDims[0] << " " << nImages << std::endl;
+                break;
+            case kipl::base::ImagePlaneYZ :
+                CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[1],nImages); // now YZ images have the right dimensions
+                std::cout << nFirstSlice << " " << nLastSlice << " " << m_nImageDims[1] << " " << nImages << std::endl;
+                break;
+            }
 
             for (size_t nFileIndex=nFirst; nFileIndex<nLast; nFileIndex++) {
                 kipl::strings::filenames::MakeFileName(sSrcMask,nFileIndex,fname,ext,'#','0');

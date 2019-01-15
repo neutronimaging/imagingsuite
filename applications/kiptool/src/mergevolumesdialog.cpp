@@ -114,6 +114,7 @@ void MergeVolumesDialog::on_pushButton_loadA_clicked()
         dlg.exec();
         return;
     }
+
     ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.Dims());
     on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
 }

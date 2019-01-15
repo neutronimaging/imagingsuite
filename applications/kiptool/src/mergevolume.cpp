@@ -285,10 +285,12 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
         throw kipl::base::KiplException("LoadVerticalSlice can only handle tiff images",__FILE__,__LINE__);
     }
 
+
     kipl::io::ReadTIFF(slice,fname.c_str());
     size_t line=slice.Size(1)/2;
     size_t dims[2]={slice.Size(0),static_cast<size_t>(last-first+1)};
     size_t total_offset=0;
+
     if (m_bCropSlices) {
         dims[0]=(m_nCrop[2]-m_nCrop[0]+1);
         total_offset=m_nCrop[0];
@@ -297,12 +299,12 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
     img->Resize(dims);
 
     float *pLine;
-    unsigned short * data = new unsigned short [slice.Size(0)];
+    float * data = new float [slice.Size(0)];
 
     for (int i=first; i<=last; i++) {
         kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
         logger(kipl::logging::Logger::LogVerbose,fname);
-        kipl::io::ReadTIFFLine(data,line,fname.c_str());
+        kipl::io::ReadTIFFLine(data,line,fname.c_str()); // THIS IS THE ERROR.. GO ON FROM THERE. READTIFFLINE
         pLine=img->GetLinePtr(i-first);
         for (size_t j=0; j<=img->Size(0); j++) {
             pLine[j]=static_cast<float>(data[j+total_offset]);

@@ -738,7 +738,7 @@ int ReadTIFFLine(ImgType *data,uint32 row, const char *fname)
 	std::stringstream msg;
 	TIFF *image;
 //	 TIFFErrorHandler warn = 
-    TIFFSetWarningHandler(nullptr);
+//    TIFFSetWarningHandler(nullptr);
     if((image = TIFFOpen(fname, "r")) == nullptr){
 		msg.str("");
 		msg<<"ReadTIFFLine: Could not open "<<fname;
