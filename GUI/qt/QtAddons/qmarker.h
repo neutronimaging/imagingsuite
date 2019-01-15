@@ -21,7 +21,7 @@ public:
     QMarker(const QMarker &m);
 
     const QMarker & operator=(const QMarker &m);
-    const QMarker & operator=(const QMarker &m) const;
+ //   const QMarker & operator=(const QMarker &m) const;
 
     ~QMarker();
 
