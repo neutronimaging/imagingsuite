@@ -31,7 +31,7 @@ SOURCES += \
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-unix|win32: LIBS += -L$$PWD/../../../../../lib/ -lkipl.1.0.0
+unix|win32: LIBS += -L$$PWD/../../../../../lib/ -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/include
