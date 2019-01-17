@@ -10,6 +10,7 @@
 #include <buildfilelist.h>
 
 #include <loggingdialog.h>
+#include <datasetbase.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -39,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->uxROI3->registerViewer(ui->ImageView);
     ui->uxROI3->setROIColor("deepskyblue");
     ui->uxROI3->setTitle("My ROI");
+    ui->uxROI3->setCheckable(true);
+    ui->uxROI3->setAutoHideROI(true);
 
 }
 
@@ -208,4 +211,39 @@ void MainWindow::on_pushButton_showLogger_clicked()
     else {
         logdlg->hide();
     }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}
+
+
+
+void MainWindow::on_checkBox_stride_toggled(bool checked)
+{
+    ui->widget_readerform->setHideStride(!checked);
+}
+
+void MainWindow::on_checkBox_repeat_toggled(bool checked)
+{
+    ui->widget_readerform->setHideRepeat(!checked);
+}
+
+void MainWindow::on_checkBox_roi_toggled(bool checked)
+{
+    ui->widget_readerform->setHideROI(!checked);
+}
+
+void MainWindow::on_checkBox_fliprot_toggled(bool checked)
+{
+    ui->widget_readerform->setHideMirrorRotate(!checked);
+}
+
+void MainWindow::on_pushButton_getFormInfo_clicked()
+{
+    ImageLoader readerInfo=ui->widget_readerform->getReaderConfig();
+    std::ostringstream msg;
+    msg<<readerInfo;
+    logger.message(msg.str());
 }

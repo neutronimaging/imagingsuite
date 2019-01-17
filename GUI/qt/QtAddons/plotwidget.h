@@ -8,7 +8,7 @@
 #include <QLineSeries>
 
 #include "callout.h"
-
+#include "plotcursor.h"
 
 
 namespace Ui {
@@ -42,6 +42,10 @@ public:
     void hideTitle();
     void updateAxes();
 
+    void setCursor(int id, PlotCursor *c);
+    void clearCursors(int id);
+    void clearAllCursors();
+
 //    void setPlotCursor(int id, PlotCursor c);
 //    void clearPlotCursor(int id);
 //    void clearAllPlotCursors();
@@ -53,6 +57,8 @@ private:
 
     Ui::PlotWidget *ui;
     std::map<int, QtCharts::QAbstractSeries *> seriesmap;
+    std::map<int, PlotCursor *> cursors;
+
     int m_nPointsVisible;
     double minX=std::numeric_limits<double>::max();
     double maxX=-std::numeric_limits<double>::max();

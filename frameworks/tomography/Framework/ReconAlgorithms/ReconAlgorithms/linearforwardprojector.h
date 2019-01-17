@@ -1,9 +1,10 @@
 #ifndef LINEARFORWARDPROJECTOR_H
 #define LINEARFORWARDPROJECTOR_H
 
+#include "reconalgorithms_global.h"
 #include "forwardprojectorbase.h"
 
-class LinearForwardProjector : public ForwardProjectorBase
+class RECONALGORITHMSSHARED_EXPORT LinearForwardProjector : public ForwardProjectorBase
 {
 public:
     LinearForwardProjector();

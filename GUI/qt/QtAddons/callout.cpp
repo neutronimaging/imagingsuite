@@ -95,9 +95,12 @@ void Callout::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
         path.lineTo(point2);
         path = path.simplified();
     }
-    painter->setBrush(QColor(255, 255, 255));
+
+    painter->setBrush(QColor("Lightyellow"));
+    painter->setPen(Qt::darkGray);
     painter->drawPath(path);
     painter->setFont(m_font);
+    painter->setPen(Qt::black);
     painter->drawText(m_textRect, m_text);
 }
 

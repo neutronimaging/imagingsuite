@@ -13,6 +13,31 @@ CONFIG += c++11
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
+
+DEFINES += PROCESSFRAMEWORK_LIBRARY
+
+SOURCES += \
+    ../../src/stdafx.cpp \
+    ../../src/KiplProcessModuleBase.cpp \
+    ../../src/KiplProcessConfig.cpp \
+    ../../src/KiplModuleItem.cpp \
+    ../../src/KiplFrameworkException.cpp \
+    ../../src/KiplFactory.cpp \
+    ../../src/KiplEngine.cpp \
+    ../../src/dllmain.cpp
+
+HEADERS += \
+    ../../include/KiplProcessModuleBase.h \
+    ../../include/KiplProcessConfig.h \
+    ../../include/KiplModuleItem.h \
+    ../../include/KiplFrameworkException.h \
+    ../../include/KiplFactory.h \
+    ../../include/KiplEngine.h \
+    ../../src/targetver.h \
+    ../../src/stdafx.h \
+    ../../include/ProcessFramework_global.h
+
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -51,6 +76,17 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+unix:!mac {
+    exists(/usr/lib/*NeXus*) {
+        message("-lNeXus exists")
+        DEFINES *= HAVE_NEXUS
+        LIBS += -lNeXus -lNeXusCPP
+    }
+    else {
+        message("-lNeXus does not exists $$LIBS")
+    }
+}
+
 unix:mac {
 exists($$PWD/../../../../../external/mac/lib/*NeXus*) {
 
@@ -71,28 +107,6 @@ message("-lNeXus does not exists $$HEADERS")
 
 }
 
-DEFINES += PROCESSFRAMEWORK_LIBRARY
-
-SOURCES += \
-    ../../src/stdafx.cpp \
-    ../../src/KiplProcessModuleBase.cpp \
-    ../../src/KiplProcessConfig.cpp \
-    ../../src/KiplModuleItem.cpp \
-    ../../src/KiplFrameworkException.cpp \
-    ../../src/KiplFactory.cpp \
-    ../../src/KiplEngine.cpp \
-    ../../src/dllmain.cpp
-
-HEADERS += \
-    ../../include/KiplProcessModuleBase.h \
-    ../../include/KiplProcessConfig.h \
-    ../../include/KiplModuleItem.h \
-    ../../include/KiplFrameworkException.h \
-    ../../include/KiplFactory.h \
-    ../../include/KiplEngine.h \
-    ../../src/targetver.h \
-    ../../src/stdafx.h \
-    ../../include/ProcessFramework_global.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

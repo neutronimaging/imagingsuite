@@ -3,19 +3,24 @@
 #ifndef MODULEITEMBASE_H_
 #define MODULEITEMBASE_H_
 
+#include "ModuleConfig_global.h"
+#include "ConfigBase.h"
+
+#include <string>
+#include <logging/logger.h>
+#include "ProcessModuleBase.h"
+
+
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef void * (__cdecl *FACTORY)(const char *,const char *, void *);
 typedef int (__cdecl *DESTROYER)(const char *,void *);
-#else // Shared object specific for gcc
+#else
 typedef void * (*FACTORY)(const char *, const char *, void *) ;
 typedef int (*DESTROYER)(const char *,void *);
 typedef  void * HINSTANCE;
 #endif
 
-#include "ModuleConfig_global.h"
-#include <string>
-#include <logging/logger.h>
-#include "ProcessModuleBase.h"
+
 
 /// Container class that manages the loading and destruction of ProcessModules.
 /// This class is only specialized for the application framework and does not
@@ -54,7 +59,7 @@ protected:
     /// Module unload method. It calls the destroy function in the shared object.
 	void Destroy();
 
-private:
+//private:
     /// Loads the specified module from the shared object file.
 	void LoadModuleObject(kipl::interactors::InteractionBase *interactor=nullptr);
 

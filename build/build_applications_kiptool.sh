@@ -9,8 +9,8 @@ REPOSPATH=$WORKSPACE/imagingsuite
 
 DEST=$WORKSPACE/builds
 
-mkdir -p $DEST/build-muhrec
-cd $DEST/build-muhrec
+mkdir -p $DEST/build-kiptool
+cd $DEST/build-kiptool
 
 $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/applications/kiptool/qt/QtKipTool/QtKipTool.pro
 make -f Makefile clean

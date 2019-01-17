@@ -9,8 +9,8 @@ REPOSPATH=$WORKSPACE/imagingsuite
 
 DEST=$WORKSPACE/builds
 
-mkdir -p $DEST/build-QtAddons
-cd $DEST/build-QtAddons
+mkdir -p $DEST/build-ProcessFramework
+cd $DEST/build-ProcessFramework
 
 $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/frameworks/imageprocessing/ProcessFramework/qt/ProcessFramework/ProcessFramework.pro
 make -f Makefile clean

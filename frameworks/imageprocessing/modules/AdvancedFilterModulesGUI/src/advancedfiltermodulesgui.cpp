@@ -35,7 +35,7 @@ ADVANCEDFILTERMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application
 
 ADVANCEDFILTERMODULESGUISHARED_EXPORT int DestroyGUIModule(const char *application, void *obj)
 {
-    if (strcmp(application,"kipltool")!=0)
+    if (strcmp(application,"kiptool")!=0)
         return -1;
 
     if (obj!=nullptr) {

@@ -1,5 +1,6 @@
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <ModuleException.h>
 #include <ReconConfig.h>
@@ -25,7 +26,7 @@ void ConfigBaseTest::testConfigChanged()
 {
         ReconConfig a,b;
         std::list<std::string> freelist;
-        cout<<"start"<<endl;
+        qDebug()<<"start";
 
         QVERIFY2(a.ConfigChanged(b,freelist) == false, "Same config failed");
 

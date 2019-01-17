@@ -276,7 +276,7 @@ ptrdiff_t PixelIterator::setPosition(ptrdiff_t pos)
 ptrdiff_t PixelIterator::neighborhood(int idx)
 {
     ptrdiff_t pos=0L;
-    switch (getEdgeStatus()) {
+    switch (edgeStatus()) {
     case kipl::base::noEdge :     pos = m_neighborhoodIndex[idx]; break;
     case kipl::base::edgeX0 :     pos = m_edgeX[idx]; break;
     case kipl::base::edgeX1 :     pos =-m_edgeX[idx]; break;
@@ -350,7 +350,7 @@ ptrdiff_t PixelIterator::forwardNeighborhood(int idx)
 {
     ptrdiff_t pos=m_currentPosition;
 
-    switch (getEdgeStatus()) {
+    switch (edgeStatus()) {
         case kipl::base::noEdge :     pos +=  m_neighborhoodIndex[idx+m_halfSizePos.full]; break;
         case kipl::base::edgeX0 :     pos +=  m_edgeX[idx+m_halfSizePos.edgeX0]; break;
         case kipl::base::edgeX1 :     pos +=  -m_edgeX[idx]; break;
@@ -370,7 +370,7 @@ ptrdiff_t PixelIterator::backwardNeighborhood(int idx)
 {
     ptrdiff_t pos=m_currentPosition;
 
-    switch (getEdgeStatus()) {
+    switch (edgeStatus()) {
         case kipl::base::noEdge :     pos +=  m_neighborhoodIndex[idx]; break;
         case kipl::base::edgeX0 :     pos +=  m_edgeX[idx]; break;
         case kipl::base::edgeX1 :     pos +=  -m_edgeX[idx+m_halfSizePos.edgeX1]; break;
@@ -386,27 +386,27 @@ ptrdiff_t PixelIterator::backwardNeighborhood(int idx)
     return pos;
 }
 
-ptrdiff_t PixelIterator::getCurrentPosition()
+ptrdiff_t PixelIterator::currentPosition()
 {
     return m_currentPosition;
 }
 
-int PixelIterator::getCurrentX()
+int PixelIterator::currentX()
 {
     return m_currentX;
 }
 
-int PixelIterator::getCurrentY()
+int PixelIterator::currentY()
 {
     return m_currentY;
 }
 
-kipl::base::eConnectivity PixelIterator::getConnectivity()
+kipl::base::eConnectivity PixelIterator::connectivity()
 {
     return m_connectivity;
 }
 
-kipl::base::eEdgeStatus PixelIterator::getEdgeStatus()
+kipl::base::eEdgeStatus PixelIterator::edgeStatus()
 {
     return m_edgeStatus;
 }

@@ -11,8 +11,8 @@
 #include <strings/miscstring.h>
 #include <math/image_statistics.h>
 
-DoseCorrection::DoseCorrection() :
-KiplProcessModuleBase("DoseCorrection"),
+DoseCorrection::DoseCorrection(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("DoseCorrection",false, interactor),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f)
 {
@@ -67,7 +67,7 @@ int DoseCorrection::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std:
         float *pSlice=nullptr;
 		float dose=1.0f;
 	//	#pragma omp for
-		for (ptrdiff_t slice=0; slice<slices; slice++) 
+        for (ptrdiff_t slice=0; (slice<slices && (updateStatus(float(slice)/slices,"Processing Dose Correction")==false) ); slice++)
 		{
 
 			pSlice=img.GetLinePtr(0,slice);
@@ -85,4 +85,13 @@ int DoseCorrection::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std:
 	}
 	
 	return 0;
+}
+
+bool DoseCorrection::updateStatus(float val, string msg){
+
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
+
 }
