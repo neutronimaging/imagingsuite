@@ -50,6 +50,7 @@ win32 {
 SOURCES += \
     tst_testImagingAlgorithms.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+CONFIG(debug, debug|release): DEFINES += DEBUG
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/

@@ -82,16 +82,6 @@ HEADERS += \
     ../../include/ReferenceImageCorrection.h
 
 
-symbian {
-    MMP_RULES += EXPORTUNFROZEN
-    TARGET.UID3 = 0xE18A5065
-    TARGET.CAPABILITY = 
-    TARGET.EPOCALLOWDLLDATA = 1
-    addFiles.sources = ImagingAlgorithms.dll
-    addFiles.path = !:/sys/bin
-    DEPLOYMENT += addFiles
-}
-
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
