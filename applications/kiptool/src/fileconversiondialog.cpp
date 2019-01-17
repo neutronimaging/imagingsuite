@@ -38,6 +38,8 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     ui->progressBar->setValue(0);
     ui->comboBox_ScanOrder->setCurrentIndex(0);
     on_comboBox_ScanOrder_currentIndexChanged(0);
+    ui->lineEdit_DestinationPath->setText("/data");
+    ui->lineEdit_DestinationMask->setText("file####.tif");
 }
 
 FileConversionDialog::~FileConversionDialog()

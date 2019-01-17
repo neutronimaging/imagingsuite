@@ -43,7 +43,7 @@ public:
 protected:
 	int GetHeader(std::string fname);
 	int CreateHeaders(std::string mask, size_t nFirst, size_t nLast, size_t width, size_t height);
-	int WriteLine(TIFF *img, size_t line, char * pLineBuffer);
+    int WriteLine(TIFF *img, size_t line, size_t bytesPerLine, char * pLineBuffer);
 	int CloseImages();
 	int LoadBuffer(std::string fname);
 
