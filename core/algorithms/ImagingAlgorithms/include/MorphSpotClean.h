@@ -49,7 +49,7 @@ protected:
     void ProcessFill(kipl::base::TImage<float,2> &img);
 
     void PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded);
-    void UnpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
+    void unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
     /// \brief Prepares neighborhood indexing LUT
     /// \param dimx Length of the x-axis
     /// \param N number of pixels in the image
@@ -74,8 +74,8 @@ protected:
     kipl::morphology::MorphConnect m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
-    int m_nEdgeSmoothLength;
-    int m_nPadMargin;
+    size_t m_nEdgeSmoothLength;
+    size_t m_nPadMargin;
     int m_nMaxArea;
     float m_fMinLevel;
     float m_fMaxLevel;

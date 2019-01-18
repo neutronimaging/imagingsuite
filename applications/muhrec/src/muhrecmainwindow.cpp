@@ -2540,7 +2540,6 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
     }
 }
 
-
 void MuhRecMainWindow::on_actionSettings_triggered()
 {
     GlobalSettingsDialog dlg;
