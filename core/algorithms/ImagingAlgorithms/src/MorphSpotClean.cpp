@@ -81,7 +81,7 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     kipl::base::TImage<float,2> padded,noholes, nopeaks;
 
     FillOutliers(img,padded,noholes,nopeaks);
-    kipl::io::WriteTIFF32(padded,"padded.tif");
+//    kipl::io::WriteTIFF32(padded,"padded.tif");
     size_t N=padded.Size();
 
     float *pImg=padded.GetDataPtr();
