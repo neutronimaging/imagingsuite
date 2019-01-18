@@ -6,9 +6,11 @@
 #include <math/median.h>
 #include <math/mathfunctions.h>
 #include <io/io_tiff.h>
+#include <segmentation/thresholds.h>
 
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
+
 
 namespace ImagingAlgorithms {
 
@@ -21,8 +23,9 @@ MorphSpotClean::MorphSpotClean() :
     m_nEdgeSmoothLength(9),
     m_nPadMargin(5),
     m_nMaxArea(100),
-    m_fMinLevel(-0.1f),
-    m_fMaxLevel(12.0f),
+    m_bClampData(false),
+    m_fMinLevel(-0.1f), // This shouldnt exist...
+    m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
     m_fThreshold(0.025f),
     m_fSigma(0.00f),
     m_LUT(1<<15,0.1f,0.0075f)
@@ -33,6 +36,9 @@ MorphSpotClean::MorphSpotClean() :
 
 void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float sigma)
 {
+    if (m_bClampData)
+         kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
+
     m_fThreshold = th;
     m_fSigma = sigma;
 
@@ -235,10 +241,12 @@ void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TIma
     delete [] buffer;
 }
 
-void MorphSpotClean::setLimits(float fMin,float fMax, int nMaxArea)
+void MorphSpotClean::setLimits(bool bClamp, float fMin, float fMax, int nMaxArea)
 {
-    m_fMinLevel = fMin;
-    m_fMaxLevel = fMax;
+    m_bClampData = bClamp;
+    m_fMinLevel  = fMin;
+    m_fMaxLevel  = fMax;
+
     if (0<nMaxArea)
         m_nMaxArea = nMaxArea;
 }

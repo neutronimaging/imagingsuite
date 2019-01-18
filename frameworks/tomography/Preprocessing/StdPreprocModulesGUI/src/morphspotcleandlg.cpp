@@ -126,6 +126,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
         m_fSigma            = GetFloatParameter(parameters,"sigma");
         m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
         m_nMaxArea          = GetIntParameter(parameters,"maxarea");
+        m_bClampData        = kipl::strings::string2bool(GetStringParameter(parameters,"clampdata"));
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
         m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
@@ -173,6 +174,7 @@ void MorphSpotCleanDlg::UpdateDialog()
     ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
+    ui->groupBox_clampData->setChecked(m_bClampData);
     ui->spinMinValue->setValue(m_fMinLevel);
     ui->spinMaxValue->setValue(m_fMaxLevel);
     ui->spinEdgeLenght->setValue(m_nEdgeSmoothLength);
@@ -185,6 +187,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
     m_fThreshold        = ui->spinThreshold->value();
     m_fSigma            = ui->spinSigma->value();
+    m_bClampData        = ui->groupBox_clampData->isChecked();
     m_fMinLevel         = ui->spinMinValue->value();
     m_fMaxLevel         = ui->spinMaxValue->value();
     m_nMaxArea          = ui->spinArea->value();
@@ -200,6 +203,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["sigma"]           = kipl::strings::value2string(m_fSigma);
     parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["clampdata"]       = kipl::strings::bool2string(m_bClampData);
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]       = kipl::strings::bool2string(m_bThreading);
