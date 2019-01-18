@@ -73,6 +73,110 @@ std::string TIFFReslicer::WriteXML(size_t indent)
 
 //void TIFFReslicer::ParseXML(xmlTextReaderPtr reader)
 //{
+//xmlTextReaderPtr reader;
+//const xmlChar *name;
+//const xmlChar *value;
+//int ret;
+//std::string sName;
+//std::string sValue;
+//std::ostringstream msg;
+
+//reader = xmlReaderForFile(fname.c_str(), nullptr, 0);
+//if (reader != nullptr) {
+//    ret = xmlTextReaderRead(reader);
+//    name = xmlTextReaderConstName(reader);
+
+//    if (name==nullptr) {
+//        throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+//    }
+
+//    sName=reinterpret_cast<const char *>(name);
+//    msg.str(""); msg<<"Found "<<sName<<" expect merge";
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
+//    if (sName!="merge") {
+//        msg.str();
+//        msg<<"Unexpected project contents in parameter file ("<<sName<<"!=merge)";
+//        logger(kipl::logging::Logger::LogMessage,msg.str());
+//        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+//    }
+
+//    logger.verbose("Got project");
+
+//    ret = xmlTextReaderRead(reader);
+
+//    while (ret == 1) {
+//        if (xmlTextReaderNodeType(reader)==1) {
+//            name = xmlTextReaderConstName(reader);
+//            ret=xmlTextReaderRead(reader);
+//            value = xmlTextReaderConstValue(reader);
+//            if (name==nullptr) {
+//                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+//            }
+//            sName=reinterpret_cast<const char *>(name);
+
+//            if (value!=nullptr)
+//                sValue=reinterpret_cast<const char *>(value);
+//            else {
+//                msg.str("");
+//                msg<<"Parameter "<<sValue<<" does not have a value";
+//                logger.warning(msg.str());
+//                sValue="Empty";
+//            }
+//            qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
+//            if (sName=="path_a")
+//                m_sPathA   = sValue;
+
+//            if (sName=="path_b")
+//                m_sPathB   = sValue;
+
+//            if (sName=="path_dest")
+//                m_sPathOut = sValue;
+
+//            if (sName=="first_a")
+//                m_nFirstA  = std::stoi(sValue);
+
+//            if (sName=="last_a")
+//                m_nLastA   = std::stoi(sValue);
+
+//            if (sName=="first_b")
+//                m_nFirstB  = std::stoi(sValue);
+
+//            if (sName=="last_b")
+//                m_nLastB   = std::stoi(sValue);
+
+//            if (sName=="startoverlap_a")
+//                m_nStartOverlapA = std::stoi(sValue);
+
+//            if (sName=="overlaplength")
+//                m_nOverlapLength = std::stoi(sValue);
+
+//            if (sName=="first_dest")
+//                m_nFirstDest = std::stoi(sValue);
+
+//            if (sName=="cropslices")
+//                m_bCropSlices = kipl::strings::string2bool(sValue);
+
+//            if (sName=="crop")
+//                kipl::strings::String2Array(sValue,m_nCrop,4);
+
+//            if (sName=="cropboffset")
+//                kipl::strings::String2Array(sValue,m_nCropOffset,2);
+
+//        }
+//        ret = xmlTextReaderRead(reader);
+//    }
+//    xmlFreeTextReader(reader);
+//    if (ret != 0) {
+//        std::stringstream str;
+//        str<<"MergeVolume failed to parse "<<fname;
+//        throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+//    }
+//} else {
+//    std::stringstream str;
+//    str<<"Module config could not open "<<fname;
+//    throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+//}
+//logger.verbose("Parsing parameter file done");
 
 //}
 int TIFFReslicer::process()
