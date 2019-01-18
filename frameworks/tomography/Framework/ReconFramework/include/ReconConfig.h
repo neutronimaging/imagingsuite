@@ -82,7 +82,7 @@ public:
         /// \param a the struct to copy.
 		cProjections & operator=(const cProjections &a);
 
-        size_t nDims[2];            ///< Dimensions of the projections.
+        size_t nDims[3];            ///< Dimensions of the projections.
         eBeamGeometry beamgeometry; ///< Selects beam geometry for the data
         float fResolution[2];       ///< Resolution of the projections in mm/pixel.
         float fBinning;             ///< Binning factor, currently only integers are valid.

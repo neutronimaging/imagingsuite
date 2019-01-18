@@ -39,8 +39,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../external/lib64
+    INCLUDEPATH += ../../../../../external/src/linalg ../../../../../external/include ../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += ../../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -61,5 +61,5 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/
 
 LIBS += -lkipl -lReconAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../core/kipl/kipl/src

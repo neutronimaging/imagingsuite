@@ -1,8 +1,10 @@
 #ifndef NNFORWARDPROJECTOR_H
 #define NNFORWARDPROJECTOR_H
 
+#include "reconalgorithms_global.h"
 #include "forwardprojectorbase.h"
-class NNForwardProjector : public ForwardProjectorBase
+
+class RECONALGORITHMSSHARED_EXPORT NNForwardProjector : public ForwardProjectorBase
 {
 public:
     NNForwardProjector();

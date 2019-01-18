@@ -59,9 +59,9 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
-    m_bCurrentReconStored(true),
     m_oldRotateDial(0),
-    m_oldRotateSpin(0.0)
+    m_oldRotateSpin(0.0),
+    m_bCurrentReconStored(true)
 {
     std::ostringstream msg;
     ui->setupUi(this);
@@ -191,6 +191,7 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setTitle("Matrix ROI");
     ui->widgetMatrixROI->setAutoHideROI(true);
     ui->widgetMatrixROI->setAllowUpdateImageDims(false);
+    ui->widgetMatrixROI->setCheckable(true);
     ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
@@ -247,7 +248,7 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
             ui->editOpenBeamMask->setText(projdir);
             ProjectionReader reader;
             size_t Nofimgs[2];
-            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, NULL);
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, nullptr);
             ui->spinFirstOpenBeam->setValue(static_cast<int>(Nofimgs[0]));
             ui->spinOpenBeamCount->setValue(static_cast<int>(Nofimgs[1]+1));
         }
@@ -833,6 +834,8 @@ void MuhRecMainWindow::MenuReconstructStart()
     ostringstream msg;
 
     ui->tabMainControl->setCurrentIndex(4);
+    msg.str(""); msg<<"Pre update "<<m_Config.ProjectionInfo.beamgeometry;
+    logger.message(msg.str());
 
     try {
         UpdateConfig();
@@ -932,7 +935,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
     freelist.push_back("projectnumber");
     freelist.push_back("sample");
     freelist.push_back("comment");
-    freelist.push_back("rotation");
+    freelist.push_back("rotate");
     freelist.push_back("tiltangle");
     freelist.push_back("tiltpivot");
     freelist.push_back("correcttilt");
@@ -956,30 +959,41 @@ void MuhRecMainWindow::ExecuteReconstruction()
             }
 
             m_pEngine=nullptr;
+            msg.str("");
+            msg<<"pre build config.roi=["<<m_Config.ProjectionInfo.roi[0]<<","
+                        <<m_Config.ProjectionInfo.roi[1]<<","
+                        <<m_Config.ProjectionInfo.roi[2]<<","
+                        <<m_Config.ProjectionInfo.roi[3]<<"]";
+            logger.message(msg.str());
 
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
         catch (std::exception &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (ModuleException &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with a ModuleException: \n"
                 <<e.what();
             bBuildFailure=true;
         }
         catch (ReconException &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with a recon exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (kipl::base::KiplException &e) {
+            msg.str("");
             msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
         catch (...) {
+            msg.str("");
             msg<<"Reconstructor initialization failed with an unknown exception";
             bBuildFailure=true;
         }
@@ -1017,8 +1031,17 @@ void MuhRecMainWindow::ExecuteReconstruction()
     bool bRunFailure=false;
     try {
         if (m_pEngine!=nullptr) {
+            msg<<"pre run config.roi=["<<m_Config.ProjectionInfo.roi[0]<<","
+                        <<m_Config.ProjectionInfo.roi[1]<<","
+                        <<m_Config.ProjectionInfo.roi[2]<<","
+                        <<m_Config.ProjectionInfo.roi[3]<<"]";
+            logger.message(msg.str());
+
             int res=0;
             ui->tabMainControl->setCurrentIndex(3);
+
+            logger.message(msg.str());
+
             res=dlg.exec(m_pEngine,bRerunBackproj);
 
             if (res==QDialog::Accepted) {
@@ -1289,8 +1312,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinGrayHigh->setValue(m_Config.MatrixInfo.fGrayInterval[1]);
 
     ui->widgetMatrixROI->setROI(m_Config.MatrixInfo.roi,true);
-    ui->checkUseMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
-    on_checkUseMatrixROI_toggled(m_Config.MatrixInfo.bUseROI);
+    ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
@@ -1441,7 +1463,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
     m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();
     m_Config.MatrixInfo.fGrayInterval[1] = ui->dspinGrayHigh->value();
-    m_Config.MatrixInfo.bUseROI = ui->checkUseMatrixROI->checkState();
+    m_Config.MatrixInfo.bUseROI = ui->widgetMatrixROI->isChecked();
     ui->widgetMatrixROI->getROI(m_Config.MatrixInfo.roi);
 
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
@@ -2299,11 +2321,6 @@ void MuhRecMainWindow::on_button_FindCenter_clicked()
 
 }
 
-void MuhRecMainWindow::on_checkUseMatrixROI_toggled(bool checked)
-{
-    ui->widgetMatrixROI->setVisible(checked);
-}
-
 void MuhRecMainWindow::on_dspinRotateRecon_valueChanged(double arg1)
 {
     QSignalBlocker blockDial(ui->dialRotateRecon);
@@ -2522,7 +2539,6 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
         ui->radioButton_customTurn->setCheckable(true);
     }
 }
-
 
 
 void MuhRecMainWindow::on_actionSettings_triggered()

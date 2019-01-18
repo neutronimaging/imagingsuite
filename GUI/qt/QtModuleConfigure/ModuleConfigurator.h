@@ -37,10 +37,10 @@ public:
 	bool configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters);
 
 protected:
-	void GetDialog(std::string application, std::string sharedobjectname, std::string objectname);
+    void loadDialog(std::string application, std::string sharedobjectname, std::string objectname);
 
-	void Destroy();
-	virtual int GetImage(std::string sSelectedModule)=0;
+    void destroy();
+    virtual int GetImage(std::string sSelectedModule)=0;
 	HINSTANCE hinstLib;
     FACTORY m_fnModuleFactory;
 	DESTROYER m_fnDestroyer;

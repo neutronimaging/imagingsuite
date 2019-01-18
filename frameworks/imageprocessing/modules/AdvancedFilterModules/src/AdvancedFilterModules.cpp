@@ -72,7 +72,14 @@ ADVANCEDFILTERMODULES_EXPORT int GetModuleList(const char *application, void *li
     NonLinDiffusionModule nld;
     modulelist->operator []("NonLinDiffusion")=nld.GetParameters();
 
-    NonLocalMeansModule nlm;
-    modulelist->operator []("NonLocalMeansFilter")=nlm.GetParameters();
+    kipl::logging::Logger logger("AdvancedFilterModules GetModuleList");
+    std::ostringstream msg;
+
+    msg<<"Modules in list "<<modulelist->size();
+    logger.message(msg.str());
+
+
+//    NonLocalMeansModule nlm;
+//    modulelist->operator []("NonLocalMeansFilter")=nlm.GetParameters();
     return 0;
 }

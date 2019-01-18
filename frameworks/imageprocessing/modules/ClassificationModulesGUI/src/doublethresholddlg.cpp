@@ -16,8 +16,9 @@
 DoubleThresholdDlg::DoubleThresholdDlg(QWidget *parent) :
     ConfiguratorDialogBase("DoubleThreshold", true, false, true,parent),
     ui(new Ui::DoubleThresholdDlg),
-    m_fLowThreshold(0.0),
+    pOriginal(nullptr),
     m_fHighThreshold(1.0),
+    m_fLowThreshold(0.0),
     m_compare(kipl::segmentation::cmp_greatereq)
 {
     ui->setupUi(this);
@@ -33,15 +34,16 @@ DoubleThresholdDlg::~DoubleThresholdDlg()
 
 void DoubleThresholdDlg::UpdateDialog()
 {
-    ui->doubleSpinBox_lower->setValue(m_fLowThreshold);
-    ui->doubleSpinBox_upper->setValue(m_fHighThreshold);
+    ui->doubleSpinBox_lower->setValue(static_cast<double>(m_fLowThreshold));
+    ui->doubleSpinBox_upper->setValue(static_cast<double>(m_fHighThreshold));
+    ui->comboBox->setCurrentIndex(static_cast<int>(m_compare));
 
 }
 
 void DoubleThresholdDlg::UpdateParameters()
 {
-    m_fLowThreshold  = ui->doubleSpinBox_lower->value();
-    m_fHighThreshold = ui->doubleSpinBox_upper->value();
+    m_fLowThreshold  = static_cast<float>(ui->doubleSpinBox_lower->value());
+    m_fHighThreshold = static_cast<float>(ui->doubleSpinBox_upper->value());
 
     m_compare = static_cast<kipl::segmentation::CmpType>(ui->comboBox->currentIndex());
 }
@@ -137,8 +139,8 @@ void DoubleThresholdDlg::on_doubleSpinBox_upper_valueChanged(double arg1)
         return;
     }
 
-    series->append((qreal)arg1,(qreal)0);
-    series->append((qreal)arg1,(qreal)m_nHistMax);
+    series->append(static_cast<qreal>(arg1),static_cast<qreal>(0));
+    series->append(static_cast<qreal>(arg1),static_cast<qreal>(m_nHistMax));
     series->setName("Upper threshold");
 
     ui->plot_histogram->setCurveData(2,series);
@@ -158,8 +160,8 @@ void DoubleThresholdDlg::on_doubleSpinBox_lower_valueChanged(double arg1)
         return;
     }
 
-    series->append((qreal)arg1,(qreal)0);
-    series->append((qreal)arg1,(qreal)m_nHistMax);
+    series->append(static_cast<qreal>(arg1),static_cast<qreal>(0));
+    series->append(static_cast<qreal>(arg1),static_cast<qreal>(m_nHistMax));
     series->setName("Upper threshold");
 
 

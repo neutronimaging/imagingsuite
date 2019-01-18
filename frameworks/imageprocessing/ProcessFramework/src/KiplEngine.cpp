@@ -257,7 +257,11 @@ kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> *
     std::list<KiplModuleItem *>::iterator it_Module;
 
     try {
-        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; ++it_Module)
+        msg.str("");
+        msg<<"Last module: "<<sLastModule;
+        logger.message(msg.str());
+
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++)
         {
             msg.str("");
             msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();

@@ -123,7 +123,8 @@ SOURCES += \
     ../src/math/circularhoughtransform.cpp \
     ../src/base/roi.cpp \
     ../src/math/findpeaks.cpp \
-    ../src/math/normalizeimage.cpp
+    ../src/math/normalizeimage.cpp \
+    ../src/strings/xmlstrings.cpp
 
 
 
@@ -334,7 +335,10 @@ HEADERS +=\
     ../include/math/core/statistics.hpp \
     ../include/io/io_serializecontainers.h \
     ../include/math/findpeaks.h \
-    ../include/math/normalizeimage.h
+    ../include/math/normalizeimage.h \
+    ../include/strings/xmlstrings.h \
+    ../include/morphology/repairhole.h \
+    ../include/morphology/core/repairhole.hpp
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

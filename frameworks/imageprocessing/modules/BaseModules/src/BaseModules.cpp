@@ -28,13 +28,13 @@ BASEMODULES_EXPORT void * GetModule(const char *application, const char * name, 
 		std::string sName=name;
 
 		if (sName=="scaledata")
-			return new ScaleData;
+            return new ScaleData(interactor);
 		if (sName=="DoseCorrection")
-			return new DoseCorrection;
+            return new DoseCorrection(interactor);
 		if (sName=="ClampData")
-			return new ClampData;
+            return new ClampData(interactor);
 		if (sName=="VolumeProject")
-			return new VolumeProject;
+            return new VolumeProject(interactor);
 	}
 
     return nullptr;
