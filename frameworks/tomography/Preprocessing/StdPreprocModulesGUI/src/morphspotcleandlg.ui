@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1053</width>
-    <height>565</height>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,7 +54,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::Plotter" name="plotDetection" native="true"/>
+          <widget class="QtAddons::PlotWidget" name="plotDetection" native="true"/>
          </item>
         </layout>
        </item>
@@ -170,7 +170,7 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_area">
        <property name="text">
         <string>Max area</string>
        </property>
@@ -401,9 +401,9 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
+   <class>QtAddons::PlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

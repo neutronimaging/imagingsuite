@@ -14,6 +14,8 @@
 #include <ParameterHandling.h>
 #include <ModuleException.h>
 
+#include <plotcursor.h>
+
 MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),
     ui(new Ui::MorphSpotCleanDlg),
@@ -24,9 +26,11 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_bThreading(false)
 {
     ui->setupUi(this);
+    ui->spinArea->hide();
+    ui->label_area->hide();
+
     float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
     size_t dims[2]={4,4};
-
 }
 
 MorphSpotCleanDlg::~MorphSpotCleanDlg()
@@ -68,25 +72,32 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     float fcumhist[N];
     size_t ii=0;
+
     for (ii=0;ii<N;ii++) {
+
         fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
         if (0.99f<fcumhist[ii])
             break;
     }
 
     size_t N99=ii;
-    ui->plotDetection->setCurveData(0,axis,fcumhist,N99);
+    ui->plotDetection->setCurveData(0,axis,fcumhist,N99,"Detection plot");
+
     float threshold[N];
+    float thaxis[N];
     if (m_fSigma!=0.0f)
     { // In case of sigmoid mixing
-        for (size_t i=0; i<N99; i++) {
-            threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
+
+        for (size_t i=0; i<N; i++) {
+            thaxis[i]=axis[0]+i*(axis[N99]-axis[0])/N;
+            threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold, m_fSigma);
         }
-        ui->plotDetection->setCurveData(1,axis,threshold,N99,Qt::red);
+        ui->plotDetection->setCurveData(1,thaxis,threshold,N,"Threshold");
     }
     else
     {
-            ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+        ui->plotDetection->setCursor(0,new QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+        //    ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
     }
 
     std::map<std::string,std::string> pars;

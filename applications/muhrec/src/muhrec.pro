@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport concurrent
+QT       += core widgets printsupport charts concurrent
 
 TARGET = muhrec
 VERSION = 4.0.2
