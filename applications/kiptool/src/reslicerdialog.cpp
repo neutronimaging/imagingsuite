@@ -32,6 +32,7 @@ ReslicerDialog::ReslicerDialog(QWidget *parent) :
     ui->spinBox_firstYZ->hide();
     ui->pushButton_getROI->hide();
 
+    LoadConfig();
     UpdateDialog();
 }
 
@@ -53,13 +54,8 @@ void ReslicerDialog::on_pushButton_browsout_clicked()
 void ReslicerDialog::on_pushButton_startreslice_clicked()
 {
     UpdateConfig();
+    SaveConfig();
     m_reslicer.process();
-
-    QString fname = QDir::homePath()+"/.imagingtools/CurrentResliceConfig.xml";
-//    kipl::strings::filenames::CheckPathSlashes(fname.toStdString(),false);
-    std::ofstream cfgfile(fname.toStdString());
-    cfgfile<<m_reslicer.WriteXML(4);
-
 }
 
 void ReslicerDialog::UpdateDialog()
@@ -134,8 +130,6 @@ void ReslicerDialog::UpdateConfig()
 
 void ReslicerDialog::on_pushButton_preview_clicked()
 {
-
-
         ImageLoader infiles = ui->widget_inputFiles->getReaderConfig();
         int idx=infiles.m_nFirst+(infiles.m_nLast-infiles.m_nFirst)/2;
 
@@ -156,9 +150,7 @@ void ReslicerDialog::on_pushButton_preview_clicked()
         }
         else
         {
-
             kipl::base::TImage<float,2> img;
-//            kipl::io::ReadTIFF(img,fname.c_str());
 
             std::ostringstream msg;
             msg.str("");
@@ -186,18 +178,24 @@ void ReslicerDialog::on_pushButton_preview_clicked()
             }
 
 
-             ui->viewer_slice->set_image(img.GetDataPtr(),img.Dims());
+            ui->viewer_slice->set_image(img.GetDataPtr(),img.Dims());
+            m_reslicer.m_nFirstXZ=0;
+            m_reslicer.m_nLastXZ=static_cast<int>(img.Size(1));
+
+            m_reslicer.m_nFirstYZ=0;
+            m_reslicer.m_nLastYZ=static_cast<int>(img.Size(0));
+
+            ui->spinBox_firstXZ->setValue(m_reslicer.m_nFirstXZ);
+            ui->spinBox_lastXZ->setValue(m_reslicer.m_nLastXZ);
+            ui->spinBox_firstYZ->setValue(m_reslicer.m_nFirstYZ);
+            ui->spinBox_lastYZ->setValue(m_reslicer.m_nLastYZ);
+
 //            m_currentROI=QRect(0,0,img.Size(0)-1,img.Size(1)-1);
 
 //            ui->spinBox_firstXZ->setMaximum(m_currentROI.right());
 //            ui->spinBox_lastXZ->setMaximum(m_currentROI.right());
 //            ui->spinBox_firstYZ->setMaximum(m_currentROI.bottom());
 //            ui->spinBox_lastYZ->setMaximum(m_currentROI.bottom());
-
-//            ui->spinBox_firstXZ->setValue(m_currentROI.left());
-//            ui->spinBox_lastXZ->setValue(m_currentROI.right());
-//            ui->spinBox_firstYZ->setValue(m_currentROI.top());
-//            ui->spinBox_lastYZ->setValue(m_currentROI.bottom());
             }
 
 }
@@ -238,3 +236,35 @@ void ReslicerDialog::on_spinBox_lastYZ_valueChanged(int arg1)
     m_currentROI.setBottom(arg1);
     ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
+
+void ReslicerDialog::SaveConfig()
+{
+    QDir dir;
+
+    QString qfname=dir.homePath()+"/"+".imagingtools";
+    if (dir.exists(qfname))
+    {
+        dir.mkdir(qfname);
+        logger.message("Created .imagingtools folder");
+    }
+
+    std::string fname = (qfname+"/").toStdString();
+    kipl::strings::filenames::CheckPathSlashes(fname,true);
+    fname+="reslicer.xml";
+
+    logger(logger.LogMessage,fname);
+
+    std::ofstream conffile(fname.c_str());
+
+    conffile<<m_reslicer.WriteXML(0);
+}
+
+void ReslicerDialog::LoadConfig()
+{
+    QDir dir;
+     QString confname=dir.homePath()+"/"+".imagingtools/reslicer.xml" ;
+    if (dir.exists(confname)) {
+        m_reslicer.ParseXML(confname.toStdString());
+    }
+}
+

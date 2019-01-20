@@ -6,6 +6,10 @@
 #include <sstream>
 #include <iomanip>
 
+#include <libxml/xmlreader.h>
+
+#include <QDebug>
+
 #include <strings/filenames.h>
 #include <strings/miscstring.h>
 #include <base/KiplException.h>
@@ -15,6 +19,7 @@
 
 TIFFReslicer::TIFFReslicer() :
     logger("TIFFReslicer"),
+    m_nMaxBlock(128),
     m_sSourceMask("/data/slices_####.tif"),
     m_sDestinationPath("/data"),
     m_sDestinationMask("verticalslices_####.tif"),
@@ -28,25 +33,25 @@ TIFFReslicer::TIFFReslicer() :
 
     m_bResliceXZ(true),
     m_bResliceYZ(true),
-    m_nMaxBlock(128),
+
     m_nSliceCount(0),
     m_nCurrentFile(0),
     m_nCurrentBlock(0),
     m_nBlocks(0),
-    buffer(NULL)
+    buffer(nullptr)
 {
 	memset(m_DstImages,0,m_nMaxBlock*sizeof(TIFF *));
-	TIFFSetWarningHandler(0);
+    TIFFSetWarningHandler(nullptr);
 }
 
 TIFFReslicer::~TIFFReslicer() {
 	for (size_t i=0; i<m_nMaxBlock; i++) {
-        if (m_DstImages[i]!=NULL) {
+        if (m_DstImages[i]!=nullptr) {
 			TIFFClose(m_DstImages[i]);
-            m_DstImages[i]=NULL;
+            m_DstImages[i]=nullptr;
         }
 	}
-	if (buffer!=NULL)
+    if (buffer!=nullptr)
 		delete [] buffer;
 }
 
@@ -71,114 +76,109 @@ std::string TIFFReslicer::WriteXML(size_t indent)
     return xml.str();
 }
 
-//void TIFFReslicer::ParseXML(xmlTextReaderPtr reader)
-//{
-//xmlTextReaderPtr reader;
-//const xmlChar *name;
-//const xmlChar *value;
-//int ret;
-//std::string sName;
-//std::string sValue;
-//std::ostringstream msg;
+void TIFFReslicer::ParseXML(std::string fname)
+{
+    xmlTextReaderPtr reader;
+    const xmlChar *name;
+    const xmlChar *value;
+    int ret;
+    std::string sName;
+    std::string sValue;
+    std::ostringstream msg;
 
-//reader = xmlReaderForFile(fname.c_str(), nullptr, 0);
-//if (reader != nullptr) {
-//    ret = xmlTextReaderRead(reader);
-//    name = xmlTextReaderConstName(reader);
+    reader = xmlReaderForFile(fname.c_str(), nullptr, 0);
+    if (reader != nullptr) {
+        ret = xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
 
-//    if (name==nullptr) {
-//        throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
-//    }
+        if (name==nullptr) {
+            throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+        }
 
-//    sName=reinterpret_cast<const char *>(name);
-//    msg.str(""); msg<<"Found "<<sName<<" expect merge";
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
-//    if (sName!="merge") {
-//        msg.str();
-//        msg<<"Unexpected project contents in parameter file ("<<sName<<"!=merge)";
-//        logger(kipl::logging::Logger::LogMessage,msg.str());
-//        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
-//    }
+        sName=reinterpret_cast<const char *>(name);
+        msg.str(""); msg<<"Found "<<sName<<" expect reslice";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        if (sName!="reslice") {
+            msg.str();
+            msg<<"Unexpected project contents in parameter file ("<<sName<<"!=reslice)";
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+        }
 
-//    logger.verbose("Got project");
+        logger.verbose("Got reslice project");
 
-//    ret = xmlTextReaderRead(reader);
+        ret = xmlTextReaderRead(reader);
 
-//    while (ret == 1) {
-//        if (xmlTextReaderNodeType(reader)==1) {
-//            name = xmlTextReaderConstName(reader);
-//            ret=xmlTextReaderRead(reader);
-//            value = xmlTextReaderConstValue(reader);
-//            if (name==nullptr) {
-//                throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
-//            }
-//            sName=reinterpret_cast<const char *>(name);
+        while (ret == 1) {
+            if (xmlTextReaderNodeType(reader)==1) {
+                name = xmlTextReaderConstName(reader);
+                ret=xmlTextReaderRead(reader);
+                value = xmlTextReaderConstValue(reader);
+                if (name==nullptr) {
+                    throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+                }
+                sName=reinterpret_cast<const char *>(name);
 
-//            if (value!=nullptr)
-//                sValue=reinterpret_cast<const char *>(value);
-//            else {
-//                msg.str("");
-//                msg<<"Parameter "<<sValue<<" does not have a value";
-//                logger.warning(msg.str());
-//                sValue="Empty";
-//            }
-//            qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
-//            if (sName=="path_a")
-//                m_sPathA   = sValue;
+                if (value!=nullptr)
+                    sValue=reinterpret_cast<const char *>(value);
+                else {
+                    msg.str("");
+                    msg<<"Parameter "<<sValue<<" does not have a value";
+                    logger.warning(msg.str());
+                    sValue="Empty";
+                }
+                qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
 
-//            if (sName=="path_b")
-//                m_sPathB   = sValue;
+                if (sName=="srcmask")
+                    m_sSourceMask  = sValue;
 
-//            if (sName=="path_dest")
-//                m_sPathOut = sValue;
+                if (sName=="dstpath")
+                    m_sDestinationPath   = sValue;
 
-//            if (sName=="first_a")
-//                m_nFirstA  = std::stoi(sValue);
+                if (sName=="first")
+                    m_nFirst = std::stoi(sValue);
 
-//            if (sName=="last_a")
-//                m_nLastA   = std::stoi(sValue);
+                if (sName=="last")
+                    m_nLast  = std::stoi(sValue);
 
-//            if (sName=="first_b")
-//                m_nFirstB  = std::stoi(sValue);
+                if (sName=="reslicexz")
+                    m_bResliceXZ   = kipl::strings::string2bool(sValue);
 
-//            if (sName=="last_b")
-//                m_nLastB   = std::stoi(sValue);
+                if (sName=="firstxz")
+                    m_nFirstXZ     = std::stoi(sValue);
 
-//            if (sName=="startoverlap_a")
-//                m_nStartOverlapA = std::stoi(sValue);
+                if (sName=="lastxz")
+                    m_nLastXZ      = std::stoi(sValue);
 
-//            if (sName=="overlaplength")
-//                m_nOverlapLength = std::stoi(sValue);
+                if (sName=="resliceyz")
+                    m_bResliceYZ   = kipl::strings::string2bool(sValue);
 
-//            if (sName=="first_dest")
-//                m_nFirstDest = std::stoi(sValue);
+                if (sName=="firstyz")
+                    m_nFirstYZ = std::stoi(sValue);
 
-//            if (sName=="cropslices")
-//                m_bCropSlices = kipl::strings::string2bool(sValue);
+                if (sName=="lastyz")
+                    m_nLastYZ = std::stoi(sValue);
 
-//            if (sName=="crop")
-//                kipl::strings::String2Array(sValue,m_nCrop,4);
 
-//            if (sName=="cropboffset")
-//                kipl::strings::String2Array(sValue,m_nCropOffset,2);
+            }
+            ret = xmlTextReaderRead(reader);
+        }
+        xmlFreeTextReader(reader);
+        if (ret != 0) {
+            std::stringstream str;
+            str<<"Reslicer failed to parse "<<fname;
+            logger.error(str.str());
+            throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+        }
+    } else {
+        std::stringstream str;
+        str<<"Reslicer config could not open "<<fname;
+        logger.error(str.str());
+        throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+    }
+    logger.verbose("Parsing parameter file done");
 
-//        }
-//        ret = xmlTextReaderRead(reader);
-//    }
-//    xmlFreeTextReader(reader);
-//    if (ret != 0) {
-//        std::stringstream str;
-//        str<<"MergeVolume failed to parse "<<fname;
-//        throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
-//    }
-//} else {
-//    std::stringstream str;
-//    str<<"Module config could not open "<<fname;
-//    throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
-//}
-//logger.verbose("Parsing parameter file done");
-
-//}
+}
 int TIFFReslicer::process()
 {
     std::string fmask=m_sDestinationPath;
@@ -396,7 +396,7 @@ int TIFFReslicer::GetHeader(std::string fname)
 	TIFF *image;
 
 	// Open the TIFF image
-	if((image = TIFFOpen(fname.c_str(), "r")) == NULL){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str("");
 		msg<<"Could not open image "<<fname;
 		logger(kipl::logging::Logger::LogError,msg.str());
@@ -473,7 +473,7 @@ int TIFFReslicer::LoadBuffer(std::string fname)
 
 	TIFFSetWarningHandler(0);
 	// Open the TIFF image
-	if((image = TIFFOpen(fname.c_str(), "r")) == NULL){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str();
 		msg<<"LoadBuffer: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -504,11 +504,11 @@ int TIFFReslicer::LoadBuffer(std::string fname)
 	//std::cout<<"buffer size: "<<bufferSize<<", number of strips:"<<TIFFNumberOfStrips (image)<<", stripSize:" <<stripSize<<", stripMax:"<<stripMax<<std::endl;
 
 	try {
-		if (buffer!=NULL) {
+        if (buffer!=nullptr) {
 			delete [] buffer;
-			buffer=NULL;
+            buffer=nullptr;
 		}
-		if((buffer = new char[bufferSize]) == NULL){
+        if((buffer = new char[bufferSize]) == nullptr){
 			msg.str("");
 			msg<<"LoadBuffer: Could not allocate"<<bufferSize<<" bytes for the uncompressed image";
 			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -591,7 +591,7 @@ int TIFFReslicer::CreateHeaders(std::string mask, size_t nFirst, size_t nLast, s
 
 	for (size_t idx=nFirst, i=0; idx<=nLast; idx++, i++) {
 		kipl::strings::filenames::MakeFileName(mask,idx,fname,ext,'#','0');
-		if((m_DstImages[i] = TIFFOpen(fname.c_str(), "w")) == NULL){
+        if((m_DstImages[i] = TIFFOpen(fname.c_str(), "w")) == nullptr){
 			msg.str("");
 			msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
 			logger(kipl::logging::Logger::LogError,msg.str());
@@ -640,9 +640,9 @@ int TIFFReslicer::CloseImages()
 {
 	size_t i;
 	for (i=0; i<m_nMaxBlock; i++) {
-        if (m_DstImages[i]!=NULL) {
+        if (m_DstImages[i]!=nullptr) {
 			TIFFClose(m_DstImages[i]);
-            m_DstImages[i]=NULL;
+            m_DstImages[i]=nullptr;
         }
     }
 

@@ -40,6 +40,9 @@ private slots:
 private:
     void UpdateDialog();
     void UpdateConfig();
+    void SaveConfig();
+    void LoadConfig();
+
     Ui::ReslicerDialog *ui;
 
    TIFFReslicer m_reslicer;

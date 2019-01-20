@@ -25,7 +25,7 @@ public:
 	float progress();
 
     std::string WriteXML(size_t indent=4);
-    //void ParseXML(xmlTextReaderPtr reader);
+    void ParseXML(std::string fname);
 
     std::string m_sSourceMask;
     std::string m_sDestinationPath;
