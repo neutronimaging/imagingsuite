@@ -60,7 +60,8 @@ protected:
 
 	char *buffer;
 	int m_nBytesPerPixel;
-	int m_nBytesPerLine;
+    int m_nBytesPerWriteLine;
+    int m_nBytesPerReadLine;
 };
 
 #endif /* RESLICER_H_ */

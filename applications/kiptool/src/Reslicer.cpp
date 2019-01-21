@@ -71,7 +71,7 @@ std::string TIFFReslicer::WriteXML(size_t indent)
         xml<<std::setw(indent+blockindent)<<" "<<"<resliceyz>"<<kipl::strings::bool2string(m_bResliceYZ)<<"</resliceyz>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<firstyz>"<<m_nFirstYZ<<"</firstyz>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<lastyz>"<<m_nLastYZ<<"</lastyz>\n";
-    xml<<std::setw(indent)<<" "<<"</reslice>\n";
+    xml<<std::setw(indent)<<" "<<"</reslice>";
 
     return xml.str();
 }
@@ -127,7 +127,7 @@ void TIFFReslicer::ParseXML(std::string fname)
                     logger.warning(msg.str());
                     sValue="Empty";
                 }
-                qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
+               // qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
 
                 if (sName=="srcmask")
                     m_sSourceMask  = sValue;
@@ -254,16 +254,16 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
 	size_t nSliceBlocks = 0;
 	size_t nBlockRest   = 0;
 	size_t nImages      = nLast - nFirst + 1;
-
+    m_nBytesPerReadLine = m_nBytesPerPixel * m_nImageDims[0];
 	switch (plane) {
 			case kipl::base::ImagePlaneXY : logger(kipl::logging::Logger::LogWarning,"Plane XY is irrelevant for the reslicer."); return -1;
 			case kipl::base::ImagePlaneXZ :
-				m_nBytesPerLine = m_nBytesPerPixel * m_nImageDims[0];
+                m_nBytesPerWriteLine = m_nBytesPerPixel * m_nImageDims[0];
 				nSliceBlocks = m_nImageDims[1] / m_nMaxBlock;
 				nBlockRest   = m_nImageDims[1] % m_nMaxBlock;
 				break;
 			case kipl::base::ImagePlaneYZ :
-				m_nBytesPerLine = m_nBytesPerPixel * m_nImageDims[1];
+                m_nBytesPerWriteLine = m_nBytesPerPixel * m_nImageDims[1];
                 nSliceBlocks = m_nImageDims[0] / m_nMaxBlock;
                 nBlockRest   = m_nImageDims[0] % m_nMaxBlock;
 				break;
@@ -273,7 +273,7 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
 	size_t nLastSlice=0;
 	size_t nBlock=0;
 
-    char *pLineBuffer=new char[m_nBytesPerLine+16];
+    char *pLineBuffer=new char[m_nBytesPerWriteLine+16];
 
 	try {
 		for (nBlock=0; nBlock<nSliceBlocks; nBlock++) {
@@ -296,22 +296,22 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
 				kipl::strings::filenames::MakeFileName(sSrcMask,nFileIndex,fname,ext,'#','0');
 				LoadBuffer(fname);
                 msg.str("");
-                msg<<"Bytes/pixel="<<m_nBytesPerPixel<<", Bytes/line="<<m_nBytesPerLine<<", dims="<<m_nImageDims[0]<<", "<<m_nImageDims[1];
-                logger(kipl::logging::Logger::LogMessage,msg.str());
+                msg<<"Bytes/pixel="<<m_nBytesPerPixel<<", Bytes/line="<<m_nBytesPerReadLine<<", dims="<<m_nImageDims[0]<<", "<<m_nImageDims[1];
+             //   logger(kipl::logging::Logger::LogMessage,msg.str());
 				for (size_t nSliceIndex=0; nSliceIndex<m_nMaxBlock; nSliceIndex++) {
 					size_t idx=nSliceIndex+nFirstSlice;
 					if (plane == kipl::base::ImagePlaneXZ )
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerLine, buffer+idx*m_nBytesPerLine);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine, buffer+idx*m_nBytesPerReadLine);
 					else {
 
                         for (int i=0; i<m_nImageDims[1]; i++) {
 //                            std::copy_n(buffer+idx*m_nBytesPerPixel+i*m_nBytesPerLine,pLineBuffer+i*m_nBytesPerPixel,m_nBytesPerPixel);
                             for (int j=0; j<m_nBytesPerPixel; j++) {
-                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerReadLine+j];
                             }
                         }
                         //memset(pLineBuffer,160,m_nBytesPerLine);
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerLine,pLineBuffer);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine,pLineBuffer);
 					}
 
 				}
@@ -354,13 +354,13 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
                 for (size_t nSliceIndex=0; nSliceIndex<=nBlockRest; nSliceIndex++) {
                     size_t idx=nSliceIndex+nFirstSlice;
                     if (plane == kipl::base::ImagePlaneXZ )
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerLine,buffer+idx*m_nBytesPerLine);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine,buffer+idx*m_nBytesPerReadLine);
                     else {
                         for (int i=0; i<m_nImageDims[1]; i++)
                             for (int j=0; j<m_nBytesPerPixel; j++)
-                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerReadLine+j];
 
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst, m_nBytesPerLine,pLineBuffer);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst, m_nBytesPerWriteLine,pLineBuffer);
                     }
                 }
             }
@@ -471,7 +471,7 @@ int TIFFReslicer::LoadBuffer(std::string fname)
 	unsigned char tempbyte;
 	unsigned long bufferSize, count;
 
-	TIFFSetWarningHandler(0);
+    TIFFSetWarningHandler(nullptr);
 	// Open the TIFF image
     if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str();
