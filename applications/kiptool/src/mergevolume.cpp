@@ -104,11 +104,16 @@ void MergeVolume::CopyMerge()
     kipl::base::TImage<float,2> a,b;
     float *pA, *pB;
     float scale=1.0f/m_nOverlapLength;
+    unsigned short BitPerSample=0;
+
     try {
         for (k=0, j=m_nFirstB; k<=m_nOverlapLength; i++,j++,k++, cnt++) {
             kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(a,src_fname.c_str());
 
+
+            if (k==0)
+                BitPerSample= a.info.nBitsPerSample;
             kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(b,src_fname.c_str());
             pA=a.GetDataPtr();
@@ -119,7 +124,10 @@ void MergeVolume::CopyMerge()
             }
 
             kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
-            kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
+            if (BitPerSample==16)
+                kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
+            if (BitPerSample==32)
+                kipl::io::WriteTIFF32(a, dst_fname.c_str());
         }
     }
     catch (kipl::base::KiplException &e) {
@@ -220,7 +228,6 @@ void MergeVolume::CropMerge() {
         for (k=0, j=m_nFirstB; k<m_nOverlapLength; i++,j++,k++, cnt++) {
             kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(a,src_fname.c_str(), cropA);
-
             kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(b,src_fname.c_str(),cropB);
             pA=a.GetDataPtr();
@@ -231,7 +238,12 @@ void MergeVolume::CropMerge() {
             }
 
             kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
-            kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
+            switch (bps) {
+            case 8:
+            case 16: kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f,65535.0f); break;
+            case 32: kipl::io::WriteTIFF32(a,dst_fname.c_str()); break;
+            default: throw kipl::base::KiplException("Unhandled number of bits",__FILE__,__LINE__);
+            }
         }
     }
 
@@ -299,11 +311,7 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
     img->Resize(dims);
 
     // here I check the image type
-    TIFF *image= TIFFOpen(fname.c_str(),"r");
-    unsigned short BitPerSample;
-    TIFFGetField(image, TIFFTAG_BITSPERSAMPLE, &BitPerSample); // here I now which type it is
-    TIFFClose(image);
-
+    unsigned short BitPerSample = slice.info.nBitsPerSample;
 
     float *pLine;
 
@@ -316,7 +324,7 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
         for (int i=first; i<=last; i++) {
             kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
             logger(kipl::logging::Logger::LogVerbose,fname);
-            kipl::io::ReadTIFFLine(data,line,fname.c_str()); // THIS IS THE ERROR.. GO ON FROM THERE. READTIFFLINE
+            kipl::io::ReadTIFFLine(data,line,fname.c_str());
             pLine=img->GetLinePtr(i-first);
             for (size_t j=0; j<=img->Size(0); j++) {
                 pLine[j]=static_cast<float>(data[j+total_offset]);
