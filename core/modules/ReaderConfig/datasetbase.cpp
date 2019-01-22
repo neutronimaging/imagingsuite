@@ -8,6 +8,7 @@
 #include <base/kiplenums.h>
 #include <strings/xmlstrings.h>
 
+#include "readerexception.h"
 #include "datasetbase.h"
 
 int ImageLoader::cnt=0;
@@ -159,6 +160,70 @@ int ImageLoader::ParseXML(std::string xml)
          }
      }
      return 0;
+}
+
+int ImageLoader::ParseXML(xmlTextReaderPtr reader)
+{
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
+
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                throw ReaderException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="filemask") {
+                m_sFilemask=sValue;
+            }
+            if (sName=="variablename") {
+                m_sVariableName=sValue;
+            }
+            if (sName=="first") {
+               m_nFirst=std::atoi(sValue.c_str());
+            }
+            if (sName=="last") {
+               m_nLast=std::atoi(sValue.c_str());
+            }
+            if (sName=="repeat") {
+               m_nRepeat=std::atoi(sValue.c_str());
+            }
+            if (sName=="stride") {
+               m_nStride=std::atoi(sValue.c_str());
+            }
+            if (sName=="step") {
+               m_nStep=std::atoi(sValue.c_str());
+            }
+
+            if (sName=="flip") {
+               string2enum(sValue.c_str(),m_Flip);
+            }
+
+            if (sName=="rotate") {
+               string2enum(sValue.c_str(),m_Rotate);
+            }
+
+            if (sName=="useroi") {
+               m_bUseROI=kipl::strings::string2bool(sValue.c_str());
+            }
+        }
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
+
+
 }
 
 std::ostream & operator<<(std::ostream &s, ImageLoader &il)

@@ -46,6 +46,7 @@ void TestReslicer::test_Process()
     }
 
     reslicer.m_bResliceXZ=true;
+    reslicer.m_bResliceYZ=true;
     reslicer.process();
 }
 

@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QSignalBlocker>
 #include <QtConcurrent>
+#include <QMessageBox>
 
 #include <findskiplistdialog.h>
 #include <buildfilelist.h>
@@ -31,14 +32,15 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     ui(new Ui::FileConversionDialog)
 {
     ui->setupUi(this);
-    on_checkBox_toggled(false);
+
     ui->checkCollate->setChecked(false);
     on_checkCollate_toggled(false);
     ui->comboAverageMethod->setCurrentIndex(3);
     ui->progressBar->setValue(0);
     ui->comboBox_ScanOrder->setCurrentIndex(0);
     on_comboBox_ScanOrder_currentIndexChanged(0);
-    ui->lineEdit_DestinationPath->setText("/data");
+    QDir dir;
+    ui->lineEdit_DestinationPath->setText(dir.homePath());
     ui->lineEdit_DestinationMask->setText("file####.tif");
 }
 
@@ -78,29 +80,42 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     std::ostringstream msg;
     std::string ext1, ext2;
 
-    if (ui->lineEdit_DestinationPath->text().isEmpty()==true) {
+    QDir dir;
+    if ((ui->lineEdit_DestinationPath->text().isEmpty()==true) ||
+            (!dir.exists(ui->lineEdit_DestinationPath->text())))
+    {
         logger(logger.LogWarning,"Empty destination path");
+        QMessageBox::warning(this,"No destination path","There is no destination path.");
         return;
     }
 
-    if (ui->lineEdit_DestinationMask->text().isEmpty()==true) {
+    if (ui->lineEdit_DestinationMask->text().isEmpty()==true)
+    {
         logger(logger.LogWarning,"Empty destination file mask");
+        QMessageBox::warning(this,"No file mask","There is no destination file mask");
         return;
     }
     filecnt=0;
+    flist.clear();
 
     std::list<ImageLoader> ll=ui->ImageLoaderConfig->GetList();
 
-    if (ll.empty()==true) {
+    if (ll.empty()==true)
+    {
         logger(logger.LogWarning,"Empty image loader.");
+        QMessageBox::warning(this,"No files","There are no files in the list");
         return;
     }
 
     ext1=kipl::strings::filenames::GetFileExtension(ll.front().m_sFilemask);
 
-    for (auto it=ll.begin(); it!=ll.end(); it++) {
-        if (ext1!=kipl::strings::filenames::GetFileExtension((*it).m_sFilemask)) {
+    for (auto it=ll.begin(); it!=ll.end(); it++)
+    {
+        if (ext1!=kipl::strings::filenames::GetFileExtension((*it).m_sFilemask))
+        {
             logger(logger.LogMessage,"The data sets don't have the same file type.");
+            QMessageBox::warning(this,"Warning","The input file sets don't have the same file type");
+
             return ;
         }
     }
@@ -138,6 +153,7 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     progress_thread.waitForFinished();
     proc_thread.waitForFinished();
 
+    ui->progressBar->setValue(0);
     logger(logger.LogVerbose,"Threads are joined");
 }
 
@@ -145,7 +161,7 @@ int FileConversionDialog::Process(bool sameext)
 {
     int res=0;
     if ((sameext) &&
-        (ui->checkBox->checkState() == Qt::Unchecked) &&
+        (ui->groupBox_crop->isChecked() == false) &&
         (ui->checkCollate->checkState() == Qt::Unchecked))
     {
         res=CopyImages();
@@ -154,6 +170,8 @@ int FileConversionDialog::Process(bool sameext)
     {
         res=ConvertImages();
     }
+
+
 
     return res;
 }
@@ -213,7 +231,7 @@ int FileConversionDialog::ConvertImages()
                   static_cast<size_t>(ui->spinBox_x1->value()),
                   static_cast<size_t>(ui->spinBox_y1->value())};
     size_t *crop=nullptr;
-    if (ui->checkBox->checkState()==Qt::Checked) {
+    if (ui->groupBox_crop->isChecked() == true) {
         crop=roi;
     }
 
@@ -222,7 +240,14 @@ int FileConversionDialog::ConvertImages()
 
     size_t dims[3];
 
-    imgreader.GetImageSize(flist.front(),1.0f,dims);
+    if (crop) {
+        dims[0]=crop[2]-crop[0];
+        dims[1]=crop[3]-crop[1];
+    }
+    else
+    {
+        imgreader.GetImageSize(flist.front(),1.0f,dims);
+    }
     dims[2]=nCollate;
 
     if (bCollate==true)
@@ -318,25 +343,15 @@ int FileConversionDialog::ConvertImages()
     return 0;
 }
 
-void FileConversionDialog::on_checkBox_toggled(bool checked)
-{
-    ui->label_x0->setVisible(checked);
-    ui->label_x1->setVisible(checked);
-    ui->label_y0->setVisible(checked);
-    ui->label_y1->setVisible(checked);
-
-    ui->spinBox_x0->setVisible(checked);
-    ui->spinBox_x1->setVisible(checked);
-    ui->spinBox_y0->setVisible(checked);
-    ui->spinBox_y1->setVisible(checked);
-}
-
 void FileConversionDialog::on_checkCollate_toggled(bool checked)
 {
     ui->spinCollationSize->setVisible(checked);
     ui->labelAverageMethod->setVisible(checked);
     ui->labelCollationStep->setVisible(checked);
     ui->comboAverageMethod->setVisible(checked);
+    ui->labelNumberOfFiles->setVisible(checked);
+    ui->label_rest->setVisible(checked);
+
 }
 
 int FileConversionDialog::Progress()

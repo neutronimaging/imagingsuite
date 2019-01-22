@@ -25,8 +25,6 @@ private slots:
 
     void on_pushButton_StartConversion_clicked();
 
-    void on_checkBox_toggled(bool checked);
-
     void on_checkCollate_toggled(bool checked);
 
     void on_buttonBox_rejected();

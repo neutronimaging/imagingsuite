@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <qmessagebox.h>
 
 #include <datasetbase.h>
 
@@ -65,7 +66,13 @@ void ReaderConfigListWidget::on_Button_AddLoader_clicked()
 
     dlg.m_loader=item->loader;
 
-    int res=dlg.exec();
+    int res=0;
+    try {
+       res=dlg.exec();
+    } catch (...) {
+        QMessageBox::warning(this,"Error","Problem analyzing file names");
+    }
+
     if (res==QDialog::Accepted) {
         item->loader=dlg.m_loader;
         msg.str("");

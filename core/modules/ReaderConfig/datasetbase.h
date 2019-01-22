@@ -7,6 +7,7 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <libxml/xmlreader.h>
 
 #include <base/kiplenums.h>
 #include <base/timage.h>
@@ -27,6 +28,7 @@ public:
     int getId();
     std::string WriteXML(int indent=4);
     int ParseXML(std::string xml);
+    int ParseXML(xmlTextReaderPtr reader);
 
     std::string m_sFilemask;
     std::string m_sVariableName;
