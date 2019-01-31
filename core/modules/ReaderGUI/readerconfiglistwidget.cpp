@@ -20,7 +20,7 @@ public:
     LoaderListItem() {}
     LoaderListItem(const LoaderListItem &item) : QListWidgetItem(item) {}
 
-    ImageLoader loader;
+    FileSet loader;
 };
 
 ReaderConfigListWidget::ReaderConfigListWidget(QWidget *parent) :
@@ -123,9 +123,9 @@ void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* c
     }
 }
 
-std::list<ImageLoader> ReaderConfigListWidget::GetList()
+std::list<FileSet> ReaderConfigListWidget::GetList()
 {
-    std::list<ImageLoader> loaderlist;
+    std::list<FileSet> loaderlist;
 
     for (int i=0; i<m_ListWidget_loaders->count(); i++) {
         LoaderListItem *item = dynamic_cast<LoaderListItem *>(m_ListWidget_loaders->item(i));

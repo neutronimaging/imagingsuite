@@ -11,9 +11,9 @@
 #include "readerexception.h"
 #include "datasetbase.h"
 
-int ImageLoader::cnt=0;
+int FileSet::cnt=0;
 
-ImageLoader::ImageLoader() :
+FileSet::FileSet() :
     id(cnt++),
     m_sFilemask("image_####.tif"),
     m_sVariableName("image"),
@@ -34,7 +34,7 @@ ImageLoader::ImageLoader() :
     m_ROI[3]=100;
 }
 
-ImageLoader::ImageLoader(const ImageLoader &cfg) :
+FileSet::FileSet(const FileSet &cfg) :
     id(cnt++),
     m_sFilemask(cfg.m_sFilemask),
     m_sVariableName(cfg.m_sVariableName),
@@ -51,12 +51,12 @@ ImageLoader::ImageLoader(const ImageLoader &cfg) :
     std::copy_n(cfg.m_ROI,4,m_ROI);
 }
 
-ImageLoader::~ImageLoader()
+FileSet::~FileSet()
 {
 
 }
 
-const ImageLoader &ImageLoader::operator=(const ImageLoader &cfg)
+const FileSet &FileSet::operator=(const FileSet &cfg)
 {
     m_sFilemask     = cfg.m_sFilemask;
     m_sVariableName = cfg.m_sVariableName;
@@ -75,11 +75,11 @@ const ImageLoader &ImageLoader::operator=(const ImageLoader &cfg)
     return *this;
 }
 
-int ImageLoader::getId() {
+int FileSet::getId() {
     return id;
 }
 
-std::string ImageLoader::WriteXML(int indent)
+std::string FileSet::WriteXML(int indent)
 {
     ostringstream xml;
 
@@ -102,7 +102,7 @@ std::string ImageLoader::WriteXML(int indent)
     return xml.str();
 }
 
-int ImageLoader::ParseXML(std::string xml)
+int FileSet::ParseXML(std::string xml)
 {
     regex reg("<(.*)>(.*)</(\\1)>");
 
@@ -162,7 +162,7 @@ int ImageLoader::ParseXML(std::string xml)
      return 0;
 }
 
-int ImageLoader::ParseXML(xmlTextReaderPtr reader)
+int FileSet::ParseXML(xmlTextReaderPtr reader)
 {
     const xmlChar *name, *value;
     int ret = xmlTextReaderRead(reader);
@@ -226,7 +226,17 @@ int ImageLoader::ParseXML(xmlTextReaderPtr reader)
 
 }
 
-std::ostream & operator<<(std::ostream &s, ImageLoader &il)
+std::string FileSet::makeFileName(int idx)
+{
+    std::string name;
+    std::string ext;
+    //TODO Add index bound check
+    kipl::strings::filenames::MakeFileName(m_sFilemask,idx, name, ext,'#');
+
+    return name;
+}
+
+std::ostream & operator<<(std::ostream &s, FileSet &il)
 {
     s<<"FileMask:"<<il.m_sFilemask<<", variable name="<<il.m_sVariableName<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]\n"
     << il.m_Flip<<" " << il.m_Rotate << "\n"

@@ -90,14 +90,14 @@ int FindSkipListDialog::exec(std::list<std::string> &filelist)
 
 int FindSkipListDialog::exec(std::string path, std::string fmask, int first, int last)
 {
-    ImageLoader il;
+    FileSet il;
     il.m_sFilemask=path;
     kipl::strings::filenames::CheckPathSlashes(il.m_sFilemask,true);
     il.m_sFilemask+=fmask;
     il.m_nFirst=first;
     il.m_nLast=last;
     il.m_nStep=1;
-    std::list<ImageLoader> ll;
+    std::list<FileSet> ll;
     ll.push_back(il);
     std::list<std::string> flist=BuildFileList(ll);
 

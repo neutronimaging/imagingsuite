@@ -14,6 +14,7 @@
 
 #include <findskiplistdialog.h>
 #include <buildfilelist.h>
+#include <roidialog.h>
 #include <imagereader.h>
 #include <imagewriter.h>
 
@@ -53,7 +54,7 @@ void FileConversionDialog::on_pushButton_GetSkipList_clicked()
 {
     FindSkipListDialog dlg;
 
-    std::list<ImageLoader> loaderlist=ui->ImageLoaderConfig->GetList();
+    std::list<FileSet> loaderlist=ui->ImageLoaderConfig->GetList();
 
     std::list<std::string> filelist=BuildFileList(loaderlist);
 
@@ -98,7 +99,7 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     filecnt=0;
     flist.clear();
 
-    std::list<ImageLoader> ll=ui->ImageLoaderConfig->GetList();
+    std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
 
     if (ll.empty()==true)
     {
@@ -380,7 +381,7 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
 {
    std::ostringstream msg;
 
-   std::list<ImageLoader> ll=ui->ImageLoaderConfig->GetList();
+   std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
 
    if (ll.empty()==true) {
        logger(logger.LogWarning,"Empty image loader.");
@@ -394,7 +395,7 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
 
    std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,ui->comboBox_ScanOrder->currentIndex(),ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
 
-   int N=plist.size();
+   int N=static_cast<int>(plist.size());
    int rest = N % arg1;
    msg<<N/arg1<<" files"<<(rest==0 ? "" : " with a rest ")<<rest;
    ui->labelNumberOfFiles->setText(QString::fromStdString(msg.str()));
@@ -415,4 +416,44 @@ void FileConversionDialog::on_comboBox_ScanOrder_currentIndexChanged(int index)
         ui->label_scanlength->hide();
         ui->comboBox_ScanLength->hide();
     }
+}
+
+void FileConversionDialog::on_pushButton_getROI_clicked()
+{
+    std::ostringstream msg;
+
+    std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
+
+    if (ll.empty()==true) {
+        logger(logger.LogWarning,"Empty image loader.");
+        QMessageBox::warning(this,"Empty loader","There are no file sets in the list. Please add a set before selecting ROI.");
+        return;
+    }
+
+    FileSet fs=ll.front();
+
+    std::string fname=fs.makeFileName(fs.m_nFirst);
+
+    ImageReader reader;
+
+    kipl::base::TImage<float,2> img=reader.Read(fname);
+
+    QtAddons::ROIDialog dlg;
+    QRect r(QPoint(ui->spinBox_x0->value(),ui->spinBox_y0->value()),
+            QPoint(ui->spinBox_x1->value(),ui->spinBox_y1->value()));
+
+    dlg.setROI(r);
+    dlg.setImage(img);
+
+    int res=dlg.exec();
+
+    if (res==QDialog::Accepted)
+    {
+        r=dlg.ROI();
+        ui->spinBox_x0->setValue(r.x());
+        ui->spinBox_y0->setValue(r.y());
+        ui->spinBox_x1->setValue(r.x()+r.width());
+        ui->spinBox_y1->setValue(r.y()+r.height());
+    }
+
 }

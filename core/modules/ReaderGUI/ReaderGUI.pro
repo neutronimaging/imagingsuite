@@ -49,6 +49,7 @@ unix {
      #   QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+        INCLUDEPATH += /opt/local/include/libxml2
     }
 }
 

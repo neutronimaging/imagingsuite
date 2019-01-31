@@ -59,9 +59,9 @@ void ReaderForm::on_button_browse_clicked()
     }
 }
 
-ImageLoader ReaderForm::getReaderConfig()
+FileSet ReaderForm::getReaderConfig()
 {
-    ImageLoader cfg;
+    FileSet cfg;
 
     cfg.m_sFilemask = ui->edit_fileMask->text().toStdString();
 
@@ -80,7 +80,7 @@ ImageLoader ReaderForm::getReaderConfig()
     return cfg;
 }
 
-void ReaderForm::setReaderConfig(ImageLoader &cfg)
+void ReaderForm::setReaderConfig(FileSet &cfg)
 {
     ui->edit_fileMask->setText(QString::fromStdString(cfg.m_sFilemask));
 

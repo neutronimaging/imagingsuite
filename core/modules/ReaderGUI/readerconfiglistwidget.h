@@ -19,9 +19,9 @@ class READERGUISHARED_EXPORT ReaderConfigListWidget : public QWidget
 public:
     explicit ReaderConfigListWidget(QWidget *parent = 0);
     ~ReaderConfigListWidget();
-    void SetList(std::list<ImageLoader> &loaderlist);
-    void AddLoader(ImageLoader &loader);
-    std::list<ImageLoader> GetList();
+    void SetList(std::list<FileSet> &loaderlist);
+    void AddLoader(FileSet &loader);
+    std::list<FileSet> GetList();
 
 signals:
 

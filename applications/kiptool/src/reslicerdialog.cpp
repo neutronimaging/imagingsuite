@@ -60,7 +60,7 @@ void ReslicerDialog::on_pushButton_startreslice_clicked()
 
 void ReslicerDialog::UpdateDialog()
 {
-    ImageLoader infiles;
+    FileSet infiles;
     infiles.m_sFilemask = m_reslicer.m_sSourceMask;
     infiles.m_nFirst    = m_reslicer.m_nFirst;
     infiles.m_nLast     = m_reslicer.m_nLast;
@@ -96,7 +96,7 @@ void ReslicerDialog::UpdateDialog()
 
 void ReslicerDialog::UpdateConfig()
 {
-    ImageLoader infiles = ui->widget_inputFiles->getReaderConfig();
+    FileSet infiles = ui->widget_inputFiles->getReaderConfig();
     m_reslicer.m_sSourceMask = infiles.m_sFilemask;
     m_reslicer.m_nFirst      = infiles.m_nFirst;
     m_reslicer.m_nLast       = infiles.m_nLast;
@@ -130,7 +130,7 @@ void ReslicerDialog::UpdateConfig()
 
 void ReslicerDialog::on_pushButton_preview_clicked()
 {
-        ImageLoader infiles = ui->widget_inputFiles->getReaderConfig();
+        FileSet infiles = ui->widget_inputFiles->getReaderConfig();
         int idx=infiles.m_nFirst+(infiles.m_nLast-infiles.m_nFirst)/2;
 
         std::string fname,ext;

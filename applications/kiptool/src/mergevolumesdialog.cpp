@@ -33,7 +33,7 @@ MergeVolumesDialog::~MergeVolumesDialog()
 
 void MergeVolumesDialog::UpdateDialog()
 {
-    ImageLoader loader;
+    FileSet loader;
     loader.m_nFirst=m_merger.m_nFirstA;
     loader.m_nLast = m_merger.m_nLastA;
     loader.m_sFilemask = m_merger.m_sPathA;
@@ -65,7 +65,7 @@ void MergeVolumesDialog::UpdateDialog()
 
 void MergeVolumesDialog::UpdateConfig()
 {
-    ImageLoader loader;
+    FileSet loader;
     loader=ui->widget_readerFormA->getReaderConfig();
 
     m_merger.m_nFirstA = loader.m_nFirst;
@@ -103,7 +103,7 @@ void MergeVolumesDialog::on_pushButton_loaddata_clicked()
 void MergeVolumesDialog::on_pushButton_loadA_clicked()
 {
     std::ostringstream msg;
-    ImageLoader loader=ui->widget_readerFormA->getReaderConfig();
+    FileSet loader=ui->widget_readerFormA->getReaderConfig();
 
     try {
         m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgA);
@@ -126,7 +126,7 @@ void MergeVolumesDialog::on_pushButton_loadB_clicked()
 {
     std::ostringstream msg;
 
-    ImageLoader loader=ui->widget_readerFormB->getReaderConfig();
+    FileSet loader=ui->widget_readerFormB->getReaderConfig();
 
     try {
         m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgB);
@@ -147,7 +147,7 @@ void MergeVolumesDialog::on_pushButton_loadB_clicked()
 
 void MergeVolumesDialog::on_comboBox_mixorder_currentIndexChanged(int index)
 {
-    ImageLoader loader;
+    FileSet loader;
     switch (index) {
     case 0:
         loader=ui->widget_readerFormA->getReaderConfig();

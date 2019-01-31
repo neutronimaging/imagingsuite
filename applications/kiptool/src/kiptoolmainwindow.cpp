@@ -114,7 +114,7 @@ void KipToolMainWindow::LoadDefaults()
 void KipToolMainWindow::UpdateDialog()
 {
     m_config.mImageInformation.sSourcePath.clear();
-    ImageLoader loadInfo;
+    FileSet loadInfo;
 
     loadInfo.m_sFilemask = m_config.mImageInformation.sSourceFileMask;
     loadInfo.m_nFirst    = m_config.mImageInformation.nFirstFileIndex;
@@ -158,7 +158,7 @@ void KipToolMainWindow::UpdateConfig()
     kipl::strings::filenames::CheckPathSlashes(m_config.mOutImageInformation.sDestinationPath,true);
     m_config.mOutImageInformation.sDestinationFileMask = ui->edit_destinationmask->text().toStdString();
 
-    ImageLoader readerInfo=ui->widget_loadForm->getReaderConfig();
+    FileSet readerInfo=ui->widget_loadForm->getReaderConfig();
     m_config.mImageInformation.sSourcePath.clear();
     kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
 

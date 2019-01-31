@@ -35,6 +35,8 @@ private slots:
 
     void on_comboBox_ScanOrder_currentIndexChanged(int index);
 
+    void on_pushButton_getROI_clicked();
+
 private:
     int CopyImages();
     int ConvertImages();

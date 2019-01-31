@@ -16,7 +16,7 @@ class READERGUISHARED_EXPORT AddLoaderDialog : public QDialog
 public:
     explicit AddLoaderDialog(QWidget *parent = 0);
     ~AddLoaderDialog();
-    ImageLoader m_loader;
+    FileSet m_loader;
     virtual int exec();
 private slots:
     void on_pushButton_Browse_clicked();

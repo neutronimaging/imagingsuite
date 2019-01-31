@@ -133,7 +133,7 @@ void MainWindow::on_check_linkimages_toggled(bool checked)
 
 void MainWindow::on_pushButton_listdata_clicked()
 {
-    std::list<ImageLoader> loaderlist;
+    std::list<FileSet> loaderlist;
 
     loaderlist=ui->ImageLoaders->GetList();
     for (auto it=loaderlist.begin(); it!=loaderlist.end(); it++) {
@@ -242,7 +242,7 @@ void MainWindow::on_checkBox_fliprot_toggled(bool checked)
 
 void MainWindow::on_pushButton_getFormInfo_clicked()
 {
-    ImageLoader readerInfo=ui->widget_readerform->getReaderConfig();
+    FileSet readerInfo=ui->widget_readerform->getReaderConfig();
     std::ostringstream msg;
     msg<<readerInfo;
     logger.message(msg.str());

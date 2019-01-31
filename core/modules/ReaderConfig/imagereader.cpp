@@ -300,7 +300,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string path,
     return img;
 }
 
-kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader,
+kipl::base::TImage<float,3> ImageReader::Read(FileSet &loader,
                                   kipl::base::eImageFlip flip,
                                   kipl::base::eImageRotate rotate,
                                   float binning,
@@ -316,7 +316,7 @@ kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader,
                 nCrop);
 }
 
-kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader)
+kipl::base::TImage<float,3> ImageReader::Read(FileSet &loader)
 {
     return Read(loader.m_sFilemask,
                 loader.m_nFirst,
