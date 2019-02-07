@@ -229,7 +229,7 @@ void string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMetho
     eam=methods[str];
 }
 
-std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod &eam)
+std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam)
 {
     std::string str;
 
