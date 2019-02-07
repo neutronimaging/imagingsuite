@@ -240,7 +240,6 @@ void uxROIWidget::on_spinX0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinX0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -250,7 +249,6 @@ void uxROIWidget::on_spinY0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -260,7 +258,7 @@ void uxROIWidget::on_spinY1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY1_valueChanged");
+
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 

@@ -39,6 +39,7 @@ protected:
     double m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
+    bool m_bUseClamping;
     double m_fMinLevel;
     double m_fMaxLevel;
     bool m_bThreading;

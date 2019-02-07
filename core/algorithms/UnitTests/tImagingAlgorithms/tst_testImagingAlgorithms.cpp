@@ -41,7 +41,7 @@ private:
     void MorphSpotClean_ListAlgorithm();
 private:
     kipl::base::TImage<float,2> holes;
-    std::map<int,float> points;
+    std::map<size_t,float> points;
     size_t pos1;
     size_t pos2;
 
@@ -97,7 +97,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05);
+    cleaner.Process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],100.0f);
@@ -178,14 +178,14 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
 void TestImagingAlgorithms::AverageImage_Enums()
 {
 
-//    std::string key;
-//    key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
-//    QCOMPARE(key,"ImageAverage");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),"ImageSum");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),"ImageMedian");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage),"ImageWeightedAverage");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),"ImageMin");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),"ImageMax");
+    std::string key;
+    key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
+    QCOMPARE(key,"ImageAverage");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),std::string("ImageSum"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),"ImageMedian");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage),"ImageWeightedAverage");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),"ImageMin");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),"ImageMax");
 
     ImagingAlgorithms::AverageImage::eAverageMethod e;
     string2enum("ImageAverage",e);
