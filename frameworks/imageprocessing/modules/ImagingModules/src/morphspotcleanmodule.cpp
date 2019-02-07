@@ -21,6 +21,7 @@ IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::MorphSpotCleanModule(kipl::int
     m_fSigma(0.01f),
     m_nEdgeSmoothLength(5),
     m_nMaxArea(30),
+    m_bUseClamping(false),
     m_fMinLevel(-0.1f),
     m_fMaxLevel(12),
     m_bThreading(false)
@@ -42,6 +43,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::Configure(KiplProcessConfi
     m_fSigma            = GetFloatParameter(parameters,"sigma");
     m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
     m_nMaxArea          = GetIntParameter(parameters,"maxarea");
+    m_bUseClamping      = kipl::strings::string2bool(GetStringParameter(parameters,"useclamping"));
     m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
     m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
     m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
@@ -60,6 +62,7 @@ std::map<string, string> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::GetPa
     parameters["sigma"]        = kipl::strings::value2string(m_fSigma);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
+    parameters["useclamping"]  = kipl::strings::bool2string(m_bUseClamping);
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]    = kipl::strings::bool2string(m_bThreading);
@@ -102,40 +105,40 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
+    cleaner.setEdgeConditioning(m_nEdgeSmoothLength);
+    cleaner.setLimits(m_bUseClamping,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
 
-     kipl::base::TImage<float,2> slice;
+    kipl::base::TImage<float,2> slice;
 
-        for (size_t i=0; (i<Nslices && (updateStatus(float(i)/Nslices,"Processing MorphSpot cleaning")==false) ); i++)
-        {
+    for (size_t i=0; (i<Nslices && (updateStatus(float(i)/Nslices,"Processing MorphSpot cleaning")==false) ); i++)
+    {
 
-            slice=kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,nullptr);
+        slice=kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,nullptr);
 
-                try {
-
-                    cleaner.Process(slice,m_fThreshold, m_fSigma);
-                   ;
-                }
-                catch (ImagingException & e) {
-                    msg.str();
-                    msg<<"Failed to process data with ImagingException : "<<std::endl<<e.what();
-                    throw ImagingException(msg.str(),__FILE__,__LINE__);
-                }
-                catch (kipl::base::KiplException & e) {
-                    msg.str();
-                    msg<<"Failed to process data with KiplException : "<<std::endl<<e.what();
-                    throw ImagingException(msg.str(),__FILE__,__LINE__);
-                }
-                catch (std::exception & e) {
-                    msg.str();
-                    msg<<"Failed to process data with STL exception : "<<std::endl<<e.what();
-                    throw ImagingException(msg.str(),__FILE__,__LINE__);
-                }
-                catch (...) {
+            try {
+                cleaner.Process(slice,m_fThreshold, m_fSigma);
+            }
+            catch (ImagingException & e) {
+                msg.str();
+                msg<<"Failed to process data with ImagingException : "<<std::endl<<e.what();
+                throw ImagingException(msg.str(),__FILE__,__LINE__);
+            }
+            catch (kipl::base::KiplException & e) {
+                msg.str();
+                msg<<"Failed to process data with KiplException : "<<std::endl<<e.what();
+                throw ImagingException(msg.str(),__FILE__,__LINE__);
+            }
+            catch (std::exception & e) {
+                msg.str();
+                msg<<"Failed to process data with STL exception : "<<std::endl<<e.what();
+                throw ImagingException(msg.str(),__FILE__,__LINE__);
+            }
+            catch (...) {
 
 
-                }
-             kipl::base::InsertSlice(slice,img,i,kipl::base::ImagePlaneXY);
-        }
+            }
+         kipl::base::InsertSlice(slice,img,i,kipl::base::ImagePlaneXY);
+    }
 
 
     return 0;
