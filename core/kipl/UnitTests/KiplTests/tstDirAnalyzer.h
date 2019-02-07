@@ -7,21 +7,21 @@
 #include <io/DirAnalyzer.h>
 #include <string>
 
-class tstDirAnalyzer : public QObject
-{
-    Q_OBJECT
+//class tstDirAnalyzer : public QObject
+//{
+//    Q_OBJECT
 
-public:
-    tstDirAnalyzer() {}
+//public:
+//    tstDirAnalyzer() {}
 
-private Q_SLOTS:
+//private Q_SLOTS:
 
-    void testGetFileMask();
+//    void testGetFileMask();
 
-private:
+//private:
 
-};
+//};
 
-#include "tstDirAnalyzer.moc"
+//#include "tstDirAnalyzer.moc"
 
 #endif // TSTDIRANALYZER_H
