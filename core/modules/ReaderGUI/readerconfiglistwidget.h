@@ -17,13 +17,11 @@ class READERGUISHARED_EXPORT ReaderConfigListWidget : public QWidget
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit ReaderConfigListWidget(QWidget *parent = 0);
+    explicit ReaderConfigListWidget(QWidget *parent = nullptr);
     ~ReaderConfigListWidget();
     void SetList(std::list<FileSet> &loaderlist);
     void AddLoader(FileSet &loader);
     std::list<FileSet> GetList();
-
-signals:
 
 public slots:
     virtual void on_Button_AddLoader_clicked();
@@ -33,6 +31,9 @@ public slots:
 
 protected:
     QListWidget *m_ListWidget_loaders;
+
+signals:
+    void readerListModified(void);
 };
 
 #endif // READERCONFIGLISTWIDGET_H

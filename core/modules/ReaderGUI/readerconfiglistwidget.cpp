@@ -84,12 +84,14 @@ void ReaderConfigListWidget::on_Button_AddLoader_clicked()
         item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
         m_ListWidget_loaders->addItem(item);
     }
+    emit readerListModified();
 }
 
 void ReaderConfigListWidget::on_Button_RemoveLoader_clicked()
 {
     logger(logger.LogMessage,"Remove loader");
     m_ListWidget_loaders->takeItem(m_ListWidget_loaders->row(m_ListWidget_loaders->currentItem()));
+    emit readerListModified();
 }
 
 void ReaderConfigListWidget::on_Button_ClearLoaders_clicked()
@@ -97,6 +99,7 @@ void ReaderConfigListWidget::on_Button_ClearLoaders_clicked()
     logger(logger.LogMessage,"Clear loaders");
 
     m_ListWidget_loaders->clear();
+    emit readerListModified();
 }
 
 void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* current)
@@ -121,6 +124,7 @@ void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* c
 
         item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
     }
+    emit readerListModified();
 }
 
 std::list<FileSet> ReaderConfigListWidget::GetList()
