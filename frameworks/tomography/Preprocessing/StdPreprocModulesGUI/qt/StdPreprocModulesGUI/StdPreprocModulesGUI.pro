@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets
+QT       += core widgets charts
 
 TARGET = StdPreprocModulesGUI
 TEMPLATE = lib

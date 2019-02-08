@@ -1,7 +1,9 @@
 //<LICENSE>
 
-#ifndef __IO_TIFF_H
-#define __IO_TIFF_H
+#ifndef IO_TIFF_H
+#define IO_TIFF_H
+
+#include "../kipl_global.h"
 
 #include <iostream>
 #include <iomanip>
@@ -79,7 +81,7 @@ int WriteTIFF32(kipl::base::TImage<float,N> src,const char *fname)
 /// \brief Gets the dimensions of a tiff image without reading the image
 /// \param fname file name of the image file
 /// \param dims array with the dimensions
-int GetTIFFDims(char const * const fname, size_t *dims);
+int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname, size_t *dims);
 
 /// \brief Parses a string to find slope and offset.
 ///
@@ -91,7 +93,7 @@ int GetTIFFDims(char const * const fname, size_t *dims);
 /// \returns If scaling information was found
 /// \retval True if both parameters were found
 /// \retval False if at least one parameter was missing.
-bool GetSlopeOffset(std::string msg, float &slope, float &offset);
+bool KIPLSHARED_EXPORT GetSlopeOffset(std::string msg, float &slope, float &offset);
 
 /// \brief Writes an uncompressed TIFF image from any image data type (grayscale)
 ///	\param src the image to be stored

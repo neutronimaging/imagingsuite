@@ -39,7 +39,7 @@ public:
 
     void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
-    void setLimits(float fMin, float fMax, int nMaxArea);
+    void setLimits(bool bClamp, float fMin, float fMax, int nMaxArea);
     void setEdgeConditioning(int nSmoothLenght);
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 
@@ -49,7 +49,7 @@ protected:
     void ProcessFill(kipl::base::TImage<float,2> &img);
 
     void PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded);
-    void UnpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
+    void unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
     /// \brief Prepares neighborhood indexing LUT
     /// \param dimx Length of the x-axis
     /// \param N number of pixels in the image
@@ -74,9 +74,10 @@ protected:
     kipl::morphology::MorphConnect m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
-    int m_nEdgeSmoothLength;
-    int m_nPadMargin;
+    size_t m_nEdgeSmoothLength;
+    size_t m_nPadMargin;
     int m_nMaxArea;
+    bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
     float m_fThreshold;

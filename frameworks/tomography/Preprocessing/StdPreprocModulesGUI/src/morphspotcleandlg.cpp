@@ -14,6 +14,8 @@
 #include <ParameterHandling.h>
 #include <ModuleException.h>
 
+#include <plotcursor.h>
+
 MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),
     ui(new Ui::MorphSpotCleanDlg),
@@ -24,9 +26,11 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_bThreading(false)
 {
     ui->setupUi(this);
+    ui->spinArea->hide();
+    ui->label_area->hide();
+
     float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
     size_t dims[2]={4,4};
-
 }
 
 MorphSpotCleanDlg::~MorphSpotCleanDlg()
@@ -68,25 +72,32 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     float fcumhist[N];
     size_t ii=0;
+
     for (ii=0;ii<N;ii++) {
+
         fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
         if (0.99f<fcumhist[ii])
             break;
     }
 
     size_t N99=ii;
-    ui->plotDetection->setCurveData(0,axis,fcumhist,N99);
+    ui->plotDetection->setCurveData(0,axis,fcumhist,N99,"Detection plot");
+
     float threshold[N];
+    float thaxis[N];
     if (m_fSigma!=0.0f)
     { // In case of sigmoid mixing
-        for (size_t i=0; i<N99; i++) {
-            threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
+
+        for (size_t i=0; i<N; i++) {
+            thaxis[i]=axis[0]+i*(axis[N99]-axis[0])/N;
+            threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold, m_fSigma);
         }
-        ui->plotDetection->setCurveData(1,axis,threshold,N99,Qt::red);
+        ui->plotDetection->setCurveData(1,thaxis,threshold,N,"Threshold");
     }
     else
     {
-            ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+        ui->plotDetection->setCursor(0,new QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
+        //    ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
     }
 
     std::map<std::string,std::string> pars;
@@ -126,6 +137,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
         m_fSigma            = GetFloatParameter(parameters,"sigma");
         m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
         m_nMaxArea          = GetIntParameter(parameters,"maxarea");
+        m_bClampData        = kipl::strings::string2bool(GetStringParameter(parameters,"clampdata"));
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
         m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
@@ -173,6 +185,7 @@ void MorphSpotCleanDlg::UpdateDialog()
     ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
+    ui->groupBox_clampData->setChecked(m_bClampData);
     ui->spinMinValue->setValue(m_fMinLevel);
     ui->spinMaxValue->setValue(m_fMaxLevel);
     ui->spinEdgeLenght->setValue(m_nEdgeSmoothLength);
@@ -185,6 +198,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
     m_fThreshold        = ui->spinThreshold->value();
     m_fSigma            = ui->spinSigma->value();
+    m_bClampData        = ui->groupBox_clampData->isChecked();
     m_fMinLevel         = ui->spinMinValue->value();
     m_fMaxLevel         = ui->spinMaxValue->value();
     m_nMaxArea          = ui->spinArea->value();
@@ -200,6 +214,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["sigma"]           = kipl::strings::value2string(m_fSigma);
     parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["clampdata"]       = kipl::strings::bool2string(m_bClampData);
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]       = kipl::strings::bool2string(m_bThreading);

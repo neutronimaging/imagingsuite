@@ -31,6 +31,7 @@ protected:
     float m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
+    bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
     bool m_bThreading;
