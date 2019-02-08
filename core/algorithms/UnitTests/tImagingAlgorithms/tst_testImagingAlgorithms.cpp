@@ -29,6 +29,7 @@ private Q_SLOTS:
     void MorphSpotClean_CleanHoles();
     void MorphSpotClean_CleanPeaks();
     void MorphSpotClean_CleanBoth();
+    void MorphSpotClean_EdgePreparation();
 
     void AverageImage_Enums();
     void AverageImage_Processing();
@@ -40,7 +41,7 @@ private:
     void MorphSpotClean_ListAlgorithm();
 private:
     kipl::base::TImage<float,2> holes;
-    std::map<int,float> points;
+    std::map<size_t,float> points;
     size_t pos1;
     size_t pos2;
 
@@ -96,7 +97,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05);
+    cleaner.Process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],100.0f);
@@ -132,6 +133,25 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
     QCOMPARE(img[pos2],1.8f);
 }
 
+void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
+{
+    kipl::base::TImage<float,2> img;
+#ifndef DEBUG
+    kipl::io::ReadTIFF(img,"../imagingsuite/core/algorithms/UnitTests/data/spotprojection_0001.tif");
+#else
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/algorithms/UnitTests/data/spotprojection_0001.tif");
+#endif
+
+    ImagingAlgorithms::MorphSpotClean cleaner;
+
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setConnectivity(kipl::morphology::conn8);
+    cleaner.Process(img,1.0f,0.05f);
+
+    kipl::io::WriteTIFF32(img,"spotcleaned.tif");
+
+}
+
 void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
@@ -158,14 +178,14 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
 void TestImagingAlgorithms::AverageImage_Enums()
 {
 
-//    std::string key;
-//    key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
-//    QCOMPARE(key,"ImageAverage");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),"ImageSum");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),"ImageMedian");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage),"ImageWeightedAverage");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),"ImageMin");
-//    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),"ImageMax");
+    std::string key;
+    key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
+    QCOMPARE(key,"ImageAverage");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),std::string("ImageSum"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),"ImageMedian");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage),"ImageWeightedAverage");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),"ImageMin");
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),"ImageMax");
 
     ImagingAlgorithms::AverageImage::eAverageMethod e;
     string2enum("ImageAverage",e);
@@ -303,12 +323,16 @@ void TestImagingAlgorithms::PiercingPoint_Processing()
 
 void TestImagingAlgorithms::piercingPointExperiment()
 {
+    QSKIP("Skipping time consuming test",__FILE__,__LINE__);
     kipl::base::TImage<float,2> ob;
     kipl::base::TImage<float,2> dc;
-
+#ifndef DEBUG
     kipl::io::ReadTIFF(ob,"../imagingsuite/frameworks/tomography/data/cbct/ob_3s_5fps_60kV_150uA_00001.tif");
     kipl::io::ReadTIFF(dc,"../imagingsuite/frameworks/tomography/data/cbct/dc_3s_5fps_00001.tif");
-
+#else
+    kipl::io::ReadTIFF(ob,"../../imagingsuite/frameworks/tomography/data/cbct/ob_3s_5fps_60kV_150uA_00001.tif");
+    kipl::io::ReadTIFF(dc,"../../imagingsuite/frameworks/tomography/data/cbct/dc_3s_5fps_00001.tif");
+#endif
     ImagingAlgorithms::PiercingPointEstimator pe;
 
     pair<float,float> pos0=pe(ob);

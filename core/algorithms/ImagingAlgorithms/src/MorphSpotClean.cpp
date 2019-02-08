@@ -1,13 +1,16 @@
 //<LICENSE>
-
+#include <algorithm>
 #include <morphology/morphextrema.h>
 #include <math/image_statistics.h>
 #include <morphology/label.h>
 #include <math/median.h>
 #include <math/mathfunctions.h>
+#include <io/io_tiff.h>
+#include <segmentation/thresholds.h>
 
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
+
 
 namespace ImagingAlgorithms {
 
@@ -15,13 +18,14 @@ MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_eConnectivity(kipl::morphology::conn8),
-    m_eMorphDetect(MorphDetectHoles),
     m_eMorphClean(MorphCleanReplace),
-    m_nEdgeSmoothLength(5),
-    m_nPadMargin(1),
+    m_eMorphDetect(MorphDetectHoles),
+    m_nEdgeSmoothLength(9),
+    m_nPadMargin(5),
     m_nMaxArea(100),
-    m_fMinLevel(-0.1f),
-    m_fMaxLevel(12.0f),
+    m_bClampData(false),
+    m_fMinLevel(-0.1f), // This shouldnt exist...
+    m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
     m_fThreshold(0.025f),
     m_fSigma(0.00f),
     m_LUT(1<<15,0.1f,0.0075f)
@@ -32,6 +36,9 @@ MorphSpotClean::MorphSpotClean() :
 
 void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float sigma)
 {
+    if (m_bClampData)
+         kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
+
     m_fThreshold = th;
     m_fSigma = sigma;
 
@@ -80,6 +87,7 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     kipl::base::TImage<float,2> padded,noholes, nopeaks;
 
     FillOutliers(img,padded,noholes,nopeaks);
+//    kipl::io::WriteTIFF32(padded,"padded.tif");
     size_t N=padded.Size();
 
     float *pImg=padded.GetDataPtr();
@@ -136,7 +144,7 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
         }
     }
 
-    UnpadEdges(padded,img);
+    unpadEdges(padded,img);
 }
 
 void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
@@ -199,47 +207,46 @@ void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TIma
 {
     size_t dims[2]={img.Size(0)+2*m_nPadMargin, img.Size(1)+2*m_nPadMargin};
     padded.Resize(dims);
-    size_t last=padded.Size(0);
-    size_t nLine=img.Size(0);
-
-    for (size_t i=0; i<img.Size(1); i++) {
-        float *pPad=padded.GetLinePtr(i+1);
-        memcpy(pPad+m_nPadMargin,img.GetLinePtr(i),nLine*sizeof(float));
-        if (m_nPadMargin==1) {
-            pPad[0]    = pPad[1];
-            pPad[last-1] = pPad[last-2];
-        }
+    padded=0.0f;
+    for (size_t i=0; i<img.Size(1); ++i)
+    {
+        copy_n(img.GetLinePtr(i),img.Size(0),padded.GetLinePtr(i+m_nPadMargin)+m_nPadMargin);
     }
 
-    memcpy(padded.GetLinePtr(0)+1,img.GetLinePtr(0),nLine*sizeof(float));
-    memcpy(padded.GetLinePtr(img.Size(1))+1,img.GetLinePtr(img.Size(1)-1),nLine*sizeof(float));
+    // Top and bottom padding
+    for (size_t i=0; i<m_nPadMargin; ++i)
+    {
+        copy_n(img.GetLinePtr(i),img.Size(0),padded.GetLinePtr(m_nPadMargin-1-i)+m_nPadMargin);
+        copy_n(img.GetLinePtr(img.Size(1)-1-i),img.Size(0),padded.GetLinePtr(padded.Size(1)-m_nPadMargin+i)+m_nPadMargin);
+    }
 
-    int l2=m_nEdgeSmoothLength/2;
-    int N=padded.Size(0)-l2;
+
+    size_t l2=m_nEdgeSmoothLength/2;
+    size_t N=padded.Size(0)-l2;
     float *buffer=new float[m_nEdgeSmoothLength];
     // Median filter horizontal upper edge
-    float *pLine=padded.GetLinePtr(1);
     float *pEdge=padded.GetLinePtr(0);
-    for (int i=l2; i<N; i++) {
-        memcpy(buffer,pLine+i-l2,m_nEdgeSmoothLength*sizeof(float));
-        kipl::math::median_quick_select(buffer,m_nEdgeSmoothLength,pEdge+i);
+    for (size_t i=l2; i<N; ++i) {
+        std::copy_n(pEdge+i-l2,m_nEdgeSmoothLength,buffer);
+        kipl::math::median(buffer,m_nEdgeSmoothLength,pEdge+i);
     }
 
     // Median filter horizontal bottom edge
-    pLine=padded.GetLinePtr(padded.Size(1)-2);
     pEdge=padded.GetLinePtr(padded.Size(1)-1);
-    for (int i=l2; i<N; i++) {
-        memcpy(buffer,pLine+i-l2,m_nEdgeSmoothLength*sizeof(float));
-        kipl::math::median_quick_select(buffer,m_nEdgeSmoothLength,pEdge+i);
+    for (size_t i=l2; i<N; ++i) {
+        std::copy_n(pEdge+i-l2,m_nEdgeSmoothLength,buffer);
+        kipl::math::median(buffer,m_nEdgeSmoothLength,pEdge+i);
     }
 
     delete [] buffer;
 }
 
-void MorphSpotClean::setLimits(float fMin,float fMax, int nMaxArea)
+void MorphSpotClean::setLimits(bool bClamp, float fMin, float fMax, int nMaxArea)
 {
-    m_fMinLevel = fMin;
-    m_fMaxLevel = fMax;
+    m_bClampData = bClamp;
+    m_fMinLevel  = fMin;
+    m_fMaxLevel  = fMax;
+
     if (0<nMaxArea)
         m_nMaxArea = nMaxArea;
 }
@@ -251,11 +258,10 @@ void MorphSpotClean::setEdgeConditioning(int nSmoothLenght)
 
 }
 
-void MorphSpotClean::UnpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img)
+void MorphSpotClean::unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img)
 {
     for (size_t i=0; i<img.Size(1); i++) {
-        float *pPad=padded.GetLinePtr(i+1);
-        memcpy(img.GetLinePtr(i),pPad+1,img.Size(0)*sizeof(float));
+        std::copy_n(padded.GetLinePtr(i+m_nPadMargin)+m_nPadMargin,img.Size(0),img.GetLinePtr(i));
     }
 }
 
@@ -290,7 +296,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float
         pImg[i]=abs(pImg[i]-pHoles[i]);
     }
 
-    UnpadEdges(padded,detection);
+    unpadEdges(padded,detection);
 
     return detection;
 }
@@ -314,7 +320,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectPeaks(kipl::base::TImage<float
         pImg[i]=abs(pPeaks[i]-pImg[i]);
     }
 
-    UnpadEdges(padded,detection);
+    unpadEdges(padded,detection);
 
     return detection;
 }
@@ -342,7 +348,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectBoth(kipl::base::TImage<float,
         pImg[i]=max(abs(val-pHoles[i]),abs(pPeaks[i]-val));
     }
 
-    UnpadEdges(padded,detection);
+    unpadEdges(padded,detection);
     return detection;
 }
 
@@ -407,7 +413,7 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
             removelist.push_back(it->second);
     }
     msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
-    logger(kipl::logging::Logger::LogVerbose,msg.str());
+    logger.message(msg.str());
 
     RemoveConnectedRegion(lbl, removelist, m_eConnectivity);
 
