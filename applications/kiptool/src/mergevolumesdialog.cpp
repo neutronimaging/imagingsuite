@@ -11,6 +11,7 @@
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
 #include <base/timage.h>
+#include <imagereader.h>
 
 #include "mergevolumesdialog.h"
 #include "ImagingToolConfig.h"
@@ -24,6 +25,7 @@ MergeVolumesDialog::MergeVolumesDialog(QWidget *parent) :
     ui->setupUi(this);
     LoadConfig();
     UpdateDialog();
+    ui->widget_cropROI->useROIDialog(true);
 }
 
 MergeVolumesDialog::~MergeVolumesDialog()
@@ -120,6 +122,11 @@ void MergeVolumesDialog::on_pushButton_loadA_clicked()
 
     ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.Dims());
     on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
+
+    ImageReader reader;
+
+    kipl::base::TImage<float,2> img=reader.Read(loader.makeFileName((loader.m_nLast+loader.m_nFirst)/2));
+    ui->widget_cropROI->setSelectionImage(img);
 }
 
 void MergeVolumesDialog::on_pushButton_loadB_clicked()

@@ -34,8 +34,7 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->checkCollate->setChecked(false);
-    on_checkCollate_toggled(false);
+    ui->groupBox_combineImages->setChecked(false);
     ui->comboAverageMethod->setCurrentIndex(3);
     ui->progressBar->setValue(0);
     ui->comboBox_ScanOrder->setCurrentIndex(0);
@@ -43,6 +42,9 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     QDir dir;
     ui->lineEdit_DestinationPath->setText(dir.homePath());
     ui->lineEdit_DestinationMask->setText("file####.tif");
+    ui->widgetROI->setCheckable(true);
+    ui->widgetROI->useROIDialog(true);
+    ui->widgetROI->setROIColor("green");
 }
 
 FileConversionDialog::~FileConversionDialog()
@@ -162,8 +164,8 @@ int FileConversionDialog::Process(bool sameext)
 {
     int res=0;
     if ((sameext) &&
-        (ui->groupBox_crop->isChecked() == false) &&
-        (ui->checkCollate->checkState() == Qt::Unchecked))
+        (ui->widgetROI->isChecked() == false) &&
+        (ui->groupBox_combineImages->isChecked() == false))
     {
         res=CopyImages();
     }
@@ -227,16 +229,13 @@ int FileConversionDialog::ConvertImages()
     QMessageBox dlg;
     std::ostringstream msg,errmsg;
 
-    size_t roi[4]={static_cast<size_t>(ui->spinBox_x0->value()),
-                  static_cast<size_t>(ui->spinBox_y0->value()),
-                  static_cast<size_t>(ui->spinBox_x1->value()),
-                  static_cast<size_t>(ui->spinBox_y1->value())};
+    size_t roi[4]={0,0,1,1};
     size_t *crop=nullptr;
-    if (ui->groupBox_crop->isChecked() == true) {
-        crop=roi;
+    if (ui->widgetROI->isChecked() == true) {
+        ui->widgetROI->getROI(roi);
     }
 
-    const bool bCollate = ui->checkCollate->checkState() == Qt::Checked;
+    const bool bCollate = ui->groupBox_combineImages->isChecked();
     const int nCollate   = bCollate ? ui->spinCollationSize->value() : 1;
 
     size_t dims[3];
@@ -344,17 +343,6 @@ int FileConversionDialog::ConvertImages()
     return 0;
 }
 
-void FileConversionDialog::on_checkCollate_toggled(bool checked)
-{
-    ui->spinCollationSize->setVisible(checked);
-    ui->labelAverageMethod->setVisible(checked);
-    ui->labelCollationStep->setVisible(checked);
-    ui->comboAverageMethod->setVisible(checked);
-    ui->labelNumberOfFiles->setVisible(checked);
-    ui->label_rest->setVisible(checked);
-
-}
-
 int FileConversionDialog::Progress()
 {
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
@@ -418,15 +406,15 @@ void FileConversionDialog::on_comboBox_ScanOrder_currentIndexChanged(int index)
     }
 }
 
-void FileConversionDialog::on_pushButton_getROI_clicked()
+void FileConversionDialog::on_ImageLoaderConfig_readerListModified()
 {
     std::ostringstream msg;
 
     std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
-
+    kipl::base::TImage<float,2> img;
     if (ll.empty()==true) {
         logger(logger.LogWarning,"Empty image loader.");
-        QMessageBox::warning(this,"Empty loader","There are no file sets in the list. Please add a set before selecting ROI.");
+        ui->widgetROI->setSelectionImage(img);
         return;
     }
 
@@ -436,24 +424,7 @@ void FileConversionDialog::on_pushButton_getROI_clicked()
 
     ImageReader reader;
 
-    kipl::base::TImage<float,2> img=reader.Read(fname);
+    img=reader.Read(fname);
 
-    QtAddons::ROIDialog dlg;
-    QRect r(QPoint(ui->spinBox_x0->value(),ui->spinBox_y0->value()),
-            QPoint(ui->spinBox_x1->value(),ui->spinBox_y1->value()));
-
-    dlg.setROI(r);
-    dlg.setImage(img);
-
-    int res=dlg.exec();
-
-    if (res==QDialog::Accepted)
-    {
-        r=dlg.ROI();
-        ui->spinBox_x0->setValue(r.x());
-        ui->spinBox_y0->setValue(r.y());
-        ui->spinBox_x1->setValue(r.x()+r.width());
-        ui->spinBox_y1->setValue(r.y()+r.height());
-    }
-
+    ui->widgetROI->setSelectionImage(img);
 }
