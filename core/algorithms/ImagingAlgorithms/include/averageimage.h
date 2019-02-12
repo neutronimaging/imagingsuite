@@ -45,7 +45,7 @@ protected:
 }
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMethod &eam);
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::AverageImage::eAverageMethod &eam);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam);
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod eam);
 #endif // AVERAGEPROJECTION_H

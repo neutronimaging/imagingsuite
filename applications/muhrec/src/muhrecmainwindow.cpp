@@ -43,6 +43,7 @@
 #include "dialogtoobig.h"
 #include "piercingpointdialog.h"
 #include "referencefiledlg.h"
+#include "globalsettingsdialog.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -58,9 +59,9 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
-    m_bCurrentReconStored(true),
     m_oldRotateDial(0),
-    m_oldRotateSpin(0.0)
+    m_oldRotateSpin(0.0),
+    m_bCurrentReconStored(true)
 {
     std::ostringstream msg;
     ui->setupUi(this);
@@ -191,7 +192,7 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setAutoHideROI(true);
     ui->widgetMatrixROI->setAllowUpdateImageDims(false);
     ui->widgetMatrixROI->setCheckable(true);
-    ui->widgetMatrixROI->updateViewer();
+    ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);    ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
 }
@@ -247,7 +248,7 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
             ui->editOpenBeamMask->setText(projdir);
             ProjectionReader reader;
             size_t Nofimgs[2];
-            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, NULL);
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, nullptr);
             ui->spinFirstOpenBeam->setValue(static_cast<int>(Nofimgs[0]));
             ui->spinOpenBeamCount->setValue(static_cast<int>(Nofimgs[1]+1));
         }
@@ -1456,13 +1457,11 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.voi[4] = 0;
     m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
 
-
-
-    m_Config.modules = ui->moduleconfigurator->GetModules();
-    m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
-    m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();
-    m_Config.MatrixInfo.fGrayInterval[1] = ui->dspinGrayHigh->value();
-    m_Config.MatrixInfo.bUseROI = ui->widgetMatrixROI->isChecked();
+    m_Config.modules                     = ui->moduleconfigurator->GetModules();
+    m_Config.MatrixInfo.fRotation        = static_cast<float>(ui->dspinRotateRecon->value());
+    m_Config.MatrixInfo.fGrayInterval[0] = static_cast<float>(ui->dspinGrayLow->value());
+    m_Config.MatrixInfo.fGrayInterval[1] = static_cast<float>(ui->dspinGrayHigh->value());
+    m_Config.MatrixInfo.bUseROI          = ui->widgetMatrixROI->isChecked();
     ui->widgetMatrixROI->getROI(m_Config.MatrixInfo.roi);
 
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
@@ -2539,3 +2538,15 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
     }
 }
 
+void MuhRecMainWindow::on_actionSettings_triggered()
+{
+    GlobalSettingsDialog dlg;
+
+    dlg.setConfig(m_Config);
+    int res=dlg.exec();
+
+    if (res == QDialog::Accepted)
+    {
+        dlg.updateConfig(m_Config);
+    }
+}

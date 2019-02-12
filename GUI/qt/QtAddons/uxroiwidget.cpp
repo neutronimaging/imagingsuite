@@ -107,8 +107,12 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
 
 void uxROIWidget::updateViewer()
 {
+    bool checkable = ui->groupROI->isCheckable();
+    bool checked   = ui->groupROI->isChecked();
+
+ //   qDebug() << "Checkable " << checkable <<"Checked"<<checked;
     if (hViewer!=nullptr) {
-        if (isVisible() && ui->groupROI->isChecked()) {
+        if (isVisible() && (!checkable || checked)) {
             updateBounds();
 
             QRect rect;
@@ -236,7 +240,6 @@ void uxROIWidget::on_spinX0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinX0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -246,7 +249,6 @@ void uxROIWidget::on_spinY0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -256,7 +258,7 @@ void uxROIWidget::on_spinY1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY1_valueChanged");
+
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 

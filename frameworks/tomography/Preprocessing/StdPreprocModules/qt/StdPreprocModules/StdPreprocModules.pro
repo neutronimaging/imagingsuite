@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
+QT       -= gui charts
 
 TARGET = StdPreprocModules
 TEMPLATE = lib

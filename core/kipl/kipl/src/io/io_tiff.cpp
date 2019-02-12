@@ -1,5 +1,6 @@
 //<LICENCE>
 
+
 #include <iostream>
 
 #include <tiffio.h>
@@ -9,7 +10,7 @@
 
 namespace kipl { namespace io {
 
-bool GetSlopeOffset(std::string msg, float &slope, float &offset)
+bool KIPLSHARED_EXPORT GetSlopeOffset(std::string msg, float &slope, float &offset)
 {
 	slope=1.0f;
 	offset=0.0f;
