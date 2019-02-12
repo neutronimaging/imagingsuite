@@ -124,6 +124,7 @@ SOURCES += \
     ../src/base/roi.cpp \
     ../src/math/findpeaks.cpp \
     ../src/math/normalizeimage.cpp \
+    ../src/stltools/stlvecmath.cpp \
     ../src/strings/xmlstrings.cpp
 
 
