@@ -10,7 +10,7 @@ TARGET = ImagingQAAlgorithms
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
+CONFIG(release, debug|release): DESTDIR    = $$PWD/../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
 
 DEFINES += IMAGINGQAALGORITHMS_LIBRARY
@@ -38,8 +38,8 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += "../../../external/src/linalg" "../../../external/include" "../../../external/include/cfitsio"
-    QMAKE_LIBDIR += ../../../external/lib64
+    INCLUDEPATH += "$$PWD/../../../external/src/linalg" "$$PWD/../../../external/include" "$$PWD/../../../external/include/cfitsio"
+    QMAKE_LIBDIR += $$PWD/../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -73,8 +73,8 @@ unix {
 
 
 }
-CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../lib
-else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../lib/debug/
+CONFIG(release, debug|release)      LIBS += -L$$PWD/../../../../lib
+else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../lib/debug/
 
 LIBS += -lkipl
 

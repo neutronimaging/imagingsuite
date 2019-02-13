@@ -10,7 +10,7 @@ TARGET = GenericBackProj
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 DEFINES += GENERICBACKPROJ_LIBRARY
@@ -54,7 +54,7 @@ exists($$PWD/../../../../../../external/mac/lib/*NeXus*) {
     DEFINES += HAVE_NEXUS
 
     INCLUDEPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
-    DEPENDPATH += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+    DEPENDPATH  += $$PWD/../../../../../../external/mac/include $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
 
     LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
@@ -67,24 +67,24 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+    INCLUDEPATH  += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 
-    exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
+#    exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 
-        message("-lNeXus exists")
-        DEFINES += HAVE_NEXUS
-        INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
-        QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
+#        message("-lNeXus exists")
+#        DEFINES += HAVE_NEXUS
+#        INCLUDEPATH += $$PWD/../../../../external/include/nexus $$PWD/../../../../external/include/hdf5
+#        QMAKE_LIBDIR += $$PWD/../../../../external/lib64/nexus $$PWD/../../../../external/lib64/hdf5
 
-        LIBS +=  -lNeXus -lNeXusCPP
+#        LIBS +=  -lNeXus -lNeXusCPP
 
-        SOURCES += ../src/io/io_nexus.cpp
-        HEADERS += ../include/io/io_nexus.h
-    }
+#        SOURCES += ../src/io/io_nexus.cpp
+#        HEADERS += ../include/io/io_nexus.h
+#    }
 
 }
 

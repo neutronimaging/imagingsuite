@@ -39,21 +39,21 @@ unix {
         QMAKE_LIBDIR += /opt/local/lib
         INCLUDEPATH  += /opt/local/include/libxml2
     }
+
+    LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
+
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 }
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz   -ltiff  -lcfitsio
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/

@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __NONLINFIT_H
-#define __NONLINFIT_H
+#ifndef NONLINFIT_H
+#define NONLINFIT_H
 #include "../kipl_global.h"
 #include <tnt.h>
 
@@ -270,4 +270,6 @@ void KIPLSHARED_EXPORT string2enum(std::string &str, Nonlinear::eProfileFunction
 std::string KIPLSHARED_EXPORT enum2string(Nonlinear::eProfileFunction e);
 
 std::ostream KIPLSHARED_EXPORT &  operator<<(std::ostream &s, Nonlinear::eProfileFunction e);
+
+
 #endif
