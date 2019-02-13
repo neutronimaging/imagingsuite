@@ -39,12 +39,13 @@ private slots:
     void on_pushButton_TestMix_clicked();
 
 protected:
-    void UpdateDialog();
-    void UpdateConfig();
-    void SaveConfig();
-    void LoadConfig();
+    void updateDialog();
+    void updateConfig();
+    void saveConfig();
+    void loadConfig();
+    bool checkImageSizes();
 
-    void LoadVerticalSlice(std::string filemask,
+    void loadVerticalSlice(std::string filemask,
                                         int first,
                                         int last,
                                         kipl::base::TImage<float,2> *img);

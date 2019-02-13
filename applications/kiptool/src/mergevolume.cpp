@@ -1,6 +1,7 @@
 //<LICENSE>
 
-#include <QDebug>
+#include <QMessageBox>
+#include <QString>
 #include <sstream>
 
 #include <logging/logger.h>
@@ -70,15 +71,32 @@ void MergeVolume::CopyMerge()
     std::string ext;
 
     std::string src_maskA = m_sPathA;
+    std::string src_maskB = m_sPathB;
     std::string dst_mask = m_sPathOut;
     kipl::strings::filenames::CheckPathSlashes(dst_mask,true);
     dst_mask+=m_sMaskOut;
 
     std::ostringstream cmd,msg;
     int cnt=m_nFirstDest;
-    int i,j,k;
+    int i=0;
+    int j=0;
+    int k=0;
 
     double total_images=(m_nStartOverlapA-m_nFirstA)+(m_nLastB-m_nFirstB)+1;
+
+    kipl::strings::filenames::MakeFileName(src_maskA,m_nFirstA,src_fname,ext,'#','0');
+    size_t sizeA[4];
+    kipl::io::GetTIFFDims(src_fname.c_str(),sizeA);
+    kipl::strings::filenames::MakeFileName(src_maskB,m_nFirstB,src_fname,ext,'#','0');
+    size_t sizeB[4];
+    kipl::io::GetTIFFDims(src_fname.c_str(),sizeB);
+    if ((sizeB[0]!=sizeA[0]) || (sizeB[1]!=sizeA[1]))
+    {
+        msg.str("");
+        msg<<"Image A ("<<sizeA[0]<<", "<<sizeA[1]<<") is not same size as Image B ("<<sizeB[0]<<", "<<sizeB[1]<<")";
+        throw kipl::base::KiplException(msg.str());
+    }
+
     // Copy data A
     int res=0;
     //progress->set_text("Copying data A");
@@ -99,7 +117,6 @@ void MergeVolume::CopyMerge()
 
  //   progress->set_text("Mixing data sets");
     logger(logger.LogMessage,"Mixing data sets");
-    std::string src_maskB = m_sPathB;
     // Here will the interpolation happen
     kipl::base::TImage<float,2> a,b;
     float *pA, *pB;
@@ -437,7 +454,7 @@ void MergeVolume::ParseXML(string fname)
                     logger.warning(msg.str());
                     sValue="Empty";
                 }
-                qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
+
                 if (sName=="path_a")
                     m_sPathA   = sValue;
 

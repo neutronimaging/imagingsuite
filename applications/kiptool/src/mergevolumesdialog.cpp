@@ -23,8 +23,8 @@ MergeVolumesDialog::MergeVolumesDialog(QWidget *parent) :
     ui(new Ui::MergeVolumesDialog)
 {
     ui->setupUi(this);
-    LoadConfig();
-    UpdateDialog();
+    loadConfig();
+    updateDialog();
     ui->widget_cropROI->useROIDialog(true);
 }
 
@@ -33,7 +33,7 @@ MergeVolumesDialog::~MergeVolumesDialog()
     delete ui;
 }
 
-void MergeVolumesDialog::UpdateDialog()
+void MergeVolumesDialog::updateDialog()
 {
     FileSet loader;
     loader.m_nFirst=m_merger.m_nFirstA;
@@ -65,7 +65,7 @@ void MergeVolumesDialog::UpdateDialog()
 
 }
 
-void MergeVolumesDialog::UpdateConfig()
+void MergeVolumesDialog::updateConfig()
 {
     FileSet loader;
     loader=ui->widget_readerFormA->getReaderConfig();
@@ -182,8 +182,11 @@ void MergeVolumesDialog::on_pushButton_browseout_clicked()
 
 void MergeVolumesDialog::on_pushButton_startmerge_clicked()
 {
-    UpdateConfig();
-    SaveConfig();
+    updateConfig();
+    saveConfig();
+    if (!checkImageSizes())
+        return ;
+
     try {
         m_merger.Process();
     }
@@ -228,8 +231,12 @@ void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
 
 void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 {
-    UpdateConfig();
-    SaveConfig();
+    updateConfig();
+    saveConfig();
+
+    if (!checkImageSizes())
+        return ;
+
     std::ostringstream msg;
 
     logger(logger.LogMessage,"on_testmix");
@@ -314,7 +321,7 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 
 }
 
-void MergeVolumesDialog::SaveConfig()
+void MergeVolumesDialog::saveConfig()
 {
     QDir dir;
 
@@ -336,12 +343,40 @@ void MergeVolumesDialog::SaveConfig()
     conffile<<m_merger.WriteXML(0);
 }
 
-void MergeVolumesDialog::LoadConfig()
+void MergeVolumesDialog::loadConfig()
 {
     QDir dir;
      QString confname=dir.homePath()+"/"+".imagingtools/volumemerge.xml" ;
     if (dir.exists(confname)) {
         m_merger.ParseXML(confname.toStdString());
     }
+}
+
+bool MergeVolumesDialog::checkImageSizes()
+{
+
+    FileSet loaderA=ui->widget_readerFormA->getReaderConfig();
+    FileSet loaderB=ui->widget_readerFormB->getReaderConfig();
+
+    std::string fname;
+    size_t sizeA[4];
+    fname=loaderA.makeFileName(loaderA.m_nFirst);
+    kipl::io::GetTIFFDims(fname.c_str(),sizeA);
+
+    size_t sizeB[4];
+    fname=loaderB.makeFileName(loaderB.m_nFirst);
+    kipl::io::GetTIFFDims(fname.c_str(),sizeB);
+
+    bool sameSize = (sizeB[0]==sizeA[0]) && (sizeB[1]==sizeA[1]);
+    if (!sameSize)
+    {
+        std::ostringstream msg;
+        msg.str("");
+        msg<<"Image A ("<<sizeA[0]<<", "<<sizeA[1]<<") is not same size as Image B ("<<sizeB[0]<<", "<<sizeB[1]<<")";
+        logger.warning(msg.str());
+        QMessageBox::warning(this,"Not same image size",QString::fromStdString(msg.str()));
+    }
+
+    return sameSize;
 }
 
