@@ -112,6 +112,12 @@ T & TImage<T,N>::operator()(size_t x, size_t y, size_t z)
 }
 
 template<typename T, size_t N>
+T & TImage<T,N>::operator()(int x, int y, int z)
+{
+    return this->operator()(static_cast<size_t>(x),static_cast<size_t>(y),static_cast<size_t>(z));
+}
+
+template<typename T, size_t N>
 size_t TImage<T,N>::Resize(size_t const * const dims) 
 {
 	m_buffer.Resize(_ComputeNElements(dims));

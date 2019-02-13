@@ -37,7 +37,6 @@ cd %DEST%/build-QtImaging
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-
 echo "Build tests"
 cd %REPOSPATH%/GUI/qt/UnitTests
 
