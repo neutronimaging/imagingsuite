@@ -160,7 +160,7 @@ void Covariance<T>::NormalizeMatrix(TNT::Array2D<double> &mat)
         for (int i=0 ; i<m_nVars; i++) {
             for (int j=i ; j<m_nVars; j++) {
                 if (i!=j) {
-                    scale=1/sqrt(mat[i][i]*mat[j][j]);
+                    scale=1.0/std::sqrt(mat[i][i]*mat[j][j]);
                     mat[i][j]*=scale;
                     mat[j][i]*=scale;
                 }

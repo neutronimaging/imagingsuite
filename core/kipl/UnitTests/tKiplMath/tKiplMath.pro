@@ -30,7 +30,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += "../../../../external/src/linalg"
+INCLUDEPATH += "$$PWD/../../../../external/src/linalg"
 unix {
  #   INCLUDEPATH += "../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
@@ -54,8 +54,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
