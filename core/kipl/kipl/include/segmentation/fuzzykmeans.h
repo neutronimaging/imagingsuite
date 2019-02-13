@@ -17,8 +17,8 @@ namespace kipl { namespace segmentation {
 
 /// \brief The class performs a fuzzy K-means segmentation of an N-dimensional image
 /// @author Anders Kaestner
-template<class ImgType, class SegType , size_t NDim>
-class FuzzyKMeans : public SegmentationBase<ImgType,SegType,NDim>
+template<typename ImgType, typename SegType , size_t NDim>
+class FuzzyKMeans : public kipl::segmentation::SegmentationBase<ImgType,SegType,NDim>
 {
 public:
 	/// \brief Constructor that initializes the output and some variables
@@ -32,17 +32,17 @@ public:
     ///	\param cVec A vector containing te guesses
     ///	
     ///	\note If size(cVec)!=nClasses, an initial guess will be randomized
-	int setCenters(float const * const cVec) {memcpy(centers,cVec,sizeof(float)*this->nClasses); haveCenters=true; return 0;}
+    int setCenters(float const * const cVec) {std::copy_n(cVec,this->nClasses,this->m_centers); haveCenters=true; return 0;}
 	
-    float const * const getCenters() const { return centers; }
+    void centers(float *cVec) { std::copy_n(this->m_centers,this->nClasses,cVec); }
 	/// Removes the initial center guess
-	int clearCenters() {memset(centers,0,sizeof(float)*this->nClasses); haveCenters=false; return 0;}
+    int clearCenters() {std::fill_n(this->m_centers,this->nClasses,0); haveCenters=false; return 0;}
 	
 	/// \brief Setting processing parameters
 	///	\param NClasses Number of classes to find
 	///	\param fuz Fuzziness parameter
 	///	\param maxIt Maximal number of iterations to find the solution
-	int set(int NClasses, float fuz=1.5f, int maxIt=250,bool bSaveIterations=false, std::string sFname="" );
+    int set(int NClasses, float *cVec,float fuz=1.5f, int maxIt=250,bool bSaveIterations=false, std::string sFname="" );
 	
     
 	/// \brief Segments an image
@@ -81,7 +81,7 @@ protected:
 	/// indicates that a initial guess has been provided
 	bool haveCenters;
 	/// vector containing the initial guesses
-	float *centers;
+    float *m_centers;
 	/// Fuzziness coefficient
 	float fuzziness;
 	/// Support variable for the fuzziness

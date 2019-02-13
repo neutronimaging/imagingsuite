@@ -3,11 +3,13 @@
 
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <base/timage.h>
 #include <io/io_tiff.h>
 #include <segmentation/thresholds.h>
 #include <segmentation/gradientguidedthreshold.h>
+#include <segmentation/fuzzykmeans.h>
 
 class kiplSegmentationTest : public QObject
 {
@@ -23,6 +25,7 @@ private Q_SLOTS:
     void testMultiThreshold();
     void testGradientGuidedThreshold();
     void testCmpType();
+    void testFyzzyKMeans();
 };
 
 kiplSegmentationTest::kiplSegmentationTest()
@@ -178,6 +181,27 @@ void kiplSegmentationTest::testCmpType()
     s<<kipl::segmentation::cmp_eq;
 
     QCOMPARE(s.str().c_str(),"cmp_equal");
+
+}
+
+void kiplSegmentationTest::testFyzzyKMeans()
+{
+    kipl::base::TImage<float,2> img,seg;
+#ifndef DEBUG
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/multi_class_reference.tif");
+#else
+    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/multi_class_reference.tif");
+#endif
+
+    kipl::segmentation::FuzzyKMeans<float,float,2> fkm;
+    float centers[3]={50,100,150};
+    fkm.set(3,centers, 1.5f, 250);
+    fkm(img,seg);
+    fkm.centers(centers);
+
+    QCOMPARE(centers[0],57.0f);
+    QCOMPARE(centers[1],108.0f);
+    QCOMPARE(centers[2],209.0f);
 
 }
 

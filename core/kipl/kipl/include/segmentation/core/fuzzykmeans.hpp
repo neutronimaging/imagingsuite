@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <sstream>
 
+#include <QDebug>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -19,37 +21,39 @@
 #include "../../logging/logger.h"
 #include "../../io/io_tiff.h"
 #include "../../math/LUTCollection.h"
+#include "../fuzzykmeans.h"
 
 namespace kipl { namespace segmentation {
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType, size_t NDim>
 FuzzyKMeans<ImgType,SegType,NDim>::FuzzyKMeans() :
     kipl::segmentation::SegmentationBase<ImgType,SegType,NDim>("FuzzyKMeans"),
 	maxIterations(250),
 	haveCenters(false),
-    centers(nullptr),
+    m_centers(nullptr),
 	fuzziness(1.5f)
 	
 {
 	this->nClasses=2;
 	mpower=2.0f/(fuzziness-1.0f);
-	centers=new float[this->nClasses];
+    m_centers=new float[this->nClasses];
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 FuzzyKMeans<ImgType,SegType,NDim>::~FuzzyKMeans()
 {
-    if (centers!=nullptr)
-		delete [] centers;
+    if (m_centers!=nullptr)
+        delete [] m_centers;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
-int FuzzyKMeans<ImgType,SegType,NDim>::set(int NClasses, float fuz, int maxIt ,bool bSaveIterations, std::string sFname)
+template<typename ImgType, typename SegType ,size_t NDim>
+int FuzzyKMeans<ImgType,SegType,NDim>::set(int NClasses, float *cVec, float fuz, int maxIt ,bool bSaveIterations, std::string sFname)
 { 
 	this->nClasses=NClasses; 
-    if (centers!=nullptr)
-		delete [] centers;
-	centers=new float[this->nClasses];
+    if (m_centers!=nullptr)
+        delete [] m_centers;
+    m_centers=new float[this->nClasses];
+    std::copy_n(cVec,this->nClasses,m_centers);
 	
 	fuzziness=fuz; 
 	mpower=2.0f/(fuzziness-1.0f);
@@ -60,20 +64,20 @@ int FuzzyKMeans<ImgType,SegType,NDim>::set(int NClasses, float fuz, int maxIt ,b
 	return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int FuzzyKMeans<ImgType,SegType,NDim>::initCenters(const kipl::base::TImage<ImgType,NDim> &img)
 { 
 	std::cout<<"Init centers"<<endl;
 	ImgType const * const pImg=img.GetDataPtr();
 	for (int i=0; i<this->nClasses; i++) 
-		centers[i]=pImg[abs((rand()*rand())) % img.Size()];
+        m_centers[i]=pImg[abs((rand()*rand())) % img.Size()];
 	
-	std::sort(centers, centers+this->nClasses);
+    std::sort(m_centers, m_centers+this->nClasses);
 	
 	return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int FuzzyKMeans<ImgType,SegType,NDim>::initU(kipl::base::TImage<float,2> &U)
 {
 	float *pU=U.GetDataPtr();
@@ -91,7 +95,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::initU(kipl::base::TImage<float,2> &U)
     return 0;
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> & seg)
 {
     std::stringstream msgstr;
@@ -110,7 +114,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 	int c;
 
 	float * pU=U.GetDataPtr();
-	float * pUold=NULL;
+    float * pUold=nullptr;
 	
 	
 	ImgType const * const pX=img.GetDataPtr();
@@ -129,6 +133,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 	ImgType imgmax=static_cast<ImgType>(0);
 	kipl::math::minmax(img.GetDataPtr(),img.Size(),&imgmin,&imgmax);
 	kipl::math::PowLUT fuzzyLUT(65535,fuzziness,0.0,2.0);
+
 	if (m_bSaveIterations) {
 		kipl::base::TImage<float,2> slice(img.Dims());
 
@@ -140,6 +145,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 	}
 
 	for (r=0; r<maxIterations; r++) {
+        qDebug() << "Iteration" << r;
 		memcpy(oldU.GetDataPtr(),U.GetDataPtr(),sizeof(float)*U.Size());
     
 		// Step II, compute centers
@@ -151,7 +157,6 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
             indexU=NC*i;
             x=pX[i];
         	for (c=0; c<NC; c++, indexU++) {
-         //     pU[indexU]=pow(pU[indexU],fuzziness);
 				pU[indexU]=fuzzyLUT(pU[indexU]);
                 sum[c]+=pU[indexU];
                 uxSum[c]+=x*pU[indexU];	
@@ -163,11 +168,11 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 		// Short
         for (c=0; c<NC; c++) {
             if (sum[c]!=0.0)
-                centers[c]=uxSum[c]/sum[c];
-            msgstr<<centers[c]<<" ";
+                m_centers[c]=uxSum[c]/sum[c];
+            msgstr<<m_centers[c]<<" ";
         }
             
-		std::sort(centers,centers+NC); // Assure that the class index 
+        std::sort(m_centers,m_centers+NC); // Assure that the class index
 									   // is ordered with the center value
 
 		pU=U.GetDataPtr();
@@ -178,11 +183,11 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
             indexU=i*NC;
             x=pX[i];
             for (ci=0; ci<NC; ci++,indexU++) {
-				dik=x-centers[ci];
+                dik=x-m_centers[ci];
 				if (dik!=0.0f) {
                     dik=1.0f/dik;
 					for (cj=0; cj<NC; cj++) {
-						djk=(x-centers[cj]);
+                        djk=(x-m_centers[cj]);
 						//pU[indexU]+=pow(fabs(dik*djk),-mpower);  // sum((|djk|/|dik|)^mpower)
 						pU[indexU]+=fuzzyLUT2(fabs(dik*djk));  // sum((|djk|/|dik|)^mpower)
 					}
@@ -271,7 +276,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 
 }
 
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int FuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> & seg)
 {
     std::stringstream msgstr;
@@ -285,8 +290,8 @@ int FuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType
 	initU(U);
 	
 	// Initialization
-	float * pUold=NULL;
-	float * pU=NULL;
+    float * pUold = nullptr;
+    float * pU    = nullptr;
 	
 	ImgType const * const pX=img.GetDataPtr();
 
@@ -349,11 +354,11 @@ int FuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType
 		// Short
         for (int c=0; c<NC; c++) {
             if (sum[c]!=0.0)
-                centers[c]=uxSum[c]/sum[c];
-            msgstr<<centers[c]<<" ";
+                m_centers[c]=uxSum[c]/sum[c];
+            msgstr<<m_centers[c]<<" ";
         }
             
-		std::sort(centers,centers+NC); // Assure that the class index 
+        std::sort(m_centers,m_centers+NC); // Assure that the class index
 									   // is ordered with the center value
 
         // Loong
@@ -369,11 +374,11 @@ int FuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType
 				indexU=i*NC;
 				x=static_cast<float>(pX[i]);
 				for (int ci=0; ci<NC; ci++,indexU++) {
-					dik=x-centers[ci];
+                    dik=x-m_centers[ci];
 					if (dik!=0.0f) {
 						dik=1/dik;
 						for (int cj=0; cj<NC; cj++) {
-							djk=(x-centers[cj]);
+                            djk=(x-m_centers[cj]);
 							pLocalU[indexU]+=pow(fabs(dik*djk),-mpower);  // sum((|djk|/|dik|)^mpower)
 						}
 					}
@@ -449,7 +454,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::parallel(const kipl::base::TImage<ImgType
 ///	\param img Image to be segmented
 ///	\param seg Segmented image
 /// \param mask mask image for stayaway regions
-template<class ImgType, class SegType ,size_t NDim>
+template<typename ImgType, typename SegType ,size_t NDim>
 int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<SegType,NDim> &seg, const kipl::base::TImage<bool,NDim> & mask)
 {
     std::stringstream msgstr;
@@ -467,7 +472,7 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 	int c;
 
 	float * pU=U.GetDataPtr();
-	float * pUold=NULL;
+    float * pUold=nullptr;
 	
 	
 	ImgType const * const pX=img.GetDataPtr();
@@ -485,7 +490,8 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
     long long int indexU0=0;
     float x=0.0f;	
     
-	for (r=0; r<maxIterations; r++) {
+    for (r=0; r<maxIterations; r++)
+    {
 		memcpy(oldU.GetDataPtr(),U.GetDataPtr(),sizeof(float)*U.Size());
 
         
@@ -494,52 +500,63 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
         memset(uxSum,0,sizeof(double)*NC);
         pU=U.GetDataPtr();
 		
-        for (i=0; i<Nimg; i++) {
+        for (i=0; i<Nimg; i++)
+        {
             indexU=NC*i;
             x=pX[i];
-            if (pMask[i]==true) {
-	        	for (c=0; c<NC; c++, indexU++) {
+            if (pMask[i]==true)
+            {
+                for (c=0; c<NC; c++, indexU++)
+                {
 	                pU[indexU]=pow(pU[indexU],fuzziness);
 	                sum[c]+=pU[indexU];
 	                uxSum[c]+=x*pU[indexU];	
 	            }
             }
-            else {
-     	       	for (c=0; c<NC; c++, indexU++) {
+            else
+            {
+                for (c=0; c<NC; c++, indexU++)
+                {
 	               pU[indexU]=0;
-	           }
+                }
             }
 		}
 		msgstr.str("");
 		msgstr<<"Iteration "<<r<<": centers= ";        
-        for (c=0; c<NC; c++) {
+        for (c=0; c<NC; c++)
+        {
             if (sum[c]!=0.0)
-                centers[c]=uxSum[c]/sum[c];
-            msgstr<<centers[c]<<" ";
+                m_centers[c]=uxSum[c]/sum[c];
+            msgstr<<m_centers[c]<<" ";
         }
             
-		std::sort(centers,centers+NC); // Assure that the class index 
+        std::sort(m_centers,m_centers+NC); // Assure that the class index
 									   // is ordered with the center value
 
 		pU=U.GetDataPtr();
      
-		for (i=0; i<Nimg; i++) {
+        for (i=0; i<Nimg; i++)
+        {
             indexU=i*NC;
             x=pX[i];
-            if (pMask[i]==true) {
-	            for (ci=0; ci<NC; ci++,indexU++) {
-					dik=x-centers[ci];
+            if (pMask[i]==true)
+            {
+                for (ci=0; ci<NC; ci++,indexU++)
+                {
+                    dik=x-m_centers[ci];
 	                if (dik!=0)
 	                    dik=1/dik;
-					for (cj=0; cj<NC; cj++) {
-						djk=(x-centers[cj]);
+                    for (cj=0; cj<NC; cj++)
+                    {
+                        djk=(x-m_centers[cj]);
 						pU[indexU]+=pow(fabs(dik*djk),-mpower);  // sum((|djk|/|dik|)^mpower)
 					}
 				}
             }
 		}
 		pU=U.GetDataPtr();
-		for (i=0; i<U.Size(); i++) { 
+        for (i=0; i<U.Size(); i++)
+        {
             if (pU[i]!=0)
     			pU[i]=1.0f/pU[i];
 		}
@@ -577,22 +594,27 @@ int FuzzyKMeans<ImgType,SegType,NDim>::operator()(const kipl::base::TImage<ImgTy
 	pU=U.GetDataPtr();
     float maxclass=0;
 
-	for (i=0; i<Nimg; i++) {
+    for (i=0; i<Nimg; i++)
+    {
         pSeg[i]=pMask[i];
         
-        if (pMask[i]==true) {
+        if (pMask[i]==true)
+        {
         	indexU=i*NC;
 	        pSeg[i]=0;
 	        float maxClass=pU[indexU];
 	        indexU++;
-	        for (c=1; c< this->nClasses; c++, indexU++) {
-	            if (maxClass<pU[indexU]) {
+            for (c=1; c< this->nClasses; c++, indexU++)
+            {
+                if (maxClass<pU[indexU])
+                {
 	                maxClass=pU[indexU];
 	                pSeg[i]=c;
 	            }
 			}
         }
-        else {
+        else
+        {
         	pSeg[i]=this->nClasses;
         }
 	}
