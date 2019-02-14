@@ -89,6 +89,7 @@ unix {
         QMAKE_LIBDIR += /opt/local/lib
     }
     LIBS += -lxml2
+    INCLUDEPATH += /usr/include/libxml2
 }
 
 win32 {

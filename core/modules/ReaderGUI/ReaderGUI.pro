@@ -42,7 +42,8 @@ unix {
     unix:!macx {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
-        LIBS += -lgomp
+        LIBS += -lgomp -lxml2
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     unix:macx {
