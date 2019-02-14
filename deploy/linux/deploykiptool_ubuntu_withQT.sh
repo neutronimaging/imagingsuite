@@ -3,8 +3,8 @@ CPCMD="cp "
 REPOSPATH=$WORKSPACE
 QT_PATH="$QTPATH"
 
-#DEST="$REPOSPATH/deploy/kiptool"
-DEST="$HOME/kiptool"
+DEST="$REPOSPATH/deploy/kiptool"
+#DEST="$HOME/kiptool"
 
 mkdir --parent $DEST
 mkdir --parent $DEST/bin
