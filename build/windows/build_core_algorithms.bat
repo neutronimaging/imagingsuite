@@ -24,7 +24,7 @@ cd %DEST%/build-imagingqaalgorithms
 
 echo "Build tests"
 
-cd %REPOSPATH%\core\modules\UnitTests\
+cd %REPOSPATH%\core\algorithms\UnitTests\
 
 FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
 

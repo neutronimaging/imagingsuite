@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>899</width>
-    <height>967</height>
+    <height>1062</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -427,11 +427,6 @@
              <item>
               <property name="text">
                <string>Result (full image)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Difference</string>
               </property>
              </item>
             </widget>

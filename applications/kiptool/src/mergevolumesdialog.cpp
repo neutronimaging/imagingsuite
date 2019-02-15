@@ -11,6 +11,7 @@
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
 #include <base/timage.h>
+#include <imagereader.h>
 
 #include "mergevolumesdialog.h"
 #include "ImagingToolConfig.h"
@@ -22,8 +23,9 @@ MergeVolumesDialog::MergeVolumesDialog(QWidget *parent) :
     ui(new Ui::MergeVolumesDialog)
 {
     ui->setupUi(this);
-    LoadConfig();
-    UpdateDialog();
+    loadConfig();
+    updateDialog();
+    ui->widget_cropROI->useROIDialog(true);
 }
 
 MergeVolumesDialog::~MergeVolumesDialog()
@@ -31,9 +33,9 @@ MergeVolumesDialog::~MergeVolumesDialog()
     delete ui;
 }
 
-void MergeVolumesDialog::UpdateDialog()
+void MergeVolumesDialog::updateDialog()
 {
-    ImageLoader loader;
+    FileSet loader;
     loader.m_nFirst=m_merger.m_nFirstA;
     loader.m_nLast = m_merger.m_nLastA;
     loader.m_sFilemask = m_merger.m_sPathA;
@@ -48,6 +50,7 @@ void MergeVolumesDialog::UpdateDialog()
     ui->spinBox_firstout->setValue(m_merger.m_nFirstDest);
 
     ui->lineEdit_pathout->setText(QString::fromStdString(m_merger.m_sPathOut));
+    ui->lineEdit_OutMask->setText(QString::fromStdString(m_merger.m_sMaskOut));
 
     ui->spinBox_mixstart->setValue(m_merger.m_nStartOverlapA);
     ui->spinBox_mixlength->setValue(m_merger.m_nOverlapLength);
@@ -58,11 +61,13 @@ void MergeVolumesDialog::UpdateDialog()
 
     ui->widget_cropROI->setROI(m_merger.m_nCrop[0],m_merger.m_nCrop[1],m_merger.m_nCrop[2],m_merger.m_nCrop[3]);
     ui->comboBox_mixorder->setCurrentIndex(m_merger.m_nMergeOrder);
+
+
 }
 
-void MergeVolumesDialog::UpdateConfig()
+void MergeVolumesDialog::updateConfig()
 {
-    ImageLoader loader;
+    FileSet loader;
     loader=ui->widget_readerFormA->getReaderConfig();
 
     m_merger.m_nFirstA = loader.m_nFirst;
@@ -100,7 +105,7 @@ void MergeVolumesDialog::on_pushButton_loaddata_clicked()
 void MergeVolumesDialog::on_pushButton_loadA_clicked()
 {
     std::ostringstream msg;
-    ImageLoader loader=ui->widget_readerFormA->getReaderConfig();
+    FileSet loader=ui->widget_readerFormA->getReaderConfig();
 
     try {
         m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgA);
@@ -114,15 +119,21 @@ void MergeVolumesDialog::on_pushButton_loadA_clicked()
         dlg.exec();
         return;
     }
+
     ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.Dims());
     on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
+
+    ImageReader reader;
+
+    kipl::base::TImage<float,2> img=reader.Read(loader.makeFileName((loader.m_nLast+loader.m_nFirst)/2));
+    ui->widget_cropROI->setSelectionImage(img);
 }
 
 void MergeVolumesDialog::on_pushButton_loadB_clicked()
 {
     std::ostringstream msg;
 
-    ImageLoader loader=ui->widget_readerFormB->getReaderConfig();
+    FileSet loader=ui->widget_readerFormB->getReaderConfig();
 
     try {
         m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgB);
@@ -143,7 +154,7 @@ void MergeVolumesDialog::on_pushButton_loadB_clicked()
 
 void MergeVolumesDialog::on_comboBox_mixorder_currentIndexChanged(int index)
 {
-    ImageLoader loader;
+    FileSet loader;
     switch (index) {
     case 0:
         loader=ui->widget_readerFormA->getReaderConfig();
@@ -171,8 +182,11 @@ void MergeVolumesDialog::on_pushButton_browseout_clicked()
 
 void MergeVolumesDialog::on_pushButton_startmerge_clicked()
 {
-    UpdateConfig();
-    SaveConfig();
+    updateConfig();
+    saveConfig();
+    if (!checkImageSizes())
+        return ;
+
     try {
         m_merger.Process();
     }
@@ -217,8 +231,12 @@ void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
 
 void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 {
-    UpdateConfig();
-    SaveConfig();
+    updateConfig();
+    saveConfig();
+
+    if (!checkImageSizes())
+        return ;
+
     std::ostringstream msg;
 
     logger(logger.LogMessage,"on_testmix");
@@ -303,7 +321,7 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 
 }
 
-void MergeVolumesDialog::SaveConfig()
+void MergeVolumesDialog::saveConfig()
 {
     QDir dir;
 
@@ -325,12 +343,40 @@ void MergeVolumesDialog::SaveConfig()
     conffile<<m_merger.WriteXML(0);
 }
 
-void MergeVolumesDialog::LoadConfig()
+void MergeVolumesDialog::loadConfig()
 {
     QDir dir;
      QString confname=dir.homePath()+"/"+".imagingtools/volumemerge.xml" ;
     if (dir.exists(confname)) {
         m_merger.ParseXML(confname.toStdString());
     }
+}
+
+bool MergeVolumesDialog::checkImageSizes()
+{
+
+    FileSet loaderA=ui->widget_readerFormA->getReaderConfig();
+    FileSet loaderB=ui->widget_readerFormB->getReaderConfig();
+
+    std::string fname;
+    size_t sizeA[4];
+    fname=loaderA.makeFileName(loaderA.m_nFirst);
+    kipl::io::GetTIFFDims(fname.c_str(),sizeA);
+
+    size_t sizeB[4];
+    fname=loaderB.makeFileName(loaderB.m_nFirst);
+    kipl::io::GetTIFFDims(fname.c_str(),sizeB);
+
+    bool sameSize = (sizeB[0]==sizeA[0]) && (sizeB[1]==sizeA[1]);
+    if (!sameSize)
+    {
+        std::ostringstream msg;
+        msg.str("");
+        msg<<"Image A ("<<sizeA[0]<<", "<<sizeA[1]<<") is not same size as Image B ("<<sizeB[0]<<", "<<sizeB[1]<<")";
+        logger.warning(msg.str());
+        QMessageBox::warning(this,"Not same image size",QString::fromStdString(msg.str()));
+    }
+
+    return sameSize;
 }
 

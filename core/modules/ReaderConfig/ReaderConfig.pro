@@ -49,6 +49,7 @@ unix {
     }
 
     unix:macx {
+
 #        exists($$PWD/../../../external/mac/lib/*NeXus*) {
 
 #            message("-lNeXus exists")
@@ -82,10 +83,13 @@ unix {
 #        else {
 #            message("-lNeXus does not exists $$HEADERS")
 #        }
-        QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include/libxml2
+
         QMAKE_LIBDIR += /opt/local/lib
     }
+    LIBS += -lxml2
+    INCLUDEPATH += /usr/include/libxml2
 }
 
 win32 {

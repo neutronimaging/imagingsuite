@@ -6,6 +6,10 @@
 #include <sstream>
 #include <iomanip>
 
+#include <libxml/xmlreader.h>
+
+#include <QDebug>
+
 #include <strings/filenames.h>
 #include <strings/miscstring.h>
 #include <base/KiplException.h>
@@ -15,6 +19,7 @@
 
 TIFFReslicer::TIFFReslicer() :
     logger("TIFFReslicer"),
+    m_nMaxBlock(128),
     m_sSourceMask("/data/slices_####.tif"),
     m_sDestinationPath("/data"),
     m_sDestinationMask("verticalslices_####.tif"),
@@ -28,25 +33,25 @@ TIFFReslicer::TIFFReslicer() :
 
     m_bResliceXZ(true),
     m_bResliceYZ(true),
-    m_nMaxBlock(128),
+
     m_nSliceCount(0),
     m_nCurrentFile(0),
     m_nCurrentBlock(0),
     m_nBlocks(0),
-    buffer(NULL)
+    buffer(nullptr)
 {
 	memset(m_DstImages,0,m_nMaxBlock*sizeof(TIFF *));
-	TIFFSetWarningHandler(0);
+    TIFFSetWarningHandler(nullptr);
 }
 
 TIFFReslicer::~TIFFReslicer() {
 	for (size_t i=0; i<m_nMaxBlock; i++) {
-		if (m_DstImages[i]!=NULL) {
+        if (m_DstImages[i]!=nullptr) {
 			TIFFClose(m_DstImages[i]);
-			m_DstImages[i]=NULL;
-		}
+            m_DstImages[i]=nullptr;
+        }
 	}
-	if (buffer!=NULL)
+    if (buffer!=nullptr)
 		delete [] buffer;
 }
 
@@ -66,15 +71,114 @@ std::string TIFFReslicer::WriteXML(size_t indent)
         xml<<std::setw(indent+blockindent)<<" "<<"<resliceyz>"<<kipl::strings::bool2string(m_bResliceYZ)<<"</resliceyz>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<firstyz>"<<m_nFirstYZ<<"</firstyz>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<lastyz>"<<m_nLastYZ<<"</lastyz>\n";
-    xml<<std::setw(indent)<<" "<<"</reslice>\n";
+    xml<<std::setw(indent)<<" "<<"</reslice>";
 
     return xml.str();
 }
 
-//void TIFFReslicer::ParseXML(xmlTextReaderPtr reader)
-//{
+void TIFFReslicer::ParseXML(std::string fname)
+{
+    xmlTextReaderPtr reader;
+    const xmlChar *name;
+    const xmlChar *value;
+    int ret;
+    std::string sName;
+    std::string sValue;
+    std::ostringstream msg;
 
-//}
+    reader = xmlReaderForFile(fname.c_str(), nullptr, 0);
+    if (reader != nullptr) {
+        ret = xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+
+        if (name==nullptr) {
+            throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+        }
+
+        sName=reinterpret_cast<const char *>(name);
+        msg.str(""); msg<<"Found "<<sName<<" expect reslice";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        if (sName!="reslice") {
+            msg.str();
+            msg<<"Unexpected project contents in parameter file ("<<sName<<"!=reslice)";
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+        }
+
+        logger.verbose("Got reslice project");
+
+        ret = xmlTextReaderRead(reader);
+
+        while (ret == 1) {
+            if (xmlTextReaderNodeType(reader)==1) {
+                name = xmlTextReaderConstName(reader);
+                ret=xmlTextReaderRead(reader);
+                value = xmlTextReaderConstValue(reader);
+                if (name==nullptr) {
+                    throw kipl::base::KiplException("Unexpected contents in parameter file",__FILE__,__LINE__);
+                }
+                sName=reinterpret_cast<const char *>(name);
+
+                if (value!=nullptr)
+                    sValue=reinterpret_cast<const char *>(value);
+                else {
+                    msg.str("");
+                    msg<<"Parameter "<<sValue<<" does not have a value";
+                    logger.warning(msg.str());
+                    sValue="Empty";
+                }
+
+                if (sName=="srcmask")
+                    m_sSourceMask  = sValue;
+
+                if (sName=="dstpath")
+                    m_sDestinationPath   = sValue;
+
+                if (sName=="first")
+                    m_nFirst = std::stoi(sValue);
+
+                if (sName=="last")
+                    m_nLast  = std::stoi(sValue);
+
+                if (sName=="reslicexz")
+                    m_bResliceXZ   = kipl::strings::string2bool(sValue);
+
+                if (sName=="firstxz")
+                    m_nFirstXZ     = std::stoi(sValue);
+
+                if (sName=="lastxz")
+                    m_nLastXZ      = std::stoi(sValue);
+
+                if (sName=="resliceyz")
+                    m_bResliceYZ   = kipl::strings::string2bool(sValue);
+
+                if (sName=="firstyz")
+                    m_nFirstYZ = std::stoi(sValue);
+
+                if (sName=="lastyz")
+                    m_nLastYZ = std::stoi(sValue);
+
+
+            }
+            ret = xmlTextReaderRead(reader);
+        }
+        xmlFreeTextReader(reader);
+        if (ret != 0) {
+            std::stringstream str;
+            str<<"Reslicer failed to parse "<<fname;
+            logger.error(str.str());
+            throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+        }
+    } else {
+        std::stringstream str;
+        str<<"Reslicer config could not open "<<fname;
+        logger.error(str.str());
+        throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
+    }
+    logger.verbose("Parsing parameter file done");
+
+}
+
 int TIFFReslicer::process()
 {
     std::string fmask=m_sDestinationPath;
@@ -123,6 +227,9 @@ int TIFFReslicer::process()
         logger(kipl::logging::Logger::LogMessage,"Reslice YZ done.");
     }
 
+
+
+
     return 0;
 }
 
@@ -146,53 +253,67 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
 
 	size_t nSliceBlocks = 0;
 	size_t nBlockRest   = 0;
-	size_t nImages      = nLast - nFirst + 1;
+    size_t nImages      = static_cast<size_t>(nLast - nFirst + 1);
 
+    m_nBytesPerReadLine = m_nBytesPerPixel * m_nImageDims[0];
 	switch (plane) {
 			case kipl::base::ImagePlaneXY : logger(kipl::logging::Logger::LogWarning,"Plane XY is irrelevant for the reslicer."); return -1;
 			case kipl::base::ImagePlaneXZ :
-				m_nBytesPerLine = m_nBytesPerPixel * m_nImageDims[0];
+                m_nBytesPerWriteLine = m_nBytesPerPixel * m_nImageDims[0];
 				nSliceBlocks = m_nImageDims[1] / m_nMaxBlock;
 				nBlockRest   = m_nImageDims[1] % m_nMaxBlock;
 				break;
 			case kipl::base::ImagePlaneYZ :
-				m_nBytesPerLine = m_nBytesPerPixel * m_nImageDims[1];
-				nSliceBlocks = m_nImageDims[0] / m_nMaxBlock;
-				nBlockRest   = m_nImageDims[0] % m_nMaxBlock;
+                m_nBytesPerWriteLine = m_nBytesPerPixel * m_nImageDims[1];
+                nSliceBlocks = m_nImageDims[0] / m_nMaxBlock;
+                nBlockRest   = m_nImageDims[0] % m_nMaxBlock;
 				break;
 	}
 
 	size_t nFirstSlice=0;
 	size_t nLastSlice=0;
 	size_t nBlock=0;
-	char *pLineBuffer=new char[m_nBytesPerLine+16];
+
+    char *pLineBuffer=new char[m_nBytesPerWriteLine+16];
 
 	try {
 		for (nBlock=0; nBlock<nSliceBlocks; nBlock++) {
 			size_t nFirstSlice = nBlock*m_nMaxBlock;
 			size_t nLastSlice  = (nBlock+1)*m_nMaxBlock-1;
-			CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[0],nImages);
 
-			for (size_t nFileIndex=nFirst; nFileIndex<=nLast; nFileIndex++) {
+                switch (plane) {
+                case kipl::base::ImagePlaneXY :
+                    logger(kipl::logging::Logger::LogWarning,"Plane XY is irrelevant for the reslicer.");
+                    return -1;
+                case kipl::base::ImagePlaneXZ :
+                    CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[0],nImages);
+                    break;
+                case kipl::base::ImagePlaneYZ :
+                    CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[1],nImages); // now YZ images have the right dimensions
+                    break;
+                }
+
+
+
+            for (int nFileIndex=nFirst; nFileIndex<=nLast; nFileIndex++) {
 				kipl::strings::filenames::MakeFileName(sSrcMask,nFileIndex,fname,ext,'#','0');
 				LoadBuffer(fname);
                 msg.str("");
-               // msg<<"Bytes/pixel="<<m_nBytesPerPixel<<", Bytes/line="<<m_nBytesPerLine<<", dims="<<m_nImageDims[0]<<", "<<m_nImageDims[1];
-               // logger(kipl::logging::Logger::LogMessage,msg.str());
-				for (size_t nSliceIndex=0; nSliceIndex<m_nMaxBlock; nSliceIndex++) {
-					size_t idx=nSliceIndex+nFirstSlice;
+                msg<<"Bytes/pixel="<<m_nBytesPerPixel<<", Bytes/line="<<m_nBytesPerReadLine<<", dims="<<m_nImageDims[0]<<", "<<m_nImageDims[1];
+             //   logger(kipl::logging::Logger::LogMessage,msg.str());
+                for (int nSliceIndex=0; nSliceIndex<m_nMaxBlock; nSliceIndex++) {
+                    int idx=nSliceIndex+nFirstSlice;
 					if (plane == kipl::base::ImagePlaneXZ )
-						WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,buffer+idx*m_nBytesPerLine);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine, buffer+idx*m_nBytesPerReadLine);
 					else {
 
                         for (int i=0; i<m_nImageDims[1]; i++) {
+//                            std::copy_n(buffer+idx*m_nBytesPerPixel+i*m_nBytesPerLine,pLineBuffer+i*m_nBytesPerPixel,m_nBytesPerPixel);
                             for (int j=0; j<m_nBytesPerPixel; j++) {
-                               // pLineBuffer[i*m_nBytesPerPixel+j]=255; //buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
-                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerReadLine+j];
                             }
                         }
-                        //memset(pLineBuffer,160,m_nBytesPerLine);
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,pLineBuffer);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine,pLineBuffer);
 					}
 
 				}
@@ -213,26 +334,39 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 
+    // Handling the block rest
     try {
         if (nBlockRest!=0) {
             nFirstSlice = nSliceBlocks*m_nMaxBlock;
             nLastSlice  = nFirstSlice+nBlockRest;
-            CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[0],nImages);
 
-            for (size_t nFileIndex=nFirst; nFileIndex<nLast; nFileIndex++) {
+            switch (plane)
+            {
+            case kipl::base::ImagePlaneXY :
+                logger(kipl::logging::Logger::LogWarning,"Plane XY is irrelevant for the reslicer.");
+                return -1;
+            case kipl::base::ImagePlaneXZ :
+                CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[0],nImages);
+                break;
+            case kipl::base::ImagePlaneYZ :
+                CreateHeaders(sDstMask,nFirstSlice,nLastSlice,m_nImageDims[1],nImages); // now YZ images have the right dimensions
+                break;
+            }
+
+            for (int nFileIndex=nFirst; nFileIndex<=nLast; nFileIndex++) {
                 kipl::strings::filenames::MakeFileName(sSrcMask,nFileIndex,fname,ext,'#','0');
                 LoadBuffer(fname);
 
                 for (size_t nSliceIndex=0; nSliceIndex<=nBlockRest; nSliceIndex++) {
-                    size_t idx=nSliceIndex+nFirstSlice;
+                    int idx=nSliceIndex+nFirstSlice;
                     if (plane == kipl::base::ImagePlaneXZ )
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,buffer+idx*m_nBytesPerLine);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine,buffer+idx*m_nBytesPerReadLine);
                     else {
                         for (int i=0; i<m_nImageDims[1]; i++)
                             for (int j=0; j<m_nBytesPerPixel; j++)
-                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerLine+j];
+                                pLineBuffer[i*m_nBytesPerPixel+j]=buffer[idx*m_nBytesPerPixel+i*m_nBytesPerReadLine+j];
 
-                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,pLineBuffer);
+                        WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst, m_nBytesPerWriteLine,pLineBuffer);
                     }
                 }
             }
@@ -268,7 +402,7 @@ int TIFFReslicer::GetHeader(std::string fname)
 	TIFF *image;
 
 	// Open the TIFF image
-	if((image = TIFFOpen(fname.c_str(), "r")) == NULL){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str("");
 		msg<<"Could not open image "<<fname;
 		logger(kipl::logging::Logger::LogError,msg.str());
@@ -343,9 +477,9 @@ int TIFFReslicer::LoadBuffer(std::string fname)
 	unsigned char tempbyte;
 	unsigned long bufferSize, count;
 
-	TIFFSetWarningHandler(0);
+    TIFFSetWarningHandler(nullptr);
 	// Open the TIFF image
-	if((image = TIFFOpen(fname.c_str(), "r")) == NULL){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str();
 		msg<<"LoadBuffer: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -376,11 +510,11 @@ int TIFFReslicer::LoadBuffer(std::string fname)
 	//std::cout<<"buffer size: "<<bufferSize<<", number of strips:"<<TIFFNumberOfStrips (image)<<", stripSize:" <<stripSize<<", stripMax:"<<stripMax<<std::endl;
 
 	try {
-		if (buffer!=NULL) {
+        if (buffer!=nullptr) {
 			delete [] buffer;
-			buffer=NULL;
+            buffer=nullptr;
 		}
-		if((buffer = new char[bufferSize]) == NULL){
+        if((buffer = new char[bufferSize]) == nullptr){
 			msg.str("");
 			msg<<"LoadBuffer: Could not allocate"<<bufferSize<<" bytes for the uncompressed image";
 			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -396,9 +530,9 @@ int TIFFReslicer::LoadBuffer(std::string fname)
 	}
 
 
-	int dimx,dimy;
+    int dimx,dimy;
 	// We need to set some values for basic tags before we can add any data
-	TIFFGetField(image, TIFFTAG_IMAGEWIDTH,&dimx);
+    TIFFGetField(image, TIFFTAG_IMAGEWIDTH,&dimx);
 	TIFFGetField(image, TIFFTAG_IMAGELENGTH, &dimy);
 
 	for (stripCount = 0; stripCount < stripMax; stripCount++){
@@ -463,7 +597,7 @@ int TIFFReslicer::CreateHeaders(std::string mask, size_t nFirst, size_t nLast, s
 
 	for (size_t idx=nFirst, i=0; idx<=nLast; idx++, i++) {
 		kipl::strings::filenames::MakeFileName(mask,idx,fname,ext,'#','0');
-		if((m_DstImages[i] = TIFFOpen(fname.c_str(), "w")) == NULL){
+        if((m_DstImages[i] = TIFFOpen(fname.c_str(), "w")) == nullptr){
 			msg.str("");
 			msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
 			logger(kipl::logging::Logger::LogError,msg.str());
@@ -472,7 +606,7 @@ int TIFFReslicer::CreateHeaders(std::string mask, size_t nFirst, size_t nLast, s
 
 		size_t fileIdx=i;
 		TIFFSetField(m_DstImages[fileIdx], TIFFTAG_IMAGEWIDTH,      width);
-		TIFFSetField(m_DstImages[fileIdx], TIFFTAG_IMAGELENGTH,     0);
+        TIFFSetField(m_DstImages[fileIdx], TIFFTAG_IMAGELENGTH,     0);
 		TIFFSetField(m_DstImages[fileIdx], TIFFTAG_BITSPERSAMPLE,   m_SrcInfo.nBitsPerSample);
 		TIFFSetField(m_DstImages[fileIdx], TIFFTAG_SAMPLESPERPIXEL, m_SrcInfo.nSamplesPerPixel);
 		TIFFSetField(m_DstImages[fileIdx], TIFFTAG_SAMPLEFORMAT,    m_SrcInfo.nSampleFormat);
@@ -497,10 +631,10 @@ int TIFFReslicer::CreateHeaders(std::string mask, size_t nFirst, size_t nLast, s
 	return 0;
 }
 
-int TIFFReslicer::WriteLine(TIFF *img, size_t line, char * pLineBuffer)
+int TIFFReslicer::WriteLine(TIFF *img, size_t line, size_t bytesPerLine, char * pLineBuffer)
 {
-	TIFFSetField(img, TIFFTAG_IMAGELENGTH, line+1);
-	if (TIFFWriteEncodedStrip(img, line, pLineBuffer, m_nBytesPerLine)==-1)
+    TIFFSetField(img, TIFFTAG_IMAGELENGTH, line+1);
+    if (TIFFWriteEncodedStrip(img, line, pLineBuffer, bytesPerLine)==-1)
 	{
 		throw kipl::base::KiplException("Failed to write strip",__FILE__,__LINE__);
 	}
@@ -512,11 +646,11 @@ int TIFFReslicer::CloseImages()
 {
 	size_t i;
 	for (i=0; i<m_nMaxBlock; i++) {
-		if (m_DstImages[i]!=NULL) {
+        if (m_DstImages[i]!=nullptr) {
 			TIFFClose(m_DstImages[i]);
-			m_DstImages[i]=NULL;
-		}
-	}
+            m_DstImages[i]=nullptr;
+        }
+    }
 
 	return i;
 }

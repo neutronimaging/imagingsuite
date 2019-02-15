@@ -10,7 +10,7 @@ TARGET = IterativeBackProj
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 
@@ -60,13 +60,13 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += $$PWD/../../../../../../external/src/linalg $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
-    QMAKE_LIBDIR += ../../../../../../external/lib64
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms

@@ -7,6 +7,7 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <libxml/xmlreader.h>
 
 #include <base/kiplenums.h>
 #include <base/timage.h>
@@ -14,19 +15,21 @@
 #include "readerconfig_global.h"
 
 
-class READERCONFIGSHARED_EXPORT ImageLoader
+class READERCONFIGSHARED_EXPORT FileSet
 {
     static int cnt;
     int id;
 public:
-    ImageLoader();
-    ~ImageLoader();
-    ImageLoader(const ImageLoader & cfg);
-    const ImageLoader & operator=(const ImageLoader & cfg);
+    FileSet();
+    ~FileSet();
+    FileSet(const FileSet & cfg);
+    const FileSet & operator=(const FileSet & cfg);
 
     int getId();
     std::string WriteXML(int indent=4);
     int ParseXML(std::string xml);
+    int ParseXML(xmlTextReaderPtr reader);
+    std::string makeFileName(int idx);
 
     std::string m_sFilemask;
     std::string m_sVariableName;
@@ -46,5 +49,5 @@ public:
     std::list<int> m_nSkipList; // list of indices of files to skip
 };
 
-std::ostream READERCONFIGSHARED_EXPORT & operator<<(std::ostream &s, ImageLoader &il);
+std::ostream READERCONFIGSHARED_EXPORT & operator<<(std::ostream &s, FileSet &il);
 #endif // DATASETBASE_H

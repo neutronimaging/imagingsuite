@@ -21,8 +21,8 @@ public:
     explicit ReaderForm(QWidget *parent = nullptr);
     ~ReaderForm();
 
-    ImageLoader getReaderConfig();
-    void setReaderConfig(ImageLoader &cfg);
+    FileSet getReaderConfig();
+    void setReaderConfig(FileSet &cfg);
 
     void setLabel(QString str);
     void showMinimalForm();

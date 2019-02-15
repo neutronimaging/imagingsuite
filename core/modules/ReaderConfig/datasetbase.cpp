@@ -8,11 +8,12 @@
 #include <base/kiplenums.h>
 #include <strings/xmlstrings.h>
 
+#include "readerexception.h"
 #include "datasetbase.h"
 
-int ImageLoader::cnt=0;
+int FileSet::cnt=0;
 
-ImageLoader::ImageLoader() :
+FileSet::FileSet() :
     id(cnt++),
     m_sFilemask("image_####.tif"),
     m_sVariableName("image"),
@@ -33,7 +34,7 @@ ImageLoader::ImageLoader() :
     m_ROI[3]=100;
 }
 
-ImageLoader::ImageLoader(const ImageLoader &cfg) :
+FileSet::FileSet(const FileSet &cfg) :
     id(cnt++),
     m_sFilemask(cfg.m_sFilemask),
     m_sVariableName(cfg.m_sVariableName),
@@ -50,12 +51,12 @@ ImageLoader::ImageLoader(const ImageLoader &cfg) :
     std::copy_n(cfg.m_ROI,4,m_ROI);
 }
 
-ImageLoader::~ImageLoader()
+FileSet::~FileSet()
 {
 
 }
 
-const ImageLoader &ImageLoader::operator=(const ImageLoader &cfg)
+const FileSet &FileSet::operator=(const FileSet &cfg)
 {
     m_sFilemask     = cfg.m_sFilemask;
     m_sVariableName = cfg.m_sVariableName;
@@ -74,11 +75,11 @@ const ImageLoader &ImageLoader::operator=(const ImageLoader &cfg)
     return *this;
 }
 
-int ImageLoader::getId() {
+int FileSet::getId() {
     return id;
 }
 
-std::string ImageLoader::WriteXML(int indent)
+std::string FileSet::WriteXML(int indent)
 {
     ostringstream xml;
 
@@ -101,7 +102,7 @@ std::string ImageLoader::WriteXML(int indent)
     return xml.str();
 }
 
-int ImageLoader::ParseXML(std::string xml)
+int FileSet::ParseXML(std::string xml)
 {
     regex reg("<(.*)>(.*)</(\\1)>");
 
@@ -161,7 +162,81 @@ int ImageLoader::ParseXML(std::string xml)
      return 0;
 }
 
-std::ostream & operator<<(std::ostream &s, ImageLoader &il)
+int FileSet::ParseXML(xmlTextReaderPtr reader)
+{
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
+
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
+
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                throw ReaderException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
+
+            if (sName=="filemask") {
+                m_sFilemask=sValue;
+            }
+            if (sName=="variablename") {
+                m_sVariableName=sValue;
+            }
+            if (sName=="first") {
+               m_nFirst=std::atoi(sValue.c_str());
+            }
+            if (sName=="last") {
+               m_nLast=std::atoi(sValue.c_str());
+            }
+            if (sName=="repeat") {
+               m_nRepeat=std::atoi(sValue.c_str());
+            }
+            if (sName=="stride") {
+               m_nStride=std::atoi(sValue.c_str());
+            }
+            if (sName=="step") {
+               m_nStep=std::atoi(sValue.c_str());
+            }
+
+            if (sName=="flip") {
+               string2enum(sValue.c_str(),m_Flip);
+            }
+
+            if (sName=="rotate") {
+               string2enum(sValue.c_str(),m_Rotate);
+            }
+
+            if (sName=="useroi") {
+               m_bUseROI=kipl::strings::string2bool(sValue.c_str());
+            }
+        }
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
+    }
+
+
+}
+
+std::string FileSet::makeFileName(int idx)
+{
+    std::string name;
+    std::string ext;
+    //TODO Add index bound check
+    kipl::strings::filenames::MakeFileName(m_sFilemask,idx, name, ext,'#');
+
+    return name;
+}
+
+std::ostream & operator<<(std::ostream &s, FileSet &il)
 {
     s<<"FileMask:"<<il.m_sFilemask<<", variable name="<<il.m_sVariableName<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]\n"
     << il.m_Flip<<" " << il.m_Rotate << "\n"

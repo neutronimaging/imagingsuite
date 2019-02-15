@@ -1,6 +1,6 @@
 ﻿@echo ----------------- Deploy copy --------------
 set REPOS=%WORKSPACE%
-set DEST=%HOMEPATH%\imagingscience
+set DEST=%WORKSPACE%\deployed\muhrec
 
 
 if not exist %DEST% mkdir %DEST%

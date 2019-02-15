@@ -1,6 +1,7 @@
 //<LICENSE>
 
-#include <QDebug>
+#include <QMessageBox>
+#include <QString>
 #include <sstream>
 
 #include <logging/logger.h>
@@ -10,8 +11,8 @@
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <libxml/xmlreader.h>
-
 #include "mergevolume.h"
+
 
 #ifdef __GNUC__
     const std::string copystring = "cp";
@@ -70,15 +71,32 @@ void MergeVolume::CopyMerge()
     std::string ext;
 
     std::string src_maskA = m_sPathA;
+    std::string src_maskB = m_sPathB;
     std::string dst_mask = m_sPathOut;
     kipl::strings::filenames::CheckPathSlashes(dst_mask,true);
     dst_mask+=m_sMaskOut;
 
     std::ostringstream cmd,msg;
     int cnt=m_nFirstDest;
-    int i,j,k;
+    int i=0;
+    int j=0;
+    int k=0;
 
     double total_images=(m_nStartOverlapA-m_nFirstA)+(m_nLastB-m_nFirstB)+1;
+
+    kipl::strings::filenames::MakeFileName(src_maskA,m_nFirstA,src_fname,ext,'#','0');
+    size_t sizeA[4];
+    kipl::io::GetTIFFDims(src_fname.c_str(),sizeA);
+    kipl::strings::filenames::MakeFileName(src_maskB,m_nFirstB,src_fname,ext,'#','0');
+    size_t sizeB[4];
+    kipl::io::GetTIFFDims(src_fname.c_str(),sizeB);
+    if ((sizeB[0]!=sizeA[0]) || (sizeB[1]!=sizeA[1]))
+    {
+        msg.str("");
+        msg<<"Image A ("<<sizeA[0]<<", "<<sizeA[1]<<") is not same size as Image B ("<<sizeB[0]<<", "<<sizeB[1]<<")";
+        throw kipl::base::KiplException(msg.str());
+    }
+
     // Copy data A
     int res=0;
     //progress->set_text("Copying data A");
@@ -99,16 +117,20 @@ void MergeVolume::CopyMerge()
 
  //   progress->set_text("Mixing data sets");
     logger(logger.LogMessage,"Mixing data sets");
-    std::string src_maskB = m_sPathB;
     // Here will the interpolation happen
     kipl::base::TImage<float,2> a,b;
     float *pA, *pB;
     float scale=1.0f/m_nOverlapLength;
+    unsigned short BitPerSample=0;
+
     try {
         for (k=0, j=m_nFirstB; k<=m_nOverlapLength; i++,j++,k++, cnt++) {
             kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(a,src_fname.c_str());
 
+
+            if (k==0)
+                BitPerSample= a.info.nBitsPerSample;
             kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(b,src_fname.c_str());
             pA=a.GetDataPtr();
@@ -119,7 +141,10 @@ void MergeVolume::CopyMerge()
             }
 
             kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
-            kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
+            if (BitPerSample==16)
+                kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
+            if (BitPerSample==32)
+                kipl::io::WriteTIFF32(a, dst_fname.c_str());
         }
     }
     catch (kipl::base::KiplException &e) {
@@ -220,7 +245,6 @@ void MergeVolume::CropMerge() {
         for (k=0, j=m_nFirstB; k<m_nOverlapLength; i++,j++,k++, cnt++) {
             kipl::strings::filenames::MakeFileName(src_maskA,i,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(a,src_fname.c_str(), cropA);
-
             kipl::strings::filenames::MakeFileName(src_maskB,j,src_fname,ext,'#','0');
             kipl::io::ReadTIFF(b,src_fname.c_str(),cropB);
             pA=a.GetDataPtr();
@@ -231,7 +255,12 @@ void MergeVolume::CropMerge() {
             }
 
             kipl::strings::filenames::MakeFileName(dst_mask,cnt,dst_fname,ext,'#','0');
-            kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f, 65535.0f);
+            switch (bps) {
+            case 8:
+            case 16: kipl::io::WriteTIFF(a,dst_fname.c_str(),0.0f,65535.0f); break;
+            case 32: kipl::io::WriteTIFF32(a,dst_fname.c_str()); break;
+            default: throw kipl::base::KiplException("Unhandled number of bits",__FILE__,__LINE__);
+            }
         }
     }
 
@@ -285,10 +314,12 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
         throw kipl::base::KiplException("LoadVerticalSlice can only handle tiff images",__FILE__,__LINE__);
     }
 
+
     kipl::io::ReadTIFF(slice,fname.c_str());
     size_t line=slice.Size(1)/2;
     size_t dims[2]={slice.Size(0),static_cast<size_t>(last-first+1)};
     size_t total_offset=0;
+
     if (m_bCropSlices) {
         dims[0]=(m_nCrop[2]-m_nCrop[0]+1);
         total_offset=m_nCrop[0];
@@ -296,22 +327,54 @@ void MergeVolume::LoadVerticalSlice(std::string filemask,
 
     img->Resize(dims);
 
+    // here I check the image type
+    unsigned short BitPerSample = slice.info.nBitsPerSample;
+
     float *pLine;
-    unsigned short * data = new unsigned short [slice.Size(0)];
 
-    for (int i=first; i<=last; i++) {
-        kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
-        logger(kipl::logging::Logger::LogVerbose,fname);
-        kipl::io::ReadTIFFLine(data,line,fname.c_str());
-        pLine=img->GetLinePtr(i-first);
-        for (size_t j=0; j<=img->Size(0); j++) {
-            pLine[j]=static_cast<float>(data[j+total_offset]);
+
+    if (BitPerSample==32)
+    {
+        float *data = new float[slice.Size(0)];
+
+
+        for (int i=first; i<=last; i++) {
+            kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
+            logger(kipl::logging::Logger::LogVerbose,fname);
+            kipl::io::ReadTIFFLine(data,line,fname.c_str());
+            pLine=img->GetLinePtr(i-first);
+            for (size_t j=0; j<=img->Size(0); j++) {
+                pLine[j]=static_cast<float>(data[j+total_offset]);
+            }
+     //       progress->set_fraction(static_cast<double>(i-first)/total_images);
+
         }
- //       progress->set_fraction(static_cast<double>(i-first)/total_images);
 
+        delete [] data;
     }
 
-    delete [] data;
+    if (BitPerSample==16)
+    {
+        unsigned short *data = new unsigned short[slice.Size(0)];
+
+
+        for (int i=first; i<=last; i++) {
+            kipl::strings::filenames::MakeFileName(filemask,i, fname, ext, '#', '0');
+            logger(kipl::logging::Logger::LogVerbose,fname);
+            kipl::io::ReadTIFFLine(data,line,fname.c_str()); // THIS IS THE ERROR.. GO ON FROM THERE. READTIFFLINE
+            pLine=img->GetLinePtr(i-first);
+            for (size_t j=0; j<=img->Size(0); j++) {
+                pLine[j]=static_cast<float>(data[j+total_offset]);
+            }
+     //       progress->set_fraction(static_cast<double>(i-first)/total_images);
+
+        }
+
+        delete [] data;
+    }
+
+
+
 }
 
 std::string MergeVolume::WriteXML(size_t indent)
@@ -391,7 +454,7 @@ void MergeVolume::ParseXML(string fname)
                     logger.warning(msg.str());
                     sValue="Empty";
                 }
-                qDebug() << QString::fromStdString(sName)<<QString::fromStdString(sValue);
+
                 if (sName=="path_a")
                     m_sPathA   = sValue;
 

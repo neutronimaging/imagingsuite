@@ -1,9 +1,6 @@
 ﻿@echo ----------------- Deploy copy --------------
-#set REPOS=C:\Users\kaestner\repos
-#set DEST=C:\Users\kaestner\kiptool
-
 set REPOS=%WORKSPACE%
-set DEST=%HOMEPATH%\kiptool
+set DEST=%WORKSPACE%\deployed\kiptool
 
 IF NOT EXIST %DEST% mkdir %DEST%
 pushd .

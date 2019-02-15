@@ -12,7 +12,7 @@ TARGET = tst_tModuleConfig
 CONFIG   += console
 CONFIG   -= app_bundle
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
@@ -56,8 +56,8 @@ win32 {
 SOURCES += tst_configbasetest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
-else:CONFIG(debug, debug|release): LIBS += -$$PWD/../../../../../lib/debug -lkipl -lModuleConfig -lReconFramework
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lModuleConfig -lReconFramework
 
 
 INCLUDEPATH += $$PWD/../../../kipl/kipl/include

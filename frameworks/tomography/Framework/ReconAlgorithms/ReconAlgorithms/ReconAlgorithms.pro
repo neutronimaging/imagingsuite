@@ -38,8 +38,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../../external/src/linalg ../../../../../external/include ../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 

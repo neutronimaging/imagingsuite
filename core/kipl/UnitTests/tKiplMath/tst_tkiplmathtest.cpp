@@ -16,6 +16,7 @@
 #include <math/mathfunctions.h>
 #include <math/findpeaks.h>
 #include <math/image_statistics.h>
+#include <math/covariance.h>
 
 #include <io/io_tiff.h>
 
@@ -41,10 +42,32 @@ private Q_SLOTS:
     void testStatistics();
     void testImageStats();
     void testSignFunction();
+    void testCovDims();
+    void testCovSymmetry();
+    void testCovIntactData();
+    void testCovSmallData();
+    void testCorrSmallData();
+
+
+
+private:
+    kipl::base::TImage<float,2> sin2D;
 };
 
 TKiplMathTest::TKiplMathTest()
 {
+    size_t dims[2]={100,6};
+    kipl::base::TImage<float,2> img(dims);
+    img=0.0f;
+    for (int i=0; i<int(dims[1]); i++) {
+        float *d=img.GetLinePtr(i);
+        float w=2*(i+1)*3.1415926f/float(dims[0]);
+ //       std::cout<<"w="<<w<<std::endl;
+        for (int j=0; j<int(dims[0]); j++) {
+            d[j]=sin(j*w)+i;
+        }
+    }
+    sin2D=img;
 }
 
 void TKiplMathTest::testCOG()
@@ -345,6 +368,96 @@ void TKiplMathTest::testSignFunction()
     QVERIFY2(kipl::math::sign(std::numeric_limits<float>::infinity())==1,"Plus inf");
     QVERIFY2(kipl::math::sign(-std::numeric_limits<float>::infinity())==-1,"Minus inf");
 
+}
+
+
+void TKiplMathTest::testCovDims()
+{
+    kipl::base::TImage<float,2> img=sin2D;
+
+    img.Clone();
+
+    kipl::math::Covariance<float> cov;
+
+    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
+
+    QCOMPARE(C.dim1(),C.dim2());
+
+    QCOMPARE(C.dim1(),int(img.Size(1)));
+}
+
+void TKiplMathTest::testCovSymmetry()
+{
+    kipl::base::TImage<float,2> img=sin2D;
+
+    img.Clone();
+
+    kipl::math::Covariance<float> cov;
+
+    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
+
+    for (int i=0; i<int(img.Size(1)); i++) {
+        for (int j=i; j<int(img.Size(1)); j++) {
+            QCOMPARE(C[i][j],C[j][i]);
+        }
+    }
+}
+
+void TKiplMathTest::testCovIntactData()
+{
+    kipl::base::TImage<float,2> img=sin2D;
+
+    img.Clone();
+
+    kipl::math::Covariance<float> cov;
+
+    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
+
+    for (int i=0; i<int(img.Size()); i++)
+        QCOMPARE(img[i],sin2D[i]);
+
+}
+
+void TKiplMathTest::testCovSmallData()
+{
+    kipl::base::TImage<float,2> img=sin2D;
+
+    img.Clone();
+
+    kipl::math::Covariance<float> cov;
+
+    cov.setResultMatrixType(kipl::math::CovarianceMatrix);
+
+    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
+
+    for (int i=0 ; i<img.Size(1); i++) {
+        for (int j=0 ; j<img.Size(1); j++) {
+  //          std::cout<<std::setw(12)<<C[i][j];
+
+        }
+//        std::cout<<std::endl;
+        QVERIFY(fabs(C[i][i]-0.5)<1e-7);
+    }
+}
+
+void TKiplMathTest::testCorrSmallData()
+{
+    kipl::base::TImage<float,2> img=sin2D;
+
+    img.Clone();
+
+    kipl::math::Covariance<float> cov;
+    cov.setResultMatrixType(kipl::math::CorrelationMatrix);
+
+    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.Dims(),2);
+
+    for (int i=0 ; i<img.Size(1); i++) {
+        for (int j=0 ; j<img.Size(1); j++) {
+            std::cout<<std::setw(12)<<C[i][j];
+        }
+        std::cout<<std::endl;
+        QVERIFY(fabs(C[i][i]-1.0)<1e-7);
+    }
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)

@@ -6,6 +6,8 @@
 #include <string>
 
 #include <logging/logger.h>
+#include <tiffio.h>
+
 
 class MergeVolume
 {
