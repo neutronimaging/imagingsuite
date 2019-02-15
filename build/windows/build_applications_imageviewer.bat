@@ -1,41 +1,39 @@
-#!/bin/bash
-if [ `uname` == 'Linux' ]; then
-    SPECSTR="-spec linux-g++"
-else
-    SPECSTR="-spec macx-clang CONFIG+=x86_64"
-fi
+call set_vars.bat
+pushd .
 
-REPOSPATH=$WORKSPACE/imagingsuite
+set REPOSPATH=%WORKSPACE%\imagingsuite
+set DEST=%WORKSPACE%\builds
+set SPECSTR=-spec win32-msvc
 
-DEST=$WORKSPACE/builds
-
-mkdir -p $DEST/build-muhrec
-cd $DEST/build-muhrec
-
-$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/applications/imageviewer/imageviewer/imageviewer.pro
-make -f Makefile clean
-make -f Makefile mocables all
-make -f Makefile
+mkdir %DEST%\build-imageviewer
+cd %DEST%\build-imageviewer
 
 
+%QTBINPATH%\qmake.exe -makefile ..\..\imagingsuite\applications\imageviewer\imageviewer\imageviewer.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-if [ -e "$REPOSPATH/applications/imageviewer/UnitTests" ]
-echo "Build tests"
-then
-    for f in `ls $REPOSPATH/applications/imageviewer/UnitTests`
-    do
-        echo "$REPOSPATH/applications/imageviewer/UnitTests/$f/$f.pro"
-        if [ -e "$REPOSPATH/applications/imageviewer/UnitTests/$f/$f.pro" ]
-        then
-            mkdir -p $DEST/build-$f
-            cd $DEST/build-$f
+REM echo "Build tests"
 
-            $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/applications/imageviewer/UnitTests/$f/$f.pro
-            make -f Makefile clean
-            make -f Makefile mocables all
-            make -f Makefile
-        fi
-    done
+REM cd %REPOSPATH%\applications\muhrec\UnitTests
 
-echo "Tests built"
-fi
+REM FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
+
+REM echo "Tests built"
+REM popd 
+
+REM goto :eof
+
+REM :testloopbody
+REM echo %2
+REM if exist "%1\applications\muhrec\UnitTests\%2\%2.pro" (
+	REM mkdir %3\%2
+	REM cd %3\%2
+
+	REM %QTBINPATH%\qmake.exe -makefile ..\..\imagingsuite\applications\muhrec\UnitTests\%2\%2.pro -o Makefile
+	REM %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+	REM %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+	REM %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+REM )
+REM goto :eof

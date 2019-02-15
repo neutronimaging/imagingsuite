@@ -7,7 +7,7 @@ call build_frameworks_tomography.bat
 call build_frameworks_imageprocessing.bat
 
 rem call build_applications_NIQA.bat
-rem call build_applications_imageviewer.bat
+call build_applications_imageviewer.bat
 call build_applications_kiptool.bat
 call build_applications_muhrec.bat
 
