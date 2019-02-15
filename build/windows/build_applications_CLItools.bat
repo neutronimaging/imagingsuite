@@ -26,7 +26,7 @@ REM cd %REPOSPATH%\applications\CLI\UnitTests
 REM FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
 
 REM echo "Tests built"
-REM popd 
+popd 
 
 REM goto :eof
 

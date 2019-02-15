@@ -21,7 +21,7 @@ REM cd %REPOSPATH%\applications\muhrec\UnitTests
 REM FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
 
 REM echo "Tests built"
-REM popd 
+popd 
 
 REM goto :eof
 
