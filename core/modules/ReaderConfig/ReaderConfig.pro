@@ -126,8 +126,7 @@ else:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../lib/debug/
 INCLUDEPATH += $$PWD/../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../kipl/kipl/include
 
-LIBS += -lkipl -lImagingAlgorithms
-
-
 INCLUDEPATH += $$PWD/../../algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../algorithms/ImagingAlgorithms/include
+
+LIBS += -lkipl -lImagingAlgorithms
