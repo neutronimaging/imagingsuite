@@ -216,25 +216,25 @@ void ReslicerDialog::on_pushButton_preview_clicked()
 void ReslicerDialog::on_spinBox_firstXZ_valueChanged(int arg1)
 {
     m_currentROI.setLeft(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::on_spinBox_lastXZ_valueChanged(int arg1)
 {
     m_currentROI.setRight(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::on_spinBox_firstYZ_valueChanged(int arg1)
 {
     m_currentROI.setTop(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::on_spinBox_lastYZ_valueChanged(int arg1)
 {
     m_currentROI.setBottom(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::SaveConfig()
