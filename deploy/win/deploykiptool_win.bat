@@ -56,7 +56,7 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\zlib.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
 cd %QTBINPATH%
-#cd C:\Qt\5.11.1\msvc2017_64\bin
+rem cd C:\Qt\5.11.1\msvc2017_64\bin
 
 windeployqt %DEST%\KipTool.exe
 windeployqt %DEST%\KipToolCLI.exe

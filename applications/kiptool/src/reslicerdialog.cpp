@@ -268,3 +268,21 @@ void ReslicerDialog::LoadConfig()
     }
 }
 
+
+void ReslicerDialog::on_widget_inputFiles_fileMaskChanged(const FileSet &fs)
+{
+    std::string fname=fs.makeFileName(fs.m_nFirst);
+
+    size_t dims[3];
+    kipl::io::GetTIFFDims(fname.c_str(),dims);
+
+    ui->spinBox_lastXZ->setRange(0,static_cast<int>(dims[0]-1UL));
+    ui->spinBox_firstXZ->setRange(0,static_cast<int>(dims[0]-1UL));
+    ui->spinBox_lastXZ->setValue(static_cast<int>(dims[0]-1UL));
+    ui->spinBox_firstXZ->setValue(0);
+
+    ui->spinBox_lastYZ->setRange(0,static_cast<int>(dims[1]-1UL));
+    ui->spinBox_firstYZ->setRange(0,static_cast<int>(dims[1]-1UL));
+    ui->spinBox_lastYZ->setValue(static_cast<int>(dims[1]-1UL));
+    ui->spinBox_firstYZ->setValue(0);
+}

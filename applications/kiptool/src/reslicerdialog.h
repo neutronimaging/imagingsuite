@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include <logging/logger.h>
+#include <datasetbase.h>
 
 #include "Reslicer.h"
 
@@ -36,6 +37,8 @@ private slots:
     void on_spinBox_firstYZ_valueChanged(int arg1);
 
     void on_spinBox_lastYZ_valueChanged(int arg1);
+
+    void on_widget_inputFiles_fileMaskChanged(const FileSet &fs);
 
 private:
     void UpdateDialog();

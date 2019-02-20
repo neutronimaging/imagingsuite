@@ -357,7 +357,7 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
                 kipl::strings::filenames::MakeFileName(sSrcMask,nFileIndex,fname,ext,'#','0');
                 LoadBuffer(fname);
 
-                for (size_t nSliceIndex=0; nSliceIndex<=nBlockRest; nSliceIndex++) {
+                for (size_t nSliceIndex=0; nSliceIndex<nBlockRest; nSliceIndex++) {
                     int idx=nSliceIndex+nFirstSlice;
                     if (plane == kipl::base::ImagePlaneXZ )
                         WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine,buffer+idx*m_nBytesPerReadLine);
