@@ -1,4 +1,3 @@
-﻿@echo ----------------- Deploy copy --------------
 set REPOS=%WORKSPACE%
 set DEST=%WORKSPACE%\deployed\muhrec
 

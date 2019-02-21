@@ -97,6 +97,15 @@ cd ..
 `$CPCMD $REPOSPATH/imagingsuite/applications/kiptool/scripts/kiptool .`
 chmod +x kiptool
 
+fname=kiptool_`uname -s`_`uname -m`_`date +%Y%m%d`.tar.bz2
+
+echo $fname
+
+cd $DEST
+cd ..
+tar -jcvhf $fname 'kiptool'
+
+
 popd
 
 
