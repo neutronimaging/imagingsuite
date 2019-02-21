@@ -1,4 +1,4 @@
-DIRECTORY=~/Applications
+DIRECTORY=$WORKSPACE/deployed
 
 REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH /..
@@ -259,3 +259,13 @@ install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/lib
 install_name_tool -change libAdvancedFilterModules.1.dylib @executable_path/../Frameworks/libAdvancedFilterModules.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 
 
+if [ ! -d "/tmp/kiptool" ]; then
+  mkdir /tmp/kiptool
+fi
+mkdir 
+ln -s /Applications /tmp/kiptool/Applications
+cp -r $DEST /tmp/kiptool
+
+hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_`date +%Y%m%d`.dmg
+
+rm -r /tmp/kiptool
