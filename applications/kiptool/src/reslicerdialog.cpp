@@ -263,8 +263,18 @@ void ReslicerDialog::LoadConfig()
 {
     QDir dir;
      QString confname=dir.homePath()+"/"+".imagingtools/reslicer.xml" ;
-    if (dir.exists(confname)) {
-        m_reslicer.ParseXML(confname.toStdString());
+    if (dir.exists(confname))
+    {
+        try
+        {
+            m_reslicer.ParseXML(confname.toStdString());
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            QMessageBox::critical(this,
+                                  "Problems loading previous settings",
+                                  "Failed to load previous settings. Solution: Remove the file <home>/.imagingtools/reslicer.xml");
+        }
     }
 }
 

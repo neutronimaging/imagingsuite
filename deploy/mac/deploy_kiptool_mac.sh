@@ -1,7 +1,7 @@
 DIRECTORY=$WORKSPACE/deployed
 
 REPOSPATH=$WORKSPACE
-QTPATH=$QTBINPATH /..
+QTPATH=$QTBINPATH/..
 DEST="$DIRECTORY/KipTool.app"
 
 echo $DIRECTORY
@@ -38,7 +38,7 @@ fi
 `$CPCMD $REPOSPATH/lib/libPCAModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libImagingModules.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libImagingModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib//libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
@@ -53,7 +53,7 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/FrameWorks`
-ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
+
 
 rm -f ./MacOS/*.dylib
 
@@ -69,6 +69,7 @@ for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.0.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 done
+ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
 cd ..
 
 if [ ! -d "./Resources" ]; then
@@ -104,6 +105,7 @@ sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
 
 cd $QTBINPATH
 echo "Do deploy ..."
+pwd
 ./macdeployqt $DEST
 
 cd $DEST/Contents/MacOS
@@ -259,7 +261,6 @@ install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/lib
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 install_name_tool -change libAdvancedFilterModules.1.dylib @executable_path/../Frameworks/libAdvancedFilterModules.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 
-
 if [ ! -d "/tmp/kiptool" ]; then
   mkdir /tmp/kiptool
 fi
@@ -269,4 +270,4 @@ cp -r $DEST /tmp/kiptool
 
 hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_`date +%Y%m%d`.dmg
 
-rm -r /tmp/kiptool
+
