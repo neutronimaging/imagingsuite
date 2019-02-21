@@ -52,7 +52,8 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_cpp.11.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
-
+`$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/FrameWorks`
+ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
 
 rm -f ./MacOS/*.dylib
 
@@ -262,7 +263,7 @@ install_name_tool -change libAdvancedFilterModules.1.dylib @executable_path/../F
 if [ ! -d "/tmp/kiptool" ]; then
   mkdir /tmp/kiptool
 fi
-mkdir 
+
 ln -s /Applications /tmp/kiptool/Applications
 cp -r $DEST /tmp/kiptool
 
