@@ -26,7 +26,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-#        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
 #        INCLUDEPATH += $$PWD/../../../gui/qt/QtAddons # due to strange ordering during ui build...
         INCLUDEPATH += /opt/local/include
