@@ -226,11 +226,11 @@ int FileSet::ParseXML(xmlTextReaderPtr reader)
 
 }
 
-std::string FileSet::makeFileName(int idx)
+std::string FileSet::makeFileName(int idx) const
 {
     std::string name;
     std::string ext;
-    //TODO Add index bound check
+
     kipl::strings::filenames::MakeFileName(m_sFilemask,idx, name, ext,'#');
 
     return name;

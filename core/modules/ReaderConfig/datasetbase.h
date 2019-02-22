@@ -29,7 +29,7 @@ public:
     std::string WriteXML(int indent=4);
     int ParseXML(std::string xml);
     int ParseXML(xmlTextReaderPtr reader);
-    std::string makeFileName(int idx);
+    std::string makeFileName(int idx) const ;
 
     std::string m_sFilemask;
     std::string m_sVariableName;

@@ -216,25 +216,25 @@ void ReslicerDialog::on_pushButton_preview_clicked()
 void ReslicerDialog::on_spinBox_firstXZ_valueChanged(int arg1)
 {
     m_currentROI.setLeft(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::on_spinBox_lastXZ_valueChanged(int arg1)
 {
     m_currentROI.setRight(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::on_spinBox_firstYZ_valueChanged(int arg1)
 {
     m_currentROI.setTop(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::on_spinBox_lastYZ_valueChanged(int arg1)
 {
     m_currentROI.setBottom(arg1);
-    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
+//    ui->viewer_slice->set_rectangle(m_currentROI,QColor("red"),0);
 }
 
 void ReslicerDialog::SaveConfig()
@@ -263,8 +263,36 @@ void ReslicerDialog::LoadConfig()
 {
     QDir dir;
      QString confname=dir.homePath()+"/"+".imagingtools/reslicer.xml" ;
-    if (dir.exists(confname)) {
-        m_reslicer.ParseXML(confname.toStdString());
+    if (dir.exists(confname))
+    {
+        try
+        {
+            m_reslicer.ParseXML(confname.toStdString());
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            QMessageBox::critical(this,
+                                  "Problems loading previous settings",
+                                  "Failed to load previous settings. Solution: Remove the file <home>/.imagingtools/reslicer.xml");
+        }
     }
 }
 
+
+void ReslicerDialog::on_widget_inputFiles_fileMaskChanged(const FileSet &fs)
+{
+    std::string fname=fs.makeFileName(fs.m_nFirst);
+
+    size_t dims[3];
+    kipl::io::GetTIFFDims(fname.c_str(),dims);
+
+    ui->spinBox_lastXZ->setRange(0,static_cast<int>(dims[0]-1UL));
+    ui->spinBox_firstXZ->setRange(0,static_cast<int>(dims[0]-1UL));
+    ui->spinBox_lastXZ->setValue(static_cast<int>(dims[0]-1UL));
+    ui->spinBox_firstXZ->setValue(0);
+
+    ui->spinBox_lastYZ->setRange(0,static_cast<int>(dims[1]-1UL));
+    ui->spinBox_firstYZ->setRange(0,static_cast<int>(dims[1]-1UL));
+    ui->spinBox_lastYZ->setValue(static_cast<int>(dims[1]-1UL));
+    ui->spinBox_firstYZ->setValue(0);
+}

@@ -40,8 +40,22 @@ public:
 private slots:
     void on_button_browse_clicked();
 
+    void on_spinBox_first_valueChanged(int arg1);
+
+    void on_spinBox_step_valueChanged(int arg1);
+
+    void on_spinBox_last_valueChanged(int arg1);
+
+    void on_spinBox_repeat_valueChanged(int arg1);
+
+    void on_spinBox_stride_valueChanged(int arg1);
+
 private:
     Ui::ReaderForm *ui;
+
+signals:
+    void fileMaskChanged(const FileSet &fs);
+    void fileIntervalChanged(const FileSet &fs);
 };
 
 #endif // READERFORM_H

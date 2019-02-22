@@ -36,7 +36,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-#        QMAKE_MAC_SDK = macosx10.14
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
