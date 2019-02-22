@@ -44,7 +44,9 @@ protected:
 	int GetHeader(std::string fname);
 	int CreateHeaders(std::string mask, size_t nFirst, size_t nLast, size_t width, size_t height);
     int WriteLine(TIFF *img, size_t line, size_t bytesPerLine, char * pLineBuffer);
-	int CloseImages();
+    /// \brief Closes the open destination image files
+    /// \param N number of open files
+    int CloseImages(int N);
 	int LoadBuffer(std::string fname);
 
 	kipl::base::ImageInfo m_SrcInfo;

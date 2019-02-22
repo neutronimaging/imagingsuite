@@ -318,7 +318,7 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
 
 				}
 			}
-			CloseImages();
+            CloseImages(m_nMaxBlock);
 		}
 	}
 	catch (kipl::base::KiplException & e)
@@ -357,7 +357,7 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
                 kipl::strings::filenames::MakeFileName(sSrcMask,nFileIndex,fname,ext,'#','0');
                 LoadBuffer(fname);
 
-                for (size_t nSliceIndex=0; nSliceIndex<=nBlockRest; nSliceIndex++) {
+                for (size_t nSliceIndex=0; nSliceIndex<nBlockRest; nSliceIndex++) {
                     int idx=nSliceIndex+nFirstSlice;
                     if (plane == kipl::base::ImagePlaneXZ )
                         WriteLine(m_DstImages[nSliceIndex],nFileIndex-nFirst,m_nBytesPerWriteLine,buffer+idx*m_nBytesPerReadLine);
@@ -370,7 +370,7 @@ int TIFFReslicer::process(std::string sSrcMask, int nFirst, int nLast, std::stri
                     }
                 }
             }
-            CloseImages();
+            CloseImages(nBlockRest);
         }
     }
     catch (kipl::base::KiplException & e)
@@ -642,10 +642,10 @@ int TIFFReslicer::WriteLine(TIFF *img, size_t line, size_t bytesPerLine, char * 
 	return 0;
 }
 
-int TIFFReslicer::CloseImages()
+int TIFFReslicer::CloseImages(int N)
 {
 	size_t i;
-	for (i=0; i<m_nMaxBlock; i++) {
+    for (i=0; i<N; i++) {
         if (m_DstImages[i]!=nullptr) {
 			TIFFClose(m_DstImages[i]);
             m_DstImages[i]=nullptr;

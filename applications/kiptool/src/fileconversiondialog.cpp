@@ -232,7 +232,9 @@ int FileConversionDialog::ConvertImages()
     size_t roi[4]={0,0,1,1};
     size_t *crop=nullptr;
     if (ui->widgetROI->isChecked() == true) {
+        logger.message("using ROI");
         ui->widgetROI->getROI(roi);
+        crop = roi;
     }
 
     const bool bCollate = ui->groupBox_combineImages->isChecked();
@@ -240,7 +242,8 @@ int FileConversionDialog::ConvertImages()
 
     size_t dims[3];
 
-    if (crop) {
+    if (crop)
+    {
         dims[0]=crop[2]-crop[0];
         dims[1]=crop[3]-crop[1];
     }
@@ -273,25 +276,29 @@ int FileConversionDialog::ConvertImages()
             }
             filecnt+=nCollate;
         }
-        catch (kipl::base::KiplException &e) {
+        catch (kipl::base::KiplException &e)
+        {
             errmsg.str("");
             msg<<"Failed to read "<<*it;
             dlg.setText(QString::fromStdString(msg.str()));
             dlg.setDetailedText(QString::fromStdString(e.what()));
         }
-        catch (std::exception &e) {
+        catch (std::exception &e)
+        {
             errmsg.str("");
             msg<<"Failed to read "<<*it;
             dlg.setText(QString::fromStdString(msg.str()));
             dlg.setDetailedText(QString::fromStdString(e.what()));
         }
-        catch (...) {
+        catch (...)
+        {
             errmsg.str("");
             msg<<"Failed to read "<<*it;
             dlg.setText(QString::fromStdString(msg.str()));
             dlg.setDetailedText("Unhandled exception");
         }
-        if (errmsg.str().empty()==false) {
+        if (errmsg.str().empty()==false)
+        {
             dlg.exec();
             return -1;
         }
@@ -301,38 +308,45 @@ int FileConversionDialog::ConvertImages()
         msg<<"Writing "<<destname;
         logger(logger.LogMessage,msg.str());
         errmsg.str("");
-        try {
+        try
+        {
             imgwriter.write(img,destname);
         }
-        catch (ReaderException &e) {
+        catch (ReaderException &e)
+        {
             errmsg.str("");
             errmsg<<"Failed to write "<<destname;
             dlg.setText(QString::fromStdString(errmsg.str()));
             dlg.setDetailedText(QString::fromStdString(e.what()));
             logger(logger.LogError,errmsg.str());
         }
-        catch (kipl::base::KiplException &e) {
+        catch (kipl::base::KiplException &e)
+        {
             errmsg.str("");
             errmsg<<"Failed to write "<<destname;
             dlg.setText(QString::fromStdString(errmsg.str()));
             dlg.setDetailedText(QString::fromStdString(e.what()));
             logger(logger.LogError,errmsg.str());
         }
-        catch (std::exception &e) {
+        catch (std::exception &e)
+        {
             errmsg.str("");
             errmsg<<"Failed to write "<<destname;
             dlg.setText(QString::fromStdString(errmsg.str()));
             dlg.setDetailedText(QString::fromStdString(e.what()));
             logger(logger.LogError,errmsg.str());
         }
-        catch (...) {
+        catch (...)
+        {
             errmsg.str("");
             errmsg<<"Failed to write "<<destname;
             dlg.setText(QString::fromStdString(errmsg.str()));
             dlg.setDetailedText("Unhandled exception");
             logger(logger.LogError,errmsg.str());
         }
-        if (errmsg.str().empty()==false) {
+
+        if (errmsg.str().empty()==false)
+        {
             dlg.exec();
             return -1;
         }
@@ -348,7 +362,8 @@ int FileConversionDialog::Progress()
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
 
   //  while (filecnt<ui->progressBar->maximum() && !proc_thread.isFinished()){
-      while (filecnt<ui->progressBar->maximum()){
+    while (filecnt<ui->progressBar->maximum())
+    {
         ui->progressBar->setValue(filecnt);
 
         QThread::msleep(50);
@@ -414,6 +429,7 @@ void FileConversionDialog::on_ImageLoaderConfig_readerListModified()
     kipl::base::TImage<float,2> img;
     if (ll.empty()==true) {
         logger(logger.LogWarning,"Empty image loader.");
+
         ui->widgetROI->setSelectionImage(img);
         return;
     }
