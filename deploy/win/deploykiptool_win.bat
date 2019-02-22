@@ -64,7 +64,7 @@ copy Qt5Charts.dll %DEST%
 popd
 
 if exist "C:\Program Files\7-Zip\7z.exe" (
-    "C:\Program Files\7-Zip\7z.exe" a %DEST%\..\kiptool_build-%date:~-4,4%%date:~-7,2%%date:~-10,2%.zip %DEST%
+    "C:\Program Files\7-Zip\7z.exe" a %DEST%\..\kiptool_build-%date:~-4,4%%date:~-10,2%%date:~-7,2%.zip %DEST%
 ) else (
     echo 7zip doesn't exist
 )
