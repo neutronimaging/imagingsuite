@@ -52,7 +52,7 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_cpp.11.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
-`$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/FrameWorks`
+#`$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/FrameWorks`
 
 
 rm -f ./MacOS/*.dylib
@@ -69,7 +69,7 @@ for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.0.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 done
-ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
+# ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
 cd ..
 
 if [ ! -d "./Resources" ]; then
