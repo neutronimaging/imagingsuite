@@ -11,7 +11,7 @@
 #include <KiplProcessModuleBase.h>
 
 #include "imagingmodules.h"
-#include "translateprojectionmodule.h"
+//#include "translateprojectionmodule.h"
 #include "stripefiltermodule.h"
 #include "bblognorm.h"
 #include "morphspotcleanmodule.h"
@@ -76,8 +76,8 @@ int GetModuleList(const char *application, void *listptr)
 
     std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-    TranslateProjectionModule tpm;
-    modulelist->operator []("TranslateProjections")=tpm.GetParameters();
+//    TranslateProjectionModule tpm;
+//    modulelist->operator []("TranslateProjections")=tpm.GetParameters();
 
     StripeFilterModule sfm;
     modulelist->operator []("StripeFilter")=sfm.GetParameters();

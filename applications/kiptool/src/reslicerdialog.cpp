@@ -85,9 +85,7 @@ void ReslicerDialog::UpdateDialog()
         msg<<"Reslicer cannot handle fits. Input filename: "<<m_reslicer.m_sSourceMask<<std::endl;
         logger(logger.LogError, msg.str());
 
-        QMessageBox dlg;
-        dlg.setText(QString::fromStdString(msg.str()));
-        dlg.exec();
+        QMessageBox::warning(this,"Wrong file type",QString::fromStdString(msg.str()));
 
         m_reslicer.m_sSourceMask="/data/slices_####.tif";
     }
@@ -135,6 +133,15 @@ void ReslicerDialog::on_pushButton_preview_clicked()
 
         std::string fname,ext;
         kipl::strings::filenames::MakeFileName(infiles.m_sFilemask,idx,fname,ext,'#','0');
+
+        QDir dir;
+
+        if (!dir.exists(QString::fromStdString(fname)))
+        {
+            QMessageBox::warning(this,"File not found",QString("The file ")+QString::fromStdString(fname)+" was not found");
+            return;
+        }
+
 
         if(ext==".fits")
         {
@@ -274,7 +281,20 @@ void ReslicerDialog::LoadConfig()
             QMessageBox::critical(this,
                                   "Problems loading previous settings",
                                   "Failed to load previous settings. Solution: Remove the file <home>/.imagingtools/reslicer.xml");
+
+            QDir dir;
+
+            m_reslicer.m_sDestinationPath=dir.homePath().toStdString();
+            m_reslicer.m_sDestinationMask="vertical_####.tif";
+            m_reslicer.m_sSourceMask=(dir.homePath()+"/slice_####.tif").toStdString();
         }
+    }
+    else {
+        QDir dir;
+
+        m_reslicer.m_sDestinationPath=dir.homePath().toStdString();
+        m_reslicer.m_sDestinationMask="vertical_####.tif";
+        m_reslicer.m_sSourceMask=(dir.homePath()+"/slice_####.tif").toStdString();
     }
 }
 
@@ -284,15 +304,20 @@ void ReslicerDialog::on_widget_inputFiles_fileMaskChanged(const FileSet &fs)
     std::string fname=fs.makeFileName(fs.m_nFirst);
 
     size_t dims[3];
-    kipl::io::GetTIFFDims(fname.c_str(),dims);
+    QDir dir;
 
-    ui->spinBox_lastXZ->setRange(0,static_cast<int>(dims[0]-1UL));
-    ui->spinBox_firstXZ->setRange(0,static_cast<int>(dims[0]-1UL));
-    ui->spinBox_lastXZ->setValue(static_cast<int>(dims[0]-1UL));
-    ui->spinBox_firstXZ->setValue(0);
+    if (dir.exists(QString::fromStdString(fname)) && kipl::strings::filenames::GetFileExtension(fname)==".tif")
+    {
+        kipl::io::GetTIFFDims(fname.c_str(),dims);
 
-    ui->spinBox_lastYZ->setRange(0,static_cast<int>(dims[1]-1UL));
-    ui->spinBox_firstYZ->setRange(0,static_cast<int>(dims[1]-1UL));
-    ui->spinBox_lastYZ->setValue(static_cast<int>(dims[1]-1UL));
-    ui->spinBox_firstYZ->setValue(0);
+        ui->spinBox_lastXZ->setRange(0,static_cast<int>(dims[0]-1UL));
+        ui->spinBox_firstXZ->setRange(0,static_cast<int>(dims[0]-1UL));
+        ui->spinBox_lastXZ->setValue(static_cast<int>(dims[0]-1UL));
+        ui->spinBox_firstXZ->setValue(0);
+
+        ui->spinBox_lastYZ->setRange(0,static_cast<int>(dims[1]-1UL));
+        ui->spinBox_firstYZ->setRange(0,static_cast<int>(dims[1]-1UL));
+        ui->spinBox_lastYZ->setValue(static_cast<int>(dims[1]-1UL));
+        ui->spinBox_firstYZ->setValue(0);
+    }
 }
