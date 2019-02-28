@@ -19,7 +19,7 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->spinExpNumProj,SIGNAL(valueChanged(int)),SLOT(ChangedNumberOfProjections(int)));
-
+    ui->plotProjectionDose->hideLegend();
 }
 
 FindSkipListDialog::~FindSkipListDialog()
@@ -99,12 +99,12 @@ void FindSkipListDialog::ChangedNumberOfProjections(int x)
 {
     std::ostringstream skipstr;
     int nSkipCnt=m_nMaxNumberProjections-x;
-    ui->plotProjectionDose->clearAllPlotCursors();
+    ui->plotProjectionDose->clearAllCursors();
     std::multimap<float,int>::iterator it=m_SortedDoses.begin();
     std::set<int> sortedSkip;
     for (int i=0; i<nSkipCnt; i++, it++) {
         sortedSkip.insert(it->second);
-        ui->plotProjectionDose->setPlotCursor(i,QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
+        ui->plotProjectionDose->setCursor(i,new QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
     }
     // Todo: Sort the list
    std::set<int>::iterator it2;
