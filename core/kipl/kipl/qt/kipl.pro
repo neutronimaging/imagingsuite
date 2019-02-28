@@ -338,7 +338,8 @@ HEADERS +=\
     ../include/math/normalizeimage.h \
     ../include/strings/xmlstrings.h \
     ../include/morphology/repairhole.h \
-    ../include/morphology/core/repairhole.hpp
+    ../include/morphology/core/repairhole.hpp \
+    ../include/algorithms/datavalidator.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

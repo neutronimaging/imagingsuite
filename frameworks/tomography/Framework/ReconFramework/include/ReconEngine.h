@@ -110,6 +110,7 @@ protected:
     int ProcessExistingProjections3D(size_t *roi);
     int BackProject3D(kipl::base::TImage<float,3> & projections, size_t *roi,std::map<std::string, std::string> parameters);
 	bool UpdateProgress(float val, std::string msg);
+    size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
 
 	bool TransferMatrix(size_t *dims);
