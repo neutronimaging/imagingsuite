@@ -149,6 +149,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->spinSlicesLast->setMinimum(roi[1]);
     ui->spinSlicesLast->setMaximum(roi[3]);
     ui->spinSlicesLast->setValue(lastSlice);
+    ui->plotHistogram->hideLegend();
     SlicesChanged(0);
 
 }
@@ -1063,7 +1064,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     float x[nBins];
                     size_t y[nBins];
                     m_pEngine->GetHistogram(x,y,nBins);
-                    ui->plotHistogram->setCurveData(0,x,y,nBins);
+                    ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
+
 
                     m_pEngine->GetMatrixDims(m_Config.MatrixInfo.nDims);
                     msg.str("");
@@ -2416,7 +2418,7 @@ void MuhRecMainWindow::on_dspinGrayLow_valueChanged(double low)
     double high=ui->dspinGrayHigh->value();
 
     ui->sliceViewer->set_levels(low,high);
-    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+  //  ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
 }
 
 void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
@@ -2425,7 +2427,7 @@ void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
     double low=ui->dspinGrayLow->value();
 
     ui->sliceViewer->set_levels(low,high);
-    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
+  //  ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 
 }
 
@@ -2438,8 +2440,8 @@ void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
     ui->dspinGrayLow->setValue(low);
     ui->dspinGrayHigh->setValue(high);
 
-    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
-    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
+  //  ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+   // ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 }
 
 void MuhRecMainWindow::on_pushButton_levels95p_clicked()
