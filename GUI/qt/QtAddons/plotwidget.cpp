@@ -4,6 +4,7 @@
 #include <limits>
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
 
 namespace QtAddons {
 
@@ -19,7 +20,7 @@ PlotWidget::PlotWidget(QWidget *parent) :
     ui->chart->setChart(chart);
     chart->layout()->setContentsMargins(4,4,4,4);
     ui->chart->chart()->setAcceptHoverEvents(true);
-
+    setupActions();
 }
 
 PlotWidget::~PlotWidget()
@@ -236,6 +237,69 @@ void PlotWidget::clearAllCursors()
         delete cursors.begin()->second;
         cursors.erase(cursors.begin());
     }
+}
+
+void PlotWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu(this);
+    menu.addAction(savePlotAct);
+    menu.addAction(copyAct);
+    menu.addAction(savePlotDataAct);
+    menu.exec(event->globalPos());
+}
+
+void PlotWidget::setupActions()
+{
+    copyAct = new QAction(tr("&Copy"), this);
+    copyAct->setShortcuts(QKeySequence::Copy);
+    copyAct->setStatusTip(tr("Copy the current selection's contents to the "
+                             "clipboard"));
+    connect(copyAct, &QAction::triggered, this, &PlotWidget::copy);
+
+    savePlotAct = new QAction(tr("&Save plot"), this);
+    savePlotAct->setShortcuts(QKeySequence::Cut);
+    savePlotAct->setStatusTip(tr("Cut the current selection's contents to the "
+                            "clipboard"));
+    connect(savePlotAct, &QAction::triggered, this, &PlotWidget::savePlot);
+
+    savePlotDataAct = new QAction(tr("Save plot &Data"), this);
+    savePlotDataAct->setShortcuts(QKeySequence::Paste);
+    savePlotDataAct->setStatusTip(tr("Paste the clipboard's contents into the current "
+                              "selection"));
+    connect(savePlotDataAct, &QAction::triggered, this, &PlotWidget::saveCurveData);
+}
+
+void PlotWidget::savePlot()
+{
+    qDebug() << "Save plot";
+
+    QString destname=QFileDialog::getSaveFileName(this,"Where should the plot be saved?",QDir::homePath()+"/plot.png");
+
+    if (!destname.isEmpty()) {
+        QPixmap p( ui->chart->size() );
+        QPainter painter(&p);
+        ui->chart->render( &painter);
+        p.save(destname,"PNG");
+    }
+}
+
+void PlotWidget::copy()
+{
+       qDebug() << "copy";
+
+       QClipboard *clipboard = QApplication::clipboard();
+
+       QPixmap p( ui->chart->size() );
+       QPainter painter(&p);
+       ui->chart->render( &painter);
+
+       clipboard->setPixmap(p);
+
+}
+
+void PlotWidget::saveCurveData()
+{
+        qDebug() << "Save curve data";
 }
 
 void PlotWidget::keepCallout()
