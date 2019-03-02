@@ -2418,7 +2418,15 @@ void MuhRecMainWindow::on_dspinGrayLow_valueChanged(double low)
     double high=ui->dspinGrayHigh->value();
 
     ui->sliceViewer->set_levels(low,high);
-  //  ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+
+    try {
+      ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical,"Lower limit"));
+    }
+    catch (...)
+    {
+        logger.warning("Failed to set cursors");
+    }
+
 }
 
 void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
@@ -2427,8 +2435,14 @@ void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
     double low=ui->dspinGrayLow->value();
 
     ui->sliceViewer->set_levels(low,high);
-  //  ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 
+    try {
+        ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical,"Upper limit"));
+    }
+    catch (...)
+    {
+        logger.warning("Failed to set cursors");
+    }
 }
 
 void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
