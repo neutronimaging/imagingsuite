@@ -43,8 +43,9 @@ public:
     void updateAxes();
 
     void setCursor(int id, PlotCursor *c);
-    void clearCursors(int id);
+    void clearCursor(int id);
     void clearAllCursors();
+    size_t cursorCount();
 
 //    void setPlotCursor(int id, PlotCursor c);
 //    void clearPlotCursor(int id);
@@ -54,10 +55,12 @@ private:
     void findMinMax();
     void keepCallout();
     void tooltip(QPointF point, bool state);
+    void updateCursors();
 
     Ui::PlotWidget *ui;
     std::map<int, QtCharts::QAbstractSeries *> seriesmap;
     std::map<int, PlotCursor *> cursors;
+    std::map<int, QtCharts::QLineSeries *> cursormap;
 
     int m_nPointsVisible;
     double minX=std::numeric_limits<double>::max();

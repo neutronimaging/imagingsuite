@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
+#include <base/KiplException.h>
+
 namespace QtAddons {
 
 PlotWidget::PlotWidget(QWidget *parent) :
@@ -97,7 +99,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
     }
 
     QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
-//    connect(line, &QLineSeries::clicked, this, &PlotWidget::keepCallout);
+
     connect(line, &QLineSeries::hovered, this, &PlotWidget::tooltip);
 
     if (line->points().size()<=m_nPointsVisible)
@@ -111,7 +113,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 
     ui->chart->chart()->createDefaultAxes();
     updateAxes();
-
+    updateCursors();
 }
 
 void PlotWidget::clearCurve(int id)
@@ -122,6 +124,7 @@ void PlotWidget::clearCurve(int id)
         ui->chart->chart()->removeSeries(it->second);
         seriesmap.erase(it);
     }
+    updateCursors();
 }
 
 void PlotWidget::clearAllCurves()
@@ -209,33 +212,60 @@ void PlotWidget::findMinMax()
 
 void PlotWidget::setCursor(int id, PlotCursor *c)
 {
+    if (ui->chart->chart()->series().empty())
+        throw kipl::base::KiplException("no plot series",__FILE__,__LINE__);
+
     auto it=cursors.find(id);
     if ( it != cursors.end())
     {
+        qDebug() << "updating cursor"<<id;
         *cursors[id]=*c;
         delete c;
     }
     else {
-        cursors[id]=c;
+        qDebug() << "adding new cursor" << id;
+     //   cursors[id]=c;
+        cursors.insert(std::make_pair(id,c));
     }
+    updateCursors();
+
 }
 
-void PlotWidget::clearCursors(int id)
+void PlotWidget::clearCursor(int id)
 {
     auto it=cursors.find(id);
     if ( it != cursors.end())
     {
+        qDebug() << "deleting cursor";
         delete it->second;
         cursors.erase(it);
+        auto it2=cursormap.find(it->first);
+        if (it2!=cursormap.end()) {
+            ui->chart->chart()->removeSeries(it2->second);
+            cursormap.erase(it2);
+        }
+
     }
 }
 
 void PlotWidget::clearAllCursors()
 {
+    qDebug() << "deleting all cursors";
     while (!cursors.empty()) {
         delete cursors.begin()->second;
+
+        auto it2=cursormap.find(cursors.begin()->first);
+        if (it2!=cursormap.end()) {
+            ui->chart->chart()->removeSeries(it2->second);
+            cursormap.erase(it2);
+        }
         cursors.erase(cursors.begin());
     }
+}
+
+size_t PlotWidget::cursorCount()
+{
+    return cursors.size();
 }
 
 void PlotWidget::keepCallout()
@@ -257,6 +287,66 @@ void PlotWidget::tooltip(QPointF point, bool state)
         m_tooltip->show();
     } else {
         m_tooltip->hide();
+    }
+}
+
+void PlotWidget::updateCursors()
+{
+    findMinMax();
+
+    for (auto c : cursors)
+    {
+        QtCharts::QLineSeries *line=nullptr;
+        auto it=cursormap.find(c.first);
+        if (it==cursormap.end())
+        {
+            line=new QtCharts::QLineSeries();
+            cursormap.insert(std::make_pair(c.first,line));
+
+
+
+            line->setPointsVisible(false);
+
+            if (c.second->m_Orientation == QtAddons::PlotCursor::Vertical)
+            {
+                line->append(c.second->m_fPosition,minY);
+                line->append(c.second->m_fPosition,maxY);
+            }
+            else
+            {
+                line->append(minX,c.second->m_fPosition);
+                line->append(maxX,c.second->m_fPosition);
+            }
+
+
+            ui->chart->chart()->addSeries(line);
+            ui->chart->chart()->legend()->markers(line)[0]->setVisible(false);
+        }
+        else
+        {
+            line=it->second;
+            line->clear();
+            if (c.second->m_Orientation == QtAddons::PlotCursor::Vertical)
+            {
+                line->append(c.second->m_fPosition,minY);
+                line->append(c.second->m_fPosition,maxY);
+            }
+            else
+            {
+                line->append(minX,c.second->m_fPosition);
+                line->append(maxX,c.second->m_fPosition);
+            }
+
+        }
+
+        QPen pen=line->pen();
+        pen.setColor(c.second->m_Color);
+        pen.setWidth(2.0);
+        line->setPen(pen);
+
+        line->setName(c.second->m_sLabel);
+        ui->chart->chart()->createDefaultAxes();
+
     }
 }
 }
