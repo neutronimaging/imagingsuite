@@ -1,10 +1,14 @@
 #include "plotwidget.h"
 #include "ui_plotwidget.h"
 
+#include <fstream>
 #include <limits>
+#include <algorithm>
 #include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
+
+#include <strings/filenames.h>
 
 namespace QtAddons {
 
@@ -78,6 +82,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
         line->replace(series->points());
         line->setName(series->name());
         if (deleteData == true)
+        {
             try
             {
                 delete series;
@@ -88,7 +93,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
                 msg=msg+QString::fromStdString(e.what());
                 QMessageBox::warning(this,"Exception",msg);
             }
-
+        }
     }
     else
     {
@@ -216,7 +221,8 @@ void PlotWidget::setCursor(int id, PlotCursor *c)
         *cursors[id]=*c;
         delete c;
     }
-    else {
+    else
+    {
         cursors[id]=c;
     }
 }
@@ -233,7 +239,8 @@ void PlotWidget::clearCursors(int id)
 
 void PlotWidget::clearAllCursors()
 {
-    while (!cursors.empty()) {
+    while (!cursors.empty())
+    {
         delete cursors.begin()->second;
         cursors.erase(cursors.begin());
     }
@@ -275,7 +282,8 @@ void PlotWidget::savePlot()
 
     QString destname=QFileDialog::getSaveFileName(this,"Where should the plot be saved?",QDir::homePath()+"/plot.png");
 
-    if (!destname.isEmpty()) {
+    if (!destname.isEmpty())
+    {
         QPixmap p( ui->chart->size() );
         QPainter painter(&p);
         ui->chart->render( &painter);
@@ -300,6 +308,45 @@ void PlotWidget::copy()
 void PlotWidget::saveCurveData()
 {
         qDebug() << "Save curve data";
+
+        QString destname=QFileDialog::getSaveFileName(this,"Where should the data series be saved?",QDir::homePath()+"/data.txt");
+
+        if (!destname.isEmpty()) {
+            std::string fname=destname.toStdString();
+            kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+            std::string path;
+            std::string name;
+            std::vector<std::string> ext;
+            kipl::strings::filenames::StripFileName(fname,path,name,ext);
+            name=path+name+"_";
+
+            if (!seriesmap.empty())
+            {
+                std::string dname;
+                int i=0;
+                for (auto s : seriesmap)
+                {
+                    QXYSeries *series = dynamic_cast<QXYSeries *>(s.second);
+                    std::string seriesname=series->name().toStdString();
+                    std::replace(seriesname.begin(),seriesname.end(),' ','_');
+                    if (seriesname.empty())
+                    {
+                        seriesname=std::to_string(i++);
+                    }
+                    dname=name+seriesname+".txt";
+                    qDebug() << "Saving"<< dname.c_str();
+                    std::ofstream datastream(dname.c_str());
+
+                    auto data = series->pointsVector();
+                    for (auto p : data)
+                    {
+                        datastream<<p.x()<<", "<<p.y()<<std::endl;
+                    }
+                }
+            }
+        }
+
 }
 
 void PlotWidget::keepCallout()
@@ -313,13 +360,16 @@ void PlotWidget::tooltip(QPointF point, bool state)
     if (m_tooltip == nullptr)
         m_tooltip = new Callout(ui->chart->chart());
 
-    if (state) {
+    if (state)
+    {
         m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
         m_tooltip->setAnchor(point);
         m_tooltip->setZValue(11);
         m_tooltip->updateGeometry();
         m_tooltip->show();
-    } else {
+    }
+    else
+    {
         m_tooltip->hide();
     }
 }
