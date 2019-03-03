@@ -1065,6 +1065,14 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     size_t y[nBins];
                     m_pEngine->GetHistogram(x,y,nBins);
                     ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
+                    try {
+                        ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(ui->dspinGrayLow->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
+                        ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(ui->dspinGrayHigh->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Upper limit"));
+                    }
+                    catch (...)
+                    {
+                        logger.warning("Failed to set cursors");
+                    }
 
 
                     m_pEngine->GetMatrixDims(m_Config.MatrixInfo.nDims);
@@ -2420,7 +2428,7 @@ void MuhRecMainWindow::on_dspinGrayLow_valueChanged(double low)
     ui->sliceViewer->set_levels(low,high);
 
     try {
-      ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical,"Lower limit"));
+      ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
     }
     catch (...)
     {
@@ -2437,7 +2445,7 @@ void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
     ui->sliceViewer->set_levels(low,high);
 
     try {
-        ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical,"Upper limit"));
+        ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("red"),QtAddons::PlotCursor::Vertical,"Upper limit"));
     }
     catch (...)
     {
