@@ -6,6 +6,7 @@
 #include <map>
 #include <QWidget>
 #include <QLineSeries>
+#include <QAction>
 
 #include "callout.h"
 #include "plotcursor.h"
@@ -50,6 +51,14 @@ public:
 //    void setPlotCursor(int id, PlotCursor c);
 //    void clearPlotCursor(int id);
 //    void clearAllPlotCursors();
+protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void setupActions();
+
+private slots:
+    void savePlot();
+    void copy();
+    void saveCurveData();
 
 private:
     void findMinMax();
@@ -67,6 +76,10 @@ private:
     double maxX=-std::numeric_limits<double>::max();
     double minY=std::numeric_limits<double>::max();
     double maxY=-std::numeric_limits<double>::max();
+
+    QAction *savePlotAct;
+    QAction *copyAct;
+    QAction *savePlotDataAct;
 
     QList<Callout *> m_callouts;
     Callout *m_tooltip;
