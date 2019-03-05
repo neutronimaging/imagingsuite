@@ -8,6 +8,7 @@
 #include <base/timage.h>
 #include <strings/miscstring.h>
 #include <base/textractor.h>
+#include <algorithms/datavalidator.h>
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
@@ -925,7 +926,8 @@ int ReconEngine::Run3DFull()
                 <<m_Config.ProjectionInfo.roi[2]<<", "
                 <<m_Config.ProjectionInfo.roi[3]<<"]";
             logger.message(msg.str());
-            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone) {
+            if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
+            {
                 if (m_Interactor!=nullptr)
                     m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
 
@@ -998,7 +1000,8 @@ int ReconEngine::Run3DFull()
                 m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
 
             }
-            else {
+            else
+            {
                     if (m_Interactor!=nullptr)
                         m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
                     nProcessedProjections=0;
@@ -1220,8 +1223,10 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 
 	msg.str("");
 
-	try {
+    try
+    {
 		projections=m_ProjectionReader.Read(m_Config,roi,parameters);
+        validateImage(projections.GetDataPtr(), projections.Size(),"post read RunPreproc");
 	}
 	catch (ReconException &e) {
 		msg<<"Reading projections failed with a recon exception: "<<e.what();
@@ -1237,8 +1242,10 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	}
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
-	try {
-		for (it_Module=m_PreprocList.begin(); (it_Module!=m_PreprocList.end()) && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++) {
+    try
+    {
+        for (it_Module=m_PreprocList.begin(); (it_Module!=m_PreprocList.end()) && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++)
+        {
 			msg.str("");
 			msg<<"Processing: "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1246,17 +1253,22 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 				(*it_Module)->GetModule()->Process(projections,parameters);
 			else
 				break;
+
+            validateImage(projections.GetDataPtr(), projections.Size(),(*it_Module)->GetModule()->ModuleName());
 		}
 	}
-	catch (ReconException &e) {
+    catch (ReconException &e)
+    {
 		msg<<"Preprocessing failed with a recon exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
 		msg<<"Preprocessing failed with a kipl exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (std::exception &e) {
+    catch (std::exception &e)
+    {
 		msg<<"Preprocessing failed with an STL exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
@@ -1274,12 +1286,12 @@ int ReconEngine::Process3D(size_t *roi)
 	logger(kipl::logging::Logger::LogMessage,msg.str());
     size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
 
-    if (m_Config.ProjectionInfo.beamgeometry!=m_Config.ProjectionInfo.BeamGeometry_Cone) {
+    if (m_Config.ProjectionInfo.beamgeometry!=m_Config.ProjectionInfo.BeamGeometry_Cone)
+    {
         if (m_ProjectionMargin<=roi[1])
             extroi[1]-=m_ProjectionMargin;
 
         extroi[3]  = m_ProjectionMargin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? m_ProjectionMargin+extroi[3] : extroi[3];
-    //extroi[3]+=m_ProjectionMargin;
     }
 
     msg.str("");
@@ -1287,7 +1299,8 @@ int ReconEngine::Process3D(size_t *roi)
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
 	// Initialize the plug-ins with the current ROI
-	try {
+    try
+    {
 		msg.str("");
         msg<<": Number of pre proc modules:"<<m_PreprocList.size();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1296,36 +1309,42 @@ int ReconEngine::Process3D(size_t *roi)
 		{
 			msg.str("");
             msg<<": Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
+
 			logger(kipl::logging::Logger::LogMessage,msg.str());
             (*it_Module)->GetModule()->SetROI(extroi);
 			logger(kipl::logging::Logger::LogMessage,"ROI set");
 		}
 	}
-	catch (ReconException &e) {
+    catch (ReconException &e)
+    {
 		msg.str("");
 		msg<<"SetROI failed with a ReconException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
 		logger(kipl::logging::Logger::LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
 			msg.str("");
 			msg<<"SetROI failed with a ModuleException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
 			logger(kipl::logging::Logger::LogError,msg.str());
 			throw ReconException(msg.str(),__FILE__,__LINE__);
-		}
-	catch (kipl::base::KiplException &e) {
+    }
+    catch (kipl::base::KiplException &e)
+    {
 		msg.str("");
 		msg<<"SetROI failed with a KiplException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
 		logger(kipl::logging::Logger::LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (std::exception &e) {
+    catch (std::exception &e)
+    {
 		msg.str("");
 		msg<<"SetROI failed with an STL-exception for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
 		logger(kipl::logging::Logger::LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (...) {
+    catch (...)
+    {
 		msg.str("");
 		msg<<"SetROI failed with an unknown exception for "<<(*it_Module)->GetModule()->ModuleName();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
@@ -1333,7 +1352,8 @@ int ReconEngine::Process3D(size_t *roi)
 
     try {
         // add switch on beam geometry
-        switch (m_Config.ProjectionInfo.beamgeometry) {
+        switch (m_Config.ProjectionInfo.beamgeometry)
+        {
             case ReconConfig::cProjections::BeamGeometry_Parallel:
                 m_BackProjector->GetModule()->SetROI(roi);
                 break;
@@ -1403,22 +1423,28 @@ int ReconEngine::Process3D(size_t *roi)
 	msg.str("");
 
 
-	try {
+    try
+    {
         ext_projections=m_ProjectionReader.Read(m_Config,extroi,parameters);
+        validateImage(ext_projections.GetDataPtr(),ext_projections.Size(),"post reader");
 	}
-	catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         msg<<"Reading projections failed with a recon exception: "<<std::endl<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg<<"Reading projections failed with a kipl exception: "<<std::endl<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         msg<<"Reading projections failed with a STL exception: "<<std::endl<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-    catch (...) {
+    catch (...)
+    {
         msg<<"Reading projections failed with an unsupported exception: ";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1428,8 +1454,11 @@ int ReconEngine::Process3D(size_t *roi)
     logger(logger.LogMessage,msg.str());
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
-	try {
-		for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); it_Module++) {
+
+    try
+    {
+        for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); it_Module++)
+        {
 			msg.str("");
 			msg<<"Processing: "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1437,21 +1466,26 @@ int ReconEngine::Process3D(size_t *roi)
                 (*it_Module)->GetModule()->Process(ext_projections,parameters);
 			else
 				break;
+            validateImage(ext_projections.GetDataPtr(),ext_projections.Size(),(*it_Module)->GetModule()->ModuleName());
 		}
 	}
-	catch (ReconException &e) {
+    catch (ReconException &e)
+    {
 		msg<<"Preprocessing failed with a recon exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
 		msg<<"Preprocessing failed with a kipl exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-	catch (std::exception &e) {
+    catch (std::exception &e)
+    {
 		msg<<"Preprocessing failed with an STL exception: "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
-    catch (...) {
+    catch (...)
+    {
         msg<<"Preprocessing failed with an unsupported exception: ";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1459,7 +1493,8 @@ int ReconEngine::Process3D(size_t *roi)
     kipl::base::TImage<float,3> projections;
     size_t dims[3];
 
-    if (m_ProjectionMargin!=0) { // Remove padding
+    if (m_ProjectionMargin!=0)
+    { // Remove padding
         dims[0]=ext_projections.Size(0);
         dims[1]=ext_projections.Size(1)-(roi[1]!=extroi[1] ? m_ProjectionMargin : 0) - (roi[3]!=extroi[3] ? m_ProjectionMargin : 0);
         dims[2]=ext_projections.Size(2);
@@ -1470,35 +1505,39 @@ int ReconEngine::Process3D(size_t *roi)
         logger(logger.LogMessage,msg.str());
         for (size_t i=0; i<projections.Size(2); i++)
             memcpy(projections.GetLinePtr(0,i),ext_projections.GetLinePtr((roi[1]!=extroi[1] ? m_ProjectionMargin : 0),i), projections.Size(0) * projections.Size(1) * sizeof(float));
-    } else {
+    }
+    else
+    {
         projections=ext_projections;
     }
 
     if (m_Config.MatrixInfo.bAutomaticSerialize==false) // Don't store the projections for the reconstruction to disk case
     {
 //        m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
-    switch (m_Config.ProjectionInfo.beamgeometry) {
-        case ReconConfig::cProjections::BeamGeometry_Parallel:
-            m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
-            break;
-        case ReconConfig::cProjections::BeamGeometry_Cone:
-            m_ProjectionBlocks.push_back(ProjectionBlock(projections,CBroi,parameters));
-            break;
-        case ReconConfig::cProjections::BeamGeometry_Helix:
-            logger(logger.LogError,"Helix is not supported by the engine.");
-            throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
-            break;
-        default:
-            logger(logger.LogError,"Unsupported geometry type.");
-            throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
-            break;
-    }
+        switch (m_Config.ProjectionInfo.beamgeometry)
+        {
+            case ReconConfig::cProjections::BeamGeometry_Parallel:
+                m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
+                break;
+            case ReconConfig::cProjections::BeamGeometry_Cone:
+                m_ProjectionBlocks.push_back(ProjectionBlock(projections,CBroi,parameters));
+                break;
+            case ReconConfig::cProjections::BeamGeometry_Helix:
+                logger(logger.LogError,"Helix is not supported by the engine.");
+                throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
+                break;
+            default:
+                logger(logger.LogError,"Unsupported geometry type.");
+                throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
+                break;
+        }
     }
 
     int res=0;
 
     try {
-        switch (m_Config.ProjectionInfo.beamgeometry) {
+        switch (m_Config.ProjectionInfo.beamgeometry)
+        {
             case ReconConfig::cProjections::BeamGeometry_Parallel:
                 BackProject3D(projections,roi,parameters);
                 break;
@@ -1542,7 +1581,8 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
     int i=0;
     int res=0;
 
-    try {
+    try
+    {
         for (it=m_ProjectionBlocks.begin(); it!=m_ProjectionBlocks.end(); ++it, ++i)
         {
             msg.str("");
@@ -1552,20 +1592,25 @@ int ReconEngine::ProcessExistingProjections3D(size_t *roi)
             m_Interactor->SetOverallProgress(float(i)/float(m_ProjectionBlocks.size()));
 
             res=BackProject3D(it->projections,it->roi,it->parameters);
+            validateImage(it->projections.GetDataPtr(),it->projections.Size(),"Projections post recon block ProcessExistingProjections3D");
         }
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         msg<<"BackProjection of preprocessed block "<<i<<" failed with a recon exception: "<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg<<"BackProjection of preprocessed block "<<i<<" failed with a kipl exception: "<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         msg<<"BackProjection of preprocessed block "<<i<<" failed with an STL exception: "<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
+
 
     return res;
 }
@@ -1598,6 +1643,8 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
         }
     }
 
+    validateImage(projections.GetDataPtr(),projections.Size(),"Projections post recon BackProject3D");
+
     if (UpdateProgress(1.0f, "Finalizing")) {
         logger(kipl::logging::Logger::LogMessage,"Reconstruction was canceled by the user.");
         return 1;
@@ -1622,7 +1669,25 @@ bool ReconEngine::UpdateProgress(float val, std::string msg)
     if (m_Interactor!=nullptr)
 		return m_Interactor->SetProgress(val, msg);
 
-	return false;
+    return false;
+}
+
+size_t ReconEngine::validateImage(float *data, size_t N, const string &description)
+{
+    if (m_Config.System.bValidateData)
+    {
+        std::ostringstream msg;
+        size_t cntInf=0;
+        size_t cntNan=0;
+        size_t cnt=0;
+
+        cnt=kipl::algorithms::dataValidator(data,N,cntNan,cntInf);
+        if (cnt!=0)
+        {
+            msg.str(""); msg<<"Encountered "<<cntInf<<" infs and "<<cntNan<<" NaNs in "<<description;
+            logger.warning(msg.str());
+        }
+    }
 }
 
 void ReconEngine::Done()

@@ -2337,7 +2337,7 @@
      <string>Options</string>
     </property>
     <addaction name="actionRemove_CurrentRecon_xml"/>
-    <addaction name="actionSettings"/>
+    <addaction name="actionGlobal_settings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReconstruct"/>
@@ -2449,7 +2449,7 @@
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>Global Settings</string>
    </property>
   </action>
   <action name="actionReport_a_bug">
@@ -2475,6 +2475,11 @@
   <action name="actionShow_repository">
    <property name="text">
     <string>Show repository</string>
+   </property>
+  </action>
+  <action name="actionGlobal_settings">
+   <property name="text">
+    <string>Global settings</string>
    </property>
   </action>
  </widget>
