@@ -194,7 +194,7 @@ private slots:
 
     void on_actionShow_repository_triggered();
 
-    void on_actionSettings_triggered();
+    void on_actionGlobal_settings_triggered();
 
 private:
     // Data members

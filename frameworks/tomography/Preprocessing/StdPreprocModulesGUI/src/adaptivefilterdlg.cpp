@@ -28,7 +28,8 @@ AdaptiveFilterDlg::AdaptiveFilterDlg(QWidget *parent) :
 {
     try {
         ui->setupUi(this);
-//        std::cout << "setup UI adaptive filter dlg" << std::endl;
+        ui->plotHistogram->hideLegend();
+
     }
     catch (ModuleException & e)
     {
@@ -126,7 +127,8 @@ void AdaptiveFilterDlg::ApplyParameters()
 //        weightprofile[i]=minprof+0.1*wscale+0.8*wscale*kipl::math::Sigmoid(static_cast<float>(i),m_fLambda,m_fSigma);
     }
 
-    ui->plotHistogram->setCurveData(0,sinoprofile,sinoangles,m_Sino.Size(1),Qt::blue);
+    ui->plotHistogram->setCurveData(0,sinoprofile,sinoangles,m_Sino.Size(1),"Sinogram profile");
+
 //    ui->plotHistogram->setCurveData(1,weightprofile,sinoangles,m_Sino.Size(1),Qt::red);
 
     AdaptiveFilter module;

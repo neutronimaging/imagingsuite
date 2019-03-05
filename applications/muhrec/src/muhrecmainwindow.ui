@@ -1724,7 +1724,14 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_17">
            <item>
-            <widget class="QtAddons::Plotter" name="plotHistogram" native="true"/>
+            <widget class="QtAddons::PlotWidget" name="plotHistogram" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>250</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
             <layout class="QHBoxLayout" name="layoutGraylevels">
@@ -2330,7 +2337,7 @@
      <string>Options</string>
     </property>
     <addaction name="actionRemove_CurrentRecon_xml"/>
-    <addaction name="actionSettings"/>
+    <addaction name="actionGlobal_settings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReconstruct"/>
@@ -2442,7 +2449,7 @@
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>Global Settings</string>
    </property>
   </action>
   <action name="actionReport_a_bug">
@@ -2470,6 +2477,11 @@
     <string>Show repository</string>
    </property>
   </action>
+  <action name="actionGlobal_settings">
+   <property name="text">
+    <string>Global settings</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -2493,12 +2505,6 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ModuleChainConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">modulechainconfiguratorwidget.h</header>
@@ -2508,6 +2514,12 @@
    <class>SingleModuleConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">singlemoduleconfiguratorwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

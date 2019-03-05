@@ -184,7 +184,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QtAddons::Plotter" name="plotCurve" native="true"/>
+        <widget class="QtAddons::PlotWidget" name="plotCurve" native="true"/>
        </item>
       </layout>
      </item>
@@ -233,9 +233,9 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
+   <class>QtAddons::PlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
