@@ -68,12 +68,24 @@ void PolynomialCorrectionDlg::ApplyParameters()
 
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
     ui->viewerOriginal->set_image(origimg.GetDataPtr(),origimg.Dims(),axis[nLo],axis[nHi]);
-
     std::map<std::string, std::string> parameters;
     UpdateParameters();
     UpdateParameterList(parameters);
 
     corrector.Configure(*m_Config, parameters);
+
+    float poly[N];
+    float minAx=axis[nLo];
+    float maxAx=axis[nHi];
+
+    corrector.PlotPolynomial(axis,poly,N,minAx,maxAx);
+    ui->plotCurve->setCurveData(1,axis,poly,N,"Polynomial");
+
+    axis[0]=minAx;
+    axis[1]=maxAx;
+    poly[0]=minAx;
+    poly[1]=maxAx;
+    ui->plotCurve->setCurveData(0,axis,poly,2,"Base line");
 
     std::map<std::string,std::string> pars;
 
@@ -90,18 +102,12 @@ void PolynomialCorrectionDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
-    float maxintense=axis[nHi];
+
     ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
 
-    float poly[N];
-    corrector.PlotPolynomial(axis,poly,N,0.0f,maxintense);
 
-    ui->plotCurve->setCurveData(1,axis,poly,N,Qt::red);
-    axis[0]=0.0f;
-    axis[1]=maxintense;
-    poly[0]=0.0f;
-    poly[1]=maxintense;
-    ui->plotCurve->setCurveData(0,axis,poly,2,Qt::green);
+
+
 }
 
 void PolynomialCorrectionDlg::UpdateDialog()

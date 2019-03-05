@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>851</width>
-    <height>691</height>
+    <height>694</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,7 +70,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QtAddons::Plotter" name="plotHistogram" native="true">
+          <widget class="QtAddons::PlotWidget" name="plotHistogram" native="true">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -249,9 +249,9 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
+   <class>QtAddons::PlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -16,11 +16,12 @@ public:
 
     PlotCursor();
     PlotCursor(const PlotCursor & c);
-    PlotCursor(double pos, QColor color, Orientation o);
+    PlotCursor(double pos, QColor color, Orientation o,const QString &label="");
     const PlotCursor & operator=(const PlotCursor & c);
     double m_fPosition;
     QColor m_Color;
     Orientation m_Orientation;
+    QString m_sLabel;
 };
 
 }
