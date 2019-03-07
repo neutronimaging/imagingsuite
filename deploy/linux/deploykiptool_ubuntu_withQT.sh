@@ -2,9 +2,13 @@
 CPCMD="cp "
 REPOSPATH=$WORKSPACE
 QT_PATH=$QTPATH
-declare -i QtV=${QT_PATH:22:2}
+#declare -i QtV=${QT_PATH:end-11:end-8}
+QtV=${QT_PATH:end-11:end-7}
+QtVmain=${QT_PATH:end-11:end-9}
+
 
 echo $QtV
+echo $QtVmain
 echo $QT_PATH
 
 
@@ -46,14 +50,14 @@ rm -f *.so.1.0.0
 `$CPCMD $REPOSPATH/lib/libImagingModulesGUI.so.1.0.0 .`
 
 #qt stuff
-`$CPCMD $QT_PATH/lib/libQt5Core.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5Gui.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5Widgets.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5PrintSupport.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5XcbQpa.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.$QtV.1 .`
-`$CPCMD $QT_PATH/lib/libQt5Charts.so.5.$QtV.1 .`
+`$CPCMD $QT_PATH/lib/libQt5Core.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5Gui.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5Widgets.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5PrintSupport.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5XcbQpa.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.$QtV .`
+`$CPCMD $QT_PATH/lib/libQt5Charts.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libicui18n.so.56.1 .`
 `$CPCMD $QT_PATH/lib/libicudata.so.56.1 .`
 `$CPCMD $QT_PATH/lib/libicuuc.so.56.1 .`
@@ -71,13 +75,13 @@ for f in `ls *.so.1.0.0`; do
 	ln -s $bn.so.1 $bn.so
 done
 
-rm -f *.so.5.$QtV
+rm -f *.so.5.QtVmain
 rm -f *.so.5
-for f in `ls *.so.5.$QtV.1.0`; do
-	bn=`basename $f .so.5.$QtV.1.0`
+for f in `ls *.so.5.$QtV`; do
+	bn=`basename $f .so.5.$QtV`
 	echo $bn
-	ln -s $f $bn.so.5.$QtV.1
-        ln -s $bn.so.5.$QtV.1 $bn.so.5
+	ln -s $f $bn.so.5.$QtVmain
+        ln -s $bn.so.5.$QtVmain $bn.so.5
 	ln -s $bn.so.5 $bn.so
 done
 
