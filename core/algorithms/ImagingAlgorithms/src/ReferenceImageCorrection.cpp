@@ -21,6 +21,7 @@
 #include <strings/miscstring.h>
 #include <morphology/label.h>
 #include <morphology/repairhole.h>
+#include <morphology/morphextrema.h>
 
 
 #include "../include/ReferenceImageCorrection.h"
@@ -484,7 +485,13 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         }
     }
 
-//     kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
+  // add here: fillHoles
+
+    kipl::base::TImage<float,2> maskOtsuFilled;
+    maskOtsuFilled = FillHole(maskOtsu,kipl::morphology::conn4); // from morphextrema
+
+     kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
+     kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled.tif");
 
 
      float bg = 1.0f;
