@@ -84,8 +84,8 @@ SOURCES += ../../src/fdkbackproj.cpp  \
         ../../src/genericbp.cpp \
         ../../src/fdkreconbase.cpp \
         ../../src/fdkbp.cpp \
-        ../../src/fdkbp_single.cpp \
-        ../../src/fdk_cuda.cpp
+        ../../src/fdkbp_single.cpp
+#        ../../src/fdk_cuda.cpp
 #        ../../src/ramp_filter.cpp
 #        ../../src/fdk.cxx \
 #        ../../src/bowtie_correction.cxx \
@@ -100,18 +100,18 @@ SOURCES += ../../src/fdkbackproj.cpp  \
 #        ../../src/volume.cxx
 #understand what to include in a smart way
 
-CUDA_SOURCES += ../../src/fdk_cuda.cu \
-                ../../src/fdk_cuda_test.cu
+#CUDA_SOURCES += ../../src/fdk_cuda.cu \
+#                ../../src/fdk_cuda_test.cu
 
 HEADERS += ../../src/fdkbackproj.h \
 	../../src/fdkbackproj_global.h \
 	../../src/genericbp.h \
         ../../src/fdkreconbase.h \
          ../../src/fdkbp.h \
-        ../../src/fdkbp_single.h \
-        ../../src/fdk_cuda.h \
-        ../../src/cuda_util.h \
-        ../../src/fdk_cuda_p.h
+        ../../src/fdkbp_single.h
+#        ../../src/fdk_cuda.h \
+#        ../../src/cuda_util.h \
+#        ../../src/fdk_cuda_p.h
 #        ../../src/ramp_filter.h
 #        ../../src/fdk.h \
 #        ../../src/bowtie_correction.h \
