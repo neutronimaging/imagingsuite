@@ -485,22 +485,43 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         }
     }
 
-  // add here: fillHoles
+  // here: fillPeaks, as at this point the BBs are black in the binary mask
 
-    kipl::base::TImage<float,2> maskOtsuFilled;
-    maskOtsuFilled = FillHole(maskOtsu,kipl::morphology::conn4); // from morphextrema
+//    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
+    kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
+    maskOtsuFilled = FillPeaks(maskOtsu,kipl::morphology::conn4); // from morphextrema
 
-     kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
-     kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled.tif");
 
 
      float bg = 1.0f;
-     int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::morphology::conn4, bg);
+     int num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::morphology::conn4, bg);
      vector< pair< size_t, size_t > > area;
      kipl::morphology::LabelArea(labelImage, num_obj, area);
+
 //     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
 
-     if (num_obj==2 || area.at(1).first>=3*area.at(2).first)
+//     kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
+
+     // remove objetcs with size lower the minum size:
+     for (size_t i=0; i<area.size(); ++i)
+     {
+         if (area.at(i).first<=min_area){
+             int *pLbl=labelImage.GetDataPtr();
+             float *pOtsu = maskOtsuFilled.GetDataPtr();
+             for (size_t p=0; p<=maskOtsuFilled.Size(); ++p)
+             {
+                 if(pLbl[p]==i)
+                     pOtsu[p]=1.0f;
+             }
+
+         }
+     }
+
+//          kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled.tif");
+
+
+//     if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
+     if (area.at(1).first>=3*area.at(2).first)
      {
          throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
      }
@@ -513,20 +534,20 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 
 
-        float *vert_profile = new float[maskOtsu.Size(1)];
-        float *hor_profile = new float[maskOtsu.Size(0)];
+        float *vert_profile = new float[maskOtsuFilled.Size(1)];
+        float *hor_profile = new float[maskOtsuFilled.Size(0)];
 
 
-        kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
-        kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
+        kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), vert_profile, true); // sum of rows
+        kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), hor_profile, true); // sum of columns
 
 
         //3.b create binary Signal
-        float *bin_VP = new float[maskOtsu.Size(1)];
-        float *bin_HP = new float[maskOtsu.Size(0)];
+        float *bin_VP = new float[maskOtsuFilled.Size(1)];
+        float *bin_HP = new float[maskOtsuFilled.Size(0)];
 
-        for (size_t i=0; i<maskOtsu.Size(1); i++) {
-            float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
+        for (size_t i=0; i<maskOtsuFilled.Size(1); i++) {
+            float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
             if(vert_profile[i]<max) {
                 bin_VP[i] = 1;
             }
@@ -537,8 +558,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         }
 
 
-        for (size_t i=0; i<maskOtsu.Size(0); i++) {
-            float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
+        for (size_t i=0; i<maskOtsuFilled.Size(0); i++) {
+            float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
             if(hor_profile[i]<max) {
                 bin_HP[i] = 1;
             }
@@ -556,7 +577,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         int index_right = 0;
 
 
-         for (int i=0; i<maskOtsu.Size(1)-1; i++) {
+         for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) {
              float diff = bin_VP[i+1]-bin_VP[i];
              if (diff>=1) {
                  pos_left[index_left] = i;
@@ -577,7 +598,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          int index_right_2 = 0;
 
 
-          for (int i=0; i<maskOtsu.Size(0)-1; i++) {
+          for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) {
               float diff = bin_HP[i+1]-bin_HP[i];
               if (diff>=1) {
                   pos_left_2[index_left_2] = i;
@@ -623,7 +644,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 
               for (int i=0; i<roi_dim[1]; i++) {
-                    memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                    memcpy(roi.GetLinePtr(i),maskOtsuFilled.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
                     memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
               }
 
@@ -664,7 +685,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
               // draw the circle with user-defined radius
 
-              // check on BB dimensions:
+              // check on BB dimensions: this is now done at the beginning to avoid crash
               if (size>=min_area) {
 
 
