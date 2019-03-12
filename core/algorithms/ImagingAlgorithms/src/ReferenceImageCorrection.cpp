@@ -520,8 +520,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 //          kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled.tif");
 
 
-//     if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
-     if (area.at(1).first>=3*area.at(2).first)
+     if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
+//     if (area.at(1).first>=3*area.at(2).first)
      {
          throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
      }
@@ -854,34 +854,34 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           float y_com = 0.0f;
           int size = 0;
 
-          // old implementation with geometrical mean:
-          for (size_t y=0; y<roi.Size(1); y++) {
-            for (size_t x=0; x<roi.Size(0); x++) {
-                  if(roi(x,y)==0) {
-                      x_com +=x;
-                      y_com +=y;
-                      size++;
-                  }
-
-              }
-          }
-          x_com /=static_cast<float>(size);
-          y_com /=static_cast<float>(size);
-
-//          float sum_roi = 0.0f;
-
-//          // weighted center of mass:
-//          for (size_t x=0; x<roi.Size(0); x++) {
-//              for (size_t y=0; y<roi.Size(1); y++) {
+//          // old implementation with geometrical mean:
+//          for (size_t y=0; y<roi.Size(1); y++) {
+//            for (size_t x=0; x<roi.Size(0); x++) {
 //                  if(roi(x,y)==0) {
-//                      x_com += (roi_im(x,y)*float(x));
-//                      y_com += (roi_im(x,y)*float(y));
-//                      sum_roi += roi_im(x,y);
+//                      x_com +=x;
+//                      y_com +=y;
 //                      size++;
 //                  }
 
 //              }
 //          }
+//          x_com /=static_cast<float>(size);
+//          y_com /=static_cast<float>(size);
+
+          float sum_roi = 0.0f;
+
+          // weighted center of mass:
+          for (size_t x=0; x<roi.Size(0); x++) {
+              for (size_t y=0; y<roi.Size(1); y++) {
+                  if(roi(x,y)==0) {
+                      x_com += (roi_im(x,y)*float(x));
+                      y_com += (roi_im(x,y)*float(y));
+                      sum_roi += roi_im(x,y);
+                      size++;
+                  }
+
+              }
+          }
 //           std::cout << x_com << " " << y_com <<std::endl;
 
 
@@ -894,8 +894,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           if (size!=0) { // check on BB existance
 
 
-//              x_com /=sum_roi;
-//              y_com /=sum_roi;
+              x_com /=sum_roi;
+              y_com /=sum_roi;
 
               std::pair<int,int> temp;
               temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
@@ -1041,14 +1041,33 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
         }
     }
 
-    float bg = 1.0f;
+    kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
+    maskOtsuFilled = FillPeaks(maskOtsu,kipl::morphology::conn4); // from morphextrema
 
+    float bg = 1.0f;
     int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::morphology::conn4, bg);
 
     vector< pair< size_t, size_t > > area;
     kipl::morphology::LabelArea(labelImage, num_obj, area);
 
-    if (num_obj==2 || area.at(1).first>=3*area.at(2).first)
+    // remove objetcs with size lower the minum size:
+    for (size_t i=0; i<area.size(); ++i)
+    {
+        if (area.at(i).first<=min_area){
+            int *pLbl=labelImage.GetDataPtr();
+            float *pOtsu = maskOtsuFilled.GetDataPtr();
+            for (size_t p=0; p<=maskOtsuFilled.Size(); ++p)
+            {
+                if(pLbl[p]==i)
+                    pOtsu[p]=1.0f;
+            }
+
+        }
+    }
+
+
+         if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
+//    if (area.at(1).first>=3*area.at(2).first)
     {
         throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
     }
@@ -1059,20 +1078,20 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
             // 3. Compute mask within Otsu
             // 3.a sum of rows and columns and location of rois
 
-            float *vert_profile = new float[maskOtsu.Size(1)];
-            float *hor_profile = new float[maskOtsu.Size(0)];
+            float *vert_profile = new float[maskOtsuFilled.Size(1)];
+            float *hor_profile = new float[maskOtsuFilled.Size(0)];
 
 
-            kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
-            kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
+            kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), vert_profile, true); // sum of rows
+            kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), hor_profile, true); // sum of columns
 
 
             //3.b create binary Signal
-            float *bin_VP = new float[maskOtsu.Size(1)];
-            float *bin_HP = new float[maskOtsu.Size(0)];
+            float *bin_VP = new float[maskOtsuFilled.Size(1)];
+            float *bin_HP = new float[maskOtsuFilled.Size(0)];
 
-            for (size_t i=0; i<maskOtsu.Size(1); i++) {
-                float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
+            for (size_t i=0; i<maskOtsuFilled.Size(1); i++) {
+                float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
                 if(vert_profile[i]<max) {
                     bin_VP[i] = 1;
                 }
@@ -1083,8 +1102,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
             }
 
 
-            for (size_t i=0; i<maskOtsu.Size(0); i++) {
-                float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
+            for (size_t i=0; i<maskOtsuFilled.Size(0); i++) {
+                float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
                 if(hor_profile[i]<max) {
                     bin_HP[i] = 1;
                 }
@@ -1102,7 +1121,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
             int index_right = 0;
 
 
-             for (int i=0; i<maskOtsu.Size(1)-1; i++) {
+             for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) {
                  float diff = bin_VP[i+1]-bin_VP[i];
                  if (diff>=1) {
                      pos_left[index_left] = i;
@@ -1122,7 +1141,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
              int index_right_2 = 0;
 
 
-              for (int i=0; i<maskOtsu.Size(0)-1; i++) {
+              for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) {
                   float diff = bin_HP[i+1]-bin_HP[i];
                   if (diff>=1) {
                       pos_left_2[index_left_2] = i;
@@ -1171,34 +1190,34 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                   float y_com= 0.0f;
                   int size = 0;
 
-                  // old implementation with geometrical mean:
-                  for (size_t y=0; y<roi.Size(1); y++) {
-                    for (size_t x=0; x<roi.Size(0); x++) {
+//                  // old implementation with geometrical mean:
+//                  for (size_t y=0; y<roi.Size(1); y++) {
+//                    for (size_t x=0; x<roi.Size(0); x++) {
+//                          if(roi(x,y)==0) {
+//                              x_com +=x;
+//                              y_com +=y;
+//                              size++;
+//                          }
+
+//                      }
+//                  }
+//                  x_com /= static_cast<float>(size);
+//                  y_com /= static_cast<float>(size);
+
+                  float sum_roi = 0.0f;
+
+                  // weighted center of mass:
+                  for (size_t x=0; x<roi.Size(0); x++) {
+                      for (size_t y=0; y<roi.Size(1); y++) {
                           if(roi(x,y)==0) {
-                              x_com +=x;
-                              y_com +=y;
+                              x_com += (roi_im(x,y)*float(x));
+                              y_com += (roi_im(x,y)*float(y));
+                              sum_roi += roi_im(x,y);
                               size++;
                           }
 
                       }
                   }
-                  x_com /= static_cast<float>(size);
-                  y_com /= static_cast<float>(size);
-
-        //          float sum_roi = 0.0f;
-
-        //          // weighted center of mass:
-        //          for (size_t x=0; x<roi.Size(0); x++) {
-        //              for (size_t y=0; y<roi.Size(1); y++) {
-        //                  if(roi(x,y)==0) {
-        //                      x_com += (roi_im(x,y)*float(x));
-        //                      y_com += (roi_im(x,y)*float(y));
-        //                      sum_roi += roi_im(x,y);
-        //                      size++;
-        //                  }
-
-        //              }
-        //          }
 
 
 
@@ -1208,8 +1227,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                   if (size>=min_area) {
 
 
-        //              x_com /=sum_roi;
-        //              y_com /=sum_roi;
+                      x_com /=sum_roi;
+                      y_com /=sum_roi;
 
                       std::pair<int,int> temp;
                       temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
