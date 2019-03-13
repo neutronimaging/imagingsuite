@@ -40,7 +40,13 @@ int process(int argc, char *argv[])
     copy_n(argv,argc,std::back_inserter(qargs));
 
     std::map<std::string,std::string> args;
-    parseArguments(qargs,args);
+    try {
+           parseArguments(qargs,args);
+    } catch (kipl::base::KiplException &e) {
+        logger.error(e.what());
+        exit(0);
+    }
+
 
 
     int cnt=static_cast<int>(qargs.size());
@@ -55,7 +61,16 @@ int process(int argc, char *argv[])
     ImageReader reader;
 
     std::string srcfname=args["infile"];
-    nDims=reader.GetImageSize(srcfname,1.0f,dims);
+    try {
+        nDims=reader.GetImageSize(srcfname,1.0f,dims);
+    } catch (ReaderException &e) {
+        logger.error(e.what());
+        exit(0);
+    }
+    catch (kipl::base::KiplException &e) {
+        logger.error(e.what());
+        exit(0);
+    }
 
     qDebug() << "nDims:" <<nDims;
     if (nDims<3) {
@@ -127,15 +142,19 @@ int process(int argc, char *argv[])
 
 int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars)
 {
+    std::ostringstream msg;
     auto item=qargs.begin();
     ++item;
     for ( ; item!= qargs.end() ; ++item) {
         if ((*item)[0]!='-')
-            throw kipl::base::KiplException("Invalid argument",__FILE__,__LINE__);
+        {
+            msg.str(""); msg<<"Invalid argument "<<(*item);
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+        }
         if (*item=="-i") {
             ++item;
             if (item==qargs.end())
-                throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
+                throw kipl::base::KiplException("Too few arguments: infile is missing",__FILE__,__LINE__);
 
             pars.insert(std::make_pair("infile",*item));
         }
@@ -143,7 +162,7 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         if (*item=="-o") {
             ++item;
             if (item==qargs.end())
-                throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
+                throw kipl::base::KiplException("Too few arguments: Destination mask is missing",__FILE__,__LINE__);
 
             pars.insert(std::make_pair("outfile",*item));
         }
@@ -151,7 +170,7 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         if (*item=="-first") {
             ++item;
             if (item==qargs.end())
-                throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
+                throw kipl::base::KiplException("Too few arguments: first slice index",__FILE__,__LINE__);
 
             pars.insert(std::make_pair("first",*item));
         }
@@ -159,7 +178,7 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         if (*item=="-last") {
             ++item;
             if (item==qargs.end())
-                throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
+                throw kipl::base::KiplException("Too few arguments: last slice index",__FILE__,__LINE__);
 
             pars.insert(std::make_pair("last",*item));
         }
@@ -167,7 +186,7 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         if (*item=="-rot") {
             ++item;
             if (item==qargs.end())
-                throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
+                throw kipl::base::KiplException("Too few arguments: rotation is missing",__FILE__,__LINE__);
             std::string rotstring="ImageRotate"+(*item == "0" ? "None" : *item);
             pars.insert(std::make_pair(std::string("rotate"),rotstring));
         }
