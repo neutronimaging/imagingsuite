@@ -694,6 +694,23 @@ void BBLogNormDlg::on_errorButton_clicked()
 
         try {
             module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+
+        }
+        catch(kipl::base::KiplException &e) {
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to configure the module dialog, check the parameters");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
+        catch(...){
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to configure the module dialog.. generic exception.");
+            return ;
+        }
+
+        try {
             error = module.GetInterpolationError(mymask);
         }
         catch(kipl::base::KiplException &e) {
