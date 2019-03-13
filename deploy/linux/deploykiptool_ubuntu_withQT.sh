@@ -75,7 +75,7 @@ for f in `ls *.so.1.0.0`; do
 	ln -s $bn.so.1 $bn.so
 done
 
-rm -f *.so.5.QtVmain
+rm -f *.so.5.$QtVmain
 rm -f *.so.5
 for f in `ls *.so.5.$QtV`; do
 	bn=`basename $f .so.5.$QtV`

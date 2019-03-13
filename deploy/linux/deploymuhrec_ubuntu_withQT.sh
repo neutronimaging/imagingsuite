@@ -109,7 +109,7 @@ cd ..
 chmod +x muhrec
 
 
-cp $REPOSPATH/imagingsuite/applications/muhrec/src/resources/*.xml resources
+cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/*.xml resources
 
 fname=muhrec_`uname -s`_`uname -m`_`date +%Y%m%d`.tar.bz2
 

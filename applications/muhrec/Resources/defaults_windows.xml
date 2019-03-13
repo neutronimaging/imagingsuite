@@ -80,6 +80,7 @@
                 <sharedobject>@executable_path\StdPreprocModules.dll</sharedobject>
                 <active>false</active>
                 <parameters>
+	            <clampdata>false</clampdata>
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
                     <detectionmethod>morphdetectpeaks</detectionmethod>
