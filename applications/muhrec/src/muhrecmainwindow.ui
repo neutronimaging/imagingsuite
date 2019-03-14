@@ -1473,7 +1473,7 @@
                 <string>Cone beam reconstruction needs the distances from source to sample as part of the acquisiton geometry.</string>
                </property>
                <property name="maximum">
-                <double>9999.989999999999782</double>
+                <double>999999.989999999990687</double>
                </property>
               </widget>
              </item>
@@ -1493,7 +1493,7 @@
                 <string>Cone beam reconstruction needs the distances from source to detector distance as part of the acquisiton geometry.</string>
                </property>
                <property name="maximum">
-                <double>9999.989999999999782</double>
+                <double>999999.989999999990687</double>
                </property>
               </widget>
              </item>
