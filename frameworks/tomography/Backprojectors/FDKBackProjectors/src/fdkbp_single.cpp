@@ -300,15 +300,16 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         float* img = cbct_volume.GetDataPtr();
         float *xip, *yip, *zip;
         float sad_sid_2;
-        float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
+        float scale =mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD;
 
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
         // magnification = SDD/SOD
 
-        float spacing[3];
+        float spacing[3]; // detector pixel spacing divided by the magnification
         spacing[0] = mConfig.MatrixInfo.fVoxelSize[0];
         spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
         spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
+
 
         float origin[3];
         float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
@@ -372,8 +373,8 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
         // Rescale image (destructive rescaling)
 //        sad_sid_2 = (pmat->sad * pmat->sad) / (pmat->sid * pmat->sid);
-        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
-
+//        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD) / (nProj*0.1f);
+          sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
 
 
 //        for (i = 0; i < cbi->dim[0]*cbi->dim[1]; i++) {
