@@ -657,17 +657,7 @@ float FDKbp::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, doub
 
  }
 
-//! In-place ramp filter for greyscale images
-//! \param data The pixel data of the image
-//! \param width The width of the image
-//! \param height The height of the image
-//! \template_param T The type of pixel in the image
-//void
-//ramp_filter (
-//    float *data,
-//    unsigned int width,
-//    unsigned int height
-//)
+
 
 
 void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
@@ -762,7 +752,8 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
     /* Roll off ramp filter */
     for (i = 0; i < padwidth; ++i)
     {
-        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+//        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORAD * 360 / padwidth) + 1));
         ramp[i] /= padwidth*0.5;
     }
 
@@ -914,7 +905,8 @@ void FDKbp::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     // Roll off ramp filter
     for (i = 0; i < padwidth; ++i)
     {
-        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+//        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORAD * 360 / padwidth) + 1));
         ramp[i] /= padwidth*0.5;
     }
 

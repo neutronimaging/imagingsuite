@@ -772,7 +772,8 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     /* Roll off ramp filter */
     for (i = 0; i < padwidth; ++i)
     {
-        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+//        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORADF * 360 / padwidth) + 1));
         ramp[i] /= padwidth*0.5;
     }
 
@@ -912,7 +913,8 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     // Roll off ramp filter
     for (i = 0; i < padwidth; ++i)
     {
-        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+//        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORADF * 360 / padwidth) + 1));
         ramp[i] /= padwidth*0.5;
 
     }

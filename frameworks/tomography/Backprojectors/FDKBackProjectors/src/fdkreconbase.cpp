@@ -245,7 +245,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
            memcpy(pImg,pProj,sizeof(float)*img.Size());
 
            img *= weights[i];
-           img *= 1.5f;
 
 //           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
           this->reconstruct(img, angles[i], nProj);
