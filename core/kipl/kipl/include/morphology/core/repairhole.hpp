@@ -17,6 +17,8 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
 {
     const T markedPixel = std::numeric_limits<T>::max();
 
+//    std::cout<< "img Size" << img.Size()<< std::endl;
+
     std::list<size_t> edgePixels;
     std::list<size_t> remainingPixels;
 
@@ -43,11 +45,16 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             bool isEdge=false;
             for (int idx=0; idx<neighborhood.neighborhoodSize(); ++idx) {
                 size_t pixel=neighborhood.neighborhood(idx);
-                T value=img[pixel];
-                if (value!=markedPixel) {
-                    sum+=img[pixel];
-                    hitcnt++;
-                    isEdge=true;
+
+
+                if (pixel<img.Size()){
+                    T value=img[pixel];
+                    if (value!=markedPixel) {
+//                        std::cout << pixel << " " << img[pixel] << " " << std::endl;
+                        sum+=img[pixel];
+                        hitcnt++;
+                        isEdge=true;
+                    }
                 }
             }
 

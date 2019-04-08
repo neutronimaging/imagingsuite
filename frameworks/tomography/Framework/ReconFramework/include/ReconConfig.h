@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+// LICENSE
 
-#ifndef __RECONCONFIG_H
-#define __RECONCONFIG_H
+#ifndef RECONCONFIG_H
+#define RECONCONFIG_H
 
 #include "ReconFramework_global.h"
 
@@ -45,7 +34,8 @@ public:
         /// Assignment operator (deep copy)
 		cSystem & operator=(const cSystem &a);
         size_t nMemory; ///< Available memory in kB.
-        kipl::logging::Logger::LogLevel eLogLevel;      ///< Default log level.
+        kipl::logging::Logger::LogLevel eLogLevel; ///< Default log level.
+        bool bValidateData;
         std::string WriteXML(size_t indent=0);          ///< Serializes the settings.
 	};
 

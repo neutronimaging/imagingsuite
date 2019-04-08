@@ -25,7 +25,7 @@ public:
 	float progress();
 
     std::string WriteXML(size_t indent=4);
-    //void ParseXML(xmlTextReaderPtr reader);
+    void ParseXML(std::string fname);
 
     std::string m_sSourceMask;
     std::string m_sDestinationPath;
@@ -43,8 +43,10 @@ public:
 protected:
 	int GetHeader(std::string fname);
 	int CreateHeaders(std::string mask, size_t nFirst, size_t nLast, size_t width, size_t height);
-	int WriteLine(TIFF *img, size_t line, char * pLineBuffer);
-	int CloseImages();
+    int WriteLine(TIFF *img, size_t line, size_t bytesPerLine, char * pLineBuffer);
+    /// \brief Closes the open destination image files
+    /// \param N number of open files
+    int CloseImages(int N);
 	int LoadBuffer(std::string fname);
 
 	kipl::base::ImageInfo m_SrcInfo;
@@ -60,7 +62,8 @@ protected:
 
 	char *buffer;
 	int m_nBytesPerPixel;
-	int m_nBytesPerLine;
+    int m_nBytesPerWriteLine;
+    int m_nBytesPerReadLine;
 };
 
 #endif /* RESLICER_H_ */

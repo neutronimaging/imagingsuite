@@ -52,6 +52,13 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     //    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
     ui->statusBar->addPermanentWidget(button_toggleLoggerDlg);
 
+     QString configpath=QDir::homePath()+"/.imagingtools";
+     QDir dir;
+
+     if(!dir.exists(configpath)){
+         dir.mkdir(configpath);
+     }
+
     LoadDefaults();
     UpdateDialog();
     SetupCallbacks();
@@ -70,6 +77,7 @@ void KipToolMainWindow::LoadDefaults()
 {
     std::string defaultsname;
     QDir dir;
+
     QString currentname=QDir::homePath()+"/.imagingtools/CurrentKIPToolConfig.xml";
 
     bool bUseDefaults=true;
@@ -77,6 +85,7 @@ void KipToolMainWindow::LoadDefaults()
         defaultsname=currentname.toStdString();
         bUseDefaults=false;
     }
+
 //    else {
 //      //  m_QtApp->
 //    #ifdef Q_OS_WIN32
@@ -114,7 +123,7 @@ void KipToolMainWindow::LoadDefaults()
 void KipToolMainWindow::UpdateDialog()
 {
     m_config.mImageInformation.sSourcePath.clear();
-    ImageLoader loadInfo;
+    FileSet loadInfo;
 
     loadInfo.m_sFilemask = m_config.mImageInformation.sSourceFileMask;
     loadInfo.m_nFirst    = m_config.mImageInformation.nFirstFileIndex;
@@ -158,7 +167,7 @@ void KipToolMainWindow::UpdateConfig()
     kipl::strings::filenames::CheckPathSlashes(m_config.mOutImageInformation.sDestinationPath,true);
     m_config.mOutImageInformation.sDestinationFileMask = ui->edit_destinationmask->text().toStdString();
 
-    ImageLoader readerInfo=ui->widget_loadForm->getReaderConfig();
+    FileSet readerInfo=ui->widget_loadForm->getReaderConfig();
     m_config.mImageInformation.sSourcePath.clear();
     kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
 

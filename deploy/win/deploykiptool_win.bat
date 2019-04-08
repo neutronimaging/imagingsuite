@@ -1,9 +1,5 @@
-﻿@echo ----------------- Deploy copy --------------
-#set REPOS=C:\Users\kaestner\repos
-#set DEST=C:\Users\kaestner\kiptool
-
 set REPOS=%WORKSPACE%
-set DEST=%HOMEPATH%\kiptool
+set DEST=%WORKSPACE%\deployed\kiptool
 
 IF NOT EXIST %DEST% mkdir %DEST%
 pushd .
@@ -59,7 +55,6 @@ copy %REPOS%\imagingsuite\external\lib64\hdf5\zlib.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\szip.dll .
 
 cd %QTBINPATH%
-#cd C:\Qt\5.11.1\msvc2017_64\bin
 
 windeployqt %DEST%\KipTool.exe
 windeployqt %DEST%\KipToolCLI.exe
@@ -67,3 +62,10 @@ copy Qt5PrintSupport.dll %DEST%
 copy Qt5Charts.dll %DEST%
 
 popd
+
+if exist "C:\Program Files\7-Zip\7z.exe" (
+    "C:\Program Files\7-Zip\7z.exe" a %DEST%\..\kiptool_build-%date:~-4,4%%date:~-10,2%%date:~-7,2%.zip %DEST%
+) else (
+    echo 7zip doesn't exist
+)
+

@@ -48,11 +48,13 @@ bool ReconConfig::SanityCheck()
 {
     std::ostringstream msg;
 
-    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0]) {
+    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0])
+    {
         msg<<"Incorrect config: ROI x1<x0 (x0="<<ProjectionInfo.roi[0]<<", x1="<<ProjectionInfo.roi[2]<<")";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1]) {
+    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1])
+    {
         msg<<"Incorrect config: ROI y1<y0 (y0="<<ProjectionInfo.roi[1]<<", y1="<<ProjectionInfo.roi[3]<<")";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -63,7 +65,8 @@ bool ReconConfig::SanityAnglesCheck()
 {
     std::ostringstream msg;
 
-    if (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f)) {
+    if (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f))
+    {
         msg<<"Incorrect angles configuration " ;
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -166,7 +169,8 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
                 ProjectionInfo.sPath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sPath,true);
             }
-            if (var=="referencepath") {
+            if (var=="referencepath")
+            {
                 ProjectionInfo.sReferencePath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sReferencePath,true);
             }
@@ -190,7 +194,8 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="pPoint") kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
         }
 
-        if (group=="matrix") {
+        if (group=="matrix")
+        {
             if (var=="dims")         kipl::strings::String2Array(value,MatrixInfo.nDims,3);
             if (var=="rotation")     MatrixInfo.fRotation=atof(value.c_str());
             if (var=="serialize")    MatrixInfo.bAutomaticSerialize=kipl::strings::string2bool(value);
@@ -216,27 +221,35 @@ void ReconConfig::ParseSystem(xmlTextReaderPtr reader)
     std::string sName, sValue;
     int depth=xmlTextReaderDepth(reader);
 
-    while (ret == 1) {
-    	if (xmlTextReaderNodeType(reader)==1) {
+    while (ret == 1)
+    {
+        if (xmlTextReaderNodeType(reader)==1)
+        {
 	        name = xmlTextReaderConstName(reader);
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr)
+            {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
 	        sName=reinterpret_cast<const char *>(name);
 
-	        if (sName=="memory") {
-				System.nMemory=atoi(sValue.c_str());
+            if (sName=="memory")
+            {
+                System.nMemory=static_cast<size_t>(std::stoi(sValue));
 	        }
 
 	        if (sName=="loglevel") 
                 string2enum(sValue,System.eLogLevel);
+
+            if (sName=="validate")
+                System.bValidateData=kipl::strings::string2bool(sValue);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -509,7 +522,7 @@ ReconConfig::cUserInformation::cUserInformation(const cUserInformation &info) :
 	sInstrument(info.sInstrument),
 	sProjectNumber(info.sProjectNumber),
 	sSample(info.sSample),
-	sComment(info.sComment)
+    sComment(info.sComment)
 {
 }
 
@@ -544,18 +557,21 @@ std::string ReconConfig::cUserInformation::WriteXML(size_t indent)
 //----------------
 ReconConfig::cSystem::cSystem(): 
 	nMemory(1500ul),
-	eLogLevel(kipl::logging::Logger::LogMessage)
+    eLogLevel(kipl::logging::Logger::LogMessage),
+    bValidateData(false)
 {}
 
 ReconConfig::cSystem::cSystem(const cSystem &a) : 
 	nMemory(a.nMemory), 
-	eLogLevel(a.eLogLevel) 
+    eLogLevel(a.eLogLevel),
+    bValidateData(a.bValidateData)
 {}
 
 ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a) 
 {
-	nMemory=a.nMemory; 
-	eLogLevel=a.eLogLevel; 
+    nMemory       = a.nMemory;
+    eLogLevel     = a.eLogLevel;
+    bValidateData = a.bValidateData;
 	return *this;
 }
 
@@ -567,6 +583,7 @@ std::string ReconConfig::cSystem::WriteXML(size_t indent)
 	str<<setw(indent)  <<" "<<"<system>"<<std::endl;
 	str<<setw(indent+4)<<" "<<"<memory>"<<nMemory<<"</memory>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<loglevel>"<<eLogLevel<<"</loglevel>"<<std::endl;
+    str<<setw(indent+4)<<"  "<<"<validate>"<<kipl::strings::bool2string(bValidateData)<<"</validate>"<<std::endl;
 	str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
 
 	return str.str();

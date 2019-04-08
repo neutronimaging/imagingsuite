@@ -69,13 +69,13 @@ public:
                                       float binning,
                                       size_t const * const nCrop);
 
-    kipl::base::TImage<float,3> Read(ImageLoader &loader,
+    kipl::base::TImage<float,3> Read(FileSet &loader,
                                       kipl::base::eImageFlip flip,
                                       kipl::base::eImageRotate rotate,
                                       float binning=1.0f,
                                       size_t const * const nCrop=nullptr);
 
-    kipl::base::TImage<float,3> Read(ImageLoader &loader);
+    kipl::base::TImage<float,3> Read(FileSet &loader);
 
     /// Get the image dimensions for an image file using a file mask
     /// \param path The path where image is stored

@@ -49,7 +49,8 @@ void STDPREPROCMODULESSHARED_EXPORT string2enum(const std::string str, Projectio
 
 STDPREPROCMODULESSHARED_EXPORT std::string enum2string(const ProjectionFilterBase::FilterType &ft)
 {
-    switch (ft) {
+    switch (ft)
+    {
         case ProjectionFilterBase::FilterRamLak			: return "Ram-Lak"; break;
         case ProjectionFilterBase::FilterSheppLogan		: return "Shepp-Logan"; break;
         case ProjectionFilterBase::FilterHanning		: return "Hanning"; break;
@@ -78,11 +79,11 @@ int ProjectionFilterBase::Configure(ReconConfig config, std::map<std::string, st
 {
 	size_t N=config.ProjectionInfo.roi[2]-config.ProjectionInfo.roi[0];
 	string2enum(GetStringParameter(parameters,"filtertype"),m_FilterType);
-	m_fCutOff=GetFloatParameter(parameters,"cutoff");
-	m_fOrder=GetFloatParameter(parameters,"order");
-	m_bUseBias=kipl::strings::string2bool(GetStringParameter(parameters,"usebias"));
-    m_fBiasWeight=GetFloatParameter(parameters,"biasweight");
-    m_nPaddingDoubler=GetIntParameter(parameters,"paddingdoubler");
+    m_fCutOff         = GetFloatParameter(parameters,"cutoff");
+    m_fOrder          = GetFloatParameter(parameters,"order");
+    m_bUseBias        = kipl::strings::string2bool(GetStringParameter(parameters,"usebias"));
+    m_fBiasWeight     = GetFloatParameter(parameters,"biasweight");
+    m_nPaddingDoubler = GetIntParameter(parameters,"paddingdoubler");
 
     nImageSize=N;
     BuildFilter(N);
@@ -106,7 +107,8 @@ int ProjectionFilterBase::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 
 	kipl::base::TImage<float,2> proj(img.Dims());
 
-    for (size_t i=0; (i<img.Size(2)) && (UpdateStatus(float(i)/img.Size(2),m_sModuleName)==false); ++i) {
+    for (size_t i=0; (i<img.Size(2)) && (UpdateStatus(float(i)/img.Size(2),m_sModuleName)==false); ++i)
+    {
 		memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),sizeof(float)*proj.Size());
 		FilterProjection(proj);
 		memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
@@ -157,12 +159,12 @@ void ProjectionFilter::BuildFilter(const size_t N)
 	nFFTsize=ComputeFilterSize(N);
 	const size_t N2=nFFTsize>>static_cast<size_t>(1);
 	mFilter.Resize(&N2);
-	mFilter=0.0f;
+    mFilter=0.0;
 	
 	std::stringstream msg;
 
 	
-	if (!((0<m_fCutOff) && (m_fCutOff<=1.0)))
+    if (!((0<m_fCutOff) && (m_fCutOff<=1.0f)))
 		throw ReconException("Cut off frequency is not in valid range",__FILE__,__LINE__);
 	
 	float FilterOrder=0.0;
@@ -176,7 +178,8 @@ void ProjectionFilter::BuildFilter(const size_t N)
 		mFilter[i]=i*step;
 
 	step=1.0f/(cN2cutoff-1.0f); // The extra N2 is for scaling the FFT
-	for (size_t i=0; i<cN2cutoff; i++) {
+    for (size_t i=0; i<cN2cutoff; i++)
+    {
 		switch (m_FilterType){
 		case FilterRamLak: break;
 		case FilterSheppLogan: mFilter[i]=sin(dPi*i*step*m_fCutOff)/N2;break;
@@ -212,7 +215,8 @@ void ProjectionFilter::FilterProjection(kipl::base::TImage<float,2> & img)
 	complex<double> *pFTLine=ft1Dimg.GetDataPtr();
 
 	double *pLine=new double[nFFTsize*2];
-    for (size_t line=0; line<nLines; line++) {
+    for (size_t line=0; line<nLines; line++)
+    {
 
 		memset(pLine,0,2*sizeof(double)*nFFTsize);
 		memcpy(pLine,dimg.GetLinePtr(line),sizeof(double)*dimg.Size(0));
@@ -258,7 +262,7 @@ void ProjectionFilterSingle::BuildFilter(const size_t N)
 	msg<<"Filter :"<<m_FilterType<<" filter size="<<mFilter.Size();
 	logger(kipl::logging::Logger::LogVerbose, msg.str());
 
-	if (!((0<m_fCutOff) && (m_fCutOff<=0.5)))
+    if (!((0<m_fCutOff) && (m_fCutOff<=0.5f)))
 		throw ReconException("Cut off frequency is not in valid range",__FILE__,__LINE__);
 	
 	float FilterOrder=0.0;
@@ -273,7 +277,8 @@ void ProjectionFilterSingle::BuildFilter(const size_t N)
 		mFilter[i]=i*rampstep;
 
 	float fstep=1.0f/((cN2cutoff-1.0f)); // The extra N2 is for scaling the FFT
-	for (size_t i=0; i<cN2cutoff; i++) {
+    for (size_t i=0; i<cN2cutoff; i++)
+    {
 		switch (m_FilterType){
 		case FilterRamLak: break;
 		case FilterSheppLogan: mFilter[i]=static_cast<float>(sin(dPi*i*fstep*m_fCutOff))/N2;break;
@@ -309,16 +314,18 @@ void ProjectionFilterSingle::FilterProjection(kipl::base::TImage<float,2> & img)
 	const size_t nLenPad=nFFTsize+16;
 	float *pLine=new float[nLenPad];
 
-    for (size_t line=0; line<(nLines); line++) {
+    for (size_t line=0; line<(nLines); line++)
+    {
 
         std::fill_n(pLine,0,nLenPad);
         std::fill_n(pFTLine,0,nLenPad);
-        //memset(pLine,0,sizeof(float)*nLenPad);
+
 		size_t insert=Pad(img.GetLinePtr(line),img.Size(0),pLine,nLenPad);
 
         fft->operator()(pLine,pFTLine);
 
-		for (size_t i=0; i< cnFilterLength; i++) { //todo: find cross talk and overwrite here!!!
+        for (size_t i=0; i< cnFilterLength; i++)
+        { //todo: find cross talk and overwrite here!!!
 			pFTLine[i]*=pFilter[i];
 		}
 		
@@ -326,7 +333,8 @@ void ProjectionFilterSingle::FilterProjection(kipl::base::TImage<float,2> & img)
 		
 		float *pImg=img.GetLinePtr(line);
 		const float scale=fPi/(4.0f*cnLoopCnt);
-		for (size_t i=0; i<img.Size(0); i++) {
+        for (size_t i=0; i<img.Size(0); i++)
+        {
 			pImg[i]=pLine[i+insert]*scale;
 		}
 
@@ -343,7 +351,8 @@ size_t ProjectionFilterSingle::Pad(float const * const pSrc,
 	memset(pDest,0,nDestLen*sizeof(float));
 	memcpy(pDest+nInsert,pSrc,nSrcLen*sizeof(float));
 
-	for (size_t i=0; i<nInsert; i++) {
+    for (size_t i=0; i<nInsert; i++)
+    {
 		pDest[i]=pSrc[0]*mPadData[i];
 		pDest[nDestLen-1-i]=pSrc[nSrcLen-1]*mPadData[i];
 	}
@@ -357,7 +366,8 @@ void ProjectionFilterSingle::PreparePadding(const size_t nImage, const size_t nF
 	
 	mPadData.Resize(&nInsert);
 
-	for (size_t i=0; i<nInsert; i++) {
+    for (size_t i=0; i<nInsert; i++)
+    {
 		float x=(float) i/ (float)nInsert - 0.5f;
 		mPadData[i]=kipl::math::Sigmoid(x,0.0f,0.07f);
 	}

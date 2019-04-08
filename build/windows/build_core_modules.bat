@@ -27,7 +27,7 @@ echo "Build tests"
 
 cd %REPOSPATH%\core\modules\UnitTests\
 
-REM FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
+FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
 
 echo "Tests built"
 popd 

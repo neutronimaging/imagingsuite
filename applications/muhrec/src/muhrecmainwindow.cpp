@@ -43,6 +43,7 @@
 #include "dialogtoobig.h"
 #include "piercingpointdialog.h"
 #include "referencefiledlg.h"
+#include "globalsettingsdialog.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -148,6 +149,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->spinSlicesLast->setMinimum(roi[1]);
     ui->spinSlicesLast->setMaximum(roi[3]);
     ui->spinSlicesLast->setValue(lastSlice);
+    ui->plotHistogram->hideLegend();
     SlicesChanged(0);
 
 }
@@ -191,7 +193,7 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setAutoHideROI(true);
     ui->widgetMatrixROI->setAllowUpdateImageDims(false);
     ui->widgetMatrixROI->setCheckable(true);
-    ui->widgetMatrixROI->updateViewer();
+    ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);    ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
 }
@@ -1062,7 +1064,16 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     float x[nBins];
                     size_t y[nBins];
                     m_pEngine->GetHistogram(x,y,nBins);
-                    ui->plotHistogram->setCurveData(0,x,y,nBins);
+                    ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
+                    try {
+                        ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(ui->dspinGrayLow->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
+                        ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(ui->dspinGrayHigh->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Upper limit"));
+                    }
+                    catch (...)
+                    {
+                        logger.warning("Failed to set cursors");
+                    }
+
 
                     m_pEngine->GetMatrixDims(m_Config.MatrixInfo.nDims);
                     msg.str("");
@@ -1456,13 +1467,11 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.voi[4] = 0;
     m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
 
-
-
-    m_Config.modules = ui->moduleconfigurator->GetModules();
-    m_Config.MatrixInfo.fRotation= ui->dspinRotateRecon->value();
-    m_Config.MatrixInfo.fGrayInterval[0] = ui->dspinGrayLow->value();
-    m_Config.MatrixInfo.fGrayInterval[1] = ui->dspinGrayHigh->value();
-    m_Config.MatrixInfo.bUseROI = ui->widgetMatrixROI->isChecked();
+    m_Config.modules                     = ui->moduleconfigurator->GetModules();
+    m_Config.MatrixInfo.fRotation        = static_cast<float>(ui->dspinRotateRecon->value());
+    m_Config.MatrixInfo.fGrayInterval[0] = static_cast<float>(ui->dspinGrayLow->value());
+    m_Config.MatrixInfo.fGrayInterval[1] = static_cast<float>(ui->dspinGrayHigh->value());
+    m_Config.MatrixInfo.bUseROI          = ui->widgetMatrixROI->isChecked();
     ui->widgetMatrixROI->getROI(m_Config.MatrixInfo.roi);
 
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
@@ -2417,7 +2426,15 @@ void MuhRecMainWindow::on_dspinGrayLow_valueChanged(double low)
     double high=ui->dspinGrayHigh->value();
 
     ui->sliceViewer->set_levels(low,high);
-    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+
+    try {
+      ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
+    }
+    catch (...)
+    {
+        logger.warning("Failed to set cursors");
+    }
+
 }
 
 void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
@@ -2426,8 +2443,14 @@ void MuhRecMainWindow::on_dspinGrayHigh_valueChanged(double high)
     double low=ui->dspinGrayLow->value();
 
     ui->sliceViewer->set_levels(low,high);
-    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 
+    try {
+        ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("red"),QtAddons::PlotCursor::Vertical,"Upper limit"));
+    }
+    catch (...)
+    {
+        logger.warning("Failed to set cursors");
+    }
 }
 
 void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
@@ -2439,8 +2462,8 @@ void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
     ui->dspinGrayLow->setValue(low);
     ui->dspinGrayHigh->setValue(high);
 
-    ui->plotHistogram->setPlotCursor(0,QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
-    ui->plotHistogram->setPlotCursor(1,QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
+  //  ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(low,QColor("green"),QtAddons::PlotCursor::Vertical));
+   // ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(high,QColor("green"),QtAddons::PlotCursor::Vertical));
 }
 
 void MuhRecMainWindow::on_pushButton_levels95p_clicked()
@@ -2539,3 +2562,15 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
     }
 }
 
+void MuhRecMainWindow::on_actionGlobal_settings_triggered()
+{
+    GlobalSettingsDialog dlg;
+
+    dlg.setConfig(m_Config);
+    int res=dlg.exec();
+
+    if (res == QDialog::Accepted)
+    {
+        dlg.updateConfig(m_Config);
+    }
+}

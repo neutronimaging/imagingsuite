@@ -7,7 +7,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) ,
-    cnt(0)
+    cnt(0),
+    cntCursors(0)
 {
     ui->setupUi(this);
 }
@@ -75,4 +76,25 @@ void MainWindow::on_pushButton_8_clicked()
 
     series->setName(name);
     ui->widget->setCurveData(1,series);
+}
+
+void MainWindow::on_pushButton_9_clicked() //add marker
+{
+    ++cntCursors;
+    ui->widget->setCursor(cntCursors,new QtAddons::PlotCursor(cntCursors,QColor("red"),QtAddons::PlotCursor::Vertical));
+}
+
+void MainWindow::on_pushButton_10_clicked() // delete last marker
+{
+    if (0<cntCursors)
+    {
+        ui->widget->clearCursor(cntCursors);
+        --cntCursors;
+    }
+}
+
+void MainWindow::on_pushButton_11_clicked() // clear all markers
+{
+    ui->widget->clearAllCursors();
+    cntCursors=0;
 }

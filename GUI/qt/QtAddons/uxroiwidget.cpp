@@ -4,9 +4,11 @@
 #include <QColor>
 #include <QSignalBlocker>
 #include <QDebug>
+#include <QMessageBox>
 
 #include <base/roi.h>
 #include "imageviewerwidget.h"
+#include "roidialog.h"
 
 namespace QtAddons {
 
@@ -19,7 +21,8 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     ui(new Ui::uxROIWidget),
     hViewer(nullptr),
     autoHideViewerROI(false),
-    allowUpdateImageDims(true)
+    allowUpdateImageDims(true),
+    useROIDlg(false)
 {
     ui->setupUi(this);
     setROI(0,0,100,100);
@@ -148,6 +151,16 @@ void uxROIWidget::setChecked(bool x)
     updateViewer();
 }
 
+void uxROIWidget::useROIDialog(bool x)
+{
+    useROIDlg=x;
+}
+
+void uxROIWidget::setSelectionImage(kipl::base::TImage<float, 2> &img)
+{
+    selectionImage.Clone(img);
+}
+
 void uxROIWidget::setROI(size_t *roi, bool ignoreBoundingBox)
 {
     setROI(static_cast<int>(roi[0]),
@@ -240,7 +253,6 @@ void uxROIWidget::on_spinX0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinX0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -250,7 +262,6 @@ void uxROIWidget::on_spinY0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -260,7 +271,7 @@ void uxROIWidget::on_spinY1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY1_valueChanged");
+
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -276,14 +287,36 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
 
 void uxROIWidget::on_buttonGetROI_clicked()
 {
-    if (hViewer != nullptr) {
-        updateBounds();
-        QRect rect=hViewer->get_marked_roi();
+    if (useROIDlg)
+    {
+        if (selectionImage.Size()<=1)
+        {
+            QMessageBox::warning(this,"No Image","No image is provided for ROI selection");
 
-        setROI(rect);
+            return;
+        }
+        QtAddons::ROIDialog dlg;
+        QRect roi;
+        getROI(roi);
+        dlg.setROI(roi);
+        dlg.setImage(selectionImage);
+        int res=dlg.exec();
+
+        if (res==dlg.Accepted) {
+            setROI(dlg.ROI());
+        }
     }
-    emit getROIClicked();
-    repaint();
+    else {
+        if (hViewer != nullptr) {
+            updateBounds();
+            QRect rect=hViewer->get_marked_roi();
+
+            setROI(rect);
+        }
+        emit getROIClicked();
+        repaint();
+    }
+
 }
 
 void uxROIWidget::on_valueChanged(int x0,int y0, int x1, int y1)

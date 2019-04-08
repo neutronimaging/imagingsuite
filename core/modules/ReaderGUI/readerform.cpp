@@ -59,12 +59,13 @@ void ReaderForm::on_button_browse_clicked()
 //        ui->spinBox_last->setMaximum(first);
         ui->spinBox_first->setValue(first);
         ui->spinBox_last->setValue(last);
+        emit fileMaskChanged(getReaderConfig());
     }
 }
 
-ImageLoader ReaderForm::getReaderConfig()
+FileSet ReaderForm::getReaderConfig()
 {
-    ImageLoader cfg;
+    FileSet cfg;
 
     cfg.m_sFilemask = ui->edit_fileMask->text().toStdString();
 
@@ -83,7 +84,7 @@ ImageLoader ReaderForm::getReaderConfig()
     return cfg;
 }
 
-void ReaderForm::setReaderConfig(ImageLoader &cfg)
+void ReaderForm::setReaderConfig(FileSet &cfg)
 {
     ui->edit_fileMask->setText(QString::fromStdString(cfg.m_sFilemask));
 
@@ -97,6 +98,7 @@ void ReaderForm::setReaderConfig(ImageLoader &cfg)
     ui->widget_roi->setROI(cfg.m_ROI);
     ui->widget_roi->setCheckable(true);
     ui->widget_roi->setChecked(cfg.m_bUseROI);
+    emit fileMaskChanged(getReaderConfig());
 }
 
 void ReaderForm::setLabel(QString str)
@@ -153,4 +155,34 @@ void ReaderForm::registerViewer(QtAddons::ImageViewerWidget *viewer)
 QtAddons::uxROIWidget * ReaderForm::roiWidget()
 {
     return ui->widget_roi;
+}
+
+void ReaderForm::on_spinBox_first_valueChanged(int arg1)
+{
+    (void) arg1;
+    emit fileIntervalChanged(getReaderConfig());
+}
+
+void ReaderForm::on_spinBox_step_valueChanged(int arg1)
+{
+    (void) arg1;
+    emit fileIntervalChanged(getReaderConfig());
+}
+
+void ReaderForm::on_spinBox_last_valueChanged(int arg1)
+{
+    (void) arg1;
+    emit fileIntervalChanged(getReaderConfig());
+}
+
+void ReaderForm::on_spinBox_repeat_valueChanged(int arg1)
+{
+    (void) arg1;
+    emit fileIntervalChanged(getReaderConfig());
+}
+
+void ReaderForm::on_spinBox_stride_valueChanged(int arg1)
+{
+    (void) arg1;
+    emit fileIntervalChanged(getReaderConfig());
 }

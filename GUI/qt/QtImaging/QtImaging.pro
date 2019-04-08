@@ -33,10 +33,10 @@ unix:!macx {
     QMAKE_CXXFLAGS += -fopenmp -fPIC -O2
     QMAKE_LFLAGS += -lgomp
     LIBS += -lgomp
+    INCLUDEPATH += /usr/include/libxml2
 }
 
 unix:macx {
-    QMAKE_MAC_SDK = macosx10.12
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib

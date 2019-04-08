@@ -36,20 +36,54 @@ SOURCES += \
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-#win32:unix: LIBS += -L$$PWD/../../../../../lib/ -lReaderConfig
-LIBS += -L$$PWD/../../../../../lib/ -lReaderConfig
-
 INCLUDEPATH += $$PWD/../../ReaderConfig
 DEPENDPATH += $$PWD/../../ReaderConfig
 
-unix|win32: LIBS += -L$$PWD/../../../../../lib/ -lkipl
+unix:!symbian {
+    maemo5 {
+        target.path = /opt/usr/lib
+    } else {
+        target.path = /usr/lib
+    }
+    INSTALLS += target
+
+    unix:macx {
+        QMAKE_CXXFLAGS += -fPIC -O2
+        INCLUDEPATH += /usr/local/include
+        QMAKE_LIBDIR += /usr/local/lib
+        QMAKE_INFO_PLIST = Info.plist
+        ICON = muhrec3.icns
+    }
+    else {
+        QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+    }
+
+    LIBS += -ltiff -lxml2
+    INCLUDEPATH += /usr/include/libxml2
+}
+
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
+
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_CXXFLAGS += /openmp /O2
+}
+
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lReaderConfig
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lReaderConfig
 
 INCLUDEPATH += $$PWD/../../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../../kipl/kipl/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/release/ -lImagingAlgorithms.1.0.0
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lImagingAlgorithms.1.0.0
-else:unix: LIBS += -L$$PWD/../../../../../lib/ -lImagingAlgorithms.1.0.0
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/release/ -lImagingAlgorithms.1.0.0
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lImagingAlgorithms.1.0.0
+#else:unix: LIBS += -L$$PWD/../../../../../lib/ -lImagingAlgorithms.1.0.0
 
-INCLUDEPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
+#INCLUDEPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
+#DEPENDPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include

@@ -464,7 +464,7 @@ void TkiplbasetestTest::testProfiles()
     float *vp=new float[dims[0]];
     float *hp=new float[dims[1]];
     kipl::base::VerticalProjection2D(img.GetDataPtr(), img.Dims(), vp);
- //   kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+    //kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
 }
 
 void TkiplbasetestTest::testImageCaster()

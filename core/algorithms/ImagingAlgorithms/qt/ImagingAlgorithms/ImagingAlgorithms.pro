@@ -11,7 +11,7 @@ TEMPLATE = lib
 
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
+CONFIG(release, debug|release): DESTDIR    = $$PWD/../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
 win32 {
@@ -20,7 +20,7 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += "$$PWD/../../../../../external/src/linalg" "$$PWD/../../../../../external/include" "../../../../../external/include/cfitsio"
+    INCLUDEPATH += "$$PWD/../../../../../external/src/linalg" "$$PWD/../../../../../external/include" "$$PWD/../../../../../external/include/cfitsio"
     QMAKE_LIBDIR += $$PWD/../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
@@ -82,16 +82,6 @@ HEADERS += \
     ../../include/ReferenceImageCorrection.h
 
 
-symbian {
-    MMP_RULES += EXPORTUNFROZEN
-    TARGET.UID3 = 0xE18A5065
-    TARGET.CAPABILITY = 
-    TARGET.EPOCALLOWDLLDATA = 1
-    addFiles.sources = ImagingAlgorithms.dll
-    addFiles.path = !:/sys/bin
-    DEPLOYMENT += addFiles
-}
-
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -103,8 +93,8 @@ unix:!symbian {
 
 
 
-CONFIG(release, debug|release) LIBS += -L$$PWD/../../../../../../lib -lkipl
-else:unix:CONFIG(debug, debug|release)   LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
+CONFIG(release, debug|release)           LIBS += -L$$PWD/../../../../../../lib -lkipl
+else:CONFIG(debug, debug|release)        LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
 
 INCLUDEPATH += $$PWD/../../../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../kipl/kipl/include

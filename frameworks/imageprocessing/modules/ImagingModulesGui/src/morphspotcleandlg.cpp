@@ -27,27 +27,24 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold(0.05f),
+    m_fSigma(m_fThreshold/10.0f),
+    m_nEdgeSmoothLength(7),
+    m_nMaxArea(0),
+    m_bUseClamping(false),
+    m_fMinLevel(-0.1f),
+    m_fMaxLevel(12.0f),
     m_bThreading(false)
 {
     ui->setupUi(this);
-//    float data[16]={0,1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15 };
-//    size_t dims[2]={4,4};
 
     // here I hide stuff that is not used
     ui->comboCleanMethod->hide();
     ui->comboConnectivity->hide();
-    ui->label_10->hide();
     ui->label_13->hide();
     ui->label_6->hide();
     ui->label_7->hide();
-    ui->label_8->hide();
-    ui->label_7->hide();
-    ui->label_8->hide();
-    ui->label_9->hide();
     ui->spinArea->hide();
-    ui->spinEdgeLenght->hide();
-    ui->spinMaxValue->hide();
-    ui->spinMinValue->hide();
+
 }
 
 MorphSpotCleanDlg::~MorphSpotCleanDlg()
@@ -100,33 +97,42 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     float fcumhist[N];
     size_t ii=0;
-    for (ii=0;ii<N;++ii) {
-        fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
-        if (0.99f<fcumhist[ii])
-            break;
+    do
+    {
+        for (ii=0;ii<N;++ii) {
+            fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
+            if (0.99f<fcumhist[ii])
+                break;
+        }
+        kipl::base::Histogram(m_DetectionImage.GetDataPtr(), m_DetectionImage.Size(), hist, N, axis[0], axis[ii], axis);
+            kipl::math::cumsum(hist,cumhist,N);
     }
+    while (ii<50);
 
     size_t N99=ii;
     ui->plotDetection->setCurveData(0,axis,fcumhist,N99, QString("Cumulative histogram"));
     float threshold[N];
+
+    float thaxis[N];
     if (m_fSigma!=0.0f)
     { // In case of sigmoid mixing
-        for (size_t i=0; i<N99; i++) {
-            threshold[i]=kipl::math::Sigmoid(axis[i], m_fThreshold, m_fSigma);
+
+        for (size_t i=0; i<N; i++) {
+            thaxis[i]=axis[0]+i*(axis[N99]-axis[0])/N;
+            threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold, m_fSigma);
         }
-        ui->plotDetection->setCurveData(1,axis,threshold,N99, QString("threshold"));
+        ui->plotDetection->setCurveData(1,thaxis,threshold,N,"Threshold");
     }
     else
     {
 //            ui->plotDetection->setPlotCursor(0,QtAddons::PlotCursor(m_fThreshold,Qt::red,QtAddons::PlotCursor::Vertical));
     }
 
-
-
     std::map<std::string,std::string> pars;
-    m_ProcessedImage=m_OriginalImage;
-    m_ProcessedImage.Clone();
-//    m_Cleaner.Process(m_ProcessedImage,m_fThreshold, m_fSigma);
+    size_t dims[3]={m_OriginalImage.Size(0),m_OriginalImage.Size(1),1};
+    m_ProcessedImage.Resize(dims);
+    std::copy_n(m_OriginalImage.GetDataPtr(),m_ProcessedImage.Size(),m_ProcessedImage.GetDataPtr());
+
     m_Cleaner.Process(m_ProcessedImage, pars);
 
     std::ostringstream msg;
@@ -137,10 +143,17 @@ void MorphSpotCleanDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->widget_VolumeViewer->setImages(&m_OriginalImage, &m_ProcessedImage);
-//    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims());
+    ui->viewer_processed->set_image(m_ProcessedImage.GetDataPtr(),m_ProcessedImage.Dims());
 
-//    on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
+    kipl::base::TImage<float,2> diffimg(m_ProcessedImage.Dims());
+    for (size_t i=0; i<m_ProcessedImage.Size(); ++i)
+        diffimg[i]=m_OriginalImage[i]-m_ProcessedImage[i];
+
+    kipl::base::Histogram(diffimg.GetDataPtr(), diffimg.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::FindLimits(hist, N, 99.0f, &nLo, &nHi);
+
+    ui->viewer_difference->set_image(diffimg.GetDataPtr(),diffimg.Dims(),axis[nLo],axis[nHi]);
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
@@ -149,7 +162,7 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
 
     m_Projections=img;
 
-    ui->widget_VolumeViewer->setImages(&m_Projections, nullptr);
+    ui->viewer_original->set_image(m_Projections.GetDataPtr(),m_Projections.Dims());
 
     m_Config=dynamic_cast<KiplProcessConfig *>(config);
 
@@ -210,6 +223,7 @@ void MorphSpotCleanDlg::UpdateDialog()
     ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
+    ui->groupClampData->setChecked(m_bUseClamping);
     ui->spinMinValue->setValue(m_fMinLevel);
     ui->spinMaxValue->setValue(m_fMaxLevel);
     ui->spinEdgeLenght->setValue(m_nEdgeSmoothLength);
@@ -223,6 +237,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_fThreshold        = ui->spinThreshold->value();
     m_fSigma            = ui->spinSigma->value();
     m_fMinLevel         = ui->spinMinValue->value();
+    m_bUseClamping      = ui->groupClampData->isChecked();
     m_fMaxLevel         = ui->spinMaxValue->value();
     m_nMaxArea          = ui->spinArea->value();
     m_nEdgeSmoothLength = ui->spinEdgeLenght->value();
@@ -237,6 +252,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["sigma"]           = kipl::strings::value2string(m_fSigma);
     parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["useclamping"]     = kipl::strings::bool2string(m_bUseClamping);
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]       = kipl::strings::bool2string(m_bThreading);

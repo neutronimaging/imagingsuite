@@ -81,7 +81,7 @@ void TReaderConfigTest::testAnalyzeFileExt()
 
 void TReaderConfigTest::testDataSetBase()
 {
-    ImageLoader l1,l2;
+    FileSet l1,l2;
 
     QCOMPARE(l1.m_nFirst,0);
     QCOMPARE(l1.m_nLast,99);

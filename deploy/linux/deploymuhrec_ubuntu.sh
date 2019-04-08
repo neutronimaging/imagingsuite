@@ -60,7 +60,7 @@ cd ..
 `$CPCMD $REPOSPATH/imagingsuite/applications/muhrec/scripts/muhrec .`
 chmod +x muhrec
 
-cp $REPOSPATH/imagingsuite/applications/muhrec/src/resources/*.xml resources
+cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/*.xml resources
 popd
 
 

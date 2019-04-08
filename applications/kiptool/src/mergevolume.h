@@ -1,9 +1,13 @@
+//<LICENSE>
+
 #ifndef MERGEVOLUME_H
 #define MERGEVOLUME_H
 
 #include <string>
 
 #include <logging/logger.h>
+#include <tiffio.h>
+
 
 class MergeVolume
 {
@@ -20,7 +24,7 @@ public:
                                         kipl::base::TImage<float,2> *img);
 
     std::string WriteXML(size_t indent=4);
-//    void ParseXML(xmlTextReaderPtr reader);
+    void ParseXML(std::string fname);
 
     std::string m_sPathA;
     std::string m_sPathB;
