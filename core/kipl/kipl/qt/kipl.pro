@@ -17,7 +17,7 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 message("Destdir $$DESTDIR")
 
 unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/src/Fadeeva_erf
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
