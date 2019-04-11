@@ -20,7 +20,7 @@ public:
     edgefunction();
     ~edgefunction();
 
-private:
+//private:
     double *erfc1;
     double *erfc2;
     double *gauss;
@@ -33,7 +33,7 @@ private:
     void computeGauss(double *gauss, double *t);
     void computeErfc1(double *erfc, double *t);
     void computeErfc2(double *erfc, double *t);
-    void computeEdge(double *edge, double *t);
+    void computeEdge(double *t);
 };
 
 }}

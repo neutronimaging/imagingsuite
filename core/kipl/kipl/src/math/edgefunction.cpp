@@ -11,8 +11,8 @@ edgefunction::edgefunction() :
     erfc2(nullptr),
     gauss(nullptr),
     edgeFunction(nullptr),
-    sigma(-1.0),
-    alpha(-10.0),
+    sigma(-0.1),
+    alpha(-0.1),
     t0(0.0),
     t(nullptr),
     size(200)
@@ -22,6 +22,7 @@ edgefunction::edgefunction() :
             erfc1 = new double[size];
             erfc2 = new double[size];
             gauss = new double[size];
+            edgeFunction = new double[size];
         }
 }
 
@@ -61,7 +62,7 @@ void edgefunction::computeErfc1(double *erfc, double *t)
 
     for (int i=0; i<size; ++i)
     {
-        erfc[i] = Faddeeva::erfc(-(t[i]-t0)/(sigma*dsqrt2)); // define this at the beginning
+        erfc[i] = Faddeeva::erfc(-(t[i]-t0)/(sigma*dsqrt2));
     }
 
 }
@@ -85,7 +86,7 @@ void edgefunction::computeGauss(double *gauss, double *t){
 
 }
 
-void edgefunction::computeEdge(double *edge, double *t)
+void edgefunction::computeEdge(double *t)
 {
 
     computeGauss(gauss,t);

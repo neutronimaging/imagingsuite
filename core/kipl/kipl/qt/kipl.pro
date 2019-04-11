@@ -16,10 +16,11 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 message("Destdir $$DESTDIR")
 
-unix {
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/src/Fadeeva_erf
-    QMAKE_CXXFLAGS += -fPIC -O2
 
+
+unix {
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+    QMAKE_CXXFLAGS += -fPIC -O2
     unix:!macx {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
@@ -46,7 +47,7 @@ win32 {
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -lFaddeeva
 
 
 
@@ -432,11 +433,18 @@ unix:!symbian {
         target.path = /opt/usr/lib
     } else {
         target.path = /usr/lib
+#        target.path = ../../../../external/src/Fadeeva_erf ## did not seem to work
     }
     INSTALLS += target
 }
 
 DISTFILES += \
     ../include/filters/nonlocalmeans.txt
+
+
+#LIBS += -L$$PWD/../../../../external/src/Fadeeva_erf/ -lFaddeeva ## but somehow I add to put the .so in usr/lib
+#QMAKE_LIBDIR += $$PWD/../../../../external/src/Fadeeva_erf/
+INCLUDEPATH += $$PWD/../../../../external/src/Fadeeva_erf
+DEPENDPATH += $$PWD/../../../../external/src/Fadeeva_erf
 
 message($$INCLUDEPATH)
