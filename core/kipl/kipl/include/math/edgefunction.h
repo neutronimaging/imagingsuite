@@ -21,18 +21,18 @@ public:
     ~edgefunction();
 
 //private:
-    double *erfc1;
-    double *erfc2;
-    double *gauss;
+    double *term3;
+    double *term5;
+    double *term4;
     double *edgeFunction;
     double sigma;
     double alpha;
     double t0;
     double *t;
     int size;
-    void computeGauss(double *gauss, double *t);
-    void computeErfc1(double *erfc, double *t);
-    void computeErfc2(double *erfc, double *t);
+    void computeTerm4(double *fun, double *t);
+    void computeTerm3(double *fun, double *t);
+    void computeTerm5(double *fun, double *t);
     void computeEdge(double *t);
 };
 
