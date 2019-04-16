@@ -1,13 +1,4 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-07-10 20:08:51 +0200 (Sa, 10 Jul 2010) $
-// $Rev: 652 $
-//
+//<LICENSE>
 
 //#include "stdafx.h"
 #include "../include/StdBackProjectorBase.h"
@@ -78,11 +69,12 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
 	proj.Clone();
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
+
 	fWeights[nProjCounter]  = weight;
 	fSin[nProjCounter]      = sin(angle*fPi/180.0f);
 	fCos[nProjCounter]      = cos(angle*fPi/180.0f);
 	fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter;
-	float *pProj=NULL;
+    float *pProj=nullptr;
 	
 	kipl::base::TImage<float,2> img;
 	proj*=weight;

@@ -1528,14 +1528,14 @@ void MuhRecMainWindow::UpdateConfig()
     // +2 to skip the matlab file types
 
     m_Config.UserInformation.sProjectNumber = ui->editProjectName->text().toStdString();
-    m_Config.UserInformation.sOperator = ui->editOperatorName->text().toStdString();
-    m_Config.UserInformation.sInstrument = ui->editInstrumentName->text().toStdString();
-    m_Config.UserInformation.sSample = ui->editSampleDescription->text().toStdString();
-    m_Config.UserInformation.sComment = ui->editExperimentDescription->toPlainText().toStdString();
-    m_Config.backprojector = ui->ConfiguratorBackProj->GetModule();
+    m_Config.UserInformation.sOperator      = ui->editOperatorName->text().toStdString();
+    m_Config.UserInformation.sInstrument    = ui->editInstrumentName->text().toStdString();
+    m_Config.UserInformation.sSample        = ui->editSampleDescription->text().toStdString();
+    m_Config.UserInformation.sComment       = ui->editExperimentDescription->toPlainText().toStdString();
+    m_Config.backprojector                  = ui->ConfiguratorBackProj->GetModule();
 
-    m_Config.ProjectionInfo.fSDD = ui->dspinSDD->value();
-    m_Config.ProjectionInfo.fSOD = ui->dspinSOD->value();
+    m_Config.ProjectionInfo.fSDD       = ui->dspinSDD->value();
+    m_Config.ProjectionInfo.fSOD       = ui->dspinSOD->value();
     m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
     m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
