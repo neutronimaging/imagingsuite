@@ -70,9 +70,10 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 	proj.Clone();
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
 
+    float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
 	fWeights[nProjCounter]  = weight;
-	fSin[nProjCounter]      = sin(angle*fPi/180.0f);
-	fCos[nProjCounter]      = cos(angle*fPi/180.0f);
+    fSin[nProjCounter]      = sin(dirWeight*angle*fPi/180.0f);
+    fCos[nProjCounter]      = cos(dirWeight*angle*fPi/180.0f);
 	fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter;
     float *pProj=nullptr;
 	
@@ -131,7 +132,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 
 	// Process the projections
 	float *pImg=img.GetDataPtr();
-	float *pProj=NULL;
+    float *pProj=nullptr;
 	size_t i=0;
 	for (i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj, "Back-projecting")); i++) {
 		pProj=projections.GetLinePtr(0,i);
