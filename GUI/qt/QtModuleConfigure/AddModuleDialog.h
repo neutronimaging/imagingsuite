@@ -36,7 +36,7 @@ class AddModuleDialog : public QDialog
     Q_OBJECT
 	kipl::logging::Logger logger;
 public:
-    explicit AddModuleDialog(QWidget *parent = NULL);
+    explicit AddModuleDialog(QWidget *parent = nullptr);
     virtual ~AddModuleDialog() {}
 
     int configure(std::string application, std::string defaultsource="", std::string application_path="");

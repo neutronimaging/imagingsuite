@@ -26,10 +26,10 @@ ModuleItem::~ModuleItem()
 
 BackProjItem::BackProjItem(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor)	:
 	logger("BackProjItem"),
-	hinstLib(NULL),
-	m_fnModuleFactory(NULL),
-	m_fnDestroyer(NULL),
-	m_Module(NULL)
+    hinstLib(nullptr),
+    m_fnModuleFactory(nullptr),
+    m_fnDestroyer(nullptr),
+    m_Module(nullptr)
 {
 	m_sApplication=application;
 	m_sModuleName=modulename;
@@ -93,7 +93,7 @@ void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase *interact
 	hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
-	if (hinstLib != NULL) 
+    if (hinstLib != nullptr)
     { 
 #ifdef _MSC_VER
 		m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(GetProcAddress(hinstLib, "GetModule"));
@@ -101,10 +101,10 @@ void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase *interact
 		m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(dlsym(hinstLib, "GetModule"));
 #endif
 		 // If the function address is valid, call the function.
-		if (NULL != m_fnModuleFactory) 
+        if (nullptr != m_fnModuleFactory)
         {
 			m_Module=reinterpret_cast<BackProjectorModuleBase *>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void *>(interactor)));
-			if (m_Module==NULL) {
+            if (m_Module==nullptr) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;
 				throw ReconException(msg.str(),__FILE__,__LINE__);
@@ -130,7 +130,7 @@ void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase *interact
 		m_fnDestroyer = reinterpret_cast<DESTROYER>(dlsym(hinstLib, "Destroy"));
 #endif
 
-		if (m_fnDestroyer==NULL) {
+        if (m_fnDestroyer==nullptr) {
 			msg.str("");
 			msg<<"Failed to get the destroyer from "<<m_sSharedObject<<" (Error: "
 #ifdef _MSC_VER

@@ -135,10 +135,10 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
             name(_name),
     		edge_dist(0)
     {
-         this->w_fwd=NULL;
-         this->w_bck=NULL;
-         this->i_fwd=NULL;
-         this->i_bck=NULL;
+         this->w_fwd=nullptr;
+         this->w_bck=nullptr;
+         this->i_fwd=nullptr;
+         this->i_bck=nullptr;
 
          size=0;
 		 index_start=0;
@@ -189,13 +189,13 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
      CMetricBase::~CMetricBase()
      {
-         if (this->i_fwd!=NULL)
+         if (this->i_fwd!=nullptr)
              delete [] this->i_fwd;
 
-         if (this->i_bck!=NULL)
+         if (this->i_bck!=nullptr)
              delete [] this->i_bck;
 
-         if (this->w_fwd!=NULL)
+         if (this->w_fwd!=nullptr)
              delete [] this->w_fwd;
 
          if (this->w_bck)

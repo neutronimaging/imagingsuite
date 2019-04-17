@@ -102,7 +102,7 @@ namespace kipl { namespace segmentation {
 			size_t N,
             T0 th,
 			CmpType cmp=cmp_greater,
-            T1 * mask = reinterpret_cast<T1 *>(NULL),
+            T1 * mask = reinterpret_cast<T1 *>(nullptr),
             size_t Nmask=size_t(0))
 	{
 		T1 cmptrue,cmpfalse;
@@ -113,7 +113,7 @@ namespace kipl { namespace segmentation {
 
 		cmpfalse=!cmptrue;
 
-		if (mask != NULL) {
+        if (mask != nullptr) {
 			Nmask = Nmask==0 ? N : Nmask;
 			for (size_t i=0, j=0; i<N; i++, j++) {
 				if (j==Nmask) j=0;
@@ -138,7 +138,7 @@ namespace kipl { namespace segmentation {
 	/// \param img Input image
 	/// \param th Array containing the threshold levels
 	/// \param n Number of thresholds
-	/// \param vals Assignment values for the intervals, if vals=NULL will automaticly 
+    /// \param vals Assignment values for the intervals, if vals=nullptr will automaticly
 	/// increasing numbers be used
 	/// \param mask ROI mask
     template <typename T0, typename T1, size_t N>
@@ -176,7 +176,7 @@ namespace kipl { namespace segmentation {
 ///		\param hi upper threshold level
 ///		\param cmp complementation switch
 ///		\param conn morphological connectivity selector
-///		\param mask ROI mask for the processing. If mask=NULL, mask processing will be skipped
+///		\param mask ROI mask for the processing. If mask=nullptr, mask processing will be skipped
 template <typename T,size_t NDim>
 int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDim> &bilevel, T lo, T hi, kipl::segmentation::CmpType cmp, kipl::morphology::MorphConnect conn, kipl::base::TImage<char,NDim> *mask=nullptr)
 {

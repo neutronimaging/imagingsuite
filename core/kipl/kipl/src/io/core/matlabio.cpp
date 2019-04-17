@@ -167,7 +167,7 @@ namespace core {
 	{
 		FILE *inf;
 		stringstream s;
-		if ((inf=fopen(fname,"rb"))==NULL) {
+        if ((inf=fopen(fname,"rb"))==nullptr) {
 			s.str("");
 			s<<"ReadMATmatrix: File opening error: "<<fname;
 			throw kipl::base::KiplException(s.str(),__FILE__,__LINE__);
@@ -180,8 +180,8 @@ namespace core {
 		fread(&head,sizeof(MATFile_header),1,inf);
 		fread(&tag,sizeof(tag),1,inf);
 
-		Bytef *buffer=NULL;
-		Bytef *cbuffer=NULL;
+        Bytef *buffer=nullptr;
+        Bytef *cbuffer=nullptr;
 		Bytef *pData;
 		DataTag &t=tag;
 		
@@ -242,7 +242,7 @@ namespace core {
 			pData=buffer+sizeof(DataTag);
 				
 			delete [] cbuffer;
-			cbuffer=NULL;
+            cbuffer=nullptr;
 		} 
 		else {
 			pData=cbuffer;
@@ -375,7 +375,7 @@ namespace core {
 		for (i=strlen(infotext); i<124; i++) infotext[i]=' ';
 
 		FILE *of;
-		if ((of=fopen(fname,"wb"))==NULL) {
+        if ((of=fopen(fname,"wb"))==nullptr) {
 			s.str("");
 			s<<"WriteMATmatrix: File opening error"<<fname;
 			throw kipl::base::KiplException(s.str(),__FILE__,__LINE__);
@@ -537,7 +537,7 @@ namespace core {
 		char infotext[124];
 		char dummy[16];
 
-		if ((*inf=fopen(fname,"rb"))==NULL) { cerr<<"ReadMAThead: File opening error"; exit(0);}
+        if ((*inf=fopen(fname,"rb"))==nullptr) { cerr<<"ReadMAThead: File opening error"; exit(0);}
 
 		// Info header
 		fread(infotext, 1, 124, *inf);
@@ -659,7 +659,7 @@ namespace core {
 		for (i=strlen(infotext); i<124; i++) infotext[i]=' ';
 
 		//FILE *of;
-		if ((*of=fopen(fname,"wb"))==NULL) { 
+        if ((*of=fopen(fname,"wb"))==nullptr) {
 			cerr<<"WriteMATmatrix: File opening error"<<endl; 
 			cerr<<"x "<<fname<<endl;
 			exit(0);

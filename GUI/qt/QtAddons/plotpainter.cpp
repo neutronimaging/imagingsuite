@@ -8,7 +8,7 @@ namespace QtAddons {
 PlotPainter::PlotPainter(QWidget *parent):
     m_pParent(parent),
     logger("PlotPainter"),
-    m_Font(QFont("Helvetic",parent!=NULL ? 10 :6 ))
+    m_Font(QFont("Helvetic",parent!=nullptr ? 10 :6 ))
 {
     setPlotSettings(PlotSettings());
 }

@@ -42,7 +42,7 @@ namespace akipl { namespace segmentation {
   class SeededRegionGrowing{
   public:
     int operator()(kipl::base::TImage<ImgType,NDims> &img, kipl::base::TImage<SegType,NDims> &seg);
-    SeededRegionGrowing() {m_pNeighborhood=NULL;}
+    SeededRegionGrowing() {m_pNeighborhood=nullptr;}
     ~SeededRegionGrowing() {if (m_pNeighborhood) delete m_pNeighborhood;}
   private:
     int PrepareRegions(kipl::base::TImage<ImgType,NDims> &img, kipl::base::TImage<SegType,NDims> &seg);

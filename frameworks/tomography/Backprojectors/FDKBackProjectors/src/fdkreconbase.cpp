@@ -170,7 +170,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
     fSin[nProjCounter]      = sin(angle*fPi/180.0f);
     fCos[nProjCounter]      = cos(angle*fPi/180.0f);
     fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter; // this stuff for now i don-t use it
-    float *pProj=NULL;
+    float *pProj=nullptr;
 
     kipl::base::TImage<float,2> img;
     proj*=weight;

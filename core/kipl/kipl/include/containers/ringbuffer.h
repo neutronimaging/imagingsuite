@@ -8,7 +8,7 @@ template <typename T>
 class RingBuffer
 {
 public:
-        RingBuffer(size_t len) : L(len), index(0), isFull(false),buffer(NULL) {buffer=new T[L];}
+        RingBuffer(size_t len) : L(len), index(0), isFull(false),buffer(nullptr) {buffer=new T[L];}
         ~RingBuffer() {delete [] buffer;}
         void Reset() {index=0; isFull=false;}
         T const * const DataPtr() {return buffer;}

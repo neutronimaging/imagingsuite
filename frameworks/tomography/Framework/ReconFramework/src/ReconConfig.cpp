@@ -273,10 +273,10 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
                 sValue="";
@@ -402,19 +402,19 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
 	        sName=reinterpret_cast<const char *>(name);
 	        	       
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -457,10 +457,10 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -475,10 +475,10 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 						ret=xmlTextReaderRead(reader);
 
 						value = xmlTextReaderConstValue(reader);
-						if (name==NULL) {
+                        if (name==nullptr) {
 							throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 						}
-						if (value!=NULL)
+                        if (value!=nullptr)
         					sValue=reinterpret_cast<const char *>(value);
 						else
         					sValue="Empty";

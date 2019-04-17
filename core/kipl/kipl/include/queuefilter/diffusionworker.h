@@ -122,15 +122,15 @@ DiffusionWorker<ImgType>::DiffusionWorker(float Tau,
 	cnt=-1;
 	rescnt=-1;
 	
-	a=NULL;
-	b=NULL;
-	d=NULL;
-	p=NULL;
-	q=NULL;
-	x=NULL;
-	y=NULL;
-	m=NULL;
-	l=NULL;
+    a=nullptr;
+    b=nullptr;
+    d=nullptr;
+    p=nullptr;
+    q=nullptr;
+    x=nullptr;
+    y=nullptr;
+    m=nullptr;
+    l=nullptr;
 }
 
 template <class ImgType>

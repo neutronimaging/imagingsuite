@@ -31,7 +31,7 @@ public:
     		quiet=true; 
     		name="SegmentationBase";
     		#ifdef USE_VIEWER
-    			fig=NULL;
+                fig=nullptr;
 			#endif
     		}
     

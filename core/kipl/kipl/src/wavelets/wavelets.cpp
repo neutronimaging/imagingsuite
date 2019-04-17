@@ -12,16 +12,16 @@
 //namespace kipl { namespace wavelets {
 //
 //WaveletTransform1D::WaveletTransform1D(std::string waveletname, size_t k, size_t maxlen) :
-//		w(NULL),
-//		work(NULL),
+//		w(nullptr),
+//		work(nullptr),
 //		m_nMaxLen(maxlen)
 //{
 //	w=gsl_wavelet_alloc(gsl_wavelet_daubechies,k);
-//	if (w==NULL)
+//	if (w==nullptr)
 //		throw kipl::base::KiplException("WaveletTransform1D: Failed to allocate wavelet",__FILE__,__LINE__);
 //
 //	work=gsl_wavelet_workspace_alloc(m_nMaxLen);
-//	if (work==NULL)
+//	if (work==nullptr)
 //		throw kipl::base::KiplException("WaveletTransform1D: Failed to allocate wavelet workspace",__FILE__,__LINE__);
 //
 //	data=new double[m_nMaxLen];
@@ -30,13 +30,13 @@
 //
 //WaveletTransform1D::~WaveletTransform1D()
 //{
-//	if (w!=NULL)
+//	if (w!=nullptr)
 //		gsl_wavelet_free(w);
 //
-//	if (work!=NULL)
+//	if (work!=nullptr)
 //		gsl_wavelet_workspace_free(work);
 //
-//	if (data!=NULL)
+//	if (data!=nullptr)
 //		delete [] data;
 //}
 //
@@ -86,19 +86,19 @@
 //
 //WaveletTransform2D::WaveletTransform2D(std::string waveletname, size_t k, size_t maxsize) :
 //	logger("WaveletTransform2D"),
-//	w(NULL),
-//	work(NULL)
+//	w(nullptr),
+//	work(nullptr)
 //{
 //	logger(kipl::logging::Logger::LogMessage,"Enter ctor");
 //	w=gsl_wavelet_alloc(gsl_wavelet_daubechies,k);
 //
-//	if (w==NULL)
+//	if (w==nullptr)
 //		throw kipl::base::KiplException("WaveletTransform1D: Failed to allocate wavelet",__FILE__,__LINE__);
 //
 //	logger(kipl::logging::Logger::LogMessage,"Wavelet allocation ok");
 //	work=gsl_wavelet_workspace_alloc(m_nMaxLen);
 //
-//	if (work==NULL)
+//	if (work==nullptr)
 //		throw kipl::base::KiplException("WaveletTransform1D: Failed to allocate wavelet workspace",__FILE__,__LINE__);
 //
 //	logger(kipl::logging::Logger::LogMessage,"Wavelet workspace ok");

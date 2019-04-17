@@ -37,7 +37,7 @@
 using namespace std;
 
 SpotClean::SpotClean(void) : PreprocModuleBase("SpotClean"),
-	pKernel(NULL), 
+    pKernel(nullptr),
 	nIterations(1), 
 	fThreshold(0.1f), 
 	fWidth(0.0075f), 
@@ -56,7 +56,7 @@ SpotClean::SpotClean(void) : PreprocModuleBase("SpotClean"),
 
 SpotClean::~SpotClean(void)
 {
-	if (pKernel!=NULL)
+    if (pKernel!=nullptr)
 		delete [] pKernel;
 }
 

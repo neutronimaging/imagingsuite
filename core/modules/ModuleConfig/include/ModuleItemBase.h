@@ -49,7 +49,7 @@ public:
 	virtual ProcessModuleBase * GetModule();
 
     /// Check if the item contains a valid module
-    /// \returns true if the module pointer is non-NULL.
+    /// \returns true if the module pointer is non-nullptr.
     bool Valid() {return m_Module!=nullptr;}
 
     /// Destructor that unloads the loaded module.

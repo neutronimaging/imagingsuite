@@ -1595,7 +1595,7 @@ void MuhRecMainWindow::on_buttonBrowseDC_clicked()
             ui->editDarkMask->setText(projdir);
             ProjectionReader reader;
             size_t Nofimgs[2];
-            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, NULL);
+            reader.GetNexusInfo(projdir.toStdString(),Nofimgs, nullptr);
             ui->spinFirstDark->setValue(Nofimgs[0]);
             ui->spinDarkCount->setValue(Nofimgs[1]+1);
         }

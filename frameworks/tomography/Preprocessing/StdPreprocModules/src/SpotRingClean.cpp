@@ -30,7 +30,7 @@
 //SpotRingClean::SpotRingClean(std::string name) :
 //	SpotClean2(name),
 //	mRingList(0),
-//	mNorm(NULL)
+//	mNorm(nullptr)
 //{
 //
 //}

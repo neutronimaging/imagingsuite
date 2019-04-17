@@ -59,10 +59,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 			ret=xmlTextReaderRead(reader);
 
 			value = xmlTextReaderConstValue(reader);
-			if (name==NULL) {
+            if (name==nullptr) {
 				throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 			}
-			if (value!=NULL)
+            if (value!=nullptr)
 				sValue=reinterpret_cast<const char *>(value);
 			else {
 				msg.str("");
@@ -88,10 +88,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 						ret=xmlTextReaderRead(reader);
 
 						value = xmlTextReaderConstValue(reader);
-						if (name==NULL) {
+                        if (name==nullptr) {
 							throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 						}
-						if (value!=NULL)
+                        if (value!=nullptr)
 							sValue=reinterpret_cast<const char *>(value);
 						else
 							sValue="Empty";

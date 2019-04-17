@@ -601,7 +601,7 @@ bool ReconEngine::Serialize(size_t *dims)
             kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, plane, m_Config.MatrixInfo.roi);
        }
        else {
-            kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, plane, NULL);
+            kipl::io::WriteNeXusStack(img, str.str().c_str(), Start,nSlices, plane, nullptr);
        }
 
 	}
@@ -621,7 +621,7 @@ bool ReconEngine::Serialize(size_t *dims)
             kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices, m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane, m_Config.MatrixInfo.roi);
        }
        else {
-            kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices,m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane, NULL);
+            kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices,m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane, nullptr);
        }
 
     }

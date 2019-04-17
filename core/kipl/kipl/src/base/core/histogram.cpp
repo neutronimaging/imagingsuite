@@ -60,7 +60,7 @@ int KIPLSHARED_EXPORT Histogram(float * data, size_t nData, size_t * hist, size_
 		delete [] temp_hist;
     }
     scale=(stop-start)/nBins;
-    if (pAxis!=NULL) {
+    if (pAxis!=nullptr) {
         pAxis[0]=start+scale/2;
         for (size_t i=1; i<nBins; i++)
             pAxis[i]=pAxis[i-1]+scale;
@@ -108,7 +108,7 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 		cumulated[i]=cumulated[i-1]+hist[i];
 	}
 
-	if ((lo!=NULL) && (hi!=NULL)) {
+    if ((lo!=nullptr) && (hi!=nullptr)) {
 		*lo=0;
 		*hi=0;
 
@@ -252,14 +252,14 @@ BivariateHistogram::BinInfo BivariateHistogram::GetBin(int posA, int posB)
 /// \returns the pointer to the axis ticks
 const float * BivariateHistogram::GetAxisA()
 {
-    return NULL;
+    return nullptr;
 }
 
 /// \brief Get axis ticks for data set B
 /// \returns the pointer to the axis ticks
 float const * BivariateHistogram::GetAxisB()
 {
-    return NULL;
+    return nullptr;
 }
 
 kipl::base::TImage<size_t,2> & BivariateHistogram::Bins()

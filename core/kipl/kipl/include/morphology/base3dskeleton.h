@@ -57,7 +57,7 @@ protected:
 template<class ImgType>
 Base3Dskeleton<ImgType>::Base3Dskeleton() : background(0), nondeletable(1), queued(2), unqueued(3), object(1), border(4),simple(5)
 {
-	N26=NULL;
+    N26=nullptr;
 	algorithm_name="Base3Dskeleton";
 }
 

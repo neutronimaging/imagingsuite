@@ -21,8 +21,8 @@ StripeFilter::StripeFilter(size_t const * const dims, std::string wname, size_t 
 	m_wt(wname),
 	m_nScale(scale),
 	m_fSigma(sigma),
-	m_pLine(NULL),
-	m_pCLine(NULL)
+    m_pLine(nullptr),
+    m_pCLine(nullptr)
 {
 	std::ostringstream msg;
 	for (size_t i=0; i<m_nScale; i++) {
@@ -41,17 +41,17 @@ StripeFilter::StripeFilter(size_t const * const dims, std::string wname, size_t 
 }
 
 StripeFilter::~StripeFilter() {
-	if (m_pDamping[0]!=NULL)
+    if (m_pDamping[0]!=nullptr)
 		for (size_t i=0; i<m_nScale; i++)
 			delete [] m_pDamping[i];
 
-	if (m_pLine!=NULL)
+    if (m_pLine!=nullptr)
 		delete [] m_pLine;
 
-	if (m_pCLine!=NULL)
+    if (m_pCLine!=nullptr)
 		delete [] m_pCLine;
 
-	if (fft[0]!=NULL) {
+    if (fft[0]!=nullptr) {
 		for (size_t i=0; i<m_nScale; i++)
 		delete fft[i];
 	}

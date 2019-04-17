@@ -20,7 +20,7 @@ namespace QueueFilter {
 			{
 				worker=new ShockWorker<ImgType>(Tau,Sigma,Lambda,st);
 				manager=new QueueFilterManager<ImgType>(*worker);
-				fig=NULL;
+                fig=nullptr;
 				Nit=N;
 			}
 			
@@ -44,7 +44,7 @@ namespace QueueFilter {
 					if (fig) 
 						delete fig;
 					
-					manager->fig=NULL;
+                    manager->fig=nullptr;
 				}
 					
 				return N;

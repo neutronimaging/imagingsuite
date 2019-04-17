@@ -310,7 +310,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectPeaks(kipl::base::TImage<float
     size_t N=padded.Size();
     float *pImg=padded.GetDataPtr();
 
-    float *pPeaks=NULL;
+    float *pPeaks=nullptr;
 
     nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
 

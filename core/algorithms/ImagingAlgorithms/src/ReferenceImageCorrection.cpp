@@ -129,13 +129,13 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         size_t *doseroi)
 {
 
-	if (ob!=NULL) {
+    if (ob!=nullptr) {
 		m_bHaveOpenBeam=true;
         m_OpenBeam=*ob;
 //        kipl::io::WriteTIFF32(m_OpenBeam,"roi_ob.tif");
 	}
 
-	if (dc!=NULL) {
+    if (dc!=nullptr) {
 		m_bHaveDarkCurrent=true;
         m_DarkCurrent=*dc;
 //        kipl::io::WriteTIFF32(m_DarkCurrent,"roi_dc.tif");
