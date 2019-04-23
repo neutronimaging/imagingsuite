@@ -61,6 +61,7 @@ int process(int argc, char *argv[])
     ImageReader reader;
 
     std::string srcfname=args["infile"];
+    qDebug() << "Pre size check";
     try {
         nDims=reader.GetImageSize(srcfname,1.0f,dims);
     } catch (ReaderException &e) {
@@ -72,7 +73,7 @@ int process(int argc, char *argv[])
         exit(0);
     }
 
-    qDebug() << "nDims:" <<nDims;
+    qDebug() << "nDims:" <<nDims<<dims[0]<<dims[1]<<dims[2];
     if (nDims<3) {
         logger(logger.LogWarning,"This is a single frame image");
         return 0;

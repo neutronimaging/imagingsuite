@@ -12,6 +12,7 @@
 
 #include <fitsio.h>
 
+#include "../../base/timage.h"
 #include "../../base/KiplException.h"
 
 namespace kipl { namespace io {
@@ -135,7 +136,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
     fitsfile *fptr;                  // pointer to the FITS file, defined in fitsio.h
     int status, ii;
     long  fpixel, nelements, exposure;
-    ImgType *array[200];
+
     char err_msg[128];
 
     // initialize FITS image parameters
@@ -145,9 +146,10 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
     naxes[0]= static_cast<long>(src.Size(0)); // Set image dimensions
     naxes[1]= static_cast<long>(src.Size(1)); // Set image dimensions
 
-    // initialize pointers to the start of each row of the image
-    for( ii=1; ii<naxes[1]; ii++ )
-      array[ii] = array[ii-1] + naxes[0];
+//    ImgType *array=new ImgType[naxes[1]];
+//    // initialize pointers to the start of each row of the image
+//    for( ii=1; ii<naxes[1]; ii++ )
+//      array[ii] = array[ii-1] + naxes[0];
 
     remove(filename);                               // Delete old file if it already exists
 
@@ -199,6 +201,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
     }
 
+//   delete [] array;
 	return 0;
 }
 
