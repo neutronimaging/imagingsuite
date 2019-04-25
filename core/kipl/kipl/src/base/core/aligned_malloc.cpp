@@ -12,7 +12,7 @@ void *aligned_malloc(size_t size, size_t align_size)
   int align_mask = align_size - 1;
 
   ptr=(char *)malloc(size + align_size + sizeof(int));
-  if(ptr==NULL) return(NULL);
+  if(ptr==nullptr) return(nullptr);
 
   ptr2 = ptr + sizeof(int);
   aligned_ptr = ptr2 + (align_size - ((size_t)ptr2 & align_mask));

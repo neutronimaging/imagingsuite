@@ -124,7 +124,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
             return new CameraStripeClean;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)

@@ -170,15 +170,15 @@ DiffusionBaseFilter<T,NDim>(Sigma,Tau,It,interactor),
 //    DiffusionBaseFilter<T,NDim>(Sigma,Tau,It,interactor)
 //{
 //	lambdaest=le;
-//	a=NULL;
-//	b=NULL;
-//	d=NULL;
-//	p=NULL;
-//	q=NULL;
-//	x=NULL;
-//	y=NULL;
-//	m=NULL;
-//	l=NULL;
+//	a=nullptr;
+//	b=nullptr;
+//	d=nullptr;
+//	p=nullptr;
+//	q=nullptr;
+//	x=nullptr;
+//	y=nullptr;
+//	m=nullptr;
+//	l=nullptr;
 //	this->NLut=10000;
 //	this->lambda=1.0f;
 //	
@@ -197,15 +197,15 @@ DiffusionBaseFilter<T,NDim>(Sigma,Tau,It,interactor),
 //	
 //	this->lambdaest=le;
 //	
-//	a=NULL;
-//	b=NULL;
-//	d=NULL;
-//	p=NULL;
-//	q=NULL;
-//	x=NULL;
-//	y=NULL;
-//	m=NULL;
-//	l=NULL;
+//	a=nullptr;
+//	b=nullptr;
+//	d=nullptr;
+//	p=nullptr;
+//	q=nullptr;
+//	x=nullptr;
+//	y=nullptr;
+//	m=nullptr;
+//	l=nullptr;
 //	this->lambda=1.0f;
 //	this->NLut=10000;
 //	ComputeLUT(this->NLut);
@@ -505,7 +505,7 @@ template <typename T, size_t NDim>
 	{
 		float *pG=this->g.GetDataPtr();
 		
-        if (this->lambdaest !=NULL) {
+        if (this->lambdaest !=nullptr) {
             float lambdaold=lambda;
             lambda=(*(this->lambdaest))(this->g);
             if (lambdaold!=lambda)

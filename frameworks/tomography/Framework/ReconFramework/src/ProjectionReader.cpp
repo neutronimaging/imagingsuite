@@ -826,7 +826,7 @@ float * ProjectionReader::GetProjectionDoseListNexus(string filename, size_t sta
     kipl::base::TImage<float,3> img;
 
     if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
-        return NULL; // possibly stupid
+        return nullptr; // possibly stupid
 
     img=ReadNexusStack(filename,start,end,flip,rotate,binning,nDoseROI);
 

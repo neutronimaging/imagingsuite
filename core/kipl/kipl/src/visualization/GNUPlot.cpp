@@ -46,7 +46,7 @@ size_t GNUPlot::figure(size_t n)
 #else 
 		FILE *tmp=_popen(cm_GPpath.c_str(),"w");
 #endif
-		if (tmp==NULL)
+        if (tmp==nullptr)
 			kipl::base::KiplException("Failed to open figure",__FILE__, __LINE__);
 		else {
 			figures[n] = tmp;
@@ -247,7 +247,7 @@ string GNUPlot::OpenBinaryPlotFile(ofstream &outfile)
 //	//
 //
 //#ifdef _MSC_VER
-//	if (_mktemp(name) == NULL)
+//	if (_mktemp(name) == nullptr)
 //#else
 //    if (mkstemp(name) == -1)
 //#endif    
@@ -333,8 +333,8 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	}
 //	else {
 //		
-//		FILE *tmp=NULL; //popen(cm_GPpath.c_str(),"w");
-//		if (tmp==NULL)
+//		FILE *tmp=nullptr; //popen(cm_GPpath.c_str(),"w");
+//		if (tmp==nullptr)
 //			cerr<<"Failed to open figure"<<endl;
 //		else {
 //			figures[n] = tmp;

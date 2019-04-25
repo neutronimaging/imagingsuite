@@ -4,6 +4,7 @@ REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH/..
 DEST="$DIRECTORY/KipTool.app"
 
+GITVER=`git rev-parse --short HEAD`
 echo $DIRECTORY
 echo $QTPATH
 echo $DEST
@@ -268,6 +269,6 @@ fi
 ln -s /Applications /tmp/kiptool/Applications
 cp -r $DEST /tmp/kiptool
 
-hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_`date +%Y%m%d`.dmg
+hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_build-$GITVER-`date +%Y%m%d`.dmg
 
 

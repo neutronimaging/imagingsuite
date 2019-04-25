@@ -66,7 +66,7 @@ int FindSkipListDialog::exec(std::list<std::string> &filelist)
         ImageReader reader;
 
         img=reader.Read(fname,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
-        //kipl::io::ReadFITS(img,fname.c_str(),NULL);
+        //kipl::io::ReadFITS(img,fname.c_str(),nullptr);
         ui->skip_imageviewer->set_image(img.GetDataPtr(),img.Dims());
         ui->skip_spin_x0->setMaximum(img.Size(0)-1);
         ui->skip_spin_x1->setMaximum(img.Size(0)-1);

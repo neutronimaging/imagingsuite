@@ -498,7 +498,7 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    NULL);
+                    nullptr);
             if (m_Config.ProjectionInfo.nOBCount!=0) {
                 if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
                     float *pProj=m_Proj0Deg.GetDataPtr();
@@ -564,7 +564,7 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    NULL);
+                    nullptr);
 
             if (m_Config.ProjectionInfo.nOBCount!=0) {
                 if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
@@ -619,7 +619,7 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                NULL);
+                nullptr);
         if (m_Config.ProjectionInfo.nOBCount!=0) {
             if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
                 float *pProj=m_Proj0Deg.GetDataPtr();
@@ -646,7 +646,7 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                NULL);
+                nullptr);
 
         if (m_Config.ProjectionInfo.nOBCount!=0) {
             if (m_Proj180Deg.Size()==m_ProjOB.Size()) {

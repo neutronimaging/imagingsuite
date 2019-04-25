@@ -11,7 +11,7 @@ namespace kipl { namespace filters {
 template <typename T, size_t nDims>
 class KernelBase {
 public:
-	KernelBase() : m_Kernel(NULL), m_nKernelLength(0)
+    KernelBase() : m_Kernel(nullptr), m_nKernelLength(0)
 	{
 		memset(m_nDims,0,sizeof(size_t)*nDims);
 		memset(m_nCenters,0,sizeof(size_t)*nDims);
@@ -41,7 +41,7 @@ protected:
 
 	void RemoveAllocation()
 	{
-		if (m_Kernel!=NULL)
+        if (m_Kernel!=nullptr)
 			_aligned_free(m_Kernel);
 	}
 };

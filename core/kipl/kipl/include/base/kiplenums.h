@@ -62,8 +62,8 @@ enum eImageRotate {
 
 ///< Selector for the rotation direction
 enum eRotationDirection {
-    RotationDirCW = 0,  ///< Rotation clock wise
-    RotationDirCCW      ///< Rotation counter clock wise
+    RotationDirCW  = 0,  ///< Rotation clock wise
+    RotationDirCCW = 1     ///< Rotation counter clock wise
 };
 
 /// \brief Unsigned integer data type selector

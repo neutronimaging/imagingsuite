@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <strings/miscstring.h>
 
 #include <ReconException.h>

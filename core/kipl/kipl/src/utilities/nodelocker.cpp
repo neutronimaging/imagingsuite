@@ -218,23 +218,23 @@ std::set<std::string> NodeLocker::GetMACaddress() // Print MAC address
     std::set<std::string> maclist;
 	std::ostringstream macstr;
 
-	PIP_ADAPTER_ADDRESSES AdapterAddresses = NULL;
+    PIP_ADAPTER_ADDRESSES AdapterAddresses = nullptr;
     ULONG OutBufferLength = 65536;
     ULONG RetVal = 0;    
 
 	RetVal = GetAdaptersAddresses(
 			AF_INET, 
 			0ul,
-			NULL, 
-			NULL, 
+            nullptr,
+            nullptr,
 			&OutBufferLength);
 
-	if (AdapterAddresses != NULL) {
+    if (AdapterAddresses != nullptr) {
 		FREE(AdapterAddresses);
 	} 
 
 	AdapterAddresses = (PIP_ADAPTER_ADDRESSES) MALLOC(10*OutBufferLength);
-	if (AdapterAddresses == NULL) {
+    if (AdapterAddresses == nullptr) {
 		std::cerr<<"Buffer Allocation error."<<std::endl;
 		exit(-1);
 	}
@@ -244,7 +244,7 @@ std::set<std::string> NodeLocker::GetMACaddress() // Print MAC address
 	RetVal = GetAdaptersAddresses(
 			AF_INET, 
 			0,
-			NULL, 
+            nullptr,
 			AdapterAddresses, 
 			&OutBufferLength);
 

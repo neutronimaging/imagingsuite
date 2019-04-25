@@ -18,7 +18,7 @@ public:
 		\param conn Selects the connectivity
 		\param mask Optional ROI mask
 	*/
-	CQuantifyImage(CImage<char,2> &img, MorphConnect conn=conn4, CImage<char,2> *mask=NULL);
+    CQuantifyImage(CImage<char,2> &img, MorphConnect conn=conn4, CImage<char,2> *mask=nullptr);
 	
 	/** \brief Sets the connectivity of the computations and recomputes the values
 		\param conn The new connectivity

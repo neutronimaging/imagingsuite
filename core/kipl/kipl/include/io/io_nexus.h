@@ -88,7 +88,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
 
                       size_t img_size[3];
 
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           img_size[0] = file.getInfo().dims[2];
                           img_size[1] = file.getInfo().dims[1];
@@ -105,7 +105,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
 
                       vector<int> slab_start;
                       slab_start.push_back(number);
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           slab_start.push_back(0);
                           slab_start.push_back(0);
@@ -216,7 +216,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 
                       size_t img_size[3];
 
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           img_size[0] = file.getInfo().dims[2];
                           img_size[1] = file.getInfo().dims[1];
@@ -233,7 +233,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 
                       vector<int> slab_start;
                       slab_start.push_back(start);
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           slab_start.push_back(0);
                           slab_start.push_back(0);
@@ -721,7 +721,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=NULL) {
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=nullptr) {
 
 
     kipl::base::PermuteAxes<ImgType> permute;
@@ -851,7 +851,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=NULL) {
+int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=nullptr) {
 
 
     kipl::base::TImage<unsigned short, NDim> img_int;

@@ -16,10 +16,10 @@ FFTBase::FFTBase(size_t const * const Dims, size_t const NDim) :
 	have_c2cPlan(false),
 	have_c2rPlan(false),
 	have_c2cPlanI(false),
-	r2cPlan(NULL),
-	c2rPlan(NULL),
-	c2cPlan(NULL),
-	c2cPlanI(NULL),
+    r2cPlan(nullptr),
+    c2rPlan(nullptr),
+    c2cPlan(nullptr),
+    c2cPlanI(nullptr),
 
 	Ndata(Dims[0])
 {
@@ -34,9 +34,9 @@ FFTBase::FFTBase(size_t const * const Dims, size_t const NDim) :
 		dims[i]=1;
 		
 	ndim=NDim;
-	cBufferA=NULL;
-	cBufferB=NULL;
-	rBuffer=NULL;
+    cBufferA=nullptr;
+    cBufferB=nullptr;
+    rBuffer=nullptr;
 }
 
 

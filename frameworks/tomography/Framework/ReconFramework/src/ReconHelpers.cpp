@@ -172,7 +172,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
 {
     kipl::logging::Logger logger("BuildFileList");
     std::ostringstream msg;
-    if (nlSkipList!=NULL)
+    if (nlSkipList!=nullptr)
     {
         msg.str();
         msg<<nlSkipList->size()<<" projections will be skipped";
@@ -222,7 +222,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
                                             static_cast<float>(nLastIndex-nFirstIndex+1);
                     for (size_t i=nFirstIndex; i<=nLastIndex; i+=nProjectionStep)
                     {
-                        if (nlSkipList!=NULL) {
+                        if (nlSkipList!=nullptr) {
                             while (nlSkipList->find(i)!=nlSkipList->end()) {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;
@@ -244,7 +244,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
                         throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
 
                     for (size_t i=0; i<nFirstIndex; i++) {
-                        if (nlSkipList!=NULL) {
+                        if (nlSkipList!=nullptr) {
                             if (nlSkipList->find(i)!=nlSkipList->end()) {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;
@@ -257,7 +257,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
 
                     for (size_t i=nFirstIndex; i<(nLastIndex+skip); i++)
                     {
-                        if (nlSkipList!=NULL) {
+                        if (nlSkipList!=nullptr) {
                             while (nlSkipList->find(i)!=nlSkipList->end()) {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;

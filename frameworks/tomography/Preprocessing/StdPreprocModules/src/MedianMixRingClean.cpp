@@ -67,7 +67,7 @@ int MedianMixRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<
 	weights=profile;
 	weights.Clone();
 
-	float *pImg=NULL;
+    float *pImg=nullptr;
 	float *pWeights=weights.GetDataPtr();
 	mLUT.InPlace(pWeights,weights.Size());
 

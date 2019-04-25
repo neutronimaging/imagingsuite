@@ -1,8 +1,10 @@
-DIRECTORY=~/Applications
+DIRECTORY=$WORKSPACE/deployed
 
 DEST="$DIRECTORY/MuhRec.app"
 REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH
+
+GITVER=`git rev-parse --short HEAD`
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -237,3 +239,12 @@ install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frame
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+
+if [ ! -d "/tmp/muhrec" ]; then
+  mkdir /tmp/muhrec
+fi
+
+ln -s /Applications /tmp/muhrec/Applications
+cp -r $DEST /tmp/muhrec
+
+hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec_build-$GITVER-`date +%Y%m%d`.dmg

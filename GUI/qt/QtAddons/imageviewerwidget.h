@@ -82,7 +82,7 @@ public:
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
     void LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect=true);
-    void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=NULL);
+    void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=nullptr);
 public slots:
 //    void zoomIn();
 //    void zoomOut();
