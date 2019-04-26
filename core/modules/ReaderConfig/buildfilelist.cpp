@@ -44,25 +44,25 @@ std::list<std::string> BuildFileList(std::list<FileSet> &il)
 
 }
 
-std::map<float,std::string> BuildProjectionFileList(std::list<FileSet> &il, int sequence, double arc)
+std::map<float,std::string> BuildProjectionFileList(std::list<FileSet> &il, int sequence, int goldenStartIdx, double arc)
 {
     std::list<int> skiplist;
 
-    return BuildProjectionFileList(il,skiplist,sequence,arc);
+    return BuildProjectionFileList(il,skiplist,sequence,goldenStartIdx,arc);
 }
 
-std::map<float,std::string> BuildProjectionFileList(std::list<FileSet> &il, std::list<int> &skiplist, int sequence, double arc)
+std::map<float,std::string> BuildProjectionFileList(std::list<FileSet> &il, std::list<int> &skiplist, int sequence, int goldenStartIdx, double arc)
 {
     kipl::logging::Logger logger("BuildProjectionFileList");
 
     std::ostringstream msg;
     std::map<float, std::string> flist;
     std::string fname,ext;
-    const float phi=(1.0f+sqrt(5))*0.5f;
+    const float phi=(1.0f+sqrt(5.0f))*0.5f;
 
     int fcnt=0;
     auto skipit=skiplist.begin();
-    int j=il.begin()->m_nFirst;
+    int j=il.begin()->m_nFirst-goldenStartIdx;
 
     for (auto ilit=il.begin(); ilit!=il.end(); ++ilit ) {
         FileSet &loader = *ilit;

@@ -108,7 +108,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 
     ImgType *pLine=new ImgType[naxes[0]+16];
 	for (size_t i=cnStart, j=0; i<cnStop; i++,j++) {
-		coord[1]=i+1;
+        coord[1]=static_cast<int>(i+1);
 
 		if (fits_read_pix(fptr, datatype, coord, static_cast<int>(dims[0]), 
                 nullptr, pLine, nullptr, &status))
@@ -169,7 +169,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 //     and BZERO keywords will be automatically written by cfitsio
 //     in this case.
 
-    if ( fits_create_img(fptr,  bitpix, naxis, naxes, &status) ) {
+    if ( fits_create_img(fptr,  bitpix, static_cast<int>(naxis), naxes, &status) ) {
         fits_get_errstatus(status, err_msg);
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
     }

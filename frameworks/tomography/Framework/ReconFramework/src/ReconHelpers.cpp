@@ -166,7 +166,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 
 bool BuildFileList(std::string sFileMask, std::string sPath,
                    int nFirstIndex, int nLastIndex, int nProjectionStep,
-                   float fScanArc[2], ReconConfig::cProjections::eScanType scantype,
+                   float fScanArc[2], ReconConfig::cProjections::eScanType scantype, int goldenStartIdx,
                    std::set<size_t> * nlSkipList,
                    std::map<float, ProjectionInfo>  * ProjectionList)
 {
@@ -196,12 +196,12 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
         char cline[2048];
         size_t line_cnt=1;
         listfile.getline(cline,2048);
-        while ((line_cnt < nFirstIndex) && !listfile.eof()) {
+        while ((line_cnt < static_cast<size_t>(nFirstIndex)) && !listfile.eof()) {
             line_cnt++;
             listfile.getline(cline,2048);
         }
 
-        while ((line_cnt <= nLastIndex) && !listfile.eof()) {
+        while ((line_cnt <= static_cast<size_t>(nLastIndex)) && !listfile.eof()) {
             line_cnt++;
             line=cline;
             float angle=static_cast<float>(atof(line.c_str()));
@@ -214,16 +214,16 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
         sequence=false;
     }
     else {
-        size_t skip=0;
+        int skip=0;
         switch (scantype) {
             case ReconConfig::cProjections::SequentialScan : {
                     //const float fAngleStep=(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])/(config->ProjectionInfo.nLastIndex-config->ProjectionInfo.nFirstIndex+1);
                     const float fAngleStep=(fScanArc[1]-fScanArc[0])/
                                             static_cast<float>(nLastIndex-nFirstIndex+1);
-                    for (size_t i=nFirstIndex; i<=nLastIndex; i+=nProjectionStep)
+                    for (int i=nFirstIndex; i<=nLastIndex; i+=nProjectionStep)
                     {
                         if (nlSkipList!=nullptr) {
-                            while (nlSkipList->find(i)!=nlSkipList->end()) {
+                            while (nlSkipList->find(static_cast<size_t>(i))!=nlSkipList->end()) {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;
                                 logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -243,9 +243,9 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
                     if ((arc!=180.0f) && (arc!=360.0f))
                         throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
 
-                    for (size_t i=0; i<nFirstIndex; i++) {
+                    for (int i=0; i<nFirstIndex; i++) {
                         if (nlSkipList!=nullptr) {
-                            if (nlSkipList->find(i)!=nlSkipList->end()) {
+                            if (nlSkipList->find(static_cast<size_t>(i))!=nlSkipList->end()) {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;
                                 logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -255,10 +255,10 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
                         }
                     }
 
-                    for (size_t i=nFirstIndex; i<(nLastIndex+skip); i++)
+                    for (int i=nFirstIndex; i<(nLastIndex+skip); i++)
                     {
                         if (nlSkipList!=nullptr) {
-                            while (nlSkipList->find(i)!=nlSkipList->end()) {
+                            while (nlSkipList->find(static_cast<size_t>(i))!=nlSkipList->end()) {
                                 msg.str("");
                                 msg<<"Skipped projection "<<i;
                                 logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -269,7 +269,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
                         kipl::strings::filenames::MakeFileName(sPath+sFileMask,i,fname,ext,'#','0');
 
                         //float angle=static_cast<float>(fmod((i-config->ProjectionInfo.nFirstIndex)*fGoldenSection*arc,arc));
-                        float angle=static_cast<float>(fmod(static_cast<float>(i-1-skip)*fGoldenSection*arc,arc));
+                        float angle=static_cast<float>(fmod(static_cast<float>(i-goldenStartIdx-skip)*fGoldenSection*arc,arc));
                         (*ProjectionList)[fmod(angle,180.0f)]=ProjectionInfo(fname,angle);
                     }
                 }

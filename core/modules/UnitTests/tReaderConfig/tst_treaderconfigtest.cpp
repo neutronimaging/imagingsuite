@@ -2,9 +2,16 @@
 #include <QtTest>
 
 #include <sstream>
+#include <list>
+#include <vector>
+#include <map>
+#include <string>
+#include <cmath>
+
 #include <base/KiplException.h>
 #include <analyzefileext.h>
 #include <datasetbase.h>
+#include <buildfilelist.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -12,14 +19,28 @@ class TReaderConfigTest : public QObject
 
 public:
     TReaderConfigTest();
+    std::vector<float> goldenAngles(int n, int start, float arc);
+
 
 private Q_SLOTS:
     void testAnalyzeFileExt();
     void testDataSetBase();
+    void testBuildFileListAngles();
 };
 
 TReaderConfigTest::TReaderConfigTest()
 {
+}
+
+std::vector<float> TReaderConfigTest::goldenAngles(int n, int start, float arc)
+{
+   std::vector<float> gv;
+   float phi=0.5f*(1.0f+sqrt(5.0f));
+
+   for (int i=0; i<n; ++i)
+       gv.push_back(static_cast<float>(fmod((i+start)*phi*arc,180)));
+
+   return gv;
 }
 
 void TReaderConfigTest::testAnalyzeFileExt()
@@ -130,6 +151,40 @@ void TReaderConfigTest::testDataSetBase()
 
 //    kipl::base::TImage<float,2> Load(int idx, kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop=nullptr);
 //    kipl::base::TImage<float,3> Load(kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop=nullptr);
+
+}
+
+void TReaderConfigTest::testBuildFileListAngles()
+{
+    std::list<FileSet> il;
+    FileSet fs;
+    fs.m_nFirst=0;
+    fs.m_nLast=10;
+    il.push_back(fs);
+
+    std::map<float,std::string> list1=BuildProjectionFileList(il, 0, 0, 180);
+    QCOMPARE(list1.size(),fs.m_nLast-fs.m_nFirst+1);
+    float angle=0.0f;
+    float d=180.0f/(fs.m_nLast-fs.m_nFirst+1);
+    for (auto & item : list1)
+    {
+        QCOMPARE(item.first,angle);
+        angle+=1;
+    }
+
+    std::map<float,std::string> list2=BuildProjectionFileList(il, 1, 0, 180);
+    QCOMPARE(list1.size(),fs.m_nLast-fs.m_nFirst+1);
+    angle=0.0f;
+    d=180.0f/(fs.m_nLast-fs.m_nFirst+1);
+    auto gv=goldenAngles(11,0,180.0f);
+    auto git=gv.begin();
+    for (auto & item : list1)
+    {
+        QCOMPARE(item.first,*git);
+        ++git;
+    }
+
+    //std::map<float,std::string> list2=BuildProjectionFileList(std::list<FileSet> &il, std::list<int> &skiplist, int sequence, int goldenStartIdx, double arc);
 
 }
 
