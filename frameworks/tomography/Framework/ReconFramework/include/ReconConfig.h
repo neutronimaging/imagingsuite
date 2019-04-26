@@ -36,7 +36,7 @@ public:
         size_t nMemory; ///< Available memory in kB.
         kipl::logging::Logger::LogLevel eLogLevel; ///< Default log level.
         bool bValidateData;
-        std::string WriteXML(size_t indent=0);          ///< Serializes the settings.
+        std::string WriteXML(int indent=0);          ///< Serializes the settings.
 	};
 
     /// Projection configuration settings
@@ -119,7 +119,7 @@ public:
 
         /// Writes the configuration to a string with XML formatting.
         /// \param indent Indent the XML block by N characters.
-		std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 	};
 
     /// Configuration information for the reconstructed matrix.
@@ -152,7 +152,7 @@ public:
 
         /// Writes the configuration to a string with XML formatting.
         /// \param indent Indent the XML block by N characters.
-        std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 	};
 
     /// Base constructor of the reonstruction configation.

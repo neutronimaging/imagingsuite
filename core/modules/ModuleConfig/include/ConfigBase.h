@@ -44,7 +44,7 @@ public:
         /// \param info the info object to copy
         /// \return a reference to itself.
 		cUserInformation & operator=(const cUserInformation & info);
-		std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 
         std::string sOperator;      ///< Name of the user who processed the data of did the experiment
         std::string sInstrument;    ///< Name of the instrument used to acquire the data

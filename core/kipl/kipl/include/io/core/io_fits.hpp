@@ -134,7 +134,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 {
 
     fitsfile *fptr;                  // pointer to the FITS file, defined in fitsio.h
-    int status, ii;
+    int status;
     long  fpixel, nelements, exposure;
 
     char err_msg[128];
