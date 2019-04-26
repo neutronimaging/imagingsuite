@@ -140,31 +140,31 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             logger(kipl::logging::Logger::LogWarning,msg.str());
         }
         if (group=="projections") {
-            if (var=="operator")      UserInformation.sOperator=value;
-            if (var=="instrument")    UserInformation.sInstrument=value;
-            if (var=="projectnumber") UserInformation.sProjectNumber=value;
-            if (var=="sample")        UserInformation.sSample=value;
-            if (var=="comment")       UserInformation.sComment=value;
+            if (var=="operator")      UserInformation.sOperator      = value;
+            if (var=="instrument")    UserInformation.sInstrument    = value;
+            if (var=="projectnumber") UserInformation.sProjectNumber = value;
+            if (var=="sample")        UserInformation.sSample        = value;
+            if (var=="comment")       UserInformation.sComment       = value;
         }
 
         int itmp;
         if (group=="projections") {
-            if (var=="dims") kipl::strings::String2Array(value,ProjectionInfo.nDims,2);
-            if (var=="resolution") kipl::strings::String2Array(value,ProjectionInfo.fResolution,2);
-            if (var=="binning") ProjectionInfo.fBinning=atof(value.c_str());
-            if (var=="margin") ProjectionInfo.nMargin=atoi(value.c_str());
-            if (var=="firstindex") ProjectionInfo.nFirstIndex=static_cast<size_t>(atoi(value.c_str()));
-            if (var=="lastindex") ProjectionInfo.nLastIndex=static_cast<size_t>(atoi(value.c_str()));
-            if (var=="projectionstep") ProjectionInfo.nProjectionStep=static_cast<size_t>(atoi(value.c_str()));
-            if (var=="repeatline") ProjectionInfo.bRepeatLine=kipl::strings::string2bool(value);
-            if (var=="scantype") string2enum(value,ProjectionInfo.scantype);
-            if (var=="imagetype") string2enum(value,ProjectionInfo.imagetype);
-            if (var=="center") ProjectionInfo.fCenter=atof(value.c_str());
-            if (var=="translation") ProjectionInfo.bTranslate=kipl::strings::string2bool(value);
-            if (var=="tiltangle") ProjectionInfo.fTiltAngle=atof(value.c_str());
-            if (var=="tiltpivot") ProjectionInfo.fTiltPivotPosition=atof(value.c_str());
-            if (var=="correcttilt") ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
-            if (var=="filemask") ProjectionInfo.sFileMask=value;
+            if (var=="dims")           kipl::strings::String2Array(value,ProjectionInfo.nDims,2);
+            if (var=="resolution")     kipl::strings::String2Array(value,ProjectionInfo.fResolution,2);
+            if (var=="binning")        ProjectionInfo.fBinning           = std::stof(value);
+            if (var=="margin")         ProjectionInfo.nMargin            = std::stoul(value);
+            if (var=="firstindex")     ProjectionInfo.nFirstIndex        = std::stoul(value);
+            if (var=="lastindex")      ProjectionInfo.nLastIndex         = std::stoul(value);
+            if (var=="projectionstep") ProjectionInfo.nProjectionStep    = std::stoul(value);
+            if (var=="repeatline")     ProjectionInfo.bRepeatLine=kipl::strings::string2bool(value);
+            if (var=="scantype")       string2enum(value,ProjectionInfo.scantype);
+            if (var=="imagetype")      string2enum(value,ProjectionInfo.imagetype);
+            if (var=="center")         ProjectionInfo.fCenter            = std::stof(value);
+            if (var=="translation")    ProjectionInfo.bTranslate         = kipl::strings::string2bool(value);
+            if (var=="tiltangle")      ProjectionInfo.fTiltAngle         = std::stof(value);
+            if (var=="tiltpivot")      ProjectionInfo.fTiltPivotPosition = std::stof(value);
+            if (var=="correcttilt")    ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
+            if (var=="filemask")       ProjectionInfo.sFileMask          = value;
             if (var=="path") {
                 ProjectionInfo.sPath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sPath,true);
@@ -174,32 +174,33 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
                 ProjectionInfo.sReferencePath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sReferencePath,true);
             }
-            if (var=="obfilemask") ProjectionInfo.sOBFileMask=value;
-            if (var=="obfirstindex") ProjectionInfo.nOBFirstIndex=atoi(value.c_str());
-            if (var=="obcount") ProjectionInfo.nOBCount=atoi(value.c_str());
-            if (var=="dcfilemask") ProjectionInfo.sDCFileMask=value;
-            if (var=="dcfirstindex") ProjectionInfo.nDCFirstIndex=atoi(value.c_str());
-            if (var=="dccount") ProjectionInfo.nDCCount=atoi(value.c_str());
-            if (var=="roi") kipl::strings::String2Array(value,ProjectionInfo.roi,4);
-            if (var=="projroi") kipl::strings::String2Array(value,ProjectionInfo.projection_roi,4);
-            if (var=="doseroi") kipl::strings::String2Array(value,ProjectionInfo.dose_roi,4);
-            if (var=="scanarc") kipl::strings::String2Array(value,ProjectionInfo.fScanArc,2);
-            if (var=="scanarc0") ProjectionInfo.fScanArc[0]=atof(value.c_str());
-            if (var=="scanarc1") ProjectionInfo.fScanArc[1]=atof(value.c_str());
-            if (var=="rotate") string2enum(value,ProjectionInfo.eRotate);
-            if (var=="flip") string2enum(value,ProjectionInfo.eFlip);
-            if (var=="direction") string2enum(value, ProjectionInfo.eDirection);
-            if (var=="sod") ProjectionInfo.fSOD=atof(value.c_str());
-            if (var=="sdd") ProjectionInfo.fSDD=atof(value.c_str());
-            if (var=="pPoint") kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
+            if (var=="obfilemask")   ProjectionInfo.sOBFileMask   = value;
+            if (var=="obfirstindex") ProjectionInfo.nOBFirstIndex = std::stoul(value);
+            if (var=="obcount")      ProjectionInfo.nOBCount      = std::stoul(value);
+            if (var=="dcfilemask")   ProjectionInfo.sDCFileMask   = value;
+            if (var=="dcfirstindex") ProjectionInfo.nDCFirstIndex = std::stoul(value);
+            if (var=="dccount")      ProjectionInfo.nDCCount      = std::stoul(value);
+            if (var=="roi")          kipl::strings::String2Array(value,ProjectionInfo.roi,4);
+            if (var=="projroi")      kipl::strings::String2Array(value,ProjectionInfo.projection_roi,4);
+            if (var=="doseroi")      kipl::strings::String2Array(value,ProjectionInfo.dose_roi,4);
+            if (var=="scanarc")      kipl::strings::String2Array(value,ProjectionInfo.fScanArc,2);
+            if (var=="scanarc0")     ProjectionInfo.fScanArc[0]   = std::stof(value);
+            if (var=="scanarc1")     ProjectionInfo.fScanArc[1]   = std::stof(value);
+            if (var=="rotate")       string2enum(value,ProjectionInfo.eRotate);
+            if (var=="flip")         string2enum(value,ProjectionInfo.eFlip);
+            if (var=="direction")    string2enum(value, ProjectionInfo.eDirection);
+            if (var=="sod")          ProjectionInfo.fSOD          = std::stof(value);
+            if (var=="sdd")          ProjectionInfo.fSDD          = std::stof(value);
+            if (var=="pPoint")       kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
         }
 
         if (group=="matrix")
         {
             if (var=="dims")         kipl::strings::String2Array(value,MatrixInfo.nDims,3);
-            if (var=="rotation")     MatrixInfo.fRotation=atof(value.c_str());
-            if (var=="serialize")    MatrixInfo.bAutomaticSerialize=kipl::strings::string2bool(value);
-            if (var=="path")         {
+            if (var=="rotation")     MatrixInfo.fRotation         = std::stof(value);
+            if (var=="serialize")    MatrixInfo.bAutomaticSerialize = kipl::strings::string2bool(value);
+            if (var=="path")
+            {
                     MatrixInfo.sDestinationPath=value;
                     kipl::strings::filenames::CheckPathSlashes(MatrixInfo.sDestinationPath,true);
             }
@@ -282,58 +283,49 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
                 sValue="";
 	        sName=reinterpret_cast<const char *>(name);
 
-	        if (sName=="dims")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.nDims,2);
-            if (sName=="beamgeometry")
-                string2enum(sValue,ProjectionInfo.beamgeometry);
+            if (sName=="dims")            kipl::strings::String2Array(sValue,ProjectionInfo.nDims,2);
+            if (sName=="beamgeometry")    string2enum(sValue,ProjectionInfo.beamgeometry);
 
-	        if (sName=="resolution")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
-	        if (sName=="binning")
-	        	ProjectionInfo.fBinning = atof(sValue.c_str());
+            if (sName=="resolution")      kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
+            if (sName=="binning")         ProjectionInfo.fBinning        = std::stof(sValue);
 
-	        if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = atoi(sValue.c_str());
-	        if (sName=="lastindex")       ProjectionInfo.nLastIndex          = atoi(sValue.c_str());
-	        if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = atoi(sValue.c_str());
+            if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = std::stoul(sValue);
+            if (sName=="lastindex")       ProjectionInfo.nLastIndex      = std::stoul(sValue);
+            if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = std::stoul(sValue);
 			if (sName=="skipprojections") {
 				kipl::strings::String2Set(sValue,ProjectionInfo.nlSkipList);
 				msg<<"Skip list: "<<kipl::strings::Set2String(ProjectionInfo.nlSkipList);
 				logger(kipl::logging::Logger::LogVerbose,msg.str());
 			}
 
-	        if (sName=="repeatline")	  ProjectionInfo.bRepeatLine     = kipl::strings::string2bool(sValue);
+            if (sName=="repeatline")	  ProjectionInfo.bRepeatLine   = kipl::strings::string2bool(sValue);
 			if (sName=="scantype")		  string2enum(sValue,ProjectionInfo.scantype);
+            if (sName=="goldenstartidx")  ProjectionInfo.nGoldenStartIdx = std::stoi(sValue);
 			if (sName=="imagetype")		  string2enum(sValue,ProjectionInfo.imagetype);
-	        if (sName=="center")          ProjectionInfo.fCenter         = static_cast<float>(atof(sValue.c_str()));
-            if (sName=="sod")             ProjectionInfo.fSOD            = static_cast<float>(atof(sValue.c_str()));
-            if (sName=="sdd")             ProjectionInfo.fSDD            = static_cast<float>(atof(sValue.c_str()));
-            if (sName=="pPoint")
-                kipl::strings::String2Array(sValue,ProjectionInfo.fpPoint,2);
-            if (sName=="translation")     ProjectionInfo.bTranslate = kipl::strings::string2bool(sValue);
-			if (sName=="tiltangle")
-				ProjectionInfo.fTiltAngle = static_cast<float>(atof(sValue.c_str()));
-			if (sName=="tiltpivot")
-				ProjectionInfo.fTiltPivotPosition = static_cast<float>(atof(sValue.c_str()));
+            if (sName=="center")          ProjectionInfo.fCenter       = std::stof(sValue);
+            if (sName=="sod")             ProjectionInfo.fSOD          = std::stof(sValue);
+            if (sName=="sdd")             ProjectionInfo.fSDD          = std::stof(sValue);
+            if (sName=="pPoint")          kipl::strings::String2Array(sValue,ProjectionInfo.fpPoint,2);
+            if (sName=="translation")     ProjectionInfo.bTranslate    = kipl::strings::string2bool(sValue);
+            if (sName=="tiltangle")       ProjectionInfo.fTiltAngle    = std::stof(sValue);
+            if (sName=="tiltpivot")       ProjectionInfo.fTiltPivotPosition = std::stof(sValue);
 
-			if (sName=="correcttilt") 	  ProjectionInfo.bCorrectTilt = kipl::strings::string2bool(sValue);
+            if (sName=="correcttilt") 	ProjectionInfo.bCorrectTilt   = kipl::strings::string2bool(sValue);
 
-	        if (sName=="filemask")    ProjectionInfo.sFileMask    = sValue;
-	        if (sName=="path") 		  ProjectionInfo.sPath        = sValue;
+            if (sName=="filemask")      ProjectionInfo.sFileMask      = sValue;
+            if (sName=="path") 		    ProjectionInfo.sPath          = sValue;
 
-	    	if (sName=="referencepath") ProjectionInfo.sReferencePath=sValue;
-	    	if (sName=="obfilemask") 	ProjectionInfo.sOBFileMask=sValue;
-	    	if (sName=="obfirstindex")  ProjectionInfo.nOBFirstIndex=atoi(sValue.c_str());
-	    	if (sName=="obcount")  ProjectionInfo.nOBCount=atoi(sValue.c_str());
-	    	if (sName=="dcfilemask")  ProjectionInfo.sDCFileMask=sValue;
-	    	if (sName=="dcfirstindex")  ProjectionInfo.nDCFirstIndex=atoi(sValue.c_str());
-	    	if (sName=="dccount")  ProjectionInfo.nDCCount=atoi(sValue.c_str());
-            if (sName=="roi")
-                kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
-            if (sName=="projroi")
-                kipl::strings::String2Array(sValue,ProjectionInfo.projection_roi,4);
+            if (sName=="referencepath") ProjectionInfo.sReferencePath = sValue;
+            if (sName=="obfilemask") 	ProjectionInfo.sOBFileMask    = sValue;
+            if (sName=="obfirstindex")  ProjectionInfo.nOBFirstIndex  = std::stoul(sValue);
+            if (sName=="obcount")       ProjectionInfo.nOBCount       = std::stoul(sValue);
+            if (sName=="dcfilemask")    ProjectionInfo.sDCFileMask    = sValue;
+            if (sName=="dcfirstindex")  ProjectionInfo.nDCFirstIndex  = std::stoul(sValue);
+            if (sName=="dccount")       ProjectionInfo.nDCCount       = std::stoul(sValue);
+            if (sName=="roi")           kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
+            if (sName=="projroi")       kipl::strings::String2Array(sValue,ProjectionInfo.projection_roi,4);
 
-			if (sName=="doseroi")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.dose_roi,4);
+            if (sName=="doseroi")       kipl::strings::String2Array(sValue,ProjectionInfo.dose_roi,4);
 			if (sName=="scanarc") {
 	        	size_t cnt=kipl::strings::String2Array(sValue,ProjectionInfo.fScanArc,2);
 				if (cnt==1) {
@@ -341,9 +333,9 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 					ProjectionInfo.fScanArc[0]=0.0f;
 				}
 			}
-			if (sName=="rotate") string2enum(sValue,ProjectionInfo.eRotate);
-			if (sName=="flip") string2enum(sValue,ProjectionInfo.eFlip);
-            if (sName=="direction") string2enum(sValue,ProjectionInfo.eDirection);
+            if (sName=="rotate")         string2enum(sValue,ProjectionInfo.eRotate);
+            if (sName=="flip")           string2enum(sValue,ProjectionInfo.eFlip);
+            if (sName=="direction")      string2enum(sValue,ProjectionInfo.eDirection);
     	}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -599,6 +591,7 @@ nLastIndex(625),
 nProjectionStep(1),
 bRepeatLine(false),
 scantype(SequentialScan),
+nGoldenStartIdx(0),
 imagetype(ImageType_Projections),
 fCenter(1024.0f),
 fSOD(100.0f),
@@ -649,6 +642,7 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	nlSkipList(a.nlSkipList),
 	bRepeatLine(a.bRepeatLine),
 	scantype(a.scantype),
+    nGoldenStartIdx(a.nGoldenStartIdx),
 	imagetype(a.imagetype),
 	fCenter(a.fCenter),
     fSOD(a.fSOD),
@@ -699,6 +693,7 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nProjectionStep = a.nProjectionStep;
 	bRepeatLine     = a.bRepeatLine;
 	scantype		= a.scantype;
+    nGoldenStartIdx = a.nGoldenStartIdx;
 	imagetype		= a.imagetype;
 	nLastIndex		= a.nLastIndex;
 	nlSkipList		= a.nlSkipList;
@@ -766,6 +761,7 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	}
 	str<<setw(indent+4)  <<" "<<"<repeatline>"<<kipl::strings::bool2string(bRepeatLine)<<"</repeatline>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<scantype>"<<scantype<<"</scantype>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<goldenstartidx>"<<nGoldenStartIdx<<"</goldenstartidx>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<imagetype>"<<enum2string(imagetype)<<"</imagetype>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<center>"<<fCenter<<"</center>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<sod>"<<fSOD<<"</sod>"<<std::endl;
