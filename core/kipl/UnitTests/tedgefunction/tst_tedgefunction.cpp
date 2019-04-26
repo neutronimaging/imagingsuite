@@ -34,19 +34,32 @@ tedgefunction::tedgefunction()
 
       std::cout << std::endl;
 
+
+     double *term1 = new double[30];
+     double *term2 = new double[30];
      double *term4 = new double[30];
      double *term3 = new double[30];
      double *term5 = new double[30];
      double *edgefunction = new double[30];
+     double *simple_edge = new double[30];
 
 
 
      kipl::math::edgefunction myedge;
      myedge.t = t;
      myedge.t0 = 3.5;
-//     myedge.erfc1 = erfc1;
+     myedge.alpha = -0.1;
+     myedge.sigma = -0.1;
+     myedge.a1 = 0.1;
+     myedge.a2 = 1.0;
+     myedge.a5 = -0.1;
+     myedge.a6 = -1.0;
+
+
      myedge.computeTerm3(term3,t);
      myedge.edgeFunction = edgefunction;
+     myedge.term1 = term1;
+     myedge.term2 = term2;
      myedge.term3 = term3;
      myedge.term4 = term4;
      myedge.term5 = term5;
@@ -81,9 +94,48 @@ tedgefunction::tedgefunction()
      }
 
       std::cout << std::endl;
-     myedge.computeEdge(t);
+
+
+
+     myedge.computeTerm1(term1, t);
+     myedge.computeTerm2(term2,t);
+
+
+     std::cout << "term1: " << std::endl;
+     for (int i=0; i<30; i++)
+    {
+         std::cout << term1[i] <<  ", " ;
+     }
+
+      std::cout << std::endl;
+
+      std::cout << "term2: " << std::endl;
+
+      for (int i=0; i<30; i++)
+     {
+          std::cout << term2[i] <<  ", " ;
+      }
+
+       std::cout << std::endl;
+
+
+       myedge.computeEdge(t);
+
 
      std::cout << "edge function:" << std::endl;
+
+    for (int i=0; i<30; i++)
+   {
+        std::cout << myedge.edgeFunction[i] <<  ", " ;
+    }
+     std::cout << std::endl;
+
+
+
+     myedge.computeSimplifiedEdge(t);
+
+
+     std::cout << "simplified edge function:" << std::endl;
 
     for (int i=0; i<30; i++)
    {
