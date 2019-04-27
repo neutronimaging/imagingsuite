@@ -299,7 +299,7 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 
             if (sName=="repeatline")	  ProjectionInfo.bRepeatLine   = kipl::strings::string2bool(sValue);
 			if (sName=="scantype")		  string2enum(sValue,ProjectionInfo.scantype);
-            if (sName=="goldenstartidx")  ProjectionInfo.nGoldenStartIdx = std::stoi(sValue);
+            if (sName=="goldenstartidx")  ProjectionInfo.nGoldenStartIdx = std::stoul(sValue);
 			if (sName=="imagetype")		  string2enum(sValue,ProjectionInfo.imagetype);
             if (sName=="center")          ProjectionInfo.fCenter       = std::stof(sValue);
             if (sName=="sod")             ProjectionInfo.fSOD          = std::stof(sValue);

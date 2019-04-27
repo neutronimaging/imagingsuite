@@ -83,7 +83,7 @@ public:
         std::set<size_t> nlSkipList;///< List of projection indices that are retakes and will be skipped. This is not a missing angle.
         bool bRepeatLine;           ///< Repeat line this is a part of the repeat sinogram reconstruction
         eScanType scantype;         ///< Indicates how the data was acquired
-        int nGoldenStartIdx;        ///< Start index of the golden sequence
+        size_t nGoldenStartIdx;        ///< Start index of the golden sequence
         eImageType imagetype;       ///< Indicates how the data is arranged in the images.
         float fCenter;              ///< Center of rotation
         float fSOD;                 ///< Source object distance, relevant for divergent beam only
