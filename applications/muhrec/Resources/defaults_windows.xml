@@ -22,6 +22,7 @@
         <projectionstep>1</projectionstep>
         <repeatline>false</repeatline>
         <scantype>sequential</scantype>
+        <goldenfirstidx>1</goldenfirstidx>
         <imagetype>projections</imagetype>
         <center>50</center>
 	    <sod>100</sod>
