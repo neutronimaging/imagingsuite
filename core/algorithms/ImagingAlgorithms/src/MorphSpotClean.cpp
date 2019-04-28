@@ -26,8 +26,8 @@ MorphSpotClean::MorphSpotClean() :
     m_bClampData(false),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
-    m_fThreshold(0.025f),
-    m_fSigma(0.00f),
+    m_fThreshold{0.025f,0.025f},
+    m_fSigma{0.00f,0.0f},
     m_LUT(1<<15,0.1f,0.0075f)
 {
 
@@ -39,8 +39,24 @@ void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float s
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
-    m_fThreshold = th;
-    m_fSigma = sigma;
+    std::fill_n(m_fThreshold,2,th);
+    std::fill_n(m_fSigma,2,sigma);
+
+    switch (m_eMorphClean) {
+        case MorphCleanReplace  : ProcessReplace(img); break;
+        case MorphCleanFill     : ProcessFill(img); break;
+    default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
+    }
+
+}
+
+void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float *th, float *sigma)
+{
+    if (m_bClampData)
+         kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
+
+    std::copy_n(m_fThreshold,2,th);
+    std::copy_n(m_fSigma,2,sigma);
 
     switch (m_eMorphClean) {
         case MorphCleanReplace  : ProcessReplace(img); break;
@@ -93,25 +109,25 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     float *pImg=padded.GetDataPtr();
     float *pHoles=noholes.GetDataPtr();
     float *pPeaks=nopeaks.GetDataPtr();
-    if (m_fSigma==0.0f)
+    if ((m_fSigma[0]==0.0f) && (m_fSigma[1]==0.0f))
     {
         for (size_t i=0; i<N; i++) {
             float val=pImg[i];
             switch (m_eMorphDetect) {
             case MorphDetectHoles :
-                if (m_fThreshold<abs(val-pHoles[i]))
+                if (m_fThreshold[0]<abs(val-pHoles[i]))
                     pImg[i]=pHoles[i];
                 break;
 
             case MorphDetectPeaks :
-                if (m_fThreshold<abs(pPeaks[i]-val))
+                if (m_fThreshold[1]<abs(pPeaks[i]-val))
                     pImg[i]=pPeaks[i];
                 break;
 
             case MorphDetectBoth :
-                if (m_fThreshold<abs(val-pHoles[i]))
+                if (m_fThreshold[0]<abs(val-pHoles[i]))
                     pImg[i]=pHoles[i];
-                if (m_fThreshold<abs(pPeaks[i]-val))
+                if (m_fThreshold[1]<abs(pPeaks[i]-val))
                     pImg[i]=pPeaks[i];
                 break;
             }
@@ -123,11 +139,11 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             float val=pImg[i];
             switch (m_eMorphDetect) {
             case MorphDetectHoles :
-                pImg[i]=kipl::math::SigmoidWeights(fabs(val-pHoles[i]),val,pHoles[i],m_fThreshold,m_fSigma);
+                pImg[i]=kipl::math::SigmoidWeights(fabs(val-pHoles[i]),val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
                 break;
 
             case MorphDetectPeaks :
-                pImg[i]=kipl::math::SigmoidWeights(fabs(pPeaks[i]-val),val,pPeaks[i],m_fThreshold,m_fSigma);
+                pImg[i]=kipl::math::SigmoidWeights(fabs(pPeaks[i]-val),val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
                 break;
 
             case MorphDetectBoth :
@@ -135,9 +151,9 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
                 dh=fabs(val-pHoles[i]);
 
                 if (dh<dp)
-                    pImg[i]=kipl::math::SigmoidWeights(dp,val,pPeaks[i],m_fThreshold,m_fSigma);
+                    pImg[i]=kipl::math::SigmoidWeights(dp,val,pPeaks[i],m_fThreshold[0],m_fSigma[0]);
                 else
-                    pImg[i]=kipl::math::SigmoidWeights(dh,val,pHoles[i],m_fThreshold,m_fSigma);
+                    pImg[i]=kipl::math::SigmoidWeights(dh,val,pHoles[i],m_fThreshold[1],m_fSigma[1]);
 
                 break;
             }
@@ -162,26 +178,45 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
     float *pPeaks=nopeaks.GetDataPtr();
 
     kipl::containers::ArrayBuffer<PixelInfo> spots(img.Size());
-    float diff=0.0f;
+
+    float diffH=0.0f;
+    float diffP=0.0f;
+
     for (size_t i=0; i<N; i++) {
         float val=pImg[i];
         switch (m_eMorphDetect) {
         case MorphDetectHoles :
-            diff=abs(val-pHoles[i]);
+            diffH=abs(val-pHoles[i]);
+            if (m_fThreshold[0]<diffH)
+            {
+                spots.push_back(PixelInfo(i,val,kipl::math::Sigmoid(diffH,m_fThreshold[0],m_fSigma[0])));
+                pRes[i]=mark;
+            }
             break;
 
         case MorphDetectPeaks :
-            diff=abs(val-pPeaks[i]);
+            diffP=abs(val-pPeaks[i]);
+            if (m_fThreshold[0]<diffP)
+            {
+                spots.push_back(PixelInfo(i,val,kipl::math::Sigmoid(diffP,m_fThreshold[1],m_fSigma[1])));
+                pRes[i]=mark;
+            }
             break;
 
         case MorphDetectBoth :
-            diff=max(abs(val-pHoles[i]),abs(val-pPeaks[i]));
-            break;
-        }
+            diffH=abs(val-pHoles[i]);
+            diffP=abs(val-pPeaks[i]);
 
-        if (m_fThreshold<diff) {
-            spots.push_back(PixelInfo(i,val,kipl::math::Sigmoid(diff,m_fThreshold,m_fSigma)));
-            pRes[i]=mark;
+            if ((m_fThreshold[0]<diffH) || (m_fThreshold[1]<diffP))
+            {
+                spots.push_back(PixelInfo(i,val,
+                                          std::min(kipl::math::Sigmoid(diffP,m_fThreshold[0],m_fSigma[0]),
+                                                   kipl::math::Sigmoid(diffP,m_fThreshold[1],m_fSigma[1]))));
+                pRes[i]=mark;
+            }
+
+
+            break;
         }
     }
 
