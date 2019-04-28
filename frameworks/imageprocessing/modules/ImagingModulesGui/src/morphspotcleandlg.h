@@ -28,7 +28,7 @@ class MorphSpotCleanDlg : public ConfiguratorDialogBase
     Q_OBJECT
 
 public:
-    explicit MorphSpotCleanDlg(QWidget *parent = 0);
+    explicit MorphSpotCleanDlg(QWidget *parent = nullptr);
     virtual ~MorphSpotCleanDlg();
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
@@ -58,8 +58,8 @@ private:
     kipl::base::TImage<float,3> m_ProcessedImage;
     kipl::base::TImage<float,2> m_DetectionImage;
 
-    float m_fThreshold;
-    float m_fSigma;
+    float m_fThreshold[2];
+    float m_fSigma[2];
     int   m_nEdgeSmoothLength;
     int   m_nMaxArea;
     bool  m_bUseClamping;

@@ -12,6 +12,7 @@
 #include <QFileDialog>
 
 #include <strings/miscstring.h>
+#include <strings/string2array.h>
 #include <base/thistogram.h>
 #include <math/sums.h>
 #include <math/mathfunctions.h>
@@ -26,8 +27,8 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_eConnectivity(kipl::morphology::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
-    m_fThreshold(0.05f),
-    m_fSigma(m_fThreshold/10.0f),
+    m_fThreshold{0.1f,0.1f},
+    m_fSigma{m_fThreshold[0]/10.0f,m_fThreshold[1]/10.0f},
     m_nEdgeSmoothLength(7),
     m_nMaxArea(0),
     m_bUseClamping(false),
@@ -114,12 +115,12 @@ void MorphSpotCleanDlg::ApplyParameters()
     float threshold[N];
 
     float thaxis[N];
-    if (m_fSigma!=0.0f)
+    if (m_fSigma[0]!=0.0f)
     { // In case of sigmoid mixing
 
         for (size_t i=0; i<N; i++) {
             thaxis[i]=axis[0]+i*(axis[N99]-axis[0])/N;
-            threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold, m_fSigma);
+            threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold[0], m_fSigma[0]);
         }
         ui->plotDetection->setCurveData(1,thaxis,threshold,N,"Threshold");
     }
@@ -172,8 +173,8 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
         string2enum(GetStringParameter(parameters,"detectionmethod"), m_eDetectionMethod);
         string2enum(GetStringParameter(parameters,"connectivity"), m_eConnectivity);
 
-        m_fThreshold        = GetFloatParameter(parameters,"threshold");
-        m_fSigma            = GetFloatParameter(parameters,"sigma");
+        kipl::strings::String2Array(GetStringParameter(parameters,"threshold"),m_fThreshold,2);
+        kipl::strings::String2Array(GetStringParameter(parameters,"sigma"),m_fSigma,2);
         m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
         m_nMaxArea          = GetIntParameter(parameters,"maxarea");
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
@@ -217,8 +218,8 @@ int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::strin
 
 void MorphSpotCleanDlg::UpdateDialog()
 {
-    ui->spinThreshold->setValue(m_fThreshold);
-    ui->spinSigma->setValue(m_fSigma);
+    ui->spinThreshold->setValue(m_fThreshold[0]);
+    ui->spinSigma->setValue(m_fSigma[0]);
     ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
     ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
@@ -234,8 +235,8 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_eCleanMethod      = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
     m_eDetectionMethod  = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
     m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
-    m_fThreshold        = ui->spinThreshold->value();
-    m_fSigma            = ui->spinSigma->value();
+    m_fThreshold[0]     = ui->spinThreshold->value();
+    m_fSigma[0]         = ui->spinSigma->value();
     m_fMinLevel         = ui->spinMinValue->value();
     m_bUseClamping      = ui->groupClampData->isChecked();
     m_fMaxLevel         = ui->spinMaxValue->value();

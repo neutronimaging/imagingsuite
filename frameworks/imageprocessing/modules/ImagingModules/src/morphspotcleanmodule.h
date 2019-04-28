@@ -35,8 +35,8 @@ protected:
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
 
-    double m_fThreshold;
-    double m_fSigma;
+    float m_fThreshold[2];
+    float m_fSigma[2];
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
     bool m_bUseClamping;
