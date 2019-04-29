@@ -33,6 +33,8 @@
 #include <ModuleException.h>
 #include <ParameterHandling.h>
 
+#include <pixelsizedlg.h>
+
 #include "muhrecmainwindow.h"
 #include "ui_muhrecmainwindow.h"
 #include "configuregeometrydialog.h"
@@ -2572,5 +2574,32 @@ void MuhRecMainWindow::on_actionGlobal_settings_triggered()
     if (res == QDialog::Accepted)
     {
         dlg.updateConfig(m_Config);
+    }
+}
+
+
+void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
+{
+    PixelSizeDlg dlg(this);
+
+    int res=0;
+
+    try {
+        res=dlg.exec();
+    }
+    catch (...)
+    {
+        logger.error("Something went wrong in the sixel size dialog...");
+        return ;
+    }
+
+    if (res==dlg.Accepted)
+    {
+        logger.message("New pixel size estimated.");
+        ui->dspinResolution->setValue(dlg.getPixelSize());
+    }
+    else
+    {
+        logger.message("Pixel size dialog was cancelled.");
     }
 }

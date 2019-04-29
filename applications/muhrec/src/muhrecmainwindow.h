@@ -196,6 +196,8 @@ private slots:
 
     void on_actionGlobal_settings_triggered();
 
+    void on_pushButton_measurePixelSize_clicked();
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data

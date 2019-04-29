@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>630</width>
-    <height>521</height>
+    <width>772</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,8 +51,11 @@
          <property name="minimumSize">
           <size>
            <width>196</width>
-           <height>123</height>
+           <height>145</height>
           </size>
+         </property>
+         <property name="toolTip">
+          <string>ROI used to detect the edges. Make the region rectangular. The distance will be measured in the widest direction.</string>
          </property>
         </widget>
        </item>
@@ -101,6 +104,9 @@
           <widget class="QDoubleSpinBox" name="doubleSpinBox_Distance">
            <property name="toolTip">
             <string>Metric distance between two features in the image.</string>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -195,6 +201,13 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Instructions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;1. Load an image with an object with known dimensions.&lt;/p&gt;&lt;p&gt;2. Select a ROI that includes two edges.&lt;/p&gt;&lt;p&gt;3. Enter the distance between the two edges.&lt;/p&gt;&lt;p&gt;4. Press analyze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -238,6 +251,7 @@
    <container>1</container>
    <slots>
     <signal>valueChanged(int,int,int,int)</signal>
+    <signal>toggled(bool)</signal>
    </slots>
   </customwidget>
  </customwidgets>

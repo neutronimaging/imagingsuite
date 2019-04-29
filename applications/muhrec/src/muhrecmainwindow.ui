@@ -680,7 +680,7 @@
               <property name="minimumSize">
                <size>
                 <width>220</width>
-                <height>130</height>
+                <height>145</height>
                </size>
               </property>
               <property name="toolTip">
@@ -693,7 +693,7 @@
               <property name="minimumSize">
                <size>
                 <width>220</width>
-                <height>130</height>
+                <height>145</height>
                </size>
               </property>
               <property name="toolTip">
@@ -771,6 +771,16 @@
              </property>
              <property name="value">
               <double>0.100000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_measurePixelSize">
+             <property name="toolTip">
+              <string>A tool to estimate the pixel size. &lt;br /&gt;Requires an image of an object with known dimensions.</string>
+             </property>
+             <property name="text">
+              <string>Measure</string>
              </property>
             </widget>
            </item>

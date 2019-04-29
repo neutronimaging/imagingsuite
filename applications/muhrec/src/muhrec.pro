@@ -97,8 +97,8 @@ FORMS    += muhrecmainwindow.ui \
     referencefiledlg.ui \
     globalsettingsdialog.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lQtImaging
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lQtImaging
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
@@ -108,6 +108,9 @@ DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
+
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtImaging
+DEPENDPATH += $$PWD/../../../GUI/qt/QtImaging
 
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
