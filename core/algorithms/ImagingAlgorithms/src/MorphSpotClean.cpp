@@ -11,6 +11,8 @@
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
 
+#include <QDebug>
+
 
 namespace ImagingAlgorithms {
 
@@ -55,8 +57,8 @@ void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float *th, float 
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
-    std::copy_n(m_fThreshold,2,th);
-    std::copy_n(m_fSigma,2,sigma);
+    std::copy_n(th,2,m_fThreshold);
+    std::copy_n(sigma,2,m_fSigma);
 
     switch (m_eMorphClean) {
         case MorphCleanReplace  : ProcessReplace(img); break;
@@ -81,9 +83,6 @@ void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::
     case MorphDetectBoth :
         noholes=kipl::morphology::FillHole(padded,m_eConnectivity);
 
-        // Original
-        //nopeaks=kipl::morphology::FillPeaks(padded,m_eConnectivity);
-
         // Alternative
         for (size_t i=0; i<padded.Size(); i++ )
             padded[i]=-padded[i];
@@ -105,13 +104,14 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     FillOutliers(img,padded,noholes,nopeaks);
 
     size_t N=padded.Size();
+    qDebug()<<m_fThreshold[0]<<m_fSigma[0]<<m_fThreshold[1]<<m_fSigma[1];
 
     float *pImg=padded.GetDataPtr();
     float *pHoles=noholes.GetDataPtr();
     float *pPeaks=nopeaks.GetDataPtr();
-    kipl::io::WriteTIFF32(nopeaks,"nopeaks.tif");
-    kipl::io::WriteTIFF32(noholes,"noholes.tif");
-    kipl::io::WriteTIFF32(padded,"padded.tif");
+//    kipl::io::WriteTIFF32(nopeaks,"nopeaks.tif");
+//    kipl::io::WriteTIFF32(noholes,"noholes.tif");
+//    kipl::io::WriteTIFF32(padded,"padded.tif");
     if ((m_fSigma[0]==0.0f) && (m_fSigma[1]==0.0f))
     {
         for (size_t i=0; i<N; i++) {
@@ -142,21 +142,18 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             float val=pImg[i];
             switch (m_eMorphDetect) {
             case MorphDetectHoles :
-             //   pImg[i]=kipl::math::SigmoidWeights(fabs(val-pHoles[i]),val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
-             //   pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
                   pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
                 break;
 
             case MorphDetectPeaks :
-//                pImg[i]=kipl::math::SigmoidWeights(val-pPeaks[i],val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
-                pImg[i]=kipl::math::SigmoidWeights(pPeaks[i]-val,val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
+                pImg[i]=kipl::math::SigmoidWeights(val-pPeaks[i],val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
                 break;
 
             case MorphDetectBoth :
                 dp=val-pPeaks[i];
                 dh=pHoles[i]-val;
 
-                if (dh<dp)
+                if (fabs(dh)<fabs(dp))
                     pImg[i]=kipl::math::SigmoidWeights(dp,val,pPeaks[i],m_fThreshold[0],m_fSigma[0]);
                 else
                     pImg[i]=kipl::math::SigmoidWeights(dh,val,pHoles[i],m_fThreshold[1],m_fSigma[1]);
