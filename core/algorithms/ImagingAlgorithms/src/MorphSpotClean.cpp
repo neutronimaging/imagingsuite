@@ -103,12 +103,15 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     kipl::base::TImage<float,2> padded,noholes, nopeaks;
 
     FillOutliers(img,padded,noholes,nopeaks);
-//    kipl::io::WriteTIFF32(padded,"padded.tif");
+
     size_t N=padded.Size();
 
     float *pImg=padded.GetDataPtr();
     float *pHoles=noholes.GetDataPtr();
     float *pPeaks=nopeaks.GetDataPtr();
+    kipl::io::WriteTIFF32(nopeaks,"nopeaks.tif");
+    kipl::io::WriteTIFF32(noholes,"noholes.tif");
+    kipl::io::WriteTIFF32(padded,"padded.tif");
     if ((m_fSigma[0]==0.0f) && (m_fSigma[1]==0.0f))
     {
         for (size_t i=0; i<N; i++) {
@@ -139,16 +142,19 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             float val=pImg[i];
             switch (m_eMorphDetect) {
             case MorphDetectHoles :
-                pImg[i]=kipl::math::SigmoidWeights(fabs(val-pHoles[i]),val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
+             //   pImg[i]=kipl::math::SigmoidWeights(fabs(val-pHoles[i]),val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
+             //   pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
+                  pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],m_fThreshold[0],m_fSigma[0]);
                 break;
 
             case MorphDetectPeaks :
-                pImg[i]=kipl::math::SigmoidWeights(fabs(pPeaks[i]-val),val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
+//                pImg[i]=kipl::math::SigmoidWeights(val-pPeaks[i],val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
+                pImg[i]=kipl::math::SigmoidWeights(pPeaks[i]-val,val,pPeaks[i],m_fThreshold[1],m_fSigma[1]);
                 break;
 
             case MorphDetectBoth :
-                dp=fabs(pPeaks[i]-val);
-                dh=fabs(val-pHoles[i]);
+                dp=val-pPeaks[i];
+                dh=pHoles[i]-val;
 
                 if (dh<dp)
                     pImg[i]=kipl::math::SigmoidWeights(dp,val,pPeaks[i],m_fThreshold[0],m_fSigma[0]);

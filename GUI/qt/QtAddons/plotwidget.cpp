@@ -256,7 +256,6 @@ void PlotWidget::clearCursor(int id)
 
 void PlotWidget::clearAllCursors()
 {
-    qDebug() << "deleting all cursors";
     while (!cursors.empty()) {
         delete cursors.begin()->second;
 
