@@ -104,7 +104,7 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     FillOutliers(img,padded,noholes,nopeaks);
 
     size_t N=padded.Size();
-    qDebug()<<m_fThreshold[0]<<m_fSigma[0]<<m_fThreshold[1]<<m_fSigma[1];
+//    qDebug()<<m_fThreshold[0]<<m_fSigma[0]<<m_fThreshold[1]<<m_fSigma[1];
 
     float *pImg=padded.GetDataPtr();
     float *pHoles=noholes.GetDataPtr();
