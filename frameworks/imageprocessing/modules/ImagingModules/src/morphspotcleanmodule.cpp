@@ -45,8 +45,8 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::Configure(KiplProcessConfi
     m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
     m_nMaxArea          = GetIntParameter(parameters,"maxarea");
     m_bUseClamping      = kipl::strings::string2bool(GetStringParameter(parameters,"useclamping"));
-    m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
-    m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
+    m_fMinLevel         = static_cast<double>(GetFloatParameter(parameters,"minlevel"));
+    m_fMaxLevel         = static_cast<double>(GetFloatParameter(parameters,"maxlevel"));
     m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
 
     return 0;
@@ -145,10 +145,10 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     return 0;
 }
 
-kipl::base::TImage<float,2> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img)
+kipl::base::TImage<float,2> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm)
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
-    cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
+    cleaner.setCleanMethod(dm,m_eCleanMethod);
     return cleaner.DetectionImage(img);
 }
 

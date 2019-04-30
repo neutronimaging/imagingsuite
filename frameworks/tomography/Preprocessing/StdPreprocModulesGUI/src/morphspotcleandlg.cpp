@@ -62,7 +62,7 @@ void MorphSpotCleanDlg::ApplyParameters()
     ui->plotDetection->clearAllCurves();
     ui->plotDetection->clearAllCursors();
 
-    m_Cleaner.Configure(*m_Config, parameters);
+    m_Cleaner.Configure(*config, parameters);
 
     m_DetectionImageHoles=m_Cleaner.DetectionImage(m_OriginalImage, ImagingAlgorithms::MorphDetectHoles);
     for (size_t i=0; i<m_DetectionImageHoles.Size(); i++) // Fix nans
@@ -111,7 +111,7 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
 
     kipl::math::cumsum(hist,cumhist,N);
 
-    float fcumhist[N];
+    float *fcumhist=new float[N];
     size_t ii=0;
 
     for (ii=0;ii<N;ii++) {
@@ -144,18 +144,19 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
     delete [] hist;
     delete [] axis;
     delete [] cumhist;
+    delete [] fcumhist;
     delete [] threshold;
     delete [] thaxis;
 }
 
-int MorphSpotCleanDlg::exec(ConfigBase *config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
+int MorphSpotCleanDlg::exec(ConfigBase *_config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
 {
 
     std::ostringstream msg;
 
     m_Projections=img;
 
-    m_Config=dynamic_cast<ReconConfig *>(config);
+    config=dynamic_cast<ReconConfig *>(_config);
 
     msg.str("");
     try {
@@ -230,13 +231,13 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_eCleanMethod      = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
     m_eDetectionMethod  = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
     m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
-    m_fThreshold[0]     = ui->spinThresholdHoles->value();
-    m_fSigma[0]         = ui->spinSigmaHoles->value();
-    m_fThreshold[1]     = ui->spinThresholdPeaks->value();
-    m_fSigma[1]         = ui->spinSigmaPeaks->value();
+    m_fThreshold[0]     = static_cast<float>(ui->spinThresholdHoles->value());
+    m_fSigma[0]         = static_cast<float>(ui->spinSigmaHoles->value());
+    m_fThreshold[1]     = static_cast<float>(ui->spinThresholdPeaks->value());
+    m_fSigma[1]         = static_cast<float>(ui->spinSigmaPeaks->value());
     m_bClampData        = ui->groupBox_clampData->isChecked();
-    m_fMinLevel         = ui->spinMinValue->value();
-    m_fMaxLevel         = ui->spinMaxValue->value();
+    m_fMinLevel         = static_cast<float>(ui->spinMinValue->value());
+    m_fMaxLevel         = static_cast<float>(ui->spinMaxValue->value());
     m_nMaxArea          = ui->spinArea->value();
     m_nEdgeSmoothLength = ui->spinEdgeLenght->value();
 }
@@ -246,8 +247,8 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["connectivity"]    = enum2string(m_eConnectivity);
     parameters["cleanmethod"]     = enum2string(m_eCleanMethod);
     parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
-    parameters["threshold"]       = kipl::strings::value2string(m_fThreshold);
-    parameters["sigma"]           = kipl::strings::value2string(m_fSigma);
+    parameters["threshold"]       = kipl::strings::Array2String(m_fThreshold,2);
+    parameters["sigma"]           = kipl::strings::Array2String(m_fSigma,2);
     parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
     parameters["clampdata"]       = kipl::strings::bool2string(m_bClampData);

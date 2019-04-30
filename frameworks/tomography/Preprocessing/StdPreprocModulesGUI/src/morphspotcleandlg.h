@@ -50,7 +50,7 @@ private:
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
 
-    ReconConfig *m_Config;
+    ReconConfig *config;
     MorphSpotCleanModule m_Cleaner;
     kipl::base::TImage<float,3> m_Projections;
     kipl::morphology::MorphConnect m_eConnectivity;
@@ -69,7 +69,7 @@ private:
     bool  m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    float m_bThreading;
+    bool m_bThreading;
 };
 
 #endif // MORPHSPOTCLEANDLG_H
