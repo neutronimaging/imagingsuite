@@ -19,7 +19,7 @@
 
 namespace ImagingAlgorithms {
 
-SpotClean::SpotClean() :
+SpotClean::SpotClean(kipl::interactors::InteractionBase *interactor) :
 	logger("ImagingAlgorithms::SpotClean"),
     mark(std::numeric_limits<float>::max()),
 	m_fGamma(0.1f),
@@ -30,7 +30,8 @@ SpotClean::SpotClean() :
 	m_nMaxArea(100),
 	m_eDetectionMethod(Detection_Ring),
 	mLUT(1<<15,0.1f,0.0075f),
-	eEdgeProcessingStyle(kipl::filters::FilterBase::EdgeMirror)
+    eEdgeProcessingStyle(kipl::filters::FilterBase::EdgeMirror),
+    m_Interactor(interactor)
 {
 }
 
@@ -360,7 +361,16 @@ int SpotClean::Neighborhood(float * pImg, int idx, float * neigborhood)
 		}
 	}
 
-	return cnt;
+    return cnt;
+}
+
+bool SpotClean::UpdateStatus(float val, string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
 
 double SpotClean::ChangeStatistics(kipl::base::TImage<float,2> img)

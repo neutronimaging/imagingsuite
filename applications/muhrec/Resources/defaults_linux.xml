@@ -91,9 +91,9 @@
                     <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
-                    <sigma>0.01</sigma>
+                    <sigma>0.01 0.01</sigma>
                     <threading>false</threading>
-                    <threshold>0.1</threshold>
+                    <threshold>0.1 0.1</threshold>
                 </parameters>
             </module>
             <module>

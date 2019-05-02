@@ -36,6 +36,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
 public:
     MorphSpotClean();
     void Process(kipl::base::TImage<float,2> &img, float th, float sigma);
+    void Process(kipl::base::TImage<float,2> &img, float *th, float *sigma);
 
     void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
@@ -80,8 +81,8 @@ protected:
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    float m_fThreshold;
-    float m_fSigma;
+    float m_fThreshold[2];
+    float m_fSigma[2];
     kipl::math::SigmoidLUT m_LUT;
 
     kipl::base::TImage<float,2> mask;

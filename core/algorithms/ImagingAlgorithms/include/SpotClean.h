@@ -16,6 +16,7 @@
 #include <containers/ArrayBuffer.h>
 #include <math/LUTCollection.h>
 #include <logging/logger.h>
+#include <interactors/interactionbase.h>
 
 #include "pixelinfo.h"
 
@@ -35,7 +36,7 @@ protected:
 	kipl::logging::Logger logger;
 public:
     float mark;
-	SpotClean();
+    SpotClean(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~SpotClean(void);
 
 	int Setup(size_t iterations,
@@ -88,6 +89,12 @@ protected:
 	/// \returns number of extracted pixels in the array
 	int Neighborhood(float * pImg, int idx, float * neigborhood);
 
+    /// Interface to a progress bar in a GUI.
+    /// \param val a fraction value 0.0-1.0 to tell the progress of the back-projection.
+    /// \param msg a message string to add information to the progress bar.
+    /// \returns The abort status of interactor object. True means abort back-projection and false continue.
+    bool UpdateStatus(float val, std::string msg);
+
 
 	float m_fGamma;
 	float m_fSigma;
@@ -113,6 +120,8 @@ protected:
 	kipl::math::SigmoidLUT mLUT;
 
 	kipl::filters::FilterBase::EdgeProcessingStyle eEdgeProcessingStyle;
+
+    kipl::interactors::InteractionBase *m_Interactor;
 };
 
 }

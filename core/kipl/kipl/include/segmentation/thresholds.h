@@ -61,7 +61,7 @@ namespace kipl { namespace segmentation {
 	{
 		if (normalize) {
 			const float scale=1.0f/(float(qhi)-float(qlo));
-			for (ptrdiff_t i=0; i<N; i++) {
+            for (size_t i=0; i<N; ++i) {
 				if (data[i]<qlo) 
 					data[i]=T(0);
 				else 
@@ -102,7 +102,7 @@ namespace kipl { namespace segmentation {
 			size_t N,
             T0 th,
 			CmpType cmp=cmp_greater,
-            T1 * mask = reinterpret_cast<T1 *>(nullptr),
+            T1 * mask = nullptr,
             size_t Nmask=size_t(0))
 	{
 		T1 cmptrue,cmpfalse;
@@ -197,7 +197,7 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	msg.str("");
 
-	std::deque<int> posQ;
+    std::deque<ptrdiff_t> posQ;
 		
 	kipl::morphology::CNeighborhood NG(dims,NDim,conn);
     ptrdiff_t Nng=NG.N();
