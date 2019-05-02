@@ -73,7 +73,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
     float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
     msg.str("");
    // msg<<"Scan direction "<<mConfig.ProjectionInfo.eDirection<<", "<<dirWeight;
-    logger.message(msg.str());
+   // logger.message(msg.str());
 	fWeights[nProjCounter]  = weight;
     fSin[nProjCounter]      = sin(dirWeight*angle*fPi/180.0f);
     fCos[nProjCounter]      = cos(dirWeight*angle*fPi/180.0f);
