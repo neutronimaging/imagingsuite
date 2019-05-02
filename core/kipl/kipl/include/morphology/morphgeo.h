@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __MORPHGEO_H
-#define __MORPHGEO_H
+#ifndef MORPHGEO_H
+#define MORPHGEO_H
 #include <iostream>
 #include <deque>
 
@@ -163,7 +163,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 	const size_t *pDimsF=f.Dims();
 	const size_t *pDimsG=g.Dims();
 
-    for (i=0; i<NDimF; i++) {
+    for (i=0; i<static_cast<ptrdiff_t>(NDimF); i++) {
         if (pDimsF[i]!=pDimsG[i]) {
             throw kipl::base::KiplException("RecByDilation: Size(f) != Size(g)",__FILE__,__LINE__);
         }
@@ -205,8 +205,8 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     const ptrdiff_t N=g.Size();
     CNeighborhood NG(g.Dims(),NDimG,conn);
     // Forward scan
-    cNGpm=NG.Nfb();
-    cNG=NG.N();
+    cNGpm=static_cast<ptrdiff_t>(NG.Nfb());
+    cNG=static_cast<ptrdiff_t>(NG.N());
     for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); pos++) {
         max=ptemp[pos];
         for (i=1; i<cNGpm; i++) {
