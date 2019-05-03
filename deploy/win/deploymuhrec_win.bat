@@ -26,6 +26,7 @@ copy %REPOS%\lib\FDKBackProjectors.dll .
 copy %REPOS%\lib\ReaderConfig.dll .
 copy %REPOS%\lib\ReaderGUI.dll .
 #copy %REPOS%\lib\ReconAlgorithms.dll .
+copy %REPOS%\lib\QtImaging.dll .
 
 copy %REPOS%\imagingsuite\external\lib64\libtiff.dll .
 copy %REPOS%\imagingsuite\external\lib64\libjpeg-62.dll .
@@ -55,6 +56,7 @@ windeployqt %DEST%\verticalslicer.exe
 windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
 windeployqt %DEST%\muhrecCLI.exe
+
 copy Qt5PrintSupport.dll %DEST%
 copy Qt5Charts.dll %DEST%
 

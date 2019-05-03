@@ -30,6 +30,8 @@ fi
 `$CPCMD $REPOSPATH/lib/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libQtImaging.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/lib/libReaderConfig.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/lib/libReconAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
@@ -47,6 +49,7 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 #`$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl_cpp.100.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
+
 `$CPCMD /opt/local/lib/libzstd.1.3.8.dylib $DEST/Contents/Frameworks`
 
 if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
@@ -117,6 +120,7 @@ cd $DEST/Contents/MacOS
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib MuhRec
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib MuhRec
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib MuhRec
+install_name_tool -change libQtImaging.1.dylib @executable_path/../Frameworks/libQtImaging.1.dylib MuhRec
 install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib MuhRec
 install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib MuhRec
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
@@ -148,6 +152,22 @@ install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/lib
 
 # QtAddons
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtAddons.1.0.0.dylib
+
+# ReaderConfig
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReaderConfig.1.0.0.dylib
+
+# QtImaging
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtImaging.1.0.0.dylib
+install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libQtImaging.1.0.0.dylib
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libQtImaging.1.0.0.dylib
+install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libQtImaging.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libQtImaging.1.0.0.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libQtImaging.1.0.0.dylib
 
 # QtModuleConfigure
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtModuleConfigure.1.0.0.dylib
@@ -190,7 +210,6 @@ install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/l
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_hl.10.dylib  libhdf5_hl.10.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libhdf5_hl.10.dylib
-
 
 #FDKBackProjector
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libFDKBackProjectors.1.0.0.dylib
@@ -246,7 +265,7 @@ if [ ! -d "/tmp/muhrec" ]; then
   mkdir /tmp/muhrec
 fi
 
-ln -s /Applications /tmp/muhrec/Applications
+ln -s /Applications /tmp/muhrec
 cp -r $DEST /tmp/muhrec
 
 hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec_build-$GITVER-`date +%Y%m%d`.dmg
