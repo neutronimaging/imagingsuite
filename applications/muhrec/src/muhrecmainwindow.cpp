@@ -1303,6 +1303,8 @@ void MuhRecMainWindow::UpdateDialog()
     }
 
     ui->comboDataSequence->setCurrentIndex(m_Config.ProjectionInfo.scantype);
+    ui->spinBox_goldenFirstIdx->setValue(static_cast<int>(m_Config.ProjectionInfo.nGoldenStartIdx));
+    on_comboDataSequence_currentIndexChanged(m_Config.ProjectionInfo.scantype);
     ui->dspinResolution->setValue(m_Config.ProjectionInfo.fResolution[0]);
 
     // Set center of rotation
@@ -1393,25 +1395,22 @@ void MuhRecMainWindow::UpdateConfig()
         QMessageBox::information(this,"Last<First projection","Last<First projection, swapped values");
     }
 
-    m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
-    m_Config.ProjectionInfo.imagetype = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
-    m_Config.ProjectionInfo.fBinning = ui->spinProjectionBinning->value();
-    m_Config.ProjectionInfo.eFlip = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
-    m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
+    m_Config.ProjectionInfo.nProjectionStep    = static_cast<size_t>(ui->spinProjectionStep->value());
+    m_Config.ProjectionInfo.imagetype          = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
+    m_Config.ProjectionInfo.fBinning           = ui->spinProjectionBinning->value();
+    m_Config.ProjectionInfo.eFlip              = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
+    m_Config.ProjectionInfo.eRotate            = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
-//    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
-//    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
-
-    m_Config.ProjectionInfo.sOBFileMask = ui->editOpenBeamMask->text().toStdString();
+    m_Config.ProjectionInfo.sOBFileMask        = ui->editOpenBeamMask->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sOBFileMask,false);
 
-    m_Config.ProjectionInfo.nOBFirstIndex = ui->spinFirstOpenBeam->value();
-    m_Config.ProjectionInfo.nOBCount = ui->spinOpenBeamCount->value();
-    m_Config.ProjectionInfo.sDCFileMask = ui->editDarkMask->text().toStdString();
+    m_Config.ProjectionInfo.nOBFirstIndex      = ui->spinFirstOpenBeam->value();
+    m_Config.ProjectionInfo.nOBCount           = ui->spinOpenBeamCount->value();
+    m_Config.ProjectionInfo.sDCFileMask        = ui->editDarkMask->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sDCFileMask,false);
 
-    m_Config.ProjectionInfo.nDCFirstIndex = ui->spinFirstDark->value();
-    m_Config.ProjectionInfo.nDCCount = ui->spinDarkCount->value();
+    m_Config.ProjectionInfo.nDCFirstIndex      = static_cast<size_t>(ui->spinFirstDark->value());
+    m_Config.ProjectionInfo.nDCCount           = static_cast<size_t>(ui->spinDarkCount->value());
     std::string str=ui->editProjectionSkipList->text().toStdString();
     if (!str.empty() && ui->checkBoxUseSkipList->isChecked())
         kipl::strings::String2Set(str,m_Config.ProjectionInfo.nlSkipList);
@@ -1421,38 +1420,39 @@ void MuhRecMainWindow::UpdateConfig()
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
     ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
 
-    m_Config.ProjectionInfo.roi[0] = m_Config.ProjectionInfo.projection_roi[0];
-    m_Config.ProjectionInfo.roi[2] = m_Config.ProjectionInfo.projection_roi[2];
-    m_Config.ProjectionInfo.roi[1] = ui->spinSlicesFirst->value();
-    m_Config.ProjectionInfo.roi[3] = ui->spinSlicesLast->value();
+    m_Config.ProjectionInfo.roi[0]             = m_Config.ProjectionInfo.projection_roi[0];
+    m_Config.ProjectionInfo.roi[2]             = m_Config.ProjectionInfo.projection_roi[2];
+    m_Config.ProjectionInfo.roi[1]             = static_cast<size_t>(ui->spinSlicesFirst->value());
+    m_Config.ProjectionInfo.roi[3]             = static_cast<size_t>(ui->spinSlicesLast->value());
 
-    m_Config.ProjectionInfo.fCenter = ui->dspinRotationCenter->value();
-    m_Config.ProjectionInfo.fScanArc[0] = ui->dspinAngleStart->value();
-    m_Config.ProjectionInfo.fScanArc[1] = ui->dspinAngleStop->value();
-    m_Config.ProjectionInfo.scantype = static_cast<ReconConfig::cProjections::eScanType>(ui->comboDataSequence->currentIndex());
-    m_Config.ProjectionInfo.fResolution[0] = m_Config.ProjectionInfo.fResolution[1] = ui->dspinResolution->value();
-    m_Config.ProjectionInfo.fTiltAngle = ui->dspinTiltAngle->value();
-    m_Config.ProjectionInfo.fTiltPivotPosition = ui->dspinTiltPivot->value();
-    m_Config.ProjectionInfo.bCorrectTilt = ui->checkCorrectTilt->checkState();
-    m_Config.ProjectionInfo.bTranslate = ui->check_stitchprojections->checkState();
+    m_Config.ProjectionInfo.fCenter            = static_cast<size_t>(ui->dspinRotationCenter->value());
+    m_Config.ProjectionInfo.fScanArc[0]        = static_cast<float>(ui->dspinAngleStart->value());
+    m_Config.ProjectionInfo.fScanArc[1]        = static_cast<float>(ui->dspinAngleStop->value());
+    m_Config.ProjectionInfo.scantype           = static_cast<ReconConfig::cProjections::eScanType>(ui->comboDataSequence->currentIndex());
+    m_Config.ProjectionInfo.nGoldenStartIdx    = static_cast<size_t>(ui->spinBox_goldenFirstIdx->value());
+    m_Config.ProjectionInfo.fResolution[0]     = m_Config.ProjectionInfo.fResolution[1] = static_cast<float>(ui->dspinResolution->value());
+    m_Config.ProjectionInfo.fTiltAngle         = static_cast<float>(ui->dspinTiltAngle->value());
+    m_Config.ProjectionInfo.fTiltPivotPosition = static_cast<float>(ui->dspinTiltPivot->value());
+    m_Config.ProjectionInfo.bCorrectTilt       = ui->checkCorrectTilt->checkState();
+    m_Config.ProjectionInfo.bTranslate         = ui->check_stitchprojections->checkState();
 
-    m_Config.ProjectionInfo.fSDD = ui->dspinSDD->value();
-    m_Config.ProjectionInfo.fSOD = ui->dspinSOD->value();
+    m_Config.ProjectionInfo.fSDD               = ui->dspinSDD->value();
+    m_Config.ProjectionInfo.fSOD               = ui->dspinSOD->value();
 
-    m_Config.ProjectionInfo.fpPoint[0] = ui->dspinPiercPointX->value();
-    m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
+    m_Config.ProjectionInfo.fpPoint[0]         = ui->dspinPiercPointX->value();
+    m_Config.ProjectionInfo.fpPoint[1]         = ui->dspinPiercPointY->value();
 
     CenterOfRotationChanged();
 
     if (ui->checkCBCT->isChecked()) {
-        m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
+        m_Config.ProjectionInfo.beamgeometry   = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
 
         ui->groupBox_ConeBeamGeometry->show();
         SlicesChanged(0);
     }
     else {
-        m_Config.ProjectionInfo.beamgeometry= m_Config.ProjectionInfo.BeamGeometry_Parallel;
+        m_Config.ProjectionInfo.beamgeometry   = m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->groupBox_ConeBeamGeometry->hide();
         SlicesChanged(0);
     }
@@ -1462,8 +1462,6 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.voi[1] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
     m_Config.MatrixInfo.voi[2] = 0;
     m_Config.MatrixInfo.voi[3] = (m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0]);
-//        m_Config.MatrixInfo.voi[4] = m_Config.ProjectionInfo.roi[3]-ui->spinSubVolumeSizeZ1->value();
-//        m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-ui->spinSubVolumeSizeZ0->value();
     m_Config.MatrixInfo.voi[4] = 0;
     m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
 
@@ -2555,10 +2553,15 @@ void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
         }
 
         ui->radioButton_customTurn->setCheckable(false);
+        ui->label_goldenFirstIdx->show();
+        ui->spinBox_goldenFirstIdx->show();
+
     }
     else
     {
         ui->radioButton_customTurn->setCheckable(true);
+        ui->label_goldenFirstIdx->hide();
+        ui->spinBox_goldenFirstIdx->hide();
     }
 }
 

@@ -1205,14 +1205,14 @@
                  </item>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_33">
                  <property name="text">
                   <string>Direction of rotation</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="2" column="1">
                 <widget class="QComboBox" name="comboDirRotation">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -1233,6 +1233,20 @@
                    <string>CounterClockWise</string>
                   </property>
                  </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_goldenFirstIdx">
+                 <property name="text">
+                  <string>Sequence first index</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBox_goldenFirstIdx">
+                 <property name="toolTip">
+                  <string>File index of the the first projection in a golden ratio sequence. This is needed to generate the correct angle sequence. Mostly this is '0' or '1'.</string>
+                 </property>
                 </widget>
                </item>
               </layout>

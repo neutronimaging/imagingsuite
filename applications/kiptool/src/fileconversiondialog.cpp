@@ -128,7 +128,10 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 
     kipl::strings::String2List(skipstring,skiplist);
 
-    std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,ui->comboBox_ScanOrder->currentIndex(),ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
+    std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,
+                                                              ui->comboBox_ScanOrder->currentIndex(),
+                                                              ui->spinBox_goldenFirstIdx->value(),
+                                                              ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
 
     msg.str("");
     msg<<"Projection file list size="<<plist.size()<<" for loader list size="<<ll.size();
@@ -396,7 +399,11 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
 
    kipl::strings::String2List(skipstring,skiplist);
 
-   std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,ui->comboBox_ScanOrder->currentIndex(),ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
+   std::map<float,std::string> plist=BuildProjectionFileList(ll,
+                                                             skiplist,
+                                                             ui->comboBox_ScanOrder->currentIndex(),
+                                                             ui->spinBox_goldenFirstIdx->value(),
+                                                             ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
 
    int N=static_cast<int>(plist.size());
    int rest = N % arg1;
@@ -414,6 +421,8 @@ void FileConversionDialog::on_comboBox_ScanOrder_currentIndexChanged(int index)
     if (0<index) {
         ui->label_scanlength->show();
         ui->comboBox_ScanLength->show();
+
+
     }
     else {
         ui->label_scanlength->hide();

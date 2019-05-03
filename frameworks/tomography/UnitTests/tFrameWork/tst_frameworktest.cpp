@@ -18,7 +18,7 @@ class FrameWorkTest : public QObject
 
 public:
     FrameWorkTest();
-
+    std::vector<float> goldenAngles(int n, int start, float arc);
 private Q_SLOTS:
     void testProjectionReader();
     void testBuildFileList_GeneratedSequence();
@@ -47,6 +47,16 @@ FrameWorkTest::FrameWorkTest()
     kipl::io::WriteTIFF(m_img,"proj_0002.tif");
 }
 
+std::vector<float> FrameWorkTest::goldenAngles(int n, int start, float arc)
+{
+   std::vector<float> gv;
+   float phi=0.5f*(1.0f+sqrt(5.0f));
+
+   for (int i=0; i<n; ++i)
+       gv.push_back(static_cast<float>(fmod((i+start)*phi*arc,180)));
+
+   return gv;
+}
 void FrameWorkTest::testProjectionReader()
 {
     QString msg;
@@ -621,20 +631,28 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     ReconConfig config;
 // Test even number
     config.ProjectionInfo.sFileMask="test_####.fits";
-    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nFirstIndex=0;
     config.ProjectionInfo.nLastIndex=18;
     config.ProjectionInfo.fScanArc[0]=0.0f;
     config.ProjectionInfo.fScanArc[1]=180.0f;
     config.ProjectionInfo.scantype=config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx=0;
 
     std::map<float,ProjectionInfo> ProjectionList;
     BuildFileList(&config,&ProjectionList);
-    msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
-    QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     float sum=0.0f;
-    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); it++) {
-        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
-        sum+=(*it).second.weight;
+    auto gv2=goldenAngles(N,0,180.0f);
+    std::sort(gv2.begin(),gv2.end());
+    auto git=gv2.begin();
+
+    for (auto &it: ProjectionList) {
+ //       std::cout<<(it.first)<<", "<<it.second.name<<", "<<it.second.angle<<", "<<it.second.weight<<std::endl;
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
     }
 
     msg.str(""); msg<<"Expected 1.0, got "<<sum;
@@ -647,13 +665,20 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     config.ProjectionInfo.nFirstIndex=1;
     config.ProjectionInfo.nLastIndex=19;
 
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     BuildFileList(&config,&ProjectionList);
-    msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
-    QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
-    for (auto it=ProjectionList.begin(); it!=ProjectionList.end(); it++) {
-        std::cout<<(it->first)<<", "<<(*it).second.name<<", "<<(*it).second.angle<<", "<<(*it).second.weight<<std::endl;
-        sum+=(*it).second.weight;
+    gv2=goldenAngles(N,1,180.0f);
+    std::sort(gv2.begin(),gv2.end());
+    git=gv2.begin();
+
+    for (auto &it: ProjectionList) {
+ //       std::cout<<(it.first)<<", "<<it.second.name<<", "<<it.second.angle<<", "<<it.second.weight<<std::endl;
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
     }
 
     msg.str(""); msg<<"Expected 1.0, got "<<sum;

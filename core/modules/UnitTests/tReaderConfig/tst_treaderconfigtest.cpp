@@ -2,9 +2,17 @@
 #include <QtTest>
 
 #include <sstream>
+#include <list>
+#include <vector>
+#include <map>
+#include <string>
+#include <cmath>
+#include <algorithm>
+
 #include <base/KiplException.h>
 #include <analyzefileext.h>
 #include <datasetbase.h>
+#include <buildfilelist.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -12,14 +20,28 @@ class TReaderConfigTest : public QObject
 
 public:
     TReaderConfigTest();
+    std::vector<float> goldenAngles(int n, int start, float arc);
+
 
 private Q_SLOTS:
     void testAnalyzeFileExt();
     void testDataSetBase();
+    void testBuildFileListAngles();
 };
 
 TReaderConfigTest::TReaderConfigTest()
 {
+}
+
+std::vector<float> TReaderConfigTest::goldenAngles(int n, int start, float arc)
+{
+   std::vector<float> gv;
+   float phi=0.5f*(1.0f+sqrt(5.0f));
+
+   for (int i=0; i<n; ++i)
+       gv.push_back(static_cast<float>(fmod((i+start)*phi*arc,180)));
+
+   return gv;
 }
 
 void TReaderConfigTest::testAnalyzeFileExt()
@@ -131,6 +153,87 @@ void TReaderConfigTest::testDataSetBase()
 //    kipl::base::TImage<float,2> Load(int idx, kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop=nullptr);
 //    kipl::base::TImage<float,3> Load(kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop=nullptr);
 
+}
+
+void TReaderConfigTest::testBuildFileListAngles()
+{
+    std::list<FileSet> il;
+    FileSet fs;
+    fs.m_nFirst=0;
+    fs.m_nLast=10;
+    il.push_back(fs);
+
+    std::map<float,std::string> list1=BuildProjectionFileList(il, 0, 0, 180);
+    QCOMPARE(list1.size(),fs.m_nLast-fs.m_nFirst+1);
+    float angle=0.0f;
+    for (auto & item : list1)
+    {
+        QCOMPARE(item.first,angle);
+        angle+=1;
+    }
+
+    // Starting from zero index
+    std::map<float,std::string> list2=BuildProjectionFileList(il, 1, 0, 180);
+    QCOMPARE(list2.size(),fs.m_nLast-fs.m_nFirst+1);
+    auto gv=goldenAngles(11,0,180.0f);
+    std::sort(gv.begin(),gv.end());
+    auto git=gv.begin();
+    for (auto & item : list2)
+    {
+        QCOMPARE(item.first,*git);
+        ++git;
+    }
+
+    // Pick sequence from 10 to 20 with start index 0
+
+    std::list<FileSet> il3;
+    FileSet fs3;
+    fs3.m_nFirst=10;
+    fs3.m_nLast=20;
+    il3.push_back(fs3);
+    std::map<float,std::string> list4=BuildProjectionFileList(il3, 1, 0, 180);
+    QCOMPARE(list4.size(),fs.m_nLast-fs.m_nFirst+1);
+    auto gv2=goldenAngles(11,10,180.0f);
+    std::sort(gv2.begin(),gv2.end());
+    git=gv2.begin();
+    for (auto & item : list4)
+    {
+        QCOMPARE(item.first,*git);
+        ++git;
+    }
+
+    // Starting from index 10
+
+    std::list<FileSet> il2;
+    FileSet fs2;
+    fs2.m_nFirst=10;
+    fs2.m_nLast=20;
+    il2.push_back(fs2);
+    std::map<float,std::string> list3=BuildProjectionFileList(il2, 1, 10, 180);
+    QCOMPARE(list3.size(),fs.m_nLast-fs.m_nFirst+1);
+    git=gv.begin();
+    for (auto & item : list3)
+    {
+        QCOMPARE(item.first,*git);
+        ++git;
+    }
+
+    // Pick sequence from 20 to 30 with start index 10
+
+    std::list<FileSet> il4;
+    FileSet fs4;
+    fs4.m_nFirst=20;
+    fs4.m_nLast=30;
+    il4.push_back(fs4);
+    std::map<float,std::string> list5=BuildProjectionFileList(il4, 1, 10, 180);
+    QCOMPARE(list5.size(),fs4.m_nLast-fs4.m_nFirst+1);
+
+    git=gv2.begin();
+    for (auto & item : list5)
+    {
+        QCOMPARE(item.first,*git);
+        ++git;
+    }
 }
 
 QTEST_APPLESS_MAIN(TReaderConfigTest)
