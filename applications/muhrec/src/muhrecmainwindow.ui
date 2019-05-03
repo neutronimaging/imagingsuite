@@ -2144,6 +2144,9 @@
              </widget>
             </item>
             <item>
+             <widget class="QSpinBox" name="spinBoxProjections"/>
+            </item>
+            <item>
              <widget class="QLabel" name="label_projindex">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -2152,7 +2155,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>0 (0deg)</string>
+               <string>(0deg)</string>
               </property>
              </widget>
             </item>
@@ -2241,6 +2244,9 @@
              </widget>
             </item>
             <item>
+             <widget class="QSpinBox" name="spinBoxSlices"/>
+            </item>
+            <item>
              <widget class="QLabel" name="label_sliceindex">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -2302,7 +2308,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -289,7 +289,9 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
         return ;
     }
     ui->sliderProjections->setMaximum(last);
+    ui->spinBoxProjections->setMaximum(last);
     ui->sliderProjections->setMinimum(first);
+    ui->spinBoxProjections->setMinimum(first);
 
     PreviewProjection();
 }
@@ -429,7 +431,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                     ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
                 }
                 msg.str("");
-                msg<<sliderval<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
+                msg<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
                      (ui->spinLastProjection->value()-ui->spinFirstProjection->value())<<" deg)";
 
                 ui->label_projindex->setText(QString::fromStdString(msg.str()));
@@ -1083,7 +1085,11 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     logger(kipl::logging::Logger::LogMessage,msg.str());
 
                     ui->sliderSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
+                    ui->spinBoxSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
+
                     ui->sliderSlices->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]/2));
+                    ui->spinBoxSlices->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]/2));
+
                     m_nSliceSizeX=m_Config.MatrixInfo.nDims[0];
                     m_nSliceSizeY=m_Config.MatrixInfo.nDims[1];
                     m_eSlicePlane=kipl::base::ImagePlaneXY;
@@ -1669,7 +1675,9 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
         m_pEngine->GetMatrixDims(dims);
         int maxslices=static_cast<int>(dims[2-index]);
         ui->sliderSlices->setMaximum(maxslices-1);
+        ui->spinBoxSlices->setMaximum(maxslices-1);
         ui->sliderSlices->setValue(maxslices/2);
+        ui->spinBoxSlices->setValue(maxslices/2);
 
         msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices;
         logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1947,6 +1955,10 @@ void MuhRecMainWindow::on_actionRegister_for_news_letter_triggered()
 
 void MuhRecMainWindow::on_sliderProjections_sliderMoved(int position)
 {
+    QSignalBlocker spinBlock(ui->spinBoxProjections);
+
+    ui->spinBoxProjections->setValue(position);
+
     bool fail=false;
     std::ostringstream msg;
 
@@ -2284,9 +2296,10 @@ void MuhRecMainWindow::on_checkCorrectTilt_clicked(bool checked)
 
 void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
 {
-    QSignalBlocker blockSlider(ui->sliderSlices);
+    QSignalBlocker blockSlider(ui->spinBoxSlices);
     if (m_pEngine==nullptr)
         return;
+
 
     std::ostringstream msg;
     int nSelectedSlice=position;
@@ -2296,13 +2309,15 @@ void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
         ui->sliderSlices->setValue(nSelectedSlice);
     }
 
+    ui->spinBoxSlices->setValue(nSelectedSlice);
+
     try {
         kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
         ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
                                    static_cast<float>(ui->dspinGrayLow->value()),
                                    static_cast<float>(ui->dspinGrayHigh->value()));
         msg.str("");
-        msg<<position<<" ("<<position+m_Config.ProjectionInfo.roi[1]<<")";
+        msg<<" ("<<nSelectedSlice+m_Config.ProjectionInfo.roi[1]<<")";
         ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
         // TODO Add line to indicate location of slice (XY-slices)
     }
@@ -2602,4 +2617,69 @@ void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
     {
         logger.message("Pixel size dialog was cancelled.");
     }
+}
+
+void MuhRecMainWindow::on_spinBoxSlices_valueChanged(int arg1)
+{
+   QSignalBlocker sliderBlock(ui->sliderSlices);
+
+
+
+   if (m_pEngine==nullptr)
+       return;
+
+   std::ostringstream msg;
+   int nSelectedSlice=arg1;
+
+   if (arg1<0) {
+       nSelectedSlice=static_cast<int>(m_Config.MatrixInfo.nDims[2]/2);
+       ui->sliderSlices->setValue(nSelectedSlice);
+   }
+
+   ui->sliderSlices->setValue(nSelectedSlice);
+
+   try {
+       kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(static_cast<size_t>(nSelectedSlice),m_eSlicePlane);
+       ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
+                                  static_cast<float>(ui->dspinGrayLow->value()),
+                                  static_cast<float>(ui->dspinGrayHigh->value()));
+       msg.str("");
+       msg<<" ("<<static_cast<size_t>(nSelectedSlice)+m_Config.ProjectionInfo.roi[1]<<")";
+       ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
+       // TODO Add line to indicate location of slice (XY-slices)
+   }
+   catch (kipl::base::KiplException &e) {
+       msg.str("");
+       msg<<"Failed to display slice \n"<<e.what();
+       logger(kipl::logging::Logger::LogMessage,msg.str());
+   }
+}
+
+void MuhRecMainWindow::on_spinBoxProjections_valueChanged(int arg1)
+{
+    std::ostringstream msg;
+
+    QSignalBlocker sliderBlock(ui->sliderProjections);
+
+    ui->sliderProjections->setValue(arg1);
+    bool fail = false;
+    try {
+        PreviewProjection(arg1);
+    }
+    catch (ReconException &e) {
+        fail=true;
+        msg<<e.what();
+    }
+    catch (kipl::base::KiplException &e) {
+        fail=true;
+        msg<<e.what();
+    }
+
+    if (fail) {
+        QMessageBox dlg;
+        dlg.setText("Failed to show projection");
+        dlg.setDetailedText(QString::fromStdString(msg.str()));
+        dlg.exec();
+    }
+
 }

@@ -198,6 +198,10 @@ private slots:
 
     void on_pushButton_measurePixelSize_clicked();
 
+    void on_spinBoxSlices_valueChanged(int arg1);
+
+    void on_spinBoxProjections_valueChanged(int arg1);
+
 private:
     // Data members
     ReconConfig      m_Config;    //<! Current configuration data
