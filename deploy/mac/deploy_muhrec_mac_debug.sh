@@ -265,7 +265,7 @@ if [ ! -d "/tmp/muhrec" ]; then
   mkdir /tmp/muhrec
 fi
 
-ln -s /Applications /tmp/muhrec/
+ln -s /Applications /tmp/muhrec
 cp -r $DEST /tmp/muhrec
 
 hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec_build-$GITVER-`date +%Y%m%d`.dmg
