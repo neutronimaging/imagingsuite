@@ -30,7 +30,7 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
         img[*pixIt]=markedPixel;
         edgePixels.push_back(*pixIt);
     }
-    int loopCnt=0;
+
     while (!edgePixels.empty())
     {
 //        qDebug() << "Loop count" << loopCnt++ << "list size "<< edgePixels.size();

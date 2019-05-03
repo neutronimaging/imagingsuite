@@ -43,6 +43,9 @@ unix:macx {
     QMAKE_LIBDIR += /opt/local/lib
 
     INCLUDEPATH += $$PWD/../../../external/mac/include
+    INCLUDEPATH += /opt/local/include
+    INCLUDEPATH += /opt/local/include/libxml2
+
     DEPENDPATH += $$PWD/../../../external/mac/include
     LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }

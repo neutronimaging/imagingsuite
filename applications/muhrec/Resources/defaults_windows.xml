@@ -22,6 +22,7 @@
         <projectionstep>1</projectionstep>
         <repeatline>false</repeatline>
         <scantype>sequential</scantype>
+        <goldenfirstidx>1</goldenfirstidx>
         <imagetype>projections</imagetype>
         <center>50</center>
 	    <sod>100</sod>
@@ -88,9 +89,9 @@
                     <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
-                    <sigma>0.01</sigma>
+                    <sigma>0.01 0.01</sigma>
                     <threading>false</threading>
-                    <threshold>0.1</threshold>
+                    <threshold>0.1 0.1</threshold>
                 </parameters>
             </module>
             <module>

@@ -731,7 +731,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
     int slabstart[3] = {static_cast<int>(start), 0, 0};
     int slabsize[3];
 
-    slabsize[0] = size;
+    slabsize[0] = static_cast<int>(size);
 
 
 
@@ -869,7 +869,7 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
     int slabstart[3] = {static_cast<int>(start), 0, 0};
     int slabsize[3];
 
-    slabsize[0] = size;
+    slabsize[0] = static_cast<int>(size);
 
 
 
