@@ -1,8 +1,11 @@
+//<LICENSE>
 #ifndef LINFIT_HPP
 #define LINFIT_HPP
 #include <algorithm>
 #include <map>
 #include <iostream>
+
+#include "../../base/KiplException.h"
 
 namespace kipl { namespace math {
 
@@ -13,7 +16,6 @@ template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *q)
 
 template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *m, double *k, double *R2)
 {
-    std::cout<<"N="<<N<<std::endl;
     double sx=0.0;
     double sx2=0.0;
     for (int i=0; i<N; i++) {
@@ -37,7 +39,7 @@ template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *m,
     *m/=det;
     *k/=det;
 
-    if (R2!=NULL) {
+    if (R2!=nullptr) {
         double sstot=0.0;
         double ssres=0.0;
         double sy=0.0;
@@ -47,8 +49,7 @@ template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *m,
         }
 
         double my=sy/N;
-        double dmy;
-        double ry;
+
         for (int i=0; i<N; i++) {
             double yy=static_cast<double>(y[i]);
             double xx=static_cast<double>(x[i]);
@@ -66,6 +67,9 @@ template <typename T, typename S>
 void LinearLSFit(T *x, S *y, int N, double *m, double *k, double *R2, double fraction)
 {
     std::map<S,T> sorted;
+    if ((fraction<0.0) || (1.0<fraction))
+        throw kipl::base::KiplException("Fraction outside the interval [0,1]",__FILE__,__LINE__);
+
     int N2=static_cast<int>(N*fraction);
     int Nstart=(N-N2)/2;
 
