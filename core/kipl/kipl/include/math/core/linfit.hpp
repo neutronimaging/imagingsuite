@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <iostream>
+#include <QDebug>
 
 #include "../../base/KiplException.h"
 
@@ -66,25 +67,27 @@ template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *m,
 template <typename T, typename S>
 void LinearLSFit(T *x, S *y, int N, double *m, double *k, double *R2, double fraction)
 {
-    std::map<S,T> sorted;
+    LinearLSFit(x,y,N,m,k,R2);
+
+
+    std::map< double,std::pair<double,double> > sorted;
     if ((fraction<0.0) || (1.0<fraction))
         throw kipl::base::KiplException("Fraction outside the interval [0,1]",__FILE__,__LINE__);
 
     int N2=static_cast<int>(N*fraction);
-    int Nstart=(N-N2)/2;
 
     for (int i=0; i<N; ++i)
-        sorted.insert(std::make_pair(y[i],x[i]));
+        sorted.insert(std::make_pair(fabs(y[i]-(*k*x[i]+*m)),std::make_pair(static_cast<double>(x[i]),static_cast<double>(y[i]))));
+
 
     auto it=sorted.begin();
-    std::advance(it,Nstart);
 
     T *x2=new T[N2];
     S *y2=new S[N2];
 
     for (int i=0; i<N2; ++i, ++it) {
-        x2[i]=it->second;
-        y2[i]=it->first;
+        x2[i]=it->second.first;
+        y2[i]=it->second.second;
     }
 
     LinearLSFit(x2,y2,N2,m,k,R2);
