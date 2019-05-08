@@ -373,6 +373,9 @@
                   <property name="toolTip">
                    <string>The center of rotation</string>
                   </property>
+                  <property name="decimals">
+                   <number>3</number>
+                  </property>
                   <property name="maximum">
                    <double>9999.000000000000000</double>
                   </property>
@@ -478,6 +481,9 @@
                    </property>
                    <property name="toolTip">
                     <string>Tilt angle of the acquisition axis</string>
+                   </property>
+                   <property name="decimals">
+                    <number>4</number>
                    </property>
                    <property name="minimum">
                     <double>-10.000000000000000</double>
