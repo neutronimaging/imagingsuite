@@ -104,6 +104,10 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
     ui->spinY0->setValue(miny);
     ui->spinY1->setValue(maxy);
 
+    std::cout << "values in uxroiwidget:" << std::endl;
+    std::cout << minx << " " << miny << " " <<maxx << " " << maxy << std::endl;
+
+
     emit valueChanged(minx,miny,maxx,maxy);
     updateViewer();
 }
