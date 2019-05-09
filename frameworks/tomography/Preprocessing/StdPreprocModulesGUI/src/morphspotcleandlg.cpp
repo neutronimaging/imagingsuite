@@ -23,6 +23,8 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_eConnectivity(kipl::morphology::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
+    m_bRemoveInfNaN(false),
+    m_bClampData(false),
     m_fThreshold{0.1f,0.1f},
     m_fSigma{0.01f,0.01f},
     m_bThreading(false)
@@ -220,6 +222,7 @@ void MorphSpotCleanDlg::UpdateDialog()
 
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
+    ui->checkBoxRemoveInfNan->setChecked(m_bRemoveInfNaN);
     ui->groupBox_clampData->setChecked(m_bClampData);
     ui->spinMinValue->setValue(m_fMinLevel);
     ui->spinMaxValue->setValue(m_fMaxLevel);
@@ -235,6 +238,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_fSigma[0]         = static_cast<float>(ui->spinSigmaHoles->value());
     m_fThreshold[1]     = static_cast<float>(ui->spinThresholdPeaks->value());
     m_fSigma[1]         = static_cast<float>(ui->spinSigmaPeaks->value());
+    m_bRemoveInfNaN     = ui->checkBoxRemoveInfNan->isChecked();
     m_bClampData        = ui->groupBox_clampData->isChecked();
     m_fMinLevel         = static_cast<float>(ui->spinMinValue->value());
     m_fMaxLevel         = static_cast<float>(ui->spinMaxValue->value());
@@ -251,6 +255,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["sigma"]           = kipl::strings::Array2String(m_fSigma,2);
     parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["removeinfnan"]    = kipl::strings::bool2string(m_bRemoveInfNaN);
     parameters["clampdata"]       = kipl::strings::bool2string(m_bClampData);
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);

@@ -31,6 +31,7 @@ protected:
     float m_fSigma[2];
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
+    bool m_bRemoveInfNaN;
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
