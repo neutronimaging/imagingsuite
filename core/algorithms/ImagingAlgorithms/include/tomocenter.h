@@ -25,19 +25,31 @@ public:
                   kipl::base::TImage<float,2> &img180,
                   ImagingAlgorithms::TomoCenter::eEstimator est,
                   size_t *_roi,
-                  double *center,
-                  double *tilt=nullptr,
-                  double *pivot=nullptr);
-    vector<float> centers();
-    void tiltParameters(double &k, double &m);
-private:
-    float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
-                                kipl::base::TImage<float,2> proj_180,
-                                size_t *roi);
+                  bool bTilt,
+                  double &center,
+                  double &tilt,
+                  double &pivot);
 
-    float LeastSquareCenter(kipl::base::TImage<float,2> proj_0,
-                            kipl::base::TImage<float,2> proj_180,
-                            size_t *roi);
+    void estimate(kipl::base::TImage<float,2> &img0,
+                  kipl::base::TImage<float,2> &img180,
+                  ImagingAlgorithms::TomoCenter::eEstimator est,
+                  size_t *_roi,
+                  bool bTilt,
+                  float &center,
+                  float &tilt,
+                  float &pivot);
+
+    vector<double> centers();
+    void tiltParameters(double &k, double &m);
+    double center(double y);
+    double R2();
+    void savePoints(bool save);
+    void setPointsFileName(const std::string & fname);
+private:
+    double computeR2(std::vector<double> &vec,double k, double m);
+    float CorrelationCenter();
+
+    float LeastSquareCenter();
 
     float CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end);
 
@@ -45,10 +57,12 @@ private:
     double fraction;
     double tiltM;
     double tiltK;
-    double R2;
+    double mR2;
     kipl::base::TImage<float,2> m_Proj0Deg;
     kipl::base::TImage<float,2> m_Proj180Deg;
-    std::vector<float> m_vCoG;
+    std::vector<double> m_vCoG;
+    bool bSavePoints;
+    std::string pointsFileName;
 };
 }
 #endif // TOMOCENTER_H

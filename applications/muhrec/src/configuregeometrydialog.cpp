@@ -21,6 +21,8 @@
 #include <base/tsubimage.h>
 #include <morphology/morphfilters.h>
 
+#include <tomocenter.h>
+
 ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     QDialog(parent),
     logger("ConfigGeometryDialog"),
@@ -705,74 +707,40 @@ void ConfigureGeometryDialog::on_buttonFindCenter_clicked()
     ui->viewerProjection->get_levels(&fMin,&fMax);
     ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims(),fMin, fMax);
 
-    m_vCoG.clear();
-    switch (ui->comboEstimatationMethod->currentIndex()) {
-        case 0:
-            LeastSquareCenter(m_Proj0Deg,m_Proj180Deg,roi);
-            break;
-        case 1:
-            CorrelationCenter(m_Proj0Deg,m_Proj180Deg,roi);
-            break;
-        default:
-            CorrelationCenter(m_Proj0Deg,m_Proj180Deg,roi);
-            break;
-    }
+
 
     QVector<QPointF> plot_data;
-    int N=m_vCoG.size();
-    if (ui->groupUseTilt->isChecked()) {
-        double k=1.0,m=0.0;
-        double R2;
+
+    ImagingAlgorithms::TomoCenter tomoCenter;
+
+    tomoCenter.setFraction(fraction);
+
+    tomoCenter.estimate(    m_Proj0Deg,
+                            m_Proj180Deg,
+                            static_cast<ImagingAlgorithms::TomoCenter::eEstimator>(ui->comboEstimatationMethod->currentIndex()),
+                            roi,
+                            ui->groupUseTilt->isChecked(),
+                            m_Config.ProjectionInfo.fCenter,
+                            m_Config.ProjectionInfo.fTiltAngle,
+                            m_Config.ProjectionInfo.fTiltPivotPosition);
 
 
-        float *x=new float[N];
-        float *y=new float[N];
-
-        for (int i=0; i<N; ++i) {
-            x[i]=i+roi[1];
-            y[i]=m_vCoG[i];
-        }
-
-        kipl::math::LinearLSFit(x,y,N,&m,&k,&R2,fraction);
-        delete [] x;
-        delete [] y;
-
-        m_Config.ProjectionInfo.fTiltAngle=-static_cast<float>(atan(k)*180.0/dPi);
-        double vertical_center=(m_Config.ProjectionInfo.projection_roi[3]-m_Config.ProjectionInfo.projection_roi[1])/2;
-        m_Config.ProjectionInfo.fCenter=static_cast<float>(k*vertical_center+m);
-//        m_Config.ProjectionInfo.fTiltPivotPosition=m_Config.ProjectionInfo.projection_roi[1]+vertical_center;
-        m_Config.ProjectionInfo.fTiltPivotPosition=vertical_center;
-
-        ui->labelR2->setText(QString::number(R2,'g',3));
-        msg.str("");
-        msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<std::endl;
-        qDebug() << QString::fromStdString(msg.str());
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-        plot_data.clear();
-        plot_data.append(QPointF(k*roi[1]+m+roi[0],0.0));
-        plot_data.append(QPointF(k*roi[3]+m+roi[0],m_Proj0Deg.Size(1)-1.0));
-    }
-    else {
-        std::vector<float> tmpCoG=m_vCoG;
-
-        std::sort(tmpCoG.begin(),tmpCoG.end());
-        auto start = tmpCoG.begin();
-        int N2=0.5*(1-fraction)*N;
-        std::advance(start,N2);
-        auto stop = start;
-        std::advance(stop,N*fraction+1);
-        m_Config.ProjectionInfo.fCenter=std::accumulate(start,stop,0.0f)/(stop-start);
-
-        plot_data.clear();
-        plot_data.append(QPointF(m_Config.ProjectionInfo.fCenter+roi[0],0.0));
-        plot_data.append(QPointF(m_Config.ProjectionInfo.fCenter+roi[0],m_Proj0Deg.Size(1)-1.0));
-    }
+    msg.str("");
+ //   msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<std::endl;
+    qDebug() << QString::fromStdString(msg.str());
+    logger(kipl::logging::Logger::LogMessage,msg.str());
+    plot_data.clear();
+    plot_data.append(QPointF(tomoCenter.center(0.0)+roi[0],0.0));
+    plot_data.append(QPointF(tomoCenter.center(m_Proj0Deg.Size(1)-1.0)+roi[0],m_Proj0Deg.Size(1)-1.0));
     ui->viewerProjection->set_plot(plot_data,QColor("lightblue"),1);
+    ui->labelR2->setText(QString::number(tomoCenter.R2(),'g',3));
+
     UpdateDialog();
 
+    m_vCoG=tomoCenter.centers();
     plot_data.clear();
     for (size_t i=0; i<m_vCoG.size(); i++) {
-        plot_data.append(QPointF(static_cast<double>(m_vCoG[i]+roi[0]),static_cast<double>(i+roi[1])));
+        plot_data.append(QPointF(m_vCoG[i]+roi[0],static_cast<double>(i+roi[1])));
     }
 
     ui->viewerProjection->set_plot(plot_data,QColor("red"),0);

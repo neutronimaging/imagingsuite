@@ -72,7 +72,7 @@ private:
     kipl::base::TImage<float,2> m_ProjDC;
     kipl::base::TImage<float,2> m_ProjOB;
     kipl::base::TImage<float,2> m_ProjCumulative;
-    std::vector<float> m_vCoG;
+    std::vector<double> m_vCoG;
     kipl::base::TImage<float,2> m_grayCumulate;
     kipl::base::TImage<float,2> m_biCumulate;
     std::vector<pair<size_t, size_t> > m_vBoundary;
