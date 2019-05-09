@@ -52,6 +52,8 @@ rm -f *.1.0.0.dylib
 
 `$CPCMD $REPOSPATH/lib/libFDKBackProjectors.so.1.0.0 .`
 
+`$CPCMD $REPOSPATH/lib/libQtImaging.so.1.0.0 .`
+
 `$CPCMD $QT_PATH/lib/libQt5Core.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libQt5Gui.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libQt5Widgets.so.5.$QtV .`

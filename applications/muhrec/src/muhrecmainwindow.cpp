@@ -686,7 +686,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
         logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
 
-        size_t dims[2]={100,100};
+        size_t dims[2]={3000,3000};
         kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings(dims,2.0f);
         ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
         ui->sliceViewer->set_image(img.GetDataPtr(),img.Dims());
@@ -743,7 +743,31 @@ void MuhRecMainWindow::MenuFileOpen()
         msgbox.exec();
     }
 
+    size_t firstSlice=m_Config.ProjectionInfo.roi[1];
+    size_t lastSlice=m_Config.ProjectionInfo.roi[3];
+
+
     UpdateDialog();
+
+    ProjectionIndexChanged(0);
+
+
+//    SetupCallBacks();
+//    ui->widgetProjectionROI->updateViewer();
+//    size_t roi[4];
+
+//    ui->widgetProjectionROI->getROI(roi);
+
+//    ui->spinSlicesFirst->setMinimum(roi[1]);
+//    ui->spinSlicesFirst->setMaximum(roi[3]);
+    ui->spinSlicesFirst->setValue(firstSlice);
+//    ui->spinSlicesLast->setMinimum(roi[1]);
+//    ui->spinSlicesLast->setMaximum(roi[3]);
+    ui->spinSlicesLast->setValue(lastSlice);
+
+//    std::cout << firstSlice << " " << lastSlice << std::endl;
+//    ui->plotHistogram->hideLegend();
+    SlicesChanged(0);
 
 
 }
@@ -1272,19 +1296,8 @@ void MuhRecMainWindow::UpdateDialog()
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
  //   qDebug("UpdateDialog");
-    std::cout << "m_Config.ProjectionInfo.roi: " << std::endl;
-    std::cout << m_Config.ProjectionInfo.projection_roi[0] << " " <<
-                                                              m_Config.ProjectionInfo.projection_roi[1] << " " <<
-                                                              m_Config.ProjectionInfo.projection_roi[2] << " " <<
-                                                              m_Config.ProjectionInfo.projection_roi[3] << std::endl;
+
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
-
-    std::cout << "m_Config.ProjectionInfo.roi: " << std::endl;
-    std::cout << m_Config.ProjectionInfo.projection_roi[0] << " " <<
-                                                              m_Config.ProjectionInfo.projection_roi[1] << " " <<
-                                                              m_Config.ProjectionInfo.projection_roi[2] << " " <<
-                                                              m_Config.ProjectionInfo.projection_roi[3] << std::endl;
-
 
     on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
                                         m_Config.ProjectionInfo.projection_roi[1],
@@ -1293,9 +1306,6 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
-
-    std::cout << "m_Config.ProjectionInfo.roi: " << std::endl;
-    std::cout<< m_Config.ProjectionInfo.roi[1] << " " << m_Config.ProjectionInfo.roi[3] << std::endl;
 
     // Scan arc settings
     ui->dspinAngleStart->setValue(m_Config.ProjectionInfo.fScanArc[0]);
@@ -2147,21 +2157,14 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
     ui->spinSlicesFirst->setMinimum(y0);
     ui->spinSlicesLast->setMaximum(y1);
 
-    std::cout << "slice diff: " << std::endl;
-    std::cout << sliceDiff<< std::endl;
-
     if (oldLastSlice<y0) {
         ui->spinSlicesLast->setValue(y0+sliceDiff);
-        std::cout<< "if (oldLastSlice<y0)" << std::endl;
-        std::cout << y0+sliceDiff << std::endl;
     }
 
     on_spinSlicesFirst_valueChanged(y0);
 
     if (y1<oldFirstSlice) {
         ui->spinSlicesFirst->setValue(y1-sliceDiff);
-        std::cout << "if (y1<oldFirstSlice)" << std::endl;
-        std::cout << y1-sliceDiff << std::endl;
     }
     on_spinSlicesLast_valueChanged(y1);
 
