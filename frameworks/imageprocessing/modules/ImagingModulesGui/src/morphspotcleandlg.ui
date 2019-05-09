@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1053</width>
+    <width>1097</width>
     <height>709</height>
    </rect>
   </property>
@@ -346,6 +346,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="checkBoxRemoveInfNan">
+             <property name="text">
+              <string>Remove Inf and NaN</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -445,15 +452,18 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::PlotWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">plotwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

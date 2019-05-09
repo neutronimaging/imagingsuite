@@ -22,6 +22,7 @@ IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::MorphSpotCleanModule(kipl::int
     m_fSigma{0.01f,0.01f},
     m_nEdgeSmoothLength(5),
     m_nMaxArea(30),
+    m_bRemoveInfNan(false),
     m_bUseClamping(false),
     m_fMinLevel(-0.1f),
     m_fMaxLevel(12),
@@ -44,6 +45,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::Configure(KiplProcessConfi
     kipl::strings::String2Array(GetStringParameter(parameters,"sigma"),m_fSigma,2);
     m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
     m_nMaxArea          = GetIntParameter(parameters,"maxarea");
+    m_bRemoveInfNan     = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
     m_bUseClamping      = kipl::strings::string2bool(GetStringParameter(parameters,"useclamping"));
     m_fMinLevel         = static_cast<double>(GetFloatParameter(parameters,"minlevel"));
     m_fMaxLevel         = static_cast<double>(GetFloatParameter(parameters,"maxlevel"));
@@ -63,6 +65,7 @@ std::map<string, string> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::GetPa
     parameters["sigma"]        = kipl::strings::Array2String(m_fSigma,2);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
+    parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNan);
     parameters["useclamping"]  = kipl::strings::bool2string(m_bUseClamping);
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
@@ -107,6 +110,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setEdgeConditioning(m_nEdgeSmoothLength);
+    cleaner.cleanInfNan(m_bRemoveInfNan);
     cleaner.setLimits(m_bUseClamping,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
 
     kipl::base::TImage<float,2> slice;

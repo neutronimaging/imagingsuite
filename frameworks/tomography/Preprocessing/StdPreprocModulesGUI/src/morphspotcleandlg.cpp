@@ -47,7 +47,7 @@ void MorphSpotCleanDlg::ApplyParameters()
     //kipl::base::TImage<float,2> img(m_Projections.Dims());
     m_OriginalImage=GetProjection(m_Projections,m_Projections.Size(2)/2);
 
-    const size_t N=512;
+    const size_t N=1024;
     size_t hist[N];
     float axis[N];
 
@@ -118,7 +118,7 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
 
     for (ii=0;ii<N;ii++) {
         fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
-        if (0.99f<fcumhist[ii])
+        if (0.999f<fcumhist[ii])
             break;
     }
 
