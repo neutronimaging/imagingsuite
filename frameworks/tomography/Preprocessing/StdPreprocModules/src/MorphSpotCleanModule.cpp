@@ -22,6 +22,7 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_fSigma{0.01f,0.01f},
     m_nEdgeSmoothLength(5),
     m_nMaxArea(30),
+    m_bRemoveInfNaN(false),
     m_bClampData(false),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
@@ -46,6 +47,7 @@ int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::st
         kipl::strings::String2Array(GetStringParameter(parameters,"sigma"),m_fSigma,2);
         m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
         m_nMaxArea          = GetIntParameter(parameters,"maxarea");
+        m_bRemoveInfNaN     = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
         m_bClampData        = kipl::strings::string2bool(GetStringParameter(parameters,"clampdata"));
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
@@ -80,6 +82,7 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
     parameters["sigma"]        = kipl::strings::Array2String(m_fSigma,2);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
+    parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNaN);
     parameters["clampdata"]    = kipl::strings::bool2string(m_bClampData);
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
@@ -113,6 +116,7 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
+    cleaner.cleanInfNan(m_bRemoveInfNaN);
 
     try {
         cleaner.Process(img,m_fThreshold, m_fSigma);

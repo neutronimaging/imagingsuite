@@ -478,6 +478,13 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxRemoveInfNan">
+         <property name="text">
+          <string>Clean inf and nan</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
