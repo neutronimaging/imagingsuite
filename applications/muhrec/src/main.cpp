@@ -121,7 +121,7 @@ int RunOffline(QApplication *app)
 
     if (2<args.size()) {
         if (args[1]=="-f") {
-          logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in CLI mode");
+          logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
           try {
                   ReconFactory factory;
                   logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
