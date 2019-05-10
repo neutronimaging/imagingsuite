@@ -51,8 +51,8 @@ namespace kipl { namespace filters {
 		
 		int ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
 		
-		virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) {};
-		virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) {}; // Dummy 
+        virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) {}
+        virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) {} // Dummy
 	
 		void RunningWindowLineInit(T const * const src, T *dest,size_t const * const dims);
 		void RunningWindowLine(T const * const src, T *dest, size_t);

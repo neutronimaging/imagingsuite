@@ -11,6 +11,41 @@ template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *q)
     LinearLSFit(x, y, N, q, q+1, q+2);
 }
 
+template <typename T, typename S> void LinearLSFit(std::vector<std::pair<T,S>> &data, float &m, float &k, float *R2)
+{
+    double dm=0.0;
+    double dk=0.0;
+    double dR2=0.0;
+
+    LinearLSFit(data,dm,dk,&dR2);
+
+    m=static_cast<float>(dm);
+    k=static_cast<float>(dk);
+
+    if (R2!=nullptr)
+        *R2=static_cast<float>(dR2);
+
+}
+
+template <typename T, typename S> void LinearLSFit(std::vector<std::pair<T,S>> &data, double &m, double &k, double *R2)
+{
+    int N= static_cast<int>(data.size());
+    T *x = new T[N];
+    S *y = new S[N];
+
+    int i=0;
+    for (auto &point : data)
+    {
+        x[i]=point.first;
+        y[i]=point.second;
+        ++i;
+    }
+    LinearLSFit(x,y,N,&m,&k,R2);
+
+    delete [] x;
+    delete [] y;
+}
+
 template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *m, double *k, double *R2)
 {
     std::cout<<"N="<<N<<std::endl;
@@ -37,7 +72,7 @@ template <typename T, typename S> void LinearLSFit(T *x, S *y, int N, double *m,
     *m/=det;
     *k/=det;
 
-    if (R2!=NULL) {
+    if (R2!=nullptr) {
         double sstot=0.0;
         double ssres=0.0;
         double sy=0.0;
