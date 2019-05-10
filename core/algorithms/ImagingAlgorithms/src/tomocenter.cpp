@@ -237,7 +237,7 @@ float TomoCenter::CenterOfGravity(const kipl::base::TImage<float, 2> img,
                                   size_t start,
                                   size_t end)
 {
-
+    return 0.0f;
 }
 
 float TomoCenter::LeastSquareCenter()
