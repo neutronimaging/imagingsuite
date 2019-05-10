@@ -2645,7 +2645,7 @@ void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
     if (res==dlg.Accepted)
     {
         logger.message("New pixel size estimated.");
-        ui->dspinResolution->setValue(dlg.getPixelSize());
+        ui->dspinResolution->setValue(dlg.pixelSize());
     }
     else
     {

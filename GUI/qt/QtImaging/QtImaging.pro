@@ -79,6 +79,8 @@ FORMS += \
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lQtAddons -lReaderConfig
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl -lQtAddons -lReaderConfig
 
+INCLUDEPATH += $$PWD/../../../external/src/linalg
+
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 
