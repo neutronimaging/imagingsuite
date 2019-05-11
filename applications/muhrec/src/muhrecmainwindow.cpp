@@ -686,7 +686,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
         logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
 
-        size_t dims[2]={100,100};
+        size_t dims[2]={3000,3000};
         kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings(dims,2.0f);
         ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
         ui->sliceViewer->set_image(img.GetDataPtr(),img.Dims());
@@ -714,6 +714,9 @@ void MuhRecMainWindow::MenuFileOpen()
 
     try {
         m_Config.LoadConfigFile(fileName.toStdString(),"reconstructor");
+        msg.str("");
+        msg<<m_Config.WriteXML();
+        logger(logger.LogMessage,msg.str());
     }
     catch (ReconException & e) {
         msg<<"Failed to load the configuration file :\n"<<
@@ -739,7 +742,33 @@ void MuhRecMainWindow::MenuFileOpen()
         msgbox.setDetailedText(QString::fromStdString(msg.str()));
         msgbox.exec();
     }
+
+    size_t firstSlice=m_Config.ProjectionInfo.roi[1];
+    size_t lastSlice=m_Config.ProjectionInfo.roi[3];
+
+
     UpdateDialog();
+
+    ProjectionIndexChanged(0);
+
+
+//    SetupCallBacks();
+//    ui->widgetProjectionROI->updateViewer();
+//    size_t roi[4];
+
+//    ui->widgetProjectionROI->getROI(roi);
+
+//    ui->spinSlicesFirst->setMinimum(roi[1]);
+//    ui->spinSlicesFirst->setMaximum(roi[3]);
+    ui->spinSlicesFirst->setValue(firstSlice);
+//    ui->spinSlicesLast->setMinimum(roi[1]);
+//    ui->spinSlicesLast->setMaximum(roi[3]);
+    ui->spinSlicesLast->setValue(lastSlice);
+
+//    std::cout << firstSlice << " " << lastSlice << std::endl;
+//    ui->plotHistogram->hideLegend();
+    SlicesChanged(0);
+
 
 }
 
@@ -1250,6 +1279,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjectionBinning->setValue(m_Config.ProjectionInfo.fBinning);
     ui->comboFlipProjection->setCurrentIndex(m_Config.ProjectionInfo.eFlip);
     ui->comboRotateProjection->setCurrentIndex(m_Config.ProjectionInfo.eRotate);
+//    ui->buttonPreview->click();
   //  ProjectionIndexChanged(-1);
 
     ui->spinFirstOpenBeam->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBFirstIndex));
@@ -1266,6 +1296,7 @@ void MuhRecMainWindow::UpdateDialog()
 
     std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
  //   qDebug("UpdateDialog");
+
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
     on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
@@ -2614,7 +2645,7 @@ void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
     if (res==dlg.Accepted)
     {
         logger.message("New pixel size estimated.");
-        ui->dspinResolution->setValue(dlg.getPixelSize());
+        ui->dspinResolution->setValue(dlg.pixelSize());
     }
     else
     {

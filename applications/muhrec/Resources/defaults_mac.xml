@@ -83,6 +83,7 @@
                 <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
                 <active>false</active>
                 <parameters>
+                    <removeinfnan>false</removeinfnan>
                     <clampdata>false</clampdata>
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>

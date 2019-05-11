@@ -64,7 +64,7 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     m_OriginalImage = m_Projections;
 
-    const size_t N=512;
+    const size_t N=1024;
     size_t hist[N];
     float axis[N];
     size_t nLo, nHi;
@@ -77,7 +77,6 @@ void MorphSpotCleanDlg::ApplyParameters()
     UpdateParameters();
     UpdateParameterList(parameters);
 
-    m_Cleaner.Configure(*config, parameters);
     ui->plotDetection->clearAllCurves();
     ui->plotDetection->clearAllCursors();
 
@@ -90,14 +89,14 @@ void MorphSpotCleanDlg::ApplyParameters()
     m_DetectionImageHoles=m_Cleaner.DetectionImage(originalSlice, ImagingAlgorithms::MorphDetectHoles);
 
     for (size_t i=0; i<m_DetectionImageHoles.Size(); i++) // Fix nans
-        if (m_DetectionImageHoles[i]!=m_DetectionImageHoles[i]) m_DetectionImageHoles[i]=0;
+        if (!std::isfinite(m_DetectionImageHoles[i])) m_DetectionImageHoles[i]=0;
 
     if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles) || (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
         prepareDetectionPlot(m_DetectionImageHoles,0,N,"Detection Holes","Threshold Holes");
 
     m_DetectionImagePeaks=m_Cleaner.DetectionImage(originalSlice, ImagingAlgorithms::MorphDetectPeaks);
     for (size_t i=0; i<m_DetectionImagePeaks.Size(); i++) // Fix nans
-        if (m_DetectionImagePeaks[i]!=m_DetectionImagePeaks[i]) m_DetectionImagePeaks[i]=0;
+        if (!std::isfinite(m_DetectionImagePeaks[i])) m_DetectionImagePeaks[i]=0;
 
     if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectPeaks) || (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
         prepareDetectionPlot(m_DetectionImagePeaks,1,N,"Detection Peaks","Threshold Peaks");
@@ -155,7 +154,7 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
     }
 
     size_t N99=ii;
-    ui->plotDetection->setCurveData(0+2*det,axis,fcumhist,N99,QString::fromStdString(curvelabel));
+    ui->plotDetection->setCurveData(0+2*det,axis,fcumhist,static_cast<int>(N99),QString::fromStdString(curvelabel));
 
     float *threshold = new float[N];
     float *thaxis    = new float[N];
@@ -166,7 +165,7 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
             thaxis[i]=axis[0]+i*(axis[N99]-axis[0])/N;
             threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold[det], m_fSigma[det]);
         }
-        ui->plotDetection->setCurveData(1+2*det,thaxis,threshold,N,QString::fromStdString(threslabel));
+        ui->plotDetection->setCurveData(1+2*det,thaxis,threshold,static_cast<int>(N),QString::fromStdString(threslabel));
     }
     else
     {
@@ -244,18 +243,19 @@ int MorphSpotCleanDlg::exec(ConfigBase *_config, std::map<std::string, std::stri
 
 void MorphSpotCleanDlg::UpdateDialog()
 {
-    ui->spinThresholdHoles->setValue(m_fThreshold[0]);
-    ui->spinSigmaHoles->setValue(m_fSigma[0]);
-    ui->spinBoxThresholdPeaks->setValue(m_fThreshold[1]);
-    ui->spinBoxSigmaPeaks->setValue(m_fSigma[1]);
-    ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
-    ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
-    ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
-    ui->spinArea->setValue(m_nMaxArea);
-    ui->groupClampData->setChecked(m_bUseClamping);
-    ui->spinMinValue->setValue(m_fMinLevel);
-    ui->spinMaxValue->setValue(m_fMaxLevel);
-    ui->spinEdgeLenght->setValue(m_nEdgeSmoothLength);
+    ui->spinThresholdHoles    -> setValue(m_fThreshold[0]);
+    ui->spinSigmaHoles        -> setValue(m_fSigma[0]);
+    ui->spinBoxThresholdPeaks -> setValue(m_fThreshold[1]);
+    ui->spinBoxSigmaPeaks     -> setValue(m_fSigma[1]);
+    ui->comboCleanMethod      -> setCurrentIndex(m_eCleanMethod);
+    ui->comboDetectionMethod  -> setCurrentIndex(m_eDetectionMethod);
+    ui->comboConnectivity     -> setCurrentIndex(m_eConnectivity);
+    ui->spinArea              -> setValue(m_nMaxArea);
+    ui->checkBoxRemoveInfNan  -> setChecked(m_bRemoveInfNan);
+    ui->groupClampData        -> setChecked(m_bUseClamping);
+    ui->spinMinValue          -> setValue(m_fMinLevel);
+    ui->spinMaxValue          -> setValue(m_fMaxLevel);
+    ui->spinEdgeLenght        -> setValue(m_nEdgeSmoothLength);
 }
 
 void MorphSpotCleanDlg::UpdateParameters()
@@ -268,6 +268,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_fThreshold[1]     = ui->spinBoxThresholdPeaks->value();
     m_fSigma[1]         = ui->spinBoxSigmaPeaks->value();
     m_fMinLevel         = ui->spinMinValue->value();
+    m_bRemoveInfNan     = ui->checkBoxRemoveInfNan->isChecked();
     m_bUseClamping      = ui->groupClampData->isChecked();
     m_fMaxLevel         = ui->spinMaxValue->value();
     m_nMaxArea          = ui->spinArea->value();
@@ -283,6 +284,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["sigma"]           = kipl::strings::Array2String(m_fSigma,2);
     parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["removeinfnan"]    = kipl::strings::bool2string(m_bRemoveInfNan);
     parameters["useclamping"]     = kipl::strings::bool2string(m_bUseClamping);
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);

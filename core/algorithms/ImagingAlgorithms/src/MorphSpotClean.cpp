@@ -25,6 +25,7 @@ MorphSpotClean::MorphSpotClean() :
     m_nEdgeSmoothLength(9),
     m_nPadMargin(5),
     m_nMaxArea(100),
+    m_bRemoveInfNan(false),
     m_bClampData(false),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
@@ -38,6 +39,9 @@ MorphSpotClean::MorphSpotClean() :
 
 void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float sigma)
 {
+    if (m_bRemoveInfNan)
+        replaceInfNaN(img);
+
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
@@ -54,6 +58,9 @@ void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float th, float s
 
 void MorphSpotClean::Process(kipl::base::TImage<float,2> &img, float *th, float *sigma)
 {
+    if (m_bRemoveInfNan)
+        replaceInfNaN(img);
+
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
@@ -289,6 +296,11 @@ void MorphSpotClean::setLimits(bool bClamp, float fMin, float fMax, int nMaxArea
         m_nMaxArea = nMaxArea;
 }
 
+void MorphSpotClean::cleanInfNan(bool remove)
+{
+    m_bRemoveInfNan = remove;
+}
+
 void MorphSpotClean::setEdgeConditioning(int nSmoothLenght)
 {
     if (1<nSmoothLenght)
@@ -461,6 +473,30 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
     for (size_t i=0; i<img.Size(); i++)
         if (pLbl[i]==0)
             pImg[i]=0.0f;
+
+}
+
+void MorphSpotClean::replaceInfNaN(kipl::base::TImage<float, 2> &img)
+{
+    float *pImg = img.GetDataPtr();
+
+    float maxval=-std::numeric_limits<float>::max();
+    vector<size_t> badList;
+
+    for (size_t i=0 ; i<img.Size(); ++i) {
+        if (std::isfinite(pImg[i])) {
+            if (maxval<pImg[i]) maxval=pImg[i];
+        }
+        else
+        {
+            badList.push_back(i);
+        }
+    }
+
+    for (auto &idx: badList)
+    {
+        pImg[idx]=maxval;
+    }
 
 }
 

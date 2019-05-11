@@ -66,6 +66,7 @@ private:
     float m_fSigma[2];
     int   m_nEdgeSmoothLength;
     int   m_nMaxArea;
+    bool  m_bRemoveInfNan;
     bool  m_bUseClamping;
     float m_fMinLevel;
     float m_fMaxLevel;

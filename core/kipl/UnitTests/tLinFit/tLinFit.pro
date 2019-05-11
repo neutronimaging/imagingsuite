@@ -21,7 +21,7 @@ SOURCES += tst_tlinfittest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
-    INCLUDEPATH += "$$PWD/../../../../../external/src/linalg"
+    INCLUDEPATH += "$$PWD/../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
