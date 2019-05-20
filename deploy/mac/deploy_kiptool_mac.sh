@@ -53,8 +53,6 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_cpp.11.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
-#`$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/FrameWorks`
-
 
 rm -f ./MacOS/*.dylib
 
@@ -66,11 +64,16 @@ cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
 
+if [ -e "/opt/local/lib/libzstd.1.3.8.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.3.8.dylib $DEST/Contents/Frameworks`
+	ln -s libzstd.1.3.8.dylib libzstd.1.dylib
+fi
+
 for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.0.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 done
-# ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
+
 cd ..
 
 if [ ! -d "./Resources" ]; then
@@ -87,17 +90,33 @@ fi
 if [ ! -d "./PlugIns/platforms" ]; then
  mkdir ./PlugIns/platforms
 fi
-cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+
+if [ ! -f "./PlugIns/platforms/libqcocoa.dylib" ]; then 
+	if [ -f "$QTPATH/plugins/platforms/libqcocoa.dylib" ]; then 
+		cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+	fi
+fi
 
 if [ ! -d "./PlugIns/printsupport" ]; then
- mkdir ./PlugIns/printsupport
+	mkdir ./PlugIns/printsupport
 fi
-cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+
+if [ ! -f "./PlugIns/printsupport/libcocoaprintersupport.dylib" ]; then 
+	if [ -f "$QTPATH/plugins/printsupport/libcocoaprintersupport.dylib" ]; then
+		cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+	fi
+fi
 
 if [ ! -d "./PlugIns/accessible" ]; then
  mkdir ./PlugIns/accessible
 fi
-cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+
+if [ ! -f "./PlugIns/accessible/libqtaccessiblewidgets.dylib" ]; then 
+	if [ -f "$QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib"] ; then
+		cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+	fi
+fi
+
 pwd
 ls PlugIns
 
