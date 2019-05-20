@@ -94,15 +94,19 @@ if [ ! -d "./PlugIns/platforms" ]; then
 fi
 
 if [ ! -f "./PlugIns/platforms/libqcocoa.dylib" ]; then 
-	cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+	if [ -f "$QTPATH/plugins/platforms/libqcocoa.dylib" ]; then 
+		cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+	fi
 fi
 
 if [ ! -d "./PlugIns/printsupport" ]; then
- mkdir ./PlugIns/printsupport
+	mkdir ./PlugIns/printsupport
 fi
 
 if [ ! -f "./PlugIns/printsupport/libcocoaprintersupport.dylib" ]; then 
-	cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+	if [ -f "$QTPATH/plugins/printsupport/libcocoaprintersupport.dylib" ]; then
+		cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+	fi
 fi
 
 if [ ! -d "./PlugIns/accessible" ]; then
@@ -110,7 +114,9 @@ if [ ! -d "./PlugIns/accessible" ]; then
 fi
 
 if [ ! -f "./PlugIns/accessible/libqtaccessiblewidgets.dylib" ]; then 
-	cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+	if [ -f "$QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib"] ; then
+		cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+	fi
 fi
 
 pwd
