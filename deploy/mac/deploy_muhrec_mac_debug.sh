@@ -50,7 +50,11 @@ fi
 #`$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl_cpp.100.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
 
+<<<<<<< HEAD
 
+=======
+`$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/Frameworks`
+>>>>>>> 7e63c68a9b4a4ff6348a503231c385493890dfc0
 
 if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
 	`$CPCMD $REPOSPATH/Applications/muhrecCLI $DEST/Contents/MacOS`
@@ -62,12 +66,16 @@ rm -f ./MacOS/*.dylib
 cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
+<<<<<<< HEAD
 
 if [ -e "/opt/local/lib/libzstd.1.3.8.dylib" ]; then
 	`$CPCMD /opt/local/lib/libzstd.1.3.8.dylib $DEST/Contents/Frameworks`
 	ln -s libzstd.1.3.8.dylib libzstd.1.dylib
 fi
 
+=======
+ln -s libzstd.1.*.dylib libzstd.1.dylib
+>>>>>>> 7e63c68a9b4a4ff6348a503231c385493890dfc0
 
 for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.0.dylib"

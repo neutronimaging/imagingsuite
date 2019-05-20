@@ -4,6 +4,7 @@
 #define LINFIT_H
 
 #include <tnt.h>
+#include <vector>
 
 namespace kipl { namespace math {
 
