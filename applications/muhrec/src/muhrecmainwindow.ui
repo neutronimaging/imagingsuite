@@ -1781,6 +1781,9 @@
                <property name="toolTip">
                 <string>Lowest gray level of the reconstructed data</string>
                </property>
+               <property name="decimals">
+                <number>4</number>
+               </property>
                <property name="minimum">
                 <double>-1000.000000000000000</double>
                </property>
@@ -1806,6 +1809,9 @@
               <widget class="QDoubleSpinBox" name="dspinGrayHigh">
                <property name="toolTip">
                 <string>Highest gray level of the reconstructed data</string>
+               </property>
+               <property name="decimals">
+                <number>4</number>
                </property>
                <property name="minimum">
                 <double>-1000.000000000000000</double>
@@ -2322,7 +2328,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

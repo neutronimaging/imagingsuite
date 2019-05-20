@@ -284,8 +284,9 @@ install_name_tool -change libAdvancedFilterModules.1.dylib @executable_path/../F
 if [ ! -d "/tmp/kiptool" ]; then
   mkdir /tmp/kiptool
 fi
-
-ln -s /Applications /tmp/kiptool/Applications
+if [ ! -e "tmp/kiptool/Applications" ]; then
+	ln -s /Applications /tmp/kiptool/Applications
+fi
 cp -r $DEST /tmp/kiptool
 
 hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_build-$GITVER-`date +%Y%m%d`.dmg
