@@ -277,7 +277,7 @@ if [ ! -d "/tmp/muhrec" ]; then
 fi
 
 if [ ! -e "tmp/muhrec/Applications" ]; then
-	ln -s /Applications /tmp/muhrec/Applications
+	ln -s /Applications /tmp/muhrec
 fi
 
 cp -r $DEST /tmp/muhrec

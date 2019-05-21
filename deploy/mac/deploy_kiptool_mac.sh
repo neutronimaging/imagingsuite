@@ -285,7 +285,7 @@ if [ ! -d "/tmp/kiptool" ]; then
   mkdir /tmp/kiptool
 fi
 if [ ! -e "tmp/kiptool/Applications" ]; then
-	ln -s /Applications /tmp/kiptool/Applications
+	ln -s /Applications /tmp/kiptool
 fi
 cp -r $DEST /tmp/kiptool
 
