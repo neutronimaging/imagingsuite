@@ -280,6 +280,7 @@ install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/lib
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 install_name_tool -change libAdvancedFilterModules.1.dylib @executable_path/../Frameworks/libAdvancedFilterModules.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 
+rm -rf /tmp/kiptool
 if [ ! -d "/tmp/kiptool" ]; then
   mkdir /tmp/kiptool
 fi
