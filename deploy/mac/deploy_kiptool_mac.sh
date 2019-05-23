@@ -64,9 +64,8 @@ cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
 
-if [ -e "/opt/local/lib/libzstd.1.3.8.dylib" ]; then
-	`$CPCMD /opt/local/lib/libzstd.1.3.8.dylib $DEST/Contents/Frameworks`
-	ln -s libzstd.1.3.8.dylib libzstd.1.dylib
+if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
 fi
 
 for f in `ls *.1.0.0.dylib`; do
