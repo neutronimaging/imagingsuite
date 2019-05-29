@@ -66,7 +66,8 @@ SOURCES += \
     ../../src/averageimage.cpp \
     ../../src/piercingpointestimator.cpp \
     ../../src/ReferenceImageCorrection.cpp \
-    ../../src/tomocenter.cpp
+    ../../src/tomocenter.cpp \
+    ../../src/vostripeclean.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -81,7 +82,8 @@ HEADERS += \
     ../../include/averageimage.h \
     ../../include/piercingpointestimator.h \
     ../../include/ReferenceImageCorrection.h \
-    ../../include/tomocenter.h
+    ../../include/tomocenter.h \
+    ../../include/vostripeclean.h
 
 
 unix:!symbian {
