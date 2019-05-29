@@ -267,27 +267,13 @@ kipl::base::TImage<float,2> VoStripeClean::remove_unresponsive_and_fluctuating_s
     return res;
 }
 
-kipl::base::TImage<float,2> VoStripeClean::remove_all_stripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t la_size, size_t sm_size):
+kipl::base::TImage<float,2> VoStripeClean::removeAllStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t la_size, size_t sm_size)
 {
-//    """
-//    Remove all types of stripe artifacts by combining algorithm 6, 5, and 3.
-//    Angular direction is along the axis 0.
-//    ---------
-//    Parameters: - sinogram: 2D array.
-//                - snr: ratio used to discriminate between useful
-//                    information and noise
-//                - la_size: window size of the median filter to remove
-//                    large stripes.
-//                - sm_size: window size of the median filter to remove
-//                    small-to-medium stripes.
-//    ---------
-//    Return:     - stripe-removed sinogram.
-//    """
-//    sinogram = remove_unresponsive_and_fluctuating_stripe(sinogram, snr, la_size)
-//    sinogram = remove_large_stripe(sinogram, snr, la_size)
-//    sinogram = remove_stripe_based_sorting(sinogram, sm_size)
-//    return sinogram
     kipl::base::TImage<float,2> res;
+    res.Clone(sinogram);
+    res = remove_unresponsive_and_fluctuating_stripe(res, snr, la_size);
+    res = remove_large_stripe(res, snr, la_size);
+    res = removeStripeBasedSorting(res, sm_size);
 
     return res;
 }
