@@ -227,20 +227,11 @@ kipl::base::TImage<float,2> VoStripeClean::remove_large_stripe(kipl::base::TImag
 
 kipl::base::TImage<float,2> VoStripeClean::remove_unresponsive_and_fluctuating_stripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size)
 {
-//    """
-//    Algorithm 6 in the paper. Remove unresponsive or fluctuating stripes by:
-//    locating stripes, correcting by interpolation.
-//    Angular direction is along the axis 0.
-//    ---------
-//    Parameters: - sinogram: 2D array.
-//                - snr: ratio used to discriminate between useful
-//                    information and noise
-//                - size: window size of the median filter.
-//    ---------
-//    Return:     - stripe-removed sinogram.
-//    """
-//    sinogram = np.copy(sinogram) # Make it mutable
-//    (nrow, _) = sinogram.shape
+    kipl::base::TImage<float,2> res;
+    res.Clone(sinogram);
+
+    size_t nrow = res.Size(1);
+
 //    sinosmoothed = np.apply_along_axis(uniform_filter1d, 0, sinogram, 10)
 //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
 //    nmean = np.mean(listdiff)
@@ -261,7 +252,7 @@ kipl::base::TImage<float,2> VoStripeClean::remove_unresponsive_and_fluctuating_s
 //        sinogram[:, listxmiss] = matzmiss
 //    # Use algorithm 5 to remove residual stripes
 //    #sinogram = remove_large_stripe(sinogram, snr, size)
-//    return sinogram
+
     kipl::base::TImage<float,2> res;
 
     return res;
