@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef _PROJECTIONREADER_H_
-#define _PROJECTIONREADER_H_
+#ifndef PROJECTIONREADER_H
+#define PROJECTIONREADER_H
 
 #include "ReconFramework_global.h"
 //#include "stdafx.h"

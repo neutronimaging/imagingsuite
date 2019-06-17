@@ -1,8 +1,11 @@
 //<LICENSE>
+
 #include "piercingpointdialog.h"
 #include "ui_piercingpointdialog.h"
 
+#include <QMessageBox>
 #include <ProjectionReader.h>
+#include <ReconException.h>
 
 #include <qmarker.h>
 
@@ -34,21 +37,65 @@ int PiercingPointDialog::exec(ReconConfig &config)
 
     ProjectionReader reader;
 
-    ob=reader.Read(config.ProjectionInfo.sReferencePath,
-                   config.ProjectionInfo.sOBFileMask,
-                   config.ProjectionInfo.nOBFirstIndex,
-                   config.ProjectionInfo.eFlip,
-                   config.ProjectionInfo.eRotate,
-                   1,
-                   nullptr);
+    try {
+        ob=reader.Read(config.ProjectionInfo.sReferencePath,
+                       config.ProjectionInfo.sOBFileMask,
+                       config.ProjectionInfo.nOBFirstIndex,
+                       config.ProjectionInfo.eFlip,
+                       config.ProjectionInfo.eRotate,
+                       1,
+                       nullptr);
+    }
+    catch (ReconException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
+    catch (std::exception &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
 
-    dc=reader.Read(config.ProjectionInfo.sReferencePath,
-                   config.ProjectionInfo.sDCFileMask,
-                   config.ProjectionInfo.nDCFirstIndex,
-                   config.ProjectionInfo.eFlip,
-                   config.ProjectionInfo.eRotate,
-                   1,
-                   nullptr);
+    try {
+        dc=reader.Read(config.ProjectionInfo.sReferencePath,
+                       config.ProjectionInfo.sDCFileMask,
+                       config.ProjectionInfo.nDCFirstIndex,
+                       config.ProjectionInfo.eFlip,
+                       config.ProjectionInfo.eRotate,
+                       1,
+                       nullptr);
+    }
+    catch (ReconException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
+    catch (std::exception &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
 
     UpdateDialog();
     ui->viewer->set_image(ob.GetDataPtr(),ob.Dims());
