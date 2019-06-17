@@ -153,7 +153,11 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->spinSlicesLast->setValue(lastSlice);
     ui->plotHistogram->hideLegend();
     SlicesChanged(0);
-
+    ui->radioButton_Magnification->setChecked(true);
+    on_radioButton_Magnification_toggled(true);
+    ui->dspinSOD->setMaximum(ui->dspinSDD->value());
+    ui->dspinSDD->setMinimum(ui->dspinSOD->value());
+    UpdateCBCTDistances();
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
@@ -1126,7 +1130,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     msg.str("");
                     msg<<"Matrix display interval ["<<m_Config.MatrixInfo.fGrayInterval[0]<<", "<<m_Config.MatrixInfo.fGrayInterval[1]<<"]";
                     logger(kipl::logging::Logger::LogMessage,msg.str());
-
+                    QSignalBlocker blockCombo(ui->comboSlicePlane);
+                    ui->comboSlicePlane->setCurrentIndex(0);
                     DisplaySlice();
                 }
                 else {
@@ -1873,7 +1878,8 @@ void MuhRecMainWindow::on_actionReport_a_bug_triggered()
 void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
 {
 
-    if (checked) {
+    if (checked)
+    {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
 
@@ -1892,10 +1898,13 @@ void MuhRecMainWindow::on_checkCBCT_clicked(bool checked)
         msgBox.setText("Cone Beam CT reconstruction: \n - Tune the CB geometry in the Advanced geometry tab \n - in the Preprocessing module remove ProjectionFilterSingle. \n - in Back-projector configuration, add  FDKBackprojectors and then choose FDKbp (for double precision) or FDKbp_single (faster, for single precision). \n \n Enjoy!");
 //        msgBox.setDetailedText(QString::fromStdString(msg.str()));
         msgBox.exec();
-
-    } else {
+        UpdatePiercingPoint();
+    }
+    else
+    {
         m_Config.ProjectionInfo.beamgeometry = m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->groupBox_ConeBeamGeometry->hide();
+        ui->projectionViewer->clear_marker(0);
 
         SlicesChanged(0);
     }
@@ -2709,11 +2718,88 @@ void MuhRecMainWindow::on_spinBoxProjections_valueChanged(int arg1)
         msg<<e.what();
     }
 
-    if (fail) {
+    if (fail)
+    {
         QMessageBox dlg;
         dlg.setText("Failed to show projection");
         dlg.setDetailedText(QString::fromStdString(msg.str()));
         dlg.exec();
     }
 
+}
+
+void MuhRecMainWindow::on_radioButton_SOD_toggled(bool checked)
+{
+    ui->dspinSOD->setEnabled(!checked);
+    ui->dspinSDD->setEnabled(checked);
+    ui->doubleSpinBox_magnification->setEnabled(checked);
+}
+
+void MuhRecMainWindow::on_radioButton_SDD_toggled(bool checked)
+{
+    ui->dspinSOD->setEnabled(checked);
+    ui->dspinSDD->setEnabled(!checked);
+    ui->doubleSpinBox_magnification->setEnabled(checked);
+}
+
+void MuhRecMainWindow::on_radioButton_Magnification_toggled(bool checked)
+{
+    ui->dspinSOD->setEnabled(checked);
+    ui->dspinSDD->setEnabled(checked);
+    ui->doubleSpinBox_magnification->setEnabled(!checked);
+}
+
+void MuhRecMainWindow::UpdateCBCTDistances()
+{
+    if (ui->radioButton_SOD->isChecked())
+    {
+        ui->dspinSOD->setValue(ui->dspinSDD->value()/ui->doubleSpinBox_magnification->value());
+    }
+
+    if (ui->radioButton_SDD->isChecked())
+    {
+        ui->dspinSDD->setValue(ui->dspinSOD->value()*ui->doubleSpinBox_magnification->value());
+    }
+
+    if (ui->radioButton_Magnification->isChecked())
+    {
+        ui->doubleSpinBox_magnification->setValue(ui->dspinSDD->value()/ui->dspinSOD->value());
+    }
+}
+
+void MuhRecMainWindow::UpdatePiercingPoint()
+{
+    if (ui->checkCBCT->isChecked())
+    {
+        QPointF pos(ui->dspinPiercPointX->value(),ui->dspinPiercPointY->value());
+        ui->projectionViewer->set_marker(QtAddons::QMarker(QtAddons::PlotGlyph_Plus,pos,QColor("red"),10),0);
+    }
+
+}
+
+void MuhRecMainWindow::on_dspinSOD_valueChanged(double arg1)
+{
+    ui->dspinSDD->setMinimum(arg1);
+    UpdateCBCTDistances();
+}
+
+void MuhRecMainWindow::on_dspinSDD_valueChanged(double arg1)
+{
+    ui->dspinSOD->setMaximum(arg1);
+    UpdateCBCTDistances();
+}
+
+void MuhRecMainWindow::on_doubleSpinBox_magnification_valueChanged(double arg1)
+{
+    UpdateCBCTDistances();
+}
+
+void MuhRecMainWindow::on_dspinPiercPointX_valueChanged(double arg1)
+{
+   UpdatePiercingPoint();
+}
+
+void MuhRecMainWindow::on_dspinPiercPointY_valueChanged(double arg1)
+{
+    UpdatePiercingPoint();
 }
