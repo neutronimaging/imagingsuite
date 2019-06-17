@@ -45,7 +45,7 @@
        <string/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <property name="toolTip">
@@ -1482,13 +1482,13 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QLabel" name="label_29">
+              <widget class="QRadioButton" name="radioButton_SOD">
                <property name="text">
-                <string>Source to Object  (mm)</string>
+                <string>Source to object [mm]</string>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup_cbctDist</string>
+               </attribute>
               </widget>
              </item>
              <item>
@@ -1502,13 +1502,13 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_28">
+              <widget class="QRadioButton" name="radioButton_SDD">
                <property name="text">
-                <string>Source to Detector (mm)</string>
+                <string>Source to Detector [mm]</string>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup_cbctDist</string>
+               </attribute>
               </widget>
              </item>
              <item>
@@ -1518,6 +1518,26 @@
                </property>
                <property name="maximum">
                 <double>999999.989999999990687</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_Magnification">
+               <property name="text">
+                <string>Magnification</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup_cbctDist</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_magnification">
+               <property name="decimals">
+                <number>4</number>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
                </property>
               </widget>
              </item>
@@ -2561,4 +2581,7 @@
  </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup_cbctDist"/>
+ </buttongroups>
 </ui>
