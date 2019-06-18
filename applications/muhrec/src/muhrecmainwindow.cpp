@@ -2753,12 +2753,16 @@ void MuhRecMainWindow::UpdateCBCTDistances()
 {
     if (ui->radioButton_SOD->isChecked())
     {
-        ui->dspinSOD->setValue(ui->dspinSDD->value()/ui->doubleSpinBox_magnification->value());
+        double value=ui->dspinSDD->value()/ui->doubleSpinBox_magnification->value();
+        ui->dspinSDD->setMinimum(0.0);
+        ui->dspinSOD->setValue(value);
     }
 
     if (ui->radioButton_SDD->isChecked())
     {
-        ui->dspinSDD->setValue(ui->dspinSOD->value()*ui->doubleSpinBox_magnification->value());
+        double value=ui->dspinSOD->value()*ui->doubleSpinBox_magnification->value();
+        ui->dspinSOD->setMaximum(100000.0);
+        ui->dspinSDD->setValue(value);
     }
 
     if (ui->radioButton_Magnification->isChecked())
