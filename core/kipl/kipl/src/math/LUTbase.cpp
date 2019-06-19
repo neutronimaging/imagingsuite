@@ -14,7 +14,7 @@ using namespace std;
 
 namespace kipl { namespace math {
 LUTbase::LUTbase(size_t len, float lo, float hi) : 
-	fLUT(NULL), 
+    fLUT(nullptr),
 	nLUT(len), 
 	fLow(lo), 
 	fHigh(hi),
@@ -26,13 +26,13 @@ LUTbase::LUTbase(size_t len, float lo, float hi) :
 
 LUTbase::~LUTbase()
 {
-	if (fLUT!=NULL)
+    if (fLUT!=nullptr)
 		delete [] fLUT;
 }
 
 void LUTbase::Resize(size_t len, float lo, float hi) 
 {
-	if (fLUT!=NULL)
+    if (fLUT!=nullptr)
 		delete [] fLUT;
 	nLUT=len;
 	fLow=lo;

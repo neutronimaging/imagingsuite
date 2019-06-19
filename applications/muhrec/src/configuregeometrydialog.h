@@ -23,14 +23,12 @@ public:
     void GetConfig(ReconConfig &config);
     virtual int exec(ReconConfig &config);
 
-protected slots:
-    void FindCenter();
 
 private slots:
     void onOKButtonClicked(){ this->setResult(QDialog::Accepted);}
     void onCancelButtonClicked(){ this->setResult(QDialog::Rejected);}
     void onROIButtonClicked();
-    void ROIChanged(int x);
+
 
 
     void on_dspinCenterRotation_valueChanged(double arg1);
@@ -42,6 +40,8 @@ private slots:
     void on_spinSliceFirst_valueChanged(int arg1);
 
     void on_spinSliceLast_valueChanged(int arg1);
+
+    void on_buttonFindCenter_clicked();
 
 private:
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
@@ -61,6 +61,7 @@ private:
     void UpdateConfig();
     void UpdateDialog();
     int LoadImages();
+    void ROIChanged(int y0, int y1);
 
     Ui::ConfigureGeometryDialog *ui;
 
@@ -71,7 +72,7 @@ private:
     kipl::base::TImage<float,2> m_ProjDC;
     kipl::base::TImage<float,2> m_ProjOB;
     kipl::base::TImage<float,2> m_ProjCumulative;
-    std::vector<float> m_vCoG;
+    std::vector<double> m_vCoG;
     kipl::base::TImage<float,2> m_grayCumulate;
     kipl::base::TImage<float,2> m_biCumulate;
     std::vector<pair<size_t, size_t> > m_vBoundary;

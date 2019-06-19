@@ -211,6 +211,20 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="label_goldenFirstIdx">
+              <property name="text">
+               <string>Sequence first index</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox_goldenFirstIdx">
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -329,6 +343,10 @@
    <extends>QWidget</extends>
    <header location="global">uxroiwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>valueChanged(int,int,int,int)</signal>
+    <signal>toggled(bool)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>ReaderConfigListWidget</class>

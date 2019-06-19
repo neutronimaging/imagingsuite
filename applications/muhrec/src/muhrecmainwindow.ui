@@ -45,7 +45,7 @@
        <string/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <property name="toolTip">
@@ -680,7 +680,7 @@
               <property name="minimumSize">
                <size>
                 <width>220</width>
-                <height>130</height>
+                <height>145</height>
                </size>
               </property>
               <property name="toolTip">
@@ -693,7 +693,7 @@
               <property name="minimumSize">
                <size>
                 <width>220</width>
-                <height>130</height>
+                <height>145</height>
                </size>
               </property>
               <property name="toolTip">
@@ -771,6 +771,16 @@
              </property>
              <property name="value">
               <double>0.100000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_measurePixelSize">
+             <property name="toolTip">
+              <string>A tool to estimate the pixel size. &lt;br /&gt;Requires an image of an object with known dimensions.</string>
+             </property>
+             <property name="text">
+              <string>Measure</string>
              </property>
             </widget>
            </item>
@@ -1205,14 +1215,14 @@
                  </item>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_33">
                  <property name="text">
                   <string>Direction of rotation</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="2" column="1">
                 <widget class="QComboBox" name="comboDirRotation">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -1233,6 +1243,20 @@
                    <string>CounterClockWise</string>
                   </property>
                  </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_goldenFirstIdx">
+                 <property name="text">
+                  <string>Sequence first index</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBox_goldenFirstIdx">
+                 <property name="toolTip">
+                  <string>File index of the the first projection in a golden ratio sequence. This is needed to generate the correct angle sequence. Mostly this is '0' or '1'.</string>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -1458,13 +1482,13 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QLabel" name="label_29">
+              <widget class="QRadioButton" name="radioButton_SOD">
                <property name="text">
-                <string>Source to Object  (mm)</string>
+                <string>Source to object [mm]</string>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup_cbctDist</string>
+               </attribute>
               </widget>
              </item>
              <item>
@@ -1478,13 +1502,13 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_28">
+              <widget class="QRadioButton" name="radioButton_SDD">
                <property name="text">
-                <string>Source to Detector (mm)</string>
+                <string>Source to Detector [mm]</string>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup_cbctDist</string>
+               </attribute>
               </widget>
              </item>
              <item>
@@ -1494,6 +1518,29 @@
                </property>
                <property name="maximum">
                 <double>999999.989999999990687</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_Magnification">
+               <property name="text">
+                <string>Magnification</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup_cbctDist</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_magnification">
+               <property name="decimals">
+                <number>4</number>
+               </property>
+               <property name="minimum">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
                </property>
               </widget>
              </item>
@@ -1757,6 +1804,9 @@
                <property name="toolTip">
                 <string>Lowest gray level of the reconstructed data</string>
                </property>
+               <property name="decimals">
+                <number>4</number>
+               </property>
                <property name="minimum">
                 <double>-1000.000000000000000</double>
                </property>
@@ -1782,6 +1832,9 @@
               <widget class="QDoubleSpinBox" name="dspinGrayHigh">
                <property name="toolTip">
                 <string>Highest gray level of the reconstructed data</string>
+               </property>
+               <property name="decimals">
+                <number>4</number>
                </property>
                <property name="minimum">
                 <double>-1000.000000000000000</double>
@@ -2134,6 +2187,9 @@
              </widget>
             </item>
             <item>
+             <widget class="QSpinBox" name="spinBoxProjections"/>
+            </item>
+            <item>
              <widget class="QLabel" name="label_projindex">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -2142,7 +2198,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>0 (0deg)</string>
+               <string>(0deg)</string>
               </property>
              </widget>
             </item>
@@ -2229,6 +2285,9 @@
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBoxSlices"/>
             </item>
             <item>
              <widget class="QLabel" name="label_sliceindex">
@@ -2525,4 +2584,7 @@
  </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup_cbctDist"/>
+ </buttongroups>
 </ui>

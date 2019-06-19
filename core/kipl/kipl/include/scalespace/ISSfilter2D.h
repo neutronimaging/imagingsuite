@@ -20,8 +20,8 @@ class ISSfilter {
 	kipl::logging::Logger logger;
 public:
 
-	ISSfilter() : logger("ISSfilter"), m_bErrorPlot(false), m_fErrorPlot(NULL) {m_fEpsilon=1e-15;}
-	~ISSfilter() {if (m_fErrorPlot!=NULL) delete [] m_fErrorPlot;}
+    ISSfilter() : logger("ISSfilter"), m_bErrorPlot(false), m_fErrorPlot(nullptr) {m_fEpsilon=1e-15;}
+    ~ISSfilter() {if (m_fErrorPlot!=nullptr) delete [] m_fErrorPlot;}
 	int Process(kipl::base::TImage<T,2> &img, float dTau, float dLambda, float dAlpha, int nN);
 	void ErrorCurve(bool bErrorPlot) {m_bErrorPlot=bErrorPlot;}
     double const * ErrorCurve() {return m_fErrorPlot;}
@@ -66,7 +66,7 @@ int ISSfilter<T>::Process(kipl::base::TImage<T,2> &img, float dTau, float dLambd
 	m_v.Resize(img.Dims());
 	m_v=static_cast<T>(0);
 	if (m_bErrorPlot) {
-		if (m_fErrorPlot!=NULL)
+        if (m_fErrorPlot!=nullptr)
 			delete [] m_fErrorPlot;
 		this->m_fErrorPlot=new double[nN+1];
 	}

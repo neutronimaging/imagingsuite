@@ -7,7 +7,7 @@
 QT       += core widgets printsupport charts concurrent
 
 TARGET = muhrec
-VERSION = 4.0.2
+VERSION = 4.1
 TEMPLATE = app
 CONFIG += c++11
 
@@ -97,8 +97,8 @@ FORMS    += muhrecmainwindow.ui \
     referencefiledlg.ui \
     globalsettingsdialog.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
@@ -109,11 +109,17 @@ DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtImaging
+DEPENDPATH += $$PWD/../../../GUI/qt/QtImaging
+
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
+
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig/include
+DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig/include
 
 INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src

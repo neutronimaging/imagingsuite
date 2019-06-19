@@ -10,7 +10,7 @@ template <typename T>
 class TMatrix {
 public:
 	TMatrix();
-	TMatrix(int rows, int cols, T *data=NULL);
+    TMatrix(int rows, int cols, T *data=nullptr);
 
 	~TMatrix();
 	TMatrix(const TMatrix<T> &m);

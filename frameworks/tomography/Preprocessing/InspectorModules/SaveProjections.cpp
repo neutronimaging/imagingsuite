@@ -53,7 +53,7 @@ int SaveProjections::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std:
 //            const size_t start, const size_t stop, const size_t count_start=0,
 //            kipl::io::eFileType filetype=kipl::io::MatlabSlices,
 //            const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
-//            size_t *roi=NULL)
+//            size_t *roi=nullptr)
 
 	switch (m_eImageType) {
 		case ReconConfig::cProjections::ImageType_Projections :

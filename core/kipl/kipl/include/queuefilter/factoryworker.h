@@ -46,7 +46,7 @@ protected:
 template <class ImgType>
 FactoryWorker<ImgType>::FactoryWorker(Parenc::CParameters & Pars, std::ostream & os):pars(Pars), BaseQueueWorker<ImgType>(os)
 {
-	this->currentworker=NULL;
+    this->currentworker=nullptr;
 	workerCnt=-1;
 	workername="FactoryWorker";
  	this->isfactory=true;
@@ -113,7 +113,7 @@ int FactoryWorker<ImgType>::ProduceWorker(const string & description)
 	classmap["segmentation"]=7;
 	
 	//cout<<"Description string: "<<description<<endl;
-	BaseQueueWorker<ImgType> * tmpworker=NULL;
+    BaseQueueWorker<ImgType> * tmpworker=nullptr;
 	
 	int filtdims[3]={3,3,3}, rank;
 	float kernel[256];
@@ -224,7 +224,7 @@ int FactoryWorker<ImgType>::ProduceWorker(const string & description)
 				if (tmpstr=="file") {
 					if(Parenc::ParseString(description,"filename",tmpstr)) {
 						logstream<<"Filename is not specified"<<endl;
-						tmpworker=NULL;
+                        tmpworker=nullptr;
 					}
 					
 					tmpworker=new MaskWorker<ImgType>(tmpstr,(ImgType)maskval,logstream);
@@ -252,7 +252,7 @@ int FactoryWorker<ImgType>::ProduceWorker(const string & description)
 				}
 				break;
 				
-		default : logstream<<"Unknown worker, keeping previous"<<endl;tmpworker=NULL; 
+        default : logstream<<"Unknown worker, keeping previous"<<endl;tmpworker=nullptr;
 	}
 	
 	if (tmpworker) {

@@ -4,6 +4,7 @@ REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH/..
 DEST="$DIRECTORY/KipTool.app"
 
+GITVER=`git rev-parse --short HEAD`
 echo $DIRECTORY
 echo $QTPATH
 echo $DEST
@@ -52,8 +53,6 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_cpp.11.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
-#`$CPCMD /opt/local/lib/libzstd.1.*.*.dylib $DEST/Contents/FrameWorks`
-
 
 rm -f ./MacOS/*.dylib
 
@@ -65,11 +64,15 @@ cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
 
+if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
+fi
+
 for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.0.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 done
-# ln -s `ls $DEST/Contents/FrameWorks/libzstd.1.*.dylib` $DEST/Contents/FrameWorks/libzstd.1.dylib
+
 cd ..
 
 if [ ! -d "./Resources" ]; then
@@ -86,17 +89,33 @@ fi
 if [ ! -d "./PlugIns/platforms" ]; then
  mkdir ./PlugIns/platforms
 fi
-cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+
+if [ ! -f "./PlugIns/platforms/libqcocoa.dylib" ]; then 
+	if [ -f "$QTPATH/plugins/platforms/libqcocoa.dylib" ]; then 
+		cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+	fi
+fi
 
 if [ ! -d "./PlugIns/printsupport" ]; then
- mkdir ./PlugIns/printsupport
+	mkdir ./PlugIns/printsupport
 fi
-cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+
+if [ ! -f "./PlugIns/printsupport/libcocoaprintersupport.dylib" ]; then 
+	if [ -f "$QTPATH/plugins/printsupport/libcocoaprintersupport.dylib" ]; then
+		cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+	fi
+fi
 
 if [ ! -d "./PlugIns/accessible" ]; then
  mkdir ./PlugIns/accessible
 fi
-cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+
+if [ ! -f "./PlugIns/accessible/libqtaccessiblewidgets.dylib" ]; then 
+	if [ -f "$QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib"] ; then
+		cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+	fi
+fi
+
 pwd
 ls PlugIns
 
@@ -261,13 +280,15 @@ install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/lib
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 install_name_tool -change libAdvancedFilterModules.1.dylib @executable_path/../Frameworks/libAdvancedFilterModules.1.dylib libAdvancedFilterModulesGUI.1.0.0.dylib
 
+rm -rf /tmp/kiptool
 if [ ! -d "/tmp/kiptool" ]; then
   mkdir /tmp/kiptool
 fi
-
-ln -s /Applications /tmp/kiptool/Applications
+if [ ! -e "tmp/kiptool/Applications" ]; then
+	ln -s /Applications /tmp/kiptool
+fi
 cp -r $DEST /tmp/kiptool
 
-hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_`date +%Y%m%d`.dmg
+hdiutil create -volname KipTool -srcfolder /tmp/kiptool -ov -format UDZO $DIRECTORY/KipTool_build-$GITVER-`date +%Y%m%d`.dmg
 
 

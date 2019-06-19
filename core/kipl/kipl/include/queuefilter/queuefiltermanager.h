@@ -83,7 +83,7 @@ int QueueFilterManager<ImgType>::operator() (kipl::base::TImage<ImgType,3> &img,
 template<class ImgType>
 int QueueFilterManager<ImgType>::ProcFactory(kipl::base::TImage<ImgType,3> &img)
 {
-	BaseQueueWorker<ImgType> *currentWorker=NULL;
+    BaseQueueWorker<ImgType> *currentWorker=nullptr;
 	
 	int Niterations;
 	logger(kipl::logging::Logger::LogVerbose,"Factory starts");

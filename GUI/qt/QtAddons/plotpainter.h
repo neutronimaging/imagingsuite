@@ -24,7 +24,7 @@ class QTADDONSSHARED_EXPORT PlotPainter
     QWidget * m_pParent;
     kipl::logging::Logger logger;
 public:
-    PlotPainter(QWidget *parent=NULL);
+    PlotPainter(QWidget *parent=nullptr);
     ~PlotPainter();
     void Render(QPainter &painter, int x, int y, int w, int h);
 

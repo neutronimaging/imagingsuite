@@ -25,10 +25,10 @@
 STDBACKPROJECTORS_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
     if (strcmp(application,"muhrecbp"))
-		return NULL;
+        return nullptr;
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
-	if (name!=NULL) {
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="MultiProjBP")
@@ -44,7 +44,7 @@ STDBACKPROJECTORS_EXPORT void * GetModule(const char *application, const char * 
 
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 STDBACKPROJECTORS_EXPORT int Destroy(const char *application,void *obj)
@@ -54,7 +54,7 @@ STDBACKPROJECTORS_EXPORT int Destroy(const char *application,void *obj)
 		return -1;
 
 	std::ostringstream msg;
-	if (obj!=NULL) {
+    if (obj!=nullptr) {
 		BackProjectorModuleBase *module=reinterpret_cast<BackProjectorModuleBase *>(obj);
 		delete module;
 	}

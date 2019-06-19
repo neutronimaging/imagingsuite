@@ -39,11 +39,13 @@ unix:!macx {
 unix:macx {
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
+    INCLUDEPATH += /opt/local/include/libxml2
     QMAKE_LIBDIR += /opt/local/lib
-}
 
-macx: {
     INCLUDEPATH += $$PWD/../../../external/mac/include
+    INCLUDEPATH += /opt/local/include
+    INCLUDEPATH += /opt/local/include/libxml2
+
     DEPENDPATH += $$PWD/../../../external/mac/include
     LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
@@ -76,6 +78,8 @@ FORMS += \
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lQtAddons -lReaderConfig
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl -lQtAddons -lReaderConfig
+
+INCLUDEPATH += $$PWD/../../../external/src/linalg
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include

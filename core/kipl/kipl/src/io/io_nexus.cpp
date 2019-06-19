@@ -55,7 +55,7 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
                           }
                       }
 
-                    if (ScanAngles!=NULL) {
+                    if (ScanAngles!=nullptr) {
                         if  (it_data->first=="rf"){
                             float *angles;
                             angles = new float[file.getInfo().dims[0]];

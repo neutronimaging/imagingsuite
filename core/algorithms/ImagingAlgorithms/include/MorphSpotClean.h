@@ -36,10 +36,12 @@ class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
 public:
     MorphSpotClean();
     void Process(kipl::base::TImage<float,2> &img, float th, float sigma);
+    void Process(kipl::base::TImage<float,2> &img, float *th, float *sigma);
 
     void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     void setLimits(bool bClamp, float fMin, float fMax, int nMaxArea);
+    void cleanInfNan(bool remove);
     void setEdgeConditioning(int nSmoothLenght);
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 
@@ -69,6 +71,8 @@ protected:
 
     void ExcludeLargeRegions(kipl::base::TImage<float,2> &img);
 
+    void replaceInfNaN(kipl::base::TImage<float,2> &img);
+
     kipl::base::TImage<float,2> CleanByArray(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 
     kipl::morphology::MorphConnect m_eConnectivity;
@@ -77,11 +81,12 @@ protected:
     size_t m_nEdgeSmoothLength;
     size_t m_nPadMargin;
     int m_nMaxArea;
+    bool m_bRemoveInfNan;
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    float m_fThreshold;
-    float m_fSigma;
+    float m_fThreshold[2];
+    float m_fSigma[2];
     kipl::math::SigmoidLUT m_LUT;
 
     kipl::base::TImage<float,2> mask;

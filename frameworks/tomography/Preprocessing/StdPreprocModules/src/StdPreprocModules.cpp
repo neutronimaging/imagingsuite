@@ -1,14 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #include "stdafx.h"
 #include "../include/StdPreprocModules_global.h"
 #include "../include/NormPlugins.h"
@@ -124,7 +114,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
             return new CameraStripeClean;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)

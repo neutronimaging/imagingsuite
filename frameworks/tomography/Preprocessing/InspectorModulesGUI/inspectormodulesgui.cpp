@@ -28,7 +28,7 @@ INSPECTORMODULESGUISHARED_EXPORT int DestroyGUIModule(const char * application, 
     if (strcmp(application,"muhrec")!=0)
         return -1;
 
-    if (obj!=NULL) {
+    if (obj!=nullptr) {
         ConfiguratorDialogBase *dlg=reinterpret_cast<ConfiguratorDialogBase *>(obj);
         delete dlg;
     }

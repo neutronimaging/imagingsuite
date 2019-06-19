@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef BBLOGNORM_H
 #define BBLOGNORM_H
 

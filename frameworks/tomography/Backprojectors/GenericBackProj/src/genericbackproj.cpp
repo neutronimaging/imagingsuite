@@ -14,17 +14,17 @@
 void * GetModule(const char *application, const char * name, void *vinteractor)
 {
     if (strcmp(application,"muhrecbp"))
-        return NULL;
+        return nullptr;
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
-    if (name!=NULL) {
+    if (name!=nullptr) {
         std::string sName=name;
 
         if (sName=="GenericBP")
             return new GenericBP(interactor);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int Destroy(const char *application,void *obj)
@@ -34,7 +34,7 @@ int Destroy(const char *application,void *obj)
         return -1;
 
     std::ostringstream msg;
-    if (obj!=NULL) {
+    if (obj!=nullptr) {
         BackProjectorBase *module=reinterpret_cast<BackProjectorBase *>(obj);
         delete module;
     }

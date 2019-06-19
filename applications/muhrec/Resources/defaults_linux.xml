@@ -22,6 +22,7 @@
         <projectionstep>1</projectionstep>
         <repeatline>false</repeatline>
         <scantype>sequential</scantype>
+        <goldenfirstidx>1</goldenfirstidx>
         <imagetype>projections</imagetype>
         <center>50</center>
 	    <sod>100</sod>
@@ -41,9 +42,9 @@
         <dcfilemask>dc_####.fits</dcfilemask>
         <dcfirstindex>1</dcfirstindex>
         <dccount>5</dccount>
-        <roi>0 0 99 99</roi>
-        <projroi>0 0 99 99</projroi>
-        <doseroi>0 0 10 10</doseroi>
+        <roi>0 0 10000 10000</roi>
+        <projroi>0 0 10000 10000</projroi>
+        <doseroi>0 0 10000 10000</doseroi>
         <scanarc>0 360</scanarc>
         <rotate>imagerotatenone</rotate>
         <flip>imageflipnone</flip>
@@ -82,7 +83,8 @@
                 <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>false</active>
                 <parameters>
-	            <clampdata>false</clampdata>
+                    <removeinfnan>false</removeinfnan>
+	                <clampdata>false</clampdata>
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
                     <detectionmethod>morphdetectpeaks</detectionmethod>
@@ -90,9 +92,9 @@
                     <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
-                    <sigma>0.01</sigma>
+                    <sigma>0.01 0.01</sigma>
                     <threading>false</threading>
-                    <threshold>0.1</threshold>
+                    <threshold>0.1 0.1</threshold>
                 </parameters>
             </module>
             <module>

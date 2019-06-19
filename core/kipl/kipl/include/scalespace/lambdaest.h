@@ -23,7 +23,7 @@ namespace akipl { namespace scalespace {
 	template<class ImgType,int NDim>
 	class LambdaEstBase {
 	public:
-        LambdaEstBase() {call_cnt=0;update_frequency=1; update_data=-1; lambda=0; mask=NULL; newROI=false;}
+        LambdaEstBase() {call_cnt=0;update_frequency=1; update_data=-1; lambda=0; mask=nullptr; newROI=false;}
 		float operator()(kipl::base::TImage<float,NDim> &img) {
 			if (!(call_cnt%update_frequency)) {
 //

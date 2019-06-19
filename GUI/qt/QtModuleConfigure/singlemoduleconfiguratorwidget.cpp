@@ -281,7 +281,7 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
 
-    if (hinstLib != NULL)
+    if (hinstLib != nullptr)
     {
         MODULELIST fnGetModuleList;
 #ifdef _MSC_VER
@@ -290,10 +290,10 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
         fnGetModuleList = reinterpret_cast<MODULELIST>(dlsym(hinstLib, "GetModuleList"));
 #endif
         msg.str("");
-        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == NULL ? "no" : "yes");
+        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == nullptr ? "no" : "yes");
         logger(kipl::logging::Logger::LogMessage,msg.str());
          // If the function address is valid, call the function.
-        if (NULL != fnGetModuleList)
+        if (nullptr != fnGetModuleList)
         {
 
             if (fnGetModuleList(m_sApplication.c_str(),&m_ModuleList)!=0) {
@@ -361,7 +361,7 @@ void SingleModuleSettingsDialog::UpdateCurrentModuleParameters()
 {
     m_ParameterListView.clear();
     QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
-    QTreeWidgetItem *item = NULL;
+    QTreeWidgetItem *item = nullptr;
 
     m_ParameterListView.setColumnWidth(0,this->width()/2);
     if (!m_ModuleConfig.m_sModule.empty()) {

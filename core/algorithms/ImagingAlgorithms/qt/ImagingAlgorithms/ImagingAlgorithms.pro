@@ -65,7 +65,8 @@ SOURCES += \
     ../../src/gammaclean.cpp \
     ../../src/averageimage.cpp \
     ../../src/piercingpointestimator.cpp \
-    ../../src/ReferenceImageCorrection.cpp
+    ../../src/ReferenceImageCorrection.cpp \
+    ../../src/tomocenter.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -79,7 +80,8 @@ HEADERS += \
     ../../include/gammaclean.h \
     ../../include/averageimage.h \
     ../../include/piercingpointestimator.h \
-    ../../include/ReferenceImageCorrection.h
+    ../../include/ReferenceImageCorrection.h \
+    ../../include/tomocenter.h
 
 
 unix:!symbian {

@@ -210,7 +210,7 @@ ConfigBase::cUserInformation & ConfigBase::cUserInformation::operator = (const c
 	return * this;
 }
 
-std::string ConfigBase::cUserInformation::WriteXML(size_t indent)
+std::string ConfigBase::cUserInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;

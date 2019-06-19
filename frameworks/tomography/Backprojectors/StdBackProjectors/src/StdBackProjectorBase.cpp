@@ -1,13 +1,4 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-07-10 20:08:51 +0200 (Sa, 10 Jul 2010) $
-// $Rev: 652 $
-//
+//<LICENSE>
 
 //#include "stdafx.h"
 #include "../include/StdBackProjectorBase.h"
@@ -78,11 +69,16 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
 	proj.Clone();
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
+
+    float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
+    msg.str("");
+   // msg<<"Scan direction "<<mConfig.ProjectionInfo.eDirection<<", "<<dirWeight;
+   // logger.message(msg.str());
 	fWeights[nProjCounter]  = weight;
-	fSin[nProjCounter]      = sin(angle*fPi/180.0f);
-	fCos[nProjCounter]      = cos(angle*fPi/180.0f);
+    fSin[nProjCounter]      = sin(dirWeight*angle*fPi/180.0f);
+    fCos[nProjCounter]      = cos(dirWeight*angle*fPi/180.0f);
 	fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter;
-	float *pProj=NULL;
+    float *pProj=nullptr;
 	
 	kipl::base::TImage<float,2> img;
 	proj*=weight;
@@ -139,7 +135,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 
 	// Process the projections
 	float *pImg=img.GetDataPtr();
-	float *pProj=NULL;
+    float *pProj=nullptr;
 	size_t i=0;
 	for (i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj, "Back-projecting")); i++) {
 		pProj=projections.GetLinePtr(0,i);
