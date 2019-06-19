@@ -26,7 +26,12 @@ public:
     double *term3;
     double *term4;
     double *term5;
+    double *line_before;
+    double *line_after;
+    double *exp_before;
+    double *exp_after;
     double *edgeFunction;
+    double *fullEdge;
     double sigma;
     double alpha;
     double t0;
@@ -41,6 +46,10 @@ public:
     void computeTerm5(double *fun, double *t);
     void computeTerm1(double *fun, double *t);
     void computeTerm2(double *fun, double *t);
+    void computeLineBefore(double *fun, double *t);
+    void computeLineAfter(double *fun, double *t);
+    void computeExpBefore(double *fun, double *t);
+    void computeExpAfter(double *fun, double *t);
     void computeSimplifiedEdge(double *t);
     void computeEdge(double *t);
 };
