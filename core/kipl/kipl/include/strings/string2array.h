@@ -49,5 +49,20 @@ std::string Set2String(std::set<T> &v)
 
 	return str.str();
 }
+
+template <typename T>
+std::string Vector2String(const std::vector<T> &vec)
+{
+    std::ostringstream s;
+
+    if (vec.empty())
+        return "";
+
+    for (const auto & val: vec)
+    {
+        s<<val<<" ";
+    }
+    return s.str().substr(0,s.str().size()-1);
+}
 }}
 #endif /*STRING2ARRAY_H_*/

@@ -3,9 +3,11 @@
 #include <sstream>
 #include <iostream>
 #include <map>
+#include <cmath>
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
+
 
 #include <base/timage.h>
 #include <io/io_fits.h>
@@ -15,7 +17,7 @@
 #include <averageimage.h>
 #include <piercingpointestimator.h>
 #include <pixelinfo.h>
-
+#include <PolynomialCorrection.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -36,6 +38,9 @@ private Q_SLOTS:
     void AverageImage_ProcessingWeights();
     void PiercingPoint_Processing();
     void piercingPointExperiment();
+
+    void PolynomialCorrection_init();
+    void PolynomialCorrection_numeric();
 
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -344,6 +349,55 @@ void TestImagingAlgorithms::piercingPointExperiment()
     // Gain correction
     pair<float,float> pos2=pe(ob,dc,true);
 
+}
+
+void TestImagingAlgorithms::PolynomialCorrection_init()
+{
+    ImagingAlgorithms::PolynomialCorrection pc;
+
+    QCOMPARE(pc.polynomialOrder(),3);
+
+    auto vec = pc.coefficients();
+
+    QCOMPARE(vec.size(),4UL);
+    QCOMPARE(vec[0],0.0f);
+    QCOMPARE(vec[1],0.879f);
+    QCOMPARE(vec[2],0.0966f);
+    QCOMPARE(vec[3],0.0998f);
+
+}
+
+void TestImagingAlgorithms::PolynomialCorrection_numeric()
+{
+    float c[]={1.0f,0.5f,0.2f,0.1f,0.05f,0.02f,0.01f,0.005f,0.002f,0.001f,0.0005f};
+
+    ImagingAlgorithms::PolynomialCorrection pc;
+    const int N=5;
+    float val[N]={0.0f,1.0f,2.0f,3.0f,4.0f};
+    float result[N];
+    float verification[N];
+    for (int i=1; i<10; ++i)
+    {
+        pc.Setup(c,i);
+        std::vector<float> vec=pc.coefficients();
+
+        QCOMPARE(vec.size(),static_cast<size_t>(i+1));
+        for (int j=0; j<(i+1); ++j)
+            QCOMPARE(vec[j],c[j]);
+
+        std::copy_n(val,N,result);
+        pc.Process(result,N);
+
+        for (int k=0; k<N; ++k)
+        {
+            float sum=c[0];
+
+            for (int j=1; j<(i+1); ++j)
+                sum+= c[j]*std::powf(val[k],j);
+
+            QCOMPARE(result[k],sum);
+        }
+    }
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
