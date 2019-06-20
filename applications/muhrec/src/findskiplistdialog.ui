@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>415</height>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,6 +97,13 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_updatePlot">
+       <property name="text">
+        <string>Update plot</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
