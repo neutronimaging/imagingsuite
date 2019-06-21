@@ -1,15 +1,12 @@
-/*
- * GeneralFilter.h
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
-#ifndef POLYNOMIALCORRECTION_H_
-#define POLYNOMIALCORRECTION_H_
+#ifndef POLYNOMIALCORRECTION_H
+#define POLYNOMIALCORRECTION_H
 
 #include "StdPreprocModules_global.h"
 #include <PreprocModuleBase.h>
+#include <PolynomialCorrection.h>
+
 
 class STDPREPROCMODULESSHARED_EXPORT PolynomialCorrection: public PreprocModuleBase {
 public:
@@ -24,9 +21,7 @@ protected:
 	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
 
-	void ComputePolynomial(float *data, size_t N);
-	int m_nDegree;
-	float m_fCoef[10];
+    ImagingAlgorithms::PolynomialCorrection pc;
 };
 
 #endif /* DATASCALER_H_ */
