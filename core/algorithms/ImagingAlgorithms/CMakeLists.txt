@@ -18,8 +18,8 @@ if(NOT pybind11_sources_POPULATED)
     add_definitions(-DHAVEPYBIND11)
 endif()
 
-include_directories(../../kipl/kipl/include)
-link_directories(../../../../lib)
+include_directories(../../kipl/kipl/include /opt/local/include)
+link_directories(../../../../lib /opt/local/lib )
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
@@ -53,7 +53,7 @@ add_library(imagalg
   include/tomocenter.h
   )
 
-target_link_libraries(imgalg
+target_link_libraries(imagalg
   PUBLIC
     pybind11::module
     kipl
@@ -61,7 +61,7 @@ target_link_libraries(imgalg
     tiff
   )
 
-set_target_properties(nxs
+set_target_properties(imagalg
   PROPERTIES
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
