@@ -38,6 +38,7 @@ add_library(imagalg
   src/piercingpointestimator.cpp  
   src/ReferenceImageCorrection.cpp  
   src/tomocenter.cpp  
+  src/pybinder.cpp
   include/StripeFilter.h  
   include/SpotClean.h  
   include/PolynomialCorrection.h  
@@ -51,6 +52,7 @@ add_library(imagalg
   include/piercingpointestimator.h  
   include/ReferenceImageCorrection.h  
   include/tomocenter.h
+  include/pybinder.h
   )
 
 target_link_libraries(imagalg

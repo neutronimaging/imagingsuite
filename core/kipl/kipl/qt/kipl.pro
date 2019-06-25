@@ -129,6 +129,7 @@ SOURCES += \
 
 
 HEADERS +=\
+    ../../../algorithms/ImagingAlgorithms/include/pybinder.h \
     ../include/kipl_global.h \
     ../include/algorithms/sortalg.h \
     ../include/base/tsubimage.h \
