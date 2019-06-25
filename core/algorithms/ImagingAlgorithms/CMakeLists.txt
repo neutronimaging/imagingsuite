@@ -15,10 +15,10 @@ if(NOT pybind11_sources_POPULATED)
     ${pybind11_sources_SOURCE_DIR}
     ${pybind11_sources_BINARY_DIR}
     )
-    add_definitions(-DHAVEPYBIND11)
+    add_definitions(-DHAVEPYBIND11 -DNO_QT)
 endif()
 
-include_directories(../../kipl/kipl/include /opt/local/include)
+include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
 link_directories(../../../../lib /opt/local/lib )
 
 # add_definitions(-DVERSION="1.6.0")

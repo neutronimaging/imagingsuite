@@ -4,6 +4,8 @@
 #include <math.h>
 #include <sstream>
 #include <list>
+#include <algorithm>
+#include <numeric>
 
 #include <tnt_array1d.h>
 #include <tnt_array2d.h>
@@ -937,7 +939,7 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
                       std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
                       std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
                       float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
-                       float average = accumulate(grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
+                       float average = std::accumulate(grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
 
 //                      new_values.insert(std::make_pair(temp,median));
                       std::pair<int,int> mypair;
@@ -1265,7 +1267,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                           std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
                           std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
                           float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2; // here I compute the median
-                          float average = accumulate( grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
+                          float average = std::accumulate( grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
                           values.insert(std::make_pair(temp,median));
 //                          values.insert(std::make_pair(temp,average));
                  }

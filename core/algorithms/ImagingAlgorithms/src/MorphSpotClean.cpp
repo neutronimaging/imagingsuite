@@ -11,8 +11,9 @@
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
 
+#if !defined(NO_QT)
 #include <QDebug>
-
+#endif
 
 namespace ImagingAlgorithms {
 
