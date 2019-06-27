@@ -31,7 +31,7 @@ public:
     AverageImage();
 
     ~AverageImage();
-    int WindowSize;
+
     void setWindowSize(int n);
     int windowSize();
     /// \brief Computes a 2D image from a set of images
@@ -52,6 +52,8 @@ protected:
     kipl::base::TImage<float,2> ComputeMax(kipl::base::TImage<float,3> & img);
 
     void GetColumn(kipl::base::TImage<float,3> &img, size_t idx, float *data);
+
+    int WindowSize;
 };
 
 }

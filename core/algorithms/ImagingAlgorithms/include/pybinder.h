@@ -15,36 +15,36 @@
 
 namespace py = pybind11;
 
-//PYBIND11_MODULE(imagalg,m)
-//{
-//    py::class_<ImagingAlgorithms::AverageImage> avgClass(m, "AverageImage");
-//    avgClass.def(py::init());
-//    avgClass.def("windowSize", &ImagingAlgorithms::AverageImage::windowSize);
-//    avgClass.def("setWindowSize", &ImagingAlgorithms::AverageImage::setWindowSize);
-// //  avgClass.def("process", &ImagingAlgorithms::AverageImage::process);
-
-//    py::enum_<ImagingAlgorithms::AverageImage::eAverageMethod>(avgClass,"eAverageMethod")
-//            .value("ImageSum",             ImagingAlgorithms::AverageImage::ImageSum)
-//            .value("ImageAverage",         ImagingAlgorithms::AverageImage::ImageAverage)
-//            .value("ImageMedian",          ImagingAlgorithms::AverageImage::ImageMedian)
-//            .value("ImageWeightedAverage", ImagingAlgorithms::AverageImage::ImageWeightedAverage)
-//            .value("ImageMin",             ImagingAlgorithms::AverageImage::ImageMin)
-//            .value("ImageMax",             ImagingAlgorithms::AverageImage::ImageMax)
-//            .export_values();
-
-
-//};
-
-
 PYBIND11_MODULE(imagalg,m)
 {
-    py::class_<ImagingAlgorithms::AverageImage>(m, "AverageImage")
-    .def(py::init())
-    .def("windowSize", &ImagingAlgorithms::AverageImage::windowSize)
-    .def("setWindowSize", &ImagingAlgorithms::AverageImage::setWindowSize);
+    py::class_<ImagingAlgorithms::AverageImage> avgClass(m, "AverageImage");
+    avgClass.def(py::init());
+    avgClass.def("windowSize", &ImagingAlgorithms::AverageImage::windowSize);
+    avgClass.def("setWindowSize", &ImagingAlgorithms::AverageImage::setWindowSize);
+    avgClass.def("process", &ImagingAlgorithms::AverageImage::process);
+
+    py::enum_<ImagingAlgorithms::AverageImage::eAverageMethod>(avgClass,"eAverageMethod")
+            .value("ImageSum",             ImagingAlgorithms::AverageImage::ImageSum)
+            .value("ImageAverage",         ImagingAlgorithms::AverageImage::ImageAverage)
+            .value("ImageMedian",          ImagingAlgorithms::AverageImage::ImageMedian)
+            .value("ImageWeightedAverage", ImagingAlgorithms::AverageImage::ImageWeightedAverage)
+            .value("ImageMin",             ImagingAlgorithms::AverageImage::ImageMin)
+            .value("ImageMax",             ImagingAlgorithms::AverageImage::ImageMax)
+            .export_values();
 
 
 };
+
+
+//PYBIND11_MODULE(imagalg,m)
+//{
+//    py::class_<ImagingAlgorithms::AverageImage>(m, "AverageImage")
+//    .def(py::init())
+//    .def("windowSize", &ImagingAlgorithms::AverageImage::windowSize)
+//    .def("setWindowSize", &ImagingAlgorithms::AverageImage::setWindowSize);
+
+
+//};
 #endif
 
 #endif // PYBINDER_H
