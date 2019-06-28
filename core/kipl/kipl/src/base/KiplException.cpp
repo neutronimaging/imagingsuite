@@ -36,21 +36,21 @@ KiplException::KiplException(std::string message,
 {
 }
 
-std::string KiplException::what()
+const char* KiplException::what() const
 {
 	
 	if (nLineNumber==0) {
-		return sMessage;	
+        return sMessage.c_str();
 	}
 
     if (sFileName.empty())
-        return sMessage;
+        return sMessage.c_str();
 
 	std::ostringstream str;
 	
     str<<"An "<<sExceptionName<<" was thrown in file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
 	
-	return str.str();
+    return str.str().c_str();
 }
 
 
