@@ -4,8 +4,10 @@
 #include <algorithm>
 #include <map>
 #include <iostream>
-#include <QDebug>
 
+#if !defined(NO_QT)
+#include <QDebug>
+#endif
 #include "../../base/KiplException.h"
 
 namespace kipl { namespace math {
