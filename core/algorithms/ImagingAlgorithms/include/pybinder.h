@@ -20,8 +20,8 @@ PYBIND11_MODULE(imagalg,m)
 {
     py::class_<ImagingAlgorithms::AverageImage> avgClass(m, "AverageImage");
     avgClass.def(py::init());
-    avgClass.def("windowSize", &ImagingAlgorithms::AverageImage::windowSize);
-    avgClass.def("setWindowSize", &ImagingAlgorithms::AverageImage::setWindowSize);
+    avgClass.def("windowSize", &ImagingAlgorithms::AverageImage::windowSize,"Returns the size of the filter window used by the weighted average");
+    avgClass.def("setWindowSize", &ImagingAlgorithms::AverageImage::setWindowSize,"Set the size of the filter window used by the weighted average",py::arg("size")=5);
     avgClass.def("process",
                  [](ImagingAlgorithms::AverageImage &a,
                  py::array_t<float> &x,
