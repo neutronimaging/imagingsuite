@@ -13,10 +13,9 @@
 namespace ImagingAlgorithms {
 
 PolynomialCorrection::PolynomialCorrection() : logger("ImagingAlgorithms::PolynomialCorrection"),
-		m_nDegree(1)
+        m_fCoef{0.0f, 0.879f, 0.0966f, 0.0998f},
+        m_nDegree(3)
 {
-	memset(m_fCoef,0,sizeof(float)*10);
-	m_fCoef[1]=1.0f;
 }
 
 PolynomialCorrection::~PolynomialCorrection()
@@ -29,7 +28,8 @@ int PolynomialCorrection::Setup(float *coef, int order)
 	if ((m_nDegree<1) || (9<m_nDegree))
 		throw ImagingException("Polynomial order is greater than 9 in PolynomialCorrection",__FILE__,__LINE__);
 
-	memcpy(m_fCoef,coef, (m_nDegree+1)*sizeof(float));
+    m_fCoef.resize(order+1UL);
+    std::copy_n(coef, m_nDegree+1,m_fCoef.begin());
 
 	return 0;
 }
@@ -155,4 +155,10 @@ void PolynomialCorrection::Process(float *data, size_t N)
 		break;
 	}
 }
+
+std::vector<float> PolynomialCorrection::coefficients()
+{
+    return m_fCoef;
+}
+
 } // end namespace imagingalgorithms
