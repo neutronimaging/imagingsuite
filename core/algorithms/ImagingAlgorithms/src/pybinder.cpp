@@ -11,11 +11,13 @@ namespace py = pybind11;
 
 void bindAverageImage(py::module &m);
 void bindPolynomialCorrection(py::module &m);
+void bindMorphSpotClean(py::module &m);
 
 PYBIND11_MODULE(imagalg,m)
 {
     bindAverageImage(m);
     bindPolynomialCorrection(m);
+    bindMorphSpotClean(m);
 
     py::register_exception<ImagingException>(m, "ImagingException");
 }
