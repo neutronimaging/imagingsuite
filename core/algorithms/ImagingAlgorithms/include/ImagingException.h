@@ -10,9 +10,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT ImagingException: public kipl::base::KiplEx
 public:
 	virtual ~ImagingException();
 	ImagingException(std::string msg);
-	ImagingException(std::string msg, std::string filename, size_t line);
-
-	virtual std::string what();
+    ImagingException(std::string msg, std::string filename, size_t line);
 };
 
 

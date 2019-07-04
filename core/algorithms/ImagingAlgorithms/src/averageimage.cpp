@@ -3,13 +3,6 @@
 #include <sstream>
 #include <map>
 
-#ifdef HAVEPYBIND11
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-namespace py=pybind11;
-#endif
-
 #include <math/median.h>
 #include <filters/stddevfilter.h>
 
@@ -41,11 +34,11 @@ int AverageImage::windowSize()
 
 kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3> &img,
                                                      eAverageMethod method,
-                                                     float *weights)
+                                                     std::vector<float> weights)
 {
     kipl::base::TImage<float,2> res(img.Dims());
     kipl::base::TImage<float,3> wimg;
-    if (weights!=nullptr) {
+    if (!weights.empty()) {
         wimg=WeightImages(img,weights);
     }
     else {
@@ -65,10 +58,13 @@ kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3>
     return res;
 }
 
-kipl::base::TImage<float,3> AverageImage::WeightImages(kipl::base::TImage<float,3> &img, float *weights)
+kipl::base::TImage<float,3> AverageImage::WeightImages(kipl::base::TImage<float,3> &img, std::vector<float> &weights)
 {
     kipl::base::TImage<float,3> res=img;
     res.Clone();
+
+    if (weights.size()!=img.Size(2))
+        throw ImagingException("WeightImages failed as the size(weight)!=number of planes in img",__FILE__,__LINE__);
 
     for (size_t i=0; i<img.Size(2); i++) {
         float *pRes=res.GetLinePtr(0,i);
@@ -119,9 +115,6 @@ kipl::base::TImage<float,2> AverageImage::ComputeMedian(kipl::base::TImage<float
     float *pImg=img.GetDataPtr();
     float *pRes=res.GetDataPtr();
     for (size_t i=0; i<M; i++, pImg++, pRes++) {
-//        for (size_t j=0; j<N; j++) {
-//            buffer[j]=pImg[j*M];
-//        }
         GetColumn(img,i,buffer);
         kipl::math::median_STL(buffer,N,pRes);
     }
@@ -225,27 +218,6 @@ void AverageImage::GetColumn(kipl::base::TImage<float,3> &img, size_t idx, float
     }
 }
 
-#ifdef HAVEPYBIND11
-py::array_t<float> AverageImage::process(py::array_t<float> &x, ImagingAlgorithms::AverageImage::eAverageMethod method)
-{
-    auto r = x.unchecked<3>(); // x must have ndim = 3; can be non-writeable
-
-    py::buffer_info buf1 = x.request();
-    py::print("input dims",buf1.shape[0],", ",buf1.shape[1],", ",buf1.shape[2]);
-    size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                   static_cast<size_t>(buf1.shape[1]),
-                   static_cast<size_t>(buf1.shape[0])};
-    kipl::base::TImage<float,3> stack(static_cast<float*>(buf1.ptr),dims);
-
-    kipl::base::TImage<float,2> res=this->operator()(stack,method,nullptr);
-
-    py::array_t<float> avg = py::array_t<float>(res.Size());
-    avg.resize({res.Size(1),res.Size(0)});
-    kipl::base::TImage<float,2> avgimg(static_cast<float*>(avg.request().ptr),dims);
-    std::copy_n(res.GetDataPtr(),res.Size(),avgimg.GetDataPtr());
-    return avg;
-}
-#endif
 }
 
 void string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMethod &eam)
