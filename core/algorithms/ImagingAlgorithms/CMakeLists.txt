@@ -26,38 +26,40 @@ link_directories(../../../../lib /opt/local/lib )
 add_library(imagalg
   MODULE
 
-  src/StripeFilter.cpp  
-  src/SpotClean.cpp  
+# src/StripeFilter.cpp  
+#  src/SpotClean.cpp  
   src/PolynomialCorrection.cpp  
   src/ImagingException.cpp  
-  src/TranslateProjections.cpp  
+# src/TranslateProjections.cpp  
   src/MorphSpotClean.cpp  
   src/pixelinfo.cpp  
-  src/gammaclean.cpp  
+#  src/gammaclean.cpp  
   src/averageimage.cpp  
-  src/piercingpointestimator.cpp  
-  src/ReferenceImageCorrection.cpp  
-  src/tomocenter.cpp  
+#  src/piercingpointestimator.cpp  
+#  src/ReferenceImageCorrection.cpp  
+#  src/tomocenter.cpp  
   src/pybinder.cpp
-  include/StripeFilter.h  
-  include/SpotClean.h  
+#  include/StripeFilter.h  
+#  include/SpotClean.h  
   include/PolynomialCorrection.h  
   include/ImagingException.h  
-  include/TranslateProjections.h  
+#  include/TranslateProjections.h  
   include/MorphSpotClean.h  
   include/pixelinfo.h  
   include/ImagingAlgorithms_global.h  
-  include/gammaclean.h  
+ # include/gammaclean.h  
   include/averageimage.h  
-  include/piercingpointestimator.h  
-  include/ReferenceImageCorrection.h  
-  include/tomocenter.h
+ # include/piercingpointestimator.h  
+ # include/ReferenceImageCorrection.h  
+ # include/tomocenter.h
   include/pybinder.h
   )
 
 target_link_libraries(imagalg
   PUBLIC
     pybind11::module
+
+  PRIVATE
     kipl
     xml2
     tiff

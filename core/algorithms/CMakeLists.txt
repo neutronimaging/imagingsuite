@@ -15,15 +15,23 @@ find_package(PythonInterp REQUIRED)
 add_subdirectory(ImagingAlgorithms)
 
 # turn on testing
-#enable_testing()
+enable_testing()
 
+message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test
-#add_test(
-#  NAME
-#    python_bindingtest
-#  COMMAND
-#    ${CMAKE_COMMAND} -E env NXS_MODULE_PATH=$<TARGET_FILE_DIR:imaglib>
-#  //  ${CMAKE_COMMAND} -E env NXS_MODULE_PATH=/Users/kaestner/git/build-nxs-Desktop_Qt_5_12_2_clang_64bit-Default
-#    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/testPyNXSlib/bindingtest.py
-#  )
+add_test(
+  NAME
+    testBindAverageImage
+  COMMAND
+    ${CMAKE_COMMAND} -E env IMAGALG_MODULE_PATH=$<TARGET_FILE_DIR:imagalg>
+#    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/build/ImagingAlgorithms/testBindAverageImage.py
+)
 
+add_test(
+  NAME
+    testBindPolynomialCorrection
+  COMMAND
+    ${CMAKE_COMMAND} -E env IMAGALG_MODULE_PATH=$<TARGET_FILE_DIR:imagalg>
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/build/ImagingAlgorithms/testBindPolynomialCorrection.py
+)
