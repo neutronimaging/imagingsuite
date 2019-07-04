@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstddef>
 #include <sstream>
+#include <algorithm>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
