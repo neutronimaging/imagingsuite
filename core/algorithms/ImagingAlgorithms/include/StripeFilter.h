@@ -31,7 +31,7 @@ public:
     /// \param wname Name of the wavelet base
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
-	StripeFilter(size_t const * const dims, std::string wname, size_t scale, float sigma);
+    StripeFilter(size_t const * const dims, const std::string &wname, int scale, float sigma);
 
     /// \brief The constructor initializes the filter
     /// \note The filter is initialized for one image size only.
@@ -39,19 +39,20 @@ public:
     /// \param wname Name of the wavelet base
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
-    StripeFilter(std::vector<int> &dims, std::string wname, size_t scale, float sigma);
+    StripeFilter(const std::vector<int> &dims, const string &wname, int scale, float sigma);
     std::vector<int> dims();
+    bool checkDims(const size_t *dims);
     std::string waveletName();
     int decompositionLevels();
     float sigma();
 
-    void configure(std::vector<int> &dims, std::string wname, size_t scale, float sigma);
+    void configure(const std::vector<int> &dims, const std::string &wname, int scale, float sigma);
 	virtual ~StripeFilter();
 
     /// \brief Applies the stripe filter to an image.
     /// \param img the image to process. The result will be stored into the same image
     /// \param op Selects filter operation
-    void Process(kipl::base::TImage<float,2> &img, eStripeFilterOperation op=VerticalComponentFFT);
+    void process(kipl::base::TImage<float,2> &img, eStripeFilterOperation op=VerticalComponentFFT);
 
 private:
     /// \brief Builds the Fourier filter window.
@@ -83,7 +84,7 @@ private:
 	void SetVerticalLine(float *pLine, float *pDest, size_t pos, size_t stride, size_t len);
 
     kipl::wavelets::WaveletTransform<float> m_wt; ///< Instance of the wavelete transform
-    size_t m_nScale;                              ///< Number of decomposition levels
+    int m_nScale;                              ///< Number of decomposition levels
     float m_fSigma;                               ///< Width of the Gaussian used to implement the highpass filter
     size_t m_nFFTlength[16];                      ///< Length of the fft transforms performed on the different decomposition levels
 
