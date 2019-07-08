@@ -19,25 +19,26 @@ namespace ImagingAlgorithms {
 StripeFilter::StripeFilter(size_t const * const dims, std::string wname, size_t scale, float sigma) :
 	logger("StripeFilter"),
 	m_wt(wname),
-	m_nScale(scale),
-	m_fSigma(sigma),
     m_pLine(nullptr),
     m_pCLine(nullptr)
 {
-	std::ostringstream msg;
-	for (size_t i=0; i<m_nScale; i++) {
-		m_nFFTlength[i]=kipl::math::fft::NextPower2(static_cast<size_t>(1.25*dims[1])>>i);
-		size_t N=2*m_nFFTlength[i];
-		fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
-		m_pDamping[i] = new float[N];
-	}
+    std::copy_n(dims,2,wdims.begin());
+    configure(wdims,wname,scale,sigma);
+}
 
-	size_t N=2*m_nFFTlength[0];
-
-	m_pLine    = new float[N];
-	m_pCLine   = new complex<float>[N];
-
-	CreateFilterWindow();
+/// \brief The constructor initializes the filter
+/// \note The filter is initialized for one image size only.
+/// \param dims Size of the image to filter
+/// \param wname Name of the wavelet base
+/// \param scale number of decomosition levels
+/// \param sigma High pass cut-off frequency
+StripeFilter::StripeFilter(std::vector<int> &dims, std::string wname, size_t scale, float sigma) :
+    logger("StripeFilter"),
+    m_wt(wname),
+    m_pLine(nullptr),
+    m_pCLine(nullptr)
+{
+    configure(dims,wname,scale,sigma);
 }
 
 StripeFilter::~StripeFilter() {
@@ -71,7 +72,7 @@ void StripeFilter::CreateFilterWindow()
 	}
 }
 
-void StripeFilter::Process(kipl::base::TImage<float,2> &img, StripeFilterOperation op)
+void StripeFilter::Process(kipl::base::TImage<float,2> &img, eStripeFilterOperation op)
 {
 	std::ostringstream msg;
 
@@ -141,9 +142,54 @@ void StripeFilter::SetVerticalLine(float *pLine, float *pDest, size_t pos, size_
 	}
 }
 
+std::vector<int> StripeFilter::dims()
+{
+    return wdims;
 }
 
-std::string enum2string(ImagingAlgorithms::StripeFilterOperation op)
+std::string StripeFilter::waveletName()
+{
+    return m_wt.Kernel.name();
+}
+
+int StripeFilter::decompositionLevels()
+{
+    return static_cast<int>(m_nScale);
+}
+
+float StripeFilter::sigma()
+{
+    return m_fSigma;
+}
+
+void StripeFilter::configure(std::vector<int> &dims, string wname, size_t scale, float sigma)
+{
+    if (dims.size()<2)
+        throw ImagingException("Stripe filter was configured with too few dimensions.",__FILE__, __LINE__);
+
+    m_wt=kipl::wavelets::WaveletTransform<float>(wname);
+    m_fSigma = sigma;
+    m_nScale = scale;
+
+    std::ostringstream msg;
+    for (size_t i=0; i<m_nScale; i++) {
+        m_nFFTlength[i]=kipl::math::fft::NextPower2(static_cast<size_t>(1.25*dims[1])>>i);
+        size_t N=2*m_nFFTlength[i];
+        fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
+        m_pDamping[i] = new float[N];
+    }
+
+    size_t N=2*m_nFFTlength[0];
+
+    m_pLine    = new float[N];
+    m_pCLine   = new complex<float>[N];
+
+    CreateFilterWindow();
+}
+
+}
+
+std::string enum2string(ImagingAlgorithms::eStripeFilterOperation op)
 {
 	std::string str;
 
@@ -155,7 +201,7 @@ std::string enum2string(ImagingAlgorithms::StripeFilterOperation op)
 	return str;
 }
 
-void string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op)
+void string2enum(std::string str, ImagingAlgorithms::eStripeFilterOperation &op)
 {
     std::ostringstream msg;
     if (str=="verticalzero")
@@ -163,14 +209,85 @@ void string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op)
     else if (str=="verticalfft")
         op=ImagingAlgorithms::VerticalComponentFFT;
     else {
-        msg<<"Could not translate string ("<<str<<") to stripe filter operation",
+        msg<<"Could not translate string ("<<str<<") to stripe filter operation";
         throw ImagingException(msg.str(), __FILE__, __LINE__);
     }
 }
 
-std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::StripeFilterOperation op)
+std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::eStripeFilterOperation op)
 {
 	s<<enum2string(op);
 
 	return s;
 }
+
+
+#ifdef HAVEPYBIND11
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+
+namespace py = pybind11;
+
+void bindStripeFilterClean(py::module &m)
+{
+    py::class_<ImagingAlgorithms::StripeFilter> sfClass(m, "StripeFilter");
+
+    sfClass.def(py::init<std::vector<int>,std::string,int, float>());
+
+    sfClass.def("process",
+                 [](ImagingAlgorithms::StripeFilter &sf,
+                 py::array_t<float> &x,
+                 ImagingAlgorithms::eStripeFilterOperation op)
+            {
+                py::buffer_info buf1 = x.request();
+
+                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                               static_cast<size_t>(buf1.shape[0])};
+                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+
+                sf.process(img,op);
+            },
+
+            "Applies the stripe filter on the image as implace operation.",
+            py::arg("x"),
+            py::arg("op"));
+
+    sfClass.def("process",
+                [](ImagingAlgorithms::StripeFilter &sf,
+                py::array_t<double> &x,
+                ImagingAlgorithms::eStripeFilterOperation op)
+                {
+                    py::buffer_info buf1 = x.request();
+
+                    size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                                   static_cast<size_t>(buf1.shape[0])};
+                    double *data=static_cast<double*>(buf1.ptr);
+
+                    kipl::base::TImage<float,2> img(dims);
+
+                    std::copy_n(data,img.Size(),img.GetDataPtr());
+
+                    msc.process(img,th,sigma);
+                    std::copy_n(img.GetDataPtr(),img.Size(),data);
+                },
+                "Applies the stripe filter on the image as implace operation.",
+                py::arg("x"),
+                py::arg("op"));
+
+                std::vector<size_t> dims();
+                std::string waveletName();
+                int decompositionLevels();
+                float sigma();
+
+
+    py::enum_<ImagingAlgorithms::eStripeFilterOperation>(m,"eStripeFilterOperation")
+        .value("VerticalComponentZero", ImagingAlgorithms::VerticalComponentZero)
+        .value("VerticalComponentFFT",    ImagingAlgorithms::VerticalComponentFFT)
+        .export_values();
+
+
+
+}
+
+#endif

@@ -15,7 +15,7 @@
 namespace ImagingAlgorithms {
 
 /// \brief Selector enum to select the type of filter operation in the vertical detail
-enum StripeFilterOperation {
+enum eStripeFilterOperation {
     VerticalComponentZero = 0, ///< Set the vertical component to zero
     VerticalComponentFFT       ///< Apply a high-pass filter to the vertical component
 };
@@ -32,12 +32,26 @@ public:
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
 	StripeFilter(size_t const * const dims, std::string wname, size_t scale, float sigma);
+
+    /// \brief The constructor initializes the filter
+    /// \note The filter is initialized for one image size only.
+    /// \param dims Size of the image to filter
+    /// \param wname Name of the wavelet base
+    /// \param scale number of decomosition levels
+    /// \param sigma High pass cut-off frequency
+    StripeFilter(std::vector<int> &dims, std::string wname, size_t scale, float sigma);
+    std::vector<int> dims();
+    std::string waveletName();
+    int decompositionLevels();
+    float sigma();
+
+    void configure(std::vector<int> &dims, std::string wname, size_t scale, float sigma);
 	virtual ~StripeFilter();
 
     /// \brief Applies the stripe filter to an image.
     /// \param img the image to process. The result will be stored into the same image
     /// \param op Selects filter operation
-	void Process(kipl::base::TImage<float,2> &img, StripeFilterOperation op=VerticalComponentFFT);
+    void Process(kipl::base::TImage<float,2> &img, eStripeFilterOperation op=VerticalComponentFFT);
 
 private:
     /// \brief Builds the Fourier filter window.
@@ -77,7 +91,7 @@ private:
     float *m_pLine;                               ///< Pointer to the line buffer
     std::complex<float> *m_pCLine;                ///< Pointer to the Fourier transformed line
 
-    size_t wdims[2];                              ///< Dimensions of the image for which the filter is configured
+    std::vector<int> wdims;                              ///< Dimensions of the image for which the filter is configured
     kipl::math::fft::FFTBaseFloat *fft[16];       ///< FFT instances for each decomposition level.
 };
 }
@@ -86,19 +100,19 @@ private:
 /// \param op The enum value to convert
 /// \returns A string with the name of the enum value
 /// \throws An ImagingException if the conversion fails
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::StripeFilterOperation op);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eStripeFilterOperation op);
 
 /// \brief Converts a string to a stripe filter enum value
 /// \param str The string with the name
 /// \param op The resulting value
 /// \throws An ImagingException if the conversion fails
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::StripeFilterOperation &op);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::eStripeFilterOperation &op);
 
 /// \brief Writes the name of stripe filter enum to a stream.
 /// \param s The target stream.
 /// \param op The enum value to write
 /// \returns the modified stream
 /// \throws An ImagingException if the conversion fails
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream & s, ImagingAlgorithms::StripeFilterOperation op);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream & s, ImagingAlgorithms::eStripeFilterOperation op);
 
 #endif /* STRIPEFILTER_H_ */
