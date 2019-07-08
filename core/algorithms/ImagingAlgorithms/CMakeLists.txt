@@ -26,7 +26,7 @@ link_directories(../../../../lib /opt/local/lib )
 add_library(imagalg
   MODULE
 
-# src/StripeFilter.cpp  
+  src/StripeFilter.cpp  
 #  src/SpotClean.cpp  
   src/PolynomialCorrection.cpp  
   src/ImagingException.cpp  
@@ -39,7 +39,7 @@ add_library(imagalg
 #  src/ReferenceImageCorrection.cpp  
 #  src/tomocenter.cpp  
   src/pybinder.cpp
-#  include/StripeFilter.h  
+  include/StripeFilter.h  
 #  include/SpotClean.h  
   include/PolynomialCorrection.h  
   include/ImagingException.h  
