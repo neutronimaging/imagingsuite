@@ -10,6 +10,8 @@ cd build/ImagingAlgorithms
 ln -s libkipl.1.0.0.dylib libkipl.1.dylib
 ln -s libNexus.1.0.0.dylib libNexus.1.dylib
 ln -s libNexusCPP.1.0.0.dylib libNexusCPP.1.dylib
+rm test*.py
+ln -s ../../UnitTests/python/test*.py .
 #nexus_related
 
 # install_name_tool -change libkipl.1.dylib libkipl.1.dylib imagalg.cpython-37m-darwin.so

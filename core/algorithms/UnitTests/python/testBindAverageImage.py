@@ -13,7 +13,7 @@ x,y,z=np.meshgrid(a,b,c)
 img=x+y*N+z*N*N
 
 avg=AverageImage()
-print(avg.windowSize())
+
 assert avg.windowSize() == 5
 
 # Average combination
@@ -48,3 +48,4 @@ mse=((res-ximg)**2).mean()
 
 assert mse==0.0
 
+print('AverageImage tests done')

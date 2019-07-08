@@ -46,8 +46,8 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, float th, float s
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
-    std::fill_n(m_fThreshold,2,th);
-    std::fill_n(m_fSigma,2,sigma);
+    std::fill_n(m_fThreshold.begin(),2,th);
+    std::fill_n(m_fSigma.begin(),2,sigma);
 
     switch (m_eMorphClean) {
         case MorphCleanReplace  : ProcessReplace(img); break;
@@ -57,7 +57,7 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, float th, float s
 
 }
 
-void MorphSpotClean::process(kipl::base::TImage<float,2> &img, float *th, float *sigma)
+void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma)
 {
     if (m_bRemoveInfNan)
         replaceInfNaN(img);
@@ -65,8 +65,8 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, float *th, float 
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
-    std::copy_n(th,2,m_fThreshold);
-    std::copy_n(sigma,2,m_fSigma);
+    std::copy_n(th.begin(),2,m_fThreshold.begin());
+    std::copy_n(sigma.begin(),2,m_fSigma.begin());
 
     switch (m_eMorphClean) {
         case MorphCleanReplace  : ProcessReplace(img); break;
@@ -249,6 +249,18 @@ void MorphSpotClean::setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod
     m_eMorphClean = mcm;
 }
 
+eMorphDetectionMethod MorphSpotClean::detectionMethod()
+{
+    return m_eMorphDetect;
+}
+
+eMorphCleanMethod MorphSpotClean::cleanMethod()
+{
+    return m_eMorphClean;
+}
+
+
+
 void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded)
 {
     size_t dims[2]={img.Size(0)+2*m_nPadMargin, img.Size(1)+2*m_nPadMargin};
@@ -297,6 +309,23 @@ void MorphSpotClean::setLimits(bool bClamp, float fMin, float fMax, int nMaxArea
         m_nMaxArea = nMaxArea;
 }
 
+std::vector<float> MorphSpotClean::clampLimits()
+{
+    std::vector<float> limits={m_fMinLevel,m_fMaxLevel};
+
+    return limits;
+}
+
+bool MorphSpotClean::clampActive()
+{
+    return m_bClampData;
+}
+
+int MorphSpotClean::maxArea()
+{
+    return m_nMaxArea;
+}
+
 void MorphSpotClean::cleanInfNan(bool activate)
 {
     m_bRemoveInfNan = activate;
@@ -305,8 +334,13 @@ void MorphSpotClean::cleanInfNan(bool activate)
 void MorphSpotClean::setEdgeConditioning(int nSmoothLenght)
 {
     if (1<nSmoothLenght)
-        m_nEdgeSmoothLength=nSmoothLenght;
+        m_nEdgeSmoothLength=static_cast<size_t>(nSmoothLenght);
 
+}
+
+int MorphSpotClean::edgeConditionLength()
+{
+    return static_cast<int>(m_nEdgeSmoothLength);
 }
 
 void MorphSpotClean::unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img)
@@ -690,6 +724,14 @@ void bindMorphSpotClean(py::module &m)
                  py::arg("detectionMethod"),
                  py::arg("cleanMethod"));
 
+    mscClass.def("cleanMethod",
+                 &ImagingAlgorithms::MorphSpotClean::cleanMethod,
+                 "Returns the current clean method.");
+
+    mscClass.def("detectionMethod",
+                 &ImagingAlgorithms::MorphSpotClean::detectionMethod,
+                 "Returns the current detection method.");
+
     mscClass.def("setLimits",
                  &ImagingAlgorithms::MorphSpotClean::setLimits,
                  "Set limit on the image values and sizes of blobs",
@@ -697,6 +739,17 @@ void bindMorphSpotClean(py::module &m)
                  py::arg("vmin"),
                  py::arg("vmax"),
                  py::arg("maxarea"));
+
+    mscClass.def("clampLimits",
+                 &ImagingAlgorithms::MorphSpotClean::clampLimits,
+                 "Returns a vector containing the data clamping lower and upper limits.");
+
+    mscClass.def("clampActive",
+                  &ImagingAlgorithms::MorphSpotClean::clampActive,
+                  "Returns true if data clamping is active.");
+    mscClass.def("maxArea",
+                 &ImagingAlgorithms::MorphSpotClean::maxArea,
+                 "Returns the max area of detected spots to be accepted for cleaning.");
 
     mscClass.def("cleanInfNan",
                  &ImagingAlgorithms::MorphSpotClean::cleanInfNan,
@@ -707,6 +760,10 @@ void bindMorphSpotClean(py::module &m)
                  &ImagingAlgorithms::MorphSpotClean::setEdgeConditioning,
                  "Sets the length of the median filter used to precondition the image boundaries.",
                  py::arg("length"));
+
+    mscClass.def("edgeConditionLength",
+                 &ImagingAlgorithms::MorphSpotClean::edgeConditionLength,
+                 "Returns the lenght of the edge conditioning filter.");
 
     // kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
     mscClass.def("detectionImage",
@@ -731,31 +788,98 @@ void bindMorphSpotClean(py::module &m)
     "Computes the detection image from the provided image.",
     py::arg("img"));
 
-//    mscClass.def("process",
-//                 [](ImagingAlgorithms::PolynomialCorrection &pc,
-//                 py::array_t<float> &x)
-//    {
-//        py::buffer_info buf1 = x.request();
+    mscClass.def("process",
+                 [](ImagingAlgorithms::MorphSpotClean &msc,
+                 py::array_t<float> &x,
+                 float th,
+                 float sigma)
+            {
+                py::buffer_info buf1 = x.request();
 
-//        float *data=static_cast<float*>(buf1.ptr);
+                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                               static_cast<size_t>(buf1.shape[0])};
+                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
-//        pc.processInplace(data,x.size());
-//    },
-//    "Applies the polynomial inplace in the array.",
-//    py::arg("data"));
+                msc.process(img,th,sigma);
+            },
 
-//    pcClass.def("process",
-//                 [](ImagingAlgorithms::PolynomialCorrection &pc,
-//                 py::array_t<double> &x)
-//    {
-//        py::buffer_info buf1 = x.request();
+            "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
+            py::arg("data"),
+            py::arg("th"),
+            py::arg("sigma"));
 
-//        double *data=static_cast<double*>(buf1.ptr);
+    mscClass.def("process",
+                         [](ImagingAlgorithms::MorphSpotClean &msc,
+                         py::array_t<float> &x,
+                         std::vector<float> &th,
+                         std::vector<float> &sigma)
+            {
+                py::buffer_info buf1 = x.request();
 
-//        pc.processInplace(data,x.size());
-//    },
-//    "Applies the polynomial inplace in the array.",
-//    py::arg("data"));
+                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                               static_cast<size_t>(buf1.shape[0])};
+                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+
+                msc.process(img,th,sigma);
+            },
+
+            "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
+            py::arg("data"),
+            py::arg("th"),
+            py::arg("sigma"));
+
+    mscClass.def("process",
+                 [](ImagingAlgorithms::MorphSpotClean &msc,
+                 py::array_t<double> &x,
+                 double th,
+                 double sigma)
+    {
+        py::buffer_info buf1 = x.request();
+
+        size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                       static_cast<size_t>(buf1.shape[0])};
+        double *data=static_cast<double*>(buf1.ptr);
+
+        kipl::base::TImage<float,2> img(dims);
+
+        std::copy_n(data,img.Size(),img.GetDataPtr());
+
+        msc.process(img,th,sigma);
+        std::copy_n(img.GetDataPtr(),img.Size(),data);
+    },
+
+                "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
+                py::arg("data"),
+                py::arg("th"),
+                py::arg("sigma"));
+
+
+    mscClass.def("process",
+                 [](ImagingAlgorithms::MorphSpotClean &msc,
+                 py::array_t<double> &x,
+                 std::vector<float> &th,
+                 std::vector<float> &sigma)
+    {
+        py::buffer_info buf1 = x.request();
+
+        size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                       static_cast<size_t>(buf1.shape[0])};
+        double *data=static_cast<double*>(buf1.ptr);
+
+        kipl::base::TImage<float,2> img(dims);
+
+        std::copy_n(data,img.Size(),img.GetDataPtr());
+
+        msc.process(img,th,sigma);
+        std::copy_n(img.GetDataPtr(),img.Size(),data);
+    },
+
+                "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
+                py::arg("data"),
+                py::arg("th"),
+                py::arg("sigma"));
+
+
 
     py::enum_<ImagingAlgorithms::eMorphCleanMethod>(m,"eMorphCleanMethod")
         .value("MorphCleanReplace", ImagingAlgorithms::MorphCleanReplace)

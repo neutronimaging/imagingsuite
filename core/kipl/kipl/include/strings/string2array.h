@@ -64,5 +64,17 @@ std::string Vector2String(const std::vector<T> &vec)
     }
     return s.str().substr(0,s.str().size()-1);
 }
+
+template <typename T>
+void string2vector(const std::string &text, std::vector<T> &vec)
+{
+    std::istringstream iss(text);
+    std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
+                                     std::istream_iterator<std::string>());
+
+    vec.clear();
+    for (auto s : results)
+        vec.push_back(static_cast<T>(std::stod(s)));
+}
 }}
 #endif /*STRING2ARRAY_H_*/
