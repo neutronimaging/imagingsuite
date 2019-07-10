@@ -60,7 +60,7 @@ private:
     float       m_fSigma;
     std::string m_sWaveletName;
     bool        m_bParallel;
-    ImagingAlgorithms::StripeFilterOperation op;
+    ImagingAlgorithms::eStripeFilterOperation op;
     kipl::base::eImagePlanes plane;
 };
 

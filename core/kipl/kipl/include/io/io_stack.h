@@ -6,6 +6,7 @@
 #include "../kipl_global.h"
 
 #include <sstream>
+#include <iostream>
 
 #include "../strings/filenames.h"
 #include "../base/timage.h"
@@ -25,6 +26,7 @@ enum eFileType {
 	TIFF8bits,
 	TIFF16bits,
 	TIFFfloat,
+    TIFF16bitsMultiFrame,
     NeXusfloat,
     NeXus16bits,
 	PNG8bits,
@@ -149,6 +151,24 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 //        WriteNeXus(img, filename.c_str());
 //        return 1;
 //    }
+
+    if ( filetype == TIFF16bitsMultiFrame )
+    {
+
+        auto pos=fname.find('#');
+        if (pos!=fname.npos)
+        {
+               filename=fname.substr(0,pos)+"vol"+fname.substr(fname.find_last_of('#')+1);
+
+        }
+        else
+        {
+            filename=fname;
+        }
+        std::cerr<<filename<<std::endl;
+        WriteTIFF(img,filename.c_str());
+        return 1;
+    }
 
 	kipl::base::TImage<float,2> ftmp;
 	for (size_t i=start; i<stop; i++) {

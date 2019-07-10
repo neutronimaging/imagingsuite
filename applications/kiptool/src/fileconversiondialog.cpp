@@ -271,7 +271,7 @@ int FileConversionDialog::ConvertImages()
                     std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),img3d.GetLinePtr(0,i));
                     ++it;
                 }
-                img=avgimg(img3d,static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboAverageMethod->currentIndex()),nullptr);
+                img=avgimg(img3d,static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboAverageMethod->currentIndex()));
             }
             else {
                 img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);

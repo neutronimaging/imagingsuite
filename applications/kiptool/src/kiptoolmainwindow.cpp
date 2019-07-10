@@ -184,9 +184,12 @@ void KipToolMainWindow::UpdateConfig()
     std::copy_n(readerInfo.m_ROI,4,m_config.mImageInformation.nROI);
 
     m_config.modules = ui->widget_moduleconfigurator->GetModules();
-    switch (ui->combo_FileType->currentIndex()) {
-        case 0: {
-            switch (m_OriginalImage.info.nBitsPerSample) {
+    switch (ui->combo_FileType->currentIndex())
+    {
+        case 0:
+        {
+            switch (m_OriginalImage.info.nBitsPerSample)
+            {
                 case 8  : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits;  break;
                 case 16 : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
                 case 32 : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat;  break;
@@ -197,6 +200,7 @@ void KipToolMainWindow::UpdateConfig()
         case 1: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits; break;
         case 2: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
         case 3: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat; break;
+        case 4: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bitsMultiFrame; break;
     }
 
     m_config.UserInformation.sComment       = ui->text_description->toPlainText().toStdString();
