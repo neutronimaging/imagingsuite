@@ -50,6 +50,7 @@ public:
     int decompositionLevels();
     float sigma();
     std::vector<float> filterWindow(int level);
+    
     void configure(const std::vector<int> &dims, const std::string &wname, int scale, float sigma);
 
 
