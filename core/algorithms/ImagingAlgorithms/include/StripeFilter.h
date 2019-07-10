@@ -24,6 +24,7 @@ enum eStripeFilterOperation {
 class IMAGINGALGORITHMSSHARED_EXPORT StripeFilter {
 private:
     kipl::logging::Logger logger; ///< Logger instance for message reporting
+    static const size_t NLevels = 16;
 public:
     /// \brief The constructor initializes the filter
     /// \note The filter is initialized for one image size only.
@@ -40,14 +41,17 @@ public:
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
     StripeFilter(const std::vector<int> &dims, const string &wname, int scale, float sigma);
+
+    virtual ~StripeFilter();
+
     std::vector<int> dims();
     bool checkDims(const size_t *dims);
     std::string waveletName();
     int decompositionLevels();
     float sigma();
-
+    std::vector<float> filterWindow(int level);
     void configure(const std::vector<int> &dims, const std::string &wname, int scale, float sigma);
-	virtual ~StripeFilter();
+
 
     /// \brief Applies the stripe filter to an image.
     /// \param img the image to process. The result will be stored into the same image
@@ -86,14 +90,14 @@ private:
     kipl::wavelets::WaveletTransform<float> m_wt; ///< Instance of the wavelete transform
     int m_nScale;                              ///< Number of decomposition levels
     float m_fSigma;                               ///< Width of the Gaussian used to implement the highpass filter
-    size_t m_nFFTlength[16];                      ///< Length of the fft transforms performed on the different decomposition levels
+    size_t m_nFFTlength[NLevels];                      ///< Length of the fft transforms performed on the different decomposition levels
 
-    float *m_pDamping[16];                        ///< Filter coefficients for the filter windows
+    float *m_pDamping[NLevels];                        ///< Filter coefficients for the filter windows
     float *m_pLine;                               ///< Pointer to the line buffer
     std::complex<float> *m_pCLine;                ///< Pointer to the Fourier transformed line
 
     std::vector<int> wdims;                              ///< Dimensions of the image for which the filter is configured
-    kipl::math::fft::FFTBaseFloat *fft[16];       ///< FFT instances for each decomposition level.
+    kipl::math::fft::FFTBaseFloat *fft[NLevels];       ///< FFT instances for each decomposition level.
 };
 }
 

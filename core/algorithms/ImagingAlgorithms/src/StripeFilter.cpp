@@ -3,11 +3,11 @@
 #include <sstream>
 #include <iostream>
 
-#include <io/io_tiff.h>
 #include <fft/zeropadding.h>
 #include <fft/fftbase.h>
 #include <base/trotate.h>
 #include <base/tpermuteimage.h>
+#include <io/io_tiff.h>
 
 #include "../include/StripeFilter.h"
 #include "../include/ImagingException.h"
@@ -23,6 +23,8 @@ StripeFilter::StripeFilter(size_t const * const dims, const string &wname, int s
     m_pCLine(nullptr)
 {
     std::copy_n(dims,2,wdims.begin());
+    std::fill_n(fft,NLevels,nullptr);
+    std::fill_n(m_pDamping,NLevels,nullptr);
     configure(wdims,wname,scale,sigma);
 }
 
@@ -38,10 +40,13 @@ StripeFilter::StripeFilter(const std::vector<int> &dims, const std::string &wnam
     m_pLine(nullptr),
     m_pCLine(nullptr)
 {
+    std::fill_n(fft,NLevels,nullptr);
+    std::fill_n(m_pDamping,NLevels,nullptr);
     configure(dims,wname,scale,sigma);
 }
 
-StripeFilter::~StripeFilter() {
+StripeFilter::~StripeFilter() 
+{
     if (m_pDamping[0]!=nullptr)
 		for (size_t i=0; i<m_nScale; i++)
 			delete [] m_pDamping[i];
@@ -52,9 +57,10 @@ StripeFilter::~StripeFilter() {
     if (m_pCLine!=nullptr)
 		delete [] m_pCLine;
 
-    if (fft[0]!=nullptr) {
+    if (fft[0]!=nullptr) 
+    {
 		for (size_t i=0; i<m_nScale; i++)
-		delete fft[i];
+		    delete fft[i];
 	}
 }
 
@@ -63,9 +69,11 @@ void StripeFilter::CreateFilterWindow()
 {
 	const float s=-1.0f/(2.0f*m_fSigma*m_fSigma);
 
-	for (size_t j=0; j<m_nScale; j++) {
+	for (size_t j=0; j<m_nScale; j++) 
+    {
 		const float scale=1.0f/(2.0f*m_nFFTlength[j]);
-		for (size_t i=0; i<2*m_nFFTlength[j]; i++) {
+		for (size_t i=0; i<2*m_nFFTlength[j]; i++) 
+        {
 			float w=static_cast<float>(i)*scale;
 			m_pDamping[j][i]=(1.0f-exp(w*w*s))*scale;
 		}
@@ -75,42 +83,49 @@ void StripeFilter::CreateFilterWindow()
 void StripeFilter::process(kipl::base::TImage<float,2> &img, eStripeFilterOperation op)
 {
 	std::ostringstream msg;
-
-	try {
-		m_wt.transform(img,m_nScale);
+   
+	try 
+    {
+ 		m_wt.transform(img,m_nScale);
+ 	}
+	catch (kipl::base::KiplException &e) 
+    {
+		logger(kipl::logging::Logger::LogError,e.what());
+        std::cerr<<"Error in the wavelet transform\n";
+		throw ImagingException(e.what(),__FILE__,__LINE__);
 	}
-	catch (kipl::base::KiplException &e) {
-		logger(kipl::logging::Logger::LogWarning,e.what());
-		return;
-		//throw ImagingException(e.what(),__FILE__,__LINE__);
-	}
 
-	list< kipl::wavelets::WaveletQuad<float> >::iterator it;
-	size_t level=0;
-	for (it=m_wt.data.begin(), level=0; it!=m_wt.data.end(); it++, level++) {
-		switch (op) {
-		case VerticalComponentZero : VerticalStripesZero(it->v); break;
-		case VerticalComponentFFT  : FilterVerticalStripes(it->v, level); break;
+    size_t level=0;
+
+	for (auto &q : m_wt.data) 
+    {
+		switch (op) 
+        {
+		case VerticalComponentZero : VerticalStripesZero(q.v); break;
+		case VerticalComponentFFT  : FilterVerticalStripes(q.v, level); break;
 		}
+
+        level++;
 	}
 
 	img=m_wt.synthesize();
-}
+ }
 
 void StripeFilter::FilterVerticalStripes(kipl::base::TImage<float,2> &img, size_t level)
 {
-
 	const size_t nLines=img.Size(0);
 
 	float *pData=img.GetDataPtr();
 
-	for (size_t line=0; line<nLines; line++) {
-		memset(m_pLine,0,sizeof(float)*2*m_nFFTlength[level]);
+	for (size_t line=0; line<nLines; line++) 
+    {
+        std::fill_n(m_pLine,2*m_nFFTlength[level],0.0f);
 		GetVerticalLine(pData,m_pLine,line,nLines,img.Size(1));
 
 		(*fft[level])(m_pLine,m_pCLine);
 
-		for (size_t i=0; i< 2*m_nFFTlength[level]; i++) {
+		for (size_t i=0; i< 2*m_nFFTlength[level]; i++) 
+        {
 			m_pCLine[i]*=m_pDamping[level][i];
 		}
 
@@ -128,7 +143,8 @@ void StripeFilter::GetVerticalLine(float *pSrc, float *pLine, size_t pos, size_t
 {
 	float *pData=pSrc+pos;
 
-	for (size_t i=0; i<len; i++, pData+=stride) {
+	for (size_t i=0; i<len; i++, pData+=stride) 
+    {
 		pLine[i]=*pData;
 	}
 }
@@ -137,7 +153,8 @@ void StripeFilter::SetVerticalLine(float *pLine, float *pDest, size_t pos, size_
 {
 	float *pData=pDest+pos;
 
-	for (size_t i=0; i<len; i++, pData+=stride) {
+	for (size_t i=0; i<len; i++, pData+=stride) 
+    {
 		*pData=pLine[i];
 	}
 }
@@ -157,7 +174,7 @@ bool StripeFilter::checkDims(const size_t *dims)
 
 std::string StripeFilter::waveletName()
 {
-    return "test"; //m_wt.Kernel.name();
+    return m_wt.Kernel().name();
 }
 
 int StripeFilter::decompositionLevels()
@@ -170,6 +187,14 @@ float StripeFilter::sigma()
     return m_fSigma;
 }
 
+std::vector<float> StripeFilter::filterWindow(int level)
+{
+    std::vector<float> vec(2*m_nFFTlength[level]);
+
+    std::copy_n(m_pDamping[level],vec.size(),vec.begin());
+
+    return vec;
+}
 void StripeFilter::configure(const std::vector<int> &dims, const string &wname, int scale, float sigma)
 {
     if (dims.size()<2)
@@ -178,18 +203,32 @@ void StripeFilter::configure(const std::vector<int> &dims, const string &wname, 
     m_wt=kipl::wavelets::WaveletTransform<float>(wname);
     m_fSigma = sigma;
     m_nScale = scale;
+    wdims=dims;
 
     std::ostringstream msg;
-    for (int i=0; i<m_nScale; i++) {
+    for (int i=0; i<m_nScale; i++) 
+    {
         m_nFFTlength[i]=kipl::math::fft::NextPower2(static_cast<size_t>(1.25*dims[1])>>i);
         size_t N=2*m_nFFTlength[i];
+        if ( fft[i] != nullptr ) 
+            delete fft[i];
+
         fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
+
+        if (m_pDamping[i]!= nullptr)
+            delete [] m_pDamping[i];
+
         m_pDamping[i] = new float[N];
     }
 
     size_t N=2*m_nFFTlength[0];
 
+    if (m_pLine != nullptr)
+        delete [] m_pLine;
     m_pLine    = new float[N];
+
+    if (m_pCLine != nullptr)
+        delete [] m_pCLine;
     m_pCLine   = new complex<float>[N];
 
     CreateFilterWindow();
@@ -237,7 +276,7 @@ std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::eStripeFilterOper
 
 namespace py = pybind11;
 
-void bindStripeFilterClean(py::module &m)
+void bindStripeFilter(py::module &m)
 {
     py::class_<ImagingAlgorithms::StripeFilter> sfClass(m, "StripeFilter");
 
@@ -263,38 +302,41 @@ void bindStripeFilterClean(py::module &m)
                 kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
                 sf.process(img,op);
+
+                std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
             },
 
             "Applies the stripe filter on the image as in-place operation.",
             py::arg("x"),
             py::arg("op"));
 
-    sfClass.def("process",
-                 [](ImagingAlgorithms::StripeFilter &sf,
-                 py::array_t<double> &x,
-                 ImagingAlgorithms::eStripeFilterOperation op)
-            {
-                py::buffer_info buf1 = x.request();
+    // sfClass.def("process",
+    //              [](ImagingAlgorithms::StripeFilter &sf,
+    //              py::array_t<double> &x,
+    //              ImagingAlgorithms::eStripeFilterOperation op)
+    //         {
+    //             py::buffer_info buf1 = x.request();
 
-                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                               static_cast<size_t>(buf1.shape[0])};
-                double *data=static_cast<double*>(buf1.ptr);
+    //             size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+    //                            static_cast<size_t>(buf1.shape[0])};
+    //             double *data=static_cast<double*>(buf1.ptr);
 
-                kipl::base::TImage<float,2> img(dims);
+    //             kipl::base::TImage<float,2> img(dims);
 
-                std::copy_n(data,img.Size(),img.GetDataPtr());
+    //             std::copy_n(data,img.Size(),img.GetDataPtr());
 
-                sf.process(img,op);
-                std::copy_n(img.GetDataPtr(),img.Size(),data);
-            },
-            "Applies the stripe filter on the image as in-place operation.",
-            py::arg("x"),
-            py::arg("op"));
+    //             sf.process(img,op);
+    //             std::copy_n(img.GetDataPtr(),img.Size(),data);
+    //         },
+    //         "Applies the stripe filter on the image as in-place operation.",
+    //         py::arg("x"),
+    //         py::arg("op"));
 
     sfClass.def("dims",                &ImagingAlgorithms::StripeFilter::dims);
     sfClass.def("waveletName",         &ImagingAlgorithms::StripeFilter::waveletName);
     sfClass.def("decompositionLevels", &ImagingAlgorithms::StripeFilter::decompositionLevels);
     sfClass.def("sigma",               &ImagingAlgorithms::StripeFilter::sigma);
+    sfClass.def("filterWindow",        &ImagingAlgorithms::StripeFilter::filterWindow);
 
     py::enum_<ImagingAlgorithms::eStripeFilterOperation>(m,"eStripeFilterOperation")
         .value("VerticalComponentZero", ImagingAlgorithms::VerticalComponentZero)

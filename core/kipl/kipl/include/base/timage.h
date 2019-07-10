@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef TIMAGE_H_
 #define TIMAGE_H_
