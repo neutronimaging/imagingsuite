@@ -163,7 +163,7 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 		kipl::io::WriteImageStack(m_ResultImage,
 				fname,
 				minval,maxval,
-				0,m_ResultImage.Size(2),m_Config.mImageInformation.nFirstFileIndex,
+                0,m_ResultImage.Size(2)-1,m_Config.mImageInformation.nFirstFileIndex,
 				config->eResultImageType,plane);
 
         std::string confname = config->sDestinationPath + "kiplscript.xml";
