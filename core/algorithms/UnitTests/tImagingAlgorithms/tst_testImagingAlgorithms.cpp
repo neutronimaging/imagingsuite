@@ -102,7 +102,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],100.0f);
@@ -117,7 +117,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks, ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],0.0f);
     QCOMPARE(img[pos2],1.8f);
@@ -132,7 +132,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],1.8f);
@@ -151,7 +151,7 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     kipl::io::WriteTIFF32(img,"spotcleaned.tif");
 
@@ -174,7 +174,7 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
     cleaner.setConnectivity(kipl::morphology::conn4);
 
-    cleaner.Process(res,0.04,0.01);
+    cleaner.process(res,0.04,0.01);
 
 
 }
@@ -257,7 +257,7 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
     kipl::base::TImage<float,3> stack(dims);
     kipl::base::TImage<float,2> res(dims);
-    float *w=new float[dims[2]];
+    std::vector<float> w(dims[2]);
     for (size_t i=0; i<dims[2]; i++) {
         float *pStack=stack.GetLinePtr(0,i);
         for (size_t j=0; j<res.Size(); j++)
@@ -290,8 +290,6 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax,w);
     r0=res[0];
     QCOMPARE(r0,25.0f);
-
-    delete [] w;
 }
 
 void TestImagingAlgorithms::PiercingPoint_Processing()
@@ -374,19 +372,19 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
     ImagingAlgorithms::PolynomialCorrection pc;
     const int N=5;
     float val[N]={0.0f,1.0f,2.0f,3.0f,4.0f};
-    float result[N];
-    float verification[N];
+    std::vector<float> result(N);
+
     for (int i=1; i<10; ++i)
     {
-        pc.Setup(c,i);
+        pc.setup(c,i);
         std::vector<float> vec=pc.coefficients();
 
         QCOMPARE(vec.size(),static_cast<size_t>(i+1));
         for (int j=0; j<(i+1); ++j)
             QCOMPARE(vec[j],c[j]);
 
-        std::copy_n(val,N,result);
-        pc.Process(result,N);
+        std::copy_n(val,N,result.begin());
+        pc.process(result);
 
         for (int k=0; k<N; ++k)
         {
