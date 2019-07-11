@@ -27,8 +27,8 @@ protected:
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
-    float m_fThreshold[2];
-    float m_fSigma[2];
+    std::vector<float> m_fThreshold;
+    std::vector<float> m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
     bool m_bRemoveInfNaN;
