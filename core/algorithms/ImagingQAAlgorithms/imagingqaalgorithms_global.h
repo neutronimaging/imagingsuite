@@ -1,12 +1,21 @@
 #ifndef IMAGINGQAALGORITHMS_GLOBAL_H
 #define IMAGINGQAALGORITHMS_GLOBAL_H
-
+#if !defined(NO_QT)
 #include <QtCore/qglobal.h>
 
 #if defined(IMAGINGQAALGORITHMS_LIBRARY)
 #  define IMAGINGQAALGORITHMSSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define IMAGINGQAALGORITHMSSHARED_EXPORT Q_DECL_IMPORT
+#endif
+#else
+#define IMAGINGQAALGORITHMSSHARED_EXPORT
+#endif
+
+#ifdef __GNUC__
+#define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#define UNUSED(x) UNUSED_ ## x
 #endif
 
 #endif // IMAGINGQAALGORITHMS_GLOBAL_H

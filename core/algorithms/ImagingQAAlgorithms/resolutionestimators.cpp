@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include <QDebug>
+//#include <QDebug>
 
 #include "resolutionestimators.h"
 
@@ -57,7 +57,6 @@ void ResolutionEstimator::setProfile(float *p, int N)
 
 void ResolutionEstimator::setProfile(double *p, int N)
 {
-//    qDebug() << __FUNCTION__ << " N =" <<N;
     createAllocation(N);
     std::copy_n(p,N,mProfile);
     analysis();
@@ -240,8 +239,6 @@ void ResolutionEstimator::analyzeLineSpread()
     mFitFunction[0]=maxval;
     mFitFunction[1]=dataX[maxpos];
     mFitFunction[2]=(dataX[HWHM]-dataX[maxpos])*2;
-
-//    qDebug() <<dataX[HWHM]<<dataX[maxpos] << mFitFunction[0] << mFitFunction[1] << mFitFunction[2];
 
     double d=dataX[1]-dataX[0];
     if (mFitFunction[2]<mPixelSize) {

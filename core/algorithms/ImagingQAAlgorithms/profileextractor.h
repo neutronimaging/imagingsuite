@@ -13,7 +13,7 @@ class IMAGINGQAALGORITHMSSHARED_EXPORT ProfileExtractor
 public:
     ProfileExtractor();
 
-    void setPrecision(float p);
+    void setPrecision(float prec);
     float precision();
     std::map<float,float> getProfile(kipl::base::TImage<float,2> &img, size_t *roi=nullptr);
 

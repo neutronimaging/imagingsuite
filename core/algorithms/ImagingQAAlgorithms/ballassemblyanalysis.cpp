@@ -34,7 +34,8 @@ void BallAssemblyAnalysis::analyzeImage(kipl::base::TImage<float,3> &img, std::l
 {
     assemblyStats.clear();
 
-    foreach (auto roi, roiList) {
+    for (auto &roi: roiList) 
+    {
         kipl::math::Statistics stats=kipl::math::imageStatistics(img,roi);
         assemblyStats.push_back(stats);
     }

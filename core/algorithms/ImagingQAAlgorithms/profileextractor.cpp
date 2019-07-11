@@ -1,10 +1,12 @@
 //<LICENSE>
 
+#include <iostream>
 #include "profileextractor.h"
 #include <filters/filter.h>
 #include <math/statistics.h>
 
-#include <QDebug>
+
+// #include <QDebug>
 #include <filters/filter.h>
 #include <io/io_tiff.h>
 #include <base/tprofile.h>
@@ -18,9 +20,9 @@ ProfileExtractor::ProfileExtractor() :
     std::fill_n(lineCoeffs,2,0.0f);
 }
 
-void ProfileExtractor::setPrecision(float p)
+void ProfileExtractor::setPrecision(float prec)
 {
-    mPrecision=fabs(p);
+    mPrecision=fabs(prec);
 }
 
 float ProfileExtractor::precision()
@@ -94,7 +96,7 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
     lineCoeffs[0]=(x*y2-y*xy)/(cnt*y2-y*y);
     lineCoeffs[1]=-(cnt*xy-x*y)/(cnt*y2-y*y);
 
-    qDebug() << "m="<<lineCoeffs[0]<<"; k="<<lineCoeffs[1]<<", atan(k)"<<atan(lineCoeffs[1])*180/fPi;
+    // qDebug() << "m="<<lineCoeffs[0]<<"; k="<<lineCoeffs[1]<<", atan(k)"<<atan(lineCoeffs[1])*180/fPi;
 
     delete [] rawProfile;
 }
@@ -142,3 +144,61 @@ float ProfileExtractor::distanceToLine(int x, int y)
 }
 
 }
+
+
+#ifdef HAVEPYBIND11
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+
+namespace py = pybind11;
+
+void bindProfileExtractor(py::module &m)
+{
+    py::class_<ImagingQAAlgorithms::ProfileExtractor> peClass(m, "ProfileExtractor");
+
+    
+    peClass.def(py::init());
+
+    peClass.def("setPrecision",
+                &ImagingQAAlgorithms::ProfileExtractor::setPrecision,
+                "Set sets the precision of dx of the profile",
+                py::arg("prec"));
+
+    peClass.def("precision",
+                &ImagingQAAlgorithms::ProfileExtractor::precision,
+                "Returns the current dx");
+
+    peClass.def("getProfile", 
+                 [](ImagingQAAlgorithms::ProfileExtractor &pe, py::array_t<float> &x, std::vector<int> roi = {})
+                {
+                    auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
+
+                    py::buffer_info buf1 = x.request();
+
+                    size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                                static_cast<size_t>(buf1.shape[0])};
+                    kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+
+                    std::map<float,float> profile;
+                    if (roi.empty() || roi.size()!=4)
+                        profile = pe.getProfile(img);
+                    else
+                    {
+                        size_t proi[4]={static_cast<size_t>(roi[1]),
+                                        static_cast<size_t>(roi[0]),
+                                        static_cast<size_t>(roi[3]),
+                                        static_cast<size_t>(roi[2])};
+
+                        profile = pe.getProfile(img,proi);
+                    }    
+
+                    return profile;
+                },
+                "Extracts an edge profile from a 2D image.",
+                py::arg("x"),
+                py::arg("roi"));
+    
+    
+}
+#endif
