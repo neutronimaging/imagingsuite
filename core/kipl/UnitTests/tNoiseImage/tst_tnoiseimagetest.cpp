@@ -1,7 +1,7 @@
 #include <QString>
 #include <QtTest>
 
-#include <base/TImage.h>
+#include <base/timage.h>
 #include <generators/NoiseImage.h>
 
 class TNoiseImageTest : public QObject

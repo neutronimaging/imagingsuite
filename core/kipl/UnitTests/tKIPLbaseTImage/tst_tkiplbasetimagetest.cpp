@@ -310,7 +310,7 @@ void TKIPLbaseTImageTest::testExternalBuffer()
         QCOMPARE(img4[i],buffer[i]);
     }
 
-    QCOMPARE(img3.Size(),6);
+    QCOMPARE(img3.Size(),6UL);
     QCOMPARE(img3.haveExternalBuffer(),false);
 
     kipl::base::TImage<float,3> img5=img4;

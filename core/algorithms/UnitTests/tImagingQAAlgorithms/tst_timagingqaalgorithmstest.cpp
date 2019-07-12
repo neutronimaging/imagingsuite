@@ -142,8 +142,6 @@ void TImagingQAAlgorithmsTest::testResEstAlg()
     double s=1.0;
     re.setPixelSize(s);
     // Test data Gaussian
-    double A=1;
-    double center=10;
     double sigma=2;
 
     const int N=21;
