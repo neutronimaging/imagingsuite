@@ -23,7 +23,7 @@ std::string enum2string(kipl::io::eFileType ft)
     case kipl::io::TIFF8bits    :           s="TIFF8bits";    break;
     case kipl::io::TIFF16bits   :           s="TIFF16bits";   break;
     case kipl::io::TIFFfloat    :           s="TIFFfloat";    break;
-    case kipl::io::TIFF16bitsMultiFrame   : s="TIFF16bitsMultiframe";   break;
+    case kipl::io::TIFF16bitsMultiFrame   : s="TIFF16bitsMultiFrame";   break;
     case kipl::io::NeXusfloat   :           s="NeXusfloat";   break;
     case kipl::io::NeXus16bits  :           s="NeXus16bits";  break;
     case kipl::io::PNG8bits     :           s="PNG8bits";     break;
