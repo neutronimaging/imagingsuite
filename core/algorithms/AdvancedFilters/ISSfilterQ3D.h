@@ -3,6 +3,7 @@
 #define ISSFILTERQ3D_H
 #include <iostream>
 #include <list>
+#include <array>
 #include <string>
 
 #include <base/timage.h>
@@ -19,7 +20,7 @@ class ISSfilterQ3D {
 public:
   ISSfilterQ3D(kipl::interactors::InteractionBase *interactor=nullptr);
   ~ISSfilterQ3D();
-  int Process(kipl::base::TImage<T,3> &img,
+  int process(kipl::base::TImage<T,3> &img,
 		  double dTau,
 		  double dLambda,
 		  double dAlpha,
@@ -27,18 +28,23 @@ public:
 		  bool saveiterations=false,
 		  std::string itpath="");
 
-   T const * const GetErrorArray() {return error;}
-   T const * const GetEntropyArray() { return entropy;}
+   std::vector<T> errors() {return m_error;}
+   std::vector<T> entropies() { return m_entropy;}
 
-   void SetNumThreads(int n) {m_nThreads=n;}
-   eInitialImageType eInitialImage;
-   eRegularizationType m_eRegularization;
+   void setNumThreads(int n) {m_nThreads=n;}
+
+   eInitialImageType initialImageType() const;
+   void setInitialImageType(const eInitialImageType &eInitialImage);
+
+   eRegularizationType regularizationType() const;
+   void setRegularizationType(const eRegularizationType &eRegularization);
+
 private:
    kipl::interactors::InteractionBase *m_Interactor;
-	enum Direction {
-		dirX=0,
-		dirY=1,
-		dirZ=2
+   enum Direction {
+       dirX=0,
+       dirY=1,
+       dirZ=2
 	};
 	
   kipl::base::TImage<T,3> m_f;
@@ -49,10 +55,11 @@ private:
   double m_dAlpha;
   double m_dEpsilon;
 
-
+  eInitialImageType   m_eInitialImage;
+  eRegularizationType m_eRegularization;
   int m_nThreads;
-  T *error;
-  T *entropy;
+  std::vector<T> m_error;
+  std::vector<T> m_entropy;
   size_t hist[512];
   size_t axis[512];
 
@@ -93,6 +100,8 @@ private:
   bool updateStatus(float val, std::string msg);
 
 };
+
+
 
 }
 

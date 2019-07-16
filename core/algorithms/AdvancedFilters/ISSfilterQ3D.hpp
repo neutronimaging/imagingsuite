@@ -38,33 +38,50 @@ template <typename T>
 ISSfilterQ3D<T>::ISSfilterQ3D(kipl::interactors::InteractionBase *interactor) :
 	logger("ISSfilterQ3D"),
     m_Interactor(interactor),
-	eInitialImage(InitialImageOriginal),
-    error(nullptr),
-    entropy(nullptr)
+    m_eInitialImage(InitialImageOriginal),
+    m_eRegularization(RegularizationTV2)
 {
 	m_dEpsilon=1e-7;
 }
 
 template <typename T>
 ISSfilterQ3D<T>::~ISSfilterQ3D() {
-    if (error!=nullptr) delete [] error;
-    if (entropy!=nullptr) delete [] entropy;
+
 }
 
 template <typename T>
-int ISSfilterQ3D<T>::Process(kipl::base::TImage<T,3> &img, double dTau, double dLambda, double dAlpha, int nN, bool saveiterations, std::string itpath)
+eInitialImageType ISSfilterQ3D<T>::initialImageType() const
 {
-    if (error!=nullptr)
-        delete [] error;
+    return m_eInitialImage;
+}
+template <typename T>
+void ISSfilterQ3D<T>::setInitialImageType(const eInitialImageType &eInitialImage)
+{
+    m_eInitialImage = eInitialImage;
+}
+
+template <typename T>
+eRegularizationType ISSfilterQ3D<T>::regularizationType() const
+{
+    return m_eRegularization;
+}
+
+template <typename T>
+void ISSfilterQ3D<T>::setRegularizationType(const eRegularizationType &eRegularization)
+{
+    m_eRegularization = eRegularization;
+}
+
+template <typename T>
+int ISSfilterQ3D<T>::process(kipl::base::TImage<T,3> &img, double dTau, double dLambda, double dAlpha, int nN, bool saveiterations, std::string itpath)
+{
+    if (m_error.size() != nN)
+        m_error.resize(nN);
     
-    error=new T[nN];
+    if (m_entropy.size() != nN)
+        m_entropy.resize(nN);
 
-    if (entropy!=nullptr)
-            delete [] entropy;
-
-    entropy=new T[nN];
-
-	switch (eInitialImage) {
+	switch (m_eInitialImage) {
 		case InitialImageOriginal: m_f=img; m_f.Clone();break;
 		case InitialImageZero: m_f.Resize(img.Dims()); m_f=static_cast<T>(0); break;
 	}
@@ -89,7 +106,7 @@ int ISSfilterQ3D<T>::Process(kipl::base::TImage<T,3> &img, double dTau, double d
 		msg.str("");
 		msg<<"Processing iteration "<<i+1;
 		logger(kipl::logging::Logger::LogMessage,msg.str());
-		error[i]=_SolveIterationSSE(img);
+		m_error[i]=_SolveIterationSSE(img);
 	//	entropy[i]=_ComputeEntropy(img);
 
 		if (saveiterations) {
