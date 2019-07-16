@@ -14,6 +14,7 @@ find_package(PythonInterp REQUIRED)
 
 add_subdirectory(ImagingAlgorithms)
 
+add_subdirectory(AdvancedFilters)
 # turn on testing
 enable_testing()
 
