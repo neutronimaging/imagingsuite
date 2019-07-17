@@ -7,12 +7,13 @@
 #include <ios>
 #include <string>
 
-#include "../base/timage.h"
+#include <base/timage.h>
 #include "diff_filterbase.h"
 #include "lambdaest.h"
+#include "advancedfilterexception.h"
 
 
-namespace akipl{ namespace scalespace {
+namespace advancedfilters {
 
 /// Implentation of non-linear diffusion filter using Weickert's AOS scheme
 template <typename T, size_t NDim>
@@ -269,7 +270,7 @@ int NonLinDiffusionFilter<T,NDim>::operator()(kipl::base::TImage<float,NDim> &im
         AllocateKernel(max(max(img.Size(0),img.Size(1)),img.Size(2)));
         break;
     default:
-        kipl::base::KiplException("Chosen dimension is not supported by non-linear diffusion filter",__FILE__,__LINE__);
+        AdvancedFiltersException("Chosen dimension is not supported by non-linear diffusion filter",__FILE__,__LINE__);
         return 0;
     }
     this->u.Clone(img);
@@ -564,5 +565,5 @@ template <typename T, size_t NDim>
 		return 1;
 	}
 }
-}
+
 #endif

@@ -123,6 +123,14 @@ void bindFilterEnums(py::module &m)
             .value("FilterIteratedMedian",    advancedfilters::FilterIteratedMedian)
             .value("FilterGauss",             advancedfilters::FilterGauss)
             .export_values();
+
+    py::enum_<advancedfilters::eGradientType>(m,"eGradientType")
+            .value("Simple_Grad_Centered",  advancedfilters::Simple_Grad_Centered)
+            .value("Jahne_Grad",            advancedfilters::Jahne_Grad)
+            .value("Simple_Grad_Minus",     advancedfilters::Simple_Grad_Minus)
+            .value("Diff_Grad_Minus",       advancedfilters::Diff_Grad_Minus)
+            .value("BinDiff_Grad",          advancedfilters::BinDiff_Grad)
+            .export_values();
 }
 
 #endif

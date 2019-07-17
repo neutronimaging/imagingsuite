@@ -1,24 +1,24 @@
-//<LICENCE>
+//<LICENSE>
 
-#ifndef __LAMBDAEST_H
-#define __LAMBDAEST_H
+#ifndef LAMBDAEST_H
+#define LAMBDAEST_H
 
 #include <vector>
 
-#include "../base/timage.h"
 //#include "imagestats.h"
 //#include "../misc/stlvecio.h"
 //#include "../misc/sortalg.h"
 //#include "../math/statistics.h"
 //#include <image/drawable.h>
-#include "../base/thistogram.h"
-#include "../base/textractor.h"
-#include "../math/median.h"
+#include <base/timage.h>
+#include <base/thistogram.h>
+#include <base/textractor.h>
+#include <math/median.h>
 
 using namespace std;
 
 /// Namespace for scale space operations and filters
-namespace akipl { namespace scalespace {
+namespace advancedfilters {
     /// Base class for contrast parameter estimators, provides a constant value of lambda
 	template<class ImgType,int NDim>
 	class LambdaEstBase {
@@ -209,6 +209,6 @@ namespace akipl { namespace scalespace {
 		this->lambda=*(--intIt);
 		return this->lambda;
 	}
-}}
+}
 
 #endif

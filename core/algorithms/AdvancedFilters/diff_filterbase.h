@@ -1,7 +1,7 @@
 //<LICENSE>
 #ifndef ADIFF_FILTERBASE_H
 #define ADIFF_FILTERBASE_H
-#include <iostream>
+#include <sstream>
 #include <ios>
 #include <string>
 #include <limits>
@@ -9,27 +9,17 @@
 #include <vector>
 
 #include <cmath>
-#include "../base/timage.h"
-#include "../profile/Timer.h"
-#include "../logging/logger.h"
-#include "../interactors/interactionbase.h"
+#include <base/timage.h>
+#include <profile/Timer.h>
+#include <logging/logger.h>
+#include <interactors/interactionbase.h>
 //#include "lambdaest.h"
 //#include "../math/mathmisc.h"
 
-namespace akipl { namespace scalespace {
-	const float NumLimitDiffusivity=numeric_limits<float>::min();
+namespace advancedfilters {
+    const float NumLimitDiffusivity=std::numeric_limits<float>::min();
 	
-	typedef enum {
-		Simple_Grad_Centered=0, /// 1 0 -1 gradient
-		Jahne_Grad=1,  /// Gradient according to Jahne
-		Simple_Grad_Minus=2, /// Gradient -1 1
-		Diff_Grad_Minus=3,  /// Gradient -0.5 0.5
-		BinDiff_Grad=4		/// Gradient Bz By Dx etc. 
-	} GradientType;
-
-//const GradientType DefaultGrad=Simple_Grad_Centered;
-const GradientType DefaultGrad=Jahne_Grad;
-//const GradientType DefaultGrad=BinDiff_Grad;
+const eGradientType DefaultGrad=Jahne_Grad;
 
 	/// An abstract base class for the family of diffusion related filters
     template <typename T, size_t NDim>
@@ -67,7 +57,7 @@ const GradientType DefaultGrad=Jahne_Grad;
 		/// Resets all temporary images to a minimum
 		int FreeMem();
 		/// Selector to select type of gradient 
-		GradientType GradType;
+        eGradientType GradType;
 	protected:
 	
 		/// Interface function to compute the gradient information
@@ -268,8 +258,8 @@ const GradientType DefaultGrad=Jahne_Grad;
 		std::ostringstream msg;
 		for (int i=0; i<Nit; i++) {			
 			msg.str("");
-			msg<<"["<<i<<"]";
-			cout<<setw(8)<<msg.str()<<flush;
+            msg<<"iteration "<<i;
+            logger.message(msg.str());
 			
 			if (sigma.front()>0) 
 				UpdateGaussianFilter(dims[0], dims[0]*dims[1],i);
@@ -517,7 +507,6 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 					t=indFilt[k]%sxy;
 					t=indFilt[k]>0 ? t-sxy : t;
 					if (abs(t+sx)<=1) {
-						//cout<<"."<<flush;
 						pos=j+indFilt[k]+sx;
 					}
 					else
@@ -761,13 +750,15 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
         int DiffusionBaseFilter<T,NDim>::UpdateGaussianFilter(unsigned int sx,unsigned int sxy,int cnt)
 	{
 		float s;
+        std::ostringstream msg;
 		if (cnt<sigma.size()) {
 			s=sigma[cnt];
 				
 			//NGauss=int(ceil(s*1.96))*2+1;	// This must be made flexible depending on the value of sigma.
 			NGauss=int(ceil(s*2))*2+1;
-            std::cout<<"Gaussian kernel sigma:"<<s<<" size: "<<NGauss<<std::endl;
-	
+            msg.str(""); msg<<"Gaussian kernel sigma:"<<s<<" size: "<<NGauss;
+            logger.message(msg.str());
+
             if (GaussKernel)
                 delete [] GaussKernel;
 
@@ -805,26 +796,27 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
     template <typename T, size_t NDim>
         int DiffusionBaseFilter<T,NDim>::InitFilters(size_t sx,size_t sxy)
 	{
+        std::ostringstream msg;
 		switch (GradType) {
 			case Jahne_Grad:
-                std::cout<<"Using Jahne gradient"<<std::endl;
+                msg<<"Using Jahne gradient"; logger.message(msg.str());
 				initJahne(sx,sxy);
 				break;
 			case Simple_Grad_Minus:
-                std::cout<<"Using simple gradient minus (x[i]-x[i-1])/2"<<std::endl;
+                msg<<"Using simple gradient minus (x[i]-x[i-1])/2"; logger.message(msg.str());
 				initDiff2(sx,sxy);
 				break;
 			case Diff_Grad_Minus:
-                std::cout<<"Using simple gradient minus (x[i]-x[i-1])"<<std::endl;
+                msg<<"Using simple gradient minus (x[i]-x[i-1])"; logger.message(msg.str());
 				initDiff(sx,sxy);
 				break;
 			case BinDiff_Grad:
-                std::cout<<"Using binomial filtered gradient Bz*By*Dx"<<std::endl;
+                msg<<"Using binomial filtered gradient Bz*By*Dx"; logger.message(msg.str());
 				initBinDiff(sx,sxy);
 				break;
 			default:
 			case Simple_Grad_Centered:
-                std::cout<<"Using simple centered gradient (x[i+1]-x[i-1])/2"<<std::endl;
+                msg<<"Using simple centered gradient (x[i+1]-x[i-1])/2"; logger.message(msg.str());
 				initDiffCentered(sx,sxy);
 				break;
 				
@@ -997,15 +989,6 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 		return 0;
 	}
 	
-//	template <typename T, size_t NDim>
-//	int DiffusionBaseFilter<T,NDim>::splitKernelIndex(int ind, int sx,int sxy, int &d, int &dx, int &dxy)
-//	{
-//		int tmp;
-		
-		
-//		return 0;
-//	}
-
 	
     template <typename T, size_t NDim>
     int DiffusionBaseFilter<T,NDim>::SaveSlice(kipl::base::TImage<T,NDim> & img, int i, const string suffix)
@@ -1034,5 +1017,5 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
         return false;
     }
 }
-}
+
 #endif

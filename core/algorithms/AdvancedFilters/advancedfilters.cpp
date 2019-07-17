@@ -13,14 +13,6 @@ void bindISSfilter(py::module &m)
 
     issClass.def(py::init());
 
-//    int process(kipl::base::TImage<T,3> &img,
-//            double dTau,
-//            double dLambda,
-//            double dAlpha,
-//            int nN,
-//            bool saveiterations=false,
-//            std::string itpath="");
-
     issClass.def("process",
                  [](advancedfilters::ISSfilterQ3Df &iss,
                  py::array_t<float> &x,
@@ -46,12 +38,12 @@ void bindISSfilter(py::module &m)
     },
     "Computes a combined image using the selected method",
     py::arg("img"),
-    py::arg("tau")=0.125,
-    py::arg("plambda")=1.0,
-    py::arg("palpha")=0.25,
-    py::arg("N")=10,
-    py::arg("saveIterations")=false,
-    py::arg("itPath")="iteration_####.tif");
+    py::arg("tau")     = 0.125,
+    py::arg("plambda") = 1.0,
+    py::arg("palpha")  = 0.25,
+    py::arg("N")       = 10,
+    py::arg("saveIterations") = false,
+    py::arg("itPath")         = "iteration_####.tif");
 
     issClass.def("errors",
                  &advancedfilters::ISSfilterQ3Df::errors,
@@ -82,4 +74,18 @@ void bindISSfilter(py::module &m)
 
 }
 
+void bindDiffusionFilters(py::module &m)
+{
+    // 2D filter
+    py::class_<advancedfilters::NonLinDiffusionFilter2Df> nld2Class(m, "NonLinDiffusionFilter2D");
+
+    nld2Class.def(py::init());
+
+
+
+    // 3D filter
+    py::class_<advancedfilters::NonLinDiffusionFilter3Df> nld3Class(m, "NonLinDiffusionFilter3D");
+
+    nld3Class.def(py::init());
+}
 #endif
