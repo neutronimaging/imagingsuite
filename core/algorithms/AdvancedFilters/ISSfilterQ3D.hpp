@@ -106,7 +106,7 @@ int ISSfilterQ3D<T>::process(kipl::base::TImage<T,3> &img, double dTau, double d
 		msg.str("");
 		msg<<"Processing iteration "<<i+1;
 		logger(kipl::logging::Logger::LogMessage,msg.str());
-		m_error[i]=_SolveIterationSSE(img);
+        m_error[i]=_SolveIterationSSE(img)/img.Size();
 	//	entropy[i]=_ComputeEntropy(img);
 
 		if (saveiterations) {

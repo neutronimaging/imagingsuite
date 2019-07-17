@@ -42,13 +42,13 @@ void bindISSfilter(py::module &m)
 
         iss.process(img,dTau,dLambda,dAlpha,nN,saveiterations,itpath);
 
-      //  std::copy_n(res.GetDataPtr(),res.Size(),avgimg.GetDataPtr());
+        std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
     },
     "Computes a combined image using the selected method",
     py::arg("img"),
     py::arg("tau")=0.125,
-    py::arg("lambda")=1.0,
-    py::arg("alpha")=0.25,
+    py::arg("plambda")=1.0,
+    py::arg("palpha")=0.25,
     py::arg("N")=10,
     py::arg("saveIterations")=false,
     py::arg("itPath")="iteration_####.tif");
