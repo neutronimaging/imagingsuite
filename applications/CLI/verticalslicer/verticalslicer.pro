@@ -16,6 +16,9 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
+LIBS += -L$$PWD/../../../../lib/
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -57,7 +60,7 @@ win32 {
 
 SOURCES += main.cpp
 
-LIBS += -L$$PWD/../../../../lib/ -lkipl -lReaderConfig -lImagingAlgorithms
+LIBS += -lkipl -lReaderConfig -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include $$PWD/../../../core/modules/ReaderConfig
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/src
