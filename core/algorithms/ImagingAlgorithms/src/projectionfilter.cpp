@@ -36,7 +36,9 @@ void string2enum(const std::string str, ImagingAlgorithms::ProjectionFilterType 
 {
     std::string s=kipl::strings::toLower(str);
 
-    if (s=="ram-lak")
+    if (s=="none")
+        ft=ImagingAlgorithms::ProjectionFilterType::ProjectionFilterNone;
+    else if (s=="ram-lak")
         ft=ImagingAlgorithms::ProjectionFilterType::ProjectionFilterRamLak;
     else if (s=="shepp-logan")
         ft=ImagingAlgorithms::ProjectionFilterType::ProjectionFilterSheppLogan;
@@ -56,13 +58,14 @@ std::string enum2string(const ImagingAlgorithms::ProjectionFilterType &ft)
 {
     switch (ft)
     {
-        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterRamLak			: return "Ram-Lak";     break;
-        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterSheppLogan		: return "Shepp-Logan"; break;
-        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHanning		    : return "Hanning";     break;
-        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHamming		    : return "Hamming";     break;
-        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterButterworth       : return "Butterworth"; break;
-        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterParzen            : return "Parzen";      break;
-        default                                     	                                : return "Undefined filter type"; break;
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterNone              : return "None";
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterRamLak			: return "Ram-Lak";
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterSheppLogan		: return "Shepp-Logan";
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHanning		    : return "Hanning";
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHamming		    : return "Hamming";
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterButterworth       : return "Butterworth";
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterParzen            : return "Parzen";
+        default                                     	                                : return "Undefined filter type";
     };
 
     return "Undefined filter type";
@@ -151,33 +154,39 @@ size_t ProjectionFilterBase::currentImageSize()
 
 int ProjectionFilterBase::process(kipl::base::TImage<float,2> & img)
 {
-    if (img.Size()==0)
-        throw ImagingException("Empty projection image",__FILE__,__LINE__);
+    if (m_FilterType != ProjectionFilterNone)
+    {
+        if (img.Size()==0)
+            throw ImagingException("Empty projection image",__FILE__,__LINE__);
 
-    if ((img.Size(0) != nImageSize) || bParametersChanged)
-        buildFilter(img.Size(0));
+        if ((img.Size(0) != nImageSize) || bParametersChanged)
+            buildFilter(img.Size(0));
 
-    filterProjection(img);
+        filterProjection(img);
+    }
+
     return 0;
 }
 
 int ProjectionFilterBase::process(kipl::base::TImage<float,3> & img)
 {
-    if (img.Size()==0)
-        throw ImagingException("Empty projection image",__FILE__,__LINE__);
-
-    if ((img.Size(0) != nImageSize) || bParametersChanged)
-        buildFilter(img.Size(0));
-
-    kipl::base::TImage<float,2> proj(img.Dims());
-
-    for (size_t i=0; (i<img.Size(2)) && (updateStatus(float(i)/img.Size(2),"ProjectionFilter")==false); ++i)
+    if (m_FilterType != ProjectionFilterNone)
     {
-        std::copy_n(img.GetLinePtr(0,i),proj.Size(),proj.GetDataPtr());
-        filterProjection(proj);
-        std::copy_n(proj.GetDataPtr(),proj.Size(),img.GetLinePtr(0,i));
-    }
+        if (img.Size()==0)
+            throw ImagingException("Empty projection image",__FILE__,__LINE__);
 
+        if ((img.Size(0) != nImageSize) || bParametersChanged)
+            buildFilter(img.Size(0));
+
+        kipl::base::TImage<float,2> proj(img.Dims());
+
+        for (size_t i=0; (i<img.Size(2)) && (updateStatus(float(i)/img.Size(2),"ProjectionFilter")==false); ++i)
+        {
+            std::copy_n(img.GetLinePtr(0,i),proj.Size(),proj.GetDataPtr());
+            filterProjection(proj);
+            std::copy_n(proj.GetDataPtr(),proj.Size(),img.GetLinePtr(0,i));
+        }
+    }
     return 0;
 }
 
@@ -255,6 +264,9 @@ ProjectionFilter::~ProjectionFilter(void)
 
 void ProjectionFilter::buildFilter(const size_t N)
 {
+    if (m_FilterType == ProjectionFilterNone)
+        return ;
+
     nImageSize = N;
     nFFTsize=ComputeFilterSize(N);
     const size_t N2=nFFTsize/2;

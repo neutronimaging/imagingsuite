@@ -15,7 +15,8 @@
 
 namespace ImagingAlgorithms {
 enum ProjectionFilterType {
-    ProjectionFilterRamLak=0,
+    ProjectionFilterNone,
+    ProjectionFilterRamLak,
     ProjectionFilterSheppLogan,
     ProjectionFilterHanning,
     ProjectionFilterHamming,
