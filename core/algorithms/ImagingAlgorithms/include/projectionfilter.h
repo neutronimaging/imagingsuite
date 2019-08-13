@@ -19,7 +19,8 @@ enum ProjectionFilterType {
     ProjectionFilterSheppLogan,
     ProjectionFilterHanning,
     ProjectionFilterHamming,
-    ProjectionFilterButterworth
+    ProjectionFilterButterworth,
+    ProjectionFilterParzen
 };
 
 class IMAGINGALGORITHMSSHARED_EXPORT ProjectionFilterBase
@@ -32,6 +33,7 @@ public:
     virtual ~ProjectionFilterBase(void) {}
 
     virtual std::map<std::string, std::string> parameters();
+    void setParameters(const std::map<std::string, std::string> &params);
     void  setFilter(ImagingAlgorithms::ProjectionFilterType ft, float cutOff, float _order=0.0f);
     ImagingAlgorithms::ProjectionFilterType filterType();
     float cutOff();

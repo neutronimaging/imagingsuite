@@ -46,6 +46,8 @@ void string2enum(const std::string str, ImagingAlgorithms::ProjectionFilterType 
         ft=ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHamming;
     else if (s=="butterworth")
         ft=ImagingAlgorithms::ProjectionFilterType::ProjectionFilterButterworth;
+    else if (s=="parzen")
+        ft=ImagingAlgorithms::ProjectionFilterType::ProjectionFilterParzen;
     else
         throw ImagingException("Could not convert filter string to enum.",__FILE__, __LINE__);
 }
@@ -59,6 +61,7 @@ std::string enum2string(const ImagingAlgorithms::ProjectionFilterType &ft)
         case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHanning		    : return "Hanning";     break;
         case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterHamming		    : return "Hamming";     break;
         case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterButterworth       : return "Butterworth"; break;
+        case ImagingAlgorithms::ProjectionFilterType::ProjectionFilterParzen            : return "Parzen";      break;
         default                                     	                                : return "Undefined filter type"; break;
     };
 
@@ -167,12 +170,12 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,3> & img)
 
     for (size_t i=0; (i<img.Size(2)) && (updateStatus(float(i)/img.Size(2),"ProjectionFilter")==false); ++i)
     {
-        memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),sizeof(float)*proj.Size());
+        std::copy_n(img.GetLinePtr(0,i),proj.Size(),proj.GetDataPtr());
         filterProjection(proj);
-        memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),sizeof(float)*proj.Size());
+        std::copy_n(proj.GetDataPtr(),proj.Size(),img.GetLinePtr(0,i));
     }
-    return 0;
 
+    return 0;
 }
 
 size_t ProjectionFilterBase::ComputeFilterSize(size_t len)
@@ -195,6 +198,31 @@ std::map<std::string, std::string> ProjectionFilterBase::parameters()
     parameters["paddingdoubler"] = kipl::strings::value2string(m_nPaddingDoubler);
 
     return parameters;
+
+}
+
+void ProjectionFilterBase::setParameters(const std::map<std::string, std::string> &params)
+{
+    if (params.count("filtertype"))
+        string2enum(params.at("filtertype"),m_FilterType);
+
+    if (params.count("cutoff"))
+        m_fCutOff = std::stof(params.at("cutoff"));
+
+    if (0.5f<m_fCutOff)
+        throw ImagingException("The cut-off frequency must be in the interval [0,0.5]",__FILE__,__LINE__);
+
+    if (params.count("order"))
+        m_fOrder = std::stof(params.at("order"));
+
+    if (params.count("usebias"))
+        m_bUseBias = kipl::strings::string2bool(params.at("usebias"));
+
+    if (params.count("biasweight"))
+        m_fBiasWeight = std::stof(params.at("biasweight"));
+
+    if (params.count("paddingdoubler"))
+        m_nPaddingDoubler = std::stoul(params.at("paddingdoubler"));
 
 }
 

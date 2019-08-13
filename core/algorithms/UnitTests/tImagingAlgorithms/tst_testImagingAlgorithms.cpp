@@ -425,6 +425,22 @@ void TestImagingAlgorithms::ProjectionFilterParameters()
     QCOMPARE(params["biasweight"],     std::string("0.1"));
     QCOMPARE(params["paddingdoubler"], std::string("2"));
 
+    params["filtertype"]     = "Parzen";
+    params["order"]          = "2";
+    params["cutoff"]         = "0.4";
+    params["usebias"]        = "false";
+    params["biasweight"]     = "0.3";
+    params["paddingdoubler"] = "1";
+
+    pf.setParameters(params);
+
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterParzen);
+    QCOMPARE(pf.order(),            2.0f);
+    QCOMPARE(pf.cutOff(),           0.4f);
+    QCOMPARE(pf.useBias(),          false);
+    QCOMPARE(pf.biasWeight(),       0.3f);
+    QCOMPARE(pf.paddingDoubler(),   1UL);
+
     pf.setFilter(ImagingAlgorithms::ProjectionFilterSheppLogan,0.4f);
     QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterSheppLogan);
     QCOMPARE(pf.order(),            0.0f);
@@ -444,7 +460,16 @@ void TestImagingAlgorithms::ProjectionFilterParameters()
 
 void TestImagingAlgorithms::ProjectionFilterProcessing()
 {
+    kipl::base::TImage<float,2> sino;
+    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
 
+    ImagingAlgorithms::ProjectionFilter pf(nullptr);
+
+    pf.process(sino);
+
+    kipl::io::WriteTIFF32(sino,"projfilt_result.tif");
+    QCOMPARE(pf.currentFFTSize(),2048);
+    QCOMPARE(pf.currentImageSize(),sino.Size(0));
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
