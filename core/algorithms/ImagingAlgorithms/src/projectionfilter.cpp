@@ -264,11 +264,11 @@ void ProjectionFilter::buildFilter(const size_t N)
     if (fft==nullptr)
         fft=new kipl::math::fft::FFTBaseFloat(&nFFTsize,1);
 
-    mFilter.Resize(&N2);
-    mFilter=0.0f;
+    mFilter.resize(N2);
+    std::fill_n(mFilter.begin(),N2,0.0f);
 
     std::stringstream msg;
-    msg<<"Filter :"<<m_FilterType<<" filter size="<<mFilter.Size();
+    msg<<"Filter :"<<m_FilterType<<" filter size="<<mFilter.size();
     logger(kipl::logging::Logger::LogVerbose, msg.str());
 
     if (!((0<m_fCutOff) && (m_fCutOff<=0.5f)))
@@ -278,7 +278,7 @@ void ProjectionFilter::buildFilter(const size_t N)
     if (m_FilterType==ProjectionFilterType::ProjectionFilterButterworth)
         FilterOrder=m_fOrder;
 
-    const size_t cN2cutoff=static_cast<size_t>(2*m_fCutOff*N2);
+    size_t cN2cutoff=static_cast<size_t>(2*m_fCutOff*N2);
 
     float rampstep=1.0f/((N2-1.0f)); // The extra N2 is for scaling the FFT
 
@@ -301,7 +301,7 @@ void ProjectionFilter::buildFilter(const size_t N)
     }
 
     //memset(mFilter.GetDataPtr()+cN2cutoff,0, sizeof(float)*(N2-cN2cutoff));
-    std::fill_n(mFilter.GetDataPtr()+cN2cutoff,N2-cN2cutoff,0.0f);
+    std::fill_n(mFilter.begin()+cN2cutoff,N2-cN2cutoff,0.0f);
 
     if (m_bUseBias==true)
         mFilter[0]=m_fBiasWeight*mFilter[1];
@@ -314,11 +314,11 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 {
     const size_t nLines=img.Size(1);
 
-    const size_t cnFilterLength=mFilter.Size(0);
+    const size_t cnFilterLength=mFilter.size();
     const size_t cnLoopCnt=nFFTsize/2;
     kipl::base::TImage<complex<float>,1> ft1Dimg(&nFFTsize);
 
-    float *pFilter=mFilter.GetDataPtr();
+  //  float *pFilter=mFilter.GetDataPtr();
     complex<float> *pFTLine=ft1Dimg.GetDataPtr();
     const size_t nLenPad=nFFTsize+16;
     float *pLine=new float[nLenPad];
@@ -334,7 +334,7 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 
         for (size_t i=0; i< cnFilterLength; i++)
         {
-            pFTLine[i]*=pFilter[i];
+            pFTLine[i]*=mFilter[i];
         }
 
         fft->operator ()(pFTLine, pLine);

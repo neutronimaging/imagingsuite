@@ -350,7 +350,7 @@ void TestImagingAlgorithms::piercingPointExperiment()
     QVERIFY(fabs(pos0.second-pos1.second)<3.0f);
 
     // Gain correction
-    pair<float,float> pos2=pe(ob,dc,true);
+    //pair<float,float> pos2=pe(ob,dc,true);
 
 }
 
@@ -461,7 +461,11 @@ void TestImagingAlgorithms::ProjectionFilterParameters()
 void TestImagingAlgorithms::ProjectionFilterProcessing()
 {
     kipl::base::TImage<float,2> sino;
+#ifdef DEBUG
+    kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#else
     kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#endif
 
     ImagingAlgorithms::ProjectionFilter pf(nullptr);
 

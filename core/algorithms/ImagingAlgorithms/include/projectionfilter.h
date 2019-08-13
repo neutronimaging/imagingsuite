@@ -78,14 +78,14 @@ public:
     ProjectionFilter(kipl::interactors::InteractionBase *interactor);
     virtual ~ProjectionFilter(void);
 
-    const kipl::base::TImage<float,1> GetFilterArray() {return mFilter;}
+    const std::vector<float> & filterWeights() { return mFilter; }
 private:
     virtual void buildFilter(const size_t N);
     virtual void PreparePadding(const size_t nImage, const size_t nFilter);
     virtual void filterProjection(kipl::base::TImage<float,2> & img);
     size_t Pad(float const * const pSrc, const size_t nSrcLen, float *pDest, const size_t nDestLen);
 
-    kipl::base::TImage<float,1> mFilter;
+    std::vector<float> mFilter;
     kipl::base::TImage<float,1> mPadData;
 
     kipl::math::fft::FFTBaseFloat *fft;
@@ -95,7 +95,7 @@ private:
 }
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream & s, ImagingAlgorithms::ProjectionFilterType ft);
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string str, ImagingAlgorithms::ProjectionFilterType &ft);
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ProjectionFilterType &ft);
+void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(const std::string str, ImagingAlgorithms::ProjectionFilterType &ft);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ProjectionFilterType &ft);
 
 #endif // PROJECTIONFILTER_H
