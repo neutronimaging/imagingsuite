@@ -10,6 +10,7 @@
 #include <fftw3.h>
 
 #include "../../include/fft/fftbase.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl { namespace math { namespace fft {
 using namespace std;
@@ -247,7 +248,15 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata, float *outRdata)
 
 	memcpy(outRdata,rBuffer,sizeof(float)*Ndata);
 
-	return static_cast<int>(Ndata);
+    return static_cast<int>(Ndata);
+}
+
+int FFTBaseFloat::size(int idx)
+{
+    if (ndim<=idx)
+        throw kipl::base::KiplException("Attempt to access axis beyond the transform dimensions",__FILE__,__LINE__);
+
+    return dims[idx];
 }
 }}}
 

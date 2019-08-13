@@ -84,6 +84,9 @@ ProjectionFilterBase::ProjectionFilterBase(std::string name,kipl::interactors::I
 
 void ProjectionFilterBase::setFilter(ImagingAlgorithms::ProjectionFilterType ft, float cutOff, float _order)
 {
+    if ((cutOff<0.0f) || (0.5f<cutOff))
+        throw ImagingException("The cut-off frequency must be in the interval [0,0.5]",__FILE__,__LINE__);
+
     m_FilterType = ft;
     m_fCutOff    = cutOff;
     m_fOrder     = _order;
@@ -145,6 +148,9 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,2> & img)
     if (img.Size()==0)
         throw ImagingException("Empty projection image",__FILE__,__LINE__);
 
+    if (img.Size(0) != nImageSize)
+        buildFilter(img.Size(0));
+
     filterProjection(img);
     return 0;
 }
@@ -153,6 +159,9 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,3> & img)
 {
     if (img.Size()==0)
         throw ImagingException("Empty projection image",__FILE__,__LINE__);
+
+    if (img.Size(0) != nImageSize)
+        buildFilter(img.Size(0));
 
     kipl::base::TImage<float,2> proj(img.Dims());
 
@@ -215,8 +224,18 @@ ProjectionFilter::~ProjectionFilter(void)
 
 void ProjectionFilter::buildFilter(const size_t N)
 {
+    nImageSize = N;
     nFFTsize=ComputeFilterSize(N);
     const size_t N2=nFFTsize/2;
+
+    if ((fft!=nullptr) && (fft->size(0)!=static_cast<int>(nFFTsize)))
+    {
+        delete fft;
+        fft=nullptr;
+    }
+    if (fft==nullptr)
+        fft=new kipl::math::fft::FFTBaseFloat(&nFFTsize,1);
+
     mFilter.Resize(&N2);
     mFilter=0.0f;
 
@@ -242,24 +261,22 @@ void ProjectionFilter::buildFilter(const size_t N)
     for (size_t i=0; i<cN2cutoff; i++)
     {
         float w = i * fstep;
-        switch (m_FilterType){
-        case ProjectionFilterRamLak: break;
-        case ProjectionFilterSheppLogan:  mFilter[i]   = static_cast<float>(sin(fPi*w*m_fCutOff))/N2;        break;
-        case ProjectionFilterHanning:     mFilter[i]  *= static_cast<float>(0.5f+0.5f*cos(fPi*w*m_fCutOff)); break;
-        case ProjectionFilterHamming:     mFilter[i]  *= static_cast<float>(0.54f+0.46f*cos(fPi*w*m_fCutOff)); break;
-        case ProjectionFilterButterworth: mFilter[i]  /= static_cast<float>(1.0f+pow(w*m_fCutOff,FilterOrder)); break;
-        default: break;
+        switch (m_FilterType)
+        {
+            case ProjectionFilterRamLak: break;
+            case ProjectionFilterSheppLogan:  mFilter[i]   = static_cast<float>(sin(fPi*w*m_fCutOff))/N2;        break;
+            case ProjectionFilterHanning:     mFilter[i]  *= static_cast<float>(0.5f+0.5f*cos(fPi*w*m_fCutOff)); break;
+            case ProjectionFilterHamming:     mFilter[i]  *= static_cast<float>(0.54f+0.46f*cos(fPi*w*m_fCutOff)); break;
+            case ProjectionFilterButterworth: mFilter[i]  /= static_cast<float>(1.0f+pow(w*m_fCutOff,FilterOrder)); break;
+            default: break;
         }
     }
 
-    memset(mFilter.GetDataPtr()+cN2cutoff,0, sizeof(float)*(N2-cN2cutoff));
+    //memset(mFilter.GetDataPtr()+cN2cutoff,0, sizeof(float)*(N2-cN2cutoff));
+    std::fill_n(mFilter.GetDataPtr()+cN2cutoff,N2-cN2cutoff,0.0f);
+
     if (m_bUseBias==true)
         mFilter[0]=m_fBiasWeight*mFilter[1];
-
-    if (fft!=nullptr)
-        delete fft;
-
-    fft=new kipl::math::fft::FFTBaseFloat(&nFFTsize,1);
 
     PreparePadding(nImageSize,nFFTsize);
     logger(kipl::logging::Logger::LogVerbose,"Filter init done");
@@ -280,16 +297,15 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 
     for (size_t line=0; line<(nLines); line++)
     {
-
-        std::fill_n(pLine,0,nLenPad);
-        std::fill_n(pFTLine,0,nLenPad);
+        std::fill_n(pLine,nLenPad,0.0f);
+        std::fill_n(pFTLine,nLenPad,0.0f);
 
         size_t insert=Pad(img.GetLinePtr(line),img.Size(0),pLine,nLenPad);
 
         fft->operator()(pLine,pFTLine);
 
         for (size_t i=0; i< cnFilterLength; i++)
-        { //todo: find cross talk and overwrite here!!!
+        {
             pFTLine[i]*=pFilter[i];
         }
 
@@ -332,7 +348,7 @@ void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
 
     for (size_t i=0; i<nInsert; i++)
     {
-        float x=(float) i/ (float)nInsert - 0.5f;
+        float x=static_cast<float>(i)/ static_cast<float>(nInsert) - 0.5f;
         mPadData[i]=kipl::math::Sigmoid(x,0.0f,0.07f);
     }
 

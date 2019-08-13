@@ -18,6 +18,8 @@
 #include <piercingpointestimator.h>
 #include <pixelinfo.h>
 #include <PolynomialCorrection.h>
+#include <projectionfilter.h>
+#include <ImagingException.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -41,6 +43,9 @@ private Q_SLOTS:
 
     void PolynomialCorrection_init();
     void PolynomialCorrection_numeric();
+
+    void ProjectionFilterParameters();
+    void ProjectionFilterProcessing();
 
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -185,12 +190,12 @@ void TestImagingAlgorithms::AverageImage_Enums()
 
     std::string key;
     key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
-    QCOMPARE(key,"ImageAverage");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),std::string("ImageSum"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),"ImageMedian");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage),"ImageWeightedAverage");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),"ImageMin");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),"ImageMax");
+    QCOMPARE(key,std::string("ImageAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),             std::string("ImageSum"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),          std::string("ImageMedian"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage), std::string("ImageWeightedAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),             std::string("ImageMin"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),             std::string("ImageMax"));
 
     ImagingAlgorithms::AverageImage::eAverageMethod e;
     string2enum("ImageAverage",e);
@@ -396,6 +401,50 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
             QCOMPARE(result[k],sum);
         }
     }
+}
+
+void TestImagingAlgorithms::ProjectionFilterParameters()
+{
+    ImagingAlgorithms::ProjectionFilter pf(nullptr);
+
+    // Check defualt values
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterHamming);
+    QCOMPARE(pf.order(),            1.0f);
+    QCOMPARE(pf.cutOff(),           0.5f);
+    QCOMPARE(pf.useBias(),          true);
+    QCOMPARE(pf.biasWeight(),       0.1f);
+    QCOMPARE(pf.currentFFTSize(),   0UL);
+    QCOMPARE(pf.currentImageSize(), 0UL);
+    QCOMPARE(pf.paddingDoubler(),   2UL);
+
+    auto params = pf.parameters();
+    QCOMPARE(params["filtertype"],     std::string("Hamming"));
+    QCOMPARE(params["order"],          std::string("1"));
+    QCOMPARE(params["cutoff"],         std::string("0.5"));
+    QCOMPARE(params["usebias"],        std::string("true"));
+    QCOMPARE(params["biasweight"],     std::string("0.1"));
+    QCOMPARE(params["paddingdoubler"], std::string("2"));
+
+    pf.setFilter(ImagingAlgorithms::ProjectionFilterSheppLogan,0.4f);
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterSheppLogan);
+    QCOMPARE(pf.order(),            0.0f);
+    QCOMPARE(pf.cutOff(),           0.4f);
+
+    pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,0.5f,3.0f);
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterButterworth);
+    QCOMPARE(pf.order(),            3.0f);
+    QCOMPARE(pf.cutOff(),           0.5f);
+
+    QVERIFY_EXCEPTION_THROWN(pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,1.0f,3.0f),
+                             ImagingException);
+
+    QVERIFY_EXCEPTION_THROWN(pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,-1.0f,3.0f),
+                             ImagingException);
+}
+
+void TestImagingAlgorithms::ProjectionFilterProcessing()
+{
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
