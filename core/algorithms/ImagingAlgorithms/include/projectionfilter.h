@@ -69,6 +69,8 @@ protected:
 
     size_t nFFTsize;
     size_t nImageSize;
+
+    bool bParametersChanged;
 };
 
 class IMAGINGALGORITHMSSHARED_EXPORT ProjectionFilter :
@@ -91,6 +93,7 @@ private:
     kipl::math::fft::FFTBaseFloat *fft;
 
     size_t nInsert;
+
 };
 }
 

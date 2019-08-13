@@ -81,7 +81,8 @@ ProjectionFilterBase::ProjectionFilterBase(std::string name,kipl::interactors::I
     m_fBiasWeight(0.1f),
     m_nPaddingDoubler(2),
     nFFTsize(0),
-    nImageSize(0)
+    nImageSize(0),
+    bParametersChanged(true)
 {
 }
 
@@ -93,6 +94,7 @@ void ProjectionFilterBase::setFilter(ImagingAlgorithms::ProjectionFilterType ft,
     m_FilterType = ft;
     m_fCutOff    = cutOff;
     m_fOrder     = _order;
+    bParametersChanged = true;
 }
 
 ImagingAlgorithms::ProjectionFilterType ProjectionFilterBase::filterType()
@@ -114,6 +116,7 @@ void ProjectionFilterBase::setBiasBehavior(bool _useBias, float _biasWeight)
 {
     m_bUseBias    = _useBias;
     m_fBiasWeight = _biasWeight;
+    bParametersChanged = true;
 }
 
 bool ProjectionFilterBase::useBias()
@@ -151,7 +154,7 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,2> & img)
     if (img.Size()==0)
         throw ImagingException("Empty projection image",__FILE__,__LINE__);
 
-    if (img.Size(0) != nImageSize)
+    if ((img.Size(0) != nImageSize) || bParametersChanged)
         buildFilter(img.Size(0));
 
     filterProjection(img);
@@ -163,7 +166,7 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,3> & img)
     if (img.Size()==0)
         throw ImagingException("Empty projection image",__FILE__,__LINE__);
 
-    if (img.Size(0) != nImageSize)
+    if ((img.Size(0) != nImageSize) || bParametersChanged)
         buildFilter(img.Size(0));
 
     kipl::base::TImage<float,2> proj(img.Dims());
@@ -296,9 +299,21 @@ void ProjectionFilter::buildFilter(const size_t N)
             case ProjectionFilterHanning:     mFilter[i]  *= static_cast<float>(0.5f+0.5f*cos(fPi*w*m_fCutOff)); break;
             case ProjectionFilterHamming:     mFilter[i]  *= static_cast<float>(0.54f+0.46f*cos(fPi*w*m_fCutOff)); break;
             case ProjectionFilterButterworth: mFilter[i]  /= static_cast<float>(1.0f+pow(w*m_fCutOff,FilterOrder)); break;
+            case ProjectionFilterParzen:
+                if ((0.0f<w) && (w<=0.5f*m_fCutOff))
+                    mFilter[i]=1.0f - 6*w*w/(m_fCutOff*m_fCutOff)*(1.0f-w/m_fCutOff);
+                else if ((0.5f*m_fCutOff<w) && (w<=m_fCutOff))
+                    mFilter[i]=2.0f * std::powf(1.0f-w/m_fCutOff,3.0f);
+                else
+                    mFilter[i]=0.0f;
+
+                break;
+
             default: break;
         }
     }
+
+
 
     //memset(mFilter.GetDataPtr()+cN2cutoff,0, sizeof(float)*(N2-cN2cutoff));
     std::fill_n(mFilter.begin()+cN2cutoff,N2-cN2cutoff,0.0f);

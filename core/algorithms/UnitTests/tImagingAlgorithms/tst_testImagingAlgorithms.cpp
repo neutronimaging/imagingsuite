@@ -474,6 +474,7 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
     kipl::io::WriteTIFF32(sino,"projfilt_result.tif");
     QCOMPARE(pf.currentFFTSize(),2048);
     QCOMPARE(pf.currentImageSize(),sino.Size(0));
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
