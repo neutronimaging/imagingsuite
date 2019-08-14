@@ -50,7 +50,7 @@
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
-    logger("MuhRec3MainWindow"),
+    logger("MuhRecMainWindow"),
     ui(new Ui::MuhRecMainWindow),
     logdlg(new QtAddons::LoggingDialog(this)),
     m_QtApp(app),
