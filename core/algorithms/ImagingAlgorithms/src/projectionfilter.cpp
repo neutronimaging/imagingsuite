@@ -312,10 +312,11 @@ void ProjectionFilter::buildFilter(const size_t N)
             case ProjectionFilterHamming:     mFilter[i]  *= static_cast<float>(0.54f+0.46f*cos(fPi*w*m_fCutOff)); break;
             case ProjectionFilterButterworth: mFilter[i]  /= static_cast<float>(1.0f+pow(w*m_fCutOff,FilterOrder)); break;
             case ProjectionFilterParzen:
+                w /=2;
                 if ((0.0f<w) && (w<=0.5f*m_fCutOff))
-                    mFilter[i]=1.0f - 6*w*w/(m_fCutOff*m_fCutOff)*(1.0f-w/m_fCutOff);
+                    mFilter[i] *=1.0f - 6*w*w/(m_fCutOff*m_fCutOff)*(1.0f-w/m_fCutOff);
                 else if ((0.5f*m_fCutOff<w) && (w<=m_fCutOff))
-                    mFilter[i]=2.0f * std::powf(1.0f-w/m_fCutOff,3.0f);
+                    mFilter[i] *=2.0f * std::powf(1.0f-w/m_fCutOff,3.0f);
                 else
                     mFilter[i]=0.0f;
 

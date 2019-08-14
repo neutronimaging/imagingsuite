@@ -23,7 +23,7 @@ ProjectionFilterDlg::~ProjectionFilterDlg()
 
 int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img)
 {
-    m_Config=dynamic_cast<ReconConfig *>(config);
+    m_ReconConfig=dynamic_cast<ReconConfig *>(config);
 
     try {
         string2enum(GetStringParameter(parameters,"filtertype"), m_eFilterType);
@@ -76,7 +76,7 @@ void ProjectionFilterDlg::UpdateDialog()
 
 void ProjectionFilterDlg::UpdateParameters()
 {
-    m_eFilterType = static_cast<ProjectionFilterBase::FilterType>(ui->combo_filterwindow->currentIndex());
+    m_eFilterType = static_cast<ImagingAlgorithms::ProjectionFilterType>(ui->combo_filterwindow->currentIndex());
     m_fCutOff       = ui->entry_cutoff->value();
     m_fBiasWeight   = ui->entry_biasfactor->value();
     m_fPadding      = ui->entry_padding->value();
