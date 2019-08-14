@@ -394,7 +394,5 @@ void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
         float x=static_cast<float>(i)/ static_cast<float>(nInsert) - 0.5f;
         mPadData[i]=kipl::math::Sigmoid(x,0.0f,0.07f);
     }
-
-
 }
 }
