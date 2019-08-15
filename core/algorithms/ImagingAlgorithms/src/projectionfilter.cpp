@@ -1,9 +1,7 @@
-#include "../include/projectionfilter.h"
-
 //<LICENSE>
-
 #include "../include/ImagingAlgorithms_global.h"
 
+#include "../include/projectionfilter.h"
 #include "../include/ImagingException.h"
 //#include <ReconHelpers.h>
 
