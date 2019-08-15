@@ -407,3 +407,80 @@ void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
     }
 }
 }
+
+#ifdef HAVEPYBIND11
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+
+namespace py = pybind11;
+
+void bindProjectionFilter(py::module &m)
+{
+//    virtual std::map<std::string, std::string> parameters();
+//    void setParameters(const std::map<std::string, std::string> &params);
+//    void  setFilter(ImagingAlgorithms::ProjectionFilterType ft, float cutOff, float _order=0.0f);
+//    ImagingAlgorithms::ProjectionFilterType filterType();
+//    float cutOff();
+//    float order();
+
+//    void  setBiasBehavior(bool _useBias, float biasWeight);
+//    bool  useBias();
+//    float biasWeight();
+
+//    void   setPaddingDoubler(size_t N);
+//    size_t paddingDoubler();
+
+//    size_t currentFFTSize();
+//    size_t currentImageSize();
+
+//    int process(kipl::base::TImage<float,2> & img);
+//    int process(kipl::base::TImage<float,3> & img);
+//    const std::vector<float> & filterWeights() { return mFilter; }
+
+    py::class_<ImagingAlgorithms::ProjectionFilter> pfClass(m, "ProjectionFilter");
+    pfClass.def(py::init());
+    pfClass.def("filterWeights",ImagingAlgorithms::ProjectionFilter::filterWeights);
+
+    pfClass.def("process", static_cast<std::vector<float> (ImagingAlgorithms::PolynomialCorrection::*)(const std::vector<float> &)>(&ImagingAlgorithms::PolynomialCorrection::process),
+                "Applies the polynomial to the elements of the provided list",
+                py::arg("x"));
+
+    pfClass.def("process",
+                 [](ImagingAlgorithms::ProjectionFilter &pf,
+                 py::array_t<float> &x)
+    {
+        py::buffer_info buf1 = x.request();
+
+        float *data=static_cast<float*>(buf1.ptr);
+
+        pf.process(data,x.size());
+    },
+    "Applies the projection filter inplace on the rows in the array.",
+    py::arg("data"));
+
+//    pcClass.def("process",
+//                 [](ImagingAlgorithms::ProjectionFilter &pf,
+//                 py::array_t<double> &x)
+//    {
+//        py::buffer_info buf1 = x.request();
+
+//        double *data=static_cast<double*>(buf1.ptr);
+
+//        pc.process(data,x.size());
+//    },
+//    "Applies the polynomial inplace in the array.",
+//    py::arg("data"));
+
+    py::enum_<ImagingAlgorithms::ProjectionFilterType>(m,"eProjectionFilterType")
+            .value("ProjectionFilterNone",         ImagingAlgorithms::ProjectionFilterNone)
+            .value("ProjectionFilterRamLak",       ImagingAlgorithms::ProjectionFilterRamLak)
+            .value("ProjectionFilterSheppLogan",   ImagingAlgorithms::ProjectionFilterSheppLogan)
+            .value("ProjectionFilterHanning",      ImagingAlgorithms::ProjectionFilterHanning)
+            .value("ProjectionFilterHamming",      ImagingAlgorithms::ProjectionFilterHamming)
+            .value("ProjectionFilterButterworth",  ImagingAlgorithms::ProjectionFilterButterworth)
+            .value("ProjectionFilterParzen",       ImagingAlgorithms::ProjectionFilterParzen)
+            .export_values();
+
+}
+#endif

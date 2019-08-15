@@ -79,7 +79,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT ProjectionFilter :
     public ProjectionFilterBase
 {
 public:
-    ProjectionFilter(kipl::interactors::InteractionBase *interactor);
+    ProjectionFilter(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~ProjectionFilter(void);
 
     const std::vector<float> & filterWeights() { return mFilter; }

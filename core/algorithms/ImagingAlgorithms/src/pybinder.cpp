@@ -16,6 +16,7 @@ void bindMorphSpotClean(py::module &m);
 void bindStripeFilter(py::module &m);
 void bindPixelInfo(py::module &m);
 void bindException(py::module &m);
+void bindProjectionFilter(py::module &m);
 
 PYBIND11_MODULE(imagalg,m)
 {
@@ -23,6 +24,7 @@ PYBIND11_MODULE(imagalg,m)
     bindPolynomialCorrection(m);
     bindMorphSpotClean(m);
     bindStripeFilter(m);
+    bindProjectionFilter(m);
 //    bindPixelInfo(m);
 //    bindException(m);
 
