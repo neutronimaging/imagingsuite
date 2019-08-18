@@ -21,6 +21,5 @@ build*
 *.pdf
 *.synctex.gz
 CMakeCache.txt
-CMakeLists.txt
 CMakeFiles
 _deps

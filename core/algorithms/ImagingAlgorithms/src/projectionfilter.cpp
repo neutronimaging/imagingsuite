@@ -485,19 +485,66 @@ void bindProjectionFilter(py::module &m)
                  py::array_t<float> &x)
     {
         py::buffer_info buf1 = x.request();
-        // dims needed
 
-        size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                       static_cast<size_t>(buf1.shape[1]),
-                       static_cast<size_t>(buf1.shape[0])};
         float *data=static_cast<float*>(buf1.ptr);
 
-        kipl::base::TImage<float,3> img(dims);
+        if (buf1.ndim==3)
+        {
+            size_t dims[]={static_cast<size_t>(buf1.shape[2]),
+                           static_cast<size_t>(buf1.shape[1]),
+                           static_cast<size_t>(buf1.shape[0])};
+            kipl::base::TImage<float,3> img(data,dims);
 
-        std::copy_n(data,img.Size(),img.GetDataPtr());
+            pf.process(img);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else if (buf1.ndim==2)
+        {
+            size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                           static_cast<size_t>(buf1.shape[0])};
 
-        pf.process(img);
-        std::copy_n(img.GetDataPtr(),img.Size(),data);
+
+            kipl::base::TImage<float,2> img(data,dims);
+            pf.process(img);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+    },
+    "Applies the projection filter inplace on the rows in the array.",
+    py::arg("data"));
+
+    pfClass.def("process",
+                 [](ImagingAlgorithms::ProjectionFilter &pf,
+                 py::array_t<double> &x)
+    {
+        py::buffer_info buf1 = x.request();
+
+        double *data=static_cast<double*>(buf1.ptr);
+
+        if (buf1.ndim==3)
+        {
+            size_t dims[]={static_cast<size_t>(buf1.shape[2]),
+                           static_cast<size_t>(buf1.shape[1]),
+                           static_cast<size_t>(buf1.shape[0])};
+            kipl::base::TImage<float,3> img(dims);
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            pf.process(img);
+
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else if (buf1.ndim==2)
+        {
+            size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                           static_cast<size_t>(buf1.shape[0])};
+
+
+            kipl::base::TImage<float,2> img(dims);
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            pf.process(img);
+
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
     },
     "Applies the projection filter inplace on the rows in the array.",
     py::arg("data"));
