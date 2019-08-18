@@ -22,4 +22,5 @@ build*
 *.synctex.gz
 CMakeCache.txt
 CMakeLists.txt
+CMakeFiles
 _deps
