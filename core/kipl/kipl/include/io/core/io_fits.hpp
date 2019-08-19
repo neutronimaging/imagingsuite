@@ -3,8 +3,6 @@
 #ifndef IO_FITS_HPP_
 #define IO_FITS_HPP_
 
-#include <QDebug>
-
 #include <iostream>
 #include <sstream>
 #include <algorithm>

@@ -71,7 +71,7 @@ int RingCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 
     for (size_t i=0; i<Nslices; i++) {
         slice=kipl::base::ExtractSlice(img,i,plane,nullptr);
-        m_StripeFilter->Process(slice,op);
+        m_StripeFilter->process(slice,op);
         kipl::base::InsertSlice(slice,img,i,plane);
     }
 

@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef TIMAGE_H_
 #define TIMAGE_H_
@@ -27,6 +27,12 @@ public:
 	/// \brief Constructor to specify the image size
 	/// \param dims Array containing the dimensions of the image. The first index in the dimension array refers to the fast index increment in the image.
 	TImage(size_t const * const dims);
+
+    /// \brief C'tor to initialize image to use an external buffer
+    /// \param pBuffer pointer to the externa buffer
+    /// \param dims array containing the image dimensions
+    TImage(T *pBuffer, size_t const * const dims);
+
 	/// \brief D'tor for the image class. 
 	~TImage();
 	
@@ -43,6 +49,8 @@ public:
 	/// \returns The length of the data buffer
 	/// \test The method is tested with unit test
 	size_t Size() const { return m_buffer.Size(); }
+
+    bool haveExternalBuffer() {return m_buffer.haveExternalBuffer();}
 	
 	/// \param n Dimension index (starts with 0)
 	/// \returns The length of dimension n

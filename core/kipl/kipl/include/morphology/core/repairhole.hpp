@@ -4,7 +4,9 @@
 
 #include <list>
 
+#if !defined(NO_QT)
 #include <QDebug>
+#endif
 
 #include "../repairhole.h"
 #include "../pixeliterator.h"

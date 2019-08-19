@@ -1,6 +1,5 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/StdBackProjectorBase.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
@@ -28,7 +27,8 @@ MatrixCenterX(0),
 ProjCenter(0.0f),
 nProjectionBufferSize(16),
 nSliceBlock(32),
-fRotation(0.0f)
+fRotation(0.0f),
+filter(nullptr)
 {
 	logger(kipl::logging::Logger::LogMessage,"c'tor StdBackProjectorBase");
     nSubVolume[0]=nSubVolume[1]=1;
@@ -41,10 +41,11 @@ StdBackProjectorBase::~StdBackProjectorBase(void)
 void StdBackProjectorBase::ClearAll()
 {
 	logger(kipl::logging::Logger::LogVerbose,"Enter clear all");
-	//volume;
+    //volume
     BackProjectorModuleBase::ClearAll();
 	ProjectionList.clear();
-	//projections;
+
+    //projection parameters
 	nProjCounter=0;
 	SizeU=0;
 	SizeV=0;
@@ -68,12 +69,14 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
 	proj.Clone();
+
+    filter.process(proj);
+
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
 
     float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
     msg.str("");
-   // msg<<"Scan direction "<<mConfig.ProjectionInfo.eDirection<<", "<<dirWeight;
-   // logger.message(msg.str());
+
 	fWeights[nProjCounter]  = weight;
     fSin[nProjCounter]      = sin(dirWeight*angle*fPi/180.0f);
     fCos[nProjCounter]      = cos(dirWeight*angle*fPi/180.0f);
@@ -323,9 +326,10 @@ int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, st
 {
 	mConfig=config;
 
-	nProjectionBufferSize=GetIntParameter(parameters,"ProjectionBufferSize");
-	nSliceBlock=GetIntParameter(parameters,"SliceBlock");
+    nProjectionBufferSize = GetIntParameter(parameters,"ProjectionBufferSize");
+    nSliceBlock           = GetIntParameter(parameters,"SliceBlock");
 	GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
+    filter.setParameters(parameters);
 	
 	return 0;
 }
@@ -333,7 +337,7 @@ int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, st
 std::map<std::string, std::string> StdBackProjectorBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
-
+    parameters = filter.parameters();
 	parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
 	parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
 	

@@ -3,6 +3,8 @@
 #ifndef ZEROPADDING_HPP_
 #define ZEROPADDING_HPP_
 
+#include "../../base/KiplException.h"
+
 namespace kipl { namespace math { namespace fft {
 
 template <typename T>
@@ -13,7 +15,7 @@ void ZeroPad(kipl::base::TImage<T,2> &img,
 			 ePaddingPosition position)
 {
 	if ((dims[0]<img.Size(0)) || (dims[1]<img.Size(1)))
-		throw("Requested dimensions of the padded image are smaller than the original image.",__FILE__,__LINE__);
+        throw kipl::base::KiplException("Requested dimensions of the padded image are smaller than the original image.",__FILE__,__LINE__);
 	
 	padded.Resize(dims);
 

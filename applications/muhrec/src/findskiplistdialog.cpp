@@ -18,7 +18,7 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
     m_nMaxNumberProjections(0)
 {
     ui->setupUi(this);
-    connect(ui->spinExpNumProj,SIGNAL(valueChanged(int)),SLOT(ChangedNumberOfProjections(int)));
+
     ui->plotProjectionDose->hideLegend();
 }
 
@@ -63,7 +63,8 @@ int FindSkipListDialog::exec(ReconConfig &config)
     ui->spinExpNumProj->setMaximum(m_nMaxNumberProjections);
     ui->spinExpNumProj->setMinimum(0);
     ui->spinExpNumProj->setValue(m_nMaxNumberProjections);
-    ChangedNumberOfProjections(m_nMaxNumberProjections);
+    on_spinExpNumProj_valueChanged(m_nMaxNumberProjections);
+
     return QDialog::exec();
 }
 
@@ -95,28 +96,55 @@ void FindSkipListDialog::LoadDoseList(ReconConfig &config)
     }
 }
 
-void FindSkipListDialog::ChangedNumberOfProjections(int x)
-{
-    std::ostringstream skipstr;
-    int nSkipCnt=m_nMaxNumberProjections-x;
-    ui->plotProjectionDose->clearAllCursors();
-    std::multimap<float,int>::iterator it=m_SortedDoses.begin();
-    std::set<int> sortedSkip;
-    for (int i=0; i<nSkipCnt; i++, it++) {
-        sortedSkip.insert(it->second);
-        ui->plotProjectionDose->setCursor(i,new QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
-    }
-    // Todo: Sort the list
-   std::set<int>::iterator it2;
-    for (it2=sortedSkip.begin(); it2!=sortedSkip.end(); it2++) {
-        skipstr<<*it2<<" ";
-    }
-
-
-    ui->editSkipList->setText(QString::fromStdString(skipstr.str()));
-}
-
 QString FindSkipListDialog::getSkipList()
 {
     return ui->editSkipList->text();
+}
+
+
+
+void FindSkipListDialog::on_pushButton_updatePlot_clicked()
+{
+    int i=0;
+    ui->plotProjectionDose->clearAllCursors();
+
+    for (const auto & idx : m_sortedSkip)
+    {
+        ui->plotProjectionDose->setCursor(i,new QtAddons::PlotCursor(idx,QColor("tomato"),QtAddons::PlotCursor::Vertical));
+        ++i;
+    }
+}
+
+void FindSkipListDialog::on_spinExpNumProj_valueChanged(int x)
+{
+    std::ostringstream skipstr;
+    int nSkipCnt=m_nMaxNumberProjections-x;
+
+    std::multimap<float,int>::iterator it=m_SortedDoses.begin();
+
+    m_sortedSkip.clear();
+
+    for (int i=0; i<nSkipCnt; i++, it++)
+    {
+        m_sortedSkip.insert(it->second);
+    }
+    // Todo: Sort the list
+    std::set<int>::iterator it2;
+    for (const auto & projIdx : m_sortedSkip)
+    {
+        skipstr<<projIdx<<" ";
+    }
+
+    ui->editSkipList->setText(QString::fromStdString(skipstr.str()));
+
+    if (nSkipCnt<10)
+    {
+        on_pushButton_updatePlot_clicked();
+        ui->pushButton_updatePlot->hide();
+
+    }
+    else
+    {
+        ui->pushButton_updatePlot->show();
+    }
 }
