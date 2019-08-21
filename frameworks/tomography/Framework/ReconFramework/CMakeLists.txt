@@ -18,14 +18,14 @@ if(NOT pybind11_sources_POPULATED)
     add_definitions(-DHAVEPYBIND11 -DNO_QT)
 endif()
 
-include_directories(../../../../core/kipl/kipl/include 
-    /opt/local/include 
-    /opt/local/include/libxml2 
+include_directories(../../../../core/kipl/kipl/include
+    /opt/local/include
+    /opt/local/include/libxml2
     ../../../../external/src/linalg
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
-    ../../../../external/mac/include/ 
-    ../../../../external/mac/include/nexus 
+    ../../../../external/mac/include/
+    ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
     )
 link_directories(../../../../../lib /opt/local/lib )
@@ -35,32 +35,32 @@ link_directories(../../../../../lib /opt/local/lib )
 add_library(reconframework
   MODULE
 
-  src/BackProjectorModuleBase.cpp	
-  src/ProjectionReader.cpp		
-  src/ReconEngine.cpp			
-  src/ReconFramework.cpp		
+  src/BackProjectorModuleBase.cpp
+  src/ProjectionReader.cpp
+  src/ReconEngine.cpp
+  src/ReconFramework.cpp
 #  src/stdafx.cpp
-  src/ModuleItem.cpp			
-  src/ReconException.cpp		
-  src/ReconHelpers.cpp		
+  src/ModuleItem.cpp
+  src/ReconException.cpp
+  src/ReconHelpers.cpp
 # src/stdafx.h
-  src/PreprocModuleBase.cpp		
-  src/ReconConfig.cpp			
+  src/PreprocModuleBase.cpp
+  src/ReconConfig.cpp
   src/ReconFactory.cpp
   src/pybinder.cpp
 #dllmain.cpp
-  include/BackProjectorModuleBase.h	
-  include/ProjectionReader.h		
-  include/ReconException.h		
-  include/ReconFramework_global.h		
+  include/BackProjectorModuleBase.h
+  include/ProjectionReader.h
+  include/ReconException.h
+  include/ReconFramework_global.h
   include/targetver.h
-  include/ModuleItem.h			
-  include/ReconConfig.h			
-  include/ReconFactory.h			
+  include/ModuleItem.h
+  include/ReconConfig.h
+  include/ReconFactory.h
   include/ReconHelpers.h
-  include/PreprocModuleBase.h		
-  include/ReconEngine.h			
-  include/ReconFramework.h		
+  include/PreprocModuleBase.h
+  include/ReconEngine.h
+  include/ReconFramework.h
   #include/stdafx.h
   )
 
