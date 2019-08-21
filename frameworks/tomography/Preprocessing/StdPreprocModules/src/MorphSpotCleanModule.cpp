@@ -1,6 +1,7 @@
 //#include "stdafx.h"
 #include <thread>
 #include <cstdlib>
+#include <functional>
 #include "../include/StdPreprocModules_global.h"
 #include "../include/MorphSpotCleanModule.h"
 #include <ParameterHandling.h>
