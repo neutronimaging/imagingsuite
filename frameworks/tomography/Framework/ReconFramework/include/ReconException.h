@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #ifndef _RECONEXCEPTION_H_
 #define _RECONEXCEPTION_H_
 #include "ReconFramework_global.h"
@@ -25,7 +14,7 @@ public:
 	ReconException(std::string msg, std::string filename, size_t line);
 	virtual ~ReconException(void);
 
-	virtual std::string what();
+    virtual const char* what() const;
 private:
 };
 

@@ -25,7 +25,8 @@ SOURCES += \
     ../../src/ProjectionReader.cpp \
     ../../src/PreprocModuleBase.cpp \
     ../../src/ModuleItem.cpp \
-    ../../src/BackProjectorModuleBase.cpp
+    ../../src/BackProjectorModuleBase.cpp \
+    ../../src/pybinder.cpp
 
 HEADERS += \
     ../../include/ReconHelpers.h \

@@ -46,7 +46,8 @@ add_library(reconframework
 # src/stdafx.h
   src/PreprocModuleBase.cpp		
   src/ReconConfig.cpp			
-  src/ReconFactory.cpp		
+  src/ReconFactory.cpp
+  src/pybinder.cpp
 #dllmain.cpp
   include/BackProjectorModuleBase.h	
   include/ProjectionReader.h		
