@@ -127,7 +127,6 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
     if (m_fSigma[det]!=0.0f)
     { // In case of sigmoid mixing
         float endPoint = axis[N99] < m_fThreshold[det]+5*m_fSigma[det] ? m_fThreshold[det]+5*m_fSigma[det] : axis[N99];
-        qDebug() <<"axis0"<<axis[0]<< "N99=" <<axis[N99]<<",endPoint="<<endPoint<<", diff="<<endPoint-axis[0];
 
         for (size_t i=0; i<N; i++) {
             thaxis[i]=axis[0]+i*(endPoint-axis[0])/N;

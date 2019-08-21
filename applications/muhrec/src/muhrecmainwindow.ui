@@ -45,7 +45,7 @@
        <string/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <property name="toolTip">
@@ -2545,6 +2545,12 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
@@ -2573,12 +2579,6 @@
    <class>SingleModuleConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">singlemoduleconfiguratorwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::PlotWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

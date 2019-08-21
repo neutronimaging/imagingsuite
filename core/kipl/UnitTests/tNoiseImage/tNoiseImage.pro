@@ -22,9 +22,6 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 QMAKE_CXXFLAGS += -O2
 
-SOURCES += tst_tnoiseimagetest.cpp
-DEFINES += SRCDIR=\\\"$$PWD/\\\"
-
 unix {
     INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2

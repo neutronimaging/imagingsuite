@@ -58,7 +58,7 @@ private:
     float       m_fSigma;
     std::string m_sWaveletName;
     bool        m_bParallel;
-    ImagingAlgorithms::StripeFilterOperation m_eCleaningMethod;
+    ImagingAlgorithms::eStripeFilterOperation m_eCleaningMethod;
 };
 
 #endif // WAVELETRINGCLEANDLG_H

@@ -3,9 +3,11 @@
 #include <sstream>
 #include <iostream>
 #include <map>
+#include <cmath>
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
+
 
 #include <base/timage.h>
 #include <io/io_fits.h>
@@ -15,7 +17,7 @@
 #include <averageimage.h>
 #include <piercingpointestimator.h>
 #include <pixelinfo.h>
-
+#include <PolynomialCorrection.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -36,6 +38,9 @@ private Q_SLOTS:
     void AverageImage_ProcessingWeights();
     void PiercingPoint_Processing();
     void piercingPointExperiment();
+
+    void PolynomialCorrection_init();
+    void PolynomialCorrection_numeric();
 
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -97,7 +102,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],100.0f);
@@ -112,7 +117,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks, ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],0.0f);
     QCOMPARE(img[pos2],1.8f);
@@ -127,7 +132,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],1.8f);
@@ -146,7 +151,7 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     kipl::io::WriteTIFF32(img,"spotcleaned.tif");
 
@@ -169,7 +174,7 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
     cleaner.setConnectivity(kipl::morphology::conn4);
 
-    cleaner.Process(res,0.04,0.01);
+    cleaner.process(res,0.04,0.01);
 
 
 }
@@ -252,7 +257,7 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
     kipl::base::TImage<float,3> stack(dims);
     kipl::base::TImage<float,2> res(dims);
-    float *w=new float[dims[2]];
+    std::vector<float> w(dims[2]);
     for (size_t i=0; i<dims[2]; i++) {
         float *pStack=stack.GetLinePtr(0,i);
         for (size_t j=0; j<res.Size(); j++)
@@ -285,8 +290,6 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax,w);
     r0=res[0];
     QCOMPARE(r0,25.0f);
-
-    delete [] w;
 }
 
 void TestImagingAlgorithms::PiercingPoint_Processing()
@@ -344,6 +347,55 @@ void TestImagingAlgorithms::piercingPointExperiment()
     // Gain correction
     pair<float,float> pos2=pe(ob,dc,true);
 
+}
+
+void TestImagingAlgorithms::PolynomialCorrection_init()
+{
+    ImagingAlgorithms::PolynomialCorrection pc;
+
+    QCOMPARE(pc.polynomialOrder(),3);
+
+    auto vec = pc.coefficients();
+
+    QCOMPARE(vec.size(),4UL);
+    QCOMPARE(vec[0],0.0f);
+    QCOMPARE(vec[1],0.879f);
+    QCOMPARE(vec[2],0.0966f);
+    QCOMPARE(vec[3],0.0998f);
+
+}
+
+void TestImagingAlgorithms::PolynomialCorrection_numeric()
+{
+    float c[]={1.0f,0.5f,0.2f,0.1f,0.05f,0.02f,0.01f,0.005f,0.002f,0.001f,0.0005f};
+
+    ImagingAlgorithms::PolynomialCorrection pc;
+    const int N=5;
+    float val[N]={0.0f,1.0f,2.0f,3.0f,4.0f};
+    std::vector<float> result(N);
+
+    for (size_t i=1; i<10; ++i)
+    {
+        pc.setup(c,static_cast<int>(i));
+        std::vector<float> vec=pc.coefficients();
+
+        QCOMPARE(vec.size(),static_cast<size_t>(i+1));
+        for (size_t j=0; j<(i+1); ++j)
+            QCOMPARE(vec[j],c[j]);
+
+        std::copy_n(val,N,result.begin());
+        pc.process(result);
+
+        for (size_t k=0; k<N; ++k)
+        {
+            float sum=c[0];
+
+            for (size_t j=1; j<(i+1); ++j)
+                sum+= c[j]*std::powf(val[k],j);
+
+            QCOMPARE(result[k],sum);
+        }
+    }
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)

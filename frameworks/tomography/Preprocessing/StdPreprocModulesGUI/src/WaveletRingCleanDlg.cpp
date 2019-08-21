@@ -169,7 +169,7 @@ void WaveletRingCleanDlg::UpdateParameters()
     m_nLevels         = ui->entry_levels->value();
     m_fSigma          = ui->entry_cutoff->value();
     m_bParallel       = false;
-    m_eCleaningMethod = static_cast<ImagingAlgorithms::StripeFilterOperation>(ui->combo_filtertype->currentIndex());
+    m_eCleaningMethod = static_cast<ImagingAlgorithms::eStripeFilterOperation>(ui->combo_filtertype->currentIndex());
 }
 
 void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)

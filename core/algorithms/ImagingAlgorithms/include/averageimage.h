@@ -4,6 +4,7 @@
 #define AVERAGEPROJECTION_H
 #include "ImagingAlgorithms_global.h"
 #include <string>
+#include <vector>
 
 #include <base/timage.h>
 
@@ -24,14 +25,16 @@ public:
     AverageImage();
 
     ~AverageImage();
-    int WindowSize;
+
+    void setWindowSize(int n);
+    int windowSize();
     /// \brief Computes a 2D image from a set of images
     /// \param img A 3D image with the input 2D images in the XY-plane.
     /// \param method Method selector
     /// \param weights Additional weights per slice, can be used for dose correction
-    kipl::base::TImage<float,2> operator()(kipl::base::TImage<float,3> &img, eAverageMethod method, float *weights=nullptr);
+    kipl::base::TImage<float,2> operator()(kipl::base::TImage<float,3> &img, eAverageMethod method, std::vector<float> weights = {});
 protected:
-    kipl::base::TImage<float,3> WeightImages(kipl::base::TImage<float,3> &img, float *weights);
+    kipl::base::TImage<float,3> WeightImages(kipl::base::TImage<float,3> &img, std::vector<float> &weights);
     kipl::base::TImage<float,2> ComputeSum(kipl::base::TImage<float,3> &img);
     kipl::base::TImage<float,2> ComputeAverage(kipl::base::TImage<float,3> & img);
     kipl::base::TImage<float,2> ComputeMedian(kipl::base::TImage<float,3> & img);
@@ -40,6 +43,8 @@ protected:
     kipl::base::TImage<float,2> ComputeMax(kipl::base::TImage<float,3> & img);
 
     void GetColumn(kipl::base::TImage<float,3> &img, size_t idx, float *data);
+
+    int WindowSize;
 };
 
 }

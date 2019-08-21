@@ -224,13 +224,10 @@ void PlotWidget::setCursor(int id, PlotCursor *c)
     auto it=cursors.find(id);
     if ( it != cursors.end())
     {
-        qDebug() << "updating cursor"<<id;
         *cursors[id]=*c;
         delete c;
     }
     else {
-        qDebug() << "adding new cursor" << id;
-     //   cursors[id]=c;
         cursors.insert(std::make_pair(id,c));
     }
     updateCursors();
@@ -242,7 +239,6 @@ void PlotWidget::clearCursor(int id)
     auto it=cursors.find(id);
     if ( it != cursors.end())
     {
-        qDebug() << "deleting cursor";
         delete it->second;
         cursors.erase(it);
         auto it2=cursormap.find(it->first);
@@ -305,8 +301,6 @@ void PlotWidget::setupActions()
 
 void PlotWidget::savePlot()
 {
-    qDebug() << "Save plot";
-
     QString destname=QFileDialog::getSaveFileName(this,"Where should the plot be saved?",QDir::homePath()+"/plot.png");
 
     if (!destname.isEmpty())
@@ -320,8 +314,6 @@ void PlotWidget::savePlot()
 
 void PlotWidget::copy()
 {
-       qDebug() << "copy";
-
        QClipboard *clipboard = QApplication::clipboard();
 
        QPixmap p( ui->chart->size() );
@@ -334,8 +326,6 @@ void PlotWidget::copy()
 
 void PlotWidget::saveCurveData()
 {
-        qDebug() << "Save curve data";
-
         QString destname=QFileDialog::getSaveFileName(this,"Where should the data series be saved?",QDir::homePath()+"/data.txt");
 
         if (!destname.isEmpty()) {
@@ -362,7 +352,6 @@ void PlotWidget::saveCurveData()
                         seriesname=std::to_string(i++);
                     }
                     dname=name+seriesname+".txt";
-                    qDebug() << "Saving"<< dname.c_str();
                     std::ofstream datastream(dname.c_str());
 
                     auto data = series->pointsVector();
@@ -405,7 +394,7 @@ void PlotWidget::updateCursors()
 {
     findMinMax();
 
-    for (auto c : cursors)
+    for (const auto &c : cursors)
     {
         QtCharts::QLineSeries *line=nullptr;
         auto it=cursormap.find(c.first);
