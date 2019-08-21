@@ -18,8 +18,17 @@ if(NOT pybind11_sources_POPULATED)
     add_definitions(-DHAVEPYBIND11 -DNO_QT)
 endif()
 
-include_directories(../../../../core/kipl/kipl/include /opt/local/include ../../../external/src/linalg)
-link_directories(../../../../lib /opt/local/lib )
+include_directories(../../../../core/kipl/kipl/include 
+    /opt/local/include 
+    /opt/local/include/libxml2 
+    ../../../../external/src/linalg
+    ../../../../core/kipl/kipl/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../external/mac/include/ 
+    ../../../../external/mac/include/nexus 
+    ../../../../external/mac/include/hdf5
+    )
+link_directories(../../../../../lib /opt/local/lib )
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module

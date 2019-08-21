@@ -3,12 +3,16 @@
 #ifndef MODULECONFIG_GLOBAL_H
 #define MODULECONFIG_GLOBAL_H
 
+#ifndef NO_QT
 #include <QtCore/qglobal.h>
 
 #if defined(MODULECONFIG_LIBRARY)
 #  define MODULECONFIGSHARED_EXPORT Q_DECL_EXPORT
 #else
 #  define MODULECONFIGSHARED_EXPORT Q_DECL_IMPORT
+#endif
+#else
+#  define MODULECONFIGSHARED_EXPORT
 #endif
 
 #endif // MODULECONFIG_GLOBAL_H
