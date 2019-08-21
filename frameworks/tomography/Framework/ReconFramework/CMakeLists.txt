@@ -72,6 +72,7 @@ target_link_libraries(reconframework
     kipl
     xml2
     tiff
+    ModuleConfig
   )
 
 set_target_properties(reconframework

@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #include "stdafx.h"
 #include "../include/ReconFactory.h"
 #include "../include/ReconConfig.h"
@@ -47,7 +36,6 @@ ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::
         logger(logger.LogError,"Failed to get image size while building recon engine.");
         throw std::runtime_error(e.what());
     }
-
 
 	std::list<ModuleConfig>::iterator it;
 
