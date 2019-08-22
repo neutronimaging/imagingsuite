@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "stdafx.h"
+#include "../include/ModuleConfig_global.h"
 #include <string>
 #include <sstream>
 #ifndef _MSC_VER

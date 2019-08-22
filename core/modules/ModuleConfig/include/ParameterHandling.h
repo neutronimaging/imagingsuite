@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef __PARAMETERHANDLING_H
-#define __PARAMETERHANDLING_H
+#ifndef PARAMETERHANDLING_H
+#define PARAMETERHANDLING_H
 
 #include "ModuleConfig_global.h"
 

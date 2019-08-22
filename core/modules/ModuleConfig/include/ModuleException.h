@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef _MODULEEXCEPTION_H_
-#define _MODULEEXCEPTION_H_
+#ifndef MODULEEXCEPTION_H_
+#define MODULEEXCEPTION_H_
 #include <string>
 
 #include "ModuleConfig_global.h"

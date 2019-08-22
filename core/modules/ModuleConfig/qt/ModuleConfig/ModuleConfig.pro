@@ -44,19 +44,19 @@ win32 {
 DEFINES += MODULECONFIG_LIBRARY
 
 SOURCES += \
-    ../../src/stdafx.cpp \
+#    ../../src/stdafx.cpp \
     ../../src/ProcessModuleBase.cpp \
     ../../src/ParameterHandling.cpp \
     ../../src/ModuleItemBase.cpp \
     ../../src/ModuleException.cpp \
     ../../src/ModuleConfig.cpp \
-    ../../src/dllmain.cpp \
+#    ../../src/dllmain.cpp \
     ../../src/ConfigBase.cpp \
     ../../src/datamodulebase.cpp
 
 HEADERS +=\
      ../../include/ModuleConfig_global.h \
-    ../../include/targetver.h \
+#    ../../include/targetver.h \
     ../../include/ProcessModuleBase.h \
     ../../include/ParameterHandling.h \
     ../../include/ModuleItemBase.h \
@@ -64,7 +64,7 @@ HEADERS +=\
     ../../include/ModuleConfig.h \
     ../../include/ConfigBase.h \
     ../../include/datamodulebase.h
-    ../../src/stdafx.h
+#    ../../src/stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
