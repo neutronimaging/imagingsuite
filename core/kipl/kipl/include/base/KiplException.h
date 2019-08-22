@@ -3,13 +3,13 @@
 #ifndef KIPLEXCEPTION_H_
 #define KIPLEXCEPTION_H_
 #include "../kipl_global.h"
-
+#include <exception>
 #include <string>
 
 namespace kipl { namespace base {
 
 /// \brief Base class for execptions in the kipl environment
-class KIPLSHARED_EXPORT KiplException
+class KIPLSHARED_EXPORT KiplException : public std::exception
 {
 public :
     /// \brief Basic exception C'tor. Only creates a message.
@@ -28,7 +28,7 @@ public :
     /// \brief Getter for the error message
     /// \returns A string containing the error message information
     //std::string what() const;
-    const char* what() const;
+    virtual const char* what() const _NOEXCEPT;
 protected :
     std::string sExceptionName;
 	std::string sMessage;

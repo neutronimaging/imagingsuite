@@ -20,7 +20,7 @@ ReconException::ReconException(std::string msg, std::string filename, size_t lin
 kipl::base::KiplException(msg,filename,line,"ReconException")
 {}
 
-const char* ReconException::what() const
+const char* ReconException::what() const _NOEXCEPT
 {
 	if (sFileName.empty())
         return sMessage.c_str();

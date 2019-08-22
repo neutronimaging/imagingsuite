@@ -78,7 +78,7 @@ void ReconFactory::SetBackProjector(ReconConfig &config, ReconEngine * engine, k
     }
 }
 
-// #ifdef HAVEPYBIND11
+#ifdef HAVEPYBIND11
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -227,4 +227,4 @@ void bindReconFactory(py::module &m)
 
 
 
-// #endif
+#endif

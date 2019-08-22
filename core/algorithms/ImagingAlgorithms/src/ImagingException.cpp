@@ -8,21 +8,16 @@ ImagingException::~ImagingException()
 }
 
 ImagingException::ImagingException(std::string msg) :
-    sExceptionName("ImagingException"),
-    sMessage(msg),
-    nLineNumber(0)
+    kipl::base::KiplException (msg)
 {
 }
 
 ImagingException::ImagingException(std::string msg, std::string filename, size_t line) :
-    sExceptionName("ImagingException"),
-    sMessage(msg),
-    sFileName(filename),
-    nLineNumber(line)
+    kipl::base::KiplException (msg,filename,line)
 {
 }
 
-const char* ImagingException::what() const
+const char* ImagingException::what() const _NOEXCEPT
 {
 
     if (nLineNumber==0) {

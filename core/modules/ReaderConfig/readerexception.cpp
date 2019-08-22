@@ -19,13 +19,13 @@ ReaderException::ReaderException(std::string msg, std::string filename, size_t l
 kipl::base::KiplException(msg,filename,line,"ReaderException")
 {}
 
-std::string ReaderException::what()
+const char* ReaderException::what() const _NOEXCEPT
 {
     if (sFileName.empty())
-        return sMessage;
+        return sMessage.c_str();
     else {
         std::stringstream str;
         str<<"Reader exception in "<<sFileName<<" on line "<<nLineNumber<<": \n"<<sMessage;
-        return str.str();
+        return str.str().c_str();
     }
 }

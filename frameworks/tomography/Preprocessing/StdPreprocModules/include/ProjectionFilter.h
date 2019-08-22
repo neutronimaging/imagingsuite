@@ -23,7 +23,7 @@ class STDPREPROCMODULESSHARED_EXPORT ProjectionFilterBase:
 {
 public:
     ProjectionFilterBase(std::string name="ProjectionFilterBase", kipl::interactors::InteractionBase *interactor=nullptr);
-	virtual ~ProjectionFilterBase(void) {};
+    virtual ~ProjectionFilterBase(void) {}
 	enum FilterType {
         FilterRamLak=0,
 		FilterSheppLogan,

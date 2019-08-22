@@ -14,7 +14,7 @@ public:
 	ReconException(std::string msg, std::string filename, size_t line);
 	virtual ~ReconException(void);
 
-    virtual const char* what() const;
+    virtual const char* what() const _NOEXCEPT;
 private:
 };
 

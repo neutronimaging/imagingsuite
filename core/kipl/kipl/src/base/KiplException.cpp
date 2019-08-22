@@ -36,7 +36,7 @@ KiplException::KiplException(std::string message,
 {
 }
 
-const char* KiplException::what() const
+const char* KiplException::what() const _NOEXCEPT
 {
 	
 	if (nLineNumber==0) {
