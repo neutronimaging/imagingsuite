@@ -55,6 +55,7 @@ bool NormBase::SetROI(size_t *roi)
 
 int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
+    std::cout<<"norm config"<<std::endl;
 	m_Config    = config;
 	path        = config.ProjectionInfo.sReferencePath;
 	flatname    = config.ProjectionInfo.sOBFileMask;
@@ -66,8 +67,9 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
 	nDCCount      = config.ProjectionInfo.nDCCount;
 	nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
 
+    std::cout<<"a"<<std::endl;
 	bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
-
+std::cout<<"b"<<std::endl;
     try {
         bUseLUT     = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
     }
@@ -76,9 +78,18 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
         bUseLUT=false;
     }
 
-    string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
-	memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
+    std::cout<<"c"<<std::endl;
+    try {
+        string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
+    }
+    catch (...) {
+        logger(logger.LogWarning,"referenceaverage not found, using image average.");
+        m_ReferenceAvagerage = ImagingAlgorithms::AverageImage::ImageAverage;
+    }
 
+std::cout<<"d"<<std::endl;
+    std::copy_n(config.ProjectionInfo.dose_roi,4,nOriginalNormRegion);
+std::cout<<"e"<<std::endl;
 	return 0;
 }
 
