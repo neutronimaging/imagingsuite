@@ -19,7 +19,7 @@ ReaderException::ReaderException(std::string msg, std::string filename, size_t l
 kipl::base::KiplException(msg,filename,line,"ReaderException")
 {}
 
-const char* ReaderException::what() const _NOEXCEPT
+const char* ReaderException::what() const noexcept
 {
     if (sFileName.empty())
         return sMessage.c_str();

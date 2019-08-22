@@ -17,7 +17,7 @@ ImagingException::ImagingException(std::string msg, std::string filename, size_t
 {
 }
 
-const char* ImagingException::what() const _NOEXCEPT
+const char* ImagingException::what() const noexcept
 {
 
     if (nLineNumber==0) {

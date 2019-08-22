@@ -15,7 +15,7 @@ public:
     ReaderException(std::string msg, std::string filename, size_t line);
     virtual ~ReaderException(void);
 
-    virtual const char* what() const _NOEXCEPT;
+    virtual const char* what() const noexcept;
 private:
 };
 

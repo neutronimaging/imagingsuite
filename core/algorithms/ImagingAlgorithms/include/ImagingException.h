@@ -12,7 +12,7 @@ public:
 	ImagingException(std::string msg);
     ImagingException(std::string msg, std::string filename, size_t line);
 
-    virtual const char* what() const _NOEXCEPT;
+    virtual const char* what() const noexcept;
 };
 
 
