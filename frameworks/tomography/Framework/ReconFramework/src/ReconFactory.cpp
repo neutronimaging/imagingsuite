@@ -1,89 +1,100 @@
 //<LICENSE>
-#include "stdafx.h"
 #include "../include/ReconFactory.h"
-#include "../include/ReconConfig.h"
 #include "../include/PreprocModuleBase.h"
+#include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
+#include "ModuleException.h"
+#include "stdafx.h"
 #include <iostream>
 #include <memory>
 
-ReconFactory::ReconFactory(void) :
-	logger("ReconFactory")
+ReconFactory::ReconFactory(void)
+    : logger("ReconFactory")
 {
-
 }
 
 ReconFactory::~ReconFactory(void)
 {
-
 }
 
-ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::InteractionBase *interactor)
+ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::InteractionBase* interactor)
 {
-	ReconEngine * engine=new ReconEngine("ReconEngine",interactor);
+    ReconEngine* engine = new ReconEngine("ReconEngine", interactor);
 
     try {
         engine->SetConfig(config);
-    }
-    catch (ReconException &e) {
-        logger(logger.LogError,"Failed to get image size while building recon engine.");
+    } catch (ReconException& e) {
+        logger(logger.LogError, "Failed to get image size while building recon engine.");
         throw ReconException(e.what());
-    }
-    catch (kipl::base::KiplException &e) {
-        logger(logger.LogError,"Failed to get image size while building recon engine.");
+    } catch (kipl::base::KiplException& e) {
+        logger(logger.LogError, "Failed to get image size while building recon engine.");
         throw kipl::base::KiplException(e.what());
-    }
-    catch (exception &e) {
-        logger(logger.LogError,"Failed to get image size while building recon engine.");
+    } catch (exception& e) {
+        logger(logger.LogError, "Failed to get image size while building recon engine.");
         throw std::runtime_error(e.what());
     }
 
-	std::list<ModuleConfig>::iterator it;
+    std::list<ModuleConfig>::iterator it;
 
-	// Setting up the preprocessing modules
-    int i=0;
-    for (it=config.modules.begin(); it!=config.modules.end(); it++, i++) {
-		if (it->m_bActive==true) {
-            ModuleItem *module=nullptr;
-			try {
-                module=new ModuleItem("muhrec",it->m_sSharedObject,it->m_sModule,interactor);
+    // Setting up the preprocessing modules
+    int i = 0;
+    for (it = config.modules.begin(); it != config.modules.end(); it++, i++) {
+        if (it->m_bActive == true) {
+            ModuleItem* module = nullptr;
+            try {
+                std::cout << "Trying to make new module for " << it->m_sModule << '\n';
+                module = new ModuleItem("muhrec", it->m_sSharedObject, it->m_sModule, interactor);
 
-				module->GetModule()->Configure(config,it->parameters);
-				engine->AddPreProcModule(module);
-			}
-			catch (ReconException &e) {
-				throw ReconException(e.what(),__FILE__,__LINE__);
-			}
-		}
-	}
+                std::cout << "Configuring module with parameters\n";
+                module->GetModule()->Configure(config, it->parameters);
+                std::cout << "Adding PreProcModule\n";
+                engine->AddPreProcModule(module);
+            } catch (ReconException& e) {
+                throw ReconException(e.what(), __FILE__, __LINE__);
+            }
+        }
+    }
 
-    SetBackProjector(config,engine,interactor);
-	return engine;
-
+    SetBackProjector(config, engine, interactor);
+    return engine;
 }
 
-void ReconFactory::SetBackProjector(ReconConfig &config, ReconEngine * engine, kipl::interactors::InteractionBase *interactor)
+void ReconFactory::SetBackProjector(ReconConfig& config, ReconEngine* engine, kipl::interactors::InteractionBase* interactor)
 {
-    if (config.backprojector.m_bActive==true) {
-        BackProjItem *module=nullptr;
+    if (config.backprojector.m_bActive == true) {
+        BackProjItem* module = nullptr;
         try {
-            module=new BackProjItem("muhrecbp",config.backprojector.m_sSharedObject,config.backprojector.m_sModule,interactor);
+            module = new BackProjItem("muhrecbp", config.backprojector.m_sSharedObject, config.backprojector.m_sModule, interactor);
 
-            module->GetModule()->Configure(config,config.backprojector.parameters);
+            module->GetModule()->Configure(config, config.backprojector.parameters);
             engine->SetBackProjector(module);
-        }
-        catch (ReconException &e) {
-            throw ReconException(e.what(),__FILE__,__LINE__);
+        } catch (ReconException& e) {
+            throw ReconException(e.what(), __FILE__, __LINE__);
         }
     }
 }
 
 #ifdef HAVEPYBIND11
-#include <pybind11/pybind11.h>
+#include <exception>
 #include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <stdexcept>
+
+#include <sstream>
+#include <string>
 
 namespace py = pybind11;
+
+void setBool(const py::handle& source, bool& toBeSet)
+{
+    toBeSet = source.cast<bool>();
+}
+
+void setSizeT(const py::handle& source, size_t& toBeSet)
+{
+    toBeSet = source.cast<size_t>();
+}
 void fillUserInformation(ReconConfig& config, py::dict& userInformation)
 {
     for (auto item : userInformation) {
@@ -111,11 +122,107 @@ void fillUserInformation(ReconConfig& config, py::dict& userInformation)
 }
 void fillSystem(ReconConfig& config, py::dict& system)
 {
-    std::cout << "TODO for system\n";
+    for (auto item : system) {
+        const auto key = item.first.cast<std::string>();
+        if (key == "memory") {
+            const auto value = item.second.cast<size_t>();
+            config.System.nMemory = value;
+
+        } else if (key == "log_level") {
+            const auto value = item.second.cast<std::string>();
+
+            if (value == "error") {
+                config.System.eLogLevel = kipl::logging::Logger::LogLevel::LogError;
+            } else if (value == "warning") {
+                config.System.eLogLevel = kipl::logging::Logger::LogLevel::LogWarning;
+            } else if (value == "message") {
+                config.System.eLogLevel = kipl::logging::Logger::LogLevel::LogMessage;
+            } else if (value == "verbose") {
+                config.System.eLogLevel = kipl::logging::Logger::LogLevel::LogVerbose;
+            } else if (value == "debug") {
+                config.System.eLogLevel = kipl::logging::Logger::LogLevel::LogDebug;
+            }
+
+        } else if (key == "validate_data") {
+            const auto value = item.second.cast<bool>();
+            config.System.bValidateData = value;
+        } else {
+            throw std::runtime_error("Unknown key " + key + "for UserInformation");
+        }
+        std::cout << "System -- key: " << item.first << ", value: " << item.second << '\n';
+    }
 }
 void fillProjections(ReconConfig& config, py::dict& projections)
 {
-    std::cout << "TODO for proj\n";
+    for (auto item : projections) {
+        const auto key = item.first.cast<std::string>();
+        if (key == "n_dims" || key == "dims" || key == "ndims") {
+            const auto value = item.second.cast<py::list>();
+            config.ProjectionInfo.nDims[0] = value[0].cast<size_t>();
+            config.ProjectionInfo.nDims[1] = value[1].cast<size_t>();
+            config.ProjectionInfo.nDims[2] = value[2].cast<size_t>();
+        } else if (key == "beam_geometry") {
+            const auto value = item.second.cast<std::string>();
+            if (value == "parallel") {
+                config.ProjectionInfo.beamgeometry = config.ProjectionInfo.BeamGeometry_Parallel;
+            } else if (value == "cone") {
+                config.ProjectionInfo.beamgeometry = config.ProjectionInfo.BeamGeometry_Cone;
+            } else if (value == "helix") {
+                config.ProjectionInfo.beamgeometry = config.ProjectionInfo.BeamGeometry_Helix;
+            }
+        } else if (key == "resolution") {
+            const auto value = item.second.cast<py::list>();
+            config.ProjectionInfo.fResolution[0] = value[0].cast<float>();
+            config.ProjectionInfo.fResolution[1] = value[1].cast<float>();
+        } else if (key == "binning") {
+            const auto value = item.second.cast<float>();
+            config.ProjectionInfo.fBinning = value;
+        } else if (key == "margin") {
+            const auto value = item.second.cast<size_t>();
+            config.ProjectionInfo.nMargin = value;
+        } else if (key == "first_index") {
+            const auto value = item.second.cast<size_t>();
+            config.ProjectionInfo.nFirstIndex = value;
+        } else if (key == "last_index") {
+            const auto value = item.second.cast<size_t>();
+            config.ProjectionInfo.nLastIndex = value;
+        } else if (key == "projection_step") {
+            const auto value = item.second.cast<size_t>();
+            config.ProjectionInfo.nProjectionStep = value;
+        } else if (key == "skip_list") {
+            const auto value = item.second.cast<py::set>();
+            for (const auto setValue : value) {
+                config.ProjectionInfo.nlSkipList.insert(setValue.cast<size_t>());
+            }
+            std::cout << "Set length after insertion: " << config.ProjectionInfo.nlSkipList.size() << '\n';
+
+        } else if (key == "repeat_line") {
+            setBool(item.second, config.ProjectionInfo.bRepeatLine);
+        } else if (key == "scan_type") {
+            const auto value = item.second.cast<std::string>();
+            if (value == "sequential") {
+                config.ProjectionInfo.scantype = config.ProjectionInfo.SequentialScan;
+            } else if (value == "golden") {
+                config.ProjectionInfo.scantype = config.ProjectionInfo.GoldenSectionScan;
+            }
+        } else if (key == "golden_start_idx") {
+            setSizeT(item.second, config.ProjectionInfo.nGoldenStartIdx);
+        } else if (key == "image_type") {
+            const auto value = item.second.cast<std::string>();
+            if (value == "projections") {
+                config.ProjectionInfo.imagetype = config.ProjectionInfo.ImageType_Projections;
+            } else if (value == "sinograms") {
+                config.ProjectionInfo.imagetype = config.ProjectionInfo.ImageType_Sinograms;
+            } else if (value == "repeat_projection") {
+                config.ProjectionInfo.imagetype = config.ProjectionInfo.ImageType_Proj_RepeatProjection;
+            } else if (value == "repeat_sinogram") {
+                config.ProjectionInfo.imagetype = config.ProjectionInfo.ImageType_Proj_RepeatSinogram;
+            }
+        } else if (key == "correct_tilt") {
+            const auto value = item.second.cast<bool>();
+            config.ProjectionInfo.bCorrectTilt = value;
+        }
+    }
 }
 void fillMatrix(ReconConfig& config, py::dict& matrix)
 {
@@ -132,21 +239,63 @@ void makeEngineFromDict(py::dict userInformation, py::dict system, py::dict proj
     // fillModuleConfig(config, ...);
 }
 
-std::unique_ptr<ReconEngine> makeEngineFromXML(const std::string xmlFile, const std::string projectName)
+std::unique_ptr<ReconEngine> makeEngineFromXML(const std::string xmlFile)
 {
-    std::cout << "Loading config file '" << xmlFile << "' with project name '" << projectName << "'\n";
+    std::cout << "Loading config file '" << xmlFile << "' with project name '"
+              << "'\n";
+    kipl::logging::Logger logger("ReconFactory-Python");
     ReconConfig config{};
     try {
-        config.LoadConfigFile(xmlFile, projectName);
-        std::cout << "Loaded with information uhh: " << config.UserInformation.sOperator << '\n';
+        config.LoadConfigFile(xmlFile, "reconstructor");
+        std::cout << "Loaded with information: " << config.UserInformation.sOperator << '\n';
+    } catch (ReconException& a) {
+        std::cout << "Encountered recon exception: " << a.what() << '\n';
     } catch (kipl::base::KiplException& a) {
         std::cout << "Encountered exception: " << a.what() << '\n';
     }
 
     ReconFactory factory{};
-    return std::unique_ptr<ReconEngine>(factory.BuildEngine(config));
+    std::cout << "Made factory\n";
+    try {
+        auto engine{ std::unique_ptr<ReconEngine>(factory.BuildEngine(config)) };
+        std::cout << "Made engine\n";
+        return std::move(engine);
+    } catch (ReconException& a) {
+        std::cout << "Encountered recon exception: " << a.what() << '\n';
+        logger.error(a.what());
+        throw a;
+    } catch (ModuleException& a) {
+        std::stringstream ss;
+        ss << "Encountered module exception: " << a.what() << '\n';
+        const auto str = ss.str();
+        std::cout << str;
+        logger.error(str);
+        throw ReconException(a.what());
+    } catch (kipl::base::KiplException& a) {
+        std::cout << "Encountered base Kip exception: " << a.what() << '\n';
+        logger.error(a.what());
+        throw a;
+    } catch (std::exception& a) {
+        std::cout << "Encountered std exception: " << a.what() << '\n';
+        logger.error(a.what());
+    } catch (...) {
+        std::cout << "Encountered some exception\n";
+        auto expPtr = std::current_exception();
+
+        try {
+            if (expPtr) {
+                std::cout << typeid(expPtr).name() << '\n';
+                std::rethrow_exception(expPtr);
+            } else {
+                std::cout << "Current exception is empty\n";
+            }
+        } catch (const std::exception& e) //it would not work if you pass by value
+        {
+            std::cout << e.what();
+        }
+    }
 }
-void bindReconFactory(py::module &m)
+void bindReconFactory(py::module& m)
 {
     // py::class_<ReconFactory> rfClass(m, "ReconFactory");
 
@@ -157,74 +306,7 @@ void bindReconFactory(py::module &m)
         py::arg("projections"),
         py::arg("matrix"));
 
-    m.def("makeEngine", &makeEngineFromXML, py::arg("xml_file"), py::arg("project_name"));
-    // py::arg("processchain")
-    // m.def("Potatoes", []() {
-    //     std::cout << "I am here\n";
-    // });
+    m.def("makeEngine", &makeEngineFromXML, py::arg("xml_file"));
 }
-
-//    sfClass.def("configure",
-//                &ImagingAlgorithms::StripeFilter::configure,
-//                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c."
-//                );
-
-//    sfClass.def("process",
-//                 [](ImagingAlgorithms::StripeFilter &sf,
-//                 py::array_t<float> &x,
-//                 ImagingAlgorithms::eStripeFilterOperation op)
-//            {
-//                py::buffer_info buf1 = x.request();
-
-//                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-//                               static_cast<size_t>(buf1.shape[0])};
-
-//                sf.checkDims(dims);
-
-//                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
-
-//                sf.process(img,op);
-
-//                std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
-//            },
-
-//            "Applies the stripe filter on the image as in-place operation.",
-//            py::arg("x"),
-//            py::arg("op"));
-
-//    // sfClass.def("process",
-//    //              [](ImagingAlgorithms::StripeFilter &sf,
-//    //              py::array_t<double> &x,
-//    //              ImagingAlgorithms::eStripeFilterOperation op)
-//    //         {
-//    //             py::buffer_info buf1 = x.request();
-
-//    //             size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-//    //                            static_cast<size_t>(buf1.shape[0])};
-//    //             double *data=static_cast<double*>(buf1.ptr);
-
-//    //             kipl::base::TImage<float,2> img(dims);
-
-//    //             std::copy_n(data,img.Size(),img.GetDataPtr());
-
-//    //             sf.process(img,op);
-//    //             std::copy_n(img.GetDataPtr(),img.Size(),data);
-//    //         },
-//    //         "Applies the stripe filter on the image as in-place operation.",
-//    //         py::arg("x"),
-//    //         py::arg("op"));
-
-//    sfClass.def("dims",                &ImagingAlgorithms::StripeFilter::dims);
-//    sfClass.def("waveletName",         &ImagingAlgorithms::StripeFilter::waveletName);
-//    sfClass.def("decompositionLevels", &ImagingAlgorithms::StripeFilter::decompositionLevels);
-//    sfClass.def("sigma",               &ImagingAlgorithms::StripeFilter::sigma);
-//    sfClass.def("filterWindow",        &ImagingAlgorithms::StripeFilter::filterWindow);
-
-//    py::enum_<ImagingAlgorithms::eStripeFilterOperation>(m,"eStripeFilterOperation")
-//        .value("VerticalComponentZero", ImagingAlgorithms::VerticalComponentZero)
-//        .value("VerticalComponentFFT",    ImagingAlgorithms::VerticalComponentFFT)
-//        .export_values();
-
-
 
 #endif
