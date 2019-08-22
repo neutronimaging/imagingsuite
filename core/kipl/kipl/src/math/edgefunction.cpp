@@ -6,7 +6,7 @@ namespace kipl {namespace math {
 
 
 
-edgefunction::edgefunction() :
+edgefunction::edgefunction(int mysize, double *t) :
     term1(nullptr),
     term2(nullptr),
     term3(nullptr),
@@ -25,11 +25,11 @@ edgefunction::edgefunction() :
     a2(0),
     a5(0),
     a6(0),
-    t(nullptr),
-    size(200)
+    t(t),
+    size(mysize)
 {
-//        if(t!=nullptr){
-            size = static_cast<int>(sizeof(t)/sizeof(*t));
+        if(t!=nullptr){
+//            size = static_cast<int>(sizeof(t)/sizeof(*t));
             term1 = new double[size];
             term2 = new double[size];
             term3 = new double[size];
@@ -37,15 +37,17 @@ edgefunction::edgefunction() :
             term5 = new double[size];
             line_before = new double[size];
             line_after = new double[size];
-            exp_after = new double[size];
             exp_before = new double[size];
+            exp_after = new double[size];            
             edgeFunction = new double[size];
             fullEdge = new double[size];
-//        }
+        }
+
 }
 
 edgefunction::~edgefunction()
 {
+
     if(term1!=nullptr){
         delete[] term1;
         term1 = nullptr;
@@ -139,7 +141,7 @@ void edgefunction::computeLineAfter(double *fun, double *t)
 
 }
 
-void edgefunction::computeExpBefore(double *fun, double *t)
+void edgefunction::computeExpAfter(double *fun, double *t)
 {
     for (int i=0; i<size; ++i)
     {
@@ -148,11 +150,11 @@ void edgefunction::computeExpBefore(double *fun, double *t)
 
 }
 
-void edgefunction::computeExpAfter(double *fun, double *t)
+void edgefunction::computeExpBefore(double *fun, double *t)
 {
     for (int i=0; i<size; ++i)
     {
-        fun[i] = exp(-(a1+a2*t[i]));
+        fun[i] = exp(-(a5+a6*t[i]));
     }
 
 }
@@ -201,7 +203,7 @@ void edgefunction::computeSimplifiedEdge(double *t)
 
 }
 
-void edgefunction::computeEdge(double *t)
+void edgefunction::computeEdgeLinear(double *t)
 {
 //    computeTerm1(term1,t);
 //    computeTerm2(term2,t);
@@ -221,6 +223,20 @@ void edgefunction::computeEdge(double *t)
     }
 
 
+
+}
+
+void edgefunction::computeEdgeExponential(double *t)
+{
+    computeExpBefore(exp_before,t);
+    computeExpAfter(exp_after,t);
+
+    computeSimplifiedEdge(t);
+
+    for (int i=0; i<size; ++i)
+    {
+        fullEdge[i] = exp_after[i]*(exp_before[i]+(1.0-exp_before[i])*edgeFunction[i]);
+    }
 
 }
 

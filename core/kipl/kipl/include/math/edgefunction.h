@@ -17,8 +17,23 @@ namespace kipl { namespace math {
 class KIPLSHARED_EXPORT edgefunction
 {
 public:
-    edgefunction();
+    edgefunction(int size, double *t);
     ~edgefunction();
+
+    void computeTerm4(double *fun, double *t);
+    void computeTerm3(double *fun, double *t);
+    void computeTerm5(double *fun, double *t);
+    void computeTerm1(double *fun, double *t); // old implementation
+    void computeTerm2(double *fun, double *t); // old implementation
+    void computeLineBefore(double *fun, double *t);
+    void computeLineAfter(double *fun, double *t);
+    void computeExpBefore(double *fun, double *t);
+    void computeExpAfter(double *fun, double *t);
+    void computeSimplifiedEdge(double *t);
+    void computeEdgeLinear(double *t);
+    void computeEdgeExponential(double *t);
+
+    double *edgeFunction;
 
 //private: // should those be private or not?
     double *term1;
@@ -30,7 +45,7 @@ public:
     double *line_after;
     double *exp_before;
     double *exp_after;
-    double *edgeFunction;
+
     double *fullEdge;
     double sigma;
     double alpha;
@@ -41,17 +56,7 @@ public:
     double a6;
     double *t;
     int size;
-    void computeTerm4(double *fun, double *t);
-    void computeTerm3(double *fun, double *t);
-    void computeTerm5(double *fun, double *t);
-    void computeTerm1(double *fun, double *t);
-    void computeTerm2(double *fun, double *t);
-    void computeLineBefore(double *fun, double *t);
-    void computeLineAfter(double *fun, double *t);
-    void computeExpBefore(double *fun, double *t);
-    void computeExpAfter(double *fun, double *t);
-    void computeSimplifiedEdge(double *t);
-    void computeEdge(double *t);
+
 };
 
 }}
