@@ -102,7 +102,8 @@ void CompareVolumeViewer::updateViews(int idx)
             }
         }
         catch (kipl::base::KiplException & e) {
-            QMessageBox::warning(this,"Display problems",QString::fromStdString(e.what()));
+            QMessageBox::warning(this,"Display problems",e.what());
+
         }
     }
 }

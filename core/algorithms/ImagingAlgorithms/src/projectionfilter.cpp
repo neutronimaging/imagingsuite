@@ -248,7 +248,7 @@ bool ProjectionFilterBase::updateStatus(float val, const std::string & msg)
 //------------------------------------------------------------
 // Projection filter w. float
 ProjectionFilter::ProjectionFilter(kipl::interactors::InteractionBase *interactor) :
-    ProjectionFilterBase("ProjectionFilterSingle",interactor),
+    ProjectionFilterBase("ProjectionFilter",interactor),
     fft(nullptr)
 {
 }

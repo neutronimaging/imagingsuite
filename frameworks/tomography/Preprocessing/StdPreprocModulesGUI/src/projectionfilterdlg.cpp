@@ -37,7 +37,7 @@ int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::st
         QMessageBox msgbox;
         msgbox.setWindowTitle("Missing parameter");
         msgbox.setText("A parameter was missing during dialog setup.");
-        msgbox.setDetailedText(QString::fromStdString(e.what()));
+        msgbox.setDetailedText(e.what());
         msgbox.exec();
         return QDialog::Rejected;
     }
