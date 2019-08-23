@@ -14,6 +14,8 @@ void bindReconEngine(py::module &m)
 
     reClass.def(py::init());
 
+    reClass.def("Run3D",&ReconEngine::Run3D,"Starts the reconstruction process.");
+
 //    sfClass.def("configure",
 //                &ImagingAlgorithms::StripeFilter::configure,
 //                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c."
