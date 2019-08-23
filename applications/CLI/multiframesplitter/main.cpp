@@ -113,7 +113,7 @@ int process(int argc, char *argv[])
         string2enum(args["rotate"],rotate);
     }
     catch (kipl::base::KiplException &e) {
-        qDebug() << QString::fromStdString(e.what());
+        qDebug() << e.what();
         return -1;
     }
 
@@ -131,11 +131,11 @@ int process(int argc, char *argv[])
         }
     }
     catch (ReaderException &e) {
-        qDebug() << QString::fromStdString(e.what());
+        qDebug() << e.what();
         return -1;
     }
     catch (kipl::base::KiplException &e) {
-        qDebug() << QString::fromStdString(e.what());
+        qDebug() << e.what();
         return -1;
     }
     return cnt;

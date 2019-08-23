@@ -25,6 +25,8 @@
 int ProjectionFilterSingle::Configure(ReconConfig config, std::map<std::string,std::string> parameters)
 {
     mFilter.setParameters(parameters);
+
+    return 0;
 }
 
 int ProjectionFilterSingle::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)

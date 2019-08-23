@@ -3,7 +3,6 @@
 #define PROJECTIONFILTER_H
 
 #include "ImagingAlgorithms_global.h"
-
 #include <map>
 #include <string>
 #include <vector>
@@ -32,7 +31,7 @@ protected:
     kipl::interactors::InteractionBase *m_Interactor;
 public:
     ProjectionFilterBase(std::string name="ProjectionFilterBase", kipl::interactors::InteractionBase *interactor=nullptr);
-    virtual ~ProjectionFilterBase(void) {}
+    virtual ~ProjectionFilterBase() {}
 
     virtual std::map<std::string, std::string> parameters();
     void setParameters(const std::map<std::string, std::string> &params);
