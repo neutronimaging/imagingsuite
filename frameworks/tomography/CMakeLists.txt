@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # for testing we will need the python interpreter
 find_package(PythonInterp REQUIRED)
 
-add_subdirectory(Framework/ReconFramework)
+add_subdirectory(pythonBindings)
 
 # turn on testing
 #enable_testing()

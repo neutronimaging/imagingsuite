@@ -58,7 +58,29 @@ I src/SSfilter.cpp
   src/PreprocEnums.cpp
   src/ProjectionFilter.cpp
 
-
+  include/AdaptiveFilter.h
+  include/ISSfilter.h
+  include/ProjectionFilter.h
+  include/StdPreprocModules_global.h
+  include/BasicRingClean.h
+  include/MedianMixRingClean.h
+  include/SinoSpotClean.h
+  include/TranslateProjectionsModule.h
+  include/CameraStripeClean.h
+  include/MorphSpotCleanModule.h
+  include/SpotClean.h
+  include/TranslatedProjectionWeighting.h
+  include/DataScaler.h
+  include/NormPlugins.h
+  include/SpotClean2.h
+  include/WaveletRingClean.h
+  include/GammaSpotCleanModule.h
+  include/PolynomialCorrectionModule.h
+  include/SpotRingClean.h
+  include/bblognorm.h
+  include/GeneralFilter.h
+  include/PreprocEnums.h
+  include/StdPreprocModules.h
   )
 
 target_link_libraries(stdpreprocmodules
