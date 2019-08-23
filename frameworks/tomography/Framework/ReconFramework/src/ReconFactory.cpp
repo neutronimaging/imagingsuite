@@ -301,7 +301,10 @@ std::unique_ptr<ReconEngine> makeEngineFromXML(const std::string xmlFile)
             std::cout << e.what();
         }
     }
+
+    return nullptr;
 }
+
 void bindReconFactory(py::module& m)
 {
     // py::class_<ReconFactory> rfClass(m, "ReconFactory");
