@@ -36,22 +36,6 @@ tedgefunction::tedgefunction()
       std::cout << std::endl;
 
 
-//     double *term1 = new double[size];
-//     double *term2 = new double[size];
-//     double *term4 = new double[size];
-//     double *term3 = new double[size];
-//     double *term5 = new double[size];
-//     double *edgefunction = new double[size];
-//     double *simple_edge = new double[size];
-
-//     double *term1 = nullptr;
-//     double *term2 = nullptr;
-//     double *term4 = nullptr;
-//     double *term3 = nullptr;
-//     double *term5 = nullptr;
-//     double *edgefunction = nullptr;
-//     double *simple_edge = nullptr;
-
       double *exp_before=new double[size];
       double *exp_after = new double[size];
 
@@ -67,68 +51,6 @@ tedgefunction::tedgefunction()
      myedge.a5 = -0.47;
      myedge.a6 = 0.39;
 
-
-//     myedge.computeTerm3(term3,t);
-//     myedge.edgeFunction = edgefunction;
-//     myedge.term1 = term1;
-//     myedge.term2 = term2;
-//     myedge.term3 = term3;
-//     myedge.term4 = term4;
-//     myedge.term5 = term5;
-
-//     myedge.sigma =0.1;
-//     myedge.alpha =0.1;
-
-//     std::cout << "term3:" << std::endl;
-
-//     for (int i=0; i<30; i++)
-//    {
-//         std::cout << term3[i] << ", " ;
-//     }
-//     std::cout << std::endl;
-
-//     myedge.computeTerm5(term5,t);
-//      std::cout << "term5:" << std::endl;
-
-//     for (int i=0; i<30; i++)
-//    {
-//         std::cout << term5[i] << ", " ;
-//     }
-//      std::cout << std::endl;
-
-//     myedge.computeTerm4(term4,t);
-
-//      std::cout << "term4:" << std::endl;
-
-//     for (int i=0; i<30; i++)
-//    {
-//         std::cout << term4[i] <<  ", " ;
-//     }
-
-//      std::cout << std::endl;
-
-
-
-//     myedge.computeTerm1(term1,t);
-//     myedge.computeTerm2(term2,t);
-
-
-//     std::cout << "term1: " << std::endl;
-//     for (int i=0; i<30; i++)
-//    {
-//         std::cout << term1[i] <<  ", " ;
-//     }
-
-//      std::cout << std::endl;
-
-//      std::cout << "term2: " << std::endl;
-
-//      for (int i=0; i<30; i++)
-//     {
-//          std::cout << term2[i] <<  ", " ;
-//      }
-
-//       std::cout << std::endl;
 
      myedge.computeExpBefore(exp_before,t);
      myedge.computeExpAfter(exp_after,t);
