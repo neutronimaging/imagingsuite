@@ -34,8 +34,8 @@ class buffer {
         cref(T * buffer, size_t N) :
             cnt(1),
             data(buffer),
-            m_pRawPointer(nullptr),
             m_nData(N),
+            m_pRawPointer(nullptr),
             bExternalBuffer(true)
         {
 

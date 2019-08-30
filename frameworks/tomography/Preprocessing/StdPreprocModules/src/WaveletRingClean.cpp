@@ -90,7 +90,7 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 			{
 				ExtractSinogram(img,sinogram,j);
 
-				filter->Process(sinogram);
+                filter->process(sinogram);
 
 				InsertSinogram(sinogram,img,j);
 			}
@@ -131,7 +131,7 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
 				std::cout<<"Processing sinogram "<<j<<std::endl;
 				ExtractSinogram(img,sinogram,j);
 
-				filter->Process(sinogram);
+                filter->process(sinogram);
 
 				InsertSinogram(sinogram,img,j);
 			}

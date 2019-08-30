@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef _FFTBASE_H_
 #define _FFTBASE_H_
