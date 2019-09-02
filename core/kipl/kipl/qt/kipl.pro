@@ -47,7 +47,7 @@ win32 {
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -lFaddeeva
+else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio # -lFaddeeva
 
 
 
@@ -125,8 +125,8 @@ SOURCES += \
     ../src/math/findpeaks.cpp \
     ../src/math/normalizeimage.cpp \
     ../src/stltools/stlvecmath.cpp \
-    ../src/strings/xmlstrings.cpp \
-    ../src/math/edgefunction.cpp
+    ../src/strings/xmlstrings.cpp 
+#   ../src/math/edgefunction.cpp
 
 
 
@@ -342,8 +342,8 @@ HEADERS +=\
     ../include/strings/xmlstrings.h \
     ../include/morphology/repairhole.h \
     ../include/morphology/core/repairhole.hpp \
-    ../include/algorithms/datavalidator.h \
-    ../include/math/edgefunction.h
+    ../include/algorithms/datavalidator.h 
+#    ../include/math/edgefunction.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

@@ -314,7 +314,7 @@ void ProjectionFilter::buildFilter(const size_t N)
                 if ((0.0f<w) && (w<=0.5f*m_fCutOff))
                     mFilter[i] *=1.0f - 6*w*w/(m_fCutOff*m_fCutOff)*(1.0f-w/m_fCutOff);
                 else if ((0.5f*m_fCutOff<w) && (w<=m_fCutOff))
-                    mFilter[i] *=2.0f * std::powf(1.0f-w/m_fCutOff,3.0f);
+                    mFilter[i] *=2.0f * std::pow(1.0f-w/m_fCutOff,3.0f);
                 else
                     mFilter[i]=0.0f;
 
