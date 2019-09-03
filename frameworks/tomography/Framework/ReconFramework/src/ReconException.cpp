@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #include "stdafx.h"
 #include "../include/ReconException.h"
 #include <string>
@@ -31,13 +20,13 @@ ReconException::ReconException(std::string msg, std::string filename, size_t lin
 kipl::base::KiplException(msg,filename,line,"ReconException")
 {}
 
-std::string ReconException::what()
+const char* ReconException::what() const
 {
 	if (sFileName.empty())
-		return sMessage;
+        return sMessage.c_str();
 	else {
 		std::stringstream str;
 		str<<"Reconstructor exception in "<<sFileName<<" on line "<<nLineNumber<<": \n"<<sMessage;
-		return str.str();
+        return str.str().c_str();
 	}
 }
