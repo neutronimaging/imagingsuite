@@ -92,7 +92,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
             catch (std::exception &e)
             {
                 QString msg="Failed to delete series:";
-                msg=msg+QString::fromStdString(e.what());
+                msg=msg+e.what();
                 QMessageBox::warning(this,"Exception",msg);
             }
         }

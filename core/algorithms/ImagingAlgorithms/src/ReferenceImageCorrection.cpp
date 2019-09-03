@@ -92,17 +92,6 @@ ReferenceImageCorrection::~ReferenceImageCorrection()
 
 }
 
-//not used
-void ReferenceImageCorrection::LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
-        std::string dcname, size_t firstdc, size_t dccnt,
-        std::string bbname, size_t firstbb, size_t bbcnt, size_t *roi,
-        size_t *doseroi)
-{
-
-    std::cout << "ciao process " << std::endl;
-
-}
-
 void ReferenceImageCorrection::SaveBG(bool value, std::string path, std::string obname, std::string filemask)
 {
     bSaveBG = value;
@@ -150,6 +139,13 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     if (roi!=nullptr){
         memcpy(m_nROI,roi, sizeof(size_t)*4);
     }
+    else{
+        size_t fullroi[4];
+        fullroi[0] = fullroi[1]=0;
+        fullroi[2]= ob->Size(0);
+        fullroi[3]= ob->Size(1);
+        memcpy(m_nROI,fullroi, sizeof(size_t)*4);
+    }
 
     if (dose_OB!=0) {
         m_bHaveDoseROI=true;
@@ -168,63 +164,25 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
     if (useBB) {
 
-//        std::cout << "case useBB" << std::endl;
 		m_bHaveBlackBody=true;
 
-        // these images are used to compute the dose in the PB variante
-        // they must be declared here because they are then used in PrepareReferencesBB();
-
-//        m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nBlackBodyROI);
-//        m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseBBRoi);
-//        std::cout << "before switch interpmethod" << std::endl;
 
         switch (m_InterpMethod) {
         case (Polynomial):{
-//            std::cout << "case polynomial" << std::endl;
             m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nROI); // now rois are in absolute coordinates , richtig?
             m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
             break;
         }
         case(ThinPlateSplines): {
-//            std::cout << "case splines: " << std::endl;
-//            for (std::map<std::pair<int, int>, float>::const_iterator it = spline_values.begin(); it != spline_values.end();  ++it)
-//            {
-//                std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//            }
-
-//            std::cout << "number of centroids found: " << spline_values.size() << " "  << std::endl;
 
             m_OB_BB_Interpolated = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nROI); // now rois are in absolute coordinates , richtig?
             m_DoseBBflat_image = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nDoseROI);
 
 
-
-//                if (i==0){
-//                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
-//                    for(int j=0;j<spline_sample_values.size()+3;++j){
-//                        std::cout << current_param[j] << " ";
-//                    }
-//                    std::cout << std::endl;
-
-////                     spline sample  values sembrano giusti..
-//                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
-
-
-//            ofstream spline_OB_values("tps_OB_points.txt");
-//              for (std::map<std::pair<int, int>, float>::const_iterator it = spline_ob_values.begin(); it != spline_ob_values.end();  ++it)
-//              {
-//                  spline_OB_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//              }
-
-
-
             break;
         }
-//        default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
         }
 
-
-//    std::cout   << "before PrepareReferencesBB" << std::endl;
 
         // HERE SAVE OB_BB INTERPOLATED
 
@@ -234,8 +192,6 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
                 kipl::io::WriteTIFF32(m_OB_BB_Interpolated,fname.c_str()); // seem correct
         }
 
-//        kipl::io::WriteTIFF32(m_OB_BB_Interpolated,"ob_backgroundimage.tif"); // seem correct
-//        kipl::io::WriteTIFF32(m_DoseBBflat_image,"dose_bb.tif");
         PrepareReferencesBB();
 	}
 
@@ -245,7 +201,6 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     }
 
     if(!useBB && !useExtBB) {
-//        std::cout << "noBB option" << std::endl;
         PrepareReferences(); // original way
     }
 
@@ -344,10 +299,6 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 current_param =new float[6];
                 memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
                 m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
-
-//                if (i==0)
-//                  kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all! // UNCOMMENT THIS TO SAVE BACKGROUND RESULTS
-
                 m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
                 delete[] current_param;
                 break;
@@ -357,28 +308,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
                 memcpy(current_param, sample_bb_interp_parameters+i*(spline_sample_values.size()+3), sizeof(float)*(spline_sample_values.size()+3));
 
-
-
-//                if (i==0){
-//                    std::cout << "------DEBUG on CURRENT PARAM ----" << std::endl;
-//                    for(int j=0;j<spline_sample_values.size()+3;++j){
-//                        std::cout << current_param[j] << " ";
-//                    }
-//                    std::cout << std::endl;
-
-//                    std::cout << "-----DEBUG on spline_sample_values-------" << std::endl;
-//                  for (std::map<std::pair<int, int>, float>::const_iterator it = spline_sample_values.begin(); it != spline_sample_values.end();  ++it)
-//                  {
-//                      spline_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//                  }
-
-//                  spline_values.close();
-
-
                 m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
                 m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
-//                if (i==0)  kipl::io::WriteTIFF32(m_BB_sample_Interpolated,"background_sample.tif");
-//                kipl::io::WriteTIFF32(m_BB_sample_Interpolated, ("background_sample_"+std::to_string(i)+".tif").c_str()); // now I save those for all!
                     delete[] current_param;
                 break;
             }

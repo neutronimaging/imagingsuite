@@ -1,15 +1,5 @@
-//
-// This file is part of the backprojector modules of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2011-04-22 12:52:16 +0200 (Fri, 22 Apr 2011) $
-// $Rev: 915 $
-// $Id: StdPreprocModules.cpp 915 2011-04-22 10:52:16Z kaestner $
-//
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdBackProjectors_global.h"
 #include "../include/StdBackProjectors.h"
 #include <BackProjectorModuleBase.h>

@@ -1088,12 +1088,6 @@ void BBLogNormDlg::on_pushButton_browseDC_clicked()
     BrowseDCPath();
 }
 
-//void BBLogNormDlg::on_checkBox_saveBG_clicked()
-//{
-//    bSaveBG=true;
-//    ui->Qwidget_path->setVisible(true);
-//    ui->Qwidget_names->setVisible(true);
-//}
 
 void BBLogNormDlg::on_checkBox_saveBG_clicked(bool checked)
 {

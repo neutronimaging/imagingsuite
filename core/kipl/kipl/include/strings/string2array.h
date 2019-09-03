@@ -12,6 +12,7 @@
 #include <list>
 #include <sstream>
 #include <cstddef>
+#include <iterator>
 
 namespace kipl { namespace strings {
 size_t KIPLSHARED_EXPORT String2Array(std::string str, double *v, size_t N);
