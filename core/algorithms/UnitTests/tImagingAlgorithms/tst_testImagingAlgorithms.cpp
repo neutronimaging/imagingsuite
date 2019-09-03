@@ -18,6 +18,8 @@
 #include <piercingpointestimator.h>
 #include <pixelinfo.h>
 #include <PolynomialCorrection.h>
+#include <projectionfilter.h>
+#include <ImagingException.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -41,6 +43,9 @@ private Q_SLOTS:
 
     void PolynomialCorrection_init();
     void PolynomialCorrection_numeric();
+
+    void ProjectionFilterParameters();
+    void ProjectionFilterProcessing();
 
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -102,7 +107,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],100.0f);
@@ -117,7 +122,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks, ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],0.0f);
     QCOMPARE(img[pos2],1.8f);
@@ -132,7 +137,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
     QCOMPARE(img[pos2],1.8f);
@@ -151,7 +156,7 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::morphology::conn8);
-    cleaner.Process(img,1.0f,0.05f);
+    cleaner.process(img,1.0f,0.05f);
 
     kipl::io::WriteTIFF32(img,"spotcleaned.tif");
 
@@ -174,7 +179,7 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
     cleaner.setConnectivity(kipl::morphology::conn4);
 
-    cleaner.Process(res,0.04,0.01);
+    cleaner.process(res,0.04,0.01);
 
 
 }
@@ -185,12 +190,12 @@ void TestImagingAlgorithms::AverageImage_Enums()
 
     std::string key;
     key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
-    QCOMPARE(key,"ImageAverage");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),std::string("ImageSum"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),"ImageMedian");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage),"ImageWeightedAverage");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),"ImageMin");
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),"ImageMax");
+    QCOMPARE(key,std::string("ImageAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),             std::string("ImageSum"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),          std::string("ImageMedian"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage), std::string("ImageWeightedAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),             std::string("ImageMin"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),             std::string("ImageMax"));
 
     ImagingAlgorithms::AverageImage::eAverageMethod e;
     string2enum("ImageAverage",e);
@@ -257,7 +262,7 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
     kipl::base::TImage<float,3> stack(dims);
     kipl::base::TImage<float,2> res(dims);
-    float *w=new float[dims[2]];
+    std::vector<float> w(dims[2]);
     for (size_t i=0; i<dims[2]; i++) {
         float *pStack=stack.GetLinePtr(0,i);
         for (size_t j=0; j<res.Size(); j++)
@@ -290,8 +295,6 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax,w);
     r0=res[0];
     QCOMPARE(r0,25.0f);
-
-    delete [] w;
 }
 
 void TestImagingAlgorithms::PiercingPoint_Processing()
@@ -347,7 +350,7 @@ void TestImagingAlgorithms::piercingPointExperiment()
     QVERIFY(fabs(pos0.second-pos1.second)<3.0f);
 
     // Gain correction
-    pair<float,float> pos2=pe(ob,dc,true);
+    //pair<float,float> pos2=pe(ob,dc,true);
 
 }
 
@@ -374,30 +377,104 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
     ImagingAlgorithms::PolynomialCorrection pc;
     const int N=5;
     float val[N]={0.0f,1.0f,2.0f,3.0f,4.0f};
-    float result[N];
-    float verification[N];
-    for (int i=1; i<10; ++i)
+    std::vector<float> result(N);
+
+    for (size_t i=1; i<10; ++i)
     {
-        pc.Setup(c,i);
+        pc.setup(c,static_cast<int>(i));
         std::vector<float> vec=pc.coefficients();
 
         QCOMPARE(vec.size(),static_cast<size_t>(i+1));
-        for (int j=0; j<(i+1); ++j)
+        for (size_t j=0; j<(i+1); ++j)
             QCOMPARE(vec[j],c[j]);
 
-        std::copy_n(val,N,result);
-        pc.Process(result,N);
+        std::copy_n(val,N,result.begin());
+        pc.process(result);
 
-        for (int k=0; k<N; ++k)
+        for (size_t k=0; k<N; ++k)
         {
             float sum=c[0];
 
-            for (int j=1; j<(i+1); ++j)
+            for (size_t j=1; j<(i+1); ++j)
                 sum+= c[j]*std::powf(val[k],j);
 
             QCOMPARE(result[k],sum);
         }
     }
+}
+
+void TestImagingAlgorithms::ProjectionFilterParameters()
+{
+    ImagingAlgorithms::ProjectionFilter pf(nullptr);
+
+    // Check defualt values
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterHamming);
+    QCOMPARE(pf.order(),            1.0f);
+    QCOMPARE(pf.cutOff(),           0.5f);
+    QCOMPARE(pf.useBias(),          true);
+    QCOMPARE(pf.biasWeight(),       0.1f);
+    QCOMPARE(pf.currentFFTSize(),   0UL);
+    QCOMPARE(pf.currentImageSize(), 0UL);
+    QCOMPARE(pf.paddingDoubler(),   2UL);
+
+    auto params = pf.parameters();
+    QCOMPARE(params["filtertype"],     std::string("Hamming"));
+    QCOMPARE(params["order"],          std::string("1"));
+    QCOMPARE(params["cutoff"],         std::string("0.5"));
+    QCOMPARE(params["usebias"],        std::string("true"));
+    QCOMPARE(params["biasweight"],     std::string("0.1"));
+    QCOMPARE(params["paddingdoubler"], std::string("2"));
+
+    params["filtertype"]     = "Parzen";
+    params["order"]          = "2";
+    params["cutoff"]         = "0.4";
+    params["usebias"]        = "false";
+    params["biasweight"]     = "0.3";
+    params["paddingdoubler"] = "1";
+
+    pf.setParameters(params);
+
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterParzen);
+    QCOMPARE(pf.order(),            2.0f);
+    QCOMPARE(pf.cutOff(),           0.4f);
+    QCOMPARE(pf.useBias(),          false);
+    QCOMPARE(pf.biasWeight(),       0.3f);
+    QCOMPARE(pf.paddingDoubler(),   1UL);
+
+    pf.setFilter(ImagingAlgorithms::ProjectionFilterSheppLogan,0.4f);
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterSheppLogan);
+    QCOMPARE(pf.order(),            0.0f);
+    QCOMPARE(pf.cutOff(),           0.4f);
+
+    pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,0.5f,3.0f);
+    QCOMPARE(pf.filterType(),       ImagingAlgorithms::ProjectionFilterButterworth);
+    QCOMPARE(pf.order(),            3.0f);
+    QCOMPARE(pf.cutOff(),           0.5f);
+
+    QVERIFY_EXCEPTION_THROWN(pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,1.0f,3.0f),
+                             ImagingException);
+
+    QVERIFY_EXCEPTION_THROWN(pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,-1.0f,3.0f),
+                             ImagingException);
+}
+
+void TestImagingAlgorithms::ProjectionFilterProcessing()
+{
+    kipl::base::TImage<float,2> sino;
+#ifdef DEBUG
+    kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#else
+    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#endif
+
+    ImagingAlgorithms::ProjectionFilter pf(nullptr);
+
+    pf.process(sino);
+
+    kipl::io::WriteTIFF32(sino,"projfilt_result.tif");
+    QCOMPARE(pf.currentFFTSize(),2048);
+    QCOMPARE(pf.currentImageSize(),sino.Size(0));
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)

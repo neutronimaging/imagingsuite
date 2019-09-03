@@ -26,7 +26,7 @@ int PolynomialCorrection::Configure(ReconConfig config, std::map<std::string, st
 
     GetFloatParameterVector(parameters,"coefficents",c,m_nDegree+1);
 
-    pc.Setup(c,m_nDegree);
+    pc.setup(c,m_nDegree);
 	
     delete [] c;
 
@@ -52,26 +52,30 @@ bool PolynomialCorrection::SetROI(size_t *roi)
 
 void PolynomialCorrection::PlotPolynomial(float *x, float *y, size_t N, float minX, float maxX)
 {
-	float k=(maxX-minX)/static_cast<float>(N);
+    std::vector<float> xx(N);
+    std::vector<float> yy(N);
+    float k=(maxX-minX)/static_cast<float>(N);
 
 	for (size_t i=0; i<N; i++) {
-		y[i]=x[i]=minX+k*static_cast<float>(i);
+        xx[i]=minX+k*static_cast<float>(i);
 	}
 
-    pc.Process(y,N);
+    yy=pc.process(xx);
 
+    std::copy_n(xx.begin(),xx.size(),x);
+    std::copy_n(yy.begin(),yy.size(),y);
 }
 
 int PolynomialCorrection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
-    pc.Process(img.GetDataPtr(),img.Size());
+    pc.processInplace(img.GetDataPtr(),img.Size());
 
     return 0;
 }
 
 int PolynomialCorrection::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-    pc.Process(img.GetDataPtr(),img.Size());
+    pc.processInplace(img.GetDataPtr(),img.Size());
 
 	return 0;
 }

@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef _FFTBASE_H_
 #define _FFTBASE_H_
@@ -108,6 +108,8 @@ public:
     ///	
     ///	\returns Number of elements in the processed array
     int operator() (std::complex<float> *inCdata, float *outRdata);
+
+    int size(int idx);
     
     /// \brief The destruct removes transform plans and deallocates buffer memory
     ~FFTBaseFloat();

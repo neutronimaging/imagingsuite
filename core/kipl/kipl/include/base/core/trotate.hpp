@@ -194,6 +194,7 @@ kipl::base::TImage<float,2> TRotate<T>::Rotate(kipl::base::TImage<float,2> & img
     }
 
     switch (flip) {
+        case kipl::base::ImageFlipDefault             : break;
         case kipl::base::ImageFlipNone                : break;
         case kipl::base::ImageFlipHorizontal          : res=MirrorHorizontal(res); break;
         case kipl::base::ImageFlipVertical            : res=MirrorVertical(res); break;

@@ -66,6 +66,7 @@ SOURCES += \
     ../../src/averageimage.cpp \
     ../../src/piercingpointestimator.cpp \
     ../../src/ReferenceImageCorrection.cpp \
+    ../../src/projectionfilter.cpp \
     ../../src/tomocenter.cpp \
     ../../src/pybinder.cpp
 
@@ -82,6 +83,7 @@ HEADERS += \
     ../../include/averageimage.h \
     ../../include/piercingpointestimator.h \
     ../../include/ReferenceImageCorrection.h \
+    ../../include/projectionfilter.h \
     ../../include/tomocenter.h \
     ../../include/pybinder.h
 

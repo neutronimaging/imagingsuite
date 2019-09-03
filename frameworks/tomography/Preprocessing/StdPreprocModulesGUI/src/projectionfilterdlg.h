@@ -11,7 +11,8 @@
 #include <ConfigBase.h>
 #include <ReconConfig.h>
 
-#include <ProjectionFilter.h>
+//#include <ProjectionFilter.h>
+#include <projectionfilter.h>
 
 namespace Ui {
 class ProjectionFilterDlg;
@@ -22,7 +23,7 @@ class ProjectionFilterDlg : public ConfiguratorDialogBase
     Q_OBJECT
 
 public:
-    explicit ProjectionFilterDlg(QWidget *parent = 0);
+    explicit ProjectionFilterDlg(QWidget *parent = nullptr);
     ~ProjectionFilterDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
@@ -35,9 +36,9 @@ private:
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
-    ReconConfig *m_Config;
+    ReconConfig *m_ReconConfig;
 
-    ProjectionFilterBase::FilterType m_eFilterType;
+    ImagingAlgorithms::ProjectionFilterType m_eFilterType;
     float m_fCutOff;
     float m_fOrder;
     bool m_bUseBias;

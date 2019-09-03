@@ -18,8 +18,8 @@
 IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("StripeFilter",false, interactor),
     m_StripeFilter(nullptr),
     m_sWaveletName("daub15"),
+    m_fSigma(0.05f),
     m_nLevels(3),
-    m_fSigma(0.05),
 //    m_nDecNum(2),
     m_bParallelProcessing(false),
     op(ImagingAlgorithms::VerticalComponentFFT),
@@ -68,7 +68,7 @@ std::map<std::string, std::string> IMAGINGMODULESSHARED_EXPORT StripeFilterModul
     return parameters;
 }
 
-int IMAGINGMODULESSHARED_EXPORT StripeFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int IMAGINGMODULESSHARED_EXPORT StripeFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
     size_t Nslices=0;
 
@@ -94,7 +94,7 @@ int IMAGINGMODULESSHARED_EXPORT StripeFilterModule::ProcessCore(kipl::base::TIma
 //    #pragma omp for
     for (size_t i=0; (i<Nslices && (updateStatus(float(i)/Nslices,"Processing Stripe Filter")==false) ); i++) {
         slice=kipl::base::ExtractSlice(img,i,plane,nullptr);
-        m_StripeFilter->Process(slice,op);
+        m_StripeFilter->process(slice,op);
         kipl::base::InsertSlice(slice,img,i,plane);
     }
 

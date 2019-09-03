@@ -1,5 +1,5 @@
 # Instructions to compile and run python bindings on Imaging algorithms
-1. INstall support for pybind in your python environment
+1. Install support for pybind in your python environment
 ```bash
 <python home>/bin$./pip install pybind11
 ```
@@ -11,6 +11,10 @@ $ cd build
 $ cmake ..
 $ cmake --build .
 ```
+3. If you want to specify a different python version please replace the 
+```cmake ...```
+by
+```cmake -DPYTHON_EXECUTABLE:FILEPATH=<path-to-python-executable> .```
 4. Run the script 'copydeps.sh' to copy needed libs 
 5. Use the module with the python version you compiled with.  
 6. A test script would be 

@@ -1,16 +1,7 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-07-14 16:28:45 +0200 (Mi, 14 Jul 2010) $
-// $Rev: 657 $
-//
+//<LICENSE>
 
-#ifndef _BACKPROJECTORBASE_H_
-#define _BACKPROJECTORBASE_H_
+#ifndef BACKPROJECTORBASE_H
+#define BACKPROJECTORBASE_H
 
 #include <string>
 #include <list>
@@ -20,6 +11,7 @@
 #include <BackProjectorModuleBase.h>
 #include <interactors/interactionbase.h>
 #include <logging/logger.h>
+#include <projectionfilter.h>
 
 class StdBackProjectorBase : public BackProjectorModuleBase
 {
@@ -75,6 +67,8 @@ protected:
 	size_t nSliceBlock;
 	size_t nSubVolume[2];
 	float fRotation;
+
+    ImagingAlgorithms::ProjectionFilter filter;
 
 };
 
