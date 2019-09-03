@@ -214,7 +214,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_plots">
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_histograms">
            <property name="enabled">
@@ -227,7 +227,14 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QtAddons::PlotWidget" name="plotter_histogram" native="true"/>
+               <widget class="QtAddons::PlotWidget" name="plotter_histogram" native="true">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="mouseTracking">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
