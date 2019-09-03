@@ -1,4 +1,4 @@
-#include "advancedfilters.h"
+#include "../AdvancedFilters/advancedfilters.h"
 
 #ifdef HAVEPYBIND11
 #include <pybind11/pybind11.h>

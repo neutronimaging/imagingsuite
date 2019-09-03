@@ -5,7 +5,7 @@
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 
-#include "advancedfilterexception.h"
+#include "../AdvancedFilters/advancedfilterexception.h"
 
 namespace py = pybind11;
 

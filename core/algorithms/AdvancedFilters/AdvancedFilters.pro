@@ -27,9 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         advancedfilterexception.cpp \
-        advancedfilters.cpp \
-        filterenums.cpp \
-        pybinder.cpp
+        filterenums.cpp
 
 HEADERS += \
         AnisoDiff.h \

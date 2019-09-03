@@ -32,10 +32,6 @@ add_library(advancedfilters
   advancedfilterexception.cpp
   filterenums.cpp
   pybinder.cpp
-
-  advancedfilters.h
-  advancedfilterexception.h
-  filterenums.h
   )
 
 target_link_libraries(advancedfilters
@@ -46,6 +42,7 @@ target_link_libraries(advancedfilters
     kipl
     xml2
     tiff
+    AdvancedFilters
   )
 
 set_target_properties(advancedfilters

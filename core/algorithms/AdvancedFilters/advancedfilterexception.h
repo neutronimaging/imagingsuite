@@ -4,20 +4,14 @@
 #define ADVANCEDFILTEREXCEPTION_H
 
 #include "advancedfilters_global.h"
+#include <base/KiplException.h>
 #include <string>
 
-class ADVANCEDFILTERSSHARED_EXPORT AdvancedFiltersException {
+class ADVANCEDFILTERSSHARED_EXPORT AdvancedFiltersException : public kipl::base::KiplException {
 public:
     virtual ~AdvancedFiltersException();
     AdvancedFiltersException(std::string msg);
     AdvancedFiltersException(std::string msg, std::string filename, size_t line);
-
-    const char* what() const;
-protected :
-    std::string sExceptionName;
-    std::string sMessage;
-    std::string sFileName;
-    size_t nLineNumber;
 };
 
 
