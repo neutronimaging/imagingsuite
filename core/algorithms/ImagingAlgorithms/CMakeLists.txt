@@ -32,7 +32,8 @@ add_library(imagalg
   src/ImagingException.cpp  
 # src/TranslateProjections.cpp  
   src/MorphSpotClean.cpp  
-  src/pixelinfo.cpp  
+  src/pixelinfo.cpp
+  src/projectionfilter.cpp
 #  src/gammaclean.cpp  
   src/averageimage.cpp  
 #  src/piercingpointestimator.cpp  
@@ -46,6 +47,7 @@ add_library(imagalg
 #  include/TranslateProjections.h  
   include/MorphSpotClean.h  
   include/pixelinfo.h  
+  include/projectionfilter.h
   include/ImagingAlgorithms_global.h  
  # include/gammaclean.h  
   include/averageimage.h  
