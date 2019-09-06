@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PythonInterp REQUIRED)
 
 add_subdirectory(ImagingAlgorithms)
-add_subdirectory(ImagingQAAlgorithms)
+add_subdirectory(pyimgqa)
 
 # turn on testing
 enable_testing()

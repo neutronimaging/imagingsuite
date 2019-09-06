@@ -6,6 +6,8 @@ else
 fi
 
 cp  ~/git/lib/libkipl.1.0.0.dylib $BINDLIBPATH/libkipl.1.0.0.dylib
+cp  ~/git/lib/libImagingQAAlgorithms.1.0.0.dylib $BINDLIBPATH/libImagingQAAlgorithms.1.0.0.dylib
+
 cp ~/git/imagingsuite/external/mac/lib/libNeXus.1.0.0.dylib $BINDLIBPATH/libNexus.1.0.0.dylib
 cp ~/git/imagingsuite/external/mac/lib/libNeXusCPP.1.0.0.dylib $BINDLIBPATH/libNexusCPP.1.0.0.dylib
 cp ~/git/imagingsuite/external/mac/lib/libhdf5_cpp.11.dylib $BINDLIBPATH/libhdf5_cpp.11.dylib
@@ -15,8 +17,10 @@ cp ~/git/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $BINDLIBPATH/libhdf5_
 
 cd $BINDLIBPATH
 ln -s libkipl.1.0.0.dylib libkipl.1.dylib
+ln -s libImagingQAAlgorithms.1.0.0.dylib libImagingQAAlgorithms.1.dylib
 ln -s libNexus.1.0.0.dylib libNexus.1.dylib
 ln -s libNexusCPP.1.0.0.dylib libNexusCPP.1.dylib
+
 rm test*.py
 ln -s ../../UnitTests/python/test*.py .
 #nexus_related
