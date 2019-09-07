@@ -12,10 +12,8 @@ class READERCONFIGSHARED_EXPORT ReaderException : public kipl::base::KiplExcepti
 public:
     ReaderException(void);
     ReaderException(std::string msg);
-    ReaderException(std::string msg, std::string filename, size_t line);
+    ReaderException(const std::string &msg, const std::string &filename, size_t line);
     virtual ~ReaderException(void);
-
-    virtual const char* what() const;
 private:
 };
 

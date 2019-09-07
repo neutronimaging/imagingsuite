@@ -300,6 +300,11 @@ void ConfigBase::GetCommandLinePars(std::vector<std::string> &args)
     ParseArgv(args);             // The arguments from the refined class
 }
 
+std::string ConfigBase::SanitySlicesCheck()
+{
+    return "";
+}
+
 void ConfigBase::ParseArgv(std::vector<std::string> &args)
 {
     std::ostringstream msg;

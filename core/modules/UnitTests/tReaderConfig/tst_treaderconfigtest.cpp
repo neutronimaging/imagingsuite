@@ -13,6 +13,7 @@
 #include <analyzefileext.h>
 #include <datasetbase.h>
 #include <buildfilelist.h>
+#include <readerexception.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -27,6 +28,7 @@ private Q_SLOTS:
     void testAnalyzeFileExt();
     void testDataSetBase();
     void testBuildFileListAngles();
+    void testExceptions();
 };
 
 TReaderConfigTest::TReaderConfigTest()
@@ -164,7 +166,7 @@ void TReaderConfigTest::testBuildFileListAngles()
     il.push_back(fs);
 
     std::map<float,std::string> list1=BuildProjectionFileList(il, 0, 0, 180);
-    QCOMPARE(list1.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list1.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     float angle=0.0f;
     for (auto & item : list1)
     {
@@ -174,7 +176,7 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Starting from zero index
     std::map<float,std::string> list2=BuildProjectionFileList(il, 1, 0, 180);
-    QCOMPARE(list2.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list2.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     auto gv=goldenAngles(11,0,180.0f);
     std::sort(gv.begin(),gv.end());
     auto git=gv.begin();
@@ -192,7 +194,7 @@ void TReaderConfigTest::testBuildFileListAngles()
     fs3.m_nLast=20;
     il3.push_back(fs3);
     std::map<float,std::string> list4=BuildProjectionFileList(il3, 1, 0, 180);
-    QCOMPARE(list4.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list4.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     auto gv2=goldenAngles(11,10,180.0f);
     std::sort(gv2.begin(),gv2.end());
     git=gv2.begin();
@@ -210,7 +212,7 @@ void TReaderConfigTest::testBuildFileListAngles()
     fs2.m_nLast=20;
     il2.push_back(fs2);
     std::map<float,std::string> list3=BuildProjectionFileList(il2, 1, 10, 180);
-    QCOMPARE(list3.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list3.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     git=gv.begin();
     for (auto & item : list3)
     {
@@ -226,7 +228,7 @@ void TReaderConfigTest::testBuildFileListAngles()
     fs4.m_nLast=30;
     il4.push_back(fs4);
     std::map<float,std::string> list5=BuildProjectionFileList(il4, 1, 10, 180);
-    QCOMPARE(list5.size(),fs4.m_nLast-fs4.m_nFirst+1);
+    QCOMPARE(list5.size(),static_cast<size_t>(fs4.m_nLast-fs4.m_nFirst+1));
 
     git=gv2.begin();
     for (auto & item : list5)
@@ -234,6 +236,15 @@ void TReaderConfigTest::testBuildFileListAngles()
         QCOMPARE(item.first,*git);
         ++git;
     }
+}
+
+void TReaderConfigTest::testExceptions()
+{
+    std::string message;
+
+    ReaderException e("test",__FILE__,__LINE__);
+
+    qDebug()<< e.what();
 }
 
 QTEST_APPLESS_MAIN(TReaderConfigTest)

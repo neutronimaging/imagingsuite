@@ -13,8 +13,8 @@ CONFIG += c++11
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../Applications
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../Applications/debug
 
 unix:!symbian {
     maemo5 {
