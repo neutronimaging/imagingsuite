@@ -188,24 +188,29 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
 {
     size_t dims[8];
     int nDims=0;
-    try {
+    try
+    {
         nDims=GetImageSize(filename, binning,dims);
     }
-    catch (ReaderException &e) {
+    catch (ReaderException &e)
+    {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
     catch (kipl::base::KiplException &e) {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
-    catch (...) {
+    catch (...)
+    {
         throw ReaderException("Unhandled exception",__FILE__,__LINE__);
     }
     size_t local_crop[4];
     size_t *pCrop=nullptr;
-    if (nCrop!=nullptr) {
+    if (nCrop!=nullptr)
+    {
 
         local_crop[0]=nCrop[0];
         local_crop[1]=nCrop[1];
@@ -220,9 +225,11 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     }
     std::ostringstream msg;
     kipl::base::TImage<float,2> img;
-    try {
+    try
+    {
         readers::eExtensionTypes ext = readers::GetFileExtensionType(filename);
-        switch (ext) {
+        switch (ext)
+        {
         case readers::ExtensionMAT  : img=ReadMAT(filename,pCrop);  break;
         case readers::ExtensionFITS : img=ReadFITS(filename,pCrop,idx); break;
         case readers::ExtensionTIFF : img=ReadTIFF(filename,pCrop,idx);  break;
@@ -232,15 +239,18 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
         default : throw ReaderException("Unknown file type",__FILE__, __LINE__); break;
         }
     }
-    catch (ReaderException &e) {
+    catch (ReaderException &e)
+    {
         msg<<"Failed to read "<<filename<<" reader exception:\n"<<e.what();
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg<<"Failed to read "<<filename<<" kipl exception:\n"<<e.what();
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         msg<<"Failed to read "<<filename<<" STL exception:\n"<<e.what();
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
@@ -249,7 +259,8 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     kipl::base::TImage<float,2> binned;
     msg.str("");
     msg<<"Failed to resample or rotate the projection with a ";
-    try {
+    try
+    {
 //        if (1<binning)
 //            kipl::base::ReBin(img,binned,bins);
 //        else
@@ -257,17 +268,20 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
 
         img=RotateProjection(binned,flip,rotate);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg<<"KiplException: \n"<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         msg<<"STL exception: \n"<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
-    catch (...) {
+    catch (...)
+    {
         msg<<"unknown exception.";
         logger(kipl::logging::Logger::LogError,msg.str());
         throw ReaderException(msg.str(),__FILE__,__LINE__);
@@ -290,7 +304,8 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string path,
     { // Reading from single file
 
     }
-    else {
+    else
+    {
         std::string filename;
         std::string ext;
         kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
@@ -300,7 +315,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string path,
     return img;
 }
 
-kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader,
+kipl::base::TImage<float,3> ImageReader::Read(FileSet &loader,
                                   kipl::base::eImageFlip flip,
                                   kipl::base::eImageRotate rotate,
                                   float binning,
@@ -314,6 +329,18 @@ kipl::base::TImage<float,3> ImageReader::Read(ImageLoader &loader,
                 rotate,
                 binning,
                 nCrop);
+}
+
+kipl::base::TImage<float,3> ImageReader::Read(FileSet &loader)
+{
+    return Read(loader.m_sFilemask,
+                loader.m_nFirst,
+                loader.m_nLast,
+                loader.m_nStep,
+                loader.m_Flip,
+                loader.m_Rotate,
+                loader.m_fBinning,
+                loader.m_ROI);
 }
 
 kipl::base::TImage<float,3> ImageReader::Read(string fname,
@@ -373,16 +400,20 @@ kipl::base::TImage<float,2> ImageReader::ReadMAT(std::string filename, size_t co
 kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, size_t const * const nCrop,size_t idx)
 {
     kipl::base::TImage<float,2> img;
-    try {
+    try
+    {
         kipl::io::ReadFITS(img,filename.c_str(),nCrop,idx);
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         throw ReaderException(e.what(), __FILE__,__LINE__);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         throw kipl::base::KiplException(e.what(), __FILE__,__LINE__);
     }
-    catch (...) {
+    catch (...)
+    {
         throw ReaderException("Unknown exception", __FILE__,__LINE__);
     }
 
@@ -392,16 +423,20 @@ kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, size_t c
 kipl::base::TImage<float,2> ImageReader::ReadTIFF(std::string filename, size_t const * const nCrop, size_t idx)
 {
     kipl::base::TImage<float,2> img;
-    try {
+    try
+    {
         kipl::io::ReadTIFF(img,filename.c_str(), nCrop, idx);
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         throw ReaderException(e.what(), __FILE__,__LINE__);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         throw kipl::base::KiplException(e.what(), __FILE__,__LINE__);
     }
-    catch (...) {
+    catch (...)
+    {
         throw ReaderException("Unknown exception", __FILE__,__LINE__);
     }
 
@@ -447,10 +482,12 @@ float ImageReader::GetProjectionDose(std::string filename,
     float *means=new float[img.Size(1)];
     memset(means,0,img.Size(1)*sizeof(float));
 
-    for (size_t y=0; y<img.Size(1); y++) {
+    for (size_t y=0; y<img.Size(1); y++)
+    {
         pImg=img.GetLinePtr(y);
 
-        for (size_t x=0; x<img.Size(0); x++) {
+        for (size_t x=0; x<img.Size(0); x++)
+        {
             means[y]+=pImg[x];
         }
         means[y]=means[y]/static_cast<float>(img.Size(0));

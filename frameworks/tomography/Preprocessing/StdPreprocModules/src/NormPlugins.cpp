@@ -208,7 +208,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
         ImagingAlgorithms::AverageImage avg;
 
-        refimg = avg(img3D,m_ReferenceAvagerage,nullptr);
+        refimg = avg(img3D,m_ReferenceAvagerage);
 
         delete [] tempdata;
         delete [] fDoses;

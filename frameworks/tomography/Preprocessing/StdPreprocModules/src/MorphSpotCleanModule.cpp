@@ -1,12 +1,14 @@
 //#include "stdafx.h"
 #include <thread>
 #include <cstdlib>
+#include <functional>
 #include "../include/StdPreprocModules_global.h"
 #include "../include/MorphSpotCleanModule.h"
 #include <ParameterHandling.h>
 #include <MorphSpotClean.h>
 #include <base/timage.h>
 #include <strings/miscstring.h>
+#include <strings/string2array.h>
 #include <ImagingException.h>
 #include <ReconException.h>
 #include <ModuleException.h>
@@ -17,12 +19,14 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_eConnectivity(kipl::morphology::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectPeaks),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
-    m_fThreshold(0.1f),
-    m_fSigma(0.01f),
+    m_fThreshold{0.1f,0.1f},
+    m_fSigma{0.01f,0.01f},
     m_nEdgeSmoothLength(5),
     m_nMaxArea(30),
-    m_fMinLevel(-0.1),
-    m_fMaxLevel(12),
+    m_bRemoveInfNaN(false),
+    m_bClampData(false),
+    m_fMinLevel(-0.1f), // This shouldnt exist...
+    m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
     m_bThreading(false)
 {
 }
@@ -33,17 +37,38 @@ MorphSpotCleanModule::~MorphSpotCleanModule()
 
 int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::string, std::string> parameters)
 {
-    string2enum(GetStringParameter(parameters,"connectivity"),m_eConnectivity);
-    string2enum(GetStringParameter(parameters,"cleanmethod"),m_eCleanMethod);
-    string2enum(GetStringParameter(parameters,"detectionmethod"),m_eDetectionMethod);
-    m_fThreshold        = GetFloatParameter(parameters,"threshold");
-    m_fSigma            = GetFloatParameter(parameters,"sigma");
-    m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
-    m_nMaxArea          = GetIntParameter(parameters,"maxarea");
-    m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
-    m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
-    m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+    std::ostringstream msg;
 
+    try
+    {
+        string2enum(GetStringParameter(parameters,"connectivity"),m_eConnectivity);
+        string2enum(GetStringParameter(parameters,"cleanmethod"),m_eCleanMethod);
+        string2enum(GetStringParameter(parameters,"detectionmethod"),m_eDetectionMethod);
+        kipl::strings::string2vector(GetStringParameter(parameters,"threshold"),m_fThreshold);
+        kipl::strings::string2vector(GetStringParameter(parameters,"sigma"),m_fSigma);
+        m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
+        m_nMaxArea          = GetIntParameter(parameters,"maxarea");
+        m_bRemoveInfNaN     = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
+        m_bClampData        = kipl::strings::string2bool(GetStringParameter(parameters,"clampdata"));
+        m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
+        m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
+        m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+    }
+    catch (ModuleException &e) {
+        msg<<"Module exception: Failed to get parameters: "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
+    }
+    catch (kipl::base::KiplException &e) {
+        msg<<"Kipl Exception: Failed to get parameters: "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
+    }
+    catch (std::exception &e) {
+        msg<<"STL exception: Failed to get parameters: "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
+    }
     return 0;
 }
 
@@ -54,10 +79,12 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
     parameters["connectivity"] = enum2string(m_eConnectivity);
     parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
     parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
-    parameters["threshold"]    = kipl::strings::value2string(m_fThreshold);
-    parameters["sigma"]        = kipl::strings::value2string(m_fSigma);
+    parameters["threshold"]    = kipl::strings::Vector2String(m_fThreshold);
+    parameters["sigma"]        = kipl::strings::Vector2String(m_fSigma);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
+    parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNaN);
+    parameters["clampdata"]    = kipl::strings::bool2string(m_bClampData);
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]    = kipl::strings::bool2string(m_bThreading);
@@ -89,9 +116,11 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
+    cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
+    cleaner.cleanInfNan(m_bRemoveInfNaN);
 
     try {
-        cleaner.Process(img,m_fThreshold, m_fSigma);
+        cleaner.process(img,m_fThreshold, m_fSigma);
     }
     catch (ImagingException & e) {
         msg.str();
@@ -127,13 +156,14 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
+    cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
 
     msg.str("");
     try {
         for (i=0; (i<N) && (UpdateStatus(float(i)/N,m_sModuleName)==false); i++) {
 
             memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
-            cleaner.Process(proj,m_fThreshold,m_fSigma);
+            cleaner.process(proj,m_fThreshold,m_fSigma);
             memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
         }
     }
@@ -165,11 +195,12 @@ int MorphSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & img)
         ImagingAlgorithms::MorphSpotClean cleaner;
         cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
         cleaner.setConnectivity(m_eConnectivity);
+        cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
 
 #pragma omp for
         for (i=0; i<N; i++) {
             memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
-            cleaner.Process(proj,m_fThreshold,m_fSigma);
+            cleaner.process(proj,m_fThreshold,m_fSigma);
             memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
         }
     }
@@ -226,7 +257,7 @@ int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const siz
 
         for (i=0; i<N; i++) {
             memcpy(proj.GetDataPtr(),pImg+i*size, size*sizeof(float));
-            cleaner.Process(proj,m_fThreshold,m_fSigma);
+            cleaner.process(proj,m_fThreshold,m_fSigma);
             memcpy(pImg+i*size,proj.GetDataPtr(), size*sizeof(float));
         }
     }
@@ -238,9 +269,9 @@ int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const siz
     return 0;
 }
 
-kipl::base::TImage<float,2> MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img)
+kipl::base::TImage<float,2> MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm)
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
-    cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
-    return cleaner.DetectionImage(img);
+    cleaner.setCleanMethod(dm,m_eCleanMethod);
+    return cleaner.detectionImage(img);
 }

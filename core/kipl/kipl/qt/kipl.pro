@@ -27,7 +27,6 @@ unix {
     }
 
     unix:macx {
-#        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -123,11 +122,14 @@ SOURCES += \
     ../src/math/circularhoughtransform.cpp \
     ../src/base/roi.cpp \
     ../src/math/findpeaks.cpp \
-    ../src/math/normalizeimage.cpp
+    ../src/math/normalizeimage.cpp \
+    ../src/stltools/stlvecmath.cpp \
+    ../src/strings/xmlstrings.cpp
 
 
 
 HEADERS +=\
+    ../../../algorithms/ImagingAlgorithms/include/pybinder.h \
     ../include/kipl_global.h \
     ../include/algorithms/sortalg.h \
     ../include/base/tsubimage.h \
@@ -334,7 +336,11 @@ HEADERS +=\
     ../include/math/core/statistics.hpp \
     ../include/io/io_serializecontainers.h \
     ../include/math/findpeaks.h \
-    ../include/math/normalizeimage.h
+    ../include/math/normalizeimage.h \
+    ../include/strings/xmlstrings.h \
+    ../include/morphology/repairhole.h \
+    ../include/morphology/core/repairhole.hpp \
+    ../include/algorithms/datavalidator.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {

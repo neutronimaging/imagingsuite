@@ -491,7 +491,8 @@ void ImageViewerWidget::set_marker(QMarker marker, int idx)
 
 void ImageViewerWidget::clear_marker(int idx)
 {
-
+    QMutexLocker locker(&m_ImageMutex);
+    m_ImagePainter.clear_marker(idx);
 }
 
 void ImageViewerWidget::hold_annotations(bool hold)

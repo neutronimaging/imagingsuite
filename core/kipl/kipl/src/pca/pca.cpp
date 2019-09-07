@@ -18,8 +18,8 @@ PCA::PCA() :
     logger("PCA"),
     m_bCenterData(false),
     m_bNormalizeData(false),
-    m_fMean(NULL),
-    m_fStdDev(NULL),
+    m_fMean(nullptr),
+    m_fStdDev(nullptr),
     m_eCovType(kipl::math::CorrelationMatrix),
     m_eDecompositionType(kipl::pca::PCA_Eigen)
 {
@@ -28,10 +28,10 @@ PCA::PCA() :
 
 PCA::~PCA()
 {
-    if (m_fMean!=NULL)
+    if (m_fMean!=nullptr)
         delete [] m_fMean;
 
-    if (m_fStdDev!=NULL)
+    if (m_fStdDev!=nullptr)
         delete [] m_fStdDev;
 }
 

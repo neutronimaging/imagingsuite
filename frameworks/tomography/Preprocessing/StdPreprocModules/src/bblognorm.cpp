@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <strings/miscstring.h>
 
 #include <ReconException.h>
@@ -1606,7 +1607,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
         ImagingAlgorithms::AverageImage avg;
 
-        refimg = avg(img3D,m_ReferenceAverageMethod,nullptr);
+        refimg = avg(img3D,m_ReferenceAverageMethod);
 
         delete [] tempdata;
 
@@ -1742,7 +1743,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         ImagingAlgorithms::AverageImage avg;
 
 
-        refimg = avg(img3D,m_ReferenceAverageMethod,nullptr);
+        refimg = avg(img3D,m_ReferenceAverageMethod);
 
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {

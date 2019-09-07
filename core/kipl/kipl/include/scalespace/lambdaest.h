@@ -5,15 +5,15 @@
 
 #include <vector>
 
-#include <base/timage.h>
+#include "../base/timage.h"
 //#include "imagestats.h"
 //#include "../misc/stlvecio.h"
 //#include "../misc/sortalg.h"
 //#include "../math/statistics.h"
 //#include <image/drawable.h>
-#include <base/thistogram.h>
-#include <base/textractor.h>
-#include <math/median.h>
+#include "../base/thistogram.h"
+#include "../base/textractor.h"
+#include "../math/median.h"
 
 using namespace std;
 
@@ -23,7 +23,7 @@ namespace akipl { namespace scalespace {
 	template<class ImgType,int NDim>
 	class LambdaEstBase {
 	public:
-		LambdaEstBase() {call_cnt=0;update_frequency=1; update_data=-1; lambda=0; mask=NULL; newROI=false;};
+        LambdaEstBase() {call_cnt=0;update_frequency=1; update_data=-1; lambda=0; mask=nullptr; newROI=false;}
 		float operator()(kipl::base::TImage<float,NDim> &img) {
 			if (!(call_cnt%update_frequency)) {
 //
@@ -164,10 +164,10 @@ namespace akipl { namespace scalespace {
 	{
 		vector<long> hist;
 		vector<float> interval;
-		kipl::base::TImage<float,2> tmp;
+        kipl::base::TImage<float,2> tmp;
 
 		//img.ExtractSlice(tmp,plane_XY,img.getDimsptr()[2]/2);
-		tmp= kipl::base::ExtractSlice(img,img.Size(2)/2,kipl::base::ImagePlaneXY);
+        tmp= kipl::base::ExtractSlice(img,img.Size(2)/2,kipl::base::ImagePlaneXY);
 
 		int Npercentile=int(img.Size()*percentile);
 		int sum=0,i=0;
@@ -180,7 +180,8 @@ namespace akipl { namespace scalespace {
 			else
 				histo.SetInterval(HistLength); // Reset to full dynamics
 
-			histo(tmp,hist,interval);
+//            histo(tmp,hist,interval);
+            hist=histo(tmp);
 			
 			sum=0;
 			for (intIt=interval.begin(), histIt=hist.begin(); 

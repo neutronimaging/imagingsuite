@@ -15,7 +15,7 @@ public:
     virtual std::map<std::string, std::string> GetParameters();
     virtual bool SetROI(size_t *roi);
 
-    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
+    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm);
 
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
@@ -27,10 +27,12 @@ protected:
     kipl::morphology::MorphConnect m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
-    float m_fThreshold;
-    float m_fSigma;
+    std::vector<float> m_fThreshold;
+    std::vector<float> m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
+    bool m_bRemoveInfNaN;
+    bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
     bool m_bThreading;

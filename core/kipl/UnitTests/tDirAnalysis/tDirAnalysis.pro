@@ -26,8 +26,8 @@ win32 {
 SOURCES += tst_tdiranalysistest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release): LIBS += -L../../../../../lib/
-else:CONFIG(debug, debug|release): LIBS += -L../../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl
 

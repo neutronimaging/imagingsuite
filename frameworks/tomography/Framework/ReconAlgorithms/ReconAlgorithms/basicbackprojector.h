@@ -1,9 +1,10 @@
 #ifndef BASICBACKPROJECTOR_H
 #define BASICBACKPROJECTOR_H
 
+#include "reconalgorithms_global.h"
 #include "backprojectorbase.h"
 
-class BasicBackProjector: public BackProjectorBase
+class RECONALGORITHMSSHARED_EXPORT BasicBackProjector: public BackProjectorBase
 {
 public:
     BasicBackProjector();

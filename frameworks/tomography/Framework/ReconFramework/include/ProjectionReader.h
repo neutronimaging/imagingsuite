@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef _PROJECTIONREADER_H_
-#define _PROJECTIONREADER_H_
+#ifndef PROJECTIONREADER_H
+#define PROJECTIONREADER_H
 
 #include "ReconFramework_global.h"
 //#include "stdafx.h"
@@ -43,7 +32,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
 	kipl::base::TImage<float,2> Read(std::string filename,
             kipl::base::eImageFlip flip = kipl::base::ImageFlipNone,
@@ -58,7 +47,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
 	kipl::base::TImage<float,2> Read(std::string path,
 			std::string filemask,
@@ -74,7 +63,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
     kipl::base::TImage<float, 2> ReadNexus(std::string filename,
                                           size_t number,
@@ -90,7 +79,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
     kipl::base::TImage<float, 3> ReadNexusStack(std::string filename,
                                           size_t start, size_t end,
@@ -115,7 +104,7 @@ public:
 
     /// Reading a block of image files using information provided by a ReconConfig struct.
     /// \param config A reconstruction configuration struct
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \param parameters A list of output parameters like acquisition angle, projection weight, and projection dose.
     /// \returns A 3D image containing the 2D images in the xy-plane.
 	kipl::base::TImage<float,3> Read(ReconConfig config,

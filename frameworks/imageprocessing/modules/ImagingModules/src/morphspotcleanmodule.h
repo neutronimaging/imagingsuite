@@ -4,6 +4,7 @@
 #include "ImagingModules_global.h"
 #include <string>
 #include <map>
+#include <vector>
 
 #include <base/timage.h>
 #include <base/kiplenums.h>
@@ -21,7 +22,7 @@ public:
 
     virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
-    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
+    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm);
 
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
@@ -35,10 +36,12 @@ protected:
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
 
-    double m_fThreshold;
-    double m_fSigma;
+    std::vector<float> m_fThreshold;
+    std::vector<float> m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
+    bool m_bRemoveInfNan;
+    bool m_bUseClamping;
     double m_fMinLevel;
     double m_fMaxLevel;
     bool m_bThreading;

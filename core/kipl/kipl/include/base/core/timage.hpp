@@ -6,6 +6,7 @@
 #include <cstring>
 #include <typeinfo>
 #include <iomanip>
+#include <algorithm>
 #ifdef _OPENMP
     #include <omp.h>
 #else
@@ -23,21 +24,28 @@ namespace kipl { namespace base {
 template<typename T, size_t N>
 TImage<T,N>::TImage() : m_NData(0), m_buffer(0)
 {
-	memset(m_Dims,0,N*sizeof(size_t));
+    std::fill_n(m_Dims,N,0UL);
 }
 	
 template<typename T, size_t N>
 TImage<T,N>::TImage(const TImage<T,N> &img) : m_NData(img.m_NData), m_buffer(img.m_buffer)
 {
 	info=img.info;
-	memcpy(m_Dims,img.m_Dims,N*sizeof(size_t));
+
+    std::copy_n(img.m_Dims,N,m_Dims);
 }
 
 template<typename T, size_t N>
 TImage<T,N>::TImage(size_t const * const dims) : m_NData(_ComputeNElements(dims)), m_buffer(m_NData) 
 {
-	memcpy(m_Dims,dims,N*sizeof(size_t));
-	memset(m_buffer.GetDataPtr(), 0, m_NData*sizeof(T));
+    std::copy_n(dims,N,m_Dims);
+    std::fill_n(m_buffer.GetDataPtr(), m_NData,0);
+}
+
+template<typename T, size_t N>
+TImage<T,N>::TImage(T *pBuffer, size_t const * const dims) : m_NData(_ComputeNElements(dims)), m_buffer(pBuffer,m_NData)
+{
+    std::copy_n(dims,N,m_Dims);
 }
 
 template<typename T, size_t N>
@@ -60,18 +68,9 @@ const TImage<T,N> & TImage<T,N>::operator=(const TImage<T,N> &img)
 template<typename T, size_t N>
 const TImage<T,N> & TImage<T,N>::operator=(const T value)
 {
-	if (value==static_cast<T>(0)) {
-		memset(m_buffer.GetDataPtr(),0,m_buffer.Size()*sizeof(T));
-	}
-	else {
-		T* pData=m_buffer.GetDataPtr();
-		const size_t n=m_buffer.Size();
-		for (size_t i=0; i<n; i++) {
-			pData[i]=value;
-		}
-	}
+    std::fill_n(m_buffer.GetDataPtr(),m_buffer.Size(),value);
 
-	return *this;
+    return *this;
 }
 
 template<typename T, size_t N>
@@ -109,6 +108,12 @@ T & TImage<T,N>::operator()(size_t x, size_t y, size_t z)
     }
 
     return *m_buffer.GetDataPtr();
+}
+
+template<typename T, size_t N>
+T & TImage<T,N>::operator()(int x, int y, int z)
+{
+    return this->operator()(static_cast<size_t>(x),static_cast<size_t>(y),static_cast<size_t>(z));
 }
 
 template<typename T, size_t N>

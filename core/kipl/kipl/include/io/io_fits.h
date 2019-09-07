@@ -13,7 +13,7 @@ namespace kipl { namespace io {
 /// \brief Read a 2D image from a .fits file.
 /// \param src the image to store the file contents
 /// \param fname File name of the file to read
-/// \param nCrop optional crop region. The entire image will be read if the value is set to NULL.
+/// \param nCrop optional crop region. The entire image will be read if the value is set to nullptr.
 /// \returns Always 0.
 template <typename ImgType>
 int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop=nullptr, size_t idx=0L);

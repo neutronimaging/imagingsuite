@@ -6,9 +6,10 @@
 #include <map>
 #include <QWidget>
 #include <QLineSeries>
+#include <QAction>
 
 #include "callout.h"
-
+#include "plotcursor.h"
 
 
 namespace Ui {
@@ -42,22 +43,43 @@ public:
     void hideTitle();
     void updateAxes();
 
+    void setCursor(int id, PlotCursor *c);
+    void clearCursor(int id);
+    void clearAllCursors();
+    size_t cursorCount();
+
 //    void setPlotCursor(int id, PlotCursor c);
 //    void clearPlotCursor(int id);
 //    void clearAllPlotCursors();
+protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void setupActions();
+
+private slots:
+    void savePlot();
+    void copy();
+    void saveCurveData();
 
 private:
     void findMinMax();
     void keepCallout();
     void tooltip(QPointF point, bool state);
+    void updateCursors();
 
     Ui::PlotWidget *ui;
     std::map<int, QtCharts::QAbstractSeries *> seriesmap;
+    std::map<int, PlotCursor *> cursors;
+    std::map<int, QtCharts::QLineSeries *> cursormap;
+
     int m_nPointsVisible;
     double minX=std::numeric_limits<double>::max();
     double maxX=-std::numeric_limits<double>::max();
     double minY=std::numeric_limits<double>::max();
     double maxY=-std::numeric_limits<double>::max();
+
+    QAction *savePlotAct;
+    QAction *copyAct;
+    QAction *savePlotDataAct;
 
     QList<Callout *> m_callouts;
     Callout *m_tooltip;

@@ -107,7 +107,7 @@ int MaskWorker<ImgType>::MakeShape()
 	
 	shapeMap["unknown"]=0;
 	shapeMap["disk"]=1;
-	Drawables::CDrawable<unsigned char> * pShape=NULL;
+    Drawables::CDrawable<unsigned char> * pShape=nullptr;
 	mask=0;
 	int r,x,y;
 	switch (shapeMap[shapename]) {

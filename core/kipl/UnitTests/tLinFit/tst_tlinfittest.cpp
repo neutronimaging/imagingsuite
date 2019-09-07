@@ -17,6 +17,7 @@ public:
 
 private Q_SLOTS:
     void testFit();
+    void testQuantileFit();
     void testCalls();
 };
 
@@ -44,6 +45,28 @@ void TLinFitTest::testFit()
     QVERIFY(qFuzzyCompare(R2,1.0,1e-7));
 
 
+}
+
+void TLinFitTest::testQuantileFit()
+{
+    const int N=100;
+    double x[N];
+    double y[N];
+    double ck=1.5;
+    double cm=10;
+    for (int i=0; i<N; ++i)
+    {
+        x[i]=static_cast<double>(i);
+        y[i]=ck*x[i]+cm+2.0*((i % 2)-0.5)*(fmod(x[i],10.0)==0 ? 10.0: 0.0);
+    }
+
+    double m,k,R2;
+    kipl::math::LinearLSFit(x,y,N,&m,&k, &R2,0.9);
+
+    qDebug() <<"m="<<m<<", k="<<k<<", R2="<<R2;
+    QVERIFY(qFuzzyCompare(m,cm, 1e-7));
+    QVERIFY(qFuzzyCompare(k,ck,1e-7));
+    QVERIFY(qFuzzyCompare(R2,1.0,1e-7));
 }
 
 void TLinFitTest::testCalls()

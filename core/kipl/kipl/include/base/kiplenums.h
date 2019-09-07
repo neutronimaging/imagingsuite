@@ -62,8 +62,8 @@ enum eImageRotate {
 
 ///< Selector for the rotation direction
 enum eRotationDirection {
-    RotationDirCW = 0,  ///< Rotation clock wise
-    RotationDirCCW      ///< Rotation counter clock wise
+    RotationDirCW  = 0,  ///< Rotation clock wise
+    RotationDirCCW = 1     ///< Rotation counter clock wise
 };
 
 /// \brief Unsigned integer data type selector
@@ -140,6 +140,11 @@ KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eImageR
 /// \param str a string containing the name to convert
 /// \param flip the enum result
 KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eImageFlip &flip);
+
+/// \brief Converts an image rotation enum to a string
+/// \param str a string containing the name to convert
+/// \param rot the enum result
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eImageFlip flip);
 
 /// \brief Converts an image rotation enum to a string
 /// \param str a string containing the name to convert

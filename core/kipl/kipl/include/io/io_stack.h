@@ -6,6 +6,7 @@
 #include "../kipl_global.h"
 
 #include <sstream>
+#include <iostream>
 
 #include "../strings/filenames.h"
 #include "../base/timage.h"
@@ -25,6 +26,7 @@ enum eFileType {
 	TIFF8bits,
 	TIFF16bits,
 	TIFFfloat,
+    TIFF16bitsMultiFrame,
     NeXusfloat,
     NeXus16bits,
 	PNG8bits,
@@ -41,7 +43,7 @@ std::string KIPLSHARED_EXPORT enum2string(kipl::io::eFileType ft);
 /// \brief start first file number
 /// \brief n number of files to read
 /// \brief nstep file number increment
-/// \brief crop coordinates for a crop region. The entire image is read if the crop is NULL
+/// \brief crop coordinates for a crop region. The entire image is read if the crop is nullptr
 /// \returns bit per pixel
 template<class ImgType>
 int ReadImageStack(kipl::base::TImage<ImgType,3> & img, 
@@ -49,7 +51,7 @@ int ReadImageStack(kipl::base::TImage<ImgType,3> & img,
 				  const size_t start,
 				  const size_t n,
 				  const size_t nstep=1,
-				  size_t const * const crop=NULL)
+                  size_t const * const crop=nullptr)
 {
 	kipl::base::TImage<ImgType,2> tmp; 
 	std::string filename,ext;
@@ -114,7 +116,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		const size_t start, const size_t stop, const size_t count_start=0,
 		kipl::io::eFileType filetype=kipl::io::MatlabSlices,
 		const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
-		size_t *roi=NULL)
+        size_t *roi=nullptr)
 {
 	if (stop<start)
 		kipl::base::KiplException("Stop index must be greater than start index.",__FILE__, __LINE__);
@@ -149,6 +151,24 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 //        WriteNeXus(img, filename.c_str());
 //        return 1;
 //    }
+
+    if ( filetype == TIFF16bitsMultiFrame )
+    {
+
+        auto pos=fname.find('#');
+        if (pos!=fname.npos)
+        {
+               filename=fname.substr(0,pos)+"vol"+fname.substr(fname.find_last_of('#')+1);
+
+        }
+        else
+        {
+            filename=fname;
+        }
+        std::cerr<<filename<<std::endl;
+        WriteTIFF(img,filename.c_str());
+        return 1;
+    }
 
 	kipl::base::TImage<float,2> ftmp;
 	for (size_t i=start; i<stop; i++) {

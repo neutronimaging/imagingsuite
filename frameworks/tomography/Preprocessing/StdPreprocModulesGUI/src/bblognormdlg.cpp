@@ -381,7 +381,7 @@ void BBLogNormDlg::BrowseOBBBPath(){
 
             ProjectionReader reader;
             size_t Nofimgs[2];
-            reader.GetNexusInfo(pdir,Nofimgs,NULL);
+            reader.GetNexusInfo(pdir,Nofimgs,nullptr);
             ui->spinFirstOBBB->setValue(Nofimgs[0]);
             ui->spinCountsOBBB->setValue(Nofimgs[1]);
         }
@@ -418,14 +418,14 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
                                              m_Config->ProjectionInfo.eFlip,
                                              m_Config->ProjectionInfo.eRotate,
                                              m_Config->ProjectionInfo.fBinning,
-                                             NULL);
+                                             nullptr);
             }
             else {
                  m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
                                                  m_Config->ProjectionInfo.eFlip,
                                                  m_Config->ProjectionInfo.eRotate,
                                                  m_Config->ProjectionInfo.fBinning,
-                                                 NULL);
+                                                 nullptr);
             }
             float lo,hi;
 
@@ -557,7 +557,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
                                      m_Config->ProjectionInfo.eFlip,
                                      m_Config->ProjectionInfo.eRotate,
                                      m_Config->ProjectionInfo.fBinning,
-                                     NULL);
+                                     nullptr);
 
 
         float lo,hi;
@@ -588,7 +588,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
                                               m_Config->ProjectionInfo.eFlip,
                                               m_Config->ProjectionInfo.eRotate,
                                               m_Config->ProjectionInfo.fBinning,
-                                              NULL);
+                                              nullptr);
         float lo,hi;
 
     //    if (x < 0) {
@@ -694,6 +694,23 @@ void BBLogNormDlg::on_errorButton_clicked()
 
         try {
             module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
+
+        }
+        catch(kipl::base::KiplException &e) {
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to configure the module dialog, check the parameters");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
+        catch(...){
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to configure the module dialog.. generic exception.");
+            return ;
+        }
+
+        try {
             error = module.GetInterpolationError(mymask);
         }
         catch(kipl::base::KiplException &e) {

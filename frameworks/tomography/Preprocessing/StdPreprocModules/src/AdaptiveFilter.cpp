@@ -26,7 +26,7 @@
 
 AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("AdaptiveFilter",interactor),
-	pLUT(NULL),
+    pLUT(nullptr),
     m_nFilterSize(7),
     m_fEccentricityMin(0.3f),
     m_fEccentricityMax(0.7f), // original value 0.7
@@ -37,7 +37,7 @@ AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
 
 AdaptiveFilter::~AdaptiveFilter()
 {
-	if (pLUT!=NULL)
+    if (pLUT!=nullptr)
 		delete pLUT;
 }
 

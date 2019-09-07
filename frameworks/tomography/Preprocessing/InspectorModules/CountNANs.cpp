@@ -27,7 +27,7 @@ int CountNANs::Configure(ReconConfig config, std::map<std::basic_string<char>, s
 int CountNANs::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
 {
 	size_t cnt=0;
-	float *pImg=NULL;
+    float *pImg=nullptr;
 //	size_t N=img.Size(0)*img.Size(1);
 	std::ostringstream msg;
 

@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+// LICENSE
 
-#ifndef __RECONCONFIG_H
-#define __RECONCONFIG_H
+#ifndef RECONCONFIG_H
+#define RECONCONFIG_H
 
 #include "ReconFramework_global.h"
 
@@ -45,8 +34,9 @@ public:
         /// Assignment operator (deep copy)
 		cSystem & operator=(const cSystem &a);
         size_t nMemory; ///< Available memory in kB.
-        kipl::logging::Logger::LogLevel eLogLevel;      ///< Default log level.
-        std::string WriteXML(size_t indent=0);          ///< Serializes the settings.
+        kipl::logging::Logger::LogLevel eLogLevel; ///< Default log level.
+        bool bValidateData;
+        std::string WriteXML(int indent=0);          ///< Serializes the settings.
 	};
 
     /// Projection configuration settings
@@ -82,7 +72,7 @@ public:
         /// \param a the struct to copy.
 		cProjections & operator=(const cProjections &a);
 
-        size_t nDims[2];            ///< Dimensions of the projections.
+        size_t nDims[3];            ///< Dimensions of the projections.
         eBeamGeometry beamgeometry; ///< Selects beam geometry for the data
         float fResolution[2];       ///< Resolution of the projections in mm/pixel.
         float fBinning;             ///< Binning factor, currently only integers are valid.
@@ -93,6 +83,7 @@ public:
         std::set<size_t> nlSkipList;///< List of projection indices that are retakes and will be skipped. This is not a missing angle.
         bool bRepeatLine;           ///< Repeat line this is a part of the repeat sinogram reconstruction
         eScanType scantype;         ///< Indicates how the data was acquired
+        size_t nGoldenStartIdx;        ///< Start index of the golden sequence
         eImageType imagetype;       ///< Indicates how the data is arranged in the images.
         float fCenter;              ///< Center of rotation
         float fSOD;                 ///< Source object distance, relevant for divergent beam only
@@ -128,7 +119,7 @@ public:
 
         /// Writes the configuration to a string with XML formatting.
         /// \param indent Indent the XML block by N characters.
-		std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 	};
 
     /// Configuration information for the reconstructed matrix.
@@ -161,7 +152,7 @@ public:
 
         /// Writes the configuration to a string with XML formatting.
         /// \param indent Indent the XML block by N characters.
-        std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 	};
 
     /// Base constructor of the reonstruction configation.

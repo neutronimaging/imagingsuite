@@ -14,7 +14,7 @@ namespace kipl { namespace base {
 /// \param plane The chosen image plane
 /// \returns A 2D slice
 template<typename T>
-kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane, size_t *roi=NULL);
+kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane, size_t *roi=nullptr);
 
 /// \brief Inserts a 2D slice into a 3D image
 /// \param slice The slice to insert

@@ -14,6 +14,9 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -31,7 +34,9 @@ SOURCES += \
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-unix|win32: LIBS += -L$$PWD/../../../../../lib/ -lkipl.1.0.0
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/include

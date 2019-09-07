@@ -357,3 +357,17 @@ std::string enum2string(kipl::base::eImageRotate &rot)
 
     return "imagerotatenone";
 }
+
+std::string enum2string(kipl::base::eImageFlip flip)
+{
+    switch (flip) {
+    case kipl::base::ImageFlipNone: return "imageflipnone"; break;
+    case kipl::base::ImageFlipHorizontal: return "imagefliphorizontal"; break;
+    case kipl::base::ImageFlipVertical: return "imageflipvertical"; break;
+    case kipl::base::ImageFlipHorizontalVertical: return "imagefliphorizontalvertical"; break;
+    case kipl::base::ImageFlipDefault: return "imageflipdefault"; break;
+    default: throw kipl::base::KiplException("Unknown rotate type", __FILE__, __LINE__);
+    }
+
+    return "imageflipnone";
+}

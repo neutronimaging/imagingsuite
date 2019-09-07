@@ -14,26 +14,26 @@ cd %DEST%\build-muhrecCLI
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
-echo "Build tests"
+REM echo "Build tests"
 
-cd %REPOSPATH%\applications\CLI\muhrecCLI\UnitTests
+REM cd %REPOSPATH%\applications\CLI\muhrecCLI\UnitTests
 
-FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
+REM FOR /D %%I IN (*) DO @call :testloopbody %REPOSPATH% %%I %DEST%
 
-echo "Tests built"
+REM echo "Tests built"
 popd 
 
-goto :eof
+REM goto :eof
 
-:testloopbody
-echo %2
-if exist "%1\C:\Users\kaestner\git\imagingsuite\applications\CLI\muhrecCLI\UnitTests\%2\%2.pro" (
-	mkdir %3\%2
-	cd %3\%2
+REM :testloopbody
+REM echo %2
+REM if exist "%REPOSPATH%\applications\CLI\muhrecCLI\UnitTests\%2\%2.pro" (
+	REM mkdir %3\%2
+	REM cd %3\%2
 
-	%QTBINPATH%\qmake.exe -makefile ..\..\imagingsuite\applications\muhrec3\UnitTests\%2\%2.pro -o Makefile
-	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
-	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
-	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
-)
-goto :eof
+	REM %QTBINPATH%\qmake.exe -makefile %REPOSPATH%\applications\CLI\muhrecCLI\UnitTests\%2\%2.pro -o Makefile
+	REM %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+	REM %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+	REM %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+REM )
+REM goto :eof

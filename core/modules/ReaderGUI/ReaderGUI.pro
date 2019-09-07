@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets
+QT       += widgets charts
 
 TARGET = ReaderGUI
 TEMPLATE = lib
@@ -42,13 +42,14 @@ unix {
     unix:!macx {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
-        LIBS += -lgomp
+        LIBS += -lgomp -lxml2
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     unix:macx {
-     #   QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+        INCLUDEPATH += /opt/local/include/libxml2
     }
 }
 

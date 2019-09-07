@@ -29,7 +29,7 @@ void SignalGenerator::Sine(size_t N, float start, float stop, float A, float w, 
 	size_t i=0;
 	float x=start;
 	for (x=start, i=0; i<N; i++, x+=step) {
-		if (axis!=NULL)
+        if (axis!=nullptr)
 			axis[i]=x;
 		signal[i]=std::sin(x);
 	}	

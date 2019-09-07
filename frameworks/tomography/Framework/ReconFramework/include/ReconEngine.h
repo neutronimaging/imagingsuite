@@ -93,7 +93,7 @@ public:
 	bool Serialize(ReconConfig::cMatrix *matrixconfig);
 
     /// \brief Writes the reconstructed image to disk. If the filename contains any # a sequence of slices will be written, otherwise the data will be written as a single matlab mat file (outdated format).
-    /// \param dims The stored image dimensions will be copied to this argument if it is non-NULL.
+    /// \param dims The stored image dimensions will be copied to this argument if it is non-nullptr.
 	bool Serialize(size_t *dims);
 
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
@@ -110,6 +110,7 @@ protected:
     int ProcessExistingProjections3D(size_t *roi);
     int BackProject3D(kipl::base::TImage<float,3> & projections, size_t *roi,std::map<std::string, std::string> parameters);
 	bool UpdateProgress(float val, std::string msg);
+    size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
 
 	bool TransferMatrix(size_t *dims);

@@ -1,9 +1,16 @@
 #include "plotwidget.h"
 #include "ui_plotwidget.h"
 
+#include <fstream>
 #include <limits>
+#include <algorithm>
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
+
+#include <strings/filenames.h>
+
+#include <base/KiplException.h>
 
 namespace QtAddons {
 
@@ -19,11 +26,12 @@ PlotWidget::PlotWidget(QWidget *parent) :
     ui->chart->setChart(chart);
     chart->layout()->setContentsMargins(4,4,4,4);
     ui->chart->chart()->setAcceptHoverEvents(true);
-
+    setupActions();
 }
 
 PlotWidget::~PlotWidget()
 {
+    clearAllCursors();
     delete ui;
 }
 
@@ -76,6 +84,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
         line->replace(series->points());
         line->setName(series->name());
         if (deleteData == true)
+        {
             try
             {
                 delete series;
@@ -86,7 +95,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
                 msg=msg+QString::fromStdString(e.what());
                 QMessageBox::warning(this,"Exception",msg);
             }
-
+        }
     }
     else
     {
@@ -96,7 +105,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
     }
 
     QLineSeries *line=dynamic_cast<QLineSeries *>(seriesmap[id]);
-//    connect(line, &QLineSeries::clicked, this, &PlotWidget::keepCallout);
+
     connect(line, &QLineSeries::hovered, this, &PlotWidget::tooltip);
 
     if (line->points().size()<=m_nPointsVisible)
@@ -110,7 +119,7 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 
     ui->chart->chart()->createDefaultAxes();
     updateAxes();
-
+    updateCursors();
 }
 
 void PlotWidget::clearCurve(int id)
@@ -121,6 +130,7 @@ void PlotWidget::clearCurve(int id)
         ui->chart->chart()->removeSeries(it->second);
         seriesmap.erase(it);
     }
+    updateCursors();
 }
 
 void PlotWidget::clearAllCurves()
@@ -206,6 +216,155 @@ void PlotWidget::findMinMax()
     }
 }
 
+void PlotWidget::setCursor(int id, PlotCursor *c)
+{
+    if (ui->chart->chart()->series().empty())
+        throw kipl::base::KiplException("no plot series",__FILE__,__LINE__);
+
+    auto it=cursors.find(id);
+    if ( it != cursors.end())
+    {
+        *cursors[id]=*c;
+        delete c;
+    }
+    else {
+        cursors.insert(std::make_pair(id,c));
+    }
+    updateCursors();
+
+}
+
+void PlotWidget::clearCursor(int id)
+{
+    auto it=cursors.find(id);
+    if ( it != cursors.end())
+    {
+        delete it->second;
+        cursors.erase(it);
+        auto it2=cursormap.find(it->first);
+        if (it2!=cursormap.end()) {
+            ui->chart->chart()->removeSeries(it2->second);
+            cursormap.erase(it2);
+        }
+
+    }
+}
+
+void PlotWidget::clearAllCursors()
+{
+    while (!cursors.empty()) {
+        delete cursors.begin()->second;
+
+        auto it2=cursormap.find(cursors.begin()->first);
+        if (it2!=cursormap.end()) {
+            ui->chart->chart()->removeSeries(it2->second);
+            cursormap.erase(it2);
+        }
+        cursors.erase(cursors.begin());
+    }
+}
+
+size_t PlotWidget::cursorCount()
+{
+    return cursors.size();
+}
+
+void PlotWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu(this);
+    menu.addAction(savePlotAct);
+    menu.addAction(copyAct);
+    menu.addAction(savePlotDataAct);
+    menu.exec(event->globalPos());
+}
+
+void PlotWidget::setupActions()
+{
+    copyAct = new QAction(tr("&Copy"), this);
+    copyAct->setShortcuts(QKeySequence::Copy);
+    copyAct->setStatusTip(tr("Copy the current selection's contents to the "
+                             "clipboard"));
+    connect(copyAct, &QAction::triggered, this, &PlotWidget::copy);
+
+    savePlotAct = new QAction(tr("&Save plot"), this);
+    savePlotAct->setShortcuts(QKeySequence::Cut);
+    savePlotAct->setStatusTip(tr("Cut the current selection's contents to the "
+                            "clipboard"));
+    connect(savePlotAct, &QAction::triggered, this, &PlotWidget::savePlot);
+
+    savePlotDataAct = new QAction(tr("Save plot &Data"), this);
+    savePlotDataAct->setShortcuts(QKeySequence::Paste);
+    savePlotDataAct->setStatusTip(tr("Paste the clipboard's contents into the current "
+                              "selection"));
+    connect(savePlotDataAct, &QAction::triggered, this, &PlotWidget::saveCurveData);
+}
+
+void PlotWidget::savePlot()
+{
+    QString destname=QFileDialog::getSaveFileName(this,"Where should the plot be saved?",QDir::homePath()+"/plot.png");
+
+    if (!destname.isEmpty())
+    {
+        QPixmap p( ui->chart->size() );
+        QPainter painter(&p);
+        ui->chart->render( &painter);
+        p.save(destname,"PNG");
+    }
+}
+
+void PlotWidget::copy()
+{
+       QClipboard *clipboard = QApplication::clipboard();
+
+       QPixmap p( ui->chart->size() );
+       QPainter painter(&p);
+       ui->chart->render( &painter);
+
+       clipboard->setPixmap(p);
+
+}
+
+void PlotWidget::saveCurveData()
+{
+        QString destname=QFileDialog::getSaveFileName(this,"Where should the data series be saved?",QDir::homePath()+"/data.txt");
+
+        if (!destname.isEmpty()) {
+            std::string fname=destname.toStdString();
+            kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+            std::string path;
+            std::string name;
+            std::vector<std::string> ext;
+            kipl::strings::filenames::StripFileName(fname,path,name,ext);
+            name=path+name+"_";
+
+            if (!seriesmap.empty())
+            {
+                std::string dname;
+                int i=0;
+                for (auto s : seriesmap)
+                {
+                    QXYSeries *series = dynamic_cast<QXYSeries *>(s.second);
+                    std::string seriesname=series->name().toStdString();
+                    std::replace(seriesname.begin(),seriesname.end(),' ','_');
+                    if (seriesname.empty())
+                    {
+                        seriesname=std::to_string(i++);
+                    }
+                    dname=name+seriesname+".txt";
+                    std::ofstream datastream(dname.c_str());
+
+                    auto data = series->pointsVector();
+                    for (auto p : data)
+                    {
+                        datastream<<p.x()<<", "<<p.y()<<std::endl;
+                    }
+                }
+            }
+        }
+
+}
+
 void PlotWidget::keepCallout()
 {
     m_callouts.append(m_tooltip);
@@ -217,14 +376,77 @@ void PlotWidget::tooltip(QPointF point, bool state)
     if (m_tooltip == nullptr)
         m_tooltip = new Callout(ui->chart->chart());
 
-    if (state) {
+    if (state)
+    {
         m_tooltip->setText(QString("X: %1 \nY: %2 ").arg(point.x()).arg(point.y()));
         m_tooltip->setAnchor(point);
         m_tooltip->setZValue(11);
         m_tooltip->updateGeometry();
         m_tooltip->show();
-    } else {
+    }
+    else
+    {
         m_tooltip->hide();
+    }
+}
+
+void PlotWidget::updateCursors()
+{
+    findMinMax();
+
+    for (const auto &c : cursors)
+    {
+        QtCharts::QLineSeries *line=nullptr;
+        auto it=cursormap.find(c.first);
+        if (it==cursormap.end())
+        {
+            line=new QtCharts::QLineSeries();
+            cursormap.insert(std::make_pair(c.first,line));
+
+
+
+            line->setPointsVisible(false);
+
+            if (c.second->m_Orientation == QtAddons::PlotCursor::Vertical)
+            {
+                line->append(c.second->m_fPosition,minY);
+                line->append(c.second->m_fPosition,maxY);
+            }
+            else
+            {
+                line->append(minX,c.second->m_fPosition);
+                line->append(maxX,c.second->m_fPosition);
+            }
+
+
+            ui->chart->chart()->addSeries(line);
+            ui->chart->chart()->legend()->markers(line)[0]->setVisible(false);
+        }
+        else
+        {
+            line=it->second;
+            line->clear();
+            if (c.second->m_Orientation == QtAddons::PlotCursor::Vertical)
+            {
+                line->append(c.second->m_fPosition,minY);
+                line->append(c.second->m_fPosition,maxY);
+            }
+            else
+            {
+                line->append(minX,c.second->m_fPosition);
+                line->append(maxX,c.second->m_fPosition);
+            }
+
+        }
+
+        QPen pen=line->pen();
+        pen.setColor(c.second->m_Color);
+        pen.setWidth(2.0);
+        line->setPen(pen);
+
+        line->setName(c.second->m_sLabel);
+        ui->chart->chart()->createDefaultAxes();
+
     }
 }
 }

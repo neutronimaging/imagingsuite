@@ -17,6 +17,9 @@ TEMPLATE = app
 
 CONFIG += c++11
 
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
+
 unix {
     INCLUDEPATH += "../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
@@ -29,7 +32,6 @@ unix {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -39,8 +41,8 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../external/lib64
+    INCLUDEPATH += ../../../../../external/src/linalg ../../../../../external/include ../../../../../external/include/cfitsio
+    QMAKE_LIBDIR += ../../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -61,5 +63,5 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/
 
 LIBS += -lkipl -lReconAlgorithms
 
-INCLUDEPATH += $$PWD/../../../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../../../kipl/trunk/kipl/src
+INCLUDEPATH += $$PWD/../../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../../core/kipl/kipl/src

@@ -7,6 +7,7 @@
 #include <QString>
 
 #include <base/roi.h>
+#include <base/timage.h>
 #include <logging/logger.h>
 
 namespace Ui {
@@ -26,7 +27,7 @@ class QTADDONSSHARED_EXPORT uxROIWidget : public QWidget
     static int cnt; //< Counter for id numbers
     int roiID; //< The ID of the current ROI widget. This will be used to reference the ROI in the ImageViewer.
 public:
-    explicit uxROIWidget(QWidget *parent = 0);
+    explicit uxROIWidget(QWidget *parent = nullptr);
     ~uxROIWidget();
 
     /// \brief Set the ROI coordinates using two x/y pairs
@@ -90,7 +91,11 @@ public:
 
     void setAllowUpdateImageDims(bool allow);
 
-
+    virtual void setCheckable(bool x);
+    virtual bool isChecked();
+    virtual void setChecked(bool x);
+    void useROIDialog(bool x);
+    void setSelectionImage(kipl::base::TImage<float,2> &img);
 
 public slots:
     /// \brief A slot the responds to the NewImage signal emitted by the viewer widget. It is used to update the bounding box of the ROI widget.
@@ -115,6 +120,8 @@ private slots:
     /// \brief Slot to update the value boxes when a spin button value is changed
     void on_valueChanged(int x0,int y0, int x1, int y1);
 
+    void on_groupROI_toggled(bool arg1);
+
 private:
     /// \brief Updates the max boundaries of the spin buttons to the size of the current image in the viewer
     void updateBounds();
@@ -125,10 +132,13 @@ private:
     QString roiColor;
     bool autoHideViewerROI;
     bool allowUpdateImageDims;
+    bool useROIDlg;
+    kipl::base::TImage<float,2> selectionImage;
 
 signals:
     void getROIClicked(void); //< signal emitted when the get ROI button is pressen, this can be used with other widgets.
     void valueChanged(int x0,int y0, int x1, int y1); // signal emitted when one of the spin buttons change value.
+    void toggled(bool x);
 };
 
 }

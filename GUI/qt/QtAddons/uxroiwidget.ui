@@ -6,156 +6,155 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>195</width>
-    <height>125</height>
+    <width>230</width>
+    <height>142</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QGroupBox" name="groupROI">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>2</y>
-     <width>196</width>
-     <height>123</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string/>
-   </property>
-   <property name="title">
-    <string>ROI</string>
-   </property>
-   <widget class="QSpinBox" name="spinY1">
-    <property name="geometry">
-     <rect>
-      <x>131</x>
-      <y>93</y>
-      <width>60</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>y1 Coordinate</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="maximum">
-     <number>9999</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinX1">
-    <property name="geometry">
-     <rect>
-      <x>69</x>
-      <y>92</y>
-      <width>60</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>x1 Coordinate</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="maximum">
-     <number>9999</number>
-    </property>
-    <property name="value">
-     <number>0</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinX0">
-    <property name="geometry">
-     <rect>
-      <x>8</x>
-      <y>22</y>
-      <width>60</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>x0 coordinate</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="maximum">
-     <number>9999</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinY0">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>22</y>
-      <width>60</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>y0 Coordinate</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="maximum">
-     <number>9999</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonGetROI">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>46</y>
-      <width>65</width>
-      <height>45</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Gets the coordinates of marked region in the ascociated viewer.</string>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-color: darkgrey; border-width: 2px; border-style: solid</string>
-    </property>
-    <property name="text">
-     <string>Get</string>
-    </property>
-    <property name="flat">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>60</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>(x0,y0)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>70</y>
-      <width>60</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>(x1,y1)</string>
-    </property>
-   </widget>
-  </widget>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupROI">
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="title">
+      <string>ROI</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <widget class="QSpinBox" name="spinY1">
+      <property name="geometry">
+       <rect>
+        <x>131</x>
+        <y>93</y>
+        <width>60</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>y1 Coordinate</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="maximum">
+       <number>9999</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinX1">
+      <property name="geometry">
+       <rect>
+        <x>69</x>
+        <y>92</y>
+        <width>60</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>x1 Coordinate</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="maximum">
+       <number>9999</number>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinX0">
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>22</y>
+        <width>60</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>x0 coordinate</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="maximum">
+       <number>9999</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinY0">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>22</y>
+        <width>60</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>y0 Coordinate</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="maximum">
+       <number>9999</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="buttonGetROI">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>46</y>
+        <width>65</width>
+        <height>45</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Gets the coordinates of marked region in the ascociated viewer.</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-color: darkgrey; border-width: 2px; border-style: solid</string>
+      </property>
+      <property name="text">
+       <string>Get</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>(x0,y0)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>70</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>(x1,y1)</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

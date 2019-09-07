@@ -48,11 +48,13 @@ bool ReconConfig::SanityCheck()
 {
     std::ostringstream msg;
 
-    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0]) {
+    if (ProjectionInfo.roi[2]<=ProjectionInfo.roi[0])
+    {
         msg<<"Incorrect config: ROI x1<x0 (x0="<<ProjectionInfo.roi[0]<<", x1="<<ProjectionInfo.roi[2]<<")";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1]) {
+    if (ProjectionInfo.roi[3]<=ProjectionInfo.roi[1])
+    {
         msg<<"Incorrect config: ROI y1<y0 (y0="<<ProjectionInfo.roi[1]<<", y1="<<ProjectionInfo.roi[3]<<")";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -63,7 +65,8 @@ bool ReconConfig::SanityAnglesCheck()
 {
     std::ostringstream msg;
 
-    if (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f)) {
+    if (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f))
+    {
         msg<<"Incorrect angles configuration " ;
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -137,70 +140,72 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             logger(kipl::logging::Logger::LogWarning,msg.str());
         }
         if (group=="projections") {
-            if (var=="operator")      UserInformation.sOperator=value;
-            if (var=="instrument")    UserInformation.sInstrument=value;
-            if (var=="projectnumber") UserInformation.sProjectNumber=value;
-            if (var=="sample")        UserInformation.sSample=value;
-            if (var=="comment")       UserInformation.sComment=value;
+            if (var=="operator")      UserInformation.sOperator      = value;
+            if (var=="instrument")    UserInformation.sInstrument    = value;
+            if (var=="projectnumber") UserInformation.sProjectNumber = value;
+            if (var=="sample")        UserInformation.sSample        = value;
+            if (var=="comment")       UserInformation.sComment       = value;
         }
 
-        int itmp;
         if (group=="projections") {
-            if (var=="dims") kipl::strings::String2Array(value,ProjectionInfo.nDims,2);
-            if (var=="resolution") kipl::strings::String2Array(value,ProjectionInfo.fResolution,2);
-            if (var=="binning") ProjectionInfo.fBinning=atof(value.c_str());
-            if (var=="margin") ProjectionInfo.nMargin=atoi(value.c_str());
-            if (var=="firstindex") ProjectionInfo.nFirstIndex=static_cast<size_t>(atoi(value.c_str()));
-            if (var=="lastindex") ProjectionInfo.nLastIndex=static_cast<size_t>(atoi(value.c_str()));
-            if (var=="projectionstep") ProjectionInfo.nProjectionStep=static_cast<size_t>(atoi(value.c_str()));
-            if (var=="repeatline") ProjectionInfo.bRepeatLine=kipl::strings::string2bool(value);
-            if (var=="scantype") string2enum(value,ProjectionInfo.scantype);
-            if (var=="imagetype") string2enum(value,ProjectionInfo.imagetype);
-            if (var=="center") ProjectionInfo.fCenter=atof(value.c_str());
-            if (var=="translation") ProjectionInfo.bTranslate=kipl::strings::string2bool(value);
-            if (var=="tiltangle") ProjectionInfo.fTiltAngle=atof(value.c_str());
-            if (var=="tiltpivot") ProjectionInfo.fTiltPivotPosition=atof(value.c_str());
-            if (var=="correcttilt") ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
-            if (var=="filemask") ProjectionInfo.sFileMask=value;
+            if (var=="dims")           kipl::strings::String2Array(value,ProjectionInfo.nDims,2);
+            if (var=="resolution")     kipl::strings::String2Array(value,ProjectionInfo.fResolution,2);
+            if (var=="binning")        ProjectionInfo.fBinning           = std::stof(value);
+            if (var=="margin")         ProjectionInfo.nMargin            = std::stoul(value);
+            if (var=="firstindex")     ProjectionInfo.nFirstIndex        = std::stoul(value);
+            if (var=="lastindex")      ProjectionInfo.nLastIndex         = std::stoul(value);
+            if (var=="projectionstep") ProjectionInfo.nProjectionStep    = std::stoul(value);
+            if (var=="repeatline")     ProjectionInfo.bRepeatLine=kipl::strings::string2bool(value);
+            if (var=="scantype")       string2enum(value,ProjectionInfo.scantype);
+            if (var=="imagetype")      string2enum(value,ProjectionInfo.imagetype);
+            if (var=="center")         ProjectionInfo.fCenter            = std::stof(value);
+            if (var=="translation")    ProjectionInfo.bTranslate         = kipl::strings::string2bool(value);
+            if (var=="tiltangle")      ProjectionInfo.fTiltAngle         = std::stof(value);
+            if (var=="tiltpivot")      ProjectionInfo.fTiltPivotPosition = std::stof(value);
+            if (var=="correcttilt")    ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
+            if (var=="filemask")       ProjectionInfo.sFileMask          = value;
             if (var=="path") {
                 ProjectionInfo.sPath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sPath,true);
             }
-            if (var=="referencepath") {
+            if (var=="referencepath")
+            {
                 ProjectionInfo.sReferencePath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sReferencePath,true);
             }
-            if (var=="obfilemask") ProjectionInfo.sOBFileMask=value;
-            if (var=="obfirstindex") ProjectionInfo.nOBFirstIndex=atoi(value.c_str());
-            if (var=="obcount") ProjectionInfo.nOBCount=atoi(value.c_str());
-            if (var=="dcfilemask") ProjectionInfo.sDCFileMask=value;
-            if (var=="dcfirstindex") ProjectionInfo.nDCFirstIndex=atoi(value.c_str());
-            if (var=="dccount") ProjectionInfo.nDCCount=atoi(value.c_str());
-            if (var=="roi") kipl::strings::String2Array(value,ProjectionInfo.roi,4);
-            if (var=="projroi") kipl::strings::String2Array(value,ProjectionInfo.projection_roi,4);
-            if (var=="doseroi") kipl::strings::String2Array(value,ProjectionInfo.dose_roi,4);
-            if (var=="scanarc") kipl::strings::String2Array(value,ProjectionInfo.fScanArc,2);
-            if (var=="scanarc0") ProjectionInfo.fScanArc[0]=atof(value.c_str());
-            if (var=="scanarc1") ProjectionInfo.fScanArc[1]=atof(value.c_str());
-            if (var=="rotate") string2enum(value,ProjectionInfo.eRotate);
-            if (var=="flip") string2enum(value,ProjectionInfo.eFlip);
-            if (var=="direction") string2enum(value, ProjectionInfo.eDirection);
-            if (var=="sod") ProjectionInfo.fSOD=atof(value.c_str());
-            if (var=="sdd") ProjectionInfo.fSDD=atof(value.c_str());
-            if (var=="pPoint") kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
+            if (var=="obfilemask")   ProjectionInfo.sOBFileMask   = value;
+            if (var=="obfirstindex") ProjectionInfo.nOBFirstIndex = std::stoul(value);
+            if (var=="obcount")      ProjectionInfo.nOBCount      = std::stoul(value);
+            if (var=="dcfilemask")   ProjectionInfo.sDCFileMask   = value;
+            if (var=="dcfirstindex") ProjectionInfo.nDCFirstIndex = std::stoul(value);
+            if (var=="dccount")      ProjectionInfo.nDCCount      = std::stoul(value);
+            if (var=="roi")          kipl::strings::String2Array(value,ProjectionInfo.roi,4);
+            if (var=="projroi")      kipl::strings::String2Array(value,ProjectionInfo.projection_roi,4);
+            if (var=="doseroi")      kipl::strings::String2Array(value,ProjectionInfo.dose_roi,4);
+            if (var=="scanarc")      kipl::strings::String2Array(value,ProjectionInfo.fScanArc,2);
+            if (var=="scanarc0")     ProjectionInfo.fScanArc[0]   = std::stof(value);
+            if (var=="scanarc1")     ProjectionInfo.fScanArc[1]   = std::stof(value);
+            if (var=="rotate")       string2enum(value,ProjectionInfo.eRotate);
+            if (var=="flip")         string2enum(value,ProjectionInfo.eFlip);
+            if (var=="direction")    string2enum(value, ProjectionInfo.eDirection);
+            if (var=="sod")          ProjectionInfo.fSOD          = std::stof(value);
+            if (var=="sdd")          ProjectionInfo.fSDD          = std::stof(value);
+            if (var=="pPoint")       kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
         }
 
-        if (group=="matrix") {
+        if (group=="matrix")
+        {
             if (var=="dims")         kipl::strings::String2Array(value,MatrixInfo.nDims,3);
-            if (var=="rotation")     MatrixInfo.fRotation=atof(value.c_str());
-            if (var=="serialize")    MatrixInfo.bAutomaticSerialize=kipl::strings::string2bool(value);
-            if (var=="path")         {
+            if (var=="rotation")     MatrixInfo.fRotation           = std::stof(value);
+            if (var=="serialize")    MatrixInfo.bAutomaticSerialize = kipl::strings::string2bool(value);
+            if (var=="path")
+            {
                     MatrixInfo.sDestinationPath=value;
                     kipl::strings::filenames::CheckPathSlashes(MatrixInfo.sDestinationPath,true);
             }
-            if (var=="matrixname")   MatrixInfo.sFileMask=value;
+            if (var=="matrixname")   MatrixInfo.sFileMask   = value;
             if (var=="filetype")     string2enum(value,MatrixInfo.FileType);
-            if (var=="firstindex")   MatrixInfo.nFirstIndex=atoi(value.c_str());
+            if (var=="firstindex")   MatrixInfo.nFirstIndex = std::stoul(value);
             if (var=="grayinterval") kipl::strings::String2Array(value,MatrixInfo.fGrayInterval,2);
             if (var=="useroi")       MatrixInfo.bUseROI=kipl::strings::string2bool(value);
             if (var=="roi")          kipl::strings::String2Array(value,MatrixInfo.roi,4);
@@ -216,27 +221,35 @@ void ReconConfig::ParseSystem(xmlTextReaderPtr reader)
     std::string sName, sValue;
     int depth=xmlTextReaderDepth(reader);
 
-    while (ret == 1) {
-    	if (xmlTextReaderNodeType(reader)==1) {
+    while (ret == 1)
+    {
+        if (xmlTextReaderNodeType(reader)==1)
+        {
 	        name = xmlTextReaderConstName(reader);
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr)
+            {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
 	        sName=reinterpret_cast<const char *>(name);
 
-	        if (sName=="memory") {
-				System.nMemory=atoi(sValue.c_str());
+            if (sName=="memory")
+            {
+                System.nMemory=static_cast<size_t>(std::stoi(sValue));
 	        }
 
 	        if (sName=="loglevel") 
                 string2enum(sValue,System.eLogLevel);
+
+            if (sName=="validate")
+                System.bValidateData=kipl::strings::string2bool(sValue);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -260,67 +273,58 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
                 sValue="";
 	        sName=reinterpret_cast<const char *>(name);
 
-	        if (sName=="dims")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.nDims,2);
-            if (sName=="beamgeometry")
-                string2enum(sValue,ProjectionInfo.beamgeometry);
+            if (sName=="dims")            kipl::strings::String2Array(sValue,ProjectionInfo.nDims,2);
+            if (sName=="beamgeometry")    string2enum(sValue,ProjectionInfo.beamgeometry);
 
-	        if (sName=="resolution")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
-	        if (sName=="binning")
-	        	ProjectionInfo.fBinning = atof(sValue.c_str());
+            if (sName=="resolution")      kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
+            if (sName=="binning")         ProjectionInfo.fBinning        = std::stof(sValue);
 
-	        if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = atoi(sValue.c_str());
-	        if (sName=="lastindex")       ProjectionInfo.nLastIndex          = atoi(sValue.c_str());
-	        if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = atoi(sValue.c_str());
+            if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = std::stoul(sValue);
+            if (sName=="lastindex")       ProjectionInfo.nLastIndex      = std::stoul(sValue);
+            if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = std::stoul(sValue);
 			if (sName=="skipprojections") {
 				kipl::strings::String2Set(sValue,ProjectionInfo.nlSkipList);
 				msg<<"Skip list: "<<kipl::strings::Set2String(ProjectionInfo.nlSkipList);
 				logger(kipl::logging::Logger::LogVerbose,msg.str());
 			}
 
-	        if (sName=="repeatline")	  ProjectionInfo.bRepeatLine     = kipl::strings::string2bool(sValue);
+            if (sName=="repeatline")	  ProjectionInfo.bRepeatLine   = kipl::strings::string2bool(sValue);
 			if (sName=="scantype")		  string2enum(sValue,ProjectionInfo.scantype);
+            if (sName=="goldenstartidx")  ProjectionInfo.nGoldenStartIdx = std::stoul(sValue);
 			if (sName=="imagetype")		  string2enum(sValue,ProjectionInfo.imagetype);
-	        if (sName=="center")          ProjectionInfo.fCenter         = static_cast<float>(atof(sValue.c_str()));
-            if (sName=="sod")             ProjectionInfo.fSOD            = static_cast<float>(atof(sValue.c_str()));
-            if (sName=="sdd")             ProjectionInfo.fSDD            = static_cast<float>(atof(sValue.c_str()));
-            if (sName=="pPoint")
-                kipl::strings::String2Array(sValue,ProjectionInfo.fpPoint,2);
-            if (sName=="translation")     ProjectionInfo.bTranslate = kipl::strings::string2bool(sValue);
-			if (sName=="tiltangle")
-				ProjectionInfo.fTiltAngle = static_cast<float>(atof(sValue.c_str()));
-			if (sName=="tiltpivot")
-				ProjectionInfo.fTiltPivotPosition = static_cast<float>(atof(sValue.c_str()));
+            if (sName=="center")          ProjectionInfo.fCenter       = std::stof(sValue);
+            if (sName=="sod")             ProjectionInfo.fSOD          = std::stof(sValue);
+            if (sName=="sdd")             ProjectionInfo.fSDD          = std::stof(sValue);
+            if (sName=="pPoint")          kipl::strings::String2Array(sValue,ProjectionInfo.fpPoint,2);
+            if (sName=="translation")     ProjectionInfo.bTranslate    = kipl::strings::string2bool(sValue);
+            if (sName=="tiltangle")       ProjectionInfo.fTiltAngle    = std::stof(sValue);
+            if (sName=="tiltpivot")       ProjectionInfo.fTiltPivotPosition = std::stof(sValue);
 
-			if (sName=="correcttilt") 	  ProjectionInfo.bCorrectTilt = kipl::strings::string2bool(sValue);
+            if (sName=="correcttilt") 	ProjectionInfo.bCorrectTilt   = kipl::strings::string2bool(sValue);
 
-	        if (sName=="filemask")    ProjectionInfo.sFileMask    = sValue;
-	        if (sName=="path") 		  ProjectionInfo.sPath        = sValue;
+            if (sName=="filemask")      ProjectionInfo.sFileMask      = sValue;
+            if (sName=="path") 		    ProjectionInfo.sPath          = sValue;
 
-	    	if (sName=="referencepath") ProjectionInfo.sReferencePath=sValue;
-	    	if (sName=="obfilemask") 	ProjectionInfo.sOBFileMask=sValue;
-	    	if (sName=="obfirstindex")  ProjectionInfo.nOBFirstIndex=atoi(sValue.c_str());
-	    	if (sName=="obcount")  ProjectionInfo.nOBCount=atoi(sValue.c_str());
-	    	if (sName=="dcfilemask")  ProjectionInfo.sDCFileMask=sValue;
-	    	if (sName=="dcfirstindex")  ProjectionInfo.nDCFirstIndex=atoi(sValue.c_str());
-	    	if (sName=="dccount")  ProjectionInfo.nDCCount=atoi(sValue.c_str());
-            if (sName=="roi")
-                kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
-            if (sName=="projroi")
-                kipl::strings::String2Array(sValue,ProjectionInfo.projection_roi,4);
+            if (sName=="referencepath") ProjectionInfo.sReferencePath = sValue;
+            if (sName=="obfilemask") 	ProjectionInfo.sOBFileMask    = sValue;
+            if (sName=="obfirstindex")  ProjectionInfo.nOBFirstIndex  = std::stoul(sValue);
+            if (sName=="obcount")       ProjectionInfo.nOBCount       = std::stoul(sValue);
+            if (sName=="dcfilemask")    ProjectionInfo.sDCFileMask    = sValue;
+            if (sName=="dcfirstindex")  ProjectionInfo.nDCFirstIndex  = std::stoul(sValue);
+            if (sName=="dccount")       ProjectionInfo.nDCCount       = std::stoul(sValue);
+            if (sName=="roi")           kipl::strings::String2Array(sValue,ProjectionInfo.roi,4);
+            if (sName=="projroi")       kipl::strings::String2Array(sValue,ProjectionInfo.projection_roi,4);
 
-			if (sName=="doseroi")
-	        	kipl::strings::String2Array(sValue,ProjectionInfo.dose_roi,4);
+            if (sName=="doseroi")       kipl::strings::String2Array(sValue,ProjectionInfo.dose_roi,4);
 			if (sName=="scanarc") {
 	        	size_t cnt=kipl::strings::String2Array(sValue,ProjectionInfo.fScanArc,2);
 				if (cnt==1) {
@@ -328,9 +332,9 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 					ProjectionInfo.fScanArc[0]=0.0f;
 				}
 			}
-			if (sName=="rotate") string2enum(sValue,ProjectionInfo.eRotate);
-			if (sName=="flip") string2enum(sValue,ProjectionInfo.eFlip);
-            if (sName=="direction") string2enum(sValue,ProjectionInfo.eDirection);
+            if (sName=="rotate")         string2enum(sValue,ProjectionInfo.eRotate);
+            if (sName=="flip")           string2enum(sValue,ProjectionInfo.eFlip);
+            if (sName=="direction")      string2enum(sValue,ProjectionInfo.eDirection);
     	}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -341,8 +345,8 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 
 std::string ReconConfig::SanitySlicesCheck()
 {
-    int fS = ProjectionInfo.roi[1];
-    int lS = ProjectionInfo.roi[3];
+    int fS = static_cast<int>(ProjectionInfo.roi[1]);
+    int lS = static_cast<int>(ProjectionInfo.roi[3]);
     string msg;
 
     if ((lS-fS)>=200)
@@ -389,19 +393,19 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
 	        sName=reinterpret_cast<const char *>(name);
 	        	       
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -414,10 +418,10 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 	        if (sName=="path") 				MatrixInfo.sDestinationPath    = sValue;
 	        if (sName=="matrixname") 	  	MatrixInfo.sFileMask           = sValue;
 			if (sName=="filetype")			string2enum(sValue,MatrixInfo.FileType);
-	        if (sName=="firstindex") 		MatrixInfo.nFirstIndex         = atoi(sValue.c_str());
+            if (sName=="firstindex") 		MatrixInfo.nFirstIndex         = std::stoul(sValue);
 	        if (sName=="grayinterval") 
 	        	kipl::strings::String2Array(sValue,MatrixInfo.fGrayInterval,2);
-			if (sName=="rotation")			MatrixInfo.fRotation           = static_cast<float>(atof(sValue.c_str()));
+            if (sName=="rotation")			MatrixInfo.fRotation           = std::stof(sValue);
 			if (sName=="useroi")			MatrixInfo.bUseROI = kipl::strings::string2bool(sValue);
 			if (sName=="roi")				kipl::strings::String2Array(sValue,MatrixInfo.roi,4);
             if (sName=="voxelsize")         kipl::strings::String2Array(sValue,MatrixInfo.fVoxelSize,3);
@@ -444,10 +448,10 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -462,10 +466,10 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 						ret=xmlTextReaderRead(reader);
 
 						value = xmlTextReaderConstValue(reader);
-						if (name==NULL) {
+                        if (name==nullptr) {
 							throw ReconException("Unexpected contents in parameter file",__FILE__,__LINE__);
 						}
-						if (value!=NULL)
+                        if (value!=nullptr)
         					sValue=reinterpret_cast<const char *>(value);
 						else
         					sValue="Empty";
@@ -509,7 +513,7 @@ ReconConfig::cUserInformation::cUserInformation(const cUserInformation &info) :
 	sInstrument(info.sInstrument),
 	sProjectNumber(info.sProjectNumber),
 	sSample(info.sSample),
-	sComment(info.sComment)
+    sComment(info.sComment)
 {
 }
 
@@ -524,7 +528,7 @@ ReconConfig::cUserInformation & ReconConfig::cUserInformation::operator = (const
 	return * this;
 }
 
-std::string ReconConfig::cUserInformation::WriteXML(size_t indent)
+std::string ReconConfig::cUserInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -544,22 +548,25 @@ std::string ReconConfig::cUserInformation::WriteXML(size_t indent)
 //----------------
 ReconConfig::cSystem::cSystem(): 
 	nMemory(1500ul),
-	eLogLevel(kipl::logging::Logger::LogMessage)
+    eLogLevel(kipl::logging::Logger::LogMessage),
+    bValidateData(false)
 {}
 
 ReconConfig::cSystem::cSystem(const cSystem &a) : 
 	nMemory(a.nMemory), 
-	eLogLevel(a.eLogLevel) 
+    eLogLevel(a.eLogLevel),
+    bValidateData(a.bValidateData)
 {}
 
 ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a) 
 {
-	nMemory=a.nMemory; 
-	eLogLevel=a.eLogLevel; 
+    nMemory       = a.nMemory;
+    eLogLevel     = a.eLogLevel;
+    bValidateData = a.bValidateData;
 	return *this;
 }
 
-std::string ReconConfig::cSystem::WriteXML(size_t indent)
+std::string ReconConfig::cSystem::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -567,6 +574,7 @@ std::string ReconConfig::cSystem::WriteXML(size_t indent)
 	str<<setw(indent)  <<" "<<"<system>"<<std::endl;
 	str<<setw(indent+4)<<" "<<"<memory>"<<nMemory<<"</memory>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<loglevel>"<<eLogLevel<<"</loglevel>"<<std::endl;
+    str<<setw(indent+4)<<"  "<<"<validate>"<<kipl::strings::bool2string(bValidateData)<<"</validate>"<<std::endl;
 	str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
 
 	return str.str();
@@ -574,35 +582,36 @@ std::string ReconConfig::cSystem::WriteXML(size_t indent)
 
 //---------
 ReconConfig::cProjections::cProjections() :
-beamgeometry(BeamGeometry_Parallel),
-fBinning(1),
-nMargin(2), // modify to 0
-nFirstIndex(1),
-nLastIndex(625),
-nProjectionStep(1),
-bRepeatLine(false),
-scantype(SequentialScan),
-imagetype(ImageType_Projections),
-fCenter(1024.0f),
-fSOD(100.0f),
-fSDD(100.0f),
-eDirection(kipl::base::RotationDirCW), // default clockwise
-bTranslate(false),
-fTiltAngle(0.0f),
-fTiltPivotPosition(0.0f),
-bCorrectTilt(false),
-sFileMask("proj_####.fits"),
-sPath(""),
-sReferencePath(""),
-sOBFileMask("ob_####.fits"),
-nOBFirstIndex(1),
-nOBCount(5),
-sDCFileMask("dc_####.fits"),
-nDCFirstIndex(1),
-nDCCount(5),
-eFlip(kipl::base::ImageFlipNone),
-eRotate(kipl::base::ImageRotateNone)
+    beamgeometry(BeamGeometry_Parallel),
+    fBinning(1),
+    nMargin(2), // modify to 0
+    nFirstIndex(1),
+    nLastIndex(625),
+    nProjectionStep(1),
+    bRepeatLine(false),
+    scantype(SequentialScan),
+    nGoldenStartIdx(0),
+    imagetype(ImageType_Projections),
+    fCenter(1024.0f),
+    fSOD(100.0f),
+    fSDD(100.0f),
+    bTranslate(false),
 
+    fTiltAngle(0.0f),
+    fTiltPivotPosition(0.0f),
+    bCorrectTilt(false),
+    sFileMask("proj_####.fits"),
+    sPath(""),
+    sReferencePath(""),
+    sOBFileMask("ob_####.fits"),
+    nOBFirstIndex(1),
+    nOBCount(5),
+    sDCFileMask("dc_####.fits"),
+    nDCFirstIndex(1),
+    nDCCount(5),
+    eFlip(kipl::base::ImageFlipNone),
+    eRotate(kipl::base::ImageRotateNone),
+    eDirection(kipl::base::RotationDirCW) // default clockwise
 {
 nDims[0]=2048; nDims[1]=2048;
 fpPoint[0]= 500.0f; fpPoint[1]= 500.0f; // initialize pPoint
@@ -632,11 +641,11 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	nlSkipList(a.nlSkipList),
 	bRepeatLine(a.bRepeatLine),
 	scantype(a.scantype),
+    nGoldenStartIdx(a.nGoldenStartIdx),
 	imagetype(a.imagetype),
 	fCenter(a.fCenter),
     fSOD(a.fSOD),
     fSDD(a.fSDD),
-    eDirection(a.eDirection),
 	bTranslate(a.bTranslate),
 	fTiltAngle(a.fTiltAngle),
 	fTiltPivotPosition(a.fTiltPivotPosition),
@@ -651,13 +660,13 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	nDCFirstIndex(a.nDCFirstIndex),
 	nDCCount(a.nDCCount),
 	eFlip(a.eFlip),
-    eRotate(a.eRotate)
-
+    eRotate(a.eRotate),
+    eDirection(a.eDirection)
 {
 	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
 	fResolution[0]=a.fResolution[0]; fResolution[1]=a.fResolution[1];
-	roi[0]=a.roi[0]; roi[2]=a.roi[2];
-	roi[1]=a.roi[1]; roi[3]=a.roi[3];
+    std::copy_n(a.roi,4,roi);
+
 	fScanArc[0]=a.fScanArc[0]; fScanArc[1]=a.fScanArc[1];
 
     fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
@@ -682,6 +691,7 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nProjectionStep = a.nProjectionStep;
 	bRepeatLine     = a.bRepeatLine;
 	scantype		= a.scantype;
+    nGoldenStartIdx = a.nGoldenStartIdx;
 	imagetype		= a.imagetype;
 	nLastIndex		= a.nLastIndex;
 	nlSkipList		= a.nlSkipList;
@@ -701,14 +711,15 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nOBCount	    = a.nOBCount;
 	sDCFileMask     = a.sDCFileMask;
 	nDCFirstIndex   = a.nDCFirstIndex;
-	nDCCount    = a.nDCCount;
+    nDCCount        = a.nDCCount;
 
 	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
 	fResolution[0]  = a.fResolution[0];
 	fResolution[1]  = a.fResolution[1];
-	roi[0]=a.roi[0]; roi[2]=a.roi[2];
-	roi[1]=a.roi[1]; roi[3]=a.roi[3];
-	fScanArc[0]     = a.fScanArc[0];
+
+    std::copy_n(a.roi,4,roi);
+
+    fScanArc[0]     = a.fScanArc[0];
 	fScanArc[1]     = a.fScanArc[1];
 
     fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
@@ -730,7 +741,7 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	return *this;
 }
 
-std::string ReconConfig::cProjections::WriteXML(size_t indent)
+std::string ReconConfig::cProjections::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -748,6 +759,7 @@ std::string ReconConfig::cProjections::WriteXML(size_t indent)
 	}
 	str<<setw(indent+4)  <<" "<<"<repeatline>"<<kipl::strings::bool2string(bRepeatLine)<<"</repeatline>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<scantype>"<<scantype<<"</scantype>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<goldenstartidx>"<<nGoldenStartIdx<<"</goldenstartidx>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<imagetype>"<<enum2string(imagetype)<<"</imagetype>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<center>"<<fCenter<<"</center>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<sod>"<<fSOD<<"</sod>"<<std::endl;
@@ -920,7 +932,7 @@ ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a)
 }
 
 
-std::string ReconConfig::cMatrix::WriteXML(size_t indent)
+std::string ReconConfig::cMatrix::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;

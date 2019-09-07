@@ -26,7 +26,7 @@ template <class ImgType, int NDim>
 	class AnisotropicDiffusionFilter: public DiffusionBaseFilter<ImgType,NDim>
 	{
 	public:
-		AnisotropicDiffusionFilter() {RhoKernel=NULL; IndRhoKernel=NULL; rho.push_back(1.0f);}
+        AnisotropicDiffusionFilter() {RhoKernel=nullptr; IndRhoKernel=nullptr; rho.push_back(1.0f);}
 		AnisotropicDiffusionFilter(float Sigma, float Rho, float Tau, float Lambda, int It=10);
 		AnisotropicDiffusionFilter(float Sigma, float Rho, float Tau, LambdaEstBase<ImgType,NDim> *le, int It=10);
 		AnisotropicDiffusionFilter(vector<float> &Sigma, vector<float> &Rho, float Tau, LambdaEstBase<ImgType,NDim> *le, int It=10);
@@ -84,8 +84,8 @@ template <class ImgType, int NDim>
 AnisotropicDiffusionFilter<ImgType,NDim>::AnisotropicDiffusionFilter(float Sigma, float Rho, float Tau, float Lambda, int It):
 DiffusionBaseFilter<ImgType,NDim>(Sigma,Tau,It)
 {
-	RhoKernel=NULL;
-	IndRhoKernel=NULL;
+    RhoKernel=nullptr;
+    IndRhoKernel=nullptr;
 	rho.push_back(Rho);
 }
 
@@ -93,8 +93,8 @@ template <class ImgType, int NDim>
 AnisotropicDiffusionFilter<ImgType,NDim>::AnisotropicDiffusionFilter(float Sigma, float Rho, float Tau, LambdaEstBase<ImgType,NDim> *le, int It):
 DiffusionBaseFilter<ImgType,NDim>(Sigma,Tau,It)
 {
-	RhoKernel=NULL;
-	IndRhoKernel=NULL;
+    RhoKernel=nullptr;
+    IndRhoKernel=nullptr;
 	rho.push_back(Rho);
 }
 
@@ -107,8 +107,8 @@ AnisotropicDiffusionFilter<ImgType,NDim>::AnisotropicDiffusionFilter(vector<floa
 DiffusionBaseFilter<ImgType,NDim>(Sigma,Tau,It)
 {
 	rho=Rho;
-	RhoKernel=NULL;
-	IndRhoKernel=NULL;
+    RhoKernel=nullptr;
+    IndRhoKernel=nullptr;
 }
 
 template <class ImgType, int NDim>

@@ -12,7 +12,7 @@ TARGET = tst_tModuleConfig
 CONFIG   += console
 CONFIG   -= app_bundle
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
@@ -56,25 +56,15 @@ win32 {
 SOURCES += tst_configbasetest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lModuleConfig -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/debug/ -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
+INCLUDEPATH += $$PWD/../../../kipl/kipl/include
+DEPENDPATH += $$PWD/../../../kipl/kipl/src
 
-INCLUDEPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/src
+INCLUDEPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/include
+DEPENDPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/include
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/debug/ -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Debug/ -lModuleConfig
-INCLUDEPATH += $$PWD/../include
-DEPENDPATH += $$PWD/../src
+INCLUDEPATH += $$PWD/../../ModuleConfig/include
+DEPENDPATH += $$PWD/../../ModuleConfig/src

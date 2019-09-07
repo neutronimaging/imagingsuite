@@ -20,7 +20,6 @@ unix:!macx {
 }
 
 unix:macx {
-    QMAKE_MAC_SDK = macosx10.12
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib
@@ -53,7 +52,10 @@ SOURCES += plotter.cpp \
     comparevolumeviewer.cpp \
     plotwidget.cpp \
     setgraylevelsdlg.cpp \
-    callout.cpp
+    callout.cpp \
+    facestyles.cpp \
+    plotcursor.cpp \
+    roidialog.cpp
 
 
 
@@ -74,7 +76,10 @@ HEADERS += QtAddons_global.h \
     comparevolumeviewer.h \
     plotwidget.h \
     setgraylevelsdlg.h \
-    callout.h
+    callout.h \
+    facestyles.h \
+    plotcursor.h \
+    roidialog.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -110,4 +115,5 @@ FORMS += \
     loggingdialog.ui \
     comparevolumeviewer.ui \
     plotwidget.ui \
-    setgraylevelsdlg.ui
+    setgraylevelsdlg.ui \
+    roidialog.ui

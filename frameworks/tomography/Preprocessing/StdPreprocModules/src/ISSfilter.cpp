@@ -28,7 +28,7 @@ ISSfilter::ISSfilter() :
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
 	m_bErrorCurve(false),
-	m_fErrorCurve(NULL)
+    m_fErrorCurve(nullptr)
 {
 
 
@@ -83,7 +83,7 @@ int ISSfilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 	filter.Process(img,m_fTau,m_fLambda,m_fAlpha,m_nN);
 	RescaleData(img);
 	if (m_bErrorCurve) {
-		if (m_fErrorCurve!=NULL)
+        if (m_fErrorCurve!=nullptr)
 			delete [] m_fErrorCurve;
 		m_fErrorCurve=new float[m_nN];
 		for (int i=0; i<m_nN; i++)

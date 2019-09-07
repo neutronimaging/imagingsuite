@@ -4,9 +4,11 @@
 #include <QColor>
 #include <QSignalBlocker>
 #include <QDebug>
+#include <QMessageBox>
 
 #include <base/roi.h>
 #include "imageviewerwidget.h"
+#include "roidialog.h"
 
 namespace QtAddons {
 
@@ -19,7 +21,8 @@ uxROIWidget::uxROIWidget(QWidget *parent) :
     ui(new Ui::uxROIWidget),
     hViewer(nullptr),
     autoHideViewerROI(false),
-    allowUpdateImageDims(true)
+    allowUpdateImageDims(true),
+    useROIDlg(false)
 {
     ui->setupUi(this);
     setROI(0,0,100,100);
@@ -101,15 +104,18 @@ void uxROIWidget::setROI(int x0, int y0, int x1, int y1, bool ignoreBoundingBox)
     ui->spinY0->setValue(miny);
     ui->spinY1->setValue(maxy);
 
-//    qDebug()<<QString("uxROIWidget::setROI")<<minx<<", "<<miny<<", "<<maxx<<", "<<maxy;
     emit valueChanged(minx,miny,maxx,maxy);
     updateViewer();
 }
 
 void uxROIWidget::updateViewer()
 {
+    bool checkable = ui->groupROI->isCheckable();
+    bool checked   = ui->groupROI->isChecked();
+
+ //   qDebug() << "Checkable " << checkable <<"Checked"<<checked;
     if (hViewer!=nullptr) {
-        if (isVisible()) {
+        if (isVisible() && (!checkable || checked)) {
             updateBounds();
 
             QRect rect;
@@ -129,9 +135,38 @@ void uxROIWidget::setAllowUpdateImageDims(bool allow)
     allowUpdateImageDims=allow;
 }
 
+void uxROIWidget::setCheckable(bool x)
+{
+    ui->groupROI->setCheckable(x);
+}
+
+bool uxROIWidget::isChecked()
+{
+    return ui->groupROI->isChecked();
+}
+
+void uxROIWidget::setChecked(bool x)
+{
+    ui->groupROI->setChecked(x);
+    updateViewer();
+}
+
+void uxROIWidget::useROIDialog(bool x)
+{
+    useROIDlg=x;
+}
+
+void uxROIWidget::setSelectionImage(kipl::base::TImage<float, 2> &img)
+{
+    selectionImage.Clone(img);
+}
+
 void uxROIWidget::setROI(size_t *roi, bool ignoreBoundingBox)
 {
-    setROI((int)roi[0],(int)roi[1],(int)roi[2],(int)roi[3],ignoreBoundingBox);
+    setROI(static_cast<int>(roi[0]),
+           static_cast<int>(roi[1]),
+            static_cast<int>(roi[2]),
+            static_cast<int>(roi[3]),ignoreBoundingBox);
 }
 
 void uxROIWidget::setROI(int *roi, bool ignoreBoundingBox)
@@ -149,7 +184,10 @@ void uxROIWidget::setROI(kipl::base::RectROI roi, bool ignoreBoundingBox)
     size_t iroi[4];
 
    roi.getBox(iroi);
-   setROI((int)iroi[0],(int)iroi[1],(int)iroi[2],(int)iroi[3],ignoreBoundingBox);
+   setROI(static_cast<int>(iroi[0]),
+          static_cast<int>(iroi[1]),
+           static_cast<int>(iroi[2]),
+           static_cast<int>(iroi[3]),ignoreBoundingBox);
 }
 
 void uxROIWidget::getROI(QRect &rect)
@@ -215,7 +253,6 @@ void uxROIWidget::on_spinX0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinX0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -225,7 +262,6 @@ void uxROIWidget::on_spinY0_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY0_valueChanged");
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -235,7 +271,7 @@ void uxROIWidget::on_spinY1_valueChanged(int arg1)
     int roi[4];
     getROI(roi);
     updateViewer();
-    qDebug("uxROIWidget::on_spinY1_valueChanged");
+
     emit valueChanged(roi[0],roi[1],roi[2],roi[3]);
 }
 
@@ -251,14 +287,36 @@ void uxROIWidget::on_spinX1_valueChanged(int arg1)
 
 void uxROIWidget::on_buttonGetROI_clicked()
 {
-    if (hViewer != nullptr) {
-        updateBounds();
-        QRect rect=hViewer->get_marked_roi();
+    if (useROIDlg)
+    {
+        if (selectionImage.Size()<=1)
+        {
+            QMessageBox::warning(this,"No Image","No image is provided for ROI selection");
 
-        setROI(rect);
+            return;
+        }
+        QtAddons::ROIDialog dlg;
+        QRect roi;
+        getROI(roi);
+        dlg.setROI(roi);
+        dlg.setImage(selectionImage);
+        int res=dlg.exec();
+
+        if (res==dlg.Accepted) {
+            setROI(dlg.ROI());
+        }
     }
-    emit getROIClicked();
-    repaint();
+    else {
+        if (hViewer != nullptr) {
+            updateBounds();
+            QRect rect=hViewer->get_marked_roi();
+
+            setROI(rect);
+        }
+        emit getROIClicked();
+        repaint();
+    }
+
 }
 
 void uxROIWidget::on_valueChanged(int x0,int y0, int x1, int y1)
@@ -305,4 +363,12 @@ void uxROIWidget::showEvent(QShowEvent *event) {
 
     updateViewer();
 }
+
+
+}
+
+void QtAddons::uxROIWidget::on_groupROI_toggled(bool arg1)
+{
+    updateViewer();
+    emit toggled(arg1);
 }

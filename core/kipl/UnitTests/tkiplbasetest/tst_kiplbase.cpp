@@ -45,13 +45,11 @@ private Q_SLOTS:
     /// Tests margin setter
     void testMarginSetter();
 
-<<<<<<< HEAD
     /// Tests vertical and horizsontal profiles
     void testProfiles();
-=======
+
     /// Test image casting
     void testImageCaster();
->>>>>>> master
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -430,7 +428,7 @@ void TkiplbasetestTest::testMarginSetter()
 
     for (i=1; i<(w+1)*dims[0]*dims[1]; i++) {
      //   qDebug() << i <<" "<< img3D[img3D.Size()-i];
-        QVERIFY(img3D[img3D.Size()-i]==val);
+        QCOMPARE(img3D[img3D.Size()-i],val);
     }
     size_t k=0;
     for (k=w; k<dims[2]-w-1; ++k) {
@@ -447,11 +445,11 @@ void TkiplbasetestTest::testMarginSetter()
             float *pLine=img3D.GetLinePtr(j,k);
             float *pOrig=img3D_orig.GetLinePtr(j,k);
             for (i=0; i<w; i++)
-                QVERIFY(pLine[i]==val);
+                QCOMPARE(pLine[i],val);
             for ( ; i<dims[0]-w-1; ++i)
-                QVERIFY(pLine[i]==pOrig[i]);
+                QCOMPARE(pLine[i],pOrig[i]);
             for ( ; i<dims[0]; ++i)
-                QVERIFY(pLine[i]==val);
+                QCOMPARE(pLine[i],val);
         }
     }
 }
@@ -466,7 +464,9 @@ void TkiplbasetestTest::testProfiles()
     float *vp=new float[dims[0]];
     float *hp=new float[dims[1]];
     kipl::base::VerticalProjection2D(img.GetDataPtr(), img.Dims(), vp);
-    kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+    //kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+    delete [] vp;
+    delete [] hp;
 }
 
 void TkiplbasetestTest::testImageCaster()

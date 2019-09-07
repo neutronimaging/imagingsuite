@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef IMAGEREADER_H
 #define IMAGEREADER_H
 
@@ -26,7 +27,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
     kipl::base::TImage<float,2> Read(std::string filename,
             kipl::base::eImageFlip flip=kipl::base::ImageFlipNone,
@@ -41,7 +42,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
     kipl::base::TImage<float,2> Read(std::string path,
             std::string filemask,
@@ -58,7 +59,7 @@ public:
     /// \param flip Should the image be flipped horizontally or vertically.
     /// \param rotate Should the file be rotated, steps of 90deg.
     /// \param binning Binning factor.
-    /// \param nCrop ROI for cropping the image. If NULL is provided the whole image will be read.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
     /// \returns The 2D image stored in the specified file.
     kipl::base::TImage<float,3> Read(std::string fname,
                                       size_t first,
@@ -69,11 +70,13 @@ public:
                                       float binning,
                                       size_t const * const nCrop);
 
-    kipl::base::TImage<float,3> Read(ImageLoader &loader,
+    kipl::base::TImage<float,3> Read(FileSet &loader,
                                       kipl::base::eImageFlip flip,
                                       kipl::base::eImageRotate rotate,
                                       float binning=1.0f,
                                       size_t const * const nCrop=nullptr);
+
+    kipl::base::TImage<float,3> Read(FileSet &loader);
 
     /// Get the image dimensions for an image file using a file mask
     /// \param path The path where image is stored

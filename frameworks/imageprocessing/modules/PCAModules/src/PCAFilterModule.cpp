@@ -1,15 +1,4 @@
-//
-// This file is part of the kiptool library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2011-08-17 16:22:51 +0200 (Mi, 17 Aug 2011) $
-// $Rev: 1020 $
-// $Id: KiplProcessModuleBase.cpp 1020 2011-08-17 14:22:51Z kaestner $
-//
+//<LICENSE>
 #include "stdafx.h"
 #include "PCAFilterModule.h"
 
@@ -75,11 +64,12 @@ int PCAFilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 
     pca.filter(img,img,m_nLevel);
 
-    kipl::containers::PlotData<float,float> eigplot(img.Size(2));
-    kipl::containers::PlotData<float,float> normeigplot(img.Size(2));
+    kipl::containers::PlotData<float,float> eigplot(img.Size(2),"Eigen values");
+    kipl::containers::PlotData<float,float> normeigplot(img.Size(2),"Normalized eigen values");
+
     TNT::Array1D<double> eigval=pca.eigenvalues();
 
-    for (int i=0; i<eigplot.Size(); i++) {
+    for (size_t i=0; i<eigplot.Size(); i++) {
         eigplot.GetX()[i]=static_cast<float>(i);
         eigplot.GetY()[i]=static_cast<float>(eigval[i]);
         normeigplot.GetX()[i]=static_cast<float>(i);

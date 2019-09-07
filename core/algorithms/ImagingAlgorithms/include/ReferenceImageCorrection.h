@@ -10,7 +10,9 @@
 #include <base/timage.h>
 #include <logging/logger.h>
 #include "../include/averageimage.h"
+#if !defined(NO_QT)
 #include <QTextStream>
+#endif
 #include <interactors/interactionbase.h>
 
 
@@ -55,11 +57,11 @@ public:
     ReferenceImageCorrection();
     ~ReferenceImageCorrection();
 
-    void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
-            std::string dcname, size_t firstdc, size_t dccnt,
-            std::string bbname, size_t firstbb, size_t bbcnt,
-            size_t *roi,
-            size_t *doseroi);
+//    void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
+//            std::string dcname, size_t firstdc, size_t dccnt,
+//            std::string bbname, size_t firstbb, size_t bbcnt,
+//            size_t *roi,
+//            size_t *doseroi);
 
     void SetReferenceImages(kipl::base::TImage<float,2> *ob,
             kipl::base::TImage<float,2> *dc,

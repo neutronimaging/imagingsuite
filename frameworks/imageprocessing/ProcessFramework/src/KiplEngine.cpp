@@ -128,14 +128,17 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 
 		float maxval=0.0f;
 		float minval=0.0f;
-		switch (config->eResultImageType) {
-			case kipl::io::TIFF8bits : maxval=255.0f; minval=0.0f; break;
+        switch (config->eResultImageType)
+        {
+            case kipl::io::TIFF8bits  : maxval=255.0f;   minval=0.0f; break;
 			case kipl::io::TIFF16bits : maxval=65535.0f; minval=0.0f; break;
-			case kipl::io::TIFFfloat: maxval=65535.0f; minval=0.0f; break;
+            case kipl::io::TIFFfloat  : maxval=65535.0f; minval=0.0f; break;
+            case kipl::io::TIFF16bitsMultiFrame : maxval=65535.0f; minval=0.0f; break;
 			default : throw KiplFrameworkException("Trying to save unsupported file type",__FILE__,__LINE__);
 		}
 
-		if (config->bRescaleResult) {
+        if (config->bRescaleResult)
+        {
 			maxval=*std::max_element(m_ResultImage.GetDataPtr(),m_ResultImage.GetDataPtr()+m_ResultImage.Size());
 			minval=*std::min_element(m_ResultImage.GetDataPtr(),m_ResultImage.GetDataPtr()+m_ResultImage.Size());
 		}
@@ -160,7 +163,7 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 		kipl::io::WriteImageStack(m_ResultImage,
 				fname,
 				minval,maxval,
-				0,m_ResultImage.Size(2),m_Config.mImageInformation.nFirstFileIndex,
+                0,m_ResultImage.Size(2)-1,m_Config.mImageInformation.nFirstFileIndex,
 				config->eResultImageType,plane);
 
         std::string confname = config->sDestinationPath + "kiplscript.xml";
@@ -257,7 +260,11 @@ kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> *
     std::list<KiplModuleItem *>::iterator it_Module;
 
     try {
-        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; ++it_Module)
+        msg.str("");
+        msg<<"Last module: "<<sLastModule;
+        logger.message(msg.str());
+
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++)
         {
             msg.str("");
             msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
@@ -305,13 +312,10 @@ kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> *
 
 bool KiplEngine::updateStatus(float val)
 {
-    if (m_Interactor!=nullptr) {
-        qDebug() << "engine update "<<val;
+    if (m_Interactor!=nullptr)
+    {
         return m_Interactor->SetOverallProgress(val);
     }
-    else
-        qDebug() << "engine update - interactor missing";
-
 
     return false;
 }

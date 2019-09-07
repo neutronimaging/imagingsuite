@@ -29,7 +29,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QtAddons::Plotter" name="skip_plot" native="true">
+  <widget class="QtAddons::PlotWidget" name="skip_plot" native="true">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -258,16 +258,19 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
-   <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -5,7 +5,7 @@
 namespace kipl { namespace filters {
 
 FilterBase::~FilterBase() {		
-	if (nKernelIndex != NULL)
+    if (nKernelIndex != nullptr)
 		delete [] nKernelIndex;
 }
 

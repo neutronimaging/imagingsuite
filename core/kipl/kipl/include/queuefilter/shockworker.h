@@ -91,7 +91,7 @@ ShockWorker<ImgType>::ShockWorker(float Tau, float Sigma, float Amount, ShockTyp
 	if (st==Osher_Filter) {
 		Nkernel=3;
 		Nkernel2=1;
-		smoothLaplacian=NULL;
+        smoothLaplacian=nullptr;
 	}
 	else {
 		Nkernel2=int(2.5*sigma);
