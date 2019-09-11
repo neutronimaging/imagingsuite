@@ -505,6 +505,162 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         return 0;
     }
 
+    EdgeFunction::EdgeFunction(): FitFunctionBase (7)
+    {
+
+    }
+
+    /// The lineshape is defined by 7 parameters, here:
+    /// m_par[0] = t0 is the edge position
+    /// m_par[1] = sigma is the Gaussian broadening
+    /// m_par[2] = tau is the exponential decay of the trailing edge
+    /// m_par[3] = a_{0} first linear parameter for the function after the edge
+    /// m_par[4] = b_{0} second linear parameter for the function after the edge
+    /// m_par[5] = a_{hkl} first linear parameter for the function before the edge
+    /// m_par[6] = b_{hkl} second linear parameter for the function after the edge
+    double EdgeFunction::operator()(double x)
+    {
+        double term3,term4,term5,edge,exp_after,exp_before;
+        term3 = erfc(-(x-m_pars[0])/(m_pars[1]*dsqrt2));
+        term4 = exp(-((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])));
+        term5 = erfc(-(x-m_pars[0])/(m_pars[1]*dsqrt2)+m_pars[1]/m_pars[2]);
+        edge = 0.5*(term3-term4*term5); // myedgefunction
+        exp_after = exp(-(m_pars[3]+m_pars[4]*x)); //myexp after
+        exp_before = exp(-(m_pars[5]+m_pars[6]*x)); //my exp before
+        return exp_after*(exp_before+(1-exp_before)*edge);
+    }
+
+
+    /// The partial derivatives are defined as follows:
+    /// dyda[0] = d(Edge_function) / d(x0)
+    /// dyda[1] = d(Edge_function) / d(sigma)
+    /// dyda[2] = d(Edge_function) / d(tau)
+    /// dyda[3] = d(Edge_function) / d(a_{0})
+    /// dyda[4] = d(Edge_function) / d(b_{0})
+    /// dyda[5] = d(Edge_function) / d(a_{hkl})
+    /// dyda[6] = d(Edge_function) / d(b_{hkl})
+    int EdgeFunction::operator()(double x, double &y, Array1D<double> &dyda)
+    {
+
+        if (dyda.dim()!=m_Npars)
+            dyda=Array1D<double>(m_Npars);
+
+        double term3,term4,term5,edge,exp_after,exp_before;
+        term3 = erfc(-(x-m_pars[0])/(m_pars[1]*dsqrt2));
+        term4 = exp(-((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])));
+        term5 = erfc(-(x-m_pars[0])/(m_pars[1]*dsqrt2)+m_pars[1]/m_pars[2]);
+        edge = 0.5*(term3-term4*term5); // myedgefunction
+        exp_after = exp(-(m_pars[3]+m_pars[4]*x)); //myexp after
+        exp_before = exp(-(m_pars[5]+m_pars[6]*x)); //my exp before
+        y = exp_after*(exp_before+(1-exp_before)*edge);
+
+        // Here I use the analytical expressions of the derivatives
+        dyda[0]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
+                    (1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                        (
+                        -((exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))*erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
+                        +(dsqrt2/sqrt(M_PI)*exp(m_pars[1]/(2*m_pars[2])-(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])*(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])-(x-m_pars[0])/m_pars[2]))/m_pars[1]
+                        -(dsqrt2/sqrt(M_PI)*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2*m_pars[0]*m_pars[0])))/m_pars[1]
+                        )
+                    ;
+        dyda[1]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
+                (1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                (
+                 -m_pars[1]*((exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))*erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/(m_pars[2]*m_pars[2])
+                 +(2*exp(m_pars[1]/(2*m_pars[2])-(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])*(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])-(x-m_pars[0])/m_pars[2]) + (1/m_pars[2]+(x-m_pars[0])/(dsqrt2*m_pars[1]*m_pars[1])))/sqrt(M_PI)
+                 -(dsqrt2/sqrt(M_PI)*(x-m_pars[0])*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2*m_pars[1]*m_pars[1])))/(m_pars[1]*m_pars[1])
+                )
+                ;
+        dyda[2]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
+                (1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                (
+                    (exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                    *(-(m_pars[1]*m_pars[1])/(m_pars[2]*m_pars[2]*m_pars[2])+(x-m_pars[0])/(m_pars[2]*m_pars[2]))
+                    * erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
+
+                    - (2*m_pars[1]*exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))-(x-m_pars[0])/(m_pars[2])))
+                    /(sqrt(M_PI)*m_pars[2]*m_pars[2])
+
+                    );
+        dyda[3]= -exp(-(m_pars[3]+m_pars[4]*x))*
+                (
+                    0.5*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+
+                        (
+                            erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+
+                            -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                            *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
+                            )
+
+                            +exp(-(m_pars[5]+m_pars[6]*x))
+
+
+                    );
+        dyda[4]= m_pars[0]*(-exp(-(m_pars[3]+m_pars[4]*x)))*
+                (
+                     0.5*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    (
+                     erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+
+                     -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                     *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
+                        )
+                     +exp(-(m_pars[5]+m_pars[6]*x))
+                    );
+
+
+        dyda[5]= (-exp(-(m_pars[3]+m_pars[4]*x)))*
+                (
+                    0.5*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    (
+                        erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+
+                        -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                        *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
+                        )
+                       -exp(-(m_pars[5]+m_pars[6]*x))
+                    );
+        dyda[6]= (-exp(-(m_pars[3]+m_pars[4]*x)))*
+                (
+                    0.5*x*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    (
+                        erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+
+                        -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                        *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
+                        )
+                    -x*exp(-(m_pars[5]+m_pars[6]*x))
+                    );
+        return 1;
+    }
+
+    int EdgeFunction::Hessian(double x, Array2D<double> &hes)
+    {
+        return -1;
+    }
+
+    int EdgeFunction::Jacobian(double x, Array2D<double> &jac)
+    {
+        return -1;
+    }
+
+    int EdgeFunction::printPars()
+    {
+        // Here print out the estimated parameters
+        char est=m_lock[0] ? ' ' : '*';
+
+        cout<<est<<"x0="<<m_pars[0]<< endl;
+        cout<<est<<"sigma="<<m_pars[1]<< endl;
+        cout<<est<<"tau="<<m_pars[2]<< endl;
+        cout<<est<<"a0="<<m_pars[3]<< endl;
+        cout<<est<<"b0="<<m_pars[4]<< endl;
+        cout<<est<<"ahkl="<<m_pars[5]<< endl;
+        cout<<est<<"bhkl="<<m_pars[6]<< endl;
+        return 0;
+    }
+
+
 }
 
 void string2enum(string &str, Nonlinear::eProfileFunction &e)
@@ -516,6 +672,7 @@ void string2enum(string &str, Nonlinear::eProfileFunction &e)
     convmap["gaussprofile"]=Nonlinear::eProfileFunction::fnSumOfGaussians;
     convmap["lorenzprofile"]=Nonlinear::eProfileFunction::fnLorenzian;
     convmap["voightprofile"]=Nonlinear::eProfileFunction::fnVoight;
+    convmap["edgeprofile"]=Nonlinear::eProfileFunction::fnEdgeFunction;
 
     auto it=convmap.find(lowstr);
 
@@ -538,6 +695,9 @@ std::string enum2string(Nonlinear::eProfileFunction e)
         break;
     case Nonlinear::fnVoight:
         return "VoightProfile";
+        break;
+    case Nonlinear::fnEdgeFunction:
+        return "EdgeProfile";
         break;
     }
 

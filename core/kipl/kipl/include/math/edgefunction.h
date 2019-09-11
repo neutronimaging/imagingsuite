@@ -34,6 +34,13 @@ public:
     void computeEdgeExponential(double *t);
 
     double *edgeFunction;
+    double t0;
+    double sigma;
+    double alpha;
+    double a1;
+    double a2;
+    double a5;
+    double a6;
 
 //private: // should those be private or not?
     double *term1;
@@ -47,13 +54,7 @@ public:
     double *exp_after;
 
     double *fullEdge;
-    double sigma;
-    double alpha;
-    double t0;
-    double a1;
-    double a2;
-    double a5;
-    double a6;
+
     double *t;
     int size;
 

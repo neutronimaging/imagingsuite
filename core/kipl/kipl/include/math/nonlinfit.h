@@ -12,7 +12,8 @@ namespace Nonlinear {
 enum eProfileFunction {
     fnSumOfGaussians,
     fnLorenzian,
-    fnVoight
+    fnVoight,
+    fnEdgeFunction
 };
 
 /// \brief Base class for mathematical function classes
@@ -120,13 +121,13 @@ public:
 private:
 
 
-    static const int NDONE=4; //Convergence parameters.
+    static const int NDONE=4; ///Convergence parameters.
     int maxIterations;
     int ndat, ma, mfit;
 
     double tol;
-    Array2D<double> covar;
-    Array2D<double> alpha;
+    Array2D<double> covar; /// covariance matrix
+    Array2D<double> alpha; /// linearized fitting matrix
     double chisq;
 
     void mrqcof(Nonlinear::FitFunctionBase &fn, Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Array2D<double> &alpha, Array1D<double> &beta);
@@ -258,6 +259,54 @@ public:
     ///	The estimated parameters are marked by a *
     virtual int printPars();
     virtual ~Voight() {}
+};
+
+class KIPLSHARED_EXPORT EdgeFunction : public FitFunctionBase
+{
+public:
+    /// \brief Constructor
+    ///
+    EdgeFunction() ;
+
+    /// \brief Computes the function value
+    ///
+    /// \param x The argument
+    /// \retval The method returns the lineshape formulation from Santisteban et al. 2001
+    /// The lineshape is defined by 7 parameters, here:
+    /// m_par[0] = t0 is the edge position
+    /// m_par[1] = sigma is the Gaussian broadening
+    /// m_par[2] = tau is the exponential decay of the trailing edge
+    /// m_par[3] = a_{0} first linear parameter for the function after the edge
+    /// m_par[4] = b_{0} second linear parameter for the function after the edge
+    /// m_par[5] = a_{hkl} first linear parameter for the function before the edge
+    /// m_par[6] = b_{hkl} second linear parameter for the function after the edge
+    virtual double operator()(double x);
+
+    /// \brief Computes information needed by the LevenbergMarquardt fitting
+    ///
+    /// \param x Input argument
+    /// \param y Function value
+    /// \param dyda partial derivatives of the target function at x
+    virtual int operator()(double x, double &y, Array1D<double> & dyda);
+
+    /// \brief Computes the numerical Hessian
+    ///
+    ///	\param x The input argument
+    ///	\param hes The numerical Hessian at x
+    virtual int Hessian(double x, Array2D<double> &hes);
+
+    /// \brief Computes the numerical Jacobian
+    ///
+    ///	\param x The input argument
+    ///	\param jac The numerical Jacobian at x
+    virtual int Jacobian(double x, Array2D<double> &jac);
+
+    /// \brief Prints the parameters stored by the instance
+    ///
+    ///	The estimated parameters are marked by a *
+    virtual int printPars();
+    virtual ~EdgeFunction() {}
+
 };
 
 int KIPLSHARED_EXPORT LeastMedianSquared(double *x, double *y, FitFunctionBase &fn);
