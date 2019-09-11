@@ -109,19 +109,6 @@
                     <wname>daub25</wname>
                 </parameters>
             </module>
-            <module>
-                <modulename>ProjectionFilterSingle</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
-                <active>true</active>
-                <parameters>
-                    <biasweight>0.1</biasweight>
-                    <cutoff>0.5</cutoff>
-                    <filtertype>Hamming</filtertype>
-                    <order>1</order>
-                    <paddingdoubler>2</paddingdoubler>
-                    <usebias>true</usebias>
-                </parameters>
-            </module>
         </preprocessing>
         <backprojector>
             <module>
@@ -132,6 +119,12 @@
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>
                     <SubVolume>1 1</SubVolume>
+                    <biasweight>0.1</biasweight>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
+                    <usebias>false</usebias>
                 </parameters>
             </module>
         </backprojector>

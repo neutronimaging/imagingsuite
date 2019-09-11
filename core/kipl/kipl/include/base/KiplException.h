@@ -27,7 +27,7 @@ public :
 
     /// \brief Getter for the error message
     /// \returns A string containing the error message information
-    //std::string what() const;
+
     virtual const char* what() const ;
 protected :
     std::string sExceptionName;
