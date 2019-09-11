@@ -389,35 +389,263 @@ void kiplMorphologyTest::testPixelIteratorMoving3D_conn6()
 void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
 {
     size_t dims4u[3]={11,9,5};
-    ptrdiff_t dims4[3];
+    int dims4[3];
     std::copy(dims4u,dims4u+3,dims4);
     kipl::base::PixelIterator it4(dims4u,kipl::base::conn6);
 
     ptrdiff_t sx=dims4[0];
     ptrdiff_t sxy=dims4[0]*dims4[1];
+    int x=0,y=0,z=0;
 
-    ptrdiff_t x=0,y=0,z=0;
+    // Bulk
+    x=dims4[0]/2; y=dims4[1]/2; z=dims4[2]/2;
     it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),6);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(5),x+y*sx+(z+1)*sxy);
+
+    //m_edgeX0 = { -m_sxy, -m_sx,  1, m_sx, m_sxy};
+    x=0; y=dims4[1]/2; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+
+    //m_edgeX1 = { -m_sxy, -m_sx, -1, m_sx, m_sxy};
+    x=dims4[0]-1; y=dims4[1]/2; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+
+    //m_edgeY0 = {-m_sxy, -1, 1, m_sx, m_sxy};
+    x=dims4[0]/2; y=0; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),(x-1)+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+
+    //m_edgeY1 = {-m_sxy, -m_sx, -1, 1, m_sxy};
+    x=dims4[0]/2; y=dims4[1]-1; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),(x-1)+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+
+    //m_edgeZ0 = {-m_sx, -1, 1, m_sx, m_sxy};
+    x=dims4[0]/2; y=dims4[1]/2; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x-1+(y)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+
+    //m_edgeZ1 = {-m_sxy, -m_sx, -1, 1,m_sx};
+    x=dims4[0]/2; y=dims4[1]/2; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x-1+(y)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(4),x+(y+1)*sx+z*sxy);
+
+    //    m_cornerX0Y0 = {-m_sxy, 1,  m_sx, m_sxy};
+    x=0; y=0; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+1+(y)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX1Y0 = {-m_sxy,-1,  m_sx, m_sxy};
+    x=dims4[0]-1; y=0; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX0Y1 = {-m_sxy,  -m_sx,1, m_sxy};
+    x=0; y=dims4[1]-1; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX1Y1 = {-m_sxy, -m_sx ,-1, m_sxy};
+    x=dims4[0]-1; y=dims4[1]-1; z=dims4[2]/2;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX0Z0 = {-m_sx,1,  m_sx,m_sxy};
+    x=0; y=dims4[1]/2; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX1Z0 = {-m_sx,-1, m_sx,m_sxy};
+    x=dims4[0]-1; y=dims4[1]/2; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX0Z1 = {-m_sx,1,  m_sx,m_sxy};
+    x=0; y=dims4[1]/2; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerX1Z1 = {-m_sxy,-m_sx,-1, m_sx};
+    x=dims4[0]-1; y=dims4[1]/2; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    //    m_cornerY0Z0 = {-1,1,m_sx,m_sxy};
+    x=dims4[0]/2; y=0; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerY1Z0 = {-m_sx,-1,1,m_sxy};
+    x=dims4[0]/2; y=dims4[1]-1; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+
+    //    m_cornerY0Z1 = {-m_sxy,-1,1, m_sx};
+    x=dims4[0]/2; y=0; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+
+    //    m_cornerY1Z1 = {-m_sxy,-m_sx,-1,1};
+    x=dims4[0]/2; y=dims4[1]-1; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(3),x+1+y*sx+z*sxy);
+
+    //m_cornerX0Y0Z0
+    x=0;y=0;z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
     QCOMPARE(it4.neighborhood(0),1L);
     QCOMPARE(it4.neighborhood(1),11L);
     QCOMPARE(it4.neighborhood(2),99L);
 
+    //m_cornerX1Y0Z0
     x=10; y=0; z=0;
-
-    it4.setPosition(10,0,0);
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
     QCOMPARE(it4.neighborhood(0),(x-1));
     QCOMPARE(it4.neighborhood(1),x+(y+1)*sx);
     QCOMPARE(it4.neighborhood(2),x+(z+1)*sxy);
 
-    it4.setPosition(0,8,0);
-    QCOMPARE(it4.neighborhood(0),1+(8L)*sx);
-    QCOMPARE(it4.neighborhood(1),(8L-1L)*sx);
-    QCOMPARE(it4.neighborhood(2),8L*sx+sxy);
+    //m_cornerX0Y1Z0
+    x=0; y=8; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),1+(y)*sx);
+    QCOMPARE(it4.neighborhood(1),(y-1)*sx);
+    QCOMPARE(it4.neighborhood(2),y*sx+sxy);
 
-    it4.setPosition(0,8,0);
-    QCOMPARE(it4.neighborhood(0),1+(8L)*sx);
-    QCOMPARE(it4.neighborhood(1),(8L-1L)*sx);
-    QCOMPARE(it4.neighborhood(2),8L*dims4[0]+dims4[0]*dims4[1]);
+    //m_cornerX0Y0Z1
+    x=0; y=0; z=4;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),(z-1)*sxy);
+    QCOMPARE(it4.neighborhood(1),1+z*sxy);
+    QCOMPARE(it4.neighborhood(2),sx+z*sxy);
+
+    //m_cornerX1Y1Z0
+    x=dims4[0]-1L; y=dims4[1]-1L; z=0;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),x-1+y*sx);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx);
+    QCOMPARE(it4.neighborhood(2),x+y*sx+(z+1)*sxy);
+
+    //m_cornerX1Y0Z1
+    x=dims4[0]-1; y=0; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),x-1+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(z-1)*sxy);
+
+    //m_cornerX1Y0Z1
+    x=dims4[0]-1; y=0; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),x-1+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+(z-1)*sxy);
+
+    //m_cornerX0Y1Z1
+    x=0; y=dims4[1]-1; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),x+1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+y*sx+(z-1)*sxy);
+
+    //m_cornerX1Y1Z1
+    x=dims4[0]-1; y=dims4[1]-1; z=dims4[2]-1;
+    it4.setPosition(x,y,z);
+    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhood(0),x-1+y*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it4.neighborhood(2),x+y*sx+(z-1)*sxy);
 
 //    QVERIFY2(it4.currentPosition()  == 0+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
 //    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1Z0,"Wrong edge status at init");
