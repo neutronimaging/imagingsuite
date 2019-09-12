@@ -556,38 +556,52 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
         // Here I use the analytical expressions of the derivatives
         dyda[0]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
-                    (1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    (1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
                         (
-                        -((exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))*erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
-                        +(dsqrt2/sqrt(M_PI)*exp(m_pars[1]/(2*m_pars[2])-(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])*(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])-(x-m_pars[0])/m_pars[2]))/m_pars[1]
+                        -((exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                         *erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
+
+                        +(dsqrt2/sqrt(M_PI)*exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])
+                                                -(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2]))
+                                                -(x-m_pars[0])/m_pars[2]))/m_pars[1]
+
                         -(dsqrt2/sqrt(M_PI)*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2*m_pars[0]*m_pars[0])))/m_pars[1]
-                        )
-                    ;
+                        );
+
         dyda[1]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
-                (1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                (1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
                 (
-                 -m_pars[1]*((exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))*erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/(m_pars[2]*m_pars[2])
-                 +(2*exp(m_pars[1]/(2*m_pars[2])-(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])*(m_pars[1]/m_pars[2]-(x-m_pars[0])/m_pars[2])-(x-m_pars[0])/m_pars[2]) + (1/m_pars[2]+(x-m_pars[0])/(dsqrt2*m_pars[1]*m_pars[1])))/sqrt(M_PI)
-                 -(dsqrt2/sqrt(M_PI)*(x-m_pars[0])*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2*m_pars[1]*m_pars[1])))/(m_pars[1]*m_pars[1])
+                 -m_pars[1]*((exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))*
+                  erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/(m_pars[2]*m_pars[2])
+
+                 +(2.0*exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-
+                     ((m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2])))-(x-m_pars[0])/m_pars[2])
+                      *(1/m_pars[2]+(x-m_pars[0])/(dsqrt2*m_pars[1]*m_pars[1])))/sqrt(M_PI)
+
+                 -(dsqrt2/sqrt(M_PI)*(x-m_pars[0])*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[1]*m_pars[1])))/(m_pars[1]*m_pars[1])
                 )
                 ;
+
+
         dyda[2]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
-                (1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                (1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
                 (
-                    (exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                    -1.0*exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2])
                     *(-(m_pars[1]*m_pars[1])/(m_pars[2]*m_pars[2]*m_pars[2])+(x-m_pars[0])/(m_pars[2]*m_pars[2]))
                     * erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
-                    - (2*m_pars[1]*exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))-(x-m_pars[0])/(m_pars[2])))
+                    - (2.0*m_pars[1]*exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-
+                       (m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))-(x-m_pars[0])/(m_pars[2])))
                     /(sqrt(M_PI)*m_pars[2]*m_pars[2])
 
                     );
-        dyda[3]= -exp(-(m_pars[3]+m_pars[4]*x))*
+
+        dyda[3]= -1.0*exp(-(m_pars[3]+m_pars[4]*x))*
                 (
-                    0.5*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    0.5*(1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
 
                         (
-                            erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+                            erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
                             -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
                             *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
@@ -597,11 +611,12 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
 
                     );
-        dyda[4]= m_pars[0]*(-exp(-(m_pars[3]+m_pars[4]*x)))*
+
+        dyda[4]= m_pars[0]*(-1.0*exp(-(m_pars[3]+m_pars[4]*x)))*
                 (
-                     0.5*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                     0.5*(1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
                     (
-                     erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+                     erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
                      -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
                      *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
@@ -610,22 +625,23 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
                     );
 
 
-        dyda[5]= (-exp(-(m_pars[3]+m_pars[4]*x)))*
+        dyda[5]= exp(-(m_pars[3]+m_pars[4]*x))*
                 (
-                    0.5*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    0.5*exp(-(m_pars[5]+m_pars[6]*x))*
                     (
-                        erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+                        erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
-                        -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                        -(exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
                         *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
                         )
                        -exp(-(m_pars[5]+m_pars[6]*x))
                     );
-        dyda[6]= (-exp(-(m_pars[3]+m_pars[4]*x)))*
+
+        dyda[6]= exp(-(m_pars[3]+m_pars[4]*x))*
                 (
-                    0.5*x*(1-exp(-(m_pars[5]+m_pars[6]*x)))*
+                    0.5*x*exp(-(m_pars[5]+m_pars[6]*x))*
                     (
-                        erfc((x-m_pars[0])/(dsqrt2*m_pars[1]))
+                        erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
                         -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
                         *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
