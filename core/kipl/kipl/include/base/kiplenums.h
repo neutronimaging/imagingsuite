@@ -1,12 +1,10 @@
 //<LICENCE>
 
-#ifndef KIPLENUMS_H_
-#define KIPLENUMS_H_
+#ifndef KIPLENUMS_H
+#define KIPLENUMS_H
 #include "../kipl_global.h"
 
 #include <iostream>
-
-
 
 namespace kipl { namespace base {
 /// \brief Image plane selection enum
@@ -96,15 +94,33 @@ enum eEdgeStatus {
     edgeX0 = 1,
     edgeX1 = 2,
     edgeY0 = 4,
-    cornerX0Y0 = edgeX0+edgeY0,//1+4,
-    cornerX1Y0 = edgeX1+edgeY0,//2+4,
+    cornerX0Y0 = edgeX0+edgeY0,//1+4 = 5
+    cornerX1Y0 = edgeX1+edgeY0,//2+4 = 6
     edgeY1 = 8,
-    cornerX0Y1 = edgeX0+edgeY1,//1+8,
-    cornerX1Y1 = edgeX1+edgeY1,//2+8,
+    cornerX0Y1 = edgeX0+edgeY1,//1+8 = 9
+    cornerX1Y1 = edgeX1+edgeY1,//2+8 = 10
     edgeZ0 = 16,
-    edgeZ1 = 32
+    edgeZ1 = 32,
+    cornerX0Y0Z0 = edgeX0+edgeY0+edgeZ0, // 1+4+16 = 21
+    cornerX1Y0Z0 = edgeX1+edgeY0+edgeZ0, // 2+4+16 = 22
+    cornerX0Y1Z0 = edgeX0+edgeY1+edgeZ0, // 1+8+16 = 25
+    cornerX1Y1Z0 = edgeX1+edgeY1+edgeZ0, // 2+8+16 = 26
+    cornerX0Y0Z1 = edgeX0+edgeY0+edgeZ1, // 1+4+32 = 37
+    cornerX1Y0Z1 = edgeX1+edgeY0+edgeZ1, // 2+4+32 = 38
+    cornerX0Y1Z1 = edgeX0+edgeY1+edgeZ1, // 1+8+32 = 41
+    cornerX1Y1Z1 = edgeX1+edgeY1+edgeZ1, // 2+8+32 = 42
+    cornerX0Z0   = edgeZ0 + edgeX0,      // 16+1   = 17
+    cornerX0Z1   = edgeZ1 + edgeX0,      // 32+1   = 33
+    cornerX1Z0   = edgeX1 + edgeZ0,      // 16+2   = 18
+    cornerX1Z1   = edgeX1 + edgeZ1,      // 32+2   = 34
+    cornerY0Z0   = edgeY0 + edgeZ0,      // 16+4   = 20
+    cornerY0Z1   = edgeY0 + edgeZ1,      // 32+4   = 36
+    cornerY1Z0   = edgeY1 + edgeZ0,      // 16+8   = 24
+    cornerY1Z1   = edgeY1 + edgeZ1       // 32+8   = 40
+
 };
 
+KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn);
 }}
 
 /// \brief Stream output operator for eImagePlanes
