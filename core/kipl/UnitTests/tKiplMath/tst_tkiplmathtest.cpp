@@ -17,7 +17,7 @@
 #include <math/findpeaks.h>
 #include <math/image_statistics.h>
 #include <math/covariance.h>
-
+#include <math/mathconstants.h>
 #include <io/io_tiff.h>
 
 class TKiplMathTest : public QObject
@@ -37,6 +37,7 @@ private Q_SLOTS:
     void testNonLinFit_enums();
     void testNonLinFit_GaussianFunction();
     void testNonLinFit_fitter();
+    void testNonLinFit_EdgeFunction();
     void testFindPeaks();
 
     void testStatistics();
@@ -172,10 +173,14 @@ void TKiplMathTest::testNonLinFit_enums()
     val="VoightProfile";
     string2enum(val,e);
     QCOMPARE(e,Nonlinear::eProfileFunction::fnVoight);
+    val="EdgeProfile";
+    string2enum(val,e);
+    QCOMPARE(e,Nonlinear::eProfileFunction::fnEdgeFunction);
 
     QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnSumOfGaussians),std::string("GaussProfile"));
     QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnLorenzian),std::string("LorenzProfile"));
     QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnVoight),std::string("VoightProfile"));
+    QCOMPARE(enum2string(Nonlinear::eProfileFunction::fnEdgeFunction),std::string("EdgeProfile"));
 
     ostringstream msg;
 
@@ -187,7 +192,10 @@ void TKiplMathTest::testNonLinFit_enums()
     QCOMPARE(msg.str(),std::string("LorenzProfile"));
     msg.str("");
     msg<<Nonlinear::eProfileFunction::fnVoight;
-    QCOMPARE(msg.str(),std::string("VoightProfile"));
+    QCOMPARE(msg.str(),std::string("VoightProfile"));   
+    msg.str("");
+    msg<<Nonlinear::eProfileFunction::fnEdgeFunction;
+    QCOMPARE(msg.str(),std::string("EdgeProfile"));
 
 }
 void TKiplMathTest::testNonLinFit_GaussianFunction()
@@ -263,6 +271,101 @@ void TKiplMathTest::testNonLinFit_fitter()
     QCOMPARE(sog[0], sog0[0]);
     QCOMPARE(sog[1], sog0[1]);
     QCOMPARE(sog[2], sog0[2]);
+
+}
+
+void TKiplMathTest::testNonLinFit_EdgeFunction()
+{
+    int N=1107;
+    double eps=0.000001;
+
+    Array1D<double> x(N);
+    Array1D<double> y(N);
+    Array1D<double> sig(N);
+    Array1D<double> initial_edge(N);
+    Array1D<double> params(7);
+
+    Nonlinear::EdgeFunction ef;
+
+    ef[0]=0.056568;
+    ef[1]=0.0001;
+    ef[2]=0.0015;
+    ef[3]=0.315462;
+    ef[4]=5.3447841;
+    ef[5]=-0.4700811;
+    ef[6]=26.92982514130;
+
+    QCOMPARE(ef.getNpars(),7); // Seven parameters to be fitted
+    QCOMPARE(ef.getNpars2fit(),7); // Default all will be fitted
+
+
+
+    short loop=0; //short for loop for input
+    string line; //this will contain the data read from the file
+    ifstream myfile("/home/carminati_c/git/imagingsuite/core/kipl/UnitTests/data/x.txt"); //opening the file.
+
+
+    for (double a; myfile>>a;)
+    {
+        x[loop]=a;
+        loop++;
+    }
+
+    QCOMPARE(loop, 1107);
+
+    short loop_y=0;
+    ifstream myfile_y ("/home/carminati_c/git/imagingsuite/core/kipl/UnitTests/data/initialmodel.txt"); //opening the file. //path should be related to the lib
+
+    for (double a; myfile_y>>a;)
+    {
+        y[loop_y]=a;
+        loop_y++;
+
+    }
+
+    QCOMPARE(loop_y, 1107);
+
+    ef.getPars(params);
+    QCOMPARE(ef[0],params[0]);
+    QCOMPARE(ef[1],params[1]);
+    QCOMPARE(ef[2],params[2]);
+    QCOMPARE(ef[3],params[3]);
+    QCOMPARE(ef[4],params[4]);
+    QCOMPARE(ef[5],params[5]);
+    QCOMPARE(ef[6],params[6]);
+
+
+    ofstream outfile;
+    outfile.open ("example.txt");
+
+
+    // Here i test the edge formulation
+    for (int i=0; i<loop; ++i)
+    {
+        initial_edge[i] = ef(x[i]); // I compute the initial edge
+        QVERIFY(fabs(initial_edge[i]-y[i])<eps);
+//        outfile << initial_edge[i] << endl ;
+
+
+    }
+
+
+    outfile.close();
+
+
+
+
+
+//    // This one I can leave it for later
+//    Nonlinear::LevenbergMarquardt mrq(1e-15,200);
+
+//    mrq.fit(x,y,sig,ef);
+
+
+
+
+
+
 
 }
 
