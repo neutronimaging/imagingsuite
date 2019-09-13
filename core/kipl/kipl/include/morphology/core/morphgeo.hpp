@@ -2,8 +2,11 @@
 #define MORPHGEO_HPP
 
 #include <stddef.h>
+#include <deque>
+#include "../../base/kiplenums.h"
 #include "../morphology.h"
 #include "../morphfilters.h"
+#include "../pixeliterator.h"
 
 using namespace std;
 
@@ -145,7 +148,7 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
 template <typename ImgType,size_t NDimG, size_t NDimF>
 kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType,NDimG> &g,
         const kipl::base::TImage<ImgType,NDimF> &f,
-        kipl::morphology::MorphConnect conn)
+        kipl::base::eConnectivity conn)
 {
     std::ostringstream msg;
 
@@ -157,16 +160,20 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     const size_t *pDimsF=f.Dims();
     const size_t *pDimsG=g.Dims();
 
-    for (i=0; i<static_cast<ptrdiff_t>(NDimF); i++) {
-        if (pDimsF[i]!=pDimsG[i]) {
+    for (i=0; i<static_cast<ptrdiff_t>(NDimF); i++)
+    {
+        if (pDimsF[i]!=pDimsG[i])
+        {
             throw kipl::base::KiplException("RecByDilation: Size(f) != Size(g)",__FILE__,__LINE__);
         }
     }
 
-    if (NDimG!=NDimF) {
-        cerr<<"Dim(f)!=Dim(g)"<<endl;
+    if (NDimG!=NDimF)
+    {
+        std::cerr<<"Dim(f)!=Dim(g)"<<endl;
 
-        if ((NDimG!=3) || (NDimF!=2)) {
+        if ((NDimG!=3) || (NDimF!=2))
+        {
             throw kipl::base::KiplException("RecByDilation: Dim(f)!=Dim(g) or Dim(g)!=2 and Dim(f)!=3",__FILE__,__LINE__);
         }
     }
@@ -178,13 +185,15 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     ImgType const * const pf=f.GetDataPtr();
     ImgType *ptemp=temp.GetDataPtr();
     size_t errcnt=0L;
-    for (i=0; i<static_cast<ptrdiff_t>(f.Size()); i++) {
+    for (i=0; i<static_cast<ptrdiff_t>(f.Size()); i++)
+    {
         if (pg[i]<pf[i]) {
             errcnt++;
         }
         ptemp[i]=pf[i];
     }
-    if (errcnt) {
+    if (errcnt)
+    {
         msg.str("");
         msg<<"Error RecByDilation: f>g ("<<errcnt<<" times)";
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -197,60 +206,69 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     ptrdiff_t pos;
     ImgType max;
     const ptrdiff_t N=g.Size();
-    CNeighborhood NG(g.Dims(),NDimG,conn);
+    kipl::base::PixelIterator NG(f.Dims(),conn);
     // Forward scan
-    cNGpm=static_cast<ptrdiff_t>(NG.Nfb());
-    cNG=static_cast<ptrdiff_t>(NG.N());
-    for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); pos++) {
+    NG.setPosition(0L);
+    for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); pos++, ++NG)
+    {
         max=ptemp[pos];
-        for (i=1; i<cNGpm; i++) {
-            if ((ipos=NG.backward(pos,i))!=-1)
-                if (ptemp[ipos]>max) max=pf[ipos];
+        for (const auto & neighborPix : NG.backwardNeighborhood())
+        {
+            if (ptemp[neighborPix]>max) max=pf[neighborPix];
         }
         ptemp[pos]=max <pg[pos] ? max : pg[pos];
     }
 
     // Backward scan
     ImgType tmppos;
-    for (pos=static_cast<ptrdiff_t>(f.Size())-1; pos>=0; pos--) {
+    NG.setPosition(f.Size()-1L);
+    for (pos=static_cast<ptrdiff_t>(f.Size())-1; pos>=0; pos--,--NG)
+    {
         max=ptemp[pos];
         tmppos=max;
-        for (i=1; i<cNGpm; i++) {
-            if ((ipos=NG.forward(pos,i))!=-1)
-                if (ptemp[ipos]>max) max=ptemp[ipos];
+        for (const auto & neighborPix : NG.forwardNeighborhood())
+        {
+            if (ptemp[neighborPix]>max) max=ptemp[neighborPix];
         }
+
         ptemp[pos]=max<pg[pos] ? max : pg[pos];
 
         tmppos=ptemp[pos];
-        for (i=1; i<cNGpm; i++) {
-            if((ipos=NG.forward(pos,i))!=-1) {
-                if ((ptemp[ipos]<tmppos) && (ptemp[ipos]<pg[ipos])) {
-                    fifo.push_front(pos);//fifo.push_back(pos);
-                    break;
-                }
+        for (const auto & neighborPix : NG.forwardNeighborhood())
+        {
+            if ((ptemp[neighborPix]<tmppos) && (ptemp[neighborPix]<pg[neighborPix]))
+            {
+                fifo.push_front(pos);//fifo.push_back(pos);
+                break;
             }
         }
     }
 
     // Fifo scan
-    while (!fifo.empty()) {
+    while (!fifo.empty())
+    {
         pos=fifo.front();
         fifo.pop_front();
         tmppos=ptemp[pos];
+        NG.setPosition(pos);
+        for (const auto & neighborPix : NG.neighborhood())
+        {
+            ptrdiff_t ipos=pos+neighborPix;
 
-        for (i=0; i<cNG; i++) {
-            if ((ipos=NG.neighbor(pos,i))!=-1) {
-                if (static_cast<size_t>(ipos)<N) {
-                    if ((ptemp[ipos]<tmppos) && (pg[ipos]!=ptemp[ipos])) {
-                        ptemp[ipos]=tmppos<pg[ipos] ? tmppos : pg[ipos];
-                        fifo.push_front(ipos);//fifo.push_back(ipos);
-                    }
+            if (static_cast<size_t>(ipos)<N)
+            {
+                if ((ptemp[ipos]<tmppos) && (pg[ipos]!=ptemp[ipos]))
+                {
+                    ptemp[ipos]=tmppos<pg[ipos] ? tmppos : pg[ipos];
+                    fifo.push_front(ipos);//fifo.push_back(ipos);
                 }
-                else {
-                    if ((ptemp[ipos]<tmppos) && (ptemp[ipos])!=0) {
-                        ptemp[ipos]=tmppos<0 ? tmppos : 0;
-                        fifo.push_front(ipos);
-                    }
+            }
+            else
+            {
+                if ((ptemp[ipos]<tmppos) && (ptemp[ipos])!=0)
+                {
+                    ptemp[ipos]=tmppos<0 ? tmppos : 0;
+                    fifo.push_front(ipos);
                 }
             }
         }
@@ -271,7 +289,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 template <typename ImgType, size_t NDimG, size_t NDimF>
 kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,NDimG> &g,
         const kipl::base::TImage<ImgType,NDimF> &f,
-        kipl::morphology::MorphConnect conn)
+        kipl::base::eConnectivity conn)
 {
     kipl::base::TImage<ImgType,NDimG> temp;
     deque<size_t> fifo;
@@ -300,7 +318,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
 
     ImgType const * const pg=g.GetDataPtr();
     ImgType * pf=temp.GetDataPtr();
-    //int NGp[27],NGm[27],NG[27];
+
     // Set up indexing arrays
     ptrdiff_t ipos;
     ptrdiff_t pos;
@@ -583,6 +601,111 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
                         ptemp[ipos]=tmppos<0 ? tmppos : 0;
                         fifo.push_front(ipos);
                     }
+                }
+            }
+        }
+    }
+
+    return temp;
+}
+
+/// \brief Performs a Reconstruction by erosion of the image
+///	\param f mask image
+///	\param g marker image
+///	\param conn Selects connectivity
+///
+///	\note \f$g \leq f \f$
+///
+///	\note The algorithm is based on the hybrid algorithm described in L. Vincent, <em>Morphological Grayscale Reconstruction
+///	in Image Analysis: Applications and Efficient Algorithms</em>, IEEE trans. on Image processing, 2(2), 1993
+template <typename ImgType, size_t NDimG, size_t NDimF>
+kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,NDimG> &g,
+        const kipl::base::TImage<ImgType,NDimF> &f,
+        kipl::morphology::MorphConnect conn)
+{
+    kipl::base::TImage<ImgType,NDimG> temp;
+    deque<size_t> fifo;
+
+    size_t i;
+
+    size_t const * const pDimsF=f.Dims();
+    size_t const * const pDimsG=g.Dims();
+    if (NDimG!=NDimF) {
+        throw kipl::base::KiplException("RecByErosion: NDimG!=NDimF",__FILE__,__LINE__);
+
+        if ((NDimG!=3 || (NDimF!=2))) {
+            throw kipl::base::KiplException("RecByDilation: Dim(f)!=Dim(g) or Dim(g)!=2 and Dim(f)!=3",__FILE__,__LINE__);
+        }
+    }
+    else
+        temp=f;
+        //f.ChangeDimension(temp);
+
+
+    for (i=0; i<NDimF; i++) {
+        if (pDimsF[i]!=pDimsG[i]) {
+            throw kipl::base::KiplException("RecByErosion: size(f)!=size(g)",__FILE__,__LINE__);
+        }
+    }
+
+    ImgType const * const pg=g.GetDataPtr();
+    ImgType * pf=temp.GetDataPtr();
+    //int NGp[27],NGm[27],NG[27];
+    // Set up indexing arrays
+    ptrdiff_t ipos;
+    ptrdiff_t pos;
+    ImgType min;
+    ptrdiff_t N=static_cast<ptrdiff_t>(g.Size());
+    CNeighborhood NG(g.Dims(),NDimG,conn);
+    // Forward scan
+    const size_t cNGpm=NG.Nfb();
+    const size_t cNG=NG.N();
+
+    // Forward scan
+    for (pos=0; pos< N; pos++) {
+        min=pf[pos];
+        for (i=1; i<cNGpm; i++) { // min(f(q)| q in NGp(p) u p)
+            if ((ipos=NG.backward(pos,i))!=-1)
+                if (pf[ipos]<min) min=pf[ipos];
+        }
+        pf[pos]=min > pg[pos] ? min : pg[pos]; // max(min(f(NGp(p))),g(p))
+    }
+
+
+    // Backward scan
+    ImgType tmppos;
+
+    for (pos=N-1; pos>=0; pos--) {
+        min=pf[pos];
+        tmppos=min;
+        for (i=1; i<cNGpm; i++) {// min(f(q)| q in NGp(p) u p)
+            if ((ipos=NG.forward(pos,i))!=-1){
+                if (pf[ipos]<min) min=pf[ipos];
+            }
+        }
+        pf[pos]=min > pg[pos] ? min : pg[pos]; // max(min(f(NGp(p))),g(p))
+        tmppos=pf[pos];
+        for (i=1; i<cNGpm; i++) {
+            if ((ipos=NG.forward(pos,i))!=-1) {
+                if ((pf[ipos]>tmppos) && (pf[ipos]>pg[ipos])) {
+                    fifo.push_front(pos);
+                    break;
+                }
+            }
+        }
+
+    }
+
+    while (!fifo.empty()) {
+        pos=fifo.front();
+        fifo.pop_front();
+        tmppos=pf[pos];
+
+        for (i=0; i<cNG; i++) {
+            if ((ipos=NG.neighbor(pos,i))!=-1) {
+                if ((pf[ipos]>tmppos) && (pg[ipos]!=pf[ipos])) {
+                    pf[ipos]=tmppos>pg[ipos] ? tmppos : pg[ipos];
+                    fifo.push_front(ipos);
                 }
             }
         }

@@ -7,6 +7,7 @@
 
 #include "../base/timage.h"
 #include "../base/imageoperators.h"
+#include "../base/kiplenums.h"
 
 #include "morphology.h"
 #include "morphfilters.h"
@@ -45,7 +46,7 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
 template <typename ImgType,size_t NDimG, size_t NDimF>
 kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType,NDimG> &g, 
 		const kipl::base::TImage<ImgType,NDimF> &f, 
-        kipl::morphology::MorphConnect conn);
+        kipl::base::eConnectivity conn);
 
 /// \brief Performs a Reconstruction by erosion of the image
 ///	\param f mask image
@@ -59,7 +60,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 template <typename ImgType, size_t NDimG, size_t NDimF>
 kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,NDimG> &g, 
 		const kipl::base::TImage<ImgType,NDimF> &f, 
-        kipl::morphology::MorphConnect conn);
+        kipl::base::eConnectivity  conn);
 
 /// \brief Removes the objects that are connected to the edge of the image
 ///	\param img Input image
@@ -121,6 +122,20 @@ namespace kipl { namespace morphology { namespace old {
 ///	\todo Fix edge processing 3D
 template <typename ImgType,size_t NDimG, size_t NDimF>
 kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType,NDimG> &g,
+        const kipl::base::TImage<ImgType,NDimF> &f,
+        kipl::morphology::MorphConnect conn);
+
+/// \brief Performs a Reconstruction by erosion of the image
+///	\param f mask image
+///	\param g marker image
+///	\param conn Selects connectivity
+///
+///	\note \f$g \leq f \f$
+///
+///	\note The algorithm is based on the hybrid algorithm described in L. Vincent, <em>Morphological Grayscale Reconstruction
+///	in Image Analysis: Applications and Efficient Algorithms</em>, IEEE trans. on Image processing, 2(2), 1993
+template <typename ImgType, size_t NDimG, size_t NDimF>
+kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,NDimG> &g,
         const kipl::base::TImage<ImgType,NDimF> &f,
         kipl::morphology::MorphConnect conn);
 
