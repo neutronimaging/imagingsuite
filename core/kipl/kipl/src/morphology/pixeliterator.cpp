@@ -134,6 +134,32 @@ void PixelIterator::setupConn4()
     m_cornerX1Y0 = {-1, m_sx};
     m_cornerX0Y1 = { 1,-m_sx};
     m_cornerX1Y1 = {-1, -m_sx};
+
+    // Forward
+    m_forward     = {1,m_sx};
+    m_fedgeX0     = {1,m_sx};
+    m_fedgeX1     = {m_sx};
+
+    m_fedgeY0     = {1,m_sx};
+    m_fedgeY1     = {1};
+
+    m_fcornerX0Y0 = {1,m_sx};
+    m_fcornerX1Y0 = {m_sx};
+    m_fcornerX0Y1 = {1};
+    m_fcornerX1Y1 = {}; //shall be empty
+
+    // Backward
+    m_backward    = {-m_sx,-1};
+    m_bedgeX0     = {-m_sx};
+    m_bedgeX1     = {-m_sx,-1};
+
+    m_bedgeY0     = {-1};
+    m_bedgeY1     = {-m_sx,-1};
+
+    m_bcornerX0Y0 = {}; // shall be empty
+    m_bcornerX1Y0 = {-1};
+    m_bcornerX0Y1 = {-m_sx};
+    m_bcornerX1Y1 = {-m_sx,-1};
 }
 
 void PixelIterator::setupConn8()
@@ -151,6 +177,32 @@ void PixelIterator::setupConn8()
     m_cornerX1Y0 = {-1,m_sx-1,m_sx};
     m_cornerX0Y1 = {1,-m_sx,-m_sx+1};
     m_cornerX1Y1 = {-m_sx-1, -m_sx,-1};
+
+    // Forward
+    m_forward     = {1,m_sx-1,m_sx,m_sx+1};
+    m_fedgeX0     = {1,m_sx,m_sx+1};
+    m_fedgeX1     = {m_sx-1,m_sx};
+
+    m_fedgeY0     = {1,m_sx-1,m_sx,m_sx+1};
+    m_fedgeY1     = {1};
+
+    m_fcornerX0Y0 = {1,m_sx,m_sx+1};
+    m_fcornerX1Y0 = {m_sx-1,m_sx};
+    m_fcornerX0Y1 = {1};
+    m_fcornerX1Y1 = {}; // shall be empty
+
+    // Backward
+    m_backward     = {-m_sx-1,-m_sx,-m_sx+1,-1};
+    m_bedgeX0     = {-m_sx,-m_sx+1};
+    m_bedgeX1     = {-m_sx-1,-m_sx,-1};
+
+    m_bedgeY0     = {-1};
+    m_bedgeY1     = {-m_sx-1,-m_sx,-m_sx+1,-1};
+
+    m_bcornerX0Y0 = {}; // shall be empty
+    m_bcornerX1Y0 = {-1};
+    m_bcornerX0Y1 = {-m_sx,-m_sx+1};
+    m_bcornerX1Y1 = {-m_sx-1,-m_sx,-1};
 }
 
 void PixelIterator::setupConn6()
@@ -188,6 +240,70 @@ void PixelIterator::setupConn6()
     m_cornerX1Y0Z1 = {-1,  m_sx, -m_sxy};
     m_cornerX0Y1Z1 = { 1, -m_sx, -m_sxy};
     m_cornerX1Y1Z1 = {-1, -m_sx, -m_sxy};
+
+    // Forward neighborhood
+    m_forward = {1,m_sx,m_sxy};
+    m_fedgeX0 = {1,m_sx,m_sxy};
+    m_fedgeX1 = {m_sx,m_sxy};
+    m_fedgeY0 = {1,m_sx,m_sxy};
+    m_fedgeY1 = {1,m_sxy};
+    m_fedgeZ0 = {1,m_sx,m_sxy};
+    m_fedgeZ1 = {1,m_sx};
+
+    // corners are indexed with xyz
+    m_fcornerX0Y0 = {1,m_sx,m_sxy};
+    m_fcornerX1Y0 = {m_sx,m_sxy};
+    m_fcornerX0Y1 = {1,m_sxy};
+    m_fcornerX1Y1 = {m_sxy};
+    m_fcornerX0Z0 = {1,m_sx,m_sxy};
+    m_fcornerX0Z1 = {1,m_sx};
+    m_fcornerX1Z0 = {1,m_sx,m_sxy};
+    m_fcornerX1Z1 = {m_sx};
+    m_fcornerY0Z0 = {1,m_sx,m_sxy};
+    m_fcornerY0Z1 = {1,m_sx};
+    m_fcornerY1Z0 = {1,m_sxy};
+    m_fcornerY1Z1 = {1};
+
+    m_fcornerX0Y0Z0 = {1,m_sx,m_sxy};
+    m_fcornerX1Y0Z0 = {m_sx,m_sxy};
+    m_fcornerX0Y1Z0 = {1,m_sxy};
+    m_fcornerX1Y1Z0 = {m_sxy};
+    m_fcornerX0Y0Z1 = {1,m_sx};
+    m_fcornerX0Y1Z1 = {1};
+    m_fcornerX1Y0Z1 = {m_sx};
+    m_fcornerX1Y1Z1 = {}; // shall be empty
+
+    // Backward neighborhood
+    m_backward = {-m_sxy,-m_sx,-1};
+    m_bedgeX0 = {-m_sxy,-m_sx};
+    m_bedgeX1 = {-m_sxy,-m_sx,-1};
+    m_bedgeY0 = {-m_sxy,-1};
+    m_bedgeY1 = {-m_sxy,-m_sx,-1};
+    m_bedgeZ0 = {-m_sx,-1};
+    m_bedgeZ1 = {-m_sxy,-m_sx,-1};
+
+    // corners are indexed with xyz
+    m_bcornerX0Y0 = {-m_sxy};
+    m_bcornerX1Y0 = {-m_sxy,-1};
+    m_bcornerX0Y1 = {-m_sxy,-1};
+    m_bcornerX1Y1 = {-m_sxy,-m_sx,-1};
+    m_bcornerX0Z0 = {-m_sx};
+    m_bcornerX0Z1 = {-m_sxy,-m_sx};
+    m_bcornerX1Z0 = {-m_sx,-1};
+    m_bcornerX1Z1 = {-m_sx};
+    m_bcornerY0Z0 = {-1};
+    m_bcornerY0Z1 = {-m_sxy,-1};
+    m_bcornerY1Z0 = {-m_sx,-1};
+    m_bcornerY1Z1 = {-m_sxy,-m_sx,-1};
+
+    m_bcornerX0Y0Z0 = {}; // shall be empty
+    m_bcornerX1Y0Z0 = {-1};
+    m_bcornerX0Y1Z0 = {-m_sx};
+    m_bcornerX1Y1Z0 = {-m_sx,-1};
+    m_bcornerX0Y0Z1 = {-m_sxy};
+    m_bcornerX0Y1Z1 = {-m_sxy,-m_sx};
+    m_bcornerX1Y0Z1 = {-m_sxy,-1};
+    m_bcornerX1Y1Z1 = {-m_sxy,-m_sx,-1};
 }
 
 void PixelIterator::setupConn18()
@@ -422,82 +538,221 @@ size_t PixelIterator::neighborhoodSize()
 }
 
 /// \brief Returns the size of the forward and backward neighborhoods with the current connectivity
-ptrdiff_t PixelIterator::forwardSize()
+size_t PixelIterator::forwardSize()
 {
-    throw kipl::base::KiplException("PixelIterator::forwardSize is not supported",__FILE__,__LINE__);
-//    switch (m_edgeStatus) {
-//        case kipl::base::noEdge :     return m_fwbwSize.full;
-//        case kipl::base::edgeX0 :     return m_fwbwSize.edgeX0;
-//        case kipl::base::edgeX1 :     return m_fwbwSize.edgeX1;
-//        case kipl::base::edgeY0 :     return m_fwbwSize.edgeY0;
-//        case kipl::base::edgeY1 :     return m_fwbwSize.edgeY1;
-//        case kipl::base::cornerX0Y0 : return m_fwbwSize.cornerX0Y0 ;
-//        case kipl::base::cornerX1Y0 : return m_fwbwSize.cornerX1Y0 ;
-//        case kipl::base::cornerX0Y1 : return m_fwbwSize.cornerX0Y1 ;
-//        case kipl::base::cornerX1Y1 : return m_fwbwSize.cornerX1Y1 ;
-//    }
+    switch (m_edgeStatus) {
+        case kipl::base::noEdge       : return m_forward.size();
+        case kipl::base::edgeX0       : return m_fedgeX0.size();
+        case kipl::base::edgeX1       : return m_fedgeX1.size();
+        case kipl::base::edgeY0       : return m_fedgeY0.size();
+        case kipl::base::edgeY1       : return m_fedgeY1.size();
+        case kipl::base::edgeZ0       : return m_fedgeZ0.size();
+        case kipl::base::edgeZ1       : return m_fedgeZ1.size();
+        case kipl::base::cornerX0Y0   : return m_fcornerX0Y0.size();
+        case kipl::base::cornerX1Y0   : return m_fcornerX1Y0.size();
+        case kipl::base::cornerX0Y1   : return m_fcornerX0Y1.size();
+        case kipl::base::cornerX1Y1   : return m_fcornerX1Y1.size();
+        case kipl::base::cornerX0Z0   : return m_fcornerX0Z0.size();
+        case kipl::base::cornerX0Z1   : return m_fcornerX0Z1.size();
+        case kipl::base::cornerX1Z0   : return m_fcornerX1Z0.size();
+        case kipl::base::cornerX1Z1   : return m_fcornerX1Z1.size();
+        case kipl::base::cornerY0Z0   : return m_fcornerY0Z0.size();
+        case kipl::base::cornerY0Z1   : return m_fcornerY0Z1.size();
+        case kipl::base::cornerY1Z0   : return m_fcornerY1Z0.size();
+        case kipl::base::cornerY1Z1   : return m_fcornerY1Z1.size();
+        case kipl::base::cornerX0Y0Z0 : return m_fcornerX0Y0Z0.size();
+        case kipl::base::cornerX0Y0Z1 : return m_fcornerX0Y0Z1.size();
+        case kipl::base::cornerX1Y0Z0 : return m_fcornerX1Y0Z0.size();
+        case kipl::base::cornerX1Y0Z1 : return m_fcornerX1Y0Z1.size();
+        case kipl::base::cornerX0Y1Z0 : return m_fcornerX0Y1Z0.size();
+        case kipl::base::cornerX0Y1Z1 : return m_fcornerX0Y1Z1.size();
+        case kipl::base::cornerX1Y1Z0 : return m_fcornerX1Y1Z0.size();
+        case kipl::base::cornerX1Y1Z1 : return m_fcornerX1Y1Z1.size();
+    }
 
     return 0;
 }
 
-ptrdiff_t PixelIterator::backwardSize()
+size_t PixelIterator::backwardSize()
 {
-    throw kipl::base::KiplException("PixelIterator::forwardSize is not supported",__FILE__,__LINE__);
 
-//    switch (m_edgeStatus) {
-//        case kipl::base::noEdge :     return m_fwbwSize.full;
-//        case kipl::base::edgeX0 :     return m_fwbwSize.edgeX1;
-//        case kipl::base::edgeX1 :     return m_fwbwSize.edgeX0;
-//        case kipl::base::edgeY0 :     return m_fwbwSize.edgeY1;
-//        case kipl::base::edgeY1 :     return m_fwbwSize.edgeY0;
-//        case kipl::base::cornerX0Y0 : return m_fwbwSize.cornerX1Y1 ;
-//        case kipl::base::cornerX1Y0 : return m_fwbwSize.cornerX0Y1 ;
-//        case kipl::base::cornerX0Y1 : return m_fwbwSize.cornerX1Y0 ;
-//        case kipl::base::cornerX1Y1 : return m_fwbwSize.cornerX0Y0 ;
-//    }
+    switch (m_edgeStatus) {
+        case kipl::base::noEdge       : return m_backward.size();
+        case kipl::base::edgeX0       : return m_bedgeX0.size();
+        case kipl::base::edgeX1       : return m_bedgeX1.size();
+        case kipl::base::edgeY0       : return m_bedgeY0.size();
+        case kipl::base::edgeY1       : return m_bedgeY1.size();
+        case kipl::base::edgeZ0       : return m_bedgeZ0.size();
+        case kipl::base::edgeZ1       : return m_bedgeZ1.size();
+        case kipl::base::cornerX0Y0   : return m_bcornerX0Y0.size();
+        case kipl::base::cornerX1Y0   : return m_bcornerX1Y0.size();
+        case kipl::base::cornerX0Y1   : return m_bcornerX0Y1.size();
+        case kipl::base::cornerX1Y1   : return m_bcornerX1Y1.size();
+        case kipl::base::cornerX0Z0   : return m_bcornerX0Z0.size();
+        case kipl::base::cornerX0Z1   : return m_bcornerX0Z1.size();
+        case kipl::base::cornerX1Z0   : return m_bcornerX1Z0.size();
+        case kipl::base::cornerX1Z1   : return m_bcornerX1Z1.size();
+        case kipl::base::cornerY0Z0   : return m_bcornerY0Z0.size();
+        case kipl::base::cornerY0Z1   : return m_bcornerY0Z1.size();
+        case kipl::base::cornerY1Z0   : return m_bcornerY1Z0.size();
+        case kipl::base::cornerY1Z1   : return m_bcornerY1Z1.size();
+        case kipl::base::cornerX0Y0Z0 : return m_bcornerX0Y0Z0.size();
+        case kipl::base::cornerX0Y0Z1 : return m_bcornerX0Y0Z1.size();
+        case kipl::base::cornerX1Y0Z0 : return m_bcornerX1Y0Z0.size();
+        case kipl::base::cornerX1Y0Z1 : return m_bcornerX1Y0Z1.size();
+        case kipl::base::cornerX0Y1Z0 : return m_bcornerX0Y1Z0.size();
+        case kipl::base::cornerX0Y1Z1 : return m_bcornerX0Y1Z1.size();
+        case kipl::base::cornerX1Y1Z0 : return m_bcornerX1Y1Z0.size();
+        case kipl::base::cornerX1Y1Z1 : return m_bcornerX1Y1Z1.size();
+    }
 
     return 0;
 }
 
-ptrdiff_t PixelIterator::forwardNeighborhood(int idx)
+/// \brief returns the forward neighborhood of the pixel
+const std::vector<ptrdiff_t> & PixelIterator::forwardNeighborhood()
 {
-    throw kipl::base::KiplException("PixelIterator: forwardNeighborhood is not implemented",__FILE__,__LINE__);
-    ptrdiff_t pos=m_currentPosition;
+    switch (edgeStatus()) {
+    case kipl::base::noEdge       : return m_forward;
+    case kipl::base::edgeX0       : return m_fedgeX0;
+    case kipl::base::edgeX1       : return m_fedgeX1;
+    case kipl::base::edgeY0       : return m_fedgeY0;
+    case kipl::base::edgeY1       : return m_fedgeY1;
+    case kipl::base::cornerX0Y0   : return m_fcornerX0Y0;
+    case kipl::base::cornerX1Y1   : return m_fcornerX1Y1;
+    case kipl::base::cornerX1Y0   : return m_fcornerX1Y0;
+    case kipl::base::cornerX0Y1   : return m_fcornerX0Y1;
+    case kipl::base::cornerX0Z0   : return m_fcornerX0Z0;
+    case kipl::base::cornerX0Z1   : return m_fcornerX0Z0;
+    case kipl::base::cornerX1Z0   : return m_fcornerX0Z0;
+    case kipl::base::cornerX1Z1   : return m_fcornerX0Z0;
+    case kipl::base::cornerY0Z0   : return m_fcornerY1Z0;
+    case kipl::base::cornerY0Z1   : return m_fcornerY1Z0;
+    case kipl::base::cornerY1Z0   : return m_fcornerY1Z0;
+    case kipl::base::cornerY1Z1   : return m_fcornerY1Z0;
+    case kipl::base::cornerX0Y0Z0 : return m_fcornerX0Y0Z0;
+    case kipl::base::cornerX0Y0Z1 : return m_fcornerX0Y0Z1;
+    case kipl::base::cornerX1Y0Z0 : return m_fcornerX1Y0Z0;
+    case kipl::base::cornerX1Y0Z1 : return m_fcornerX1Y0Z1;
+    case kipl::base::cornerX0Y1Z0 : return m_fcornerX0Y1Z0;
+    case kipl::base::cornerX0Y1Z1 : return m_fcornerX0Y1Z1;
+    case kipl::base::cornerX1Y1Z0 : return m_fcornerX1Y1Z0;
+    case kipl::base::cornerX1Y1Z1 : return m_fcornerX1Y1Z1;
+    default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
+    }
 
-//    switch (edgeStatus()) {
-//        case kipl::base::noEdge :     pos +=  m_neighborhoodIndex[idx+m_halfSizePos.full]; break;
-//        case kipl::base::edgeX0 :     pos +=  m_edgeX[idx+m_halfSizePos.edgeX0]; break;
-//        case kipl::base::edgeX1 :     pos += -m_edgeX[idx]; break;
-//        case kipl::base::edgeY0 :     pos +=  m_edgeY[idx+m_halfSizePos.edgeY0]; break;
-//        case kipl::base::edgeY1 :     pos +=  1;    break; //-m_edgeY[idx+m_halfSizePos.edgeY1];   break;
-//        case kipl::base::cornerX0Y0 : pos +=  m_corner0[idx+m_halfSizePos.cornerX0Y0]; break;
-//        case kipl::base::cornerX1Y1 : pos += -m_corner0[idx+m_halfSizePos.cornerX1Y1]; break;
-//        case kipl::base::cornerX1Y0 : pos +=  m_corner1[idx+m_halfSizePos.cornerX1Y0]; break;
-//        case kipl::base::cornerX0Y1 : pos += -m_corner1[idx+m_halfSizePos.cornerX0Y1]; break;
-//        default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
-//    }
+    return m_forward;
+}
+
+/// \brief returns the backward neighborhood of the pixel
+const std::vector<ptrdiff_t> & PixelIterator::backwardNeighborhood()
+{
+    switch (edgeStatus()) {
+    case kipl::base::noEdge       : return m_backward;
+    case kipl::base::edgeX0       : return m_bedgeX0;
+    case kipl::base::edgeX1       : return m_bedgeX1;
+    case kipl::base::edgeY0       : return m_bedgeY0;
+    case kipl::base::edgeY1       : return m_bedgeY1;
+    case kipl::base::cornerX0Y0   : return m_bcornerX0Y0;
+    case kipl::base::cornerX1Y1   : return m_bcornerX1Y1;
+    case kipl::base::cornerX1Y0   : return m_bcornerX1Y0;
+    case kipl::base::cornerX0Y1   : return m_bcornerX0Y1;
+    case kipl::base::cornerX0Z0   : return m_bcornerX0Z0;
+    case kipl::base::cornerX0Z1   : return m_bcornerX0Z0;
+    case kipl::base::cornerX1Z0   : return m_bcornerX0Z0;
+    case kipl::base::cornerX1Z1   : return m_bcornerX0Z0;
+    case kipl::base::cornerY0Z0   : return m_bcornerY1Z0;
+    case kipl::base::cornerY0Z1   : return m_bcornerY1Z0;
+    case kipl::base::cornerY1Z0   : return m_bcornerY1Z0;
+    case kipl::base::cornerY1Z1   : return m_bcornerY1Z0;
+    case kipl::base::cornerX0Y0Z0 : return m_bcornerX0Y0Z0;
+    case kipl::base::cornerX0Y0Z1 : return m_bcornerX0Y0Z1;
+    case kipl::base::cornerX1Y0Z0 : return m_bcornerX1Y0Z0;
+    case kipl::base::cornerX1Y0Z1 : return m_bcornerX1Y0Z1;
+    case kipl::base::cornerX0Y1Z0 : return m_bcornerX0Y1Z0;
+    case kipl::base::cornerX0Y1Z1 : return m_bcornerX0Y1Z1;
+    case kipl::base::cornerX1Y1Z0 : return m_bcornerX1Y1Z0;
+    case kipl::base::cornerX1Y1Z1 : return m_bcornerX1Y1Z1;
+    default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
+    }
+
+    return m_backward;
+}
+
+ptrdiff_t PixelIterator::forwardNeighborhood(size_t idx)
+{
+    ptrdiff_t pos=0L;
+    switch (edgeStatus()) {
+    case kipl::base::noEdge       : pos = m_forward[idx]; break;
+    case kipl::base::edgeX0       : pos = m_fedgeX0[idx]; break;
+    case kipl::base::edgeX1       : pos = m_fedgeX1[idx]; break;
+    case kipl::base::edgeY0       : pos = m_fedgeY0[idx]; break;
+    case kipl::base::edgeY1       : pos = m_fedgeY1[idx]; break;
+    case kipl::base::edgeZ0       : pos = m_fedgeZ0[idx]; break;
+    case kipl::base::edgeZ1       : pos = m_fedgeZ1[idx]; break;
+    case kipl::base::cornerX0Y0   : pos = m_fcornerX0Y0[idx]; break;
+    case kipl::base::cornerX1Y1   : pos = m_fcornerX1Y1[idx]; break;
+    case kipl::base::cornerX1Y0   : pos = m_fcornerX1Y0[idx]; break;
+    case kipl::base::cornerX0Y1   : pos = m_fcornerX0Y1[idx]; break;
+    case kipl::base::cornerX0Z0   : pos = m_fcornerX0Z0[idx]; break;
+    case kipl::base::cornerX0Z1   : pos = m_fcornerX0Z1[idx]; break;
+    case kipl::base::cornerX1Z0   : pos = m_fcornerX1Z0[idx]; break;
+    case kipl::base::cornerX1Z1   : pos = m_fcornerX1Z1[idx]; break;
+    case kipl::base::cornerY0Z0   : pos = m_fcornerY0Z0[idx]; break;
+    case kipl::base::cornerY0Z1   : pos = m_fcornerY0Z1[idx]; break;
+    case kipl::base::cornerY1Z0   : pos = m_fcornerY1Z0[idx]; break;
+    case kipl::base::cornerY1Z1   : pos = m_fcornerY1Z1[idx]; break;
+    case kipl::base::cornerX0Y0Z0 : pos = m_fcornerX0Y0Z0[idx]; break;
+    case kipl::base::cornerX0Y0Z1 : pos = m_fcornerX0Y0Z1[idx]; break;
+    case kipl::base::cornerX1Y0Z0 : pos = m_fcornerX1Y0Z0[idx]; break;
+    case kipl::base::cornerX1Y0Z1 : pos = m_fcornerX1Y0Z1[idx]; break;
+    case kipl::base::cornerX0Y1Z0 : pos = m_fcornerX0Y1Z0[idx]; break;
+    case kipl::base::cornerX0Y1Z1 : pos = m_fcornerX0Y1Z1[idx]; break;
+    case kipl::base::cornerX1Y1Z0 : pos = m_fcornerX1Y1Z0[idx]; break;
+    case kipl::base::cornerX1Y1Z1 : pos = m_fcornerX1Y1Z1[idx]; break;
+    default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
+    }
+
+    pos+=m_currentPosition;
 
     return pos;
 }
 
-ptrdiff_t PixelIterator::backwardNeighborhood(ptrdiff_t idx)
+ptrdiff_t PixelIterator::backwardNeighborhood(size_t idx)
 {
-    throw kipl::base::KiplException("PixelIterator: backwardNeighborhood is not implemented",__FILE__,__LINE__);
+    ptrdiff_t pos=0L;
+    switch (edgeStatus()) {
+    case kipl::base::noEdge       : pos = m_backward[idx]; break;
+    case kipl::base::edgeX0       : pos = m_bedgeX0[idx]; break;
+    case kipl::base::edgeX1       : pos = m_bedgeX1[idx]; break;
+    case kipl::base::edgeY0       : pos = m_bedgeY0[idx]; break;
+    case kipl::base::edgeY1       : pos = m_bedgeY1[idx]; break;
+    case kipl::base::edgeZ0       : pos = m_bedgeZ0[idx]; break;
+    case kipl::base::edgeZ1       : pos = m_bedgeZ1[idx]; break;
+    case kipl::base::cornerX0Y0   : pos = m_bcornerX0Y0[idx]; break;
+    case kipl::base::cornerX1Y1   : pos = m_bcornerX1Y1[idx]; break;
+    case kipl::base::cornerX1Y0   : pos = m_bcornerX1Y0[idx]; break;
+    case kipl::base::cornerX0Y1   : pos = m_bcornerX0Y1[idx]; break;
+    case kipl::base::cornerX0Z0   : pos = m_bcornerX0Z0[idx]; break;
+    case kipl::base::cornerX0Z1   : pos = m_bcornerX0Z1[idx]; break;
+    case kipl::base::cornerX1Z0   : pos = m_bcornerX1Z0[idx]; break;
+    case kipl::base::cornerX1Z1   : pos = m_bcornerX1Z1[idx]; break;
+    case kipl::base::cornerY0Z0   : pos = m_bcornerY0Z0[idx]; break;
+    case kipl::base::cornerY0Z1   : pos = m_bcornerY0Z1[idx]; break;
+    case kipl::base::cornerY1Z0   : pos = m_bcornerY1Z0[idx]; break;
+    case kipl::base::cornerY1Z1   : pos = m_bcornerY1Z1[idx]; break;
+    case kipl::base::cornerX0Y0Z0 : pos = m_bcornerX0Y0Z0[idx]; break;
+    case kipl::base::cornerX0Y0Z1 : pos = m_bcornerX0Y0Z1[idx]; break;
+    case kipl::base::cornerX1Y0Z0 : pos = m_bcornerX1Y0Z0[idx]; break;
+    case kipl::base::cornerX1Y0Z1 : pos = m_bcornerX1Y0Z1[idx]; break;
+    case kipl::base::cornerX0Y1Z0 : pos = m_bcornerX0Y1Z0[idx]; break;
+    case kipl::base::cornerX0Y1Z1 : pos = m_bcornerX0Y1Z1[idx]; break;
+    case kipl::base::cornerX1Y1Z0 : pos = m_bcornerX1Y1Z0[idx]; break;
+    case kipl::base::cornerX1Y1Z1 : pos = m_bcornerX1Y1Z1[idx]; break;
+    default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
+    }
 
-    ptrdiff_t pos=m_currentPosition;
-
-//    switch (edgeStatus()) {
-//        case kipl::base::noEdge :     pos +=  m_neighborhoodIndex[idx]; break;
-//        case kipl::base::edgeX0 :     pos +=  m_edgeX[idx]; break;
-//        case kipl::base::edgeX1 :     pos += -m_edgeX[idx+m_halfSizePos.edgeX1]; break;
-//        case kipl::base::edgeY0 :     pos +=  m_edgeY[idx]; break;
-//        case kipl::base::edgeY1 :     pos += -m_edgeY[idx+1];   break;
-//        case kipl::base::cornerX0Y0 : pos +=  m_corner0[idx]; break;
-//        case kipl::base::cornerX1Y1 : pos += -m_corner0[idx]; break;
-//        case kipl::base::cornerX1Y0 : pos +=  m_corner1[idx]; break;
-//        case kipl::base::cornerX0Y1 : pos += -m_corner1[idx+1]; break;
-//        default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
-//    }
+    pos+=m_currentPosition;
 
     return pos;
 }
