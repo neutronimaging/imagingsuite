@@ -16,8 +16,6 @@ using namespace std;
 
 namespace kipl { namespace morphology {
 
-int ComputeKernelIndex(int sx,int sy,int NDim, MorphConnect conn,int *NG, int *NGp, int *NGm, int &cNG, int &cNGpm);
-
 /// \brief Performs a Self dual Geodesic Reconstruction of the image
 ///	\param f mask image
 ///	\param g marker image
@@ -31,7 +29,7 @@ int ComputeKernelIndex(int sx,int sy,int NDim, MorphConnect conn,int *NG, int *N
 template <typename ImgType, size_t NDim>
 kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgType,NDim> &f, 
 		kipl::base::TImage<ImgType,NDim> &g, 
-        kipl::morphology::MorphConnect conn);
+        kipl::base::eConnectivity conn);
 
 /// \brief Performs a Reconstruction by dilation of the image (\f$R^{\delta}_g(f) \f$)
 ///	\param g mask image
@@ -70,7 +68,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
 ///	to the border of img while the rest of fm is equal to 0
 template <typename ImgType, size_t NDim>
 kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> &img, 
-        kipl::morphology::MorphConnect conn);
+        kipl::base::eConnectivity conn);
 
 // /// \brief Opens the image by reconstruction
 // ///	\param img Input image
@@ -109,6 +107,20 @@ kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> 
 }} // end namespace morphology
 
 namespace kipl { namespace morphology { namespace old {
+/// \brief Performs a Self dual Geodesic Reconstruction of the image
+///	\param f mask image
+///	\param g marker image
+///	\param conn Selects connectivity
+///
+///	if \f$f\leq g\f$ will reconstruction by erosion \f$R^{\epsilon}_f\f$ be performed, if
+///	\f$g\leq f\f$ will reconstruction by dilation \f$R^{\delta}_f\f$ be performed
+///
+///	\note The algorithm is based on the hybrid algorithm described in L. Vincent, <em>Morphological Grayscale Reconstruction
+///	in Image Analysis: Applications and Efficient Algorithms</em>, IEEE trans. on Image processing, 2(2), 1993
+template <typename ImgType, size_t NDim>
+kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgType,NDim> &f,
+        kipl::base::TImage<ImgType,NDim> &g,
+        kipl::morphology::MorphConnect conn);
 
 /// \brief Performs a Reconstruction by dilation of the image (\f$R^{\delta}_g(f) \f$)
 ///	\param g mask image
@@ -137,6 +149,16 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 template <typename ImgType, size_t NDimG, size_t NDimF>
 kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,NDimG> &g,
         const kipl::base::TImage<ImgType,NDimF> &f,
+        kipl::morphology::MorphConnect conn);
+
+/// \brief Removes the objects that are connected to the edge of the image
+///	\param img Input image
+///	\param conn Connectivity of the reconstruction
+///
+///	Computes \f$img-R^{\delta}_{img}(fm)\f$ where the border of fm is equal
+///	to the border of img while the rest of fm is equal to 0
+template <typename ImgType, size_t NDim>
+kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> &img,
         kipl::morphology::MorphConnect conn);
 
 }}}

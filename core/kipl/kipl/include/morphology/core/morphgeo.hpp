@@ -5,15 +5,15 @@
 #include <sstream>
 #include <deque>
 #include "../../base/kiplenums.h"
+#include "../../base/imageoperators.h"
 #include "../morphology.h"
 #include "../morphfilters.h"
 #include "../pixeliterator.h"
 
+
 using namespace std;
 
 namespace kipl { namespace morphology {
-
-int ComputeKernelIndex(int sx,int sy,int NDim, MorphConnect conn,int *NG, int *NGp, int *NGm, int &cNG, int &cNGpm);
 
 /// \brief Performs a Self dual Geodesic Reconstruction of the image
 ///	\param f mask image
@@ -28,7 +28,7 @@ int ComputeKernelIndex(int sx,int sy,int NDim, MorphConnect conn,int *NG, int *N
 template <typename ImgType, size_t NDim>
 kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgType,NDim> &f,
         kipl::base::TImage<ImgType,NDim> &g,
-        kipl::morphology::MorphConnect conn)
+        base::eConnectivity conn)
 {
     kipl::base::TImage<ImgType,NDim> temp(f);
     deque<int> fifo;
@@ -39,96 +39,114 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
     const size_t *pDimsG=g.Dims();
 
     for (i=0; i<NDim; i++)
-        if (pDimsF[i]!=pDimsG[i]) {
+    {
+        if (pDimsF[i]!=pDimsG[i])
+        {
             throw kipl::base::KiplException("SelfDualReconstruction: Size(f) != Size(g)",__FILE__,__LINE__);
         }
-
+    }
 
     ImgType *pF=temp.GetDataPtr();
     ImgType *pG=g.GetDataPtr();
     // Set up indexing arrays
 
-    CNeighborhood NG(g.Dims(), NDim, conn);
-    const ptrdiff_t cNG=NG.N();
-    const ptrdiff_t cNGpm=NG.Nfb();
-    int ipos;
+    kipl::base::PixelIterator NG(f.Dims(), conn);
+    ptrdiff_t ipos;
     ptrdiff_t pos;
-    ImgType max,min;
-    const ptrdiff_t N=f.Size();
+    ImgType maxVal,minVal;
+    const ptrdiff_t N=static_cast<ptrdiff_t>(f.Size());
     // Forward scan
-    for (pos=0; pos< N; pos++) {
-        if (pF[pos]<pG[pos]) {
-            max=pF[pos];
+    NG.setPosition(0L);
+    for (pos=0; pos< N; ++pos, ++NG)
+    {
+        if (pF[pos]<pG[pos])
+        {
+            maxVal=pF[pos];
             // Compute max(f(q)) q in ng_backw(p) U p
-            for (i=1; i<cNGpm; i++) {
-                if ((ipos=NG.backward(pos,i))!=-1)
-                    if (pF[ipos]>max) max=pF[ipos];
+            for (const auto & neighborPix : NG.backwardNeighborhood())
+            {
+                ipos = pos + neighborPix;
+                if (pF[ipos]>maxVal) maxVal=pF[ipos];
             }
-            pF[pos]=max <pG[pos] ? max : pG[pos];
+            pF[pos]=maxVal <pG[pos] ? maxVal : pG[pos];
         }
-        else {
-            min=pF[pos];
+        else
+        {
+            minVal=pF[pos];
             // Compute min(f(q)) q in ng_backw(p) U p
-            for (i=1; i<cNGpm; i++) {
-                if ((ipos=NG.backward(pos,i))!=-1)
-                    if (pF[ipos]<min) min=pF[ipos];
+            for (const auto & neighborPix : NG.backwardNeighborhood())
+            {
+                ipos = pos + neighborPix;
+                if (pF[ipos]<minVal) minVal=pF[ipos];
             }
-            pF[pos]=min >pG[pos] ? min : pG[pos];
+            pF[pos]=minVal >pG[pos] ? minVal : pG[pos];
         }
     }
 
     //Backward scan
-    for (pos=N-1; pos>=0; pos--) {
-        if (pF[pos]<pG[pos]) {
-            max=pF[pos];
-            for (i=1; i<cNGpm; i++) {
-                if ((ipos=NG.forward(pos,i))!=-1)
-                    if (pF[ipos]>max) max=pF[ipos];
+    NG.setPosition(N-1);
+    for (pos=N-1; pos>=0; --pos, --NG) {
+        if (pF[pos]<pG[pos])
+        {
+            maxVal=pF[pos];
+
+            for (const auto & neighborPix : NG.forwardNeighborhood())
+            {
+                ipos = pos + neighborPix;
+                if (pF[ipos]>maxVal) maxVal=pF[ipos];
             }
-            pF[pos]=max <pG[pos] ? max : pG[pos];
+            pF[pos]=maxVal <pG[pos] ? maxVal : pG[pos];
         }
         else {
-            min=pF[pos];
-            for (i=1; i<cNGpm; i++) {
-                if ((ipos=NG.forward(pos,i))!=-1)
-                    if (pF[ipos]<min) min=pF[ipos];
+            minVal=pF[pos];
+            for (const auto & neighborPix : NG.forwardNeighborhood())
+            {
+                ipos = pos + neighborPix;
+                if (pF[ipos]<minVal) minVal=pF[ipos];
             }
-            pF[pos]=min >pG[pos] ? min : pG[pos];
+            pF[pos]=minVal >pG[pos] ? minVal : pG[pos];
         }
 
-        for (i=1; i<cNGpm; i++) {
-            if ((ipos=NG.forward(pos,i)!=-1)) {
-                if ((pF[ipos]<pF[pos]) && (pF[ipos]<pG[ipos])) {
+        for (const auto & neighborPix : NG.forwardNeighborhood())
+        {
+            ipos = pos + neighborPix;
+            if ((pF[ipos]<pF[pos]) && (pF[ipos]<pG[ipos]))
+            {
+                fifo.push_back(pos);
+                break;
+            }
+            else
+            {
+                if ((pF[ipos]>pF[pos]) && (pF[ipos]>pG[ipos]))
+                {
                     fifo.push_back(pos);
                     break;
-                }
-                else {
-                    if ((pF[ipos]>pF[pos]) && (pF[ipos]>pG[ipos])) {
-                        fifo.push_back(pos);
-                        break;
-                    }
                 }
             }
         }
     }
-    //cout<<"Queue scan, queue size="<<fifo.size()<<endl;
+
     while (!fifo.empty()) {
         pos=fifo.front();
         fifo.pop_front();
-
-        for (i=0; i<cNG; i++) {
-            if ((ipos=NG.neighbor(pos,i))!=-1) {
-                if (pF[ipos]<pG[pos]) {
-                    if ((pF[ipos]<pF[pos]) && (pG[ipos]!=pF[ipos])) {
-                        pF[ipos]=std::min(pF[pos],pG[ipos]);
-                        fifo.push_back(ipos);
-                    }
+        NG.setPosition(pos);
+        for (const auto & neighborPix : NG.neighborhood())
+        {
+            ipos = pos + neighborPix;
+            if (pF[ipos]<pG[pos])
+            {
+                if ((pF[ipos]<pF[pos]) && (pG[ipos]!=pF[ipos]))
+                {
+                    pF[ipos]=std::min(pF[pos],pG[ipos]);
+                    fifo.push_back(ipos);
                 }
-                else {
-                    if ((pF[ipos]<pF[pos]) && (pG[ipos]!=pF[ipos])) {
-                        pF[ipos]=std::max(pF[pos],pG[ipos]);
-                        fifo.push_back(ipos);
-                    }
+            }
+            else
+            {
+                if ((pF[ipos]<pF[pos]) && (pG[ipos]!=pF[ipos]))
+                {
+                    pF[ipos]=std::max(pF[pos],pG[ipos]);
+                    fifo.push_back(ipos);
                 }
             }
         }
@@ -419,7 +437,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
 ///	to the border of img while the rest of fm is equal to 0
 template <typename ImgType, size_t NDim>
 kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> &img,
-        kipl::morphology::MorphConnect conn)
+        kipl::base::eConnectivity conn)
 {
     size_t const *const dims=img.Dims();
     kipl::base::TImage<ImgType,NDim> edge(dims);
@@ -444,8 +462,7 @@ kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> 
     }
 
     edge=img;
-    //edge-=RecByDilation(img,edge,conn);
-    edge-=img;
+    edge-=RecByDilation(img,edge,conn);
 
     return edge;
 
@@ -510,6 +527,126 @@ template <typename ImgType, size_t NDim>
 }} // end namespace morphology
 
 namespace kipl { namespace morphology { namespace old {
+/// \brief Performs a Self dual Geodesic Reconstruction of the image
+///	\param f mask image
+///	\param g marker image
+///	\param conn Selects connectivity
+///
+///	if \f$f\leq g\f$ will reconstruction by erosion \f$R^{\epsilon}_f\f$ be performed, if
+///	\f$g\leq f\f$ will reconstruction by dilation \f$R^{\delta}_f\f$ be performed
+///
+///	\note The algorithm is based on the hybrid algorithm described in L. Vincent, <em>Morphological Grayscale Reconstruction
+///	in Image Analysis: Applications and Efficient Algorithms</em>, IEEE trans. on Image processing, 2(2), 1993
+template <typename ImgType, size_t NDim>
+kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgType,NDim> &f,
+        kipl::base::TImage<ImgType,NDim> &g,
+        kipl::morphology::MorphConnect conn)
+{
+    kipl::base::TImage<ImgType,NDim> temp(f);
+    deque<int> fifo;
+
+    ptrdiff_t i;
+
+    const size_t *pDimsF=f.Dims();
+    const size_t *pDimsG=g.Dims();
+
+    for (i=0; i<NDim; i++)
+        if (pDimsF[i]!=pDimsG[i]) {
+            throw kipl::base::KiplException("SelfDualReconstruction: Size(f) != Size(g)",__FILE__,__LINE__);
+        }
+
+
+    ImgType *pF=temp.GetDataPtr();
+    ImgType *pG=g.GetDataPtr();
+    // Set up indexing arrays
+
+    CNeighborhood NG(g.Dims(), NDim, conn);
+    const ptrdiff_t cNG=NG.N();
+    const ptrdiff_t cNGpm=NG.Nfb();
+    int ipos;
+    ptrdiff_t pos;
+    ImgType max,min;
+    const ptrdiff_t N=f.Size();
+    // Forward scan
+    for (pos=0; pos< N; pos++) {
+        if (pF[pos]<pG[pos]) {
+            max=pF[pos];
+            // Compute max(f(q)) q in ng_backw(p) U p
+            for (i=1; i<cNGpm; i++) {
+                if ((ipos=NG.backward(pos,i))!=-1)
+                    if (pF[ipos]>max) max=pF[ipos];
+            }
+            pF[pos]=max <pG[pos] ? max : pG[pos];
+        }
+        else {
+            min=pF[pos];
+            // Compute min(f(q)) q in ng_backw(p) U p
+            for (i=1; i<cNGpm; i++) {
+                if ((ipos=NG.backward(pos,i))!=-1)
+                    if (pF[ipos]<min) min=pF[ipos];
+            }
+            pF[pos]=min >pG[pos] ? min : pG[pos];
+        }
+    }
+
+    //Backward scan
+    for (pos=N-1; pos>=0; pos--) {
+        if (pF[pos]<pG[pos]) {
+            max=pF[pos];
+            for (i=1; i<cNGpm; i++) {
+                if ((ipos=NG.forward(pos,i))!=-1)
+                    if (pF[ipos]>max) max=pF[ipos];
+            }
+            pF[pos]=max <pG[pos] ? max : pG[pos];
+        }
+        else {
+            min=pF[pos];
+            for (i=1; i<cNGpm; i++) {
+                if ((ipos=NG.forward(pos,i))!=-1)
+                    if (pF[ipos]<min) min=pF[ipos];
+            }
+            pF[pos]=min >pG[pos] ? min : pG[pos];
+        }
+
+        for (i=1; i<cNGpm; i++) {
+            if ((ipos=NG.forward(pos,i)!=-1)) {
+                if ((pF[ipos]<pF[pos]) && (pF[ipos]<pG[ipos])) {
+                    fifo.push_back(pos);
+                    break;
+                }
+                else {
+                    if ((pF[ipos]>pF[pos]) && (pF[ipos]>pG[ipos])) {
+                        fifo.push_back(pos);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    //cout<<"Queue scan, queue size="<<fifo.size()<<endl;
+    while (!fifo.empty()) {
+        pos=fifo.front();
+        fifo.pop_front();
+
+        for (i=0; i<cNG; i++) {
+            if ((ipos=NG.neighbor(pos,i))!=-1) {
+                if (pF[ipos]<pG[pos]) {
+                    if ((pF[ipos]<pF[pos]) && (pG[ipos]!=pF[ipos])) {
+                        pF[ipos]=std::min(pF[pos],pG[ipos]);
+                        fifo.push_back(ipos);
+                    }
+                }
+                else {
+                    if ((pF[ipos]<pF[pos]) && (pG[ipos]!=pF[ipos])) {
+                        pF[ipos]=std::max(pF[pos],pG[ipos]);
+                        fifo.push_back(ipos);
+                    }
+                }
+            }
+        }
+    }
+    return temp;
+}
 
 /// \brief Performs a Reconstruction by dilation of the image (\f$R^{\delta}_g(f) \f$)
 ///	\param g mask image
@@ -741,6 +878,46 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
     }
 
     return temp;
+}
+
+/// \brief Removes the objects that are connected to the edge of the image
+///	\param img Input image
+///	\param conn Connectivity of the reconstruction
+///
+///	Computes \f$img-R^{\delta}_{img}(fm)\f$ where the border of fm is equal
+///	to the border of img while the rest of fm is equal to 0
+template <typename ImgType, size_t NDim>
+kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> &img,
+        kipl::morphology::MorphConnect conn)
+{
+    size_t const *const dims=img.Dims();
+    kipl::base::TImage<ImgType,NDim> edge(dims);
+    edge=kipl::base::min(img);
+
+    size_t y,z;
+    ImgType *pLineEdge, *pLineImg;
+    for (z=0; z<dims[2]; z++) {
+        memcpy(edge.GetLinePtr(0,z),img.GetLinePtr(0,z),dims[0]*sizeof(ImgType));
+        memcpy(edge.GetLinePtr(dims[1]-1,z),img.GetLinePtr(dims[1]-1,z),dims[0]*sizeof(ImgType));
+        for (y=1; y<dims[1]-1; y++) {
+            pLineEdge=edge.GetLinePtr(y,z);
+            pLineImg=img.GetLinePtr(y,z);
+            pLineEdge[0]=pLineImg[0];
+            pLineEdge[dims[0]-1]=pLineImg[dims[0]-1];
+
+        }
+    }
+    if (NDim==3) {
+        memcpy(edge.GetDataPtr(),img.GetDataPtr(),dims[0]*dims[1]*sizeof(ImgType));
+        memcpy(edge.GetLinePtr(0,dims[2]-1),img.GetLinePtr(0,dims[2]-1),dims[0]*dims[1]*sizeof(ImgType));
+    }
+
+    edge=img;
+    //edge-=RecByDilation(img,edge,conn);
+    edge-=img;
+
+    return edge;
+
 }
 }}}
 
