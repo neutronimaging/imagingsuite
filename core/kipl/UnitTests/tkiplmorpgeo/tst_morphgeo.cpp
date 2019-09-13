@@ -20,6 +20,7 @@ public:
 
 private slots:
     void test_RecByDilation();
+    void test_RecByErosion();
 
 };
 
@@ -44,7 +45,7 @@ void morphgeo::test_RecByDilation()
     img2+=1.0f;
 
     kipl::base::TImage<float,2> ref,dev;
-//    QBENCHMARK
+    QBENCHMARK
     {
         ref=kipl::morphology::old::RecByDilation(img2,img,kipl::morphology::conn8);
     }
@@ -68,7 +69,45 @@ void morphgeo::test_RecByDilation()
 
     kipl::io::WriteTIFF32(ref,"recdil_ref.tif");
     kipl::io::WriteTIFF32(dev,"recdil_dev.tif");
-  //  QCOMPARE(cnt,0UL);
+    QCOMPARE(cnt,0UL);
+}
+
+void morphgeo::test_RecByErosion()
+{
+    kipl::base::TImage<float,2> img;
+
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
+
+    kipl::base::TImage<float,2> img2;
+    img2.Clone(img);
+    img2+=1.0f;
+
+    kipl::base::TImage<float,2> ref,dev;
+//    QBENCHMARK
+    {
+        ref=kipl::morphology::old::RecByErosion(img,img2,kipl::morphology::conn8);
+    }
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::RecByErosion(img,img2,kipl::base::conn8);
+    }
+
+    QCOMPARE(ref.Size(),dev.Size());
+    std::ostringstream msg;
+    size_t cnt=0;
+    for (size_t i=0; i<ref.Size(); ++i)
+    {
+        //msg.str(""); msg<<"pos="<<i<<", ref="<<ref[i]<<", dev="<<dev[i];
+
+       // QVERIFY2(ref[i]==dev[i],msg.str().c_str());
+        if (ref[i]!=dev[i])
+            cnt++;
+    }
+
+    kipl::io::WriteTIFF32(ref,"recero_ref.tif");
+    kipl::io::WriteTIFF32(dev,"recero_dev.tif");
+    QCOMPARE(cnt,0UL);
 }
 
 

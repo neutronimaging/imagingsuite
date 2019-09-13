@@ -2,6 +2,7 @@
 #define MORPHGEO_HPP
 
 #include <stddef.h>
+#include <sstream>
 #include <deque>
 #include "../../base/kiplenums.h"
 #include "../morphology.h"
@@ -153,7 +154,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     std::ostringstream msg;
 
     kipl::base::TImage<ImgType,NDimG> temp;
-    deque<int> fifo;
+    deque<ptrdiff_t> fifo;
 
     ptrdiff_t i;
 
@@ -200,21 +201,21 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     }
 
     // Set up indexing arrays
-    ptrdiff_t cNGpm,cNG;
-
-    long ipos;
+    ptrdiff_t ipos;
     ptrdiff_t pos;
     ImgType max;
     const ptrdiff_t N=g.Size();
     kipl::base::PixelIterator NG(f.Dims(),conn);
     // Forward scan
     NG.setPosition(0L);
-    for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); pos++, ++NG)
+    for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); ++pos, ++NG)
     {
         max=ptemp[pos];
+
         for (const auto & neighborPix : NG.backwardNeighborhood())
         {
-            if (ptemp[neighborPix]>max) max=pf[neighborPix];
+            ipos = pos + neighborPix ;
+            if (ptemp[ipos]>max) max=pf[ipos];
         }
         ptemp[pos]=max <pg[pos] ? max : pg[pos];
     }
@@ -222,13 +223,14 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     // Backward scan
     ImgType tmppos;
     NG.setPosition(f.Size()-1L);
-    for (pos=static_cast<ptrdiff_t>(f.Size())-1; pos>=0; pos--,--NG)
+    for (pos=static_cast<ptrdiff_t>(f.Size())-1; pos>=0; --pos,--NG)
     {
         max=ptemp[pos];
         tmppos=max;
         for (const auto & neighborPix : NG.forwardNeighborhood())
         {
-            if (ptemp[neighborPix]>max) max=ptemp[neighborPix];
+            ipos = pos + neighborPix;
+            if (ptemp[ipos]>max) max=ptemp[ipos];
         }
 
         ptemp[pos]=max<pg[pos] ? max : pg[pos];
@@ -236,7 +238,8 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         tmppos=ptemp[pos];
         for (const auto & neighborPix : NG.forwardNeighborhood())
         {
-            if ((ptemp[neighborPix]<tmppos) && (ptemp[neighborPix]<pg[neighborPix]))
+            ipos = pos + neighborPix;
+            if ((ptemp[ipos]<tmppos) && (ptemp[ipos]<pg[ipos]))
             {
                 fifo.push_front(pos);//fifo.push_back(pos);
                 break;
@@ -253,7 +256,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         NG.setPosition(pos);
         for (const auto & neighborPix : NG.neighborhood())
         {
-            ptrdiff_t ipos=pos+neighborPix;
+            ipos=pos+neighborPix;
 
             if (static_cast<size_t>(ipos)<N)
             {
@@ -291,8 +294,9 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
         const kipl::base::TImage<ImgType,NDimF> &f,
         kipl::base::eConnectivity conn)
 {
+    std::ostringstream msg;
     kipl::base::TImage<ImgType,NDimG> temp;
-    deque<size_t> fifo;
+    std::deque<ptrdiff_t> fifo;
 
     size_t i;
 
@@ -306,7 +310,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
         }
     }
     else
-        temp=f;
+        temp.Clone(f);
         //f.ChangeDimension(temp);
 
 
@@ -319,47 +323,71 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
     ImgType const * const pg=g.GetDataPtr();
     ImgType * pf=temp.GetDataPtr();
 
+    size_t errcnt=0L;
+    for (i=0; i<static_cast<ptrdiff_t>(f.Size()); i++)
+    {
+        if (pf[i]<pg[i])
+        {
+            errcnt++;
+        }
+    }
+
+    if (errcnt)
+    {
+        msg.str("");
+        msg<<"Error RecByErosion: g>f ("<<errcnt<<" times)";
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
     // Set up indexing arrays
     ptrdiff_t ipos;
     ptrdiff_t pos;
-    ImgType min;
+    ImgType minVal;
     ptrdiff_t N=static_cast<ptrdiff_t>(g.Size());
-    CNeighborhood NG(g.Dims(),NDimG,conn);
-    // Forward scan
-    const size_t cNGpm=NG.Nfb();
-    const size_t cNG=NG.N();
+    kipl::base::PixelIterator NG(f.Dims(),conn);
 
     // Forward scan
-    for (pos=0; pos< N; pos++) {
-        min=pf[pos];
-        for (i=1; i<cNGpm; i++) { // min(f(q)| q in NGp(p) u p)
-            if ((ipos=NG.backward(pos,i))!=-1)
-                if (pf[ipos]<min) min=pf[ipos];
+    NG.setPosition(0L);
+    for (pos=0; pos< N; ++pos, ++NG)
+    {
+        minVal=pf[pos];
+
+        for (const auto & neighborPix : NG.backwardNeighborhood()) //min(f(q)| q in NGp(p) u p)
+        {
+            ipos = pos + neighborPix;
+            if (pf[ipos]<minVal) minVal=pf[ipos];
         }
-        pf[pos]=min > pg[pos] ? min : pg[pos]; // max(min(f(NGp(p))),g(p))
+
+        pf[pos]=minVal > pg[pos] ? minVal : pg[pos]; // max(min(f(NGp(p))),g(p))
     }
 
 
     // Backward scan
     ImgType tmppos;
-
-    for (pos=N-1; pos>=0; pos--) {
-        min=pf[pos];
-        tmppos=min;
-        for (i=1; i<cNGpm; i++) {// min(f(q)| q in NGp(p) u p)
-            if ((ipos=NG.forward(pos,i))!=-1){
-                if (pf[ipos]<min) min=pf[ipos];
-            }
+    NG.setPosition(f.Size()-1L);
+    for (pos=N-1; pos>=0; --pos, --NG) {
+        minVal=pf[pos];
+        tmppos=minVal;
+        for (const auto & neighborPix : NG.forwardNeighborhood())
+        {
+        //for (i=1; i<cNGpm; i++) {// min(f(q)| q in NGp(p) u p)
+            ipos =  pos + neighborPix;
+            if (pf[ipos]<minVal) minVal=pf[ipos];
         }
-        pf[pos]=min > pg[pos] ? min : pg[pos]; // max(min(f(NGp(p))),g(p))
+
+        pf[pos]=minVal > pg[pos] ? minVal : pg[pos]; // max(min(f(NGp(p))),g(p))
+
         tmppos=pf[pos];
-        for (i=1; i<cNGpm; i++) {
-            if ((ipos=NG.forward(pos,i))!=-1) {
-                if ((pf[ipos]>tmppos) && (pf[ipos]>pg[ipos])) {
-                    fifo.push_front(pos);
-                    break;
-                }
+
+        for (const auto & neighborPix : NG.forwardNeighborhood())
+        {
+            ipos = pos + neighborPix;
+            if ((pf[ipos]>tmppos) && (pf[ipos]>pg[ipos]))
+            {
+                fifo.push_front(pos);
+                break;
             }
+
         }
 
     }
@@ -369,12 +397,13 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
         fifo.pop_front();
         tmppos=pf[pos];
 
-        for (i=0; i<cNG; i++) {
-            if ((ipos=NG.neighbor(pos,i))!=-1) {
-                if ((pf[ipos]>tmppos) && (pg[ipos]!=pf[ipos])) {
-                    pf[ipos]=tmppos>pg[ipos] ? tmppos : pg[ipos];
-                    fifo.push_front(ipos);
-                }
+        for (const auto & neighborPix : NG.neighborhood())
+        {
+            ipos = pos + neighborPix;
+            if ((pf[ipos]>tmppos) && (pg[ipos]!=pf[ipos]))
+            {
+                pf[ipos]=tmppos>pg[ipos] ? tmppos : pg[ipos];
+                fifo.push_front(ipos);
             }
         }
     }
