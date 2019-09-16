@@ -35,7 +35,7 @@ private slots:
     void testMinImpose();
     void testFillHole();
     void testFillPeaks();
-    void testFillExtrema();
+    //void testFillExtrema();
 };
 
 morphgeo::morphgeo()
@@ -59,7 +59,7 @@ void morphgeo::test_RecByDilation()
     img2+=1.0f;
 
     kipl::base::TImage<float,2> ref,dev;
-    QBENCHMARK
+//    QBENCHMARK
     {
         ref=kipl::morphology::old::RecByDilation(img2,img,kipl::morphology::conn8);
     }
@@ -99,7 +99,7 @@ void morphgeo::test_RecByErosion()
         ref=kipl::morphology::old::RecByErosion(img,img2,kipl::morphology::conn8);
     }
 
-    QBENCHMARK
+//   QBENCHMARK
     {
         dev=kipl::morphology::RecByErosion(img,img2,kipl::base::conn8);
     }
@@ -129,12 +129,12 @@ void morphgeo::testSelfDualReconstruction()
     img2+=1.0f;
 
     kipl::base::TImage<float,2> ref,dev;
-    QBENCHMARK
+    //QBENCHMARK
     {
         ref=kipl::morphology::old::SelfDualReconstruction(img,img2,kipl::morphology::conn8);
     }
 
-    QBENCHMARK
+    //QBENCHMARK
     {
         dev=kipl::morphology::SelfDualReconstruction(img,img2,kipl::base::conn8);
     }
@@ -148,6 +148,8 @@ void morphgeo::testSelfDualReconstruction()
             cnt++;
     }
 
+    QCOMPARE(cnt,0UL);
+
     kipl::io::WriteTIFF32(ref,"recself_ref.tif");
     kipl::io::WriteTIFF32(dev,"recselg_dev.tif");
 }
@@ -159,12 +161,12 @@ void morphgeo::testRemoveEdgeObjects()
     kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
 
     kipl::base::TImage<float,2> ref,dev;
-    QBENCHMARK
+    //QBENCHMARK
     {
         ref=kipl::morphology::old::RemoveEdgeObj(img,kipl::morphology::conn8);
     }
 
-    QBENCHMARK
+    //QBENCHMARK
     {
         dev=kipl::morphology::RemoveEdgeObj(img,kipl::base::conn8);
     }
@@ -177,6 +179,8 @@ void morphgeo::testRemoveEdgeObjects()
         if (ref[i]!=dev[i])
             cnt++;
     }
+
+    QCOMPARE(cnt,0UL);
 
     kipl::io::WriteTIFF32(ref,"removeedges_ref.tif");
     kipl::io::WriteTIFF32(dev,"removeedges_dev.tif");
@@ -405,7 +409,7 @@ void morphgeo::testFillHole()
             cnt++;
     }
 
-//    QCOMPARE(cnt,0UL);
+    QCOMPARE(cnt,0UL);
 
     kipl::io::WriteTIFF32(ref,"fillhole_ref.tif");
     kipl::io::WriteTIFF32(dev,"fillhole_dev.tif");
@@ -442,12 +446,6 @@ void morphgeo::testFillPeaks()
     kipl::io::WriteTIFF32(ref,"fillpeaks_ref.tif");
     kipl::io::WriteTIFF32(dev,"fillpeaks_dev.tif");
 }
-
-void morphgeo::testFillExtrema()
-{
-QSKIP("Not implemented");
-}
-
 
 
 QTEST_APPLESS_MAIN(morphgeo)
