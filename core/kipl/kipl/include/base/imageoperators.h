@@ -29,7 +29,7 @@ T min(const kipl::base::TImage<T,NDims> &img)
 /// \param img the image to search in
 /// \return the greatest found value in the image
 template <typename T, size_t NDims>
-T max(const kipl::base::TImage<T,NDims> img)
+T max(const kipl::base::TImage<T,NDims> &img)
 {
 	const size_t N=img.Size();
 	T const * const pImg=img.GetDataPtr();
@@ -46,7 +46,7 @@ T max(const kipl::base::TImage<T,NDims> img)
 /// \param img the image to sum up
 /// \return the sum of the pixels
 template <typename T, size_t NDims>
-double sum(const kipl::base::TImage<T,NDims> img)
+double sum(const kipl::base::TImage<T,NDims> &img)
 {
 	const size_t N=img.Size();
 	T const * const pImg=img.GetDataPtr();
@@ -63,7 +63,7 @@ double sum(const kipl::base::TImage<T,NDims> img)
 /// \param img the image to sum up
 /// \return the average intensity of the image
 template <typename T, size_t NDims>
-double mean(const kipl::base::TImage<T,NDims> img)
+double mean(const kipl::base::TImage<T,NDims> &img)
 {	
 	return sum(img)/img.Size();
 }
@@ -72,7 +72,7 @@ double mean(const kipl::base::TImage<T,NDims> img)
 /// \param img the image to check
 /// \return the number of NaN pixels
 template <typename T, size_t NDims>
-size_t count_NaN(const kipl::base::TImage<T,NDims> img)
+size_t count_NaN(const kipl::base::TImage<T,NDims> &img)
 {
 	T const * const pData=img.GetDataPtr();
 	size_t cnt=0L;

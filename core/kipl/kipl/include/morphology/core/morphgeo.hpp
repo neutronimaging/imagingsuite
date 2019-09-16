@@ -461,8 +461,7 @@ kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> 
         memcpy(edge.GetLinePtr(0,dims[2]-1),img.GetLinePtr(0,dims[2]-1),dims[0]*dims[1]*sizeof(ImgType));
     }
 
-    edge=img;
-    edge-=RecByDilation(img,edge,conn);
+    edge=img-kipl::morphology::RecByDilation(img,edge,conn);
 
     return edge;
 
