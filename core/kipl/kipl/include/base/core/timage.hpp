@@ -145,7 +145,7 @@ const TImage<T,N> & TImage<T,N>::operator+=(const TImage<T,N> &img)
         kipl::base::core::SSE2Add(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicAdd(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicAdd(m_buffer.GetDataPtr(), img.GetDataPtr(),m_buffer.Size());
 	}
 	return *this;
 }
@@ -179,10 +179,10 @@ const TImage<T,N> & TImage<T,N>::operator*=(const TImage<T,N> &img)
 	m_buffer.Clone();	
 	
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Mult(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Mult(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicMult(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicMult(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	return *this;
 }
@@ -197,10 +197,10 @@ const TImage<T,N> & TImage<T,N>::operator/=(const TImage<T,N> &img)
 	m_buffer.Clone();	
 	
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Div(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Div(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicDiv(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicDiv(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	return *this;
 }

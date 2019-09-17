@@ -16,7 +16,7 @@
 
 MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("MorphSpotClean",interactor),
-    m_eConnectivity(kipl::morphology::conn4),
+    m_eConnectivity(kipl::base::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectPeaks),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold{0.1f,0.1f},
