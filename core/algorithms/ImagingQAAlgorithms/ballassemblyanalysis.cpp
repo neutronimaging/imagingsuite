@@ -83,7 +83,7 @@ void BallAssemblyAnalysis::createLabelledMask(kipl::base::TImage<float,3> &img)
     kipl::segmentation::Threshold(tmp.GetDataPtr(),mask.GetDataPtr(),tmp.Size(),strelRadius,kipl::segmentation::cmp_greatereq);
     logger(logger.LogMessage,"Distance driven closing for pores in assembly");
 
-    int cnt=kipl::morphology::LabelImage(mask,labels,kipl::morphology::conn18);
+    size_t cnt=kipl::morphology::LabelImage(mask,labels,kipl::base::conn6);
     //kipl::morphology::LabelArea(labels,cnt,labelarea);
     logger(logger.LogMessage,"Labelled");
 }

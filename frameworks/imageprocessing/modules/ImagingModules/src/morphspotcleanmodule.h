@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef MORPHSPOTCLEANMODULE_H
 #define MORPHSPOTCLEANMODULE_H
 
@@ -32,7 +33,7 @@ protected:
 //    int ProcessParallelStd(kipl::base::TImage<float,3> & img);
 //    int ProcessParallelStd(size_t tid, float *pImg, const size_t *dims, size_t N);
 
-    kipl::morphology::MorphConnect m_eConnectivity;
+    kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
 
