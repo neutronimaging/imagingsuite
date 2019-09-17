@@ -142,7 +142,7 @@ const TImage<T,N> & TImage<T,N>::operator+=(const TImage<T,N> &img)
 	
 	//kipl::base::core::BasicAdd(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Add(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Add(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
 		kipl::base::core::BasicAdd(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
@@ -158,7 +158,7 @@ const TImage<T,N> & TImage<T,N>::operator-=(const TImage<T,N> &img)
 			throw std::length_error("Image dimension mismatch for TImage<T,N>::operator-=");
 	
 	m_buffer.Clone();	
-    T *a=nullptr,*b=nullptr;
+
 	if (typeid(T)==typeid(float)) {
         kipl::base::core::SSE2Minus(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
