@@ -74,7 +74,7 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
     ochisq=chisq;
 
     for (iter=0;iter<maxIterations;iter++) {
-        if ((iter % 100)==0)
+//        if ((iter % 100)==0)
             qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
 
         if (done==NDONE) {
@@ -255,7 +255,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 	{
         m_pars=Array1D<double>(n);
         m_lock=new bool[n];
-        std::fill(m_lock,m_lock+n,true);
+        std::fill(m_lock,m_lock+n,true); // set all to locked?
 
 		m_pars2fit=n;
 		m_Npars=n;
@@ -525,7 +525,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
     {
         double term3,term4,term5,edge,exp_after,exp_before;
         term3 = erfc(-1.0*(x-m_pars[0])/(m_pars[1]*dsqrt2));
-        term4 = exp(-1.0*((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])));
+        term4 = exp(-1.0*((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])));
         term5 = erfc(-1.0*(x-m_pars[0])/(m_pars[1]*dsqrt2)+m_pars[1]/m_pars[2]);
         edge = 0.5*(term3-term4*term5); // myedgefunction
         exp_after = exp(-1.0*(m_pars[3]+m_pars[4]*x)); //myexp after
@@ -550,27 +550,37 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
             dyda=Array1D<double>(m_Npars);
 
         double term3,term4,term5,edge,exp_after,exp_before;
-        term3 = erfc(-(x-m_pars[0])/(m_pars[1]*dsqrt2));
-        term4 = exp(-((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])));
-        term5 = erfc(-(x-m_pars[0])/(m_pars[1]*dsqrt2)+m_pars[1]/m_pars[2]);
+        term3 = erfc(-1.0*(x-m_pars[0])/(m_pars[1]*dsqrt2));
+        term4 = exp(-1.0*((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])));
+        term5 = erfc(-1.0*(x-m_pars[0])/(m_pars[1]*dsqrt2)+m_pars[1]/m_pars[2]);
         edge = 0.5*(term3-term4*term5); // myedgefunction
-        exp_after = exp(-(m_pars[3]+m_pars[4]*x)); //myexp after
-        exp_before = exp(-(m_pars[5]+m_pars[6]*x)); //my exp before
-        y = exp_after*(exp_before+(1-exp_before)*edge);
+        exp_after = exp(-1.0*(m_pars[3]+m_pars[4]*x)); //myexp after
+        exp_before = exp(-1.0*(m_pars[5]+m_pars[6]*x)); //my exp before
+        y = exp_after*(exp_before+(1.0-exp_before)*edge);
 
         // Here I use the analytical expressions of the derivatives
-        dyda[0]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
-                    (1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
-                        (
-                        -((exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
-                         *erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
+//        dyda[0]= 0.5*exp(-m_pars[3]-m_pars[4]*x)*(1.0-exp(-m_pars[5]-m_pars[6]*x))*
+//                (
+//                        -1.0*((exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+//                         *erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
 
-                        +(dsqrt2/dsqrtPi*exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])
-                                                -(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2]))
-                                                -(x-m_pars[0])/m_pars[2]))/m_pars[1]
+//                        +(dsqrt2/dsqrtPi*exp(((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2]))
+//                                                -((m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1])))
+//                                                -(x-m_pars[0])/m_pars[2]))/m_pars[1]
 
-                        -(dsqrt2/dsqrtPi*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2*m_pars[0]*m_pars[0])))/m_pars[1]
-                        );
+//                        -(dsqrt2/dsqrtPi*exp(-1.0*((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[0]*m_pars[0])))/m_pars[1]
+//                        );
+
+        dyda[0] = 0.5*(exp(-m_pars[3]-m_pars[4]*x))*(1-exp(-m_pars[5]-m_pars[6]*x)*(
+
+                    -(exp(-((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[1]*m_pars[1]))*dsqrt2/dsqrtPi)/m_pars[1]
+
+                    +(exp(-(x-m_pars[0])/m_pars[2]+(m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])
+                        -((-(x-m_pars[0])/(dsqrt2*m_pars[0])+m_pars[0]/m_pars[1])*(-(x-m_pars[0])/(dsqrt2*m_pars[0])+m_pars[0]/m_pars[1])))*dsqrt2/dsqrtPi)/m_pars[1]
+
+                    -((exp(-(x-m_pars[0])/m_pars[2]+(m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2]))))
+                     *erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[0]/m_pars[1]))/m_pars[2]
+                    );
 
         dyda[1]= 0.5*exp(-(m_pars[3]+m_pars[4]*x))*
                 (1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
@@ -579,7 +589,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
                   erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/(m_pars[2]*m_pars[2])
 
                  +(2.0*exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-
-                     ((m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[2])))-(x-m_pars[0])/m_pars[2])
+                     ((m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1])))-(x-m_pars[0])/m_pars[2])
                       *(1/m_pars[2]+(x-m_pars[0])/(dsqrt2*m_pars[1]*m_pars[1])))/dsqrtPi
 
                  -(dsqrt2/dsqrtPi*(x-m_pars[0])*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[1]*m_pars[1])))/(m_pars[1]*m_pars[1])
@@ -616,13 +626,13 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
                     );
 
-        dyda[4]= m_pars[0]*(-1.0*exp(-(m_pars[3]+m_pars[4]*x)))*
+        dyda[4]= x*(-1.0*exp(-(m_pars[3]+m_pars[4]*x)))*
                 (
                      0.5*(1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
                     (
                      erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
-                     -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                     -(exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
                      *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
                         )
                      +exp(-(m_pars[5]+m_pars[6]*x))
@@ -673,13 +683,13 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         for (i=0; i<m_Npars; i++)
             est[i]=m_lock[i] ? ' ': '*';
 
-        cout<<est[0]<<"x0="<<m_pars[0]<< endl;
-        cout<<est[1]<<"sigma="<<m_pars[1]<< endl;
-        cout<<est[2]<<"tau="<<m_pars[2]<< endl;
-        cout<<est[3]<<"a0="<<m_pars[3]<< endl;
-        cout<<est[4]<<"b0="<<m_pars[4]<< endl;
-        cout<<est[5]<<"ahkl="<<m_pars[5]<< endl;
-        cout<<est[6]<<"bhkl="<<m_pars[6]<< endl;
+        cout<<m_lock[0]<<"x0="<<m_pars[0]<< endl;
+        cout<<m_lock[1]<<"sigma="<<m_pars[1]<< endl;
+        cout<<m_lock[2]<<"tau="<<m_pars[2]<< endl;
+        cout<<m_lock[3]<<"a0="<<m_pars[3]<< endl;
+        cout<<m_lock[4]<<"b0="<<m_pars[4]<< endl;
+        cout<<m_lock[5]<<"ahkl="<<m_pars[5]<< endl;
+        cout<<m_lock[6]<<"bhkl="<<m_pars[6]<< endl;
 
         delete [] est;
 

@@ -11,7 +11,7 @@ const float        fPi  = 3.1415926535897932384626f;
 const double       dsqrt2 = 1.4142129629629629629629629629629629629629629629629;
 const float        fsqrt2 = 1.4142129626926926926926f;
 const long double  lsqrtPi = sqrt(lPi);
-const double       dsqrtPi = sqrt(dPi);
+const double       dsqrtPi = 1.7724538509055159;
 const float        fsqrtPi = sqrt(fPi) ;
 
 #endif /*MATHCONSTANTS_H_*/

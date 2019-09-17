@@ -277,13 +277,116 @@ void TKiplMathTest::testNonLinFit_fitter()
 void TKiplMathTest::testNonLinFit_EdgeFunction()
 {
     int N=1107;
-    double eps=0.000001;
+    double eps=0.0001;
 
     Array1D<double> x(N);
     Array1D<double> y(N);
     Array1D<double> sig(N);
     Array1D<double> initial_edge(N);
     Array1D<double> params(7);
+    Array1D<double> dyda(7);
+    Array1D<double> dfdsigma(12);
+    Array1D<double> dfdx0(12);
+    Array1D<double> dfdtau(12);
+    Array1D<double> dfda0(12);
+    Array1D<double> dfdb0(12);
+    Array1D<double> dfda1(12);
+    Array1D<double> dfdb1(12);
+
+    // values of the first partial derivatives computed with Mathematica from the analytical function
+    dfdsigma[0] = 0.0;
+    dfdsigma[1] = 0.0;
+    dfdsigma[2] = 0.0;
+    dfdsigma[3] = 0.0768592;
+    dfdsigma[4] = -5.3928;
+    dfdsigma[5] = -1.3984;
+    dfdsigma[6] = -0.361873;
+    dfdsigma[7] = -0.0934707;
+    dfdsigma[8] = -0.0119275;
+    dfdsigma[9] = -0.000788495;
+    dfdsigma[10] = -0.0000518738;
+    dfdsigma[11] = -0.00000339884;
+
+
+    dfdx0[0] = 0.0;
+    dfdx0[1] = 0.0;
+    dfdx0[2] = 0.0;
+    dfdx0[3] = -0.0170123;
+    dfdx0[4] = -80.892;
+    dfdx0[5] = -20.976;
+    dfdx0[6] = -5.4289;
+    dfdx0[7] = -1.40206;
+    dfdx0[8] = -0.178912;
+    dfdx0[9] = -0.0118274;
+    dfdx0[10] = -0.000778108;
+    dfdx0[11] = -0.000508926;
+
+    dfdtau[0] = 0.0;
+    dfdtau[1] = 0.0;
+    dfdtau[2] = 0.0;
+    dfdtau[3] = -0.000245961;
+    dfdtau[4] = -86.8905;
+    dfdtau[5] = -51.1708;
+    dfdtau[6] = -20.6529;
+    dfdtau[7] = -7.24887;
+    dfdtau[8] = -1.29596;
+    dfdtau[9] = -0.117969;
+    dfdtau[10] = -0.00988577;
+    dfdtau[11] = -0.000786945;
+
+
+    dfda0[0] = -0.232489;
+    dfda0[1] = -0.217618;
+    dfda0[2] = -0.203699;
+    dfda0[3] = -0.190671;
+    dfda0[4] = -0.413146;
+    dfda0[5] = -0.497202;
+    dfda0[6] = -0.514768;
+    dfda0[7] = -0.515115;
+    dfda0[8] = -0.508423;
+    dfda0[9] = -0.497658;
+    dfda0[10] = -0.486898;
+    dfda0[11] = -0.476355;
+
+    dfdb0[0] = -0.011623;
+    dfdb0[1] = -0.0113253;
+    dfdb0[2] = -0.0110181;
+    dfdb0[3] = -0.0107039;
+    dfdb0[4] = -0.0240393;
+    dfdb0[5] = -0.0299484;
+    dfdb0[6] = -0.0320607;
+    dfdb0[7] = -0.0331373;
+    dfdb0[8] = -0.034288;
+    dfdb0[9] = -0.0356005;
+    dfdb0[10] = -0.0368251;
+    dfdb0[11] = -0.0379789;
+
+    dfda1[0] = -0.232489;
+    dfda1[1] = -0.217618;
+    dfda1[2] = -0.203699;
+    dfda1[3] = -0.19067;
+    dfda1[4] = -0.0608292;
+    dfda1[5] = -0.0145361;
+    dfda1[6] = -0.00347365;
+    dfda1[7] = -0.000830086;
+    dfda1[8] = -0.0000944199;
+    dfda1[9] = -5.39185e-6;
+    dfda1[10] = -3.07902e-7;
+    dfda1[11] =-1.75827e-8;
+
+    dfdb1[0] = -0.011623;
+    dfdb1[1] = -0.0113253;
+    dfdb1[2] = -0.0110181;
+    dfdb1[3] = -0.0107038;
+    dfdb1[4] = -0.0035394;
+    dfdb1[5] = -0.000875568;
+    dfdb1[6] = -0.000216346;
+    dfdb1[7] = -0.000053399;
+    dfdb1[8] = -6.36768e-6;
+    dfdb1[9] = -3.85711e-7;
+    dfdb1[10] = -2.32872e-8;
+    dfdb1[11] = -1.40184e-9;
+
 
     Nonlinear::EdgeFunction ef;
 
@@ -296,7 +399,7 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     ef[6]=26.92982514130;
 
     QCOMPARE(ef.getNpars(),7); // Seven parameters to be fitted
-    QCOMPARE(ef.getNpars2fit(),7); // Default all will be fitted
+    QCOMPARE(ef.getNpars2fit(),7); // Default all will be fitted   
 
 
 
@@ -319,6 +422,7 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     for (double a; myfile_y>>a;)
     {
         y[loop_y]=a;
+        sig[loop_y]=1.0;
         loop_y++;
 
     }
@@ -335,31 +439,68 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     QCOMPARE(ef[6],params[6]);
 
 
-    ofstream outfile;
-    outfile.open ("example.txt");
 
 
     // Here i test the edge formulation
     for (int i=0; i<loop; ++i)
     {
         initial_edge[i] = ef(x[i]); // I compute the initial edge
-        QVERIFY(fabs(initial_edge[i]-y[i])<eps);
-//        outfile << initial_edge[i] << endl ;
-
-
+        QVERIFY(fabs(initial_edge[i]-y[i])<eps);// it is correct
     }
 
 
-    outfile.close();
+
+
+    // Then I have to test the correctness of the first derivative
+    // here I compute the derivatives
+
+    int ind =0;
+    for (int i=0; i<loop; i+=100)
+    {
+        ef(x[i],y[i],dyda);
+        qDebug() << ind;
+//        qDebug() << x[i];
+//        qDebug() << y[i];
+        qDebug() << dyda[0];
+        qDebug() << dfdx0[ind];
+//        qDebug() << dyda[1];
+//        qDebug() << dyda[2];
+//        qDebug() << dyda[3];
+//        qDebug() << dyda[4];
+//        qDebug() << dyda[5];
+//        qDebug() << dyda[6];
+
+        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // not passed :( check this formula
+        QVERIFY(fabs(dyda[1]-dfdsigma[ind])<eps); // passed!
+        QVERIFY(fabs(dyda[2]-dfdtau[ind])<eps); // passed!
+        QVERIFY(fabs(dyda[3]-dfda0[ind])<eps); // passed!
+        QVERIFY(fabs(dyda[4]-dfdb0[ind])<eps); // passed!
+        QVERIFY(fabs(dyda[5]-dfda1[ind])<eps); // passed!
+        QVERIFY(fabs(dyda[6]-dfdb1[ind])<eps); // passed!
+        ++ind;
+
+    } // I have to check those numbers..! Evaluate with Wolframe the derivative at those points with the given initial parameters
 
 
 
+    Nonlinear::LevenbergMarquardt mrq(1e-15,20);
 
-
-//    // This one I can leave it for later
-//    Nonlinear::LevenbergMarquardt mrq(1e-15,200);
+//    bool lock[7]={false, false, false, true, true, true, true};
+//    ef.setLock(lock);
 
 //    mrq.fit(x,y,sig,ef);
+
+//    ef.printPars();
+
+//    ef.getPars(params);
+
+//    qDebug() << params[0];
+//    qDebug() << params[1];
+//    qDebug() << params[2];
+//    qDebug() << params[3];
+//    qDebug() << params[4];
+//    qDebug() << params[5];
+//    qDebug() << params[6];
 
 
 
