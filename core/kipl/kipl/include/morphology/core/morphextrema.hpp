@@ -4,6 +4,8 @@
 
 #include "../../base/kiplenums.h"
 #include "../pixeliterator.h"
+#include "../morphology.h"
+#include <deque>
 
 /// Reconstruction based extrem operations
 namespace kipl {
@@ -22,14 +24,14 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     ImgType maxVal=kipl::base::max(img);
     extremes.Clone(img);
 
-    deque<ptrdiff_t> posQ;
+    std::deque<ptrdiff_t> posQ;
 
     kipl::base::PixelIterator NG(dims,conn);
 
     ImgType *pExt=extremes.GetDataPtr();
     const ImgType *pImg=img.GetDataPtr();
     ImgType val;
-    ptrdiff_t i,j,pos,p;
+    ptrdiff_t i,pos,p;
 
     NG.setPosition(0L);
     for (i=0; i<extremes.Size(); ++i) {
@@ -64,8 +66,12 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     }
 
     if (bilevel)
+    {
         for (i=0; i<extremes.Size(); i++)
-            extremes[i]= (extremes[i]==maxVal) ? 0 : 1;
+        {
+            extremes[i] = (extremes[i]==maxVal) ? 0 : 1;
+        }
+    }
 
     return 0;
 }
@@ -266,16 +272,17 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConn
     std::stringstream msg;
     kipl::base::TImage<T,2> fm(img.Dims());
 
-    T maxval;
-    T minval;
-    kipl::math::minmax(img.GetDataPtr(),img.Size(),&minval, & maxval);
+    T maxval = kipl::base::max(img);
+//    T minval;
+//    kipl::math::minmax(img.GetDataPtr(),img.Size(),&minval, & maxval);
 
     fm=maxval;
 
-    std::copy_n(img.GetLinePtr(0),img.Size(0),fm.GetLinePtr(0));
-    std::copy_n(img.GetLinePtr(img.Size(1)-1),img.Size(0),fm.GetLinePtr(img.Size(1)-1));
+    std::copy_n(img.GetLinePtr(0),             img.Size(0), fm.GetLinePtr(0));
+    std::copy_n(img.GetLinePtr(img.Size(1)-1), img.Size(0), fm.GetLinePtr(img.Size(1)-1));
+
     size_t last=img.Size(0)-1;
-    for (size_t i=1; i<img.Size(1)-1; i++)
+    for (size_t i=1; i<img.Size(1)-1; ++i)
     {
         T *pA=img.GetLinePtr(i);
         T *pB=fm.GetLinePtr(i);
@@ -288,7 +295,8 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConn
 
     try
     {
-        result=kipl::morphology::RecByErosion(img,fm,conn);
+       //result=kipl::morphology::old::RecByErosion(img,fm,kipl::morphology::conn8);
+       result=kipl::morphology::RecByErosion(img,fm,conn);
     }
     catch (kipl::base::KiplException & e) {
         msg<<"FillHoles failed with a kipl exception: "<<e.what();
@@ -303,13 +311,12 @@ kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::base::eCon
 {
     kipl::base::TImage<T,2> fm(img.Dims());
     std::stringstream msg;
-    T maxval;
-    T minval;
-    kipl::math::minmax(img.GetDataPtr(),img.Size(),&minval, & maxval);
+    T minval = kipl::base::min(img);
 
     fm=minval;
-    memcpy(fm.GetLinePtr(0),img.GetLinePtr(0),img.Size(0)*sizeof(T));
-    memcpy(fm.GetLinePtr(img.Size(1)-1),img.GetLinePtr(img.Size(1)-1),img.Size(0)*sizeof(T));
+    std::copy_n(img.GetLinePtr(0),             img.Size(0), fm.GetLinePtr(0));
+    std::copy_n(img.GetLinePtr(img.Size(1)-1), img.Size(0), fm.GetLinePtr(img.Size(1)-1));
+
     size_t last=img.Size(0)-1;
     for (size_t i=1; i<img.Size(1)-1; i++) {
         T *pA=img.GetLinePtr(i);
@@ -449,14 +456,15 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     ImgType maxVal=kipl::base::max(img);
     extremes=img;
 
-    deque<int> posQ;
+    std::deque<ptrdiff_t> posQ;
 
-    CNeighborhood NG(dims,N,conn);
+    kipl::morphology::CNeighborhood NG(dims,N,conn);
     int Nng=NG.N();
+
     ImgType *pExt=extremes.GetDataPtr();
     const ImgType *pImg=img.GetDataPtr();
     ImgType val;
-    int i,j,pos,p;
+    ptrdiff_t i,j,pos,p;
 
     for (i=0; i<extremes.Size(); i++) {
         if (pExt[i]!=maxVal) {
@@ -485,8 +493,12 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     }
 
     if (bilevel)
+    {
         for (i=0; i<extremes.Size(); i++)
-            extremes[i]= (extremes[i]==maxVal) ? 0 : 1;
+        {
+            extremes[i] = (extremes[i]==maxVal) ? 0 : 1;
+        }
+    }
 
     return 0;
 }

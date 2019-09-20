@@ -14,15 +14,9 @@ namespace kipl { namespace base {
 template <typename T, size_t NDims>
 T min(const kipl::base::TImage<T,NDims> &img)
 {
-	const size_t N=img.Size();
-	T const * const pImg=img.GetDataPtr();
-	T val=pImg[0];
-	for (size_t i=1; i<N; i++) {
-		if (pImg[i]<val)
-			val=pImg[i];
-	}
-	
-	return val;
+    auto minpos = std::min_element(img.GetDataPtr(),img.GetDataPtr()+img.Size());
+
+    return *minpos;
 }
 
 /// \brief Finds the max value in the image
@@ -31,15 +25,9 @@ T min(const kipl::base::TImage<T,NDims> &img)
 template <typename T, size_t NDims>
 T max(const kipl::base::TImage<T,NDims> &img)
 {
-	const size_t N=img.Size();
-	T const * const pImg=img.GetDataPtr();
-	T val=pImg[0];
-	for (size_t i=1; i<N; i++) {
-		if (val<pImg[i])
-			val=pImg[i];
-	}
-	
-	return val;
+    auto maxpos = std::max_element(img.GetDataPtr(),img.GetDataPtr()+img.Size());
+
+    return *maxpos;
 }
 
 /// \brief Computes the sum of the pixel values in the image

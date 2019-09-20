@@ -10,7 +10,7 @@
 #include "../morphfilters.h"
 #include "../pixeliterator.h"
 
-
+#include <QDebug>
 using namespace std;
 
 namespace kipl { namespace morphology {
@@ -179,14 +179,6 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     const size_t *pDimsF=f.Dims();
     const size_t *pDimsG=g.Dims();
 
-    for (i=0; i<static_cast<ptrdiff_t>(NDimF); i++)
-    {
-        if (pDimsF[i]!=pDimsG[i])
-        {
-            throw kipl::base::KiplException("RecByDilation: Size(f) != Size(g)",__FILE__,__LINE__);
-        }
-    }
-
     if (NDimG!=NDimF)
     {
         std::cerr<<"Dim(f)!=Dim(g)"<<endl;
@@ -197,9 +189,17 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         }
     }
 
+    for (i=0; i<static_cast<ptrdiff_t>(NDimF); i++)
+    {
+        if (pDimsF[i]!=pDimsG[i])
+        {
+            throw kipl::base::KiplException("RecByDilation: Size(f) != Size(g)",__FILE__,__LINE__);
+        }
+    }
+
+
     temp.Resize(g.Dims());
     temp=static_cast<ImgType>(0);
-
     ImgType const * const pg=g.GetDataPtr();
     ImgType const * const pf=f.GetDataPtr();
     ImgType *ptemp=temp.GetDataPtr();
@@ -217,7 +217,6 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         msg<<"Error RecByDilation: f>g ("<<errcnt<<" times)";
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
-
     // Set up indexing arrays
     ptrdiff_t ipos;
     ptrdiff_t pos;
@@ -237,7 +236,6 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         }
         ptemp[pos]=max <pg[pos] ? max : pg[pos];
     }
-
     // Backward scan
     ImgType tmppos;
     NG.setPosition(f.Size()-1L);
@@ -415,6 +413,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
         fifo.pop_front();
         tmppos=pf[pos];
 
+        NG.setPosition(pos);
         for (const auto & neighborPix : NG.neighborhood())
         {
             ipos = pos + neighborPix;
@@ -911,9 +910,7 @@ kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> 
         memcpy(edge.GetLinePtr(0,dims[2]-1),img.GetLinePtr(0,dims[2]-1),dims[0]*dims[1]*sizeof(ImgType));
     }
 
-    edge=img;
-    //edge-=RecByDilation(img,edge,conn);
-    edge-=img;
+    edge=img-kipl::morphology::old::RecByDilation(img,edge,conn);
 
     return edge;
 
