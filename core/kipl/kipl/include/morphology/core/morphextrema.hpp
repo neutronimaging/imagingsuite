@@ -34,13 +34,16 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     ptrdiff_t i,pos,p;
 
     NG.setPosition(0L);
-    for (i=0; i<extremes.Size(); ++i) {
+    for (i=0; i<extremes.Size(); ++i)
+    {
         NG.setPosition(i);
-        if (pExt[i]!=maxVal) {
+        if (pExt[i]!=maxVal)
+        {
             for (const auto & neighborPix : NG.neighborhood())
             {
                 pos = i + neighborPix;
-                if (pImg[pos]<pImg[i]) {
+                if (pImg[pos]<pImg[i])
+                {
                     posQ.push_front(i);
                     val=pImg[i];
                     pExt[i]=maxVal;
@@ -48,7 +51,8 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
                 }
             }
 
-            while (!posQ.empty()) {
+            while (!posQ.empty())
+            {
                 p=posQ.front();
                 pExt[p]=maxVal;
                 posQ.pop_front();
@@ -214,13 +218,12 @@ template <typename T, size_t N>
 int ExtendedMin(const kipl::base::TImage<T,N> &img,kipl::base::TImage<T,N> &res, T h, kipl::base::eConnectivity conn, bool bilevel)
 {
     if (h<0) {
-        cerr<<"ExtendedMin: h must be >0"<<endl;
-        return -1;
+        throw kipl::base::KiplException("ExtendedMin: h must be >0",__FILE__,__LINE__);
     }
 
     res=img+h;
 
-    RMin(RecByErosion(img,res,conn),res, conn);
+    kipl::morphology::RMin(kipl::morphology::RecByErosion(img,res,conn),res, conn);
 
     return 0;
 }
@@ -295,7 +298,6 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConn
 
     try
     {
-       //result=kipl::morphology::old::RecByErosion(img,fm,kipl::morphology::conn8);
        result=kipl::morphology::RecByErosion(img,fm,conn);
     }
     catch (kipl::base::KiplException & e) {
@@ -639,13 +641,12 @@ template <typename T, size_t N>
 int ExtendedMin(const kipl::base::TImage<T,N> &img,kipl::base::TImage<T,N> &res, T h, MorphConnect conn, bool bilevel)
 {
     if (h<0) {
-        cerr<<"ExtendedMin: h must be >0"<<endl;
-        return -1;
+        throw kipl::base::KiplException("ExtendedMin: h must be >0",__FILE__,__LINE__);
     }
 
     res=img+h;
 
-    RMin(RecByErosion(img,res,conn),res, conn,bilevel);
+    kipl::morphology::old::RMin(kipl::morphology::old::RecByErosion(img,res,conn),res, conn,bilevel);
 
     return 0;
 }

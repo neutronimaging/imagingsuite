@@ -40,6 +40,10 @@ private slots:
     void testExtendedMin();
     void testMinImpose();
     void testFillHole();
+    void testFillHoleTransposedTiming();
+    void testFillHoleTiming();
+    void testFillPeaksTransposedTiming();
+    void testFillPeaksTiming();
     void testFillPeaks();
     //void testFillExtrema();
 };
@@ -393,6 +397,37 @@ void morphgeo::testFillHole()
     QCOMPARE(cnt,0UL);
 }
 
+void morphgeo::testFillHoleTransposedTiming()
+{
+    loadData();
+
+    size_t dims[] = {64,1024};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillHole(input,kipl::base::conn8);
+    }
+}
+
+void morphgeo::testFillHoleTiming()
+{
+    loadData();
+    size_t dims[] = {1024,64};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillHole(input,kipl::base::conn8);
+    }
+}
+
 void morphgeo::testFillPeaks()
 {
     loadData();
@@ -422,6 +457,36 @@ void morphgeo::testFillPeaks()
     QCOMPARE(cnt,0UL);
 }
 
+void morphgeo::testFillPeaksTransposedTiming()
+{
+    loadData();
+
+    size_t dims[] = {64,1024};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillPeaks(input,kipl::base::conn8);
+    }
+}
+
+void morphgeo::testFillPeaksTiming()
+{
+    loadData();
+    size_t dims[] = {1024,64};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillPeaks(input,kipl::base::conn8);
+    }
+}
 
 QTEST_APPLESS_MAIN(morphgeo)
 
