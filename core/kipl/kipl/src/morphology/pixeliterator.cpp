@@ -398,7 +398,6 @@ ptrdiff_t PixelIterator::setPosition(int x, int y, int z)
 
 ptrdiff_t PixelIterator::setPosition(ptrdiff_t pos)
 {
-//    std::cout<<m_ndims<<", "<<m_connectivity<<"\n";
     switch (m_ndims) {
     case 2:
         if ((pos<m_rowStart) || (m_rowEnd<pos)) {
@@ -406,7 +405,6 @@ ptrdiff_t PixelIterator::setPosition(ptrdiff_t pos)
             m_currentY=pos/m_sx;
         }
         m_currentX=pos-m_currentY*m_sx;
-//        std::cout<<"pos="<<pos<<" x="<<m_currentX<<" y="<<m_currentY<<"\n";
         break;
     case 3:
         if ((pos<m_rowStart) || (m_rowEnd<pos)) {

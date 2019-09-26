@@ -25,7 +25,7 @@ namespace morphology {
 ///	\todo Fix edge processing
 
 template <typename ImgType,size_t N>
-int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, kipl::base::eConnectivity conn, bool bilevel=true);
+int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, kipl::base::eConnectivity conn, bool bilevel=false);
 
 /// \brief Computes the regional maximum image
 ///	\param img Input image

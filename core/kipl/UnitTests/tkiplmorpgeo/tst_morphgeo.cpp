@@ -1,6 +1,7 @@
 #include <QtTest>
 
 // add necessary includes here
+#include <QDebug>
 #include <sstream>
 
 #include <base/timage.h>
@@ -19,6 +20,11 @@ public:
     morphgeo();
     ~morphgeo();
 
+private:
+    void loadData();
+    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> bilevelimg;
+
 private slots:
     void test_RecByDilation();
     void test_RecByErosion();
@@ -34,13 +40,17 @@ private slots:
     void testExtendedMin();
     void testMinImpose();
     void testFillHole();
+    void testFillHoleTransposedTiming();
+    void testFillHoleTiming();
+    void testFillPeaksTransposedTiming();
+    void testFillPeaksTiming();
     void testFillPeaks();
     //void testFillExtrema();
 };
 
 morphgeo::morphgeo()
 {
-
+    loadData();
 }
 
 morphgeo::~morphgeo()
@@ -48,25 +58,31 @@ morphgeo::~morphgeo()
 
 }
 
+void morphgeo::loadData()
+{
+#ifdef DEBUG
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
+    kipl::io::ReadTIFF(bilevelimg,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+#else
+    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
+    kipl::io::ReadTIFF(bilevelimg,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+#endif
+    kipl::io::WriteTIFF(img,"scroll_256.tif");
+    kipl::io::WriteTIFF(bilevelimg,"bilevel_ws.tif");
+}
+
 void morphgeo::test_RecByDilation()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> img2;
     img2.Clone(img);
     img2+=1.0f;
 
     kipl::base::TImage<float,2> ref,dev;
-//    QBENCHMARK
-    {
-        ref=kipl::morphology::old::RecByDilation(img2,img,kipl::morphology::conn8);
-    }
-
-//    QBENCHMARK
-    {
+    ref=kipl::morphology::old::RecByDilation(img2,img,kipl::morphology::conn8);
+    try {
         dev=kipl::morphology::RecByDilation(img2,img,kipl::base::conn8);
+    } catch (kipl::base::KiplException &e) {
+        qDebug() << e.what();
     }
 
     QCOMPARE(ref.Size(),dev.Size());
@@ -85,10 +101,6 @@ void morphgeo::test_RecByDilation()
 
 void morphgeo::test_RecByErosion()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> img2;
     img2.Clone(img);
     img2+=1.0f;
@@ -98,7 +110,6 @@ void morphgeo::test_RecByErosion()
     {
         ref=kipl::morphology::old::RecByErosion(img,img2,kipl::morphology::conn8);
     }
-
 //   QBENCHMARK
     {
         dev=kipl::morphology::RecByErosion(img,img2,kipl::base::conn8);
@@ -121,8 +132,11 @@ void morphgeo::test_RecByErosion()
 void morphgeo::testSelfDualReconstruction()
 {
     kipl::base::TImage<float,2> img;
-
+#ifdef DEBUG
     kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
+#else
+    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
+#endif
 
     kipl::base::TImage<float,2> img2;
     img2.Clone(img);
@@ -156,19 +170,15 @@ void morphgeo::testSelfDualReconstruction()
 
 void morphgeo::testRemoveEdgeObjects()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
-
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
-        ref=kipl::morphology::old::RemoveEdgeObj(img,kipl::morphology::conn8);
+        ref=kipl::morphology::old::RemoveEdgeObj(bilevelimg,kipl::morphology::conn8);
     }
 
     //QBENCHMARK
     {
-        dev=kipl::morphology::RemoveEdgeObj(img,kipl::base::conn8);
+        dev=kipl::morphology::RemoveEdgeObj(bilevelimg,kipl::base::conn8);
     }
 
     QCOMPARE(ref.Size(),dev.Size());
@@ -188,19 +198,15 @@ void morphgeo::testRemoveEdgeObjects()
 
 void morphgeo::testRMin()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
-        kipl::morphology::old::RMin(img,ref,kipl::morphology::conn8,true);
+        kipl::morphology::old::RMin(img,ref,kipl::morphology::conn8,false);
     }
 
     //QBENCHMARK
     {
-        kipl::morphology::RMin(img,dev,kipl::base::conn8,true);
+        kipl::morphology::RMin(img,dev,kipl::base::conn8,false);
     }
 
     QCOMPARE(ref.Size(),dev.Size());
@@ -212,18 +218,14 @@ void morphgeo::testRMin()
             cnt++;
     }
 
-    QCOMPARE(cnt,0UL);
-
     kipl::io::WriteTIFF32(ref,"rmin_ref.tif");
     kipl::io::WriteTIFF32(dev,"rmin_dev.tif");
+
+    QCOMPARE(cnt,0UL);
 }
 
 void morphgeo::testRMax()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
@@ -252,10 +254,6 @@ void morphgeo::testRMax()
 
 void morphgeo::testhMax()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
@@ -284,10 +282,6 @@ void morphgeo::testhMax()
 
 void morphgeo::testExtendedMax()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
@@ -316,10 +310,6 @@ void morphgeo::testExtendedMax()
 
 void morphgeo::testhMin()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
@@ -348,10 +338,7 @@ void morphgeo::testhMin()
 
 void morphgeo::testExtendedMin()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
+    loadData();
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
@@ -371,11 +358,9 @@ void morphgeo::testExtendedMin()
         if (ref[i]!=dev[i])
             cnt++;
     }
-
-    QCOMPARE(cnt,0UL);
-
     kipl::io::WriteTIFF32(ref,"emin_ref.tif");
     kipl::io::WriteTIFF32(dev,"emin_dev.tif");
+    QCOMPARE(cnt,0UL);
 }
 
 void morphgeo::testMinImpose()
@@ -385,10 +370,7 @@ void morphgeo::testMinImpose()
 
 void morphgeo::testFillHole()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
+    loadData();
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK
     {
@@ -409,25 +391,53 @@ void morphgeo::testFillHole()
             cnt++;
     }
 
-    QCOMPARE(cnt,0UL);
-
     kipl::io::WriteTIFF32(ref,"fillhole_ref.tif");
     kipl::io::WriteTIFF32(dev,"fillhole_dev.tif");
+
+    QCOMPARE(cnt,0UL);
+}
+
+void morphgeo::testFillHoleTransposedTiming()
+{
+    loadData();
+
+    size_t dims[] = {64,1024};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillHole(input,kipl::base::conn8);
+    }
+}
+
+void morphgeo::testFillHoleTiming()
+{
+    loadData();
+    size_t dims[] = {1024,64};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillHole(input,kipl::base::conn8);
+    }
 }
 
 void morphgeo::testFillPeaks()
 {
-    kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/scroll_256.tif");
-
+    loadData();
     kipl::base::TImage<float,2> ref,dev;
-    QBENCHMARK
+    //QBENCHMARK
     {
         ref=kipl::morphology::old::FillPeaks(img,kipl::morphology::conn8);
     }
 
-    //QBENCHMARK
+    QBENCHMARK
     {
         dev=kipl::morphology::FillPeaks(img,kipl::base::conn8);
     }
@@ -441,12 +451,42 @@ void morphgeo::testFillPeaks()
             cnt++;
     }
 
-    QCOMPARE(cnt,0UL);
-
     kipl::io::WriteTIFF32(ref,"fillpeaks_ref.tif");
     kipl::io::WriteTIFF32(dev,"fillpeaks_dev.tif");
+
+    QCOMPARE(cnt,0UL);
 }
 
+void morphgeo::testFillPeaksTransposedTiming()
+{
+    loadData();
+
+    size_t dims[] = {64,1024};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillPeaks(input,kipl::base::conn8);
+    }
+}
+
+void morphgeo::testFillPeaksTiming()
+{
+    loadData();
+    size_t dims[] = {1024,64};
+    kipl::base::TImage<float,2> input(dims);
+    kipl::base::TImage<float,2> dev;
+
+    copy_n(img.GetDataPtr(),input.Size(),input.GetDataPtr());
+
+    QBENCHMARK
+    {
+        dev=kipl::morphology::FillPeaks(input,kipl::base::conn8);
+    }
+}
 
 QTEST_APPLESS_MAIN(morphgeo)
 
