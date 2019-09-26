@@ -232,8 +232,11 @@ int ContrastSampleAnalysis::getHistogram(float *axis, size_t *bins)
 
 void ContrastSampleAnalysis::makeHistogram()
 {
-    logger(logger.LogMessage,"Compute histogram");
+    std::ostringstream msg;
+    msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
+    logger(logger.LogMessage,msg.str());
     kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_bins,hist_size,0.0f,0.0f,hist_axis);
+    logger.message("Histogram ready");
 }
 
 }
