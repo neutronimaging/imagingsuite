@@ -14,7 +14,7 @@ template <typename T>
 double RegionMean(T const * const data, size_t width, size_t height, size_t stride);
 
 template <typename T>
-void minmax(T const * const data, const size_t N, T *minval, T *maxval);
+void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool finiteSafe=true);
 
 template <typename T>
 T sum(T * const begin, T const * const end);

@@ -161,12 +161,37 @@ double diffsum2(T * const beginA, T const * const endA, const T val)
 }
 
 template <typename T>
-void minmax(T const * const data, const size_t N, T *minval, T *maxval)
+struct NaNAwareLess
 {
-//	*minval=std::numeric_limits<T>::max();
-//	*maxval=-std::numeric_limits<T>::max();
+  bool operator () (T a, T b) const
+  {
 
-    std::pair<const T*, const T*> mm = minmax_element(data, data+N);
+    if (std::isfinite(a) && std::isfinite(b))
+    {
+      return (a < b);// Assume *any* non-NaN value is greater than NaN.
+    }
+
+    if (isfinite(a))
+    {
+
+
+    }
+    else
+    {
+
+    }
+    return false;
+  }
+};
+
+template <typename T>
+void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool finiteSafe)
+{
+    std::pair<const T*, const T*> mm;
+    if (finiteSafe)
+        mm = minmax_element(data, data+N,NaNAwareLess<T>());
+    else
+        mm = minmax_element(data, data+N);
 
     *minval=*(mm.first);
     *maxval=*(mm.second);
