@@ -945,7 +945,8 @@ void kiplMorphologyTest::testhMax()
         }
 
     kipl::base::TImage<float,2> res;
-    kipl::morphology::hMax(img,res,3.0f);
+
+    kipl::morphology::hMax(img,res,3.0f,kipl::base::conn4);
 
     QVERIFY(img.Size()==res.Size());
     QVERIFY(img.Size(0)==res.Size(0));

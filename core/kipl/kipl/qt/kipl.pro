@@ -191,6 +191,8 @@ HEADERS +=\
     ../include/io/core/matlabio.h \
     ../include/io/core/io_fits.hpp \
     ../include/io/DirAnalyzer.h \
+    ../include/morphology/core/morphextrema.hpp \
+    ../include/morphology/core/morphgeo.hpp \
     ../include/octree/octree.h \
     ../include/morphology/palagyi_skeleton.h \
     ../include/morphology/morphquantify.h \

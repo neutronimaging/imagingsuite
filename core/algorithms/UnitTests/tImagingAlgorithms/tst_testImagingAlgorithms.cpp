@@ -106,7 +106,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
     img.Clone();
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::morphology::conn8);
+    cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
@@ -121,7 +121,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
     img.Clone();
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks, ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::morphology::conn8);
+    cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],0.0f);
@@ -136,7 +136,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
     img.Clone();
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::morphology::conn8);
+    cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,1.0f,0.05f);
 
     QCOMPARE(img[pos1],1.6f);
@@ -155,7 +155,7 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
     ImagingAlgorithms::MorphSpotClean cleaner;
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::morphology::conn8);
+    cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,1.0f,0.05f);
 
     kipl::io::WriteTIFF32(img,"spotcleaned.tif");
@@ -177,7 +177,7 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
     }
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
-    cleaner.setConnectivity(kipl::morphology::conn4);
+    cleaner.setConnectivity(kipl::base::conn4);
 
     cleaner.process(res,0.04,0.01);
 

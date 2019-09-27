@@ -20,7 +20,7 @@ namespace ImagingAlgorithms {
 MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
-    m_eConnectivity(kipl::morphology::conn8),
+    m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
     m_nEdgeSmoothLength(9),
@@ -235,7 +235,7 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
 
 }
 
-void MorphSpotClean::setConnectivity(kipl::morphology::MorphConnect conn)
+void MorphSpotClean::setConnectivity(kipl::base::eConnectivity conn)
 {
     if ((conn!=kipl::morphology::conn8) && (conn!=kipl::morphology::conn4))
         throw ImagingException("MorphSpotClean only supports 4- and 8-connectivity",__FILE__,__LINE__);
@@ -485,7 +485,7 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
         pTh[i]= pTh[i]!=0.0f;
 
     kipl::base::TImage<int,2> lbl;
-    size_t N=LabelImage(thimg, lbl,m_eConnectivity);
+    size_t N=kipl::morphology::LabelImage(thimg, lbl,m_eConnectivity);
 
     vector<pair<size_t,size_t> > area;
     vector<size_t> removelist;
@@ -500,7 +500,7 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
     msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
     logger.message(msg.str());
 
-    RemoveConnectedRegion(lbl, removelist, m_eConnectivity);
+    kipl::morphology::RemoveConnectedRegion(lbl, removelist, m_eConnectivity);
 
     int *pLbl=lbl.GetDataPtr();
     float *pImg=img.GetDataPtr();

@@ -76,16 +76,24 @@ public:
 
     /// \brief returns the forward neighborhood of the pixel
     /// \param idx index of the neighbor pixel
-    ptrdiff_t forwardNeighborhood(int idx);
+    const std::vector<ptrdiff_t> & forwardNeighborhood();
 
     /// \brief returns the forward neighborhood of the pixel
     /// \param idx index of the neighbor pixel
-    ptrdiff_t backwardNeighborhood(ptrdiff_t idx);
+    const std::vector<ptrdiff_t> & backwardNeighborhood();
+
+    /// \brief returns the forward neighborhood of the pixel
+    /// \param idx index of the neighbor pixel
+    ptrdiff_t forwardNeighborhood(size_t idx);
+
+    /// \brief returns the forward neighborhood of the pixel
+    /// \param idx index of the neighbor pixel
+    ptrdiff_t backwardNeighborhood(size_t idx);
 
     /// \brief Returns the size of the forward or backward neighborhood with the current connectivity
-    ptrdiff_t forwardSize();
+    size_t forwardSize();
 
-    ptrdiff_t backwardSize();
+    size_t backwardSize();
 
     /// \brief Returns the pixel index of the current pixel position
     ptrdiff_t currentPosition() ;
@@ -124,6 +132,8 @@ protected:
     ptrdiff_t m_sxy;
 
     kipl::base::eConnectivity m_connectivity;
+
+    // Full neighborhoods
     std::vector<ptrdiff_t> m_neighborhoodIndex;
     std::vector<ptrdiff_t> m_edgeX0;
     std::vector<ptrdiff_t> m_edgeX1;
@@ -155,8 +165,69 @@ protected:
     std::vector<ptrdiff_t> m_cornerX1Y0Z1;
     std::vector<ptrdiff_t> m_cornerX1Y1Z1;
 
+    // Forward neighborhood
     std::vector<ptrdiff_t> m_forward;
+    std::vector<ptrdiff_t> m_fedgeX0;
+    std::vector<ptrdiff_t> m_fedgeX1;
+    std::vector<ptrdiff_t> m_fedgeY0;
+    std::vector<ptrdiff_t> m_fedgeY1;
+    std::vector<ptrdiff_t> m_fedgeZ0;
+    std::vector<ptrdiff_t> m_fedgeZ1;
+
+    // corners are indexed with xyz
+    std::vector<ptrdiff_t> m_fcornerX0Y0;
+    std::vector<ptrdiff_t> m_fcornerX1Y0;
+    std::vector<ptrdiff_t> m_fcornerX0Y1;
+    std::vector<ptrdiff_t> m_fcornerX1Y1;
+    std::vector<ptrdiff_t> m_fcornerX0Z0;
+    std::vector<ptrdiff_t> m_fcornerX0Z1;
+    std::vector<ptrdiff_t> m_fcornerX1Z0;
+    std::vector<ptrdiff_t> m_fcornerX1Z1;
+    std::vector<ptrdiff_t> m_fcornerY0Z0;
+    std::vector<ptrdiff_t> m_fcornerY0Z1;
+    std::vector<ptrdiff_t> m_fcornerY1Z0;
+    std::vector<ptrdiff_t> m_fcornerY1Z1;
+
+    std::vector<ptrdiff_t> m_fcornerX0Y0Z0;
+    std::vector<ptrdiff_t> m_fcornerX1Y0Z0;
+    std::vector<ptrdiff_t> m_fcornerX0Y1Z0;
+    std::vector<ptrdiff_t> m_fcornerX1Y1Z0;
+    std::vector<ptrdiff_t> m_fcornerX0Y0Z1;
+    std::vector<ptrdiff_t> m_fcornerX0Y1Z1;
+    std::vector<ptrdiff_t> m_fcornerX1Y0Z1;
+    std::vector<ptrdiff_t> m_fcornerX1Y1Z1;
+
+    // Backward neighborhood
     std::vector<ptrdiff_t> m_backward;
+    std::vector<ptrdiff_t> m_bedgeX0;
+    std::vector<ptrdiff_t> m_bedgeX1;
+    std::vector<ptrdiff_t> m_bedgeY0;
+    std::vector<ptrdiff_t> m_bedgeY1;
+    std::vector<ptrdiff_t> m_bedgeZ0;
+    std::vector<ptrdiff_t> m_bedgeZ1;
+
+    // corners are indexed with xyz
+    std::vector<ptrdiff_t> m_bcornerX0Y0;
+    std::vector<ptrdiff_t> m_bcornerX1Y0;
+    std::vector<ptrdiff_t> m_bcornerX0Y1;
+    std::vector<ptrdiff_t> m_bcornerX1Y1;
+    std::vector<ptrdiff_t> m_bcornerX0Z0;
+    std::vector<ptrdiff_t> m_bcornerX0Z1;
+    std::vector<ptrdiff_t> m_bcornerX1Z0;
+    std::vector<ptrdiff_t> m_bcornerX1Z1;
+    std::vector<ptrdiff_t> m_bcornerY0Z0;
+    std::vector<ptrdiff_t> m_bcornerY0Z1;
+    std::vector<ptrdiff_t> m_bcornerY1Z0;
+    std::vector<ptrdiff_t> m_bcornerY1Z1;
+
+    std::vector<ptrdiff_t> m_bcornerX0Y0Z0;
+    std::vector<ptrdiff_t> m_bcornerX1Y0Z0;
+    std::vector<ptrdiff_t> m_bcornerX0Y1Z0;
+    std::vector<ptrdiff_t> m_bcornerX1Y1Z0;
+    std::vector<ptrdiff_t> m_bcornerX0Y0Z1;
+    std::vector<ptrdiff_t> m_bcornerX0Y1Z1;
+    std::vector<ptrdiff_t> m_bcornerX1Y0Z1;
+    std::vector<ptrdiff_t> m_bcornerX1Y1Z1;
 
     ptrdiff_t m_currentPosition;
     kipl::base::eEdgeStatus m_edgeStatus;

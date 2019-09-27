@@ -90,14 +90,14 @@ public:
 	/// \test The method is tested with unit test
 	int References() {return m_buffer.References();}
 	// Arithmetic operators
-	TImage<T,N> & operator+=(TImage<T,N> &img); //< Operator to add two images
-	TImage<T,N> & operator-=(TImage<T,N> &img);
-	TImage<T,N> & operator*=(TImage<T,N> &img);
-	TImage<T,N> & operator/=(TImage<T,N> &img);
-	TImage<T,N> & operator+=(const T x);
-	TImage<T,N> & operator-=(const T x);
-	TImage<T,N> & operator*=(const T x);
-	TImage<T,N> & operator/=(const T x);
+    const TImage<T,N> & operator+=(const TImage<T,N> &img); //< Operator to add two images
+    const TImage<T,N> & operator-=(const TImage<T,N> &img);
+    const TImage<T,N> & operator*=(const TImage<T,N> &img);
+    const TImage<T,N> & operator/=(const TImage<T,N> &img);
+    const TImage<T,N> & operator+=(const T x);
+    const TImage<T,N> & operator-=(const T x);
+    const TImage<T,N> & operator*=(const T x);
+    const TImage<T,N> & operator/=(const T x);
 
     TImage<T,N> operator+(const T x) const;
     TImage<T,N> operator-(const T x) const;
@@ -166,28 +166,28 @@ private:
 /// \param imgB The second term
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator+(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator+(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise difference between two images
 /// \param imgA The first term
 /// \param imgB The second term
 /// \returns The pixewise difference
 template<typename T, size_t N>
-TImage<T,N> operator-(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator-(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise product between two images
 /// \param imgA The first factor
 /// \param imgB The second factor
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator*(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator*(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise division between two images
 /// \param imgA The numerator
 /// \param imgB The denominator
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator/(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator/(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Send information about the image to a stream
 /// \param s target stream

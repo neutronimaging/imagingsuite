@@ -24,6 +24,21 @@ KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn)
     }
     return dims;
 }
+
+int connectivityNeighbors(kipl::base::eConnectivity conn)
+{
+    switch (conn) {
+    case conn4  : return 4;
+    case conn8  : return 8;
+    case conn6  : return 6;
+    case conn18 : return 18;
+    case conn26 : return 26;
+    case euclid : return 0;
+    default :
+        throw kipl::base::KiplException("Unknown connectivity enum value encountered", __FILE__, __LINE__);
+    };
+}
+
 }
 
 }

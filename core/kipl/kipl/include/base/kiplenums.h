@@ -81,12 +81,12 @@ enum eEndians {
 
 /// \brief selector for neighborhood connectivity
 enum eConnectivity {
-    conn4=4,
-    conn8=8,
-    conn6=6,
-    conn18=18,
-    conn26=26,
-    euclid=0
+    conn4,
+    conn8,
+    conn6,
+    conn18,
+    conn26,
+    euclid
 };
 
 enum eEdgeStatus {
@@ -121,6 +121,7 @@ enum eEdgeStatus {
 };
 
 KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn);
+KIPLSHARED_EXPORT int connectivityNeighbors(kipl::base::eConnectivity conn);
 }}
 
 /// \brief Stream output operator for eImagePlanes

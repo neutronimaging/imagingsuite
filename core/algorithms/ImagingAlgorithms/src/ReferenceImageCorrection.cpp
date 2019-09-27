@@ -422,12 +422,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 //    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
     kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
-    maskOtsuFilled = FillPeaks(maskOtsu,kipl::morphology::conn4); // from morphextrema
-
-
+    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
 
      float bg = 1.0f;
-     int num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::morphology::conn4, bg);
+     int num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
      vector< pair< size_t, size_t > > area;
      kipl::morphology::LabelArea(labelImage, num_obj, area);
 
@@ -975,10 +973,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     }
 
     kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
-    maskOtsuFilled = FillPeaks(maskOtsu,kipl::morphology::conn4); // from morphextrema
+    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
 
     float bg = 1.0f;
-    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::morphology::conn4, bg);
+    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::base::conn4, bg);
 
     vector< pair< size_t, size_t > > area;
     kipl::morphology::LabelArea(labelImage, num_obj, area);

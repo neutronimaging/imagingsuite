@@ -13,8 +13,6 @@ public:
 	ReconException(std::string msg);
 	ReconException(std::string msg, std::string filename, size_t line);
 	virtual ~ReconException(void);
-
-    virtual const char* what() const;
 private:
 };
 

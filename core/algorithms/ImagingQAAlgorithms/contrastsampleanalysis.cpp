@@ -115,6 +115,7 @@ void ContrastSampleAnalysis::findCenters(float ps)
     const float radius = 0.5f*metricInsetDiameter/ps;
 
     logger(logger.LogMessage,"Circ Hough transform");
+
     chm=cht(m_Img2D,radius,true);
 
     if (saveIntermediateImages)
@@ -130,7 +131,7 @@ void ContrastSampleAnalysis::findCenters(float ps)
     std::ostringstream msg;
     msg<<"hmax with h="<<threshold;
     logger(logger.LogMessage,msg.str());
-    kipl::morphology::hMax(chm,peaks,threshold, kipl::morphology::conn4);
+    kipl::morphology::hMax(chm,peaks,threshold, kipl::base::conn4);
 
     if (saveIntermediateImages)
         kipl::io::WriteTIFF32(peaks,"csa_hmax.tif");
@@ -160,10 +161,10 @@ void ContrastSampleAnalysis::findCenters(float ps)
     msg.str("");
     msg<<"Found "<<dots.size()<<" dots";
     logger(logger.LogMessage,msg.str());
-    TNT::Array2D<float> H(dots.size()-1,2);
-    TNT::Array1D<float> a(dots.size()-1);
+    TNT::Array2D<float> H(dots.size()-1UL,2);
+    TNT::Array1D<float> a(dots.size()-1UL);
     std::pair<float,float> xyN=dots.back();
-    for (int i=0; i<dots.size()-1; ++i) {
+    for (size_t i=0; i<dots.size()-1; ++i) {
         H[i][0]=2*(xyN.first-dots[i].first);
         H[i][1]=2*(xyN.second-dots[i].second);
         a[i]=xyN.first*xyN.first
@@ -232,8 +233,11 @@ int ContrastSampleAnalysis::getHistogram(float *axis, size_t *bins)
 
 void ContrastSampleAnalysis::makeHistogram()
 {
-    logger(logger.LogMessage,"Compute histogram");
+    std::ostringstream msg;
+    msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
+    logger(logger.LogMessage,msg.str());
     kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_bins,hist_size,0.0f,0.0f,hist_axis);
+    logger.message("Histogram ready");
 }
 
 }
