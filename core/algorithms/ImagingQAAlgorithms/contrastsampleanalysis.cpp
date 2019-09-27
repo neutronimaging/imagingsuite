@@ -115,6 +115,7 @@ void ContrastSampleAnalysis::findCenters(float ps)
     const float radius = 0.5f*metricInsetDiameter/ps;
 
     logger(logger.LogMessage,"Circ Hough transform");
+
     chm=cht(m_Img2D,radius,true);
 
     if (saveIntermediateImages)
