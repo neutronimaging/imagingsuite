@@ -113,7 +113,7 @@ void ContrastSampleAnalysis::findCenters(float ps)
     kipl::math::CircularHoughTransform cht;
 
     const float radius = 0.5f*metricInsetDiameter/ps;
-
+// Add timing
     logger(logger.LogMessage,"Circ Hough transform");
 
     chm=cht(m_Img2D,radius,true);
