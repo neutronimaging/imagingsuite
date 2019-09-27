@@ -480,6 +480,10 @@ void TKiplMathTest::testMinMax()
     img[3]=1.0f/0.0f;
     img[4]=-1.0f/0.0f;
 
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
+    QCOMPARE(mi,0.0f);
+    QCOMPARE(ma,img.Size()-1.0f);
+
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
     QCOMPARE(mi,-1.0f/0.0f);
     QCOMPARE(ma,1.0f/0.0f);
