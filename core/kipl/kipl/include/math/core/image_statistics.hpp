@@ -185,10 +185,13 @@ struct NaNAwareLess
 };
 
 template <typename T>
-void minmax(T const * const data, const size_t N, T *minval, T *maxval)
+void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool finiteSafe)
 {
-
-    std::pair<const T*, const T*> mm = minmax_element(data, data+N,NaNAwareLess<T>());
+    std::pair<const T*, const T*> mm;
+    if (finiteSafe)
+        mm = minmax_element(data, data+N,NaNAwareLess<T>());
+    else
+        mm = minmax_element(data, data+N);
 
     *minval=*(mm.first);
     *maxval=*(mm.second);

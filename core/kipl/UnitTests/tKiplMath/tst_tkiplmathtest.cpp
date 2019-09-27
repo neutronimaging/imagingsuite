@@ -47,6 +47,7 @@ private Q_SLOTS:
     void testCovIntactData();
     void testCovSmallData();
     void testCorrSmallData();
+    void testMinMax();
 
 
 
@@ -458,6 +459,31 @@ void TKiplMathTest::testCorrSmallData()
         std::cout<<std::endl;
         QVERIFY(fabs(C[i][i]-1.0)<1e-7);
     }
+}
+
+void TKiplMathTest::testMinMax()
+{
+    size_t dims[]={100UL,100UL};
+    kipl::base::TImage<float,2> img(dims);
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+
+    float mi, ma;
+
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
+    QCOMPARE(mi,0.0f);
+    QCOMPARE(ma,img.Size()-1.0f);
+
+    img[1]=sqrt(-1.0f);
+    img[2]=-sqrt(-1.0f);
+    img[3]=1.0f/0.0f;
+    img[4]=-1.0f/0.0f;
+
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
+    QCOMPARE(mi,-1.0f/0.0f);
+    QCOMPARE(ma,1.0f/0.0f);
+
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)
