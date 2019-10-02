@@ -191,6 +191,28 @@ void PlotWidget::updateAxes()
     ui->chart->chart()->axisY()->setMax(maxY);
 }
 
+void PlotWidget::setXLabel(const QString &lbl)
+{
+    if (lbl.isEmpty())
+        ui->chart->chart()->axisX()->setTitleVisible(false);
+    else
+    {
+        ui->chart->chart()->axisX()->setTitleText(lbl);
+        ui->chart->chart()->axisX()->setTitleVisible(true);
+    }
+}
+
+void PlotWidget::setYLabel(const QString &lbl)
+{
+    if (lbl.isEmpty())
+        ui->chart->chart()->axisY()->setTitleVisible(false);
+    else
+    {
+        ui->chart->chart()->axisY()->setTitleText(lbl);
+        ui->chart->chart()->axisY()->setTitleVisible(true);
+    }
+}
+
 void PlotWidget::findMinMax()
 {
     minX=std::numeric_limits<double>::max();
