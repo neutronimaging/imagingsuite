@@ -42,6 +42,9 @@ public:
     void setTitle(QString title);
     void hideTitle();
     void updateAxes();
+    void setXLabel(const QString & lbl="");
+    void setYLabel(const QString & lbl="");
+
 
     void setCursor(int id, PlotCursor *c);
     void clearCursor(int id);
