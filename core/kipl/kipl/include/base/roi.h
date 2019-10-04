@@ -22,7 +22,8 @@ class KIPLSHARED_EXPORT RectROI
         virtual ~RectROI();
 
         virtual RectROI & operator=(const RectROI & roi);
-        virtual int getBox(size_t *roi);
+        virtual int getBox(size_t *roi) const;
+        size_t const * box() const;
         int getDimensions();
         int getID();
         std::string toString();

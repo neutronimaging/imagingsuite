@@ -27,7 +27,7 @@ public:
 
     /// Serialization of the module description
     /// \param indent number of spaces used for the formatting indent of the configuration block.
-    std::string WriteXML(int indent);
+    const std::string WriteXML(int indent);
     /// Parser for a module block in an XML formatted configuration file.
     /// \param Reference to an xml reader struct for the opened file.
 	void ParseModule(xmlTextReaderPtr reader);
