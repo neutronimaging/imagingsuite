@@ -1,0 +1,4088 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    144375,       4080]
+NotebookOptionsPosition[    134988,       3782]
+NotebookOutlinePosition[    135625,       3808]
+CellTagsIndexPosition[    135538,       3803]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{" ", 
+  RowBox[{
+   RowBox[{"f", "[", 
+    RowBox[{
+    "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", ",",
+      "b", ",", "c", ",", "d"}], " ", "]"}], ":=", " ", 
+   RowBox[{
+    RowBox[{"Exp", "[", 
+     RowBox[{"-", 
+      RowBox[{"(", 
+       RowBox[{"a", "+", 
+        RowBox[{"b", "*", "x"}]}], ")"}]}], "]"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{"-", 
+        RowBox[{"(", 
+         RowBox[{"c", "+", 
+          RowBox[{"d", "*", "x"}]}], ")"}]}], "]"}], "+", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{"Exp", "[", 
+          RowBox[{"-", 
+           RowBox[{"(", 
+            RowBox[{"c", "+", 
+             RowBox[{"d", "*", "x"}]}], ")"}]}], "]"}]}], ")"}], "*", "0.5", 
+       "*", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Erfc", "[", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "x"}], "+", "x0"}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Sqrt", "[", "2", "]"}], " ", "\[Sigma]"}], ")"}]}], 
+          "]"}], "-", 
+         RowBox[{
+          RowBox[{"Exp", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"-", 
+              RowBox[{"(", 
+               RowBox[{"x", "-", "x0"}], ")"}]}], "/", "\[Alpha]"}], "+", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"\[Sigma]", "*", "\[Sigma]"}], ")"}], "/", 
+             RowBox[{"(", 
+              RowBox[{"2", "*", "\[Alpha]", "*", "\[Alpha]"}], ")"}]}]}], 
+           "]"}], "*", 
+          RowBox[{"Erfc", "[", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"-", 
+               RowBox[{"(", 
+                RowBox[{"x", "-", "x0"}], ")"}]}], "/", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"Sqrt", "[", "2", "]"}], " ", "\[Sigma]"}], ")"}]}], 
+             ")"}], "+", 
+            RowBox[{"\[Sigma]", "/", "\[Alpha]"}]}], "]"}]}]}], ")"}]}]}], 
+     ")"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.7776253045835238`*^9, 3.7776253731349125`*^9}, {
+  3.7776272252541018`*^9, 3.777627228344147*^9}, {3.777627403207257*^9, 
+  3.777627414097727*^9}, {3.7776286380529413`*^9, 3.777628651003502*^9}, {
+  3.7776290811441975`*^9, 3.7776291684165554`*^9}, {3.777631162822421*^9, 
+  3.7776311853028927`*^9}, {3.7776314676836953`*^9, 3.777631512974366*^9}, {
+  3.777631651210388*^9, 3.777631661648611*^9}},
+ ExpressionUUID -> "cd5d6c02-b40f-440c-ae39-9ecf54d40cc2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "f"}]], "Input",
+ CellChangeTimes->{{3.7776253948852353`*^9, 3.7776254234456577`*^9}, {
+  3.7776271480612965`*^9, 3.7776271809723115`*^9}, {3.7776272545045347`*^9, 
+  3.7776272797949095`*^9}, {3.777627326345838*^9, 3.77762733254593*^9}, {
+  3.7776274227978525`*^9, 3.777627442588149*^9}},
+ ExpressionUUID -> "3c89d639-8aa8-48f5-bb4e-ba18b9015d00"],
+
+Cell["Global`f", "Print", "PrintUsage",
+ CellChangeTimes->{3.779429860883733*^9},
+ CellTags->"Info3779437060-7948263"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {GridBox[{
+       {
+        RowBox[{
+         RowBox[{"f", "[", 
+          RowBox[{
+          "x", ",", "x0", ",", "\[Sigma]", ",", "\[Alpha]", ",", "a", ",", 
+           "b", ",", "c", ",", "d"}], "]"}], ":=", 
+         RowBox[{
+          RowBox[{"Exp", "[", 
+           RowBox[{"-", 
+            RowBox[{"(", 
+             RowBox[{"a", "+", 
+              RowBox[{"b", " ", "x"}]}], ")"}]}], "]"}], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"Exp", "[", 
+             RowBox[{"-", 
+              RowBox[{"(", 
+               RowBox[{"c", "+", 
+                RowBox[{"d", " ", "x"}]}], ")"}]}], "]"}], "+", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"1", "-", 
+               RowBox[{"Exp", "[", 
+                RowBox[{"-", 
+                 RowBox[{"(", 
+                  RowBox[{"c", "+", 
+                   RowBox[{"d", " ", "x"}]}], ")"}]}], "]"}]}], ")"}], " ", 
+             "0.5`", " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"Erfc", "[", 
+                FractionBox[
+                 RowBox[{
+                  RowBox[{"-", "x"}], "+", "x0"}], 
+                 RowBox[{
+                  SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "-", 
+               RowBox[{
+                RowBox[{"Exp", "[", 
+                 RowBox[{
+                  RowBox[{"-", 
+                   FractionBox[
+                    RowBox[{"x", "-", "x0"}], "\[Alpha]"]}], "+", 
+                  FractionBox[
+                   RowBox[{"\[Sigma]", " ", "\[Sigma]"}], 
+                   RowBox[{"2", " ", "\[Alpha]", " ", "\[Alpha]"}]]}], "]"}], 
+                " ", 
+                RowBox[{"Erfc", "[", 
+                 RowBox[{
+                  RowBox[{"-", 
+                   FractionBox[
+                    RowBox[{"x", "-", "x0"}], 
+                    RowBox[{
+                    SqrtBox["2"], " ", "\[Sigma]"}]]}], "+", 
+                  FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}]}], ")"}]}]}],
+            ")"}]}]}]}
+      },
+      BaselinePosition->{Baseline, {1, 1}},
+      GridBoxAlignment->{
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+        "RowsIndexed" -> {}},
+      GridBoxItemSize->{"Columns" -> {{
+           Scaled[0.999]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+        "RowsIndexed" -> {}}]}
+   },
+   BaselinePosition->{Baseline, {1, 1}},
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}}],
+  Definition[$CellContext`f],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.7794298611862803`*^9},
+ CellTags->"Info3779437060-7948263"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{" ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"fx0", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], "]"}], " ", "=", " ", 
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+       "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+        ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}]}], 
+   "  ", "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.777625433496414*^9, 3.777625497218463*^9}, {
+  3.7776274254178953`*^9, 3.777627528560087*^9}, {3.7776281008079643`*^9, 
+  3.777628125448481*^9}, {3.7776286658137207`*^9, 3.777628676733941*^9}, {
+  3.7776287588061557`*^9, 3.777628759646177*^9}, {3.7776315398357215`*^9, 
+  3.7776315493058615`*^9}},
+ ExpressionUUID -> "af7e6596-d13b-423c-a092-af68e5413e1e"],
+
+Cell[BoxData[
+ RowBox[{"0.5`", " ", 
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", "a"}], "-", 
+    RowBox[{"b", " ", "x"}]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{"1", "-", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", "c"}], "-", 
+      RowBox[{"d", " ", "x"}]}]]}], ")"}], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         FractionBox[
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "x"}], "+", "x0"}], ")"}], "2"], 
+          RowBox[{"2", " ", 
+           SuperscriptBox["\[Sigma]", "2"]}]]}]], " ", 
+       SqrtBox[
+        FractionBox["2", "\[Pi]"]]}], "\[Sigma]"]}], "+", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Alpha]", "2"]}]], "-", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox[
+            RowBox[{
+             RowBox[{"-", "x"}], "+", "x0"}], 
+            RowBox[{
+             SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+           FractionBox["\[Sigma]", "\[Alpha]"]}], ")"}], "2"]}]], " ", 
+      SqrtBox[
+       FractionBox["2", "\[Pi]"]]}], "\[Sigma]"], "-", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+      RowBox[{"Erfc", "[", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+        FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}], "\[Alpha]"]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{3.7777126690464573`*^9, 3.777889706859107*^9}]
+}, Open  ]],
+
+Cell["First derivative with respect to sigma", "Text",
+ CellChangeTimes->{{3.7777001667691584`*^9, 
+  3.777700178769335*^9}},ExpressionUUID->"7d2e5814-c2e5-4625-8541-\
+be5d638add54"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+  " "}]], "Input",
+ CellChangeTimes->{3.777699493181697*^9},
+ ExpressionUUID -> "7cb440ef-4fe9-4f06-aaee-5b8870a21c75"],
+
+Cell[BoxData[
+ RowBox[{"0.5`", " ", 
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", "a"}], "-", 
+    RowBox[{"b", " ", "x"}]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{"1", "-", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", "c"}], "-", 
+      RowBox[{"d", " ", "x"}]}]]}], ")"}], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Alpha]", "2"]}]], "-", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox[
+            RowBox[{
+             RowBox[{"-", "x"}], "+", "x0"}], 
+            RowBox[{
+             SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+           FractionBox["\[Sigma]", "\[Alpha]"]}], ")"}], "2"]}]], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["1", "\[Alpha]"], "-", 
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", 
+          SuperscriptBox["\[Sigma]", "2"]}]]}], ")"}]}], 
+     SqrtBox["\[Pi]"]], "+", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"-", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], ")"}], "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Sigma]", "2"]}]]}]], " ", 
+      SqrtBox[
+       FractionBox["2", "\[Pi]"]], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "x"}], "+", "x0"}], ")"}]}], 
+     SuperscriptBox["\[Sigma]", "2"]], "-", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", "\[Sigma]", " ", 
+      RowBox[{"Erfc", "[", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+        FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}], 
+     SuperscriptBox["\[Alpha]", "2"]]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.7776994955917435`*^9, 3.777889709614285*^9},
+ ExpressionUUID -> "1bf0c79d-88cc-48e3-a4cf-19c5834ac72a"]
+}, Open  ]],
+
+Cell["", "Text",
+ CellChangeTimes->{{3.7776994790280285`*^9, 
+  3.7776994855815372`*^9}},ExpressionUUID->"ad472678-5f27-47e6-9c1e-\
+b32d161ad586"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{
+  3.777697724241373*^9, {3.777698347176142*^9, 3.7776983489861813`*^9}, {
+   3.7776994087390537`*^9, 3.7776994224297495`*^9}},
+ NumberMarks->False,
+ ExpressionUUID -> "51b52c80-75a9-44ab-83e5-c8d28df8ea48"],
+
+Cell[BoxData["2.34901885144358674512289141241`15.954589770191005*^-934"], \
+"Output",
+ CellChangeTimes->{
+  3.777699424969801*^9},ExpressionUUID->"85d91f06-4a91-4082-859b-\
+8c6dd1222fdd"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777699407139016*^9, 3.777699407149016*^9}, 
+   3.7776999415628567`*^9, {3.7776999731333227`*^9, 
+   3.7776999773637686`*^9}},ExpressionUUID->"108f5386-79ef-4459-a1ed-\
+867f5f74016e"],
+
+Cell[BoxData["6.2613910965094186960161066278541015219702`15.954589770191005*^-\
+441"], "Output",
+ CellChangeTimes->{
+  3.777699978013775*^9},ExpressionUUID->"786abc69-0dbf-41dc-930b-\
+2df678fd3ed2"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{3.777699405448985*^9},
+ NumberMarks->False,ExpressionUUID->"dcc93040-3433-4ea0-851c-443c8b4b2826"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7776994123891263`*^9, 3.777699412409135*^9}, {
+  3.7776999953640337`*^9, 
+  3.7777000083542285`*^9}},ExpressionUUID->"0d67bbb7-8148-40b6-8d86-\
+22c8ede32fd8"],
+
+Cell[BoxData["7.549234777579141`*^-130"], "Output",
+ CellChangeTimes->{
+  3.7777000089742327`*^9},ExpressionUUID->"d7d5f586-90c4-43ea-9c4d-\
+420d0ec18eff"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777000209044094`*^9, 3.777700025714483*^9}},
+ ExpressionUUID -> "c9b4f7fc-4e38-406e-8d02-cf35af135381"],
+
+Cell[BoxData["0.07685921429148715`"], "Output",
+ CellChangeTimes->{
+  3.7777000262344894`*^9},ExpressionUUID->"ab8b11f0-cc3d-4349-bfa6-\
+987818429f5c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777000421958294`*^9, 
+  3.777700047815913*^9}},ExpressionUUID->"6afbd984-04fd-49f7-b32d-\
+3ff54461b122"],
+
+Cell[BoxData[
+ RowBox[{"-", "5.392797188669587`"}]], "Output",
+ CellChangeTimes->{
+  3.7777000485459204`*^9},ExpressionUUID->"bc0d9e0b-6609-47cc-8dce-\
+343b1a26b2e7"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777000783663645`*^9, 
+  3.777700083776445*^9}},ExpressionUUID->"702a69a2-25b5-41cd-b4ca-\
+e44d9ff386ca"],
+
+Cell[BoxData[
+ RowBox[{"-", "1.398401273086945`"}]], "Output",
+ CellChangeTimes->{
+  3.7777000842564497`*^9},ExpressionUUID->"118511ab-e704-4fbb-94cf-\
+d1dfa197736b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777007870197773`*^9, 
+  3.777700798010006*^9}},ExpressionUUID->"8f674927-549e-4e62-81fb-\
+84d198df5c5c"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.3618729576663814`"}]], "Output",
+ CellChangeTimes->{
+  3.7777007992400284`*^9},ExpressionUUID->"2a6213e4-88d3-4002-8c1e-\
+2b6baf87edc1"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777700872161463*^9, 
+  3.777700882651618*^9}},ExpressionUUID->"f1c37b43-d1a1-4c52-92fb-\
+2b472277883d"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.09347069593470206`"}]], "Output",
+ CellChangeTimes->{3.7777008837016306`*^9},
+ ExpressionUUID -> "cd1688d2-9265-486a-b63b-bae2eaa47c28"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777700098287318*^9, 
+  3.7777001187673206`*^9}},ExpressionUUID->"32876896-6054-40e5-b0ad-\
+a483536d96d7"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.011927467858628192`"}]], "Output",
+ CellChangeTimes->{{3.777700104197102*^9, 
+  3.7777001199973354`*^9}},ExpressionUUID->"2f905cec-0adf-41fc-a8dd-\
+44f2a6bcb1b0"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777009336427393`*^9, 
+  3.777700944332894*^9}},ExpressionUUID->"d03ffc24-c0ad-42c1-8fae-\
+dfac3d7f40fd"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0007884949558597973`"}]], "Output",
+ CellChangeTimes->{
+  3.777700945462911*^9},ExpressionUUID->"f7ece379-9439-417e-a3c2-\
+85f73293013d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777001374975967`*^9, 
+  3.7777001407776456`*^9}},ExpressionUUID->"26a140a7-8d9b-4dca-b920-\
+91bcb0250237"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00005187383765963174`"}]], "Output",
+ CellChangeTimes->{
+  3.7777001423676653`*^9},ExpressionUUID->"4e411c96-d573-4dfe-a525-\
+3fcf8b111af6"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Sigma]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777700148637762*^9, 
+  3.7777001524078183`*^9}},ExpressionUUID->"7138acaa-b602-4a88-b0ac-\
+d7d3b7edc005"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", "3.3988403062551376`*^-6"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.777701403725672*^9, 
+  3.777701403735669*^9}},ExpressionUUID->"0fcdb71b-9350-4e92-8138-\
+abf867650ee0"],
+
+Cell["First derivative with respect to x0", "Text",
+ CellChangeTimes->{{3.7777014101058054`*^9, 
+  3.7777014206060257`*^9}},ExpressionUUID->"b7a9bd77-49b0-47c1-8714-\
+80a8bc3769c0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], 
+  " "}]], "Input",
+ CellChangeTimes->{{3.777701438886409*^9, 3.7777014396564245`*^9}},
+ ExpressionUUID -> "a8fe082d-761e-4ecc-a696-897f457c44cb"],
+
+Cell[BoxData[
+ RowBox[{"0.5`", " ", 
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", "a"}], "-", 
+    RowBox[{"b", " ", "x"}]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{"1", "-", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", "c"}], "-", 
+      RowBox[{"d", " ", "x"}]}]]}], ")"}], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         FractionBox[
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "x"}], "+", "x0"}], ")"}], "2"], 
+          RowBox[{"2", " ", 
+           SuperscriptBox["\[Sigma]", "2"]}]]}]], " ", 
+       SqrtBox[
+        FractionBox["2", "\[Pi]"]]}], "\[Sigma]"]}], "+", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Alpha]", "2"]}]], "-", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox[
+            RowBox[{
+             RowBox[{"-", "x"}], "+", "x0"}], 
+            RowBox[{
+             SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+           FractionBox["\[Sigma]", "\[Alpha]"]}], ")"}], "2"]}]], " ", 
+      SqrtBox[
+       FractionBox["2", "\[Pi]"]]}], "\[Sigma]"], "-", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+      RowBox[{"Erfc", "[", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+        FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}], "\[Alpha]"]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{
+  3.7777014403864374`*^9, 3.777810216211031*^9, 3.777889714847208*^9, {
+   3.778584843231422*^9, 3.778584862864682*^9}, 3.7794300136389627`*^9},
+ ExpressionUUID -> "fbe64548-79cc-4360-ae4c-aa82b16ee38a"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ ExpressionUUID -> "78bdf926-4a4d-4b01-ba1b-aaef5e142ec8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.777701649837987*^9, 3.7777016550980988`*^9}, {
+  3.779435347146472*^9, 3.779435397645341*^9}, {3.7794355092970037`*^9, 
+  3.7794355099717712`*^9}},
+ ExpressionUUID -> "7ca5fe48-8b02-4146-8f07-612f69bbe12f"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  "3.5728499380111524147023712529217433404399495614`15.954589770191005*^-936"}\
+]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510637833*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  "1.383057995413383881394134558378442284087`15.954589770191005*^-442"}]], \
+"Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510638492*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "3.0429308652101194`*^-131"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.7794355106390743`*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.017012276794950966`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.7794355106395473`*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "80.8919578300438`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.7794355106400337`*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "20.976019096304174`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510640523*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "5.428094364995721`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.77943551064098*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "1.4020604390205305`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510641464*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.17891201787942287`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510641974*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.011827424337896958`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510642457*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.000778107564894476`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.779435510642943*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00005098260459382706`"}]], "Output",
+ CellChangeTimes->{{3.7777016510380087`*^9, 3.777701655498103*^9}, 
+   3.777810219207708*^9, 3.777889718396269*^9, 3.778584865785989*^9, 
+   3.779430016770501*^9, 3.779435348625307*^9, 3.7794353993162937`*^9, 
+   3.7794355106434*^9},
+ ExpressionUUID -> "10e7a8bc-9859-4344-bccb-bc89fa706056"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0559331"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0559536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0559741"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0559946"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.056015"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0560355"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.056056"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0560765"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.056097"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561174"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561584"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561789"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561994"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0562198"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0562403"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Evaluate", "[", 
+   RowBox[{
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+       "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+        ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", 
+    "/.", " ", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"x", "\[Rule]", "0.0562608"}], ",", " ", 
+      RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+      RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+      RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+      RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+      RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+      RowBox[{"c", "\[Rule]", " ", 
+       RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+      RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0562813"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0563018"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "x0"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0563222"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.7794359255604563`*^9, 3.779436195655704*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "4.2069524305013467`*^-7"}]], "Output",
+ CellChangeTimes->{3.779436196526945*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "1.4749224553502635`*^-6"}]], "Output",
+ CellChangeTimes->{3.77943619652761*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "4.95442995714755`*^-6"}]], "Output",
+ CellChangeTimes->{3.779436196528132*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00001594510927619427`"}]], "Output",
+ CellChangeTimes->{3.779436196528656*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.000048900839764468774`"}]], "Output",
+ CellChangeTimes->{3.7794361965291443`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00014448324025665639`"}]], "Output",
+ CellChangeTimes->{3.779436196529604*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00040896449125041155`"}]], "Output",
+ CellChangeTimes->{3.7794361965301733`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0011089363936604712`"}]], "Output",
+ CellChangeTimes->{3.77943619653058*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0028804943147621416`"}]], "Output",
+ CellChangeTimes->{3.779436196531011*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.007136222062470677`"}]], "Output",
+ CellChangeTimes->{3.779436196531446*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.017012276794950966`"}]], "Output",
+ CellChangeTimes->{3.779436196531878*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.03884756278857287`"}]], "Output",
+ CellChangeTimes->{3.7794361965323067`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0849703474098252`"}]], "Output",
+ CellChangeTimes->{3.779436196532743*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.17802191630392533`"}]], "Output",
+ CellChangeTimes->{3.779436196533174*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.35608945654274454`"}]], "Output",
+ CellChangeTimes->{3.779436196533646*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.6846894354998839`"}]], "Output",
+ CellChangeTimes->{3.779436196534109*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "1.2612089133412288`"}]], "Output",
+ CellChangeTimes->{3.7794361965345287`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.225819997855167`"}]], "Output",
+ CellChangeTimes->{3.779436196534947*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "3.764259938331901`"}]], "Output",
+ CellChangeTimes->{3.779436196535367*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "6.088207513318592`"}]], "Output",
+ CellChangeTimes->{3.7794361965358257`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+First derivative with respect to tau
+\
+\>", "Text",
+ CellChangeTimes->{{3.7777128457179127`*^9, 3.777712864654643*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "\[Alpha]"}], 
+   "]"}], " "}]], "Input",
+ CellChangeTimes->{{3.777702017657077*^9, 3.7777020184370885`*^9}, {
+  3.777712814215938*^9, 3.77771287262805*^9}},
+ ExpressionUUID -> "74968e75-44c1-4a3c-87e5-80beaf165235"],
+
+Cell[BoxData[
+ RowBox[{"0.5`", " ", 
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", "a"}], "-", 
+    RowBox[{"b", " ", "x"}]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{"1", "-", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", "c"}], "-", 
+      RowBox[{"d", " ", "x"}]}]]}], ")"}], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{"2", " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         FractionBox[
+          RowBox[{
+           RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+         FractionBox[
+          SuperscriptBox["\[Sigma]", "2"], 
+          RowBox[{"2", " ", 
+           SuperscriptBox["\[Alpha]", "2"]}]], "-", 
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{
+            FractionBox[
+             RowBox[{
+              RowBox[{"-", "x"}], "+", "x0"}], 
+             RowBox[{
+              SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+            FractionBox["\[Sigma]", "\[Alpha]"]}], ")"}], "2"]}]], " ", 
+       "\[Sigma]"}], 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       SuperscriptBox["\[Alpha]", "2"]}]]}], "-", 
+    RowBox[{
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       FractionBox[
+        RowBox[{
+         RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+       FractionBox[
+        SuperscriptBox["\[Sigma]", "2"], 
+        RowBox[{"2", " ", 
+         SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         SuperscriptBox["\[Alpha]", "2"]]}], "-", 
+       FractionBox[
+        SuperscriptBox["\[Sigma]", "2"], 
+        SuperscriptBox["\[Alpha]", "3"]]}], ")"}], " ", 
+     RowBox[{"Erfc", "[", 
+      RowBox[{
+       FractionBox[
+        RowBox[{
+         RowBox[{"-", "x"}], "+", "x0"}], 
+        RowBox[{
+         SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+       FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.777712873523376*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777712897365694*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  "1.2771579711676399190762446779320709933229262`15.954589770191005*^-939"}]],\
+ "Output",
+ CellChangeTimes->{3.777712898364098*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777712910624206*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  "1.021535645936124146035749505488235258`15.954589770191005*^-445"}]], \
+"Output",
+ CellChangeTimes->{3.777712913026968*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777712962030002*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "5.698533667966999`*^-134"}]], "Output",
+ CellChangeTimes->{3.7777129636859493`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777129766662493`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00024596078642683325`"}]], "Output",
+ CellChangeTimes->{3.777712977760099*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777713005052034*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "86.8905459029072`"}]], "Output",
+ CellChangeTimes->{3.777713006247855*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "\[Alpha]"}], 
+    "]"}], "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777713039080265*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "51.170765518555186`"}]], "Output",
+ CellChangeTimes->{3.777713041649428*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777713102287612*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "20.652934064254943`"}]], "Output",
+ CellChangeTimes->{3.777713103423938*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{
+  3.7777131272881203`*^9, {3.777714057844554*^9, 3.777714059511366*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "7.248870568026654`"}]], "Output",
+ CellChangeTimes->{3.777713128278504*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777713177052175*^9, 3.777713192577256*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "1.2959591410661486`"}]], "Output",
+ CellChangeTimes->{{3.777713178209791*^9, 3.777713193660705*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{
+  3.777713265442134*^9, {3.777713770780992*^9, 3.7777137724173107`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.11796935866270379`"}]], "Output",
+ CellChangeTimes->{{3.777713242839382*^9, 3.777713267975595*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777132669155903`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00988577015558822`"}]], "Output",
+ CellChangeTimes->{3.7777132763349743`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "\[Alpha]"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777713294023479*^9, 3.777713300394062*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0007869448255749392`"}]], "Output",
+ CellChangeTimes->{3.777713301503496*^9}]
+}, Open  ]],
+
+Cell["\<\
+First derivative with respect to a0\
+\>", "Text",
+ CellChangeTimes->{{3.777713382576034*^9, 3.777713389402923*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "a"}], "]"}], 
+  " "}]], "Input",
+ CellChangeTimes->{{3.7777133799880323`*^9, 3.777713403505476*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{
+     RowBox[{"-", "a"}], "-", 
+     RowBox[{"b", " ", "x"}]}]]}], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", "c"}], "-", 
+      RowBox[{"d", " ", "x"}]}]], "+", 
+    RowBox[{"0.5`", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", 
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", "c"}], "-", 
+         RowBox[{"d", " ", "x"}]}]]}], ")"}], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Erfc", "[", 
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "-", 
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"2", " ", 
+            SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+        RowBox[{"Erfc", "[", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], 
+           RowBox[{
+            SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+          FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}]}], ")"}]}]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{3.7777134044526243`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7777134005806503`*^9, 3.777713414209049*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.23248850875531493`"}]], "Output",
+ CellChangeTimes->{3.7777134153448553`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777134558282757`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.21761825407177113`"}]], "Output",
+ CellChangeTimes->{3.777713456827392*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777713483028471*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.20369911940502855`"}]], "Output",
+ CellChangeTimes->{3.777713483991557*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777713499697184*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.19067066045683906`"}]], "Output",
+ CellChangeTimes->{3.777713501402927*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777135165859137`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.41314628256399194`"}]], "Output",
+ CellChangeTimes->{3.7777135181755342`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "a"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777713689914872*^9, 3.777713690029327*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.497201567184888`"}]], "Output",
+ CellChangeTimes->{3.777713690482831*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "a"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777713705969331*^9, 3.777713718255794*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.5147681748223638`"}]], "Output",
+ CellChangeTimes->{{3.777713707361244*^9, 3.7777137191907167`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "a"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.777713736386895*^9, 3.777714022292981*^9, 
+  3.777714068646315*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.5151146006820089`"}]], "Output",
+ CellChangeTimes->{3.777713737433407*^9, 3.777714070989382*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.777713757901964*^9, 3.777713757964344*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.5084227742858174`"}]], "Output",
+ CellChangeTimes->{3.777713758351163*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777137786015873`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.4976580302924609`"}]], "Output",
+ CellChangeTimes->{3.777713780135242*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777137913723783`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.4868977639688429`"}]], "Output",
+ CellChangeTimes->{3.777713792343585*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "a"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{3.7777138049487762`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.4763553797200427`"}]], "Output",
+ CellChangeTimes->{3.777713805778472*^9}]
+}, Open  ]],
+
+Cell["\<\
+First derivative with respect to b0\
+\>", "Text",
+ CellChangeTimes->{{3.777713825672846*^9, 3.777713834457313*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "b"}], "]"}], 
+  " "}]], "Input",
+ CellChangeTimes->{{3.777713822893074*^9, 3.777713841508136*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{
+     RowBox[{"-", "a"}], "-", 
+     RowBox[{"b", " ", "x"}]}]]}], " ", "x", " ", 
+  RowBox[{"(", 
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", "c"}], "-", 
+      RowBox[{"d", " ", "x"}]}]], "+", 
+    RowBox[{"0.5`", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", 
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", "c"}], "-", 
+         RowBox[{"d", " ", "x"}]}]]}], ")"}], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Erfc", "[", 
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "-", 
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"2", " ", 
+            SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+        RowBox[{"Erfc", "[", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], 
+           RowBox[{
+            SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+          FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}]}], ")"}]}]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{3.77771384175344*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "b"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "b"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "b"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "b"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.777713820059907*^9, 3.777713853292708*^9}, {
+  3.777714144369467*^9, 3.777714181227702*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.01162300725786234`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.7777142176810293`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.011325267416577706`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.7777142176815777`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.011018064998706055`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.7777142176821012`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.010703850469659984`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217682507*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.024039288282640178`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.7777142176829147`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.029948389477657825`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217683318*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.03206073998746898`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217683721*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.03313727075041357`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217684124*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.03428803189783552`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.7777142176845284`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.03560046485500149`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217684931*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.036825051684491523`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217685334*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.037978861714319564`"}]], "Output",
+ CellChangeTimes->{3.777713853779035*^9, 3.777714173195532*^9, 
+  3.777714217685753*^9}]
+}, Open  ]],
+
+Cell["\<\
+First derivative with respect to a1\
+\>", "Text",
+ CellChangeTimes->{{3.777714330949387*^9, 3.777714338899675*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "c"}], "]"}], 
+  " "}]], "Input",
+ CellChangeTimes->{{3.7777143282904377`*^9, 3.777714349005102*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", "a"}], "-", 
+    RowBox[{"b", " ", "x"}]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"-", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", "c"}], "-", 
+       RowBox[{"d", " ", "x"}]}]]}], "+", 
+    RowBox[{"0.5`", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", "c"}], "-", 
+       RowBox[{"d", " ", "x"}]}]], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Erfc", "[", 
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "-", 
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"2", " ", 
+            SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+        RowBox[{"Erfc", "[", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], 
+           RowBox[{
+            SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+          FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}]}], ")"}]}]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{3.777714349295298*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "c"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "c"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "c"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "c"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.777714361524941*^9, 3.777714378695438*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.23248850875531493`"}]], "Output",
+ CellChangeTimes->{3.777714379107205*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.21761825407177113`"}]], "Output",
+ CellChangeTimes->{3.777714379107585*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.20369911940502855`"}]], "Output",
+ CellChangeTimes->{3.7777143791080637`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.19067005700311324`"}]], "Output",
+ CellChangeTimes->{3.7777143791084757`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.06082916877833187`"}]], "Output",
+ CellChangeTimes->{3.777714379108885*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.01453613605336187`"}]], "Output",
+ CellChangeTimes->{3.777714379109293*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.003473650151818529`"}]], "Output",
+ CellChangeTimes->{3.7777143791097116`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0008300861613384662`"}]], "Output",
+ CellChangeTimes->{3.7777143791101427`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00009441993648974742`"}]], "Output",
+ CellChangeTimes->{3.777714379110557*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "5.391851200827684`*^-6"}]], "Output",
+ CellChangeTimes->{3.77771437911097*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "3.079017043648946`*^-7"}]], "Output",
+ CellChangeTimes->{3.777714379111414*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "1.7582729195426084`*^-8"}]], "Output",
+ CellChangeTimes->{3.777714379111858*^9}]
+}, Open  ]],
+
+Cell["\<\
+First derivative with respect to b1\
+\>", "Text",
+ CellChangeTimes->{{3.7777144935972033`*^9, 3.7777144952420464`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+     "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+      ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "d"}], "]"}], 
+  " "}]], "Input",
+ CellChangeTimes->{{3.777714501942923*^9, 3.7777145020337048`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", "a"}], "-", 
+    RowBox[{"b", " ", "x"}]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", 
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        RowBox[{"-", "c"}], "-", 
+        RowBox[{"d", " ", "x"}]}]]}], " ", "x"}], "+", 
+    RowBox[{"0.5`", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", "c"}], "-", 
+       RowBox[{"d", " ", "x"}]}]], " ", "x", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Erfc", "[", 
+        FractionBox[
+         RowBox[{
+          RowBox[{"-", "x"}], "+", "x0"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "-", 
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], "\[Alpha]"], "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"2", " ", 
+            SuperscriptBox["\[Alpha]", "2"]}]]}]], " ", 
+        RowBox[{"Erfc", "[", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            RowBox[{"-", "x"}], "+", "x0"}], 
+           RowBox[{
+            SqrtBox["2"], " ", "\[Sigma]"}]], "+", 
+          FractionBox["\[Sigma]", "\[Alpha]"]}], "]"}]}]}], ")"}]}]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{3.777714502397994*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0499939"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0520419"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0540899"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0561379"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0581859"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "d"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0602339"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "d"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0622819"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", " ", "d"}], "]"}], 
+   "  ", "/.", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.0643299"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.06744"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.071536"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.075632"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Evaluate", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{
+      "x", ",", "x0", ",", " ", "\[Sigma]", ",", " ", "\[Alpha]", ",", "a", 
+       ",", "b", ",", "c", ",", "d"}], " ", "]"}], ",", "d"}], "]"}], "  ", "/.",
+    " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "\[Rule]", "0.079728"}], ",", " ", 
+     RowBox[{"x0", "\[Rule]", "0.056568"}], ",", " ", 
+     RowBox[{"\[Sigma]", "\[Rule]", "0.0001"}], ",", 
+     RowBox[{"\[Alpha]", "\[Rule]", " ", "0.0015"}], ",", " ", 
+     RowBox[{"a", "\[Rule]", " ", "0.315462"}], ",", " ", 
+     RowBox[{"b", "\[Rule]", "5.3447841"}], ",", " ", 
+     RowBox[{"c", "\[Rule]", " ", 
+      RowBox[{"-", "0.4700811"}]}], " ", ",", " ", 
+     RowBox[{"d", "\[Rule]", "  ", "26.929825"}]}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.7777145161607437`*^9, 3.777714557615842*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.01162300725786234`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608623499*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.011325267416577706`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608624156*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.011018064998706055`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.7777146086246357`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.010703816593035069`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608625087*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.003539399931619139`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608625536*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.000875568165424594`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.7777146086260233`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00021634553139054802`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608626471*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.00005339935975028867`"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.7777146086269207`*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "6.3676805168698724`*^-6"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.7777146086274*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "3.8571146750255265`*^-7"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608627873*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.32872217053025`*^-8"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608628337*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", "1.4018358345044451`*^-9"}]], "Output",
+ CellChangeTimes->{3.7777145602830057`*^9, 3.777714608628804*^9}]
+}, Open  ]]
+},
+CellGrouping->Manual,
+WindowSize->{1153, 2105},
+WindowMargins->{{Automatic, -10}, {Automatic, -8}},
+ShowSelection->True,
+Magnification->1.5,
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (October 10, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "Info3779437060-7948263"->{
+  Cell[3527, 104, 118, 2, 61, "Print",
+   CellTags->"Info3779437060-7948263"],
+  Cell[3648, 108, 2710, 74, 82, "Print",
+   CellTags->"Info3779437060-7948263"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"Info3779437060-7948263", 135354, 3795}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 2566, 72, 125, "Input"],
+Cell[CellGroupData[{
+Cell[3149, 96, 375, 6, 43, "Input"],
+Cell[3527, 104, 118, 2, 61, "Print",
+ CellTags->"Info3779437060-7948263"],
+Cell[3648, 108, 2710, 74, 82, "Print",
+ CellTags->"Info3779437060-7948263"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6395, 187, 883, 20, 71, "Input"],
+Cell[7281, 209, 2182, 70, 189, "Output"]
+}, Open  ]],
+Cell[9478, 282, 182, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[9685, 289, 366, 10, 43, "Input"],
+Cell[10054, 301, 2603, 82, 189, "Output"]
+}, Open  ]],
+Cell[12672, 386, 146, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[12843, 393, 1065, 25, 98, "Input"],
+Cell[13911, 420, 187, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14135, 429, 1043, 24, 98, "Input"],
+Cell[15181, 455, 198, 4, 43, "Output"]
+}, Open  ]],
+Cell[15394, 462, 144, 2, 43, "Input"],
+Cell[CellGroupData[{
+Cell[15563, 468, 1019, 24, 98, "Input"],
+Cell[16585, 494, 155, 3, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16777, 502, 965, 22, 98, "Input"],
+Cell[17745, 526, 151, 3, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17933, 534, 966, 23, 98, "Input"],
+Cell[18902, 559, 166, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19105, 568, 966, 23, 98, "Input"],
+Cell[20074, 593, 166, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20277, 602, 966, 23, 98, "Input"],
+Cell[21246, 627, 167, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21450, 636, 964, 23, 98, "Input"],
+Cell[22417, 661, 167, 3, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22621, 669, 964, 23, 98, "Input"],
+Cell[23588, 694, 193, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23818, 703, 965, 23, 98, "Input"],
+Cell[24786, 728, 168, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24991, 737, 967, 23, 98, "Input"],
+Cell[25961, 762, 171, 4, 43, "Output"]
+}, Open  ]],
+Cell[26147, 769, 965, 23, 98, "Input"],
+Cell[27115, 794, 228, 5, 71, "Input"],
+Cell[27346, 801, 181, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[27552, 808, 386, 10, 43, "Input"],
+Cell[27941, 820, 2340, 73, 166, "Output"]
+}, Open  ]],
+Cell[30296, 896, 85, 1, 43, "Input"],
+Cell[CellGroupData[{
+Cell[30406, 901, 10254, 255, 989, "Input"],
+Cell[40663, 1158, 417, 8, 43, "Output"],
+Cell[41083, 1168, 410, 8, 43, "Output"],
+Cell[41496, 1178, 366, 6, 43, "Output"],
+Cell[41865, 1186, 362, 6, 43, "Output"],
+Cell[42230, 1194, 358, 6, 43, "Output"],
+Cell[42591, 1202, 358, 6, 43, "Output"],
+Cell[42952, 1210, 356, 6, 43, "Output"],
+Cell[43311, 1218, 358, 6, 43, "Output"],
+Cell[43672, 1226, 359, 6, 43, "Output"],
+Cell[44034, 1234, 360, 6, 43, "Output"],
+Cell[44397, 1242, 360, 6, 43, "Output"],
+Cell[44760, 1250, 360, 6, 43, "Output"],
+Cell[CellGroupData[{
+Cell[45145, 1260, 16864, 422, 1691, InheritFromParent],
+Cell[62012, 1684, 109, 2, 43, "Output"],
+Cell[62124, 1688, 108, 2, 43, "Output"],
+Cell[62235, 1692, 107, 2, 43, "Output"],
+Cell[62345, 1696, 109, 2, 43, "Output"],
+Cell[62457, 1700, 112, 2, 43, "Output"],
+Cell[62572, 1704, 109, 2, 43, "Output"],
+Cell[62684, 1708, 111, 2, 43, "Output"],
+Cell[62798, 1712, 107, 2, 43, "Output"],
+Cell[62908, 1716, 108, 2, 43, "Output"],
+Cell[63019, 1720, 107, 2, 43, "Output"],
+Cell[63129, 1724, 107, 2, 43, "Output"],
+Cell[63239, 1728, 108, 2, 43, "Output"],
+Cell[63350, 1732, 105, 2, 43, "Output"],
+Cell[63458, 1736, 106, 2, 43, "Output"],
+Cell[63567, 1740, 106, 2, 43, "Output"],
+Cell[63676, 1744, 105, 2, 43, "Output"],
+Cell[63784, 1748, 107, 2, 43, "Output"],
+Cell[63894, 1752, 104, 2, 43, "Output"],
+Cell[64001, 1756, 104, 2, 43, "Output"],
+Cell[64108, 1760, 106, 2, 43, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[64241, 1766, 129, 4, 68, "Text"],
+Cell[CellGroupData[{
+Cell[64395, 1774, 446, 11, 43, "Input"],
+Cell[64844, 1787, 2081, 67, 129, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[66962, 1859, 880, 21, 98, "Input"],
+Cell[67845, 1882, 161, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[68043, 1891, 880, 21, 98, "Input"],
+Cell[68926, 1914, 154, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69117, 1923, 880, 21, 98, "Input"],
+Cell[70000, 1946, 112, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[70149, 1953, 882, 21, 98, "Input"],
+Cell[71034, 1976, 109, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[71180, 1983, 880, 21, 98, "Input"],
+Cell[72063, 2006, 103, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[72203, 2013, 886, 21, 98, "Input"],
+Cell[73092, 2036, 105, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[73234, 2043, 880, 21, 98, "Input"],
+Cell[74117, 2066, 105, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[74259, 2073, 931, 22, 98, "Input"],
+Cell[75193, 2097, 104, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[75334, 2104, 902, 21, 98, "Input"],
+Cell[76239, 2127, 129, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[76405, 2134, 930, 22, 98, "Input"],
+Cell[77338, 2158, 130, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[77505, 2165, 881, 21, 98, "Input"],
+Cell[78389, 2188, 108, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[78534, 2195, 903, 21, 98, "Input"],
+Cell[79440, 2218, 108, 2, 43, "Output"]
+}, Open  ]],
+Cell[79563, 2223, 125, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[79713, 2230, 331, 9, 43, "Input"],
+Cell[80047, 2241, 1439, 47, 90, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[81523, 2293, 899, 21, 98, "Input"],
+Cell[82425, 2316, 108, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[82570, 2323, 875, 21, 98, "Input"],
+Cell[83448, 2346, 106, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[83591, 2353, 873, 21, 98, "Input"],
+Cell[84467, 2376, 106, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[84610, 2383, 873, 21, 98, "Input"],
+Cell[85486, 2406, 106, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[85629, 2413, 875, 21, 98, "Input"],
+Cell[86507, 2436, 108, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[86652, 2443, 902, 21, 98, "Input"],
+Cell[87557, 2466, 104, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[87698, 2473, 902, 21, 98, "Input"],
+Cell[88603, 2496, 131, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[88771, 2503, 925, 22, 98, "Input"],
+Cell[89699, 2527, 127, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[89863, 2534, 895, 21, 98, "Input"],
+Cell[90761, 2557, 105, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[90903, 2564, 874, 21, 98, "Input"],
+Cell[91780, 2587, 105, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[91922, 2594, 874, 21, 98, "Input"],
+Cell[92799, 2617, 105, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[92941, 2624, 874, 21, 98, "Input"],
+Cell[93818, 2647, 105, 2, 43, "Output"]
+}, Open  ]],
+Cell[93938, 2652, 125, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[94088, 2659, 329, 9, 43, "Input"],
+Cell[94420, 2670, 1446, 47, 90, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[95903, 2722, 10169, 254, 1016, "Input"],
+Cell[106075, 2978, 155, 3, 43, "Output"],
+Cell[106233, 2983, 156, 3, 43, "Output"],
+Cell[106392, 2988, 156, 3, 43, "Output"],
+Cell[106551, 2993, 154, 3, 43, "Output"],
+Cell[106708, 2998, 156, 3, 43, "Output"],
+Cell[106867, 3003, 154, 3, 43, "Output"],
+Cell[107024, 3008, 153, 3, 43, "Output"],
+Cell[107180, 3013, 153, 3, 43, "Output"],
+Cell[107336, 3018, 155, 3, 43, "Output"],
+Cell[107494, 3023, 153, 3, 43, "Output"],
+Cell[107650, 3028, 154, 3, 43, "Output"],
+Cell[107807, 3033, 154, 3, 43, "Output"]
+}, Open  ]],
+Cell[107976, 3039, 125, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[108126, 3046, 331, 9, 43, "Input"],
+Cell[108460, 3057, 1378, 45, 90, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[109875, 3107, 10094, 252, 989, "Input"],
+Cell[119972, 3361, 106, 2, 43, "Output"],
+Cell[120081, 3365, 106, 2, 43, "Output"],
+Cell[120190, 3369, 108, 2, 43, "Output"],
+Cell[120301, 3373, 108, 2, 43, "Output"],
+Cell[120412, 3377, 106, 2, 43, "Output"],
+Cell[120521, 3381, 106, 2, 43, "Output"],
+Cell[120630, 3385, 109, 2, 43, "Output"],
+Cell[120742, 3389, 110, 2, 43, "Output"],
+Cell[120855, 3393, 109, 2, 43, "Output"],
+Cell[120967, 3397, 107, 2, 43, "Output"],
+Cell[121077, 3401, 108, 2, 43, "Output"],
+Cell[121188, 3405, 109, 2, 43, "Output"]
+}, Open  ]],
+Cell[121312, 3410, 129, 3, 42, "Text"],
+Cell[CellGroupData[{
+Cell[121466, 3417, 331, 9, 43, "Input"],
+Cell[121800, 3428, 1418, 46, 90, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[123255, 3479, 10096, 252, 989, "Input"],
+Cell[133354, 3733, 130, 2, 43, "Output"],
+Cell[133487, 3737, 131, 2, 43, "Output"],
+Cell[133621, 3741, 133, 2, 43, "Output"],
+Cell[133757, 3745, 131, 2, 43, "Output"],
+Cell[133891, 3749, 131, 2, 43, "Output"],
+Cell[134025, 3753, 133, 2, 43, "Output"],
+Cell[134161, 3757, 133, 2, 43, "Output"],
+Cell[134297, 3761, 135, 2, 43, "Output"],
+Cell[134435, 3765, 131, 2, 43, "Output"],
+Cell[134569, 3769, 133, 2, 43, "Output"],
+Cell[134705, 3773, 131, 2, 43, "Output"],
+Cell[134839, 3777, 133, 2, 43, "Output"]
+}, Open  ]]
+}
+]
+*)
+

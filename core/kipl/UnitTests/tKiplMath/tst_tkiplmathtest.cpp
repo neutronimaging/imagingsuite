@@ -471,7 +471,7 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
 //        qDebug() << dyda[5];
 //        qDebug() << dyda[6];
 
-        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // it does not pass only for ind=4 :(
+        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // passed!
         QVERIFY(fabs(dyda[1]-dfdsigma[ind])<eps); // passed!
         QVERIFY(fabs(dyda[2]-dfdtau[ind])<eps); // passed!
         QVERIFY(fabs(dyda[3]-dfda0[ind])<eps); // passed!
@@ -480,38 +480,12 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
         QVERIFY(fabs(dyda[6]-dfdb1[ind])<eps); // passed!
         ++ind;
 
-    } // I have to check those numbers..! Evaluate with Wolframe the derivative at those points with the given initial parameters
+    }
 
-
-//    for (int i=50; i<250; i++)
-//    {
-//        ef(x[i],y[i],dyda);
-////        qDebug() << ind;
-////        qDebug() << x[i];
-////        qDebug() << y[i];
-//        qDebug() << dyda[0];
-////        qDebug() << dfdx0[ind];
-////        qDebug() << dyda[1];
-////        qDebug() << dyda[2];
-////        qDebug() << dyda[3];
-////        qDebug() << dyda[4];
-////        qDebug() << dyda[5];
-////        qDebug() << dyda[6];
-
-////        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // it does not pass only for ind=4 :(
-////        QVERIFY(fabs(dyda[1]-dfdsigma[ind])<eps); // passed!
-////        QVERIFY(fabs(dyda[2]-dfdtau[ind])<eps); // passed!
-////        QVERIFY(fabs(dyda[3]-dfda0[ind])<eps); // passed!
-////        QVERIFY(fabs(dyda[4]-dfdb0[ind])<eps); // passed!
-////        QVERIFY(fabs(dyda[5]-dfda1[ind])<eps); // passed!
-////        QVERIFY(fabs(dyda[6]-dfdb1[ind])<eps); // passed!
-////        ++ind;
-
-//    }
 
     Nonlinear::LevenbergMarquardt mrq(1e-15,20);
 
-    bool lock[7]={true, true, true, false, false, false, false};
+    bool lock[7]={false, false, false, false, false, false, false};
     ef.setLock(lock);
 
     mrq.fit(x,y,sig,ef);

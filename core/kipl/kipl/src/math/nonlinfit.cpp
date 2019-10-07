@@ -687,13 +687,13 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         for (i=0; i<m_Npars; i++)
             est[i]=m_lock[i] ? ' ': '*';
 
-        cout<<m_lock[0]<<"x0="<<m_pars[0]<< endl;
-        cout<<m_lock[1]<<"sigma="<<m_pars[1]<< endl;
-        cout<<m_lock[2]<<"tau="<<m_pars[2]<< endl;
-        cout<<m_lock[3]<<"a0="<<m_pars[3]<< endl;
-        cout<<m_lock[4]<<"b0="<<m_pars[4]<< endl;
-        cout<<m_lock[5]<<"ahkl="<<m_pars[5]<< endl;
-        cout<<m_lock[6]<<"bhkl="<<m_pars[6]<< endl;
+        cout<<m_lock[0]<<" x0="<<m_pars[0]<< endl;
+        cout<<m_lock[1]<<" sigma="<<m_pars[1]<< endl;
+        cout<<m_lock[2]<<" tau="<<m_pars[2]<< endl;
+        cout<<m_lock[3]<<" a0="<<m_pars[3]<< endl;
+        cout<<m_lock[4]<<" b0="<<m_pars[4]<< endl;
+        cout<<m_lock[5]<<" ahkl="<<m_pars[5]<< endl;
+        cout<<m_lock[6]<<" bhkl="<<m_pars[6]<< endl;
 
         delete [] est;
 
