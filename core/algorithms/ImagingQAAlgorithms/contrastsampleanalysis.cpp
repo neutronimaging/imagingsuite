@@ -328,7 +328,7 @@ void ContrastSampleAnalysis::makeHistogram()
     msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
     logger(logger.LogMessage,msg.str());
     kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,false);
-    medianFilter(hist_bins,3UL);
+    hist_bins = medianFilter(hist_bins,5UL);
 
     logger.message("Histogram ready");
 }

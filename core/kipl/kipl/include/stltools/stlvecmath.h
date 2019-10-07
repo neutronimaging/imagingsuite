@@ -1,15 +1,18 @@
 //<LICENCE>
 
-#ifndef __stlvecmath_h
-#define __stlvecmath_h
+#ifndef STLVECMATH_H
+#define STLVECMATH_H
 
 #include <vector>
 #include <map>
 #include <iostream>
 #include <algorithm>
+#include <stddef.h>
 
 #include "../math/median.h"
 #include "../kipl_global.h"
+
+#include <QDebug>
 //#include "statistics.h"
 //#include "../misc/sortalg.h"
 //#include "../image/imagethres.h"
@@ -133,7 +136,7 @@ std::vector<double> operator-(std::vector<T> & a, double x )
 template<class T>
 T sum(std::vector<T> v)
 {
-	T sum=(T) 0;
+    T sum=static_cast<T>(0);
     for (const auto &item : v)
         sum+=item;
 
@@ -145,8 +148,8 @@ template<class T>
 std::vector<T> filter(std::vector<T> &x, std::vector<double> &H)
 {
     std::vector<T> tmp(x.size());
-    ptrdiff_t sx=x.size();
-    ptrdiff_t sH=H.size();
+    ptrdiff_t sx=static_cast<ptrdiff_t>(x.size());
+    ptrdiff_t sH=static_cast<ptrdiff_t>(H.size());
 
     for (ptrdiff_t i=0; i<sx; i++) {
 		tmp[i]=0;
@@ -165,14 +168,20 @@ std::vector<T> medianFilter(const std::vector<T> &x, size_t len)
 {
     std::vector<T> res(x.size());
     std::vector<T> buffer(len);
-    size_t w=len/2 + len % 2;
+    size_t oddLen = len % 2;
+    size_t w = len/2 + oddLen;
+
+    qDebug() <<"len="<<len<<", oddLen="<<oddLen;
     auto itX = x.begin();
     auto itR = res.begin()+w;
     for ( ; itX!=(x.end()-len); ++itX,++itR)
     {
         std::copy(itX,itX+len,buffer.begin());
         std::sort(buffer.begin(),buffer.end());
-        *itR=buffer[w];
+        if (oddLen)
+            *itR=buffer[w];
+        else
+            *itR = (buffer[w]+buffer[w+1])/2;
     }
 
     std::fill(res.begin(),res.begin()+w-1,res[w]);
@@ -195,7 +204,7 @@ std::vector<T> medianFilter(const std::vector<T> &x, size_t len)
 
 /// Returns a vector with n elements having data in an increasing series
 template<class T>
-std::vector<T> FillVecSeries(T start, T stop, T step=(T)1)
+std::vector<T> FillVecSeries(T start, T stop, T step=static_cast<T>(1))
 {
     size_t n=1+(stop-start)/step;
 
