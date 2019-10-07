@@ -17,6 +17,7 @@
 #include <profile/Timer.h>
 #include <filters/medianfilter.h>
 #include <base/KiplException.h>
+#include <stltools/stlvecmath.h>
 
 #include "contrastsampleanalysis.h"
 namespace ImagingQAAlgorithms {
@@ -26,8 +27,6 @@ ContrastSampleAnalysis::ContrastSampleAnalysis() :
     metricInsetDiameter(6.0f),
     pixelsize(0.1f),
     hist_size(1024),
-    hist_axis(nullptr),
-    hist_bins(nullptr),
     filterSize(5)
 {
     createAllocation();
@@ -40,23 +39,12 @@ ContrastSampleAnalysis::~ContrastSampleAnalysis()
 
 void ContrastSampleAnalysis::clearAllocation()
 {
-    if (hist_axis!=nullptr) {
-        delete [] hist_axis;
-        hist_axis=nullptr;
-    }
 
-    if (hist_bins!=nullptr) {
-        delete [] hist_bins;
-        hist_bins=nullptr;
-    }
 }
 
 void ContrastSampleAnalysis::createAllocation()
 {
     clearAllocation();
-
-    hist_axis=new float[hist_size];
-    hist_bins=new size_t[hist_size];
 
 }
 
@@ -326,10 +314,11 @@ int ContrastSampleAnalysis::getHistogramSize()
     return hist_size;
 }
 
-int ContrastSampleAnalysis::getHistogram(float *axis, size_t *bins)
+int ContrastSampleAnalysis::getHistogram(std::vector<float> &axis, std::vector<size_t> &bins)
 {
-    std::copy(hist_axis,hist_axis+hist_size,axis);
-    std::copy(hist_bins,hist_bins+hist_size,bins);
+    axis = hist_axis;
+    bins = hist_bins;
+
     return hist_size;
 }
 
@@ -338,7 +327,9 @@ void ContrastSampleAnalysis::makeHistogram()
     std::ostringstream msg;
     msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
     logger(logger.LogMessage,msg.str());
-    kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_bins,hist_size,0.0f,0.0f,hist_axis);
+    kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,false);
+    medianFilter(hist_bins,3UL);
+
     logger.message("Histogram ready");
 }
 

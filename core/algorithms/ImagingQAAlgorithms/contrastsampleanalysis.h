@@ -24,7 +24,7 @@ public:
     void setFilterSize(size_t N);
     void analyzeContrast(float pixelSize, const std::list<kipl::base::RectROI> &ROIs = {});
 
-    int getHistogram(float *axis, size_t *bins);
+    int getHistogram(std::vector<float> &axis, std::vector<size_t> &bins);
     int getHistogramSize();
 
     std::vector<kipl::math::Statistics> getStatistics();
@@ -54,8 +54,8 @@ protected:
     float radius;
 
     int hist_size;
-    float *hist_axis;
-    size_t *hist_bins;
+    std::vector<float>  hist_axis;
+    std::vector<size_t> hist_bins;
     kipl::base::TImage<float,2> ringKernel;
     size_t filterSize;
 
