@@ -93,7 +93,18 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
             oneda[j][0]=beta[j];
         }
 
-        gaussj(temp,oneda); //Matrix solution.
+        try {
+            gaussj(temp,oneda); //Matrix solution.
+        }
+        catch (kipl::base::KiplException & e) {
+            qDebug() << "kiplException: " << QString::fromStdString(e.what());
+
+        }
+        catch (std::exception &e){
+            qDebug() << "std::exception " << QString::fromStdString(e.what());
+
+        }
+
 
         for (j=0;j<mfit;j++) {
             for (k=0;k<mfit;k++)
@@ -559,29 +570,19 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
         y = exp_after*(exp_before+(1.0-exp_before)*edge);
 
         // Here I use the analytical expressions of the derivatives
-//        dyda[0]= 0.5*exp(-m_pars[3]-m_pars[4]*x)*(1.0-exp(-m_pars[5]-m_pars[6]*x))*
-//                (
-//                        -1.0*((exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
-//                         *erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
 
-//                        +(dsqrt2/dsqrtPi*exp(((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2]))
-//                                                -((m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1])))
-//                                                -(x-m_pars[0])/m_pars[2]))/m_pars[1]
+        dyda[0] = 0.5*exp(-(m_pars[3]+m_pars[4]*x))
+                *(1.0-exp(-(m_pars[5]+m_pars[6]*x)))*
+                (
 
-//                        -(dsqrt2/dsqrtPi*exp(-1.0*((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[0]*m_pars[0])))/m_pars[1]
-//                        );
-
-        dyda[0] = 0.5*(exp(-m_pars[3]-m_pars[4]*x))*(1.0-exp(-m_pars[5]-m_pars[6]*x))*(
-
-                    -(exp(-((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[1]*m_pars[1]))*dsqrt2/dsqrtPi)/m_pars[1]
+                    -1.0*(exp(-((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[1]*m_pars[1]))*dsqrt2/dsqrtPi)/m_pars[1]
 
                     +(exp(-(x-m_pars[0])/m_pars[2]+(m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])
-                        -((-(x-m_pars[0])/(dsqrt2*m_pars[0])+m_pars[0]/m_pars[1])*(-(x-m_pars[0])/(dsqrt2*m_pars[0])+m_pars[0]/m_pars[1])))*dsqrt2/dsqrtPi)/m_pars[1]
+                        -((-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2])*(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2])))*dsqrt2/dsqrtPi)/m_pars[1]
 
-                    -((exp(-(x-m_pars[0])/m_pars[2]+(m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])))
+                    -1.0*((exp(-(x-m_pars[0])/m_pars[2]+(m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])))
                      *erfc(-(x-m_pars[0])/(dsqrt2*m_pars[1])+m_pars[1]/m_pars[2]))/m_pars[2]
                     );
-
 
 
 
@@ -593,7 +594,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
 
                  +(2.0*exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-
                      ((m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))*(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1])))-(x-m_pars[0])/m_pars[2])
-                      *(1/m_pars[2]+(x-m_pars[0])/(dsqrt2*m_pars[1]*m_pars[1])))/dsqrtPi
+                      *(1.0/m_pars[2]+(x-m_pars[0])/(dsqrt2*m_pars[1]*m_pars[1])))/dsqrtPi
 
                  -(dsqrt2/dsqrtPi*(x-m_pars[0])*exp(-((x-m_pars[0])*(x-m_pars[0]))/(2.0*m_pars[1]*m_pars[1])))/(m_pars[1]*m_pars[1])
                 )
@@ -660,7 +661,7 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
                     (
                         erfc(-1.0*(x-m_pars[0])/(dsqrt2*m_pars[1]))
 
-                        -(exp((m_pars[1]*m_pars[1])/(2*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
+                        -(exp((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])-(x-m_pars[0])/m_pars[2]))
                         *erfc(m_pars[1]/m_pars[2]-(x-m_pars[0])/(dsqrt2*m_pars[1]))
                         )
                     -x*exp(-(m_pars[5]+m_pars[6]*x))

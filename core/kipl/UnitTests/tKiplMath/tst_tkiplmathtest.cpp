@@ -277,7 +277,7 @@ void TKiplMathTest::testNonLinFit_fitter()
 void TKiplMathTest::testNonLinFit_EdgeFunction()
 {
     int N=1107;
-    double eps=0.0001;
+    double eps=0.001;
 
     Array1D<double> x(N);
     Array1D<double> y(N);
@@ -396,7 +396,7 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     ef[3]=0.315462;
     ef[4]=5.3447841;
     ef[5]=-0.4700811;
-    ef[6]=26.92982514130;
+    ef[6]=26.929825;
 
     QCOMPARE(ef.getNpars(),7); // Seven parameters to be fitted
     QCOMPARE(ef.getNpars2fit(),7); // Default all will be fitted   
@@ -456,13 +456,14 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
 
     int ind =0;
     for (int i=0; i<loop; i+=100)
+//    for (int i=290; i<310; i++)
     {
         ef(x[i],y[i],dyda);
-        qDebug() << ind;
+//        qDebug() << ind;
 //        qDebug() << x[i];
 //        qDebug() << y[i];
-        qDebug() << dyda[0];
-        qDebug() << dfdx0[ind];
+//        qDebug() << dyda[0];
+//        qDebug() << dfdx0[ind];
 //        qDebug() << dyda[1];
 //        qDebug() << dyda[2];
 //        qDebug() << dyda[3];
@@ -470,7 +471,7 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
 //        qDebug() << dyda[5];
 //        qDebug() << dyda[6];
 
-//        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // passed!
+        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // it does not pass only for ind=4 :(
         QVERIFY(fabs(dyda[1]-dfdsigma[ind])<eps); // passed!
         QVERIFY(fabs(dyda[2]-dfdtau[ind])<eps); // passed!
         QVERIFY(fabs(dyda[3]-dfda0[ind])<eps); // passed!
@@ -482,25 +483,50 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     } // I have to check those numbers..! Evaluate with Wolframe the derivative at those points with the given initial parameters
 
 
+//    for (int i=50; i<250; i++)
+//    {
+//        ef(x[i],y[i],dyda);
+////        qDebug() << ind;
+////        qDebug() << x[i];
+////        qDebug() << y[i];
+//        qDebug() << dyda[0];
+////        qDebug() << dfdx0[ind];
+////        qDebug() << dyda[1];
+////        qDebug() << dyda[2];
+////        qDebug() << dyda[3];
+////        qDebug() << dyda[4];
+////        qDebug() << dyda[5];
+////        qDebug() << dyda[6];
+
+////        QVERIFY(fabs(dyda[0]-dfdx0[ind])<eps); // it does not pass only for ind=4 :(
+////        QVERIFY(fabs(dyda[1]-dfdsigma[ind])<eps); // passed!
+////        QVERIFY(fabs(dyda[2]-dfdtau[ind])<eps); // passed!
+////        QVERIFY(fabs(dyda[3]-dfda0[ind])<eps); // passed!
+////        QVERIFY(fabs(dyda[4]-dfdb0[ind])<eps); // passed!
+////        QVERIFY(fabs(dyda[5]-dfda1[ind])<eps); // passed!
+////        QVERIFY(fabs(dyda[6]-dfdb1[ind])<eps); // passed!
+////        ++ind;
+
+//    }
 
     Nonlinear::LevenbergMarquardt mrq(1e-15,20);
 
-//    bool lock[7]={false, false, false, true, true, true, true};
-//    ef.setLock(lock);
+    bool lock[7]={true, true, true, false, false, false, false};
+    ef.setLock(lock);
 
-//    mrq.fit(x,y,sig,ef);
+    mrq.fit(x,y,sig,ef);
 
-//    ef.printPars();
+    ef.printPars();
 
-//    ef.getPars(params);
+    ef.getPars(params);
 
-//    qDebug() << params[0];
-//    qDebug() << params[1];
-//    qDebug() << params[2];
-//    qDebug() << params[3];
-//    qDebug() << params[4];
-//    qDebug() << params[5];
-//    qDebug() << params[6];
+    qDebug() << params[0];
+    qDebug() << params[1];
+    qDebug() << params[2];
+    qDebug() << params[3];
+    qDebug() << params[4];
+    qDebug() << params[5];
+    qDebug() << params[6];
 
 
 
