@@ -71,12 +71,14 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
     {
         float *pSlice=m_Img3D.GetLinePtr(0,slice);
-        for (size_t pix=0; pix<m_Img2D.Size(); ++pix) {
+        for (size_t pix=0; pix<m_Img2D.Size(); ++pix)
+        {
             m_Img2D[pix]+=pSlice[pix];
         }
     }
 
-    for (size_t pix=0; pix<m_Img2D.Size(); ++pix) {
+    for (size_t pix=0; pix<m_Img2D.Size(); ++pix)
+    {
         m_Img2D[pix]/=m_Img3D.Size(2);
     }
 
@@ -107,9 +109,11 @@ void ContrastSampleAnalysis::analyzeContrast(float pixelSize, const std::list<ki
     estimateInsetRing();
     std::ostringstream msg;
     msg<<"Values of insets:";
-    for (int i=0; i<6; ++i) {
-        m_insetStats.push_back(computeInsetStatistics(m_insetCenters[i],pixelSize));
-        msg<<m_insetStats[i].E()<<", s="<<m_insetStats[i].s()<<std::endl;
+    for (auto &center :m_insetCenters)
+    {
+        auto stats =computeInsetStatistics(center,pixelSize);
+        m_insetStats.push_back(stats);
+        msg<<stats.E()<<", s="<<stats.s()<<"\n";
     }
     logger(logger.LogMessage,msg.str());
 }
@@ -117,6 +121,16 @@ void ContrastSampleAnalysis::analyzeContrast(float pixelSize, const std::list<ki
 std::vector<kipl::math::Statistics> ContrastSampleAnalysis::getStatistics()
 {
     return m_insetStats;
+}
+
+std::vector<kipl::base::coords3Df> ContrastSampleAnalysis::getInsetCoordinates()
+{
+    return m_insetCenters;
+}
+
+kipl::base::coords3Df ContrastSampleAnalysis::centerCoordinate()
+{
+    return m_ringCenter;
 }
 
 void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &ROIs)
@@ -128,9 +142,9 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
     float *max=std::max_element(chm.GetDataPtr(),chm.GetDataPtr()+chm.Size());
     size_t maxpos=max-chm.GetDataPtr();
-    kipl::base::coords3Df maxinset_center;
-    maxinset_center.y=maxpos/m_Img2D.Size(0);
-    maxinset_center.x=maxpos%m_Img2D.Size(0);
+
+    m_maxInsetCenter.y=maxpos/m_Img2D.Size(0);
+    m_maxInsetCenter.x=maxpos%m_Img2D.Size(0);
 
     float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
 
@@ -139,7 +153,8 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     logger(logger.LogMessage,msg.str());
 
     dots.clear();
-
+    std::vector<pair<float, float> > roiDots;
+    std::ofstream dotfile("dots.csv");
     timer.Reset();
     timer.Tic();
     for (const auto &roi : ROIs)
@@ -148,23 +163,31 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
         kipl::morphology::hMax(chmCrop,peaks,threshold, kipl::base::conn4);
         size_t idx=0;
 
+        float *max=std::max_element(chmCrop.GetDataPtr(),chmCrop.GetDataPtr()+chmCrop.Size());
+        size_t maxpos=max-chmCrop.GetDataPtr();
+
+        float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
         insetpeaks=chmCrop-peaks;
 
         for (size_t i=0; i<insetpeaks.Size(); ++i)
             insetpeaks[i]=0.5f*threshold<insetpeaks[i];
 
+        roiDots.clear();
         for (size_t y=0; y<insetpeaks.Size(1); ++y)
         {
             for (size_t x=0; x<insetpeaks.Size(0); ++x , ++idx)
             {
                 if (insetpeaks[idx]!=0.0f)
                 {
-                    dots.push_back(make_pair(float(x+roi.box()[0]),float(y+roi.box()[1])));
+                    roiDots.push_back(make_pair(float(x+roi.box()[0]),float(y+roi.box()[1])));
+                    dotfile<<x+roi.box()[0]<<", "<<y+roi.box()[1]<<"\n";
                 }
             }
         }
-
+        if (roiDots.size()<30)
+            dots.insert( dots.end(), roiDots.begin(), roiDots.end() );
     }
+    dotfile.close();
     timer.Toc();
     msg.str(""); msg<<"hMax timing: "<<timer;
     qDebug() << msg.str().c_str();
@@ -175,7 +198,6 @@ void ContrastSampleAnalysis::findCenters()
 {
     std::ostringstream msg;
     logger.message("Find centers");
-    qDebug() << "Find centers";
 
 
     float *max=std::max_element(chm.GetDataPtr(),chm.GetDataPtr()+chm.Size());
@@ -223,10 +245,11 @@ void ContrastSampleAnalysis::findCenters()
             if (insetpeaks[idx]!=0.0f)
             {
                 dots.push_back(make_pair(float(x),float(y)));
-                dotfile<<x<<", "<<y<<std::endl;
+                dotfile<<x<<", "<<y<<"\n";
             }
         }
     }
+    dotfile.close();
 }
 
 void ContrastSampleAnalysis::estimateInsetRing()
@@ -273,18 +296,20 @@ void ContrastSampleAnalysis::estimateInsetRing()
     logger(logger.LogDebug,msg.str());
 
     msg.str("");
-    msg<<"Dot centers at:"<<std::endl;
+    msg<<"Dot centers at:\n";
     float r=hypotf(m_maxInsetCenter.x-m_ringCenter.x,m_maxInsetCenter.y-m_ringCenter.y);
+    m_insetCenters.clear();
     for (int i=0 ; i<6 ; i++) {
         kipl::base::coords3Df coord;
 
         coord.y=r*cos(phi+i*fPi/3)+m_ringCenter.y;
         coord.x=r*sin(phi+i*fPi/3)+m_ringCenter.x;
+        coord.z=0.0f;
         m_insetCenters.push_back(coord);
 
-        msg<<coord.x<<", "<<coord.y<<std::endl;
+        msg<<"Inset "<<i<<" at "<<coord.x<<", "<<coord.y<<"\n";
     }
-    logger.debug(msg.str());
+    logger.message(msg.str());
 }
 
 kipl::math::Statistics ContrastSampleAnalysis::computeInsetStatistics(kipl::base::coords3Df pos,float ps)
@@ -326,8 +351,10 @@ void ContrastSampleAnalysis::makeHistogram()
 {
     std::ostringstream msg;
     msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
+    qDebug() << msg.str().c_str();
     logger(logger.LogMessage,msg.str());
     kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,false);
+
     hist_bins = medianFilter(hist_bins,5UL);
 
     logger.message("Histogram ready");
@@ -343,6 +370,7 @@ void ContrastSampleAnalysis::circleTransform(float pixelSize)
 
     kipl::profile::Timer timer;
     timer.Tic();
+    chm=0.0f;
     chm=cht(m_Img2D,radius,true);
     timer.Toc();
     msg.str(""); msg<<"Circular Hough timing: "<<timer;

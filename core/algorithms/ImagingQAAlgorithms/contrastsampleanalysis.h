@@ -28,6 +28,8 @@ public:
     int getHistogramSize();
 
     std::vector<kipl::math::Statistics> getStatistics();
+    std::vector<kipl::base::coords3Df> getInsetCoordinates();
+    kipl::base::coords3Df centerCoordinate();
     bool saveIntermediateImages;
     float metricInsetDiameter;
 

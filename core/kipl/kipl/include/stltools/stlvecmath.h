@@ -173,19 +173,19 @@ std::vector<T> medianFilter(const std::vector<T> &x, size_t len)
 
     qDebug() <<"len="<<len<<", oddLen="<<oddLen;
     auto itX = x.begin();
-    auto itR = res.begin()+w;
-    for ( ; itX!=(x.end()-len); ++itX,++itR)
+    auto itR = res.begin()+w-1;
+    for ( ; itX!=(x.end()-len+1); ++itX,++itR)
     {
         std::copy(itX,itX+len,buffer.begin());
         std::sort(buffer.begin(),buffer.end());
         if (oddLen)
-            *itR=buffer[w];
+            *itR=buffer[w-1];
         else
-            *itR = (buffer[w]+buffer[w+1])/2;
+            *itR = (buffer[w]+buffer[w-1])/2;
     }
 
-    std::fill(res.begin(),res.begin()+w-1,res[w]);
-    std::fill(res.end()-len+1,res.end()+w-1,*(res.end()-len));
+    std::fill(res.begin(),res.begin()+w,res[w-1]);
+    std::fill(res.end()-(len-w),res.end(),*(res.end()-(len-w+1)));
     return res;
 }
 

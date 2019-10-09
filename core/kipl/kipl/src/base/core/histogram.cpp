@@ -9,6 +9,9 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "../../../include/math/sums.h"
 #include "../../../include/math/image_statistics.h"
@@ -113,7 +116,6 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         int index;
         long long int i=0;
         std::vector<size_t> temp_hist(nBins);
-        //size_t *temp_hist=new size_t[nBins];
         std::fill(temp_hist.begin(),temp_hist.end(),0UL);
 
         const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
@@ -141,7 +143,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         }
         #pragma omp critical
         {
-            for (i=0; i<snBins; i++)
+            for (i=0; i<hist.size(); i++)
                 hist[i]+=temp_hist[i];
         }
     }
