@@ -327,8 +327,17 @@ void PlotWidget::savePlot()
 
     if (!destname.isEmpty())
     {
-        QPixmap p( ui->chart->size() );
+        auto wsize = ui->chart->size();
+        const int w=1024;
+        if (wsize.width()<w)
+        {
+            wsize = QSize(w,static_cast<int>(w*static_cast<float>(wsize.height())/static_cast<float>(wsize.width())));
+
+        }
+
+        QPixmap p( wsize );
         QPainter painter(&p);
+        painter.fillRect(QRect(0,0,wsize.width(),wsize.height()),QColor("lightgray"));
         ui->chart->render( &painter);
         p.save(destname,"PNG");
     }
@@ -337,9 +346,17 @@ void PlotWidget::savePlot()
 void PlotWidget::copy()
 {
        QClipboard *clipboard = QApplication::clipboard();
+       auto wsize = ui->chart->size();
+       const int w=1024;
+       if (wsize.width()<w)
+       {
+           wsize = QSize(w,static_cast<int>(w*static_cast<float>(wsize.height())/static_cast<float>(wsize.width())));
 
-       QPixmap p( ui->chart->size() );
+       }
+
+       QPixmap p( wsize );
        QPainter painter(&p);
+       painter.fillRect(QRect(0,0,wsize.width(),wsize.height()),QColor("lightgray"));
        ui->chart->render( &painter);
 
        clipboard->setPixmap(p);

@@ -5,6 +5,8 @@
 #include "../../base/kiplenums.h"
 #include "../pixeliterator.h"
 #include "../morphology.h"
+#include "../morphgeo.h"
+#include "../../base/imageoperators.h"
 #include <deque>
 
 /// Reconstruction based extrem operations
@@ -94,7 +96,7 @@ int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     ImgType min=kipl::base::min(img);
     extremes=img;
 
-    deque<ptrdiff_t> posQ;
+    std::deque<ptrdiff_t> posQ;
     kipl::base::PixelIterator NG(dims,conn);
 
     ImgType *pExt=extremes.GetDataPtr();
@@ -148,13 +150,13 @@ template <typename ImgType,size_t N>
 int hMax(const kipl::base::TImage<ImgType,N> &img,kipl::base::TImage<ImgType,N> &result,ImgType h, kipl::base::eConnectivity conn)
 {
     if (h<0) {
-        cerr<<"hMax: h must be >0"<<endl;
+        std::cerr<<"hMax: h must be >0"<<std::endl;
         return -1;
     }
 
     result=img-h;
 
-    result=RecByDilation(img,result, conn);
+    result=kipl::morphology::RecByDilation(img,result, conn);
 
     return 0;
 }

@@ -52,10 +52,15 @@ RectROI & RectROI::operator=(const RectROI & roi)
     return *this;
 }
 
-int RectROI:: getBox(size_t *roi)
+int RectROI:: getBox(size_t *roi) const
 {
     std::copy(coords,coords+4,roi);
     return dimensions;
+}
+
+size_t const * RectROI::box() const
+{
+    return coords;
 }
 
 int RectROI::getDimensions()
