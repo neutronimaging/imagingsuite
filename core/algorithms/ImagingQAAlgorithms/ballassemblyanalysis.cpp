@@ -36,11 +36,11 @@ void BallAssemblyAnalysis::analyzeImage(kipl::base::TImage<float,3> &img, std::l
 
     foreach (auto roi, roiList) {
         kipl::math::Statistics stats=kipl::math::imageStatistics(img,roi);
-        assemblyStats.push_back(stats);
+        assemblyStats.insert(std::make_pair(std::stof(roi.label()),stats));
     }
 }
 
-std::list<kipl::math::Statistics> BallAssemblyAnalysis::getStatistics()
+std::map<float,kipl::math::Statistics> & BallAssemblyAnalysis::getStatistics()
 {
     return assemblyStats;
 }
