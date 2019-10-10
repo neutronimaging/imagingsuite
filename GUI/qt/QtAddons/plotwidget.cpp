@@ -16,6 +16,7 @@ namespace QtAddons {
 
 PlotWidget::PlotWidget(QWidget *parent) :
     QWidget(parent),
+    logger("PlotWidget"),
     ui(new Ui::PlotWidget),
     m_nPointsVisible(25),
     m_tooltip(nullptr)
@@ -78,8 +79,9 @@ void PlotWidget::setCurveData(int id, const float * const x, const size_t * cons
 void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 {
     auto it=seriesmap.find(id);
-    if ( it != seriesmap.end())
-    {
+
+    if ( (it != seriesmap.end()) && (it->second->type()==series->type()) )
+    {       
         QLineSeries *line=dynamic_cast<QLineSeries *>(it->second);
         line->replace(series->points());
         line->setName(series->name());
@@ -99,6 +101,9 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
     }
     else
     {
+        if (it != seriesmap.end())
+            ui->chart->chart()->removeSeries(it->second);
+
         seriesmap[id]=series;
 
         ui->chart->chart()->addSeries(series);
@@ -120,6 +125,35 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
     ui->chart->chart()->createDefaultAxes();
     updateAxes();
     updateCursors();
+}
+
+void PlotWidget::setDataSeries(int id, QAbstractSeries *series, bool deleteData)
+{
+    auto it=seriesmap.find(id);
+    if ( it != seriesmap.end())
+    {
+        qDebug() << "Plot exists";
+        try
+        {
+            ui->chart->chart()->removeSeries(it->second);
+        }
+        catch (std::exception &e)
+        {
+            QString msg="Failed to delete series:";
+            msg=msg+e.what();
+            QMessageBox::warning(this,"Exception",msg);
+        }
+        qDebug()<< "remove OK";
+    }
+
+    qDebug() <<"setting series";
+    seriesmap[id]=series;
+    ui->chart->chart()->addSeries(series);
+    ui->chart->chart()->createDefaultAxes();
+    qDebug() <<"setting ok";
+    updateAxes();
+    updateCursors();
+    qDebug() << "done";
 }
 
 void PlotWidget::clearCurve(int id)
@@ -185,10 +219,18 @@ void PlotWidget::hideTitle()
 void PlotWidget::updateAxes()
 { 
     findMinMax();
-    ui->chart->chart()->axisX()->setMin(minX);
-    ui->chart->chart()->axisX()->setMax(maxX);
-    ui->chart->chart()->axisY()->setMin(minY);
-    ui->chart->chart()->axisY()->setMax(maxY);
+
+    if (minX!=std::numeric_limits<double>::max())
+        ui->chart->chart()->axisX()->setMin(minX);
+
+    if (maxX!=-std::numeric_limits<double>::max())
+        ui->chart->chart()->axisX()->setMax(maxX);
+
+    if (minY!=std::numeric_limits<double>::max())
+        ui->chart->chart()->axisY()->setMin(minY);
+
+    if (maxY!=-std::numeric_limits<double>::max())
+        ui->chart->chart()->axisY()->setMax(maxY);
 }
 
 void PlotWidget::setXLabel(const QString &lbl)
@@ -223,17 +265,26 @@ void PlotWidget::findMinMax()
     if (seriesmap.empty()==true)
         return;
 
-    for (auto it=seriesmap.begin(); it!=seriesmap.end(); ++it)
+    for (const auto &seriesItem : seriesmap)
     {
-        QLineSeries *series=dynamic_cast<QLineSeries *>(it->second);
-
-        QVector<QPointF> points=series->pointsVector();
-        for (auto point=points.begin(); point!=points.end(); ++point)
+        switch (seriesItem.second->type())
         {
-            minX = std::min(minX,point->x());
-            maxX = std::max(maxX,point->x());
-            minY = std::min(minY,point->y());
-            maxY = std::max(maxY,point->y());
+            case QAbstractSeries::SeriesTypeLine :
+            {
+                QLineSeries *series=dynamic_cast<QLineSeries *>(seriesItem.second);
+
+                QVector<QPointF> points=series->pointsVector();
+                for (const auto &point: points)
+                {
+                    minX = std::min(minX,point.x());
+                    maxX = std::max(maxX,point.x());
+                    minY = std::min(minY,point.y());
+                    maxY = std::max(maxY,point.y());
+                }
+            }
+            break;
+            case QAbstractSeries::SeriesTypeBoxPlot :
+            break;
         }
     }
 }
@@ -383,8 +434,8 @@ void PlotWidget::saveCurveData()
                 int i=0;
                 for (auto s : seriesmap)
                 {
-                    QXYSeries *series = dynamic_cast<QXYSeries *>(s.second);
-                    std::string seriesname=series->name().toStdString();
+
+                    std::string seriesname=s.second->name().toStdString();
                     std::replace(seriesname.begin(),seriesname.end(),' ','_');
                     if (seriesname.empty())
                     {
@@ -393,10 +444,34 @@ void PlotWidget::saveCurveData()
                     dname=name+seriesname+".txt";
                     std::ofstream datastream(dname.c_str());
 
-                    auto data = series->pointsVector();
-                    for (auto p : data)
+                    switch (s.second->type()) {
+                    case QAbstractSeries::SeriesTypeLine :
                     {
-                        datastream<<p.x()<<", "<<p.y()<<std::endl;
+                        QLineSeries *series = dynamic_cast<QLineSeries *>(s.second);
+                        auto data = series->pointsVector();
+                        for (auto p : data)
+                        {
+                            datastream<<p.x()<<", "<<p.y()<<std::endl;
+                        }
+                        break;
+                    }
+                    case QAbstractSeries::SeriesTypeBoxPlot :
+                    {
+                        QBoxPlotSeries *series = dynamic_cast<QBoxPlotSeries *>(s.second);
+                        auto data = series->boxSets();
+                        for (const auto pp : data)
+                        {
+                            auto & p = *pp;
+                            datastream<<p[p.Median]<<", "
+                                      <<p[p.LowerQuartile]<<", "
+                                      <<p[p.UpperQuartile]<<", "
+                                      <<p[p.LowerExtreme]<<", "
+                                      <<p[p.UpperExtreme]
+                                      <<"\n";
+                        }
+                        break;
+                    }
+                    default : logger.message("This plot type can't be saved as data");
                     }
                 }
             }
