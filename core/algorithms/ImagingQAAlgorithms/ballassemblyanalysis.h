@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -21,7 +22,8 @@ public:
     void analyzeImage(kipl::base::TImage<float,3> &img);
     void analyzeImage(kipl::base::TImage<float,3> &img, std::list<kipl::base::RectROI> &roiList);
 
-    std::list<kipl::math::Statistics> getStatistics();
+    std::map<float, kipl::math::Statistics> &getStatistics();
+
 
     kipl::base::TImage<float,2> & getZProjection();
     kipl::base::TImage<float,3> & getMask();
@@ -36,7 +38,7 @@ private:
     kipl::base::TImage<float,3> mask;
     kipl::base::TImage<float,3> dist;
     kipl::base::TImage<int,3> labels;
-    std::list<kipl::math::Statistics> assemblyStats;
+    std::map<float,kipl::math::Statistics> assemblyStats;
 };
 }
 #endif // BALLASSEMBLYANALYSIS_H
