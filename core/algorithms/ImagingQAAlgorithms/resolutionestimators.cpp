@@ -3,13 +3,15 @@
 #include <map>
 #include <string>
 
-#include <QDebug>
+//#include <QDebug>
 
 #include "resolutionestimators.h"
 
 #include <tnt.h>
 #include <strings/miscstring.h>
 #include <math/nonlinfit.h>
+#include <fft/fftbase.h>
+#include <fft/zeropadding.h>
 
 namespace ImagingQAAlgorithms {
 //Nonlinear::SumOfGaussians sog_dummy(1);
@@ -18,10 +20,7 @@ ResolutionEstimator::ResolutionEstimator() :
     logger("ResolutionEstimator"),
     profileFunction(Nonlinear::fnSumOfGaussians),
     profileSize(0),
-    mPixelSize(0.1),
-    mProfile(nullptr),
-    mDiffProfile(nullptr),
-    mXaxis(nullptr),
+    mPixelSize(1),
     mfwhm(-1.0),
     mFitFunction(1)
 {
@@ -50,34 +49,32 @@ int ResolutionEstimator::size()
 
 void ResolutionEstimator::setProfile(float *p, int N)
 {
-    createAllocation(N);
-    std::copy_n(p,N,mProfile);
+    mProfile.resize(N);
+    std::copy_n(p,N,mProfile.begin());
     analysis();
 }
 
 void ResolutionEstimator::setProfile(double *p, int N)
 {
-//    qDebug() << __FUNCTION__ << " N =" <<N;
-    createAllocation(N);
-    std::copy_n(p,N,mProfile);
+    profileSize = N;
+    mProfile.resize(N);
+    std::copy_n(p,N,mProfile.begin());
     analysis();
 }
 
-void ResolutionEstimator::setProfile(std::vector<double> &p)
+void ResolutionEstimator::setProfile(const std::vector<double> &p)
 {
-    int N=static_cast<int>(p.size());
-    createAllocation(N);
-    std::copy_n(p.begin(),N,mProfile);
+    profileSize = p.size();
+    mProfile = p;
 
     analysis();
 }
 
-void ResolutionEstimator::setProfile(std::vector<float> &p)
+void ResolutionEstimator::setProfile(const std::vector<float> &p)
 {
-    size_t N=p.size();
-    createAllocation(static_cast<int>(N));
-    for (size_t i=0; i<N; ++i)
-        mProfile[i]=static_cast<double>(p[i]);
+    profileSize = p.size();
+    mProfile.resize(p.size());
+    std::copy(p.begin(),p.end(),mProfile.begin());
     analysis();
 }
 
@@ -92,16 +89,15 @@ void ResolutionEstimator::setProfile(TNT::Array1D<double> &p)
     analysis();
 }
 
-void ResolutionEstimator::profile(double *p, int &N)
+void ResolutionEstimator::profile(double *p, size_t &N)
 {
     N=profileSize;
-    std::copy_n(mProfile,N,p);
+    std::copy(mProfile.begin(),mProfile.end(),p);
 }
 
 void ResolutionEstimator::clear()
 {
     removeAllocation();
-
 }
 
 double ResolutionEstimator::FWHM()
@@ -109,11 +105,19 @@ double ResolutionEstimator::FWHM()
     return mfwhm;
 }
 
-double ResolutionEstimator::MTFresolution(float level)
+double ResolutionEstimator::MTFresolution(double level)
 {
-    (void)level;
+    // Basic implementation, more precise using polynomial fit
+    size_t idx=0;
+    for (const auto &amplitude : mMTFamplitude)
+    {
+        if (amplitude<=level)
+            break;
 
-    return -1.0;
+        ++idx;
+    }
+
+    return mMTFfrequency[idx];
 }
 
 void ResolutionEstimator::edgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit, float smooth)
@@ -122,22 +126,27 @@ void ResolutionEstimator::edgeDerivative(std::vector<double> &x, std::vector<dou
     x.clear();
     y.clear();
     if (returnFit==true) {
-        for (int i=0; i<profileSize; ++i) {
+        for (size_t i=0; i<profileSize; ++i) {
             x.push_back(i*mPixelSize);
             y.push_back(mFitFunction(i*mPixelSize));
         }
     }
     else {
-        for (int i=0; i<profileSize; ++i) {
+        for (size_t i=0; i<profileSize; ++i) {
             x.push_back(i*mPixelSize);
             y.push_back(mDiffProfile[i]);
         }
     }
 }
 
-void ResolutionEstimator::MTF(std::vector<double> &w, std::vector<double> &a)
+const vector<double> & ResolutionEstimator::MTFAmplitude()
 {
+    return mMTFamplitude;
+}
 
+const vector<double> & ResolutionEstimator::MTFFrequency()
+{
+    return mMTFfrequency;
 }
 
 Nonlinear::SumOfGaussians ResolutionEstimator::fitFunction()
@@ -149,37 +158,18 @@ void ResolutionEstimator::createAllocation(int N)
 {
     removeAllocation();
 
-    mProfile=new double[N];
-    mDiffProfile=new double[N];
-    mXaxis=new double[N];
     profileSize=N;
 }
 
 void ResolutionEstimator::removeAllocation()
 {
-    if (mProfile!=nullptr)
-    {
-        delete [] mProfile;
-        mProfile=nullptr;
-    }
-
-    if (mDiffProfile!=nullptr)
-    {
-        delete [] mDiffProfile;
-        mDiffProfile=nullptr;
-    }
-
-    if (mXaxis!=nullptr)
-    {
-        delete [] mXaxis;
-        mXaxis=nullptr;
-    }
 
     profileSize=0;
 }
 
 void ResolutionEstimator::prepareXAxis()
 {
+    mXaxis.resize(profileSize);
     for (int i=0; i<profileSize; ++i) {
         mXaxis[i]=mPixelSize*i;
     }
@@ -189,7 +179,6 @@ void ResolutionEstimator::analysis()
 {
    prepareXAxis();
    diffProfile();
-
    analyzeLineSpread();
    analyzeMTF();
 }
@@ -271,6 +260,27 @@ void ResolutionEstimator::analyzeLineSpread()
 void ResolutionEstimator::analyzeMTF()
 {
     // TODO Implement MTF
+    size_t dims = kipl::math::fft::NextPower2(profileSize);
+    kipl::math::fft::FFTBase transform(&dims,1);
+
+    double *data=new double[dims];
+    std::fill_n(data,dims,0.0);
+    std::copy(mDiffProfile.begin(),mDiffProfile.end(),data);
+
+    complex<double> *spec = new complex<double>[dims];
+    std::fill_n(spec,dims,0.0);
+    transform(data,spec);
+
+    mMTFamplitude.resize(dims);
+    mMTFfrequency.resize(dims);
+
+    double dW = 0.5/mPixelSize/dims;
+    for (size_t i=0; i<dims; ++i)
+    {
+        mMTFamplitude[i] = std::abs(spec[i])/std::abs(spec[0]);
+        mMTFfrequency[i] = i*dW;
+    }
+
 }
 
 void ResolutionEstimator::diffProfile()

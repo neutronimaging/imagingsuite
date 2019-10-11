@@ -28,16 +28,17 @@ public:
     int    size();
     void   setProfile(float *p, int N);
     void   setProfile(double *p, int N);
-    void   setProfile(std::vector<double> &p);
-    void   setProfile(std::vector<float> &p);
+    void   setProfile(const std::vector<double> &p);
+    void   setProfile(const std::vector<float> &p);
     void   setProfile(TNT::Array1D<double> &p);
-    void   profile(double *p, int &N);
+    void   profile(double *p, size_t &N);
     void   clear();
 
     double FWHM();
-    double MTFresolution(float level=0.1f);
-    void edgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit=false, float smooth=0.0f);
-    void MTF(std::vector<double> &w, std::vector<double> &a);
+    double MTFresolution(double level=0.1);
+    void   edgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit=false, float smooth=0.0f);
+    const  vector<double> &MTFAmplitude();
+    const  vector<double> &MTFFrequency();
     Nonlinear::SumOfGaussians fitFunction();
 
 protected:
@@ -48,13 +49,15 @@ protected:
     void analyzeLineSpread();
     void analyzeMTF();
     void diffProfile();
-    int profileSize;
+    size_t profileSize;
     double mPixelSize;
-    double *mProfile;
-    double *mDiffProfile;
-    double *mXaxis;
+    std::vector<double> mProfile;
+    std::vector<double> mDiffProfile;
+    std::vector<double> mXaxis;
     double mfwhm;
     Nonlinear::SumOfGaussians mFitFunction;
+    std::vector<double> mMTFamplitude;
+    std::vector<double> mMTFfrequency;
 };
 }
 
