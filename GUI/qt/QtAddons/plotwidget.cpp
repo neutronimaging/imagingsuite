@@ -25,7 +25,7 @@ PlotWidget::PlotWidget(QWidget *parent) :
 
     QChart *chart = new QChart();
     ui->chart->setChart(chart);
-    chart->layout()->setContentsMargins(4,4,4,4);
+    chart->layout()->setContentsMargins(2,2,2,2);
     ui->chart->chart()->setAcceptHoverEvents(true);
     setupActions();
 }
@@ -132,7 +132,6 @@ void PlotWidget::setDataSeries(int id, QAbstractSeries *series, bool deleteData)
     auto it=seriesmap.find(id);
     if ( it != seriesmap.end())
     {
-        qDebug() << "Plot exists";
         try
         {
             ui->chart->chart()->removeSeries(it->second);
@@ -143,17 +142,15 @@ void PlotWidget::setDataSeries(int id, QAbstractSeries *series, bool deleteData)
             msg=msg+e.what();
             QMessageBox::warning(this,"Exception",msg);
         }
-        qDebug()<< "remove OK";
+
     }
 
-    qDebug() <<"setting series";
     seriesmap[id]=series;
     ui->chart->chart()->addSeries(series);
     ui->chart->chart()->createDefaultAxes();
-    qDebug() <<"setting ok";
     updateAxes();
     updateCursors();
-    qDebug() << "done";
+
 }
 
 void PlotWidget::clearCurve(int id)
