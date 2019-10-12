@@ -68,6 +68,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
 
     logger(logger.LogMessage,"Average slice");
     m_Img2D.Resize(m_Img3D.Dims());
+    m_Img2D=0.0f;
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
     {
         float *pSlice=m_Img3D.GetLinePtr(0,slice);
