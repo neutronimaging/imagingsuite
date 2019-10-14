@@ -45,6 +45,7 @@ SOURCES += plotter.cpp \
     imageviewerinfodialog.cpp \
     qmarker.cpp \
     qtlogviewer.cpp \
+    roiitemdlg.cpp \
     roiwidget.cpp \
     roimanager.cpp \
     uxroiwidget.cpp \
@@ -69,6 +70,7 @@ HEADERS += QtAddons_global.h \
     imageviewerinfodialog.h \
     qmarker.h \
     qtlogviewer.h \
+    roiitemdlg.h \
     roiwidget.h \
     roimanager.h \
     uxroiwidget.h \
@@ -109,6 +111,7 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 FORMS += \
     imageviewerinfodialog.ui \
     qtlogviewer.ui \
+    roiitemdlg.ui \
     roiwidget.ui \
     roimanager.ui \
     uxroiwidget.ui \

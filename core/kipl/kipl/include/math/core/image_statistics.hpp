@@ -1,13 +1,17 @@
-#ifndef IMAGE_STATISTICS_HPP_
-#define IMAGE_STATISTICS_HPP_
+//<LICENSE>
+
+#ifndef IMAGE_STATISTICS_HPP
+#define IMAGE_STATISTICS_HPP
 #include <cmath>
 #include <emmintrin.h>
 #include <iostream>
 #include <algorithm>
+#include <stddef.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 #include <limits>
+#include "../../base/timage.h"
 
 namespace kipl { namespace math {
 
@@ -195,28 +199,6 @@ void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool fin
 
     *minval=*(mm.first);
     *maxval=*(mm.second);
-//	#pragma omp parallel
-//	{
-//		T mi=*minval;
-//		T ma=*maxval;
-
-//		ptrdiff_t NN=static_cast<ptrdiff_t>(N);
-
-//		#pragma omp for
-//		for (ptrdiff_t i=0; i<NN; i++) {
-//			if (data[i]==data[i]) { // Exclude NaNs from the search
-//				if (ma<data[i])
-//					ma=data[i];
-//				else if (data[i]<mi)
-//					mi=data[i];
-//			}
-//		}
-//		#pragma omp critical
-//		{
-//			*minval=     mi < *minval ? mi : *minval;
-//			*maxval=*maxval <  ma     ? ma : *maxval ;
-//		}
-//	}
 }
 
 template <typename T>
@@ -254,12 +236,12 @@ void statistics(T const * const x,double *m, double *s, const size_t *dims, size
     }
 
     if (bAllocate) {
-        if (m!=NULL)
+        if (m!=nullptr)
             delete [] m;
 
         m=new double[nSlices];
 
-        if (s!=NULL)
+        if (s!=nullptr)
             delete [] s;
 
         s=new double[nSlices];

@@ -18,7 +18,7 @@ ModuleConfig::ModuleConfig(void) :
 {
 }
 
-std::string ModuleConfig::WriteXML(int indent)
+const std::string ModuleConfig::WriteXML(int indent)
 {
 	std::ostringstream str;
 

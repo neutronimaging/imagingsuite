@@ -176,7 +176,7 @@ void MainWindow::on_button_ListAllROIs_clicked()
     foreach (kipl::base::RectROI roi, roilist) {
         msg<<std::endl;
         roi.getBox(coord);
-        msg<<roi.getName()<<" ("<<roi.getID()
+        msg<<roi.label()<<" ("<<roi.getID()
           <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
     }
@@ -195,7 +195,7 @@ void MainWindow::on_button_ListSelectedROIs_clicked()
     foreach (kipl::base::RectROI roi, roilist) {
         msg<<std::endl;
         roi.getBox(coord);
-        msg<<roi.getName()<<" ("<<roi.getID()
+        msg<<roi.label()<<" ("<<roi.getID()
           <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
     }
