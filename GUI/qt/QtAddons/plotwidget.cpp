@@ -459,7 +459,8 @@ void PlotWidget::saveCurveData()
                         for (const auto pp : data)
                         {
                             auto & p = *pp;
-                            datastream<<p[p.Median]<<", "
+                            datastream<<p.label().toStdString()<<", "
+                                      <<p[p.Median]<<", "
                                       <<p[p.LowerQuartile]<<", "
                                       <<p[p.UpperQuartile]<<", "
                                       <<p[p.LowerExtreme]<<", "
