@@ -158,12 +158,15 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     std::ofstream dotfile("dots.csv");
     timer.Reset();
     timer.Tic();
+    int loopidx=0;
     for (const auto &roi : ROIs)
     {
         kipl::base::TImage<float,2> chmCrop=kipl::base::TSubImage<float,2>::Get(chm, roi.box());
         kipl::morphology::hMax(chmCrop,peaks,threshold, kipl::base::conn4);
         size_t idx=0;
 
+        msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
+        kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
         float *max=std::max_element(chmCrop.GetDataPtr(),chmCrop.GetDataPtr()+chmCrop.Size());
         size_t maxpos=max-chmCrop.GetDataPtr();
 
@@ -185,7 +188,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
                 }
             }
         }
-        if (roiDots.size()<30)
+        if (roiDots.size()<400)
             dots.insert( dots.end(), roiDots.begin(), roiDots.end() );
     }
     dotfile.close();
@@ -317,7 +320,7 @@ kipl::math::Statistics ContrastSampleAnalysis::computeInsetStatistics(kipl::base
 {
     kipl::math::Statistics stats;
     stats.reset();
-    const float fRadius = 0.4f*metricInsetDiameter/ps; // Reduced radius to avoid edge effects
+    const float fRadius = 0.3f*metricInsetDiameter/ps; // Reduced radius to avoid edge effects
     const int nRadius = static_cast<int>(floor(fRadius));
     for (int y=-nRadius; y<=nRadius; ++y) {
         int wx=floor(sqrt(fRadius*fRadius-y*y));
