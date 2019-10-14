@@ -9,6 +9,7 @@
 #include <base/tsubimage.h>
 #include <filters/filter.h>
 #include <math/mathconstants.h>
+#include <math/image_statistics.h>
 #include <math/circularhoughtransform.h>
 #include <morphology/morphextrema.h>
 #include <morphology/label.h>
@@ -152,12 +153,6 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     m_maxInsetCenter.y=maxpos/m_Img2D.Size(0);
     m_maxInsetCenter.x=maxpos%m_Img2D.Size(0);
 
-    float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
-
-    msg.str("");
-    msg<<"hmax with h="<<threshold;
-    logger(logger.LogMessage,msg.str());
-
     dots.clear();
     std::vector<pair<float, float> > roiDots;
     std::ofstream dotfile("dots.csv");
@@ -167,19 +162,21 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     for (const auto &roi : ROIs)
     {
         kipl::base::TImage<float,2> chmCrop=kipl::base::TSubImage<float,2>::Get(chm, roi.box());
-        kipl::morphology::hMax(chmCrop,peaks,threshold, kipl::base::conn4);
         size_t idx=0;
 
         msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
-        kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
-        float *max=std::max_element(chmCrop.GetDataPtr(),chmCrop.GetDataPtr()+chmCrop.Size());
-        size_t maxpos=max-chmCrop.GetDataPtr();
+        if (saveIntermediateImages)
+            kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
 
-        float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
-        insetpeaks=chmCrop-peaks;
 
-        for (size_t i=0; i<insetpeaks.Size(); ++i)
-            insetpeaks[i]=0.5f*threshold<insetpeaks[i];
+        float minVal=0.0f;
+        float maxVal=0.0f;
+
+        kipl::math::minmax(chmCrop.GetDataPtr(),chmCrop.Size(),&minVal,&maxVal,true);
+        float threshold = (maxVal-minVal)*0.8f+minVal;
+        insetpeaks.Resize(chmCrop.Dims());
+        for (size_t i=0; i<chmCrop.Size(); ++i)
+            insetpeaks[i]=threshold < chmCrop[i];
 
         roiDots.clear();
         for (size_t y=0; y<insetpeaks.Size(1); ++y)
