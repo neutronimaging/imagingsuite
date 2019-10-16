@@ -98,25 +98,25 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
             oneda[j][0]=beta[j];
         }
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<mfit;k++)
-            {
-                std::cout << temp[j][k] << " ";
-            }
-            std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<mfit;k++)
+//            {
+//                std::cout << temp[j][k] << " ";
+//            }
+//            std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<1;k++)
-            {
-                std::cout <<  oneda[j][k] << " ";
-            }
-             std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<1;k++)
+//            {
+//                std::cout <<  oneda[j][k] << " ";
+//            }
+//             std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
 
         try {
@@ -132,25 +132,25 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
 
         }
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<mfit;k++)
-            {
-                std::cout << temp[j][k] << " ";
-            }
-            std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<mfit;k++)
+//            {
+//                std::cout << temp[j][k] << " ";
+//            }
+//            std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<1;k++)
-            {
-                std::cout <<  oneda[j][k] << " ";
-            }
-             std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<1;k++)
+//            {
+//                std::cout <<  oneda[j][k] << " ";
+//            }
+//             std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
 
 
@@ -171,10 +171,10 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
         for (j=0,l=0;l<ma;l++) //Did the trial succeed?
             if (fn.isFree(l)) {
                 atry[l]=fn[l]+da[j++];
-                std::cout << atry[l] << " ";
+//                std::cout << atry[l] << " ";
             }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
         fn.setPars(atry);
         mrqcof(fn,x,y,sig,covar,da);
@@ -391,7 +391,7 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
         }
 
     Array2D<double> F3(b.dim2(), b.dim1());
-    std::cout << b.dim2() << ' ' << b.dim1() << std::endl;
+//    std::cout << b.dim2() << ' ' << b.dim1() << std::endl;
     F3 = matmult(F2,b);
 
 
