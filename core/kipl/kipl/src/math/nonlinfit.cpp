@@ -10,6 +10,9 @@
 #include <math.h>
 #include <tnt.h>
 #include <jama_qr.h>
+#include <jama_cholesky.h>
+#include <jama_svd.h>
+#include <tnt_cmat.h>
 //#include <Faddeeva.hh>
 
 #include "../../include/math/nonlinfit.h"
@@ -21,6 +24,8 @@
 
 using namespace TNT;
 using namespace JAMA;
+
+
 //using namespace Faddeeva;
 
 namespace Nonlinear {
@@ -36,10 +41,10 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
                              Array1D<double> &sig,
                              Nonlinear::FitFunctionBase &fn)
 {
-    //    Iterate to reduce the 2 of a fit between a set of data points x[0..ndat-1], y[0..ndat-1]
+    //    Iterate to reduce the Chi2 of a fit between a set of data points x[0..ndat-1], y[0..ndat-1]
     //    with individual standard deviations sig[0..ndat-1], and a nonlinear function that depends
-    //    on ma coefficients a[0..ma-1]. When 2 is no longer decreasing, set best-fit values
-    //    for the parameters a[0..ma-1], and chisq D 2, covar[0..ma-1][0..ma-1], and
+    //    on ma coefficients a[0..ma-1]. When Chi2 is no longer decreasing, set best-fit values
+    //    for the parameters a[0..ma-1], and chisq = Chi2, covar[0..ma-1][0..ma-1], and
     //    alpha[0..ma-1][0..ma-1]. (Parameters held fixed will return zero covariances.)
     ma=fn.getNpars();
     mfit=fn.getNpars2fit();
@@ -93,8 +98,30 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
             oneda[j][0]=beta[j];
         }
 
+        for (j=0;j<mfit;j++) {
+            for (k=0;k<mfit;k++)
+            {
+                std::cout << temp[j][k] << " ";
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        for (j=0;j<mfit;j++) {
+            for (k=0;k<1;k++)
+            {
+                std::cout <<  oneda[j][k] << " ";
+            }
+             std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+
+
         try {
-            gaussj(temp,oneda); //Matrix solution.
+//            gaussj(temp,oneda); //Matrix solution.
+            svd(temp,oneda);
         }
         catch (kipl::base::KiplException & e) {
             qDebug() << "kiplException: " << QString::fromStdString(e.what());
@@ -104,6 +131,28 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
             qDebug() << "std::exception " << QString::fromStdString(e.what());
 
         }
+
+        for (j=0;j<mfit;j++) {
+            for (k=0;k<mfit;k++)
+            {
+                std::cout << temp[j][k] << " ";
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        for (j=0;j<mfit;j++) {
+            for (k=0;k<1;k++)
+            {
+                std::cout <<  oneda[j][k] << " ";
+            }
+             std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+
+
 
 
         for (j=0;j<mfit;j++) {
@@ -120,14 +169,22 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
         }
 
         for (j=0,l=0;l<ma;l++) //Did the trial succeed?
-            if (fn.isFree(l)) atry[l]=fn[l]+da[j++];
+            if (fn.isFree(l)) {
+                atry[l]=fn[l]+da[j++];
+                std::cout << atry[l] << " ";
+            }
+
+        std::cout << std::endl;
 
         fn.setPars(atry);
         mrqcof(fn,x,y,sig,covar,da);
 
         if (abs(chisq-ochisq) < std::max(tol,tol*chisq)) done++;
 
-        if (chisq < ochisq) { //Success, accept the new solution.
+        qDebug() << ochisq;
+        qDebug() << chisq;
+
+        if (chisq <= ochisq) { //Success, accept the new solution.
             alamda *= 0.1;
             ochisq=chisq;
             for (j=0;j<mfit;j++) {
@@ -142,7 +199,7 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
             chisq=ochisq;
         }
     }
-    throw kipl::base::KiplException("Fitmrq too many iterations",__FILE__,__LINE__);
+//    throw kipl::base::KiplException("Fitmrq too many iterations",__FILE__,__LINE__);
 }
 
 void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, Array1D<double> &x, Array1D<double> &y,
@@ -260,13 +317,189 @@ void LevenbergMarquardt::gaussj(Array2D<double> &a, Array2D<double> &b)
     }
 }
 
+void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
+{
+    JAMA::SVD<double> svd_solver(a);
+
+    Array2D<double> U(a.dim1(),a.dim2());
+    Array2D<double> UT(a.dim1(),a.dim2());
+    Array2D<double> V(a.dim1(),a.dim2());
+    Array2D<double> VT(a.dim1(),a.dim2());
+    Array2D<double> s(a.dim1(),a.dim2());
+    Array2D<double> sinv(a.dim1(),a.dim2());
+//    Array2D<double> C(a.dim1(),1);
+
+    svd_solver.getU(U); //U
+    svd_solver.getV(V); //V
+    svd_solver.getS(s); //s
+
+//    U[U.dim1()-1][0] = - U[U.dim1()-1][0];
+//    V[0][V.dim1()-1] = - V[0][U.dim1()-1];
+
+
+    // A = U*s*V'
+    // A' = U'*s'*V
+    // U and V are orthogonal, so their inverse is the transpose
+    // s' = 1/S, the reciprocal of the eigenvalues
+
+
+//    std::cout << "A:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << a[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+
+//    std::cout << "U:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << U[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+//    std::cout << "V:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << V[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+//    std::cout << "s:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << s[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+
+
+// compute the inverse (=transpose) of U
+    for(int i = 0; i < U.dim1(); ++i)
+        for(int j = 0; j < U.dim2(); ++j)
+        {
+            UT[j][i]=U[i][j];
+        }
+
+
+//    std::cout << "UT:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << UT[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+// compute the inverse (=reciprocal) of s
+
+    for(int i = 0; i < s.dim1(); ++i){
+        for(int j = 0; j < s.dim2(); ++j)
+        {
+            sinv[i][j] = 0.0; // first fill with zeros
+        }
+    }
+
+//    std::cout << s.dim1() << std::endl;
+    for(int i = 0; i < s.dim1(); ++i)
+    {
+        sinv[i][i] = 1.0/s[i][i]; // then compute the reciprocal
+    }
+
+//    std::cout << "sinv:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << sinv[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+ // compute the inverse (=transpose) of V'
+    for(int i = 0; i < V.dim1(); ++i)
+        for(int j = 0; j < V.dim2(); ++j)
+        {
+            VT[j][i]=V[i][j];
+        }
+
+//        std::cout << "VT:" << std::endl;
+
+//        for(int i = 0; i < U.dim1(); ++i){
+//            for(int j = 0; j < U.dim2(); ++j)
+//            {
+//                std::cout << VT[j][i] << " ";
+//            }
+//        std::cout << std::endl;
+//        }
+
+
+    Array2D<double> F1;
+    F1 = matmult(sinv, UT);
+
+
+//    std::cout << "F1:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << F1[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+    Array2D<double> F2;
+    F2 = matmult(V,F1);
+
+    for(int i = 0; i < U.dim1(); ++i)
+        for(int j = 0; j < U.dim2(); ++j)
+        {
+            a[i][j] = F2[i][j];
+        }
+
+//    std::cout << "F2:" << std::endl;
+
+//    for(int i = 0; i < U.dim1(); ++i){
+//        for(int j = 0; j < U.dim2(); ++j)
+//        {
+//            std::cout << F2[j][i] << " ";
+//        }
+//    std::cout << std::endl;
+//    }
+
+    Array2D<double> F3(b.dim2(), b.dim1());
+    std::cout << b.dim2() << ' ' << b.dim1() << std::endl;
+    F3 = matmult(F2,b);
+
+
+
+    for(int i = 0; i < U.dim1(); ++i)
+        {
+            b[i][0] = F3[0][i];
+        }
+
+}
+
 	//#####################################
 
 	FitFunctionBase::FitFunctionBase(int n) 
 	{
         m_pars=Array1D<double>(n);
         m_lock=new bool[n];
-        std::fill(m_lock,m_lock+n,true); // set all to locked?
+        std::fill(m_lock,m_lock+n,true); // set all to free
 
 		m_pars2fit=n;
 		m_Npars=n;

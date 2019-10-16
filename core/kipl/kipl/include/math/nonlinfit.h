@@ -133,6 +133,7 @@ private:
     void mrqcof(Nonlinear::FitFunctionBase &fn, Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Array2D<double> &alpha, Array1D<double> &beta);
     void covsrt(Array2D<double> &covar, FitFunctionBase &fn);
     void gaussj(Array2D<double> &a, Array2D<double> &b);
+    void svd(Array2D<double> &a, Array2D<double> &b);
 
 };
 

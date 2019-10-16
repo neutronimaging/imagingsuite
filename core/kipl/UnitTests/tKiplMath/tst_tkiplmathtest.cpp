@@ -264,9 +264,11 @@ void TKiplMathTest::testNonLinFit_fitter()
         sig[i]=1.0;
     }
 
-    Nonlinear::LevenbergMarquardt mrq(1e-15);
+    Nonlinear::LevenbergMarquardt mrq(1e-15,15);
 
     mrq.fit(x,y,sig,sog);
+
+    sog.printPars();
 
     QCOMPARE(sog[0], sog0[0]);
     QCOMPARE(sog[1], sog0[1]);
@@ -280,7 +282,8 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     double eps=0.001;
 
     Array1D<double> x(N);
-    Array1D<double> y(N);
+    Array1D<double> y(N); // used for the initial estimated of the edge
+    Array1D<double> edge(N); // actual edge to be fitted
     Array1D<double> sig(N);
     Array1D<double> initial_edge(N);
     Array1D<double> params(7);
@@ -418,11 +421,19 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
 
     short loop_y=0;
     ifstream myfile_y ("/home/carminati_c/git/imagingsuite/core/kipl/UnitTests/data/initialmodel.txt"); //opening the file. //path should be related to the lib
-
+    ifstream myfile_y2 ("/home/carminati_c/git/imagingsuite/core/kipl/UnitTests/data/y.txt"); //opening the file. //path should be related to the lib
     for (double a; myfile_y>>a;)
     {
         y[loop_y]=a;
         sig[loop_y]=1.0;
+        loop_y++;
+
+    }
+
+    loop_y=0;
+    for (double a; myfile_y2>>a;)
+    {
+        edge[loop_y]=a;
         loop_y++;
 
     }
@@ -483,24 +494,40 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     }
 
 
-    Nonlinear::LevenbergMarquardt mrq(1e-15,20);
+    Nonlinear::LevenbergMarquardt mrq(1e-3,2);
 
-    bool lock[7]={false, false, false, false, false, false, false};
-    ef.setLock(lock);
+//    bool lock[7]={true, true, true, false, false, false, false};
+//    ef.setLock(lock);
 
-    mrq.fit(x,y,sig,ef);
+//    mrq.fit(x,edge,sig,ef);
 
-    ef.printPars();
+//    ef.printPars();
 
-    ef.getPars(params);
+//    ef.getPars(params);
 
-    qDebug() << params[0];
-    qDebug() << params[1];
-    qDebug() << params[2];
-    qDebug() << params[3];
-    qDebug() << params[4];
-    qDebug() << params[5];
-    qDebug() << params[6];
+//    qDebug() << params[0];
+//    qDebug() << params[1];
+//    qDebug() << params[2];
+//    qDebug() << params[3];
+//    qDebug() << params[4];
+//    qDebug() << params[5];
+//    qDebug() << params[6];
+
+//    lock[3]= lock[4] = false;
+//    lock[5] = lock[6] = true;
+
+//    ef.setLock(lock);
+//    mrq.fit(x,edge,sig,ef);
+
+//    ef.getPars(params);
+
+//    qDebug() << params[0];
+//    qDebug() << params[1];
+//    qDebug() << params[2];
+//    qDebug() << params[3];
+//    qDebug() << params[4];
+//    qDebug() << params[5];
+//    qDebug() << params[6];
 
 
 
