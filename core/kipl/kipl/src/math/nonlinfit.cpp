@@ -333,8 +333,6 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
     svd_solver.getV(V); //V
     svd_solver.getS(s); //s
 
-//    U[U.dim1()-1][0] = - U[U.dim1()-1][0];
-//    V[0][V.dim1()-1] = - V[0][U.dim1()-1];
 
 
     // A = U*s*V'
@@ -342,47 +340,6 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
     // U and V are orthogonal, so their inverse is the transpose
     // s' = 1/S, the reciprocal of the eigenvalues
 
-
-//    std::cout << "A:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << a[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
-
-
-//    std::cout << "U:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << U[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
-
-//    std::cout << "V:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << V[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
-
-//    std::cout << "s:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << s[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
 
 
 
@@ -394,15 +351,6 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
         }
 
 
-//    std::cout << "UT:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << UT[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
 
 // compute the inverse (=reciprocal) of s
 
@@ -419,47 +367,19 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
         sinv[i][i] = 1.0/s[i][i]; // then compute the reciprocal
     }
 
-//    std::cout << "sinv:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << sinv[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
-
- // compute the inverse (=transpose) of V'
+ // compute the inverse (=transpose) of V' (not used)
     for(int i = 0; i < V.dim1(); ++i)
         for(int j = 0; j < V.dim2(); ++j)
         {
             VT[j][i]=V[i][j];
         }
 
-//        std::cout << "VT:" << std::endl;
-
-//        for(int i = 0; i < U.dim1(); ++i){
-//            for(int j = 0; j < U.dim2(); ++j)
-//            {
-//                std::cout << VT[j][i] << " ";
-//            }
-//        std::cout << std::endl;
-//        }
 
 
     Array2D<double> F1;
     F1 = matmult(sinv, UT);
 
 
-//    std::cout << "F1:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << F1[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
 
     Array2D<double> F2;
     F2 = matmult(V,F1);
@@ -469,16 +389,6 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
         {
             a[i][j] = F2[i][j];
         }
-
-//    std::cout << "F2:" << std::endl;
-
-//    for(int i = 0; i < U.dim1(); ++i){
-//        for(int j = 0; j < U.dim2(); ++j)
-//        {
-//            std::cout << F2[j][i] << " ";
-//        }
-//    std::cout << std::endl;
-//    }
 
     Array2D<double> F3(b.dim2(), b.dim1());
     std::cout << b.dim2() << ' ' << b.dim1() << std::endl;
