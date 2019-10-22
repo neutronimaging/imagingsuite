@@ -5,6 +5,9 @@
 #include <math/edgefunction.h>
 #include <Faddeeva.hh>
 #include <iostream>
+#include <chrono>
+#include <ctime>
+
 using namespace std;
 using namespace Faddeeva;
 
@@ -18,6 +21,7 @@ public:
 
 private slots:
     void test_case1();
+    void compare_erfc();
 
 };
 
@@ -111,6 +115,49 @@ void tedgefunction::test_case1()
 {
 
     std::cout << "testing case 1 empty" << std::endl;
+}
+
+void tedgefunction::compare_erfc()
+{
+    unsigned long size = 30;
+    double *t = new double[size];
+
+     for (int i=0; i<size; ++i)
+     {
+        t[i] = 3.0+i*(5.0-3.0)/size;
+     }
+
+     double t0 = 4.06667;
+     double sigma = 0.0053;
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+    double fun;
+
+    for (int i=0; i<100000000; ++i)
+    {
+        // call Faddeeva erfc
+        fun = Faddeeva::erfc(-(t[10]-t0)/(sigma*dsqrt2));
+    }
+    auto t2 = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    qDebug() << "duration of 100000000 Fadeevva erfc " << duration;
+
+
+     t1 = std::chrono::high_resolution_clock::now();
+
+
+    for (int i=0; i<100000000; ++i)
+    {
+        // call std erfc
+         fun = std::erfc(-(t[10]-t0)/(sigma*dsqrt2));
+
+    }
+     t2 = std::chrono::high_resolution_clock::now();
+
+     duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    qDebug() << "duration of 100000000 std erfc " << duration;
+
 }
 
 QTEST_APPLESS_MAIN(tedgefunction)
