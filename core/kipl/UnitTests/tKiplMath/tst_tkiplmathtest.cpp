@@ -494,14 +494,14 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     }
 
 
-    Nonlinear::LevenbergMarquardt mrq(1e-3,2);
+    Nonlinear::LevenbergMarquardt mrq(1e-3,10);
 
-//    bool lock[7]={true, true, true, false, false, false, false};
+//    bool lock[7]={false, false, false, true, true, true, true};
 //    ef.setLock(lock);
 
-//    mrq.fit(x,edge,sig,ef);
+    mrq.fit(x,edge,sig,ef);
 
-//    ef.printPars();
+    ef.printPars();
 
 //    ef.getPars(params);
 
