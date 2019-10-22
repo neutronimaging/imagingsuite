@@ -46,7 +46,7 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
-    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio -L/usr/local/lib/ -llmfit
+    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio  -llmfit
 }
 
 

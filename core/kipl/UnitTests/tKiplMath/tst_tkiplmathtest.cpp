@@ -527,8 +527,6 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     control.verbosity = 7;
 
     printf( "Fitting ...\n" );
-//    lmcurve( n, par, m, t, y, f, &control, &status );
-
     lmcurve(n, params, N, x,edge, f, &control, &status );
 
     printf( "Results:\n" );
@@ -540,10 +538,10 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
         printf("  par[%i] = %12g\n", i, params[i]);
     printf("obtained norm:\n  %12g\n", status.fnorm );
 
-//    printf("fitting data as follows:\n");
-//    for (int i = 0; i < m; ++i)
-//        printf( "  t[%2d]=%4g y=%6g fit=%10g residue=%12g\n",
-//                i, t[i], y[i], f(t[i],par), y[i] - f(t[i],par) );
+    printf("fitting data as follows:\n");
+    for (int i = 0; i < N; i+=100)
+        printf( "  t[%2d]=%4g y=%6g fit=%10g residue=%12g\n",
+                i, x[i], edge[i], f(x[i],params), edge[i] - f(x[i],params) );
 
 
 

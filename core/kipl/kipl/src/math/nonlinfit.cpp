@@ -102,29 +102,29 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
             oneda[j][0]=beta[j];
         }
 
-        std::cout << "matrix to invert" << std::endl;
+//        std::cout << "matrix to invert" << std::endl;
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<mfit;k++)
-            {
-                std::cout << temp[j][k] << " ";
-            }
-            std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<mfit;k++)
+//            {
+//                std::cout << temp[j][k] << " ";
+//            }
+//            std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
-        std::cout << " b vector" << std::endl;
+//        std::cout << " b vector" << std::endl;
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<1;k++)
-            {
-                std::cout <<  oneda[j][k] << " ";
-            }
-             std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<1;k++)
+//            {
+//                std::cout <<  oneda[j][k] << " ";
+//            }
+//             std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
 
         try {
@@ -140,25 +140,25 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
 
         }
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<mfit;k++)
-            {
-                std::cout << temp[j][k] << " ";
-            }
-            std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<mfit;k++)
+//            {
+//                std::cout << temp[j][k] << " ";
+//            }
+//            std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
-        for (j=0;j<mfit;j++) {
-            for (k=0;k<1;k++)
-            {
-                std::cout <<  oneda[j][k] << " ";
-            }
-             std::cout << std::endl;
-        }
+//        for (j=0;j<mfit;j++) {
+//            for (k=0;k<1;k++)
+//            {
+//                std::cout <<  oneda[j][k] << " ";
+//            }
+//             std::cout << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
 
 
 
@@ -383,12 +383,12 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
         }
 
 
-    std::cout << "singular values" << std::endl;
-    for(i = 0; i < s.dim1(); ++i){
-            std::cout <<  s[i][i] << ' ';
-    }
+//    std::cout << "singular values" << std::endl;
+//    for(i = 0; i < s.dim1(); ++i){
+//            std::cout <<  s[i][i] << ' ';
+//    }
 
-    std::cout << std::endl;
+//    std::cout << std::endl;
 
 // compute the inverse (=reciprocal) of s
 
@@ -447,13 +447,8 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
             res_norm[i] += (F4[0][j]-b[j][0])*(F4[0][j]-b[j][0]);
 
         }
-
-
         sol_norm[i] = log(sqrt(sol_norm[i]));
         res_norm[i] = (sqrt(res_norm[i]));
-
-//        std::cout << res_norm[i] << " " <<  sol_norm[i]<< std::endl; // correct!
-
     }
 
     // from this compute the second order derivative of sol_norm with respect of res_norm
@@ -472,32 +467,18 @@ void LevenbergMarquardt::svd(Array2D<double> &a, Array2D<double> &b)
 
     int index_max = std::distance(A, std::max_element(A, A+second_der.dim()));
 
-//    std::cout << "index max element: " << index_max << std::endl;
-//    std::cout << "value max element: " << max_el << std::endl;
-
-//    std::cout << "regularization parameter: " << reg_par[index_max] << std::endl;
-
 
     // select the max element for the final regularization
 
-   std::cout << "singular values after regularization: " ;
     for (j=0; j<s.dim1(); ++j)
     {
         phi[j] = (s[j][j]*s[j][j])/(s[j][j]*s[j][j]+reg_par[index_max]*reg_par[index_max]);
         s_reg[j][j]= s[j][j]/phi[j];
         s_reg_inv[j][j] = 1.0/s_reg[j][j];
-
-        std::cout << s_reg[j][j] << " ";
     }
-    std::cout << std::endl;
 
-
-
-
-
-
-//    F1 = matmult(sinv, UT);  // this would be just the results without regularization
-    F1 = matmult(s_reg_inv, UT);
+    F1 = matmult(sinv, UT);  // this would be just the results without regularization
+//    F1 = matmult(s_reg_inv, UT); // this is with regularization
     F2 = matmult(V,F1);
 
     for(int i = 0; i < U.dim1(); ++i)
