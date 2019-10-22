@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH += "$$PWD/../../../../external/src/linalg"
+
 unix {
  #   INCLUDEPATH += "../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
@@ -45,7 +46,7 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
-    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
+    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio -L/usr/local/lib/ -llmfit
 }
 
 

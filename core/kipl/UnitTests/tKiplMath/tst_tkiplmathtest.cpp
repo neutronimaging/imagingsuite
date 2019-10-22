@@ -20,6 +20,8 @@
 #include <math/mathconstants.h>
 #include <io/io_tiff.h>
 
+#include <lmcurve.h>
+
 class TKiplMathTest : public QObject
 {
     Q_OBJECT
@@ -39,7 +41,6 @@ private Q_SLOTS:
     void testNonLinFit_fitter();
     void testNonLinFit_EdgeFunction();
     void testFindPeaks();
-
     void testStatistics();
     void testImageStats();
     void testSignFunction();
@@ -54,6 +55,7 @@ private Q_SLOTS:
 private:
     kipl::base::TImage<float,2> sin2D;
 };
+
 
 TKiplMathTest::TKiplMathTest()
 {
@@ -276,6 +278,19 @@ void TKiplMathTest::testNonLinFit_fitter()
 
 }
 
+
+double f(double x, const double *m_pars)
+{
+    double term3,term4,term5,edge,exp_after,exp_before;
+    term3 = erfc(-1.0*(x-m_pars[0])/(m_pars[1]*dsqrt2));
+    term4 = exp(-1.0*((x-m_pars[0])/m_pars[2])+((m_pars[1]*m_pars[1])/(2.0*m_pars[2]*m_pars[2])));
+    term5 = erfc(-1.0*(x-m_pars[0])/(m_pars[1]*dsqrt2)+m_pars[1]/m_pars[2]);
+    edge = 0.5*(term3-term4*term5); // myedgefunction
+    exp_after = exp(-1.0*(m_pars[3]+m_pars[4]*x)); //myexp after
+    exp_before = exp(-1.0*(m_pars[5]+m_pars[6]*x)); //my exp before
+    return exp_after*(exp_before+(1-exp_before)*edge);
+}
+
 void TKiplMathTest::testNonLinFit_EdgeFunction()
 {
     int N=1107;
@@ -494,41 +509,41 @@ void TKiplMathTest::testNonLinFit_EdgeFunction()
     }
 
 
-    Nonlinear::LevenbergMarquardt mrq(1e-3,10);
+//    Nonlinear::LevenbergMarquardt mrq(1e-3,1);
 
-//    bool lock[7]={false, false, false, true, true, true, true};
-//    ef.setLock(lock);
+// //    bool lock[7]={false, false, false, true, true, true, true};
+// // ef.setLock(lock);
 
-    mrq.fit(x,edge,sig,ef);
-
-    ef.printPars();
-
-//    ef.getPars(params);
-
-//    qDebug() << params[0];
-//    qDebug() << params[1];
-//    qDebug() << params[2];
-//    qDebug() << params[3];
-//    qDebug() << params[4];
-//    qDebug() << params[5];
-//    qDebug() << params[6];
-
-//    lock[3]= lock[4] = false;
-//    lock[5] = lock[6] = true;
-
-//    ef.setLock(lock);
 //    mrq.fit(x,edge,sig,ef);
 
-//    ef.getPars(params);
+//    ef.printPars();
 
-//    qDebug() << params[0];
-//    qDebug() << params[1];
-//    qDebug() << params[2];
-//    qDebug() << params[3];
-//    qDebug() << params[4];
-//    qDebug() << params[5];
-//    qDebug() << params[6];
+// Here I test with lmfit, maybe it works
 
+    int n = 7; /* number of parameters in model function f */
+
+    lm_control_struct control = lm_control_double;
+    lm_status_struct status;
+    control.verbosity = 7;
+
+    printf( "Fitting ...\n" );
+//    lmcurve( n, par, m, t, y, f, &control, &status );
+
+    lmcurve(n, params, N, x,edge, f, &control, &status );
+
+    printf( "Results:\n" );
+    printf( "status after %d function evaluations:\n  %s\n",
+            status.nfev, lm_infmsg[status.outcome] );
+
+    printf("obtained parameters:\n");
+    for (int i = 0; i < n; ++i)
+        printf("  par[%i] = %12g\n", i, params[i]);
+    printf("obtained norm:\n  %12g\n", status.fnorm );
+
+//    printf("fitting data as follows:\n");
+//    for (int i = 0; i < m; ++i)
+//        printf( "  t[%2d]=%4g y=%6g fit=%10g residue=%12g\n",
+//                i, t[i], y[i], f(t[i],par), y[i] - f(t[i],par) );
 
 
 

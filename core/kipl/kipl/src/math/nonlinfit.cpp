@@ -15,6 +15,7 @@
 #include <jama_svd.h>
 #include <tnt_cmat.h>
 //#include <Faddeeva.hh>
+#include <lmcurve.h>
 
 #include "../../include/math/nonlinfit.h"
 #include "../../include/math/gradient.h"
