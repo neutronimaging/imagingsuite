@@ -125,8 +125,8 @@ SOURCES += \
     ../src/math/findpeaks.cpp \
     ../src/math/normalizeimage.cpp \
     ../src/stltools/stlvecmath.cpp \
-    ../src/strings/xmlstrings.cpp 
-#   ../src/math/edgefunction.cpp
+    ../src/strings/xmlstrings.cpp \
+    ../src/math/gradient.cpp
 
 
 
@@ -344,8 +344,8 @@ HEADERS +=\
     ../include/strings/xmlstrings.h \
     ../include/morphology/repairhole.h \
     ../include/morphology/core/repairhole.hpp \
-    ../include/algorithms/datavalidator.h 
-#    ../include/math/edgefunction.h
+    ../include/algorithms/datavalidator.h \
+    ../include/math/gradient.h
 
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
