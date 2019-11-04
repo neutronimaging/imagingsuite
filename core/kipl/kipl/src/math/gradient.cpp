@@ -4,7 +4,7 @@ namespace kipl {
 namespace math {
 
 
-void num_gradient(TNT::Array1D<double> &Y, TNT::Array1D<double> &X, int N, TNT::Array1D<double> &grad)
+void num_gradient(double *Y, double *X, int N, double *grad)
 {
     double hs, hd, fhs, fhd, f;
     for (int i=0; i<N; ++i)
