@@ -17,6 +17,7 @@
 #include <math/findpeaks.h>
 #include <math/image_statistics.h>
 #include <math/covariance.h>
+#include <math/gradient.h>
 
 #include <io/io_tiff.h>
 
@@ -48,6 +49,7 @@ private Q_SLOTS:
     void testCovSmallData();
     void testCorrSmallData();
     void testMinMax();
+    void TestGradient();
 
 
 
@@ -487,6 +489,64 @@ void TKiplMathTest::testMinMax()
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
     QCOMPARE(mi,-1.0f/0.0f);
     QCOMPARE(ma,1.0f/0.0f);
+
+}
+
+void TKiplMathTest::TestGradient()
+{
+//read data and expected gradient, compute gradient and compare
+
+    double x[12] = {0.0500144, 0.0520624, 0.0541104, 0.0561584, 0.0582064, 0.0602544, 0.0623024,
+                    0.0643504, 0.067481,  0.071577,  0.075673,  0.079769};
+
+
+    double data[12] = {0.232335, 0.217474, 0.203564, 0.190545, 0.414715, 0.497566, 0.51482,  0.515086,
+                    0.508319, 0.497549, 0.486791, 0.476251};
+    double exp_gradient[12] = {-7.25634766, -7.02416992, -6.57446289, 51.55053711, 74.95629883, 24.43969727,
+                               4.27734375, -0.77632507, -2.36423198, -2.62792969, -2.59985352, -2.57324219};
+
+    double *comp_gradient = new double[12];
+
+    kipl::math::num_gradient(data, x, 12, comp_gradient);
+
+    for (int i=0; i<12; ++i)
+    {
+        qDebug() << comp_gradient[i];
+        QVERIFY(fabs(comp_gradient[i]-exp_gradient[i])<1e-7);
+//        QCOMPARE(comp_gradient[i], exp_gradient[i]); // does not like negative?
+    }
+
+    delete [] comp_gradient;
+
+    // This gives a compilation error
+//    // fake arrays to check what happens with int as inputs
+//    int intx[12] = {0,1,2,3,4,5,6,7,8,9,10,11};
+//    int inty[12] = {0,1,2,3,4,5,6,7,8,9,10,11};
+//    int *int_gradient = new int[12];
+
+//    kipl::math::num_gradient(inty, intx, 12, int_gradient);
+
+    float x_f[12] = {0.0500144, 0.0520624, 0.0541104, 0.0561584, 0.0582064, 0.0602544, 0.0623024,
+                    0.0643504, 0.067481,  0.071577,  0.075673,  0.079769};
+
+
+    float data_f[12] = {0.232335, 0.217474, 0.203564, 0.190545, 0.414715, 0.497566, 0.51482,  0.515086,
+                    0.508319, 0.497549, 0.486791, 0.476251};
+    float exp_gradient_f[12] = {-7.25634766, -7.02416992, -6.57446289, 51.55053711, 74.95629883, 24.43969727,
+                               4.27734375, -0.77632507, -2.36423198, -2.62792969, -2.59985352, -2.57324219};
+
+    float *comp_gradient_f = new float[12];
+
+    kipl::math::num_gradient(data_f, x_f, 12, comp_gradient_f);
+
+    for (int i=0; i<12; ++i)
+    {
+        qDebug() << comp_gradient_f[i];
+        QVERIFY(fabs(comp_gradient_f[i]-exp_gradient_f[i])<1e-3);
+//        QCOMPARE(comp_gradient[i], exp_gradient[i]); // does not like negative?
+    }
+
+    delete [] comp_gradient;
 
 }
 
