@@ -125,8 +125,8 @@ SOURCES += \
     ../src/math/findpeaks.cpp \
     ../src/math/normalizeimage.cpp \
     ../src/stltools/stlvecmath.cpp \
-    ../src/strings/xmlstrings.cpp \
-    ../src/math/gradient.cpp
+    ../src/strings/xmlstrings.cpp
+#    ../src/math/gradient.cpp
 
 
 
