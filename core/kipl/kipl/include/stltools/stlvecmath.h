@@ -8,6 +8,7 @@
 #include <iostream>
 #include <algorithm>
 #include <stddef.h>
+#include <numeric>
 
 #include "../math/median.h"
 #include "../kipl_global.h"
@@ -144,9 +145,12 @@ T sum(std::vector<T> v)
 }
 
 /// Convolves the vector x with the filter kernel in H
-template<class T>
-std::vector<T> filter(std::vector<T> &x, std::vector<double> &H)
+template<typename T, typename S>
+std::vector<T> filter(const std::vector<T> &x, const std::vector<S> &H)
 {
+    static_assert(std::is_floating_point<S>::value,
+                     "STL convolution can only be called with floating point kernel types");
+
     std::vector<T> tmp(x.size());
     ptrdiff_t sx=static_cast<ptrdiff_t>(x.size());
     ptrdiff_t sH=static_cast<ptrdiff_t>(H.size());
@@ -160,6 +164,25 @@ std::vector<T> filter(std::vector<T> &x, std::vector<double> &H)
 	}
 	
 	return tmp;
+}
+
+template<typename T, typename S>
+std::vector<T> convolve1d(const std::vector<T> &x, const std::vector<S> &H)
+{
+    static_assert(std::is_floating_point<S>::value,
+                     "STL convolution can only be called with floating point kernel types");
+
+    std::vector<T> y(x.size());
+    size_t pos = H.size()/2;
+    auto itY = y.begin();
+    std::advance(itY,pos);
+
+    for (auto itX = x.begin(); itX!=x.end()-pos; ++itX, ++itY)
+    {
+        *itY = std::inner_product(H.begin(),H.end(),itX,0.0);
+        qDebug() << *itX, *itY;
+    }
+    return y;
 }
 
 /// Convolves the vector x with the filter kernel in H

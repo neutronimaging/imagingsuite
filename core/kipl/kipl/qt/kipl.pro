@@ -132,6 +132,8 @@ SOURCES += \
 
 HEADERS +=\
     ../../../algorithms/ImagingAlgorithms/include/pybinder.h \
+    ../include/filters/core/savitzkygolayfilter.hpp \
+    ../include/filters/savitzkygolayfilter.h \
     ../include/kipl_global.h \
     ../include/algorithms/sortalg.h \
     ../include/base/tsubimage.h \
