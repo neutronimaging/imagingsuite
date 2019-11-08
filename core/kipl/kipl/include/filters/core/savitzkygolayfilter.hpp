@@ -1,5 +1,6 @@
 //<LICENSE>
 #include <cstdlib>
+#include <sstream>
 #include "../savitzkygolayfilter.h"
 #include "../../base/KiplException.h"
 #include "../../math/mathfunctions.h"
@@ -129,14 +130,22 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
     // from 0 to polyorder.  (That is, A is a vandermonde matrix, but not
     // necessarily square.)
 
-    TNT::Array2D<T> A(windowLength, polyOrder+1);
+//    TNT::Array2D<T> A(windowLength, polyOrder+1);
+//    float x=-pos;
+//    for (int i=0; i<windowLength; ++i, ++x)
+//    {
+//        for (int order = 0 ; order<=polyOrder; ++order)
+//        {
+//            A[i][order]=std::pow(x,order);
+//        }
+//    }
+    TNT::Array2D<T> A(polyOrder+1,windowLength);
     float x=-pos;
     for (int i=0; i<windowLength; ++i, ++x)
     {
         for (int order = 0 ; order<=polyOrder; ++order)
         {
-            A[i][order]=std::pow(x,order);
-            qDebug() << A[i][order];
+            A[order][i]=std::pow(x,order);
         }
     }
 
@@ -148,9 +157,11 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
     // account the order of the derivative and the sample spacing.
     y[deriv] = kipl::math::factorial(deriv) / std::pow(delta,deriv);
 
+
     // Find the least-squares solution of A*c = y
     JAMA::QR<T> lstsq(A);
-
+    qDebug() <<"dims A"<<A.dim1()<<A.dim2()<< ", Full rank"<< lstsq.isFullRank();
+    qDebug() <<"dim y"<<y.dim1();
     TNT::Array1D<T> tcvec = lstsq.solve(y);
 
     qDebug() <<"Coeffs"<< tcvec.dim1();
