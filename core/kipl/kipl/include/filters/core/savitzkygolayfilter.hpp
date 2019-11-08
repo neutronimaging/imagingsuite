@@ -1,13 +1,13 @@
 //<LICENSE>
 #include <cstdlib>
+#include <iostream>
 #include <sstream>
 #include "../savitzkygolayfilter.h"
 #include "../../base/KiplException.h"
 #include "../../math/mathfunctions.h"
 #include "../../stltools/stlvecmath.h"
-#include <tnt.h>
-#include <jama_qr.h>
-#include <jama_lu.h>
+#include "../../math/tnt_utils.h"
+#include <armadillo.h>
 #include <QDebug>
 
 namespace kipl {
@@ -63,17 +63,13 @@ void SavitzkyGolayFilter<T>::operator()(T *signal, size_t N, T * result, int ord
 /// -------
 /// y : ndarray, same shape as `x`
 ///     The filtered data.
-
 template <typename T>
 std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,int windowLength, int polyOrder, int deriv, double delta,eSavGolInterp mode, T cval)
 {
     std::vector<T> result;
 
     auto cvec = coeffs(windowLength, polyOrder, deriv, delta);
-    qDebug()<< "kernel size" <<cvec.size();
 
-    for (const auto & item : cvec)
-        qDebug() << "kernel"<<item;
 //    if (mode == sgInterp)
 //    {
 //        if (windowLength > signal.size())
@@ -87,7 +83,7 @@ std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,i
 //    }
 //    else
 //    {
-//        // Any mode other than 'interp' is passed on to ndimage.convolve1d.
+        // Any mode other than 'interp' is passed on to ndimage.convolve1d.
         //result = convolve1d(signal, cvec, mode, cval);
         result = convolve1d(signal, cvec);
 //    }
@@ -109,9 +105,9 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
         throw kipl::base::KiplException("polyorder must be less than window_length.",__FILE__,__LINE__);
 
     auto res    = std::div(windowLength, 2);
-    int halflen =res.quot;
+    int halflen = res.quot;
     int rem     = res.rem;
-    int pos = halflen;
+    int pos     = halflen;
 
     if (rem == 0)
         throw kipl::base::KiplException("window_length must be odd.",__FILE__,__LINE__);
@@ -129,47 +125,29 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
     // from -pos to window_length - pos - 1.  The powers (i.e. rows) range
     // from 0 to polyorder.  (That is, A is a vandermonde matrix, but not
     // necessarily square.)
+    arma::mat A(polyOrder+1,windowLength) ;
 
-//    TNT::Array2D<T> A(windowLength, polyOrder+1);
-//    float x=-pos;
-//    for (int i=0; i<windowLength; ++i, ++x)
-//    {
-//        for (int order = 0 ; order<=polyOrder; ++order)
-//        {
-//            A[i][order]=std::pow(x,order);
-//        }
-//    }
-    TNT::Array2D<T> A(polyOrder+1,windowLength);
     float x=-pos;
     for (int i=0; i<windowLength; ++i, ++x)
     {
         for (int order = 0 ; order<=polyOrder; ++order)
         {
-            A[order][i]=std::pow(x,order);
+            A(order,i)=std::pow(x,order);
         }
     }
 
-    // y determines which order derivative is returned.
-    TNT::Array1D<T> y(polyOrder+1);
-    y=0.0;
+    arma::vec y(polyOrder+1);
 
-    // The coefficient assigned to y[deriv] scales the result to take into
-    // account the order of the derivative and the sample spacing.
-    y[deriv] = kipl::math::factorial(deriv) / std::pow(delta,deriv);
+    y.fill(0.0);
+    y(deriv)= kipl::math::factorial(deriv) / std::pow(delta,deriv);
+    std::cout<<y<<std::endl;
+    arma::vec c=solve(A,y);
 
-
-    // Find the least-squares solution of A*c = y
-    JAMA::QR<T> lstsq(A);
-    qDebug() <<"dims A"<<A.dim1()<<A.dim2()<< ", Full rank"<< lstsq.isFullRank();
-    qDebug() <<"dim y"<<y.dim1();
-    TNT::Array1D<T> tcvec = lstsq.solve(y);
-
-    qDebug() <<"Coeffs"<< tcvec.dim1();
-    for (int i=0; i<tcvec.dim1(); ++i)
+    for (int i=0; i<c.n_elem; ++i)
     {
-        cvec[i]= tcvec[i];
-        qDebug() << tcvec[i]<<cvec[i];
+        cvec[i]= c(i);
     }
+
     return cvec;
 }
 

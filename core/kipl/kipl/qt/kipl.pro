@@ -46,11 +46,7 @@ win32 {
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio # -lFaddeeva
-
-
-
+else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 
 DEFINES += KIPL_LIBRARY
 
@@ -364,26 +360,6 @@ message("-lNeXus does not exists $$HEADERS")
 
 }
 
-#unix:mac {
-#exists(/usr/local/lib/*NeXus*) {
-
-#    message("-lNeXus exists")
-#    DEFINES += HAVE_NEXUS
-##    INCLUDEPATH += /usr/local/lib
-##    LIBS += -L/usr/local/lib/  -lNeXus -lNeXusCPP
-
-#    LIBS += -L$$PWD/../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
-
-#    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
-#    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
-
-#    SOURCES += ../src/io/io_nexus.cpp
-#    HEADERS += ../include/io/io_nexus.h
-#}
-#else {
-#message("-lNeXus does not exists $$HEADERS")
-#}
-
 unix:mac {
 exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
@@ -397,8 +373,6 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
 
-#    QMAKE_CXXFLAGS += --coverage
-#    QMAKE_LFLAGS += --coverage
 }
 else {
 message("-lNeXus does not exists $$HEADERS")
@@ -438,7 +412,6 @@ unix:!symbian {
         target.path = /opt/usr/lib
     } else {
         target.path = /usr/lib
-#        target.path = ../../../../external/src/Fadeeva_erf ## did not seem to work
     }
     INSTALLS += target
 }
@@ -446,10 +419,6 @@ unix:!symbian {
 DISTFILES += \
     ../include/filters/nonlocalmeans.txt
 
-
-#LIBS += -L$$PWD/../../../../external/src/Fadeeva_erf/ -lFaddeeva ## but somehow I add to put the .so in usr/lib
-#QMAKE_LIBDIR += $$PWD/../../../../external/src/Fadeeva_erf/
-INCLUDEPATH += $$PWD/../../../../external/src/Fadeeva_erf
-DEPENDPATH += $$PWD/../../../../external/src/Fadeeva_erf
+INCLUDEPATH += $$PWD/../../../../external/src/armadillo-9.800.2/include/
 
 message($$INCLUDEPATH)

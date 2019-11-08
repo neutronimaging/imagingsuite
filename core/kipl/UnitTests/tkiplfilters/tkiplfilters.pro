@@ -22,7 +22,7 @@ unix {
 
     unix:macx {
         INCLUDEPATH += /opt/local/include
-        QMAKE_LIBDIR += /opt/local/lib
+        QMAKE_LIBDIR += /opt/local/lib $$PWD/../../../../external/mac/lib
     }
 }
 
@@ -37,6 +37,8 @@ win32 {
     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 }
 
+INCLUDEPATH += $$PWD/../../../../external/src/armadillo-9.800.2/include/
+
 SOURCES +=  tst_kiplfilters.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
@@ -48,7 +50,7 @@ else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl
+LIBS += -lkipl -larmadillo -llapack
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src
