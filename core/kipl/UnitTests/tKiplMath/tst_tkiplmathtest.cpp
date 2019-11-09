@@ -53,6 +53,7 @@ private Q_SLOTS:
 
     void testPolyFun();
     void testPolyFit();
+    void testPolyDeriv();
 
 
 
@@ -600,6 +601,40 @@ void TKiplMathTest::testPolyFit()
     QCOMPARE(c3[2],coef3[2]);
     QCOMPARE(c3[3],coef3[3]);
 
+
+}
+
+void TKiplMathTest::testPolyDeriv()
+{
+    std::vector<double> coef1 = {2,3};
+    auto dc1=kipl::math::polyDeriv(coef1,1);
+    QCOMPARE(dc1.size(),1);
+    QCOMPARE(dc1[0],3);
+    auto ddc1=kipl::math::polyDeriv(coef1,2);
+    QCOMPARE(ddc1.size(),0);
+
+    std::vector<double> coef2 = {2,3,1.5};
+    auto dc2=kipl::math::polyDeriv(coef2,1);
+    QCOMPARE(dc2.size(),2);
+    QCOMPARE(dc2[0],3);
+    QCOMPARE(dc2[1],3);
+
+    auto ddc2=kipl::math::polyDeriv(coef2,2);
+    QCOMPARE(ddc2.size(),1);
+    QCOMPARE(ddc2[0],3);
+
+    std::vector<double> coef3 = {2,3,1.5,-0.5};
+    auto dc3=kipl::math::polyDeriv(coef3,1);
+
+    QCOMPARE(dc3.size(),3);
+    QCOMPARE(dc3[0],3);
+    QCOMPARE(dc3[1],3);
+    QCOMPARE(dc3[2],-1.5);
+
+    auto ddc3=kipl::math::polyDeriv(coef3,2);
+    QCOMPARE(ddc3.size(),2);
+    QCOMPARE(ddc3[0],3);
+    QCOMPARE(ddc3[1],-3);
 
 }
 

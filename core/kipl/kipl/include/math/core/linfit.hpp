@@ -184,5 +184,32 @@ std::vector<double> polyFun(const std::vector<T> &xx,const std::vector<S> &c)
 
     return y;
 }
+
+template<typename T>
+std::vector<T> polyDeriv(const std::vector<T> &c,int deriv)
+{
+    if (deriv<1)
+        return c;
+
+    std::vector<T> dc;
+    if (deriv==1)
+    {
+        for (int i=1; i<c.size(); ++i)
+        {
+            dc.push_back(i*c[i]);
+        }
+    }
+    else
+    {
+       auto cc = polyDeriv(c,deriv-1);
+       for (int i=1; i<cc.size(); ++i)
+       {
+           dc.push_back(i*cc[i]);
+       }
+    }
+
+    return dc;
+
+}
 }}
 #endif // LINFIT_HPP
