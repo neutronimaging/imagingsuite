@@ -18,6 +18,7 @@
 #include <math/image_statistics.h>
 #include <math/covariance.h>
 #include <math/gradient.h>
+#include <math/linfit.h>
 
 #include <io/io_tiff.h>
 
@@ -49,11 +50,15 @@ private Q_SLOTS:
     void testCovSmallData();
     void testCorrSmallData();
     void testMinMax();
-    void TestGradient();
+
+    void testPolyFun();
+    void testPolyFit();
+
 
 
 
 private:
+    void TestGradient();
     kipl::base::TImage<float,2> sin2D;
 };
 
@@ -547,6 +552,54 @@ void TKiplMathTest::TestGradient()
     }
 
     delete [] comp_gradient;
+
+}
+
+void TKiplMathTest::testPolyFun()
+{
+    std::vector<double> x={-2,-1,0,1,2};
+    std::vector<double> y1={-4,-1,2,5,8};
+    std::vector<double> coef1 = {2,3};
+
+    auto y=kipl::math::polyFun(x,coef1);
+
+    for (auto itRes=y.begin(), itExp=y1.begin(); itRes!=y.end(); ++itRes, ++itExp)
+        QCOMPARE(*itRes,*itExp);
+}
+
+void TKiplMathTest::testPolyFit()
+{
+    std::vector<double> x={-8,-2,-1,0,1,2,15};
+    std::vector<double> coef1 = {2,3};
+
+    auto y1=kipl::math::polyFun(x,coef1);
+
+    auto c=kipl::math::polyFit(x,y1,1);
+
+    QCOMPARE(c[0],coef1[0]);
+    QCOMPARE(c[1],coef1[1]);
+
+    std::vector<double> coef2 = {2,3,1.5};
+
+    auto y2=kipl::math::polyFun(x,coef2);
+
+    auto c2=kipl::math::polyFit(x,y2,2);
+
+    QCOMPARE(c2[0],coef2[0]);
+    QCOMPARE(c2[1],coef2[1]);
+    QCOMPARE(c2[2],coef2[2]);
+
+    std::vector<double> coef3 = {2,3,1.5,-0.5};
+
+    auto y3=kipl::math::polyFun(x,coef3);
+
+    auto c3=kipl::math::polyFit(x,y3,3);
+
+    QCOMPARE(c3[0],coef3[0]);
+    QCOMPARE(c3[1],coef3[1]);
+    QCOMPARE(c3[2],coef3[2]);
+    QCOMPARE(c3[3],coef3[3]);
+
 
 }
 

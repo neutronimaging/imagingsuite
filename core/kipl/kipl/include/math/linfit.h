@@ -15,6 +15,13 @@ template <typename T, typename S> void LinearLSFit(std::vector<std::pair<T,S>> &
 
 
 void weightedLSFit(TNT::Array2D<double> &H, TNT::Array2D<double> &C, TNT::Array2D<double> &y, TNT::Array2D<double> &param);
+
+template<typename T, typename S>
+std::vector<double> polyFit(const std::vector<T> &x,const std::vector<S> &y, int polyOrder);
+
+template<typename T, typename S>
+std::vector<double> polyFun(const std::vector<T> &x,const std::vector<S> &c);
+
 }}
 
 #include "core/linfit.hpp"
