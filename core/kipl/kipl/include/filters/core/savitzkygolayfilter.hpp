@@ -140,8 +140,8 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
 
     y.fill(0.0);
     y(deriv)= kipl::math::factorial(deriv) / std::pow(delta,deriv);
-    std::cout<<y<<std::endl;
-    arma::vec c=solve(A,y);
+
+    arma::vec c=arma::solve(A,y);
 
     for (int i=0; i<c.n_elem; ++i)
     {
@@ -151,7 +151,63 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
     return cvec;
 }
 
-}}
+//Given an n-d array `x` and the specification of a slice of `x` from
+//`window_start` to `window_stop` along `axis`, create an interpolating
+//polynomial of each 1-d slice, and evaluate that polynomial in the slice
+//from `interp_start` to `interp_stop`.  Put the result into the
+//corresponding slice of `y`.
+template <typename T>
+void SavitzkyGolayFilter<T>::fitEdge(const std::vector<kipl::filters::T> &x, int windowStart, int windowStop, int interpStart, int interpStop,
+              int polyorder, int deriv, double delta, std::vector<kipl::filters::T> &y)
+{
+
+    # Get the edge into a (window_length, -1) array.
+    std::vector<T> xEdge;
+    std::copy(x.begin()+windowStart, x.begin()+windowStop,xEdge.begin());
+    std::vector<T> xaxis(xEdge.size());
+
+    double xval=0.0;
+    for (auto &xitem : xaxis)
+        xitem = xval++;
+
+    # Fit the edges.  poly_coeffs has shape (polyorder + 1, -1),
+    # where '-1' is the same as in xx_edge.
+    auto polyCoeffs = np.polyfit(xaxis, xEdge, polyOrder);
+
+    if deriv > 0:
+        poly_coeffs = _polyder(poly_coeffs, deriv)
+
+    # Compute the interpolated values for the edge.
+    i = np.arange(interp_start - window_start, interp_stop - window_start)
+    values = np.polyval(poly_coeffs, i.reshape(-1, 1)) / (delta ** deriv)
+
+    # Now put the values into the appropriate slice of y.
+    # First reshape values to match y.
+    shp = list(y.shape)
+    shp[0], shp[axis] = shp[axis], shp[0]
+    values = values.reshape(interp_stop - interp_start, *shp[1:])
+    if swapped:
+        values = values.swapaxes(0, axis)
+    # Get a view of the data to be replaced by values.
+    y_edge = axis_slice(y, start=interp_start, stop=interp_stop, axis=axis)
+    y_edge[...] = values
+}
+
+
+//  Use polynomial interpolation of x at the low and high ends of the axis
+//  to fill in the halflen values in y.
+//  This function just calls _fit_edge twice, once for each end of the axis.
+template <typename T>
+void SavitzkyGolayFilter<T>::fitEdgesPolyfit(const std::vector<T> &x, int windowLength, int polyOrder, int deriv, double delta, std::vector<T> &y)
+{
+    int halflen = windowLength/2;
+    fitEdge(x, 0, windowLength, 0, halflen, polyOrder, deriv, delta, y);
+    int n = x.size();
+    fitEdge(x, n - windowLength, n, n - halflen, n, polyOrder, deriv, delta, y);
+
+}
+
+}
 
 /*
     >>> from scipy.signal import savgol_coeffs
