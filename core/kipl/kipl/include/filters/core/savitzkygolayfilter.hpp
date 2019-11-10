@@ -70,23 +70,8 @@ std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,i
 
     auto cvec = coeffs(windowLength, polyOrder, deriv, delta);
 
-//    if (mode == sgInterp)
-//    {
-//        if (windowLength > signal.size())
-//            throw kipl::base::KiplException("If mode is 'interp', window_length must be less than or equal to the size of x.",__FILE__,__LINE__);
-
-//        // Do not pad.  Instead, for the elements within `window_length // 2`
-//        // of the ends of the sequence, use the polynomial that is fitted to
-//        // the last `window_length` elements.
-//        result = convolve1d(signal, cvec, sgConstant);
-//        _fit_edges_polyfit(signal, windowLength, polyOrder, deriv, delta, result);
-//    }
-//    else
-//    {
-        // Any mode other than 'interp' is passed on to ndimage.convolve1d.
-        //result = convolve1d(signal, cvec, mode, cval);
-        result = convolve1d(signal, cvec);
-//    }
+    result = convolve1d(signal, cvec);
+//    fitEdgesPolyfit(signal, windowLength, polyOrder, deriv, delta, result);
 
     return result;
 }
