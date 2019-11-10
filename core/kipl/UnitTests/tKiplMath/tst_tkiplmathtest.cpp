@@ -51,7 +51,7 @@ private Q_SLOTS:
     void testCorrSmallData();
     void testMinMax();
 
-    void testPolyFun();
+    void testPolyVal();
     void testPolyFit();
     void testPolyDeriv();
 
@@ -556,13 +556,13 @@ void TKiplMathTest::TestGradient()
 
 }
 
-void TKiplMathTest::testPolyFun()
+void TKiplMathTest::testPolyVal()
 {
     std::vector<double> x={-2,-1,0,1,2};
     std::vector<double> y1={-4,-1,2,5,8};
     std::vector<double> coef1 = {2,3};
 
-    auto y=kipl::math::polyFun(x,coef1);
+    auto y=kipl::math::polyVal(x,coef1);
 
     for (auto itRes=y.begin(), itExp=y1.begin(); itRes!=y.end(); ++itRes, ++itExp)
         QCOMPARE(*itRes,*itExp);
@@ -573,7 +573,7 @@ void TKiplMathTest::testPolyFit()
     std::vector<double> x={-8,-2,-1,0,1,2,15};
     std::vector<double> coef1 = {2,3};
 
-    auto y1=kipl::math::polyFun(x,coef1);
+    auto y1=kipl::math::polyVal(x,coef1);
 
     auto c=kipl::math::polyFit(x,y1,1);
 
@@ -582,7 +582,7 @@ void TKiplMathTest::testPolyFit()
 
     std::vector<double> coef2 = {2,3,1.5};
 
-    auto y2=kipl::math::polyFun(x,coef2);
+    auto y2=kipl::math::polyVal(x,coef2);
 
     auto c2=kipl::math::polyFit(x,y2,2);
 
@@ -592,7 +592,7 @@ void TKiplMathTest::testPolyFit()
 
     std::vector<double> coef3 = {2,3,1.5,-0.5};
 
-    auto y3=kipl::math::polyFun(x,coef3);
+    auto y3=kipl::math::polyVal(x,coef3);
 
     auto c3=kipl::math::polyFit(x,y3,3);
 

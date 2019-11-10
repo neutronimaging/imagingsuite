@@ -20,7 +20,7 @@ template<typename T, typename S>
 std::vector<double> polyFit(const std::vector<T> &x,const std::vector<S> &y, int polyOrder);
 
 template<typename T, typename S>
-std::vector<double> polyFun(const std::vector<T> &x,const std::vector<S> &c);
+std::vector<double> polyVal(const std::vector<T> &x,const std::vector<S> &c);
 
 template<typename T>
 std::vector<T> polyDeriv(const std::vector<T> &c,int deriv);

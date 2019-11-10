@@ -164,7 +164,7 @@ std::vector<double> polyFit(const std::vector<T> &xx,const std::vector<S> &yy, i
 }
 
 template<typename T, typename S>
-std::vector<double> polyFun(const std::vector<T> &xx,const std::vector<S> &c)
+std::vector<double> polyVal(const std::vector<T> &xx,const std::vector<S> &c)
 {
     std::vector<double> y(xx.size());
 
