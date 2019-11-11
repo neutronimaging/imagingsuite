@@ -18,6 +18,7 @@
 #include <math/image_statistics.h>
 #include <math/covariance.h>
 #include <math/gradient.h>
+#include <math/linfit.h>
 
 #include <io/io_tiff.h>
 
@@ -49,11 +50,16 @@ private Q_SLOTS:
     void testCovSmallData();
     void testCorrSmallData();
     void testMinMax();
-    void TestGradient();
+
+    void testPolyVal();
+    void testPolyFit();
+    void testPolyDeriv();
+
 
 
 
 private:
+    void TestGradient();
     kipl::base::TImage<float,2> sin2D;
 };
 
@@ -547,6 +553,88 @@ void TKiplMathTest::TestGradient()
     }
 
     delete [] comp_gradient;
+
+}
+
+void TKiplMathTest::testPolyVal()
+{
+    std::vector<double> x={-2,-1,0,1,2};
+    std::vector<double> y1={-4,-1,2,5,8};
+    std::vector<double> coef1 = {2,3};
+
+    auto y=kipl::math::polyVal(x,coef1);
+
+    for (auto itRes=y.begin(), itExp=y1.begin(); itRes!=y.end(); ++itRes, ++itExp)
+        QCOMPARE(*itRes,*itExp);
+}
+
+void TKiplMathTest::testPolyFit()
+{
+    std::vector<double> x={-8,-2,-1,0,1,2,15};
+    std::vector<double> coef1 = {2,3};
+
+    auto y1=kipl::math::polyVal(x,coef1);
+
+    auto c=kipl::math::polyFit(x,y1,1);
+
+    QCOMPARE(c[0],coef1[0]);
+    QCOMPARE(c[1],coef1[1]);
+
+    std::vector<double> coef2 = {2,3,1.5};
+
+    auto y2=kipl::math::polyVal(x,coef2);
+
+    auto c2=kipl::math::polyFit(x,y2,2);
+
+    QCOMPARE(c2[0],coef2[0]);
+    QCOMPARE(c2[1],coef2[1]);
+    QCOMPARE(c2[2],coef2[2]);
+
+    std::vector<double> coef3 = {2,3,1.5,-0.5};
+
+    auto y3=kipl::math::polyVal(x,coef3);
+
+    auto c3=kipl::math::polyFit(x,y3,3);
+
+    QCOMPARE(c3[0],coef3[0]);
+    QCOMPARE(c3[1],coef3[1]);
+    QCOMPARE(c3[2],coef3[2]);
+    QCOMPARE(c3[3],coef3[3]);
+
+
+}
+
+void TKiplMathTest::testPolyDeriv()
+{
+    std::vector<double> coef1 = {2,3};
+    auto dc1=kipl::math::polyDeriv(coef1,1);
+    QCOMPARE(dc1.size(),1);
+    QCOMPARE(dc1[0],3);
+    auto ddc1=kipl::math::polyDeriv(coef1,2);
+    QCOMPARE(ddc1.size(),0);
+
+    std::vector<double> coef2 = {2,3,1.5};
+    auto dc2=kipl::math::polyDeriv(coef2,1);
+    QCOMPARE(dc2.size(),2);
+    QCOMPARE(dc2[0],3);
+    QCOMPARE(dc2[1],3);
+
+    auto ddc2=kipl::math::polyDeriv(coef2,2);
+    QCOMPARE(ddc2.size(),1);
+    QCOMPARE(ddc2[0],3);
+
+    std::vector<double> coef3 = {2,3,1.5,-0.5};
+    auto dc3=kipl::math::polyDeriv(coef3,1);
+
+    QCOMPARE(dc3.size(),3);
+    QCOMPARE(dc3[0],3);
+    QCOMPARE(dc3[1],3);
+    QCOMPARE(dc3[2],-1.5);
+
+    auto ddc3=kipl::math::polyDeriv(coef3,2);
+    QCOMPARE(ddc3.size(),2);
+    QCOMPARE(ddc3[0],3);
+    QCOMPARE(ddc3[1],-3);
 
 }
 

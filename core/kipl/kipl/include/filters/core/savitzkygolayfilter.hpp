@@ -8,6 +8,7 @@
 #include "../../stltools/stlvecmath.h"
 #include "../../math/tnt_utils.h"
 #include <armadillo>
+#include "../../math/linfit.h"
 #include <QDebug>
 
 namespace kipl {
@@ -70,23 +71,8 @@ std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,i
 
     auto cvec = coeffs(windowLength, polyOrder, deriv, delta);
 
-//    if (mode == sgInterp)
-//    {
-//        if (windowLength > signal.size())
-//            throw kipl::base::KiplException("If mode is 'interp', window_length must be less than or equal to the size of x.",__FILE__,__LINE__);
-
-//        // Do not pad.  Instead, for the elements within `window_length // 2`
-//        // of the ends of the sequence, use the polynomial that is fitted to
-//        // the last `window_length` elements.
-//        result = convolve1d(signal, cvec, sgConstant);
-//        _fit_edges_polyfit(signal, windowLength, polyOrder, deriv, delta, result);
-//    }
-//    else
-//    {
-        // Any mode other than 'interp' is passed on to ndimage.convolve1d.
-        //result = convolve1d(signal, cvec, mode, cval);
-        result = convolve1d(signal, cvec);
-//    }
+    result = convolve1d(signal, cvec);
+    fitEdgesPolyfit(signal, windowLength, polyOrder, deriv, delta, result);
 
     return result;
 }
@@ -125,25 +111,25 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
     // from -pos to window_length - pos - 1.  The powers (i.e. rows) range
     // from 0 to polyorder.  (That is, A is a vandermonde matrix, but not
     // necessarily square.)
-    arma::mat A(polyOrder+1,windowLength) ;
+    arma::mat A(static_cast<arma::uword>(polyOrder+1),static_cast<arma::uword>(windowLength)) ;
 
     float x=-pos;
-    for (int i=0; i<windowLength; ++i, ++x)
+    for (arma::uword i=0; i<static_cast<arma::uword>(windowLength); ++i, ++x)
     {
-        for (int order = 0 ; order<=polyOrder; ++order)
+        for (arma::uword order = 0 ; order<=static_cast<arma::uword>(polyOrder); ++order)
         {
             A(order,i)=std::pow(x,order);
         }
     }
 
-    arma::vec y(polyOrder+1);
+    arma::vec y(static_cast<arma::uword>(polyOrder+1));
 
     y.fill(0.0);
-    y(deriv)= kipl::math::factorial(deriv) / std::pow(delta,deriv);
-    std::cout<<y<<std::endl;
-    arma::vec c=solve(A,y);
+    y(static_cast<arma::uword>(deriv))= kipl::math::factorial(deriv) / std::pow(delta,deriv);
 
-    for (int i=0; i<c.n_elem; ++i)
+    arma::vec c=arma::solve(A,y);
+
+    for (arma::uword i=0; i<c.n_elem; ++i)
     {
         cvec[i]= c(i);
     }
@@ -151,8 +137,61 @@ std::vector<T> SavitzkyGolayFilter<T>::coeffs(int windowLength, int polyOrder, i
     return cvec;
 }
 
-}}
+/// Given an n-d array `x` and the specification of a slice of `x` from
+/// `window_start` to `window_stop` along `axis`, create an interpolating
+/// polynomial of each 1-d slice, and evaluate that polynomial in the slice
+/// from `interp_start` to `interp_stop`.  Put the result into the
+/// corresponding slice of `y`.
+template <typename T>
+void SavitzkyGolayFilter<T>::fitEdge(const std::vector<T> &x, int windowStart, int windowStop, int interpStart, int interpStop,
+              int polyOrder, int deriv, double delta, std::vector<T> &y)
+{
+    // Get the edge into a (window_length, -1) array.
+    std::vector<T> xEdge(windowStop-windowStart);
+    std::copy(x.begin()+windowStart, x.begin()+windowStop,xEdge.begin());
+    std::vector<T> xaxis(xEdge.size());
 
+    double xval=0;
+    for (auto &xitem : xaxis)
+        xitem = xval++;
+
+    // Fit the edges.  poly_coeffs has shape (polyorder + 1, -1),
+    // where '-1' is the same as in xx_edge.
+    auto polyCoeffs = kipl::math::polyFit(xaxis, xEdge, polyOrder);
+
+    if (deriv > 0)
+        polyCoeffs = kipl::math::polyDeriv(polyCoeffs, deriv);
+
+    // Compute the interpolated values for the edge.
+    xaxis.clear();
+
+    for (xval = interpStart - windowStart; xval<interpStop - windowStart; ++xval)
+        xaxis.push_back(xval);
+
+    auto values = kipl::math::polyVal(xaxis,polyCoeffs) ;
+
+    for (auto &value : values)
+            value = value/ std::pow(delta,deriv);
+
+    std::copy(values.begin(),values.end(),y.begin()+interpStart);
+}
+
+
+///  Use polynomial interpolation of x at the low and high ends of the axis
+///  to fill in the halflen values in y.
+///  This function just calls _fit_edge twice, once for each end of the axis.
+template <typename T>
+void SavitzkyGolayFilter<T>::fitEdgesPolyfit(const std::vector<T> &x, int windowLength, int polyOrder, int deriv, double delta, std::vector<T> &y)
+{
+    int halflen = windowLength/2;
+    fitEdge(x, 0, windowLength, 0, halflen, polyOrder, deriv, delta, y);
+    int n = x.size();
+    fitEdge(x, n - windowLength, n, n - halflen, n, polyOrder, deriv, delta, y);
+
+}
+
+}
+}
 /*
     >>> from scipy.signal import savgol_coeffs
     >>> savgol_coeffs(5, 2)

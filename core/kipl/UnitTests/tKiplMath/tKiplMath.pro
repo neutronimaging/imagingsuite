@@ -60,6 +60,8 @@ win32 {
     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
  }
 
+INCLUDEPATH += $$PWD/../../../../external/src/armadillo-9.800.2/include/
+
 SOURCES += \
         tst_tkiplmathtest.cpp 
 
@@ -68,7 +70,7 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl
+LIBS += -lkipl -larmadillo -llapack -lblas
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src

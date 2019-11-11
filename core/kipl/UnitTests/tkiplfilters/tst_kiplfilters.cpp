@@ -67,18 +67,14 @@ void KiplFilters::test_SavGolFilter()
         QFAIL(e.what());
     }
 
-    std::vector<double> expres= {1.66, 3.17, 3.54286, 2.85714, 0.657143, 0.171429, 1.  , 4.  , 9.};
+    std::vector<double> expres= {1.65714285714, 3.17143, 3.54286, 2.85714, 0.657143, 0.171429, 1.  , 4.  , 9.};
 
     QCOMPARE(res.size(),expres.size());
     for (auto itA=res.begin(),itB=expres.begin(); itA!=res.end(); ++itA, ++itB)
     {
-      //  QCOMPARE(*itA, *itB);
-        qDebug() << *itA << *itB;
+      QVERIFY(fabs(*itA-*itB)<1e-5);
+      // QCOMPARE is too sensitive for the test data
     }
-
-
-//    savgol_filter(x, 5, 2, mode='nearest')
-//    array([1.74, 3.03, 3.54, 2.86, 0.66, 0.17, 1.  , 4.6 , 7.97])
 }
 
 QTEST_APPLESS_MAIN(KiplFilters)
