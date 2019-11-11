@@ -7,7 +7,7 @@
 #include "../../math/mathfunctions.h"
 #include "../../stltools/stlvecmath.h"
 #include "../../math/tnt_utils.h"
-#include <armadillo.h>
+#include <armadillo>
 #include <QDebug>
 
 namespace kipl {
