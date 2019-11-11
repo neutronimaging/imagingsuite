@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <iostream>
-#include <armadillo.h>
+#include <armadillo>
 
 #if !defined(NO_QT)
 #include <QDebug>

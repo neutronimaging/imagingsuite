@@ -54,13 +54,14 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    # INCLUDEPATH += $$PWD/../../../../external/src/armadillo-9.800.2/include/
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
  }
 
-INCLUDEPATH += $$PWD/../../../../external/src/armadillo-9.800.2/include/
+
 
 SOURCES += \
         tst_tkiplmathtest.cpp 
