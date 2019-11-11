@@ -67,6 +67,15 @@ void SavitzkyGolayFilter<T>::operator()(T *signal, size_t N, T * result, int ord
 template <typename T>
 std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,int windowLength, int polyOrder, int deriv, double delta,eSavGolInterp mode, T cval)
 {
+    if (polyOrder<0)
+        throw kipl::base::KiplException("Negative poly orders are not valid",__FILE__,__LINE__);
+
+    if (even(windowLength))
+        throw kipl::base::KiplException("Even window length is not good",__FILE__,__LINE__);
+
+    if (delta<=0.0)
+        throw kipl::base::KiplException("The derivative step must be strict positive.",__FILE__,__LINE__);
+
     std::vector<T> result;
 
     auto cvec = coeffs(windowLength, polyOrder, deriv, delta);
