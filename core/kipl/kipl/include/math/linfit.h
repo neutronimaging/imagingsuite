@@ -2,6 +2,7 @@
 
 #ifndef LINFIT_H
 #define LINFIT_H
+#include "../kipl_global.h"
 
 #include <tnt.h>
 #include <vector>
@@ -40,6 +41,7 @@ std::vector<double> polyVal(const std::vector<T> &x,const std::vector<S> &c);
 template<typename T>
 std::vector<T> polyDeriv(const std::vector<T> &c,int deriv);
 
+void KIPLSHARED_EXPORT weightedLSFit(TNT::Array2D<double> &H, TNT::Array2D<double> &C, TNT::Array2D<double> &y, TNT::Array2D<double> &param);
 }}
 
 #include "core/linfit.hpp"
