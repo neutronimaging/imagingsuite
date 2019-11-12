@@ -1,6 +1,7 @@
 //<LICENCE>
 #include <map>
 #include <utility>
+#include "../../include/stltools/stlvecmath.h"
 
 std::map<float,float> diff(std::map<float,float> data)
 {
