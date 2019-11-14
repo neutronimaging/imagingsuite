@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <armadillo>
 #include <tnt.h>
 #include <jama_qr.h>
 
@@ -29,6 +30,38 @@ LevenbergMarquardt::LevenbergMarquardt(const double TOL, int iterations) :
     // Constructor.
 }
 
+void LevenbergMarquardt::fit(const arma::vec &x, const arma::vec &y, const arma::vec &sig, Nonlinear::FitFunctionBase &fn)
+{
+    Array1D<double> xx(x.n_elem);
+    Array1D<double> yy(y.n_elem);
+    Array1D<double> ssig(sig.n_elem);
+
+    for (size_t i=0; i<x.n_elem; ++i)
+    {
+        xx[i]   = x[i];
+        yy[i]   = y[i];
+        ssig[i] = sig[i];
+    }
+
+    fit(xx,yy,ssig,fn);
+}
+
+void LevenbergMarquardt::fit(const std::vector<double> &x, std::vector<double> &y, const std::vector<double> &sig, Nonlinear::FitFunctionBase &fn)
+{
+    Array1D<double> xx(x.size());
+    Array1D<double> yy(y.size());
+    Array1D<double> ssig(sig.size());
+
+    for (size_t i=0; i<x.size(); ++i)
+    {
+        xx[i]   = x[i];
+        yy[i]   = y[i];
+        ssig[i] = sig[i];
+    }
+
+    fit(xx,yy,ssig,fn);
+}
+
 void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
                              Array1D<double> &sig,
                              Nonlinear::FitFunctionBase &fn)
@@ -44,7 +77,6 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
         throw kipl::base::KiplException("Array size missmatch for the fitter",__FILE__,__LINE__);
 
     ndat=x.dim1();
- //   qDebug()<< "ndat:"<<ndat;
 
     covar=Array2D<double>(ma,ma);
     alpha=Array2D<double>(ma,ma);

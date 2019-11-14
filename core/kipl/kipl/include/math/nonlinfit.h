@@ -4,6 +4,8 @@
 #define NONLINFIT_H
 #include "../kipl_global.h"
 #include <tnt.h>
+#include <armadillo>
+#include <vector>
 
 using namespace TNT;
 
@@ -117,6 +119,8 @@ public:
     double getTolerance() {return tol;}
 
     void fit(Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Nonlinear::FitFunctionBase &fn);
+    void fit(const arma::vec &x, const arma::vec &y, const arma::vec &sig, Nonlinear::FitFunctionBase &fn);
+    void fit(const std::vector<double> &x, std::vector<double> &y, const std::vector<double> &sig, Nonlinear::FitFunctionBase &fn);
 private:
 
 
