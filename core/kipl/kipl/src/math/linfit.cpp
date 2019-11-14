@@ -1,7 +1,9 @@
 //<LICENCE>
 
+#include <armadillo>
 #include <jama_qr.h>
 #include "../../include/math/linfit.h"
+
 using namespace TNT;
 
 namespace kipl {
@@ -25,6 +27,15 @@ void weightedLSFit(TNT::Array2D<double> &H, TNT::Array2D<double> &C, TNT::Array2
     JAMA::QR<double> qr(Ch);
     param = qr.solve(Cy);
 
+}
+
+void weightedLSFit(const arma::mat &H, const arma::mat &C, const arma::vec &y, arma::vec &param)
+{
+    arma::mat HtCH = H.t()*C*H;
+
+    arma::mat HtCy = H.t()*C*y;
+
+    param = arma::solve(HtCH,HtCy);
 }
 
 }

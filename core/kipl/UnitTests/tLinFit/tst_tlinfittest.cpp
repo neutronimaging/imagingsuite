@@ -19,6 +19,7 @@ private Q_SLOTS:
     void testFit();
     void testQuantileFit();
     void testCalls();
+    void testWeightedFit();
 };
 
 TLinFitTest::TLinFitTest()
@@ -98,6 +99,38 @@ void TLinFitTest::testCalls()
     std::cout<<"m="<<m<<", k="<<k<<", R2"<<R2<<std::endl;
 
 
+}
+
+void TLinFitTest::testWeightedFit()
+{
+    arma::mat H(7,3);
+    arma::vec y(7);
+    arma::vec q0(3);
+
+    q0 << 3. << 2.<< 1.;
+
+    double x=-3.0;
+    for (int r=0; r<H.n_rows; ++r, ++x)
+    {
+        y(r)=0.0;
+        for (int c = 0; c<H.n_cols; ++c)
+        {
+            y(r)+=q0(c)*std::pow(x,c);
+            H(r,c)=std::pow(x,c);
+        }
+    }
+    y(0)=8.0;
+    arma::mat C(y.n_elem,y.n_elem,arma::fill::eye);
+    C(0,0)=0.01;
+
+    arma::vec q;
+
+    kipl::math::weightedLSFit(H, C, y, q);
+    QCOMPARE(q.n_elem,3);
+    double eps=1e-6;
+    QVERIFY(fabs(q(0)-2.99224806)<eps);
+    QVERIFY(fabs(q(1)-1.99127907)<eps);
+    QVERIFY(fabs(q(2)-1.00484496)<eps);
 }
 
 QTEST_APPLESS_MAIN(TLinFitTest)
