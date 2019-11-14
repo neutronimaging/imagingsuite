@@ -40,6 +40,12 @@ std::vector<double> polyVal(const std::vector<T> &x,const std::vector<S> &c);
 template<typename T>
 std::vector<T> polyDeriv(const std::vector<T> &c,int deriv);
 
+/// \brief Compute a weighted least squared fit using a system matrix, a weight matrix
+/// \param H system matrix
+/// \param C weight matrix (square matrix with dimensions that match the number of rows of H)
+/// \param y vector containing the measured values.
+/// \returns param, a vector containing the fitted parameters.
+/// \test A unit test verifies that an example produces expected numerical results.
 void KIPLSHARED_EXPORT weightedLSFit(const arma::mat &H, const arma::mat &C, const arma::vec &y, arma::vec &param);
 }}
 
