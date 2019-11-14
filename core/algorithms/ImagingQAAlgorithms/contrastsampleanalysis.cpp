@@ -9,6 +9,7 @@
 #include <base/tsubimage.h>
 #include <filters/filter.h>
 #include <math/mathconstants.h>
+#include <math/image_statistics.h>
 #include <math/circularhoughtransform.h>
 #include <morphology/morphextrema.h>
 #include <morphology/label.h>
@@ -126,6 +127,11 @@ std::vector<kipl::math::Statistics> ContrastSampleAnalysis::getStatistics()
 
 std::vector<kipl::base::coords3Df> ContrastSampleAnalysis::getInsetCoordinates()
 {
+    logger(logger.LogMessage,"Find centers");
+    kipl::math::CircularHoughTransform cht;
+
+    const float radius = 0.5f*metricInsetDiameter/pixelsize;
+    logger(logger.LogMessage,"Circ Hough transform");
     return m_insetCenters;
 }
 
@@ -147,31 +153,30 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     m_maxInsetCenter.y=maxpos/m_Img2D.Size(0);
     m_maxInsetCenter.x=maxpos%m_Img2D.Size(0);
 
-    float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
-
-    msg.str("");
-    msg<<"hmax with h="<<threshold;
-    logger(logger.LogMessage,msg.str());
-
     dots.clear();
     std::vector<pair<float, float> > roiDots;
     std::ofstream dotfile("dots.csv");
     timer.Reset();
     timer.Tic();
+    int loopidx=0;
     for (const auto &roi : ROIs)
     {
         kipl::base::TImage<float,2> chmCrop=kipl::base::TSubImage<float,2>::Get(chm, roi.box());
-        kipl::morphology::hMax(chmCrop,peaks,threshold, kipl::base::conn4);
         size_t idx=0;
 
-        float *max=std::max_element(chmCrop.GetDataPtr(),chmCrop.GetDataPtr()+chmCrop.Size());
-        size_t maxpos=max-chmCrop.GetDataPtr();
+        msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
+        if (saveIntermediateImages)
+            kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
 
-        float threshold=*max-chm[maxpos+size_t(0.05f*radius)];
-        insetpeaks=chmCrop-peaks;
 
-        for (size_t i=0; i<insetpeaks.Size(); ++i)
-            insetpeaks[i]=0.5f*threshold<insetpeaks[i];
+        float minVal=0.0f;
+        float maxVal=0.0f;
+
+        kipl::math::minmax(chmCrop.GetDataPtr(),chmCrop.Size(),&minVal,&maxVal,true);
+        float threshold = (maxVal-minVal)*0.8f+minVal;
+        insetpeaks.Resize(chmCrop.Dims());
+        for (size_t i=0; i<chmCrop.Size(); ++i)
+            insetpeaks[i]=threshold < chmCrop[i];
 
         roiDots.clear();
         for (size_t y=0; y<insetpeaks.Size(1); ++y)
@@ -185,7 +190,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
                 }
             }
         }
-        if (roiDots.size()<30)
+        if (roiDots.size()<400)
             dots.insert( dots.end(), roiDots.begin(), roiDots.end() );
     }
     dotfile.close();
@@ -317,7 +322,7 @@ kipl::math::Statistics ContrastSampleAnalysis::computeInsetStatistics(kipl::base
 {
     kipl::math::Statistics stats;
     stats.reset();
-    const float fRadius = 0.4f*metricInsetDiameter/ps; // Reduced radius to avoid edge effects
+    const float fRadius = 0.3f*metricInsetDiameter/ps; // Reduced radius to avoid edge effects
     const int nRadius = static_cast<int>(floor(fRadius));
     for (int y=-nRadius; y<=nRadius; ++y) {
         int wx=floor(sqrt(fRadius*fRadius-y*y));
