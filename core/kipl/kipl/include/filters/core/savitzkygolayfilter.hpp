@@ -70,7 +70,7 @@ std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,i
     if (polyOrder<0)
         throw kipl::base::KiplException("Negative poly orders are not valid",__FILE__,__LINE__);
 
-    if (even(windowLength))
+    if (windowLength %2 == 0)
         throw kipl::base::KiplException("Even window length is not good",__FILE__,__LINE__);
 
     if (delta<=0.0)
