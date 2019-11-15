@@ -215,7 +215,7 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 
 
     std::vector<std::thread> threads;
-    const int N = static_cast<int>(img.Size(2));
+    const size_t N = img.Size(2);
 
     size_t M=N/concurentThreadsSupported;
 
@@ -227,8 +227,8 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     {
         // spawn threads
         size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
-        float *pImg=img.GetLinePtr(0,i*M);
-        threads.push_back(std::thread([=] { ProcessParallelStd(i,pImg,img.Dims(),M+rest); }));
+        auto pImg = &img;
+        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,i*M,M+rest); }));
     }
 
     // call join() on each thread in turn
@@ -240,25 +240,25 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const size_t *dims, size_t N)
+int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N)
 {
     std::ostringstream msg;
     size_t i;
-    size_t size=dims[0]*dims[1];
 
     msg<<"Starting morphclean thread id="<<tid<<" N="<<N;
     logger(logger.LogMessage,msg.str());
 
     try {
-        kipl::base::TImage<float,2> proj(dims);
+        kipl::base::TImage<float,2> proj(img->Dims());
         ImagingAlgorithms::MorphSpotClean cleaner;
         cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
         cleaner.setConnectivity(m_eConnectivity);
 
         for (i=0; i<N; i++) {
-            memcpy(proj.GetDataPtr(),pImg+i*size, size*sizeof(float));
+            std::copy_n(img->GetLinePtr(firstSlice+i,0),proj.Size(),proj.GetDataPtr());
+
             cleaner.process(proj,m_fThreshold,m_fSigma);
-            memcpy(pImg+i*size,proj.GetDataPtr(), size*sizeof(float));
+            std::copy_n(proj.GetDataPtr(),proj.Size(),img->GetLinePtr(firstSlice+i,0));
         }
     }
     catch (...) {
