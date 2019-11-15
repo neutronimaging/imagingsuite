@@ -245,7 +245,7 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
     std::ostringstream msg;
     size_t i;
 
-    msg<<"Starting morphclean thread id="<<tid<<" N="<<N;
+    msg<<"Starting morphclean thread number="<<tid<<", "<<std::this_thread::get_id()<<", N="<<N;
     logger(logger.LogMessage,msg.str());
 
     try {
