@@ -93,6 +93,7 @@
                     <sigma>0.01 0.01</sigma>
                     <threading>false</threading>
                     <threshold>0.1 0.1</threshold>
+                    <transpose>true</transpose>
                 </parameters>
             </module>
             <module>

@@ -15,6 +15,7 @@
 #include <base/marginsetter.h>
 #include <base/tprofile.h>
 #include <base/imagecast.h>
+#include <base/tpermuteimage.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -45,11 +46,13 @@ private Q_SLOTS:
     /// Tests margin setter
     void testMarginSetter();
 
-    /// Tests vertical and horizsontal profiles
+    /// Tests vertical and horizontal profiles
     void testProfiles();
 
     /// Test image casting
     void testImageCaster();
+
+    void testTranspose();
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -504,6 +507,37 @@ void TkiplbasetestTest::testImageCaster()
 
         QCOMPARE(casted2[i],static_cast<unsigned short>(val));
     }
+
+}
+
+void TkiplbasetestTest::testTranspose()
+{
+    kipl::base::Transpose<float> tr;
+
+    size_t dims[2]={100,50};
+    kipl::base::TImage<float,2> img(dims);
+
+    kipl::base::TImage<float,2> img2;
+    try
+    {
+        for (size_t i=0; i<img.Size(); ++i)
+            img[i]=static_cast<float>(i);
+        img2.Clone(img);
+
+        img2=tr(img2);
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        QFAIL(e.what());
+    }
+    QCOMPARE(img2.Size(0),img.Size(1));
+    QCOMPARE(img2.Size(1),img.Size(0));
+
+    for (size_t y=0; y<img.Size(1); ++y)
+        for (size_t x=0; x<img.Size(0); ++x)
+            QCOMPARE(img2(y,x),img(x,y));
+
+
 
 }
 

@@ -1,7 +1,8 @@
-//#include "stdafx.h"
+//<LICENSE>
 #include <thread>
 #include <cstdlib>
 #include <functional>
+#include <algorithm>
 #include "../include/StdPreprocModules_global.h"
 #include "../include/MorphSpotCleanModule.h"
 #include <ParameterHandling.h>
@@ -12,6 +13,8 @@
 #include <ImagingException.h>
 #include <ReconException.h>
 #include <ModuleException.h>
+#include <base/tpermuteimage.h>
+#include <QDebug>
 
 
 MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
@@ -27,7 +30,8 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_bClampData(false),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
-    m_bThreading(false)
+    m_bThreading(false),
+    m_bTranspose(false)
 {
 }
 
@@ -53,6 +57,7 @@ int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::st
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
         m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+        m_bTranspose        = kipl::strings::string2bool(GetStringParameter(parameters,"transpose"));
     }
     catch (ModuleException &e) {
         msg<<"Module exception: Failed to get parameters: "<<e.what();
@@ -88,6 +93,7 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]    = kipl::strings::bool2string(m_bThreading);
+    parameters["transpose"]    = kipl::strings::bool2string(m_bTranspose);
 
     return parameters;
 }
@@ -245,26 +251,48 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
     std::ostringstream msg;
     size_t i;
 
-    msg<<"Starting morphclean thread number="<<tid<<", "<<std::this_thread::get_id()<<", N="<<N;
-    logger(logger.LogMessage,msg.str());
+    msg<<"Starting morphclean thread number="<<tid<<", N="<<N;
+    logger.message(msg.str());
+    msg.str("");
+    msg<<"Thread "<<tid<<" progress :";
 
-    try {
-        kipl::base::TImage<float,2> proj(img->Dims());
+    kipl::base::TImage<float,2> proj(img->Dims());
+
+    kipl::base::Transpose<float> transpose;
+    transpose.bUseReference=true;
+    try
+    {
         ImagingAlgorithms::MorphSpotClean cleaner;
-        cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
-        cleaner.setConnectivity(m_eConnectivity);
+        cleaner.setCleanMethod(this->m_eDetectionMethod,this->m_eCleanMethod);
+        cleaner.setConnectivity(this->m_eConnectivity);
 
-        for (i=0; i<N; i++) {
-            std::copy_n(img->GetLinePtr(firstSlice+i,0),proj.Size(),proj.GetDataPtr());
+        for (i=0; i<N; i++)
+        {
+            std::copy_n(img->GetLinePtr(0,firstSlice+i),proj.Size(),proj.GetDataPtr());
 
-            cleaner.process(proj,m_fThreshold,m_fSigma);
-            std::copy_n(proj.GetDataPtr(),proj.Size(),img->GetLinePtr(firstSlice+i,0));
+            if (m_bTranspose)
+            {
+                auto tproj = transpose(proj);
+                cleaner.process(tproj,this->m_fThreshold,this->m_fSigma);
+                proj = transpose(tproj);
+            }
+            else
+            {
+                cleaner.process(proj,this->m_fThreshold,this->m_fSigma);
+            }
+
+            std::copy_n(proj.GetDataPtr(),proj.Size(),img->GetLinePtr(0,firstSlice+i));
+
+            msg<<".";
         }
     }
-    catch (...) {
+    catch (...)
+    {
         msg<<"Thread tid="<<tid<<" failed with an exception.";
         logger(logger.LogMessage,msg.str());
     }
+
+    logger.message(msg.str());
 
     return 0;
 }

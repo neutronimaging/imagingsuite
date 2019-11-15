@@ -36,7 +36,7 @@ inline void Transpose<T,N>::InsertSubBlock(T const * const block,
 }
 
 template <class T, size_t N>
-TImage<T,2> Transpose<T,N>::operator()(TImage<T,2> src)
+TImage<T,2> Transpose<T,N>::operator()(const TImage<T,2> &src)
 {
 	size_t dims[2]={src.Size(1), src.Size(0)};
 	TImage<T,2> dest(dims);

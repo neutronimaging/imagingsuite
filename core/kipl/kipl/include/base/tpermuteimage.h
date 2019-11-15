@@ -35,7 +35,7 @@ public:
     /// \param src The image to transpose
     ///
     /// \returns the transposed image
-    TImage<T,2> operator() (const TImage<T,2> src);
+    TImage<T,2> operator() (const TImage<T,2> & src);
 
     /// \var A switch to use the refence code for performance evaluation
     bool bUseReference;

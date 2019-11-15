@@ -748,14 +748,6 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	str<<matrixconfig->sDestinationPath<<matrixconfig->sFileMask;
 
 	bool bTransposed=false;
-/*	if (matrixconfig->FileType==kipl::io::MatlabVolume) {
-		logger(kipl::logging::Logger::LogVerbose,"Serializing matrix");
-        std::string path,name;
-		std::vector<std::string> ext;
-		kipl::strings::filenames::StripFileName(str.str(),path,name,ext);
-		kipl::io::WriteMAT(m_Volume,str.str().c_str(),name.c_str());
-	}
-    else */
 
     float res=0.0f;
     if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
