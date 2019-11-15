@@ -10,7 +10,5 @@ const double       dsqrt2 = 1.4142129629629629629629629629629629629629629629629;
 const float        fsqrt2 = 1.4142129626926926926926f;
 const double       dnmass = 1.674927471e-27;
 const double       dplanck = 6.62607004e-34;
-const float        fnmass = 1.674927471e-27f;
-const float        fplanck = 6.62607004e-34f;
 
 #endif /*MATHCONSTANTS_H_*/
