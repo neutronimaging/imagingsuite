@@ -15,6 +15,7 @@
 #include "../logging/logger.h"
 #include "../base/timage.h"
 #include "../morphology/morphology.h"
+#include "../morphology/pixeliterator.h"
 #include "../base/thistogram.h"
 
 /// Namespace that supports threshold methods on images
@@ -61,7 +62,7 @@ namespace kipl { namespace segmentation {
 	{
 		if (normalize) {
 			const float scale=1.0f/(float(qhi)-float(qlo));
-			for (ptrdiff_t i=0; i<N; i++) {
+            for (size_t i=0; i<N; ++i) {
 				if (data[i]<qlo) 
 					data[i]=T(0);
 				else 
@@ -102,7 +103,7 @@ namespace kipl { namespace segmentation {
 			size_t N,
             T0 th,
 			CmpType cmp=cmp_greater,
-            T1 * mask = reinterpret_cast<T1 *>(NULL),
+            T1 * mask = nullptr,
             size_t Nmask=size_t(0))
 	{
 		T1 cmptrue,cmpfalse;
@@ -113,7 +114,7 @@ namespace kipl { namespace segmentation {
 
 		cmpfalse=!cmptrue;
 
-		if (mask != NULL) {
+        if (mask != nullptr) {
 			Nmask = Nmask==0 ? N : Nmask;
 			for (size_t i=0, j=0; i<N; i++, j++) {
 				if (j==Nmask) j=0;
@@ -138,7 +139,7 @@ namespace kipl { namespace segmentation {
 	/// \param img Input image
 	/// \param th Array containing the threshold levels
 	/// \param n Number of thresholds
-	/// \param vals Assignment values for the intervals, if vals=NULL will automaticly 
+    /// \param vals Assignment values for the intervals, if vals=nullptr will automaticly
 	/// increasing numbers be used
 	/// \param mask ROI mask
     template <typename T0, typename T1, size_t N>
@@ -176,11 +177,15 @@ namespace kipl { namespace segmentation {
 ///		\param hi upper threshold level
 ///		\param cmp complementation switch
 ///		\param conn morphological connectivity selector
-///		\param mask ROI mask for the processing. If mask=NULL, mask processing will be skipped
+///		\param mask ROI mask for the processing. If mask=nullptr, mask processing will be skipped
 template <typename T,size_t NDim>
-int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDim> &bilevel, T lo, T hi, kipl::segmentation::CmpType cmp, kipl::morphology::MorphConnect conn, kipl::base::TImage<char,NDim> *mask=reinterpret_cast<kipl::base::TImage<char,NDim> *>(NULL))
+int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
+                    kipl::base::TImage<char,NDim> &bilevel,
+                    T lo, T hi,
+                    kipl::segmentation::CmpType cmp,
+                    kipl::base::eConnectivity conn,
+                    kipl::base::TImage<char,NDim> *mask=nullptr)
 {
-	//kipl::base::TImage<char,NDim> *mask=NULL;
 	kipl::logging::Logger logger("kipl::segmentation::DoubleThreshold");
 	std::ostringstream msg;
 
@@ -198,15 +203,14 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	msg.str("");
 
-	std::deque<int> posQ;
+    std::deque<ptrdiff_t> posQ;
 		
-	kipl::morphology::CNeighborhood NG(dims,NDim,conn);
-	int Nng=NG.N();
+    kipl::base::PixelIterator NG(dims,conn);
 
 	T *pImg=img.GetDataPtr();
 	char *pTmp=bilevel.GetDataPtr();
 
-	long i,pos,p;
+    ptrdiff_t i,pos,p;
 
 	if (mask) {
 		long maskscope;
@@ -219,18 +223,20 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 		}
 
 		char *pMask=mask->GetDataPtr();
-		for (i=0; i<bilevel.Size(); i++) {
+        NG.setPosition(0L);
+        for (i=0; i<bilevel.Size(); ++i, ++NG) {
             if (cmp==kipl::segmentation::cmp_greater) {
 				if ((pImg[i]>hi) && pMask[i % maskscope]) {
 					pTmp[i]=th_true;
 
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]>lo) && pMask[pos% maskscope]) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]>lo) && pMask[pos% maskscope])
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
@@ -239,13 +245,14 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 			else {
 				if (pMask[i%maskscope] && (pImg[i]<lo)) {
 					pTmp[i]=th_true;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]<hi) && pMask[pos%maskscope]) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]<hi) && pMask[pos%maskscope])
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
@@ -258,63 +265,71 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
 
-		while (!posQ.empty()) {
+        while (!posQ.empty())
+        {
 			pos=posQ.front();
 			posQ.pop_front();
 			//if (pTmp[pos]==th_inque) {
 				pTmp[pos]=th_true;
 				if (cmp==cmp_greater) {
-					for (j=0; j<Nng; j++) {
-						if ((p=NG.neighbor(pos,j))!=-1) {
-							if ((!pTmp[p]) && (pImg[p]>lo) && pMask[p%maskscope]) {
-								posQ.push_back(p);
-								pTmp[p]=th_inque;
-							}
-
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        p = pos + neighborPix;
+                        if ((!pTmp[p]) && (pImg[p]>lo) && pMask[p%maskscope])
+                        {
+                            posQ.push_back(p);
+                            pTmp[p]=th_inque;
+                        }
 					}
 				}
 				else {
-					for (j=0; j<Nng; j++) {
-						if ((p=NG.neighbor(pos,j))!=-1) {
-							if (pMask[p%maskscope] && (!pTmp[p]) && (pImg[p]<hi)) {
-								posQ.push_back(p);
-								pTmp[p]=th_inque;
-							}
-							
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        p = pos + neighborPix;
+                        if (pMask[p%maskscope] && (!pTmp[p]) && (pImg[p]<hi))
+                        {
+                            posQ.push_back(p);
+                            pTmp[p]=th_inque;
+                        }
 					}
 				}
 			//}
 		}
 	}
 	else {
-		for (i=0; i<bilevel.Size(); i++) {
+        NG.setPosition(0L);
+        for (i=0; i<bilevel.Size(); ++i,++NG)
+        {
 			if (cmp==cmp_greater) {
-				if (pImg[i]>hi) {
+                if (pImg[i]>hi)
+                {
 					pTmp[i]=1;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]>lo)) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]>lo))
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
 					pTmp[i]=th_false;
 			}
-			else {
-				if (pImg[i]<lo) {
+            else
+            {
+                if (pImg[i]<lo)
+                {
 					pTmp[i]=1;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]<hi)) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]<hi))
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
@@ -326,29 +341,34 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 		msg<<"Queue processing size(queue)="<<posQ.size();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
-		while (!posQ.empty()) {
+        while (!posQ.empty())
+        {
 			pos=posQ.front();
 			posQ.pop_front();
 			pTmp[pos]=1;
-			if (cmp==cmp_greater) {
-				for (j=0; j<Nng; j++) {
-					if ((p=NG.neighbor(pos,j))!=-1) {
-						if ((!pTmp[p]) && (pImg[p]>lo)) {
-							posQ.push_back(p);
-							pTmp[p]=th_inque;
-						}
-
-					}
+            NG.setPosition(pos);
+            if (cmp==cmp_greater)
+            {
+                for (const auto & neighborPix : NG.neighborhood())
+                {
+                    p = pos + neighborPix;
+                    if ((!pTmp[p]) && (pImg[p]>lo))
+                    {
+                        posQ.push_back(p);
+                        pTmp[p]=th_inque;
+                    }
 				}
 			}
-			else {
-				for (j=0; j<Nng; j++) {
-					if ((p=NG.neighbor(pos,j))!=-1) {
-						if ((!pTmp[p]) && (pImg[p]<hi)) {
-							posQ.push_back(p);
-							pTmp[p]=th_inque;
-						}
-					}
+            else
+            {
+                for (const auto & neighborPix : NG.neighborhood())
+                {
+                    p = pos + neighborPix;
+                    if ((!pTmp[p]) && (pImg[p]<hi))
+                    {
+                        posQ.push_back(p);
+                        pTmp[p]=th_inque;
+                    }
 				}
 			}
 		}
@@ -369,8 +389,6 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 //	const char fuzzy=-1;
 //	const char hi=1;
 //	const char lo=0;
-	
-////	CImgViewer fig;
 	
 //	int i,j,pos;
 //	// Initial thresholding
@@ -498,6 +516,10 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 	///	\param median_filter_len Length of the median filter
     int KIPLSHARED_EXPORT Threshold_Rosin(size_t const * const hist, const TailType tail=tail_left, const size_t median_filter_len=0);
 }}
+
+std::string KIPLSHARED_EXPORT enum2string(kipl::segmentation::CmpType cmp);
+void KIPLSHARED_EXPORT string2enum(std::string str, kipl::segmentation::CmpType &cmp);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::segmentation::CmpType c);
 
 
 #endif

@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef TIMAGE_H_
 #define TIMAGE_H_
@@ -27,6 +27,12 @@ public:
 	/// \brief Constructor to specify the image size
 	/// \param dims Array containing the dimensions of the image. The first index in the dimension array refers to the fast index increment in the image.
 	TImage(size_t const * const dims);
+
+    /// \brief C'tor to initialize image to use an external buffer
+    /// \param pBuffer pointer to the externa buffer
+    /// \param dims array containing the image dimensions
+    TImage(T *pBuffer, size_t const * const dims);
+
 	/// \brief D'tor for the image class. 
 	~TImage();
 	
@@ -43,6 +49,8 @@ public:
 	/// \returns The length of the data buffer
 	/// \test The method is tested with unit test
 	size_t Size() const { return m_buffer.Size(); }
+
+    bool haveExternalBuffer() {return m_buffer.haveExternalBuffer();}
 	
 	/// \param n Dimension index (starts with 0)
 	/// \returns The length of dimension n
@@ -71,19 +79,25 @@ public:
     /// \param y y-coordinate
     /// \param z z-coordinate
     T & operator()(size_t x=0, size_t y=0, size_t z=0);
+
+    /// \brief Coordinate access of a pixel
+    /// \param x x-coordinate
+    /// \param y y-coordinate
+    /// \param z z-coordinate
+    T & operator()(int x=0, int y=0, int z=0);
 	
 	/// \brief Gives the number of references to the current memory block
 	/// \test The method is tested with unit test
 	int References() {return m_buffer.References();}
 	// Arithmetic operators
-	TImage<T,N> & operator+=(TImage<T,N> &img); //< Operator to add two images
-	TImage<T,N> & operator-=(TImage<T,N> &img);
-	TImage<T,N> & operator*=(TImage<T,N> &img);
-	TImage<T,N> & operator/=(TImage<T,N> &img);
-	TImage<T,N> & operator+=(const T x);
-	TImage<T,N> & operator-=(const T x);
-	TImage<T,N> & operator*=(const T x);
-	TImage<T,N> & operator/=(const T x);
+    const TImage<T,N> & operator+=(const TImage<T,N> &img); //< Operator to add two images
+    const TImage<T,N> & operator-=(const TImage<T,N> &img);
+    const TImage<T,N> & operator*=(const TImage<T,N> &img);
+    const TImage<T,N> & operator/=(const TImage<T,N> &img);
+    const TImage<T,N> & operator+=(const T x);
+    const TImage<T,N> & operator-=(const T x);
+    const TImage<T,N> & operator*=(const T x);
+    const TImage<T,N> & operator/=(const T x);
 
     TImage<T,N> operator+(const T x) const;
     TImage<T,N> operator-(const T x) const;
@@ -152,28 +166,28 @@ private:
 /// \param imgB The second term
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator+(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator+(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise difference between two images
 /// \param imgA The first term
 /// \param imgB The second term
 /// \returns The pixewise difference
 template<typename T, size_t N>
-TImage<T,N> operator-(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator-(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise product between two images
 /// \param imgA The first factor
 /// \param imgB The second factor
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator*(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator*(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise division between two images
 /// \param imgA The numerator
 /// \param imgB The denominator
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator/(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator/(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Send information about the image to a stream
 /// \param s target stream

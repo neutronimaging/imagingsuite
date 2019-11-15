@@ -5,6 +5,8 @@
 #include "roimanager.h"
 #include "ui_roimanager.h"
 #include <base/roi.h>
+#include "roiitemdlg.h"
+
 namespace QtAddons {
 
 class ROIListItem : public QListWidgetItem
@@ -23,7 +25,8 @@ ROIManager::ROIManager(QWidget *parent) :
     QWidget(parent),
     logger("ROIManager"),
     ui(new Ui::ROIManager),
-    viewer(nullptr)
+    viewer(nullptr),
+    visibleLabels(false)
 {
     ui->setupUi(this);
 }
@@ -36,6 +39,34 @@ ROIManager::~ROIManager()
 void ROIManager::setViewer(QtAddons::ImageViewerWidget *v)
 {
     viewer=v;
+}
+
+void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
+{
+    ostringstream msg;
+    size_t roi[4];
+
+    ui->listROI->clear();
+    for (auto it = rois.begin(); it!=rois.end(); ++it) {
+        ROIListItem *item = new ROIListItem;
+
+        item->roi=*it;
+        it->getBox(roi);
+        msg.str("");
+        if (visibleLabels)
+            msg<<item->roi.label()<<": ";
+
+        msg<<"[x0: "<<roi[0]<<", y0: "<<roi[1]
+           <<", x1: "<<roi[2]<<", y1: "<<roi[3]<<"]";
+
+        item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+        item->setData(Qt::CheckStateRole,Qt::Unchecked);
+
+        item->setCheckState(Qt::CheckState::Checked);
+        ui->listROI->addItem(item);
+        QRect rect=QRect(roi[0],roi[1],roi[0]-roi[2],roi[3]-roi[1]);
+        viewer->set_rectangle(rect,QColor("green"),item->roi.getID());
+    }
 }
 
 std::list<kipl::base::RectROI> ROIManager::getROIs()
@@ -63,6 +94,16 @@ std::list<kipl::base::RectROI> ROIManager::getSelectedROIs()
     }
     qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     return roiList;
+}
+
+void ROIManager::setLabelVisible(bool show)
+{
+    visibleLabels = show;
+}
+
+bool ROIManager::labelIsVisible()
+{
+    return visibleLabels;
 }
 
 void ROIManager::updateViewer()
@@ -100,8 +141,10 @@ void ROIManager::on_button_addROI_clicked()
 
     item->roi=kipl::base::RectROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.height());
 
-    msg<<item->roi.getName()<<" ("<<item->roi.getID()
-      <<"): [x0: "<<rect.x()<<", y0: "<<rect.y()
+    if (visibleLabels)
+        msg<<item->roi.label()<<": ";
+
+    msg<<"[x0: "<<rect.x()<<", y0: "<<rect.y()
       <<", x1: "<<rect.x()+rect.width()<<", y1: "<<rect.y()+rect.height()<<"]";
     item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
     item->setData(Qt::CheckStateRole,Qt::Unchecked);
@@ -127,4 +170,35 @@ void ROIManager::on_button_deleteROI_clicked()
     }
 
 }
+
+void QtAddons::ROIManager::on_listROI_itemDoubleClicked(QListWidgetItem *item)
+{
+    QtAddons::ROIItemDlg dlg(this);
+
+    ROIListItem *roiItem = dynamic_cast<ROIListItem *>(item);
+    dlg.setROIItem(roiItem->roi);
+
+    int res = dlg.exec();
+
+    if (res == dlg.Accepted) {
+        kipl::base::RectROI roi = dlg.roiItem();
+        roiItem->roi = roi;
+
+        auto box = roi.box();
+        QRect rect(box[0],box[1],box[2]-box[0],box[3]-box[1]);
+        viewer->set_rectangle(rect,QColor("green"),roiItem->roi.getID());
+        std::ostringstream msg;
+
+        if (visibleLabels)
+            msg<<roi.label()<<": ";
+
+        msg<<"[x0: "<<rect.x()<<", y0: "<<rect.y()
+          <<", x1: "<<rect.x()+rect.width()<<", y1: "<<rect.y()+rect.height()<<"]";
+        item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
+    }
+
 }
+
+}
+
+

@@ -5,10 +5,12 @@
 #include <complex>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 #include <fftw3.h>
 
 #include "../../include/fft/fftbase.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl { namespace math { namespace fft {
 using namespace std;
@@ -21,25 +23,26 @@ FFTBaseFloat::FFTBaseFloat(size_t const * const Dims, size_t const NDim) :
 	have_c2cPlan(false),
 	have_c2rPlan(false),
 	have_c2cPlanI(false),
-	r2cPlan(NULL),
-	c2rPlan(NULL),
-	c2cPlan(NULL),
-	c2cPlanI(NULL),
+    r2cPlan(nullptr),
+    c2rPlan(nullptr),
+    c2cPlan(nullptr),
+    c2cPlanI(nullptr),
+    cBufferA(nullptr),
+    cBufferB(nullptr),
+    rBuffer(nullptr),
 	Ndata(Dims[0])
 {
 	for (size_t i=1; i<NDim; i++)
 		Ndata*=Dims[i];
 		
 	for (size_t i=0; i<NDim; i++)
-		dims[i]=Dims[i];
+        dims[i]=static_cast<int>(Dims[i]);
 
 	for (size_t i=NDim; i<8; i++)
 		dims[i]=1;
 		
 	ndim=static_cast<int>(NDim);
-	cBufferA=NULL;
-	cBufferB=NULL;
-	rBuffer=NULL;
+
 }
 
 FFTBaseFloat::~FFTBaseFloat()
@@ -73,7 +76,9 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata,  complex<float> *outCdat
 	
 	if (!cBufferB)
 		cBufferB=new  complex<float>[Ndata];
-	
+
+//    std::fill_n(cBufferA,0,Ndata);
+//    std::fill_n(cBufferB,0,Ndata);
 
 	if (sign<0) {
 		if (!have_c2cPlan) {
@@ -113,7 +118,7 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata,  complex<float> *outCdat
 			switch (ndim) {
 				case 1:
 					c2cPlanI=fftwf_plan_dft_1d(dims[0],
-                           reinterpret_cast<fftwf_complex*>(cBufferA), 
+                            reinterpret_cast<fftwf_complex*>(cBufferA),
 							reinterpret_cast<fftwf_complex*>(cBufferB),1,
 							FFTW_ESTIMATE);
 					break;
@@ -156,6 +161,9 @@ int FFTBaseFloat::operator() (float *inRdata,  complex<float> *outCdata)
 	
 	if (!rBuffer)
 		rBuffer=new float[2*Ndata];
+
+    std::fill_n(cBufferA,0,Ndata);
+    std::fill_n(rBuffer,0,2*Ndata);
 		
 	if (!have_r2cPlan) {
 		ostringstream str;
@@ -203,7 +211,10 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata, float *outRdata)
 	
 	if (!rBuffer)
 		rBuffer=new float[2*Ndata];
-			
+
+    std::fill_n(cBufferA,0,Ndata);
+    std::fill_n(rBuffer,0,2*Ndata);
+
 	if (!have_c2rPlan) {
 		ostringstream str;
 		switch (ndim) {
@@ -237,7 +248,15 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata, float *outRdata)
 
 	memcpy(outRdata,rBuffer,sizeof(float)*Ndata);
 
-	return static_cast<int>(Ndata);
+    return static_cast<int>(Ndata);
+}
+
+int FFTBaseFloat::size(int idx)
+{
+    if (ndim<=idx)
+        throw kipl::base::KiplException("Attempt to access axis beyond the transform dimensions",__FILE__,__LINE__);
+
+    return dims[idx];
 }
 }}}
 

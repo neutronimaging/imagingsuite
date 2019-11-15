@@ -1,19 +1,11 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSignalBlocker>
 #include <QDesktopServices>
+#include <QVersionNumber>
 
 #include <KiplFrameworkException.h>
 #include <ModuleException.h>
@@ -22,6 +14,7 @@
 #include <base/thistogram.h>
 #include <base/textractor.h>
 #include <io/DirAnalyzer.h>
+#include <datasetbase.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -30,27 +23,49 @@
 #include "reslicerdialog.h"
 #include "mergevolumesdialog.h"
 #include "fileconversiondialog.h"
+#include "processdialog.h"
 
 #include "ImageIO.h"
+using namespace std;
 
-KipToolMainWindow::KipToolMainWindow(QWidget *parent) :
+KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("KipToolMainWindow"),
     ui(new Ui::KipToolMainWindow),
-    m_Engine(NULL),
-    m_OriginalHistogram(1024),
+    m_QtApp(app),
+    logdlg(new QtAddons::LoggingDialog(this)),
+    button_toggleLoggerDlg(new QPushButton("Logger",this)),
+    m_Engine(nullptr),
+    m_OriginalHistogram(1024UL,"Original histogram"),
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
     m_bJustLoaded(false),
-    m_eSlicePlane(kipl::base::ImagePlaneXY)
+    m_eSlicePlane(kipl::base::ImagePlaneXY),
+    m_ModuleConfigurator(&m_config)
 {
     ui->setupUi(this);
-    logger.AddLogTarget(*(ui->widget_logviewer));
+    //logger.AddLogTarget(*(ui->widget_logviewer));
+    logger.AddLogTarget(*logdlg);
 
-    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
+    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString(),&m_ModuleConfigurator);
+    ui->widget_moduleconfigurator->SetApplicationObject(this);
+    //    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
+    ui->statusBar->addPermanentWidget(button_toggleLoggerDlg);
+
+     QString configpath=QDir::homePath()+"/.imagingtools";
+     QDir dir;
+
+     if(!dir.exists(configpath)){
+         dir.mkdir(configpath);
+     }
+
     LoadDefaults();
     UpdateDialog();
     SetupCallbacks();
+
+    ui->plotter_hprofile->hideLegend();
+    ui->plotter_vprofile->hideLegend();
+
 }
 
 KipToolMainWindow::~KipToolMainWindow()
@@ -62,6 +77,7 @@ void KipToolMainWindow::LoadDefaults()
 {
     std::string defaultsname;
     QDir dir;
+
     QString currentname=QDir::homePath()+"/.imagingtools/CurrentKIPToolConfig.xml";
 
     bool bUseDefaults=true;
@@ -69,6 +85,7 @@ void KipToolMainWindow::LoadDefaults()
         defaultsname=currentname.toStdString();
         bUseDefaults=false;
     }
+
 //    else {
 //      //  m_QtApp->
 //    #ifdef Q_OS_WIN32
@@ -106,20 +123,24 @@ void KipToolMainWindow::LoadDefaults()
 void KipToolMainWindow::UpdateDialog()
 {
     m_config.mImageInformation.sSourcePath.clear();
-    ui->edit_datafilemask->setText(QString::fromStdString(m_config.mImageInformation.sSourceFileMask));
+    FileSet loadInfo;
+
+    loadInfo.m_sFilemask = m_config.mImageInformation.sSourceFileMask;
+    loadInfo.m_nFirst    = m_config.mImageInformation.nFirstFileIndex;
+    loadInfo.m_nLast     = m_config.mImageInformation.nLastFileIndex;
+    loadInfo.m_nStep     = m_config.mImageInformation.nStepFileIndex;
+    loadInfo.m_bUseROI   = m_config.mImageInformation.bUseROI;
+    loadInfo.m_Flip      = m_config.mImageInformation.eFlip;
+    loadInfo.m_Rotate    = m_config.mImageInformation.eRotate;
+    loadInfo.m_nRepeat   = m_config.mImageInformation.nRepeat;
+    loadInfo.m_nStride   = m_config.mImageInformation.nStride;
+
+    std::copy_n(m_config.mImageInformation.nROI, 4, loadInfo.m_ROI);
+    ui->widget_loadForm->setReaderConfig(loadInfo);
 
     ui->edit_destinationpath->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationPath));
     ui->edit_destinationmask->setText(QString::fromStdString(m_config.mOutImageInformation.sDestinationFileMask));
 
-    ui->spin_idxfirst->setValue(static_cast<int>(m_config.mImageInformation.nFirstFileIndex));
-    ui->spin_idxlast->setValue(static_cast<int>(m_config.mImageInformation.nLastFileIndex));
-    ui->spin_idxstep->setValue(static_cast<int>(m_config.mImageInformation.nStepFileIndex));
-
-    ui->check_crop->setChecked(m_config.mImageInformation.bUseROI);
-    ui->spin_crop0->setValue(static_cast<int>(m_config.mImageInformation.nROI[0]));
-    ui->spin_crop1->setValue(static_cast<int>(m_config.mImageInformation.nROI[1]));
-    ui->spin_crop2->setValue(static_cast<int>(m_config.mImageInformation.nROI[2]));
-    ui->spin_crop3->setValue(static_cast<int>(m_config.mImageInformation.nROI[3]));
     int idx=0;
     switch (m_config.mOutImageInformation.eResultImageType) {
         case kipl::io::TIFF8bits  : idx=1; break;
@@ -140,37 +161,46 @@ void KipToolMainWindow::UpdateDialog()
 
 void KipToolMainWindow::UpdateConfig()
 {
-    m_config.mImageInformation.sSourcePath.clear();
-    kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
-    m_config.mImageInformation.sSourceFileMask = ui->edit_datafilemask->text().toStdString();
+
 
     m_config.mOutImageInformation.sDestinationPath     = ui->edit_destinationpath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_config.mOutImageInformation.sDestinationPath,true);
     m_config.mOutImageInformation.sDestinationFileMask = ui->edit_destinationmask->text().toStdString();
 
-    m_config.mImageInformation.nFirstFileIndex = ui->spin_idxfirst->value();
-    m_config.mImageInformation.nLastFileIndex  = ui->spin_idxlast->value();
-    m_config.mImageInformation.nStepFileIndex  = ui->spin_idxstep->value();
+    FileSet readerInfo=ui->widget_loadForm->getReaderConfig();
+    m_config.mImageInformation.sSourcePath.clear();
+    kipl::strings::filenames::CheckPathSlashes(m_config.mImageInformation.sSourcePath,true);
 
-    m_config.mImageInformation.bUseROI = ui->check_crop->checkState();
-    m_config.mImageInformation.nROI[0] = ui->spin_crop0->value();
-    m_config.mImageInformation.nROI[1] = ui->spin_crop1->value();
-    m_config.mImageInformation.nROI[2] = ui->spin_crop2->value();
-    m_config.mImageInformation.nROI[3] = ui->spin_crop3->value();
+    m_config.mImageInformation.sSourceFileMask = readerInfo.m_sFilemask;
+    m_config.mImageInformation.nFirstFileIndex = static_cast<size_t>(readerInfo.m_nFirst);
+    m_config.mImageInformation.nLastFileIndex  = static_cast<size_t>(readerInfo.m_nLast);
+    m_config.mImageInformation.nStepFileIndex  = static_cast<size_t>(readerInfo.m_nStep);
+    m_config.mImageInformation.nStride         = static_cast<size_t>(readerInfo.m_nStride);
+    m_config.mImageInformation.nRepeat         = static_cast<size_t>(readerInfo.m_nRepeat);
+    m_config.mImageInformation.eFlip           = readerInfo.m_Flip;
+    m_config.mImageInformation.eRotate         = readerInfo.m_Rotate;
+
+    m_config.mImageInformation.bUseROI = readerInfo.m_bUseROI;
+    std::copy_n(readerInfo.m_ROI,4,m_config.mImageInformation.nROI);
 
     m_config.modules = ui->widget_moduleconfigurator->GetModules();
-    switch (ui->combo_FileType->currentIndex()) {
-        case 0: {
-            switch (m_OriginalImage.info.nBitsPerSample) {
+    switch (ui->combo_FileType->currentIndex())
+    {
+        case 0:
+        {
+            switch (m_OriginalImage.info.nBitsPerSample)
+            {
                 case 8  : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits;  break;
                 case 16 : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
                 case 32 : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat;  break;
                 default : m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
             }
+            break;
         }
         case 1: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF8bits; break;
         case 2: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bits; break;
         case 3: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFFfloat; break;
+        case 4: m_config.mOutImageInformation.eResultImageType = kipl::io::TIFF16bitsMultiFrame; break;
     }
 
     m_config.UserInformation.sComment       = ui->text_description->toPlainText().toStdString();
@@ -182,53 +212,21 @@ void KipToolMainWindow::UpdateConfig()
 
 void KipToolMainWindow::SetupCallbacks()
 {
-}
+    ui->widget_loadForm->setHideROI(false);
+    ui->widget_loadForm->setHideMirrorRotate(false);
 
-void KipToolMainWindow::on_button_browsedatapath_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the images",
-                                      ui->edit_datafilemask->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
+    QtAddons::uxROIWidget * roiw=ui->widget_loadForm->roiWidget();
 
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
+    roiw->registerViewer(ui->imageviewer_original);
+    roiw->setROIColor("green");
+    roiw->setTitle("Crop region");
+    roiw->updateViewer();
+    roiw->setAutoHideROI(true);
+    roiw->setAllowUpdateImageDims(false);
 
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        std::string fname=pdir.substr(pos+1);
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
+    // BUtton in status bar needs to be manually connected
+    connect(button_toggleLoggerDlg,SIGNAL(clicked()),this,SLOT(button_toggleLoggerDlg_clicked()));
 
-        ui->edit_datafilemask->setText(QString::fromStdString(fi.m_sMask));
-    }
-}
-
-void KipToolMainWindow::on_button_getROI_clicked()
-{
-    QRect rect=ui->imageviewer_original->get_marked_roi();
-
-    if (rect.width()*rect.height()!=0)
-    {
-        ui->spin_crop0->blockSignals(true);
-        ui->spin_crop1->blockSignals(true);
-        ui->spin_crop2->blockSignals(true);
-        ui->spin_crop3->blockSignals(true);
-        ui->spin_crop0->setValue(rect.x());
-        ui->spin_crop1->setValue(rect.y());
-        ui->spin_crop2->setValue(rect.x()+rect.width());
-        ui->spin_crop3->setValue(rect.y()+rect.height());
-        ui->spin_crop0->blockSignals(false);
-        ui->spin_crop1->blockSignals(false);
-        ui->spin_crop2->blockSignals(false);
-        ui->spin_crop3->blockSignals(false);
-
-        UpdateMatrixROI();
-    }
 }
 
 void KipToolMainWindow::UpdateHistogramView()
@@ -239,14 +237,17 @@ void KipToolMainWindow::UpdateHistogramView()
     if (!m_HistogramList.empty()) {
 
         for (it=m_HistogramList.begin(); it!=m_HistogramList.end(); it++, idx++) {
-            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),it->second.Size(),QColor("red"));
+            QString lbl;
+            lbl.sprintf("Hist ",idx);
+            ui->plotter_histogram->setCurveData(idx,it->second.GetX(),it->second.GetY(),static_cast<int>(it->second.Size()),lbl);
         }
 
-        ui->plotter_histogram->setCurveData(0,m_OriginalHistogram.GetX(), m_OriginalHistogram.GetY(),m_OriginalHistogram.Size());
+
     }
     else {
         ui->plotter_histogram->clearAllCurves();
     }
+    ui->plotter_histogram->setCurveData(0,m_OriginalHistogram.GetX(), m_OriginalHistogram.GetY(),m_OriginalHistogram.Size(),QString::fromStdString(m_OriginalHistogram.name()));
 }
 
 void KipToolMainWindow::UpdatePlotView()
@@ -260,7 +261,7 @@ void KipToolMainWindow::UpdatePlotView()
             ui->plotter_plots->clearAllCurves();
             idx=0;
             for (plot_it=module_it->second.begin(); plot_it!=module_it->second.end(); plot_it++,idx++) {
-                ui->plotter_plots->setCurveData(idx,plot_it->second.GetX(),plot_it->second.GetY(),plot_it->second.Size());
+                ui->plotter_plots->setCurveData(idx,plot_it->second.GetX(),plot_it->second.GetY(),plot_it->second.Size(),QString::fromStdString(plot_it->second.name()));
             }
         }
     }
@@ -269,14 +270,14 @@ void KipToolMainWindow::UpdatePlotView()
 void KipToolMainWindow::UpdateMatrixROI()
 {
     logger(kipl::logging::Logger::LogMessage,"Update MatrixROI");
-    QRect rect;
+//    QRect rect;
 
-    rect.setCoords(ui->spin_crop0->value(),
-                   ui->spin_crop1->value(),
-                   ui->spin_crop2->value(),
-                   ui->spin_crop3->value());
+//    rect.setCoords(ui->spin_crop0->value(),
+//                   ui->spin_crop1->value(),
+//                   ui->spin_crop2->value(),
+//                   ui->spin_crop3->value());
 
-    ui->imageviewer_original->set_rectangle(rect,QColor("green"),0);
+//    ui->imageviewer_original->set_rectangle(rect,QColor("green"),0);
 }
 
 void KipToolMainWindow::on_button_loaddata_clicked()
@@ -285,13 +286,13 @@ void KipToolMainWindow::on_button_loaddata_clicked()
     UpdateConfig();
     try {
         m_OriginalImage = LoadVolumeImage(m_config);
-        if (m_Engine!=NULL) {
+        if (m_Engine!=nullptr) {
             delete m_Engine;
-            m_Engine = NULL;
+            m_Engine = nullptr;
         }
 
         ui->slider_images->setMinimum(0);
-        ui->slider_images->setMaximum(m_OriginalImage.Size(2)-1);
+        ui->slider_images->setMaximum(static_cast<int>(m_OriginalImage.Size(2))-1);
         ui->slider_images->setValue(0);
         m_bJustLoaded = true;
         ui->combo_sliceplane->setCurrentIndex(0);
@@ -303,6 +304,7 @@ void KipToolMainWindow::on_button_loaddata_clicked()
         kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),bins,m_OriginalHistogram.Size(),0,0,axis);
 
         m_OriginalHistogram.SetData(axis,bins,m_OriginalHistogram.Size());
+        UpdateHistogramView();
         delete [] axis;
         delete [] bins;
     }
@@ -326,16 +328,10 @@ void KipToolMainWindow::on_button_browsedestination_clicked()
         ui->edit_destinationpath->setText(projdir);
 }
 
-void KipToolMainWindow::on_check_crop_stateChanged(int arg1)
-{
-    logger(kipl::logging::Logger::LogMessage,"crop state changed");
-
-}
-
 void KipToolMainWindow::on_button_savedata_clicked()
 {
     logger(kipl::logging::Logger::LogMessage,"Save processed data");
-    if (m_Engine!=NULL) {
+    if (m_Engine!=nullptr) {
         UpdateConfig();
         m_Engine->SaveImage(&m_config.mOutImageInformation);
     }
@@ -355,9 +351,9 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
 {
     int maxslice;
     switch (m_eSlicePlane) {
-    case kipl::base::ImagePlaneXY: maxslice = m_OriginalImage.Size(2); break;
-    case kipl::base::ImagePlaneXZ: maxslice = m_OriginalImage.Size(1); break;
-    case kipl::base::ImagePlaneYZ: maxslice = m_OriginalImage.Size(0); break;
+    case kipl::base::ImagePlaneXY: maxslice = static_cast<int>(m_OriginalImage.Size(2)); break;
+    case kipl::base::ImagePlaneXZ: maxslice = static_cast<int>(m_OriginalImage.Size(1)); break;
+    case kipl::base::ImagePlaneYZ: maxslice = static_cast<int>(m_OriginalImage.Size(0)); break;
     }
 
     if ((m_OriginalImage.Size()!=0) && (position<maxslice) && (0<=position)) {
@@ -378,7 +374,7 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
         m_SliceOriginal=kipl::base::ExtractSlice(m_OriginalImage,static_cast<size_t>(position),m_eSlicePlane);
 
         ui->imageviewer_original->set_image(m_SliceOriginal.GetDataPtr(),m_SliceOriginal.Dims(),lo,hi);
-        if (m_Engine!=NULL) {
+        if (m_Engine!=nullptr) {
             kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
 
             if ((result.Size(0)==m_OriginalImage.Size(0)) &&
@@ -452,12 +448,13 @@ void KipToolMainWindow::on_actionSave_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"save config");
 
-    UpdateConfig();
+
 
     if (m_sFileName == "noname.xml") {
         on_actionSave_as_triggered();
     }
     else {
+        UpdateConfig();
         SaveConfiguration(m_sFileName);
     }
 }
@@ -466,6 +463,7 @@ void KipToolMainWindow::on_actionSave_as_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"Save config as");
 
+    UpdateConfig();
     QString qfname=QDir::homePath()+"/"+m_sFileName;
 
     qfname=QFileDialog::getSaveFileName(this,"Select location to save the configuration",qfname,"*.xml");
@@ -561,13 +559,13 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
 
     if (m_Engine) {
         delete m_Engine;
-        m_Engine=NULL;
+        m_Engine=nullptr;
     }
 
     bool bBuildFailed=false;
 
     try {
-        m_Engine=m_Factory.BuildEngine(m_config);
+        m_Engine=m_Factory.BuildEngine(m_config,&m_Interactor);
     }
     catch (ModuleException &e) {
         bBuildFailed=true;
@@ -610,12 +608,12 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
     m_PlotList.clear();
     m_HistogramList.clear();
 
-    msg.str("");
-    try {
-        m_Engine->Run(&m_OriginalImage);
+    ProcessDialog dlg(&m_Interactor,this);
 
-        m_PlotList=m_Engine->GetPlots();
-        m_HistogramList=m_Engine->GetHistograms();
+    msg.str("");
+    int res=0;
+    try {
+        res=dlg.exec(m_Engine,&m_OriginalImage);
     }
     catch (ModuleException &e) {
         bBuildFailed=true;
@@ -647,21 +645,27 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
         return;
     }
 
-    logger(kipl::logging::Logger::LogMessage,"The process chain ended successfully");
+    if (res==QDialog::Accepted) {
+        logger(kipl::logging::Logger::LogMessage,"The process chain ended successfully");
+        m_PlotList=m_Engine->GetPlots();
+        m_HistogramList=m_Engine->GetHistograms();
+        m_bRescaleViewers=true;
+        on_slider_images_sliderMoved(ui->slider_images->value());
+        UpdatePlotView();
+        UpdateHistogramView();
 
-    m_bRescaleViewers=true;
-    on_slider_images_sliderMoved(ui->slider_images->value());
-    UpdatePlotView();
-    UpdateHistogramView();
+    //  post processing admin
+        kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
+        kipl::base::TImage<float,2> img(result.Dims());
 
-//  post processing admin
-    kipl::base::TImage<float,3> &result=m_Engine->GetResultImage();
-    kipl::base::TImage<float,2> img(result.Dims());
+        m_config.UserInformation.sDate = kipl::utilities::TimeStamp();
+        memcpy(img.GetDataPtr(),result.GetLinePtr(0,result.Size(2)/2),img.Size()*sizeof(float));
+        m_configHistory.push_back(make_pair(m_config,img));
+    }
+    else {
+        logger(kipl::logging::Logger::LogMessage,"The process chain was aborted.");
 
-    m_config.UserInformation.sDate = kipl::utilities::TimeStamp();
-    memcpy(img.GetDataPtr(),result.GetLinePtr(0,result.Size(2)/2),img.Size()*sizeof(float));
-    m_configHistory.push_back(make_pair(m_config,img));
-
+    }
 }
 
 void KipToolMainWindow::on_actionProcessing_history_triggered()
@@ -695,7 +699,29 @@ void KipToolMainWindow::on_actionClear_History_triggered()
 
 void KipToolMainWindow::on_actionAbout_triggered()
 {
-logger(kipl::logging::Logger::LogMessage,"About");
+    QMessageBox dlg;
+    std::ostringstream msg;
+    QVersionNumber ver;
+
+    msg<<"KipTool "<<m_QtApp->applicationVersion().toStdString()<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__<<std::endl;
+
+    msg<<"Using \nQt version: "<<qVersion()<<"\n"
+      <<"LibTIFF, zLib, fftw3, libcfitsio";
+
+    dlg.setText(QString::fromStdString(msg.str()));
+
+    dlg.exec();
+}
+
+void KipToolMainWindow::button_toggleLoggerDlg_clicked()
+{
+    if (logdlg->isHidden()) {
+
+        logdlg->show();
+    }
+    else {
+        logdlg->hide();
+    }
 }
 
 void KipToolMainWindow::on_combo_sliceplane_activated(int index)
@@ -755,7 +781,7 @@ void KipToolMainWindow::on_tabWidget_plots_currentChanged(int index)
     else {
         ui->imageviewer_original->clear_plot(0);
         ui->imageviewer_original->clear_plot(1);
-        if (m_Engine!=NULL) {
+        if (m_Engine!=nullptr) {
             ui->imageviewer_processed->clear_plot(0);
             ui->imageviewer_processed->clear_plot(1);
         }
@@ -772,20 +798,20 @@ void KipToolMainWindow::on_slider_hprofile_sliderMoved(int position)
         ui->imageviewer_original->set_plot(cursor,QColor("red"),0);
 
         QVector<QPointF> data;
-        float *pImg=m_SliceOriginal.GetLinePtr(position);
-        for (int i=0; i<m_SliceOriginal.Size(0); i++)
+        float *pImg=m_SliceOriginal.GetLinePtr(static_cast<size_t>(position));
+        for (size_t i=0; i<m_SliceOriginal.Size(0); i++)
             data.append(QPointF(i,static_cast<double>(pImg[i])));
 
-        ui->plotter_hprofile->setCurveData(0,data,QColor("blue"));
+        ui->plotter_hprofile->setCurveData(0,data,"Original");
 
-        if (m_Engine!=NULL) {
+        if (m_Engine!=nullptr) {
             ui->imageviewer_processed->set_plot(cursor,QColor("red"),0);
             data.clear();
-            pImg=m_SliceResult.GetLinePtr(position);
-            for (int i=0; i<m_SliceResult.Size(0); i++)
+            pImg=m_SliceResult.GetLinePtr(static_cast<size_t>(position));
+            for (size_t i=0; i<m_SliceResult.Size(0); i++)
                 data.append(QPointF(i,static_cast<double>(pImg[i])));
 
-            ui->plotter_hprofile->setCurveData(1,data,QColor("red"));
+            ui->plotter_hprofile->setCurveData(1,data,"Processed");
         }
     }
 }
@@ -800,20 +826,20 @@ void KipToolMainWindow::on_slider_vprofile_sliderMoved(int position)
 
         QVector<QPointF> data;
         float *pImg=m_SliceOriginal.GetDataPtr()+position;
-        int sx=m_SliceOriginal.Size(0);
-        for (int i=0; i<m_SliceOriginal.Size(1); i++)
+        size_t sx=m_SliceOriginal.Size(0);
+        for (size_t i=0; i<m_SliceOriginal.Size(1); i++)
             data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
 
-        ui->plotter_vprofile->setCurveData(0,data,QColor("blue"));
+        ui->plotter_vprofile->setCurveData(0,data,"Original");
 
-        if (m_Engine!=NULL) {
+        if (m_Engine!=nullptr) {
             ui->imageviewer_processed->set_plot(cursor,QColor("red"),1);
             data.clear();
             pImg=m_SliceResult.GetDataPtr()+position;
-            for (int i=0; i<m_SliceResult.Size(1); i++)
+            for (size_t i=0; i<m_SliceResult.Size(1); i++)
                 data.append(QPointF(i,static_cast<double>(pImg[i*sx])));
 
-            ui->plotter_vprofile->setCurveData(1,data,QColor("red"));
+            ui->plotter_vprofile->setCurveData(1,data,"Processed");
         }
     }
 }
@@ -877,6 +903,16 @@ void KipToolMainWindow::on_actionRegister_for_news_letter_triggered()
     if (!QDesktopServices::openUrl(url)) {
         QMessageBox dlg;
         dlg.setText("KipTool could not open your web browser with the link http://www.imagingscience.ch/newsletter/");
+        dlg.exec();
+    }
+}
+
+void KipToolMainWindow::on_actionUser_manual_triggered()
+{
+    QUrl url=QUrl("https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool");
+    if (!QDesktopServices::openUrl(url)) {
+        QMessageBox dlg;
+        dlg.setText("MuhRec could not open your web browser with the link https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool");
         dlg.exec();
     }
 }

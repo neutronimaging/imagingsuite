@@ -10,10 +10,12 @@
 
 #include <base/timage.h>
 #include <math/nonlinfit.h>
+#include <logging/logger.h>
 
 namespace ImagingQAAlgorithms {
 class  IMAGINGQAALGORITHMSSHARED_EXPORT ResolutionEstimator
 {
+    kipl::logging::Logger logger;
 public:
 
     ResolutionEstimator();
@@ -22,17 +24,21 @@ public:
     Nonlinear::eProfileFunction profileFunction;
 
     void   setPixelSize(double s);
-    double getPixelSize();
-    void   setProfile(float *p, int N, double d=1.0f);
-    void   setProfile(double *p, int N, double d=1.0f);
-    void   setProfile(std::vector<double> &p, double d=1.0);
-    void   setProfile(std::vector<float> &p, double d=1.0);
-    void   setProfile(TNT::Array1D<double> &p, double d=1.0);
+    double pixelSize();
+    int    size();
+    void   setProfile(float *p, int N);
+    void   setProfile(double *p, int N);
+    void   setProfile(std::vector<double> &p);
+    void   setProfile(std::vector<float> &p);
+    void   setProfile(TNT::Array1D<double> &p);
+    void   profile(double *p, int &N);
+    void   clear();
 
-    float getFWHM();
-    float getMTFresolution(float level=0.1f);
-    void getEdgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit=false, float smooth=0.0f);
-    void getMTF(std::vector<double> &w, std::vector<double> &a);
+    double FWHM();
+    double MTFresolution(float level=0.1f);
+    void edgeDerivative(std::vector<double> &x, std::vector<double> &y, bool returnFit=false, float smooth=0.0f);
+    void MTF(std::vector<double> &w, std::vector<double> &a);
+    Nonlinear::SumOfGaussians fitFunction();
 
 protected:
     void createAllocation(int N);
@@ -43,12 +49,12 @@ protected:
     void analyzeMTF();
     void diffProfile();
     int profileSize;
-    double pixelSize;
-    double *profile;
-    double *dprofile;
-    double *xaxis;
-    double fwhm;
-    Nonlinear::FitFunctionBase &fn;
+    double mPixelSize;
+    double *mProfile;
+    double *mDiffProfile;
+    double *mXaxis;
+    double mfwhm;
+    Nonlinear::SumOfGaussians mFitFunction;
 };
 }
 

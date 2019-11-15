@@ -4,11 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets  concurrent # printsupport
+QT       += core widgets charts concurrent # printsupport
 
-TARGET = QtKipTool
+TARGET = KipTool
+VERSION = 2.7.0
 TEMPLATE = app
 CONFIG += c++11
+
+DEFINES += VERSION=\\\"$$VERSION\\\"
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../Applications/debug
@@ -22,29 +25,28 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-     #   QMAKE_INFO_PLIST = Info.plist
 
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
-    INCLUDEPATH += /usr/include/libxml2
+
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio $$PWD/../../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -70,7 +72,8 @@ message("-lNeXus does not exist $$HEADERS")
 
 }
 
-ICON = kip_icon.icns
+ICON = kiptool_icon.icns
+RC_ICONS = kiptool_icon.ico
 
 SOURCES +=  ../../src/main.cpp\
             ../../src/kiptoolmainwindow.cpp \
@@ -83,7 +86,10 @@ SOURCES +=  ../../src/main.cpp\
     ../../src/mergevolumesdialog.cpp \
     ../../src/ImagingToolConfig.cpp \
     ../../src/fileconversiondialog.cpp \
-    ../../src/Fits2Tif.cpp
+    ../../src/Fits2Tif.cpp \
+    ../../src/imagingmoduleconfigurator.cpp \
+    processdialog.cpp
+
 
 HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/ImageIO.h \
@@ -95,14 +101,17 @@ HEADERS  += ../../src/kiptoolmainwindow.h \
     ../../src/mergevolumesdialog.h \
     ../../src/ImagingToolConfig.h \
     ../../src/fileconversiondialog.h \
-    ../../src/Fits2Tif.h
+    ../../src/Fits2Tif.h \
+    ../../src/imagingmoduleconfigurator.h \
+    processdialog.h
 
 FORMS    += ../../src/kiptoolmainwindow.ui \
             ../../src/confighistorydialog.ui \
             ../../src/genericconversion.ui \
     ../../src/reslicerdialog.ui \
     ../../src/mergevolumesdialog.ui \
-    ../../src/fileconversiondialog.ui
+    ../../src/fileconversiondialog.ui \
+    processdialog.ui
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
@@ -131,3 +140,8 @@ DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/src
+
+DISTFILES += \
+    ../../deploykiptool_mac.sh \
+    ../../deploykiptool_ubuntu.sh \
+    ../../deploykiptool_win.bat

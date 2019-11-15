@@ -17,7 +17,7 @@ NonLocalMeansModule::~NonLocalMeansModule()
 
 }
 
-int NonLocalMeansModule::Configure(std::map<std::string, std::string> parameters)
+int NonLocalMeansModule::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
     m_fSensitivity  = GetFloatParameter(parameters,"sensitivity");
     m_nWidth        = GetIntParameter(parameters,"width");

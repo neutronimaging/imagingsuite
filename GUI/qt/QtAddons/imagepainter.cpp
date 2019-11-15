@@ -156,6 +156,7 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
         m_MaxVal=high;
     }
 
+
     const size_t nHistSize=1024;
     float haxis[nHistSize];
     size_t hist[nHistSize];
@@ -305,7 +306,7 @@ void ImagePainter::get_image_minmax(float *level_low, float *level_high)
 
 void ImagePainter::show_clamped(bool show)
 {
-
+    (void) show;
 }
 
 void ImagePainter::prepare_pixbuf()
@@ -347,8 +348,6 @@ void ImagePainter::prepare_pixbuf()
                 3*m_ZoomedImage.Size(0),
                 QImage::Format_RGB888);
 
-    QSize imgdims=qimg.size();
-
     m_pixmap_full=QPixmap::fromImage(qimg);
 
     if (m_pixmap_full.isNull()) {
@@ -372,7 +371,7 @@ void ImagePainter::createZoomImage(QRect roi)
     m_ZoomedImage.Resize(dims);
     m_currentROI=roi;
 
-    for (int y=0; y<m_ZoomedImage.Size(1); y++) {
+    for (size_t y=0; y<m_ZoomedImage.Size(1); y++) {
         memcpy(m_ZoomedImage.GetLinePtr(y),m_OriginalImage.GetLinePtr(y+roi.y())+roi.x(), m_ZoomedImage.Size(0)*sizeof(float));
     }
     prepare_pixbuf();

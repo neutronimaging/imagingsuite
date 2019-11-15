@@ -11,8 +11,8 @@
 #include <strings/miscstring.h>
 #include <math/image_statistics.h>
 
-ScaleData::ScaleData() :
-KiplProcessModuleBase("ScaleData"),
+ScaleData::ScaleData(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("ScaleData", false, interactor),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
 	m_bAutoScale(false)
@@ -24,7 +24,7 @@ ScaleData::~ScaleData() {
 }
 
 
-int ScaleData::Configure(std::map<std::string, std::string> parameters)
+int ScaleData::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fSlope = GetFloatParameter(parameters,"slope");
 	m_fIntercept = GetFloatParameter(parameters,"intercept");

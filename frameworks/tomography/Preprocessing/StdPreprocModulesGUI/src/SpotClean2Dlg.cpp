@@ -19,6 +19,7 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
     ui(new Ui::SpotClean2Dlg)
 {
     ui->setupUi(this);
+   // ui->plot_detection->hideLegend();
 }
 
 SpotClean2Dlg::~SpotClean2Dlg()
@@ -100,13 +101,13 @@ void SpotClean2Dlg::ApplyParameters()
     }
 
     size_t N99=ii;
-    ui->plot_detection->setCurveData(0,axis,fcumhist,N99);
+    ui->plot_detection->setCurveData(0,axis,fcumhist,N99,"Detection histogram");
     float threshold[N];
 
     for (size_t i=0; i<N; i++) {
         threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
     }
-    ui->plot_detection->setCurveData(1,axis,threshold,N99);
+    ui->plot_detection->setCurveData(1,axis,threshold,N99,"Threshold weight");
 
     std::map<std::string,std::string> pars;
     m_ProcessedImage=m_OriginalImage;

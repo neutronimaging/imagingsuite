@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __WAVELETS_H
-#define __WAVELETS_H
+#ifndef WAVELETS_H
+#define WAVELETS_H
 
 #include <iostream>
 #include <list>

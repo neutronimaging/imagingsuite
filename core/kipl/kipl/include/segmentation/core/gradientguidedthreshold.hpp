@@ -6,6 +6,7 @@
 #include "../thresholds.h"
 #include "../../filters/filter.h"
 #include "../../morphology/pixeliterator.h"
+#include "../gradientguidedthreshold.h"
 
 namespace kipl { namespace segmentation {
 
@@ -160,6 +161,7 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
 
 
     }
+    return 0;
 }
 
 }}

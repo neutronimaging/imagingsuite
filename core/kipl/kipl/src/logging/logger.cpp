@@ -92,6 +92,32 @@ void Logger::operator()(LogLevel severity, std::stringstream & message)
     operator ()(severity,message.str());
 }
 
+void Logger::error(const std::string message)
+{
+    WriteMessage(LogError, message);
+
+}
+
+void Logger::warning(const std::string message)
+{
+    WriteMessage(LogWarning, message);
+}
+
+void Logger::message(const std::string message)
+{
+    WriteMessage(LogMessage, message);
+}
+
+void Logger::verbose(const std::string message)
+{
+    WriteMessage(LogVerbose, message);
+}
+
+void Logger::debug(const std::string message)
+{
+    WriteMessage(LogDebug, message);
+}
+
 void Logger::WriteMessage(LogLevel s, std::string message)
 {
     std::lock_guard<std::mutex> lock(m_LoggerMutex);

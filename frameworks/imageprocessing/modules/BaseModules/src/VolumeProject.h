@@ -7,6 +7,7 @@
 
 #include <KiplProcessModuleBase.h>
 #include <base/kiplenums.h>
+#include <KiplProcessConfig.h>
 
 enum eProjectionMethod {
 	ProjectMean,
@@ -17,10 +18,10 @@ enum eProjectionMethod {
 
 class BASEMODULES_EXPORT VolumeProject: public KiplProcessModuleBase {
 public:
-	VolumeProject();
+    VolumeProject(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~VolumeProject();
 	
-	virtual int Configure(std::map<std::string, std::string> parameters);
+    virtual int Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
 protected:
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
@@ -34,7 +35,8 @@ protected:
 	kipl::base::eImagePlanes m_Plane;
 	std::string m_sFileName;
 	eProjectionMethod m_ProjectionMethod;
-
+private:
+    bool updateStatus(float val, std::string msg);
 };
 
 std::string enum2string(eProjectionMethod method);

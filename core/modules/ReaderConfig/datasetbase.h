@@ -7,6 +7,7 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <libxml/xmlreader.h>
 
 #include <base/kiplenums.h>
 #include <base/timage.h>
@@ -14,34 +15,21 @@
 #include "readerconfig_global.h"
 
 
-class READERCONFIGSHARED_EXPORT ImageLoader
+class READERCONFIGSHARED_EXPORT FileSet
 {
     static int cnt;
     int id;
 public:
-    ImageLoader();
-    ~ImageLoader();
+    FileSet();
+    ~FileSet();
+    FileSet(const FileSet & cfg);
+    const FileSet & operator=(const FileSet & cfg);
+
     int getId();
     std::string WriteXML(int indent=4);
     int ParseXML(std::string xml);
-
-    // \brief Load a single 2D image given the parameters of the described data set
-    // \param idx sequence index of the image to load
-    // \param rot Rotation of the image if requested
-    // \param flip Mirror the image as requested
-    // \param crop
-    kipl::base::TImage<float,2> Load(int idx,
-                                     kipl::base::eImageRotate rot=kipl::base::ImageRotateNone,
-                                     kipl::base::eImageFlip flip=kipl::base::ImageFlipNone,
-                                     size_t *crop=nullptr);
-
-    // \brief Load the volume given by the parameters of the described data set
-    // \param rot Rotation of the image if requested
-    // \param flip Mirror the image as requested
-    // \param crop
-    kipl::base::TImage<float,3> Load(kipl::base::eImageRotate rot=kipl::base::ImageRotateNone,
-                                     kipl::base::eImageFlip flip=kipl::base::ImageFlipNone,
-                                     size_t *crop=nullptr);
+    int ParseXML(xmlTextReaderPtr reader);
+    std::string makeFileName(int idx) const ;
 
     std::string m_sFilemask;
     std::string m_sVariableName;
@@ -50,10 +38,16 @@ public:
     int m_nRepeat;  //< Number of repeated images for the same position
     int m_nStride;  //< Index step to obtain the next observation in the series
     int m_nStep;    //< Sample every m_nStep images given the previous
+    float m_fBinning;
 
+    kipl::base::eImageFlip m_Flip;
+    kipl::base::eImageRotate m_Rotate;
+
+    bool m_bUseROI;
+    size_t m_ROI[4];
 
     std::list<int> m_nSkipList; // list of indices of files to skip
 };
 
-std::ostream READERCONFIGSHARED_EXPORT & operator<<(std::ostream &s, ImageLoader &il);
+std::ostream READERCONFIGSHARED_EXPORT & operator<<(std::ostream &s, FileSet &il);
 #endif // DATASETBASE_H

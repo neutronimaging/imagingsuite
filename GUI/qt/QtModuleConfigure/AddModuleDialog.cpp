@@ -82,15 +82,16 @@ int AddModuleDialog::configure(std::string application, std::string defaultsourc
 
 int AddModuleDialog::exec()
 {
-    std::ostringstream msg;
 
     QString appPath = QCoreApplication::applicationDirPath();
+    std::ostringstream msg;
 
     msg<<"appPath "<<appPath.toStdString();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     QString fileName=QString::fromStdString(m_sDefaultModuleSource);
     msg.str(""); msg<<"default module "<<m_sDefaultModuleSource;
+
 
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -112,7 +113,9 @@ int AddModuleDialog::exec()
     m_Modulefile_edit.setText(fileName);
 
     if (UpdateModuleCombobox(fileName)!=0)
+    {
         return QDialog::Rejected;
+    }
 
     m_ModuleConfig.m_sSharedObject=fileName.toStdString();
     m_ModuleConfig.m_sModule=modulelist.begin()->first;
@@ -125,7 +128,6 @@ int AddModuleDialog::exec()
 int AddModuleDialog::UpdateModuleCombobox(QString fname)
 {
     std::ostringstream msg;
-
     try {
         modulelist.clear();
         modulelist=GetModuleList(fname.toStdString());
@@ -174,7 +176,7 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
 
-    if (hinstLib != NULL)
+    if (hinstLib != nullptr)
     {
         MODULELIST fnGetModuleList;
 #ifdef _MSC_VER
@@ -183,10 +185,10 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
         fnGetModuleList = reinterpret_cast<MODULELIST>(dlsym(hinstLib, "GetModuleList"));
 #endif
         msg.str("");
-        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == NULL ? "no" : "yes");
+        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == nullptr ? "no" : "yes");
         logger(kipl::logging::Logger::LogMessage,msg.str());
          // If the function address is valid, call the function.
-        if (NULL != fnGetModuleList)
+        if (fnGetModuleList !=nullptr)
         {
 
             if (fnGetModuleList(m_sApplication.c_str(),&modulelist)!=0) {

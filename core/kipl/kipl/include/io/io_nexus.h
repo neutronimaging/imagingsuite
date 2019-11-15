@@ -88,7 +88,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
 
                       size_t img_size[3];
 
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           img_size[0] = file.getInfo().dims[2];
                           img_size[1] = file.getInfo().dims[1];
@@ -105,7 +105,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
 
                       vector<int> slab_start;
                       slab_start.push_back(number);
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           slab_start.push_back(0);
                           slab_start.push_back(0);
@@ -216,7 +216,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 
                       size_t img_size[3];
 
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           img_size[0] = file.getInfo().dims[2];
                           img_size[1] = file.getInfo().dims[1];
@@ -233,7 +233,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 
                       vector<int> slab_start;
                       slab_start.push_back(start);
-                      if (nCrop==NULL)
+                      if (nCrop==nullptr)
                       {
                           slab_start.push_back(0);
                           slab_start.push_back(0);
@@ -322,10 +322,10 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
             std::cout << " found data!"<< std::endl;
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
-            cout << "Number of group attributes for "<< it->second <<": " << attr_infos.size() << endl;
+            std::cout << "Number of group attributes for "<< it->second <<": " << attr_infos.size() << std::endl;
 
             map<string, string> entries_data = file.getEntries();
-            cout << "Group contains " << entries_data.size() << " items" << endl;
+            std::cout << "Group contains " << entries_data.size() << " items" << std::endl;
 
             for (map<string,string>::const_iterator it_data = entries_data.begin();
                  it_data != entries_data.end(); it_data++)
@@ -333,14 +333,14 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
                 std::cout << it_data->first << ": " << it_data->second << std::endl;
                 file.openData(it_data->first);
                 attr_infos = file.getAttrInfos();
-                cout << "Number of data attributes for " << it_data->first <<  ": "<< attr_infos.size() <<std::endl;
+                std::cout << "Number of data attributes for " << it_data->first <<  ": "<< attr_infos.size() <<std::endl;
                 for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin();
                      it_att != attr_infos.end(); it_att++) {
-                  cout << "   " << it_att->name << " = ";
+                  std::cout << "   " << it_att->name << " = ";
                   if (it_att->type == NeXus::CHAR) {
-                    cout << file.getStrAttr(*it_att);
+                    std::cout << file.getStrAttr(*it_att);
                   }
-                  cout << endl;
+                  std::cout << std::endl;
 
                   if (it_att->name=="signal"){
                       std::cout << "found plottable data!!" << std::endl;
@@ -721,7 +721,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=NULL) {
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=nullptr) {
 
 
     kipl::base::PermuteAxes<ImgType> permute;
@@ -731,7 +731,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
     int slabstart[3] = {static_cast<int>(start), 0, 0};
     int slabsize[3];
 
-    slabsize[0] = size;
+    slabsize[0] = static_cast<int>(size);
 
 
 
@@ -851,7 +851,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=NULL) {
+int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=nullptr) {
 
 
     kipl::base::TImage<unsigned short, NDim> img_int;
@@ -869,7 +869,7 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
     int slabstart[3] = {static_cast<int>(start), 0, 0};
     int slabsize[3];
 
-    slabsize[0] = size;
+    slabsize[0] = static_cast<int>(size);
 
 
 

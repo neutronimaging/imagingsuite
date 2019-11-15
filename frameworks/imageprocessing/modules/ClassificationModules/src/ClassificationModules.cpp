@@ -1,14 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2011-08-09 19:55:32 +0200 (Di, 09 Aug 2011) $
-// $Rev: 998 $
-// $Id: StdPreprocModules.cpp 998 2011-08-09 17:55:32Z kaestner $
-//
+//<LICENSE>
 
 // ClassificationModules.cpp : Defines the exported functions for the DLL application.
 //
@@ -32,19 +22,21 @@
 
 
 
-void * GetModule(const char * application, const char * name)
+void * GetModule(const char * application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="BasicThreshold")
-			return new BasicThreshold;
+            return new BasicThreshold (interactor);
 
 		if (sName=="DoubleThreshold")
-			return new DoubleThreshold;
+            return new DoubleThreshold (interactor);
 
 //		if (sName=="FuzzyCMeans")
 //			return new FuzzyCMeans;
@@ -52,13 +44,13 @@ void * GetModule(const char * application, const char * name)
 //		if (sName=="KernelFuzzyCMeans")
 //			return new KernelFuzzyCMeans;
 
-		if (sName=="RemoveBackground")
-			return new RemoveBackground;
+//		if (sName=="RemoveBackground")
+//			return new RemoveBackground;
 
 
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 int Destroy(const char * application, void *obj)
@@ -86,7 +78,7 @@ int GetModuleList(const char * application, void *listptr)
 	BasicThreshold bt;
 	modulelist->operator []("BasicThreshold")=bt.GetParameters();
 
-	BasicThreshold dt;
+    DoubleThreshold dt;
 	modulelist->operator []("DoubleThreshold")=dt.GetParameters();
 
 //	FuzzyCMeans fcm;
@@ -95,8 +87,8 @@ int GetModuleList(const char * application, void *listptr)
 //	KernelFuzzyCMeans kfcm;
 //	modulelist->operator []("KernelFuzzyCMeans")=kfcm.GetParameters();
 
-	RemoveBackground rb;
-	modulelist->operator []("RemoveBackground")=rb.GetParameters();
+//	RemoveBackground rb;
+//	modulelist->operator []("RemoveBackground")=rb.GetParameters();
 
 	return 0;
 }

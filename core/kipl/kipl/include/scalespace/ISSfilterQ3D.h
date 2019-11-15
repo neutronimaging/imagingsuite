@@ -1,12 +1,14 @@
 //<LICENCE>
-#ifndef __ISSFILTERQ3D_H
-#define __ISSFILTERQ3D_H
+#ifndef ISSFILTERQ3D_H
+#define ISSFILTERQ3D_H
 #include <iostream>
 #include <list>
+#include <string>
 
 #include "../base/timage.h"
 #include "../logging/logger.h"
 #include "filterenums.h"
+#include "../interactors/interactionbase.h"
 
 namespace akipl { namespace scalespace {
 
@@ -14,7 +16,7 @@ template <typename T>
 class ISSfilterQ3D {
 	kipl::logging::Logger logger;
 public:
-  ISSfilterQ3D();
+  ISSfilterQ3D(kipl::interactors::InteractionBase *interactor=nullptr);
   ~ISSfilterQ3D();
   int Process(kipl::base::TImage<T,3> &img,
 		  double dTau,
@@ -31,6 +33,7 @@ public:
    eInitialImageType eInitialImage;
    eRegularizationType m_eRegularization;
 private:
+   kipl::interactors::InteractionBase *m_Interactor;
 	enum Direction {
 		dirX=0,
 		dirY=1,
@@ -83,6 +86,10 @@ private:
 
   double _ComputeEntropy(kipl::base::TImage<T,3> &img);
 
+  /// \param val a fraction value 0.0-1.0 to tell the progress of the back-projection.
+  /// \param msg a message string to add information to the progress bar.
+  /// \returns The abort status of interactor object. True means abort back-projection and false continue.
+  bool updateStatus(float val, std::string msg);
 
 };
 

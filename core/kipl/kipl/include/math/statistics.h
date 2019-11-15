@@ -3,12 +3,14 @@
 #ifndef KIPL_STATISTICS_H__
 #define KIPL_STATISTICS_H__
 
+#include "../kipl_global.h"
+
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
 
-#include "../kipl_global.h"
+
 
 #include "../base/timage.h"
 #include "../base/roi.h"

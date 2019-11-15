@@ -52,13 +52,13 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
     std::ostringstream msg;
 
     modules.clear();
-    reader = xmlReaderForFile(configfile.c_str(), NULL, 0);
-    if (reader != NULL) {
+    reader = xmlReaderForFile(configfile.c_str(), nullptr, 0);
+    if (reader != nullptr) {
     	ret = xmlTextReaderRead(reader);
         name = xmlTextReaderConstName(reader);
 
 
-        if (name==NULL) {
+        if (name==nullptr) {
             throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
         }
 
@@ -80,7 +80,7 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
         	if (xmlTextReaderNodeType(reader)==1) {
 	            name = xmlTextReaderConstName(reader);
 	            
-	            if (name==NULL) {
+                if (name==nullptr) {
 	                throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	            }
 	            sName=reinterpret_cast<const char *>(name);
@@ -125,10 +125,10 @@ void ConfigBase::ParseUserInformation(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -151,16 +151,16 @@ void ConfigBase::ParseUserInformation(xmlTextReaderPtr reader)
 	        }
 
 			if (sName=="comment") {
-				if (value!=NULL)
+                if (value!=nullptr)
 					UserInformation.sComment=reinterpret_cast<const char *>(value);
 	        }
             if (sName=="date") {
-                if (value!=NULL)
+                if (value!=nullptr)
                     UserInformation.sDate=reinterpret_cast<const char *>(value);
             }
 
             if (sName=="version") {
-                if (value!=NULL)
+                if (value!=nullptr)
                     UserInformation.sVersion=reinterpret_cast<const char *>(value);
             }
 		}
@@ -210,7 +210,7 @@ ConfigBase::cUserInformation & ConfigBase::cUserInformation::operator = (const c
 	return * this;
 }
 
-std::string ConfigBase::cUserInformation::WriteXML(size_t indent)
+std::string ConfigBase::cUserInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;

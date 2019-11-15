@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts
+QT       += core gui charts printsupport svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,6 +12,9 @@ TARGET = NIQA
 TEMPLATE = app
 
 CONFIG += c++11
+
+VERSION = 1.0.0
+DEFINES += VERSION=\\\"$$VERSION\\\"
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
@@ -63,13 +66,23 @@ win32 {
 
 SOURCES += main.cpp\
         niqamainwindow.cpp \
-    edgefileitemdialog.cpp
+    edgefileitemdialog.cpp \
+    niqaconfig.cpp \
+    edgefittingdialog.cpp \
+    reportmaker.cpp
 
 HEADERS  += niqamainwindow.h \
-    edgefileitemdialog.h
+    edgefileitemdialog.h \
+    niqaconfig.h \
+    edgefittingdialog.h \
+    reportmaker.h
 
 FORMS    += niqamainwindow.ui \
-    edgefileitemdialog.ui
+    edgefileitemdialog.ui \
+    edgefittingdialog.ui
+
+ICON = NIQAIcon.icns
+RC_ICONS = NIQAIcon.ico
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug

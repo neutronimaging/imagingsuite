@@ -35,7 +35,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-   #     QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
@@ -83,3 +82,12 @@ else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lImagingAlgorithms -lReconFramework
 
+macx: {
+    INCLUDEPATH += $$PWD/../../../../external/mac/include
+    INCLUDEPATH += $$PWD/../../../../external/mac/include/hdf5
+    INCLUDEPATH += $$PWD/../../../../external/mac/include/nexus
+    DEPENDPATH  += $$PWD/../../../../external/mac/include
+    DEPENDPATH  += $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH  += $$PWD/../../../../external/mac/include/nexus
+    LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+}

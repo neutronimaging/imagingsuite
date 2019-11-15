@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>610</width>
-    <height>521</height>
+    <width>772</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,8 +51,11 @@
          <property name="minimumSize">
           <size>
            <width>196</width>
-           <height>123</height>
+           <height>145</height>
           </size>
+         </property>
+         <property name="toolTip">
+          <string>ROI used to detect the edges. Make the region rectangular. The distance will be measured in the widest direction.</string>
          </property>
         </widget>
        </item>
@@ -80,6 +83,9 @@
             <property name="text">
              <string>Edges</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
@@ -98,6 +104,9 @@
           <widget class="QDoubleSpinBox" name="doubleSpinBox_Distance">
            <property name="toolTip">
             <string>Metric distance between two features in the image.</string>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -134,6 +143,52 @@
         </widget>
        </item>
        <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>pixels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_edgeDistance">
+           <property name="text">
+            <string>N/A</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Distance</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Pixel size</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_pixelSize">
+           <property name="text">
+            <string>N/A</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -145,6 +200,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Instructions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;1. Load an image with an object with known dimensions.&lt;/p&gt;&lt;p&gt;2. Select a ROI that includes two edges.&lt;/p&gt;&lt;p&gt;3. Enter the distance between the two edges.&lt;/p&gt;&lt;p&gt;4. Press analyze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -159,13 +221,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_results">
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -196,6 +251,7 @@
    <container>1</container>
    <slots>
     <signal>valueChanged(int,int,int,int)</signal>
+    <signal>toggled(bool)</signal>
    </slots>
   </customwidget>
  </customwidgets>

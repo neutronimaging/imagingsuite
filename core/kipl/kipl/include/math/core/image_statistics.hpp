@@ -1,13 +1,17 @@
-#ifndef IMAGE_STATISTICS_HPP_
-#define IMAGE_STATISTICS_HPP_
+//<LICENSE>
+
+#ifndef IMAGE_STATISTICS_HPP
+#define IMAGE_STATISTICS_HPP
 #include <cmath>
 #include <emmintrin.h>
 #include <iostream>
 #include <algorithm>
+#include <stddef.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 #include <limits>
+#include "../../base/timage.h"
 
 namespace kipl { namespace math {
 
@@ -161,37 +165,40 @@ double diffsum2(T * const beginA, T const * const endA, const T val)
 }
 
 template <typename T>
-void minmax(T const * const data, const size_t N, T *minval, T *maxval)
+struct NaNAwareLess
 {
-//	*minval=std::numeric_limits<T>::max();
-//	*maxval=-std::numeric_limits<T>::max();
+  bool operator () (T a, T b) const
+  {
 
-    std::pair<const T*, const T*> mm = minmax_element(data, data+N);
+    if (std::isfinite(a) && std::isfinite(b))
+    {
+      return (a < b);// Assume *any* non-NaN value is greater than NaN.
+    }
+
+    if (isfinite(a))
+    {
+
+
+    }
+    else
+    {
+
+    }
+    return false;
+  }
+};
+
+template <typename T>
+void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool finiteSafe)
+{
+    std::pair<const T*, const T*> mm;
+    if (finiteSafe)
+        mm = minmax_element(data, data+N,NaNAwareLess<T>());
+    else
+        mm = minmax_element(data, data+N);
 
     *minval=*(mm.first);
     *maxval=*(mm.second);
-//	#pragma omp parallel
-//	{
-//		T mi=*minval;
-//		T ma=*maxval;
-
-//		ptrdiff_t NN=static_cast<ptrdiff_t>(N);
-
-//		#pragma omp for
-//		for (ptrdiff_t i=0; i<NN; i++) {
-//			if (data[i]==data[i]) { // Exclude NaNs from the search
-//				if (ma<data[i])
-//					ma=data[i];
-//				else if (data[i]<mi)
-//					mi=data[i];
-//			}
-//		}
-//		#pragma omp critical
-//		{
-//			*minval=     mi < *minval ? mi : *minval;
-//			*maxval=*maxval <  ma     ? ma : *maxval ;
-//		}
-//	}
 }
 
 template <typename T>
@@ -213,7 +220,7 @@ std::pair<double,double> statistics(T const * const x, const size_t N)
 		var  += delta*(value-mean);
 	}
 
-	var=var/(N-1);
+    var=var/(N);
 
 	return std::pair<double,double>(mean,std::sqrt(static_cast<double>(var)));
 }
@@ -229,12 +236,12 @@ void statistics(T const * const x,double *m, double *s, const size_t *dims, size
     }
 
     if (bAllocate) {
-        if (m!=NULL)
+        if (m!=nullptr)
             delete [] m;
 
         m=new double[nSlices];
 
-        if (s!=NULL)
+        if (s!=nullptr)
             delete [] s;
 
         s=new double[nSlices];

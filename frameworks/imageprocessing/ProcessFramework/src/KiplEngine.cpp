@@ -1,14 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
-
+//<LICENSE>
 
 #include "stdafx.h"
 
@@ -24,16 +14,17 @@
 
 #include <ModuleException.h>
 
-KiplEngine::KiplEngine(std::string name) : 
- logger(name),
-	 m_InputImage(NULL)
+KiplEngine::KiplEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
+    logger(name),
+    m_Interactor(interactor),
+    m_InputImage(nullptr)
 {
 }
 
 KiplEngine::~KiplEngine(void)
 {
 	while (!m_ProcessList.empty()) {
-		if (m_ProcessList.front()!=NULL) {
+        if (m_ProcessList.front()!=nullptr) {
 			delete m_ProcessList.front();
 		}
 		m_ProcessList.pop_front();
@@ -47,7 +38,7 @@ void KiplEngine::SetConfig(KiplProcessConfig &config)
 
 size_t KiplEngine::AddProcessingModule(KiplModuleItem *module) 
 {
-	if (module!=NULL) {
+    if (module!=nullptr) {
 		if (module->Valid())
 			m_ProcessList.push_back(module);
 	}
@@ -68,8 +59,10 @@ int KiplEngine::Run(kipl::base::TImage<float,3> * img)
 	std::map<std::string, std::string> parameters;
 
 	std::list<KiplModuleItem *>::iterator it_Module;
+    float cnt=1;
+    float nModules=static_cast<float>(m_ProcessList.size());
 	try {
-		for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
+        for (it_Module=m_ProcessList.begin(); (it_Module!=m_ProcessList.end()) && (updateStatus(float(cnt)/nModules)==false) ; ++cnt,++it_Module) {
 			msg.str("");
 			msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -121,7 +114,7 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 	std::ostringstream msg;
 	std::string fname;
 
-	KiplProcessConfig::cOutImageInformation *config= info==NULL ? &m_Config.mOutImageInformation : info;
+    KiplProcessConfig::cOutImageInformation *config= info==nullptr ? &m_Config.mOutImageInformation : info;
 
     m_Config.mOutImageInformation=*config;
 
@@ -135,14 +128,17 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 
 		float maxval=0.0f;
 		float minval=0.0f;
-		switch (config->eResultImageType) {
-			case kipl::io::TIFF8bits : maxval=255.0f; minval=0.0f; break;
+        switch (config->eResultImageType)
+        {
+            case kipl::io::TIFF8bits  : maxval=255.0f;   minval=0.0f; break;
 			case kipl::io::TIFF16bits : maxval=65535.0f; minval=0.0f; break;
-			case kipl::io::TIFFfloat: maxval=65535.0f; minval=0.0f; break;
+            case kipl::io::TIFFfloat  : maxval=65535.0f; minval=0.0f; break;
+            case kipl::io::TIFF16bitsMultiFrame : maxval=65535.0f; minval=0.0f; break;
 			default : throw KiplFrameworkException("Trying to save unsupported file type",__FILE__,__LINE__);
 		}
 
-		if (config->bRescaleResult) {
+        if (config->bRescaleResult)
+        {
 			maxval=*std::max_element(m_ResultImage.GetDataPtr(),m_ResultImage.GetDataPtr()+m_ResultImage.Size());
 			minval=*std::min_element(m_ResultImage.GetDataPtr(),m_ResultImage.GetDataPtr()+m_ResultImage.Size());
 		}
@@ -167,7 +163,7 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 		kipl::io::WriteImageStack(m_ResultImage,
 				fname,
 				minval,maxval,
-				0,m_ResultImage.Size(2),m_Config.mImageInformation.nFirstFileIndex,
+                0,m_ResultImage.Size(2)-1,m_Config.mImageInformation.nFirstFileIndex,
 				config->eResultImageType,plane);
 
         std::string confname = config->sDestinationPath + "kiplscript.xml";
@@ -207,7 +203,7 @@ std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,flo
 	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
-	KiplProcessModuleBase *module=NULL;
+    KiplProcessModuleBase *module=nullptr;
 
 	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
 		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
@@ -232,7 +228,7 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
-	KiplProcessModuleBase *module=NULL;
+    KiplProcessModuleBase *module=nullptr;
 
 	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
 		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
@@ -249,4 +245,77 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	}
 
 	return histlist;
+}
+
+
+kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> * img, std::string sLastModule)
+{
+
+    std::ostringstream msg;
+    m_InputImage=img;
+    m_ResultImage.Clone(*m_InputImage);
+
+    std::map<std::string, std::string> parameters;
+
+    std::list<KiplModuleItem *>::iterator it_Module;
+
+    try {
+        msg.str("");
+        msg<<"Last module: "<<sLastModule;
+        logger.message(msg.str());
+
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++)
+        {
+            msg.str("");
+            msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+
+            (*it_Module)->GetModule()->Process(m_ResultImage,parameters);
+        }
+
+
+        msg.str("");
+        msg<<"Execution times :\n";
+        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++) {
+            msg<<"Module "<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
+        }
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+    catch (KiplFrameworkException &e) {
+        throw KiplFrameworkException(e.what(),__FILE__,__LINE__);
+    }
+    catch (ModuleException &e) {
+        msg.str("");
+        msg<<"Got a ModuleException during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Got a KiplException during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Got a STL Exception during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg.str("");
+        msg<<"Got an unknown exception during execution of the process chain\n";
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+
+    }
+
+    return m_ResultImage;
+}
+
+
+bool KiplEngine::updateStatus(float val)
+{
+    if (m_Interactor!=nullptr)
+    {
+        return m_Interactor->SetOverallProgress(val);
+    }
+
+    return false;
 }

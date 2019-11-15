@@ -3,13 +3,17 @@
 #include <regex>
 
 #include <strings/filenames.h>
+#include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <base/kiplenums.h>
+#include <strings/xmlstrings.h>
 
+#include "readerexception.h"
 #include "datasetbase.h"
 
-int ImageLoader::cnt=0;
+int FileSet::cnt=0;
 
-ImageLoader::ImageLoader() :
+FileSet::FileSet() :
     id(cnt++),
     m_sFilemask("image_####.tif"),
     m_sVariableName("image"),
@@ -17,37 +21,88 @@ ImageLoader::ImageLoader() :
     m_nLast(99),
     m_nRepeat(1),
     m_nStride(1),
-    m_nStep(1)
+    m_nStep(1),
+    m_fBinning(1.0f),
+    m_Flip(kipl::base::ImageFlipNone),
+    m_Rotate(kipl::base::ImageRotateNone),
 
+    m_bUseROI(false)
 {
+    m_ROI[0]=0;
+    m_ROI[1]=0;
+    m_ROI[2]=100;
+    m_ROI[3]=100;
 }
 
-ImageLoader::~ImageLoader()
+FileSet::FileSet(const FileSet &cfg) :
+    id(cnt++),
+    m_sFilemask(cfg.m_sFilemask),
+    m_sVariableName(cfg.m_sVariableName),
+    m_nFirst(cfg.m_nFirst),
+    m_nLast(cfg.m_nLast),
+    m_nRepeat(cfg.m_nRepeat),
+    m_nStride(cfg.m_nStride),
+    m_nStep(cfg.m_nStep),
+    m_fBinning(cfg.m_fBinning),
+    m_Flip(cfg.m_Flip),
+    m_Rotate(cfg.m_Rotate),
+    m_bUseROI(cfg.m_bUseROI)
+{
+    std::copy_n(cfg.m_ROI,4,m_ROI);
+}
+
+FileSet::~FileSet()
 {
 
 }
 
-int ImageLoader::getId() {
+const FileSet &FileSet::operator=(const FileSet &cfg)
+{
+    m_sFilemask     = cfg.m_sFilemask;
+    m_sVariableName = cfg.m_sVariableName;
+    m_nFirst        = cfg.m_nFirst;
+    m_nLast         = cfg.m_nLast;
+    m_nRepeat       = cfg.m_nRepeat;
+    m_nStride       = cfg.m_nStride;
+    m_nStep         = cfg.m_nStep;
+    m_fBinning      = cfg.m_fBinning;
+    m_Flip          = cfg.m_Flip;
+    m_Rotate        = cfg.m_Rotate;
+    m_bUseROI       = cfg.m_bUseROI;
+
+    std::copy_n(cfg.m_ROI,4,m_ROI);
+
+    return *this;
+}
+
+int FileSet::getId() {
     return id;
 }
 
-std::string ImageLoader::WriteXML(int indent)
+std::string FileSet::WriteXML(int indent)
 {
     ostringstream xml;
 
-    xml<<std::setw(indent+4)<<"<filemask>"     << m_sFilemask     << "</filemask>\n";
-    xml<<std::setw(indent+4)<<"<variablename>" << m_sVariableName << "</variablename>\n";
-    xml<<std::setw(indent+4)<<"<first>"        << m_nFirst        << "</first>\n";
-    xml<<std::setw(indent+4)<<"<last>"         << m_nLast         << "</last>\n";
-    xml<<std::setw(indent+4)<<"<repeat>"       << m_nRepeat       << "</repeat>\n";
-    xml<<std::setw(indent+4)<<"<stride>"       << m_nStride       << "</stride>\n";
-    xml<<std::setw(indent+4)<<"<step>"         << m_nStep         << "</step>\n";
+    xml<<kipl::strings::xmlString("filemask",     m_sFilemask,           indent+4);
+    xml<<kipl::strings::xmlString("variablename", m_sVariableName,       indent+4);
+    xml<<kipl::strings::xmlString("first",        m_nFirst,              indent+4);
+    xml<<kipl::strings::xmlString("last",         m_nLast,               indent+4);
+    xml<<kipl::strings::xmlString("repeat",       m_nRepeat,             indent+4);
+    xml<<kipl::strings::xmlString("stride",       m_nStride,             indent+4);
+    xml<<kipl::strings::xmlString("step",         m_nStep,               indent+4);
+    xml<<kipl::strings::xmlString("binning",      m_fBinning,            indent+4);
+    xml<<kipl::strings::xmlString("flip",         enum2string(m_Flip),   indent+4);
+    xml<<kipl::strings::xmlString("rotate",       enum2string(m_Rotate), indent+4);
+    xml<<kipl::strings::xmlString("useroi",       m_bUseROI,             indent+4);
+
+    xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
+
     xml<<std::setw(indent+4)<<"<skiplist>"     << kipl::strings::List2String(m_nSkipList)     << "</skiplist>\n";
 
     return xml.str();
 }
 
-int ImageLoader::ParseXML(std::string xml)
+int FileSet::ParseXML(std::string xml)
 {
     regex reg("<(.*)>(.*)</(\\1)>");
 
@@ -84,6 +139,22 @@ int ImageLoader::ParseXML(std::string xml)
          if (tag=="step") {
             m_nStep=std::atoi(value.c_str());
          }
+
+         if (tag=="flip") {
+            string2enum(value.c_str(),m_Flip);
+         }
+
+         if (tag=="rotate") {
+            string2enum(value.c_str(),m_Rotate);
+         }
+
+         if (tag=="useroi") {
+            m_bUseROI=kipl::strings::string2bool(value.c_str());
+         }
+//         xml<<std::setw(indent+4)<<"<flip>"<< m_Flip<<"</flip>\n";
+//         xml<<std::setw(indent+4)<<"<rotate>"<< m_Rotate<<"</flip>\n";
+//         xml<<std::setw(indent+4)<<"<useroi>"<< kipl::strings::bool2string(m_bUseROI)<<"</useroi>\n";
+//         xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
          if (tag=="skiplist") {
             kipl::strings::String2List(value,m_nSkipList);
          }
@@ -91,38 +162,85 @@ int ImageLoader::ParseXML(std::string xml)
      return 0;
 }
 
-kipl::base::TImage<float,2> ImageLoader::Load(int idx,kipl::base::eImageRotate rot,kipl::base::eImageFlip flip, size_t *crop)
+int FileSet::ParseXML(xmlTextReaderPtr reader)
 {
-    kipl::base::TImage<float,2> img;
+    const xmlChar *name, *value;
+    int ret = xmlTextReaderRead(reader);
+    std::string sName, sValue;
+    int depth=xmlTextReaderDepth(reader);
 
-    std::string fname;
-//    kipl::strings::filenames::MakeFileName()
-    return img;
-}
+    while (ret == 1) {
+        if (xmlTextReaderNodeType(reader)==1) {
+            name = xmlTextReaderConstName(reader);
+            ret=xmlTextReaderRead(reader);
 
-kipl::base::TImage<float,3> ImageLoader::Load(kipl::base::eImageRotate rot, kipl::base::eImageFlip flip, size_t *crop)
-{
-    kipl::base::TImage<float,3> volume;
-    kipl::base::TImage<float,2> slice;
+            value = xmlTextReaderConstValue(reader);
+            if (name==nullptr) {
+                throw ReaderException("Unexpected contents in parameter file",__FILE__,__LINE__);
+            }
+            if (value!=nullptr)
+                sValue=reinterpret_cast<const char *>(value);
+            else
+                sValue="Empty";
+            sName=reinterpret_cast<const char *>(name);
 
-    size_t dims[3]={0,0,0};
-    for (int i=m_nFirst; i<=m_nLast; i+=m_nStep) {\
-        slice=Load(i,rot,flip,crop);
-        if (i==m_nFirst) {
-            dims[0]=slice.Size(0);
-            dims[1]=slice.Size(1);
-            dims[2]=(m_nLast-m_nFirst+1)/m_nStep;
-            volume.Resize(dims);
+            if (sName=="filemask") {
+                m_sFilemask=sValue;
+            }
+            if (sName=="variablename") {
+                m_sVariableName=sValue;
+            }
+            if (sName=="first") {
+               m_nFirst=std::atoi(sValue.c_str());
+            }
+            if (sName=="last") {
+               m_nLast=std::atoi(sValue.c_str());
+            }
+            if (sName=="repeat") {
+               m_nRepeat=std::atoi(sValue.c_str());
+            }
+            if (sName=="stride") {
+               m_nStride=std::atoi(sValue.c_str());
+            }
+            if (sName=="step") {
+               m_nStep=std::atoi(sValue.c_str());
+            }
+
+            if (sName=="flip") {
+               string2enum(sValue.c_str(),m_Flip);
+            }
+
+            if (sName=="rotate") {
+               string2enum(sValue.c_str(),m_Rotate);
+            }
+
+            if (sName=="useroi") {
+               m_bUseROI=kipl::strings::string2bool(sValue.c_str());
+            }
         }
-        memcpy(volume.GetLinePtr(i-m_nFirst),slice.GetDataPtr(),slice.Size()*sizeof(float));
+        ret = xmlTextReaderRead(reader);
+        if (xmlTextReaderDepth(reader)<depth)
+            ret=0;
     }
 
-    return volume;
+
 }
 
-std::ostream & operator<<(std::ostream &s, ImageLoader &il)
+std::string FileSet::makeFileName(int idx) const
 {
-    s<<"FileMask:"<<il.m_sFilemask<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]";
+    std::string name;
+    std::string ext;
+
+    kipl::strings::filenames::MakeFileName(m_sFilemask,idx, name, ext,'#');
+
+    return name;
+}
+
+std::ostream & operator<<(std::ostream &s, FileSet &il)
+{
+    s<<"FileMask:"<<il.m_sFilemask<<", variable name="<<il.m_sVariableName<<", interval ["<<il.m_nFirst<<", "<<il.m_nLast<<"]\n"
+    << il.m_Flip<<" " << il.m_Rotate << "\n"
+    << "Use roi "<<kipl::strings::bool2string(il.m_bUseROI)<<" ["<< il.m_ROI[0]<<" "<< il.m_ROI[1]<<" "<< il.m_ROI[2]<<" "<< il.m_ROI[3]<<"]\n";
 
     return s;
 }

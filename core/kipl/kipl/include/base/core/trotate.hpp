@@ -2,17 +2,22 @@
 
 #ifndef TROTATE_HPP_
 #define TROTATE_HPP_
-
+#include "../trotate.h"
+#include "../timage.h"
 #include "../KiplException.h"
 
 namespace kipl{ namespace base {
 template <typename T>
 kipl::base::TImage<T,2> & TRotate<T>::Rotate(kipl::base::TImage<T,2> &img, double angle)
 {
+    (void)img;
+
  if (fmod(angle,90.0)==0) {
 
 
  }
+
+ return img;
 
 }
 
@@ -26,7 +31,14 @@ void TRotate<T>::HorizontalSkew (T *pSrc,
 	                double dWeight,
 	                T blackvalue)
 {
-
+    (void)pSrc;
+    (void)nSrc;
+    (void)pDst;
+    (void)sDst;
+    (void)uRow;
+    (void)iOffset;
+    (void)dWeight;
+    (void)blackvalue;
 }
 
 template <typename T>
@@ -39,7 +51,14 @@ void TRotate<T>::VerticalSkew (T *pSrc,
 		                double dWeight,
 		                T blackvalue)
 {
-
+    (void)pSrc;
+    (void)nSrc;
+    (void)pDst;
+    (void)sDst;
+    (void)uRow;
+    (void)iOffset;
+    (void)dWeight;
+    (void)blackvalue;
 }
 
 
@@ -113,6 +132,7 @@ kipl::base::TImage<T,2> & TRotate<T>::Rotate270 (kipl::base::TImage<T,2> &img)
 template <typename T>
 kipl::base::TImage<T,2> & TRotate<T>::Rotate45 (kipl::base::TImage<T,2> &img, double angle)
 {
+    (void)angle;
 	throw kipl::base::KiplException("Rotate45 is not implemented",__FILE__,__LINE__);
 
 	size_t dims[2]={img.Size(1), img.Size(0)};
@@ -166,6 +186,7 @@ kipl::base::TImage<float,2> TRotate<T>::Rotate(kipl::base::TImage<float,2> & img
     res.Clone();
 
     switch (rotate) {
+        case kipl::base::ImageRotateDefault : break;
         case kipl::base::ImageRotateNone : break;
         case kipl::base::ImageRotate90   : res=Rotate90(img);break;
         case kipl::base::ImageRotate180  : res=Rotate180(img);break;
@@ -173,6 +194,7 @@ kipl::base::TImage<float,2> TRotate<T>::Rotate(kipl::base::TImage<float,2> & img
     }
 
     switch (flip) {
+        case kipl::base::ImageFlipDefault             : break;
         case kipl::base::ImageFlipNone                : break;
         case kipl::base::ImageFlipHorizontal          : res=MirrorHorizontal(res); break;
         case kipl::base::ImageFlipVertical            : res=MirrorVertical(res); break;

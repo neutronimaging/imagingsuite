@@ -75,6 +75,13 @@ public:
     /// \param severity The log level of the current log message
     /// \param message A string containing the message
     void operator()(LogLevel severity, std::stringstream & message);
+
+    void error(const std::string message);
+    void warning(const std::string message);
+    void message(const std::string message);
+    void verbose(const std::string message);
+    void debug(const std::string message);
+
 protected:
 
 	/// \brief Back-end of the log writer

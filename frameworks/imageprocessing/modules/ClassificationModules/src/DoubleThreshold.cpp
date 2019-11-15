@@ -9,12 +9,11 @@
 
 #include <ParameterHandling.h>
 
-DoubleThreshold::DoubleThreshold():
-	KiplProcessModuleBase("DoubleThreshold"),
+DoubleThreshold::DoubleThreshold(kipl::interactors::InteractionBase *interactor):
+    KiplProcessModuleBase("DoubleThreshold", false, interactor),
 	m_fHighThreshold(1000.0f),
 	m_fLowThreshold(500.0f),
-	m_fBackgroundValue(0.0f),
-	m_bUseBackgroundValue(false)
+    m_Compare(kipl::segmentation::cmp_greatereq)
 {
 	// TODO Auto-generated constructor stub
 
@@ -24,12 +23,11 @@ DoubleThreshold::~DoubleThreshold() {
 	// TODO Auto-generated destructor stub
 }
 
-int DoubleThreshold::Configure(std::map<std::string, std::string> parameters)
+int DoubleThreshold::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fHighThreshold      = GetFloatParameter(parameters,"highthreshold");
 	m_fLowThreshold       = GetFloatParameter(parameters,"lowthreshold");
-	m_fBackgroundValue    = GetFloatParameter(parameters,"backgroundvalue");
-	m_bUseBackgroundValue = kipl::strings::string2bool(GetStringParameter(parameters,"usebackgroundvalue"));
+    string2enum(GetStringParameter(parameters,"compare"),m_Compare);
 
 	return 0;
 }
@@ -40,8 +38,7 @@ std::map<std::string, std::string> DoubleThreshold::GetParameters()
 
 	parameters["highthreshold"]   = kipl::strings::value2string(m_fHighThreshold);
 	parameters["lowthreshold"]    = kipl::strings::value2string(m_fLowThreshold);
-	parameters["backgroundvalue"] = kipl::strings::value2string(m_fBackgroundValue);
-	parameters["usebackgroundvalue"] = kipl::strings::bool2string(m_bUseBackgroundValue);
+    parameters["compare"]         = enum2string(m_Compare);
 
 	return parameters;
 }
@@ -52,9 +49,9 @@ int DoubleThreshold::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 
 	kipl::segmentation::DoubleThreshold(img,mask,
 			m_fLowThreshold,m_fHighThreshold,
-			kipl::segmentation::cmp_greater,
-			kipl::morphology::conn26);
+            m_Compare,
+            kipl::base::conn6);
 
+    std::copy_n(mask.GetDataPtr(),mask.Size(),img.GetDataPtr());
 	return 0;
 }
-

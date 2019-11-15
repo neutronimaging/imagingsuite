@@ -1,15 +1,5 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-07-10 20:08:51 +0200 (Sa, 10 Jul 2010) $
-// $Rev: 652 $
-//
+//<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/StdBackProjectorBase.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
@@ -37,7 +27,8 @@ MatrixCenterX(0),
 ProjCenter(0.0f),
 nProjectionBufferSize(16),
 nSliceBlock(32),
-fRotation(0.0f)
+fRotation(0.0f),
+filter(nullptr)
 {
 	logger(kipl::logging::Logger::LogMessage,"c'tor StdBackProjectorBase");
     nSubVolume[0]=nSubVolume[1]=1;
@@ -50,10 +41,11 @@ StdBackProjectorBase::~StdBackProjectorBase(void)
 void StdBackProjectorBase::ClearAll()
 {
 	logger(kipl::logging::Logger::LogVerbose,"Enter clear all");
-	//volume;
+    //volume
     BackProjectorModuleBase::ClearAll();
 	ProjectionList.clear();
-	//projections;
+
+    //projection parameters
 	nProjCounter=0;
 	SizeU=0;
 	SizeV=0;
@@ -77,12 +69,19 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
 	proj.Clone();
+
+    filter.process(proj);
+
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
+
+    float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
+    msg.str("");
+
 	fWeights[nProjCounter]  = weight;
-	fSin[nProjCounter]      = sin(angle*fPi/180.0f);
-	fCos[nProjCounter]      = cos(angle*fPi/180.0f);
+    fSin[nProjCounter]      = sin(dirWeight*angle*fPi/180.0f);
+    fCos[nProjCounter]      = cos(dirWeight*angle*fPi/180.0f);
 	fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter;
-	float *pProj=NULL;
+    float *pProj=nullptr;
 	
 	kipl::base::TImage<float,2> img;
 	proj*=weight;
@@ -139,7 +138,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 
 	// Process the projections
 	float *pImg=img.GetDataPtr();
-	float *pProj=NULL;
+    float *pProj=nullptr;
 	size_t i=0;
 	for (i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj, "Back-projecting")); i++) {
 		pProj=projections.GetLinePtr(0,i);
@@ -327,9 +326,10 @@ int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, st
 {
 	mConfig=config;
 
-	nProjectionBufferSize=GetIntParameter(parameters,"ProjectionBufferSize");
-	nSliceBlock=GetIntParameter(parameters,"SliceBlock");
+    nProjectionBufferSize = GetIntParameter(parameters,"ProjectionBufferSize");
+    nSliceBlock           = GetIntParameter(parameters,"SliceBlock");
 	GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
+    filter.setParameters(parameters);
 	
 	return 0;
 }
@@ -337,7 +337,7 @@ int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, st
 std::map<std::string, std::string> StdBackProjectorBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
-
+    parameters = filter.parameters();
 	parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
 	parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
 	

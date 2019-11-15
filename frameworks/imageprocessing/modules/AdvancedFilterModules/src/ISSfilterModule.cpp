@@ -1,6 +1,7 @@
 //<LICENSE>
 
 #include "stdafx.h"
+#include <QDebug>
 #include "ISSfilterModule.h"
 
 #ifdef _OPENMP
@@ -13,8 +14,8 @@
 #include <scalespace/ISSfilterQ3D.h>
 #include <containers/PlotData.h>
 
-ISSfilterModule::ISSfilterModule() :
-KiplProcessModuleBase("ISSfilterModule", true),
+ISSfilterModule::ISSfilterModule(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("ISSfilter", true,interactor),
     m_bAutoScale(true),
 	m_fSlope(1.0f),
 	m_fIntercept(0.0f),
@@ -27,14 +28,13 @@ KiplProcessModuleBase("ISSfilterModule", true),
     m_eRegularization(akipl::scalespace::RegularizationTV2),
     m_eInitialImage(akipl::scalespace::InitialImageOriginal)
 {
-
 }
 
 ISSfilterModule::~ISSfilterModule() {
 }
 
 
-int ISSfilterModule::Configure(std::map<std::string, std::string> parameters)
+int ISSfilterModule::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
     m_fSlope          = GetFloatParameter(parameters,"slope");
     m_fIntercept      = GetFloatParameter(parameters,"intercept");
@@ -76,7 +76,7 @@ int ISSfilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 {
 	ScaleImage(img,true);
 
-	akipl::scalespace::ISSfilterQ3D<float> filter;
+    akipl::scalespace::ISSfilterQ3D<float> filter(m_Interactor);
 
     filter.eInitialImage = m_eInitialImage;
     filter.m_eRegularization = m_eRegularization;
@@ -84,7 +84,7 @@ int ISSfilterModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 	filter.Process(img,m_fTau,m_fLambda,m_fAlpha,m_nIterations,m_bSaveIterations,m_sIterationPath);
 
 	ScaleImage(img,false);
-	kipl::containers::PlotData<float,float> errplot(m_nIterations);
+    kipl::containers::PlotData<float,float> errplot(m_nIterations,"ISS error");
 	for (int i=0; i<m_nIterations; i++) {
 		errplot.GetX()[i]=i;
 		errplot.GetY()[i]=filter.GetErrorArray()[i];

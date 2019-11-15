@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets
+QT       += widgets charts
 
 TARGET = ReaderGUI
 TEMPLATE = lib
@@ -19,14 +19,16 @@ SOURCES += readergui.cpp \
     readerconfiglistwidget.cpp \
     addloaderdialog.cpp \
     findskiplistdialog.cpp \
-    readerform.cpp
+    readerform.cpp \
+    singlefileform.cpp
 
 HEADERS += readergui.h\
         readergui_global.h \
     readerconfiglistwidget.h \
     addloaderdialog.h \
     findskiplistdialog.h \
-    readerform.h
+    readerform.h \
+    singlefileform.h
 
 unix {
     target.path = /usr/lib
@@ -40,13 +42,14 @@ unix {
     unix:!macx {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
-        LIBS += -lgomp
+        LIBS += -lgomp -lxml2
+        INCLUDEPATH += /usr/include/libxml2
     }
 
     unix:macx {
-     #   QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+        INCLUDEPATH += /opt/local/include/libxml2
     }
 }
 
@@ -80,4 +83,5 @@ DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 FORMS += \
     addloaderdialog.ui \
     findskiplistdialog.ui \
-    readerform.ui
+    readerform.ui \
+    singlefileform.ui

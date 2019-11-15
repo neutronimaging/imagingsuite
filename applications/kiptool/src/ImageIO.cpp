@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <KiplProcessConfig.h>
 #include <KiplFrameworkException.h>
@@ -15,29 +6,38 @@
 #include <sstream>
 #include <string>
 #include <base/timage.h>
+#include <imagereader.h>
 
 kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config)
 {
 
 	std::ostringstream msg;
-	std::string fname=config.mImageInformation.sSourcePath+config.mImageInformation.sSourceFileMask;
+    std::string fname=config.mImageInformation.sSourceFileMask;
 
 	kipl::base::TImage<float,3> img;
+    ImageReader reader;
 	try {	
-		if (config.mImageInformation.bUseROI==true) {
-			kipl::io::ReadImageStack(img,fname,
-				config.mImageInformation.nFirstFileIndex,
-                config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
-                config.mImageInformation.nStepFileIndex,
-				config.mImageInformation.nROI);
-		}
-		else {
-			kipl::io::ReadImageStack(img,fname,
-				config.mImageInformation.nFirstFileIndex,
-                config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
-                config.mImageInformation.nStepFileIndex,
-				NULL);
-		}
+           if (config.mImageInformation.bUseROI==true) {
+                img=reader.Read(fname,
+                    config.mImageInformation.nFirstFileIndex,
+                    config.mImageInformation.nLastFileIndex,
+                    config.mImageInformation.nStepFileIndex,
+                    config.mImageInformation.eFlip,
+                    config.mImageInformation.eRotate,
+                    1.0f,
+                    config.mImageInformation.nROI);
+            }
+            else {
+                img=reader.Read(fname,
+                    config.mImageInformation.nFirstFileIndex,
+                    config.mImageInformation.nLastFileIndex,
+                    config.mImageInformation.nStepFileIndex,
+                    config.mImageInformation.eFlip,
+                    config.mImageInformation.eRotate,
+                    1.0f,
+                    nullptr);
+            }
+
 	}
 	catch (kipl::base::KiplException &e) {
 		msg<<"KiplException with message: "<<e.what();

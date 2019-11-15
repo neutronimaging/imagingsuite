@@ -55,18 +55,18 @@ namespace Filter {
 	template<class ImgType, int NDim>
 	CGaussianFilter<ImgType,NDim>::CGaussianFilter()
 	{
-		kernel=NULL;
-		this->indx=NULL;
-		edge_weight=NULL;
+        kernel=nullptr;
+        this->indx=nullptr;
+        edge_weight=nullptr;
 		CreateKernel(1.0);
 	} 
 	
 	template<class ImgType, int NDim>
 	CGaussianFilter<ImgType,NDim>::CGaussianFilter(double sigma)
 	{
-		kernel=NULL;
-		this->indx=NULL;
-		edge_weight=NULL;
+        kernel=nullptr;
+        this->indx=nullptr;
+        edge_weight=nullptr;
 		
 		CreateKernel(sigma);		
 	} 
@@ -342,12 +342,12 @@ namespace Filter {
 	CGaussianFilter<ImgType,NDim>::~CGaussianFilter()
 	{
 		if (this->kernel) delete [] this->kernel;
-		this->kernel=NULL;
+        this->kernel=nullptr;
 		if (this->indx) delete [] this->indx;
-		this->indx=NULL;
+        this->indx=nullptr;
 		
 		if (this->edge_weight) delete [] this->edge_weight;
-		this->edge_weight=NULL;
+        this->edge_weight=nullptr;
 	}
 }
 #endif

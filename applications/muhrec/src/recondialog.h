@@ -16,7 +16,7 @@ class ReconDialog : public QDialog
     kipl::logging::Logger logger;
 
 public:
-    explicit ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent = 0);
+    explicit ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent = nullptr);
     ~ReconDialog();
     int progress();
     int process();

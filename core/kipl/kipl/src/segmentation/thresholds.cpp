@@ -8,6 +8,7 @@
 #include "../../include/segmentation/thresholds.h"
 #include "../../include/morphology/morphology.h"
 #include "../../include/math/sums.h"
+#include "../../include/strings/miscstring.h"
 
 using namespace std;
 
@@ -194,3 +195,47 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 
 
 }} // End namespace ImageThreshold
+
+std::string enum2string(kipl::segmentation::CmpType cmp)
+{
+    std::string str;
+
+    switch (cmp) {
+    case kipl::segmentation::cmp_less : str="cmp_less"; break;
+    case kipl::segmentation::cmp_greater : str="cmp_greater"; break;
+    case kipl::segmentation::cmp_lesseq : str="cmp_less_equal"; break;
+    case kipl::segmentation::cmp_greatereq : str="cmp_greater_equal"; break;
+    case kipl::segmentation::cmp_noteq : str="cmp_not_equal"; break;
+    case kipl::segmentation::cmp_eq : str="cmp_equal"; break;
+    default: throw kipl::base::KiplException("Failed to convert cmp enum to string",__FILE__,__LINE__);
+    }
+
+    return str;
+}
+
+void string2enum(std::string str, kipl::segmentation::CmpType &cmp)
+{
+    std::map<std::string,kipl::segmentation::CmpType> m;
+
+    m["cmp_less"]          = kipl::segmentation::cmp_less;
+    m["cmp_greater"]       = kipl::segmentation::cmp_greater;
+    m["cmp_less_equal"]    = kipl::segmentation::cmp_lesseq;
+    m["cmp_greater_equal"] = kipl::segmentation::cmp_greatereq;
+    m["cmp_not_equal"]     = kipl::segmentation::cmp_noteq;
+    m["cmp_equal"]         = kipl::segmentation::cmp_eq;
+
+    str=kipl::strings::toLower(str);
+
+    if (m.find(str)!=m.end()) {
+        cmp=m[str];
+    }
+    else {
+        throw kipl::base::KiplException("Failed to convert string to CmpType",__FILE__,__LINE__);
+    }
+}
+
+std::ostream & operator<<(std::ostream &s, kipl::segmentation::CmpType c)
+{
+    s<<enum2string(c);
+    return s;
+}

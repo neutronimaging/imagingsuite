@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DoseCorrectionDlg</class>
+ <widget class="QDialog" name="DoseCorrectionDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>619</width>
+    <height>450</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dose correction configuration</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Slope</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Intercept</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_slope">
+           <property name="toolTip">
+            <string>Slope if there is a need to rescale the image intensty in addition to the dose correction.</string>
+           </property>
+           <property name="decimals">
+            <number>5</number>
+           </property>
+           <property name="minimum">
+            <double>-999999.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_intercept">
+           <property name="toolTip">
+            <string>Intercept if there is a need to rescale the image intensty in addition to the dose correction.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QtAddons::uxROIWidget" name="roi_widget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>220</width>
+           <height>150</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>ROI where the dose is measured in the image. This region must be outside of any features in the image.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QtAddons::ImageViewerWidget" name="imageviewer" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>386</width>
+        <height>386</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>XY-projection in the Z-direction of the image.</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtAddons::ImageViewerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">imageviewerwidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::uxROIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">uxroiwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DoseCorrectionDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DoseCorrectionDlg</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

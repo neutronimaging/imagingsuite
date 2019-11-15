@@ -23,7 +23,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-#        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
@@ -105,11 +104,10 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debu
 #INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 #DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 
-LIBS += -lkipl -lModuleConfig -lReconFramework
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
-
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
@@ -117,7 +115,8 @@ DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
-
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/src
 
 macx: {
 INCLUDEPATH += $$PWD/../../../../../../external/mac/include

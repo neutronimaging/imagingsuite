@@ -22,7 +22,7 @@ OctreeNode::~OctreeNode()
 {
 	for (int i=0; i<8; i++)
 	{
-		if (nodes[i]!=NULL)
+        if (nodes[i]!=nullptr)
 			delete nodes[i];
 	}
 }

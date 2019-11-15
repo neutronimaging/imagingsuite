@@ -2,6 +2,9 @@
 core/algorithms/ImagingAlgorithms/.DS_Store
 build*
 *.user
+*.user.4.8-pre1
+*.user.4.9-pre1
+*.user.4.10-pre1
 *.stash
 *.o
 *~
@@ -18,3 +21,7 @@ build*
 *.toc
 *.pdf
 *.synctex.gz
+CMakeCache.txt
+CMakeFiles
+_deps
+*.png

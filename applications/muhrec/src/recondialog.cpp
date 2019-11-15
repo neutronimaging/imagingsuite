@@ -47,14 +47,6 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
 
     m_Interactor->Reset();
 
-#ifdef NEVER//_MSC_VER
-    #undef USEDIALOG
-//    #define USEDIALOG
-#else
-    #define USEDIALOG
-#endif
-
-#ifdef USEDIALOG
     logger(logger.LogMessage,"Starting with threads");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
@@ -75,43 +67,7 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     progress_thread.waitForFinished();
     logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
     return res;
-#else
-    bool bFailure=false;
 
-    ostringstream msg;
-    try {
-        process();
-    }
-    catch (std::exception &e) {
-        msg<<"Reconstruction failed: "<<endl
-            <<e.what();
-        bFailure=true;
-    }
-    catch (ReconException &e) {
-        msg<<"Reconstruction failed: "<<endl
-            <<e.what();
-        bFailure=true;
-    }
-    catch (kipl::base::KiplException &e) {
-        msg<<"Reconstruction failed: "<<endl
-            <<e.what();
-        bFailure=true;
-    }
-    catch (...) {
-        msg<<"Reconstruction failed";
-        bFailure=true;
-    }
-
-    if (bFailure) {
-        QMessageBox error_dlg(this);
-        error_dlg.setText("Reconstruction failed");
-        error_dlg.setDetailedText(QString::fromStdString(msg.str()));
-        error_dlg.exec();
-        logger(kipl::logging::Logger::LogError,msg.str());
-        return Rejected;
-    }
-    return Accepted;
-#endif
 }
 
 int ReconDialog::progress()
@@ -122,10 +78,6 @@ int ReconDialog::progress()
         emit updateProgress(m_Interactor->CurrentProgress(),
                             m_Interactor->CurrentOverallProgress(),
                             QString::fromStdString(m_Interactor->CurrentMessage()));
-//        ui->progressBar->setValue(m_Interactor->CurrentProgress()*100);
-//        ui->progressBar_overall->setValue(m_Interactor->CurrentOverallProgress()*100);
-
-//        ui->label_message->setText(QString::fromStdString(m_Interactor->CurrentMessage()));
 
         QThread::msleep(50);
     }
@@ -136,8 +88,8 @@ int ReconDialog::progress()
 
 void ReconDialog::changedProgress(float progress, float overallProgress, QString msg)
 {
-    ui->progressBar->setValue(progress*100);
-    ui->progressBar_overall->setValue(overallProgress*100);
+    ui->progressBar->setValue(static_cast<int>(progress*100));
+    ui->progressBar_overall->setValue(static_cast<int>(overallProgress*100));
 
     ui->label_message->setText(msg);
 }
@@ -145,7 +97,7 @@ void ReconDialog::changedProgress(float progress, float overallProgress, QString
 int ReconDialog::process()
 {
     logger(kipl::logging::Logger::LogMessage,"Process thread is started");
-    ostringstream msg;
+    std::ostringstream msg;
 
     bool failed=false;
     try {

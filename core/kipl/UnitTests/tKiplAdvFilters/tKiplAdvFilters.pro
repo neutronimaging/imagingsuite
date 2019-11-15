@@ -30,7 +30,6 @@ unix {
     }
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -58,6 +57,8 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src

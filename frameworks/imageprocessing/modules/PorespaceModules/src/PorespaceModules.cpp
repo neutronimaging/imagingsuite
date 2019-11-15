@@ -1,3 +1,4 @@
+//<LICENSE>
 // AdvancedFilterModules.cpp : Defines the exported functions for the DLL application.
 //
 
@@ -8,19 +9,20 @@
 #include <logging/logger.h>
 
 
-DLL_EXPORT void * GetModule(const char *application, const char * name)
+DLL_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+        kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="PoreSizeMap")
 			return new PoreSizeMapModule;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 DLL_EXPORT int Destroy(const char *application, void *obj)
@@ -32,7 +34,7 @@ DLL_EXPORT int Destroy(const char *application, void *obj)
 	kipl::logging::Logger logger("PorespaceModules destroy");
 	std::ostringstream msg;
 
-	if (obj!=NULL) {
+    if (obj!=nullptr) {
 		KiplProcessModuleBase * module = reinterpret_cast<KiplProcessModuleBase *>(obj);
 		msg<<"Destroying "<<module->ModuleName();
 		logger(kipl::logging::Logger::LogMessage,msg.str());

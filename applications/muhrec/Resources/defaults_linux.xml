@@ -16,12 +16,13 @@
 	    <beamgeometry>parallel</beamgeometry>
         <resolution>0.1 0.1</resolution>
         <binning>1</binning>
-        <margin>2</margin>
+        <margin>5</margin>
         <firstindex>1</firstindex>
         <lastindex>100</lastindex>
         <projectionstep>1</projectionstep>
         <repeatline>false</repeatline>
         <scantype>sequential</scantype>
+        <goldenfirstidx>1</goldenfirstidx>
         <imagetype>projections</imagetype>
         <center>50</center>
 	    <sod>100</sod>
@@ -41,9 +42,9 @@
         <dcfilemask>dc_####.fits</dcfilemask>
         <dcfirstindex>1</dcfirstindex>
         <dccount>5</dccount>
-        <roi>0 0 99 99</roi>
-        <projroi>0 0 99 99</projroi>
-        <doseroi>0 0 10 10</doseroi>
+        <roi>0 0 10000 10000</roi>
+        <projroi>0 0 10000 10000</projroi>
+        <doseroi>0 0 10000 10000</doseroi>
         <scanarc>0 360</scanarc>
         <rotate>imagerotatenone</rotate>
         <flip>imageflipnone</flip>
@@ -82,6 +83,8 @@
                 <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
                 <active>false</active>
                 <parameters>
+                    <removeinfnan>false</removeinfnan>
+	                <clampdata>false</clampdata>
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
                     <detectionmethod>morphdetectpeaks</detectionmethod>
@@ -89,9 +92,9 @@
                     <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
-                    <sigma>0.01</sigma>
+                    <sigma>0.01 0.01</sigma>
                     <threading>false</threading>
-                    <threshold>0.1</threshold>
+                    <threshold>0.1 0.1</threshold>
                 </parameters>
             </module>
             <module>
@@ -106,29 +109,21 @@
                     <wname>daub25</wname>
                 </parameters>
             </module>
-            <module>
-                <modulename>ProjectionFilterSingle</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
-                <active>true</active>
-                <parameters>
-                    <biasweight>0.1</biasweight>
-                    <cutoff>0.5</cutoff>
-                    <filtertype>Hamming</filtertype>
-                    <order>1</order>
-                    <paddingdoubler>2</paddingdoubler>
-                    <usebias>true</usebias>
-                </parameters>
-            </module>
         </preprocessing>
         <backprojector>
             <module>
                 <modulename>MultiProjBPparallel</modulename>
                 <sharedobject>@executable_path/Frameworks/libStdBackProjectors.so</sharedobject>
                 <active>true</active>
-                <parameters>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>
                     <SubVolume>1 1</SubVolume>
+                    <biasweight>0.1</biasweight>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
+                    <usebias>false</usebias>
                 </parameters>
             </module>
         </backprojector>

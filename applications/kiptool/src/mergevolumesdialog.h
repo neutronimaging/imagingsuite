@@ -18,14 +18,10 @@ class MergeVolumesDialog : public QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit MergeVolumesDialog(QWidget *parent = 0);
+    explicit MergeVolumesDialog(QWidget *parent = nullptr);
     ~MergeVolumesDialog();
 
 private slots:
-    void on_pushButton_browseA_clicked();
-
-    void on_pushButton_browseB_clicked();
-
     void on_pushButton_loaddata_clicked();
 
     void on_pushButton_loadA_clicked();
@@ -40,17 +36,16 @@ private slots:
 
     void on_comboBox_result_currentIndexChanged(int index);
 
-    void on_checkBox_crop_toggled(bool checked);
-
     void on_pushButton_TestMix_clicked();
 
 protected:
-    void UpdateDialog();
-    void UpdateConfig();
-    void SaveConfig();
-    void LoadConfig();
+    void updateDialog();
+    void updateConfig();
+    void saveConfig();
+    void loadConfig();
+    bool checkImageSizes();
 
-    void LoadVerticalSlice(std::string filemask,
+    void loadVerticalSlice(std::string filemask,
                                         int first,
                                         int last,
                                         kipl::base::TImage<float,2> *img);
@@ -61,6 +56,7 @@ protected:
     kipl::base::TImage<float,2> m_VerticalImgResult;
     kipl::base::TImage<float,2> m_VerticalImgLocalResult;
     kipl::base::TImage<float,2> m_HorizontalSliceResult;
+
 
 private:
     Ui::MergeVolumesDialog *ui;

@@ -61,7 +61,7 @@ int DistanceStatistics::ProcessCore(kipl::base::TImage<float,3> & img, std::map<
 
 	kipl::base::TImage<float,3> dist;
 
-	kipl::morphology::EuclideanDistance(mask,dist);
+    kipl::morphology::old::EuclideanDistance(mask,dist);
 	float *pDist=dist.GetDataPtr();
 
 	for (size_t i=0; i<img.Size(); i++) {

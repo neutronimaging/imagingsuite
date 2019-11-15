@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef _BASICPROJECTOR_H_
-#define _BASICPROJECTOR_H_
+#ifndef BASICPROJECTOR_H
+#define BASICPROJECTOR_H
 
 #include "../base/timage.h"
 #include "../base/kiplenums.h"

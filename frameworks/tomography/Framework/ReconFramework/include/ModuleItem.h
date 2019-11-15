@@ -67,7 +67,7 @@ public:
 
     /// The status of the created module.
     /// \returns true if there is an allocated module in the item.
-	bool Valid() {return m_Module!=NULL;}
+    bool Valid() {return m_Module!=nullptr;}
 	
     /// Unloads the back-projection module
 	virtual ~BackProjItem();

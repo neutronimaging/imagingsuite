@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <QtWidgets/QApplication>
 #include <QDir>
@@ -44,6 +35,7 @@ int RunOffline(QApplication * a);
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationVersion(VERSION);
     QDir dir;
     kipl::logging::Logger logger("KipTool");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
@@ -70,7 +62,7 @@ int main(int argc, char *argv[])
 
 int RunGUI(QApplication * a)
 {
-    KipToolMainWindow w;
+    KipToolMainWindow w(a);
     w.show();
 
     return a->exec();
@@ -88,7 +80,7 @@ int RunOffline(QApplication * a)
         std::string fname(args[2].toStdString());
 
         KiplProcessConfig config;
-        KiplEngine *engine=NULL;
+        KiplEngine *engine=nullptr;
         KiplFactory factory;
 
         try {
@@ -96,15 +88,15 @@ int RunOffline(QApplication * a)
             engine=factory.BuildEngine(config);
         }
         catch (ModuleException & e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -1;
         }
         catch (KiplFrameworkException &e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -2;
         }
         catch (kipl::base::KiplException &e) {
-            cerr<<"Failed to initialize config struct "<<e.what()<<endl;
+            std::cerr<<"Failed to initialize config struct "<<e.what()<<std::endl;
             return -3;
         }
 
@@ -114,23 +106,23 @@ int RunOffline(QApplication * a)
             engine->SaveImage();
         }
         catch (ModuleException &e) {
-            cerr<<"ModuleException: "<<e.what();
+            std::cerr<<"ModuleException: "<<e.what();
             return -4;
         }
         catch (KiplFrameworkException &e) {
-            cerr<<"KiplFrameworkException: "<<e.what();
+            std::cerr<<"KiplFrameworkException: "<<e.what();
             return -5;
         }
         catch (kipl::base::KiplException &e) {
-            cerr<<"KiplException: "<<e.what();
+            std::cerr<<"KiplException: "<<e.what();
             return -6;
         }
         catch (std::exception &e) {
-            cerr<<"STL Exception: "<<e.what();
+            std::cerr<<"STL Exception: "<<e.what();
             return -7;
         }
         catch (...) {
-            cerr<<"Unhandled exception";
+            std::cerr<<"Unhandled exception";
             return -8;
         }
     }

@@ -43,6 +43,8 @@ private:
     // Collection of call-backs
     void PreviewProjection(int x);
     void ProjectionIndexChanged(int x);
+    void UpdateCBCTDistances();
+    void UpdatePiercingPoint();
 
 protected slots:
     void StoreGeometrySetting();
@@ -170,8 +172,6 @@ private slots:
 
     void on_button_FindCenter_clicked();
 
-    void on_checkUseMatrixROI_toggled(bool checked);
-
     void on_dspinRotateRecon_valueChanged(double arg1);
 
     void on_dialRotateRecon_sliderMoved(int position);
@@ -195,6 +195,31 @@ private slots:
     void on_comboDataSequence_currentIndexChanged(int index);
 
     void on_actionShow_repository_triggered();
+
+    void on_actionGlobal_settings_triggered();
+
+    void on_pushButton_measurePixelSize_clicked();
+
+    void on_spinBoxSlices_valueChanged(int arg1);
+
+    void on_spinBoxProjections_valueChanged(int arg1);
+
+
+    void on_radioButton_SOD_toggled(bool checked);
+
+    void on_radioButton_SDD_toggled(bool checked);
+
+    void on_radioButton_Magnification_toggled(bool checked);
+
+    void on_dspinSOD_valueChanged(double arg1);
+
+    void on_dspinSDD_valueChanged(double arg1);
+
+    void on_doubleSpinBox_magnification_valueChanged(double arg1);
+
+    void on_dspinPiercPointX_valueChanged(double arg1);
+
+    void on_dspinPiercPointY_valueChanged(double arg1);
 
 private:
     // Data members

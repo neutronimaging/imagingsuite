@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef _IMAGECAST_H
-#define _IMAGECAST_H
+#ifndef IMAGECAST_H
+#define IMAGECAST_H
 
 #include "timage.h"
 

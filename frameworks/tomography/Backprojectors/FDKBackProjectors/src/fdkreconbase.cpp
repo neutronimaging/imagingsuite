@@ -32,18 +32,6 @@ FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAli
     fRotation(0.0f) // not sure if i need these parameters.. for sure i would need the others that we have added in reconconfig
 {
    logger(kipl::logging::Logger::LogMessage,"c'tor FdkProjectorBase");
-
-   // set ebeamgeometry to conical
-//   mConfig.ProjectionInfo.beamgeometry = "Cone";
-//   mConfig.ProjectionInfo.beamgeometry=mConfig.ProjectionInfo.BeamGeometry_Cone;
-
-//   std::cout << "beam geoemtry in fdk recon base: " << std::endl;
-//   std::cout<< mConfig.ProjectionInfo.beamgeometry << std::endl;
-   // e' in set roi
-//       size_t mysize[3] = {512, 512, 85};
-//       volume.Resize(mysize);
-//       volume = 0.0f;
-
 }
 
 FdkReconBase::~FdkReconBase(void)
@@ -93,12 +81,6 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
     parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
     parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
     parameters["SubVolume"]=kipl::strings::value2string(nSubVolume[0])+" "+kipl::strings::value2string(nSubVolume[1]);
-//    parameters["SDD"] = kipl::strings::value2string(mConfig.ProjectionInfo.fSDD);
-//    parameters["SOD"] = kipl::strings::value2string(mConfig.ProjectionInfo.fSOD);
-//    parameters["HorizontalCenter"] = kipl::strings::value2string(mConfig.ProjectionInfo.fpPoint[0]);
-//    parameters["VerticalCenter"] = kipl::strings::value2string(mConfig.ProjectionInfo.fpPoint[1]);
-//    parameters["volumeSize"] = kipl::strings::value2string(volume_size[0])+" " +kipl::strings::value2string(volume_size[1])+" " +kipl::strings::value2string(volume_size[2]);
-//    parameters["volumeSpacing"] = kipl::strings::value2string(spacing[0])+" "+kipl::strings::value2string(spacing[1])+" "+kipl::strings::value2string(spacing[2]);
 
     return parameters;
 }
@@ -123,13 +105,6 @@ void FdkReconBase::SetROI(size_t *roi)
     mConfig.ProjectionInfo.roi[1]=roi[1];
     mConfig.ProjectionInfo.roi[2]=roi[2];
     mConfig.ProjectionInfo.roi[3]=roi[3];
-
-
-
-//    volume_size[0] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (x1-x0)
-//    volume_size[1] = mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]; // (y1-y0)
-//    volume_size[2] = mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]; // (z1-z0)
-
 
     volume_size[0] = mConfig.MatrixInfo.nDims[0];
     volume_size[1] = mConfig.MatrixInfo.nDims[1];
@@ -163,12 +138,6 @@ void FdkReconBase::SetROI(size_t *roi)
     cbct_volume.Resize(MatrixDims);
     cbct_volume=0.0f;
 
-//    volume.Resize(volume_size);
-//    volume=0.0f;
-
-//    cbct_volume.Resize(volume_size);
-//    cbct_volume=0.0f;
-
 
     stringstream msg;
     msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
@@ -201,7 +170,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
     fSin[nProjCounter]      = sin(angle*fPi/180.0f);
     fCos[nProjCounter]      = cos(angle*fPi/180.0f);
     fStartU[nProjCounter]   = MatrixCenterX*(fSin[nProjCounter]-fCos[nProjCounter])+ProjCenter; // this stuff for now i don-t use it
-    float *pProj=NULL;
+    float *pProj=nullptr;
 
     kipl::base::TImage<float,2> img;
     proj*=weight;
@@ -239,7 +208,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 
     return nProjCounter;
 
-//    return 0L;
 }
 
 
@@ -259,11 +227,9 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
        // Extract the projection parameters
        float *weights=new float[nProj+16];
-//       float *weights=new float[nProj];
-       GetFloatParameterVector(parameters,"weights",weights,nProj);
-
-
        float *angles=new float[nProj];
+
+       GetFloatParameterVector(parameters,"weights",weights,nProj);       
        GetFloatParameterVector(parameters,"angles",angles,nProj);
 
        // Process the projections
@@ -274,15 +240,13 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 //        kipl::profile::Timer fdkTimer;
 //        fdkTimer.Tic();
         InitializeBuffers(img.Size(0),img.Size(1));
-        for (int i=0; (i<nProj) && (!m_Interactor->SetProgress(float(i)/nProj,"FDK back-projection")); i++) {
-
+        for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); i++) {
            pProj=projections.GetLinePtr(0,i);
            memcpy(pImg,pProj,sizeof(float)*img.Size());
 
            img *= weights[i];
-//           std::cout << "weigth: " << weights[i] << std::endl;
-//           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
 
+//           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
           this->reconstruct(img, angles[i], nProj);
 
 
@@ -303,7 +267,6 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
              memcpy(ori.GetDataPtr(), cbct_volume.GetLinePtr(0,k), sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
              rotated = rotate.MirrorHorizontal(ori);
              memcpy(volume.GetLinePtr(0,volume.Size(2)-k-1),rotated.GetDataPtr(),sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
-//             memcpy(volume.GetLinePtr(0,volume.Size(2)-k-1),cbct_volume.GetLinePtr(0,k),sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
          }
 
 

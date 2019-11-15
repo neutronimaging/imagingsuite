@@ -26,14 +26,15 @@
 #include "PreprocEnums.h"
 #include <ReconConfig.h>
 #include <SpotClean.h>
+#include <interactors/interactionbase.h>
 
 
 class STDPREPROCMODULESSHARED_EXPORT SpotClean2 :
 	public PreprocModuleBase
 {
 public:
-		const float mark;
-	SpotClean2(std::string name="SpotClean2");
+    const float mark;
+    SpotClean2(std::string name="SpotClean2", kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~SpotClean2(void);
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 

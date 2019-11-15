@@ -1,15 +1,4 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-10-18 21:06:50 +0200 (Thu, 18 Oct 2012) $
-// $Rev: 1380 $
-// $Id: ModuleConfigurator.cpp 1380 2012-10-18 19:06:50Z kaestner $
-//
-
+//<LICENSE>
 
 // ModuleConfigurator.cpp : Defines the exported functions for the DLL application.
 //
@@ -18,6 +7,7 @@
 #include "ModuleConfigurator.h"
 #include <ModuleException.h>
 #include <QMessageBox>
+#include <QDebug>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -26,18 +16,18 @@
 // see ModuleConfigurator.h for the class definition
 ModuleConfigurator::ModuleConfigurator() :
 	logger("ModuleConfigurator"),
-	hinstLib(NULL),
-    m_fnModuleFactory(NULL),
-	m_fnDestroyer(NULL),
-	m_Dialog(NULL),
-	m_Config(NULL)
+    hinstLib(nullptr),
+    m_fnModuleFactory(nullptr),
+    m_fnDestroyer(nullptr),
+    m_Dialog(nullptr),
+    m_Config(nullptr)
 {
 
 }
 
 ModuleConfigurator::~ModuleConfigurator()
 {
-	Destroy();
+   // destroy();
 }
 	
 bool ModuleConfigurator::configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters)
@@ -58,8 +48,8 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
             return false;
     }
 
-	try {
-		GetDialog(application,SharedObjectName,ModuleName);
+    try {
+        loadDialog(application,SharedObjectName,ModuleName);
 	}
 	catch (ModuleException &e)
 	{
@@ -78,12 +68,19 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		throw ModuleException(msg.str(),__FILE__,__LINE__);
 
 	bool res=false;
-	if (m_Dialog!=NULL) {
+    if (m_Dialog!=nullptr) {
 		msg.str("");
 
          try {
+
+
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
+
+            res=m_Dialog->exec(m_Config, parameters, m_Image);
+
+            m_Image.FreeImage();
+            destroy();
         }
         catch (ModuleException &e)
         {
@@ -99,11 +96,8 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
             msg<<"Failed to load projection data with unhandled exception for "<<ModuleName<<".";
         }
         if (!msg.str().empty())
-            throw ModuleException(msg.str(),__FILE__,__LINE__);
+            throw ModuleException(msg.str(),__FILE__,__LINE__);;
 
-        res=m_Dialog->exec(m_Config, parameters, m_Image);
-
-		m_Image.FreeImage();
 	}
 	else {
 		msg.str("");
@@ -114,7 +108,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 	return res;
 }
 
-void ModuleConfigurator::GetDialog(std::string application, std::string sharedobjectname, std::string objectname)
+void ModuleConfigurator::loadDialog(std::string application, std::string sharedobjectname, std::string objectname)
 {
 	std::ostringstream msg;
 
@@ -130,7 +124,7 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 	hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
-	if (hinstLib != NULL)
+    if (hinstLib != nullptr)
     {
 #ifdef _MSC_VER
 		m_fnModuleFactory = reinterpret_cast<FACTORY>(GetProcAddress(hinstLib, "GetGUIModule"));
@@ -138,10 +132,10 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 		m_fnModuleFactory = reinterpret_cast<FACTORY>(dlsym(hinstLib, "GetGUIModule"));
 #endif
 		 // If the function address is valid, call the function.
-		if (NULL != m_fnModuleFactory)
+        if (nullptr != m_fnModuleFactory)
         {
             m_Dialog=reinterpret_cast<ConfiguratorDialogBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str(),nullptr));
-			if (m_Dialog==NULL) {
+            if (m_Dialog==nullptr) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;
 				throw ModuleException(msg.str(),__FILE__,__LINE__);
@@ -167,7 +161,7 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 		m_fnDestroyer = reinterpret_cast<DESTROYER>(dlsym(hinstLib, "DestroyGUIModule"));
 #endif
 
-		if (m_fnDestroyer==NULL) {
+        if (m_fnDestroyer==nullptr) {
 			msg.str("");
 			msg<<"Failed to get the destroyer from "<<m_sSharedObject<<" (Error: "
 #ifdef _MSC_VER
@@ -191,19 +185,29 @@ void ModuleConfigurator::GetDialog(std::string application, std::string sharedob
 	}
 }
 
-void ModuleConfigurator::Destroy()
+void ModuleConfigurator::destroy()
 {
 	logger(kipl::logging::Logger::LogMessage,"Destroying");
 
-	if (m_Dialog!=NULL)
-		m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
+    if (m_Dialog!=nullptr) {
+        int res=m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Dialog));
 
-	if (hinstLib!=NULL) {
-	#ifdef _MSC_VER
+        if (res!=0) {
+            logger.error("Something went really wrong");
+            return;
+        }
+    }
+    m_Dialog=nullptr;
+
+    if (hinstLib!=nullptr)
+    {
+#ifdef _MSC_VER
 		FreeLibrary(hinstLib);
-	#else
-		 dlclose(hinstLib);
-	#endif
+#else
+        dlclose(hinstLib);
+#endif
 	}
+
+    hinstLib=nullptr;
 
 }

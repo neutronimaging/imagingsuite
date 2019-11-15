@@ -3,8 +3,6 @@
 #ifndef IO_FITS_HPP_
 #define IO_FITS_HPP_
 
-#include <QDebug>
-
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -12,6 +10,7 @@
 
 #include <fitsio.h>
 
+#include "../../base/timage.h"
 #include "../../base/KiplException.h"
 
 namespace kipl { namespace io {
@@ -107,7 +106,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 
     ImgType *pLine=new ImgType[naxes[0]+16];
 	for (size_t i=cnStart, j=0; i<cnStop; i++,j++) {
-		coord[1]=i+1;
+        coord[1]=static_cast<int>(i+1);
 
 		if (fits_read_pix(fptr, datatype, coord, static_cast<int>(dims[0]), 
                 nullptr, pLine, nullptr, &status))
@@ -133,9 +132,9 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 {
 
     fitsfile *fptr;                  // pointer to the FITS file, defined in fitsio.h
-    int status, ii;
+    int status;
     long  fpixel, nelements, exposure;
-    ImgType *array[200];
+
     char err_msg[128];
 
     // initialize FITS image parameters
@@ -145,9 +144,10 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
     naxes[0]= static_cast<long>(src.Size(0)); // Set image dimensions
     naxes[1]= static_cast<long>(src.Size(1)); // Set image dimensions
 
-    // initialize pointers to the start of each row of the image
-    for( ii=1; ii<naxes[1]; ii++ )
-      array[ii] = array[ii-1] + naxes[0];
+//    ImgType *array=new ImgType[naxes[1]];
+//    // initialize pointers to the start of each row of the image
+//    for( ii=1; ii<naxes[1]; ii++ )
+//      array[ii] = array[ii-1] + naxes[0];
 
     remove(filename);                               // Delete old file if it already exists
 
@@ -167,7 +167,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 //     and BZERO keywords will be automatically written by cfitsio
 //     in this case.
 
-    if ( fits_create_img(fptr,  bitpix, naxis, naxes, &status) ) {
+    if ( fits_create_img(fptr,  bitpix, static_cast<int>(naxis), naxes, &status) ) {
         fits_get_errstatus(status, err_msg);
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
     }
@@ -199,6 +199,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
     }
 
+//   delete [] array;
 	return 0;
 }
 

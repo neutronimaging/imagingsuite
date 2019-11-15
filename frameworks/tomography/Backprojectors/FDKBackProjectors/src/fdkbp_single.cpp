@@ -300,15 +300,16 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         float* img = cbct_volume.GetDataPtr();
         float *xip, *yip, *zip;
         float sad_sid_2;
-        float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
+        float scale =mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD;
 
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
         // magnification = SDD/SOD
 
-        float spacing[3];
+        float spacing[3]; // detector pixel spacing divided by the magnification
         spacing[0] = mConfig.MatrixInfo.fVoxelSize[0];
         spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
         spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
+
 
         float origin[3];
         float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
@@ -372,8 +373,8 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
         // Rescale image (destructive rescaling)
 //        sad_sid_2 = (pmat->sad * pmat->sad) / (pmat->sid * pmat->sid);
-        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
-
+//        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD) / (nProj*0.1f);
+          sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
 
 
 //        for (i = 0; i < cbi->dim[0]*cbi->dim[1]; i++) {
@@ -681,17 +682,6 @@ float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r
 
  }
 
-//! In-place ramp filter for greyscale images
-//! \param data The pixel data of the image
-//! \param width The width of the image
-//! \param height The height of the image
-//! \template_param T The type of pixel in the image
-//void
-//ramp_filter (
-//    float *data,
-//    unsigned int width,
-//    unsigned int height
-//)
 
 
 void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
@@ -731,9 +721,7 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
     N = width * height;
     Npad = padwidth*padheight;
-//    in = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * N);
-//    fft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * N);
-//    ifft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * N);
+
     in = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
     fft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
     ifft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
@@ -746,22 +734,7 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     float *data = img.GetDataPtr();
     float *paddata = padImg.GetDataPtr();
 
-//    for (r = 0; r < MARGINF; ++r)
-//        memcpy (data + r * width, data + MARGINF * width,
-//        width * sizeof(float));
 
-//    for (r = height - MARGINF; r < height; ++r)
-//        memcpy (data + r * width, data + (height - MARGINF - 1) * width,
-//        width * sizeof(float));
-
-//    for (r = 0; r < height; ++r) {
-//        for (c = 0; c < MARGINF; ++c){
-//            data[r * width + c] = data[r * width + MARGINF];
-//        }
-//        for (c = width - MARGINF; c < width; ++c){
-//            data[r * width + c] = data[r * width + width - MARGINF - 1];
-//        }
-//    }
 
     for (r = 0; r < MARGINF; ++r)
         memcpy (paddata + r * padwidth, paddata + MARGINF * padwidth,
@@ -780,57 +753,13 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
         }
     }
 
-//    kipl::io::WriteTIFF32(padImg,"AfterStuff.tif");
 
-//    /* Fill in ramp filter in frequency space */
-//    for (i = 0; i < N; ++i) {
-//        in[i][0] = (float)(data[i]);
-//        // comment from here, check what happens here to understand the attenuation coefficients....
-////        in[i][0] /= 65535;
-////        in[i][0] = (in[i][0] == 0 ? 1 : in[i][0]);
-////        in[i][0] = -log (in[i][0]);
-//        // to here, to erase -log operation on projections
-//        in[i][1] = 0.0;
-//    }
 
     /* Fill in ramp filter in frequency space */
     for (i = 0; i < Npad; ++i) {
         in[i][0] = (float)(paddata[i]);
-        // comment from here, check what happens here to understand the attenuation coefficients....
-//        in[i][0] /= 65535;
-//        in[i][0] = (in[i][0] == 0 ? 1 : in[i][0]);
-//        in[i][0] = -log (in[i][0]);
-        // to here, to erase -log operation on projections
         in[i][1] = 0.0;
     }
-
-
-
-//    /* Add padding */
-//    for (i = 0; i < width / 2; ++i)
-//        ramp[i] = i;
-
-
-//    for (i = width / 2; i < (unsigned int) width; ++i)
-//        ramp[i] = width - i;
-
-//    /* Roll off ramp filter */
-//    for (i = 0; i < width; ++i)
-//        ramp[i] *= (cos (i * DEGTORADF * 360 / width) + 1) / 2;
-
-//    for (r = 0; r < height; ++r)
-//    {
-//    fftp = fftw_plan_dft_1d (width, in + r * width, fft + r * width,
-//        FFTW_FORWARD, FFTW_ESTIMATE);
-//    if (!fftp) {
-//        printf ("Error creating fft plan\n");
-//    }
-
-//    ifftp = fftw_plan_dft_1d (width, fft + r * width, ifft + r * width,
-//        FFTW_BACKWARD, FFTW_ESTIMATE);
-//    if (!ifftp) {
-//        printf ("Error creating ifft plan\n");
-//    }
 
     /* Add padding */
     for (i = 0; i < padwidth / 2; ++i)
@@ -842,7 +771,11 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
     /* Roll off ramp filter */
     for (i = 0; i < padwidth; ++i)
-        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+    {
+//        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORADF * 360 / padwidth) + 1));
+        ramp[i] /= padwidth*0.5;
+    }
 
     for (r = 0; r < padheight; ++r)
     {
@@ -860,19 +793,13 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
         fftw_execute (fftp);
 
-//        // Apply ramp
-//        for (c = 0; c < width; ++c) {
-//            fft[r * width + c][0] *= ramp[c];
-//            fft[r * width + c][1] *= ramp[c];
-//        }
-
         // Apply ramp
         for (c = 0; c < padwidth; ++c) {
             fft[r * padwidth + c][0] *= ramp[c];
             fft[r * padwidth + c][1] *= ramp[c];
         }
 
-        // Add apodization
+
 
         fftw_execute (ifftp);
 
@@ -880,11 +807,7 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     fftw_destroy_plan (ifftp);
     }
 
-//    for (i = 0; i < N; ++i)
-//        ifft[i][0] /= width;
 
-//    for (i = 0; i < N; ++i)
-//        data[i] = (float)(ifft[i][0]);
 
     for (i = 0; i < Npad; ++i)
         ifft[i][0] /= padwidth;
@@ -892,7 +815,7 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     for (i = 0; i < Npad; ++i)
         paddata[i] = (float)(ifft[i][0]);
 
-    // fo back to original dimension
+    // go back to original dimension
 
     for (i=0; i<height; ++i){
         memcpy(img.GetLinePtr(i,0), padImg.GetLinePtr(i,0)+pad_factor/2, sizeof(float)*width);
@@ -989,7 +912,12 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
 
     // Roll off ramp filter
     for (i = 0; i < padwidth; ++i)
-        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+    {
+//        ramp[i] *= (cos (i * DEGTORADF * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORADF * 360 / padwidth) + 1));
+        ramp[i] /= padwidth*0.5;
+
+    }
 
 
 

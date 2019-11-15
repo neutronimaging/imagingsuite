@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <qmessagebox.h>
 
 #include <datasetbase.h>
 
@@ -19,7 +20,7 @@ public:
     LoaderListItem() {}
     LoaderListItem(const LoaderListItem &item) : QListWidgetItem(item) {}
 
-    ImageLoader loader;
+    FileSet loader;
 };
 
 ReaderConfigListWidget::ReaderConfigListWidget(QWidget *parent) :
@@ -65,7 +66,13 @@ void ReaderConfigListWidget::on_Button_AddLoader_clicked()
 
     dlg.m_loader=item->loader;
 
-    int res=dlg.exec();
+    int res=0;
+    try {
+       res=dlg.exec();
+    } catch (...) {
+        QMessageBox::warning(this,"Error","Problem analyzing file names");
+    }
+
     if (res==QDialog::Accepted) {
         item->loader=dlg.m_loader;
         msg.str("");
@@ -77,12 +84,14 @@ void ReaderConfigListWidget::on_Button_AddLoader_clicked()
         item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
         m_ListWidget_loaders->addItem(item);
     }
+    emit readerListModified();
 }
 
 void ReaderConfigListWidget::on_Button_RemoveLoader_clicked()
 {
     logger(logger.LogMessage,"Remove loader");
     m_ListWidget_loaders->takeItem(m_ListWidget_loaders->row(m_ListWidget_loaders->currentItem()));
+    emit readerListModified();
 }
 
 void ReaderConfigListWidget::on_Button_ClearLoaders_clicked()
@@ -90,6 +99,7 @@ void ReaderConfigListWidget::on_Button_ClearLoaders_clicked()
     logger(logger.LogMessage,"Clear loaders");
 
     m_ListWidget_loaders->clear();
+    emit readerListModified();
 }
 
 void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* current)
@@ -114,11 +124,12 @@ void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* c
 
         item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
     }
+    emit readerListModified();
 }
 
-std::list<ImageLoader> ReaderConfigListWidget::GetList()
+std::list<FileSet> ReaderConfigListWidget::GetList()
 {
-    std::list<ImageLoader> loaderlist;
+    std::list<FileSet> loaderlist;
 
     for (int i=0; i<m_ListWidget_loaders->count(); i++) {
         LoaderListItem *item = dynamic_cast<LoaderListItem *>(m_ListWidget_loaders->item(i));

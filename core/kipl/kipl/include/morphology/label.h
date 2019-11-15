@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __LABEL_H
-#define __LABEL_H
+#ifndef LABEL_H
+#define LABEL_H
 
 #include <deque>
 #include <list>
@@ -11,7 +11,8 @@
 
 #include "morphology.h"
 #include "../base/timage.h"
-
+#include "pixeliterator.h"
+#include "../base/kiplenums.h"
 
 namespace kipl {namespace morphology {
 	/// \brief Creates a labelled image from a bi level image
@@ -25,7 +26,7 @@ namespace kipl {namespace morphology {
 	/// \note If the input image is a grayscale image will the regions be determined as 
 	/// neighbours having the same graylevel.
 	template <class ImgType, size_t NDim>
-		long LabelImage(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::morphology::MorphConnect conn=conn4, ImgType bg=(ImgType)0)
+        size_t LabelImage(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::base::eConnectivity conn=kipl::base::conn4, ImgType bg=(ImgType)0)
 	{
 		list<long long int> stack;
 		
@@ -36,30 +37,39 @@ namespace kipl {namespace morphology {
 		int *pLbl=lbl.GetDataPtr();
 		
 
-		CNeighborhood NG(img.Dims(),NDim,conn);
-		int cNG=NG.N();
-		
-		size_t cnt=0, N=img.Size();
+        kipl::base::PixelIterator NG(img.Dims(),conn);
+
+        int cnt=0;
+        size_t N=img.Size();
 		ptrdiff_t pp,q,qq;
 		ImgType t=static_cast<ImgType>(0);
 		
 		for (size_t p=0; p<N ; p++) {
-			if ((!pLbl[p]) && (pImg[p]!=bg)) {
+            NG.setPosition(p);
+            if ( (!pLbl[p]) && (pImg[p]!=bg) ) {
 				t=pImg[p];
 				cnt++;
 				pLbl[p]=cnt;
-				for (int j=0; j<cNG; j++) {
-					if (((pp=NG.neighbor(p,j))!=-1)
-					 && (pImg[pp]==t)) {
+                for (const auto & neighborPix : NG.neighborhood())
+                {
+                    pp=p + neighborPix;
+
+                     if (pImg[pp]==t)
+                     {
 						stack.push_front(pp);
 						pLbl[pp]=cnt;
-					}
+                     }
 				}
+
 				while (!stack.empty()) {
 					q=stack.front();
 					stack.pop_front();
-					for (int j=0; j<cNG; j++) {
-						if (((qq=NG.neighbor(q,j))!=-1) && (pImg[qq]==t) && (!pLbl[qq])) {
+                    NG.setPosition(q);
+                    for (const auto & neighborPix: NG.neighborhood())
+                    {
+                        qq = q + neighborPix;
+                        if ((pImg[qq]==t) && (!pLbl[qq]))
+                        {
 							stack.push_front(qq);
 							pLbl[qq]=cnt;
 						}
@@ -68,7 +78,7 @@ namespace kipl {namespace morphology {
 				}
 			}
 		}
-		return cnt;
+        return static_cast<size_t>(cnt);
 	}
 	
 	/// \brief Computes the area of each labelled object in a labelled image
@@ -79,14 +89,16 @@ namespace kipl {namespace morphology {
 	int LabelArea(kipl::base::TImage<ImgType,NDim> & a,size_t n,vector<pair<size_t,size_t> > & area)
 	{
 		area.resize(n+1);
-		for (size_t i=0; i<area.size(); i++) {
+        for (size_t i=0; i<area.size(); i++)
+        {
 			area[i].first=0;
 			area[i].second=0;
 		}
 
 		int lbl;
 		const size_t N=a.Size();
-		for (size_t i=0; i<N; i++) {
+        for (size_t i=0; i<N; i++)
+        {
 			lbl=a[i];
 			area[lbl].first++;
 			area[lbl].second=i;
@@ -101,17 +113,17 @@ namespace kipl {namespace morphology {
 	/// \param conn Neighborhood connectivity
 	/// \param replaceval value to inscribe on the connected pixels
 	template <class ImgType,size_t NDim>
-	int RemoveConnectedRegion(kipl::base::TImage<ImgType,NDim> &img, vector<size_t> &remove_list, MorphConnect conn, ImgType replaceval=0)
+    int RemoveConnectedRegion(kipl::base::TImage<ImgType,NDim> &img, const vector<size_t> &remove_list, kipl::base::eConnectivity conn, ImgType replaceval=0)
 	{
 		if (remove_list.empty())
 			return 0;
 			
-		kipl::base::TImage<ImgType,NDim> tmp=img;
+        kipl::base::TImage<ImgType,NDim> tmp;
+        tmp.Clone(img);
 		
-		CNeighborhood NG(img.Dims(),NDim,conn);
-		int cNG=NG.N();
-		
-		ptrdiff_t pp,p;
+        kipl::base::PixelIterator NG(img.Dims(),conn);
+
+        ptrdiff_t pos,p;
 		
 		ImgType *pImg=img.GetDataPtr();
 		ImgType *pTmp=tmp.GetDataPtr();
@@ -119,24 +131,25 @@ namespace kipl {namespace morphology {
 		deque<long> remove_queue;
 		
         copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
-	//	ImgType val;
-		deque<long>::iterator it;
-	//	const long inqueue=-1;
-		
-		for (it=remove_queue.begin(); it!=remove_queue.end(); it++) {
-			pTmp[*it]=replaceval; 
+
+
+        for (const auto & pix : remove_queue) {
+            pTmp[pix]=replaceval;
 		}
 		
-		while (!remove_queue.empty()) {
+        while (!remove_queue.empty())
+        {
 			p=remove_queue.front();
 			remove_queue.pop_front();
-			for (int j=0; j<cNG; j++) {
-				if ((pp=NG.neighbor(p,j))!=-1) {
-					if ((pImg[pp]!=replaceval) && (pTmp[pp]!=replaceval)) {
-						remove_queue.push_back(pp);
-						pTmp[pp]=replaceval;
-					}
-				}
+            NG.setPosition(p);
+            for (const auto &neighborPix : NG.neighborhood())
+            {
+                pos = p + neighborPix;
+                if ((pImg[pos]!=replaceval) && (pTmp[pos]!=replaceval))
+                {
+                    remove_queue.push_back(pos);
+                    pTmp[pos]=replaceval;
+                }
 			}	
 		}
 		
@@ -158,17 +171,17 @@ namespace kipl {namespace morphology {
 	kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img, int n);
 
 	/// \brief Container class for labelled items 
-	class CLabelledItem {
+    class LabelledItem {
 	public:
 		
-		CLabelledItem(){ResetAll();}
-		CLabelledItem(int id, int nDim);
+        LabelledItem(){ResetAll();}
+        LabelledItem(int id, int nDim);
 		/// Copy constructor
 		/// \param item object to copy
-		CLabelledItem(const CLabelledItem &item) {Copy(item);}
+        LabelledItem(const LabelledItem &item) {Copy(item);}
 		
 		/// Empty destructor
-		virtual ~CLabelledItem() {}
+        virtual ~LabelledItem() {}
 		
 		/// \brief Add a new pixel to the item
 		/// \param x x-coordinate of the pixel
@@ -200,7 +213,7 @@ namespace kipl {namespace morphology {
 		
 		/// \brief Assignment operator
 		/// \param item the item to assign
-		const CLabelledItem & operator=(const CLabelledItem &item) {
+        const LabelledItem & operator=(const LabelledItem &item) {
 			Copy(item); 
 			return *this;
 		}
@@ -218,7 +231,7 @@ namespace kipl {namespace morphology {
 		double sum2[3];
 		mutable double cog[3];
 		int ResetAll();
-		int Copy(const CLabelledItem & item);
+        int Copy(const LabelledItem & item);
 		int Compute() const;
 		mutable bool newinfo;
 		int N;
@@ -234,18 +247,18 @@ namespace kipl {namespace morphology {
 	/// \param img A labeled image 
 	/// \param itemList a vector where the item information is stored
 	template<class ImgType, size_t NDim>
-	int CollectLabelledItemsInfo(const kipl::base::TImage<ImgType,NDim> &img, vector<CLabelledItem> &itemList)
+    int CollectLabelledItemsInfo(const kipl::base::TImage<ImgType,NDim> &img, vector<LabelledItem> &itemList)
 	{
 		int i,x,y,z;
 		
 		itemList.clear();
 		size_t const * const dims=img.Dims();
 		int N=img.Max()+1;
-		CLabelledItem tmp;
+        LabelledItem tmp;
 		cout<<N-2<<" items are present in the sample"<<endl;
 		cout<<"Preparing item list"<<endl;
 		for (i=0; i<N; i++) {
-			tmp=CLabelledItem(i-1,NDim);
+            tmp=LabelledItem(i-1,NDim);
 			itemList.push_back(tmp);
 		}
 
@@ -264,7 +277,7 @@ namespace kipl {namespace morphology {
 	/// Connects prints information from an item to an ostream
 	/// \param os target ostream
 	/// \param item The item to print
-	ostream & operator<<(ostream & os, const CLabelledItem & item);
+    ostream & operator<<(ostream & os, const LabelledItem & item);
 	
 }}// End namespace Morphology
 

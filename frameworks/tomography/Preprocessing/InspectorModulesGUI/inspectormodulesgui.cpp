@@ -11,16 +11,16 @@ class ConfiguratorDialogBase;
 void INSPECTORMODULESGUISHARED_EXPORT * GetGUIModule(const char * application, const char * name, void *interactor)
 {
     if (strcmp(application,"muhrec")!=0)
-        return NULL;
+        return nullptr;
 
-    if (name!=NULL) {
+    if (name!=nullptr) {
         std::string sName=name;
 
         if (sName=="SaveProjections")
             return new SaveProjectionsDlg;
 
     }
-    return NULL;
+    return nullptr;
 }
 
 INSPECTORMODULESGUISHARED_EXPORT int DestroyGUIModule(const char * application, void *obj)
@@ -28,7 +28,7 @@ INSPECTORMODULESGUISHARED_EXPORT int DestroyGUIModule(const char * application, 
     if (strcmp(application,"muhrec")!=0)
         return -1;
 
-    if (obj!=NULL) {
+    if (obj!=nullptr) {
         ConfiguratorDialogBase *dlg=reinterpret_cast<ConfiguratorDialogBase *>(obj);
         delete dlg;
     }

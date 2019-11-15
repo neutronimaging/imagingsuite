@@ -12,10 +12,10 @@
 
 ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor):
 		logger(modulename),
-		hinstLib(NULL),
-		m_fnModuleFactory(NULL),
-		m_fnDestroyer(NULL),
-		m_Module(NULL)
+        hinstLib(nullptr),
+        m_fnModuleFactory(nullptr),
+        m_fnDestroyer(nullptr),
+        m_Module(nullptr)
 {
 	m_sApplication=application;
 	m_sModuleName=modulename;
@@ -91,7 +91,7 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
 	hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
-	if (hinstLib != NULL)
+    if (hinstLib != nullptr)
     {
 #ifdef _MSC_VER
 		m_fnModuleFactory = reinterpret_cast<FACTORY>(GetProcAddress(hinstLib, "GetModule"));
@@ -99,10 +99,10 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
 		m_fnModuleFactory = reinterpret_cast<FACTORY>(dlsym(hinstLib, "GetModule"));
 #endif
 		 // If the function address is valid, call the function.
-		if (NULL != m_fnModuleFactory)
+        if (nullptr != m_fnModuleFactory)
         {
             m_Module=reinterpret_cast<ProcessModuleBase *>(m_fnModuleFactory(m_sApplication.c_str(),m_sModuleName.c_str(),reinterpret_cast<void *>(interactor)));
-			if (m_Module==NULL) {
+            if (m_Module==nullptr) {
 				msg.str("");
 				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;
 				throw ModuleException(msg.str(),__FILE__,__LINE__);
@@ -128,7 +128,7 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
 		m_fnDestroyer = reinterpret_cast<DESTROYER>(dlsym(hinstLib, "Destroy"));
 #endif
 
-		if (m_fnDestroyer==NULL) {
+        if (m_fnDestroyer==nullptr) {
 			msg.str("");
 			msg<<"Failed to get the destroyer from "<<m_sSharedObject<<" (Error: "
 #ifdef _MSC_VER

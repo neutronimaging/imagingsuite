@@ -30,7 +30,7 @@ class QTADDONSSHARED_EXPORT ImagePainter
     QWidget * m_pParent;
     kipl::logging::Logger logger;
 public:
-    ImagePainter(QWidget *parent=NULL);
+    ImagePainter(QWidget *parent=nullptr);
     ~ImagePainter();
     void Render(QPainter &painter, int x, int y, int w, int h);
 

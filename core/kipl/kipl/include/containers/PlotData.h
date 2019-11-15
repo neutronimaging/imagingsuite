@@ -1,7 +1,9 @@
 //<LICENCE>
 
-#ifndef _KIPL_PLOTDATA_H
-#define _KIPL_PLOTDATA_H
+#ifndef KIPL_PLOTDATA_H
+#define KIPL_PLOTDATA_H
+
+#include <string>
 
 namespace kipl { namespace containers {
 
@@ -10,11 +12,11 @@ template <typename Tx, typename Ty>
 class PlotData {
 public:
     /// \brief Basic C'tor to create an empty plot data container
-	PlotData() : m_tAxisX(NULL), m_tAxisY(NULL), m_nNdata(0) {}
+    PlotData() : m_tAxisX(nullptr), m_tAxisY(nullptr), m_nNdata(0), plotName("label") {}
 
     /// \brief Copy C'tor
     /// \param pd A plot data instance to copy
-	PlotData(const PlotData<Tx,Ty> & pd);
+    PlotData(const PlotData<Tx,Ty> & pd) ;
 
     /// \brief The D'tor clean up the memory
 	~PlotData() {
@@ -25,12 +27,12 @@ public:
 	}
 
     /// \brief C'tor to allocate the buffer size and it memory
-	PlotData(size_t N) : m_nNdata(N)
+    PlotData(size_t N,std::string name) : m_nNdata(N), plotName(name)
 	{
 		m_tAxisX=new Tx[m_nNdata];
 		m_tAxisY=new Ty[m_nNdata];
-		memset(m_tAxisX,0,sizeof(Tx)*m_nNdata);
-		memset(m_tAxisY,0,sizeof(Ty)*m_nNdata);
+        std::fill_n(m_tAxisX,m_nNdata,Tx(0));
+        std::fill_n(m_tAxisY,m_nNdata,Ty(0));
 	}
 
     /// \brief Assignment operator
@@ -46,11 +48,11 @@ public:
 			m_nNdata=pd.m_nNdata;			
 			m_tAxisX=new Tx[m_nNdata];
 			m_tAxisY=new Ty[m_nNdata];
-
 		}
 
-		memcpy(m_tAxisX,pd.m_tAxisX,m_nNdata*sizeof(Tx));
-		memcpy(m_tAxisY,pd.m_tAxisY,m_nNdata*sizeof(Ty));
+        std::copy_n(pd.m_tAxisX,m_nNdata,m_tAxisX);
+        std::copy_n(pd.m_tAxisY,m_nNdata,m_tAxisY);
+        plotName = pd.plotName;
 
 		return *this;
 	}
@@ -85,21 +87,27 @@ public:
 	Ty * const GetY() {return m_tAxisY;}
 	size_t Size() {return m_nNdata;}
 
+    void setName(std::string name) {plotName = name;}
+    std::string name() {return plotName;}
+
 private:
 	Tx * m_tAxisX;
 	Ty * m_tAxisY;
 
 	size_t m_nNdata;
+    std::string plotName;
 };
 
 template <typename Tx, typename Ty>
-PlotData<Tx,Ty>::PlotData(const kipl::containers::PlotData<Tx,Ty> & pd) : m_nNdata(pd.m_nNdata)
+PlotData<Tx,Ty>::PlotData(const kipl::containers::PlotData<Tx,Ty> & pd) : m_nNdata(pd.m_nNdata), plotName(pd.plotName)
 {
-	this->m_tAxisX=new Tx[m_nNdata];
-	this->m_tAxisY=new Ty[m_nNdata];
+    m_nNdata=pd.m_nNdata;
+    m_tAxisX=new Tx[m_nNdata];
+    m_tAxisY=new Ty[m_nNdata];
 
-	memcpy(this->m_tAxisX,pd.m_tAxisX,m_nNdata*sizeof(Tx));
-	memcpy(this->m_tAxisY,pd.m_tAxisY,m_nNdata*sizeof(Ty));
+    std::copy_n(pd.m_tAxisX,m_nNdata,m_tAxisX);
+    std::copy_n(pd.m_tAxisY,m_nNdata,m_tAxisY);
+
 }
 }}
 
