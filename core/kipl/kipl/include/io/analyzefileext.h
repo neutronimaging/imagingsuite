@@ -30,6 +30,19 @@ enum eExtensionTypes {
     ExtensionSEQ    ///< Images are stored in the Varian ViVa SEQ format
 };
 
+enum eFileType {
+    MatlabVolume,
+    MatlabSlices,
+    TIFF8bits,
+    TIFF16bits,
+    TIFFfloat,
+    TIFF16bitsMultiFrame,
+    NeXusfloat,
+    NeXus16bits,
+    PNG8bits,
+    PNG16bits
+};
+
 eExtensionTypes KIPLSHARED_EXPORT GetFileExtensionType(std::string fname);
 
 }}
@@ -49,5 +62,9 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &e
 /// \param et The enum value to translate
 /// \returns A string with the value
 std::string KIPLSHARED_EXPORT enum2string(kipl::io::eExtensionTypes et);
+
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
+void KIPLSHARED_EXPORT string2enum(const std::string str, kipl::io::eFileType &ft);
+std::string KIPLSHARED_EXPORT enum2string(kipl::io::eFileType ft);
 #endif // ANALYZEFILEEXT_H
 

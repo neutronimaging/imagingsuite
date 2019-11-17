@@ -9,6 +9,8 @@
 #include <strings/miscstring.h>
 #include <base/textractor.h>
 #include <algorithms/datavalidator.h>
+#include <io/io_nexus.h>
+#include <io/io_stack.h>
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
@@ -16,6 +18,7 @@
 #include "../include/ReconEngine.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
+
 
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),

@@ -3,14 +3,17 @@
 
 #include <string>
 #include <logging/logger.h>
+#include <base/kiplenums.h>
 
 class ModuleLibNameManger
 {
     kipl::logging::Logger logger;
 public:
     ModuleLibNameManger(const std::string &path);
-    std::string generateLibName(std::string name);
-    std::string stripLibName(std::string libPath);
+    std::string generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os);
+    std::string generateLibName(const std::string &name);
+    std::string stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os);
+    std::string stripLibName(const std::string &libPath);
 
 private:
     std::string generateWindowsLibName(const std::string &name);

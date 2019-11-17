@@ -1,4 +1,4 @@
-// LICENSE
+//<LICENSE>
 
 #ifndef RECONCONFIG_H
 #define RECONCONFIG_H
@@ -16,7 +16,7 @@
 #include <ConfigBase.h>
 
 #include <logging/logger.h>
-#include <io/io_stack.h>
+#include <io/analyzefileext.h>
 #include <base/kiplenums.h>
 
 /// The reconstruction configuration structure. Used to set up the reconstruction process.
@@ -187,9 +187,9 @@ protected:
     /// \param cName Name of the main block.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string cName);
 
-    virtual string SanitySlicesCheck();
+    virtual std::string SanitySlicesCheck();
 
-    virtual string SanityMessage(bool mess);
+    virtual std::string SanityMessage(bool mess);
 
     /// Parse a list of arguments provided by the CLI
     /// \param args A list of arguments as they come from the CLI.

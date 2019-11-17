@@ -9,11 +9,11 @@ ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
 
 }
 
-std::string ModuleLibNameManger::generateLibName(std::string name)
+std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
 {
     std::string fullName;
 
-    switch (kipl::base::getOperatingSystem())
+    switch (os)
     {
         case kipl::base::OSUnknown : throw kipl::base::KiplException("OS not recognized",__FILE__,__LINE__);
         case kipl::base::OSWindows : fullName = generateWindowsLibName(name); break;
@@ -24,11 +24,29 @@ std::string ModuleLibNameManger::generateLibName(std::string name)
     return fullName;
 }
 
-std::string ModuleLibNameManger::stripLibName(std::string libPath)
+std::string ModuleLibNameManger::generateLibName(const std::string &name)
 {
-    std::string fullName;
+    return generateLibName(name,kipl::base::getOperatingSystem());
+}
 
-    return fullName;
+std::string ModuleLibNameManger::stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os)
+{
+    std::string moduleName;
+
+    switch (os)
+    {
+        case kipl::base::OSUnknown : throw kipl::base::KiplException("OS not recognized",__FILE__,__LINE__);
+        case kipl::base::OSWindows : moduleName = stripWindowsLibName(libPath); break;
+        case kipl::base::OSMacOS   : moduleName = stripMacOSLibName(libPath);   break;
+        case kipl::base::OSLinux   : moduleName = stripLinuxLibName(libPath);   break;
+    }
+
+    return moduleName;
+}
+
+std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
+{
+    return stripLibName(libPath,kipl::base::getOperatingSystem());
 }
 
 std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)

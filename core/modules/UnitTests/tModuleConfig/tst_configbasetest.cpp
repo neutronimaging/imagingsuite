@@ -4,6 +4,7 @@
 
 #include <ModuleException.h>
 #include <ReconConfig.h>
+#include <modulelibnamemanger.h>
 
 class ConfigBaseTest : public QObject
 {
@@ -16,6 +17,9 @@ private Q_SLOTS:
     void testConfigChanged();
     void testEvalArg();
     void testGetCommandLinePars();
+    void testLibNameManagerMac();
+    void testLibNameManagerWindows();
+    void testLibNameManagerLinux();
 };
 
 ConfigBaseTest::ConfigBaseTest()
@@ -96,6 +100,38 @@ void ConfigBaseTest::testGetCommandLinePars()
     ReconConfig config;
 
     config.GetCommandLinePars(args);
+}
+
+void ConfigBaseTest::testLibNameManagerMac()
+{
+    std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
+    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
+
+    ModuleLibNameManger mlnm(appPath);
+
+    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSMacOS),"StdBackProjectors");
+
+
+}
+
+void ConfigBaseTest::testLibNameManagerLinux()
+{
+    std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
+    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
+
+    ModuleLibNameManger mlnm(appPath);
+
+    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),"StdBackProjectors");
+}
+
+void ConfigBaseTest::testLibNameManagerWindows()
+{
+    std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
+    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
+
+    ModuleLibNameManger mlnm(appPath);
+
+    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSWindows),"StdBackProjectors");
 }
 
 QTEST_APPLESS_MAIN(ConfigBaseTest)

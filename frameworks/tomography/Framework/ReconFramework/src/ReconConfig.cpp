@@ -10,6 +10,7 @@
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 ReconConfig::ReconConfig(void) :  
 	ConfigBase("ReconConfig")
@@ -347,7 +348,7 @@ std::string ReconConfig::SanitySlicesCheck()
 {
     int fS = static_cast<int>(ProjectionInfo.roi[1]);
     int lS = static_cast<int>(ProjectionInfo.roi[3]);
-    string msg;
+    std::string msg;
 
     if ((lS-fS)>=200)
     {
@@ -362,7 +363,7 @@ std::string ReconConfig::SanitySlicesCheck()
 
 }
 
-string ReconConfig::SanityMessage(bool mess)
+std::string ReconConfig::SanityMessage(bool mess)
 {
     std::ostringstream msg;
     if (mess)

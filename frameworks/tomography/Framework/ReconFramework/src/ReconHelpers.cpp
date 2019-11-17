@@ -4,9 +4,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cmath>
 #include <map>
 
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
@@ -34,7 +36,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
         logger(logger.LogMessage,"Using list file");
         std::cout<<"Using list file"<<std::endl;
         fname=config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask;
-        ifstream listfile(fname.c_str());
+        std::ifstream listfile(fname.c_str());
 
         if (listfile.fail())
             throw ReconException("Could not open projection list file",__FILE__,__LINE__);
@@ -111,7 +113,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 				break;
             case ReconConfig::cProjections::GoldenSectionScan :
                 {
-					const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+                    const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
 					float arc=config->ProjectionInfo.fScanArc[1];
 					if ((arc!=180.0f) && (arc!=360.0f))
 						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
@@ -200,7 +202,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
     if ((ext==".lst") || (ext==".txt"))
     {
         fname=sPath+sFileMask;
-        ifstream listfile(fname.c_str());
+        std::ifstream listfile(fname.c_str());
 
         if (listfile.fail())
             throw ReconException("Could not open projection list file",__FILE__,__LINE__);
@@ -370,7 +372,7 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
         {
             ProjectionInfo info=(*it).second;
             info.weight=1.0/multiProjectionList.size();
-            ProjectionList->insert(make_pair((*it).first,info));
+            ProjectionList->insert(std::make_pair((*it).first,info));
         }
         return 0;
     }
