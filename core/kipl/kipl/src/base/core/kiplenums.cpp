@@ -39,6 +39,28 @@ int connectivityNeighbors(kipl::base::eConnectivity conn)
     };
 }
 
+kipl::base::eOperatingSystem getOperatingSystem()
+{
+#ifdef _WIN32
+    return kipl::base::OSWindows;
+#elif __APPLE__
+    #include "TargetConditionals.h"
+    #if TARGET_OS_MAC
+        return kipl::base::OSMacOS;
+    #else
+        return kipl::base::OSUnknown;
+    #endif
+#elif __linux__
+    return kipl::base::OSLinux;
+#elif __unix__ // all unices not caught above
+    return kipl::base::OSLinux;
+#elif defined(_POSIX_VERSION)
+    return kipl::base::OSLinux;
+#else
+    return kipl::base::OSUnknown;
+#endif
+}
+
 }
 
 }
@@ -441,4 +463,38 @@ std::string enum2string(kipl::base::eImageFlip flip)
     }
 
     return "imageflipnone";
+}
+
+std::ostream &operator<<(std::ostream &s, kipl::base::eOperatingSystem &os)
+{
+    s<<enum2string(os);
+
+    return s;
+}
+
+std::string enum2string(const kipl::base::eOperatingSystem &os)
+{
+   switch (os) {
+   case kipl::base::OSUnknown     : return "OSUnknown";
+       case kipl::base::OSWindows : return "OSWindows";
+       case kipl::base::OSMacOS   : return "OSMacOS";
+       case kipl::base::OSLinux   : return "OSLinux";
+   }
+}
+
+void string2enum(const std::string &str, kipl::base::eOperatingSystem &os)
+{
+    std::map<std::string,kipl::base::eOperatingSystem> osMap;
+
+    osMap["OSUnknown"] = kipl::base::OSUnknown;
+    osMap["OSWindows"] = kipl::base::OSWindows;
+    osMap["OSMacOS"]   = kipl::base::OSMacOS;
+    osMap["OSLinux"]   = kipl::base::OSLinux;
+
+    auto it=osMap.find(str);
+
+    if (it!=osMap.end())
+        os=it->second;
+    else
+        throw kipl::base::KiplException("Could not transform string to an operating system enum", __FILE__, __LINE__);
 }
