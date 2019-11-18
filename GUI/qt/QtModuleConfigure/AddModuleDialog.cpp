@@ -1,16 +1,4 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-12-27 12:16:26 +0100 (Thu, 27 Dec 2012) $
-// $Rev: 1420 $
-// $Id: AddModuleDialog.cpp 1420 2012-12-27 11:16:26Z kaestner $
-//
-
-
+//<LICENSE>
 #include "stdafx.h"
 #include "QtModuleConfigure_global.h"
 #undef max
@@ -43,7 +31,8 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_Button_OK("OK"),
     m_Button_Cancel("Cancel"),
     m_sApplication("muhrec"),
-    m_sApplicationPath("")
+    m_sApplicationPath(""),
+    m_ModuleConfig("")
 {
     setWindowTitle(tr("Add a module"));
     setLayout(&m_Dlg_layout);

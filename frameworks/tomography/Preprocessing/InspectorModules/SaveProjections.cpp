@@ -6,6 +6,7 @@
 
 SaveProjections::SaveProjections(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("SaveProjections",interactor),
+    m_config(""),
     m_sPath("./"),
     m_sFileMask("projections_####.tif"),
     m_eImageType(ReconConfig::cProjections::ImageType_Projections),

@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <QString>
 #include <QtTest>
 #include <QDebug>
@@ -115,9 +116,9 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     std::string modulePath2 = "/Users/kaestner/libStdBackProjectors.1.0.0.dylib";
 
-    QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSLinux),modulePath2);
+    QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSMacOS),modulePath2);
 
-    QCOMPARE(mlnm.generateLibName(modulePath2,kipl::base::OSLinux),modulePath2);
+    QCOMPARE(mlnm.generateLibName(modulePath2,kipl::base::OSMacOS),modulePath2);
 
 
 }
@@ -125,7 +126,7 @@ void ConfigBaseTest::testLibNameManagerMac()
 void ConfigBaseTest::testLibNameManagerLinux()
 {
     std::string appPath    = "/Users/kaestner/git/deployed/muhrec/";
-    std::string modulePath = "/Users/kaestner/git/deployed/muhrec/lib/libStdBackProjectors.so.1.0.0";
+    std::string modulePath = "/Users/kaestner/git/deployed/muhrec/Frameworks/libStdBackProjectors.so.1.0.0";
 
     ModuleLibNameManger mlnm(appPath);
 

@@ -1,18 +1,4 @@
-//
-// AdaptiveFilter.cpp
-//
-//  Created on: May 25, 2011
-//      Author: anders
-//
-//  Revision information
-//    Checked in by $author$
-//    Check-in date $date$
-//    svn Revision  $revision$
-//
-// local smoothing with a filter function fDx of characteristics width  Dx such that this width
-// is a function of the attenuation value p(x) that is currently beeing smoothed
-
-//#include "stdafx.h"
+//<LICENSE>
 #include "../include/AdaptiveFilter.h"
 
 #include <ReconException.h>
@@ -26,6 +12,7 @@
 
 AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("AdaptiveFilter",interactor),
+    mConfig(""),
     pLUT(nullptr),
     m_nFilterSize(7),
     m_fEccentricityMin(0.3f),

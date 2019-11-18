@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "../include/modulelibnamemanger.h"
 #include <base/kiplenums.h>
 #include <base/KiplException.h>
@@ -12,6 +13,9 @@ ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
 
 std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
 {
+    if (name.find_first_of("/\\")!=std::string::npos)
+        return name;
+
     std::string fullName;
 
     switch (os)
@@ -27,6 +31,7 @@ std::string ModuleLibNameManger::generateLibName(const std::string &name, const 
 
 std::string ModuleLibNameManger::generateLibName(const std::string &name)
 {
+
     return generateLibName(name,kipl::base::getOperatingSystem());
 }
 
@@ -48,6 +53,11 @@ std::string ModuleLibNameManger::stripLibName(const std::string &libPath, const 
 std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
 {
     return stripLibName(libPath,kipl::base::getOperatingSystem());
+}
+
+void ModuleLibNameManger::setAppPath(const std::string &path)
+{
+    m_sApplicationPath = path;
 }
 
 std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
@@ -72,13 +82,16 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath;
 
-    fullName = fullName+"lib/lib"+name+".so.1.0.0";
+    fullName = fullName+"Frameworks/lib"+name+".so.1.0.0";
 
     return fullName;
 }
 
 std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 {
+    if (!libInAppPath(path,m_sApplicationPath))
+        return path;
+
     std::string libName;
 
     libName = path.substr(path.find_last_of('\\')+1);
@@ -88,6 +101,9 @@ std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 
 std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 {
+    if (!libInAppPath(path,m_sApplicationPath+"../Frameworks/"))
+        return path;
+
     std::string libName;
 
     libName = path.substr(path.find_last_of('/')+1);
@@ -98,10 +114,24 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 
 std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 {
+    if (!libInAppPath(path,m_sApplicationPath+"Frameworks/"))
+        return path;
+
     std::string libName;
 
     libName = path.substr(path.find_last_of('/')+1);
     libName = libName.substr(3,libName.find_first_of('.')-3);
 
     return libName;
+}
+
+bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::string &appPath)
+{
+    if (path.size()<appPath.size())
+        return false;
+
+    if ((path.substr(0,appPath.size())!=appPath) || path.find_first_of("/\\",appPath.size())!=std::string::npos)
+        return false;
+
+    return true;
 }

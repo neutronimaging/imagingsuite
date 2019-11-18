@@ -124,5 +124,10 @@ std::string ModuleConfig::PrintParameters()
 		s<<std::setw(16)<<it->first<<" = "<<it->second<<"\n";
 	}
 
-	return s.str();
+    return s.str();
+}
+
+void ModuleConfig::setAppPath(const std::string &path)
+{
+    m_NameManager.setAppPath(path);
 }

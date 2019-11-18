@@ -8,6 +8,7 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 
 #include <ReconException.h>
 #include <ProjectionReader.h>
@@ -30,7 +31,8 @@ NormBase::NormBase(std::string name) :
     fBlackDose(1.0f),
     bUseNormROI(true),
     bUseLUT(false),
-    bUseWeightedMean(false)
+    bUseWeightedMean(false),
+    m_Config("")
 {
 	memset(nNormRegion, 0, sizeof(size_t)*4);
 	memset(nOriginalNormRegion, 0, sizeof(size_t)*4);

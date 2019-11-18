@@ -19,6 +19,7 @@
 #include <math/mathconstants.h>
 #include <math/linfit.h>
 #include <base/tsubimage.h>
+#include <base/tpermuteimage.h>
 #include <morphology/morphfilters.h>
 
 #include <tomocenter.h>
@@ -27,6 +28,7 @@ ConfigureGeometryDialog::ConfigureGeometryDialog(QWidget *parent) :
     QDialog(parent),
     logger("ConfigGeometryDialog"),
     ui(new Ui::ConfigureGeometryDialog),
+    m_Config(""),
     fraction(0.9f)
 {
     ui->setupUi(this);

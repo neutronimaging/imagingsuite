@@ -1,15 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
-//#include "stdafx.h"
+//<LICENSE>
 #include "../include/StdPreprocModules_global.h"
 
 #ifdef _OPENMP
@@ -56,7 +45,8 @@ SpotClean2::SpotClean2(std::string name, kipl::interactors::InteractionBase *int
     m_fMaxLevel(5.0f),
     m_fMinLevel(-0.1f),
     m_nMaxArea(20),
-    m_eDetectionMethod(ImagingAlgorithms::Detection_Ring)
+    m_eDetectionMethod(ImagingAlgorithms::Detection_Ring),
+    m_Config("")
 {
 	 Setup(m_nIterations,m_fGamma,m_fSigma,m_fMinLevel,m_fMaxLevel, m_nMaxArea, m_eDetectionMethod);
 }

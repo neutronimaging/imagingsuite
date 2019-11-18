@@ -36,6 +36,7 @@ public:
 
     /// Dumps the module parameters on the console.
 	std::string PrintParameters();
+    void setAppPath(const std::string &path);
 protected:
 
     ModuleLibNameManger m_NameManager;

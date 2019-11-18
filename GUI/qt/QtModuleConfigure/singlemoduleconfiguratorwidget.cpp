@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "stdafx.h"
 #include "QtModuleConfigure_global.h"
 #include "singlemoduleconfiguratorwidget.h"
@@ -25,7 +26,8 @@ typedef  void * HINSTANCE;
 
 SingleModuleConfiguratorWidget::SingleModuleConfiguratorWidget(QWidget *parent) :
     QFrame(parent),
-    logger("SingleModuleConfiguratorWidget")
+    logger("SingleModuleConfiguratorWidget"),
+    m_ModuleConfig("")
 {
     this->setFrameStyle(6);
     this->setLayout(&m_LayoutMain);
@@ -51,6 +53,7 @@ void SingleModuleConfiguratorWidget::Configure(std::string sApplicationName, std
     m_sApplicationPath     = sApplicationPath;
     m_sDefaultModuleSource = sDefaultModuleSource;
     m_ModuleConfig.m_sSharedObject = sDefaultModuleSource;
+    m_ModuleConfig.setAppPath(sApplicationPath);
 }
 
 void SingleModuleConfiguratorWidget::setDescriptionLabel(QString lbl)
@@ -101,7 +104,8 @@ SingleModuleSettingsDialog::SingleModuleSettingsDialog(std::string sApplicationN
     QDialog(parent),
     logger("SingleModuleSettingsDialog"),
     m_sApplication(sApplicationName),
-    m_sDefaultModuleSource(sDefaultModuleSource)
+    m_sDefaultModuleSource(sDefaultModuleSource),
+    m_ModuleConfig("")
 {
     BuildDialog();
     connect(&m_ButtonBrowse,SIGNAL(clicked()),this,SLOT(on_ButtonBrowse_Clicked()));

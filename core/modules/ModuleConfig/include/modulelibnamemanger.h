@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef MODULELIBNAMEMANGER_H
 #define MODULELIBNAMEMANGER_H
 
@@ -14,6 +15,7 @@ public:
     std::string generateLibName(const std::string &name);
     std::string stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os);
     std::string stripLibName(const std::string &libPath);
+    void setAppPath(const std::string &path);
 
 private:
     std::string generateWindowsLibName(const std::string &name);
@@ -23,6 +25,8 @@ private:
     std::string stripWindowsLibName(const std::string &path);
     std::string stripMacOSLibName(const std::string &path);
     std::string stripLinuxLibName(const std::string &path);
+
+    bool libInAppPath(const std::string & path, const std::string &appPath);
 
     std::string m_sApplicationPath;
 

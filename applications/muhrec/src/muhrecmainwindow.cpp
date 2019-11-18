@@ -50,6 +50,8 @@
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
+    m_Config(""),
+    m_LastReconConfig(""),
     logger("MuhRecMainWindow"),
     ui(new Ui::MuhRecMainWindow),
     logdlg(new QtAddons::LoggingDialog(this)),
