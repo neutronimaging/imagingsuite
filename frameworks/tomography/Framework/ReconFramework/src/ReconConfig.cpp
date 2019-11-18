@@ -12,8 +12,9 @@
 #include <strings/string2array.h>
 #include <strings/filenames.h>
 
-ReconConfig::ReconConfig(void) :  
-	ConfigBase("ReconConfig")
+ReconConfig::ReconConfig(std::string appPath) :
+    ConfigBase("ReconConfig",appPath),
+    backprojector(appPath)
 {
 
 }
@@ -476,8 +477,8 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
         					sValue="Empty";
 						sName=reinterpret_cast<const char *>(name);
 						if (sName=="module") {
-							ModuleConfig module;
-							module.ParseModule(reader);
+                            ModuleConfig module(m_sApplicationPath);
+                            module.ParseModule(reader);
 							modules.push_back(module);
 						}
 					}
@@ -488,7 +489,7 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			}
 			if (sName=="backprojector") {
 				logger(kipl::logging::Logger::LogVerbose,"Parsing backproj");
-				backprojector.ParseModule(reader);
+                backprojector.ParseModule(reader);
 			}
 
 		}

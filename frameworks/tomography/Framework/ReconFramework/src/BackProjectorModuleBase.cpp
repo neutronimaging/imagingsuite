@@ -7,9 +7,10 @@
 #include "../include/ReconException.h"
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
-	logger(name),
+    logger(name),
 	MatrixAlignment(align),
-	m_sModuleName(name),
+    mConfig(""),
+    m_sModuleName(name),
 	m_sApplication(application),
 	m_Interactor(interactor)
 {

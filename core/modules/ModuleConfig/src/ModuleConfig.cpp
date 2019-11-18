@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "../include/ModuleConfig.h"
 #include "../include/ModuleException.h"
+#include "../include/modulelibnamemanger.h"
 #include <sstream>
 #include <iomanip>
 
@@ -10,11 +11,12 @@
 #include <strings/string2array.h>
 
 
-ModuleConfig::ModuleConfig(void) :
+ModuleConfig::ModuleConfig(std::string appPath) :
 	logger("ModuleConfig"),
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
-    m_bActive(true)
+    m_bActive(true),
+    m_NameManager(appPath)
 {
 }
 
@@ -24,7 +26,7 @@ const std::string ModuleConfig::WriteXML(int indent)
 
 	str<<std::setw(indent)<<" "<<"<module>\n"
 		<<std::setw(indent+4)<<" "<<"<modulename>"<<m_sModule<<"</modulename>\n"
-		<<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_sSharedObject<<"</sharedobject>\n"
+        <<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_NameManager.stripLibName(m_sSharedObject)<<"</sharedobject>\n"
 		<<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n";
 	if (!parameters.empty()) {
 		str<<std::setw(indent+4)<<" "<<"<parameters>\n";
@@ -44,6 +46,7 @@ const std::string ModuleConfig::WriteXML(int indent)
 void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 {
 	std::ostringstream msg;
+
 	parameters.clear();
 
 	const xmlChar *name, *value;
@@ -75,7 +78,7 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 				m_sModule=sValue;
 			}
 			if (sName=="sharedobject") {
-				m_sSharedObject=sValue;
+                m_sSharedObject=m_NameManager.generateLibName(sValue);
 			}
 			if (sName=="active") {
 				m_bActive=kipl::strings::string2bool(sValue);

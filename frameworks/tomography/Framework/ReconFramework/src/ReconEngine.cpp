@@ -22,6 +22,7 @@
 
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
+    m_Config(""),
 	m_FirstSlice(0),
     m_ProjectionMargin(0),
 	m_ProjectionReader(interactor),

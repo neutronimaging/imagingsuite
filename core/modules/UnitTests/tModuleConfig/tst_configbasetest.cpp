@@ -28,7 +28,7 @@ ConfigBaseTest::ConfigBaseTest()
 
 void ConfigBaseTest::testConfigChanged()
 {
-        ReconConfig a,b;
+        ReconConfig a(""),b("");
         std::list<std::string> freelist;
         qDebug()<<"start";
 
@@ -49,7 +49,7 @@ void ConfigBaseTest::testConfigChanged()
         b.ProjectionInfo.dose_roi[2]=1234;
         QVERIFY2(a.ConfigChanged(b,freelist) == true , "Two parameters in the free list, three changed");
 
-        ReconConfig c,d;
+        ReconConfig c(""),d("");
         QVERIFY2(c.ConfigChanged(d,freelist) == false , "Two parameters in the free list, same config");
 }
 
@@ -61,7 +61,7 @@ void ConfigBaseTest::testEvalArg()
     std::string value;
 
     arg="userinformation:sample=mouse";
-    ReconConfig config;
+    ReconConfig config("");
 
     config.EvalArg(arg, group, var, value);
 
@@ -97,7 +97,7 @@ void ConfigBaseTest::testGetCommandLinePars()
     args.push_back("userinformation:sample=mouse");
     args.push_back("projections:center=100.45");
 
-    ReconConfig config;
+    ReconConfig config("");
 
     config.GetCommandLinePars(args);
 }
@@ -113,6 +113,12 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSMacOS),modulePath);
 
+    std::string modulePath2 = "/Users/kaestner/libStdBackProjectors.1.0.0.dylib";
+
+    QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSLinux),modulePath2);
+
+    QCOMPARE(mlnm.generateLibName(modulePath2,kipl::base::OSLinux),modulePath2);
+
 
 }
 
@@ -126,6 +132,12 @@ void ConfigBaseTest::testLibNameManagerLinux()
     QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),"StdBackProjectors");
 
     QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSLinux),modulePath);
+
+    std::string modulePath2 = "/Users/kaestner/libStdBackProjectors.so.1.0.0";
+
+    QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSLinux),modulePath2);
+
+    QCOMPARE(mlnm.generateLibName(modulePath2,kipl::base::OSLinux),modulePath2);
 }
 
 void ConfigBaseTest::testLibNameManagerWindows()
@@ -138,6 +150,14 @@ void ConfigBaseTest::testLibNameManagerWindows()
     QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSWindows),"StdPreprocModules");
 
     QCOMPARE(mlnm.generateLibName("StdPreprocModules",kipl::base::OSWindows),modulePath);
+
+    std::string modulePath2 = "C:\\Users\\kaestner\\muhrec\\StdPreprocModules.dll";
+
+    QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSWindows),modulePath2);
+
+    QCOMPARE(mlnm.generateLibName(modulePath2,kipl::base::OSWindows),modulePath2);
+
+
 }
 
 QTEST_APPLESS_MAIN(ConfigBaseTest)
