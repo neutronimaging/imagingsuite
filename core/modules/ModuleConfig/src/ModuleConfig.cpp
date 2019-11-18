@@ -32,8 +32,8 @@ const std::string ModuleConfig::WriteXML(int indent)
 		str<<std::setw(indent+4)<<" "<<"<parameters>\n";
 		std::map<std::string,std::string>::iterator it;
 
-		for (it=parameters.begin(); it!=parameters.end(); it++) {
-			str<<std::setw(indent+8)<<" "<<"<"<<it->first<<">"<<it->second<<"</"<<it->first<<">\n";
+        for (auto &parameter :parameters) {
+            str<<std::setw(indent+8)<<" "<<"<"<<parameter.first<<">"<<parameter.second<<"</"<<parameter.first<<">\n";
 		}
 
 		str<<std::setw(indent+4)<<" "<<"</parameters>\n";

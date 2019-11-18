@@ -752,11 +752,11 @@ void MuhRecMainWindow::MenuFileOpen()
     size_t firstSlice=m_Config.ProjectionInfo.roi[1];
     size_t lastSlice=m_Config.ProjectionInfo.roi[3];
 
+    m_Config.setAppPath(m_sApplicationPath);
 
     UpdateDialog();
 
     ProjectionIndexChanged(0);
-
 
 //    SetupCallBacks();
 //    ui->widgetProjectionROI->updateViewer();
@@ -786,6 +786,7 @@ void MuhRecMainWindow::MenuFileSave()
         UpdateConfig();
         std::ofstream conffile(m_sConfigFilename.c_str());
 
+        m_Config.setAppPath(m_sApplicationPath);
         conffile<<m_Config.WriteXML();
     }
 }
@@ -798,6 +799,7 @@ void MuhRecMainWindow::MenuFileSaveAs()
     m_sConfigFilename=fname.toStdString();
     std::ofstream conffile(m_sConfigFilename.c_str());
 
+    m_Config.setAppPath(m_sApplicationPath);
     conffile<<m_Config.WriteXML();
 }
 
@@ -849,6 +851,7 @@ void MuhRecMainWindow::saveCurrentRecon()
             return ;
         }
 
+        m_Config.setAppPath(m_sApplicationPath);
         of<<m_Config.WriteXML();
         of.flush();
         logger(kipl::logging::Logger::LogMessage,"Saved current recon config");
@@ -1140,6 +1143,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
                     kipl::strings::filenames::CheckPathSlashes(fname,false);
                     std::ofstream configfile(fname.c_str());
+                    m_Config.setAppPath(m_sApplicationPath);
                     configfile<<m_Config.WriteXML();
                     configfile.close();
 
@@ -2414,6 +2418,7 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
             std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
             kipl::strings::filenames::CheckPathSlashes(fname,false);
             std::ofstream configfile(fname.c_str());
+            m_Config.setAppPath(m_sApplicationPath);
             configfile<<m_Config.WriteXML();
             configfile.close();
 

@@ -156,7 +156,7 @@ public:
 	};
 
     /// Base constructor of the reonstruction configation.
-    ReconConfig(std::string appPath);
+    ReconConfig(const std::string &appPath);
 
     /// Copy constructor of the reconstructor configuration.
     /// \param config The configuration to copy.

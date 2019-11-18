@@ -12,7 +12,7 @@
 #include <strings/string2array.h>
 #include <strings/filenames.h>
 
-ReconConfig::ReconConfig(std::string appPath) :
+ReconConfig::ReconConfig(const std::string &appPath) :
     ConfigBase("ReconConfig",appPath),
     backprojector(appPath)
 {
@@ -92,8 +92,8 @@ std::string ReconConfig::WriteXML()
 			str<<std::setw(indent+4)<<" "<<"<preprocessing>\n";
 			std::list<ModuleConfig>::iterator it;
 
-			for (it=modules.begin(); it!=modules.end(); it++) {
-				str<<it->WriteXML(indent+8);
+            for (auto & module : modules) {
+                str<<module.WriteXML(indent+8);
 			}
 			str<<std::setw(indent+4)<<" "<<"</preprocessing>\n";
 		}

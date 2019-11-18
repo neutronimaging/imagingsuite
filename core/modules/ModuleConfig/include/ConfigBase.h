@@ -99,7 +99,7 @@ public:
     /// Sanity check on the number of slices to be reconstruct during Config
     virtual std::string SanitySlicesCheck()=0;
 
-
+    void setAppPath(const std::string & path);
 protected:
     /// Parser for an opened XML formatted input file.
     /// \param reader Reference to an xml reader struct for the opened configuration file.
