@@ -101,12 +101,12 @@ std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 
 std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 {
-    if (!libInAppPath(path,m_sApplicationPath+"../Frameworks/"))
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-6)+"/Frameworks/"))
         return path;
 
     std::string libName;
 
-    libName = path.substr(path.find_last_of('/')+1);
+    libName = path.substr(path.find_last_of('/'));
     libName = libName.substr(3,libName.find_first_of('.')-3);
 
     return libName;

@@ -119,6 +119,7 @@ int SingleModuleSettingsDialog::exec(ModuleConfig &config)
 {
     std::ostringstream msg;
     m_ModuleConfig=config;
+    m_ModuleConfig.setAppPath(QCoreApplication::applicationDirPath().toStdString());
 
     QDir dir;
     if (dir.exists(QString::fromStdString(m_ModuleConfig.m_sSharedObject))) {
@@ -177,15 +178,16 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 {      
     logger(kipl::logging::Logger::LogMessage,"browse");
-    QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks";
-    logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
     QString fileName;
     #ifdef Q_OS_WIN
+        QString appPath = QCoreApplication::applicationDirPath()+"\\";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
     #else
+        QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks/";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
     #endif
+    logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
     if (fileName.isEmpty()) {
         logger(kipl::logging::Logger::LogError,"No file selected");
@@ -258,12 +260,12 @@ int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname, bool bSetFir
     }
 
     m_ComboModules.clear();
-    std::map<std::string, std::map<std::string, std::string> >::iterator it;
     msg.str("");
     msg<<"The library has "<<m_ModuleList.size()<<" modules";
     logger(kipl::logging::Logger::LogVerbose,msg.str());
-    for (it=m_ModuleList.begin(); it!=m_ModuleList.end(); it++) {
-        m_ComboModules.addItem(QString::fromStdString(it->first));
+    for (auto &module : m_ModuleList)
+    {
+        m_ComboModules.addItem(QString::fromStdString(module.first));
     }
 
     if (bSetFirstIndex)

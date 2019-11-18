@@ -106,7 +106,7 @@ void ConfigBaseTest::testGetCommandLinePars()
 void ConfigBaseTest::testLibNameManagerMac()
 {
     std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
-    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
+    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/Frameworks/libStdBackProjectors.1.0.0.dylib";
 
     ModuleLibNameManger mlnm(appPath);
 
