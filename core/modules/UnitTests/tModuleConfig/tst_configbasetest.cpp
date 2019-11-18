@@ -111,6 +111,8 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSMacOS),"StdBackProjectors");
 
+    QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSMacOS),modulePath);
+
 
 }
 
@@ -122,17 +124,20 @@ void ConfigBaseTest::testLibNameManagerLinux()
     ModuleLibNameManger mlnm(appPath);
 
     QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),"StdBackProjectors");
+
+    QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSLinux),modulePath);
 }
 
 void ConfigBaseTest::testLibNameManagerWindows()
 {
-    QSKIP("Not implemented");
-    std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
-    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
+    std::string appPath    = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\";
+    std::string modulePath = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\StdPreprocModules.dll";
 
     ModuleLibNameManger mlnm(appPath);
 
-    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSWindows),"StdBackProjectors");
+    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSWindows),"StdPreprocModules");
+
+    QCOMPARE(mlnm.generateLibName("StdPreprocModules",kipl::base::OSWindows),modulePath);
 }
 
 QTEST_APPLESS_MAIN(ConfigBaseTest)

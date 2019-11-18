@@ -1,13 +1,13 @@
 #include "../include/modulelibnamemanger.h"
 #include <base/kiplenums.h>
 #include <base/KiplException.h>
+#include <strings/filenames.h>
 #include <QDebug>
 
 ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
     logger("ModuleLibNameManger"),
     m_sApplicationPath(path)
 {
-
 }
 
 std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
@@ -52,21 +52,27 @@ std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
 
 std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
 {
-    std::string fullName;
+    std::string fullName=m_sApplicationPath;
+
+    fullName = fullName+name+".dll";
 
     return fullName;
 }
 
 std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
 {
-    std::string fullName;
+    std::string fullName=m_sApplicationPath;
+
+    fullName = fullName+"../Frameworks/lib"+name+".1.0.0.dylib";
 
     return fullName;
 }
 
 std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
-    std::string fullName;
+    std::string fullName=m_sApplicationPath;
+
+    fullName = fullName+"lib/lib"+name+".so.1.0.0";
 
     return fullName;
 }
@@ -75,6 +81,8 @@ std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 {
     std::string libName;
 
+    libName = path.substr(path.find_last_of('\\')+1);
+    libName = libName.substr(0,libName.find_first_of('.'));
     return libName;
 }
 
