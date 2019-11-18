@@ -116,8 +116,8 @@ void ConfigBaseTest::testLibNameManagerMac()
 
 void ConfigBaseTest::testLibNameManagerLinux()
 {
-    std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
-    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
+    std::string appPath    = "/Users/kaestner/git/deployed/muhrec/";
+    std::string modulePath = "/Users/kaestner/git/deployed/muhrec/lib/libStdBackProjectors.so.1.0.0";
 
     ModuleLibNameManger mlnm(appPath);
 
@@ -126,6 +126,7 @@ void ConfigBaseTest::testLibNameManagerLinux()
 
 void ConfigBaseTest::testLibNameManagerWindows()
 {
+    QSKIP("Not implemented");
     std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
     std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.1.0.0.dylib";
 

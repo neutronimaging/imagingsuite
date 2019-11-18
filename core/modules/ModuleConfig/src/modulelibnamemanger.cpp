@@ -1,6 +1,7 @@
 #include "../include/modulelibnamemanger.h"
 #include <base/kiplenums.h>
 #include <base/KiplException.h>
+#include <QDebug>
 
 ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
     logger("ModuleLibNameManger"),
@@ -81,12 +82,18 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 {
     std::string libName;
 
+    libName = path.substr(path.find_last_of('/')+1);
+    libName = libName.substr(3,libName.find_first_of('.')-3);
+
     return libName;
 }
 
 std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 {
     std::string libName;
+
+    libName = path.substr(path.find_last_of('/')+1);
+    libName = libName.substr(3,libName.find_first_of('.')-3);
 
     return libName;
 }
