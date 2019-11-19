@@ -1,6 +1,5 @@
 //<LICENSE>
 
-#include "stdafx.h"
 #include "SaveProjections.h"
 #include <io/io_stack.h>
 

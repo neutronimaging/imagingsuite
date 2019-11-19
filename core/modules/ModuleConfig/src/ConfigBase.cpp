@@ -305,6 +305,11 @@ void ConfigBase::setAppPath(const std::string &path)
     m_sApplicationPath = path;
 }
 
+std::string ConfigBase::appPath()
+{
+    return m_sApplicationPath;
+}
+
 void ConfigBase::ParseArgv(std::vector<std::string> &args)
 {
     std::ostringstream msg;

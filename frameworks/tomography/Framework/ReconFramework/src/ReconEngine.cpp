@@ -18,6 +18,8 @@
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
 
+#include <QDebug>
+
 
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
@@ -75,6 +77,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
 	m_Config=config;
 
+    qDebug() << "ReconEngine::SetConfig"<<m_Config.appPath().c_str();
 
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
     std::string fname,ext;

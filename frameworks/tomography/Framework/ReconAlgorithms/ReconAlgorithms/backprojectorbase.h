@@ -1,5 +1,5 @@
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+#ifndef ALGBACKPROJECTORBASE_H
+#define ALGBACKPROJECTORBASE_H
 
 #include "reconalgorithms_global.h"
 #include <string>

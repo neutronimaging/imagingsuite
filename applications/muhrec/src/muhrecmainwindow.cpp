@@ -841,28 +841,30 @@ void MuhRecMainWindow::saveCurrentRecon()
     kipl::strings::filenames::CheckPathSlashes(sPath,true);
     confpath<<sPath<<"CurrentRecon.xml";
 
-    try {
+    try
+    {
         UpdateConfig();
         ofstream of(confpath.str().c_str());
-        if (!of.is_open()) {
+        if (!of.is_open())
+        {
             msg.str("");
             msg<<"Failed to open config file: "<<confpath.str()<<" for writing.";
             logger(kipl::logging::Logger::LogError,msg.str());
             return ;
         }
-
-        m_Config.setAppPath(m_sApplicationPath);
         of<<m_Config.WriteXML();
         of.flush();
         logger(kipl::logging::Logger::LogMessage,"Saved current recon config");
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg.str("");
         msg<<"Saving current config failed with exception: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         return;
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         msg.str("");
         msg<<"Saving current config failed with exception: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
@@ -877,30 +879,32 @@ void MuhRecMainWindow::MenuReconstructStart()
     ostringstream msg;
 
     ui->tabMainControl->setCurrentIndex(4);
-    msg.str(""); msg<<"Pre update "<<m_Config.ProjectionInfo.beamgeometry;
-    logger.message(msg.str());
 
-    try {
+    try
+    {
         UpdateConfig();
-        m_Config.setAppPath(m_sApplicationPath);
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
 
-    try {
+    try
+    {
         m_Config.MatrixInfo.bAutomaticSerialize=false;
-        if (m_Config.System.nMemory<m_nRequiredMemory) {
-
+        if (m_Config.System.nMemory<m_nRequiredMemory)
+        {
             DialogTooBig largesize_dlg;
             int roi[4];
             ui->widgetProjectionROI->getROI(roi);
@@ -912,7 +916,8 @@ void MuhRecMainWindow::MenuReconstructStart()
                                     roi[1],roi[3]);
             int res=largesize_dlg.exec();
 
-            if (res!=QDialog::Accepted) {
+            if (res!=QDialog::Accepted)
+            {
                 logger(logger.LogMessage,"Reconstruction was aborted");
                 return;
             }
@@ -932,33 +937,40 @@ void MuhRecMainWindow::MenuReconstructStart()
         else
             m_Config.MatrixInfo.bAutomaticSerialize=false;
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
 
     saveCurrentRecon();
 
-    try {
+    try
+    {
         ExecuteReconstruction();
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -989,12 +1001,14 @@ void MuhRecMainWindow::ExecuteReconstruction()
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if ( bRerunBackproj==false || m_pEngine==nullptr || m_Config.MatrixInfo.bAutomaticSerialize==true) {
+    if ( bRerunBackproj==false || m_pEngine==nullptr || m_Config.MatrixInfo.bAutomaticSerialize==true)
+    {
         bRerunBackproj=false; // Just in case if other cases outruled re-run
 
         logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
         msg.str("");
-        try {
+        try
+        {
             if (m_pEngine!=nullptr)
             {
                 delete m_pEngine;
@@ -1010,37 +1024,43 @@ void MuhRecMainWindow::ExecuteReconstruction()
             m_Config.setAppPath(m_sApplicationPath);
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
-        catch (std::exception &e) {
+        catch (std::exception &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (ModuleException &e) {
+        catch (ModuleException &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with a ModuleException: \n"
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (ReconException &e) {
+        catch (ReconException &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with a recon exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (kipl::base::KiplException &e) {
+        catch (kipl::base::KiplException &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (...) {
+        catch (...)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with an unknown exception";
             bBuildFailure=true;
         }
 
-        if (bBuildFailure) {
+        if (bBuildFailure)
+        {
             logger(kipl::logging::Logger::LogError,msg.str());
             QMessageBox error_dlg;
             error_dlg.setText("Failed to build reconstructor due to plugin exception. See log message for more information.");
@@ -1587,6 +1607,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
     m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
 
+    m_Config.setAppPath(m_sApplicationPath);
     try {
         m_Config.SanityCheck();
     }
