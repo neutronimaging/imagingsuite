@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include <QString>
 #include <QtTest>
 #include <QDebug>
@@ -110,9 +111,13 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     ModuleLibNameManger mlnm(appPath);
 
-    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSMacOS),"StdBackProjectors");
+    std::string name=mlnm.stripLibName(modulePath,kipl::base::OSMacOS);
 
-    QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSMacOS),modulePath);
+    QCOMPARE(name,"StdBackProjectors");
+
+    name = mlnm.generateLibName("StdBackProjectors",kipl::base::OSMacOS);
+
+    QCOMPARE(name,modulePath);
 
     std::string modulePath2 = "/Users/kaestner/libStdBackProjectors.1.0.0.dylib";
 

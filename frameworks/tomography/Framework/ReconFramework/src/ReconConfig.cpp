@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "stdafx.h"
+#include "../include/ReconFramework_global.h"
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
 #include <ModuleException.h>
@@ -36,12 +36,13 @@ ReconConfig::ReconConfig(const ReconConfig &config) :
 
 const ReconConfig & ReconConfig::operator=(const ReconConfig &config)
 {
-	UserInformation=config.UserInformation;
-	System=config.System;
-	ProjectionInfo=config.ProjectionInfo;
-	MatrixInfo=config.MatrixInfo;
-	modules=config.modules;
-	backprojector=config.backprojector;
+    ConfigBase::operator=(config);
+    UserInformation  = config.UserInformation;
+    System           = config.System;
+    ProjectionInfo   = config.ProjectionInfo;
+    MatrixInfo       = config.MatrixInfo;
+    modules          = config.modules;
+    backprojector    = config.backprojector;
 
 	return *this;
 }
@@ -958,7 +959,7 @@ std::string ReconConfig::cMatrix::WriteXML(int indent)
 	return str.str();
 }
 
-DLL_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it) 
+std::string enum2string(ReconConfig::cProjections::eImageType &it)
 {
 	std::string str;
 	
@@ -968,7 +969,7 @@ DLL_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it)
 		case ReconConfig::cProjections::ImageType_Proj_RepeatProjection : str="proj_repeatprojection"; break;
 		case ReconConfig::cProjections::ImageType_Proj_RepeatSinogram : str="proj_repeatsinogram"; break;
 		default : throw ReconException("Unknown image type encountered in enum2string(imagetype)", __FILE__,__LINE__);
-	};
+    }
 
 	return str;
 }

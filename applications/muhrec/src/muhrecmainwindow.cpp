@@ -882,6 +882,7 @@ void MuhRecMainWindow::MenuReconstructStart()
 
     try {
         UpdateConfig();
+        m_Config.setAppPath(m_sApplicationPath);
     }
     catch (ModuleException &e) {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
@@ -930,8 +931,6 @@ void MuhRecMainWindow::MenuReconstructStart()
         }
         else
             m_Config.MatrixInfo.bAutomaticSerialize=false;
-
-        saveCurrentRecon();
     }
     catch (ModuleException &e) {
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
@@ -1008,7 +1007,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
                         <<m_Config.ProjectionInfo.roi[2]<<","
                         <<m_Config.ProjectionInfo.roi[3]<<"]";
             logger.message(msg.str());
-
+            m_Config.setAppPath(m_sApplicationPath);
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
         catch (std::exception &e) {

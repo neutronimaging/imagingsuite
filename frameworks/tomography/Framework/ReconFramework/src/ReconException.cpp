@@ -1,5 +1,5 @@
 //<LICENSE>
-#include "stdafx.h"
+
 #include "../include/ReconException.h"
 #include <string>
 #include <sstream>

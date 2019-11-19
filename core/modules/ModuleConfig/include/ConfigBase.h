@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef __CONFIGBASE_H
-#define __CONFIGBASE_H
+#ifndef CONFIGBASE_H
+#define CONFIGBASE_H
 
 #include "ModuleConfig_global.h"
 

@@ -1,6 +1,5 @@
 //<LICENSE>
 
-#include "stdafx.h"
 #include <iostream>
 #include <string.h>
 

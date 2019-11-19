@@ -1,5 +1,4 @@
 //<LICENSE>
-#include "stdafx.h"
 
 #include <math/mathconstants.h>
 

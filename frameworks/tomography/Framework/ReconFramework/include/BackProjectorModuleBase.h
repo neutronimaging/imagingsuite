@@ -1,9 +1,8 @@
 //<LICENSE>
 
-#ifndef __BACKPROJECTORBASE_H
-#define __BACKPROJECTORBASE_H
+#ifndef BACKPROJECTORBASE_H
+#define BACKPROJECTORBASE_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 #include <string>
 
 #include <base/timage.h>
