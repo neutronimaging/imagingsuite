@@ -490,6 +490,7 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			}
 			if (sName=="backprojector") {
 				logger(kipl::logging::Logger::LogVerbose,"Parsing backproj");
+                backprojector.setAppPath(m_sApplicationPath);
                 backprojector.ParseModule(reader);
 			}
 

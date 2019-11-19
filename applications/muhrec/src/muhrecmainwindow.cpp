@@ -642,6 +642,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
     msg.str("");
     try {
+        m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
         msg.str("");
         msg<<m_Config.WriteXML();
@@ -719,6 +720,7 @@ void MuhRecMainWindow::MenuFileOpen()
     msgbox.setText(tr("Failed to load the configuration file"));
 
     try {
+        m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(fileName.toStdString(),"reconstructor");
         msg.str("");
         msg<<m_Config.WriteXML();
