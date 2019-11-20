@@ -82,7 +82,7 @@ std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
 
 std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
-    std::string fullName=m_sApplicationPath;
+    std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 3 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));;
 
     fullName = fullName+"Frameworks/lib"+name+".so.1.0.0";
 
@@ -120,8 +120,13 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 
 std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 {
-    if (!libInAppPath(path,m_sApplicationPath+"Frameworks/"))
+    std::ostringstream msg;
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"Frameworks/"))
+    {
+        msg << path.c_str()<<" is not in lib path";
+        logger.message(msg.str());
         return path;
+    }
 
     std::string libName;
 
@@ -133,6 +138,7 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 
 bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::string &appPath)
 {
+    logger.message(path+" vs.  "+appPath);
     if (path.size()<appPath.size())
         return false;
 

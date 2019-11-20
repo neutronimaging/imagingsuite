@@ -859,9 +859,9 @@ ReconConfig::cMatrix::cMatrix() :
 	fGrayInterval[0]=0;
 	fGrayInterval[1]=5;
 
-	memset(roi,0,4*sizeof(size_t));
-    memset(voi,0,6*sizeof(size_t));
-	
+    std::fill_n(roi,4,0UL);
+    std::fill_n(voi,6,0UL);
+
 	bAutomaticSerialize=true;
 }
 

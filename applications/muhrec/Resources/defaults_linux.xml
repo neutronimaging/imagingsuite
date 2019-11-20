@@ -114,7 +114,8 @@
             <module>
                 <modulename>MultiProjBPparallel</modulename>
                 <sharedobject>StdBackProjectors</sharedobject>
-                <active>true</active>
+                <parameters>
+                    <active>true</active>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>
                     <SubVolume>1 1</SubVolume>
