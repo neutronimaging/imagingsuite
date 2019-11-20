@@ -488,6 +488,7 @@ void KipToolMainWindow::SaveConfiguration(QString qfname)
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     std::ofstream cfgfile(fname.c_str());
 
+    logger.message(std::string("Save config apppath ")+m_sApplicationPath);
     m_config.setAppPath(m_sApplicationPath);
     cfgfile<<m_config.WriteXML();
 }
