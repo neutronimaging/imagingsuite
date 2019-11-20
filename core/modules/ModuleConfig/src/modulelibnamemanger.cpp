@@ -72,7 +72,8 @@ std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
 std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
 {
     qDebug() << "generateMacOSLibName"<< m_sApplicationPath.c_str();
-    std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size()-7);
+
+    std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 6 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
     qDebug() << "generateMacOSLibName"<< fullName.c_str();
     fullName = fullName+"/Frameworks/lib"+name+".1.0.0.dylib";
 

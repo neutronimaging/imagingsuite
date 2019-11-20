@@ -127,6 +127,7 @@ private:
     int m_nSliceSizeY;
 
     QApplication *m_QtApp;
+    std::string m_sApplicationPath;
 
     std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };

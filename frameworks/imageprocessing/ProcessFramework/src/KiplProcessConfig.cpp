@@ -90,7 +90,7 @@ void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			
 			int depth2=xmlTextReaderDepth(reader);
 			if (sName=="module") {
-				ModuleConfig module;
+                ModuleConfig module(m_sApplicationPath);
 				module.ParseModule(reader);
 				modules.push_back(module);
 			}
@@ -402,7 +402,7 @@ void KiplProcessConfig::cOutImageInformation::ParseXML(xmlTextReaderPtr reader)
 			}
 
 			if (sName=="imagetype") {
-				kipl::io::string2enum(sValue,eResultImageType);
+                string2enum(sValue,eResultImageType);
 			}
 		}
         ret = xmlTextReaderRead(reader);
