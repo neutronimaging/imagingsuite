@@ -33,8 +33,7 @@ ModuleItemBase::ModuleItemBase(ModuleItemBase & item) :
     m_sApplication(item.m_sApplication),
     m_sSharedObject(item.m_sSharedObject),
     m_sModuleName(item.m_sModuleName),
-    m_Module(item.m_Module),
-    publications(item.publications)
+    m_Module(item.m_Module)
 {
 
 }
@@ -51,7 +50,6 @@ ModuleItemBase & ModuleItemBase::operator=(ModuleItemBase & item)
 
 	m_Module=item.m_Module;
 
-    publications=item.publications;
 	return *this;
 }
 
@@ -77,17 +75,6 @@ ModuleItemBase::~ModuleItemBase()
 {
     Destroy();
 }
-
-const string &ModuleItemBase::moduleName()
-{
-    return m_sModuleName;
-}
-
-const std::vector<Publication> &ModuleItemBase::publicationList()
-{
-    return publications;
-}
-
 
 void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *interactor)
 {
