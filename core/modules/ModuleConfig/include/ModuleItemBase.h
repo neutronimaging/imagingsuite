@@ -55,6 +55,9 @@ public:
     /// Destructor that unloads the loaded module.
 	virtual ~ModuleItemBase();
 
+    const std::string & moduleName();
+    const std::vector<Publication> & publicationList();
+
 protected:
     /// Module unload method. It calls the destroy function in the shared object.
 	void Destroy();
@@ -72,7 +75,7 @@ protected:
     std::string  m_sModuleName;   ///< Name of the module.
 
     ProcessModuleBase *m_Module;  ///< Reference to the created module instance.
-
+    std::vector<Publication> publications;
 };
 
 

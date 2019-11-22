@@ -74,7 +74,17 @@ void ModuleItemBase::Destroy()
 
 ModuleItemBase::~ModuleItemBase()
 {
-	Destroy();
+    Destroy();
+}
+
+const string &ModuleItemBase::moduleName()
+{
+    return m_sModuleName;
+}
+
+const std::vector<Publication> &ModuleItemBase::publicationList()
+{
+    return publications;
 }
 
 
