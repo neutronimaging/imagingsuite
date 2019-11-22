@@ -26,17 +26,17 @@ ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject
 
 
 ModuleItemBase::ModuleItemBase(ModuleItemBase & item) :
-	logger(item.m_sModuleName)
+    logger(item.m_sModuleName),
+    hinstLib(item.hinstLib),
+    m_fnModuleFactory(item.m_fnModuleFactory),
+    m_fnDestroyer(item.m_fnDestroyer),
+    m_sApplication(item.m_sApplication),
+    m_sSharedObject(item.m_sSharedObject),
+    m_sModuleName(item.m_sModuleName),
+    m_Module(item.m_Module),
+    publications(item.publications)
 {
-	hinstLib=item.hinstLib;
-	m_fnModuleFactory=item.m_fnModuleFactory;
-	m_fnDestroyer=item.m_fnDestroyer;
 
-	m_sApplication=item.m_sApplication;
-	m_sSharedObject=item.m_sSharedObject;
-	m_sModuleName=item.m_sModuleName;
-
-	m_Module=item.m_Module;
 }
 
 ModuleItemBase & ModuleItemBase::operator=(ModuleItemBase & item)
@@ -51,6 +51,7 @@ ModuleItemBase & ModuleItemBase::operator=(ModuleItemBase & item)
 
 	m_Module=item.m_Module;
 
+    publications=item.publications;
 	return *this;
 }
 
