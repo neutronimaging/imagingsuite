@@ -2,7 +2,9 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <fstream>
 #include <string.h>
+#include <vector>
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -12,6 +14,7 @@
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
+#include <publication.h>
 
 #include "../include/ReconEngine.h"
 #include "../include/ReconException.h"
@@ -39,6 +42,23 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 
 	}
 
+    publications.push_back(Publication("A.P. Kaestner",
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
+
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner","C. Carminati"}),
+                                       "MuhRec software",
+                                       "Zenodo",
+                                       2019,
+                                       1,
+                                       1,
+                                       "no pages",
+                                       "10.5281/zenodo.1117850"));
 }
 
 ReconEngine::~ReconEngine(void)
@@ -585,7 +605,7 @@ bool ReconEngine::Serialize(size_t *dims)
 	img.info.SetMetricY(m_Config.ProjectionInfo.fResolution[1]);
 	img.info.sArtist=m_Config.UserInformation.sOperator;
 	img.info.sCopyright=m_Config.UserInformation.sOperator;
-    img.info.sSoftware="MuhRec3 CT reconstructor";
+    img.info.sSoftware="MuhRec CT reconstructor";
 	img.info.sDescription=m_Config.UserInformation.sSample;
 
 	str.str("");
@@ -711,6 +731,7 @@ bool ReconEngine::Serialize(size_t *dims)
 		memcpy(dims,img.Dims(),3*sizeof(size_t));
 
 
+    writePublicationList();
 	return bTransposed;
 }
 
@@ -721,7 +742,72 @@ kipl::base::TImage<float,2> ReconEngine::GetSlice(size_t index, kipl::base::eIma
     if (m_Volume.Size()!=0UL)
         img=kipl::base::ExtractSlice(m_Volume,index,plane,nullptr);
 
-	return img;
+    return img;
+}
+
+string ReconEngine::citations()
+{
+    ostringstream cites;
+
+    cites<<"MuhRec\n=============================\n";
+    for (const auto &pub : publications)
+    {
+        cites<<pub;
+    }
+
+    cites<<"Preprocessing\n=============================\n";
+    for (const auto & module : m_PreprocList)
+    {
+        for (const auto &pub : module->GetModule()->publicationList())
+        {
+            cites<<pub;
+        }
+    }
+
+    cites<<"Back-projector\n=============================\n";
+
+    for (const auto &pub : m_BackProjector->GetModule()->publicationList())
+    {
+        cites<<pub;
+    }
+
+    return cites.str();
+}
+
+std::vector<Publication> ReconEngine::publicationList()
+{
+    std::vector<Publication> pubList;
+
+    pubList = publications;
+    for (const auto & module : m_PreprocList)
+    {
+        for (const auto &pub : module->GetModule()->publicationList())
+        {
+            pubList.push_back(pub);
+        }
+    }
+
+    for (const auto &pub : m_BackProjector->GetModule()->publicationList())
+    {
+        pubList.push_back(pub);
+    }
+
+    return pubList;
+}
+
+void ReconEngine::writePublicationList(string fname)
+{
+    std::string destName=fname;
+    if (fname.empty())
+    {
+        destName = m_Config.MatrixInfo.sDestinationPath + "/citations.txt";
+    }
+
+    logger.message(std::string("Writing citations to ")+destName);
+    kipl::strings::filenames::CheckPathSlashes(destName,false);
+    std::ofstream citefile(destName.c_str());
+
+    citefile<<citations();
 }
 
 size_t ReconEngine::GetHistogram(float *axis, size_t *hist, size_t nBins)
@@ -741,21 +827,13 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	m_Volume.info.SetMetricY(m_Config.ProjectionInfo.fResolution[1]);
 	m_Volume.info.sArtist=m_Config.UserInformation.sOperator;
 	m_Volume.info.sCopyright=m_Config.UserInformation.sOperator;
-	m_Volume.info.sSoftware="MUHRec CT reconstructor";
+    m_Volume.info.sSoftware="MuhRec CT reconstructor";
 	m_Volume.info.sDescription=m_Config.UserInformation.sSample;
 
 	str.str("");
 	str<<matrixconfig->sDestinationPath<<matrixconfig->sFileMask;
 
 	bool bTransposed=false;
-/*	if (matrixconfig->FileType==kipl::io::MatlabVolume) {
-		logger(kipl::logging::Logger::LogVerbose,"Serializing matrix");
-        std::string path,name;
-		std::vector<std::string> ext;
-		kipl::strings::filenames::StripFileName(str.str(),path,name,ext);
-		kipl::io::WriteMAT(m_Volume,str.str().c_str(),name.c_str());
-	}
-    else */
 
     float res=0.0f;
     if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
@@ -788,6 +866,7 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 				matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1],
 				0,nSlices,m_FirstSlice,matrixconfig->FileType,plane);
 	}
+    writePublicationList();
 
 	return bTransposed;
 }
@@ -1703,7 +1782,9 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
         size_t dims[3];
 
         if (m_Config.MatrixInfo.bAutomaticSerialize==true)
+        {
             Serialize(dims);
+        }
         else
         {
             TransferMatrix(roi);

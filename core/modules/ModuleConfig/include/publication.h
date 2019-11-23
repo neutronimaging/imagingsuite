@@ -62,19 +62,19 @@ public:
     eCitationFormatting format;       //< Formatting selector
 
     ///\brief Formats the publication information as a string using the selected format
-    std::string citation();
+    std::string citation() const ;
 
     /// \brief Formats the publication information as a string
     /// \param cf Format selector
-    std::string citation(eCitationFormatting cf);
+    std::string citation(eCitationFormatting cf) const;
 private:
 
-    std::string citationDOIonly();
-    std::string citationPlain();
-    std::string citationBiBTex();
+    std::string citationDOIonly() const;
+    std::string citationPlain() const;
+    std::string citationBiBTex() const;
 
 };
 
-std::ostringstream & operator<<(std::ostringstream &s, Publication &pub);
+std::ostringstream & operator<<(std::ostringstream &s, const Publication &pub);
 
 #endif // PUBLICATION_H

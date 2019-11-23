@@ -53,12 +53,12 @@ Publication::Publication(const std::string &_author,
     authors.push_back(_author);
 }
 
-std::string Publication::citation()
+std::string Publication::citation() const
 {
     return citation(format);
 }
 
-std::string Publication::citation(eCitationFormatting cf)
+std::string Publication::citation(eCitationFormatting cf) const
 {
     std::string cite;
     switch (cf)
@@ -71,14 +71,14 @@ std::string Publication::citation(eCitationFormatting cf)
     return cite;
 }
 
-std::string Publication::citationDOIonly()
+std::string Publication::citationDOIonly() const
 {
     std::ostringstream formatter;
     formatter<<DOI;
     return formatter.str();
 }
 
-std::string Publication::citationPlain()
+std::string Publication::citationPlain() const
 {
     std::ostringstream formatter;
 
@@ -90,7 +90,7 @@ std::string Publication::citationPlain()
     return formatter.str();
 }
 
-std::string Publication::citationBiBTex()
+std::string Publication::citationBiBTex() const
 {
     std::ostringstream formatter;
 
@@ -98,7 +98,7 @@ std::string Publication::citationBiBTex()
 }
 
 
-std::ostringstream & operator<<(std::ostringstream &s, Publication &pub)
+std::ostringstream & operator<<(std::ostringstream &s, const Publication &pub)
 {
     s<<pub.citation();
 
