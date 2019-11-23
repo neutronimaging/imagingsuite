@@ -42,7 +42,7 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 
 	}
 
-    publications.push_back(Publication("A.P. Kaestner",
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
                                        "MuhRec - a new tomography reconstructor",
                                        "Nuclear Instruments and Methods Section A",
                                        2011,
@@ -745,31 +745,35 @@ kipl::base::TImage<float,2> ReconEngine::GetSlice(size_t index, kipl::base::eIma
     return img;
 }
 
-string ReconEngine::citations()
+std::string ReconEngine::citations()
 {
-    ostringstream cites;
+    std::ostringstream cites;
 
     cites<<"MuhRec\n=============================\n";
     for (const auto &pub : publications)
     {
-        cites<<pub;
+        cites<<pub<<"\n";
     }
+    cites<<"\n";
 
-    cites<<"Preprocessing\n=============================\n";
+    cites<<"\nPreprocessing\n=============================\n";
     for (const auto & module : m_PreprocList)
     {
+        cites<<module->GetModule()->ModuleName()<<"\n";
         for (const auto &pub : module->GetModule()->publicationList())
         {
-            cites<<pub;
+            cites<<pub<<"\n";
         }
+        cites<<"\n";
     }
 
-    cites<<"Back-projector\n=============================\n";
-
+    cites<<"\nBack-projector\n=============================\n";
+    cites<<m_BackProjector->GetModule()->Name()<<"\n";
     for (const auto &pub : m_BackProjector->GetModule()->publicationList())
     {
-        cites<<pub;
+        cites<<pub<<"\n";
     }
+
 
     return cites.str();
 }
@@ -795,12 +799,12 @@ std::vector<Publication> ReconEngine::publicationList()
     return pubList;
 }
 
-void ReconEngine::writePublicationList(string fname)
+void ReconEngine::writePublicationList(const std::string &fname)
 {
     std::string destName=fname;
     if (fname.empty())
     {
-        destName = m_Config.MatrixInfo.sDestinationPath + "/citations.txt";
+        destName = m_Config.MatrixInfo.sDestinationPath + "citations.txt";
     }
 
     logger.message(std::string("Writing citations to ")+destName);
@@ -832,6 +836,8 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 
 	str.str("");
 	str<<matrixconfig->sDestinationPath<<matrixconfig->sFileMask;
+
+    writePublicationList(matrixconfig->sDestinationPath+"citations.txt");
 
 	bool bTransposed=false;
 
@@ -866,7 +872,7 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 				matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1],
 				0,nSlices,m_FirstSlice,matrixconfig->FileType,plane);
 	}
-    writePublicationList();
+
 
 	return bTransposed;
 }
@@ -1645,11 +1651,9 @@ int ReconEngine::Process3D(size_t *roi)
             case ReconConfig::cProjections::BeamGeometry_Helix:
                 logger(logger.LogError,"Helix is not supported by the engine.");
                 throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
-                break;
             default:
                 logger(logger.LogError,"Unsupported geometry type.");
                 throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
-                break;
         }
     }
 
@@ -1668,11 +1672,9 @@ int ReconEngine::Process3D(size_t *roi)
             case ReconConfig::cProjections::BeamGeometry_Helix:
                 logger(logger.LogError,"Helix is not supported by the engine.");
                 throw ReconException("Helix is not supported by the engine",__FILE__,__LINE__);
-                break;
             default:
                 logger(logger.LogError,"Unsupported geometry type.");
                 throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
-                break;
         }
 
 

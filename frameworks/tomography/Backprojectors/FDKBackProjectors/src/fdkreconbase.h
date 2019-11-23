@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef FDKRECONBASE_H
 #define FDKRECONBASE_H
 

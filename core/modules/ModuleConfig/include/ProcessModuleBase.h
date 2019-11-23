@@ -72,7 +72,7 @@ public:
 		return s.str();
 	}
 
-    const std::vector<Publication> & publicationList();
+    const std::vector<Publication> & publicationList() const;
 protected:
 
     /// Method that executes the algorithmic core of the processing for 2D images.

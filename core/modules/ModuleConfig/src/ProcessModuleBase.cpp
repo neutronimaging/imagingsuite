@@ -51,7 +51,7 @@ int ProcessModuleBase::Process(kipl::base::TImage<float,3> &img, std::map<std::s
     return res;
 }
 
-const std::vector<Publication> &ProcessModuleBase::publicationList()
+const std::vector<Publication> &ProcessModuleBase::publicationList() const
 {
     return publications;
 }

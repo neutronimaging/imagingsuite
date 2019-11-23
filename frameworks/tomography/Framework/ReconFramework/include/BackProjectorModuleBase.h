@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+#ifndef BACKPROJECTORMODULEBASE_H
+#define BACKPROJECTORMODULEBASE_H
 #include "ReconFramework_global.h"
 
 #include <string>

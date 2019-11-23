@@ -2,6 +2,7 @@
 #ifndef PUBLICATION_H
 #define PUBLICATION_H
 
+#include "ModuleConfig_global.h"
 #include <string>
 #include <vector>
 
@@ -11,7 +12,7 @@ enum eCitationFormatting {
   citeBiBTex
 };
 
-class Publication
+class MODULECONFIGSHARED_EXPORT Publication
 {
 public:
     Publication();
@@ -25,8 +26,8 @@ public:
     ///\param _pages Pages in the journal
     ///\param _DOI Document identifier
     Publication(const std::vector<std::string> & _authors,
-                const std::string _title,
-                const std::string _publication,
+                const std::string &_title,
+                const std::string &_publication,
                 int _year,
                 int _volume,
                 int _issue,
@@ -43,8 +44,8 @@ public:
     ///\param _pages Pages in the journal
     ///\param _DOI Document identifier
     Publication(const std::string & _author,
-                const std::string _title,
-                const std::string _publication,
+                const std::string & _title,
+                const std::string & _publication,
                 int _year,
                 int _volume,
                 int _issue,
@@ -75,6 +76,6 @@ private:
 
 };
 
-std::ostringstream & operator<<(std::ostringstream &s, const Publication &pub);
+std::ostringstream MODULECONFIGSHARED_EXPORT & operator<<(std::ostringstream &s, const Publication &pub);
 
 #endif // PUBLICATION_H
