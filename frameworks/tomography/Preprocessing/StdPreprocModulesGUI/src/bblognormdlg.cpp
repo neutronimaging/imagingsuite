@@ -42,7 +42,8 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     nBBextCount(0),
     nBBextFirstIndex(0),
     min_area(20),
-    thresh(0)
+    thresh(0),
+    bExtSingleFile(false)
 {
 
     blackbodyname = "somename";
@@ -113,6 +114,7 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
         nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
         bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
         bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
         thresh = GetFloatParameter(parameters,"thresh");
         min_area = GetIntParameter(parameters, "min_area");
@@ -241,6 +243,11 @@ void BBLogNormDlg::UpdateDialog(){
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
+
+    if (bExtSingleFile)
+        ui->check_singleext->setChecked(true);
+    else
+        ui->check_singleext->setChecked(false);
 
 
 //    std::cout << "update dialog" << std::endl;
@@ -869,4 +876,12 @@ void BBLogNormDlg::on_pushButton_filenameOBBB_clicked()
 void BBLogNormDlg::on_pushButton_filenameBB_clicked()
 {
     ui->edit_sample_BB_mask->setText(ui->edit_OB_BB_mask->text());
+}
+
+void BBLogNormDlg::on_checkBox_clicked(bool checked)
+{
+    if (checked)
+    {
+        std::cout << "single file option is clicked" << std::endl;
+    }
 }

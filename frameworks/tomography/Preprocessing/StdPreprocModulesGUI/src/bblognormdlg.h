@@ -55,6 +55,8 @@ private slots:
     void on_pushButton_filenameOBBB_clicked();
     void on_pushButton_filenameBB_clicked();
 
+    void on_checkBox_clicked(bool checked);
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();
@@ -99,6 +101,7 @@ private:
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
     bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
+    bool bExtSingleFile; /// boolean value on the use of single external file for sample background
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;

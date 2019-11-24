@@ -53,7 +53,8 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     bUseManualThresh(false),
     min_area(20),
     thresh(0),
-    m_Interactor(interactor)
+    m_Interactor(interactor),
+    bExtSingleFile(false)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -129,6 +130,7 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     flastAngle = GetFloatParameter(parameters, "lastAngle");
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+    bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
     thresh = GetFloatParameter(parameters,"thresh");
 
     m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
@@ -256,6 +258,7 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh = GetFloatParameter(parameters,"thresh");
+    bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 //    std::cout << bUseManualThresh << " " << thresh << std::endl;
@@ -371,6 +374,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["thresh"]= kipl::strings::value2string(thresh);
+    parameters["singleBBext"] = kipl::strings::value2string(bExtSingleFile);
 
     return parameters;
 }
