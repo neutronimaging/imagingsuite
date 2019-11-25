@@ -2,7 +2,7 @@
 
 #ifndef MODULEITEMBASE_H_
 #define MODULEITEMBASE_H_
-
+#include "../src/stdafx.h"
 #include "ModuleConfig_global.h"
 #include "ConfigBase.h"
 

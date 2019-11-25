@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef __RECONENGINE_H
-#define __RECONENGINE_H
+#ifndef RECONENGINE_H
+#define RECONENGINE_H
 #include "ReconFramework_global.h"
 
 #include <list>

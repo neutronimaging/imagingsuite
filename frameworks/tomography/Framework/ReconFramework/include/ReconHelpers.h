@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 
-#include "../include/ReconConfig.h"
+#include "ReconConfig.h"
 
 
 struct RECONFRAMEWORKSHARED_EXPORT ProjectionInfo {

@@ -1,7 +1,7 @@
 //<LICENSE>
 #ifndef MODULELIBNAMEMANGER_H
 #define MODULELIBNAMEMANGER_H
-
+#include "ModuleConfig_global.h"
 #include <string>
 #include <logging/logger.h>
 #include <base/kiplenums.h>

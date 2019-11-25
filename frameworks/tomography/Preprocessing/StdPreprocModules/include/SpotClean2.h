@@ -14,7 +14,6 @@
 #ifndef _SPOTCLEAN2_H_
 #define _SPOTCLEAN2_H_
 
-//#include "../src/stdafx.h"
 #include "StdPreprocModules_global.h"
 #include <PreprocModuleBase.h>
 #include <base/timage.h>
