@@ -1855,6 +1855,8 @@ void MuhRecMainWindow::on_actionRemove_CurrentRecon_xml_triggered()
         QDate date=QDate::currentDate();
         QString destname=filename+"."+date.toString("yyyyMMdd");
         dir.rename(filename,destname);
+        if (dir.exists(filename)) // Workarround for MacOS, to actually delete the current recon.
+            dir.remove(filename);
         msg.str("");
         msg<<"Moved "<<filename.toStdString()<<" to "<<destname.toStdString();
         logger(logger.LogMessage,msg.str());
