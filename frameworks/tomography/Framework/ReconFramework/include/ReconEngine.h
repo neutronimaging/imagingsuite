@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef __RECONENGINE_H
-#define __RECONENGINE_H
+#ifndef RECONENGINE_H
+#define RECONENGINE_H
 #include "ReconFramework_global.h"
 
 #include <list>
@@ -99,6 +88,9 @@ public:
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
 	void GetMatrixDims(size_t *dims) {dims[0]=m_Volume.Size(0); dims[1]=m_Volume.Size(1); dims[2]=m_Volume.Size(2);}
     kipl::base::TImage<float,2> GetSlice(size_t index, kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY);
+    std::string citations();
+    std::vector<Publication> publicationList();
+    void writePublicationList(const std::string &fname = "");
 
 	virtual ~ReconEngine(void);
 protected:
@@ -118,6 +110,7 @@ protected:
     void MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins);
     void UnpadProjections(kipl::base::TImage<float,3> &projections, size_t *roi, size_t *margins);
 	ReconConfig m_Config;
+    std::vector<Publication> publications;
 
 	size_t m_FirstSlice;
     size_t m_ProjectionMargin;

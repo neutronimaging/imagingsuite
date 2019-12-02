@@ -25,6 +25,34 @@ KiplProcessModuleBase("NonLinDiffusion", true,interactor),
     m_sIterationPath("./issiteration_####.tif"),
     m_bSaveIterations(false)
 {
+    publications.push_back(Publication(std::vector<std::string>({"P. Perona","J. Malik"}),
+                                       "Scale-Space and Edge Detection using Anisotropic Diffusion",
+                                       "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+                                       1990,
+                                       12,
+                                       7,
+                                       "629-639",
+                                       "10.1109/34.56205"));
+
+    publications.push_back(Publication(std::vector<std::string>({"F. Catte","P-L. Lions","J-M. Morel","T. Coll"}),
+                                       "Image selective smoothing and edge detection by nonlinear diffusion",
+                                       "SIAM journal on Numerical Analysis",
+                                       1992,
+                                       29,
+                                       1,
+                                       "182-193",
+                                       "10.1137/0729012"));
+
+
+    publications.push_back(Publication(std::vector<std::string>({"J. Weickert","K.J. Zuiderveld","B.M. ter Haar Romeny","W.J. Niessen"}),
+                           "Parallel implementations of AOS schemes: a fast way of nonlinear diffusion filtering",
+                           "Proceedings of International Conference on Image Processing",
+                           1997,
+                           3,
+                           1,
+                           "396--399",
+                           "10.1109/icip.1997.632133"
+                           ));
 
 }
 

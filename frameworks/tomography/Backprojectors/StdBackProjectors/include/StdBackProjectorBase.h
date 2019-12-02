@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+#ifndef STDBACKPROJECTORBASE_H
+#define STDBACKPROJECTORBASE_H
 
 #include <string>
 #include <list>
