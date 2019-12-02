@@ -12,6 +12,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QDir>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -88,7 +89,11 @@ int AddModuleDialog::exec()
         #ifdef Q_OS_WIN
             fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
         #else
-            appPath += +"/../Frameworks";
+            QDir dir;
+
+            if (!dir.exists(appPath+"/../Frameworks"))
+                appPath += "/../Frameworks";
+
             fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
         #endif
     }
@@ -99,12 +104,12 @@ int AddModuleDialog::exec()
         return 0;
     }
 
-    m_Modulefile_edit.setText(fileName);
-
     if (UpdateModuleCombobox(fileName)!=0)
     {
         return QDialog::Rejected;
     }
+
+    m_Modulefile_edit.setText(fileName);
 
     m_ModuleConfig.m_sSharedObject=fileName.toStdString();
     m_ModuleConfig.m_sModule=modulelist.begin()->first;
@@ -114,8 +119,23 @@ int AddModuleDialog::exec()
     return QDialog::exec();
 }
 
-int AddModuleDialog::UpdateModuleCombobox(QString fname)
+int AddModuleDialog::UpdateModuleCombobox(QString &fname)
 {
+    QDir dir;
+
+    if (!dir.exists(fname))
+    {
+        logger.warning("Module file doesn't exist");
+        QFileDialog dlg(this,"Select a module file",QCoreApplication::applicationDirPath());
+
+        auto res = dlg.exec();
+
+        if (res!=QDialog::Accepted)
+            return 0;
+
+        fname = dlg.selectedFiles().first();
+    }
+
     std::ostringstream msg;
     try {
         modulelist.clear();
