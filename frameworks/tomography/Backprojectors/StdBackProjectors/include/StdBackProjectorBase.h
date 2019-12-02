@@ -3,6 +3,7 @@
 #ifndef STDBACKPROJECTORBASE_H
 #define STDBACKPROJECTORBASE_H
 #include "StdBackProjectors_global.h"
+
 #include <string>
 #include <list>
 #include <vector>

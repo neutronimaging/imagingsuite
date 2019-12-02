@@ -1,3 +1,4 @@
+//<LICENSE>
 //#include "stdafx.h"
 #include <thread>
 #include <cstdlib>
@@ -29,6 +30,23 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
     m_bThreading(false)
 {
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
+
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner","C. Carminati"}),
+                                       "MuhRec software",
+                                       "Zenodo",
+                                       2019,
+                                       1,
+                                       1,
+                                       "no pages",
+                                       "10.5281/zenodo.1117850"));
 }
 
 MorphSpotCleanModule::~MorphSpotCleanModule()

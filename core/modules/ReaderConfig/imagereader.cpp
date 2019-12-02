@@ -1,14 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $File$
-// $Date: 2015-09-05 16:05:45 +0200 (Sat, 05 Sep 2015) $
-// $Rev: 1235 $
-// $Id: ImageReader.cpp 1235 2015-09-05 14:05:45Z kaestner $
+//<LICENSE>
 //
 #include "readerconfig_global.h"
 

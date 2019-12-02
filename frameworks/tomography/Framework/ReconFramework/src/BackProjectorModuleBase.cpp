@@ -27,6 +27,11 @@ BackProjectorModuleBase::~BackProjectorModuleBase(void)
 {
 }
 
+const std::vector<Publication> &BackProjectorModuleBase::publicationList()
+{
+    return publications;
+}
+
 size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
 	std::ostringstream msg;

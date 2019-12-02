@@ -1,5 +1,6 @@
 //<LICENSE>
 
+//#include "stdafx.h"
 #include "../include/ReconFramework_global.h"
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
@@ -960,7 +961,11 @@ std::string ReconConfig::cMatrix::WriteXML(int indent)
 	return str.str();
 }
 
+<<<<<<< HEAD
 std::string enum2string(ReconConfig::cProjections::eImageType &it)
+=======
+RECONFRAMEWORKSHARED_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it)
+>>>>>>> master
 {
 	std::string str;
 	

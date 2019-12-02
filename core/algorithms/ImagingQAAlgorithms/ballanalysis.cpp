@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <math/tcenterofgravity.h>
 #include <base/index2coord.h>
 #include <io/io_serializecontainers.h>
@@ -83,7 +84,7 @@ void BallAnalysis::computeSphereGeometry()
     float *pImgCL = img.GetLinePtr(static_cast<size_t>(center.y+0.5f),static_cast<size_t>(center.z+0.5));
 
     std::copy(pImgCL,pImgCL+N,cl);
-    kipl::io::serializeContainer(pImgCL,pImgCL+N,"/Users/kaestner/profile.txt");
+ //   kipl::io::serializeContainer(pImgCL,pImgCL+N,"/Users/kaestner/profile.txt");
 
     float maxVal = *std::max_element(cl,cl+N);
     float minVal = *std::min_element(cl,cl+N);

@@ -44,6 +44,7 @@ win32 {
 DEFINES += MODULECONFIG_LIBRARY
 
 SOURCES += \
+    ../../src/publication.cpp \
     ../../src/stdafx.cpp \
     ../../src/ProcessModuleBase.cpp \
     ../../src/ParameterHandling.cpp \
@@ -57,6 +58,7 @@ SOURCES += \
 
 HEADERS +=\
      ../../include/ModuleConfig_global.h \
+    ../../include/publication.h \
     ../../include/targetver.h \
     ../../include/ProcessModuleBase.h \
     ../../include/ParameterHandling.h \

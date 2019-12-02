@@ -1,14 +1,16 @@
 //<LICENSE>
 
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+#ifndef BACKPROJECTORMODULEBASE_H
+#define BACKPROJECTORMODULEBASE_H
 #include "ReconFramework_global.h"
-#include <string>
 
+#include <string>
+#include <vector>
 #include <base/timage.h>
 #include <logging/logger.h>
 #include <profile/Timer.h>
 #include <interactors/interactionbase.h>
+#include <publication.h>
 
 #include "ReconConfig.h"
 
@@ -98,6 +100,8 @@ public:
     /// \returns The execution time in seconds.
 	double ExecTime() {return timer.ElapsedSeconds(); }
 
+    const std::vector<Publication> & publicationList();
+
 protected:
     /// \brief Clears circle mask and matrix dimensions
     virtual void ClearAll();
@@ -121,6 +125,7 @@ protected:
 
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
+    std::vector<Publication> publications;
 };
 
 #endif

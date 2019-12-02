@@ -1,4 +1,5 @@
 //<LICENSE>
+#include "stdafx.h"
 #include "../include/ReconFactory.h"
 #include "../include/ReconConfig.h"
 #include "../include/PreprocModuleBase.h"

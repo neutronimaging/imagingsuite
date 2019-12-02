@@ -1,10 +1,4 @@
-/*
- * SinoSpotClean.cpp
- *
- *  Created on: May 21, 2013
- *      Author: kaestner
- */
-//#include "stdafx.h"
+//<LICENSE>
 #include "../include/SinoSpotClean.h"
 #include <filters/medianfilter.h>
 

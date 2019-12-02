@@ -40,7 +40,7 @@ protected slots:
     virtual void reject();
 
 protected:
-    int UpdateModuleCombobox(QString fname);
+    int UpdateModuleCombobox(QString &fname);
     std::map<std::string, std::map<std::string, std::string> > GetModuleList(std::string filename);
 
     QVBoxLayout m_Dlg_layout;
