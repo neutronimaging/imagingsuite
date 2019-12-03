@@ -5,10 +5,12 @@
 #include "ModuleConfig_global.h"
 #include <map>
 #include <list>
+#include <array>
 #include <string>
 
 #include <libxml/xmlreader.h>
 #include <logging/logger.h>
+#include "publication.h"
 
 /// Container for module configuration information.
 /// This information is used in the configuration struct based on ConfigBase.

@@ -1,9 +1,4 @@
-/*
- * ISSfilter.cpp
- *
- *  Created on: Aug 5, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #include "../include/StdPreprocModules_global.h"
 #ifdef _OPENMP

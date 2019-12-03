@@ -1,10 +1,4 @@
-/*
- * BasicRingClean.cpp
- *
- *  Created on: Jun 30, 2011
- *      Author: kaestner
- */
-//#include "stdafx.h"
+//<LICENSE>
 
 #include <algorithm>
 

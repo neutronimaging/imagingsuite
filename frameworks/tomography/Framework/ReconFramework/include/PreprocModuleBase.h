@@ -11,8 +11,8 @@
 // $Id$
 //
 
-#ifndef __PREPROCMODULEBASE_H
-#define __PREPROCMODULEBASE_H
+#ifndef PREPROCMODULEBASE_H
+#define PREPROCMODULEBASE_H
 #include "ReconFramework_global.h"
 //#include "stdafx.h"
 

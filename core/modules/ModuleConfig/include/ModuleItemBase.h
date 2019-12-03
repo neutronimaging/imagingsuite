@@ -55,6 +55,8 @@ public:
     /// Destructor that unloads the loaded module.
 	virtual ~ModuleItemBase();
 
+
+
 protected:
     /// Module unload method. It calls the destroy function in the shared object.
 	void Destroy();

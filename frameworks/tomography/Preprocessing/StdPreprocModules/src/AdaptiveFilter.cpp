@@ -1,18 +1,5 @@
-//
-// AdaptiveFilter.cpp
-//
-//  Created on: May 25, 2011
-//      Author: anders
-//
-//  Revision information
-//    Checked in by $author$
-//    Check-in date $date$
-//    svn Revision  $revision$
-//
-// local smoothing with a filter function fDx of characteristics width  Dx such that this width
-// is a function of the attenuation value p(x) that is currently beeing smoothed
+//<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/AdaptiveFilter.h"
 
 #include <ReconException.h>
@@ -23,7 +10,6 @@
 #include <math/mathfunctions.h>
 #include <averageimage.h>
 
-
 AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("AdaptiveFilter",interactor),
     pLUT(nullptr),
@@ -33,7 +19,16 @@ AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
     m_fFilterStrength(1.0f),
     m_fFmax(0.10f),
     bNegative(false)
-{}
+{
+    publications.push_back(Publication({"M. Kachelriess","O. Watzke","W.A. Kalender"},
+                                       "Generalized multi-dimensional adaptive filtering for conventional and spiral single-slice, multi-slice, and cone-beam CT",
+                                       "Medical Physics",
+                                       2001,
+                                       24,
+                                       4,
+                                       "475--490",
+                                       "10.1118/1.1358303"));
+}
 
 AdaptiveFilter::~AdaptiveFilter()
 {

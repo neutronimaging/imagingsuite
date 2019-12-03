@@ -25,7 +25,14 @@ IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interac
     op(ImagingAlgorithms::VerticalComponentFFT),
     plane(kipl::base::ImagePlaneXY)
 {
-
+    publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
+                                        "Stripe and ring artifact removal with combined wavelet-Fourier filtering",
+                                        "Optics express",
+                                        2009,
+                                        17,
+                                        10,
+                                        "8567--8591",
+                                        "10.1364/oe.17.008567"));
 }
 
 IMAGINGMODULESSHARED_EXPORT StripeFilterModule::~StripeFilterModule()

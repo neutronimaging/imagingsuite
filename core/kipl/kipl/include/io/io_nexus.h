@@ -1,5 +1,5 @@
-#ifndef __IO_NEXUS_H
-#define __IO_NEXUS_H
+#ifndef IO_NEXUS_H
+#define IO_NEXUS_H
 
 #include "../kipl_global.h"
 #include "../base/imagecast.h"
