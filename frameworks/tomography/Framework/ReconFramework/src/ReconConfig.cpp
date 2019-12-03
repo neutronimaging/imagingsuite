@@ -961,11 +961,8 @@ std::string ReconConfig::cMatrix::WriteXML(int indent)
 	return str.str();
 }
 
-<<<<<<< HEAD
-std::string enum2string(ReconConfig::cProjections::eImageType &it)
-=======
+
 RECONFRAMEWORKSHARED_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it)
->>>>>>> master
 {
 	std::string str;
 	
