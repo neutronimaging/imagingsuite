@@ -96,21 +96,21 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &e
     }
 }
 
-std::ostream & operator<<(std::ostream &s, kipl::io::eExtensionTypes etype)
+std::ostream & operator<<(std::ostream &s, const kipl::io::eExtensionTypes &etype)
 {
     s<<enum2string(etype);
 
     return s;
 }
 
-std::ostream & operator<<(std::ostream &s, kipl::io::eFileType ft)
+std::ostream & operator<<(std::ostream &s, const kipl::io::eFileType &ft)
 {
     s<<enum2string(ft);
 
     return s;
 }
 
-std::string enum2string(kipl::io::eFileType ft)
+std::string enum2string(const kipl::io::eFileType & ft)
 {
 std::string s;
 switch (ft) {
@@ -131,7 +131,7 @@ default : throw kipl::base::KiplException("Unknown file type",__FILE__,__LINE__)
 return s;
 }
 
-void string2enum(const std::string str, kipl::io::eFileType &ft)
+void string2enum(const std::string &str, kipl::io::eFileType &ft)
 {
 if      (str=="MatlabVolume")           ft=kipl::io::MatlabVolume;
 else if (str=="MatlabSlices")           ft=kipl::io::MatlabSlices;

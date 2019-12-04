@@ -6,7 +6,7 @@
 #include <logging/logger.h>
 #include <base/kiplenums.h>
 
-class ModuleLibNameManger
+class MODULECONFIGSHARED_EXPORT ModuleLibNameManger
 {
     kipl::logging::Logger logger;
 public:

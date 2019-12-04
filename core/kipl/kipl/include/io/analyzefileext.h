@@ -51,7 +51,7 @@ eExtensionTypes KIPLSHARED_EXPORT GetFileExtensionType(std::string fname);
 /// \param s The target stream
 /// \param eType The enum value
 /// \returns The target stream
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eExtensionTypes etype);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, const kipl::io::eExtensionTypes &etype);
 
 /// \brief Translates a string to an extension enum
 /// \param ext a string containing a file extension
@@ -63,8 +63,8 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &e
 /// \returns A string with the value
 std::string KIPLSHARED_EXPORT enum2string(kipl::io::eExtensionTypes et);
 
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
-void KIPLSHARED_EXPORT string2enum(const std::string str, kipl::io::eFileType &ft);
-std::string KIPLSHARED_EXPORT enum2string(kipl::io::eFileType ft);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, const kipl::io::eFileType &ft);
+void KIPLSHARED_EXPORT string2enum(const std::string &str, kipl::io::eFileType &ft);
+std::string KIPLSHARED_EXPORT enum2string(const kipl::io::eFileType &ft);
 #endif // ANALYZEFILEEXT_H
 

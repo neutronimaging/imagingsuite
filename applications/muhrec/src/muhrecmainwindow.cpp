@@ -352,7 +352,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
         name=it->second.name;
 
         if (QFile::exists(QString::fromStdString(name))) {
-            int sliderval=ui->sliderProjections->value();
+//           int sliderval=ui->sliderProjections->value();
 //            m_PreviewImage=reader.Read(name,
 //                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
 //                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
@@ -573,7 +573,7 @@ void MuhRecMainWindow::ViewGeometryList()
 void MuhRecMainWindow::MatrixROIChanged(int x)
 {
     // todo Update the matrix roi callback
-//    (void) x;
+    (void) x;
 //    logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
 //    UpdateMatrixROI();
 
@@ -700,8 +700,8 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
          UpdateDialog();
     }
-    std::copy(m_Config.ProjectionInfo.projection_roi,
-              m_Config.ProjectionInfo.projection_roi,
+    std::copy_n(m_Config.ProjectionInfo.projection_roi,
+              4,
               m_oldROI);
 
 //    UpdateDialog();
@@ -888,16 +888,19 @@ void MuhRecMainWindow::MenuReconstructStart()
     }
     catch (ModuleException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
     catch (ReconException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
     catch (kipl::base::KiplException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -941,16 +944,19 @@ void MuhRecMainWindow::MenuReconstructStart()
     }
     catch (ModuleException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
     catch (ReconException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
     catch (kipl::base::KiplException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -963,16 +969,19 @@ void MuhRecMainWindow::MenuReconstructStart()
     }
     catch (ModuleException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
     catch (ReconException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
     catch (kipl::base::KiplException &e)
     {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -1252,7 +1261,8 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
         nBufferMemory += length*height*projbuffersize*sizeof(float);
 
         // Projection Data
-        double nprojections=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+        double nprojections=(static_cast<double>(m_Config.ProjectionInfo.nLastIndex)
+                             -static_cast<double>(m_Config.ProjectionInfo.nFirstIndex)+1.0)/static_cast<double>(m_Config.ProjectionInfo.nProjectionStep);
         nBufferMemory += length*height*nprojections*sizeof(float);
 
         nMatrixMemory/=1024*1024;
@@ -1326,15 +1336,15 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
-    std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
+    std::copy_n(m_Config.ProjectionInfo.projection_roi,4,m_oldROI);
  //   qDebug("UpdateDialog");
 
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
-    on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
-                                        m_Config.ProjectionInfo.projection_roi[1],
-                                        m_Config.ProjectionInfo.projection_roi[2],
-                                        m_Config.ProjectionInfo.projection_roi[3]);
+    on_widgetProjectionROI_valueChanged(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]),
+                                        static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]),
+                                        static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]),
+                                        static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
 
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
@@ -1549,8 +1559,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+3);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
 
-    ptrdiff_t pos;
-
+   // ptrdiff_t pos;
+    size_t pos=0;
     switch (ui->comboDestFileType->currentIndex())
     {
 
@@ -2563,11 +2573,11 @@ void MuhRecMainWindow::on_pushButton_levels95p_clicked()
         size_t lowlevel=0;
         size_t highlevel=0;
         kipl::base::FindLimits(y, nBins, 95.0, &lowlevel, &highlevel);
-        ui->dspinGrayLow->setValue(x[lowlevel]);
-        ui->dspinGrayHigh->setValue(x[highlevel]);
+        ui->dspinGrayLow->setValue(static_cast<double>(x[lowlevel]));
+        ui->dspinGrayHigh->setValue(static_cast<double>(x[highlevel]));
     }
     else
-        logger(logger.LogMessage,"Level 95\%: Missing engine");
+        logger(logger.LogMessage,"Level 95%: Missing engine");
 }
 
 void MuhRecMainWindow::on_pushButton_levels99p_clicked()
@@ -2585,7 +2595,7 @@ void MuhRecMainWindow::on_pushButton_levels99p_clicked()
         ui->dspinGrayHigh->setValue(x[highlevel]);
     }
     else
-        logger(logger.LogMessage,"Level 99\%: Missing engine");
+        logger(logger.LogMessage,"Level 99%: Missing engine");
 }
 
 
@@ -2822,15 +2832,18 @@ void MuhRecMainWindow::on_dspinSDD_valueChanged(double arg1)
 
 void MuhRecMainWindow::on_doubleSpinBox_magnification_valueChanged(double arg1)
 {
+    (void) arg1;
     UpdateCBCTDistances();
 }
 
 void MuhRecMainWindow::on_dspinPiercPointX_valueChanged(double arg1)
 {
+    (void) arg1;
    UpdatePiercingPoint();
 }
 
 void MuhRecMainWindow::on_dspinPiercPointY_valueChanged(double arg1)
 {
+    (void) arg1;
     UpdatePiercingPoint();
 }

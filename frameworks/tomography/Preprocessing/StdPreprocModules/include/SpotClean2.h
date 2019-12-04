@@ -52,7 +52,7 @@ public:
 
 	virtual std::string Version() {
 		ostringstream s;
-		s<<m_sModuleName<<" ("<<std::max(kipl::strings::VersionNumber("$Rev$"), SourceVersion())<<"), "<<PreprocModuleBase::Version();
+        s<<m_sModuleName<<" ("<<SourceVersion()<<"), "<<PreprocModuleBase::Version();
 
 		return s.str();
 	}
