@@ -398,7 +398,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["thresh"]= kipl::strings::value2string(thresh);
-    parameters["singleBBext"] = kipl::strings::value2string(bExtSingleFile);
+    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
 
     return parameters;
 }

@@ -303,6 +303,7 @@ void BBLogNormDlg::UpdateParameters(){
 
     bUseManualThresh = ui->checkBox_thresh->isChecked();
     thresh = ui->spinThresh->value();
+    bExtSingleFile = ui->check_singleext->isChecked();
 
 //    std::cout << "update parameters " << std::endl;
 //    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
@@ -346,6 +347,7 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["thresh"]= kipl::strings::value2string(thresh);
+    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
 
 //    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
 //    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
