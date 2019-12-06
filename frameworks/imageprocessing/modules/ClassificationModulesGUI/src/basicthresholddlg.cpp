@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "basicthresholddlg.h"
 #include "ui_basicthresholddlg.h"
 

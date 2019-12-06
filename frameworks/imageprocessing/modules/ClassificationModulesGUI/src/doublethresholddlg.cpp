@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include "doublethresholddlg.h"
 #include "ui_doublethresholddlg.h"
 
