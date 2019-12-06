@@ -846,6 +846,7 @@ void MuhRecMainWindow::saveCurrentRecon()
     try
     {
         UpdateConfig();
+        m_Config.setAppPath(QCoreApplication::applicationDirPath().toStdString());
         ofstream of(confpath.str().c_str());
         if (!of.is_open())
         {

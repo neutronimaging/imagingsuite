@@ -95,6 +95,7 @@ std::string ReconConfig::WriteXML()
 			std::list<ModuleConfig>::iterator it;
 
             for (auto & module : modules) {
+                module.setAppPath(m_sApplicationPath);
                 str<<module.WriteXML(indent+8);
 			}
 			str<<std::setw(indent+4)<<" "<<"</preprocessing>\n";
