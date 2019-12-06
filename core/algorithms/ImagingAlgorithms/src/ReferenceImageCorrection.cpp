@@ -56,7 +56,8 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     bUseManualThresh(false),
     thresh(0.0f),
     bSaveBG(false),
-    m_Interactor(nullptr)
+    m_Interactor(nullptr),
+    bExtSingleFile(true)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -112,7 +113,7 @@ void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase 
 
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
         kipl::base::TImage<float,2> *dc,
-        bool useBB, bool useExtBB,
+        bool useBB, bool useExtBB, bool useSingleExtBB,
         float dose_OB,
         float dose_DC,
         bool normBB,
@@ -197,6 +198,10 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
     if (useExtBB){
         m_bHaveExternalBlackBody = true;
+
+        bExtSingleFile = useSingleExtBB;
+
+        std::cout << "before PrepareReferencesExtBB()" << std::endl;
         PrepareReferencesExtBB();
     }
 
@@ -333,24 +338,41 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
         if (m_bHaveExternalBlackBody){
 
-//             std::cout << "m_bHaveExternalBlackBody" << std::endl;
-
-            if (m_BB_sample_ext.Size(2)!=img.Size(2)){
-                throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
-            }
+            std::cout << "m_bHaveExternalBlackBody" << std::endl;
             m_BB_slice_ext.Resize(m_OB_BB_ext.Dims());
-            memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
-            fdose_ext_slice = fdose_ext_list[i];
+
+            if (bExtSingleFile)
+            {
+                std::cout << "bExtSingleFile" << std::endl;
+
+                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetDataPtr(), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+                fdose_ext_slice = fdoseS_ext;
+            }
+            else {
+
+                std::cout << "no bExtSingleFile" << std::endl;
+                if (m_BB_sample_ext.Size(2)!=img.Size(2)){
+                    throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
+                }
+                std::cout << "before memcpy" << std::endl;
+                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+                std::cout << "after memcpy" << std::endl;
+                fdose_ext_slice = fdose_ext_list[i];
+
+            }
+
         }
+
+         std::cout << "before memcpy" << std::endl;
 
 
 
 
 
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
-//        std::cout << "before Process: " << i << std::endl;
+        std::cout << "before Process: " << i << std::endl;
         Process(slice,dose[i]);
-//        std::cout << "after process" << std::endl;
+        std::cout << "after process" << std::endl;
         memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
 	}
 
@@ -2965,6 +2987,17 @@ float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
     kipl::math::median(means,img.Size(1),&dose);
     delete [] means;
     return dose;
+
+}
+
+void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s)
+{
+    m_OB_BB_ext.Resize(bb_ext.Dims());
+    m_BB_sample_ext.Resize(bb_sample_ext.Dims());
+    memcpy(m_OB_BB_ext.GetDataPtr(), bb_ext.GetDataPtr(), sizeof(float)*bb_ext.Size());
+    memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
+    fdoseOB_ext = dose;
+    fdoseS_ext = dose_s;
 
 }
 

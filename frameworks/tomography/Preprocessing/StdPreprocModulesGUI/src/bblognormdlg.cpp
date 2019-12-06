@@ -43,7 +43,7 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     nBBextFirstIndex(0),
     min_area(20),
     thresh(0),
-    bExtSingleFile(false)
+    bExtSingleFile(true)
 {
 
     blackbodyname = "somename";

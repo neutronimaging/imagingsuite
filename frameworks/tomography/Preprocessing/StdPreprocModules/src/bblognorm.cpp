@@ -54,7 +54,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     min_area(20),
     thresh(0),
     m_Interactor(interactor),
-    bExtSingleFile(false)
+    bExtSingleFile(true)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -423,52 +423,28 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
     myflat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,0.0f,m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
     SetReferenceImages(mydark,myflat);
 
-//    switch (m_BBOptions){
-//    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
-//        bUseBB = false;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
-//        bUseBB = true;
-//        bUseExternalBB = false;
-//        break;
-//    }
-//    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
-//        bUseBB = false; // to evaluate
-//        bUseExternalBB = true;
-//        break;
-//    }
-//    default: throw ReconException("Unknown BBOption method in RobustLogNorm::Configure",__FILE__,__LINE__);
-
-//    }
-
-
     if (bUseExternalBB && nBBextCount!=0){
-        LoadExternalBBData(roi); // they must be ready for SetReferenceImages
+        std::cout << "loading external BBdata" << std::endl;
+        try {
+             LoadExternalBBData(roi); // they must be ready for SetReferenceImages
+
+        } catch (...) {
+            throw ReconException("Error while loading external BB data", __FILE__, __LINE__);
+
+        }
+
     }
 
+    std::cout << "before SetReferenceImages" << std::endl;
 
-//    if (bUseBB && nBBCount!=0 && nBBSampleCount!=0) {
-//        PrepareBBData();
-//    }
+     m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), bExtSingleFile, fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, m_Config.ProjectionInfo.dose_roi);
 
-     m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, m_Config.ProjectionInfo.dose_roi);
-
+     std::cout << "after SetReferenceImages" << std::endl;
 }
 
 void BBLogNorm::LoadExternalBBData(size_t *roi){
 
+     std::cout << "loading external BBdata" << std::endl;
 
     if (blackbodyexternalname.empty())
         throw ReconException("The pre-processed open beam with BB image mask is empty", __FILE__, __LINE__);
@@ -477,16 +453,40 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
 
 
     kipl::base::TImage<float,2> bb_ext;
-    kipl::base::TImage<float,3> bb_sample_ext;
+
     float dose;
-    float *doselist = new float[nBBextCount];
+
+    std::cout << "before BB ext "<< std::endl;
+
 
     bb_ext = BBExternalLoader(blackbodyexternalname, m_Config, roi, dose);
 //    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
-//    std::cout << "dose: " << dose << std::endl;
-    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex, m_Config, doselist);
+    std::cout << "after BB ext "<< std::endl;
 
-    m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
+    if (bExtSingleFile)
+    {
+        std::cout << "trying to load single bb ext file " << std::endl;
+        kipl::base::TImage<float,2> bb_sample_ext;
+        float dose_s;
+        std::cout << "before BBExternalLoader" << std::endl;
+        std::cout << blackbodysampleexternalname << std::endl;
+        bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, m_Config, roi, dose_s);
+        std::cout << "before m_corrector.SetExternalBBimages" << std::endl;
+        m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, dose_s);
+        std::cout << "after m_corrector.SetExternalBBimages" << std::endl;
+
+    }
+    else
+    {
+        std::cout << "trying to load stack of bb ext file " << std::endl;
+        kipl::base::TImage<float,3> bb_sample_ext;
+        float *doselist = new float[nBBextCount];
+        std::cout << "before BBExternalLoader" << std::endl;
+        bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex, m_Config, doselist);
+        std::cout << "before m_corrector.SetExternalBBimages" << std::endl;
+        m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
+        std::cout << "after m_corrector.SetExternalBBimages" << std::endl;
+    }
 
 }
 
@@ -600,12 +600,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
     ob_bb_param = new float[6];
     memcpy(ob_bb_param, bb_ob_param, sizeof(float)*6);
-//    ob_bb_param[0] = 0.0f;
-//    ob_bb_param[1] = 0.0f;
-//    ob_bb_param[2] = 0.0f;
-//    ob_bb_param[3] = 0.0f;
-//    ob_bb_param[4] = 0.0f;
-//    ob_bb_param[5] = 0.0f;
+
 
 
     // load sample images with BBs and sample images
