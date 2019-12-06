@@ -54,8 +54,9 @@ private slots:
     void on_checkBox_thresh_stateChanged(int arg1);
     void on_pushButton_filenameOBBB_clicked();
     void on_pushButton_filenameBB_clicked();
+    void on_check_singleext_clicked(bool checked);
 
-    void on_checkBox_clicked(bool checked);
+    void on_check_singleext_stateChanged(int arg1);
 
 private:
     virtual void ApplyParameters();

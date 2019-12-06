@@ -244,11 +244,7 @@ void BBLogNormDlg::UpdateDialog(){
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
 
-    if (bExtSingleFile)
-        ui->check_singleext->setChecked(true);
-    else
-        ui->check_singleext->setChecked(false);
-
+    ui->check_singleext->setChecked(bExtSingleFile);
 
 //    std::cout << "update dialog" << std::endl;
 
@@ -782,7 +778,7 @@ void BBLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
 void BBLogNormDlg::on_button_OB_BB_ext_clicked()
 {
     QString ob_bb_ext_dir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the open beam images with BB",
+                                      "Select the open beam images with BB",
                                                    ui->edit_OBBB_ext->text());
 
     if (!ob_bb_ext_dir.isEmpty()) {
@@ -808,25 +804,38 @@ void BBLogNormDlg::on_button_OB_BB_ext_clicked()
 void BBLogNormDlg::on_button_BBexternal_path_clicked()
 {
     QString sample_bb_ext_dir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the open beam images with BB",
+                                      "Select one sample beam images with BB",
                                                    ui->edit_BB_external->text());
+    std::cout << "bExtSingleFile " <<  bExtSingleFile << std::endl;
+
 
     if (!sample_bb_ext_dir.isEmpty()) {
+
         std::string pdir=sample_bb_ext_dir.toStdString();
+        std::cout << pdir << std::endl;
+        if (bExtSingleFile)
+        {
+            std::cout << "bExtSingleFile" << std::endl;
+            ui->edit_BB_external->setText(QString::fromStdString(pdir));
+        }
+        else {
 
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
+            #ifdef _MSC_VER
+            const char slash='\\';
+            #else
+            const char slash='/';
+            #endif
+            ptrdiff_t pos=pdir.find_last_of(slash);
 
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        std::string fname=pdir.substr(pos+1);
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
+            QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+            std::string fname=pdir.substr(pos+1);
+            kipl::io::DirAnalyzer da;
+            kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
+            ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
+
+        }
+
     }
 
 
@@ -880,10 +889,23 @@ void BBLogNormDlg::on_pushButton_filenameBB_clicked()
     ui->edit_sample_BB_mask->setText(ui->edit_OB_BB_mask->text());
 }
 
-void BBLogNormDlg::on_checkBox_clicked(bool checked)
+
+void BBLogNormDlg::on_check_singleext_clicked(bool checked)
 {
-    if (checked)
+    bExtSingleFile = checked;
+    std::cout<< bExtSingleFile << std::endl;
+
+}
+
+void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
+{
+    if (ui->check_singleext->isChecked())
     {
-        std::cout << "single file option is clicked" << std::endl;
+        bExtSingleFile = true;
+        std::cout  << bExtSingleFile << std::endl;
+    }
+    else {
+        bExtSingleFile = false;
+        std::cout  << bExtSingleFile << std::endl;
     }
 }
