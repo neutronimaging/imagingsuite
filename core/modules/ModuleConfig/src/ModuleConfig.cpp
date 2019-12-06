@@ -9,9 +9,10 @@
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 
-ModuleConfig::ModuleConfig(std::string appPath) :
+ModuleConfig::ModuleConfig(const std::string &appPath) :
 	logger("ModuleConfig"),
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
@@ -24,6 +25,7 @@ const std::string ModuleConfig::WriteXML(int indent)
 {
 	std::ostringstream str;
 
+    kipl::strings::filenames::CheckPathSlashes(m_sSharedObject,false);
 	str<<std::setw(indent)<<" "<<"<module>\n"
 		<<std::setw(indent+4)<<" "<<"<modulename>"<<m_sModule<<"</modulename>\n"
         <<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_NameManager.stripLibName(m_sSharedObject)<<"</sharedobject>\n"

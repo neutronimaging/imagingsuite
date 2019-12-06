@@ -125,7 +125,7 @@ case kipl::io::NeXus16bits  :           s="NeXus16bits";  break;
 case kipl::io::PNG8bits     :           s="PNG8bits";     break;
 case kipl::io::PNG16bits    :           s="PNG16bits";    break;
 
-default : throw kipl::base::KiplException("Unknown file type",__FILE__,__LINE__); break;
+//default : throw kipl::base::KiplException("Unknown file type",__FILE__,__LINE__); break;
 }
 
 return s;

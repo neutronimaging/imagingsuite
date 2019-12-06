@@ -1,9 +1,4 @@
-/*
- * RemoveBackground.h
- *
- *  Created on: Nov 11, 2012
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef REMOVEBACKGROUND_H_
 #define REMOVEBACKGROUND_H_

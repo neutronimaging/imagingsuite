@@ -14,6 +14,7 @@
 #include <strings/miscstring.h>
 
 TranslateProjectionModule::TranslateProjectionModule() : KiplProcessModuleBase("TranslateProjectionModule",false),
+    m_Config(""),
     m_fSlope(1.0f),
     m_fIntercept(0.0f),
     m_eSampler(ImagingAlgorithms::TranslateLinear),

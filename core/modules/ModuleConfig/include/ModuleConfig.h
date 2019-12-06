@@ -22,7 +22,7 @@ protected:
     kipl::logging::Logger logger; ///< Logging for the Module config objects
 
 public:
-    ModuleConfig(std::string appPath);           ///< Default constructor
+    ModuleConfig(const std::string &appPath);           ///< Default constructor
     std::string m_sSharedObject;  ///< File name of the shared object file containing the module
     std::string m_sModule;        ///< Name of the module
 	bool m_bActive;

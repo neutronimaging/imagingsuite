@@ -15,6 +15,7 @@
 #include <base/textractor.h>
 #include <io/DirAnalyzer.h>
 #include <datasetbase.h>
+#include <strings/filenames.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -37,6 +38,7 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     button_toggleLoggerDlg(new QPushButton("Logger",this)),
     m_Engine(nullptr),
     m_OriginalHistogram(1024UL,"Original histogram"),
+    m_config(QCoreApplication::applicationDirPath().toStdString()),
     m_ModuleConfigurator(&m_config),
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
@@ -399,7 +401,7 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
                 float *pRes=m_SliceResult.GetDataPtr();
                 float *pImg=m_SliceOriginal.GetDataPtr();
 
-                for (int i=0; i<diff.Size(); i++) {
+                for (size_t i=0; i<diff.Size(); i++) {
                         pDiff[i]=pRes[i]-pImg[i];
                 }
                 ui->imageviewer_difference->set_image(pDiff,diff.Dims());
@@ -417,7 +419,7 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
 void KipToolMainWindow::on_actionNew_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"New config requested");
-    KiplProcessConfig cfg;
+    KiplProcessConfig cfg(QCoreApplication::applicationDirPath().toStdString());
     m_config = cfg;
     ui->imageviewer_original->clear_viewer();
     ui->imageviewer_processed->clear_viewer();
@@ -544,6 +546,7 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
     logger(kipl::logging::Logger::LogMessage,"Start processing");
 
     UpdateConfig();
+    m_config.setAppPath(QCoreApplication::applicationDirPath().toStdString());
     QString qfname=QDir::homePath()+"/.imagingtools/CurrentKIPToolConfig.xml";
     SaveConfiguration(qfname);
 //  Start the processing

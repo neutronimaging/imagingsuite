@@ -7,6 +7,7 @@
 #include <ParameterHandling.h>
 #include <MorphSpotClean.h>
 #include <base/timage.h>
+#include <base/textractor.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <ImagingException.h>

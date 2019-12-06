@@ -17,6 +17,7 @@
 KiplEngine::KiplEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
     logger(name),
     m_Interactor(interactor),
+    m_Config(""),
     m_InputImage(nullptr)
 {
 }

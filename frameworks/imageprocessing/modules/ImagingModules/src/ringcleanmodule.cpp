@@ -9,6 +9,7 @@
 
 RingCleanModule::RingCleanModule() : KiplProcessModuleBase("RingCleanModule",false),
     m_StripeFilter(nullptr),
+    m_Config(""),
     wname("daub15"),
     scale(3),
     sigma(0.05),
