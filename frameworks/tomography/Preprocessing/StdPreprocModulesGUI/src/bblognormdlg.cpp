@@ -451,48 +451,6 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
 }
 
-//void BBLogNormDlg::on_button_BBroi_clicked()
-//{
-//    QRect rect=ui->ob_bb_Viewer->get_marked_roi();
-
-//    if (rect.width()*rect.height()!=0)
-//    {
-////        ui->spinx0BBroi->blockSignals(true);
-////        ui->spiny0BBroi->blockSignals(true);
-////        ui->spinx1BBroi->blockSignals(true);
-////        ui->spiny1BBroi->blockSignals(true);
-//        ui->spinx0BBroi->setValue(rect.x());
-//        ui->spiny0BBroi->setValue(rect.y());
-//        ui->spinx1BBroi->setValue(rect.x()+rect.width());
-//        ui->spiny1BBroi->setValue(rect.y()+rect.height());
-////        ui->spinx0BBroi->blockSignals(false);
-////        ui->spiny0BBroi->blockSignals(false);
-////        ui->spinx1BBroi->blockSignals(false);
-////        ui->spiny1BBroi->blockSignals(false);
-//        UpdateBBROI();
-//    }
-//}
-
-//void BBLogNormDlg::UpdateBBROI()
-//{
-//    QRect rect;
-
-//    rect.setCoords(ui->spinx0BBroi->value(),
-//                   ui->spiny0BBroi->value(),
-//                   ui->spinx1BBroi->value(),
-//                   ui->spiny1BBroi->value());
-
-//    ui->ob_bb_Viewer->set_rectangle(rect,QColor("green").light(),0);
-//}
-
-//void BBLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
-//{
-//    UpdateBBROI();
-//}
-
-//void BBLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-//void BBLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-//void BBLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
 
 
 
@@ -620,60 +578,6 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
 }
 
-//void BBLogNormDlg::on_button_BBdose_clicked()
-//{
-//    QRect rect=ui->sample_bb_Viewer->get_marked_roi();
-
-//    if (rect.width()*rect.height()!=0)
-//    {
-//        ui->spinx0BBdose->blockSignals(true);
-//        ui->spiny0BBdose->blockSignals(true);
-//        ui->spinx1BBdose->blockSignals(true);
-//        ui->spiny1BBdose->blockSignals(true);
-//        ui->spinx0BBdose->setValue(rect.x());
-//        ui->spiny0BBdose->setValue(rect.y());
-//        ui->spinx1BBdose->setValue(rect.x()+rect.width());
-//        ui->spiny1BBdose->setValue(rect.y()+rect.height());
-//        ui->spinx0BBdose->blockSignals(false);
-//        ui->spiny0BBdose->blockSignals(false);
-//        ui->spinx1BBdose->blockSignals(false);
-//        ui->spiny1BBdose->blockSignals(false);
-//        UpdateDoseROI();
-//    }
-//}
-
-
-//void BBLogNormDlg::UpdateDoseROI(){
-//    QRect rect;
-
-//    rect.setCoords(ui->spinx0BBdose->value(),
-//                   ui->spiny0BBdose->value(),
-//                   ui->spinx1BBdose->value(),
-//                   ui->spiny1BBdose->value());
-
-//    ui->sample_bb_Viewer->set_rectangle(rect,QColor("red"),0);
-
-//}
-
-//void BBLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
 
 
 void BBLogNormDlg::on_errorButton_clicked()
@@ -894,6 +798,8 @@ void BBLogNormDlg::on_check_singleext_clicked(bool checked)
 {
     bExtSingleFile = checked;
     std::cout<< bExtSingleFile << std::endl;
+    // triggers the re-browsing of the bb ext file
+    ui->button_BBexternal_path->click();
 
 }
 
@@ -908,4 +814,5 @@ void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
         bExtSingleFile = false;
         std::cout  << bExtSingleFile << std::endl;
     }
+
 }

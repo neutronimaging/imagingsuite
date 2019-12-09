@@ -463,7 +463,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
         float dose_s;
         bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, m_Config, roi, dose_s);
         m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, dose_s);
-        kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
+//        kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
 
     }
     else
