@@ -1,11 +1,12 @@
 //<LICENSE>
 
-#ifndef COUNTNANS_H_
-#define COUNTNANS_H_
+#ifndef COUNTNANS_H
+#define COUNTNANS_H
 
+#include "inspectormodules_global.h"
 #include <PreprocModuleBase.h>
 
-class CountNANs: public PreprocModuleBase {
+class INSPECTORMODULESSHARED_EXPORT CountNANs: public PreprocModuleBase {
 public:
 	CountNANs();
 	virtual ~CountNANs();

@@ -14,7 +14,6 @@
 #ifndef _SPOTCLEAN2_H_
 #define _SPOTCLEAN2_H_
 
-//#include "../src/stdafx.h"
 #include "StdPreprocModules_global.h"
 #include <PreprocModuleBase.h>
 #include <base/timage.h>
@@ -53,7 +52,7 @@ public:
 
 	virtual std::string Version() {
 		ostringstream s;
-		s<<m_sModuleName<<" ("<<std::max(kipl::strings::VersionNumber("$Rev$"), SourceVersion())<<"), "<<PreprocModuleBase::Version();
+        s<<m_sModuleName<<" ("<<SourceVersion()<<"), "<<PreprocModuleBase::Version();
 
 		return s.str();
 	}

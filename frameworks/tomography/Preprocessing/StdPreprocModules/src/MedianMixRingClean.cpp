@@ -1,9 +1,4 @@
-/*
- * MedianMixRingClean.cpp
- *
- *  Created on: Aug 4, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #include "../include/StdPreprocModules_global.h"
 

@@ -1,14 +1,4 @@
-//
-// AdaptiveFilter.h
-//
-//  Created on: May 25, 2011
-//      Author: anders
-//
-//  Revision information
-//    Checked in by $author$
-//    Check-in date $date$
-//    svn Revision  $revision$
-//
+//<LICENSE>
 
 #ifndef ADAPTIVEFILTER_H_
 #define ADAPTIVEFILTER_H_

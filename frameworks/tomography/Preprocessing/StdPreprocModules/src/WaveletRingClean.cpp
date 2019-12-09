@@ -1,10 +1,5 @@
-/*
- * WaveletRingClean.cpp
- *
- *  Created on: Aug 9, 2011
- *      Author: anders
- */
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 #include "../include/WaveletRingClean.h"
 
@@ -24,7 +19,14 @@ WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interacto
 	m_bParallelProcessing(false),
 	m_eCleanMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
-
+    publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
+                                        "Stripe and ring artifact removal with combined wavelet-Fourier filtering",
+                                        "Optics express",
+                                        2009,
+                                        17,
+                                        10,
+                                        "8567--8591",
+                                        "10.1364/oe.17.008567"));
 }
 
 WaveletRingClean::~WaveletRingClean() 

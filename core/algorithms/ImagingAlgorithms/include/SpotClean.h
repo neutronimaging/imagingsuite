@@ -50,8 +50,8 @@ public:
 	double ChangeStatistics(kipl::base::TImage<float,2> img);
 	virtual std::string Version() {
 		ostringstream s;
-		//s<<"ImagingAlgorithms::SpotClean ("<<std::max(kipl::strings::VersionNumber("$Rev: 1384 $"), SourceVersion())<<")";
-		s<<"ImagingAlgorithms::SpotClean ("<<std::max(kipl::strings::VersionNumber("$Rev: 1384 $"), 0)<<")";
+
+        s<<"ImagingAlgorithms::SpotClean ("<<0<<")";
 
 		return s.str();
 	}

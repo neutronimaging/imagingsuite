@@ -16,6 +16,7 @@
 
 #include <facestyles.h>
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 #include <utilities/nodelocker.h>
 
 #include <ReconException.h>
@@ -125,7 +126,7 @@ int RunOffline(QApplication *app)
           try {
                   ReconFactory factory;
                   logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
-                  ReconConfig config;
+                  ReconConfig config("");
                   config.LoadConfigFile(args[2],"reconstructor");
                   config.GetCommandLinePars(args);
                   config.MatrixInfo.bAutomaticSerialize=true;

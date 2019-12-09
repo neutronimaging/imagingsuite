@@ -49,7 +49,12 @@ int ProcessModuleBase::Process(kipl::base::TImage<float,3> &img, std::map<std::s
 	res=ProcessCore(img,parameters);
 	timer.Toc();
 
-	return res;
+    return res;
+}
+
+const std::vector<Publication> &ProcessModuleBase::publicationList() const
+{
+    return publications;
 }
 
 int ProcessModuleBase::ProcessCore(kipl::base::TImage<float,2> &UNUSED(img), std::map<std::string,std::string> & UNUSED(parameters))

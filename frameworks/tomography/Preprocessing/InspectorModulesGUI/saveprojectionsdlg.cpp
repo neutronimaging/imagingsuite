@@ -4,6 +4,7 @@
 #include "ui_saveprojectionsdlg.h"
 #include "QFileDialog"
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 #include <ParameterHandling.h>
 
 SaveProjectionsDlg::SaveProjectionsDlg(QWidget *parent) :

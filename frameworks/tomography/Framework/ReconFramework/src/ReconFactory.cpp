@@ -1,15 +1,4 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 #include "stdafx.h"
 #include "../include/ReconFactory.h"
 #include "../include/ReconConfig.h"
@@ -52,15 +41,15 @@ ReconEngine * ReconFactory::BuildEngine(ReconConfig &config, kipl::interactors::
 	std::list<ModuleConfig>::iterator it;
 
 	// Setting up the preprocessing modules
-    int i=0;
-    for (it=config.modules.begin(); it!=config.modules.end(); it++, i++) {
-		if (it->m_bActive==true) {
-            ModuleItem *module=nullptr;
-			try {
-                module=new ModuleItem("muhrec",it->m_sSharedObject,it->m_sModule,interactor);
 
-				module->GetModule()->Configure(config,it->parameters);
-				engine->AddPreProcModule(module);
+    for (auto &module : config.modules) {
+        if (module.m_bActive==true) {
+            ModuleItem *moduleItem=nullptr;
+			try {
+                moduleItem=new ModuleItem("muhrec",module.m_sSharedObject,module.m_sModule,interactor);
+
+                moduleItem->GetModule()->Configure(config,module.parameters);
+                engine->AddPreProcModule(moduleItem);
 			}
 			catch (ReconException &e) {
 				throw ReconException(e.what(),__FILE__,__LINE__);

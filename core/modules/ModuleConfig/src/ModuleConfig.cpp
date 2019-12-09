@@ -3,19 +3,22 @@
 #include "stdafx.h"
 #include "../include/ModuleConfig.h"
 #include "../include/ModuleException.h"
+#include "../include/modulelibnamemanger.h"
 #include <sstream>
 #include <iomanip>
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 
-ModuleConfig::ModuleConfig(void) :
+ModuleConfig::ModuleConfig(const std::string &appPath) :
 	logger("ModuleConfig"),
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
     m_bActive(true),
     m_bThreading(false)
+    m_NameManager(appPath)
 {
 }
 
@@ -23,17 +26,19 @@ const std::string ModuleConfig::WriteXML(int indent)
 {
 	std::ostringstream str;
 
+    kipl::strings::filenames::CheckPathSlashes(m_sSharedObject,false);
 	str<<std::setw(indent)<<" "<<"<module>\n"
 		<<std::setw(indent+4)<<" "<<"<modulename>"<<m_sModule<<"</modulename>\n"
-		<<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_sSharedObject<<"</sharedobject>\n"
+        <<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_NameManager.stripLibName(m_sSharedObject)<<"</sharedobject>\n"
         <<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n"
         <<std::setw(indent+4)<<" "<<"<threading>"<<(m_bThreading ? "true":"false")<<"</threading>\n";
+
 	if (!parameters.empty()) {
 		str<<std::setw(indent+4)<<" "<<"<parameters>\n";
 		std::map<std::string,std::string>::iterator it;
 
-		for (it=parameters.begin(); it!=parameters.end(); it++) {
-			str<<std::setw(indent+8)<<" "<<"<"<<it->first<<">"<<it->second<<"</"<<it->first<<">\n";
+        for (auto &parameter :parameters) {
+            str<<std::setw(indent+8)<<" "<<"<"<<parameter.first<<">"<<parameter.second<<"</"<<parameter.first<<">\n";
 		}
 
 		str<<std::setw(indent+4)<<" "<<"</parameters>\n";
@@ -46,6 +51,7 @@ const std::string ModuleConfig::WriteXML(int indent)
 void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 {
 	std::ostringstream msg;
+
 	parameters.clear();
 
 	const xmlChar *name, *value;
@@ -77,7 +83,7 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 				m_sModule=sValue;
 			}
 			if (sName=="sharedobject") {
-				m_sSharedObject=sValue;
+                m_sSharedObject=m_NameManager.generateLibName(sValue);
 			}
 			if (sName=="active") {
 				m_bActive=kipl::strings::string2bool(sValue);
@@ -127,5 +133,10 @@ std::string ModuleConfig::PrintParameters()
 		s<<std::setw(16)<<it->first<<" = "<<it->second<<"\n";
 	}
 
-	return s.str();
+    return s.str();
+}
+
+void ModuleConfig::setAppPath(const std::string &path)
+{
+    m_NameManager.setAppPath(path);
 }

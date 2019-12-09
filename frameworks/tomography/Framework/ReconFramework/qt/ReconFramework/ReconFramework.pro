@@ -38,7 +38,8 @@ HEADERS += \
     ../../include/PreprocModuleBase.h \
     ../../include/ModuleItem.h \
     ../../include/ReconFramework_global.h \
-    ../../include/BackProjectorModuleBase.h
+    ../../include/BackProjectorModuleBase.h \
+    ../../src/stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

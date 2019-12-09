@@ -5,6 +5,8 @@
 
 #include "ModuleConfig_global.h"
 
+#include "publication.h"
+
 #include <string>
 #include <map>
 
@@ -70,6 +72,7 @@ public:
 		return s.str();
 	}
 
+    const std::vector<Publication> & publicationList() const;
 protected:
 
     /// Method that executes the algorithmic core of the processing for 2D images.
@@ -92,6 +95,7 @@ protected:
 
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     bool bThreaded;
+    std::vector<Publication> publications;
 };
 
 

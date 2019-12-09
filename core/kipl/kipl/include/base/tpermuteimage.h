@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef _TPERMUTEIMAGE_H_
-#define _TPERMUTEIMAGE_H_
+#ifndef TPERMUTEIMAGE_H
+#define TPERMUTEIMAGE_H
 
 #include "timage.h"
 #include "kiplenums.h"

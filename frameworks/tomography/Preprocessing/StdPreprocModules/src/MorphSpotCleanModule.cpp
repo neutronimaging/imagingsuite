@@ -1,4 +1,5 @@
 //<LICENSE>
+//#include "stdafx.h"
 #include <thread>
 #include <cstdlib>
 #include <functional>
@@ -33,6 +34,23 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_bThreading(false),
     m_bTranspose(false)
 {
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
+
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner","C. Carminati"}),
+                                       "MuhRec software",
+                                       "Zenodo",
+                                       2019,
+                                       1,
+                                       1,
+                                       "no pages",
+                                       "10.5281/zenodo.1117850"));
 }
 
 MorphSpotCleanModule::~MorphSpotCleanModule()

@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "viewgeometrylistdialog.h"
 #include "ui_viewgeometrylistdialog.h"
 
@@ -22,8 +23,8 @@
 class ConfigListItem : public QListWidgetItem
 {
 public:
-    ConfigListItem() {}
-    ConfigListItem(const ConfigListItem &item) : QListWidgetItem(item) {}
+    ConfigListItem() : config("") {}
+    ConfigListItem(const ConfigListItem &item) : QListWidgetItem(item),config("") {}
 
     kipl::base::TImage<float,2> image;
     ReconConfig config;
@@ -36,8 +37,8 @@ ViewGeometryListDialog::ViewGeometryListDialog(QWidget *parent) :
     logger("ViewGeometryListDialog"),
     ui(new Ui::ViewGeometryListDialog),
     m_eChangeConfigFields(ConfigField_None),
-    m_fTilt(0.0f),
-    m_fPivot(0.0f)
+    m_fTilt(0.0),
+    m_fPivot(0.0)
 {
     ui->setupUi(this);
     ui->listWidget->setIconSize(QSize(150,150));

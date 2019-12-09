@@ -1,15 +1,4 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-12-27 12:16:26 +0100 (Thu, 27 Dec 2012) $
-// $Rev: 1420 $
-// $Id: AddModuleDialog.cpp 1420 2012-12-27 11:16:26Z kaestner $
-//
-
+//<LICENSE>
 
 #include "stdafx.h"
 #include "QtModuleConfigure_global.h"
@@ -23,6 +12,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QDir>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -43,7 +33,8 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_Button_OK("OK"),
     m_Button_Cancel("Cancel"),
     m_sApplication("muhrec"),
-    m_sApplicationPath("")
+    m_sApplicationPath(""),
+    m_ModuleConfig("")
 {
     setWindowTitle(tr("Add a module"));
     setLayout(&m_Dlg_layout);
@@ -89,35 +80,45 @@ int AddModuleDialog::exec()
     msg<<"appPath "<<appPath.toStdString();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    QString fileName=QString::fromStdString(m_sDefaultModuleSource);
+    std::string fileName=m_sDefaultModuleSource;
+    QString qfileName = QString::fromStdString(fileName);
     msg.str(""); msg<<"default module "<<m_sDefaultModuleSource;
-
 
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if (fileName.isEmpty()) {
+    if (fileName.empty()) {
         #ifdef Q_OS_WIN
-            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+
         #else
-            appPath += +"/../Frameworks";
-            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+            QDir dir;
+
+            if (!dir.exists(appPath+"/../Frameworks"))
+                appPath += "/../Frameworks";
+
+            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+
         #endif
     }
 
-    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
-    if (fileName.isEmpty()) {
-        logger(kipl::logging::Logger::LogError,"No file selected");
+    logger(kipl::logging::Logger::LogMessage,qfileName.toStdString());
+    if (qfileName.isEmpty()) {
+        QMessageBox::warning(this,"Warning","No module library file was chosen");
+
+        logger(kipl::logging::Logger::LogWarning,"No file selected");
         return 0;
     }
 
-    m_Modulefile_edit.setText(fileName);
-
-    if (UpdateModuleCombobox(fileName)!=0)
+    if (UpdateModuleCombobox(qfileName)!=0)
     {
         return QDialog::Rejected;
     }
+    m_Modulefile_edit.setText(qfileName);
 
-    m_ModuleConfig.m_sSharedObject=fileName.toStdString();
+    fileName = qfileName.toStdString();
+    kipl::strings::filenames::CheckPathSlashes(fileName,false);
+    m_ModuleConfig.m_sSharedObject=fileName;
+
     m_ModuleConfig.m_sModule=modulelist.begin()->first;
     m_ModuleConfig.parameters=modulelist.begin()->second;
     m_ModuleConfig.m_bActive=true;
@@ -125,8 +126,23 @@ int AddModuleDialog::exec()
     return QDialog::exec();
 }
 
-int AddModuleDialog::UpdateModuleCombobox(QString fname)
+int AddModuleDialog::UpdateModuleCombobox(QString &fname)
 {
+    QDir dir;
+
+    if (!dir.exists(fname))
+    {
+        logger.warning("Module file doesn't exist");
+        QFileDialog dlg(this,"Select a module file",QCoreApplication::applicationDirPath());
+
+        auto res = dlg.exec();
+
+        if (res!=QDialog::Accepted)
+            return 0;
+
+        fname = dlg.selectedFiles().first();
+    }
+
     std::ostringstream msg;
     try {
         modulelist.clear();
