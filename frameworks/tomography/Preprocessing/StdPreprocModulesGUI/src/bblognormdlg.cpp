@@ -256,28 +256,13 @@ void BBLogNormDlg::UpdateParameters(){
     nBBFirstIndex = ui->spinFirstOBBB->value();
     nBBCount = ui->spinCountsOBBB->value();
     blackbodyname = ui->edit_OB_BB_mask->text().toStdString();
-//    BBroi[0] = ui->spinx0BBroi->value();
-//    BBroi[1] = ui->spiny0BBroi->value();
-//    BBroi[2] = ui->spinx1BBroi->value();
-//    BBroi[3] = ui->spiny1BBroi->value();
     ui->roiwidget_BB->getROI(BBroi);
 
     nBBSampleFirstIndex =ui->spinFirstsampleBB->value();
     nBBSampleCount = ui->spinCountsampleBB->value();
     blackbodysamplename = ui->edit_sample_BB_mask->text().toStdString();
-//    doseBBroi[0] = ui->spinx0BBdose->value();
-//    doseBBroi[1] = ui->spiny0BBdose->value();
-//    doseBBroi[2] = ui->spinx1BBdose->value();
-//    doseBBroi[3] = ui->spiny1BBdose->value();
-    ui->roiwidget_dose->getROI(doseBBroi);
 
-//    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
-//        bUseNormROIBB = true;
-//        std::cout << "----------------" << bUseNormROIBB << std::endl;
-//    } else {
-//        bUseNormROIBB = false;
-//        std::cout << "---------------------" << bUseNormROIBB << std::endl;
-//    }
+    ui->roiwidget_dose->getROI(doseBBroi);
 
     radius = static_cast<size_t>(ui->spinRadius->value());
     string2enum(ui->combo_averagingMethod->currentText().toStdString(), m_ReferenceAverageMethod);
@@ -301,9 +286,6 @@ void BBLogNormDlg::UpdateParameters(){
     thresh = ui->spinThresh->value();
     bExtSingleFile = ui->check_singleext->isChecked();
 
-//    std::cout << "update parameters " << std::endl;
-//    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
-//    std::cout << blackbodyname << std::endl;
 
 }
 
@@ -326,9 +308,7 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["BBOption"] = enum2string(m_BBOptions);
     parameters["InterpolationMethod"] = enum2string(m_InterpMethod);
     parameters["tau"] = kipl::strings::value2string(tau);
-//    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
-//    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
@@ -345,12 +325,6 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["thresh"]= kipl::strings::value2string(thresh);
     parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
 
-//    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
-//    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
-
-
-
-//    std::cout << "update parameters list" << std::endl;
 
 }
 
@@ -688,18 +662,6 @@ void BBLogNormDlg::on_button_OB_BB_ext_clicked()
     if (!ob_bb_ext_dir.isEmpty()) {
         std::string pdir=ob_bb_ext_dir.toStdString();
 
-//        #ifdef _MSC_VER
-//        const char slash='\\';
-//        #else
-//        const char slash='/';
-//        #endif
-//        ptrdiff_t pos=pdir.find_last_of(slash);
-
-//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-//        std::string fname=pdir.substr(pos+1);
-//        kipl::io::DirAnalyzer da;
-//        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
         ui->edit_OBBB_ext->setText(QString::fromStdString(pdir)); // I want the entire filename
     }
 
@@ -716,10 +678,8 @@ void BBLogNormDlg::on_button_BBexternal_path_clicked()
     if (!sample_bb_ext_dir.isEmpty()) {
 
         std::string pdir=sample_bb_ext_dir.toStdString();
-        std::cout << pdir << std::endl;
         if (bExtSingleFile)
         {
-            std::cout << "bExtSingleFile" << std::endl;
             ui->edit_BB_external->setText(QString::fromStdString(pdir));
         }
         else {
@@ -797,7 +757,6 @@ void BBLogNormDlg::on_pushButton_filenameBB_clicked()
 void BBLogNormDlg::on_check_singleext_clicked(bool checked)
 {
     bExtSingleFile = checked;
-    std::cout<< bExtSingleFile << std::endl;
     // triggers the re-browsing of the bb ext file
     ui->button_BBexternal_path->click();
 
@@ -808,11 +767,9 @@ void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
     if (ui->check_singleext->isChecked())
     {
         bExtSingleFile = true;
-        std::cout  << bExtSingleFile << std::endl;
     }
     else {
         bExtSingleFile = false;
-        std::cout  << bExtSingleFile << std::endl;
     }
 
 }

@@ -248,6 +248,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="check_singleext">
+           <property name="text">
+            <string>Single File</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="horizontalLayoutWidget_9">

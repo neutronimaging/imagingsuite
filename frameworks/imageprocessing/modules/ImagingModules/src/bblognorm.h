@@ -88,6 +88,7 @@ protected:
     bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
     bool bPBvariante; /// boolean value to enable the full formulation of the correction by PB. It is actually the only one used
     bool bSaveBG; /// boolean value to enable the option of saving the computed BGs
+    bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
 
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
