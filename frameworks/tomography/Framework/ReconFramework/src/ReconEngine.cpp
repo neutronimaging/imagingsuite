@@ -1,5 +1,4 @@
 //<LICENSE>
-
 #include "stdafx.h"
 #include <iostream>
 #include <fstream>
@@ -11,6 +10,8 @@
 #include <strings/miscstring.h>
 #include <base/textractor.h>
 #include <algorithms/datavalidator.h>
+#include <io/io_nexus.h>
+#include <io/io_stack.h>
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
@@ -20,8 +21,12 @@
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
 
+#include <QDebug>
+
+
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
+    m_Config(""),
 	m_FirstSlice(0),
     m_ProjectionMargin(0),
 	m_ProjectionReader(interactor),
@@ -92,6 +97,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
 	m_Config=config;
 
+    qDebug() << "ReconEngine::SetConfig"<<m_Config.appPath().c_str();
 
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
     std::string fname,ext;

@@ -1,14 +1,5 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-11-11 13:54:35 +0100 (Sun, 11 Nov 2012) $
-// $Rev: 1400 $
-// $Id: AddModuleDialog.h 1400 2012-11-11 12:54:35Z kaestner $
-//
+//<LICENSE>
+
 #ifndef __ADDMODULEDIALOG_H
 #define __ADDMODULEDIALOG_H
 

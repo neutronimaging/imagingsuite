@@ -12,6 +12,7 @@
 
 AdaptiveFilter::AdaptiveFilter(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("AdaptiveFilter",interactor),
+    mConfig(""),
     pLUT(nullptr),
     m_nFilterSize(7),
     m_fEccentricityMin(0.3f),

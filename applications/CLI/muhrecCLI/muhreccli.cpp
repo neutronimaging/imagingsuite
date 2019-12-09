@@ -17,6 +17,7 @@
 #include <ModuleException.h>
 
 #include <base/KiplException.h>
+#include <strings/filenames.h>
 
 #include "muhreccli.h"
 
@@ -44,7 +45,7 @@ int MuhRecCLI::exec()
             logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in CLI mode");
             try {
                 logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
-                ReconConfig config;
+                ReconConfig config(QCoreApplication::applicationDirPath().toStdString());
 
                 config.LoadConfigFile(args[2],"reconstructor");
                 config.GetCommandLinePars(args);

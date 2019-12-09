@@ -2,7 +2,7 @@
 
 #ifndef SAVEPROJECTIONS_H_
 #define SAVEPROJECTIONS_H_
-
+#include "inspectormodules_global.h"
 #include <string>
 
 #include <PreprocModuleBase.h>
@@ -10,7 +10,7 @@
 
 #include <interactors/interactionbase.h>
 
-class SaveProjections : public PreprocModuleBase
+class INSPECTORMODULESSHARED_EXPORT SaveProjections : public PreprocModuleBase
 {
 public:
     SaveProjections(kipl::interactors::InteractionBase *interactor=nullptr);

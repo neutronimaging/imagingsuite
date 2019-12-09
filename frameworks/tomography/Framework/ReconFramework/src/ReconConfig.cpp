@@ -11,9 +11,11 @@
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
-ReconConfig::ReconConfig(void) :  
-	ConfigBase("ReconConfig")
+ReconConfig::ReconConfig(const std::string &appPath) :
+    ConfigBase("ReconConfig",appPath),
+    backprojector(appPath)
 {
 
 }
@@ -35,12 +37,13 @@ ReconConfig::ReconConfig(const ReconConfig &config) :
 
 const ReconConfig & ReconConfig::operator=(const ReconConfig &config)
 {
-	UserInformation=config.UserInformation;
-	System=config.System;
-	ProjectionInfo=config.ProjectionInfo;
-	MatrixInfo=config.MatrixInfo;
-	modules=config.modules;
-	backprojector=config.backprojector;
+    ConfigBase::operator=(config);
+    UserInformation  = config.UserInformation;
+    System           = config.System;
+    ProjectionInfo   = config.ProjectionInfo;
+    MatrixInfo       = config.MatrixInfo;
+    modules          = config.modules;
+    backprojector    = config.backprojector;
 
 	return *this;
 }
@@ -91,8 +94,9 @@ std::string ReconConfig::WriteXML()
 			str<<std::setw(indent+4)<<" "<<"<preprocessing>\n";
 			std::list<ModuleConfig>::iterator it;
 
-			for (it=modules.begin(); it!=modules.end(); it++) {
-				str<<it->WriteXML(indent+8);
+            for (auto & module : modules) {
+                module.setAppPath(m_sApplicationPath);
+                str<<module.WriteXML(indent+8);
 			}
 			str<<std::setw(indent+4)<<" "<<"</preprocessing>\n";
 		}
@@ -348,7 +352,7 @@ std::string ReconConfig::SanitySlicesCheck()
 {
     int fS = static_cast<int>(ProjectionInfo.roi[1]);
     int lS = static_cast<int>(ProjectionInfo.roi[3]);
-    string msg;
+    std::string msg;
 
     if ((lS-fS)>=200)
     {
@@ -363,7 +367,7 @@ std::string ReconConfig::SanitySlicesCheck()
 
 }
 
-string ReconConfig::SanityMessage(bool mess)
+std::string ReconConfig::SanityMessage(bool mess)
 {
     std::ostringstream msg;
     if (mess)
@@ -476,8 +480,8 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
         					sValue="Empty";
 						sName=reinterpret_cast<const char *>(name);
 						if (sName=="module") {
-							ModuleConfig module;
-							module.ParseModule(reader);
+                            ModuleConfig module(m_sApplicationPath);
+                            module.ParseModule(reader);
 							modules.push_back(module);
 						}
 					}
@@ -488,7 +492,8 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			}
 			if (sName=="backprojector") {
 				logger(kipl::logging::Logger::LogVerbose,"Parsing backproj");
-				backprojector.ParseModule(reader);
+                backprojector.setAppPath(m_sApplicationPath);
+                backprojector.ParseModule(reader);
 			}
 
 		}
@@ -856,9 +861,9 @@ ReconConfig::cMatrix::cMatrix() :
 	fGrayInterval[0]=0;
 	fGrayInterval[1]=5;
 
-	memset(roi,0,4*sizeof(size_t));
-    memset(voi,0,6*sizeof(size_t));
-	
+    std::fill_n(roi,4,0UL);
+    std::fill_n(voi,6,0UL);
+
 	bAutomaticSerialize=true;
 }
 
@@ -956,6 +961,7 @@ std::string ReconConfig::cMatrix::WriteXML(int indent)
 
 	return str.str();
 }
+
 
 RECONFRAMEWORKSHARED_EXPORT std::string enum2string(ReconConfig::cProjections::eImageType &it)
 {

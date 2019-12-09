@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef CLAMPDATADLG_H
 #define CLAMPDATADLG_H
 

@@ -1,5 +1,5 @@
 //<LICENSE>
-#include "stdafx.h"
+
 #include <string>
 #include <sstream>
 #include <strings/miscstring.h>

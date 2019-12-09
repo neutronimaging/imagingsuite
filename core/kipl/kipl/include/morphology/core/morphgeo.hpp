@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef MORPHGEO_HPP
 #define MORPHGEO_HPP
 
@@ -10,7 +12,6 @@
 #include "../morphfilters.h"
 #include "../pixeliterator.h"
 
-#include <QDebug>
 using namespace std;
 
 namespace kipl { namespace morphology {

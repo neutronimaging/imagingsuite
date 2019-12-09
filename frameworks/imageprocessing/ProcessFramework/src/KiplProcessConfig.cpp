@@ -13,10 +13,12 @@
 #include "../include/KiplProcessConfig.h"
 #include "../include/KiplFrameworkException.h"
 
+#include <io/analyzefileext.h>
+
 // Main config class
 
-KiplProcessConfig::KiplProcessConfig(void) :
-    ConfigBase("KiplProcessConfig")
+KiplProcessConfig::KiplProcessConfig(const std::string &appPath) :
+    ConfigBase("KiplProcessConfig",appPath)
 {
 }
 
@@ -39,10 +41,11 @@ std::string KiplProcessConfig::WriteXML()
 
 		if (!modules.empty()) {
 			str<<std::setw(indent)<<" "<<"<processchain>\n";
-			std::list<ModuleConfig>::iterator it;
 
-			for (it=modules.begin(); it!=modules.end(); it++) {
-				str<<it->WriteXML(indent+4);
+            for (auto &module : modules)
+            {
+                module.setAppPath(m_sApplicationPath);
+                str<<module.WriteXML(indent+4);
 			}
 			str<<std::setw(indent)<<" "<<"</processchain>\n";
 		}
@@ -90,7 +93,7 @@ void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			
 			int depth2=xmlTextReaderDepth(reader);
 			if (sName=="module") {
-				ModuleConfig module;
+                ModuleConfig module(m_sApplicationPath);
 				module.ParseModule(reader);
 				modules.push_back(module);
 			}
@@ -402,7 +405,7 @@ void KiplProcessConfig::cOutImageInformation::ParseXML(xmlTextReaderPtr reader)
 			}
 
 			if (sName=="imagetype") {
-				kipl::io::string2enum(sValue,eResultImageType);
+                string2enum(sValue,eResultImageType);
 			}
 		}
         ret = xmlTextReaderRead(reader);

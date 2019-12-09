@@ -15,6 +15,7 @@
 #include <base/marginsetter.h>
 #include <base/tprofile.h>
 #include <base/imagecast.h>
+#include <base/kiplenums.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -50,6 +51,10 @@ private Q_SLOTS:
 
     /// Test image casting
     void testImageCaster();
+
+    /// Test OS specifying enums
+    void testOSenums();
+
 };
 
 TkiplbasetestTest::TkiplbasetestTest()
@@ -505,6 +510,26 @@ void TkiplbasetestTest::testImageCaster()
         QCOMPARE(casted2[i],static_cast<unsigned short>(val));
     }
 
+}
+
+void TkiplbasetestTest::testOSenums()
+{
+    QCOMPARE(enum2string(kipl::base::OSLinux),std::string("OSLinux"));
+    QCOMPARE(enum2string(kipl::base::OSWindows),std::string("OSWindows"));
+    QCOMPARE(enum2string(kipl::base::OSMacOS),std::string("OSMacOS"));
+    QCOMPARE(enum2string(kipl::base::OSUnknown),std::string("OSUnknown"));
+
+    kipl::base::eOperatingSystem oe;
+    string2enum("OSLinux",oe);
+    QCOMPARE(oe,kipl::base::OSLinux);
+    string2enum("OSWindows",oe);
+    QCOMPARE(oe,kipl::base::OSWindows);
+    string2enum("OSMacOS",oe);
+    QCOMPARE(oe,kipl::base::OSMacOS);
+    string2enum("OSUnknown",oe);
+    QCOMPARE(oe,kipl::base::OSUnknown);
+
+    QVERIFY_EXCEPTION_THROWN(string2enum("OSMacos",oe),kipl::base::KiplException);
 }
 
 QTEST_APPLESS_MAIN(TkiplbasetestTest)
