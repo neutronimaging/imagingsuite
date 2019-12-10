@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "removebackgrounddlg.h"
 #include "ui_removebackgrounddlg.h"
 

@@ -1,8 +1,7 @@
 //<LICENSE>
-#ifndef _RECONEXCEPTION_H_
-#define _RECONEXCEPTION_H_
+#ifndef RECONEXCEPTION_H
+#define RECONEXCEPTION_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 #include <string>
 #include <base/KiplException.h>
 

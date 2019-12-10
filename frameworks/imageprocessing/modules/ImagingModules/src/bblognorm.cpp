@@ -11,6 +11,7 @@
 #include <base/textractor.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 #include <ParameterHandling.h>
 
@@ -21,6 +22,7 @@
 
 IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("BBLogNorm", false, interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
+    m_Config(""),
     nOBCount(0),
     nOBFirstIndex(1),
     nBBSampleCount(0),

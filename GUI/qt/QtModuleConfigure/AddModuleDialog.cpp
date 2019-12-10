@@ -33,7 +33,8 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_Button_OK("OK"),
     m_Button_Cancel("Cancel"),
     m_sApplication("muhrec"),
-    m_sApplicationPath("")
+    m_sApplicationPath(""),
+    m_ModuleConfig("")
 {
     setWindowTitle(tr("Add a module"));
     setLayout(&m_Dlg_layout);
@@ -79,39 +80,45 @@ int AddModuleDialog::exec()
     msg<<"appPath "<<appPath.toStdString();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    QString fileName=QString::fromStdString(m_sDefaultModuleSource);
+    std::string fileName=m_sDefaultModuleSource;
+    QString qfileName = QString::fromStdString(fileName);
     msg.str(""); msg<<"default module "<<m_sDefaultModuleSource;
-
 
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if (fileName.isEmpty()) {
+    if (fileName.empty()) {
         #ifdef Q_OS_WIN
-            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
+
         #else
             QDir dir;
 
             if (!dir.exists(appPath+"/../Frameworks"))
                 appPath += "/../Frameworks";
 
-            fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+
         #endif
     }
 
-    logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
-    if (fileName.isEmpty()) {
-        logger(kipl::logging::Logger::LogError,"No file selected");
+    logger(kipl::logging::Logger::LogMessage,qfileName.toStdString());
+    if (qfileName.isEmpty()) {
+        QMessageBox::warning(this,"Warning","No module library file was chosen");
+
+        logger(kipl::logging::Logger::LogWarning,"No file selected");
         return 0;
     }
 
-    if (UpdateModuleCombobox(fileName)!=0)
+    if (UpdateModuleCombobox(qfileName)!=0)
     {
         return QDialog::Rejected;
     }
+    m_Modulefile_edit.setText(qfileName);
 
-    m_Modulefile_edit.setText(fileName);
+    fileName = qfileName.toStdString();
+    kipl::strings::filenames::CheckPathSlashes(fileName,false);
+    m_ModuleConfig.m_sSharedObject=fileName;
 
-    m_ModuleConfig.m_sSharedObject=fileName.toStdString();
     m_ModuleConfig.m_sModule=modulelist.begin()->first;
     m_ModuleConfig.parameters=modulelist.begin()->second;
     m_ModuleConfig.m_bActive=true;

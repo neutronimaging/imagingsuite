@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <string>
 #include <map>
 
@@ -16,6 +17,7 @@
 
 
 IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("StripeFilter",false, interactor),
+    m_Config(""),
     m_StripeFilter(nullptr),
     m_sWaveletName("daub15"),
     m_fSigma(0.05f),

@@ -4,7 +4,6 @@
 #define MODULEITEM_H
 #include "ReconFramework_global.h"
 
-
 #include <string>
 
 #include <ModuleItemBase.h>

@@ -14,6 +14,7 @@
 #include "../include/KiplProcessConfig.h"
 #include "../include/KiplModuleItem.h"
 #include <interactors/interactionbase.h>
+#include <publication.h>
 
 class PROCESSFRAMEWORKSHARED_EXPORT KiplEngine
 {
@@ -49,7 +50,9 @@ protected:
     /// \param msg a message string to add information to the progress bar.
     /// \returns The abort status of interactor object. True means abort back-projection and false continue.
     bool updateStatus(float val);
-
+    std::string citations();
+    std::vector<Publication> publicationList();
+    void writePublicationList(const std::string & fname);
 
     kipl::interactors::InteractionBase *m_Interactor;
 	KiplProcessConfig m_Config;
@@ -62,6 +65,7 @@ protected:
 	kipl::base::TImage<float,3> m_ResultImage;
 
 	std::map<std::string, float> m_ProcessingCoefficients;
+    std::vector<Publication> publications;
 
 	bool m_bCancel;									//!< Cancel flag if true the reconstruction process will terminate
 };

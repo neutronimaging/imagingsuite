@@ -7,6 +7,15 @@
 #include <iostream>
 
 namespace kipl { namespace base {
+
+/// \brief Operating system selector
+enum eOperatingSystem {
+    OSUnknown,
+    OSWindows,
+    OSMacOS,
+    OSLinux
+};
+
 /// \brief Image plane selection enum
 enum eImagePlanes {
     ImagePlaneXY = 1, ///< selects the XY plane
@@ -122,7 +131,25 @@ enum eEdgeStatus {
 
 KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn);
 KIPLSHARED_EXPORT int connectivityNeighbors(kipl::base::eConnectivity conn);
+KIPLSHARED_EXPORT kipl::base::eOperatingSystem getOperatingSystem();
 }}
+
+/// \brief Stream output operator for eOperatingSystem
+/// \param s the stream that handles the enum
+/// \param plane the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream & s, kipl::base::eOperatingSystem &os);
+
+/// \brief Converts an operating system enum to a string
+/// \param plane the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the image plane name
+KIPLSHARED_EXPORT std::string enum2string(const kipl::base::eOperatingSystem &os);
+
+/// \brief Converts a string to an operating system enum
+/// \param str a string containing the name to convert
+/// \param plane the enum result
+KIPLSHARED_EXPORT void  string2enum(const std::string &str, kipl::base::eOperatingSystem &os);
 
 /// \brief Stream output operator for eImagePlanes
 /// \param s the stream that handles the enum

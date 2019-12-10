@@ -12,12 +12,14 @@ TARGET = tst_tModuleConfig
 CONFIG   += console
 CONFIG   -= app_bundle
 
+CONFIG += c++11
+
 CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
-unix:!symbian {
+unix {
     maemo5 {
         target.path = /opt/usr/lib
     } else {
@@ -29,8 +31,7 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
-        QMAKE_LIBDIR += /usr/local/lib
-        QMAKE_INFO_PLIST = Info.plist
+        QMAKE_LIBDIR += /opt/local/lib
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2

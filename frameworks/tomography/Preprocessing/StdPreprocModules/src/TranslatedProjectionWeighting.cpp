@@ -12,7 +12,8 @@
 
 
 TranslatedProjectionWeighting::TranslatedProjectionWeighting() : 
-	PreprocModuleBase("TranslatedProjectionWeighting")
+    PreprocModuleBase("TranslatedProjectionWeighting"),
+    mConfig("")
 {
 }
 

@@ -1,6 +1,5 @@
 //<LICENSE>
-
-//#include "stdafx.h"
+#include "stdafx.h"
 #include "../include/ReconConfig.h"
 #include "../include/PreprocModuleBase.h"
 #include "../include/ReconException.h"
@@ -36,7 +35,7 @@ std::string PreprocModuleBase::Version()
 
 int PreprocModuleBase::Configure(std::map<std::string, std::string> parameters)
 {
-    return parameters.size();
+    return static_cast<int>(parameters.size());
 }
 
 int PreprocModuleBase::ExtractSinogram(kipl::base::TImage<float,3> &projections, kipl::base::TImage<float,2> &sinogram, size_t idx)

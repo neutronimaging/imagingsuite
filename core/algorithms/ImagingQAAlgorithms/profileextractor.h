@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef PROFILEEXTRACTOR_H
 #define PROFILEEXTRACTOR_H
 #include "imagingqaalgorithms_global.h"

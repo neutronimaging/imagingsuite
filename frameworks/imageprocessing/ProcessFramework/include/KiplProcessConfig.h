@@ -7,7 +7,7 @@
 #include <string>
 
 #include <logging/logger.h>
-#include <io/io_stack.h>
+#include <io/analyzefileext.h>
 
 #include <ModuleConfig.h>
 #include <ConfigBase.h>
@@ -63,7 +63,7 @@ public:
 		std::string sDestinationFileMask;
 	};
 
-	KiplProcessConfig(void);
+    KiplProcessConfig(const std::string &appPath);
 	~KiplProcessConfig(void);
 	std::string WriteXML();
 

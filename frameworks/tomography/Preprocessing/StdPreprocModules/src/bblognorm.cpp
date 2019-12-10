@@ -6,6 +6,7 @@
 #include <ReconConfig.h>
 #include <math/image_statistics.h>
 #include <math/median.h>
+#include <strings/filenames.h>
 
 #include <ParameterHandling.h>
 
@@ -15,6 +16,7 @@
 BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
+    m_Config(""),
     nOBCount(0),
     nOBFirstIndex(1),
     nBBSampleCount(0),

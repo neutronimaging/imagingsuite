@@ -1,20 +1,8 @@
-//
-// This file is part of the Inspector library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #ifndef PREPROCMODULEBASE_H
 #define PREPROCMODULEBASE_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 
 #include <logging/logger.h>
 #include <base/timage.h>
