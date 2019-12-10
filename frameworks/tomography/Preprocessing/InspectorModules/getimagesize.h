@@ -3,10 +3,11 @@
 #ifndef GETIMAGESIZE_H
 #define GETIMAGESIZE_H
 
+#include "inspectormodules_global.h"
 #include <PreprocModuleBase.h>
 #include <ReconConfig.h>
 
-class GetImageSize : public PreprocModuleBase
+class INSPECTORMODULESSHARED_EXPORT GetImageSize : public PreprocModuleBase
 {
 public:
     GetImageSize();

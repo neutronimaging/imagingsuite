@@ -53,7 +53,7 @@ private:
     ReconConfig *config;
     MorphSpotCleanModule m_Cleaner;
     kipl::base::TImage<float,3> m_Projections;
-    kipl::morphology::MorphConnect m_eConnectivity;
+    kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
 

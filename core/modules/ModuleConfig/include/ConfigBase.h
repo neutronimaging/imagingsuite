@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef __CONFIGBASE_H
-#define __CONFIGBASE_H
+#ifndef CONFIGBASE_H
+#define CONFIGBASE_H
 
 #include "ModuleConfig_global.h"
 
@@ -99,7 +99,8 @@ public:
     /// Sanity check on the number of slices to be reconstruct during Config
     virtual std::string SanitySlicesCheck()=0;
 
-
+    void setAppPath(const std::string & path);
+    std::string appPath();
 protected:
     /// Parser for an opened XML formatted input file.
     /// \param reader Reference to an xml reader struct for the opened configuration file.

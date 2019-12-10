@@ -22,7 +22,7 @@ void PoreSizeMap(kipl::base::TImage<T,3> &mask, kipl::base::TImage<S,3> &poremap
 	ostringstream msg;
 	logger(kipl::logging::Logger::LogMessage,"Computing distance map");
 
-	kipl::morphology::EuclideanDistance(mask, poremap,complement);
+    kipl::morphology::old::EuclideanDistance(mask, poremap,complement);
 
 	std::map<float, std::list<kipl::base::coords3D> > coords;
 	S *pDist=poremap.GetDataPtr();

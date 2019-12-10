@@ -9,7 +9,7 @@
 
 namespace akipl { namespace segmentation {
 
-int Threshold_Watershed(vector<size_t> &hist, double height, size_t medianlength, vector<size_t> &thvec) {
+int Threshold_Watershed(std::vector<size_t> &hist, double height, size_t medianlength, std::vector<size_t> &thvec) {
 
 	if ((height<0) || (height>1)) {
 		std::cerr<<"WatershedThreshold: the height must be given in the interval [0,1]"<<std::endl;
@@ -18,10 +18,10 @@ int Threshold_Watershed(vector<size_t> &hist, double height, size_t medianlength
 	
 	std::vector<size_t> medHist, localMin, normHist;
 	
-	MedianFilter(hist,medHist,medianlength);
+    medHist=medianFilter(hist,medianlength);
 	int histMax=*std::max_element(medHist.begin(),medHist.end());
 
-	vector<size_t>::iterator it;
+    std::vector<size_t>::iterator it;
 
 	for (it=medHist.begin() ; it!=medHist.end() ; it++)
 		normHist.push_back((histMax-(*it)));
@@ -34,7 +34,7 @@ int Threshold_Watershed(vector<size_t> &hist, double height, size_t medianlength
 	std::vector<int> ws;
 	kipl::STLmorphology::watershed(medHist,ws);
 
-	vector<int>::iterator wsIt;
+    std::vector<int>::iterator wsIt;
 	int i;
 	thvec.clear();
 	for (wsIt=ws.begin(), it=localMin.begin(), i=0; wsIt!= ws.end(); wsIt++,it++, i++) 

@@ -10,6 +10,7 @@
 
 #include "ImagingAlgorithms_global.h"
 #include <base/timage.h>
+#include <base/kiplenums.h>
 #include <morphology/morphology.h>
 #include <logging/logger.h>
 #include <containers/ArrayBuffer.h>
@@ -40,7 +41,7 @@ public:
     void process(kipl::base::TImage<float,2> &img, float th, float sigma);
     void process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma);
 
-    void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     eMorphDetectionMethod detectionMethod();
     eMorphCleanMethod cleanMethod();
@@ -83,7 +84,7 @@ protected:
 
     kipl::base::TImage<float,2> CleanByArray(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 
-    kipl::morphology::MorphConnect m_eConnectivity;
+    kipl::base::eConnectivity m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
     size_t m_nEdgeSmoothLength;

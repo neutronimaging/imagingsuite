@@ -79,7 +79,7 @@ int RunOffline(QApplication * a)
     if ((2<args.size()) && (args[1]=="-f")) {
         std::string fname(args[2].toStdString());
 
-        KiplProcessConfig config;
+        KiplProcessConfig config(QCoreApplication::applicationDirPath().toStdString());
         KiplEngine *engine=nullptr;
         KiplFactory factory;
 

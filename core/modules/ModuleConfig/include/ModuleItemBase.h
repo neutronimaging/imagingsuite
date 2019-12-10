@@ -2,7 +2,7 @@
 
 #ifndef MODULEITEMBASE_H_
 #define MODULEITEMBASE_H_
-
+#include "../src/stdafx.h"
 #include "ModuleConfig_global.h"
 #include "ConfigBase.h"
 
@@ -54,6 +54,8 @@ public:
 
     /// Destructor that unloads the loaded module.
 	virtual ~ModuleItemBase();
+
+
 
 protected:
     /// Module unload method. It calls the destroy function in the shared object.

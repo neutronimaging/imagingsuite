@@ -28,6 +28,14 @@ KiplProcessModuleBase("ISSfilter", true,interactor),
     m_eRegularization(akipl::scalespace::RegularizationTV2),
     m_eInitialImage(akipl::scalespace::InitialImageOriginal)
 {
+    publications.push_back(Publication(std::vector<string>({"M. Burger","G. Gilboa","S. Osher","J. Xu"}),
+                                                "Nonlinear inverse scale space methods",
+                                                "Communications in Mathematical Sciences",
+                                                2006,
+                                                4,
+                                                1,
+                                                "179-212",
+                                                "10.4310/cms.2006.v4.n1.a7"));
 }
 
 ISSfilterModule::~ISSfilterModule() {

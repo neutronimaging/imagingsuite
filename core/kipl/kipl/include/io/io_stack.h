@@ -17,25 +17,9 @@
 #include "io_matlab.h"
 #include "io_fits.h"
 #include "io_nexus.h"
+#include "analyzefileext.h"
 
 namespace kipl { namespace io {
-
-enum eFileType {
-	MatlabVolume,
-	MatlabSlices,
-	TIFF8bits,
-	TIFF16bits,
-	TIFFfloat,
-    TIFF16bitsMultiFrame,
-    NeXusfloat,
-    NeXus16bits,
-	PNG8bits,
-    PNG16bits
-};
-
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::io::eFileType ft);
-void KIPLSHARED_EXPORT string2enum(const std::string str, kipl::io::eFileType &ft);
-std::string KIPLSHARED_EXPORT enum2string(kipl::io::eFileType ft);
 
 /// \brief Read a series of tiff image and stores as a 3D image
 /// \brief img target image

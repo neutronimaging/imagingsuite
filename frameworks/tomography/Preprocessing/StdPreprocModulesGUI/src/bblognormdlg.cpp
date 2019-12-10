@@ -5,6 +5,7 @@
 #include <QMessageBox>
 
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 #include <base/thistogram.h>
 #include <io/DirAnalyzer.h>
 

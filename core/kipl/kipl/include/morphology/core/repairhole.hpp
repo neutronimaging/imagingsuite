@@ -35,7 +35,6 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
 
     while (!edgePixels.empty())
     {
-//        qDebug() << "Loop count" << loopCnt++ << "list size "<< edgePixels.size();
         while (!edgePixels.empty())
         {
             size_t pixPos=edgePixels.front();
@@ -45,14 +44,14 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             double sum=0.0f;
             int hitcnt=0;
             bool isEdge=false;
-            for (int idx=0; idx<neighborhood.neighborhoodSize(); ++idx) {
-                size_t pixel=neighborhood.neighborhood(idx);
 
+            for (const auto &neighborPix : neighborhood.neighborhood())
+            {
+                size_t pixel = pixPos + neighborPix;
 
                 if (pixel<img.Size()){
                     T value=img[pixel];
                     if (value!=markedPixel) {
-//                        std::cout << pixel << " " << img[pixel] << " " << std::endl;
                         sum+=img[pixel];
                         hitcnt++;
                         isEdge=true;
@@ -60,7 +59,6 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
                 }
             }
 
-//            qDebug() << "hit cnt"<<hitcnt<<" isedge"<<isEdge;
             if (isEdge)
             {
                 processedPixels.push_back(std::make_pair(pixPos,static_cast<T>(sum/hitcnt)));
@@ -71,7 +69,6 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             }
         }
 
-//        qDebug() << "Size processed:" << processedPixels.size() <<" remaining "<< remainingPixels.size();
         for (auto p=processedPixels.begin(); p!=processedPixels.end(); ++p)
             img[p->first]=p->second;
 
@@ -79,9 +76,8 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
 
         edgePixels.clear();
         edgePixels=remainingPixels;
-//        qDebug() << "Loop count" << loopCnt << "list size "<< edgePixels.size();
-        remainingPixels.clear();
 
+        remainingPixels.clear();
     }
 
 }

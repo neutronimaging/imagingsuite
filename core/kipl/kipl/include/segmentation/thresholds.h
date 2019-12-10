@@ -15,6 +15,7 @@
 #include "../logging/logger.h"
 #include "../base/timage.h"
 #include "../morphology/morphology.h"
+#include "../morphology/pixeliterator.h"
 #include "../base/thistogram.h"
 
 /// Namespace that supports threshold methods on images
@@ -178,7 +179,12 @@ namespace kipl { namespace segmentation {
 ///		\param conn morphological connectivity selector
 ///		\param mask ROI mask for the processing. If mask=nullptr, mask processing will be skipped
 template <typename T,size_t NDim>
-int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDim> &bilevel, T lo, T hi, kipl::segmentation::CmpType cmp, kipl::morphology::MorphConnect conn, kipl::base::TImage<char,NDim> *mask=nullptr)
+int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
+                    kipl::base::TImage<char,NDim> &bilevel,
+                    T lo, T hi,
+                    kipl::segmentation::CmpType cmp,
+                    kipl::base::eConnectivity conn,
+                    kipl::base::TImage<char,NDim> *mask=nullptr)
 {
 	kipl::logging::Logger logger("kipl::segmentation::DoubleThreshold");
 	std::ostringstream msg;
@@ -199,13 +205,12 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 
     std::deque<ptrdiff_t> posQ;
 		
-	kipl::morphology::CNeighborhood NG(dims,NDim,conn);
-    ptrdiff_t Nng=NG.N();
+    kipl::base::PixelIterator NG(dims,conn);
 
 	T *pImg=img.GetDataPtr();
 	char *pTmp=bilevel.GetDataPtr();
 
-	long i,pos,p;
+    ptrdiff_t i,pos,p;
 
 	if (mask) {
 		long maskscope;
@@ -218,18 +223,20 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 		}
 
 		char *pMask=mask->GetDataPtr();
-		for (i=0; i<bilevel.Size(); i++) {
+        NG.setPosition(0L);
+        for (i=0; i<bilevel.Size(); ++i, ++NG) {
             if (cmp==kipl::segmentation::cmp_greater) {
 				if ((pImg[i]>hi) && pMask[i % maskscope]) {
 					pTmp[i]=th_true;
 
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]>lo) && pMask[pos% maskscope]) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]>lo) && pMask[pos% maskscope])
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
@@ -238,13 +245,14 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 			else {
 				if (pMask[i%maskscope] && (pImg[i]<lo)) {
 					pTmp[i]=th_true;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]<hi) && pMask[pos%maskscope]) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]<hi) && pMask[pos%maskscope])
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
@@ -257,63 +265,71 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
 
-		while (!posQ.empty()) {
+        while (!posQ.empty())
+        {
 			pos=posQ.front();
 			posQ.pop_front();
 			//if (pTmp[pos]==th_inque) {
 				pTmp[pos]=th_true;
 				if (cmp==cmp_greater) {
-					for (j=0; j<Nng; j++) {
-						if ((p=NG.neighbor(pos,j))!=-1) {
-							if ((!pTmp[p]) && (pImg[p]>lo) && pMask[p%maskscope]) {
-								posQ.push_back(p);
-								pTmp[p]=th_inque;
-							}
-
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        p = pos + neighborPix;
+                        if ((!pTmp[p]) && (pImg[p]>lo) && pMask[p%maskscope])
+                        {
+                            posQ.push_back(p);
+                            pTmp[p]=th_inque;
+                        }
 					}
 				}
 				else {
-					for (j=0; j<Nng; j++) {
-						if ((p=NG.neighbor(pos,j))!=-1) {
-							if (pMask[p%maskscope] && (!pTmp[p]) && (pImg[p]<hi)) {
-								posQ.push_back(p);
-								pTmp[p]=th_inque;
-							}
-							
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        p = pos + neighborPix;
+                        if (pMask[p%maskscope] && (!pTmp[p]) && (pImg[p]<hi))
+                        {
+                            posQ.push_back(p);
+                            pTmp[p]=th_inque;
+                        }
 					}
 				}
 			//}
 		}
 	}
 	else {
-		for (i=0; i<bilevel.Size(); i++) {
+        NG.setPosition(0L);
+        for (i=0; i<bilevel.Size(); ++i,++NG)
+        {
 			if (cmp==cmp_greater) {
-				if (pImg[i]>hi) {
+                if (pImg[i]>hi)
+                {
 					pTmp[i]=1;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]>lo)) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]>lo))
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
 					pTmp[i]=th_false;
 			}
-			else {
-				if (pImg[i]<lo) {
+            else
+            {
+                if (pImg[i]<lo)
+                {
 					pTmp[i]=1;
-					for (j=0; j<Nng; j++) {
-						if ((pos=NG.neighbor(i,j))!=-1) {
-							if ((!pTmp[pos]) && (pImg[pos]<hi)) {
-								posQ.push_back(pos);
-								pTmp[pos]=th_inque;
-							}
-						}
+                    for (const auto & neighborPix : NG.neighborhood())
+                    {
+                        pos = i + neighborPix;
+                        if ((!pTmp[pos]) && (pImg[pos]<hi))
+                        {
+                            posQ.push_back(pos);
+                            pTmp[pos]=th_inque;
+                        }
 					}
 				}
 				else
@@ -325,29 +341,34 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 		msg<<"Queue processing size(queue)="<<posQ.size();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
-		while (!posQ.empty()) {
+        while (!posQ.empty())
+        {
 			pos=posQ.front();
 			posQ.pop_front();
 			pTmp[pos]=1;
-			if (cmp==cmp_greater) {
-				for (j=0; j<Nng; j++) {
-					if ((p=NG.neighbor(pos,j))!=-1) {
-						if ((!pTmp[p]) && (pImg[p]>lo)) {
-							posQ.push_back(p);
-							pTmp[p]=th_inque;
-						}
-
-					}
+            NG.setPosition(pos);
+            if (cmp==cmp_greater)
+            {
+                for (const auto & neighborPix : NG.neighborhood())
+                {
+                    p = pos + neighborPix;
+                    if ((!pTmp[p]) && (pImg[p]>lo))
+                    {
+                        posQ.push_back(p);
+                        pTmp[p]=th_inque;
+                    }
 				}
 			}
-			else {
-				for (j=0; j<Nng; j++) {
-					if ((p=NG.neighbor(pos,j))!=-1) {
-						if ((!pTmp[p]) && (pImg[p]<hi)) {
-							posQ.push_back(p);
-							pTmp[p]=th_inque;
-						}
-					}
+            else
+            {
+                for (const auto & neighborPix : NG.neighborhood())
+                {
+                    p = pos + neighborPix;
+                    if ((!pTmp[p]) && (pImg[p]<hi))
+                    {
+                        posQ.push_back(p);
+                        pTmp[p]=th_inque;
+                    }
 				}
 			}
 		}
@@ -368,8 +389,6 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img, kipl::base::TImage<char,NDi
 //	const char fuzzy=-1;
 //	const char hi=1;
 //	const char lo=0;
-	
-////	CImgViewer fig;
 	
 //	int i,j,pos;
 //	// Initial thresholding

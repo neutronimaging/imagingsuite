@@ -2,7 +2,7 @@
 
 #include <string>
 #include <sstream>
-
+#include <QDebug>
 #include "../../include/base/KiplException.h"
 
 namespace kipl
@@ -11,29 +11,29 @@ namespace kipl
 namespace base
 {
 
-//KiplException::KiplException(std::string exname)
-//{
-//}
-
 KiplException::~KiplException()
 {
 }
 
-KiplException::KiplException(const std::string message,const std::string exname) :
+KiplException::KiplException(const std::string &message,const std::string &exname) :
     sExceptionName(exname),
     sMessage(message),
     nLineNumber(0)
 {}
 
-KiplException::KiplException(std::string message,
-        std::string filename,
+KiplException::KiplException(const std::string &message,
+        const std::string &filename,
         size_t linenumber,
-        std::string exname) :
+        const std::string &exname) :
     sExceptionName(exname),
     sMessage(message),
     sFileName(filename),
     nLineNumber(linenumber)
 {
+    std::ostringstream msg;
+    msg<<"A "<<sExceptionName<<" was thrown in file "<<sFileName<<" on line "<<nLineNumber<<": \n"<<sMessage;
+
+    sFormattedMessage = msg.str();
 }
 
 const char* KiplException::what() const
@@ -46,11 +46,7 @@ const char* KiplException::what() const
     if (sFileName.empty())
         return sMessage.c_str();
 
-	std::ostringstream str;
-	
-    str<<"An "<<sExceptionName<<" was thrown in file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
-	
-    return str.str().c_str();
+    return sFormattedMessage.c_str();
 }
 
 

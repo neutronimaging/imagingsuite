@@ -1,15 +1,5 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 #undef min
 #undef max
@@ -234,7 +224,7 @@ kipl::base::TImage<float,2> SpotClean::ProcessPixelList(kipl::base::TImage<float
 		mask[i]=mLUT.Low()<s[i];
 
 	kipl::base::TImage<char,2> dist;
-	kipl::morphology::EuclideanDistance(mask,dist);
+    kipl::morphology::old::EuclideanDistance(mask,dist);
 
 	std::map<float,std::list<size_t> > spotlist;
     for (int i=0; i<static_cast<int>(dist.Size()); i++) {
@@ -343,7 +333,7 @@ kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img
 
 	// Compute propagation field for the filling
 	kipl::base::TImage<float,2> dist;
-	kipl::morphology::EuclideanDistance(mask2,dist,kipl::morphology::conn8);
+    kipl::morphology::old::EuclideanDistance(mask2,dist,kipl::morphology::conn8);
 
 	map<float,vector<size_t> > distmap;
 #undef max

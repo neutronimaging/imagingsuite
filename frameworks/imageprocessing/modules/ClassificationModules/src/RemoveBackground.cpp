@@ -1,9 +1,4 @@
-/*
- * RemoveBackground.cpp
- *
- *  Created on: Nov 11, 2012
- *      Author: anders
- */
+//<LICENSE>
 
 #include "RemoveBackground.h"
 
@@ -60,11 +55,11 @@ int RemoveBackground::ProcessCore(kipl::base::TImage<float,3> & img, std::map<st
 	Threshold(img.GetDataPtr(),mask.GetDataPtr(),N,m_fThreshold, kipl::segmentation::cmp_greater);
 
 	// Expand region
-	kipl::morphology::EuclideanDistance(mask,distance,kipl::morphology::conn26);
+    kipl::morphology::old::EuclideanDistance(mask,distance,kipl::morphology::conn26);
 	Threshold(distance.GetDataPtr(),mask.GetDataPtr(),img.Size(),m_fPruneRadius, kipl::segmentation::cmp_greater);
 
 	// Shrink region
-	kipl::morphology::EuclideanDistance(mask,distance,kipl::morphology::conn26);
+    kipl::morphology::old::EuclideanDistance(mask,distance,kipl::morphology::conn26);
 	Threshold(distance.GetDataPtr(),mask.GetDataPtr(),img.Size(),m_fPruneRadius, kipl::segmentation::cmp_greater);
 
 	float *pImg  = img.GetDataPtr();

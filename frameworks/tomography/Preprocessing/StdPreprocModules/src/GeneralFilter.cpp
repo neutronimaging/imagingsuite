@@ -1,9 +1,4 @@
-/*
- * GeneralFilter.cpp
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 #include "../include/StdPreprocModules_global.h"
 
 #include <algorithm>

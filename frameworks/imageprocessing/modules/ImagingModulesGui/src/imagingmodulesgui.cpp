@@ -1,8 +1,4 @@
-
-//#ifndef _WINDOWS_
-//#include <Windows.h>
-//#include <winnt.h>
-//#endif
+//<LICENSE>
 
 #include "imagingmodulesgui_global.h"
 #include "imagingmodulesgui.h"

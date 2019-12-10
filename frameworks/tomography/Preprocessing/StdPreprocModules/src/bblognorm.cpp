@@ -6,6 +6,7 @@
 #include <ReconConfig.h>
 #include <math/image_statistics.h>
 #include <math/median.h>
+#include <strings/filenames.h>
 
 #include <ParameterHandling.h>
 
@@ -15,6 +16,7 @@
 BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
+    m_Config(""),
     nOBCount(0),
     nOBFirstIndex(1),
     nBBSampleCount(0),
@@ -63,8 +65,32 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
 
+    publications.push_back(Publication({"C. Carminati","P. Boillat","F. Schmid",
+                                        "P. Vontobel","J. Hovind","M. Morgano",
+                                        "M. Raventos","M. Siegwart","D. Mannes",
+                                        "C. Gruenzweig","P. Trtik","E. Lehmann",
+                                        "M. Strobl","A. Kaestner"},
+                                       "Implementation and assessment of the black body bias correction in quantitative neutron imaging",
+                                       "PLOS ONE",
+                                       2019,
+                                       14,
+                                       1,
+                                       "e0210300",
+                                       "10.1371/journal.pone.0210300"
+                                       ));
 
-
+    publications.push_back(Publication({"P. Boillat","C. Carminati","F. Schmid",
+                                        "C. Gruenzweig","J. Hovind","A. Kaestner",
+                                        "D. Mannes","M. Morgano","M. Siegwart",
+                                        "P. Trtik","P. Vontobel","E.H. Lehmann"},
+                                     "Chasing quantitative biases in neutron imaging with scintillator-camera detectors: a practical method with black body grids",
+                                     "Optics Express",
+                                     2018,
+                                     26,
+                                     12,
+                                     "15769",
+                                     "10.1364/oe.26.015769"
+                               ));
 }
 
 BBLogNorm::~BBLogNorm()

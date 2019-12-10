@@ -4,7 +4,6 @@
 #define PROJECTIONREADER_H
 
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 #include <string>
 #include <map>
 #include <base/timage.h>

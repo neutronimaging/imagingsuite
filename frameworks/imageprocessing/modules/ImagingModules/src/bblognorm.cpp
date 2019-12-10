@@ -11,6 +11,7 @@
 #include <base/textractor.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 #include <ParameterHandling.h>
 
@@ -21,6 +22,7 @@
 
 IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("BBLogNorm", false, interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
+    m_Config(""),
     nOBCount(0),
     nOBFirstIndex(1),
     nBBSampleCount(0),
@@ -78,7 +80,32 @@ IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionB
     flatname_BG="flat_background.tif";
     filemask_BG="sample_background_####.tif";
 
+    publications.push_back(Publication({"C. Carminati","P. Boillat","F. Schmid",
+                                        "P. Vontobel","J. Hovind","M. Morgano",
+                                        "M. Raventos","M. Siegwart","D. Mannes",
+                                        "C. Gruenzweig","P. Trtik","E. Lehmann",
+                                        "M. Strobl","A. Kaestner"},
+                                       "Implementation and assessment of the black body bias correction in quantitative neutron imaging",
+                                       "PLOS ONE",
+                                       2019,
+                                       14,
+                                       1,
+                                       "e0210300",
+                                       "10.1371/journal.pone.0210300"
+                                       ));
 
+    publications.push_back(Publication({"P. Boillat","C. Carminati","F. Schmid",
+                                        "C. Gruenzweig","J. Hovind","A. Kaestner",
+                                        "D. Mannes","M. Morgano","M. Siegwart",
+                                        "P. Trtik","P. Vontobel","E.H. Lehmann"},
+                                     "Chasing quantitative biases in neutron imaging with scintillator-camera detectors: a practical method with black body grids",
+                                     "Optics Express",
+                                     2018,
+                                     26,
+                                     12,
+                                     "15769",
+                                     "10.1364/oe.26.015769"
+                               ));
 
 
 }

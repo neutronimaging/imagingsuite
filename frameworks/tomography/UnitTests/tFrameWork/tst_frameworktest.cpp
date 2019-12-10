@@ -39,8 +39,8 @@ FrameWorkTest::FrameWorkTest()
     m_fimg.Resize(dims);
 
     for (size_t i=0; i<m_img.Size(); i++) {
-        m_img[i]  = i;
-        m_fimg[i] = i;
+        m_img[i]  = static_cast<int>(i);
+        m_fimg[i] = static_cast<float>(i);
     }
 
     kipl::io::WriteFITS(m_img,"proj_0001.fits");
@@ -581,7 +581,7 @@ void FrameWorkTest::testBuildFileList_GeneratedSequence()
     size_t N=10;
     size_t i=0;
 
-    ReconConfig config;
+    ReconConfig config(QCoreApplication::applicationDirPath().toStdString());
 // Test even number
     config.ProjectionInfo.sFileMask="test_####.fits";
     config.ProjectionInfo.nFirstIndex=1;
@@ -628,7 +628,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     size_t N=10;
     size_t i=0;
 
-    ReconConfig config;
+    ReconConfig config(QCoreApplication::applicationDirPath().toStdString());
 // Test even number
     config.ProjectionInfo.sFileMask="test_####.fits";
     config.ProjectionInfo.nFirstIndex=0;
@@ -702,7 +702,7 @@ void FrameWorkTest::testBuildFileList()
 //    ++i;listfile<<18*i<<"\t  file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
     //++i;listfile<<"file_"<<setfill('0') << setw(5) << i <<".fits,"<<18*i<<std::endl;
 
-    ReconConfig config;
+    ReconConfig config(QCoreApplication::applicationDirPath().toStdString());
 
     config.ProjectionInfo.sFileMask="listfile.txt";
     config.ProjectionInfo.nFirstIndex=1;
