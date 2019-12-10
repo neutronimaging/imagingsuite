@@ -44,12 +44,8 @@ win32 {
 DEFINES += MODULECONFIG_LIBRARY
 
 SOURCES += \
-<<<<<<< HEAD
-#    ../../src/stdafx.cpp \
-=======
     ../../src/publication.cpp \
     ../../src/stdafx.cpp \
->>>>>>> master
     ../../src/ProcessModuleBase.cpp \
     ../../src/ParameterHandling.cpp \
     ../../src/ModuleItemBase.cpp \

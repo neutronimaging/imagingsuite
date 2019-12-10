@@ -38,45 +38,45 @@ ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::I
     std::list<ModuleConfig>::iterator it;
 
     // Setting up the preprocessing modules
-    for (auto const & moduleItem : config.modules) {
-        if (moduleItem.m_bActive == true) {
+    for (auto const & moduleItem : config.modules)
+    {
+        if (moduleItem.m_bActive == true)
+        {
             ModuleItem* module = nullptr;
-            try {
+            try
+            {
                 std::cout << "Trying to make new module for " << moduleItem.m_sModule << '\n';
                 module = new ModuleItem("muhrec",
                                         moduleItem.m_sSharedObject,
                                         moduleItem.m_sModule, interactor);
 
-<<<<<<< HEAD
-                if (module==nullptr)
-                    throw ReconException("Failed to build module",__FILE__,__LINE__);
+                // Setting up the preprocessing modules
+                for (auto &module : config.modules)
+                {
+                    if (module.m_bActive==true)
+                    {
+                        ModuleItem *moduleItem=nullptr;
+                        try
+                        {
+                            moduleItem=new ModuleItem("muhrec",module.m_sSharedObject,module.m_sModule,interactor);
 
-                if (module->GetModule()==nullptr)
-                    throw ReconException("GetModule returns no valid module.",__FILE__,__LINE__);
-=======
-	// Setting up the preprocessing modules
-
-    for (auto &module : config.modules) {
-        if (module.m_bActive==true) {
-            ModuleItem *moduleItem=nullptr;
-			try {
-                moduleItem=new ModuleItem("muhrec",module.m_sSharedObject,module.m_sModule,interactor);
-
-                moduleItem->GetModule()->Configure(config,module.parameters);
-                engine->AddPreProcModule(moduleItem);
-			}
-			catch (ReconException &e) {
-				throw ReconException(e.what(),__FILE__,__LINE__);
-			}
-		}
-	}
->>>>>>> master
+                            moduleItem->GetModule()->Configure(config,module.parameters);
+                            engine->AddPreProcModule(moduleItem);
+                        }
+                        catch (ReconException &e)
+                        {
+                            throw ReconException(e.what(),__FILE__,__LINE__);
+                        }
+                    }
+                }
 
                 std::cout << "Configuring "<<moduleItem.m_sModule<<" module with "<<moduleItem.parameters.size()<<" parameters\n";
                 module->GetModule()->Configure(config, moduleItem.parameters);
                 std::cout << "Adding PreProcModule to the processing chain\n";
                 engine->AddPreProcModule(module);
-            } catch (ReconException& e) {
+            }
+            catch (ReconException& e)
+            {
                 throw ReconException(e.what(), __FILE__, __LINE__);
             }
         }

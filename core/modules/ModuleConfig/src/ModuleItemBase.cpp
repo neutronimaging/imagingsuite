@@ -77,11 +77,7 @@ ModuleItemBase::~ModuleItemBase()
     Destroy();
 }
 
-<<<<<<< HEAD
-void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase* interactor)
-=======
 void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *interactor)
->>>>>>> master
 {
     std::ostringstream msg;
 
