@@ -88,7 +88,6 @@ void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase* interact
     copy(m_sSharedObject.begin(), m_sSharedObject.end(), so.begin());
     hinstLib = LoadLibrary(so.c_str());
 #else
-    std::cout << "Trying to find module shared library.\n";
     hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
@@ -96,12 +95,10 @@ void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase* interact
 #ifdef _MSC_VER
         m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(GetProcAddress(hinstLib, "GetModule"));
 #else
-        std::cout << "Trying to find module factory.\n";
         m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(dlsym(hinstLib, "GetModule"));
 #endif
         // If the function address is valid, call the function.
         if (nullptr != m_fnModuleFactory) {
-            std::cout << "Found module factory, trying to make module.\n";
             m_Module = reinterpret_cast<BackProjectorModuleBase*>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void*>(interactor)));
             if (m_Module == nullptr) {
                 msg.str("");

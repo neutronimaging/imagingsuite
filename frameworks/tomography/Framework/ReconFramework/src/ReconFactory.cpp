@@ -21,6 +21,7 @@ ReconFactory::~ReconFactory(void)
 
 ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::InteractionBase* interactor)
 {
+    std::ostringstream msg;
     ReconEngine* engine = new ReconEngine("ReconEngine", interactor);
 
     try {
@@ -36,7 +37,6 @@ ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::I
         throw std::runtime_error(e.what());
     }
 
-    qDebug() << "Factory module list size"<<config.modules.size();
     // Setting up the preprocessing modules
     for (auto const & moduleItem : config.modules)
     {
@@ -45,15 +45,18 @@ ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::I
             ModuleItem* module = nullptr;
             try
             {
-                std::cout << "Trying to make new module for " << moduleItem.m_sModule << '\n';
+                msg.str(""); msg<< "Trying to make new module for " << moduleItem.m_sModule;
+                logger.message(msg.str());
                 module = new ModuleItem("muhrec",
                                         moduleItem.m_sSharedObject,
                                         moduleItem.m_sModule, interactor);
 
                 // Setting up the preprocessing modules
-                std::cout << "Configuring "<<moduleItem.m_sModule<<" module with "<<moduleItem.parameters.size()<<" parameters\n";
+                msg.str(""); msg<< "Configuring "<<moduleItem.m_sModule<<" module with "<<moduleItem.parameters.size()<<" parameters";
+                logger.message(msg.str());
                 module->GetModule()->Configure(config, moduleItem.parameters);
-                std::cout << "Adding PreProcModule to the processing chain\n";
+                msg.str(""); msg<<  "Adding PreProcModule to the processing chain";
+                logger.message(msg.str());
                 engine->AddPreProcModule(module);
             }
             catch (ReconException& e)

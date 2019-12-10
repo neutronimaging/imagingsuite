@@ -33,7 +33,6 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
     if ((ext==".lst") || (ext==".txt") || (ext==".csv"))
     {
         logger(logger.LogMessage,"Using list file");
-        std::cout<<"Using list file"<<std::endl;
         fname=config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask;
         std::ifstream listfile(fname.c_str());
 

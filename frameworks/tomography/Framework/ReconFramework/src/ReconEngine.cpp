@@ -1116,8 +1116,6 @@ int ReconEngine::Run3DFull()
                if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
                    CBCT_roi[3] +=8;
 
-//                std::cout << CBCT_roi[1] << " " << CBCT_roi[3] << std::endl;
-
                 msg.str("");
                 msg<<__FUNCTION__<<" CBCT Processing block "<<nProcessedBlocks<<" ["
                     <<m_Config.ProjectionInfo.roi[0]<<", "
