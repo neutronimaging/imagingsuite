@@ -17,7 +17,7 @@ ModuleConfig::ModuleConfig(const std::string &appPath) :
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
     m_bActive(true),
-    m_bThreading(false)
+    m_bThreading(false),
     m_NameManager(appPath)
 {
 }
