@@ -17,8 +17,17 @@
 KiplEngine::KiplEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
     logger(name),
     m_Interactor(interactor),
+    m_Config(""),
     m_InputImage(nullptr)
 {
+    publications.push_back(Publication(std::vector<std::string>({"Chiara Carminati","Markus Strobl","Anders Kaestner"}),
+                                       "KipTool, a general purpose processing tool for neutron imaging data",
+                                       "SoftwareX",
+                                       2019,
+                                       10,
+                                       1,
+                                       "100279",
+                                       "10.1016/j.softx.2019.100279"));
 }
 
 KiplEngine::~KiplEngine(void)
@@ -120,6 +129,8 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 
 	kipl::strings::filenames::CheckPathSlashes(config->sDestinationPath,true);
 		fname=config->sDestinationPath+config->sDestinationFileMask;
+
+    writePublicationList(config->sDestinationPath+"citations.txt");
 
 	try {
 		std::stringstream msg;
@@ -318,4 +329,60 @@ bool KiplEngine::updateStatus(float val)
     }
 
     return false;
+}
+
+std::string KiplEngine::citations()
+{
+    std::ostringstream cites;
+
+    cites<<"KipTool\n=============================\n";
+    for (const auto &pub : publications)
+    {
+        cites<<pub<<"\n";
+    }
+    cites<<"\n";
+
+    cites<<"\nProcessing modules\n=============================\n";
+    for (const auto & module : m_ProcessList)
+    {
+        cites<<module->GetModule()->ModuleName()<<"\n";
+        for (const auto &pub : module->GetModule()->publicationList())
+        {
+            cites<<pub<<"\n";
+        }
+        cites<<"\n";
+    }
+
+    return cites.str();
+}
+
+std::vector<Publication> KiplEngine::publicationList()
+{
+    std::vector<Publication> pubList;
+
+    pubList = publications;
+    for (const auto & module : m_ProcessList)
+    {
+        for (const auto &pub : module->GetModule()->publicationList())
+        {
+            pubList.push_back(pub);
+        }
+    }
+
+    return pubList;
+}
+
+void KiplEngine::writePublicationList(const string &fname)
+{
+    std::string destName=fname;
+    if (fname.empty())
+    {
+        destName = m_Config.mOutImageInformation.sDestinationPath + "citations.txt";
+    }
+
+    logger.message(std::string("Writing citations to ")+destName);
+    kipl::strings::filenames::CheckPathSlashes(destName,false);
+    std::ofstream citefile(destName.c_str());
+
+    citefile<<citations();
 }

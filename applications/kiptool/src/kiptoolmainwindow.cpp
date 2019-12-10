@@ -15,6 +15,7 @@
 #include <base/textractor.h>
 #include <io/DirAnalyzer.h>
 #include <datasetbase.h>
+#include <strings/filenames.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -32,16 +33,19 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
     logger("KipToolMainWindow"),
     ui(new Ui::KipToolMainWindow),
-    m_QtApp(app),
+
     logdlg(new QtAddons::LoggingDialog(this)),
     button_toggleLoggerDlg(new QPushButton("Logger",this)),
     m_Engine(nullptr),
     m_OriginalHistogram(1024UL,"Original histogram"),
+    m_config(QCoreApplication::applicationDirPath().toStdString()),
+    m_ModuleConfigurator(&m_config),
     m_sFileName("noname.xml"),
     m_bRescaleViewers(false),
     m_bJustLoaded(false),
     m_eSlicePlane(kipl::base::ImagePlaneXY),
-    m_ModuleConfigurator(&m_config)
+    m_QtApp(app),
+    m_sApplicationPath(app->applicationDirPath().toStdString())
 {
     ui->setupUi(this);
     //logger.AddLogTarget(*(ui->widget_logviewer));
@@ -52,12 +56,13 @@ KipToolMainWindow::KipToolMainWindow(QApplication *app, QWidget *parent) :
     //    ui->widget_moduleconfigurator->configure("kiptool",QDir::currentPath().toStdString());
     ui->statusBar->addPermanentWidget(button_toggleLoggerDlg);
 
-     QString configpath=QDir::homePath()+"/.imagingtools";
-     QDir dir;
+    QString configpath=QDir::homePath()+"/.imagingtools";
+    QDir dir;
+    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
 
-     if(!dir.exists(configpath)){
+    if (!dir.exists(configpath)) {
          dir.mkdir(configpath);
-     }
+    }
 
     LoadDefaults();
     UpdateDialog();
@@ -101,8 +106,8 @@ void KipToolMainWindow::LoadDefaults()
 
     kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
     try {
+        m_config.setAppPath(m_sApplicationPath);
         m_config.LoadConfigFile(defaultsname.c_str(),"kiplprocessing");
-
     }
     catch (ModuleException &e) {
         msg<<"Loading defaults failed :\n"<<e.what();
@@ -396,7 +401,7 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
                 float *pRes=m_SliceResult.GetDataPtr();
                 float *pImg=m_SliceOriginal.GetDataPtr();
 
-                for (int i=0; i<diff.Size(); i++) {
+                for (size_t i=0; i<diff.Size(); i++) {
                         pDiff[i]=pRes[i]-pImg[i];
                 }
                 ui->imageviewer_difference->set_image(pDiff,diff.Dims());
@@ -414,7 +419,7 @@ void KipToolMainWindow::on_slider_images_sliderMoved(int position)
 void KipToolMainWindow::on_actionNew_triggered()
 {
     logger(kipl::logging::Logger::LogMessage,"New config requested");
-    KiplProcessConfig cfg;
+    KiplProcessConfig cfg(QCoreApplication::applicationDirPath().toStdString());
     m_config = cfg;
     ui->imageviewer_original->clear_viewer();
     ui->imageviewer_processed->clear_viewer();
@@ -474,6 +479,7 @@ void KipToolMainWindow::on_actionSave_as_triggered()
     }
     else {
         logger(kipl::logging::Logger::LogMessage,"The configuration name was empty, no file saved.");
+        QMessageBox::warning(this,"No file name","You did not provide a file name to save the configuration file. The configuration was not saved.");
     }
 
 }
@@ -484,6 +490,8 @@ void KipToolMainWindow::SaveConfiguration(QString qfname)
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     std::ofstream cfgfile(fname.c_str());
 
+    logger.message(std::string("Save config apppath ")+m_sApplicationPath);
+    m_config.setAppPath(m_sApplicationPath);
     cfgfile<<m_config.WriteXML();
 }
 
@@ -495,6 +503,7 @@ void  KipToolMainWindow::LoadConfiguration(QString qfname)
     QString sError;
     bool bError=false;
     try {
+        m_config.setAppPath(m_sApplicationPath);
         m_config.LoadConfigFile(fname,"kiplprocessing");
     }
     catch (ModuleException &e) {
@@ -537,6 +546,7 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
     logger(kipl::logging::Logger::LogMessage,"Start processing");
 
     UpdateConfig();
+    m_config.setAppPath(QCoreApplication::applicationDirPath().toStdString());
     QString qfname=QDir::homePath()+"/.imagingtools/CurrentKIPToolConfig.xml";
     SaveConfiguration(qfname);
 //  Start the processing
@@ -598,6 +608,7 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
         QMessageBox dlg;
 
         dlg.setText("Failed to build the process chain.");
+        dlg.setDetailedText(QString::fromStdString(msg.str()));
         dlg.exec();
         return;
     }

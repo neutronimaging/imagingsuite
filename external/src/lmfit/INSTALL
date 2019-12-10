@@ -1,0 +1,10 @@
+Build&install are based on CMake.
+Out-of-source build is enforced.
+After unpacking the source, go to the source directory and do:
+
+mkdir build
+cd build
+cmake ..
+ctest
+make
+make install

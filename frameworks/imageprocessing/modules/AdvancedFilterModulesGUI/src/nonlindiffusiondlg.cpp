@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "nonlindiffusiondlg.h"
 #include "ui_nonlindiffusiondlg.h"
 #include <QDebug>

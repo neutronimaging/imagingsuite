@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "morphspotcleanmodule.h"
 #include <thread>
 #include <cstdlib>
@@ -6,6 +7,7 @@
 #include <ParameterHandling.h>
 #include <MorphSpotClean.h>
 #include <base/timage.h>
+#include <base/textractor.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <ImagingException.h>
@@ -15,7 +17,7 @@
 
 IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     KiplProcessModuleBase("MorphSpotClean",false, interactor),
-    m_eConnectivity(kipl::morphology::conn4),
+    m_eConnectivity(kipl::base::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectPeaks),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold{0.1f,0.1f},
@@ -24,7 +26,7 @@ IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::MorphSpotCleanModule(kipl::int
     m_nMaxArea(30),
     m_bRemoveInfNan(false),
     m_bUseClamping(false),
-    m_fMinLevel(-0.1f),
+    m_fMinLevel(-0.1),
     m_fMaxLevel(12),
     m_bThreading(false)
 {

@@ -156,6 +156,7 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
         m_MaxVal=high;
     }
 
+
     const size_t nHistSize=1024;
     float haxis[nHistSize];
     size_t hist[nHistSize];

@@ -13,6 +13,7 @@
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
 #include <io/io_stack.h>
+#include <io/analyzefileext.h>
 
 class kiplIOTest : public QObject
 {
@@ -354,51 +355,51 @@ void kiplIOTest::testIOStack_enums()
 {
     kipl::io::eFileType ft;
 
-    kipl::io::string2enum("MatlabVolume",ft);
+    string2enum("MatlabVolume",ft);
     QCOMPARE(ft, kipl::io::MatlabVolume);
 
-    kipl::io::string2enum("MatlabSlices",ft);
+    string2enum("MatlabSlices",ft);
     QCOMPARE(ft, kipl::io::MatlabSlices);
 
-    kipl::io::string2enum("TIFF8bits",ft);
+    string2enum("TIFF8bits",ft);
     QCOMPARE(ft, kipl::io::TIFF8bits);
 
-    kipl::io::string2enum("TIFF16bits",ft);
+    string2enum("TIFF16bits",ft);
     QCOMPARE(ft, kipl::io::TIFF16bits);
 
-    kipl::io::string2enum("TIFFfloat",ft);
+   string2enum("TIFFfloat",ft);
     QCOMPARE(ft, kipl::io::TIFFfloat);
 
-    kipl::io::string2enum("TIFF16bitsMultiFrame",ft);
+    string2enum("TIFF16bitsMultiFrame",ft);
     QCOMPARE(ft, kipl::io::TIFF16bitsMultiFrame);
 
-    kipl::io::string2enum("NeXusfloat",ft);
+    string2enum("NeXusfloat",ft);
     QCOMPARE(ft, kipl::io::NeXusfloat);
 
-    kipl::io::string2enum("NeXus16bits",ft);
+    string2enum("NeXus16bits",ft);
     QCOMPARE(ft, kipl::io::NeXus16bits);
 
-    kipl::io::string2enum("PNG8bits",ft);
+    string2enum("PNG8bits",ft);
     QCOMPARE(ft, kipl::io::PNG8bits);
 
-    kipl::io::string2enum("PNG16bits",ft);
+    string2enum("PNG16bits",ft);
     QCOMPARE(ft, kipl::io::PNG16bits);
 
     // enum 2 string
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::MatlabVolume),"MatlabVolume");
-    QCOMPARE(kipl::io::enum2string(kipl::io::MatlabSlices),"MatlabSlices");
+    QCOMPARE(enum2string(kipl::io::MatlabVolume),"MatlabVolume");
+    QCOMPARE(enum2string(kipl::io::MatlabSlices),"MatlabSlices");
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFF8bits),"TIFF8bits");
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFF16bits),"TIFF16bits");
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFFfloat),"TIFFfloat");
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFF16bitsMultiFrame),"TIFF16bitsMultiFrame");
+    QCOMPARE(enum2string(kipl::io::TIFF8bits),"TIFF8bits");
+    QCOMPARE(enum2string(kipl::io::TIFF16bits),"TIFF16bits");
+    QCOMPARE(enum2string(kipl::io::TIFFfloat),"TIFFfloat");
+    QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame),"TIFF16bitsMultiFrame");
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::NeXusfloat),"NeXusfloat");
-    QCOMPARE(kipl::io::enum2string(kipl::io::NeXus16bits),"NeXus16bits");
+    QCOMPARE(enum2string(kipl::io::NeXusfloat),"NeXusfloat");
+    QCOMPARE(enum2string(kipl::io::NeXus16bits),"NeXus16bits");
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::PNG8bits),"PNG8bits");
-    QCOMPARE(kipl::io::enum2string(kipl::io::PNG16bits),"PNG16bits");
+    QCOMPARE(enum2string(kipl::io::PNG8bits),"PNG8bits");
+    QCOMPARE(enum2string(kipl::io::PNG16bits),"PNG16bits");
 
 }
 

@@ -13,7 +13,7 @@
 namespace kipl { namespace STLmorphology {
 
 template <class T1, class WsType>
-int watershed(vector<T1> &vec, vector<WsType> &ws)
+int watershed(std::vector<T1> &vec, std::vector<WsType> &ws)
 {
 	/*
 	if (!numeric_limits<WsType>::is_signed) {

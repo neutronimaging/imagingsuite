@@ -169,13 +169,10 @@ STDPREPROCMODULESSHARED_EXPORT int LibVersion()
 
 STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *listptr)
 {
-    std::cout << application << std::endl;
 	if (strcmp(application,"muhrec")!=0)
 		return -1;
 
 	std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
-
-     std::cout << "after module list" << std::endl;
 
     FullLogNorm flnorm;
     modulelist->operator []("FullLogNorm")=flnorm.GetParameters();
@@ -240,8 +237,6 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
     CameraStripeClean csc;
     modulelist->operator []("CameraStripeClean")=csc.GetParameters();
-
-    std::cout << "end of GetModuleList" << std::endl;
 
 	return 0;
 }

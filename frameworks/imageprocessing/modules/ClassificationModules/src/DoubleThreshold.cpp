@@ -50,7 +50,7 @@ int DoubleThreshold::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 	kipl::segmentation::DoubleThreshold(img,mask,
 			m_fLowThreshold,m_fHighThreshold,
             m_Compare,
-			kipl::morphology::conn26);
+            kipl::base::conn6);
 
     std::copy_n(mask.GetDataPtr(),mask.Size(),img.GetDataPtr());
 	return 0;

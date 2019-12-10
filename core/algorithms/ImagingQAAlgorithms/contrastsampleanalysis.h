@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef CONTRASTSAMPLEANALYSIS_H
 #define CONTRASTSAMPLEANALYSIS_H
 
@@ -21,12 +22,15 @@ public:
 
     void setImage(kipl::base::TImage<float,2> img);
     void setImage(kipl::base::TImage<float,3> img);
+    void setFilterSize(size_t N);
+    void analyzeContrast(float pixelSize, const std::list<kipl::base::RectROI> &ROIs = {});
 
-    void analyzeContrast(float pixelSize);
-
-    int getHistogram(float *axis, size_t *bins);
+    int getHistogram(std::vector<float> &axis, std::vector<size_t> &bins);
     int getHistogramSize();
+
     std::vector<kipl::math::Statistics> getStatistics();
+    std::vector<kipl::base::coords3Df> getInsetCoordinates();
+    kipl::base::coords3Df centerCoordinate();
     bool saveIntermediateImages;
     float metricInsetDiameter;
 
@@ -35,25 +39,33 @@ protected:
     void clearAllocation();
     void createAllocation();
     void makeHistogram();
-    void findCenters(float ps);
+    void circleTransform(float pixelSize);
+    void findCenters(const std::list<kipl::base::RectROI> &ROIs);
+    void findCenters();
+    void estimateInsetRing();
     kipl::math::Statistics computeInsetStatistics(kipl::base::coords3Df pos,float ps);
     void buildRingKernel(float radius);
+
 
     kipl::base::TImage<float,3> m_Img3D;
     kipl::base::TImage<float,2> m_Img2D;
     kipl::base::TImage<float,2> chm;
     kipl::base::TImage<float,2> peaks;
+    kipl::base::TImage<float,2> insetpeaks;
 
     float pixelsize;
+    float radius;
 
     int hist_size;
-    float *hist_axis;
-    size_t *hist_bins;
+    std::vector<float>  hist_axis;
+    std::vector<size_t> hist_bins;
     kipl::base::TImage<float,2> ringKernel;
+    size_t filterSize;
 
-
+    std::vector<pair<float, float> > dots;
     std::vector<kipl::math::Statistics> m_insetStats;
     kipl::base::coords3Df m_ringCenter;
+    kipl::base::coords3Df m_maxInsetCenter;
     std::vector<kipl::base::coords3Df> m_insetCenters;
 
 };

@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include "confighistorydialog.h"
 #include "ui_confighistorydialog.h"
@@ -19,8 +10,8 @@
 class ConfigListItem : public QListWidgetItem
 {
 public:
-    ConfigListItem() {}
-    ConfigListItem(const ConfigListItem &item) : QListWidgetItem(item) {}
+    ConfigListItem() : config("") {}
+    ConfigListItem(const ConfigListItem &item) : QListWidgetItem(item),config(item.config) {}
 
     kipl::base::TImage<float,2> image;
     KiplProcessConfig config;
@@ -29,7 +20,8 @@ public:
 
 ConfigHistoryDialog::ConfigHistoryDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ConfigHistoryDialog)
+    ui(new Ui::ConfigHistoryDialog),
+    m_SelectedConfig("")
 {
     ui->setupUi(this);
     ui->list_configurations->setIconSize(QSize(150,150));

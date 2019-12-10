@@ -55,7 +55,7 @@ kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, fl
 
 void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 {
-    QSKIP("Skipping due to save time");
+  //  QSKIP("Skipping due to save time");
     ImagingQAAlgorithms::ContrastSampleAnalysis csa;
     const size_t N=512;
     size_t dims[2]={N,N};

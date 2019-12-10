@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef RESOLUTIONESTIMATORS_H
 #define RESOLUTIONESTIMATORS_H
 #include "imagingqaalgorithms_global.h"

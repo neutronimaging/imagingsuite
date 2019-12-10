@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include "doublethresholddlg.h"
 #include "ui_doublethresholddlg.h"
 
@@ -56,7 +57,7 @@ void DoubleThresholdDlg::ApplyParameters()
     kipl::segmentation::DoubleThreshold(*pOriginal,res,
             m_fLowThreshold,m_fHighThreshold,
             m_compare,
-            kipl::morphology::conn26);
+            kipl::base::conn6);
 
     std::copy_n(res.GetDataPtr(),res.Size(),bilevelImg.GetDataPtr());
     ui->viewer->setImages(pOriginal,&bilevelImg);

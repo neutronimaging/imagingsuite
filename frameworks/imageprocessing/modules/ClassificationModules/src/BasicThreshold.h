@@ -1,9 +1,4 @@
-/*
- * GeneralFilter.h
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef BASICTHRESHOLD_H_
 #define BASICTHRESHOLD_H_
