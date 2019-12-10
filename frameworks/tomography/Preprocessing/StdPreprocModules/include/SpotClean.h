@@ -1,17 +1,7 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef _SPOTCLEAN_H_
-#define _SPOTCLEAN_H_
+#ifndef SPOTCLEAN_H_
+#define SPOTCLEAN_H_
 
 #include <PreprocModuleBase.h>
 #include <base/timage.h>

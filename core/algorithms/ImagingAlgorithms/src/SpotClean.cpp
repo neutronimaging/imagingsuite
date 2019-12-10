@@ -243,7 +243,7 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 		pTh[i]= pTh[i]!=0.0f;
 
 	kipl::base::TImage<int,2> lbl;
-	size_t N=LabelImage(thimg, lbl,kipl::morphology::conn8);
+    size_t N=kipl::morphology::LabelImage(thimg, lbl,kipl::base::conn8);
 
 	vector<pair<size_t,size_t> > area;
 	vector<size_t> removelist;
@@ -258,7 +258,7 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 	msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-	RemoveConnectedRegion(lbl, removelist, kipl::morphology::conn8);
+    kipl::morphology::RemoveConnectedRegion(lbl, removelist, kipl::base::conn8);
 
 	int *pLbl=lbl.GetDataPtr();
 	float *pImg=img.GetDataPtr();
@@ -272,7 +272,7 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 kipl::base::TImage<float,2> SpotClean::CleanByArray(kipl::base::TImage<float,2> img,
 													 kipl::containers::ArrayBuffer<PixelInfo> *pixels)
 {
-	PrepareNeighborhood(img.Size(0),img.Size());
+    PrepareNeighborhood(static_cast<int>(img.Size(0)),static_cast<int>(img.Size()));
 
 	kipl::containers::ArrayBuffer<PixelInfo > toProcess(img.Size()), corrected(img.Size()), remaining(img.Size());
 
@@ -513,11 +513,11 @@ void SpotClean::OneKernel(kipl::base::TImage<float,2> img, size_t size, float si
 
     pair<double,double> stats=kipl::math::statistics(pFImg,fimg.Size());
 
-    float level=stats.first+sigma*stats.second;
+    float level=static_cast<float>(stats.first+sigma*stats.second);
 
     float *pDImg = dimg.GetDataPtr();
     for (size_t i=0; i<dimg.Size(); i++) {
-        pDImg[i]=pDImg[i] || (level < pFImg[i]);
+        pDImg[i]= (pDImg[i]!=0) || (level < pFImg[i]);
     }
 }
 

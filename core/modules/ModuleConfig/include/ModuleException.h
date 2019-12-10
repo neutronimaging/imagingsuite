@@ -1,7 +1,8 @@
 //<LICENSE>
 
-#ifndef MODULEEXCEPTION_H_
-#define MODULEEXCEPTION_H_
+#ifndef MODULEEXCEPTION_H
+#define MODULEEXCEPTION_H
+#include "../src/stdafx.h"
 #include <string>
 
 #include "ModuleConfig_global.h"

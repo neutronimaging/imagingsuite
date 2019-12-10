@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef FDKRECONBASE_H
 #define FDKRECONBASE_H
 
@@ -74,7 +75,7 @@ protected:
 
 
     ForwardProjectorBase *m_fp;
-    BackProjectorBase    *m_bp;
+ //   BackProjectorBase    *m_bp;
 
     struct ProjectionInfo {
         ProjectionInfo(const float _angle, const float _weight) :

@@ -1,7 +1,8 @@
 //<LICENSE>
 
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+#ifndef STDBACKPROJECTORBASE_H
+#define STDBACKPROJECTORBASE_H
+#include "StdBackProjectors_global.h"
 
 #include <string>
 #include <list>
@@ -25,7 +26,7 @@ protected:
 		float weight;
 	};
 public:
-    StdBackProjectorBase(std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor=nullptr);
+    StdBackProjectorBase(std::string name, BackProjectorModuleBase::eMatrixAlignment align, kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~StdBackProjectorBase(void);
 	virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection);
 	virtual size_t Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters);

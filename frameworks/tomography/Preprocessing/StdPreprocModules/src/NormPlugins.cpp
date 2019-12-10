@@ -8,6 +8,7 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 
 #include <ReconException.h>
 #include <ProjectionReader.h>
@@ -30,10 +31,28 @@ NormBase::NormBase(std::string name) :
     fBlackDose(1.0f),
     bUseNormROI(true),
     bUseLUT(false),
-    bUseWeightedMean(false)
+    bUseWeightedMean(false),
+    m_Config("")
 {
 	memset(nNormRegion, 0, sizeof(size_t)*4);
 	memset(nOriginalNormRegion, 0, sizeof(size_t)*4);
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
+
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner","C. Carminati"}),
+                                       "MuhRec software",
+                                       "Zenodo",
+                                       2019,
+                                       1,
+                                       1,
+                                       "no pages",
+                                       "10.5281/zenodo.1117850"));
 }
 
 NormBase::~NormBase(void) {}

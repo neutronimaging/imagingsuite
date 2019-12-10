@@ -50,6 +50,8 @@
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
+    m_Config(""),
+    m_LastReconConfig(""),
     logger("MuhRecMainWindow"),
     ui(new Ui::MuhRecMainWindow),
     logdlg(new QtAddons::LoggingDialog(this)),
@@ -350,7 +352,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
         name=it->second.name;
 
         if (QFile::exists(QString::fromStdString(name))) {
-            int sliderval=ui->sliderProjections->value();
+//           int sliderval=ui->sliderProjections->value();
 //            m_PreviewImage=reader.Read(name,
 //                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
 //                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
@@ -571,7 +573,7 @@ void MuhRecMainWindow::ViewGeometryList()
 void MuhRecMainWindow::MatrixROIChanged(int x)
 {
     // todo Update the matrix roi callback
-//    (void) x;
+    (void) x;
 //    logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
 //    UpdateMatrixROI();
 
@@ -640,6 +642,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
     msg.str("");
     try {
+        m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
         msg.str("");
         msg<<m_Config.WriteXML();
@@ -697,8 +700,8 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
          UpdateDialog();
     }
-    std::copy(m_Config.ProjectionInfo.projection_roi,
-              m_Config.ProjectionInfo.projection_roi,
+    std::copy_n(m_Config.ProjectionInfo.projection_roi,
+              4,
               m_oldROI);
 
 //    UpdateDialog();
@@ -717,6 +720,7 @@ void MuhRecMainWindow::MenuFileOpen()
     msgbox.setText(tr("Failed to load the configuration file"));
 
     try {
+        m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(fileName.toStdString(),"reconstructor");
         msg.str("");
         msg<<m_Config.WriteXML();
@@ -750,11 +754,11 @@ void MuhRecMainWindow::MenuFileOpen()
     size_t firstSlice=m_Config.ProjectionInfo.roi[1];
     size_t lastSlice=m_Config.ProjectionInfo.roi[3];
 
+    m_Config.setAppPath(m_sApplicationPath);
 
     UpdateDialog();
 
     ProjectionIndexChanged(0);
-
 
 //    SetupCallBacks();
 //    ui->widgetProjectionROI->updateViewer();
@@ -784,6 +788,7 @@ void MuhRecMainWindow::MenuFileSave()
         UpdateConfig();
         std::ofstream conffile(m_sConfigFilename.c_str());
 
+        m_Config.setAppPath(m_sApplicationPath);
         conffile<<m_Config.WriteXML();
     }
 }
@@ -796,6 +801,7 @@ void MuhRecMainWindow::MenuFileSaveAs()
     m_sConfigFilename=fname.toStdString();
     std::ofstream conffile(m_sConfigFilename.c_str());
 
+    m_Config.setAppPath(m_sApplicationPath);
     conffile<<m_Config.WriteXML();
 }
 
@@ -837,27 +843,31 @@ void MuhRecMainWindow::saveCurrentRecon()
     kipl::strings::filenames::CheckPathSlashes(sPath,true);
     confpath<<sPath<<"CurrentRecon.xml";
 
-    try {
+    try
+    {
         UpdateConfig();
+        m_Config.setAppPath(QCoreApplication::applicationDirPath().toStdString());
         ofstream of(confpath.str().c_str());
-        if (!of.is_open()) {
+        if (!of.is_open())
+        {
             msg.str("");
             msg<<"Failed to open config file: "<<confpath.str()<<" for writing.";
             logger(kipl::logging::Logger::LogError,msg.str());
             return ;
         }
-
         of<<m_Config.WriteXML();
         of.flush();
         logger(kipl::logging::Logger::LogMessage,"Saved current recon config");
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg.str("");
         msg<<"Saving current config failed with exception: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
         return;
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         msg.str("");
         msg<<"Saving current config failed with exception: "<<e.what();
         logger(kipl::logging::Logger::LogError,msg.str());
@@ -872,29 +882,35 @@ void MuhRecMainWindow::MenuReconstructStart()
     ostringstream msg;
 
     ui->tabMainControl->setCurrentIndex(4);
-    msg.str(""); msg<<"Pre update "<<m_Config.ProjectionInfo.beamgeometry;
-    logger.message(msg.str());
 
-    try {
+    try
+    {
         UpdateConfig();
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
 
-    try {
+    try
+    {
         m_Config.MatrixInfo.bAutomaticSerialize=false;
-        if (m_Config.System.nMemory<m_nRequiredMemory) {
-
+        if (m_Config.System.nMemory<m_nRequiredMemory)
+        {
             DialogTooBig largesize_dlg;
             int roi[4];
             ui->widgetProjectionROI->getROI(roi);
@@ -906,7 +922,8 @@ void MuhRecMainWindow::MenuReconstructStart()
                                     roi[1],roi[3]);
             int res=largesize_dlg.exec();
 
-            if (res!=QDialog::Accepted) {
+            if (res!=QDialog::Accepted)
+            {
                 logger(logger.LogMessage,"Reconstruction was aborted");
                 return;
             }
@@ -925,36 +942,47 @@ void MuhRecMainWindow::MenuReconstructStart()
         }
         else
             m_Config.MatrixInfo.bAutomaticSerialize=false;
-
-        saveCurrentRecon();
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
 
     saveCurrentRecon();
 
-    try {
+    try
+    {
         ExecuteReconstruction();
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
+        (void)e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -985,12 +1013,14 @@ void MuhRecMainWindow::ExecuteReconstruction()
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if ( bRerunBackproj==false || m_pEngine==nullptr || m_Config.MatrixInfo.bAutomaticSerialize==true) {
+    if ( bRerunBackproj==false || m_pEngine==nullptr || m_Config.MatrixInfo.bAutomaticSerialize==true)
+    {
         bRerunBackproj=false; // Just in case if other cases outruled re-run
 
         logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
         msg.str("");
-        try {
+        try
+        {
             if (m_pEngine!=nullptr)
             {
                 delete m_pEngine;
@@ -1003,40 +1033,46 @@ void MuhRecMainWindow::ExecuteReconstruction()
                         <<m_Config.ProjectionInfo.roi[2]<<","
                         <<m_Config.ProjectionInfo.roi[3]<<"]";
             logger.message(msg.str());
-
+            m_Config.setAppPath(m_sApplicationPath);
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
-        catch (std::exception &e) {
+        catch (std::exception &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (ModuleException &e) {
+        catch (ModuleException &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with a ModuleException: \n"
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (ReconException &e) {
+        catch (ReconException &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with a recon exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (kipl::base::KiplException &e) {
+        catch (kipl::base::KiplException &e)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }
-        catch (...) {
+        catch (...)
+        {
             msg.str("");
             msg<<"Reconstructor initialization failed with an unknown exception";
             bBuildFailure=true;
         }
 
-        if (bBuildFailure) {
+        if (bBuildFailure)
+        {
             logger(kipl::logging::Logger::LogError,msg.str());
             QMessageBox error_dlg;
             error_dlg.setText("Failed to build reconstructor due to plugin exception. See log message for more information.");
@@ -1138,6 +1174,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
                     kipl::strings::filenames::CheckPathSlashes(fname,false);
                     std::ofstream configfile(fname.c_str());
+                    m_Config.setAppPath(m_sApplicationPath);
                     configfile<<m_Config.WriteXML();
                     configfile.close();
 
@@ -1225,7 +1262,8 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
         nBufferMemory += length*height*projbuffersize*sizeof(float);
 
         // Projection Data
-        double nprojections=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+        double nprojections=(static_cast<double>(m_Config.ProjectionInfo.nLastIndex)
+                             -static_cast<double>(m_Config.ProjectionInfo.nFirstIndex)+1.0)/static_cast<double>(m_Config.ProjectionInfo.nProjectionStep);
         nBufferMemory += length*height*nprojections*sizeof(float);
 
         nMatrixMemory/=1024*1024;
@@ -1299,15 +1337,15 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
-    std::copy(m_Config.ProjectionInfo.projection_roi,m_Config.ProjectionInfo.projection_roi+4,m_oldROI);
+    std::copy_n(m_Config.ProjectionInfo.projection_roi,4,m_oldROI);
  //   qDebug("UpdateDialog");
 
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
-    on_widgetProjectionROI_valueChanged(m_Config.ProjectionInfo.projection_roi[0],
-                                        m_Config.ProjectionInfo.projection_roi[1],
-                                        m_Config.ProjectionInfo.projection_roi[2],
-                                        m_Config.ProjectionInfo.projection_roi[3]);
+    on_widgetProjectionROI_valueChanged(static_cast<int>(m_Config.ProjectionInfo.projection_roi[0]),
+                                        static_cast<int>(m_Config.ProjectionInfo.projection_roi[1]),
+                                        static_cast<int>(m_Config.ProjectionInfo.projection_roi[2]),
+                                        static_cast<int>(m_Config.ProjectionInfo.projection_roi[3]));
 
     ui->spinSlicesFirst->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[1]));
     ui->spinSlicesLast->setValue(static_cast<int>(m_Config.ProjectionInfo.roi[3]));
@@ -1522,8 +1560,8 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+3);
     m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
 
-    ptrdiff_t pos;
-
+   // ptrdiff_t pos;
+    size_t pos=0;
     switch (ui->comboDestFileType->currentIndex())
     {
 
@@ -1582,6 +1620,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fpPoint[1] = ui->dspinPiercPointY->value();
     m_Config.ProjectionInfo.eDirection = static_cast<kipl::base::eRotationDirection>(ui->comboDirRotation->currentIndex());
 
+    m_Config.setAppPath(m_sApplicationPath);
     try {
         m_Config.SanityCheck();
     }
@@ -1855,6 +1894,8 @@ void MuhRecMainWindow::on_actionRemove_CurrentRecon_xml_triggered()
         QDate date=QDate::currentDate();
         QString destname=filename+"."+date.toString("yyyyMMdd");
         dir.rename(filename,destname);
+        if (dir.exists(filename)) // Workarround for MacOS, to actually delete the current recon.
+            dir.remove(filename);
         msg.str("");
         msg<<"Moved "<<filename.toStdString()<<" to "<<destname.toStdString();
         logger(logger.LogMessage,msg.str());
@@ -2412,6 +2453,7 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
             std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
             kipl::strings::filenames::CheckPathSlashes(fname,false);
             std::ofstream configfile(fname.c_str());
+            m_Config.setAppPath(m_sApplicationPath);
             configfile<<m_Config.WriteXML();
             configfile.close();
 
@@ -2532,11 +2574,11 @@ void MuhRecMainWindow::on_pushButton_levels95p_clicked()
         size_t lowlevel=0;
         size_t highlevel=0;
         kipl::base::FindLimits(y, nBins, 95.0, &lowlevel, &highlevel);
-        ui->dspinGrayLow->setValue(x[lowlevel]);
-        ui->dspinGrayHigh->setValue(x[highlevel]);
+        ui->dspinGrayLow->setValue(static_cast<double>(x[lowlevel]));
+        ui->dspinGrayHigh->setValue(static_cast<double>(x[highlevel]));
     }
     else
-        logger(logger.LogMessage,"Level 95\%: Missing engine");
+        logger(logger.LogMessage,"Level 95%: Missing engine");
 }
 
 void MuhRecMainWindow::on_pushButton_levels99p_clicked()
@@ -2554,7 +2596,7 @@ void MuhRecMainWindow::on_pushButton_levels99p_clicked()
         ui->dspinGrayHigh->setValue(x[highlevel]);
     }
     else
-        logger(logger.LogMessage,"Level 99\%: Missing engine");
+        logger(logger.LogMessage,"Level 99%: Missing engine");
 }
 
 
@@ -2791,15 +2833,18 @@ void MuhRecMainWindow::on_dspinSDD_valueChanged(double arg1)
 
 void MuhRecMainWindow::on_doubleSpinBox_magnification_valueChanged(double arg1)
 {
+    (void) arg1;
     UpdateCBCTDistances();
 }
 
 void MuhRecMainWindow::on_dspinPiercPointX_valueChanged(double arg1)
 {
+    (void) arg1;
    UpdatePiercingPoint();
 }
 
 void MuhRecMainWindow::on_dspinPiercPointY_valueChanged(double arg1)
 {
+    (void) arg1;
     UpdatePiercingPoint();
 }

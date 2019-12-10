@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <string>
 #include <map>
 
@@ -16,6 +17,7 @@
 
 
 IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interactors::InteractionBase *interactor) : KiplProcessModuleBase("StripeFilter",false, interactor),
+    m_Config(""),
     m_StripeFilter(nullptr),
     m_sWaveletName("daub15"),
     m_fSigma(0.05f),
@@ -25,7 +27,14 @@ IMAGINGMODULESSHARED_EXPORT StripeFilterModule::StripeFilterModule(kipl::interac
     op(ImagingAlgorithms::VerticalComponentFFT),
     plane(kipl::base::ImagePlaneXY)
 {
-
+    publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
+                                        "Stripe and ring artifact removal with combined wavelet-Fourier filtering",
+                                        "Optics express",
+                                        2009,
+                                        17,
+                                        10,
+                                        "8567--8591",
+                                        "10.1364/oe.17.008567"));
 }
 
 IMAGINGMODULESSHARED_EXPORT StripeFilterModule::~StripeFilterModule()

@@ -25,18 +25,18 @@ ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject
     LoadModuleObject(interactor);
 }
 
-ModuleItemBase::ModuleItemBase(ModuleItemBase& item)
-    : logger(item.m_sModuleName)
+
+ModuleItemBase::ModuleItemBase(ModuleItemBase & item) :
+    logger(item.m_sModuleName),
+    hinstLib(item.hinstLib),
+    m_fnModuleFactory(item.m_fnModuleFactory),
+    m_fnDestroyer(item.m_fnDestroyer),
+    m_sApplication(item.m_sApplication),
+    m_sSharedObject(item.m_sSharedObject),
+    m_sModuleName(item.m_sModuleName),
+    m_Module(item.m_Module)
 {
-    hinstLib = item.hinstLib;
-    m_fnModuleFactory = item.m_fnModuleFactory;
-    m_fnDestroyer = item.m_fnDestroyer;
 
-    m_sApplication = item.m_sApplication;
-    m_sSharedObject = item.m_sSharedObject;
-    m_sModuleName = item.m_sModuleName;
-
-    m_Module = item.m_Module;
 }
 
 ModuleItemBase& ModuleItemBase::operator=(ModuleItemBase& item)
@@ -77,7 +77,11 @@ ModuleItemBase::~ModuleItemBase()
     Destroy();
 }
 
+<<<<<<< HEAD
 void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase* interactor)
+=======
+void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *interactor)
+>>>>>>> master
 {
     std::ostringstream msg;
 

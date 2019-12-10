@@ -5,6 +5,8 @@
 
 #include <tnt_array2d.h>
 #include <jama_lu.h>
+#include <sstream>
+#include <string>
 
 namespace TNT {
 template<typename T>
@@ -33,5 +35,33 @@ TNT::Array2D<T> transpose(const TNT::Array2D<T> &M)
     return tran;
 }
 
+template <typename T>
+std::string serializeArray2D(const TNT::Array2D<T> &M)
+{
+    std::ostringstream str;
+    for (int r=0; r<M.dim1(); ++r)
+    {
+       for (int c=0; c<M.dim2(); ++c)
+       {
+           str<<M[r][c]<<" ";
+       }
+       if (r<M.dim1()-1)
+           str<<"\n";
+    }
+
+    return str.str();
+}
+
+template <typename T>
+std::string serializeArray1D(const TNT::Array1D<T> &M)
+{
+    std::ostringstream str;
+    for (int r=0; r<M.dim1(); ++r)
+    {
+       str<<M[r]<<" ";
+    }
+
+    return str.str();
+}
 }
 #endif

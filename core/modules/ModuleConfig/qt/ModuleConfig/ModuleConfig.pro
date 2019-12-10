@@ -44,7 +44,12 @@ win32 {
 DEFINES += MODULECONFIG_LIBRARY
 
 SOURCES += \
+<<<<<<< HEAD
 #    ../../src/stdafx.cpp \
+=======
+    ../../src/publication.cpp \
+    ../../src/stdafx.cpp \
+>>>>>>> master
     ../../src/ProcessModuleBase.cpp \
     ../../src/ParameterHandling.cpp \
     ../../src/ModuleItemBase.cpp \
@@ -52,19 +57,22 @@ SOURCES += \
     ../../src/ModuleConfig.cpp \
 #    ../../src/dllmain.cpp \
     ../../src/ConfigBase.cpp \
-    ../../src/datamodulebase.cpp
+    ../../src/datamodulebase.cpp \
+    ../../src/modulelibnamemanger.cpp
 
 HEADERS +=\
      ../../include/ModuleConfig_global.h \
-#    ../../include/targetver.h \
+    ../../include/publication.h \
+    ../../include/targetver.h \
     ../../include/ProcessModuleBase.h \
     ../../include/ParameterHandling.h \
     ../../include/ModuleItemBase.h \
     ../../include/ModuleException.h \
     ../../include/ModuleConfig.h \
     ../../include/ConfigBase.h \
-    ../../include/datamodulebase.h
-#    ../../src/stdafx.h
+    ../../include/datamodulebase.h \
+    ../../include/modulelibnamemanger.h \
+    ../../src/stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

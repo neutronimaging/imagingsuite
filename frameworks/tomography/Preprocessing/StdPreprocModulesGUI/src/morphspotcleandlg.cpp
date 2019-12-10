@@ -20,7 +20,7 @@
 MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),
     ui(new Ui::MorphSpotCleanDlg),
-    m_eConnectivity(kipl::morphology::conn4),
+    m_eConnectivity(kipl::base::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold{0.1f,0.1f},
@@ -233,7 +233,7 @@ void MorphSpotCleanDlg::UpdateParameters()
 {
     m_eCleanMethod      = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
     m_eDetectionMethod  = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
-    m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
+    m_eConnectivity     = static_cast<kipl::base::eConnectivity>(ui->comboConnectivity->currentIndex());
     m_fThreshold[0]     = static_cast<float>(ui->spinThresholdHoles->value());
     m_fSigma[0]         = static_cast<float>(ui->spinSigmaHoles->value());
     m_fThreshold[1]     = static_cast<float>(ui->spinThresholdPeaks->value());

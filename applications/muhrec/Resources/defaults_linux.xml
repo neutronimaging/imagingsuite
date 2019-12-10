@@ -68,7 +68,7 @@
         <preprocessing>
             <module>
                 <modulename>FullLogNorm</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
+                <sharedobject>StdPreprocModules</sharedobject>
                 <active>true</active>
                 <parameters>
                     <referenceaverage>ImageWeightedAverage</referenceaverage>
@@ -80,7 +80,7 @@
             </module>
             <module>
                 <modulename>MorphSpotClean</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
+                <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
                 <parameters>
                     <removeinfnan>false</removeinfnan>
@@ -99,7 +99,7 @@
             </module>
             <module>
                 <modulename>WaveletRingClean</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.so</sharedobject>
+                <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
                 <parameters>
                     <decnum>4</decnum>
@@ -113,8 +113,9 @@
         <backprojector>
             <module>
                 <modulename>MultiProjBPparallel</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdBackProjectors.so</sharedobject>
-                <active>true</active>
+                <sharedobject>StdBackProjectors</sharedobject>
+                <parameters>
+                    <active>true</active>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>
                     <SubVolume>1 1</SubVolume>

@@ -17,6 +17,8 @@
 #include <math/findpeaks.h>
 #include <math/image_statistics.h>
 #include <math/covariance.h>
+#include <math/gradient.h>
+#include <math/linfit.h>
 
 #include <io/io_tiff.h>
 
@@ -47,10 +49,17 @@ private Q_SLOTS:
     void testCovIntactData();
     void testCovSmallData();
     void testCorrSmallData();
+    void testMinMax();
+
+    void testPolyVal();
+    void testPolyFit();
+    void testPolyDeriv();
+
 
 
 
 private:
+    void TestGradient();
     kipl::base::TImage<float,2> sin2D;
 };
 
@@ -458,6 +467,175 @@ void TKiplMathTest::testCorrSmallData()
         std::cout<<std::endl;
         QVERIFY(fabs(C[i][i]-1.0)<1e-7);
     }
+}
+
+void TKiplMathTest::testMinMax()
+{
+    size_t dims[]={100UL,100UL};
+    kipl::base::TImage<float,2> img(dims);
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+
+    float mi, ma;
+
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
+    QCOMPARE(mi,0.0f);
+    QCOMPARE(ma,img.Size()-1.0f);
+    float zero=0.0f;
+    img[1]=sqrt(-1.0f);
+    img[2]=-sqrt(-1.0f);
+    img[3]=1.0f/zero;
+    img[4]=-1.0f/zero;
+
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
+    QCOMPARE(mi,0.0f);
+    QCOMPARE(ma,img.Size()-1.0f);
+
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
+    QCOMPARE(mi,-1.0f/zero);
+    QCOMPARE(ma,1.0f/zero);
+
+}
+
+void TKiplMathTest::TestGradient()
+{
+//read data and expected gradient, compute gradient and compare
+
+    double x[12] = {0.0500144, 0.0520624, 0.0541104, 0.0561584, 0.0582064, 0.0602544, 0.0623024,
+                    0.0643504, 0.067481,  0.071577,  0.075673,  0.079769};
+
+
+    double data[12] = {0.232335, 0.217474, 0.203564, 0.190545, 0.414715, 0.497566, 0.51482,  0.515086,
+                    0.508319, 0.497549, 0.486791, 0.476251};
+    double exp_gradient[12] = {-7.25634766, -7.02416992, -6.57446289, 51.55053711, 74.95629883, 24.43969727,
+                               4.27734375, -0.77632507, -2.36423198, -2.62792969, -2.59985352, -2.57324219};
+
+    double *comp_gradient = new double[12];
+
+    kipl::math::num_gradient(data, x, 12, comp_gradient);
+
+    for (int i=0; i<12; ++i)
+    {
+        qDebug() << comp_gradient[i];
+        QVERIFY(fabs(comp_gradient[i]-exp_gradient[i])<1e-7);
+//        QCOMPARE(comp_gradient[i], exp_gradient[i]); // does not like negative?
+    }
+
+    delete [] comp_gradient;
+
+    // This gives a compilation error
+//    // fake arrays to check what happens with int as inputs
+//    int intx[12] = {0,1,2,3,4,5,6,7,8,9,10,11};
+//    int inty[12] = {0,1,2,3,4,5,6,7,8,9,10,11};
+//    int *int_gradient = new int[12];
+
+//    kipl::math::num_gradient(inty, intx, 12, int_gradient);
+
+    float x_f[12] = {0.0500144, 0.0520624, 0.0541104, 0.0561584, 0.0582064, 0.0602544, 0.0623024,
+                    0.0643504, 0.067481,  0.071577,  0.075673,  0.079769};
+
+
+    float data_f[12] = {0.232335, 0.217474, 0.203564, 0.190545, 0.414715, 0.497566, 0.51482,  0.515086,
+                    0.508319, 0.497549, 0.486791, 0.476251};
+    float exp_gradient_f[12] = {-7.25634766, -7.02416992, -6.57446289, 51.55053711, 74.95629883, 24.43969727,
+                               4.27734375, -0.77632507, -2.36423198, -2.62792969, -2.59985352, -2.57324219};
+
+    float *comp_gradient_f = new float[12];
+
+    kipl::math::num_gradient(data_f, x_f, 12, comp_gradient_f);
+
+    for (int i=0; i<12; ++i)
+    {
+        qDebug() << comp_gradient_f[i];
+        QVERIFY(fabs(comp_gradient_f[i]-exp_gradient_f[i])<1e-3);
+//        QCOMPARE(comp_gradient[i], exp_gradient[i]); // does not like negative?
+    }
+
+    delete [] comp_gradient;
+
+}
+
+void TKiplMathTest::testPolyVal()
+{
+    std::vector<double> x={-2,-1,0,1,2};
+    std::vector<double> y1={-4,-1,2,5,8};
+    std::vector<double> coef1 = {2,3};
+
+    auto y=kipl::math::polyVal(x,coef1);
+
+    for (auto itRes=y.begin(), itExp=y1.begin(); itRes!=y.end(); ++itRes, ++itExp)
+        QCOMPARE(*itRes,*itExp);
+}
+
+void TKiplMathTest::testPolyFit()
+{
+    std::vector<double> x={-8,-2,-1,0,1,2,15};
+    std::vector<double> coef1 = {2,3};
+
+    auto y1=kipl::math::polyVal(x,coef1);
+
+    auto c=kipl::math::polyFit(x,y1,1);
+
+    QCOMPARE(c[0],coef1[0]);
+    QCOMPARE(c[1],coef1[1]);
+
+    std::vector<double> coef2 = {2,3,1.5};
+
+    auto y2=kipl::math::polyVal(x,coef2);
+
+    auto c2=kipl::math::polyFit(x,y2,2);
+
+    QCOMPARE(c2[0],coef2[0]);
+    QCOMPARE(c2[1],coef2[1]);
+    QCOMPARE(c2[2],coef2[2]);
+
+    std::vector<double> coef3 = {2,3,1.5,-0.5};
+
+    auto y3=kipl::math::polyVal(x,coef3);
+
+    auto c3=kipl::math::polyFit(x,y3,3);
+
+    QCOMPARE(c3[0],coef3[0]);
+    QCOMPARE(c3[1],coef3[1]);
+    QCOMPARE(c3[2],coef3[2]);
+    QCOMPARE(c3[3],coef3[3]);
+
+
+}
+
+void TKiplMathTest::testPolyDeriv()
+{
+    std::vector<double> coef1 = {2,3};
+    auto dc1=kipl::math::polyDeriv(coef1,1);
+    QCOMPARE(dc1.size(),1);
+    QCOMPARE(dc1[0],3);
+    auto ddc1=kipl::math::polyDeriv(coef1,2);
+    QCOMPARE(ddc1.size(),0);
+
+    std::vector<double> coef2 = {2,3,1.5};
+    auto dc2=kipl::math::polyDeriv(coef2,1);
+    QCOMPARE(dc2.size(),2);
+    QCOMPARE(dc2[0],3);
+    QCOMPARE(dc2[1],3);
+
+    auto ddc2=kipl::math::polyDeriv(coef2,2);
+    QCOMPARE(ddc2.size(),1);
+    QCOMPARE(ddc2[0],3);
+
+    std::vector<double> coef3 = {2,3,1.5,-0.5};
+    auto dc3=kipl::math::polyDeriv(coef3,1);
+
+    QCOMPARE(dc3.size(),3);
+    QCOMPARE(dc3[0],3);
+    QCOMPARE(dc3[1],3);
+    QCOMPARE(dc3[2],-1.5);
+
+    auto ddc3=kipl::math::polyDeriv(coef3,2);
+    QCOMPARE(ddc3.size(),2);
+    QCOMPARE(ddc3[0],3);
+    QCOMPARE(ddc3[1],-3);
+
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)

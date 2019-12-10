@@ -25,8 +25,7 @@ SOURCES += \
     ../../src/ProjectionReader.cpp \
     ../../src/PreprocModuleBase.cpp \
     ../../src/ModuleItem.cpp \
-    ../../src/BackProjectorModuleBase.cpp \
-    ../../src/pybinder.cpp
+    ../../src/BackProjectorModuleBase.cpp
 
 HEADERS += \
     ../../include/ReconHelpers.h \
@@ -39,7 +38,12 @@ HEADERS += \
     ../../include/PreprocModuleBase.h \
     ../../include/ModuleItem.h \
     ../../include/ReconFramework_global.h \
+<<<<<<< HEAD
     ../../include/BackProjectorModuleBase.h
+=======
+    ../../include/BackProjectorModuleBase.h \
+    ../../src/stdafx.h
+>>>>>>> master
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

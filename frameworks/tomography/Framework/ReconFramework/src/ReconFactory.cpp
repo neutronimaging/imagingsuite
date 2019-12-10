@@ -1,4 +1,5 @@
 //<LICENSE>
+#include "stdafx.h"
 #include "../include/ReconFactory.h"
 #include "../include/PreprocModuleBase.h"
 #include "../include/ReconConfig.h"
@@ -46,11 +47,30 @@ ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::I
                                         moduleItem.m_sSharedObject,
                                         moduleItem.m_sModule, interactor);
 
+<<<<<<< HEAD
                 if (module==nullptr)
                     throw ReconException("Failed to build module",__FILE__,__LINE__);
 
                 if (module->GetModule()==nullptr)
                     throw ReconException("GetModule returns no valid module.",__FILE__,__LINE__);
+=======
+	// Setting up the preprocessing modules
+
+    for (auto &module : config.modules) {
+        if (module.m_bActive==true) {
+            ModuleItem *moduleItem=nullptr;
+			try {
+                moduleItem=new ModuleItem("muhrec",module.m_sSharedObject,module.m_sModule,interactor);
+
+                moduleItem->GetModule()->Configure(config,module.parameters);
+                engine->AddPreProcModule(moduleItem);
+			}
+			catch (ReconException &e) {
+				throw ReconException(e.what(),__FILE__,__LINE__);
+			}
+		}
+	}
+>>>>>>> master
 
                 std::cout << "Configuring "<<moduleItem.m_sModule<<" module with "<<moduleItem.parameters.size()<<" parameters\n";
                 module->GetModule()->Configure(config, moduleItem.parameters);
