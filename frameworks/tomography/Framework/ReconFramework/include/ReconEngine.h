@@ -116,7 +116,7 @@ protected:
     size_t m_ProjectionMargin;
 	ProjectionReader m_ProjectionReader;             //!< Instance of the projection reader
 	
-	std::list<ModuleItem *> m_PreprocList;
+    std::vector<ModuleItem *> m_PreprocList;
 	BackProjItem * m_BackProjector;
 
 	kipl::base::TImage<float,3> m_Volume;

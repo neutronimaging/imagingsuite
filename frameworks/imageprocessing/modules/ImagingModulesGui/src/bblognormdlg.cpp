@@ -13,6 +13,7 @@
 #include <strings/miscstring.h>
 #include <base/thistogram.h>
 #include <io/DirAnalyzer.h>
+#include <strings/filenames.h>
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
@@ -36,20 +37,21 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     bPBvariante(true),
     bSameMask(true),
     bUseManualThresh(false),
-    m_nWindow(5),
+
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
-    m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
-    m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
-    m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
+    min_area(20),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
     nBBextCount(0),
     nBBextFirstIndex(0),
-    min_area(20),
     thresh(0),
-    bSaveBG(false)
+    bSaveBG(false),
+    m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
+    m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
+    m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
+    m_nWindow(5)
 {
 
     blackbodyname = "somename";

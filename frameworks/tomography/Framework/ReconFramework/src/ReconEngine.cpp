@@ -70,19 +70,34 @@ ReconEngine::~ReconEngine(void)
 {
 	std::ostringstream msg;
     logger(logger.LogVerbose,"Enter destructor");
-	while (!m_PreprocList.empty()) {
-		msg.str("");
-		msg<<"Removing "<<m_PreprocList.front()->GetModule()->ModuleName()<<" from the module list ("<<m_PreprocList.size()<<")";
-		logger(kipl::logging::Logger::LogMessage,msg.str());
-        if (m_PreprocList.front()!=nullptr) {
-			delete m_PreprocList.front();
-		}
-		msg.str("");
-		msg<<"Removed the module ("<<m_PreprocList.size()<<")";
-        logger(logger.LogVerbose,msg.str());
+//	while (!m_PreprocList.empty()) {
+//		msg.str("");
+//		msg<<"Removing "<<m_PreprocList.front()->GetModule()->ModuleName()<<" from the module list ("<<m_PreprocList.size()<<")";
+//		logger(kipl::logging::Logger::LogMessage,msg.str());
+//        if (m_PreprocList.front()!=nullptr) {
+//			delete m_PreprocList.front();
+//		}
+//		msg.str("");
+//		msg<<"Removed the module ("<<m_PreprocList.size()<<")";
+//        logger(logger.LogVerbose,msg.str());
 
-		m_PreprocList.pop_front();
-	}
+//		m_PreprocList.pop_front();
+//	}
+
+    for (auto &module : m_PreprocList)
+    {
+        msg.str("");
+        msg<<"Removing "<<module->GetModule()->ModuleName()<<" from the module list ("<<m_PreprocList.size()<<")";
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        if (module!=nullptr)
+        {
+            delete module;
+        }
+        msg.str("");
+        msg<<"Removed the module ("<<m_PreprocList.size()<<")";
+        logger(logger.LogVerbose,msg.str());
+    }
+    m_PreprocList.clear();
 
     if (m_BackProjector!=nullptr)
 		delete m_BackProjector;
@@ -440,42 +455,45 @@ int ReconEngine::Process(size_t *roi)
     extroi[1]  = margin<extroi[1] ? extroi[1] : extroi[1]-margin;
     extroi[3]  = margin+extroi[3] < m_Config.ProjectionInfo.nDims[1] ? margin+extroi[3] : extroi[3];
 
-	std::list<ModuleItem *>::iterator it_Module;
+
 	msg<<"Processing ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	// Initialize the plugins with the current ROI
+
+    qDebug() << "RecEng Process module list size"<<m_PreprocList.size();
+    std::string moduleName;
 	try {
-		for (it_Module=m_PreprocList.begin();
-			it_Module!=m_PreprocList.end(); it_Module++)
+        for (auto &module : m_PreprocList)
 		{
 			msg.str("");
-			msg<<"Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
+            moduleName = module->GetModule()->ModuleName();
+            msg<<"Setting ROI for module "<< moduleName;
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
-            (*it_Module)->GetModule()->SetROI(extroi);
+            module->GetModule()->SetROI(extroi);
 		}
 	}
     catch (ReconException &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with a ReconException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a ReconException for "<<moduleName<<"\n"<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (kipl::base::KiplException &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with a KiplException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a KiplException for "<<moduleName<<"\n"<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (std::exception &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with an STL-exception for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with an STL-exception for "<<moduleName<<"\n"<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (...)
     {
 		msg.str("");
-		msg<<"SetROI failed with an unknown exception for "<<(*it_Module)->GetModule()->ModuleName();
+        msg<<"SetROI failed with an unknown exception for "<<moduleName;
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 
@@ -522,9 +540,9 @@ int ReconEngine::Process(size_t *roi)
 		msg<<"Block "<<nProcessedBlocks<<", Projection "<<i<<" (weight="<<fWeight<<", angle="<<fAngle<<")";
 		logger(kipl::logging::Logger::LogVerbose, msg.str());
 
-        for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); it_Module++)
+        for (auto &module : m_PreprocList)
         {
-			(*it_Module)->GetModule()->Process(projection,parameters);
+            module->GetModule()->Process(projection,parameters);
 		}
 
 
@@ -1256,9 +1274,10 @@ int ReconEngine::Run3DFull()
 
 		msg.str("");
 		msg<<"\nModule process time:\n";
-		std::list<ModuleItem *>::iterator it_Module;
-        for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); ++it_Module) {
-			msg<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
+
+        for (auto & module : m_PreprocList)
+        {
+            msg<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
 		}
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1294,37 +1313,38 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 
 	std::list<ModuleItem *>::iterator it_Module;
 	// Initialize the plug-ins with the current ROI
+    std::string moduleName;
 	try {
-		for (it_Module=m_PreprocList.begin();
-			it_Module!=m_PreprocList.end(); it_Module++)
+        for (auto &module : m_PreprocList)
 		{
+            moduleName = module->GetModule()->ModuleName();
 			msg.str("");
-			msg<<"Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<"Setting ROI for module "<< moduleName;
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
-			(*it_Module)->GetModule()->SetROI(roi);
+            module->GetModule()->SetROI(roi);
 		}
 	}
     catch (ReconException &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with a ReconException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a ReconException for "<<moduleName<<"\n"<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (kipl::base::KiplException &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with a KiplException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a KiplException for "<<moduleName<<"\n"<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (std::exception &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with an STL-exception for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with an STL-exception for "<<moduleName<<"\n"<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 	catch (...) {
 		msg.str("");
-		msg<<"SetROI failed with an unknown exception for "<<(*it_Module)->GetModule()->ModuleName();
+        msg<<"SetROI failed with an unknown exception for "<<moduleName;
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 
@@ -1370,13 +1390,16 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
     try
     {
-        for (it_Module=m_PreprocList.begin(); (it_Module!=m_PreprocList.end()) && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++)
+        for (auto &module : m_PreprocList)
         {
+            if (module->GetModule()->ModuleName()!=sLastModule)
+                break;
+
 			msg.str("");
-			msg<<"Processing: "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<"Processing: "<<module->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
 			if (!(m_bCancel=UpdateProgress(0.0f, msg.str())))
-				(*it_Module)->GetModule()->Process(projections,parameters);
+                module->GetModule()->Process(projections,parameters);
 			else
 				break;
 
@@ -1407,7 +1430,6 @@ int ReconEngine::Process3D(size_t *roi)
 	std::stringstream msg;
 	m_bCancel=false;
 
-	std::list<ModuleItem *>::iterator it_Module;
     msg<<": Processing ROI in 3D mode ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogMessage,msg.str());
     size_t extroi[4]={roi[0],roi[1],roi[2],roi[3]};
@@ -1425,54 +1447,56 @@ int ReconEngine::Process3D(size_t *roi)
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
 	// Initialize the plug-ins with the current ROI
+    std::string moduleName;
     try
     {
 		msg.str("");
         msg<<": Number of pre proc modules:"<<m_PreprocList.size();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
-		for (it_Module=m_PreprocList.begin();
-			it_Module!=m_PreprocList.end(); it_Module++)
+        for (auto &module : m_PreprocList)
 		{
+            moduleName = module->GetModule()->ModuleName();
 			msg.str("");
-            msg<<": Setting ROI for module "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<": Setting ROI for module "<< moduleName;
 
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-            (*it_Module)->GetModule()->SetROI(extroi);
+
+            module->GetModule()->SetROI(extroi);
 			logger(kipl::logging::Logger::LogMessage,"ROI set");
 		}
 	}
     catch (ReconException &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with a ReconException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a ReconException for "<<moduleName<<"\n"<<e.what();
 		logger(kipl::logging::Logger::LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (ModuleException &e)
     {
 			msg.str("");
-			msg<<"SetROI failed with a ModuleException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+            msg<<"SetROI failed with a ModuleException for "<<moduleName<<"\n"<<e.what();
 			logger(kipl::logging::Logger::LogError,msg.str());
 			throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (kipl::base::KiplException &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with a KiplException for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with a KiplException for "<<moduleName<<"\n"<<e.what();
 		logger(kipl::logging::Logger::LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (std::exception &e)
     {
 		msg.str("");
-		msg<<"SetROI failed with an STL-exception for "<<(*it_Module)->GetModule()->ModuleName()<<"\n"<<e.what();
+        msg<<"SetROI failed with an STL-exception for "<<moduleName<<"\n"<<e.what();
 		logger(kipl::logging::Logger::LogError,msg.str());
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (...)
     {
 		msg.str("");
-		msg<<"SetROI failed with an unknown exception for "<<(*it_Module)->GetModule()->ModuleName();
+        msg<<"SetROI failed with an unknown exception for "<<moduleName;
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 
@@ -1589,36 +1613,37 @@ int ReconEngine::Process3D(size_t *roi)
 
     try
     {
-        for (it_Module=m_PreprocList.begin(); it_Module!=m_PreprocList.end(); it_Module++)
+        for (auto &module : m_PreprocList)
         {
+            moduleName = module->GetModule()->ModuleName();
 			msg.str("");
-			msg<<"Processing: "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<"Processing: "<< moduleName;
 			logger(kipl::logging::Logger::LogMessage,msg.str());
 			if (!(m_bCancel=UpdateProgress(0.0f, msg.str())))
-                (*it_Module)->GetModule()->Process(ext_projections,parameters);
+                module->GetModule()->Process(ext_projections,parameters);
 			else
 				break;
-            validateImage(ext_projections.GetDataPtr(),ext_projections.Size(),(*it_Module)->GetModule()->ModuleName());
+            validateImage(ext_projections.GetDataPtr(),ext_projections.Size(),moduleName);
 		}
 	}
     catch (ReconException &e)
     {
-		msg<<"Preprocessing failed with a recon exception: "<<e.what();
+        msg<<"Preprocessing failed with a recon exception in "<<moduleName<<": "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (kipl::base::KiplException &e)
     {
-		msg<<"Preprocessing failed with a kipl exception: "<<e.what();
+        msg<<"Preprocessing failed with a kipl exception in "<<moduleName<<": "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (std::exception &e)
     {
-		msg<<"Preprocessing failed with an STL exception: "<<e.what();
+        msg<<"Preprocessing failed with an STL exception in "<<moduleName<<": "<<e.what();
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
     catch (...)
     {
-        msg<<"Preprocessing failed with an unsupported exception: ";
+        msg<<"Preprocessing failed with an unsupported exception in "<<moduleName<<". ";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 	
