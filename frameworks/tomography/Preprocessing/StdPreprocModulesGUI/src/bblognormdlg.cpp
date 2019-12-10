@@ -40,7 +40,7 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
-    nBBextCount(0),
+    nBBextCount(1),
     nBBextFirstIndex(0),
     min_area(20),
     thresh(0),
@@ -182,14 +182,9 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
 void BBLogNormDlg::ApplyParameters(){
 
-    //std::cout << "apply parameters" << std::endl;
 
     ui->buttonPreviewOBBB->click();
     ui->buttonPreviewsampleBB->click();
-
-
-//    UpdateDoseROI();
-//    UpdateBBROI();
 
 
     std::map<std::string, std::string> parameters;
@@ -201,53 +196,34 @@ void BBLogNormDlg::ApplyParameters(){
 
 void BBLogNormDlg::UpdateDialog(){
 
-//    UpdateDoseROI();
-//    UpdateBBROI();
 
     ui->spinFirstOBBB->setValue(nBBFirstIndex);
     ui->spinCountsOBBB->setValue(nBBCount);
     ui->edit_OB_BB_mask->setText(QString::fromStdString(blackbodyname));
-//    ui->spinx0BBroi->setValue(BBroi[0]);
-//    ui->spinx1BBroi->setValue(BBroi[2]);
-//    ui->spiny0BBroi->setValue(BBroi[1]);
-//    ui->spiny1BBroi->setValue(BBroi[3]);
     ui->roiwidget_BB->setROI(BBroi);
-
     ui->spinFirstsampleBB->setValue(nBBSampleFirstIndex);
     ui->spinCountsampleBB->setValue(nBBSampleCount);
     ui->edit_sample_BB_mask->setText(QString::fromStdString(blackbodysamplename));
-//    ui->spinx0BBdose->setValue(doseBBroi[0]);
-//    ui->spinx1BBdose->setValue(doseBBroi[2]);
-//    ui->spiny0BBdose->setValue(doseBBroi[1]);
-//    ui->spiny1BBdose->setValue(doseBBroi[3]);
     ui->roiwidget_dose->setROI(doseBBroi);
-
     ui->spinRadius->setValue(static_cast<int>(radius));
     ui->combo_averagingMethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceAverageMethod)));
     ui->combo_referencingmethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceMethod)));
     ui->combo_BBoptions->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
     ui->combo_IntMeth_X->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
     ui->combo_IntMeth_Y->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
-
     ui->edit_OBBB_ext->setText(QString::fromStdString(blackbodyexternalname));
     ui->edit_BB_external->setText(QString::fromStdString(blackbodysampleexternalname));
     ui->spin_first_extBB->setValue(nBBextFirstIndex);
     ui->spin_count_ext_BB->setValue(nBBextCount);
-
     ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
     ui->checkBox_thresh->setChecked(bUseManualThresh);
     ui->spinThresh->setValue(thresh);
-
-
-
-//    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
-
     ui->check_singleext->setChecked(bExtSingleFile);
 
-//    std::cout << "update dialog" << std::endl;
+
 
 }
 

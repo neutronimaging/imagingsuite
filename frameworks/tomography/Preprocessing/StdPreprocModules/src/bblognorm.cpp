@@ -48,7 +48,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     ferror(0.0f),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
-    nBBextCount(0),
+    nBBextCount(1),
     nBBextFirstIndex(0),
     bUseExternalBB(false),
     bSameMask(true),
@@ -160,10 +160,8 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     thresh = GetFloatParameter(parameters,"thresh");
 
     m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
-//    m_corrector.SetInteractor(m_Interactor);
-
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
-//    std::cout << bUseManualThresh << " " << thresh << std::endl;
+
 
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 
@@ -287,7 +285,7 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
-//    std::cout << bUseManualThresh << " " << thresh << std::endl;
+
 
     memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
 

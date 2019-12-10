@@ -9,6 +9,7 @@
 //#include <winnt.h>
 //#endif
 
+#include <strings/filenames.h>
 
 #include <strings/miscstring.h>
 #include <base/thistogram.h>
@@ -45,7 +46,7 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
-    nBBextCount(0),
+    nBBextCount(1),
     nBBextFirstIndex(0),
     min_area(20),
     thresh(0),
@@ -673,7 +674,6 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
         float lo,hi;
 
-    //    if (x < 0) {
             const size_t NHist=512;
             size_t hist[NHist];
             float axis[NHist];
@@ -686,100 +686,11 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
             ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
 
-    //    }
-    //    else {
-
-    //        ui->projectionViewer->get_levels(&lo,&hi);
-    //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-    //    }
     }
 
-//    if (QFile::exists(QString::fromStdString(blackbodysamplename)) && blackbodysamplename!="./") {
-//        m_Preview_sampleBB = reader.ReadNexus(blackbodysamplename, nBBSampleFirstIndex,
-//                                              m_Config->ProjectionInfo.eFlip,
-//                                              m_Config->ProjectionInfo.eRotate,
-//                                              m_Config->ProjectionInfo.fBinning,
-//                                              NULL);
-//        float lo,hi;
-
-//    //    if (x < 0) {
-//            const size_t NHist=512;
-//            size_t hist[NHist];
-//            float axis[NHist];
-//            size_t nLo=0;
-//            size_t nHi=0;
-//            kipl::base::Histogram(m_Preview_OBBB.GetDataPtr(),m_Preview_OBBB.Size(),hist,NHist,0.0f,0.0f,axis);
-//            kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
-//            lo=axis[nLo];
-//            hi=axis[nHi];
-
-//            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
-
-//    //    }
-//    //    else {
-
-//    //        ui->projectionViewer->get_levels(&lo,&hi);
-//    //        ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
-//    //    }
-
-//    }
 
 }
 
-//void BBLogNormDlg::on_button_BBdose_clicked()
-//{
-//    QRect rect=ui->sample_bb_Viewer->get_marked_roi();
-
-//    if (rect.width()*rect.height()!=0)
-//    {
-//        ui->spinx0BBdose->blockSignals(true);
-//        ui->spiny0BBdose->blockSignals(true);
-//        ui->spinx1BBdose->blockSignals(true);
-//        ui->spiny1BBdose->blockSignals(true);
-//        ui->spinx0BBdose->setValue(rect.x());
-//        ui->spiny0BBdose->setValue(rect.y());
-//        ui->spinx1BBdose->setValue(rect.x()+rect.width());
-//        ui->spiny1BBdose->setValue(rect.y()+rect.height());
-//        ui->spinx0BBdose->blockSignals(false);
-//        ui->spiny0BBdose->blockSignals(false);
-//        ui->spinx1BBdose->blockSignals(false);
-//        ui->spiny1BBdose->blockSignals(false);
-//        UpdateDoseROI();
-//    }
-//}
-
-
-//void BBLogNormDlg::UpdateDoseROI(){
-//    QRect rect;
-
-//    rect.setCoords(ui->spinx0BBdose->value(),
-//                   ui->spiny0BBdose->value(),
-//                   ui->spinx1BBdose->value(),
-//                   ui->spiny1BBdose->value());
-
-//    ui->sample_bb_Viewer->set_rectangle(rect,QColor("red"),0);
-
-//}
-
-//void BBLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
 
 
 void BBLogNormDlg::on_errorButton_clicked()

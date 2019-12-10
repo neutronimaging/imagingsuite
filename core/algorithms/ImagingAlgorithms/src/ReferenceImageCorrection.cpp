@@ -338,7 +338,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             if (bExtSingleFile)
             {
 
-                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetDataPtr(), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+//                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetDataPtr(), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
                 fdose_ext_slice = fdoseS_ext;
             }
             else {
