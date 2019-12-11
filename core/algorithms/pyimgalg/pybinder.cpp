@@ -1,12 +1,10 @@
-#include "../include/pybinder.h"
+#include "pyBinder.h"
 
-#ifdef HAVEPYBIND11
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 
-#include "../include/ImagingException.h"
-
+#include <ImagingException.h>
 
 namespace py = pybind11;
 
@@ -18,7 +16,7 @@ void bindPixelInfo(py::module &m);
 void bindException(py::module &m);
 void bindProjectionFilter(py::module &m);
 
-PYBIND11_MODULE(imagalg,m)
+PYBIND11_MODULE(pyimgalg,m)
 {
     bindAverageImage(m);
     bindPolynomialCorrection(m);
@@ -31,4 +29,3 @@ PYBIND11_MODULE(imagalg,m)
     py::register_exception<ImagingException>(m, "ImagingException");
 }
 
-#endif
