@@ -17,6 +17,8 @@
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
+#include <KiplFrameworkException.h>
+#include <base/KiplException.h>
 
 #include <imagereader.h>
 
@@ -703,24 +705,20 @@ void BBLogNormDlg::on_errorButton_clicked()
 
     if (rect.width()*rect.height()!=0) {
 
-//        ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
-
         std::map<std::string, std::string> parameters;
         UpdateParameters();
         UpdateParameterList(parameters);
-//        std::cout << "trying to compute error" << std::endl;
-//        std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
 
         kipl::base::TImage<float,2> mymask;
         float error;
 
-        try {
+        try{
             module.ConfigureDLG(*(dynamic_cast<KiplProcessConfig *>(m_Config)),parameters);
-            error = module.GetInterpolationError(mymask);
+
         }
         catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
             logger(kipl::logging::Logger::LogWarning,e.what());
             errdlg.exec();
@@ -728,15 +726,52 @@ void BBLogNormDlg::on_errorButton_clicked()
         }
         catch(...){
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpolation error.. generic exception.");
+            errdlg.setText("Failed to configure the module dialog.. generic exception.");
             return ;
+        }
+            ostringstream msg;
+
+        try {           
+            error = module.GetInterpolationError(mymask);
+        }
+//        catch(kipl::base::KiplException &e) {
+//            QMessageBox errdlg(this);
+//            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+//            errdlg.setDetailedText(QString::fromStdString(e.what()));
+//            logger(kipl::logging::Logger::LogWarning,e.what());
+//            errdlg.exec();
+//            return ;
+//        }
+//        catch(...){
+//            QMessageBox errdlg(this);
+//            errdlg.setText("Failed to compute interpolation error.. generic exception.");
+//            return ;
+//        }
+
+        catch (KiplFrameworkException &e)
+        {
+            msg<<"KiplFrameworkException with message: "<<e.what();
+            throw KiplFrameworkException("KiplFrameworkException ", __FILE__,__LINE__);
+        }
+        catch (ModuleException &e) {
+            msg<<"ModuleException with message: "<<e.what();
+            throw ModuleException("ModuleException ", __FILE__,__LINE__);
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            msg<<"KiplException with message: "<<e.what();
+            throw kipl::base::KiplException("KiplException ", __FILE__,__LINE__);
+        }
+        catch (std::exception &e)
+        {
+            msg<<"STL exception with message: "<<e.what();
+        }
+        catch (...)
+        {
+            msg<<"An unknown exception";
         }
 
 
-//        std::cout << error << std::endl;
-
-        // display interpolation error
-//        ui->errorBrowser->setText(QString::number(error));
         ui->label_error->setText(QString::number(error));
 
         // display computed mask

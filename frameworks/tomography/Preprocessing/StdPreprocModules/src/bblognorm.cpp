@@ -894,7 +894,11 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
     std::map<std::pair<int, int>, float> values_bb;
 
 
-     bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+    } catch (...) {
+        throw ReconException("Error while computing ob_bb_parameters, try to change the segmentation method.", __FILE__, __LINE__);
+    }
 
 
 

@@ -3,9 +3,6 @@
 #include "ImagingModules_global.h"
 #include <strings/miscstring.h>
 
-//#include <ReconException.h>
-//#include <ProjectionReader.h>
-//#include <ReconConfig.h>
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <base/textractor.h>
@@ -14,6 +11,7 @@
 #include <strings/filenames.h>
 
 #include <ParameterHandling.h>
+#include <ModuleException.h>
 
 #include <imagereader.h>
 
@@ -586,9 +584,6 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareBBData(){
     m_corrector.SetMinArea(min_area);
     m_corrector.SetInterpolationMethod(m_InterpMethod);
 
-//    float *bb_ob_param;
-//    float *bb_sample_parameters;
-
  size_t nProj=(m_Config.mImageInformation.nLastFileIndex-m_Config.mImageInformation.nFirstFileIndex+1); // here I only need the number of images loaded.. and not these computation relevant to tomography
     // this should come somehow from the KipTool mainwindow I guess
 
@@ -653,7 +648,15 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
     kipl::base::TImage<float,2> obmask(bb.Dims());
 
 
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    }
+    catch(...)
+    {
+        throw ImagingException("Error while computing ob_bb_parameters, try to change the segmentation method.", __FILE__, __LINE__);
+
+    }
+
 
 
     if (bPBvariante) {
@@ -1021,8 +1024,12 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
     std::map<std::pair<int, int>, float> values;
     std::map<std::pair<int, int>, float> values_bb;
 
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+    } catch (...) {
+        throw ImagingException("failed to PrepareBlackBodyImagewithSlices", __FILE__,__LINE__);
+    }
 
-     bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
 
 //     kipl::base::TImage<float,2> mythinimage = m_corrector.InterpolateBlackBodyImagewithSplines(bb_ob_param, values, BBroi);
 //      kipl::io::WriteTIFF32(mythinimage,"BBob_image.tif"); // this is now correct!
@@ -1507,7 +1514,16 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
+    } catch (...) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. ";
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ",__FILE__,__LINE__);
+    }
+
+
+
     mask = obmask;
 
 //    std::cout << "after PrepareBlackBodyImage" <<std::endl;
