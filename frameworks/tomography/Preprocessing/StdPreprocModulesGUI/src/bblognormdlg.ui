@@ -248,6 +248,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="check_singleext">
+           <property name="text">
+            <string>Single File</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="horizontalLayoutWidget_9">
@@ -288,6 +295,9 @@
            </property>
            <property name="maximum">
             <number>9999</number>
+           </property>
+           <property name="value">
+            <number>1</number>
            </property>
           </widget>
          </item>

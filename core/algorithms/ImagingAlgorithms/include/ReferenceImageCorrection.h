@@ -67,6 +67,7 @@ public:
             kipl::base::TImage<float,2> *dc,
             bool useBB,
             bool useExtBB,
+            bool useSingleExtBB,
             float dose_OB,
             float dose_DC,
             bool normBB,
@@ -109,6 +110,7 @@ public:
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist); /// set the BB externally computed images and corresponding doses
+    void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s); /// set the BB externally computed images and corresponding doses, case of single file also for the sample background
     void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
     void SaveBG(bool value, string path, string obname, string filemask);
     void SetInteractor(kipl::interactors::InteractionBase *interactor);
@@ -171,8 +173,10 @@ protected:
     bool m_bHaveBBDoseROI;
 	bool m_bHaveBlackBodyROI;
     bool bPBvariante;
+    bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
 
-    float fdoseOB_ext; /// dose value in externally computed open beam with BB image in dose roi
+    float fdoseOB_ext; /// dose value in externally computed background for open beam image
+    float fdoseS_ext; /// dose value in externally computed background for single sample image
     float *fdose_ext_list; /// dose value list in externally computed sample with BB image in dose roi
     float fdose_ext_slice; /// dose value of current slice from fdose_ext_list
 
