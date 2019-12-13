@@ -1319,7 +1319,14 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
+
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
+    } catch (...) {
+         throw ReconException("Error while computing ob_bb_parameters, try to change the segmentation method.", __FILE__, __LINE__);
+
+    }
+
     mask = obmask;
 
     delete [] bb_ob_param;
