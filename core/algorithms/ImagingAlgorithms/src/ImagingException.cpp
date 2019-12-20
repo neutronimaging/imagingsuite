@@ -8,29 +8,13 @@ ImagingException::~ImagingException()
 }
 
 ImagingException::ImagingException(std::string msg) :
-    kipl::base::KiplException (msg)
+    kipl::base::KiplException (msg,"ImagingException")
 {
 }
 
 ImagingException::ImagingException(std::string msg, std::string filename, size_t line) :
-    kipl::base::KiplException (msg,filename,line)
+    kipl::base::KiplException (msg,filename,line,"ImagingException")
 {
 }
 
-const char* ImagingException::what() const noexcept
-{
-
-    if (nLineNumber==0) {
-        return sMessage.c_str();
-    }
-
-    if (sFileName.empty())
-        return sMessage.c_str();
-
-    std::ostringstream str;
-
-    str<<"An "<<sExceptionName<<" was thrown in file "<<sFileName<<" on line "<<nLineNumber<<": "<<std::endl<<sMessage;
-
-    return str.str().c_str();
-}
 
