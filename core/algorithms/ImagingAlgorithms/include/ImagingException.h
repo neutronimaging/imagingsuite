@@ -4,19 +4,15 @@
 #define IMAGINGEXCEPTION_H_
 #include "ImagingAlgorithms_global.h"
 #include <string>
+#include <base/KiplException.h>
 
-class IMAGINGALGORITHMSSHARED_EXPORT ImagingException {
+class IMAGINGALGORITHMSSHARED_EXPORT ImagingException : public kipl::base::KiplException{
 public:
 	virtual ~ImagingException();
 	ImagingException(std::string msg);
     ImagingException(std::string msg, std::string filename, size_t line);
 
-    const char* what() const;
-protected :
-    std::string sExceptionName;
-    std::string sMessage;
-    std::string sFileName;
-    size_t nLineNumber;
+    virtual const char* what() const noexcept;
 };
 
 
