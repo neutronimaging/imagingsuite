@@ -98,13 +98,12 @@ void MainWindow::on_ShowImageButton_clicked()
 
 void MainWindow::GetModulesClicked()
 {
-    std::list<ModuleConfig> modules=ui->ModuleConf->GetModules();
+    auto modules=ui->ModuleConf->GetModules();
 
-    std::list<ModuleConfig>::iterator it;
     std::ostringstream msg;
     msg<<"Got "<<modules.size()<<" modules from the widget\n";
-    for (it=modules.begin(); it!=modules.end(); it++) {
-        msg<<(it->m_sModule)<<"("<<(it->m_bActive ? "Active": "Disabled")<<"), has "<<(it->parameters.size())<<" parameters\n";
+    for (auto & module : modules) {
+        msg<<(module.m_sModule)<<"("<<(module.m_bActive ? "Active": "Disabled")<<"), has "<<(module.parameters.size())<<" parameters\n";
     }
 
     logger(kipl::logging::Logger::LogMessage,msg.str());
