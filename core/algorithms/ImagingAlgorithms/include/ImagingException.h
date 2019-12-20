@@ -6,13 +6,12 @@
 #include <string>
 #include <base/KiplException.h>
 
-class IMAGINGALGORITHMSSHARED_EXPORT ImagingException : public kipl::base::KiplException{
+class IMAGINGALGORITHMSSHARED_EXPORT ImagingException : public kipl::base::KiplException
+{
 public:
 	virtual ~ImagingException();
 	ImagingException(std::string msg);
     ImagingException(std::string msg, std::string filename, size_t line);
-
-    virtual const char* what() const noexcept;
 };
 
 
