@@ -40,10 +40,11 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
-    nBBextCount(0),
+    nBBextCount(1),
     nBBextFirstIndex(0),
     min_area(20),
-    thresh(0)
+    thresh(0),
+    bExtSingleFile(true)
 {
 
     blackbodyname = "somename";
@@ -114,6 +115,7 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
         nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
         bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
         bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
         thresh = GetFloatParameter(parameters,"thresh");
         min_area = GetIntParameter(parameters, "min_area");
@@ -180,14 +182,9 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
 void BBLogNormDlg::ApplyParameters(){
 
-    //std::cout << "apply parameters" << std::endl;
 
     ui->buttonPreviewOBBB->click();
     ui->buttonPreviewsampleBB->click();
-
-
-//    UpdateDoseROI();
-//    UpdateBBROI();
 
 
     std::map<std::string, std::string> parameters;
@@ -199,52 +196,34 @@ void BBLogNormDlg::ApplyParameters(){
 
 void BBLogNormDlg::UpdateDialog(){
 
-//    UpdateDoseROI();
-//    UpdateBBROI();
 
     ui->spinFirstOBBB->setValue(nBBFirstIndex);
     ui->spinCountsOBBB->setValue(nBBCount);
     ui->edit_OB_BB_mask->setText(QString::fromStdString(blackbodyname));
-//    ui->spinx0BBroi->setValue(BBroi[0]);
-//    ui->spinx1BBroi->setValue(BBroi[2]);
-//    ui->spiny0BBroi->setValue(BBroi[1]);
-//    ui->spiny1BBroi->setValue(BBroi[3]);
     ui->roiwidget_BB->setROI(BBroi);
-
     ui->spinFirstsampleBB->setValue(nBBSampleFirstIndex);
     ui->spinCountsampleBB->setValue(nBBSampleCount);
     ui->edit_sample_BB_mask->setText(QString::fromStdString(blackbodysamplename));
-//    ui->spinx0BBdose->setValue(doseBBroi[0]);
-//    ui->spinx1BBdose->setValue(doseBBroi[2]);
-//    ui->spiny0BBdose->setValue(doseBBroi[1]);
-//    ui->spiny1BBdose->setValue(doseBBroi[3]);
     ui->roiwidget_dose->setROI(doseBBroi);
-
     ui->spinRadius->setValue(static_cast<int>(radius));
     ui->combo_averagingMethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceAverageMethod)));
     ui->combo_referencingmethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceMethod)));
     ui->combo_BBoptions->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
     ui->combo_IntMeth_X->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
     ui->combo_IntMeth_Y->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
-
     ui->edit_OBBB_ext->setText(QString::fromStdString(blackbodyexternalname));
     ui->edit_BB_external->setText(QString::fromStdString(blackbodysampleexternalname));
     ui->spin_first_extBB->setValue(nBBextFirstIndex);
     ui->spin_count_ext_BB->setValue(nBBextCount);
-
     ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
     ui->checkBox_thresh->setChecked(bUseManualThresh);
     ui->spinThresh->setValue(thresh);
-
-
-
-//    std::cout << "ui->combo_averagingMethod->currentIndex():  " << ui->combo_averagingMethod->currentText().toStdString()<< std::endl;
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
+    ui->check_singleext->setChecked(bExtSingleFile);
 
 
-//    std::cout << "update dialog" << std::endl;
 
 }
 
@@ -254,28 +233,13 @@ void BBLogNormDlg::UpdateParameters(){
     nBBFirstIndex = ui->spinFirstOBBB->value();
     nBBCount = ui->spinCountsOBBB->value();
     blackbodyname = ui->edit_OB_BB_mask->text().toStdString();
-//    BBroi[0] = ui->spinx0BBroi->value();
-//    BBroi[1] = ui->spiny0BBroi->value();
-//    BBroi[2] = ui->spinx1BBroi->value();
-//    BBroi[3] = ui->spiny1BBroi->value();
     ui->roiwidget_BB->getROI(BBroi);
 
     nBBSampleFirstIndex =ui->spinFirstsampleBB->value();
     nBBSampleCount = ui->spinCountsampleBB->value();
     blackbodysamplename = ui->edit_sample_BB_mask->text().toStdString();
-//    doseBBroi[0] = ui->spinx0BBdose->value();
-//    doseBBroi[1] = ui->spiny0BBdose->value();
-//    doseBBroi[2] = ui->spinx1BBdose->value();
-//    doseBBroi[3] = ui->spiny1BBdose->value();
-    ui->roiwidget_dose->getROI(doseBBroi);
 
-//    if ( (doseBBroi[3]-doseBBroi[1])>0 && (doseBBroi[2]-doseBBroi[0]>0)) {
-//        bUseNormROIBB = true;
-//        std::cout << "----------------" << bUseNormROIBB << std::endl;
-//    } else {
-//        bUseNormROIBB = false;
-//        std::cout << "---------------------" << bUseNormROIBB << std::endl;
-//    }
+    ui->roiwidget_dose->getROI(doseBBroi);
 
     radius = static_cast<size_t>(ui->spinRadius->value());
     string2enum(ui->combo_averagingMethod->currentText().toStdString(), m_ReferenceAverageMethod);
@@ -297,10 +261,8 @@ void BBLogNormDlg::UpdateParameters(){
 
     bUseManualThresh = ui->checkBox_thresh->isChecked();
     thresh = ui->spinThresh->value();
+    bExtSingleFile = ui->check_singleext->isChecked();
 
-//    std::cout << "update parameters " << std::endl;
-//    std::cout << ui->edit_OB_BB_mask->text().toStdString() << std::endl;
-//    std::cout << blackbodyname << std::endl;
 
 }
 
@@ -323,9 +285,7 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["BBOption"] = enum2string(m_BBOptions);
     parameters["InterpolationMethod"] = enum2string(m_InterpMethod);
     parameters["tau"] = kipl::strings::value2string(tau);
-//    parameters["useBBnormregion"] = kipl::strings::bool2string(bUseNormROIBB);
     parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
-//    parameters["usenormregion"] = kipl::strings::bool2string(bUseNormROI);
     parameters["window"] = kipl::strings::value2string(m_nWindow);
     parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
     parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
@@ -340,13 +300,8 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["thresh"]= kipl::strings::value2string(thresh);
+    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
 
-//    parameters["useBB"] = kipl::strings::bool2string(bUseBB);
-//    parameters["useExternalBB"] = kipl::strings::bool2string(bUseExternalBB);
-
-
-
-//    std::cout << "update parameters list" << std::endl;
 
 }
 
@@ -447,48 +402,6 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
 }
 
-//void BBLogNormDlg::on_button_BBroi_clicked()
-//{
-//    QRect rect=ui->ob_bb_Viewer->get_marked_roi();
-
-//    if (rect.width()*rect.height()!=0)
-//    {
-////        ui->spinx0BBroi->blockSignals(true);
-////        ui->spiny0BBroi->blockSignals(true);
-////        ui->spinx1BBroi->blockSignals(true);
-////        ui->spiny1BBroi->blockSignals(true);
-//        ui->spinx0BBroi->setValue(rect.x());
-//        ui->spiny0BBroi->setValue(rect.y());
-//        ui->spinx1BBroi->setValue(rect.x()+rect.width());
-//        ui->spiny1BBroi->setValue(rect.y()+rect.height());
-////        ui->spinx0BBroi->blockSignals(false);
-////        ui->spiny0BBroi->blockSignals(false);
-////        ui->spinx1BBroi->blockSignals(false);
-////        ui->spiny1BBroi->blockSignals(false);
-//        UpdateBBROI();
-//    }
-//}
-
-//void BBLogNormDlg::UpdateBBROI()
-//{
-//    QRect rect;
-
-//    rect.setCoords(ui->spinx0BBroi->value(),
-//                   ui->spiny0BBroi->value(),
-//                   ui->spinx1BBroi->value(),
-//                   ui->spiny1BBroi->value());
-
-//    ui->ob_bb_Viewer->set_rectangle(rect,QColor("green").light(),0);
-//}
-
-//void BBLogNormDlg::on_spinx0BBroi_valueChanged(int arg1)
-//{
-//    UpdateBBROI();
-//}
-
-//void BBLogNormDlg::on_spinx1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-//void BBLogNormDlg::on_spiny0BBroi_valueChanged(int arg1){ UpdateBBROI(); }
-//void BBLogNormDlg::on_spiny1BBroi_valueChanged(int arg1){ UpdateBBROI(); }
 
 
 
@@ -616,60 +529,6 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
 
 }
 
-//void BBLogNormDlg::on_button_BBdose_clicked()
-//{
-//    QRect rect=ui->sample_bb_Viewer->get_marked_roi();
-
-//    if (rect.width()*rect.height()!=0)
-//    {
-//        ui->spinx0BBdose->blockSignals(true);
-//        ui->spiny0BBdose->blockSignals(true);
-//        ui->spinx1BBdose->blockSignals(true);
-//        ui->spiny1BBdose->blockSignals(true);
-//        ui->spinx0BBdose->setValue(rect.x());
-//        ui->spiny0BBdose->setValue(rect.y());
-//        ui->spinx1BBdose->setValue(rect.x()+rect.width());
-//        ui->spiny1BBdose->setValue(rect.y()+rect.height());
-//        ui->spinx0BBdose->blockSignals(false);
-//        ui->spiny0BBdose->blockSignals(false);
-//        ui->spinx1BBdose->blockSignals(false);
-//        ui->spiny1BBdose->blockSignals(false);
-//        UpdateDoseROI();
-//    }
-//}
-
-
-//void BBLogNormDlg::UpdateDoseROI(){
-//    QRect rect;
-
-//    rect.setCoords(ui->spinx0BBdose->value(),
-//                   ui->spiny0BBdose->value(),
-//                   ui->spinx1BBdose->value(),
-//                   ui->spiny1BBdose->value());
-
-//    ui->sample_bb_Viewer->set_rectangle(rect,QColor("red"),0);
-
-//}
-
-//void BBLogNormDlg::on_spinx0BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spinx1BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spiny0BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
-
-//void BBLogNormDlg::on_spiny1BBdose_valueChanged(int arg1)
-//{
-//    UpdateDoseROI();
-//}
 
 
 void BBLogNormDlg::on_errorButton_clicked()
@@ -774,23 +633,11 @@ void BBLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
 void BBLogNormDlg::on_button_OB_BB_ext_clicked()
 {
     QString ob_bb_ext_dir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the open beam images with BB",
+                                      "Select the open beam images with BB",
                                                    ui->edit_OBBB_ext->text());
 
     if (!ob_bb_ext_dir.isEmpty()) {
         std::string pdir=ob_bb_ext_dir.toStdString();
-
-//        #ifdef _MSC_VER
-//        const char slash='\\';
-//        #else
-//        const char slash='/';
-//        #endif
-//        ptrdiff_t pos=pdir.find_last_of(slash);
-
-//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-//        std::string fname=pdir.substr(pos+1);
-//        kipl::io::DirAnalyzer da;
-//        kipl::io::FileItem fi=da.GetFileMask(pdir);
 
         ui->edit_OBBB_ext->setText(QString::fromStdString(pdir)); // I want the entire filename
     }
@@ -800,25 +647,36 @@ void BBLogNormDlg::on_button_OB_BB_ext_clicked()
 void BBLogNormDlg::on_button_BBexternal_path_clicked()
 {
     QString sample_bb_ext_dir=QFileDialog::getOpenFileName(this,
-                                      "Select location of the open beam images with BB",
+                                      "Select one sample beam images with BB",
                                                    ui->edit_BB_external->text());
+    std::cout << "bExtSingleFile " <<  bExtSingleFile << std::endl;
+
 
     if (!sample_bb_ext_dir.isEmpty()) {
+
         std::string pdir=sample_bb_ext_dir.toStdString();
+        if (bExtSingleFile)
+        {
+            ui->edit_BB_external->setText(QString::fromStdString(pdir));
+        }
+        else {
 
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
+            #ifdef _MSC_VER
+            const char slash='\\';
+            #else
+            const char slash='/';
+            #endif
+            ptrdiff_t pos=pdir.find_last_of(slash);
 
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        std::string fname=pdir.substr(pos+1);
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
+            QString path(QString::fromStdString(pdir.substr(0,pos+1)));
+            std::string fname=pdir.substr(pos+1);
+            kipl::io::DirAnalyzer da;
+            kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
+            ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
+
+        }
+
     }
 
 
@@ -870,4 +728,25 @@ void BBLogNormDlg::on_pushButton_filenameOBBB_clicked()
 void BBLogNormDlg::on_pushButton_filenameBB_clicked()
 {
     ui->edit_sample_BB_mask->setText(ui->edit_OB_BB_mask->text());
+}
+
+
+void BBLogNormDlg::on_check_singleext_clicked(bool checked)
+{
+    bExtSingleFile = checked;
+    // triggers the re-browsing of the bb ext file
+    ui->button_BBexternal_path->click();
+
+}
+
+void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
+{
+    if (ui->check_singleext->isChecked())
+    {
+        bExtSingleFile = true;
+    }
+    else {
+        bExtSingleFile = false;
+    }
+
 }

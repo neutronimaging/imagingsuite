@@ -54,14 +54,15 @@ IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionB
     ferror(0.0f),
     ffirstAngle(0.0f),
     flastAngle(360.0f),
-    nBBextCount(0),
+    nBBextCount(1),
     nBBextFirstIndex(0),
     bUseExternalBB(false),
     bSameMask(true),
     bUseManualThresh(false),
     min_area(20),
     thresh(0),
-    bSaveBG(false)
+    bSaveBG(false),
+    bExtSingleFile(true)
 {
 
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
@@ -134,7 +135,6 @@ int IMAGINGMODULESSHARED_EXPORT BBLogNorm::Configure(KiplProcessConfig config, s
     m_Config    = config;
 
     m_corrector.SetInteractor(m_Interactor); // outside the constructor.. to check if still OK.
-
     path = GetStringParameter(parameters,"path"); // not sure it is used
     flatname = GetStringParameter(parameters, "OB_PATH");
     darkname = GetStringParameter(parameters, "DC_PATH");
@@ -178,6 +178,7 @@ int IMAGINGMODULESSHARED_EXPORT BBLogNorm::Configure(KiplProcessConfig config, s
     flastAngle = GetFloatParameter(parameters, "lastAngle");
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+    bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
     thresh = GetFloatParameter(parameters,"thresh");
 
     bSaveBG = kipl::strings::string2bool(GetStringParameter(parameters,"SaveBG"));
@@ -324,6 +325,7 @@ int IMAGINGMODULESSHARED_EXPORT BBLogNorm::ConfigureDLG(KiplProcessConfig config
     bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh = GetFloatParameter(parameters,"thresh");
+    bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
 
     bSaveBG = kipl::strings::string2bool(GetStringParameter(parameters,"SaveBG"));
     pathBG = GetStringParameter(parameters,"path_BG");
@@ -467,6 +469,7 @@ std::map<std::string, std::string> IMAGINGMODULESSHARED_EXPORT   BBLogNorm::GetP
     parameters["path_BG"] = pathBG;
     parameters["flatname_BG"] = flatname_BG;
     parameters["filemask_BG"] = filemask_BG;
+    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
 
     msg<<"end of BBLogNorm::GetParameters";
     logger(kipl::logging::Logger::LogDebug,msg.str());
@@ -504,10 +507,17 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::LoadReferenceImages(size_t *roi)
 
 
     if (bUseExternalBB && nBBextCount!=0){
+        try {
+
         LoadExternalBBData(roi); // they must be ready for SetReferenceImages
+
+        } catch (...) {
+            throw ImagingException("Error while loading external BB data", __FILE__, __LINE__);
+
+        }
     }
 
-     m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, dose_roi);
+     m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), bExtSingleFile, fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, dose_roi);
 
      msg<<"References loaded";
      logger(kipl::logging::Logger::LogDebug,msg.str());
@@ -529,11 +539,23 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::LoadExternalBBData(size_t *roi){
     float *doselist = new float[nBBextCount];
 
     bb_ext = BBExternalLoader(blackbodyexternalname, roi, dose);
-//    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
-//    std::cout << "dose: " << dose << std::endl;
-    bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex,doselist);
 
-    m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
+    if (bExtSingleFile)
+    {
+        kipl::base::TImage<float,2> bb_sample_ext;
+        float dose_s;
+        bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, roi, dose_s);
+        m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, dose_s);
+
+    }
+    else
+    {
+        kipl::base::TImage<float,3> bb_sample_ext;
+        float *doselist = new float[nBBextCount];
+        bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex, doselist);
+        m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
+    }
+
 
 }
 

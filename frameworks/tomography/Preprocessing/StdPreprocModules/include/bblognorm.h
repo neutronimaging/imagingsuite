@@ -80,6 +80,7 @@ protected:
     bool bSameMask; /// boolean value on the use of the same mask computed for OB images with BB also for sample image with BB, in case of false the mask is recomputed on the first available image with BB. This implies that exists an image with the sample and without BB and the sample is in the exact same position
     bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
     bool bPBvariante;
+    bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
 
     size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
