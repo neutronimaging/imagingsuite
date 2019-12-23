@@ -9,7 +9,8 @@
 ProcessModuleBase::ProcessModuleBase(std::string name,kipl::interactors::InteractionBase *interactor) :
  logger(name),
  m_sModuleName(name),
-  m_Interactor(interactor)
+  m_Interactor(interactor),
+  m_bThreading(false)
 {
     std::ostringstream msg;
 

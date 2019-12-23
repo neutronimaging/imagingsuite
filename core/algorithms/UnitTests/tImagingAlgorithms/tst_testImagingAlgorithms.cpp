@@ -31,6 +31,7 @@ public:
     
 private Q_SLOTS:
     void PixelInfo();
+    void MorphSpotClean_Initialization();
     void MorphSpotClean_CleanHoles();
     void MorphSpotClean_CleanPeaks();
     void MorphSpotClean_CleanBoth();
@@ -99,6 +100,40 @@ void TestImagingAlgorithms::PixelInfo()
     QCOMPARE(pi3.pos,10);
     QCOMPARE(pi3.value,20.0f);
     QCOMPARE(pi3.weight,40.0f);
+}
+
+void TestImagingAlgorithms::MorphSpotClean_Initialization()
+{
+    ImagingAlgorithms::MorphSpotClean cleaner;
+
+    QCOMPARE(cleaner.connectivity(),kipl::base::conn8);
+    cleaner.setConnectivity(kipl::base::conn4);
+    QCOMPARE(cleaner.connectivity(),kipl::base::conn4);
+    QVERIFY_EXCEPTION_THROWN(cleaner.setConnectivity(kipl::base::conn6),kipl::base::KiplException);
+    QVERIFY_EXCEPTION_THROWN(cleaner.setConnectivity(kipl::base::conn18),kipl::base::KiplException);
+    QVERIFY_EXCEPTION_THROWN(cleaner.setConnectivity(kipl::base::conn26),kipl::base::KiplException);
+    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectHoles);
+    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanReplace);
+
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth, ImagingAlgorithms::MorphCleanFill);
+    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectBoth);
+    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanFill);
+
+    QCOMPARE(cleaner.clampLimits(),std::vector<float>({-0.1f,7.0f}));
+    QCOMPARE(cleaner.clampActive(),false);
+    QCOMPARE(cleaner.maxArea(),100);
+    cleaner.setLimits(true, -1, 20, 21);
+    QCOMPARE(cleaner.clampLimits(),std::vector<float>({-1.0f,20.0f}));
+    QCOMPARE(cleaner.clampActive(),true);
+    QCOMPARE(cleaner.maxArea(),21);
+
+    QCOMPARE(cleaner.edgeConditionLength(),9);
+    cleaner.setEdgeConditioning(15);
+    QCOMPARE(cleaner.edgeConditionLength(),15);
+
+    QCOMPARE(cleaner.cleanInfNan(),false);
+    cleaner.setCleanInfNan(true);
+    QCOMPARE(cleaner.cleanInfNan(),true);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanHoles()

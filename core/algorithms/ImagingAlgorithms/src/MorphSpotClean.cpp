@@ -237,10 +237,15 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
 
 void MorphSpotClean::setConnectivity(kipl::base::eConnectivity conn)
 {
-    if ((conn!=kipl::morphology::conn8) && (conn!=kipl::morphology::conn4))
+    if ((conn!=kipl::base::conn8) && (conn!=kipl::base::conn4))
         throw ImagingException("MorphSpotClean only supports 4- and 8-connectivity",__FILE__,__LINE__);
 
     m_eConnectivity = conn;
+}
+
+kipl::base::eConnectivity MorphSpotClean::connectivity()
+{
+    return m_eConnectivity;
 }
 
 void MorphSpotClean::setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm)
@@ -326,9 +331,14 @@ int MorphSpotClean::maxArea()
     return m_nMaxArea;
 }
 
-void MorphSpotClean::cleanInfNan(bool activate)
+void MorphSpotClean::setCleanInfNan(bool activate)
 {
     m_bRemoveInfNan = activate;
+}
+
+bool MorphSpotClean::cleanInfNan()
+{
+    return m_bRemoveInfNan;
 }
 
 void MorphSpotClean::setEdgeConditioning(int nSmoothLenght)
