@@ -20,9 +20,9 @@ StripeFilter::StripeFilter(size_t const * const dims, const string &wname, int s
 	logger("StripeFilter"),
 	m_wt(wname),
     m_pLine(nullptr),
-    m_pCLine(nullptr)
+    m_pCLine(nullptr),
+    wdims{static_cast<int>(dims[0]), static_cast<int>(dims[1])}
 {
-    std::copy_n(dims,2,wdims.begin());
     std::fill_n(fft,NLevels,nullptr);
     std::fill_n(m_pDamping,NLevels,nullptr);
     configure(wdims,wname,scale,sigma);
@@ -48,7 +48,7 @@ StripeFilter::StripeFilter(const std::vector<int> &dims, const std::string &wnam
 StripeFilter::~StripeFilter() 
 {
     if (m_pDamping[0]!=nullptr)
-		for (size_t i=0; i<m_nScale; i++)
+        for (int i=0; i<m_nScale; i++)
 			delete [] m_pDamping[i];
 
     if (m_pLine!=nullptr)
@@ -59,7 +59,7 @@ StripeFilter::~StripeFilter()
 
     if (fft[0]!=nullptr) 
     {
-		for (size_t i=0; i<m_nScale; i++)
+        for (int i=0; i<m_nScale; i++)
 		    delete fft[i];
 	}
 }
@@ -69,7 +69,7 @@ void StripeFilter::CreateFilterWindow()
 {
 	const float s=-1.0f/(2.0f*m_fSigma*m_fSigma);
 
-	for (size_t j=0; j<m_nScale; j++) 
+    for (int j=0; j<m_nScale; j++)
     {
 		const float scale=1.0f/(2.0f*m_nFFTlength[j]);
 		for (size_t i=0; i<2*m_nFFTlength[j]; i++) 
@@ -166,7 +166,7 @@ std::vector<int> StripeFilter::dims()
 
 bool StripeFilter::checkDims(const size_t *dims)
 {
-    if ((dims[0]!=wdims[0]) || (dims[1]!=wdims[1]))
+    if ((static_cast<int>(dims[0])!=wdims[0]) || (static_cast<int>(dims[1])!=wdims[1]))
         throw ImagingException("Image size check failed",__FILE__,__LINE__);
 
     return true;

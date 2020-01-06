@@ -185,21 +185,21 @@ void ModuleChainConfiguratorWidget::on_Selected_Module(QListWidgetItem* current,
     UpdateCurrentModuleParameters();
 }
 
-void ModuleChainConfiguratorWidget::SetModules(std::list<ModuleConfig> &modules)
+void ModuleChainConfiguratorWidget::SetModules(std::vector<ModuleConfig> &modules)
 {
   std::list<ModuleConfig>::iterator it;
 
   m_ModuleListView.clear();
 
-  for (it=modules.begin(); it!=modules.end(); ++it)
+  for (auto &module: modules)
   {
-    InsertModuleAfter(*it);
+    InsertModuleAfter(module);
   }
 }
 
-std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
+std::vector<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
 {
-    std::list<ModuleConfig> modulelist;
+    std::vector<ModuleConfig> modulelist;
 
     QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
     if (item!=nullptr)

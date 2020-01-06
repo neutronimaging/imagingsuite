@@ -11,6 +11,7 @@
 #include "../../base/timage.h"
 #include "../../math/median.h"
 #include "../../base/KiplException.h"
+#include "../medianfilter.h"
 
 namespace kipl { namespace filters {
 

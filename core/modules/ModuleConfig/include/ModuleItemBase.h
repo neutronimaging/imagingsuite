@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef MODULEITEMBASE_H_
-#define MODULEITEMBASE_H_
+#ifndef MODULEITEMBASE_H
+#define MODULEITEMBASE_H
 #include "../src/stdafx.h"
 #include "ModuleConfig_global.h"
 #include "ConfigBase.h"

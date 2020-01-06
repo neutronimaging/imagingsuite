@@ -539,7 +539,7 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
             return img;
 
     #else
-        std::cout << "HAVE_NEXUS not defined" << std::endl;
+        logger.warning("HAVE_NEXUS not defined");
 //        throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
 //        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
         return kipl::base::TImage<float,2>();
@@ -653,7 +653,7 @@ kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filena
 //             return img;
 
      #else
-         std::cout << "HAVE_NEXUS not defined" << std::endl;
+         logger.warning("HAVE_NEXUS not defined");
            throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
              throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
          return kipl::base::TImage<float,3>();
@@ -1075,17 +1075,12 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 		break;
     }
 	default :
-		throw ReconException("Unknown image type in ProjectionReader", __FILE__, __LINE__); break;
+        throw ReconException("Unknown image type in ProjectionReader", __FILE__, __LINE__);
 	}
 
 	parameters["weights"]=weight.str();
 	parameters["dose"]=dose.str();
 	parameters["angles"]=angle.str();
-	
-//	ofstream dosefile("dose_list");
-//	dosefile<<angle.str()<<"\n";
-//	dosefile<<dose.str()<<"\n";
-//	dosefile<<weight.str()<<"\n";
 
 	return img;
 }
@@ -1093,7 +1088,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 bool ProjectionReader::UpdateStatus(float val, std::string msg)
 {
     if (m_Interactor!=nullptr)
-		return m_Interactor->SetProgress(val, msg);;
+        return m_Interactor->SetProgress(val, msg);
 
 	return false;
 }

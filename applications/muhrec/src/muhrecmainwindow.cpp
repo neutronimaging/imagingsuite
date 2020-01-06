@@ -669,21 +669,20 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
         m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
 
-        std::list<ModuleConfig>::iterator it;
-
         std::string sSearchStr = "@executable_path";
 
         // Replace template path by module path for pre processing
         size_t pos=0;
 
         logger(logger.LogMessage,"Updating path of preprocessing modules");
-        for (it=m_Config.modules.begin(); it!=m_Config.modules.end(); it++) {
-            pos=it->m_sSharedObject.find(sSearchStr);
+        for (auto &module : m_Config.modules)
+        {
+            pos=module.m_sSharedObject.find(sSearchStr);
 
             if (pos!=std::string::npos)
-                it->m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+                module.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
 
-            logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
+            logger(kipl::logging::Logger::LogMessage,module.m_sSharedObject);
         }
 
         logger(logger.LogMessage,"Updating path of back projector");
@@ -1547,7 +1546,9 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.voi[4] = 0;
     m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
 
+    m_Config.modules.clear();
     m_Config.modules                     = ui->moduleconfigurator->GetModules();
+
     m_Config.MatrixInfo.fRotation        = static_cast<float>(ui->dspinRotateRecon->value());
     m_Config.MatrixInfo.fGrayInterval[0] = static_cast<float>(ui->dspinGrayLow->value());
     m_Config.MatrixInfo.fGrayInterval[1] = static_cast<float>(ui->dspinGrayHigh->value());

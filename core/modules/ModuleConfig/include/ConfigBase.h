@@ -71,7 +71,7 @@ public:
 	virtual ~ConfigBase(void);
 
     cUserInformation UserInformation;  ///< Instance of the configuration information
-    std::list<ModuleConfig> modules;   ///< List of processing module descriptions. Used to set up a processing engine.
+    std::vector<ModuleConfig> modules;   ///< List of processing module descriptions. Used to set up a processing engine.
     virtual std::string WriteXML()=0;  ///< Virtual method to used to stream an XML formatted string
                                        ///< \returns A string with an XML formatted configuration
     /// Loads an XML formatted configuration file. It calls a set of virutal parsing methods.
