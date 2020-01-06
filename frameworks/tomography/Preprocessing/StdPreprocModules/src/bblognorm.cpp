@@ -2,6 +2,7 @@
 #include <strings/miscstring.h>
 
 #include <ReconException.h>
+#include <ModuleException.h>
 #include <ProjectionReader.h>
 #include <ReconConfig.h>
 #include <math/image_statistics.h>
@@ -563,9 +564,31 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,fBlackDose); // this is for mask computation and dose correction (small roi)
 
     kipl::base::TImage<float,2> obmask(bb.Dims());
+    std::ostringstream msg;
 
-
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    }
+    catch (ModuleException &e) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(kipl::base::KiplException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(ReconException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch (std::exception & e) {
+        msg.str();
+        msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
+    }
 
 
     if (bPBvariante) {
@@ -892,12 +915,30 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
     float *bb_sample_parameters;
     std::map<std::pair<int, int>, float> values;
     std::map<std::pair<int, int>, float> values_bb;
-
+    std::ostringstream msg;
 
     try {
         bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
-    } catch (...) {
-        throw ReconException("Error while computing ob_bb_parameters, try to change the segmentation method.", __FILE__, __LINE__);
+    }
+    catch (ModuleException &e) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(kipl::base::KiplException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(ReconException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch (std::exception & e) {
+        msg.str();
+        msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
 
@@ -1326,9 +1367,26 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     try {
         bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
-    } catch (...) {
-         throw ReconException("Error while computing ob_bb_parameters, try to change the segmentation method.", __FILE__, __LINE__);
-
+    }
+    catch (ModuleException &e) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(kipl::base::KiplException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(ReconException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch (std::exception & e) {
+        msg.str();
+        msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
+        throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
     mask = obmask;

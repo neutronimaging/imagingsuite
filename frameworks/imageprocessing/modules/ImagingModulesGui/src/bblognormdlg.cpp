@@ -735,41 +735,55 @@ void BBLogNormDlg::on_errorButton_clicked()
         try {           
             error = module.GetInterpolationError(mymask);
         }
-//        catch(kipl::base::KiplException &e) {
-//            QMessageBox errdlg(this);
-//            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
-//            errdlg.setDetailedText(QString::fromStdString(e.what()));
-//            logger(kipl::logging::Logger::LogWarning,e.what());
-//            errdlg.exec();
-//            return ;
-//        }
-//        catch(...){
-//            QMessageBox errdlg(this);
-//            errdlg.setText("Failed to compute interpolation error.. generic exception.");
-//            return ;
-//        }
 
         catch (KiplFrameworkException &e)
         {
-            msg<<"KiplFrameworkException with message: "<<e.what();
-            throw KiplFrameworkException("KiplFrameworkException ", __FILE__,__LINE__);
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
         }
         catch (ModuleException &e) {
-            msg<<"ModuleException with message: "<<e.what();
-            throw ModuleException("ModuleException ", __FILE__,__LINE__);
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
         }
         catch (kipl::base::KiplException &e)
         {
-            msg<<"KiplException with message: "<<e.what();
-            throw kipl::base::KiplException("KiplException ", __FILE__,__LINE__);
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
         }
         catch (std::exception &e)
         {
             msg<<"STL exception with message: "<<e.what();
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
         }
         catch (...)
         {
             msg<<"An unknown exception";
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.exec();
+            return ;
         }
 
 

@@ -11,6 +11,8 @@
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
+#include <base/KiplException.h>
+#include <ReconException.h>
 
 #include <ProjectionReader.h>
 
@@ -564,6 +566,14 @@ void BBLogNormDlg::on_errorButton_clicked()
             errdlg.exec();
             return ;
         }
+        catch(ModuleException &e){
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to configure the module dialog, check the parameters");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
         catch(...){
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog.. generic exception.");
@@ -588,10 +598,8 @@ void BBLogNormDlg::on_errorButton_clicked()
         }
 
 
-//        std::cout << error << std::endl;
-
         // display interpolation error
-//        ui->errorBrowser->setText(QString::number(error));
+
         ui->label_error->setText(QString::number(error));
 
         // display computed mask
