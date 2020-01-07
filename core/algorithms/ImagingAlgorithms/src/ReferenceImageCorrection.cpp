@@ -425,18 +425,19 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
   // here: fillPeaks, as at this point the BBs are black in the binary mask
 
-    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
+//    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
     kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
 
     try {
         maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
-    } catch (ImagingException &e) {
+    }
+    catch (ImagingException &e) {
         logger(kipl::logging::Logger::LogError,e.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
     }
 
-    kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
+//    kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
 
      float bg = 1.0f;
      size_t num_obj;
@@ -444,12 +445,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      vector< pair< size_t, size_t > > area;
      try {
          num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
-         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
+//         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
          std::ostringstream msg;
          msg << "number of objects: " << num_obj;
-         logger(kipl::logging::Logger::LogMessage, msg.str());
-         std::cout << num_obj << std::endl;
-
+         logger(kipl::logging::Logger::LogDebug, msg.str());
      }
      catch (ImagingException &e) {
          logger(kipl::logging::Logger::LogError,e.what());
@@ -475,7 +474,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      if (num_obj<=2)
          throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
 
-     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
+//     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
 
 
 
