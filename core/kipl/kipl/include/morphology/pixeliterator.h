@@ -115,6 +115,7 @@ public:
 
     int supportedDims();
 
+    std::string reportStatus();
 protected:
     void setupNeighborhoods();
     void setupConn4();
