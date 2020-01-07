@@ -1835,12 +1835,13 @@ bool ReconEngine::UpdateProgress(float val, std::string msg)
 
 size_t ReconEngine::validateImage(float *data, size_t N, const string &description)
 {
+    size_t cnt=0;
+
     if (m_Config.System.bValidateData)
     {
         std::ostringstream msg;
         size_t cntInf=0;
         size_t cntNan=0;
-        size_t cnt=0;
 
         cnt=kipl::algorithms::dataValidator(data,N,cntNan,cntInf);
         if (cnt!=0)
@@ -1849,6 +1850,7 @@ size_t ReconEngine::validateImage(float *data, size_t N, const string &descripti
             logger.warning(msg.str());
         }
     }
+    return cnt;
 }
 
 void ReconEngine::Done()
