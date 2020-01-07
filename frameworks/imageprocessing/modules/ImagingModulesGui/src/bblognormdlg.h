@@ -57,6 +57,10 @@ private slots:
     void on_check_singleext_stateChanged(int arg1);
 
 
+    void on_pushButton_ext_back_clicked();
+
+    void on_pushButton_ext_sample_back_clicked();
+
 private:
     virtual void ApplyParameters();
     virtual void UpdateDialog();

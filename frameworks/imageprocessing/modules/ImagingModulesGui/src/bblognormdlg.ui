@@ -220,6 +220,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="pushButton_ext_sample_back">
+           <property name="text">
+            <string>filename</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_11">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -330,6 +337,13 @@
           <widget class="QLabel" name="label_28">
            <property name="text">
             <string>Background scattering</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_ext_back">
+           <property name="text">
+            <string>filename</string>
            </property>
           </widget>
          </item>
