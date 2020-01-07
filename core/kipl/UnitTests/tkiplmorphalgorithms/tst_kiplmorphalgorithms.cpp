@@ -46,10 +46,10 @@ kiplmorphalgorithms::~kiplmorphalgorithms()
 
 void kiplmorphalgorithms::loadData()
 {
-#if defined DEBUG
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
-#else
+#ifdef _NDEBUG
     kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+#else
+    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
 #endif
 }
 
@@ -63,16 +63,35 @@ void kiplmorphalgorithms::test_LabelImage()
     QCOMPARE(img.Size(),result.Size());
     QCOMPARE(lblCnt,24);
 
-    kipl::io::WriteTIFF(result,"lblresult.tif");
+    // Special cases
+    int data[]={   0,0,0,0,0,1,1,0,
+                   1,1,0,0,0,1,1,0,
+                   1,1,0,0,0,0,0,0,
+                   0,0,0,1,1,0,0,0,
+                   0,0,0,1,1,0,0,0,
+                   0,0,0,0,0,0,1,1,
+                   0,1,1,0,0,0,1,1,
+                   0,1,1,0,0,0,0,0
+             };
+
+    size_t dims[2]={8,8};
+    kipl::base::TImage<int,2> s(dims);
+    std::copy_n(data,s.Size(),s.GetDataPtr());
+    lblCnt=kipl::morphology::LabelImage(s,result,kipl::base::conn4);
+    kipl::io::WriteTIFF(result,"lblresult_4x4blocks_4connect.tif");
+
+    lblCnt=kipl::morphology::LabelImage(s,result,kipl::base::conn8);
+    kipl::io::WriteTIFF(result,"lblresult_4x4blocks_8connect.tif");
 
 }
 
 void kiplmorphalgorithms::test_RemoveConnectedRegion()
 {
+    loadData();
     kipl::base::TImage<int,2> result;
     size_t lblCnt=0;
 
-    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
+    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn8);
 
     QCOMPARE(img.Size(),result.Size());
     QCOMPARE(lblCnt,24UL);
