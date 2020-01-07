@@ -14,6 +14,8 @@
 #include "pixeliterator.h"
 #include "../base/kiplenums.h"
 
+#include <QDebug>
+
 namespace kipl {namespace morphology {
 	/// \brief Creates a labelled image from a bi level image
 	/// \param img Input image
@@ -28,7 +30,7 @@ namespace kipl {namespace morphology {
 	template <class ImgType, size_t NDim>
         size_t LabelImage(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::base::eConnectivity conn=kipl::base::conn4, ImgType bg=(ImgType)0)
 	{
-		list<long long int> stack;
+        list<ptrdiff_t> stack;
 		
 		ImgType *pImg=img.GetDataPtr();
 		lbl.Resize(img.Dims());
@@ -41,43 +43,49 @@ namespace kipl {namespace morphology {
 
         int cnt=0;
         size_t N=img.Size();
-		ptrdiff_t pp,q,qq;
-		ImgType t=static_cast<ImgType>(0);
+        ptrdiff_t pp,q,qq;
+        ImgType t=static_cast<ImgType>(0);
 		
-		for (size_t p=0; p<N ; p++) {
+        for (size_t p=0; p<N ; ++p) {
             NG.setPosition(p);
             if ( (!pLbl[p]) && (pImg[p]!=bg) ) {
-				t=pImg[p];
-				cnt++;
-				pLbl[p]=cnt;
+                t=pImg[p];
+                ++cnt;
+                pLbl[p]=cnt;
                 for (const auto & neighborPix : NG.neighborhood())
                 {
                     pp=p + neighborPix;
 
                      if (pImg[pp]==t)
                      {
-						stack.push_front(pp);
-						pLbl[pp]=cnt;
+                        stack.push_front(pp);
+                        pLbl[pp]=cnt;
                      }
-				}
+                }
 
-				while (!stack.empty()) {
-					q=stack.front();
-					stack.pop_front();
+                while (!stack.empty()) {
+                    q=stack.front();
+                    stack.pop_front();
                     NG.setPosition(q);
                     for (const auto & neighborPix: NG.neighborhood())
                     {
                         qq = q + neighborPix;
+                        if ((qq < 0) || (img.Size()<=qq))
+                        {
+                            qDebug() << NG.reportStatus().c_str();
+                            return 0;
+                        }
+
                         if ((pImg[qq]==t) && (!pLbl[qq]))
                         {
-							stack.push_front(qq);
-							pLbl[qq]=cnt;
-						}
-					}
-					
-				}
-			}
-		}
+                            stack.push_front(qq);
+                            pLbl[qq]=cnt;
+                        }
+                    }
+
+                }
+            }
+        }
         return static_cast<size_t>(cnt);
 	}
 	

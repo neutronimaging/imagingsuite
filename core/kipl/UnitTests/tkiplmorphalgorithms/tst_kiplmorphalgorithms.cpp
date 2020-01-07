@@ -23,9 +23,12 @@ public:
 
 private slots:
     void test_LabelImage();
+    void test_LabelImageRealData();
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
     void test_pixdist();
+
+private:
     void test_EuclideanDistance();
     void test_EuclideanDistance2();
 
@@ -85,13 +88,35 @@ void kiplmorphalgorithms::test_LabelImage()
 
 }
 
+void kiplmorphalgorithms::test_LabelImageRealData()
+{
+
+#ifdef _NDEBUG
+    std::string fname="../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
+#else
+    std::string fname="../../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
+#endif
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::base::TImage<int,2> a;
+    kipl::base::TImage<int,2> result;
+
+    kipl::io::ReadTIFF(a,fname.c_str());
+
+    size_t lblCnt=0;
+
+    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
+    qDebug() << lblCnt;
+    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn8);
+    qDebug() << lblCnt;
+}
+
 void kiplmorphalgorithms::test_RemoveConnectedRegion()
 {
     loadData();
     kipl::base::TImage<int,2> result;
     size_t lblCnt=0;
 
-    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn8);
+    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
 
     QCOMPARE(img.Size(),result.Size());
     QCOMPARE(lblCnt,24UL);

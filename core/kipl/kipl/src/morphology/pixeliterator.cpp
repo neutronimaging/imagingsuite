@@ -9,7 +9,7 @@
 #include "../../include/morphology/pixeliterator.h"
 #include "../../include/base/KiplException.h"
 #include <cstring>
-
+#include <QDebug>
 
 namespace kipl {
 namespace base {
@@ -359,7 +359,6 @@ ptrdiff_t PixelIterator::setPosition(int x, int y)
         std::ostringstream msg;
         msg<<"PixelIterator: Coordinates ("<<x<<", "<<y
            <<") are out of bounds ("<<m_dims[0]<<", "<<m_dims[1]<<")";
-    //    logger.warning(msg.str());
         throw KiplException(msg.str(),__FILE__,__LINE__);
     }
     m_currentZ=0;
@@ -405,6 +404,7 @@ ptrdiff_t PixelIterator::setPosition(ptrdiff_t pos)
             m_currentY=pos/m_sx;
         }
         m_currentX=pos-m_currentY*m_sx;
+
         break;
     case 3:
         if ((pos<m_rowStart) || (m_rowEnd<pos)) {
@@ -413,12 +413,13 @@ ptrdiff_t PixelIterator::setPosition(ptrdiff_t pos)
         }
         m_currentX = pos-m_currentY*m_sx-m_currentZ*m_sxy;
 
-//        std::cout<<"pos="<<pos<<" x="<<m_currentX<<" y="<<m_currentY<<" z="<<m_currentZ<<"\n";
         break;
     default :
         kipl::base::KiplException("PixelIterator: Unsupported dimensionality",__FILE__,__LINE__);
     }
 
+    m_rowStart        = m_currentY*m_sx+m_currentZ*m_sxy;
+    m_rowEnd          = m_rowStart+m_sx-1;
     m_currentPosition=pos;
 
     updateEdgeStatus();
@@ -790,23 +791,40 @@ int PixelIterator::supportedDims()
     return m_ndims;
 }
 
+std::string PixelIterator::reportStatus()
+{
+    std::ostringstream msg;
+
+    msg << "\nPosition     : " << m_currentX << " " << m_currentY << " "<< m_currentZ << "("<<m_currentPosition<<")\n"
+        << "EdgeStatus   : " << m_edgeStatus << "\n"
+        << "Neighborhood : ";
+
+    for (const auto & p : neighborhood())
+        msg << p << " ";
+
+    msg << "\n";
+
+    return msg.str();
+}
+
 kipl::base::eEdgeStatus PixelIterator::updateEdgeStatus() {
 
 
     int edgeStatus =
-              (m_currentX == 0)
-            + ((m_currentX == (m_dims[0]-1)) << 1)
-            + ((m_currentY == 0)             << 2)
-            + ((m_currentY == (m_dims[1]-1)) << 3) ;
+              ((m_currentX == 0)             ? 1 : 0)
+            + ((m_currentX == (m_dims[0]-1)) ? 2 : 0)
+            + ((m_currentY == 0)             ? 4 : 0)
+            + ((m_currentY == (m_dims[1]-1)) ? 8 : 0);
     if (m_ndims==3) {
         edgeStatus +=
-              ((m_currentZ == 0) << 4)
-            + ((m_currentZ == m_dims[2]-1) <<5);
+              ((m_currentZ == 0)           ? 16 : 0)
+            + ((m_currentZ == m_dims[2]-1) ? 32 : 0);
     }
 
     m_edgeStatus= static_cast<kipl::base::eEdgeStatus>(edgeStatus);
 
- //   std::cout<<"Edge status: pos:"<<m_currentPosition<<", x:"<<m_currentX<<", y:"<<m_currentY<<", z:"<<m_currentZ<<", edgeStatus:"<<m_edgeStatus<<"\n";
+//    if (m_edgeStatus != 0)
+//        qDebug() <<"Edge status: pos:"<<m_currentPosition<<", x:"<<m_currentX<<", y:"<<m_currentY<<", z:"<<m_currentZ<<", edgeStatus:"<<m_edgeStatus<<"\n";
 
     return m_edgeStatus;
 }
