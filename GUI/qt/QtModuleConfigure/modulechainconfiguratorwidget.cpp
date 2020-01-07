@@ -10,6 +10,9 @@
 #include <list>
 #include <string>
 #include <ModuleException.h>
+#include <modulelibnamemanger.h>
+
+#include <strings/filenames.h>
 
 
 
@@ -116,9 +119,17 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             m_pApplication->UpdateConfig();
             std::string modulename = pCurrentModule->m_Module.m_sModule;
             std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
-            size_t      pos        = soname.find_last_of('.');
-            pos = soname.find_last_not_of("0123456789.",pos);
-            std::string guisoname  = soname.substr(0,pos+1)+"GUI"+soname.substr(pos+1);
+            ModuleLibNameManger mlnm(m_sApplicationPath);
+
+            std::string path;
+            std::string fname;
+            std::vector<std::string> ext;
+
+            kipl::strings::filenames::StripFileName(soname,path,fname,ext);
+
+            std::string guisoname = path+fname+"GUI";
+            for (const auto & e : ext)
+                guisoname+=e;
 
             msg.str(""); msg<<"Configuring "<<modulename<<" from "<<soname<<" with "<<guisoname<<std::endl;
             logger(kipl::logging::Logger::LogMessage,msg.str());

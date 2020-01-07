@@ -11,8 +11,6 @@ public:
 
     ReconAlgorithmException(std::string msg);
     ReconAlgorithmException(std::string msg, std::string filename, size_t line);
-
-    virtual const char* what() const _NOEXCEPT;
 };
 
 #endif // RECONALGORITHMEXCEPTION_H
