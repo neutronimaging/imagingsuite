@@ -104,10 +104,11 @@ void kiplmorphalgorithms::test_LabelImageRealData()
 
     size_t lblCnt=0;
 
-    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
+    lblCnt=kipl::morphology::LabelImage(a,result,kipl::base::conn4);
     qDebug() << lblCnt;
-    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn8);
+    lblCnt=kipl::morphology::LabelImage(a,result,kipl::base::conn8);
     qDebug() << lblCnt;
+    kipl::io::WriteTIFF(result,"lblrealresult_8connect.tif");
 }
 
 void kiplmorphalgorithms::test_RemoveConnectedRegion()
