@@ -427,16 +427,56 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 //    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
     kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
-    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+
+    try {
+        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+    }
+    catch (ImagingException &e) {
+        logger(kipl::logging::Logger::LogError,e.what());
+        std::cerr<<"Error in the SegmentBlackBody function\n";
+        throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
+    }
+
+//    kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
 
      float bg = 1.0f;
-     int num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+     size_t num_obj;
+
      vector< pair< size_t, size_t > > area;
+     try {
+         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+//         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
+         std::ostringstream msg;
+         msg << "number of objects: " << num_obj;
+         logger(kipl::logging::Logger::LogDebug, msg.str());
+     }
+     catch (ImagingException &e) {
+         logger(kipl::logging::Logger::LogError,e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch(kipl::base::KiplException &e){
+         logger(kipl::logging::Logger::LogError,e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch (std::exception &e)
+     {
+         logger(kipl::logging::Logger::LogError,e.what());
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+
+
+
      kipl::morphology::LabelArea(labelImage, num_obj, area);
+
+
+     if (num_obj<=2)
+         throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
 
 //     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
 
-//     kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
+
 
      // remove objetcs with size lower the minum size:
      for (size_t i=0; i<area.size(); ++i)
@@ -1808,7 +1848,9 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     try{
         SegmentBlackBody(norm, mask);
     }
-    catch (...) {
+    catch (kipl::base::KiplException &e) {
+        logger(kipl::logging::Logger::LogError,e.what());
+        std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
 
