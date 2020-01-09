@@ -332,7 +332,10 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         double *xip, *yip, *zip;
         double sad_sid_2;
 
-        float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
+//        float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
+
+        float scale = mConfig.ProjectionInfo.fSDD/mConfig.ProjectionInfo.fSOD;
+//        float scale = 1.0f;
 
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
         // magnification = SDD/SOD
