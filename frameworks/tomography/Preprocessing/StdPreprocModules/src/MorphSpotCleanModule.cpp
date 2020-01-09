@@ -31,7 +31,7 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_bClampData(false),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
-    m_bThreading(false),
+    m_bThreading(true),
     m_bTranspose(false)
 {
     publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
@@ -99,19 +99,19 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
-    parameters["connectivity"] = enum2string(m_eConnectivity);
-    parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
+    parameters["connectivity"]    = enum2string(m_eConnectivity);
+    parameters["cleanmethod"]     = enum2string(m_eCleanMethod);
     parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
-    parameters["threshold"]    = kipl::strings::Vector2String(m_fThreshold);
-    parameters["sigma"]        = kipl::strings::Vector2String(m_fSigma);
-    parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
-    parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
-    parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNaN);
-    parameters["clampdata"]    = kipl::strings::bool2string(m_bClampData);
-    parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
-    parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
-    parameters["threading"]    = kipl::strings::bool2string(m_bThreading);
-    parameters["transpose"]    = kipl::strings::bool2string(m_bTranspose);
+    parameters["threshold"]       = kipl::strings::Vector2String(m_fThreshold);
+    parameters["sigma"]           = kipl::strings::Vector2String(m_fSigma);
+    parameters["edgesmooth"]      = kipl::strings::value2string(m_nEdgeSmoothLength);
+    parameters["maxarea"]         = kipl::strings::value2string(m_nMaxArea);
+    parameters["removeinfnan"]    = kipl::strings::bool2string(m_bRemoveInfNaN);
+    parameters["clampdata"]       = kipl::strings::bool2string(m_bClampData);
+    parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
+    parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
+    parameters["threading"]       = kipl::strings::bool2string(m_bThreading);
+    parameters["transpose"]       = kipl::strings::bool2string(m_bTranspose);
 
     return parameters;
 }
