@@ -236,6 +236,13 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="pushButton_ext_sample_back">
+           <property name="text">
+            <string>filename</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLineEdit" name="edit_BB_external"/>
          </item>
          <item>
@@ -348,6 +355,13 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_ext_back">
+           <property name="text">
+            <string>filename</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="edit_OBBB_ext"/>
