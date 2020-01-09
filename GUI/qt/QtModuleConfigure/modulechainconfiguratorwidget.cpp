@@ -10,7 +10,6 @@
 #include <list>
 #include <string>
 #include <ModuleException.h>
-#include <modulelibnamemanger.h>
 
 #include <strings/filenames.h>
 
@@ -66,10 +65,6 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
     AddModuleDialog dlg(this);
 
-
-//    msg.str(""); msg<<"Add:Preconf: "<<m_sDefaultModuleSource;
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
-
     dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath);
     if (dlg.exec()==QDialog::Accepted)
     {
@@ -119,7 +114,6 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             m_pApplication->UpdateConfig();
             std::string modulename = pCurrentModule->m_Module.m_sModule;
             std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
-            ModuleLibNameManger mlnm(m_sApplicationPath);
 
             std::string path;
             std::string fname;
