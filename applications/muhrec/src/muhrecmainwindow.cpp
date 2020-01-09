@@ -351,6 +351,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         name=it->second.name;
 
+        logger.message(name);
         if (QFile::exists(QString::fromStdString(name))) {
 //           int sliderval=ui->sliderProjections->value();
 //            m_PreviewImage=reader.Read(name,
@@ -363,9 +364,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 int sliderval=ui->sliderProjections->value();
 
                 found = fmask.find("hdf");
-                //           size_t zdims[2]={1,1};
-                //            m_PreviewImage.Resize(zdims);
-
                 try {
                     if (found!=std::string::npos )
                     {
@@ -378,10 +376,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
                     }
                     else
                     {
-//                        m_PreviewImage=reader.Read("",fmask,static_cast<size_t>(ui->sliderProjections->value()),
-//                                        static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-//                                        static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-//                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
                         m_PreviewImage=reader.Read(name,
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
@@ -451,6 +445,9 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 logger(kipl::logging::Logger::LogError,msg.str());
                 throw ReconException(msg.str(),__FILE__,__LINE__);
             }
+        }
+        else {
+            logger.warning("Preview file not found.");
         }
 
     }
@@ -669,21 +666,20 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
         m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
 
-        std::list<ModuleConfig>::iterator it;
-
         std::string sSearchStr = "@executable_path";
 
         // Replace template path by module path for pre processing
         size_t pos=0;
 
         logger(logger.LogMessage,"Updating path of preprocessing modules");
-        for (it=m_Config.modules.begin(); it!=m_Config.modules.end(); it++) {
-            pos=it->m_sSharedObject.find(sSearchStr);
+        for (auto &module : m_Config.modules)
+        {
+            pos=module.m_sSharedObject.find(sSearchStr);
 
             if (pos!=std::string::npos)
-                it->m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+                module.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
 
-            logger(kipl::logging::Logger::LogMessage,it->m_sSharedObject);
+            logger(kipl::logging::Logger::LogMessage,module.m_sSharedObject);
         }
 
         logger(logger.LogMessage,"Updating path of back projector");
@@ -1547,7 +1543,9 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.voi[4] = 0;
     m_Config.MatrixInfo.voi[5] = m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1];
 
+    m_Config.modules.clear();
     m_Config.modules                     = ui->moduleconfigurator->GetModules();
+
     m_Config.MatrixInfo.fRotation        = static_cast<float>(ui->dspinRotateRecon->value());
     m_Config.MatrixInfo.fGrayInterval[0] = static_cast<float>(ui->dspinGrayLow->value());
     m_Config.MatrixInfo.fGrayInterval[1] = static_cast<float>(ui->dspinGrayHigh->value());
@@ -2259,15 +2257,18 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
 
             kipl::io::DirAnalyzer da;
             fi=da.GetFileMask(pdir);
-            newmask=QString::fromStdString(fi.m_sMask);
 
-            if ((fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
-                da.AnalyzeFileList(fi.m_sMask,c);
+
+            if ((fi.m_sExt==".lst") || (fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
+                da.AnalyzeFileList(pdir,c);
                 f=1;
-                l=c;
+                l=c-1;
+                newmask = projdir;
             }
-            else
+            else {
+                newmask=QString::fromStdString(fi.m_sMask);
                 da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            }
 
             msg<<"Found "<<c<<" files for mask "<<fi.m_sMask<<" in the interval "<<f<<" to "<<l;
             logger(logger.LogMessage,msg.str());

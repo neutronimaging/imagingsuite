@@ -20,6 +20,7 @@
 #include <PolynomialCorrection.h>
 #include <projectionfilter.h>
 #include <ImagingException.h>
+#include <StripeFilter.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -46,6 +47,8 @@ private Q_SLOTS:
 
     void ProjectionFilterParameters();
     void ProjectionFilterProcessing();
+    void StripeFilterParameters();
+    void StripeFilterProcessing2D();
 
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -474,6 +477,61 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
     kipl::io::WriteTIFF32(sino,"projfilt_result.tif");
     QCOMPARE(pf.currentFFTSize(),2048);
     QCOMPARE(pf.currentImageSize(),sino.Size(0));
+
+}
+
+void TestImagingAlgorithms::StripeFilterParameters()
+{
+   kipl::base::TImage<float,2> sino;
+#ifdef DEBUG
+   kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#else
+   kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#endif
+   ImagingAlgorithms::StripeFilter sf(sino.Dims(),"daub17",4,0.21f);
+   QCOMPARE(sf.dims()[0],sino.Size(0));
+   QCOMPARE(sf.dims()[1],sino.Size(1));
+   QCOMPARE(sf.sigma(),0.21f);
+   QCOMPARE(sf.decompositionLevels(),4);
+   size_t dims[]={sino.Size(0),sino.Size(1)};
+   QCOMPARE(sf.checkDims(dims),true);
+   dims[0]--;
+   QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);
+   dims[1]--;
+   QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);
+   dims[0]++;
+   QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);
+
+   std::vector<int> dims2={static_cast<int>(sino.Size(0)), static_cast<int>(sino.Size(1))};
+
+   ImagingAlgorithms::StripeFilter sf2(dims2,"daub17",4,0.21f);
+   QCOMPARE(sf2.dims()[0],sino.Size(0));
+   QCOMPARE(sf2.dims()[1],sino.Size(1));
+   QCOMPARE(sf2.sigma(),0.21f);
+   QCOMPARE(sf2.decompositionLevels(),4);
+   dims[0]=sino.Size(0);
+   dims[1]=sino.Size(1);
+   QCOMPARE(sf2.checkDims(dims),true);
+   dims[0]--;
+   QVERIFY_EXCEPTION_THROWN(sf2.checkDims(dims),ImagingException);
+   dims[1]--;
+   QVERIFY_EXCEPTION_THROWN(sf2.checkDims(dims),ImagingException);
+   dims[0]++;
+   QVERIFY_EXCEPTION_THROWN(sf2.checkDims(dims),ImagingException);
+
+}
+
+void TestImagingAlgorithms::StripeFilterProcessing2D()
+{
+    kipl::base::TImage<float,2> sino;
+#ifdef DEBUG
+    kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#else
+    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+#endif
+    ImagingAlgorithms::StripeFilter sf(sino.Dims(),"daub17",4,0.21f);
+
+    sf.process(sino);
 
 }
 

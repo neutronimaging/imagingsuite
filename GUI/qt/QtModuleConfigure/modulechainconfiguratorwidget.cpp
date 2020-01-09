@@ -11,6 +11,8 @@
 #include <string>
 #include <ModuleException.h>
 
+#include <strings/filenames.h>
+
 
 
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
@@ -63,10 +65,6 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
     AddModuleDialog dlg(this);
 
-
-//    msg.str(""); msg<<"Add:Preconf: "<<m_sDefaultModuleSource;
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
-
     dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath);
     if (dlg.exec()==QDialog::Accepted)
     {
@@ -116,9 +114,16 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             m_pApplication->UpdateConfig();
             std::string modulename = pCurrentModule->m_Module.m_sModule;
             std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
-            size_t      pos        = soname.find_last_of('.');
-            pos = soname.find_last_not_of("0123456789.",pos);
-            std::string guisoname  = soname.substr(0,pos+1)+"GUI"+soname.substr(pos+1);
+
+            std::string path;
+            std::string fname;
+            std::vector<std::string> ext;
+
+            kipl::strings::filenames::StripFileName(soname,path,fname,ext);
+
+            std::string guisoname = path+fname+"GUI";
+            for (const auto & e : ext)
+                guisoname+=e;
 
             msg.str(""); msg<<"Configuring "<<modulename<<" from "<<soname<<" with "<<guisoname<<std::endl;
             logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -185,21 +190,21 @@ void ModuleChainConfiguratorWidget::on_Selected_Module(QListWidgetItem* current,
     UpdateCurrentModuleParameters();
 }
 
-void ModuleChainConfiguratorWidget::SetModules(std::list<ModuleConfig> &modules)
+void ModuleChainConfiguratorWidget::SetModules(std::vector<ModuleConfig> &modules)
 {
   std::list<ModuleConfig>::iterator it;
 
   m_ModuleListView.clear();
 
-  for (it=modules.begin(); it!=modules.end(); ++it)
+  for (auto &module: modules)
   {
-    InsertModuleAfter(*it);
+    InsertModuleAfter(module);
   }
 }
 
-std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
+std::vector<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
 {
-    std::list<ModuleConfig> modulelist;
+    std::vector<ModuleConfig> modulelist;
 
     QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
     if (item!=nullptr)

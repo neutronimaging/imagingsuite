@@ -1,17 +1,6 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
-#ifndef __RECONFACTORY_H
-#define __RECONFACTORY_H
+//<LICENSE>
+#ifndef RECONFACTORY_H
+#define RECONFACTORY_H
 #include "ReconFramework_global.h"
 
 #include <list>

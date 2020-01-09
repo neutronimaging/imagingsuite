@@ -51,7 +51,7 @@ SOURCES += \
     ../../src/ModuleItemBase.cpp \
     ../../src/ModuleException.cpp \
     ../../src/ModuleConfig.cpp \
-    ../../src/dllmain.cpp \
+#    ../../src/dllmain.cpp \
     ../../src/ConfigBase.cpp \
     ../../src/datamodulebase.cpp \
     ../../src/modulelibnamemanger.cpp

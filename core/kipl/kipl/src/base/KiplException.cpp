@@ -36,7 +36,7 @@ KiplException::KiplException(const std::string &message,
     sFormattedMessage = msg.str();
 }
 
-const char* KiplException::what() const
+const char* KiplException::what() const noexcept
 {
 	
 	if (nLineNumber==0) {
@@ -50,4 +50,13 @@ const char* KiplException::what() const
 }
 
 
+DimsException::DimsException(std::string message) :
+    KiplException(message, "DimsException")
+{}
+
+DimsException::DimsException(std::string message,
+        std::string filename,
+        const size_t linenumber) :
+    KiplException(message,filename, linenumber, "DimsException")
+{}
 }}

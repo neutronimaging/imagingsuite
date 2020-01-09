@@ -56,7 +56,8 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     bUseManualThresh(false),
     thresh(0.0f),
     bSaveBG(false),
-    m_Interactor(nullptr)
+    m_Interactor(nullptr),
+    bExtSingleFile(true)
 {
     m_nDoseROI[0]=0;
     m_nDoseROI[1]=0;
@@ -112,7 +113,7 @@ void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase 
 
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
         kipl::base::TImage<float,2> *dc,
-        bool useBB, bool useExtBB,
+        bool useBB, bool useExtBB, bool useSingleExtBB,
         float dose_OB,
         float dose_DC,
         bool normBB,
@@ -197,6 +198,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
     if (useExtBB){
         m_bHaveExternalBlackBody = true;
+        bExtSingleFile = useSingleExtBB;
         PrepareReferencesExtBB();
     }
 
@@ -290,7 +292,6 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
         if (m_bHaveBlackBody) {
 
-//            std::cout << "m_bHaveBlackBody" << std::endl;
 
             float *current_param;
 
@@ -321,7 +322,6 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
             if (bSaveBG){
                 std::string filename, ext;
                 kipl::strings::filenames::MakeFileName(filemask_BG,static_cast<int>(i),filename,ext,'#','0');
-//                std::cout << filename << std::endl;
                 std::string fname=pathBG+"/"+filename;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
                 kipl::io::WriteTIFF32(m_BB_sample_Interpolated,fname.c_str()); // seem correct
@@ -333,24 +333,29 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
         if (m_bHaveExternalBlackBody){
 
-//             std::cout << "m_bHaveExternalBlackBody" << std::endl;
-
-            if (m_BB_sample_ext.Size(2)!=img.Size(2)){
-                throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
-            }
             m_BB_slice_ext.Resize(m_OB_BB_ext.Dims());
-            memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
-            fdose_ext_slice = fdose_ext_list[i];
+
+            if (bExtSingleFile)
+            {
+
+//                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetDataPtr(), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+                fdose_ext_slice = fdoseS_ext;
+            }
+            else {
+
+                if (m_BB_sample_ext.Size(2)!=img.Size(2)){
+                    throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
+                }
+                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+                fdose_ext_slice = fdose_ext_list[i];
+
+            }
+
         }
 
 
-
-
-
         memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
-//        std::cout << "before Process: " << i << std::endl;
         Process(slice,dose[i]);
-//        std::cout << "after process" << std::endl;
         memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
 	}
 
@@ -422,16 +427,56 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 //    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
     kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
-    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+
+    try {
+        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+    }
+    catch (ImagingException &e) {
+        logger(kipl::logging::Logger::LogError,e.what());
+        std::cerr<<"Error in the SegmentBlackBody function\n";
+        throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
+    }
+
+//    kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
 
      float bg = 1.0f;
-     int num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+     size_t num_obj;
+
      vector< pair< size_t, size_t > > area;
+     try {
+         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+//         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
+         std::ostringstream msg;
+         msg << "number of objects: " << num_obj;
+         logger(kipl::logging::Logger::LogDebug, msg.str());
+     }
+     catch (ImagingException &e) {
+         logger(kipl::logging::Logger::LogError,e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch(kipl::base::KiplException &e){
+         logger(kipl::logging::Logger::LogError,e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch (std::exception &e)
+     {
+         logger(kipl::logging::Logger::LogError,e.what());
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+
+
+
      kipl::morphology::LabelArea(labelImage, num_obj, area);
+
+
+     if (num_obj<=2)
+         throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
 
 //     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
 
-//     kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
+
 
      // remove objetcs with size lower the minum size:
      for (size_t i=0; i<area.size(); ++i)
@@ -884,33 +929,12 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
                                 values.at(mypair) = median;
                                 break;
                           }
-//                      mypair = std::make_pair(it_values->first.first, it_values->first.second);
-//                      mypair.first = it_values->first.first;
-//                      mypair.second = it_values->first.second;
-//                      values.at(mypair) = median;
                       }
-
-//                       values.at(mypair) = mean_value;
-//                      values.at(mypair) = average;
-//                      logger(kipl::logging::Logger::LogMessage,"before insert");
-//                      new_values.insert(std::make_pair(temp, median));
-//                      logger(kipl::logging::Logger::LogMessage,"after insert");
-//                       ++it_values;
-
-//                       std::cout << mypair.first  << " " << mypair.second << std::endl;
 
          }
 
       }
 
-//      return new_values;
-
-//      for (std::map<std::pair<int, int>, float>::const_iterator it = values.begin(); it != values.end();  ++it)
-//      {
-//          std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//      }
-
-//      std::cout << "number of centroids found: " << values.size() << " "  << std::endl;
 
 }
 
@@ -943,13 +967,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     if (bUseManualThresh)
         {
               ot = thresh;
-//              std::cout << "manual threshold " << ot << std::endl;
         }
     else
         {
             int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
             ot = static_cast<float>(histo.at(value).first);
-//            std::cout << "otsu threshold " << ot << std::endl;
             }
 
     //2.c threshold image
@@ -1209,8 +1231,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
 void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
 
     memcpy(m_nBlackBodyROI,roi,sizeof(size_t)*4);
-//    std::cout << "black body roi: " << m_nBlackBodyROI[0] << " " << m_nBlackBodyROI[1] << " " << m_nBlackBodyROI[2] << " "
-//                                       << m_nBlackBodyROI[3] << std::endl;
 
 }
 
@@ -1261,17 +1281,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     std_dev=sqrt(std_dev/values.size());
 
 
-//    std::cout << "MEAN AND STD DEV: " << mean_value << " " << std_dev << std::endl;
-
-//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-//                it != values.end(); ++it) {
-
-//        if(it->second >= (mean_value+2*std_dev)) {
-//            values.erase(it); // not sure it won't cause problems
-
-//        }
-
-//    }
 
     // this should be the correct way of removing element (STL book, page 205)
 
@@ -1298,9 +1307,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     std::map<std::pair<int,int>, float> values;
 
 
-    // find values to interpolate
-
-//     kipl::io::WriteTIFF32(mask, "mask.tif");
 
 
     float mean_value = 0.0f;
@@ -1311,9 +1317,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
                 std::pair<int,int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images. now it should be in absolute coordinates
                 values.insert(std::make_pair(temp,img(x,y)));
-//                  std::cout << " " << x << " " << y << " " <<  img(x,y) << std::endl;
-//                  std::cout << m_diffBBroi[0] << " " << m_diffBBroi[1] << std::endl;
-//                  std::cout << " " << x+m_diffBBroi[0] << " " << y+m_diffBBroi[1] << " " <<  img(x,y) << std::endl;
                 mean_value +=img(x,y);
 
             }
@@ -1335,19 +1338,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     std_dev=sqrt(std_dev/values.size());
 
-//int outlier = 0;
-//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-//                it != values.end(); ++it) {
-
-//        if(it->second >= (mean_value+2*std_dev)) {
-////            std::cout << "found outlier value" << std::endl;
-////            std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//            values.erase(it); // not sure it won't cause problems
-//            outlier++;
-
-//        }
-
-//    }
 
     for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
         if(it->second >= (mean_value+2*std_dev)){
@@ -1358,17 +1348,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
         }
     }
 
-//    ofstream int_points("poly_points.txt");
-
-//    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-//                it != values.end(); ++it) {
-
-//           int_points << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-
-
-//    }
-
-
 
     float *myparam = new float[6];
 //    float error;
@@ -1376,7 +1355,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     myparam = SolveLinearEquation(values, my_error);
     error = my_error;
 
-//    std::cout << "error in compute interpolation parameters: " << error << std::endl;
 
          return myparam;
 
@@ -1386,15 +1364,13 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
 
     int matrix_size = 1 + ((d && a)+b+c+f+e);
-//    std::cout << "matrix_size: " << matrix_size << std::endl;
 
     Array2D< double > my_matrix(values.size(),matrix_size, 0.0);
     Array1D< double > I(values.size(), 0.0);
     Array1D< double > param(matrix_size, 0.0);
     std::map<std::pair<int, int>, float>::const_iterator it = values.begin();
 
-//    std::cout << "TNT STUFF: " << std::endl;
-//    std::cout << my_matrix.dim1() << " " << my_matrix.dim2() << std::endl;
+
     for (int x=0; x<my_matrix.dim1(); x++) {
 
         if (a && b && c && d && e && f) { // second order X, second order Y
@@ -1458,8 +1434,6 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
         }
 
               I[x] = static_cast<double>(it->second);
-//                          std::cout << it->first.first << " " << it->first.second << " " << it->second << "\n";
-
               it++;
 
     }
@@ -1469,15 +1443,7 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
 
 
-//    for (int i=0; i<matrix_size; i++) {
-//    std::cout << param[i] <<  " ";
-//    }
-//    std::cout << std::endl;
-
-
-
     float *myparam = new float[6];
-//    memcpy(myparam, float(param), sizeof(float)*6); // problems with casting..
 
     for (int i=0; i<6; i++) { // initialize them to zero:
         myparam[i] = 0.0f;
@@ -1586,12 +1552,6 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
     error = sqrt(1/float(values.size())*error);
 
-
-//    std::cout << "error in solve linear equation " << error << std::endl;
-
-//    std::cout << myparam[0] << " " << myparam[1] << " " << myparam[2] << " " << myparam[3] << " " << myparam[4] << " " << myparam[5] << std::endl;
-
-
     return myparam;
 
 
@@ -1691,10 +1651,8 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 
     for (i=0; i<values.size()+3; ++i){
         param[i] = static_cast<float>(qr_param[i]);
-//        std::cout << param[i] << " ";
     }
 
-//   std::cout << std::endl;
 
     return param;
 
@@ -1864,16 +1822,11 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::b
     kipl::base::TImage<float,2> BB_DC(bb.Dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
-
-//        std::cout << "before ComputeBlackBodyCentroids(BB_DC,mask, values); in PrepareBlackBodyImagewithSplinesAndMask "<< std::endl;
-
     ComputeBlackBodyCentroids(BB_DC,mask, values);
 
     float *tps_param = new float[values.size()+3];
-//    std::cout << "before SolveThinPlateSplines(values); in PrepareBlackBodyImagewithSplinesAndMask "<< std::endl;
     tps_param = SolveThinPlateSplines(values);
 
-//    std::cout << "after SolveThinPlateSplines(values); in PrepareBlackBodyImagewithSplinesAndMask "<< std::endl;
     return tps_param;
 }
 
@@ -1895,7 +1848,9 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     try{
         SegmentBlackBody(norm, mask);
     }
-    catch (...) {
+    catch (kipl::base::KiplException &e) {
+        logger(kipl::logging::Logger::LogError,e.what());
+        std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
 
@@ -1988,22 +1943,15 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
     }
     case(OneToOne) : {
 
-//        std::cout << " case(OneToOne) : { in void ReferenceImageCorrection::SetSplinesParameters" << std::endl;
 
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
 
-//                std::cout << m_nProj << " " << nBBs << " " << std::endl;
-//                for (size_t i=0; i<(nBBs+3)*m_nProj; ++i){
-//                   std::cout << sample_parameter[i] << " ";
-//                }
-//                std::cout << std::endl;
-
 
 
         for (size_t i=0; i<m_nProj; i++){
-//            std::cout << dosesamplelist[i] << std::endl;
+
             for (size_t j=0; j<(nBBs+3); j++){          
                 sample_parameter[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
             }
@@ -2011,7 +1959,7 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
 
 
         memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
-//        std::cout << " case(OneToOne) : { in void ReferenceImageCorrection::SetSplinesParameters" << std::endl;
+
 
 
         break;
@@ -2072,8 +2020,6 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
         break;
     }
     case(OneToOne) : {
-//        std::cout << "OneToOne.... " << std::endl;
-//        std::cout << "copying parameters" << std::endl;
 
         if (m_nBBimages!=m_nProj){
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
@@ -2394,7 +2340,6 @@ int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand)
 void ReferenceImageCorrection::PrepareReferences()
 {
     float dose=1.0f/(m_fOpenBeamDose-m_fDarkDose);
-//    std::cout << "dose: " << dose << std::endl;
 
 //    if (dose!=dose)
 //        throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
@@ -2422,7 +2367,6 @@ void ReferenceImageCorrection::PrepareReferences()
                         }
                         else
                         {
-//                            std::cout << "Prepare References without log" << std::endl;
                             pFlat[i]=fProjPixel*dose;
                         }
                     }
@@ -2728,12 +2672,9 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
     }
     else {
-//        std::cout << "noBB option" << std::endl;
+
         if (m_bHaveDarkCurrent) {
             if (m_bHaveOpenBeam) {
-    //                #pragma omp parallel for firstprivate(pFlat,pDark)
-
-//                 kipl::io::WriteTIFF32(img,"img_beforenorm.tif");
 
                         float *pImg=img.GetDataPtr();
 
@@ -2756,7 +2697,6 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
             }
             else {
-    //            #pragma omp parallel for firstprivate(pDark)
 
                   float *pImg=img.GetDataPtr();
 
@@ -2792,9 +2732,6 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
 
 //    dose = dose - m_fDarkDose;
     float Pdose = 0.0f;
-
-//    std::cout << "inside ComputeNorm" << std::endl;
-
 
 
 //    float logdose = log(dose<1 ? 1.0f : dose);
@@ -2908,9 +2845,7 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
     else {
         if (m_bHaveDarkCurrent) {
             if (m_bHaveOpenBeam) {
-    //                #pragma omp parallel for firstprivate(pFlat,pDark)
 
-//                std::cout << "computing values" << std::endl;
 
                         float *pImg=img.GetDataPtr();
 
@@ -2968,6 +2903,17 @@ float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
 }
 
+void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s)
+{
+    m_OB_BB_ext.Resize(bb_ext.Dims());
+    m_BB_slice_ext.Resize(bb_sample_ext.Dims());
+    memcpy(m_OB_BB_ext.GetDataPtr(), bb_ext.GetDataPtr(), sizeof(float)*bb_ext.Size());
+    memcpy(m_BB_slice_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
+    fdoseOB_ext = dose;
+    fdoseS_ext = dose_s;
+
+}
+
 void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist){
 
     m_OB_BB_ext.Resize(bb_ext.Dims());
@@ -2975,8 +2921,7 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     memcpy(m_OB_BB_ext.GetDataPtr(), bb_ext.GetDataPtr(), sizeof(float)*bb_ext.Size());
     memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
 
-    //    kipl::io::WriteTIFF32(m_OB_BB_ext,"m_OB_BB_ext.tif");
-
+//    kipl::io::WriteTIFF32(m_OB_BB_ext,"m_OB_BB_ext.tif");
 //    kipl::base::TImage<float,2> slice(m_OB_BB_ext.Dims());
 //    memcpy(slice.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,0), sizeof(float)*bb_ext.Size());
 //    kipl::io::WriteTIFF32(slice,"slice.tif");

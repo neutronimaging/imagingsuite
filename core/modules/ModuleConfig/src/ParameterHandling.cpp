@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "stdafx.h"
+#include "../include/ModuleConfig_global.h"
 
 #include <strings/string2array.h>
 #include <cstdlib>
@@ -11,7 +11,7 @@
 #include "../include/ModuleException.h"
 
 
-std::string DLL_EXPORT GetStringParameter(std::map<std::string, std::string> parameters, std::string parameter)
+std::string MODULECONFIGSHARED_EXPORT GetStringParameter(std::map<std::string, std::string> parameters, std::string parameter)
 {
 	std::ostringstream msg;
 	std::string str;
@@ -25,7 +25,7 @@ std::string DLL_EXPORT GetStringParameter(std::map<std::string, std::string> par
 	return str;
 }
 
-float DLL_EXPORT GetFloatParameter(std::map<std::string, std::string> parameters, std::string parameter)
+float MODULECONFIGSHARED_EXPORT GetFloatParameter(std::map<std::string, std::string> parameters, std::string parameter)
 {
 	std::string str=GetStringParameter(parameters,parameter);
 
@@ -33,14 +33,14 @@ float DLL_EXPORT GetFloatParameter(std::map<std::string, std::string> parameters
 	return static_cast<float>(std::atof(str.c_str()));
 }
 
-int DLL_EXPORT GetIntParameter(std::map<std::string, std::string> parameters, std::string parameter)
+int MODULECONFIGSHARED_EXPORT GetIntParameter(std::map<std::string, std::string> parameters, std::string parameter)
 {
 	std::string str=GetStringParameter(parameters,parameter);
 
 	return std::atoi(str.c_str());
 }
 
-int DLL_EXPORT GetFloatParameterVector(std::map<std::string, std::string> parameters, std::string parameter,float *arr, int N)
+int MODULECONFIGSHARED_EXPORT GetFloatParameterVector(std::map<std::string, std::string> parameters, std::string parameter,float *arr, int N)
 {
 	std::string str=GetStringParameter(parameters,parameter);
 
@@ -49,7 +49,7 @@ int DLL_EXPORT GetFloatParameterVector(std::map<std::string, std::string> parame
 	return N;
 }
 
-int DLL_EXPORT GetIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,int *arr, int N)
+int MODULECONFIGSHARED_EXPORT GetIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,int *arr, int N)
 {
 	std::string str=GetStringParameter(parameters,parameter);
 
@@ -57,7 +57,7 @@ int DLL_EXPORT GetIntParameterVector(std::map<std::string, std::string> paramete
 	return N;
 }
 
-int DLL_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,size_t *arr, int N)
+int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,size_t *arr, int N)
 {
 	std::string str=GetStringParameter(parameters,parameter);
 

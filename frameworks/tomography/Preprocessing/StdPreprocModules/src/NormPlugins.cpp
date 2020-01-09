@@ -86,7 +86,6 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
 	nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
 
 	bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
-
     try {
         bUseLUT     = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
     }
@@ -95,8 +94,15 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
         bUseLUT=false;
     }
 
-    string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
-	memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
+    try {
+        string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
+    }
+    catch (...) {
+        logger(logger.LogWarning,"referenceaverage not found, using image average.");
+        m_ReferenceAvagerage = ImagingAlgorithms::AverageImage::ImageAverage;
+    }
+
+    std::copy_n(config.ProjectionInfo.dose_roi,4,nOriginalNormRegion);
 
 	return 0;
 }
@@ -132,41 +138,43 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
     dose = initialDose; // A precaution in case no dose is calculated
 
-    if (N!=0) {
+    if (N!=0)
+    {
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
         float *fDoses=new float[N];
 
-       found = fmask.find("hdf");
-        if (found==std::string::npos ) {
+        found = fmask.find("hdf");
+        if (found==std::string::npos )
+        {
 
-        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
-        img = reader.Read(filename,
-                config.ProjectionInfo.eFlip,
-                config.ProjectionInfo.eRotate,
-                config.ProjectionInfo.fBinning,
-                roi);
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+            img     = reader.Read(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
 
-        tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
-                    config.ProjectionInfo.eFlip,
-                    config.ProjectionInfo.eRotate,
-                    config.ProjectionInfo.fBinning,
-                    nOriginalNormRegion) : initialDose;
-        }
-        else {
-            img = reader.ReadNexus(fmask, firstIndex,
-                    config.ProjectionInfo.eFlip,
-                    config.ProjectionInfo.eRotate,
-                    config.ProjectionInfo.fBinning,
-                    roi);
-
-            tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
                         nOriginalNormRegion) : initialDose;
+        }
+        else
+        {
+            img     = reader.ReadNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
 
+            tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
         }
 
         tmpdose   = tmpdose - doseBias;
@@ -181,7 +189,8 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (found==std::string::npos ) {
+            if (found==std::string::npos )
+            {
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
                         m_Config.ProjectionInfo.eRotate,
@@ -195,7 +204,8 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                             config.ProjectionInfo.fBinning,
                             nOriginalNormRegion) : initialDose;
             }
-            else{
+            else
+            {
                     img=reader.ReadNexus(fmask,i+firstIndex,
                             m_Config.ProjectionInfo.eFlip,
                             m_Config.ProjectionInfo.eRotate,

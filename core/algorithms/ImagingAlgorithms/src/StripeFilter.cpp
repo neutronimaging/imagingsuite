@@ -20,9 +20,9 @@ StripeFilter::StripeFilter(size_t const * const dims, const string &wname, int s
 	logger("StripeFilter"),
 	m_wt(wname),
     m_pLine(nullptr),
-    m_pCLine(nullptr)
+    m_pCLine(nullptr),
+    wdims{static_cast<int>(dims[0]), static_cast<int>(dims[1])}
 {
-    std::copy_n(dims,2,wdims.begin());
     std::fill_n(fft,NLevels,nullptr);
     std::fill_n(m_pDamping,NLevels,nullptr);
     configure(wdims,wname,scale,sigma);
@@ -48,7 +48,7 @@ StripeFilter::StripeFilter(const std::vector<int> &dims, const std::string &wnam
 StripeFilter::~StripeFilter() 
 {
     if (m_pDamping[0]!=nullptr)
-		for (size_t i=0; i<m_nScale; i++)
+        for (int i=0; i<m_nScale; i++)
 			delete [] m_pDamping[i];
 
     if (m_pLine!=nullptr)
@@ -59,7 +59,7 @@ StripeFilter::~StripeFilter()
 
     if (fft[0]!=nullptr) 
     {
-		for (size_t i=0; i<m_nScale; i++)
+        for (int i=0; i<m_nScale; i++)
 		    delete fft[i];
 	}
 }
@@ -69,7 +69,7 @@ void StripeFilter::CreateFilterWindow()
 {
 	const float s=-1.0f/(2.0f*m_fSigma*m_fSigma);
 
-	for (size_t j=0; j<m_nScale; j++) 
+    for (int j=0; j<m_nScale; j++)
     {
 		const float scale=1.0f/(2.0f*m_nFFTlength[j]);
 		for (size_t i=0; i<2*m_nFFTlength[j]; i++) 
@@ -166,7 +166,7 @@ std::vector<int> StripeFilter::dims()
 
 bool StripeFilter::checkDims(const size_t *dims)
 {
-    if ((dims[0]!=wdims[0]) || (dims[1]!=wdims[1]))
+    if ((static_cast<int>(dims[0])!=wdims[0]) || (static_cast<int>(dims[1])!=wdims[1]))
         throw ImagingException("Image size check failed",__FILE__,__LINE__);
 
     return true;
@@ -269,82 +269,3 @@ std::ostream & operator<<(std::ostream & s, ImagingAlgorithms::eStripeFilterOper
 }
 
 
-#ifdef HAVEPYBIND11
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-
-namespace py = pybind11;
-
-void bindStripeFilter(py::module &m)
-{
-    py::class_<ImagingAlgorithms::StripeFilter> sfClass(m, "StripeFilter");
-
-    sfClass.def(py::init<const std::vector<int> &,const std::string &, int, float>());
-
-    sfClass.def("configure",
-                &ImagingAlgorithms::StripeFilter::configure,
-                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c."
-                );
-
-    sfClass.def("process",
-                 [](ImagingAlgorithms::StripeFilter &sf,
-                 py::array_t<float> &x,
-                 ImagingAlgorithms::eStripeFilterOperation op)
-            {
-                py::buffer_info buf1 = x.request();
-
-                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                               static_cast<size_t>(buf1.shape[0])};
-
-                sf.checkDims(dims);
-
-                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
-
-                sf.process(img,op);
-
-                std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
-            },
-
-            "Applies the stripe filter on the image as in-place operation.",
-            py::arg("x"),
-            py::arg("op"));
-
-    // sfClass.def("process",
-    //              [](ImagingAlgorithms::StripeFilter &sf,
-    //              py::array_t<double> &x,
-    //              ImagingAlgorithms::eStripeFilterOperation op)
-    //         {
-    //             py::buffer_info buf1 = x.request();
-
-    //             size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-    //                            static_cast<size_t>(buf1.shape[0])};
-    //             double *data=static_cast<double*>(buf1.ptr);
-
-    //             kipl::base::TImage<float,2> img(dims);
-
-    //             std::copy_n(data,img.Size(),img.GetDataPtr());
-
-    //             sf.process(img,op);
-    //             std::copy_n(img.GetDataPtr(),img.Size(),data);
-    //         },
-    //         "Applies the stripe filter on the image as in-place operation.",
-    //         py::arg("x"),
-    //         py::arg("op"));
-
-    sfClass.def("dims",                &ImagingAlgorithms::StripeFilter::dims);
-    sfClass.def("waveletName",         &ImagingAlgorithms::StripeFilter::waveletName);
-    sfClass.def("decompositionLevels", &ImagingAlgorithms::StripeFilter::decompositionLevels);
-    sfClass.def("sigma",               &ImagingAlgorithms::StripeFilter::sigma);
-    sfClass.def("filterWindow",        &ImagingAlgorithms::StripeFilter::filterWindow);
-
-    py::enum_<ImagingAlgorithms::eStripeFilterOperation>(m,"eStripeFilterOperation")
-        .value("VerticalComponentZero", ImagingAlgorithms::VerticalComponentZero)
-        .value("VerticalComponentFFT",    ImagingAlgorithms::VerticalComponentFFT)
-        .export_values();
-
-
-
-}
-
-#endif
