@@ -96,6 +96,7 @@ protected:
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     bool bThreaded;
     std::vector<Publication> publications;
+    bool m_bThreading;
 };
 
 
