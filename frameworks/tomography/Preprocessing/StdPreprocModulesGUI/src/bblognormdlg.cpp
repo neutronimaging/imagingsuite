@@ -11,6 +11,9 @@
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
+#include <base/KiplException.h>
+#include <ReconException.h>
+#include <ImagingException.h>
 
 #include <ProjectionReader.h>
 
@@ -564,6 +567,14 @@ void BBLogNormDlg::on_errorButton_clicked()
             errdlg.exec();
             return ;
         }
+        catch(ModuleException &e){
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to configure the module dialog, check the parameters");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
         catch(...){
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog.. generic exception.");
@@ -572,6 +583,15 @@ void BBLogNormDlg::on_errorButton_clicked()
 
         try {
             error = module.GetInterpolationError(mymask);
+        }
+        catch(ImagingException &e ){
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+
         }
         catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
@@ -588,10 +608,8 @@ void BBLogNormDlg::on_errorButton_clicked()
         }
 
 
-//        std::cout << error << std::endl;
-
         // display interpolation error
-//        ui->errorBrowser->setText(QString::number(error));
+
         ui->label_error->setText(QString::number(error));
 
         // display computed mask
@@ -675,6 +693,13 @@ void BBLogNormDlg::on_button_BBexternal_path_clicked()
 
             ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
 
+            int c=0;
+            int f=0;
+            int l=0;
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            ui->spin_first_extBB->setValue(f);
+            ui->spin_count_ext_BB->setValue(c);
+
         }
 
     }
@@ -749,4 +774,14 @@ void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
         bExtSingleFile = false;
     }
 
+}
+
+void BBLogNormDlg::on_pushButton_ext_OB_back_clicked()
+{
+    ui->edit_OBBB_ext->setText(QString::fromStdString(m_Config->ProjectionInfo.sFileMask));
+}
+
+void BBLogNormDlg::on_pushButton_ext_sample_back_clicked()
+{
+    ui->edit_BB_external->setText(QString::fromStdString(m_Config->ProjectionInfo.sFileMask));
 }

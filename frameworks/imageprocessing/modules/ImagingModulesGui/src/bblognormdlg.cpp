@@ -18,6 +18,8 @@
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
+#include <KiplFrameworkException.h>
+#include <base/KiplException.h>
 
 #include <imagereader.h>
 
@@ -704,24 +706,20 @@ void BBLogNormDlg::on_errorButton_clicked()
 
     if (rect.width()*rect.height()!=0) {
 
-//        ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
-
         std::map<std::string, std::string> parameters;
         UpdateParameters();
         UpdateParameterList(parameters);
-//        std::cout << "trying to compute error" << std::endl;
-//        std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
 
         kipl::base::TImage<float,2> mymask;
         float error;
 
-        try {
+        try{
             module.ConfigureDLG(*(dynamic_cast<KiplProcessConfig *>(m_Config)),parameters);
-            error = module.GetInterpolationError(mymask);
+
         }
         catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
             logger(kipl::logging::Logger::LogWarning,e.what());
             errdlg.exec();
@@ -729,15 +727,66 @@ void BBLogNormDlg::on_errorButton_clicked()
         }
         catch(...){
             QMessageBox errdlg(this);
-            errdlg.setText("Failed to compute interpolation error.. generic exception.");
+            errdlg.setText("Failed to configure the module dialog.. generic exception.");
+            return ;
+        }
+            ostringstream msg;
+
+        try {           
+            error = module.GetInterpolationError(mymask);
+        }
+
+        catch (KiplFrameworkException &e)
+        {
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
+        catch (ModuleException &e) {
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
+        catch (kipl::base::KiplException &e)
+        {
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
+        catch (std::exception &e)
+        {
+            msg<<"STL exception with message: "<<e.what();
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(kipl::logging::Logger::LogWarning,e.what());
+            errdlg.exec();
+            return ;
+        }
+        catch (...)
+        {
+            msg<<"An unknown exception";
+
+            QMessageBox errdlg(this);
+            errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
+            errdlg.exec();
             return ;
         }
 
 
-//        std::cout << error << std::endl;
-
-        // display interpolation error
-//        ui->errorBrowser->setText(QString::number(error));
         ui->label_error->setText(QString::number(error));
 
         // display computed mask
@@ -830,6 +879,14 @@ void BBLogNormDlg::on_button_BBexternal_path_clicked()
             kipl::io::FileItem fi=da.GetFileMask(pdir);
 
             ui->edit_BB_external->setText(QString::fromStdString(fi.m_sMask));
+
+            int c=0;
+            int f=0;
+            int l=0;
+            da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
+            ui->spin_first_extBB->setValue(f);
+            ui->spin_count_ext_BB->setValue(c);
+
 
         }
     }
@@ -948,3 +1005,13 @@ void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
 
 }
 
+
+void BBLogNormDlg::on_pushButton_ext_back_clicked()
+{
+    ui->edit_OBBB_ext->setText(QString::fromStdString(m_Config->mImageInformation.sSourceFileMask));
+}
+
+void BBLogNormDlg::on_pushButton_ext_sample_back_clicked()
+{
+    ui->edit_BB_external->setText(QString::fromStdString(m_Config->mImageInformation.sSourceFileMask));
+}
