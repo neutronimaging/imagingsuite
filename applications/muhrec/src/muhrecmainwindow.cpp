@@ -2259,7 +2259,7 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
             fi=da.GetFileMask(pdir);
 
 
-            if ((fi.m_sExt==".lst") || (fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
+            if ((fi.m_sExt=="lst") || (fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
                 da.AnalyzeFileList(pdir,c);
                 f=1;
                 l=c-1;
