@@ -42,6 +42,7 @@ public:
     void process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma);
 
     void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    kipl::base::eConnectivity connectivity();
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     eMorphDetectionMethod detectionMethod();
     eMorphCleanMethod cleanMethod();
@@ -49,7 +50,8 @@ public:
     std::vector<float> clampLimits();
     bool clampActive();
     int maxArea();
-    void cleanInfNan(bool activate);
+    void setCleanInfNan(bool activate);
+    bool cleanInfNan();
     void setEdgeConditioning(int nSmoothLenght);
     int edgeConditionLength();
     kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);

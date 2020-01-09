@@ -14,6 +14,8 @@
 #include <ReconException.h>
 #include <ModuleException.h>
 
+#include <QDebug>
+
 
 MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("MorphSpotClean",interactor),
@@ -28,7 +30,7 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_bClampData(false),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
-    m_bThreading(false)
+    m_bTranspose(false)
 {
     publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
                                        "MuhRec - a new tomography reconstructor",
@@ -71,6 +73,7 @@ int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::st
         m_fMinLevel         = GetFloatParameter(parameters,"minlevel");
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
         m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+        m_bTranspose        = kipl::strings::string2bool(GetStringParameter(parameters,"transpose"));
     }
     catch (ModuleException &e) {
         msg<<"Module exception: Failed to get parameters: "<<e.what();
@@ -106,6 +109,7 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
     parameters["minlevel"]     = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]     = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]    = kipl::strings::bool2string(m_bThreading);
+    parameters["transpose"]    = kipl::strings::bool2string(m_bTranspose);
 
     return parameters;
 }
@@ -132,10 +136,11 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
 {
     std::ostringstream msg;
     ImagingAlgorithms::MorphSpotClean cleaner;
+    qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
-    cleaner.cleanInfNan(m_bRemoveInfNaN);
+    cleaner.setCleanInfNan(m_bRemoveInfNaN);
 
     try {
         cleaner.process(img,m_fThreshold, m_fSigma);
@@ -170,8 +175,10 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
 
     int i;
 
+
     kipl::base::TImage<float,2> proj(img.Dims());
     ImagingAlgorithms::MorphSpotClean cleaner;
+    qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
@@ -270,6 +277,7 @@ int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const siz
     try {
         kipl::base::TImage<float,2> proj(dims);
         ImagingAlgorithms::MorphSpotClean cleaner;
+        qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
         cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
         cleaner.setConnectivity(m_eConnectivity);
 
