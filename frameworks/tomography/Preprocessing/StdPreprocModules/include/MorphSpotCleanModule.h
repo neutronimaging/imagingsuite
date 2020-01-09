@@ -37,7 +37,7 @@ protected:
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    bool m_bThreading;
+    bool m_bTranspose;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H
