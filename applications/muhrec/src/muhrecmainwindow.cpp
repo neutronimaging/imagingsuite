@@ -294,6 +294,8 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
         return ;
     }
+
+
     ui->sliderProjections->setMaximum(last);
     ui->spinBoxProjections->setMaximum(last);
     ui->sliderProjections->setMinimum(first);
@@ -2287,13 +2289,9 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
 
 
         QSignalBlocker spinFirst(ui->spinFirstProjection);
-//        ui->spinFirstProjection->setMaximum(l);
-//        ui->spinFirstProjection->setMinimum(f);
         ui->spinFirstProjection->setValue(f);
 
         QSignalBlocker spinLast(ui->spinLastProjection);
-//        ui->spinLastProjection->setMaximum(l);
-//        ui->spinLastProjection->setMinimum(f);
         ui->spinLastProjection->setValue(l);
 
         ProjectionIndexChanged(0);
@@ -2848,4 +2846,49 @@ void MuhRecMainWindow::on_dspinPiercPointY_valueChanged(double arg1)
 {
     (void) arg1;
     UpdatePiercingPoint();
+}
+
+void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int index)
+{
+    int first=ui->spinFirstProjection->value();
+    int last=ui->spinLastProjection->value();
+
+    switch (index)
+    {
+    case 0:
+        first=ui->spinFirstProjection->value();
+        last=ui->spinLastProjection->value();
+        break;
+    case 1:
+        if (ui->spinOpenBeamCount->value() == 0) {
+            ui->comboBox_projectionViewer->setCurrentIndex(0);
+            return ;
+        }
+        first=ui->spinOpenBeamCount->value();
+        last=first + ui->spinOpenBeamCount->value();
+        break;
+    case 2:
+        if (ui->spinDarkCount->value() == 0) {
+            ui->comboBox_projectionViewer->setCurrentIndex(0);
+            return ;
+        }
+        first=ui->spinDarkCount->value();
+        last=first + ui->spinDarkCount->value();
+
+        break;
+    }
+
+    if (last<first) {
+        logger(logger.LogWarning,"Last<First index.");
+
+        return ;
+    }
+
+
+    ui->sliderProjections->setMaximum(last);
+    ui->spinBoxProjections->setMaximum(last);
+    ui->sliderProjections->setMinimum(first);
+    ui->spinBoxProjections->setMinimum(first);
+
+    ui->sliderProjections->setValue(first);
 }

@@ -222,9 +222,11 @@ private slots:
 
     void on_dspinPiercPointY_valueChanged(double arg1);
 
+    void on_comboBox_projectionViewer_currentIndexChanged(int index);
+
 private:
     // Data members
-    ReconConfig      m_Config;    //<! Current configuration data
+    ReconConfig      m_Config;    ///<! Current configuration data
     ReconConfig      m_LastReconConfig;
 
     MuhrecInteractor m_Interactor;
@@ -238,7 +240,7 @@ private:
     std::string      m_sApplicationPath;
     std::string      m_sHomePath;
     std::string      m_sConfigPath;
-    std::string      m_sConfigFilename; //<! Name of the configuration file
+    std::string      m_sConfigFilename; ///<! Name of the configuration file
     std::map<float, ProjectionInfo> m_ProjectionList;
 
     kipl::base::TImage<float,2>     m_PreviewImage;
