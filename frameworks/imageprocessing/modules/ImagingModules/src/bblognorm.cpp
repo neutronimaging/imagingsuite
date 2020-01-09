@@ -3,9 +3,6 @@
 #include "ImagingModules_global.h"
 #include <strings/miscstring.h>
 
-//#include <ReconException.h>
-//#include <ProjectionReader.h>
-//#include <ReconConfig.h>
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <base/textractor.h>
@@ -14,6 +11,7 @@
 #include <strings/filenames.h>
 
 #include <ParameterHandling.h>
+#include <ModuleException.h>
 
 #include <imagereader.h>
 
@@ -586,9 +584,6 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareBBData(){
     m_corrector.SetMinArea(min_area);
     m_corrector.SetInterpolationMethod(m_InterpMethod);
 
-//    float *bb_ob_param;
-//    float *bb_sample_parameters;
-
  size_t nProj=(m_Config.mImageInformation.nLastFileIndex-m_Config.mImageInformation.nFirstFileIndex+1); // here I only need the number of images loaded.. and not these computation relevant to tomography
     // this should come somehow from the KipTool mainwindow I guess
 
@@ -652,8 +647,30 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
 
     kipl::base::TImage<float,2> obmask(bb.Dims());
 
+    std::stringstream msg;
 
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    }
+    catch (ModuleException &e) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+
+    catch(ImagingException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+
+    catch(kipl::base::KiplException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+
 
 
     if (bPBvariante) {
@@ -1021,8 +1038,29 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
     std::map<std::pair<int, int>, float> values;
     std::map<std::pair<int, int>, float> values_bb;
 
+    std::ostringstream msg;
 
-     bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+    }
+    catch (ModuleException &e) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(ImagingException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(kipl::base::KiplException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+
+
+
 
 //     kipl::base::TImage<float,2> mythinimage = m_corrector.InterpolateBlackBodyImagewithSplines(bb_ob_param, values, BBroi);
 //      kipl::io::WriteTIFF32(mythinimage,"BBob_image.tif"); // this is now correct!
@@ -1092,18 +1130,6 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
 
                           logger(kipl::logging::Logger::LogDebug,"Loading sample images with BB");
 
-//                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
-//                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
-
-//                          std::cout << "doselist: " << std::endl;
-
-//                          float *doselist = new float[nProj];
-//                          for (size_t i=0; i<nProj; i++) {
-//                              doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
-//                          }
-
-//                          m_corrector.SetDoseList(doselist);
-//                          delete [] doselist;
 
                           for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating ThinPlateSplines interpolation")==false)); i++) {
 
@@ -1212,20 +1238,6 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
                           sample_bb_param = new float[values.size()+3];
                           temp_parameters = new float[values.size()+3];
                           float * mask_parameters = new float[values.size()+3];
-
-//                          float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
-//                          m_corrector.SetAngles(angles, nProj, nBBSampleCount);
-
-//                          std::cout << "doselist: " << std::endl;
-
-//                          float *doselist = new float[nProj];
-//                          for (size_t i=0; i<nProj; i++) {
-//                              doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
-//                          }
-
-//                          m_corrector.SetDoseList(doselist);
-//                          delete [] doselist;
-
 
                           kipl::base::TImage<float,2> samplebb_temp;
                           float dose_temp;
@@ -1386,15 +1398,6 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
 
                          float dose = dosesample/(current_dose*tau);
 
-//                         ofstream spline_values;
-//                         spline_values.open(("tps_points_"+std::to_string(i)+".txt").c_str());
-//                           for (std::map<std::pair<int, int>, float>::const_iterator it = values_bb.begin(); it != values_bb.end();  ++it)
-//                           {
-//                               spline_values << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-//                           }
-
-//                           spline_values.close();
-//                         std::cout << "image #: " << i << std::endl;
                      }
 
 //                     std::cout << "before mempcy" << std::endl;
@@ -1507,7 +1510,28 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
 
     float error;
     kipl::base::TImage<float,2> obmask(bb.Dims());
-    bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
+    try {
+        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
+    }
+    catch (ModuleException &e) {
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(ImagingException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+    catch(kipl::base::KiplException &e){
+        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    }
+
+
+
+
     mask = obmask;
 
 //    std::cout << "after PrepareBlackBodyImage" <<std::endl;
