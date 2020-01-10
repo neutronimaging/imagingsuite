@@ -7,7 +7,7 @@
 QT       += core widgets printsupport charts concurrent
 
 TARGET = muhrec
-VERSION = 4.1
+VERSION = 4.2
 TEMPLATE = app
 CONFIG += c++11
 
@@ -130,3 +130,8 @@ INCLUDEPATH += $$PWD/../../../external/mac/include
 DEPENDPATH += $$PWD/../../../external/mac/include
 LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
+
+DISTFILES += \
+    ../Resources/defaults_linux.xml \
+    ../Resources/defaults_mac.xml \
+    ../Resources/defaults_windows.xml

@@ -14,6 +14,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT AverageImage
 {
 public:
     enum eAverageMethod {
+        ImageSelectSingle,      ///< Selects the first XY-image in the stack
         ImageSum,               ///< Compute the sum of the XY-images
         ImageAverage,           ///< Compute the average of the XY-images
         ImageMedian,            ///< Compute the median of the XY-images
@@ -34,6 +35,8 @@ public:
     /// \param weights Additional weights per slice, can be used for dose correction
     kipl::base::TImage<float,2> operator()(kipl::base::TImage<float,3> &img, eAverageMethod method, std::vector<float> weights = {});
 protected:
+    kipl::base::TImage<float,2> SelectSingle(kipl::base::TImage<float,3> &img);
+    kipl::base::TImage<float,3> WeightImages(kipl::base::TImage<float,3> &img, float *weights);
     kipl::base::TImage<float,3> WeightImages(kipl::base::TImage<float,3> &img, std::vector<float> &weights);
     kipl::base::TImage<float,2> ComputeSum(kipl::base::TImage<float,3> &img);
     kipl::base::TImage<float,2> ComputeAverage(kipl::base::TImage<float,3> & img);
