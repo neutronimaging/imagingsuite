@@ -851,8 +851,7 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	std::stringstream msg;
 	std::stringstream str;
 
-	m_Volume.info.SetMetricX(m_Config.ProjectionInfo.fResolution[0]);
-	m_Volume.info.SetMetricY(m_Config.ProjectionInfo.fResolution[1]);
+
 	m_Volume.info.sArtist=m_Config.UserInformation.sOperator;
 	m_Volume.info.sCopyright=m_Config.UserInformation.sOperator;
     m_Volume.info.sSoftware="MuhRec CT reconstructor";
@@ -876,6 +875,11 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
         res = m_Config.MatrixInfo.fVoxelSize[0];
     }
 
+//    m_Volume.info.SetMetricX(m_Config.ProjectionInfo.fResolution[0]);
+//	m_Volume.info.SetMetricY(m_Config.ProjectionInfo.fResolution[1]);
+    m_Volume.info.SetMetricX(res);
+    m_Volume.info.SetMetricY(res);
+
     if (matrixconfig->FileType==kipl::io::NeXusfloat){
        kipl::io::WriteNexusFloat(m_Volume,str.str().c_str(),res);
     }
@@ -890,6 +894,8 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 		msg.str("");
 		msg<<"Serializing "<<nSlices<<" slices to "<<str.str();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
+
+
 
 		kipl::io::WriteImageStack(m_Volume,
 				str.str(),
