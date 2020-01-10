@@ -7,7 +7,7 @@
 QT       += core widgets printsupport charts concurrent
 
 TARGET = muhrec
-VERSION = 4.1
+VERSION = 4.2
 TEMPLATE = app
 CONFIG += c++11
 
