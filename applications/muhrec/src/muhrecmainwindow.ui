@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1126</width>
+    <width>1128</width>
     <height>856</height>
    </rect>
   </property>
@@ -2144,6 +2144,9 @@
          <layout class="QVBoxLayout" name="projectionviewerLayout">
           <item>
            <widget class="QComboBox" name="comboBox_projectionViewer">
+            <property name="toolTip">
+             <string>Select with type of images you want to inspect.</string>
+            </property>
             <item>
              <property name="text">
               <string>Projections</string>
@@ -2350,7 +2353,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1126</width>
+     <width>1128</width>
      <height>22</height>
     </rect>
    </property>

@@ -224,6 +224,12 @@ private slots:
 
     void on_comboBox_projectionViewer_currentIndexChanged(int index);
 
+    void on_spinFirstOpenBeam_valueChanged(int arg1);
+
+    void on_spinOpenBeamCount_valueChanged(int arg1);
+
+    void on_editOpenBeamMask_editingFinished();
+
 private:
     // Data members
     ReconConfig      m_Config;    ///<! Current configuration data
