@@ -230,6 +230,14 @@ private slots:
 
     void on_editOpenBeamMask_editingFinished();
 
+    void on_editProjectionMask_editingFinished();
+
+    void on_editDarkMask_editingFinished();
+
+    void on_spinFirstDark_valueChanged(int arg1);
+
+    void on_spinDarkCount_valueChanged(int arg1);
+
 private:
     // Data members
     ReconConfig      m_Config;    ///<! Current configuration data
