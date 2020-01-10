@@ -110,14 +110,6 @@ void FDKbp_single::getProjMatrix(float angles, float *nrm, float *proj_matrix){
     float pup[3] = {0.0f, 0.0f, 0.0f}; // Panel up (toward top row)
     float vup[3] = {0.0f, 0.0f, 1.0f};
 
-//    if (mConfig.ProjectionInfo.bCorrectTilt) { // check the sign and the pivot (OK pivot)
-//        vup[1] = sin(-mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-//        vup[2] = cos(-mConfig.ProjectionInfo.fTiltAngle*dPi/180);
-//    }
-//    else {
-//        vup[2] = 1.0; // hardcoded for ideal panel orientation  -- add tilt here
-//    }
-
     float tgt[3] = {0.0f, 0.0f, 0.0f};
 
 //    Compute imager coordinate sys (nrm,pup,plt)
@@ -300,7 +292,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         float* img = cbct_volume.GetDataPtr();
         float *xip, *yip, *zip;
         float sad_sid_2;
-        float scale =mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD;
+        float scale = mConfig.ProjectionInfo.fSDD/mConfig.ProjectionInfo.fSOD; // compensate for resolution that is already included in weights
 
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
         // magnification = SDD/SOD
