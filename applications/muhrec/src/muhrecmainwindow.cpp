@@ -63,6 +63,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
+    m_sPreviewMask(""),
     m_oldRotateDial(0),
     m_oldRotateSpin(0.0),
     m_bCurrentReconStored(true)
@@ -134,8 +135,11 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QSignalBlocker b(ui->spinSlicesLast);
 
     LoadDefaults(true);
-    size_t firstSlice=m_Config.ProjectionInfo.roi[1];
-    size_t lastSlice=m_Config.ProjectionInfo.roi[3];
+    size_t firstSlice = m_Config.ProjectionInfo.roi[1];
+    size_t lastSlice  = m_Config.ProjectionInfo.roi[3];
+    m_sPreviewMask    = m_Config.ProjectionInfo.sFileMask;
+    m_nPreviewLast    = m_Config.ProjectionInfo.nLastIndex;
+    m_nPreviewFirst   = m_Config.ProjectionInfo.nFirstIndex;
 
     UpdateDialog();
 
@@ -294,12 +298,6 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
         return ;
     }
-
-
-    ui->sliderProjections->setMaximum(last);
-    ui->spinBoxProjections->setMaximum(last);
-    ui->sliderProjections->setMinimum(first);
-    ui->spinBoxProjections->setMinimum(first);
 
     PreviewProjection();
 }
@@ -2261,7 +2259,7 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
             fi=da.GetFileMask(pdir);
 
 
-            if ((fi.m_sExt==".lst") || (fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
+            if ((fi.m_sExt=="lst") || (fi.m_sExt=="txt") || (fi.m_sExt=="csv")) {
                 da.AnalyzeFileList(pdir,c);
                 f=1;
                 l=c-1;
@@ -2852,12 +2850,14 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
 {
     int first=ui->spinFirstProjection->value();
     int last=ui->spinLastProjection->value();
+    m_sPreviewMask = ui->editOpenBeamMask->text().toStdString();
 
     switch (index)
     {
     case 0:
         first=ui->spinFirstProjection->value();
         last=ui->spinLastProjection->value();
+        m_sPreviewMask = ui->editProjectionMask->text().toStdString();
         break;
     case 1:
         if (ui->spinOpenBeamCount->value() == 0) {
@@ -2866,6 +2866,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
         }
         first=ui->spinOpenBeamCount->value();
         last=first + ui->spinOpenBeamCount->value();
+        m_sPreviewMask = ui->editOpenBeamMask->text().toStdString();
         break;
     case 2:
         if (ui->spinDarkCount->value() == 0) {
@@ -2874,6 +2875,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
         }
         first=ui->spinDarkCount->value();
         last=first + ui->spinDarkCount->value();
+        m_sPreviewMask = ui->editDarkMask->text().toStdString();
 
         break;
     }

@@ -241,6 +241,9 @@ private:
     std::string      m_sHomePath;
     std::string      m_sConfigPath;
     std::string      m_sConfigFilename; ///<! Name of the configuration file
+    std::string      m_sPreviewMask;
+    int              m_nPreviewFirst;
+    int              m_nPreviewLast;
     std::map<float, ProjectionInfo> m_ProjectionList;
 
     kipl::base::TImage<float,2>     m_PreviewImage;
