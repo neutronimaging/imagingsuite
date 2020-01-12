@@ -6,9 +6,7 @@
 #include <ParameterHandling.h>
 #include <StripeFilter.h>
 #include <ReconException.h>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include <thread>
 #include <math/mathconstants.h>
 
 WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interactor) :
@@ -16,7 +14,6 @@ WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interacto
     m_sWName("daub15"),
     m_fSigma(0.05f),
     m_nDecNum(2),
-	m_bParallelProcessing(false),
 	m_eCleanMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
     publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
@@ -27,6 +24,7 @@ WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interacto
                                         10,
                                         "8567--8591",
                                         "10.1364/oe.17.008567"));
+    m_bThreading = false;
 }
 
 WaveletRingClean::~WaveletRingClean() 
@@ -38,7 +36,7 @@ int WaveletRingClean::Configure(ReconConfig UNUSED(config), std::map<std::string
 	m_sWName              = GetStringParameter(parameters,"wname");
 	m_fSigma              = GetFloatParameter(parameters,"sigma");
 	m_nDecNum             = GetIntParameter(parameters,"decnum");
-	m_bParallelProcessing = kipl::strings::string2bool(GetStringParameter(parameters,"parallel"));
+    m_bThreading          = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
 	string2enum(GetStringParameter(parameters,"method"),m_eCleanMethod);
 
 	return 0;
@@ -48,11 +46,11 @@ std::map<std::string, std::string> WaveletRingClean::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
 
-	parameters["wname"]    = m_sWName;
-	parameters["sigma"]    = kipl::strings::value2string(m_fSigma);
-	parameters["decnum"]   = kipl::strings::value2string(m_nDecNum);
-	parameters["parallel"] = m_bParallelProcessing ? "true" : "false";
-	parameters["method"]   = enum2string(m_eCleanMethod);
+    parameters["wname"]     = m_sWName;
+    parameters["sigma"]     = kipl::strings::value2string(m_fSigma);
+    parameters["decnum"]    = kipl::strings::value2string(m_nDecNum);
+    parameters["threading"] = m_bThreading ? "true" : "false";
+    parameters["method"]    = enum2string(m_eCleanMethod);
 
 	return parameters;
 }
@@ -65,7 +63,7 @@ bool WaveletRingClean::SetROI(size_t * UNUSED(roi))
 int WaveletRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
 	int retval=0;
-	if (m_bParallelProcessing)
+    if (m_bThreading)
 		retval=ProcessParallel(img,coeff);
 	else
 		retval=ProcessSingle(img,coeff);
@@ -94,7 +92,7 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 
                 filter->process(sinogram);
 
-				InsertSinogram(sinogram,img,j);
+                InsertSinogram(sinogram,img,j);
 			}
 			delete filter;
 		}
@@ -109,42 +107,89 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 
 int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-	size_t dims[2]={img.Size(0), img.Size(2)};
 	bool fail=false;
-    int N=static_cast<int>(img.Size(1));
-	#pragma omp parallel
-	{
-		kipl::base::TImage<float,2> sinogram;
-        ImagingAlgorithms::StripeFilter *filter=nullptr;
-		try {
-			filter=new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
-		}
-		catch (kipl::base::KiplException &e) {
-			#pragma omp critical
-			{
-				logger(kipl::logging::Logger::LogError,e.what());
-				fail=true;
-			}
-		}
-		if (!fail) {
-			#pragma omp for
-            for (int j=0; j<N; j++)
-			{
-				std::cout<<"Processing sinogram "<<j<<std::endl;
-				ExtractSinogram(img,sinogram,j);
+
+    std::ostringstream msg;
+    const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
+
+
+    std::vector<std::thread> threads;
+    const size_t N = img.Size(1); // Number of rows = # sinograms
+
+    size_t M=N/concurentThreadsSupported;
+
+    msg.str(""); msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" sinograms per thread";
+    logger(logger.LogMessage,msg.str());
+
+    for(size_t i = 0; i < concurentThreadsSupported; ++i)
+    {
+        // spawn threads
+        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest sinograms
+        auto pImg = &img;
+        threads.push_back(std::thread([=] { ProcessBlock(i,pImg,i*M,M+rest); }));
+    }
+
+    // call join() on each thread in turn
+    for_each(threads.begin(), threads.end(),
+        std::mem_fn(&std::thread::join));
+
+    if (fail) {
+        throw ReconException("Failed to process the projections using stripe filter.",__FILE__,__LINE__);
+    }
+
+    return 0;
+}
+
+int WaveletRingClean::ProcessBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSinogram, size_t N)
+{
+    std::ostringstream msg;
+    bool fail = false;
+
+    msg<<"Starting WaveletRingClean thread number="<<tid<<", N="<<N;
+    logger.message(msg.str());
+    msg.str("");
+    msg<<"Thread "<<tid<<" progress :";
+
+    kipl::base::TImage<float,2> sinogram;
+    ImagingAlgorithms::StripeFilter *filter=nullptr;
+    try {
+        size_t dims[2]={img->Size(0), img->Size(2)};
+        filter=new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
+    }
+    catch (kipl::base::KiplException &e) {
+            logger(kipl::logging::Logger::LogError,e.what());
+            fail=true;
+    }
+
+    if (!fail)
+    {
+        kipl::base::TImage<float,2> proj(img->Dims());
+
+
+        try
+        {
+            for (size_t i=0; i<N; ++i)
+            {
+                ExtractSinogram(*img,sinogram,i+firstSinogram);
 
                 filter->process(sinogram);
 
-				InsertSinogram(sinogram,img,j);
-			}
-			delete filter;
-		}
-	}
+                InsertSinogram(sinogram,*img,i+firstSinogram);
 
-	if (fail) {
-		throw ReconException("Failed to process the projections using stripe filter.",__FILE__,__LINE__);
-	}
-	return 0;
+                msg<<".";
+            }
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            msg<<"Thread tid="<<tid<<" failed with an exception. "<< e.what();
+            logger(logger.LogMessage,msg.str());
+            fail = true;
+        }
+        delete filter;
+
+    }
+
+    return fail ? 1 :0;
 }
 
 
