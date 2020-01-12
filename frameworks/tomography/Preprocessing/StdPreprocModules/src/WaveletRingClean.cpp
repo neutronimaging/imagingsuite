@@ -121,10 +121,12 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
     msg.str(""); msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" sinograms per thread";
     logger(logger.LogMessage,msg.str());
 
+//    size_t rest=N % concurentThreadsSupported; // Take care of the rest sinograms
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
         // spawn threads
-        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest sinograms
+        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+        logger.message("");
         auto pImg = &img;
         threads.push_back(std::thread([=] { ProcessBlock(i,pImg,i*M,M+rest); }));
     }
