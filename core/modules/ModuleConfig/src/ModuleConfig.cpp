@@ -17,6 +17,7 @@ ModuleConfig::ModuleConfig(const std::string &appPath) :
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
     m_bActive(true),
+    m_bThreading(false),
     m_NameManager(appPath)
 {
 }
@@ -29,7 +30,9 @@ const std::string ModuleConfig::WriteXML(int indent)
 	str<<std::setw(indent)<<" "<<"<module>\n"
 		<<std::setw(indent+4)<<" "<<"<modulename>"<<m_sModule<<"</modulename>\n"
         <<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_NameManager.stripLibName(m_sSharedObject)<<"</sharedobject>\n"
-		<<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n";
+        <<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n"
+        <<std::setw(indent+4)<<" "<<"<threading>"<<(m_bThreading ? "true":"false")<<"</threading>\n";
+
 	if (!parameters.empty()) {
 		str<<std::setw(indent+4)<<" "<<"<parameters>\n";
 		std::map<std::string,std::string>::iterator it;
@@ -85,6 +88,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 			if (sName=="active") {
 				m_bActive=kipl::strings::string2bool(sValue);
 			}
+
+            if (sName=="threading") {
+                m_bThreading=kipl::strings::string2bool(sValue);
+            }
 			if (sName=="parameters") {
 				int depth2=xmlTextReaderDepth(reader);
 				while (ret == 1) {

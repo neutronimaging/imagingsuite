@@ -65,9 +65,10 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
-    std::copy_n(th.begin(),2,m_fThreshold.begin());
-    std::copy_n(sigma.begin(),2,m_fSigma.begin());
+    m_fThreshold = th;
+    m_fSigma     = sigma;
 
+//    qDebug() << "Threshold " << m_fThreshold <<", Sigma "<<m_fSigma;
     switch (m_eMorphClean) {
         case MorphCleanReplace  : ProcessReplace(img); break;
         case MorphCleanFill     : ProcessFill(img); break;

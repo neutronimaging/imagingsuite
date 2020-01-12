@@ -3,6 +3,7 @@
 #include <thread>
 #include <cstdlib>
 #include <functional>
+#include <algorithm>
 #include "../include/StdPreprocModules_global.h"
 #include "../include/MorphSpotCleanModule.h"
 #include <ParameterHandling.h>
@@ -13,6 +14,8 @@
 #include <ImagingException.h>
 #include <ReconException.h>
 #include <ModuleException.h>
+#include <base/tpermuteimage.h>
+#include <QDebug>
 
 #include <QDebug>
 
@@ -32,6 +35,7 @@ MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *i
     m_fMaxLevel(7.0f), //This corresponds to 0.1% transmission
     m_bTranspose(false)
 {
+    m_bThreading = true;
     publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
                                        "MuhRec - a new tomography reconstructor",
                                        "Nuclear Instruments and Methods Section A",
@@ -97,8 +101,8 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
-    parameters["connectivity"] = enum2string(m_eConnectivity);
-    parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
+    parameters["connectivity"]    = enum2string(m_eConnectivity);
+    parameters["cleanmethod"]     = enum2string(m_eCleanMethod);
     parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
     parameters["threshold"]    = kipl::strings::Vector2String(m_fThreshold);
     parameters["sigma"]        = kipl::strings::Vector2String(m_fSigma);
@@ -240,7 +244,7 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 
 
     std::vector<std::thread> threads;
-    const int N = static_cast<int>(img.Size(2));
+    const size_t N = img.Size(2);
 
     size_t M=N/concurentThreadsSupported;
 
@@ -252,8 +256,8 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     {
         // spawn threads
         size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
-        float *pImg=img.GetLinePtr(0,i*M);
-        threads.push_back(std::thread([=] { ProcessParallelStd(i,pImg,img.Dims(),M+rest); }));
+        auto pImg = &img;
+        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,i*M,M+rest); }));
     }
 
     // call join() on each thread in turn
@@ -265,32 +269,53 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int MorphSpotCleanModule::ProcessParallelStd(size_t tid, float * pImg, const size_t *dims, size_t N)
+int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N)
 {
     std::ostringstream msg;
     size_t i;
-    size_t size=dims[0]*dims[1];
 
-    msg<<"Starting morphclean thread id="<<tid<<" N="<<N;
-    logger(logger.LogMessage,msg.str());
+    msg<<"Starting morphclean thread number="<<tid<<", N="<<N;
+    logger.message(msg.str());
+    msg.str("");
+    msg<<"Thread "<<tid<<" progress :";
 
-    try {
-        kipl::base::TImage<float,2> proj(dims);
+    kipl::base::TImage<float,2> proj(img->Dims());
+
+    kipl::base::Transpose<float> transpose;
+    transpose.bUseReference=true;
+    try
+    {
         ImagingAlgorithms::MorphSpotClean cleaner;
-        qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
-        cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
-        cleaner.setConnectivity(m_eConnectivity);
+        cleaner.setCleanMethod(this->m_eDetectionMethod,this->m_eCleanMethod);
+        cleaner.setConnectivity(this->m_eConnectivity);
 
-        for (i=0; i<N; i++) {
-            memcpy(proj.GetDataPtr(),pImg+i*size, size*sizeof(float));
-            cleaner.process(proj,m_fThreshold,m_fSigma);
-            memcpy(pImg+i*size,proj.GetDataPtr(), size*sizeof(float));
+        for (i=0; i<N; i++)
+        {
+            std::copy_n(img->GetLinePtr(0,firstSlice+i),proj.Size(),proj.GetDataPtr());
+
+            if (m_bTranspose)
+            {
+                auto tproj = transpose(proj);
+                cleaner.process(tproj,this->m_fThreshold,this->m_fSigma);
+                proj = transpose(tproj);
+            }
+            else
+            {
+                cleaner.process(proj,this->m_fThreshold,this->m_fSigma);
+            }
+
+            std::copy_n(proj.GetDataPtr(),proj.Size(),img->GetLinePtr(0,firstSlice+i));
+
+            msg<<".";
         }
     }
-    catch (...) {
+    catch (...)
+    {
         msg<<"Thread tid="<<tid<<" failed with an exception.";
         logger(logger.LogMessage,msg.str());
     }
+
+    logger.message(msg.str());
 
     return 0;
 }
