@@ -51,6 +51,7 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
 
                 if (pixel<img.Size()){
                     T value=img[pixel];
+
                     if (value!=markedPixel) {
                         sum+=img[pixel];
                         hitcnt++;
