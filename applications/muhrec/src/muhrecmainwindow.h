@@ -222,9 +222,25 @@ private slots:
 
     void on_dspinPiercPointY_valueChanged(double arg1);
 
+    void on_comboBox_projectionViewer_currentIndexChanged(int index);
+
+    void on_spinFirstOpenBeam_valueChanged(int arg1);
+
+    void on_spinOpenBeamCount_valueChanged(int arg1);
+
+    void on_editOpenBeamMask_editingFinished();
+
+    void on_editProjectionMask_editingFinished();
+
+    void on_editDarkMask_editingFinished();
+
+    void on_spinFirstDark_valueChanged(int arg1);
+
+    void on_spinDarkCount_valueChanged(int arg1);
+
 private:
     // Data members
-    ReconConfig      m_Config;    //<! Current configuration data
+    ReconConfig      m_Config;    ///<! Current configuration data
     ReconConfig      m_LastReconConfig;
 
     MuhrecInteractor m_Interactor;
@@ -238,7 +254,10 @@ private:
     std::string      m_sApplicationPath;
     std::string      m_sHomePath;
     std::string      m_sConfigPath;
-    std::string      m_sConfigFilename; //<! Name of the configuration file
+    std::string      m_sConfigFilename; ///<! Name of the configuration file
+    std::string      m_sPreviewMask;
+    int              m_nPreviewFirst;
+    int              m_nPreviewLast;
     std::map<float, ProjectionInfo> m_ProjectionList;
 
     kipl::base::TImage<float,2>     m_PreviewImage;

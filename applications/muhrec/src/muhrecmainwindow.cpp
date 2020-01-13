@@ -63,6 +63,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_sApplicationPath(app->applicationDirPath().toStdString()),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
+    m_sPreviewMask(""),
     m_oldRotateDial(0),
     m_oldRotateSpin(0.0),
     m_bCurrentReconStored(true)
@@ -134,8 +135,11 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QSignalBlocker b(ui->spinSlicesLast);
 
     LoadDefaults(true);
-    size_t firstSlice=m_Config.ProjectionInfo.roi[1];
-    size_t lastSlice=m_Config.ProjectionInfo.roi[3];
+    size_t firstSlice = m_Config.ProjectionInfo.roi[1];
+    size_t lastSlice  = m_Config.ProjectionInfo.roi[3];
+    m_sPreviewMask    = m_Config.ProjectionInfo.sFileMask;
+    m_nPreviewLast    = m_Config.ProjectionInfo.nLastIndex;
+    m_nPreviewFirst   = m_Config.ProjectionInfo.nFirstIndex;
 
     UpdateDialog();
 
@@ -276,6 +280,8 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
             ui->spinFirstOpenBeam->setValue(f);
             ui->spinOpenBeamCount->setValue(c);
         }
+
+        ui->editOpenBeamMask->editingFinished();
     }
 }
 
@@ -284,8 +290,8 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
     (void)x;
 
     std::ostringstream msg;
-    int first=ui->spinFirstProjection->value();
-    int last=ui->spinLastProjection->value();
+    int first = ui->spinFirstProjection->value();
+    int last  = ui->spinLastProjection->value();
 
     msg<<"New projection indices first="<<first<<", last="<<last;
     logger(logger.LogMessage,msg.str());
@@ -294,11 +300,8 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
 
         return ;
     }
-    ui->sliderProjections->setMaximum(last);
-    ui->spinBoxProjections->setMaximum(last);
-    ui->sliderProjections->setMinimum(first);
-    ui->spinBoxProjections->setMinimum(first);
 
+    on_comboBox_projectionViewer_currentIndexChanged(0);
     PreviewProjection();
 }
 
@@ -309,33 +312,41 @@ void MuhRecMainWindow::PreviewProjection(int x)
     std::ostringstream msg;
     ProjectionReader reader;
 
-    if (ui->spinLastProjection->value()<ui->spinFirstProjection->value())
+    if (m_nPreviewLast<m_nPreviewFirst)
         return;
 
     if (x<=0) {
-       int slice = ui->spinFirstProjection->value();
+       int slice = m_nPreviewFirst;
        ui->sliderProjections->setValue(slice);
     }
 
     msg.str("");
-    msg<<"Preview slider info:min="<<ui->sliderProjections->minimum()
-      <<", max="<<ui->sliderProjections->maximum()<<", current="
-     << ui->sliderProjections->value();
+    msg << "Preview slider info:min="<<ui->sliderProjections->minimum()
+        << ", max="<<ui->sliderProjections->maximum()<<", current="
+        << ui->sliderProjections->value();
 
     logger(logger.LogVerbose,msg.str());
 
     try {
         UpdateConfig();
-        std::string fmask=ui->editProjectionMask->text().toStdString();
+        std::string fmask=m_sPreviewMask;
 
         std::string name, ext;
         size_t found;
         int position=ui->sliderProjections->value();
 
         std::map<float,ProjectionInfo> fileList;
-        BuildFileList(&m_Config,&fileList);
+        if (ui->comboBox_projectionViewer->currentIndex() == 0)
+            BuildFileList(&m_Config,&fileList);
+        else
+            BuildFileList(m_sPreviewMask,"",m_nPreviewFirst,m_nPreviewLast,1,
+                          m_Config.ProjectionInfo.fScanArc,
+                          ReconConfig::cProjections::SequentialScan,
+                          0,
+                          nullptr,
+                          &fileList);
 
-        if (fileList.size()<position) // Workaround for bad BuildFileList implementation
+        if (static_cast<int>(fileList.size())<position) // Workaround for bad BuildFileList implementation
         {
             logger(logger.LogWarning, "Projection slider out of list range.");
             return;
@@ -353,11 +364,6 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         logger.message(name);
         if (QFile::exists(QString::fromStdString(name))) {
-//           int sliderval=ui->sliderProjections->value();
-//            m_PreviewImage=reader.Read(name,
-//                            static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
-//                            static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-//                            static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
 
             if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
 
@@ -2287,13 +2293,9 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
 
 
         QSignalBlocker spinFirst(ui->spinFirstProjection);
-//        ui->spinFirstProjection->setMaximum(l);
-//        ui->spinFirstProjection->setMinimum(f);
         ui->spinFirstProjection->setValue(f);
 
         QSignalBlocker spinLast(ui->spinLastProjection);
-//        ui->spinLastProjection->setMaximum(l);
-//        ui->spinLastProjection->setMinimum(f);
         ui->spinLastProjection->setValue(l);
 
         ProjectionIndexChanged(0);
@@ -2307,6 +2309,7 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
         }
 
         lookForReferences(fi.m_sPath);
+        ui->editProjectionMask->editingFinished();
     }
 }
 
@@ -2323,6 +2326,7 @@ void MuhRecMainWindow::on_buttonBrowseDestinationPath_clicked()
 void MuhRecMainWindow::on_buttonTakePath_clicked()
 {
       ui->editOpenBeamMask->setText(ui->editProjectionMask->text());
+      ui->editOpenBeamMask->editingFinished();
       repaint();
 }
 
@@ -2848,4 +2852,87 @@ void MuhRecMainWindow::on_dspinPiercPointY_valueChanged(double arg1)
 {
     (void) arg1;
     UpdatePiercingPoint();
+}
+
+void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int index)
+{
+    if (index == ui->comboBox_projectionViewer->currentIndex()) {
+        m_nPreviewFirst = ui->spinFirstProjection->value();
+        m_nPreviewLast  = ui->spinLastProjection->value();
+        m_sPreviewMask  = ui->editOpenBeamMask->text().toStdString();
+
+        switch (index)
+        {
+        case 0:
+            m_nPreviewFirst = ui->spinFirstProjection->value();
+            m_nPreviewLast  = ui->spinLastProjection->value();
+            m_sPreviewMask  = ui->editProjectionMask->text().toStdString();
+            ui->label_projindex->show();
+            break;
+        case 1:
+            if (ui->spinOpenBeamCount->value() == 0) {
+                ui->comboBox_projectionViewer->setCurrentIndex(0);
+                return ;
+            }
+
+            m_nPreviewFirst = ui->spinFirstOpenBeam->value();
+            m_nPreviewLast  = m_nPreviewFirst + ui->spinOpenBeamCount->value();
+            m_sPreviewMask  = ui->editOpenBeamMask->text().toStdString();
+            ui->label_projindex->hide();
+            break;
+        case 2:
+            if (ui->spinDarkCount->value() == 0) {
+                ui->comboBox_projectionViewer->setCurrentIndex(0);
+                return ;
+            }
+            m_nPreviewFirst = ui->spinFirstDark->value();
+            m_nPreviewLast  = m_nPreviewFirst + ui->spinDarkCount->value();
+            m_sPreviewMask  = ui->editDarkMask->text().toStdString();
+            ui->label_projindex->hide();
+            break;
+        }
+
+        ui->sliderProjections  -> setMaximum(m_nPreviewLast);
+        ui->spinBoxProjections -> setMaximum(m_nPreviewLast);
+        ui->sliderProjections  -> setMinimum(m_nPreviewFirst);
+        ui->spinBoxProjections -> setMinimum(m_nPreviewFirst);
+
+        ui->sliderProjections  -> setValue(m_nPreviewFirst);
+        PreviewProjection();
+    }
+}
+
+void MuhRecMainWindow::on_spinFirstOpenBeam_valueChanged(int arg1)
+{
+    on_comboBox_projectionViewer_currentIndexChanged(1);
+}
+
+void MuhRecMainWindow::on_spinOpenBeamCount_valueChanged(int arg1)
+{
+    on_comboBox_projectionViewer_currentIndexChanged(1);
+}
+
+void MuhRecMainWindow::on_editOpenBeamMask_editingFinished()
+{
+    on_comboBox_projectionViewer_currentIndexChanged(1);
+}
+
+void MuhRecMainWindow::on_editProjectionMask_editingFinished()
+{
+    on_comboBox_projectionViewer_currentIndexChanged(0);
+}
+
+void MuhRecMainWindow::on_editDarkMask_editingFinished()
+{
+    on_comboBox_projectionViewer_currentIndexChanged(2);
+}
+
+void MuhRecMainWindow::on_spinFirstDark_valueChanged(int arg1)
+{
+    on_comboBox_projectionViewer_currentIndexChanged(2);
+}
+
+void MuhRecMainWindow::on_spinDarkCount_valueChanged(int arg1)
+{
+    on_comboBox_projectionViewer_currentIndexChanged(2);
 }
