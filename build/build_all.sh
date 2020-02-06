@@ -1,11 +1,14 @@
 #!/bin/bash
 ./build_core_kipl.sh
 ./build_core_algorithms.sh
+./build_lmfit.sh
 
 if [ -d "$WORKSPACE/ToFImaging" ] 
 then
     echo "Directory $WORKSPACE/ToFImaging exists."
-    ./$WORKSPACE/ToFImaging/build/build_tofimagingalgorithms.sh
+    cd $WORKSPACE/ToFImaging/build/
+    ./build_tofimagingalgorithms.sh
+    cd $WORKSPACE/imagingsuite/build/
 else
     echo "Warning: Directory $WORKSPACE/ToFImaging does not exists."
 fi
