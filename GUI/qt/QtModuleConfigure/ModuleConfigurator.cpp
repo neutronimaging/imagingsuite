@@ -14,13 +14,14 @@
 
 // This is the constructor of a class that has been exported.
 // see ModuleConfigurator.h for the class definition
-ModuleConfigurator::ModuleConfigurator() :
+ModuleConfigurator::ModuleConfigurator(kipl::interactors::InteractionBase *interactor) :
 	logger("ModuleConfigurator"),
     hinstLib(nullptr),
     m_fnModuleFactory(nullptr),
     m_fnDestroyer(nullptr),
     m_Dialog(nullptr),
-    m_Config(nullptr)
+    m_Config(nullptr),
+    m_Interactor(interactor)
 {
 
 }
@@ -72,8 +73,6 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 		msg.str("");
 
          try {
-
-
             if (m_Dialog->NeedImages())
                 GetImage(ModuleName);
 

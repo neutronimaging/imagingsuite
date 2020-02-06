@@ -58,7 +58,8 @@ ICON = muh4_icon.icns
 RC_ICONS = muh4_icon.ico
 
 SOURCES += main.cpp\
-        muhrecmainwindow.cpp \
+    moduleconfigprogressdialog.cpp \
+    muhrecmainwindow.cpp \
     MuhrecInteractor.cpp \
     configuregeometrydialog.cpp \
     findskiplistdialog.cpp \
@@ -76,6 +77,7 @@ HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
     configuregeometrydialog.h \
     findskiplistdialog.h \
+    moduleconfigprogressdialog.h \
     recondialog.h \
     PreProcModuleConfigurator.h \
     stdafx.h \
@@ -89,6 +91,7 @@ HEADERS  += muhrecmainwindow.h \
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
     findskiplistdialog.ui \
+    moduleconfigprogressdialog.ui \
     recondialog.ui \
     viewgeometrylistdialog.ui \
     preferencesdialog.ui \

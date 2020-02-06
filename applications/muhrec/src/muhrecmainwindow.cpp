@@ -56,7 +56,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui(new Ui::MuhRecMainWindow),
     logdlg(new QtAddons::LoggingDialog(this)),
     m_QtApp(app),
-    m_ModuleConfigurator(&m_Config),
+    m_ModuleConfigurator(&m_Config,&m_Interactor),
     m_pEngine(nullptr),
     m_nCurrentPage(0),
     m_nRequiredMemory(0),

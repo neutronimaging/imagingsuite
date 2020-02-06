@@ -17,6 +17,7 @@
 #include <ParameterHandling.h>
 
 #include "../include/NormPlugins.h"
+#include <QDebug>
 
 NormBase::NormBase(std::string name) :
     PreprocModuleBase(name),
@@ -439,6 +440,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 
 int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
+    qDebug() << "FLN Proc core 3d";
 	int nDose=img.Size(2);
 	float *doselist=new float[nDose];
 
@@ -482,6 +484,7 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
     std::atomic<float> cnt;
     cnt=0.0f;
 	if (bUseLUT) {
+        qDebug() <<"Use lut";
 		#pragma omp parallel for firstprivate(pDark, pFlat)
         for (int j=0; j<static_cast<int>(img.Size(2)); j++) {
 			float *pImg=img.GetLinePtr(0,j);
@@ -508,6 +511,10 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 		}
 	}
 	else {
+        qDebug() <<"Calc log norm";
+        qDebug() << "Img:" << img.Size(0)<<img.Size(1)<<img.Size(2);
+        qDebug() << "DC:" << mDark.Size(0)<<mDark.Size(1);
+        qDebug() << "OB:" << mFlatField.Size(0)<<mFlatField.Size(1);
 		if (nDCCount!=0) {
 			if (nOBCount!=0) {
                     #pragma omp parallel for firstprivate(pFlat,pDark)
@@ -577,7 +584,9 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 	}
 
 	delete [] doselist;
-	return 0;
+    qDebug() << "FLN Done";
+
+    return 0;
 }
 
 //----------------------------------------------------
