@@ -77,9 +77,14 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 
          try {
             if (m_Dialog->NeedImages())
-                GetImage(ModuleName,m_Interactor);
-
-            res=m_Dialog->exec(m_Config, parameters, m_Image);
+            {
+                if (GetImage(ModuleName,m_Interactor))
+                    res=m_Dialog->exec(m_Config, parameters, m_Image);
+            }
+            else
+            {
+                res=m_Dialog->exec(m_Config, parameters, m_Image);
+            }
 
             m_Image.FreeImage();
             destroy();

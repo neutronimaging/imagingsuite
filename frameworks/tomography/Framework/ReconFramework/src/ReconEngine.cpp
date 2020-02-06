@@ -1301,7 +1301,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	// Initialize the plug-ins with the current ROI
     std::string moduleName;
 	try {
-        for (auto &module : m_PreprocList)  // TODO Doesnt happen
+        for (auto &module : m_PreprocList)
 		{
             moduleName = module->GetModule()->ModuleName();
 			msg.str("");
@@ -1375,10 +1375,14 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	}
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
+    float moduleCnt=0.0f;
+    float fNumberOfModules=static_cast<float>(m_PreprocList.size());
     try
     {
         for (auto &module : m_PreprocList)
         {
+            ++moduleCnt;
+            UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
             if (module->GetModule()->ModuleName()==sLastModule)
                 break;
 
@@ -1818,8 +1822,7 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
 bool ReconEngine::UpdateProgress(float val, std::string msg)
 {
     if (m_Interactor!=nullptr) {
-
-		return m_Interactor->SetProgress(val, msg);
+        return m_Interactor->SetOverallProgress(val);
     }
 
     return false;

@@ -29,7 +29,7 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
 	ReconConfig * config=dynamic_cast<ReconConfig *>(m_Config);
 	std::ostringstream msg;
 	try {
-        engine=factory.BuildEngine(*dynamic_cast<ReconConfig *>(m_Config),nullptr);
+        engine=factory.BuildEngine(*dynamic_cast<ReconConfig *>(m_Config),m_Interactor);
 	}
 	catch (ReconException &e) {
 		msg<<"Failed to build the configuration engine with a ReconException: "<<e.what();
@@ -75,6 +75,8 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
                 {
                     m_Image = dlg.getImage();
                 }
+                else
+                    bRunFailure = true;
             }
         }
     }
@@ -113,5 +115,5 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
 
     if (engine!=nullptr)
 		delete engine;
-	return 0;
+    return 1;
 }
