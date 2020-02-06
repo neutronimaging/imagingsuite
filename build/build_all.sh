@@ -4,6 +4,13 @@
 ./build_core_modules.sh
 ./build_GUI.sh # needs to be here due to GUI components in modules
 
+if [ -d "$WORKSPACE/TOFImaging" ] 
+then
+    echo "Directory $WORKSPACE/TOFImaging exists."
+    ./$WORKSPACE/TOFImaging/build/build_tofimagingalgorithms.sh
+else
+    echo "Warning: Directory $WORKSPACE/TOFImaging does not exists."
+fi
 
 ./build_frameworks_tomography.sh
 ./build_frameworks_imageprocessing.sh
