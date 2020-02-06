@@ -1,5 +1,12 @@
 call build_core_kipl.bat 
 call build_core_algorithms.bat
+
+IF EXIST %WORKSPACE%/ToFImaging (
+echo ToFImaging exists
+call %WORKSPACE%/ToFImaging/build/windows/build_tofimagingalgorithms.bat
+) ELSE (
+echo ToFImaging does not exist
+)
 call build_core_modules.bat
 call build_GUI.bat
 
