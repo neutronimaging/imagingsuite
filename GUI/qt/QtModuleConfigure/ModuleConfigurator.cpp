@@ -23,7 +23,10 @@ ModuleConfigurator::ModuleConfigurator(kipl::interactors::InteractionBase *inter
     m_Config(nullptr),
     m_Interactor(interactor)
 {
-
+//    if (m_Interactor!=nullptr)
+//        qDebug() << "Have interactor for moduleConfigurator";
+//    else
+//        qDebug() << "Don't have interactor for moduleConfigurator";
 }
 
 ModuleConfigurator::~ModuleConfigurator()
@@ -74,7 +77,7 @@ bool ModuleConfigurator::configure(std::string application, std::string SharedOb
 
          try {
             if (m_Dialog->NeedImages())
-                GetImage(ModuleName);
+                GetImage(ModuleName,m_Interactor);
 
             res=m_Dialog->exec(m_Config, parameters, m_Image);
 
