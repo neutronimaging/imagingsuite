@@ -1,16 +1,18 @@
 #!/bin/bash
 ./build_core_kipl.sh
 ./build_core_algorithms.sh
+
+if [ -d "$WORKSPACE/ToFImaging" ] 
+then
+    echo "Directory $WORKSPACE/ToFImaging exists."
+    ./$WORKSPACE/ToFImaging/build/build_tofimagingalgorithms.sh
+else
+    echo "Warning: Directory $WORKSPACE/ToFImaging does not exists."
+fi
+
+
 ./build_core_modules.sh
 ./build_GUI.sh # needs to be here due to GUI components in modules
-
-if [ -d "$WORKSPACE/TOFImaging" ] 
-then
-    echo "Directory $WORKSPACE/TOFImaging exists."
-    ./$WORKSPACE/TOFImaging/build/build_tofimagingalgorithms.sh
-else
-    echo "Warning: Directory $WORKSPACE/TOFImaging does not exists."
-fi
 
 ./build_frameworks_tomography.sh
 ./build_frameworks_imageprocessing.sh
