@@ -7,7 +7,7 @@ mkdir $WORKSPACE/imagingsuite/external/src/lmfit/build
 mkdir $DEST_DEPENDENCY
 cd $WORKSPACE/imagingsuite/external/src/lmfit/build
 
-$CMAKEBINPATH/cmake -DCMAKE_INSTALL_PREFIX=$DEST_DEPENDENCY .. 
+cmake -DCMAKE_INSTALL_PREFIX=$DEST_DEPENDENCY .. 
 make
 make install
 cp $DEST_DEPENDENCY/lib/* $WORKSPACE/lib
