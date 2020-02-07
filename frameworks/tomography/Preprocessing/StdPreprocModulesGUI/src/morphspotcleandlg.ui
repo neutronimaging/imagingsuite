@@ -285,6 +285,9 @@
             <property name="decimals">
              <number>6</number>
             </property>
+            <property name="maximum">
+             <double>9999.999900000000707</double>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
@@ -294,6 +297,9 @@
             </property>
             <property name="decimals">
              <number>6</number>
+            </property>
+            <property name="maximum">
+             <double>9999.999900000000707</double>
             </property>
            </widget>
           </item>
@@ -318,6 +324,9 @@
             <property name="decimals">
              <number>6</number>
             </property>
+            <property name="maximum">
+             <double>9999.999900000000707</double>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -331,6 +340,9 @@
            <widget class="QDoubleSpinBox" name="spinSigmaPeaks">
             <property name="decimals">
              <number>6</number>
+            </property>
+            <property name="maximum">
+             <double>9999.999900000000707</double>
             </property>
            </widget>
           </item>
@@ -427,13 +439,13 @@
                <string>Additional value clamping, setting lowest value allowed.</string>
               </property>
               <property name="decimals">
-               <number>5</number>
+               <number>3</number>
               </property>
               <property name="minimum">
-               <double>-10000.000000000000000</double>
+               <double>-99999.000000000000000</double>
               </property>
               <property name="maximum">
-               <double>10000.000000000000000</double>
+               <double>99999.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -453,10 +465,10 @@
                <number>5</number>
               </property>
               <property name="minimum">
-               <double>-10000.000000000000000</double>
+               <double>-99999.998999999996158</double>
               </property>
               <property name="maximum">
-               <double>10000.000000000000000</double>
+               <double>99999.999989999996615</double>
               </property>
              </widget>
             </item>

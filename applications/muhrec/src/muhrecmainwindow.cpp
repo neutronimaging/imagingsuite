@@ -56,7 +56,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui(new Ui::MuhRecMainWindow),
     logdlg(new QtAddons::LoggingDialog(this)),
     m_QtApp(app),
-    m_ModuleConfigurator(&m_Config),
+    m_ModuleConfigurator(&m_Config,&m_Interactor),
     m_pEngine(nullptr),
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
@@ -2876,7 +2876,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
             }
 
             m_nPreviewFirst = ui->spinFirstOpenBeam->value();
-            m_nPreviewLast  = m_nPreviewFirst + ui->spinOpenBeamCount->value();
+            m_nPreviewLast  = m_nPreviewFirst + ui->spinOpenBeamCount->value()-1;
             m_sPreviewMask  = ui->editOpenBeamMask->text().toStdString();
             ui->label_projindex->hide();
             break;
@@ -2886,7 +2886,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
                 return ;
             }
             m_nPreviewFirst = ui->spinFirstDark->value();
-            m_nPreviewLast  = m_nPreviewFirst + ui->spinDarkCount->value();
+            m_nPreviewLast  = m_nPreviewFirst + ui->spinDarkCount->value()-1;
             m_sPreviewMask  = ui->editDarkMask->text().toStdString();
             ui->label_projindex->hide();
             break;
