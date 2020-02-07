@@ -5,6 +5,7 @@
 
 #include <math/image_statistics.h>
 #include <base/thistogram.h>
+#include <stltools/stlvecmath.h>
 
 #include "imagepainter.h"
 
@@ -97,7 +98,7 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
                 painter.setPen(QPen(it->second));
                 QPoint offset(offset_x,offset_y);
                 QPointF pointA, pointB;
-                QLine line;
+
                 for (int i=1; i<it->first.size(); i++) {
                     pointA=offset+m_fScale*it->first[i-1];
                     pointB=offset+m_fScale*it->first[i];
@@ -167,6 +168,8 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
                           m_ImageMin,
                           m_ImageMax,
                           haxis);
+
+    medianFilter(hist,nHistSize,5);
 
     m_Histogram.clear();
     for (size_t i=0; i<nHistSize; i++) {
