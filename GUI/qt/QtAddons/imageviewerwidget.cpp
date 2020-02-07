@@ -21,7 +21,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
     m_ImagePainter(this),
-    m_rubberBandLine(QRubberBand::Line, this),
+    m_rubberBandLine(QRubberBand::Rectangle, this),
     m_RubberBandStatus(RubberBandHide),
     m_MouseMode(ViewerROI),
     m_PressedButton(Qt::NoButton),
