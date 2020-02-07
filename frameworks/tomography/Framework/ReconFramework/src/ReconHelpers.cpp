@@ -20,7 +20,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 	kipl::logging::Logger logger("BuildFileList");
 	std::ostringstream msg;
     msg<<config->ProjectionInfo.nlSkipList.size()<<" projections will be skipped";
-    logger(logger.LogDebug,msg.str());
+    logger.debug(msg.str());
 	ProjectionList->clear();
 
     std::multimap<float, ProjectionInfo> multiProjectionList;
@@ -57,7 +57,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
             line=cline;
             float angle=static_cast<float>(atof(line.c_str()));
 
-            std::string fname=line.substr(line.find_first_of(",\t")+1);
+            std::string fname=line.substr(line.find_first_of(",\t;")+1);
             fname=fname.substr(fname.find_first_not_of("\t "));
             fname=fname.substr(0,fname.find_first_of("\n\r"));
 
@@ -171,7 +171,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 
     ComputeWeights(config,multiProjectionList,ProjectionList);
     msg.str(""); msg<<"proj list size="<<ProjectionList->size();
-    logger(logger.LogMessage,msg.str());
+    logger.verbose(msg.str());
 
 	return sequence;
 }

@@ -21,7 +21,6 @@ ModuleItemBase::ModuleItemBase(std::string application, std::string sharedobject
     m_sModuleName = modulename;
     m_sSharedObject = sharedobject;
 
-    std::cout << "IN ModuleItemBase\n";
     LoadModuleObject(interactor);
 }
 
@@ -87,7 +86,6 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
     copy(m_sSharedObject.begin(), m_sSharedObject.end(), so.begin());
     hinstLib = LoadLibrary(so.c_str());
 #else
-    std::cout << "Trying to open shared library at " << m_sSharedObject.c_str() << '\n';
     hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
@@ -95,12 +93,10 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
 #ifdef _MSC_VER
         m_fnModuleFactory = reinterpret_cast<FACTORY>(GetProcAddress(hinstLib, "GetModule"));
 #else
-        std::cout << "Trying to retrieve factory.\n";
         m_fnModuleFactory = reinterpret_cast<FACTORY>(dlsym(hinstLib, "GetModule"));
 #endif
         // If the function address is valid, call the function.
         if (nullptr != m_fnModuleFactory) {
-            std::cout << "Trying to make ProcessModuleBase.\n";
             m_Module = reinterpret_cast<ProcessModuleBase*>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void*>(interactor)));
             if (m_Module == nullptr) {
                 msg.str("");

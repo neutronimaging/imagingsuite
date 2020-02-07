@@ -137,11 +137,6 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
 
     ostringstream msg;
 
-    msg<<"Got key "<<keyvalue;
-    qDebug() <<msg.str().c_str();
-
-  //  logger(kipl::logging::Logger::LogMessage,msg.str());
-
     switch (keyvalue) {
     case 'm':
     case 'M':
