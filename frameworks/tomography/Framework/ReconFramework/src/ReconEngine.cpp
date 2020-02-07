@@ -70,19 +70,6 @@ ReconEngine::~ReconEngine(void)
 {
 	std::ostringstream msg;
     logger(logger.LogVerbose,"Enter destructor");
-//	while (!m_PreprocList.empty()) {
-//		msg.str("");
-//		msg<<"Removing "<<m_PreprocList.front()->GetModule()->ModuleName()<<" from the module list ("<<m_PreprocList.size()<<")";
-//		logger(kipl::logging::Logger::LogMessage,msg.str());
-//        if (m_PreprocList.front()!=nullptr) {
-//			delete m_PreprocList.front();
-//		}
-//		msg.str("");
-//		msg<<"Removed the module ("<<m_PreprocList.size()<<")";
-//        logger(logger.LogVerbose,msg.str());
-
-//		m_PreprocList.pop_front();
-//	}
 
     for (auto &module : m_PreprocList)
     {
@@ -108,11 +95,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
     std::ostringstream msg;
     config.SanityCheck();
 
-
-
 	m_Config=config;
-
-    qDebug() << "ReconEngine::SetConfig"<<m_Config.appPath().c_str();
 
     m_ProjectionMargin = config.ProjectionInfo.nMargin;
     std::string fname,ext;
@@ -460,7 +443,6 @@ int ReconEngine::Process(size_t *roi)
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	// Initialize the plugins with the current ROI
 
-    qDebug() << "RecEng Process module list size"<<m_PreprocList.size();
     std::string moduleName;
 	try {
         for (auto &module : m_PreprocList)
@@ -1325,6 +1307,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 			msg.str("");
             msg<<"Setting ROI for module "<< moduleName;
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
+
             module->GetModule()->SetROI(roi);
 		}
 	}
@@ -1392,22 +1375,27 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	}
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
+    float moduleCnt=0.0f;
+    float fNumberOfModules=static_cast<float>(m_PreprocList.size());
     try
     {
         for (auto &module : m_PreprocList)
         {
-            if (module->GetModule()->ModuleName()!=sLastModule)
+            ++moduleCnt;
+            UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
+            if (module->GetModule()->ModuleName()==sLastModule)
                 break;
 
 			msg.str("");
             msg<<"Processing: "<<module->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-			if (!(m_bCancel=UpdateProgress(0.0f, msg.str())))
+            if (!(m_bCancel=UpdateProgress(0.0f, msg.str()))) {
                 module->GetModule()->Process(projections,parameters);
+            }
 			else
 				break;
 
-            validateImage(projections.GetDataPtr(), projections.Size(),(*it_Module)->GetModule()->ModuleName());
+            validateImage(projections.GetDataPtr(), projections.Size(),module->GetModule()->ModuleName());
 		}
 	}
     catch (ReconException &e)
@@ -1833,8 +1821,9 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
 
 bool ReconEngine::UpdateProgress(float val, std::string msg)
 {
-    if (m_Interactor!=nullptr)
-		return m_Interactor->SetProgress(val, msg);
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetOverallProgress(val);
+    }
 
     return false;
 }

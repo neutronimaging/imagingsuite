@@ -17,6 +17,7 @@
 #include <ParameterHandling.h>
 
 #include "../include/NormPlugins.h"
+#include <QDebug>
 
 NormBase::NormBase(std::string name) :
     PreprocModuleBase(name),
@@ -577,7 +578,8 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 	}
 
 	delete [] doselist;
-	return 0;
+
+    return 0;
 }
 
 //----------------------------------------------------
