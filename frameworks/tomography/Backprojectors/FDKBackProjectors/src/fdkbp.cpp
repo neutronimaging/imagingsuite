@@ -36,7 +36,23 @@ static const unsigned int MARGIN = 5;
 FDKbp::FDKbp(kipl::interactors::InteractionBase *interactor) :
     FdkReconBase("muhrec","FDKbp",BackProjectorModuleBase::MatrixXYZ,interactor)
 {
+    publications.push_back(Publication(std::vector<std::string>({"L. A. Feldkamp","L. C. Davis","J. W. Kress"}),
+                                       "Practical cone-beam algorithm",
+                                       "J. Opt. Soc. Am. A",
+                                       1984,
+                                       1,
+                                       6,
+                                       "612-619",
+                                       "10.1364/JOSAA.1.000612"));
 
+    publications.push_back(Publication(std::vector<std::string>({"Gregory Sharp", "Nagarajan Kandasamy", "Harman Singh", "Michael Folkert"}),
+                                       "GPU-based streaming architectures for fast cone-beam CT image reconstruction and demons deformable registration",
+                                       "Physics in Medicine and Biology",
+                                       2007,
+                                       52,
+                                       19,
+                                       "5771-5783",
+                                       "10.1088/0031-9155/52/19/003"));
 
 }
 
