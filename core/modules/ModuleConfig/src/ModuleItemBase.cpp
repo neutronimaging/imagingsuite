@@ -101,7 +101,7 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
             if (m_Module == nullptr) {
                 msg.str("");
                 msg << "Failed to create " << m_sModuleName << " from " << m_sSharedObject;
-                std::cout << msg.str();
+                logger.error(msg.str());
                 throw ModuleException(msg.str(), __FILE__, __LINE__);
             }
         } else {

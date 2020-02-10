@@ -8,9 +8,9 @@ namespace kipl { namespace io{
 
 int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
 //int GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
-
+    kipl::logging::Logger logger("GetNexusInfo");
     NeXus::File file(fname);
-    std::cout << fname << std::endl;
+    logger.message(fname);
 
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 

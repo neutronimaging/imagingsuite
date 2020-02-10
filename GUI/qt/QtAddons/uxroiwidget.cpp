@@ -113,7 +113,6 @@ void uxROIWidget::updateViewer()
     bool checkable = ui->groupROI->isCheckable();
     bool checked   = ui->groupROI->isChecked();
 
- //   qDebug() << "Checkable " << checkable <<"Checked"<<checked;
     if (hViewer!=nullptr) {
         if (isVisible() && (!checkable || checked)) {
             updateBounds();
