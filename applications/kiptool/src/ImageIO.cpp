@@ -7,15 +7,16 @@
 #include <string>
 #include <base/timage.h>
 #include <imagereader.h>
+#include <interactors/interactionbase.h>
 
-kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config)
+kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config, kipl::interactors::InteractionBase *interactor)
 {
 
 	std::ostringstream msg;
     std::string fname=config.mImageInformation.sSourceFileMask;
 
 	kipl::base::TImage<float,3> img;
-    ImageReader reader;
+    ImageReader reader(interactor);
 	try {	
            if (config.mImageInformation.bUseROI==true) {
                 img=reader.Read(fname,

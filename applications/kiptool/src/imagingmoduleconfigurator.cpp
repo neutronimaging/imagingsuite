@@ -20,7 +20,7 @@ ImagingModuleConfigurator::~ImagingModuleConfigurator(){
 }
 
 
-int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
+int ImagingModuleConfigurator::GetImage(std::string sSelectedModule, kipl::interactors::InteractionBase *interactor)
 {
 
     KiplEngine *engine=nullptr;
@@ -53,7 +53,7 @@ int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
 
     logger(kipl::logging::Logger::LogMessage,"Engine successfully built");
 
-    m_OriginalImage = LoadVolumeImage(*config);
+    m_OriginalImage = LoadVolumeImage(*config,m_Interactor);
 
     m_Image=engine->RunPreproc(&m_OriginalImage,sSelectedModule);
 
