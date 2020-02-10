@@ -16,6 +16,7 @@
 #include <io/DirAnalyzer.h>
 #include <datasetbase.h>
 #include <strings/filenames.h>
+#include <stltools/stlvecmath.h>
 
 #include "kiptoolmainwindow.h"
 #include "ui_kiptoolmainwindow.h"
@@ -25,6 +26,7 @@
 #include "mergevolumesdialog.h"
 #include "fileconversiondialog.h"
 #include "processdialog.h"
+#include "loadimagedialog.h"
 
 #include "ImageIO.h"
 using namespace std;
@@ -290,28 +292,36 @@ void KipToolMainWindow::on_button_loaddata_clicked()
     logger(kipl::logging::Logger::LogMessage,"Load image data");
     UpdateConfig();
     try {
-        m_OriginalImage = LoadVolumeImage(m_config);
-        if (m_Engine!=nullptr) {
-            delete m_Engine;
-            m_Engine = nullptr;
+        LoadImageDialog loaddlg(&m_Interactor,this);
+        kipl::base::TImage<float,3> img;
+        int res = loaddlg.exec(&m_config,&img);
+
+        if (res == QDialog::Accepted)
+        {
+            m_OriginalImage=img;
+            if (m_Engine!=nullptr) {
+                delete m_Engine;
+                m_Engine = nullptr;
+            }
+
+            ui->slider_images->setMinimum(0);
+            ui->slider_images->setMaximum(static_cast<int>(m_OriginalImage.Size(2))-1);
+            ui->slider_images->setValue(0);
+            m_bJustLoaded = true;
+            ui->combo_sliceplane->setCurrentIndex(0);
+            on_combo_sliceplane_activated(0);
+            on_slider_images_sliderMoved(0);
+            // Todo: Show histogram...
+            float *axis = new float[m_OriginalHistogram.Size()];
+            size_t *bins = new size_t[m_OriginalHistogram.Size()];
+            kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),bins,m_OriginalHistogram.Size(),0,0,axis);
+
+            medianFilter(bins,m_OriginalHistogram.Size(),5);
+            m_OriginalHistogram.SetData(axis,bins,m_OriginalHistogram.Size());
+            UpdateHistogramView();
+            delete [] axis;
+            delete [] bins;
         }
-
-        ui->slider_images->setMinimum(0);
-        ui->slider_images->setMaximum(static_cast<int>(m_OriginalImage.Size(2))-1);
-        ui->slider_images->setValue(0);
-        m_bJustLoaded = true;
-        ui->combo_sliceplane->setCurrentIndex(0);
-        on_combo_sliceplane_activated(0);
-        on_slider_images_sliderMoved(0);
-        // Todo: Show histogram...
-        float *axis = new float[m_OriginalHistogram.Size()];
-        size_t *bins = new size_t[m_OriginalHistogram.Size()];
-        kipl::base::Histogram(m_OriginalImage.GetDataPtr(),m_OriginalImage.Size(),bins,m_OriginalHistogram.Size(),0,0,axis);
-
-        m_OriginalHistogram.SetData(axis,bins,m_OriginalHistogram.Size());
-        UpdateHistogramView();
-        delete [] axis;
-        delete [] bins;
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
