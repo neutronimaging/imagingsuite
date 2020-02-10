@@ -6,6 +6,7 @@
 
 #include <base/timage.h>
 #include <io/analyzefileext.h>
+#include <logging/logger.h>
 
 namespace Ui {
 class ViewerMainWindow;
@@ -14,7 +15,7 @@ class ViewerMainWindow;
 class ViewerMainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    kipl::logging::Logger logger;
 public:
     explicit ViewerMainWindow(QWidget *parent = 0);
     ~ViewerMainWindow();

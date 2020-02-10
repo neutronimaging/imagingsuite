@@ -42,6 +42,7 @@ ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::I
     {
         if (moduleItem.m_bActive == true)
         {
+            logger.message(moduleItem.m_sModule);
             ModuleItem* module = nullptr;
             try
             {

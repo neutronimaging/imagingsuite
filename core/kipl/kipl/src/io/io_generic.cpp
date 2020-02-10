@@ -66,7 +66,6 @@ kipl::base::TImage<unsigned short,2> KIPLSHARED_EXPORT ReadDat(std::string fname
 //    }
 
 //    size_t file_offset=imageindex*size_y*stride+offset;
-//    std::cout<<"Offset="<<file_offset<<", stride="<<stride<<std::endl;
 //    file.seekg(file_offset);
 
 //    size_t dims[2]={size_x, size_y};
@@ -76,7 +75,6 @@ kipl::base::TImage<unsigned short,2> KIPLSHARED_EXPORT ReadDat(std::string fname
 //    converter data[3];
 
 //    char * buffer = new char[stride];
-//    std::cout<<dt<<std::endl;
 
 //    unsigned short *sbuffer= reinterpret_cast<unsigned short *>(buffer);
 //    for (size_t i=0; i<size_y; i++) {

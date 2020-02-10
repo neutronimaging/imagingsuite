@@ -761,25 +761,10 @@ void MuhRecMainWindow::MenuFileOpen()
     UpdateDialog();
 
     ProjectionIndexChanged(0);
-
-//    SetupCallBacks();
-//    ui->widgetProjectionROI->updateViewer();
-//    size_t roi[4];
-
-//    ui->widgetProjectionROI->getROI(roi);
-
-//    ui->spinSlicesFirst->setMinimum(roi[1]);
-//    ui->spinSlicesFirst->setMaximum(roi[3]);
     ui->spinSlicesFirst->setValue(firstSlice);
-//    ui->spinSlicesLast->setMinimum(roi[1]);
-//    ui->spinSlicesLast->setMaximum(roi[3]);
     ui->spinSlicesLast->setValue(lastSlice);
 
-//    std::cout << firstSlice << " " << lastSlice << std::endl;
-//    ui->plotHistogram->hideLegend();
     SlicesChanged(0);
-
-
 }
 
 void MuhRecMainWindow::MenuFileSave()

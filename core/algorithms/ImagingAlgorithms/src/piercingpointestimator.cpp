@@ -68,6 +68,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
                              bool gaincorrection,
                              size_t *roi)
 {
+    std::ostringstream msg;
     correctedImage=img-dc;
 
     if (gaincorrection) {
@@ -97,7 +98,8 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
             stats.put(profile[i]);
         }
         profile[0]= m_gainThreshold < abs(profile[0]-stats.E())/stats.s()? 0 : profile[0];
-        std::cout<<stats<<std::endl;
+        msg.str(""); msg<<"Piercing point stats "<<stats<<"\n";
+        logger.message(msg.str());
         for (int i=1; i<N; ++i) {
             profile[i]= m_gainThreshold < abs(profile[i]-stats.E())/stats.s() ? profile[i] : 0;
             profile[i]+=profile[i-1];

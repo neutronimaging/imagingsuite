@@ -275,7 +275,6 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
     }
     else
     {
-//        std::cout << "ComputeNorm" << std::endl;
 		ComputeNorm(img,dose);
     }
 
@@ -392,13 +391,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     if (bUseManualThresh)
         {
               ot = thresh;
-//              std::cout << "manual threshold " << ot << std::endl;
         }
     else
         {
             int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
             ot = static_cast<float>(histo.at(value).first);
-//            std::cout << "otsu threshold " << ot << std::endl;
             }
 
 
@@ -602,7 +599,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
                     left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
                     left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
 
-//                    std::cout << pos_right[i] << " " << pos_right_2[j] << " " << pos_left[i] << " " << pos_left_2[j] << std::endl;
                     pos++;
               }
 
@@ -614,7 +610,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
               const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
 
-//              std::cout << roi_dim[0] << " " << roi_dim[1] << std::endl;
               kipl::base::TImage<float,2> roi(roi_dim);
               kipl::base::TImage<float,2> roi_im(roi_dim);
 
@@ -804,7 +799,6 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
       }
 
 
-//      std::cout << "pos: " << pos << std::endl; // it is the number of potential BBs that I have found: that one is correct, error comes later on
 //      ostringstream msg;
 //      msg.str(""); msg<<"pos= "<<pos;
 //      logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -858,9 +852,6 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 
               }
           }
-//           std::cout << x_com << " " << y_com <<std::endl;
-
-
 
           // draw the circle with user-defined radius
 
@@ -880,7 +871,6 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
               std::vector<float> grayvalues;
               float mean_value =0.0f;
 
-//              std::cout << floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0] << " " << floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1] << std::endl;
                   for (size_t y=0; y<roi.Size(1); y++) {
                         for (size_t x=0; x<roi.Size(0); x++) {
 
@@ -890,7 +880,6 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 //                              roi(x,y)=1; // this one actually I don't need
 //                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1; // this is now useless
                               value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
-//                              std::cout << value << " ";
 //                              if (value!=0)
 //                              {
                                 grayvalues.push_back(value);
@@ -902,7 +891,6 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 
                       }
                   }
-//                  std::cout << std::endl;
 
                   mean_value /= static_cast<float>(grayvalues.size());
 
@@ -1254,10 +1242,9 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images 
 //                if (img(x,y)!=0)
 //                {
-                     values.insert(std::make_pair(temp,img(x,y)));
-//                  std::cout << " " << x << " " << y << " " <<  BB_DC(x,y) << std::endl;
-                        mean_value +=img(x,y);
-                        value_size++;
+                    values.insert(std::make_pair(temp,img(x,y)));
+                    mean_value +=img(x,y);
+                    value_size++;
 //                }
 
             }
