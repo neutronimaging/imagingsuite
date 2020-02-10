@@ -667,8 +667,9 @@ void BBLogNormDlg::on_button_BBexternal_path_clicked()
     QString sample_bb_ext_dir=QFileDialog::getOpenFileName(this,
                                       "Select one sample beam images with BB",
                                                    ui->edit_BB_external->text());
-    std::cout << "bExtSingleFile " <<  bExtSingleFile << std::endl;
-
+    std::ostringstream msg;
+    msg<< "bExtSingleFile " <<  bExtSingleFile ;
+    logger.message(msg.str());
 
     if (!sample_bb_ext_dir.isEmpty()) {
 

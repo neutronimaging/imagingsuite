@@ -275,7 +275,7 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
     size_t i;
 
     msg<<"Starting morphclean thread number="<<tid<<", N="<<N;
-    logger.message(msg.str());
+    logger.verbose(msg.str());
     msg.str("");
     msg<<"Thread "<<tid<<" progress :";
 
@@ -312,10 +312,10 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
     catch (...)
     {
         msg<<"Thread tid="<<tid<<" failed with an exception.";
-        logger(logger.LogMessage,msg.str());
+        logger(logger.LogError,msg.str());
     }
 
-    logger.message(msg.str());
+    logger.verbose(msg.str());
 
     return 0;
 }

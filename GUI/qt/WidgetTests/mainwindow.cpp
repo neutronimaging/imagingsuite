@@ -134,18 +134,26 @@ void MainWindow::on_pushButton_listdata_clicked()
 {
     std::list<FileSet> loaderlist;
 
+    std::ostringstream msg;
+
     loaderlist=ui->ImageLoaders->GetList();
+    msg.str("");
+    msg<<"Getting files from loader:\n";
     for (auto it=loaderlist.begin(); it!=loaderlist.end(); it++) {
-        std::cout<<*it<<std::endl;
+         msg<<*it<<"\n";
     }
+
+    logger.message(msg.str());
 
     std::list<std::string> flist=BuildFileList(loaderlist);
 
+    msg.str("");
+    msg<<"Build file list:\n";
     for (auto it=flist.begin(); it!=flist.end(); it++) {
-        std::cout<<*it<<std::endl;
+        msg<<*it<<"\n";
     }
 
-
+    logger.message(msg.str());
 }
 
 void MainWindow::on_roiwidget_getROIclicked()

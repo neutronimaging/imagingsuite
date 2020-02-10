@@ -212,6 +212,15 @@ std::vector<T> medianFilter(const std::vector<T> &x, size_t len)
     return res;
 }
 
+template <class T>
+void medianFilter(T * x, size_t N, size_t len)
+{
+    std::vector<T> xx(N);
+    std::copy_n(x,N,xx.begin());
+    auto res=medianFilter(xx,len);
+    std::copy_n(res.begin(),res.size(),x);
+}
+
 ///// Computes the statistics of vector v
 //template<class T>
 //Math::Statistics vecstats(vector<T> v)

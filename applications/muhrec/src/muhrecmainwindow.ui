@@ -2376,7 +2376,6 @@
     <addaction name="actionVideo_tutorials"/>
     <addaction name="actionShow_repository"/>
     <addaction name="actionReport_a_bug"/>
-    <addaction name="actionRegister_for_news_letter"/>
    </widget>
    <widget class="QMenu" name="menuReconstruct">
     <property name="title">
@@ -2384,7 +2383,6 @@
     </property>
     <addaction name="actionStartReconstruction"/>
     <addaction name="actionReconstruct_to_disk"/>
-    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuGeometry">
     <property name="title">

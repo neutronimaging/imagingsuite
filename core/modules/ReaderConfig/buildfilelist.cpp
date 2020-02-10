@@ -68,7 +68,7 @@ std::map<float,std::string> BuildProjectionFileList(std::list<FileSet> &il, std:
         FileSet &loader = *ilit;
         msg.str("");
         msg<<"Current loader has file mask "<<loader.m_sFilemask<<", first="<<loader.m_nFirst<<", last="<<loader.m_nLast;;
-        logger(logger.LogDebug,msg.str());
+        logger.verbose(msg.str());
 
         for (int i=loader.m_nFirst; i<=loader.m_nLast; ++i,++fcnt) {
             if ((!skiplist.empty()) && (skipit!=skiplist.end())) {
@@ -87,9 +87,8 @@ std::map<float,std::string> BuildProjectionFileList(std::list<FileSet> &il, std:
             ++j;
         }
     }
-    msg.str("");
-    msg<<"Built list size="<<flist.size();
-    logger(logger.LogDebug,msg.str());
+    msg.str(""); msg<<"Built list size="<<flist.size();
+    logger.verbose(msg.str());
 
     return flist;
 }

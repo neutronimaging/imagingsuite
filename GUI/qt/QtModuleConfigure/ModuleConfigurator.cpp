@@ -23,10 +23,6 @@ ModuleConfigurator::ModuleConfigurator(kipl::interactors::InteractionBase *inter
     m_Config(nullptr),
     m_Interactor(interactor)
 {
-//    if (m_Interactor!=nullptr)
-//        qDebug() << "Have interactor for moduleConfigurator";
-//    else
-//        qDebug() << "Don't have interactor for moduleConfigurator";
 }
 
 ModuleConfigurator::~ModuleConfigurator()
