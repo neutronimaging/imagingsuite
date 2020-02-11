@@ -176,9 +176,9 @@ bool ProcessDialog::Finished()
 void ProcessDialog::on_processFailure(QString msg)
 {
     QMessageBox dlg;
-    dlg.setWindowTitle("Reconstruction error");
+    dlg.setWindowTitle("Processing error");
 
-    dlg.setText("Reconstruction failed");
+    dlg.setText("Processing failed");
     dlg.setDetailedText(msg);
     dlg.exec();
     Abort();
