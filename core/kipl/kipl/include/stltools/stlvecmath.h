@@ -1,4 +1,4 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef STLVECMATH_H
 #define STLVECMATH_H

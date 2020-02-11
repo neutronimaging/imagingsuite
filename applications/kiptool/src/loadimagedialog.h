@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef LOADIMAGEDIALOG_H
 #define LOADIMAGEDIALOG_H
 

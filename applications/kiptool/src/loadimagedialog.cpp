@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include "loadimagedialog.h"
 #include "ui_loadimagedialog.h"
 
