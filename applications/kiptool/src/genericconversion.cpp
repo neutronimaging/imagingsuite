@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include <string>
 
 #include <QString>

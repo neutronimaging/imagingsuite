@@ -83,8 +83,8 @@ public:
 		memset(m_tAxisY,0,sizeof(Ty)*m_nNdata);
 	}
 
-	Tx * const GetX() {return m_tAxisX;}
-	Ty * const GetY() {return m_tAxisY;}
+    Tx * GetX() {return m_tAxisX;}
+    Ty * GetY() {return m_tAxisY;}
 	size_t Size() {return m_nNdata;}
 
     void setName(std::string name) {plotName = name;}

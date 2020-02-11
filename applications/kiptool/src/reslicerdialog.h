@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef RESLICERDIALOG_H
 #define RESLICERDIALOG_H
 

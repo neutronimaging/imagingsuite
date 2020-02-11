@@ -27,8 +27,9 @@
 #include "analyzefileext.h"
 #include "readerexception.h"
 
-ImageReader::ImageReader() :
-    logger("ImageReader")
+ImageReader::ImageReader(kipl::interactors::InteractionBase *interactor) :
+    logger("ImageReader"),
+    m_Interactor(interactor)
 {
 
 }
@@ -361,6 +362,8 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
 
         for (size_t i=first; i<=last; i+=step)
         {
+            if (UpdateStatus(static_cast<float>(i-first)/static_cast<float>(last-first),"Reading image"))
+                break;
             kipl::strings::filenames::MakeFileName(fname,i,filename,ext,'#','0');
 
             tmpimg=Read(filename,flip,rotate,binning,nCrop);
@@ -446,6 +449,27 @@ kipl::base::TImage<float,2> ImageReader::ReadSEQ(std::string filename, size_t co
     kipl::io::ReadViVaSEQ(filename, img, idx, nCrop);
 
     return img;
+}
+
+bool ImageReader::UpdateStatus(float val, string msg)
+{
+    bool res=false;
+    if (m_Interactor!=nullptr) {
+        res=m_Interactor->SetProgress(val,msg);
+    }
+
+    return res;
+}
+
+bool ImageReader::Aborted()
+{
+    bool res=false;
+    if (m_Interactor!=nullptr)
+    {
+        res= m_Interactor->Aborted();
+    }
+
+    return res;
 }
 
 kipl::base::TImage<float,2> ImageReader::ReadPNG(std::string filename, size_t const * const nCrop, size_t idx)

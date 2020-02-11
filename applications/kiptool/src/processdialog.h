@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef PROCESSDIALOG_H
 #define PROCESSDIALOG_H
 

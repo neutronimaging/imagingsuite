@@ -8,6 +8,7 @@
 #include <base/timage.h>
 #include <base/kiplenums.h>
 #include <profile/Timer.h>
+#include <interactors/interactionbase.h>
 
 #include "datasetbase.h"
 
@@ -17,7 +18,7 @@ class READERCONFIGSHARED_EXPORT ImageReader
 
 public:
     /// Constructor to initialize the reader
-    ImageReader();
+    ImageReader(kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Cleaning up and closing files.
     ~ImageReader(void);
@@ -177,6 +178,7 @@ protected:
     bool Aborted();
 
     kipl::profile::Timer timer; ///< Timer to measure the execution time for the reading.
+    kipl::interactors::InteractionBase *m_Interactor;
 };
 
 #endif
