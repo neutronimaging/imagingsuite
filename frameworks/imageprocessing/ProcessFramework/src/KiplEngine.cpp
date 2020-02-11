@@ -32,12 +32,12 @@ KiplEngine::KiplEngine(std::string name, kipl::interactors::InteractionBase *int
 
 KiplEngine::~KiplEngine(void)
 {
-	while (!m_ProcessList.empty()) {
-        if (m_ProcessList.front()!=nullptr) {
-			delete m_ProcessList.front();
-		}
-		m_ProcessList.pop_front();
-	}
+    for (auto &module: m_ProcessList)
+    {
+        delete module;
+    }
+
+    m_ProcessList.clear();
 }
 
 void KiplEngine::SetConfig(KiplProcessConfig &config)
@@ -47,7 +47,8 @@ void KiplEngine::SetConfig(KiplProcessConfig &config)
 
 size_t KiplEngine::AddProcessingModule(KiplModuleItem *module) 
 {
-    if (module!=nullptr) {
+    if (module!=nullptr)
+    {
 		if (module->Valid())
 			m_ProcessList.push_back(module);
 	}
@@ -67,21 +68,29 @@ int KiplEngine::Run(kipl::base::TImage<float,3> * img)
 
 	std::map<std::string, std::string> parameters;
 
-	std::list<KiplModuleItem *>::iterator it_Module;
-    float cnt=1;
-    float nModules=static_cast<float>(m_ProcessList.size());
+//	std::list<KiplModuleItem *>::iterator it_Module;
+    float cnt=0.0;
+    float fNumberOfModules=static_cast<float>(m_ProcessList.size());
 	try {
-        for (it_Module=m_ProcessList.begin(); (it_Module!=m_ProcessList.end()) && (updateStatus(float(cnt)/nModules)==false) ; ++cnt,++it_Module) {
+        //for (it_Module=m_ProcessList.begin(); (it_Module!=m_ProcessList.end()) && (updateStatus(float(cnt)/nModules)==false) ; ++cnt,++it_Module) {
+        for (auto &module : m_ProcessList)
+        {
 			msg.str("");
-			msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<"Module " << module->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-			(*it_Module)->GetModule()->Process(m_ResultImage,parameters);
+            cnt++;
+            if (!(m_bCancel=updateStatus(cnt/fNumberOfModules)))
+            {
+                module->GetModule()->Process(m_ResultImage,parameters);
+            }
+            else
+                break;
 		}
 		
 		msg.str("");
 		msg<<"Execution times :\n";
-		for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
-			msg<<"Module "<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
+        for (auto &module : m_ProcessList) {
+            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
 		}
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 	}
@@ -181,7 +190,8 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 
         std::ofstream conffile(confname.c_str());
 
-        if (conffile.is_open()) {
+        if (conffile.is_open())
+        {
             conffile<<m_Config.WriteXML();
             conffile.flush();
         }
@@ -211,19 +221,20 @@ std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,flo
 {
 	std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,float> > > plotlist;
 	std::ostringstream msg;
-	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
     KiplProcessModuleBase *module=nullptr;
 
-	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
-		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
+    for (auto &moduleItem : m_ProcessList)
+    {
+        module=dynamic_cast<KiplProcessModuleBase *>(moduleItem->GetModule());
 		sName=module->ModuleName();
 		msg.str("");
 		size_t N=module->Plots().size();
 		msg<<"Module "<<sName<<" has "<<N<<" plots";
 		logger(kipl::logging::Logger::LogVerbose,msg.str());
-		if (N!=0) {
+        if (N!=0)
+        {
             plotlist[sName]=module->Plots();
 		}
 	}
@@ -241,12 +252,13 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 
     KiplProcessModuleBase *module=nullptr;
 
-	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
-		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
+    for (auto &moduleItem : m_ProcessList)
+    {
+        module=dynamic_cast<KiplProcessModuleBase *>(moduleItem->GetModule());
 		sName=module->ModuleName();
-		
-		
-		if (module->HaveHistogram()) {
+				
+        if (module->HaveHistogram())
+        {
 			msg.str("");
 			msg<<"Module "<<sName<<" has a histogram";
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -268,27 +280,37 @@ kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> *
 
     std::map<std::string, std::string> parameters;
 
-    std::list<KiplModuleItem *>::iterator it_Module;
-
     try {
         msg.str("");
         msg<<"Last module: "<<sLastModule;
         logger.message(msg.str());
 
-        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++)
+        for (auto &module : m_ProcessList)
         {
+            std::string moduleName=module->GetModule()->ModuleName();
+
+            if (moduleName==sLastModule)
+                break;
+
             msg.str("");
-            msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<"Module "<< moduleName;
             logger(kipl::logging::Logger::LogMessage,msg.str());
 
-            (*it_Module)->GetModule()->Process(m_ResultImage,parameters);
+            module->GetModule()->Process(m_ResultImage,parameters);
         }
 
 
         msg.str("");
         msg<<"Execution times :\n";
-        for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end() && (*it_Module)->GetModule()->ModuleName()!=sLastModule; it_Module++) {
-            msg<<"Module "<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
+
+        for (auto &module : m_ProcessList)
+        {
+            std::string moduleName=module->GetModule()->ModuleName();
+
+            if (moduleName==sLastModule)
+                break;
+
+            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
         }
         logger(kipl::logging::Logger::LogMessage,msg.str());
     }
