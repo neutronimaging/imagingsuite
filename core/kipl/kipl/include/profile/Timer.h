@@ -7,6 +7,7 @@
 
 #include <sys/types.h>
 #include <time.h>
+#include <chrono>
 #include <iostream>
 
 namespace kipl { namespace profile {
@@ -15,45 +16,37 @@ public :
   /// \brief Default c'tor which calibrates all timers upon first call
 	Timer();
 	/// \brief Starts the timer
-	void Tic();
-	/// \brief Stops the timer. Can be called multiple times, in this case the time from the most resent call to Tic() is measured.
-	/// \returns Number of elapsed tics since the timer started.
-	clock_t Toc();
-	/// \brief Resets the last time measurement
-	void Reset() { 
-		m_nTic=m_nToc=m_nDiff=m_nCumulative=0; 
-		m_fTic=m_fToc=m_fDiff=m_fCumulative=0.0;
-	}
+    void Tic();
+//	/// \brief Stops the timer. Can be called multiple times, in this case the time from the most resent call to Tic() is measured.
+//	/// \returns Number of elapsed tics since the timer started.
+    double Toc();
+//	/// \brief Resets the last time measurement
+    void Reset() {
+  //      m_nTic = std::chrono::duration<double, std::milli>(0);
+        m_nDiff       = std::chrono::duration<double, std::milli>(0);
+        m_nCumulative = std::chrono::duration<double, std::milli>(0);
+    }
 	/// \returns The last number of measured tics.
-	clock_t ElapsedTics() {return m_nDiff;}
+//	clock_t ElapsedTics() {return m_nDiff;}
 	
-	clock_t CumulativeElapsedTics() {return m_nCumulative;}
+    double CumulativeElapsedTics() {return m_nCumulative.count();}
 	/// \returns The elapsed time in seconds. This time is computed using the timer calibration.
-	double ElapsedSeconds() {return static_cast<double>(m_nDiff)/static_cast<double>(CLOCKS_PER_SEC);}
-	double WallTime() {return m_fDiff;}
-	double CumulativeElapsedSeconds() {return static_cast<double>(m_nCumulative)/static_cast<double>(CLOCKS_PER_SEC);}
-	double CumulativeWallTime() {return m_fCumulative;}
+    double elapsedTime() {return m_nDiff.count();}
+    double cumulativeElapsedTime() {return m_nCumulative.count();}
 private :
 
-	clock_t m_nTic;
-	/// \brief Memory for the most recent tic reading
-	clock_t m_nToc;
-
-	double m_fTic;
-	double m_fToc;
+    std::chrono::steady_clock::time_point m_nTic;
+/// \brief Memory for the most recent tic reading
+    std::chrono::steady_clock::time_point m_nToc;
 	
-	/// \brief Stores the measured time difference 
-	clock_t m_nDiff;
-	clock_t m_nCumulative;
-	double m_fDiff;
-	double m_fCumulative;
-	
-	inline clock_t _diff (clock_t v1, clock_t v2);
+//	/// \brief Stores the measured time difference
+    std::chrono::duration<double, std::milli> m_nDiff;
+    std::chrono::duration<double, std::milli> m_nCumulative;
 };
 
 }}
 
 /// \breif Formatted output of the timer to an ostream.
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::profile::Timer &t);
+//std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::profile::Timer &t);
 
 #endif /*MICROTIMER_H_*/
