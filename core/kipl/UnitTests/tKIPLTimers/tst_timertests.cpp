@@ -64,35 +64,51 @@ void TimerTests::test_case1()
 
 void TimerTests::test_BasicTiming()
 {
-    using Clock = std::chrono::high_resolution_clock;
-    using TimePoint = std::chrono::time_point<Clock>;
-
+    kipl::profile::Timer timer;
     std::clock_t c_start = std::clock();
-    TimePoint t_start = std::chrono::high_resolution_clock::now();
-    std::thread t1(f);
-    std::thread t2(f); // f() is called on two threads
-    t1.join();
-    t2.join();
+    timer.Tic();
+    f();
     std::clock_t c_end = std::clock();
-    TimePoint t_end = std::chrono::high_resolution_clock::now();
+    double dt=timer.Toc();
 
-    std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
-              << 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC << " ms\n"
-              << "Wall clock time passed: "
-              << std::chrono::duration<double, std::milli>(t_end-t_start).count()
-            << " ms\n";
+    QVERIFY(std::fabs(1000.0 * (c_end-c_start) / CLOCKS_PER_SEC - dt)/dt <0.01);
+//    std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
+//              << 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC << " ms\n"
+//              << "Wall clock time passed: "
+//              << std::chrono::duration<double, std::milli>(t_end-t_start).count()
+//            << " ms\n";
 }
 
 void TimerTests::test_ThreadedTiming()
 {
     kipl::profile::Timer timer;
+
+    std::clock_t c_start = std::clock();
     timer.Tic();
     std::thread t1(f);
     std::thread t2(f); // f() is called on two threads
     t1.join();
     t2.join();
+    std::clock_t c_end = std::clock();
     double t=timer.Toc();
-    std::cout<<t<<"ms\n";
+
+
+    QVERIFY(std::fabs(1000.0 * (c_end-c_start) / CLOCKS_PER_SEC/t-2) <0.05);
+    QVERIFY((timer.elapsedTime()-t)/t<0.1);
+
+    QVERIFY(std::fabs(1-timer.elapsedTime(kipl::profile::Timer::nanoSeconds)*1e-6/t)<0.01);
+    QVERIFY(std::fabs(1-timer.elapsedTime(kipl::profile::Timer::microSeconds)*1e-3/t)<0.01);
+    QVERIFY(std::fabs(1-timer.elapsedTime(kipl::profile::Timer::milliSeconds)/t)<0.01);
+    QVERIFY(std::fabs(1-timer.elapsedTime(kipl::profile::Timer::seconds)*1e3/t)<0.01);
+
+//    std::cout<<timer.elapsedTime()<<"ms\n";
+//    std::cout<<timer.elapsedTime(kipl::profile::Timer::nanoSeconds)<<"ns\n";
+//    std::cout<<timer.elapsedTime(kipl::profile::Timer::microSeconds)<<"ns\n";
+//    std::cout<<timer.elapsedTime(kipl::profile::Timer::milliSeconds)<<"ms\n";
+//    std::cout<<timer.elapsedTime(kipl::profile::Timer::seconds)<<"s\n";
+//    std::cout<<timer.elapsedTime(kipl::profile::Timer::minutes)<<"min\n";
+//    std::cout<<timer.elapsedTime(kipl::profile::Timer::hours)<<"h\n";
+
 }
 
 QTEST_APPLESS_MAIN(TimerTests)
