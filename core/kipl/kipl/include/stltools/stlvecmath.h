@@ -194,7 +194,6 @@ std::vector<T> medianFilter(const std::vector<T> &x, size_t len)
     size_t oddLen = len % 2;
     size_t w = len/2 + oddLen;
 
-    qDebug() <<"len="<<len<<", oddLen="<<oddLen;
     auto itX = x.begin();
     auto itR = res.begin()+w-1;
     for ( ; itX!=(x.end()-len+1); ++itX,++itR)

@@ -37,7 +37,8 @@ double Timer::Toc()
     return dt;
 }
 /// \brief Resets the last time measurement
-void Timer::Reset() {
+void Timer::reset()
+{
     m_fCumulative = 0.0;
 }
 
@@ -55,16 +56,16 @@ double Timer::elapsedTime(kipl::profile::Timer::eTimerUnit tu)
     }
     return dt;
 }
-double Timer::cumulativeElapsedTime() {return m_fCumulative;}
+double Timer::cumulativeTime()
+{
+    return m_fCumulative;
+}
 
 }}
 
 std::ostream & operator<<(std::ostream &s, kipl::profile::Timer &t)
 {
-//    if (t.cumulativeTime()==t.elapsedTime())
-//		s<<t.CumulativeElapsedSeconds()<<"s ("<<t.CumulativeElapsedTics()<<" tics)"<<std::flush;
-//	else
-//		s<<"Total time: "<<t.CumulativeElapsedSeconds()<<"s, Wall time: "<<t.CumulativeWallTime()<<"s"<<std::flush;
-	
+    s<<t.elapsedTime()<<"ms"<<std::flush;
+
     return s;
 }

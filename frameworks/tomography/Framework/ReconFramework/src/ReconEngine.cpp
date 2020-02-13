@@ -418,11 +418,9 @@ int ReconEngine::Run()
 	totalTimer.Toc();
 	msg.str("");
     msg<<"Totals for "<<totalSlices<<" slices"<<std::endl
-		<<totalTimer<<" ("<<totalTimer.WallTime()/static_cast<double>(totalSlices)<<" s/slice)";
+        <<totalTimer.elapsedTime(kipl::profile::Timer::seconds)<<" ("<<totalTimer.elapsedTime(kipl::profile::Timer::seconds)/static_cast<double>(totalSlices)<<" s/slice)";
 
 	logger(kipl::logging::Logger::LogMessage,msg.str());
-
-//	status = bCancel ? ReconStatusCancelled : ReconStatusFinished;
 
 	return result;
 }
@@ -1260,7 +1258,7 @@ int ReconEngine::Run3DFull()
 		totalTimer.Toc();
 		msg.str("");
         msg<<": Totals for "<<totalSlices<<" slices"<<std::endl
-			<<totalTimer<<" ("<<totalTimer.ElapsedSeconds()/static_cast<double>(totalSlices)<<" s/slice)";
+            <<totalTimer.elapsedTime(kipl::profile::Timer::seconds)<<" ("<<totalTimer.elapsedTime(kipl::profile::Timer::seconds)/static_cast<double>(totalSlices)<<" s/slice)";
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 

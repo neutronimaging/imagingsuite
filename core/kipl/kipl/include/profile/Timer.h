@@ -33,12 +33,12 @@ public :
     double Toc();
 
     /// \brief Resets the last time measurement
-    void Reset();
+    void reset();
 
 	/// \returns The elapsed time in seconds. This time is computed using the timer calibration.
     double elapsedTime(kipl::profile::Timer::eTimerUnit tu= kipl::profile::Timer::milliSeconds) ;
 
-    double cumulativeElapsedTime() ;
+    double cumulativeTime() ;
 private :
 
     std::chrono::steady_clock::time_point m_nTic; ///< \brief Memory for the most recent tic reading
@@ -49,7 +49,7 @@ private :
 
 }}
 
-/// \breif Formatted output of the timer to an ostream.
-//std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::profile::Timer &t);
+/// \brief Formatted output of the timer to an ostream.
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::profile::Timer &t);
 
 #endif /*MICROTIMER_H_*/
