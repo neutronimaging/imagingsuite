@@ -22,6 +22,7 @@ Timer::Timer() :
 /// \brief Starts the timer
 void Timer::Tic()
 {
+    std::chrono::high_resolution_clock::now();
     m_nToc=m_nTic=std::chrono::high_resolution_clock::now();
     m_fCumulative = 0.0;
 }

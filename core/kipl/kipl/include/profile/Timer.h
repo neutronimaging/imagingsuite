@@ -41,8 +41,8 @@ public :
     double cumulativeTime() ;
 private :
 
-    std::chrono::steady_clock::time_point m_nTic; ///< \brief Memory for the most recent tic reading
-    std::chrono::steady_clock::time_point m_nToc; ///< \brief Memory for the most recent tic reading
+    std::chrono::high_resolution_clock::time_point m_nTic; ///< \brief Memory for the most recent tic reading
+    std::chrono::high_resolution_clock::time_point m_nToc; ///< \brief Memory for the most recent tic reading
 	
     double m_fCumulative;  ///< \brief Stores the cumulated time from several toc calls
 };

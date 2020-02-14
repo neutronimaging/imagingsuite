@@ -53,7 +53,7 @@ void TimerTests::test_case1()
     t1.join();
     t2.join();
     std::clock_t c_end = std::clock();
-    std::chrono::steady_clock::time_point t_end = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point t_end = std::chrono::high_resolution_clock::now();
 
     std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
               << 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC << " ms\n"
