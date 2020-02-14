@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QString>
 #include <QTextStream>
+#include <QMessageBox>
 
 #include "roimanager.h"
 #include "ui_roimanager.h"
@@ -259,5 +260,6 @@ void QtAddons::ROIManager::on_button_save_clicked()
 
 void QtAddons::ROIManager::on_button_load_clicked()
 {
+    QMessageBox::warning(this,"Not available","It is not possible to load a ROI list. This is a place holder for future implementation");
 
 }
