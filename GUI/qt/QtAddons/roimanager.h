@@ -32,6 +32,8 @@ public:
     std::list<kipl::base::RectROI> getSelectedROIs();
     void setLabelVisible(bool show);
     bool labelIsVisible();
+    void setRequireLabel(bool require);
+    bool requireLabel();
     void updateViewer();
 private slots:
     void on_button_addROI_clicked();
@@ -47,8 +49,10 @@ private slots:
 private:
     Ui::ROIManager *ui;
     QtAddons::ImageViewerWidget *viewer;
-    bool visibleLabels;
+    bool bVisibleLabels;
+    bool bRequireLabel;
 };
+
 
 }
 #endif // ROIMANAGER_H

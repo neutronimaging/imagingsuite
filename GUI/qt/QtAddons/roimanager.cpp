@@ -30,7 +30,8 @@ ROIManager::ROIManager(QWidget *parent) :
     logger("ROIManager"),
     ui(new Ui::ROIManager),
     viewer(nullptr),
-    visibleLabels(false)
+    bVisibleLabels(false),
+    bRequireLabel(false)
 {
     ui->setupUi(this);
 }
@@ -57,7 +58,7 @@ void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
         item->roi=*it;
         it->getBox(roi);
         msg.str("");
-        if (visibleLabels)
+        if (bVisibleLabels)
             msg<<item->roi.label()<<": ";
 
         msg<<"[x0: "<<roi[0]<<", y0: "<<roi[1]
@@ -77,38 +78,48 @@ void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
 std::list<kipl::base::RectROI> ROIManager::getROIs()
 {
     std::list<kipl::base::RectROI> roiList;
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+   // qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         roiList.push_back(roiItem->roi);
     }
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+    //qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     return roiList;
 }
 
 std::list<kipl::base::RectROI> ROIManager::getSelectedROIs()
 {
     std::list<kipl::base::RectROI> roiList;
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+  //  qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         if (roiItem->checkState()==Qt::Checked)
             roiList.push_back(roiItem->roi);
     }
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+ //   qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     return roiList;
 }
 
 void ROIManager::setLabelVisible(bool show)
 {
-    visibleLabels = show;
+    bVisibleLabels = show;
 }
 
 bool ROIManager::labelIsVisible()
 {
-    return visibleLabels;
+    return bVisibleLabels;
+}
+
+bool ROIManager::requireLabel()
+{
+    return bRequireLabel;
+}
+
+void ROIManager::setRequireLabel(bool require)
+{
+    bRequireLabel = require;
 }
 
 void ROIManager::updateViewer()
@@ -146,15 +157,28 @@ void ROIManager::on_button_addROI_clicked()
 
     item->roi=kipl::base::RectROI(rect.x(),rect.y(),rect.x()+rect.width(),rect.y()+rect.height());
 
-    if (visibleLabels)
+    if (bRequireLabel)
+    {
+        QtAddons::ROIItemDlg dlg(this);
+        dlg.setROIItem(item->roi);
+        int res=dlg.exec();
+        if (res==QDialog::Accepted)
+        {
+            item->roi = dlg.roiItem();
+        }
+    }
+
+    if (bVisibleLabels)
         msg<<item->roi.label()<<": ";
 
     msg<<"[x0: "<<rect.x()<<", y0: "<<rect.y()
       <<", x1: "<<rect.x()+rect.width()<<", y1: "<<rect.y()+rect.height()<<"]";
+
     item->setData(Qt::DisplayRole,QString::fromStdString(msg.str()));
     item->setData(Qt::CheckStateRole,Qt::Unchecked);
 
     item->setCheckState(Qt::CheckState::Checked);
+
     ui->listROI->addItem(item);
     viewer->set_rectangle(rect,QColor("green"),item->roi.getID());
 }
@@ -194,7 +218,7 @@ void QtAddons::ROIManager::on_listROI_itemDoubleClicked(QListWidgetItem *item)
         viewer->set_rectangle(rect,QColor("green"),roiItem->roi.getID());
         std::ostringstream msg;
 
-        if (visibleLabels)
+        if (bVisibleLabels)
             msg<<roi.label()<<": ";
 
         msg<<"[x0: "<<rect.x()<<", y0: "<<rect.y()
