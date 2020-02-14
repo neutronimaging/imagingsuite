@@ -26,14 +26,28 @@
      <item>
       <widget class="QPushButton" name="button_addROI">
        <property name="text">
-        <string>Add marked ROI</string>
+        <string>Add ROI</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="button_deleteROI">
        <property name="text">
-        <string>Delete ROI from list</string>
+        <string>Delete ROI</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_load">
+       <property name="text">
+        <string>Load</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_save">
+       <property name="text">
+        <string>Save</string>
        </property>
       </widget>
      </item>

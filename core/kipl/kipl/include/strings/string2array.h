@@ -77,5 +77,6 @@ void string2vector(const std::string &text, std::vector<T> &vec)
     for (auto s : results)
         vec.push_back(static_cast<T>(std::stod(s)));
 }
+
 }}
 #endif /*STRING2ARRAY_H_*/

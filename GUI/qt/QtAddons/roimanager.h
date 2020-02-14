@@ -40,6 +40,10 @@ private slots:
 
     void on_listROI_itemDoubleClicked(QListWidgetItem *item);
 
+    void on_button_save_clicked();
+
+    void on_button_load_clicked();
+
 private:
     Ui::ROIManager *ui;
     QtAddons::ImageViewerWidget *viewer;

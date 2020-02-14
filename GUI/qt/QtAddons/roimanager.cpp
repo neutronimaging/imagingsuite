@@ -1,6 +1,10 @@
 //<LICENSE>
 
 #include <QDebug>
+#include <QFileDialog>
+#include <QFile>
+#include <QString>
+#include <QTextStream>
 
 #include "roimanager.h"
 #include "ui_roimanager.h"
@@ -67,6 +71,7 @@ void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
         QRect rect=QRect(roi[0],roi[1],roi[0]-roi[2],roi[3]-roi[1]);
         viewer->set_rectangle(rect,QColor("green"),item->roi.getID());
     }
+    updateViewer();
 }
 
 std::list<kipl::base::RectROI> ROIManager::getROIs()
@@ -201,4 +206,34 @@ void QtAddons::ROIManager::on_listROI_itemDoubleClicked(QListWidgetItem *item)
 
 }
 
+void QtAddons::ROIManager::on_button_save_clicked()
+{
+    QString filename = QFileDialog::getSaveFileName(this,"Save ROI list",QDir::homePath());
+    QFile f( filename );
+    f.open( QIODevice::WriteOnly );
+    QTextStream out(&f);
+    // store data in f
+    out<<"{\n";
+    out<<"  \"rois\" : [\n";
+    size_t roi[4];
+    for (int i=0; i<ui->listROI->count(); ++i)
+    {
 
+        ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
+        out<<"    {\n";
+        out<<"      \"label\" : \""<<roiItem->roi.label().c_str()<<"\",\n";
+        roiItem->roi.getBox(roi);
+        out<<"      \"roi\" : \""<< roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3] <<"\"\n    }";
+        if (i<ui->listROI->count()-1)
+            out<<",\n";
+        else
+            out<<"\n";
+    }
+    out<<"  ]\n}\n";
+    f.close();
+}
+
+void QtAddons::ROIManager::on_button_load_clicked()
+{
+
+}

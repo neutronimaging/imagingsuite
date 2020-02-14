@@ -35,6 +35,8 @@ void BallAssemblyAnalysis::analyzeImage(kipl::base::TImage<float,3> &img, std::l
     assemblyStats.clear();
 
     foreach (auto roi, roiList) {
+        qDebug() << "ROI label"<<roi.label().c_str();
+
         kipl::math::Statistics stats=kipl::math::imageStatistics(img,roi);
         assemblyStats.insert(std::make_pair(std::stof(roi.label()),stats));
     }
