@@ -577,6 +577,18 @@ void KipToolMainWindow::on_actionStart_processing_triggered()
         return;
     }
 
+    if(m_OriginalImage.Size(2)==1){
+
+        QMessageBox mbox;
+        mbox.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+        mbox.setDefaultButton(QMessageBox::Abort);
+        mbox.setText(QString::fromStdString("You have loaded a single image. Please note, most modules are configured to work in 3D. Do you want to continue?"));
+        mbox.setWindowTitle("Sanity check warning");
+        int res_msg=mbox.exec();
+        if (res_msg==QMessageBox::Abort)
+            return;
+    }
+
     if (m_Engine) {
         delete m_Engine;
         m_Engine=nullptr;
