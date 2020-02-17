@@ -24,6 +24,16 @@ public:
     {}
 
     kipl::base::RectROI roi;
+    QRect rect() {
+        size_t roivec[4];
+
+        roi.getBox(roivec);
+
+            QRect rect;
+            rect.setCoords(roivec[0],roivec[1],roivec[2],roivec[3]);
+
+            return rect;
+    }
 };
 
 ROIManager::ROIManager(QWidget *parent) :
@@ -262,4 +272,17 @@ void QtAddons::ROIManager::on_button_load_clicked()
 {
     QMessageBox::warning(this,"Not available","It is not possible to load a ROI list. This is a place holder for future implementation");
 
+}
+
+void QtAddons::ROIManager::on_listROI_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    ROIListItem *currentItem = dynamic_cast<ROIListItem *>(current);
+
+    viewer->set_rectangle(currentItem->rect(),QColor("red"),currentItem->roi.getID());
+    if (previous!=nullptr)
+    {
+        ROIListItem *previousItem = dynamic_cast<ROIListItem *>(previous);
+
+        viewer->set_rectangle(previousItem->rect(),QColor("green"),previousItem->roi.getID());
+    }
 }

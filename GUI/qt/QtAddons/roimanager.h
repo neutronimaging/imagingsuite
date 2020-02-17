@@ -46,6 +46,8 @@ private slots:
 
     void on_button_load_clicked();
 
+    void on_listROI_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
 private:
     Ui::ROIManager *ui;
     QtAddons::ImageViewerWidget *viewer;
