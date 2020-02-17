@@ -93,7 +93,7 @@ int AddModuleDialog::exec()
         #else
             QDir dir;
 
-            if (!dir.exists(appPath+"/../Frameworks"))
+            if (dir.exists(appPath+"/../Frameworks"))
                 appPath += "/../Frameworks";
 
             qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
