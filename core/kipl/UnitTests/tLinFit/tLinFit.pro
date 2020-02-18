@@ -50,7 +50,7 @@ else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl
+LIBS += -lkipl -lblas llapack
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src
