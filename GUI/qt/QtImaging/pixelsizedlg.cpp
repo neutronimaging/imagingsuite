@@ -242,10 +242,18 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
 
         return;
     }
+    if ((roi[2]-roi[0])<25 || (roi[3]-roi[1])<25)
+    {
+        QMessageBox::warning(this,"Too small ROI selected","You have to provide a sufficiently large (>25 pixels) ROI before you can analyse.",QMessageBox::Ok);
+        logger.message("Too small ROI.");
+
+        return;
+    }
+
     pixelDistance=getDistance2(img,roi);
     mPixelSize=ui->doubleSpinBox_Distance->value()/pixelDistance;
     std::ostringstream msg;
-    msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<"mm/"<<pixelDistance<<"px, pixelSize: "<<mPixelSize;
+    msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<" mm/"<<pixelDistance<<" px, pixelSize: "<<mPixelSize<<" mm/pixel";
     QString str;
     str.setNum(pixelDistance,'g',4);
     ui->label_edgeDistance->setText(str);

@@ -68,6 +68,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
     m_Img3D.Clone(img);
 
     logger(logger.LogMessage,"Average slice");
+    qDebug() << "Start avg";
     m_Img2D.Resize(m_Img3D.Dims());
     m_Img2D=0.0f;
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
@@ -79,21 +80,27 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
         }
     }
 
+    qDebug()<< "Summing done";
     for (size_t pix=0; pix<m_Img2D.Size(); ++pix)
     {
         m_Img2D[pix]/=m_Img3D.Size(2);
     }
 
-    if (1UL<filterSize)
-    {
-        size_t fltdims[]={filterSize,filterSize};
-        kipl::filters::TMedianFilter<float,2> flt(fltdims);
-        m_Img2D = flt(m_Img2D);
-    }
+    qDebug() << "Pre filter"<< filterSize;
+//    if (1UL<filterSize)
+//    {
+//        size_t fltdims[]={filterSize,filterSize};
+//        kipl::filters::TMedianFilter<float,2> flt(fltdims);
+//        m_Img2D = flt(m_Img2D);
+//    }
+    qDebug() << "Histogram";
     makeHistogram();
 
+    qDebug() << "save";
     if (saveIntermediateImages)
         kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+
+   qDebug() << "done";
 }
 
 void ContrastSampleAnalysis::analyzeContrast(float pixelSize, const std::list<kipl::base::RectROI> &ROIs)
