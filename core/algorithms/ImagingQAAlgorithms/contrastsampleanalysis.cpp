@@ -163,7 +163,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     dots.clear();
     std::vector<pair<float, float> > roiDots;
     std::ofstream dotfile("dots.csv");
-    timer.Reset();
+    timer.reset();
     timer.Tic();
     int loopidx=0;
     for (const auto &roi : ROIs)
@@ -244,7 +244,7 @@ void ContrastSampleAnalysis::findCenters()
 
     if (saveIntermediateImages)
         kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks_bi.tif");
-    timer.Reset();
+    timer.reset();
     timer.Tic();
 
     size_t idx=0;

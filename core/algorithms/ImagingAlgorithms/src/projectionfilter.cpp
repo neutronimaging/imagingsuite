@@ -89,8 +89,12 @@ ProjectionFilterBase::ProjectionFilterBase(std::string name,kipl::interactors::I
 
 void ProjectionFilterBase::setFilter(ImagingAlgorithms::ProjectionFilterType ft, float cutOff, float _order)
 {
+    std::ostringstream msg;
     if ((cutOff<0.0f) || (0.5f<cutOff))
-        throw ImagingException("The cut-off frequency must be in the interval [0,0.5]",__FILE__,__LINE__);
+    {
+        msg<<"The cut-off frequency is "<<cutOff<<", it must be in the interval [0,0.5]";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 
     m_FilterType = ft;
     m_fCutOff    = cutOff;
@@ -218,8 +222,10 @@ void ProjectionFilterBase::setParameters(const std::map<std::string, std::string
 
     if (params.count("cutoff"))
         m_fCutOff = std::stof(params.at("cutoff"));
+    else
+        m_fCutOff = 0.5f;
 
-    if (0.5f<m_fCutOff)
+    if ((m_fCutOff<0.0f) || (0.5f<m_fCutOff))
         throw ImagingException("The cut-off frequency must be in the interval [0,0.5]",__FILE__,__LINE__);
 
     if (params.count("order"))
@@ -284,8 +290,11 @@ void ProjectionFilter::buildFilter(const size_t N)
     msg<<"Filter :"<<m_FilterType<<" filter size="<<mFilter.size();
     logger(kipl::logging::Logger::LogVerbose, msg.str());
 
-    if (!((0<m_fCutOff) && (m_fCutOff<=0.5f)))
-        throw ImagingException("Cut off frequency is not in valid range",__FILE__,__LINE__);
+    if ((m_fCutOff<0.0f) || (0.5f<m_fCutOff))
+    {
+        msg<<"The cut-off frequency is "<<m_fCutOff<<", it must be in the interval [0,0.5]";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 
     float FilterOrder=0.0;
     if (m_FilterType==ProjectionFilterType::ProjectionFilterButterworth)
