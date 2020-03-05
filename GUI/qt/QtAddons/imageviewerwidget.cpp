@@ -347,21 +347,31 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
             QRect r=rubberBandRect.normalized();
             int const * const dims=m_ImagePainter.imageDims();
-            int xpos = floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale());
-            int ypos = floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale());
+//            int xpos = floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale());
+//            int ypos = floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale());
 
-            int w    = floor(r.width()/m_ImagePainter.getScale());
-            int h    = floor(r.height()/m_ImagePainter.getScale());
+//            int w    = floor(r.width()/m_ImagePainter.getScale());
+//            int h    = floor(r.height()/m_ImagePainter.getScale());
+
+            int xpos = m_ImagePainter.globalPositionX(floor((r.x()*m_ImagePainter.getScale())));
+            int ypos = m_ImagePainter.globalPositionY(floor((r.y()*m_ImagePainter.getScale())));
+
+            int w    = floor(r.width()*m_ImagePainter.getScale());
+            int h    = floor(r.height()*m_ImagePainter.getScale());
 
             xpos = xpos < 0 ? 0 : xpos;
             ypos = ypos < 0 ? 0 : ypos;
             w = dims[0] <= xpos + w ? dims[0]-xpos-1 : w;
             h = dims[1] <= ypos + h ? dims[1]-ypos-1 : h;
 
-            roiRect.setRect(xpos,ypos,w,h);
+            roiRect.setRect(m_ImagePainter.globalPositionX(xpos),
+                            m_ImagePainter.globalPositionY(ypos),
+                            w,h);
+
+            roiRect=roiRect.normalized();
 
             m_RubberBandStatus = RubberBandFreeze;
-
+             qDebug() << roiRect<< m_ImagePainter.getScale();
             m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
         }
         if (m_MouseMode==ViewerProfile) {

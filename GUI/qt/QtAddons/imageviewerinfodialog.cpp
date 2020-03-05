@@ -19,8 +19,6 @@ ImageViewerInfoDialog::ImageViewerInfoDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->histogramplot->hideTitle();
     ui->histogramplot->showLegend();
-    ui->histogramplot->setXLabel("Levels");
-    ui->histogramplot->setYLabel("Relative frequency");
 }
 
 ImageViewerInfoDialog::~ImageViewerInfoDialog()
@@ -83,7 +81,11 @@ void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect ro
     }
 
     ui->histogramplot->setCurveData(1,m_LocalHistogram,"Local");
+
     on_check_showglobal_toggled(ui->check_showglobal->isChecked());
+
+    ui->histogramplot->setXLabel("Levels");
+    ui->histogramplot->setYLabel("Relative frequency");
 }
 
 

@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <QLine>
+#include <QDebug>
 
 #include <math/image_statistics.h>
 #include <base/thistogram.h>
@@ -335,6 +336,14 @@ void ImagePainter::showClamped(bool show)
     (void) show;
 }
 
+float ImagePainter::getScale()
+{
+    // return m_fScale; // original
+    float scale = static_cast<float>(m_ZoomedImage.Size(0))/static_cast<float>(m_pixmap_full.size().width());
+
+    return scale;
+}
+
 void ImagePainter::preparePixbuf()
 {
     ostringstream msg;
@@ -407,15 +416,18 @@ const QVector<QPointF> & ImagePainter::getImageHistogram()
 
 void ImagePainter::createZoomImage(QRect roi)
 {
-    size_t dims[2]={static_cast<size_t>(roi.width()),static_cast<size_t>(roi.height())};
+    m_currentROI=roi.normalized();
+    size_t dims[2]={static_cast<size_t>(m_currentROI.width()),static_cast<size_t>(m_currentROI.height())};
     m_ZoomedImage.Resize(dims);
-    m_currentROI=roi;
+
 
     for (size_t y=0; y<m_ZoomedImage.Size(1); y++)
     {
-        memcpy(m_ZoomedImage.GetLinePtr(y),m_OriginalImage.GetLinePtr(y+roi.y())+roi.x(), m_ZoomedImage.Size(0)*sizeof(float));
+        memcpy(m_ZoomedImage.GetLinePtr(y),m_OriginalImage.GetLinePtr(y+m_currentROI.y())+m_currentROI.x(), m_ZoomedImage.Size(0)*sizeof(float));
     }
+
     preparePixbuf();
+    qDebug() << "Create zoom image"<<getScale();
 }
 
 int ImagePainter::zoomIn(QRect *zoomROI)

@@ -53,7 +53,7 @@ public:
     const QVector<QPointF> &getImageHistogram();
     int const * imageDims() {return m_dims;}
     void showClamped(bool show);
-    float getScale() {return m_fScale;}
+    float getScale();
     int getOffsetx() {return offset_x;}
     int getOffsety() {return offset_y;}
     float getValue(int x, int y);
