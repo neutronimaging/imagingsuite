@@ -30,7 +30,7 @@ ImagePainter::ImagePainter(QWidget * parent) :
       for (int i=0; i<N*N; i++)
           data[i]=static_cast<float>(i);
 
-      set_image(data,dims);
+      setImage(data,dims);
 }
 
 ImagePainter::~ImagePainter()
@@ -122,31 +122,31 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
     }
 }
 
-void ImagePainter::set_image(kipl::base::TImage<float, 2> &img)
+void ImagePainter::setImage(kipl::base::TImage<float, 2> &img)
 {
-    set_image(img.GetDataPtr(),img.Dims());
+    setImage(img.GetDataPtr(),img.Dims());
 }
 
-kipl::base::TImage<float,2> ImagePainter::get_image()
+kipl::base::TImage<float,2> ImagePainter::getImage()
 {
     return m_OriginalImage;
 }
 
-void ImagePainter::set_image(float const * const data, size_t const * const dims)
+void ImagePainter::setImage(float const * const data, size_t const * const dims)
 {
-    set_image(data,dims,0.0f,0.0f);
+    setImage(data,dims,0.0f,0.0f);
 }
 
-void ImagePainter::set_image(float const * const data, size_t const * const dims, const float low, const float high)
+void ImagePainter::setImage(float const * const data, size_t const * const dims, const float low, const float high)
 {
     m_dims[0]=static_cast<int>(dims[0]);
     m_dims[1]=static_cast<int>(dims[1]);
     m_globalROI.setRect(0,0,dims[0],dims[1]);
 
     m_OriginalImage.Resize(dims);
-    memcpy(m_OriginalImage.GetDataPtr(),data,m_OriginalImage.Size()*sizeof(float));
+    std::copy_n(data,m_OriginalImage.Size(),m_OriginalImage.GetDataPtr());
 
-    kipl::math::minmax(data,dims[0]*dims[1],&m_ImageMin, &m_ImageMax);
+    kipl::math::minmax(data,dims[0]*dims[1],&m_ImageMin, &m_ImageMax,true);
     if (low==high) {
         m_MinVal=m_ImageMin;
         m_MaxVal=m_ImageMax;
@@ -166,11 +166,12 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
                           nHistSize,
                           m_ImageMin,
                           m_ImageMax,
-                          haxis);
+                          haxis,
+                          true);
 
     m_Histogram.clear();
-    for (size_t i=0; i<nHistSize; i++) {
-        m_Histogram.append(QPointF(haxis[i],static_cast<float>(hist[i])));
+    for (size_t i=0; i<nHistSize; ++i) {
+        m_Histogram.append(QPointF(static_cast<qreal>(haxis[i]),static_cast<qreal>(hist[i])));
     }
 
     if (!m_bHold_annotations) {
@@ -182,35 +183,38 @@ void ImagePainter::set_image(float const * const data, size_t const * const dims
     createZoomImage(m_globalROI);
 }
 
-void ImagePainter::set_plot(QVector<QPointF> data, QColor color, int idx)
+void ImagePainter::setPlot(QVector<QPointF> data, QColor color, int idx)
 {
     m_PlotList[idx]=qMakePair<QVector<QPointF>, QColor>(data,color);
     m_pParent->update();
 }
 
-void ImagePainter::set_rectangle(QRect rect, QColor color, int idx)
+void ImagePainter::setRectangle(QRect rect, QColor color, int idx)
 {
     m_BoxList[idx]=qMakePair<QRect,QColor>(rect,color);
     m_pParent->update();
 }
 
-void ImagePainter::hold_annotations(bool hold)
+void ImagePainter::holdAnnotations(bool hold)
 {
     m_bHold_annotations=hold;
 }
 
-int ImagePainter::clear_plot(int idx)
+int ImagePainter::clearPlot(int idx)
 {
     QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
 
-    if (!m_PlotList.empty()) {
-        if (idx<0)  {
+    if (!m_PlotList.empty())
+    {
+        if (idx<0)
+        {
             m_PlotList.clear();
         }
-
-        else {
+        else
+        {
             it=m_PlotList.find(idx);
-            if (it!=m_PlotList.end()) {
+            if (it!=m_PlotList.end())
+            {
                 m_PlotList.erase (it);
             }
         }
@@ -220,19 +224,22 @@ int ImagePainter::clear_plot(int idx)
     return 0;
 }
 
-int ImagePainter::clear_rectangle(int idx)
+int ImagePainter::clearRectangle(int idx)
 {
     QMap<int,QPair<QRect, QColor> >::iterator it;
 
-    if (!m_BoxList.empty()) {
-        if (idx<0) {
+    if (!m_BoxList.empty())
+    {
+        if (idx<0)
+        {
             m_BoxList.clear();
         }
         else
         {
             it=m_BoxList.find(idx);
 
-            if (it!=m_BoxList.end()) {
+            if (it!=m_BoxList.end())
+            {
                 m_BoxList.erase (it);
             }
         }
@@ -243,25 +250,28 @@ int ImagePainter::clear_rectangle(int idx)
     return 0;
 }
 
-void ImagePainter::set_marker(QtAddons::QMarker marker, int idx)
+void ImagePainter::setMarker(QtAddons::QMarker marker, int idx)
 {
     m_MarkerList.insert(idx,marker);
     m_pParent->update();
 }
 
-int ImagePainter::clear_marker(int idx)
+int ImagePainter::clearMarker(int idx)
 {
     QMap<int,QMarker >::iterator it;
 
-    if (!m_MarkerList.empty()) {
-        if (idx<0) {
+    if (!m_MarkerList.empty())
+    {
+        if (idx<0)
+        {
             m_MarkerList.clear();
         }
         else
         {
             it=m_MarkerList.find(idx);
 
-            if (it!=m_MarkerList.end()) {
+            if (it!=m_MarkerList.end())
+            {
                 m_MarkerList.erase (it);
             }
         }
@@ -280,11 +290,11 @@ int ImagePainter::clear()
     return 1;
 }
 
-void ImagePainter::set_levels(const float level_low, const float level_high)
+void ImagePainter::setLevels(const float level_low, const float level_high)
 {
     m_MinVal = level_low;
     m_MaxVal = level_high;
-    prepare_pixbuf();
+    preparePixbuf();
 }
 
 float ImagePainter::getValue(int x, int y)
@@ -292,24 +302,40 @@ float ImagePainter::getValue(int x, int y)
     return m_OriginalImage[x+m_dims[0]*y];
 }
 
-void ImagePainter::get_levels(float *level_low, float *level_high)
+void ImagePainter::globalPosition(int &x, int &y)
+{
+    x += m_currentROI.x();
+    y += m_currentROI.y();
+}
+
+int ImagePainter::globalPositionX(int x)
+{
+    return x+m_currentROI.x();
+}
+
+int ImagePainter::globalPositionY(int y)
+{
+    return y+m_currentROI.y();
+}
+
+void ImagePainter::getLevels(float *level_low, float *level_high)
 {
     *level_low  = m_MinVal;
     *level_high = m_MaxVal;
 }
 
-void ImagePainter::get_image_minmax(float *level_low, float *level_high)
+void ImagePainter::getImageMinMax(float *level_low, float *level_high)
 {
     *level_low  = m_ImageMin;
     *level_high = m_ImageMax;
 }
 
-void ImagePainter::show_clamped(bool show)
+void ImagePainter::showClamped(bool show)
 {
     (void) show;
 }
 
-void ImagePainter::prepare_pixbuf()
+void ImagePainter::preparePixbuf()
 {
     ostringstream msg;
     if (m_cdata!=nullptr)
@@ -317,14 +343,15 @@ void ImagePainter::prepare_pixbuf()
 
     m_NData=m_ZoomedImage.Size();
     m_cdata=new uchar[m_NData*3];
-    memset(m_cdata,0,3*sizeof(uchar)*m_NData);
+    std::fill_n(m_cdata,m_NData*3,0);
 
     const float scale=255.0f/(m_MaxVal-m_MinVal);
-    float val=0.0;
+    float val=0.0f;
     int idx=0;
-    for (int i=0; i<m_NData; i++) {
-        idx=3*i;
-        if (m_ZoomedImage[i]==m_ZoomedImage[i]) {
+    for (size_t i=0; i<m_NData; i++) {
+        idx=static_cast<int>(3*i);
+        if (std::isfinite(m_ZoomedImage[i]))
+        {
             val=(m_ZoomedImage[i]-m_MinVal)*scale;
             if (255.0f<val)
                 m_cdata[idx]=255;
@@ -336,9 +363,20 @@ void ImagePainter::prepare_pixbuf()
             m_cdata[idx+2]=m_cdata[idx+1]=m_cdata[idx];
         }
         else {
-            m_cdata[idx]=255;
-            m_cdata[idx+1]=0;
-            m_cdata[idx+2]=0;
+            if (std::isinf(m_ZoomedImage[i]))
+            {
+                m_cdata[idx]   = 255;
+                m_cdata[idx+1] = 0;
+                m_cdata[idx+2] = 0;
+            }
+
+            if (std::isnan(m_ZoomedImage[i]))
+            {
+                m_cdata[idx]   = 0;
+                m_cdata[idx+1] = 255;
+                m_cdata[idx+2] = 0;
+            }
+
         }
     }
 
@@ -350,11 +388,13 @@ void ImagePainter::prepare_pixbuf()
 
     m_pixmap_full=QPixmap::fromImage(qimg);
 
-    if (m_pixmap_full.isNull()) {
+    if (m_pixmap_full.isNull())
+    {
         logger(kipl::logging::Logger::LogMessage,"Pixmap failed");
     }
 
-    if (m_pParent!=nullptr) {
+    if (m_pParent!=nullptr)
+    {
         m_pParent->update();
     }
 
@@ -371,10 +411,11 @@ void ImagePainter::createZoomImage(QRect roi)
     m_ZoomedImage.Resize(dims);
     m_currentROI=roi;
 
-    for (size_t y=0; y<m_ZoomedImage.Size(1); y++) {
+    for (size_t y=0; y<m_ZoomedImage.Size(1); y++)
+    {
         memcpy(m_ZoomedImage.GetLinePtr(y),m_OriginalImage.GetLinePtr(y+roi.y())+roi.x(), m_ZoomedImage.Size(0)*sizeof(float));
     }
-    prepare_pixbuf();
+    preparePixbuf();
 }
 
 int ImagePainter::zoomIn(QRect *zoomROI)
@@ -385,25 +426,29 @@ int ImagePainter::zoomIn(QRect *zoomROI)
     int h=0;
 
     QRect roi;
-    if (zoomROI==nullptr) {
-       if (m_ZoomList.empty()) {
-           x=m_OriginalImage.Size(0)/4;
-           y=m_OriginalImage.Size(1)/4;
-           w=m_OriginalImage.Size(0)/2;
-           h=m_OriginalImage.Size(1)/2;
+    if (zoomROI==nullptr) // Automatic zooming
+    {
+       if (m_ZoomList.empty())
+       {
+           x = static_cast<int>(m_OriginalImage.Size(0)/4);
+           y = static_cast<int>(m_OriginalImage.Size(1)/4);
+           w = static_cast<int>(m_OriginalImage.Size(0)/2);
+           h = static_cast<int>(m_OriginalImage.Size(1)/2);
        }
-       else {
+       else
+       {
            //QRect currentROI=m_ZoomList.last();
 
-           x=m_currentROI.x()+m_currentROI.width()/4;
-           y=m_currentROI.y()+m_currentROI.height()/4;
-           w=m_currentROI.width()/2;
-           h=m_currentROI.height()/2;
+           x = m_currentROI.x() + m_currentROI.width()/4;
+           y = m_currentROI.y() + m_currentROI.height()/4;
+           w = m_currentROI.width()/2;
+           h = m_currentROI.height()/2;
        }
 
        roi.setRect(x,y,w,h);
     }
-    else {
+    else
+    {
         roi=*zoomROI;
     }
 

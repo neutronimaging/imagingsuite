@@ -33,7 +33,7 @@ class QTADDONSSHARED_EXPORT ImageViewerWidget : public QWidget
     Q_OBJECT
 
     kipl::logging::Logger logger;
-    static QList<ImageViewerWidget *> s_ViewerList;
+ //   static QList<ImageViewerWidget *> s_ViewerList;
     static int m_nViewerCounter;
     QString m_sViewerName;
 public:
@@ -53,7 +53,7 @@ public:
     };
 
    // explicit ImageViewerWidget(QWidget *parent = 0);
-    ImageViewerWidget(QWidget *parent = 0);
+    ImageViewerWidget(QWidget *parent = nullptr);
     ~ImageViewerWidget();
 
     void set_image(float const * const data, size_t const * const dims);

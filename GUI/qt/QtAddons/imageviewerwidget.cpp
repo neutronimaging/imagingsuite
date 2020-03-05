@@ -15,7 +15,7 @@
 namespace QtAddons {
 
 int ImageViewerWidget::m_nViewerCounter = -1;
-QList<ImageViewerWidget *> ImageViewerWidget::s_ViewerList;
+//QList<ImageViewerWidget *> ImageViewerWidget::s_ViewerList = QList<ImageViewerWidget *>();
 
 ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
@@ -37,19 +37,19 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     this->setMouseTracking(true);
     m_nViewerCounter++;
     m_sViewerName = QString("ImageViewer ")+QString::number(m_nViewerCounter);
-    s_ViewerList.push_back(this);
+    //s_ViewerList.push_back(this);
     m_infoDialog.setModal(false);
 
 //    setContextMenuPolicy(Qt::CustomContextMenu);
 //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
 //        this, SLOT(ShowContextMenu(const QPoint&)));
 
-        connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
+    connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
 }
 
 ImageViewerWidget::~ImageViewerWidget()
 {
-    s_ViewerList.removeOne(this);
+    //s_ViewerList.removeOne(this);
     m_infoDialog.close();
 }
 
@@ -289,7 +289,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
     if (m_MouseMode==ViewerPan) {
-        m_ImagePainter.panImage(dx/m_ImagePainter.get_scale(),dy/m_ImagePainter.get_scale());
+        m_ImagePainter.panImage(dx/m_ImagePainter.getScale(),dy/m_ImagePainter.getScale());
     }
 
 
@@ -319,8 +319,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     else {
         QRect roi=m_ImagePainter.getCurrentZoomROI();
 
-        QPoint pos(static_cast<int>((event->pos().x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale()),
-                   static_cast<int>((event->pos().y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale()));
+        QPoint pos(static_cast<int>((event->pos().x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()),
+                   static_cast<int>((event->pos().y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
 
         pos+=roi.topLeft();
 
@@ -346,12 +346,12 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
             updateRubberBandRegion();
 
             QRect r=rubberBandRect.normalized();
-            int const * const dims=m_ImagePainter.get_image_dims();
-            int xpos = floor((r.x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale());
-            int ypos = floor((r.y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale());
+            int const * const dims=m_ImagePainter.imageDims();
+            int xpos = floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale());
+            int ypos = floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale());
 
-            int w    = floor(r.width()/m_ImagePainter.get_scale());
-            int h    = floor(r.height()/m_ImagePainter.get_scale());
+            int w    = floor(r.width()/m_ImagePainter.getScale());
+            int h    = floor(r.height()/m_ImagePainter.getScale());
 
             xpos = xpos < 0 ? 0 : xpos;
             ypos = ypos < 0 ? 0 : ypos;
@@ -362,7 +362,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
             m_RubberBandStatus = RubberBandFreeze;
 
-            m_infoDialog.updateInfo(m_ImagePainter.get_image(), roiRect);
+            m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
         }
         if (m_MouseMode==ViewerProfile) {
             m_rubberBandLine.hide();
@@ -417,13 +417,13 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 {
     QMutexLocker locker(&m_ImageMutex);
     std::ostringstream msg;
-    m_ImagePainter.set_image(data,dims);
+    m_ImagePainter.setImage(data,dims);
     roiRect.setRect(0,0,1,1);
     rubberBandRect.setRect(0,0,1,1);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
     float mi,ma;
-    m_ImagePainter.get_image_minmax(&mi,&ma);
+    m_ImagePainter.getImageMinMax(&mi,&ma);
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
 
@@ -441,7 +441,7 @@ QRect ImageViewerWidget::get_marked_roi()
 void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_image(data,dims,low,high);
+    m_ImagePainter.setImage(data,dims,low,high);
     roiRect.setRect(0,0,1,1);
     rubberBandRect.setRect(0,0,1,1);
 
@@ -454,7 +454,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 
 void ImageViewerWidget::getImageDims(int &x, int &y)
 {
-    const int *dims=m_ImagePainter.get_image_dims();
+    const int *dims=m_ImagePainter.imageDims();
     x=dims[0];
     y=dims[1];
 }
@@ -462,42 +462,42 @@ void ImageViewerWidget::getImageDims(int &x, int &y)
 void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_plot(data,color,idx);
+    m_ImagePainter.setPlot(data,color,idx);
 }
 
 void ImageViewerWidget::clear_plot(int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.clear_plot(idx);
+    m_ImagePainter.clearPlot(idx);
 }
 
 void ImageViewerWidget::set_rectangle(QRect rect, QColor color, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_rectangle(rect,color,idx);
+    m_ImagePainter.setRectangle(rect,color,idx);
 }
 
 void ImageViewerWidget::clear_rectangle(int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.clear_rectangle(idx);
+    m_ImagePainter.clearRectangle(idx);
 }
 
 void ImageViewerWidget::set_marker(QMarker marker, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_marker(marker,idx);
+    m_ImagePainter.setMarker(marker,idx);
 }
 
 void ImageViewerWidget::clear_marker(int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.clear_marker(idx);
+    m_ImagePainter.clearMarker(idx);
 }
 
 void ImageViewerWidget::hold_annotations(bool hold)
 {
-    m_ImagePainter.hold_annotations(hold);
+    m_ImagePainter.holdAnnotations(hold);
 }
 
 void ImageViewerWidget::clear_viewer()
@@ -509,7 +509,7 @@ void ImageViewerWidget::clear_viewer()
 void ImageViewerWidget::set_levels(const float level_low, const float level_high, bool updatelinked)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_levels(level_low,level_high);
+    m_ImagePainter.setLevels(level_low,level_high);
     if (updatelinked) {
         UpdateLinkedViewers();
     }
@@ -519,17 +519,17 @@ void ImageViewerWidget::set_levels(const float level_low, const float level_high
 
 void ImageViewerWidget::get_levels(float *level_low, float *level_high)
 {
-    m_ImagePainter.get_levels(level_low,level_high);
+    m_ImagePainter.getLevels(level_low,level_high);
 }
 
 void ImageViewerWidget::get_minmax(float *level_low, float *level_high)
 {
-    m_ImagePainter.get_image_minmax(level_low,level_high);
+    m_ImagePainter.getImageMinMax(level_low,level_high);
 }
 
 void ImageViewerWidget::show_clamped(bool show)
 {
-    m_ImagePainter.show_clamped(show);
+    m_ImagePainter.showClamped(show);
 }
 
 const QVector<QPointF> & ImageViewerWidget::get_histogram()
