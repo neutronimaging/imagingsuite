@@ -72,27 +72,27 @@ void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
 std::list<kipl::base::RectROI> ROIManager::getROIs()
 {
     std::list<kipl::base::RectROI> roiList;
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         roiList.push_back(roiItem->roi);
     }
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     return roiList;
 }
 
 std::list<kipl::base::RectROI> ROIManager::getSelectedROIs()
 {
     std::list<kipl::base::RectROI> roiList;
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         if (roiItem->checkState()==Qt::Checked)
             roiList.push_back(roiItem->roi);
     }
-    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     return roiList;
 }
 

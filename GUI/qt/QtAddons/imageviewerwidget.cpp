@@ -25,6 +25,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     m_RubberBandStatus(RubberBandHide),
     m_MouseMode(ViewerROI),
     m_PressedButton(Qt::NoButton),
+    m_CurrentScale(1.0),
     m_infoDialog(this)
 {
     QPalette palette;
@@ -138,7 +139,7 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
     ostringstream msg;
 
     msg<<"Got key "<<keyvalue;
-    qDebug() <<msg.str().c_str();
+//    qDebug() <<msg.str().c_str();
 
   //  logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -294,7 +295,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
 
     QPoint tooltipOffset(0,0);
-    if (m_PressedButton == Qt::RightButton) {
+    if (m_PressedButton == Qt::RightButton)
+    {
         float minlevel, maxlevel;
 
         get_levels(&minlevel, &maxlevel);
@@ -316,15 +318,15 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
-    else {
+    else
+    {
         QRect roi=m_ImagePainter.getCurrentZoomROI();
 
-        QPoint pos(static_cast<int>((event->pos().x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()),
-                   static_cast<int>((event->pos().y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
+        QPoint pos(static_cast<int>( m_ImagePainter.globalPositionX((event->pos().x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()) ),
+                   static_cast<int>( m_ImagePainter.globalPositionY((event->pos().y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()) ) );
 
-        pos+=roi.topLeft();
-
-        if(roi.contains(pos)==true) {
+        if(roi.contains(pos)==true)
+        {
             msg.str("");
 
             msg<<m_ImagePainter.getValue(pos.x(),pos.y())<<" @ ("<<pos.x()<<", "<<pos.y()<<")";
@@ -347,31 +349,24 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
             QRect r=rubberBandRect.normalized();
             int const * const dims=m_ImagePainter.imageDims();
-//            int xpos = floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale());
-//            int ypos = floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale());
+            int xpos = m_ImagePainter.globalPositionX(floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()));
+            int ypos = m_ImagePainter.globalPositionY(floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
 
-//            int w    = floor(r.width()/m_ImagePainter.getScale());
-//            int h    = floor(r.height()/m_ImagePainter.getScale());
-
-            int xpos = m_ImagePainter.globalPositionX(floor((r.x()*m_ImagePainter.getScale())));
-            int ypos = m_ImagePainter.globalPositionY(floor((r.y()*m_ImagePainter.getScale())));
-
-            int w    = floor(r.width()*m_ImagePainter.getScale());
-            int h    = floor(r.height()*m_ImagePainter.getScale());
+            int w    = floor(r.width()/m_ImagePainter.getScale());
+            int h    = floor(r.height()/m_ImagePainter.getScale());
 
             xpos = xpos < 0 ? 0 : xpos;
             ypos = ypos < 0 ? 0 : ypos;
-            w = dims[0] <= xpos + w ? dims[0]-xpos-1 : w;
-            h = dims[1] <= ypos + h ? dims[1]-ypos-1 : h;
+            auto currentZoomROI = m_ImagePainter.getCurrentZoomROI();
+            w = currentZoomROI.width()+currentZoomROI.x()  <= xpos + w ? currentZoomROI.width()  + currentZoomROI.x() - xpos-1 : w;
+            h = currentZoomROI.height()+currentZoomROI.y() <= ypos + h ? currentZoomROI.height() + currentZoomROI.y() - ypos-1 : h;
 
-            roiRect.setRect(m_ImagePainter.globalPositionX(xpos),
-                            m_ImagePainter.globalPositionY(ypos),
-                            w,h);
+            roiRect.setRect(xpos, ypos, w, h);
 
             roiRect=roiRect.normalized();
 
             m_RubberBandStatus = RubberBandFreeze;
-             qDebug() << roiRect<< m_ImagePainter.getScale();
+//             qDebug() << "Mouse released:" <<roiRect<< m_ImagePainter.getScale();
             m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
         }
         if (m_MouseMode==ViewerProfile) {

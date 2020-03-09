@@ -121,6 +121,7 @@ protected:
     ImageViewerInfoDialog m_infoDialog;
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
+    double m_CurrentScale;
 
 signals:
     void newImageDims(const QRect &rect);

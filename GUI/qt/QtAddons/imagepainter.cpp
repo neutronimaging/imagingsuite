@@ -51,11 +51,12 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         QPoint centerPoint(0,0);
         // Scale new image which size is widgetSize
         QPixmap scaledPixmap = m_pixmap_full.scaled(widgetSize, Qt::KeepAspectRatio);
+
         // Calculate image center position into screen
         centerPoint.setX(x+(widgetSize.width()-scaledPixmap.width())/2);
         centerPoint.setY(y+(widgetSize.height()-scaledPixmap.height())/2);
-        // Draw image
 
+        // Draw image
         painter.drawPixmap(centerPoint,scaledPixmap);
 
         offset_x = (w-scaledPixmap.width())/2+x;
@@ -64,18 +65,16 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         scaled_width = scaledPixmap.width();
         scaled_height = scaledPixmap.height();
 
-        m_fScale=scaledPixmap.width()/static_cast<float>(m_dims[0]);
+        m_fScale=scaledPixmap.width()/static_cast<float>(m_ZoomedImage.Size(0));
 
         if (!m_BoxList.empty()) {
-
-            QMap<int,QPair<QRect, QColor> >::iterator it;
-
-            for (it=m_BoxList.begin(); it!=m_BoxList.end(); it++) {
-                QRect rect=it->first;
+            for (auto & boxItem : m_BoxList)
+            {
+                QRect rect=boxItem.first;
                 QRect drawrect=rect.intersected(m_currentROI);
-                //QRect drawrect=rect.translated(-m_currentROI.topLeft());
 
-                if (drawrect.isEmpty()==false) {
+                if (drawrect.isEmpty()==false)
+                {
                     drawrect.translate(-m_currentROI.topLeft());
                     rect.setRect(drawrect.x()*m_fScale,
                                  drawrect.y()*m_fScale,
@@ -84,7 +83,7 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
                     rect=rect.normalized();
                     rect.translate(offset_x,offset_y);
 
-                    painter.setPen(QPen(it->second));
+                    painter.setPen(QPen(boxItem.second));
                     painter.drawRect(rect);
                 }
             }
@@ -92,16 +91,16 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
         if (!m_PlotList.empty()) {
 
-            QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
-            for (it=m_PlotList.begin(); it!=m_PlotList.end(); it++) {
-
-                painter.setPen(QPen(it->second));
+            for (auto & plotItem : m_PlotList)
+            {
+                painter.setPen(QPen(plotItem.second));
                 QPoint offset(offset_x,offset_y);
                 QPointF pointA, pointB;
-                QLine line;
-                for (int i=1; i<it->first.size(); i++) {
-                    pointA=offset+m_fScale*it->first[i-1];
-                    pointB=offset+m_fScale*it->first[i];
+
+                for (int i=1; i<plotItem.first.size(); i++)
+                {
+                    pointA=offset + m_fScale * plotItem.first[i-1];
+                    pointB=offset + m_fScale * plotItem.first[i];
 
                     painter.drawLine(pointA,pointB);
                 }
@@ -109,13 +108,12 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
         }
 
         if (!m_MarkerList.empty()) {
-            QMap<int,QMarker>::iterator it;
-            for (it=m_MarkerList.begin(); it!=m_MarkerList.end(); it++)
+
+            for (auto & marker : m_MarkerList)
             {
                 QPoint offset(offset_x,offset_y);
 
-                it->Draw(painter,m_fScale,offset);
-
+                marker.Draw(painter,m_fScale,offset);
             }
         }
 
@@ -148,11 +146,13 @@ void ImagePainter::setImage(float const * const data, size_t const * const dims,
     std::copy_n(data,m_OriginalImage.Size(),m_OriginalImage.GetDataPtr());
 
     kipl::math::minmax(data,dims[0]*dims[1],&m_ImageMin, &m_ImageMax,true);
-    if (low==high) {
+    if (low==high)
+    {
         m_MinVal=m_ImageMin;
         m_MaxVal=m_ImageMax;
     }
-    else {
+    else
+    {
         m_MinVal=low;
         m_MaxVal=high;
     }
@@ -171,11 +171,13 @@ void ImagePainter::setImage(float const * const data, size_t const * const dims,
                           true);
 
     m_Histogram.clear();
-    for (size_t i=0; i<nHistSize; ++i) {
+    for (size_t i=0; i<nHistSize; ++i)
+    {
         m_Histogram.append(QPointF(static_cast<qreal>(haxis[i]),static_cast<qreal>(hist[i])));
     }
 
-    if (!m_bHold_annotations) {
+    if (!m_bHold_annotations)
+    {
         m_BoxList.clear();
         m_PlotList.clear();
     }
@@ -338,10 +340,7 @@ void ImagePainter::showClamped(bool show)
 
 float ImagePainter::getScale()
 {
-    // return m_fScale; // original
-    float scale = static_cast<float>(m_ZoomedImage.Size(0))/static_cast<float>(m_pixmap_full.size().width());
-
-    return scale;
+     return m_fScale;
 }
 
 void ImagePainter::preparePixbuf()
@@ -427,7 +426,7 @@ void ImagePainter::createZoomImage(QRect roi)
     }
 
     preparePixbuf();
-    qDebug() << "Create zoom image"<<getScale();
+ //   qDebug() << "Create zoom image"<<getScale();
 }
 
 int ImagePainter::zoomIn(QRect *zoomROI)
