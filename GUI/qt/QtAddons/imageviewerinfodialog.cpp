@@ -18,6 +18,7 @@ ImageViewerInfoDialog::ImageViewerInfoDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->histogramplot->hideTitle();
+    ui->histogramplot->showLegend();
 }
 
 ImageViewerInfoDialog::~ImageViewerInfoDialog()
@@ -69,18 +70,22 @@ void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect ro
     size_t hist[nHist];
 
     memset(hist,0,nHist*sizeof(size_t));
-    kipl::base::Histogram(m_roiImage.GetDataPtr(),m_roiImage.Size(),hist,nHist,0.0f,0.0f,axis);
+    kipl::base::Histogram(m_roiImage.GetDataPtr(),m_roiImage.Size(),hist,nHist,0.0f,0.0f,axis,true);
 
     auto maxit=std::max_element(hist,hist+nHist);
-    maxval=static_cast<float>(*maxit);
+    maxval=static_cast<double>(*maxit);
 
     m_LocalHistogram.clear();
     for (size_t i=0; i<nHist; i++) {
-        m_LocalHistogram.append(QPointF(axis[i],static_cast<float>(hist[i])/(maxval)));
+        m_LocalHistogram.append(QPointF(static_cast<double>(axis[i]),static_cast<double>(hist[i])/(maxval)));
     }
 
     ui->histogramplot->setCurveData(1,m_LocalHistogram,"Local");
+
     on_check_showglobal_toggled(ui->check_showglobal->isChecked());
+
+    ui->histogramplot->setXLabel("Levels");
+    ui->histogramplot->setYLabel("Relative frequency");
 }
 
 
