@@ -5,6 +5,8 @@
 #include "../kipl_global.h"
 #include <tnt.h>
 
+#include <armadillo>
+
 using namespace TNT;
 
 namespace Nonlinear {
@@ -117,6 +119,9 @@ public:
     double getTolerance() {return tol;}
 
     void fit(Array1D<double> &x, Array1D<double> &y, Array1D<double> &sig, Nonlinear::FitFunctionBase &fn);
+    void fit(arma::vec &x, arma::vec &y,
+                                 arma::vec &sig,
+                                 Nonlinear::FitFunctionBase &fn);
 private:
 
 

@@ -16,7 +16,14 @@
 MultiProjectionBP::MultiProjectionBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP",StdBackProjectorBase::MatrixZXY, interactor)
 {
-
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
 }
 
 MultiProjectionBP::~MultiProjectionBP(void)

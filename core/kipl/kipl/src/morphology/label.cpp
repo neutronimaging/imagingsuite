@@ -85,7 +85,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 	
     int LabelledItem::CheckBBox(int x,int y,int z)
 	{
-		cout<<"."<<flush;
+        //cout<<"."<<flush;
 		if (x<this->bbox[0]) this->bbox[0]=x;
 		if (x>this->bbox[3]) this->bbox[3]=x;
 		if (y<this->bbox[1]) this->bbox[1]=y;

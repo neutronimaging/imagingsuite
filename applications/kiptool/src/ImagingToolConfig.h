@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef __MERGECONFIG_H
 #define __MERGECONFIG_H
 

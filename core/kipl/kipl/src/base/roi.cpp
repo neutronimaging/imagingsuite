@@ -76,14 +76,20 @@ std::string RectROI::toString()
 {
     std::ostringstream str;
 
-    str<<coords[0]<<" "<<coords[1]<<" "<<coords[2]<<" "<<coords[3];
+    str<<roiLabel<<" "<<coords[0]<<" "<<coords[1]<<" "<<coords[2]<<" "<<coords[3];
 
     return str.str();
 }
 
 void RectROI::fromString(std::string str)
 {
-    kipl::strings::String2Array(str,coords,4);
+    ptrdiff_t pos=0;
+    if (str[0]!=' ')
+        pos=str.find_first_not_of(' ');
+    ptrdiff_t pos2 = str.find_first_of(' ',pos);
+    roiLabel = str.substr(pos,pos2);
+    pos=str.find_first_not_of(' ',pos2);
+    kipl::strings::String2Array(str.substr(pos),coords,4);
 }
 
 std::string RectROI::label()

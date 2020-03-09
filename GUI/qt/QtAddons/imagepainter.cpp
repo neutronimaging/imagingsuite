@@ -6,6 +6,7 @@
 
 #include <math/image_statistics.h>
 #include <base/thistogram.h>
+#include <stltools/stlvecmath.h>
 
 #include "imagepainter.h"
 
@@ -169,6 +170,8 @@ void ImagePainter::setImage(float const * const data, size_t const * const dims,
                           m_ImageMax,
                           haxis,
                           true);
+
+    medianFilter(hist,nHistSize,5);
 
     m_Histogram.clear();
     for (size_t i=0; i<nHistSize; ++i)

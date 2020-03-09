@@ -1,54 +1,53 @@
 //<LICENSE>
 
+#include "loadimagedialog.h"
+#include "ui_loadimagedialog.h"
+
 #include <QMessageBox>
 #include <QtConcurrent>
 #include <QFuture>
 
-#include "processdialog.h"
-#include "ui_processdialog.h"
 #include <KiplFrameworkException.h>
 #include <ModuleException.h>
 #include <base/KiplException.h>
+#include "ImageIO.h"
 
-ProcessDialog::ProcessDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent) :
+LoadImageDialog::LoadImageDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent) :
     QDialog(parent),
-    logger("ProcessDialog"),
-    ui(new Ui::ProcessDialog),
-    fraction(0.0f),
-    finish(false),
+    logger("LoadImageDialog"),
+    ui(new Ui::LoadImageDialog),
     m_Interactor(interactor)
 {
     ui->setupUi(this);
     if (interactor==nullptr)
         throw KiplFrameworkException("Progress dialog can't open without valid interactor");
 
-    connect(this,&ProcessDialog::updateProgress,this,&ProcessDialog::changedProgress);
-    connect(this,&ProcessDialog::processFailure,this,&ProcessDialog::on_processFailure);
+    connect(this,&LoadImageDialog::updateProgress,this,&LoadImageDialog::changedProgress);
+    connect(this,&LoadImageDialog::processFailure,this,&LoadImageDialog::on_processFailure);
 }
 
-ProcessDialog::~ProcessDialog()
+LoadImageDialog::~LoadImageDialog()
 {
     delete ui;
 }
 
-
-int ProcessDialog::exec(KiplEngine * engine, kipl::base::TImage<float,3> *img)
+int LoadImageDialog::exec(KiplProcessConfig *config, kipl::base::TImage<float,3> *img)
 {
     if (img==nullptr)
     {
-        logger(logger.LogError,"Called recon dialog with uninitialized image");
+        logger(logger.LogError,"Called load image dialog with uninitialized image");
         return Rejected;
     }
 
     m_img=img;
 
-    if (engine==nullptr)
+    if (config==nullptr)
     {
-        logger(logger.LogError,"Called recon dialog with unallocated engine");
+        logger(logger.LogError,"Called load image dialog without config");
         return Rejected;
     }
 
-    m_Engine=engine;
+    mConfig=config;
 
     finish=false;
     logger(kipl::logging::Logger::LogMessage,"Start");
@@ -56,11 +55,12 @@ int ProcessDialog::exec(KiplEngine * engine, kipl::base::TImage<float,3> *img)
     m_Interactor->Reset();
 
     logger(logger.LogMessage,"Starting with threads");
+
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(this,&ProcessDialog::process);
-    QFuture<int> progress_thread=QtConcurrent::run(this,&ProcessDialog::progress);
+    QFuture<int> proc_thread=QtConcurrent::run(this,&LoadImageDialog::process);
+    QFuture<int> progress_thread=QtConcurrent::run(this,&LoadImageDialog::progress);
 
     int res=exec();
 
@@ -77,7 +77,7 @@ int ProcessDialog::exec(KiplEngine * engine, kipl::base::TImage<float,3> *img)
 
 }
 
-int ProcessDialog::progress()
+int LoadImageDialog::progress()
 {
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
     QThread::msleep(250);
@@ -93,27 +93,21 @@ int ProcessDialog::progress()
     return 0;
 }
 
-void ProcessDialog::changedProgress(float progress, float overallProgress, QString msg)
+void LoadImageDialog::changedProgress(float progress, float overallProgress, QString msg)
 {
     ui->progressBar->setValue(static_cast<int>(progress*100));
-    ui->progressBar_overall->setValue(static_cast<int>(overallProgress*100));
 
     ui->label_message->setText(msg);
 }
 
-int ProcessDialog::process()
+int LoadImageDialog::process()
 {
     logger(kipl::logging::Logger::LogMessage,"Process thread is started");
     ostringstream msg;
 
     bool failed=false;
     try {
-        if (m_Engine!=nullptr)
-            m_Engine->Run(m_img);
-        else {
-            logger(logger.LogError,"Trying to start an unallocated engine.");
-            failed=true;
-        }
+        *m_img = LoadVolumeImage(*mConfig,m_Interactor);
     }
     catch (KiplFrameworkException &e)
     {
@@ -147,7 +141,7 @@ int ProcessDialog::process()
         emit processFailure(QString::fromStdString(msg.str()));
         return 0;
     }
-    logger(kipl::logging::Logger::LogMessage,"Processing done");
+    logger(kipl::logging::Logger::LogMessage,"Loading done");
 
     finish=true;
     m_Interactor->Done();
@@ -156,7 +150,7 @@ int ProcessDialog::process()
     return 0;
 }
 
-void ProcessDialog::Abort()
+void LoadImageDialog::Abort()
 {
     if (m_Interactor!=nullptr) {
         m_Interactor->Abort();
@@ -164,7 +158,7 @@ void ProcessDialog::Abort()
     this->reject();
 }
 
-bool ProcessDialog::Finished()
+bool LoadImageDialog::Finished()
 {
     if (m_Interactor!=nullptr) {
         return m_Interactor->Finished();
@@ -173,18 +167,18 @@ bool ProcessDialog::Finished()
     return true;
 }
 
-void ProcessDialog::on_processFailure(QString msg)
+void LoadImageDialog::on_processFailure(QString msg)
 {
     QMessageBox dlg;
-    dlg.setWindowTitle("Reconstruction error");
+    dlg.setWindowTitle("Failed to load image");
 
-    dlg.setText("Reconstruction failed");
+    dlg.setText("Could not load the image.");
     dlg.setDetailedText(msg);
     dlg.exec();
     Abort();
 }
 
-void ProcessDialog::on_buttonBox_rejected()
+void LoadImageDialog::on_buttonBox_rejected()
 {
     Abort();
     this->reject();

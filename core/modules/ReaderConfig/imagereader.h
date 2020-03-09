@@ -8,6 +8,7 @@
 #include <base/timage.h>
 #include <base/kiplenums.h>
 #include <profile/Timer.h>
+#include <interactors/interactionbase.h>
 
 #include "datasetbase.h"
 
@@ -17,7 +18,7 @@ class READERCONFIGSHARED_EXPORT ImageReader
 
 public:
     /// Constructor to initialize the reader
-    ImageReader();
+    ImageReader(kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Cleaning up and closing files.
     ~ImageReader(void);
@@ -115,10 +116,10 @@ public:
     float GetProjectionDose(std::string path, std::string filemask, size_t number, kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning ,size_t const * const nCrop);
 
     /// Initializes the reading timer
-    void Initialize() {timer.Reset();}
+    void Initialize() {timer.reset();}
 
     /// \returns The elapsed reading time.
-    double ExecTime() {return timer.ElapsedSeconds();}
+    double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds);}
 protected:
     /// Recomputes the crop ROI based on flipping and rotation into real image coordinates.
     /// \param flip How should the image be flipped.
@@ -177,6 +178,7 @@ protected:
     bool Aborted();
 
     kipl::profile::Timer timer; ///< Timer to measure the execution time for the reading.
+    kipl::interactors::InteractionBase *m_Interactor;
 };
 
 #endif

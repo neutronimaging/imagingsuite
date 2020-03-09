@@ -38,7 +38,7 @@ std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2>
 
     computeEdgeEquation(de);
 
-    kipl::io::WriteTIFF32(de,"PE_diffEdge.tif");
+ //   kipl::io::WriteTIFF32(de,"PE_diffEdge.tif");
     int nx=static_cast<int>(de.Size(0));
     int ny=static_cast<int>(de.Size(1));
 

@@ -418,11 +418,9 @@ int ReconEngine::Run()
 	totalTimer.Toc();
 	msg.str("");
     msg<<"Totals for "<<totalSlices<<" slices"<<std::endl
-		<<totalTimer<<" ("<<totalTimer.WallTime()/static_cast<double>(totalSlices)<<" s/slice)";
+        <<totalTimer.elapsedTime(kipl::profile::Timer::seconds)<<" ("<<totalTimer.elapsedTime(kipl::profile::Timer::seconds)/static_cast<double>(totalSlices)<<" s/slice)";
 
 	logger(kipl::logging::Logger::LogMessage,msg.str());
-
-//	status = bCancel ? ReconStatusCancelled : ReconStatusFinished;
 
 	return result;
 }
@@ -522,8 +520,14 @@ int ReconEngine::Process(size_t *roi)
 		msg<<"Block "<<nProcessedBlocks<<", Projection "<<i<<" (weight="<<fWeight<<", angle="<<fAngle<<")";
 		logger(kipl::logging::Logger::LogVerbose, msg.str());
 
+        float moduleCnt=0.0f;
+        float fNumberOfModules=static_cast<float>(m_PreprocList.size());
+
         for (auto &module : m_PreprocList)
         {
+            ++moduleCnt;
+
+            //UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
             module->GetModule()->Process(projection,parameters);
 		}
 
@@ -1254,14 +1258,14 @@ int ReconEngine::Run3DFull()
 		totalTimer.Toc();
 		msg.str("");
         msg<<": Totals for "<<totalSlices<<" slices"<<std::endl
-			<<totalTimer<<" ("<<totalTimer.ElapsedSeconds()/static_cast<double>(totalSlices)<<" s/slice)";
+            <<totalTimer.elapsedTime(kipl::profile::Timer::seconds)<<" ("<<totalTimer.elapsedTime(kipl::profile::Timer::seconds)/static_cast<double>(totalSlices)<<" s/slice)";
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
 		msg.str("");
 		msg<<"\nModule process time:\n";
 
-        for (auto & module : m_PreprocList)
+        for (auto &module : m_PreprocList)
         {
             msg<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
 		}
@@ -1300,10 +1304,17 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	std::list<ModuleItem *>::iterator it_Module;
 	// Initialize the plug-ins with the current ROI
     std::string moduleName;
-	try {
+    float moduleCnt=0.0f;
+    float fNumberOfModules=static_cast<float>(m_PreprocList.size())+1;
+    try
+    {
         for (auto &module : m_PreprocList)
-		{
+        {
+            ++moduleCnt;
+
             moduleName = module->GetModule()->ModuleName();
+            //UpdateProgress(moduleCnt/fNumberOfModules,moduleName);
+
 			msg.str("");
             msg<<"Setting ROI for module "<< moduleName;
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -1375,21 +1386,21 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(size_t * roi, std::string sL
 	}
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
-    float moduleCnt=0.0f;
-    float fNumberOfModules=static_cast<float>(m_PreprocList.size());
+
     try
     {
         for (auto &module : m_PreprocList)
         {
             ++moduleCnt;
-            UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
+
+            //UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
             if (module->GetModule()->ModuleName()==sLastModule)
                 break;
 
 			msg.str("");
             msg<<"Processing: "<<module->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-            if (!(m_bCancel=UpdateProgress(0.0f, msg.str()))) {
+            if (!(m_bCancel=UpdateProgress(moduleCnt/fNumberOfModules, msg.str()))) {
                 module->GetModule()->Process(projections,parameters);
             }
 			else
@@ -1440,6 +1451,8 @@ int ReconEngine::Process3D(size_t *roi)
 
 	// Initialize the plug-ins with the current ROI
     std::string moduleName;
+
+
     try
     {
 		msg.str("");
@@ -1603,15 +1616,21 @@ int ReconEngine::Process3D(size_t *roi)
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
+    float moduleCnt=0.0f;
+    float fNumberOfModules=static_cast<float>(m_PreprocList.size())+1;
+
     try
     {
         for (auto &module : m_PreprocList)
         {
             moduleName = module->GetModule()->ModuleName();
+            ++moduleCnt;
+
+            //UpdateProgress(moduleCnt/fNumberOfModules,moduleName);
 			msg.str("");
             msg<<"Processing: "<< moduleName;
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-			if (!(m_bCancel=UpdateProgress(0.0f, msg.str())))
+            if (!(m_bCancel=UpdateProgress(moduleCnt/fNumberOfModules, msg.str())))
                 module->GetModule()->Process(ext_projections,parameters);
 			else
 				break;
@@ -1772,7 +1791,7 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
     logger(kipl::logging::Logger::LogMessage,msg.str());
     msg.str("");
     m_BackProjector->GetModule()->SetROI(roi);
-    if (!UpdateProgress(0.2f, "Back projection"))
+    if (!UpdateProgress(0.95f, "Back projection"))
     {
         try {
             logger(kipl::logging::Logger::LogMessage,"Back projection started.");

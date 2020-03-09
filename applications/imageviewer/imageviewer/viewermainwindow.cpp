@@ -28,6 +28,7 @@
 
 ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     QMainWindow(parent),
+    logger("ViewerMainWindow"),
     ui(new Ui::ViewerMainWindow),
     isMultiFrame(false)
 {
@@ -93,7 +94,8 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
         m_fname = fname;
     }
     else {
-        std::cout<<"File does not exist"<<endl;
+
+        logger.warning("File does not exist");
     }
 }
 
@@ -146,6 +148,7 @@ void ViewerMainWindow::dropEvent(QDropEvent *e)
 
 void ViewerMainWindow::on_actionSave_as_triggered()
 {
+    std::ostringstream msg;
     std::string path;
     std::string fname;
     std::vector<std::string> exts;
@@ -169,7 +172,8 @@ void ViewerMainWindow::on_actionSave_as_triggered()
 
             dlg.getDialogInfo(fmask, first, last);
 
-            std::cout<<fmask<<", first="<<first<<", last="<<last<<std::endl;
+            msg.str(""); msg<<fmask<<", first="<<first<<", last="<<last;
+            logger.message(msg.str());
             std::string destname;
             ImageWriter writer;
             kipl::base::TImage<float,2> img;
@@ -184,6 +188,6 @@ void ViewerMainWindow::on_actionSave_as_triggered()
     else {
         std::string destname=QFileDialog::getSaveFileName(this,"Save image as",QString::fromStdString(path)).toStdString();
 
-        std::cout<<destname<<std::endl;
+        msg.str(""); msg<<"Saving to:"<<destname;
     }
 }

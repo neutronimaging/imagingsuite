@@ -11,6 +11,7 @@ QT       -= gui
 TARGET = tst_tkiplstringstest
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG += c++11
 
 TEMPLATE = app
 
@@ -30,7 +31,7 @@ SOURCES += tst_tkiplstringstest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 
-CONFIG += c++11
+
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
