@@ -264,7 +264,6 @@ const TImage<T,N> & TImage<T,N>::operator/=(const T x)
 
 	m_buffer.Clone();	
 
-#pragma omp parallel for
 	for (ptrdiff_t i=0; i<ndata; i++)
 		m_buffer[i]*=inv;
 
@@ -294,7 +293,6 @@ TImage<T,N> TImage<T,N>::operator-(const T x) const
     TImage<T,N> res=*this;
     res.Clone();
 
-#pragma omp parallel for
     for (ptrdiff_t i=0; i<ndata; i++)
         res.m_buffer[i]-=x;
 
@@ -309,7 +307,6 @@ TImage<T,N> TImage<T,N>::operator*(const T x) const
     TImage<T,N> res=*this;
     res.Clone();
 
-#pragma omp parallel for
     for (ptrdiff_t i=0; i<ndata; i++)
         res.m_buffer[i]*=x;
 
@@ -324,7 +321,6 @@ TImage<T,N> TImage<T,N>::operator/(const T x) const
     TImage<T,N> res=*this;
     res.Clone();
 
-#pragma omp parallel for
     for (ptrdiff_t i=0; i<ndata; i++)
         res.m_buffer[i]/=x;
 

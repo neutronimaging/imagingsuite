@@ -387,19 +387,19 @@ void kiplIOTest::testIOStack_enums()
 
     // enum 2 string
 
-    QCOMPARE(enum2string(kipl::io::MatlabVolume),"MatlabVolume");
-    QCOMPARE(enum2string(kipl::io::MatlabSlices),"MatlabSlices");
+    QCOMPARE(enum2string(kipl::io::MatlabVolume), std::string("MatlabVolume"));
+    QCOMPARE(enum2string(kipl::io::MatlabSlices), std::string("MatlabSlices"));
 
-    QCOMPARE(enum2string(kipl::io::TIFF8bits),"TIFF8bits");
-    QCOMPARE(enum2string(kipl::io::TIFF16bits),"TIFF16bits");
-    QCOMPARE(enum2string(kipl::io::TIFFfloat),"TIFFfloat");
-    QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame),"TIFF16bitsMultiFrame");
+    QCOMPARE(enum2string(kipl::io::TIFF8bits),    std::string("TIFF8bits"));
+    QCOMPARE(enum2string(kipl::io::TIFF16bits),   std::string("TIFF16bits"));
+    QCOMPARE(enum2string(kipl::io::TIFFfloat),    std::string("TIFFfloat"));
+    QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame), std::string("TIFF16bitsMultiFrame"));
 
-    QCOMPARE(enum2string(kipl::io::NeXusfloat),"NeXusfloat");
-    QCOMPARE(enum2string(kipl::io::NeXus16bits),"NeXus16bits");
+    QCOMPARE(enum2string(kipl::io::NeXusfloat),  std::string("NeXusfloat"));
+    QCOMPARE(enum2string(kipl::io::NeXus16bits), std::string("NeXus16bits"));
 
-    QCOMPARE(enum2string(kipl::io::PNG8bits),"PNG8bits");
-    QCOMPARE(enum2string(kipl::io::PNG16bits),"PNG16bits");
+    QCOMPARE(enum2string(kipl::io::PNG8bits),    std::string("PNG8bits"));
+    QCOMPARE(enum2string(kipl::io::PNG16bits),   std::string("PNG16bits"));
 
 }
 
