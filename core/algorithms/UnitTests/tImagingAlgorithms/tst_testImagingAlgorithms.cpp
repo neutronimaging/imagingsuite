@@ -434,7 +434,7 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
             float sum=c[0];
 
             for (size_t j=1; j<(i+1); ++j)
-                sum+= c[j]*std::powf(val[k],j);
+                sum+= c[j]*std::pow(val[k],j);
 
             QCOMPARE(result[k],sum);
         }
