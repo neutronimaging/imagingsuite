@@ -14,7 +14,7 @@ namespace kipl { namespace base {
         /// \param xx x coordinate
         /// \param yy y coordinate
         /// \param zz z coordinate
-		coords3D(short xx,short yy, short zz) : x(xx), y(yy), z(zz) {}
+        coords3D(short xx,short yy, short zz) : x(xx), y(yy), z(zz), reserved(0) {}
 
         /// \param C'tor to set the struct to default values (all =0)
 		coords3D() : x(0), y(0), z(0), reserved(0) {}

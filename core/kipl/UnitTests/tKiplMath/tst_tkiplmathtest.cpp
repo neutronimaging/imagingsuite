@@ -269,9 +269,9 @@ void TKiplMathTest::testNonLinFit_fitter()
 
     mrq.fit(x,y,sig,sog);
 
-    QCOMPARE(sog[0], sog0[0]);
-    QCOMPARE(sog[1], sog0[1]);
-    QCOMPARE(sog[2], sog0[2]);
+    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
+    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
+    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
 
 }
 

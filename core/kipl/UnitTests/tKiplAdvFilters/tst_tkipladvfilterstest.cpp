@@ -106,6 +106,7 @@ void TKiplAdvFiltersTest::NLMeans_AlgorithmEnum()
 
 void TKiplAdvFiltersTest::NLMeans_process()
 {
+    QSKIP("Development test");
     kipl::base::TImage<float,2> img, res;
     kipl::io::ReadTIFF(img,"../data/scroll_256.tif");
 //    kipl::io::ReadTIFF(img,"../data/lena256x256_8bit.tif");

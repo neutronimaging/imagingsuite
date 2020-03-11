@@ -64,7 +64,7 @@ void kiplmorphalgorithms::test_LabelImage()
     lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
 
     QCOMPARE(img.Size(),result.Size());
-    QCOMPARE(lblCnt,24);
+    QCOMPARE(lblCnt,24UL);
 
     // Special cases
     int data[]={   0,0,0,0,0,1,1,0,

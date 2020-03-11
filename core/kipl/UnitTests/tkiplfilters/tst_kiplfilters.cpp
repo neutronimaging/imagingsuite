@@ -38,7 +38,7 @@ void KiplFilters::test_SavGolCoeffs()
 
     for (auto itA=res.begin(),itB=expres.begin(); itA!=res.end(); ++itA, ++itB)
     {
-        QCOMPARE(*itA, *itB);
+        QVERIFY(fabs(*itA-*itB)<1e-5);
     }
 
 
@@ -47,7 +47,7 @@ void KiplFilters::test_SavGolCoeffs()
     QCOMPARE(res.size(),expres2.size());
     for (auto itA=res.begin(),itB=expres2.begin(); itA!=res.end(); ++itA, ++itB)
     {
-       QCOMPARE(*itA, *itB);
+       QVERIFY(fabs(*itA-*itB)<1e-5);
     }
 }
 
