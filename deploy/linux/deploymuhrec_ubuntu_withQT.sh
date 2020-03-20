@@ -1,5 +1,5 @@
 CPCMD="cp "
-REPOSPATH="/home/`whoami`/git"
+REPOSPATH=$WORKSPACE
 
 QT_PATH="$QTPATH"
 QtV=${QT_PATH:end-11:end-7}
