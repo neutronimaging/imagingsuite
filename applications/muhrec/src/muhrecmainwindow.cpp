@@ -362,7 +362,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         name=it->second.name;
 
-        logger.message(name);
+        logger.verbose(name);
         if (QFile::exists(QString::fromStdString(name))) {
 
             if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
