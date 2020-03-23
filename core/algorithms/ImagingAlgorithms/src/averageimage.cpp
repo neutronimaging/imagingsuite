@@ -224,6 +224,7 @@ void string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMetho
 {
     std::map<std::string,ImagingAlgorithms::AverageImage::eAverageMethod> methods;
 
+    methods["ImageSelectSingle"]=ImagingAlgorithms::AverageImage::ImageSelectSingle;
     methods["ImageSum"]=ImagingAlgorithms::AverageImage::ImageSum;
     methods["ImageAverage"]=ImagingAlgorithms::AverageImage::ImageAverage;
     methods["ImageMedian"]=ImagingAlgorithms::AverageImage::ImageMedian;
@@ -242,6 +243,7 @@ std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam)
     std::string str;
 
     switch (eam) {
+        case ImagingAlgorithms::AverageImage::ImageSelectSingle: str="ImageSelectSingle"; break;
         case ImagingAlgorithms::AverageImage::ImageSum: str="ImageSum"; break;
         case ImagingAlgorithms::AverageImage::ImageAverage: str="ImageAverage"; break;
         case ImagingAlgorithms::AverageImage::ImageMedian: str="ImageMedian"; break;
