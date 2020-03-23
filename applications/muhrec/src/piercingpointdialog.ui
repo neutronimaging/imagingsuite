@@ -99,8 +99,8 @@
           <widget class="QtAddons::uxROIWidget" name="widgetEstimationROI" native="true">
            <property name="minimumSize">
             <size>
-             <width>160</width>
-             <height>120</height>
+             <width>220</width>
+             <height>145</height>
             </size>
            </property>
           </widget>
@@ -173,6 +173,7 @@
    <container>1</container>
    <slots>
     <signal>valueChanged(int,int,int,int)</signal>
+    <signal>toggled(bool)</signal>
    </slots>
   </customwidget>
  </customwidgets>
