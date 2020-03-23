@@ -25,3 +25,5 @@ CMakeCache.txt
 CMakeFiles
 _deps
 *.png
+moc_*
+*.moc
