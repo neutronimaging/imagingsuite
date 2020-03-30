@@ -18,11 +18,11 @@ fi
 ./build_GUI.sh # needs to be here due to GUI components in modules
 
 ./build_frameworks_tomography.sh
-./build_frameworks_imageprocessing.sh
+#./build_frameworks_imageprocessing.sh
 
 #../../ImagingQuality/build/build_applications_NIQA.sh
 ./build_applications_imageviewer.sh
-./build_applications_kiptool.sh
+#./build_applications_kiptool.sh
 ./build_applications_muhrec.sh
 #./build_CLI_framesplitter.sh
 #./build_CLI_muhrec.sh
