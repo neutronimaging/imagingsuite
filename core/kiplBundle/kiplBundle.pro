@@ -1,7 +1,5 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
-
 SUBDIRS += \
     ../kipl/kipl/qt/kipl.pro \
     ../kipl/UnitTests/tDirAnalysis \
