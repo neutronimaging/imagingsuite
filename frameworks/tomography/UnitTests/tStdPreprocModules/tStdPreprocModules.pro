@@ -82,8 +82,8 @@ DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/include
 
-INCLUDEPATH += $$PWD/../../preprocessing/StdPreprocModules/include
-DEPENDPATH += $$PWD/../../preprocessing/StdPreprocModules/include
+INCLUDEPATH += $$PWD/../../Preprocessing/StdPreprocModules/include
+DEPENDPATH += $$PWD/../../Preprocessing/StdPreprocModules/include
 
 INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
