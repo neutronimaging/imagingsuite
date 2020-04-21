@@ -275,7 +275,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         {
             ipos=pos+neighborPix;
 
-            if (static_cast<size_t>(ipos)<N)
+            if (ipos<N)
             {
                 if ((ptemp[ipos]<tmppos) && (pg[ipos]!=ptemp[ipos]))
                 {

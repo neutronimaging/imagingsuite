@@ -129,7 +129,7 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
     kipl::strings::filenames::CheckPathSlashes(imgname,false);
     kipl::io::ReadTIFF(img,imgname.c_str());
     size_t nLines = min(40UL,img.Size(1));
-    size_t dims[3]={img.Size(0),nLines,8};
+ //   size_t dims[3]={img.Size(0),nLines,8};
     kipl::base::TImage<float,3> img3;
 
     for (size_t i=0; i<nLines; ++i) {

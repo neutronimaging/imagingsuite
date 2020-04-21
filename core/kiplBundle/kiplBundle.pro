@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    ../kipl/kipl/qt/kipl.pro \
     ../kipl/UnitTests/tDirAnalysis \
     ../kipl/UnitTests/tedgefunction \
     ../kipl/UnitTests/tFillHole \
@@ -23,5 +24,5 @@ SUBDIRS += \
     ../kipl/UnitTests/tNoiseImage \
     ../kipl/UnitTests/tSegmentationTest \
     ../kipl/UnitTests/tSTLVectorOperations \
-    ../kipl/UnitTests/tDirAnalysis \
-    ../kipl/kipl/qt/kipl.pro
+    ../kipl/UnitTests/tDirAnalysis
+

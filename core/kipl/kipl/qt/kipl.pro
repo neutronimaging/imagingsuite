@@ -47,7 +47,7 @@ win32 {
 }
 
 win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
 else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 
 DEFINES += KIPL_LIBRARY
