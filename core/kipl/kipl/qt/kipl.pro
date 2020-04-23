@@ -22,6 +22,7 @@ unix {
     INCLUDEPATH += $$PWD/../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
     unix:!macx {
+        INCLUDEPATH += /usr/include/cfitsio
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
