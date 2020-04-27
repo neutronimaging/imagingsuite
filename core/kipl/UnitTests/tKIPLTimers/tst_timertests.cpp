@@ -72,11 +72,11 @@ void TimerTests::test_BasicTiming()
     double dt=timer.Toc();
 
     QVERIFY(std::fabs(1000.0 * (c_end-c_start) / CLOCKS_PER_SEC - dt)/dt <0.01);
-//    std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
-//              << 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC << " ms\n"
-//              << "Wall clock time passed: "
-//              << std::chrono::duration<double, std::milli>(t_end-t_start).count()
-//            << " ms\n";
+    std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
+              << 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC << " ms\n"
+              << "Wall clock time passed: "
+              << std::chrono::duration<double, std::milli>(c_end-c_start).count()
+            << " ms\n";
 }
 
 void TimerTests::test_ThreadedTiming()

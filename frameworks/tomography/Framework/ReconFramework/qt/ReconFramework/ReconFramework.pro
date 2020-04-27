@@ -69,6 +69,7 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio/
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
@@ -79,6 +80,7 @@ unix:!mac {
     exists(/usr/lib/*NeXus*) {
         message("-lNeXus exists")
         DEFINES *= HAVE_NEXUS
+        LIBS += -L/usr/local/lib64
         LIBS += -lNeXus -lNeXusCPP
     }
     else {
