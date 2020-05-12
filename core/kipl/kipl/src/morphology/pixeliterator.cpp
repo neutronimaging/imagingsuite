@@ -257,7 +257,7 @@ void PixelIterator::setupConn6()
     m_fcornerX1Y1 = {m_sxy};
     m_fcornerX0Z0 = {1,m_sx,m_sxy};
     m_fcornerX0Z1 = {1,m_sx};
-    m_fcornerX1Z0 = {1,m_sx,m_sxy};
+    m_fcornerX1Z0 = {m_sx,m_sxy};
     m_fcornerX1Z1 = {m_sx};
     m_fcornerY0Z0 = {1,m_sx,m_sxy};
     m_fcornerY0Z1 = {1,m_sx};
@@ -290,7 +290,7 @@ void PixelIterator::setupConn6()
     m_bcornerX0Z0 = {-m_sx};
     m_bcornerX0Z1 = {-m_sxy,-m_sx};
     m_bcornerX1Z0 = {-m_sx,-1};
-    m_bcornerX1Z1 = {-m_sx};
+    m_bcornerX1Z1 = {-1,-m_sx,-m_sxy};
     m_bcornerY0Z0 = {-1};
     m_bcornerY0Z1 = {-m_sxy,-1};
     m_bcornerY1Z0 = {-m_sx,-1};

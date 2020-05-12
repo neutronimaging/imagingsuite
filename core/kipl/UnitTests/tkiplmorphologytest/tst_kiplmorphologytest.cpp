@@ -134,54 +134,54 @@ void kiplMorphologyTest::testPixelIteratorMoving2D_conn4()
     std::copy(dims4u,dims4u+2,dims4);
     kipl::base::PixelIterator it4(dims4u,kipl::base::conn4);
     ++it4;
-    QVERIFY2(it4.currentPosition()  == 1,"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 1L,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(10,0);
-    QVERIFY2(it4.currentPosition()  == 10,"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 10L,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 2, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 1, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 2UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 1UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     --it4;
-    QVERIFY2(it4.currentPosition()  == 9,"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 9L,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(0,3);
     QVERIFY2(it4.currentPosition()  == 3*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeX0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     ++it4;
 
     QVERIFY2(it4.currentPosition()  == 3*dims4[0]+1,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::noEdge,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 2, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(10,3);
     QVERIFY2(it4.currentPosition()  == 3*dims4[0]+dims4[0]-1,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeX1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 1, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 2, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 1UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     --it4;
     QVERIFY2(it4.currentPosition()  == 3*dims4[0]+dims4[0]-2,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::noEdge,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn4)");
-    QVERIFY2(it4.backwardSize()     == 2, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.backwardSize()     == 2UL, "Wrong neighborhood size for edge y0 (conn4)");
 }
 
 void kiplMorphologyTest::testPixelIteratorMoving2D_conn8()
@@ -191,53 +191,53 @@ void kiplMorphologyTest::testPixelIteratorMoving2D_conn8()
     kipl::base::PixelIterator it8(dims4u,kipl::base::conn8);
     std::copy(dims4u,dims4u+2,dims4);
     ++it8;
-    QVERIFY2(it8.currentPosition()  == 1,"Initialize to wrong start position");
+    QVERIFY2(it8.currentPosition()  == 1L,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 5, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.forwardSize()      == 4, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.forwardSize()      == 4UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn8)");
 
     it8.setPosition(10,0);
-    QVERIFY2(it8.currentPosition()  == 10,"Initialize to wrong start position");
+    QVERIFY2(it8.currentPosition()  == 10L,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::cornerX1Y0,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it8.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it8.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn8)");
 
     --it8;
-    QVERIFY2(it8.currentPosition()  == 9,"Initialize to wrong start position");
+    QVERIFY2(it8.currentPosition()  == 9L,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it8.forwardSize()      == 4, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 1, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it8.forwardSize()      == 4UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 1UL, "Wrong neighborhood size for edge y0 (conn8)");
 
     it8.setPosition(0,3);
     QVERIFY2(it8.currentPosition()  == 3*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::edgeX0,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it8.forwardSize()      == 3, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 2, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it8.forwardSize()      == 3UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 2UL, "Wrong neighborhood size for edge y0 (conn8)");
 
     ++it8;
     QVERIFY2(it8.currentPosition()  == 3*dims4[0]+1,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::noEdge,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 8, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it8.forwardSize()      == 4, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 4, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 8UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it8.forwardSize()      == 4UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 4UL, "Wrong neighborhood size for edge y0 (conn8)");
 
     it8.setPosition(10,3);
     QVERIFY2(it8.currentPosition()  == 3*dims4[0]+dims4[0]-1,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::edgeX1,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it8.forwardSize()      == 2, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 3, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it8.forwardSize()      == 2UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 3UL, "Wrong neighborhood size for edge y0 (conn8)");
 
     --it8;
     QVERIFY2(it8.currentPosition()  == 3*dims4[0]+dims4[0]-2,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::noEdge,"Wrong edge status at init");
-    QVERIFY2(it8.neighborhoodSize() == 8, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it8.forwardSize()      == 4, "Wrong neighborhood size for edge y0 (conn8)");
-    QVERIFY2(it8.backwardSize()     == 4, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.neighborhoodSize() == 8UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it8.forwardSize()      == 4UL, "Wrong neighborhood size for edge y0 (conn8)");
+    QVERIFY2(it8.backwardSize()     == 4UL, "Wrong neighborhood size for edge y0 (conn8)");
 
 }
 
@@ -273,7 +273,7 @@ void kiplMorphologyTest::testPixelIteratorSetup3D_conn6()
     QVERIFY2(iteq.neighborhoodSize()   == it6.neighborhoodSize(),"Neighborhood size miss match");
     QVERIFY2(iteq.connectivity()       == it6.connectivity(),"Copy connectivity failed");
     QVERIFY2(iteq.currentPosition()    == it6.currentPosition(),"Copy position failed");
-    QVERIFY2(iteq.forwardSize()        == 4UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(iteq.forwardSize()        == 3UL, "Wrong sub neighborhood size (conn6)");
     QVERIFY2(iteq.backwardSize()       == 1UL, "Wrong sub neighborhood size (conn6)");
 
     QVERIFY_EXCEPTION_THROWN(it6.setPosition(-1,0),kipl::base::KiplException);
@@ -284,145 +284,190 @@ void kiplMorphologyTest::testPixelIteratorMoving3D_conn6()
     size_t dims4u[3]={11,9,5};
     ptrdiff_t dims4[3];
     std::copy(dims4u,dims4u+3,dims4);
-    kipl::base::PixelIterator it4(dims4u,kipl::base::conn6);
+    kipl::base::PixelIterator it6(dims4u,kipl::base::conn6);
 
 
-    it4.setPosition(0,0,0);
-    QVERIFY2(it4.currentPosition()  == 0L,"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
-    QVERIFY2(it4.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
-    QVERIFY2(it4.backwardSize()     == 0, "Wrong sub neighborhood size (conn6)");
+    it6.setPosition(0,0,0);
+    QVERIFY2(it6.currentPosition()  == 0L,"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Y0Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 0UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,0,0);
-    QVERIFY2(it4.currentPosition()  == 10L,"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,0,0);
+    QVERIFY2(it6.currentPosition()  == 10L,"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Y0Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 1UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,8,0);
-    QVERIFY2(it4.currentPosition()  == 0L+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,8,0);
+    QVERIFY2(it6.currentPosition()  == 0L+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Y1Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 1UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,8,0);
-    QVERIFY2(it4.currentPosition()  == 10L+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,8,0);
+    QVERIFY2(it6.currentPosition()  == 10L+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Y1Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 1UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,0,4);
-    QVERIFY2(it4.currentPosition()  == 4*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,0,4);
+    QVERIFY2(it6.currentPosition()  == 4*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Y0Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 1UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,0,4);
-    QVERIFY2(it4.currentPosition()  == 10+0*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,0,4);
+    QVERIFY2(it6.currentPosition()  == 10+0*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Y0Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 1UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,8,4);
-    QVERIFY2(it4.currentPosition()  == 0+8*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,8,4);
+    QVERIFY2(it6.currentPosition()  == 0+8*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Y1Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 1UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,0,4);
-    QVERIFY2(it4.currentPosition()  == 10+0*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,8,4);
+    QVERIFY2(it6.currentPosition()  == 10+8*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Y1Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 0UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,8,4);
-    QVERIFY2(it4.currentPosition()  == 10+8*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,0,1);
+    QVERIFY2(it6.currentPosition()  == 0+0*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Y0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 1UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,0,1);
-    QVERIFY2(it4.currentPosition()  == 0+0*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,8,1);
+    QVERIFY2(it6.currentPosition()  == 0+8*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Y1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,8,1);
-    QVERIFY2(it4.currentPosition()  == 0+8*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,0,1);
+    QVERIFY2(it6.currentPosition()  == 10+0*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Y0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,0,1);
-    QVERIFY2(it4.currentPosition()  == 10+0*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,8,1);
+    QVERIFY2(it6.currentPosition()  == 10+8*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Y1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 1UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,8,1);
-    QVERIFY2(it4.currentPosition()  == 10+8*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,3,0);
+    QVERIFY2(it6.currentPosition()  == 3*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 1UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,3,0);
-    QVERIFY2(it4.currentPosition()  == 3*dims4[0],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(0,3,4);
+    QVERIFY2(it6.currentPosition()  == 3*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX0Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,3,4);
-    QVERIFY2(it4.currentPosition()  == 3*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,3,0);
+    QVERIFY2(it6.currentPosition()  == 3*dims4[0]+10,"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,3,0);
-    QVERIFY2(it4.currentPosition()  == 3*dims4[0]+10,"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,3,4);
+    QVERIFY2(it6.currentPosition()  == 3*dims4[0]+4*dims4[0]*dims4[1]+10,"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerX1Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 1UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,3,4);
-    QVERIFY2(it4.currentPosition()  == 3*dims4[0]+4*dims4[0]*dims4[1]+10,"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(1,0,0);
+    QVERIFY2(it6.currentPosition()  == 1+0*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerY0Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 1UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(1,0,0);
-    QVERIFY2(it4.currentPosition()  == 1+0*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    it6.setPosition(1,8,0);
+    QVERIFY2(it6.currentPosition()  == 1+8*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerY1Z0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(1,8,0);
-    QVERIFY2(it4.currentPosition()  == 1+8*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    it6.setPosition(1,0,4);
+    QVERIFY2(it6.currentPosition()  == 1+0*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerY0Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(1,0,4);
-    QVERIFY2(it4.currentPosition()  == 1+0*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    it6.setPosition(1,8,4);
+    QVERIFY2(it6.currentPosition()  == 1+8*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::cornerY1Z1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 1UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(1,8,4);
-    QVERIFY2(it4.currentPosition()  == 1+8*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
+    it6.setPosition(0,3,3);
+    QVERIFY2(it6.currentPosition()  == 0+3*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::edgeX0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(0,3,3);
-    QVERIFY2(it4.currentPosition()  == 0+3*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::edgeX0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(10,3,3);
+    QVERIFY2(it6.currentPosition()  == 10+3*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::edgeX1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(10,3,3);
-    QVERIFY2(it4.currentPosition()  == 10+3*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::edgeX1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(3,0,3);
+    QVERIFY2(it6.currentPosition()  == 3+0*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(3,0,3);
-    QVERIFY2(it4.currentPosition()  == 3+0*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(3,8,3);
+    QVERIFY2(it6.currentPosition()  == 3+8*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::edgeY1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(3,8,3);
-    QVERIFY2(it4.currentPosition()  == 3+8*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::edgeY1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(3,3,0);
+    QVERIFY2(it6.currentPosition()  == 3+3*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::edgeZ0,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 3UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 2UL, "Wrong sub neighborhood size (conn6)");
 
-    it4.setPosition(3,3,0);
-    QVERIFY2(it4.currentPosition()  == 3+3*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::edgeZ0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
-
-    it4.setPosition(3,3,4);
-    QVERIFY2(it4.currentPosition()  == 3+3*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()       == kipl::base::edgeZ1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    it6.setPosition(3,3,4);
+    QVERIFY2(it6.currentPosition()  == 3+3*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
+    QVERIFY2(it6.edgeStatus()       == kipl::base::edgeZ1,"Wrong edge status at init");
+    QVERIFY2(it6.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it6.forwardSize()      == 2UL, "Wrong sub neighborhood size (conn6)");
+    QVERIFY2(it6.backwardSize()     == 3UL, "Wrong sub neighborhood size (conn6)");
 }
 
 void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
@@ -430,7 +475,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     size_t dims4u[3]={11,9,5};
     int dims4[3];
     std::copy(dims4u,dims4u+3,dims4);
-    kipl::base::PixelIterator it4(dims4u,kipl::base::conn6);
+    kipl::base::PixelIterator it6(dims4u,kipl::base::conn6);
 
     ptrdiff_t sx=dims4[0];
     ptrdiff_t sxy=dims4[0]*dims4[1];
@@ -438,253 +483,262 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
 
     // Bulk
     x=dims4[0]/2; y=dims4[1]/2; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),6UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(5),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),6UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(5),x+y*sx+(z+1)*sxy);
+
+
+    QCOMPARE(it6.forwardNeighborhood(0),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.forwardNeighborhood(1),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.forwardNeighborhood(2),x+y*sx+(z+1)*sxy);
+
+    QCOMPARE(it6.backwardNeighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.backwardNeighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.backwardNeighborhood(2),x-1+y*sx+z*sxy);
 
     //m_edgeX0 = { -m_sxy, -m_sx,  1, m_sx, m_sxy};
     x=0; y=dims4[1]/2; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),5UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+y*sx+(z+1)*sxy);
 
     //m_edgeX1 = { -m_sxy, -m_sx, -1, m_sx, m_sxy};
     x=dims4[0]-1; y=dims4[1]/2; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),5UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+y*sx+(z+1)*sxy);
 
     //m_edgeY0 = {-m_sxy, -1, 1, m_sx, m_sxy};
     x=dims4[0]/2; y=0; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),(x-1)+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),(x+1)+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),5UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),(x-1)+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+y*sx+(z+1)*sxy);
 
     //m_edgeY1 = {-m_sxy, -m_sx, -1, 1, m_sxy};
     x=dims4[0]/2; y=dims4[1]-1; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),(x-1)+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),(x+1)+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),5UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),(x-1)+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+y*sx+(z+1)*sxy);
 
     //m_edgeZ0 = {-m_sx, -1, 1, m_sx, m_sxy};
     x=dims4[0]/2; y=dims4[1]/2; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5UL);
-    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x-1+(y)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),(x+1)+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),5UL);
+    QCOMPARE(it6.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x-1+(y)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+y*sx+(z+1)*sxy);
 
     //m_edgeZ1 = {-m_sxy, -m_sx, -1, 1,m_sx};
     x=dims4[0]/2; y=dims4[1]/2; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x-1+(y)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),(x+1)+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(4),x+(y+1)*sx+z*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),5UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x-1+(y)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),(x+1)+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(4),x+(y+1)*sx+z*sxy);
 
     //    m_cornerX0Y0 = {-m_sxy, 1,  m_sx, m_sxy};
     x=0; y=0; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+1+(y)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+1+(y)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX1Y0 = {-m_sxy,-1,  m_sx, m_sxy};
     x=dims4[0]-1; y=0; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX0Y1 = {-m_sxy,  -m_sx,1, m_sxy};
     x=0; y=dims4[1]-1; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX1Y1 = {-m_sxy, -m_sx ,-1, m_sxy};
     x=dims4[0]-1; y=dims4[1]-1; z=dims4[2]/2;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX0Z0 = {-m_sx,1,  m_sx,m_sxy};
     x=0; y=dims4[1]/2; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX1Z0 = {-m_sx,-1, m_sx,m_sxy};
     x=dims4[0]-1; y=dims4[1]/2; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX0Z1 = {-m_sx,1,  m_sx,m_sxy};
     x=0; y=dims4[1]/2; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerX1Z1 = {-m_sxy,-m_sx,-1, m_sx};
     x=dims4[0]-1; y=dims4[1]/2; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+(y+1)*sx+z*sxy);
     //    m_cornerY0Z0 = {-1,1,m_sx,m_sxy};
     x=dims4[0]/2; y=0; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerY1Z0 = {-m_sx,-1,1,m_sxy};
     x=dims4[0]/2; y=dims4[1]-1; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+y*sx+(z+1)*sxy);
 
     //    m_cornerY0Z1 = {-m_sxy,-1,1, m_sx};
     x=dims4[0]/2; y=0; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+(y+1)*sx+z*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+(y+1)*sx+z*sxy);
 
     //    m_cornerY1Z1 = {-m_sxy,-m_sx,-1,1};
     x=dims4[0]/2; y=dims4[1]-1; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4UL);
-    QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(3),x+1+y*sx+z*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),4UL);
+    QCOMPARE(it6.neighborhood(0),x+y*sx+(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(3),x+1+y*sx+z*sxy);
 
     //m_cornerX0Y0Z0
     x=0;y=0;z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),1L);
-    QCOMPARE(it4.neighborhood(1),11L);
-    QCOMPARE(it4.neighborhood(2),99L);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),1L);
+    QCOMPARE(it6.neighborhood(1),11L);
+    QCOMPARE(it6.neighborhood(2),99L);
 
     //m_cornerX1Y0Z0
     x=10; y=0; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),(x-1));
-    QCOMPARE(it4.neighborhood(1),x+(y+1)*sx);
-    QCOMPARE(it4.neighborhood(2),x+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),(x-1));
+    QCOMPARE(it6.neighborhood(1),x+(y+1)*sx);
+    QCOMPARE(it6.neighborhood(2),x+(z+1)*sxy);
 
     //m_cornerX0Y1Z0
     x=0; y=8; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),1+(y)*sx);
-    QCOMPARE(it4.neighborhood(1),(y-1)*sx);
-    QCOMPARE(it4.neighborhood(2),y*sx+sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),1+(y)*sx);
+    QCOMPARE(it6.neighborhood(1),(y-1)*sx);
+    QCOMPARE(it6.neighborhood(2),y*sx+sxy);
 
     //m_cornerX0Y0Z1
     x=0; y=0; z=4;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),(z-1)*sxy);
-    QCOMPARE(it4.neighborhood(1),1+z*sxy);
-    QCOMPARE(it4.neighborhood(2),sx+z*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),(z-1)*sxy);
+    QCOMPARE(it6.neighborhood(1),1+z*sxy);
+    QCOMPARE(it6.neighborhood(2),sx+z*sxy);
 
     //m_cornerX1Y1Z0
     x=dims4[0]-1L; y=dims4[1]-1L; z=0;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),x-1+y*sx);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx);
-    QCOMPARE(it4.neighborhood(2),x+y*sx+(z+1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),x-1+y*sx);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx);
+    QCOMPARE(it6.neighborhood(2),x+y*sx+(z+1)*sxy);
 
     //m_cornerX1Y0Z1
     x=dims4[0]-1; y=0; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),x-1+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(z-1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),x-1+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(z-1)*sxy);
 
     //m_cornerX1Y0Z1
     x=dims4[0]-1; y=0; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),x-1+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y+1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+(z-1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),x-1+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y+1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+(z-1)*sxy);
 
     //m_cornerX0Y1Z1
     x=0; y=dims4[1]-1; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),x+1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+y*sx+(z-1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),x+1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+y*sx+(z-1)*sxy);
 
     //m_cornerX1Y1Z1
     x=dims4[0]-1; y=dims4[1]-1; z=dims4[2]-1;
-    it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3UL);
-    QCOMPARE(it4.neighborhood(0),x-1+y*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
-    QCOMPARE(it4.neighborhood(2),x+y*sx+(z-1)*sxy);
+    it6.setPosition(x,y,z);
+    QCOMPARE(it6.neighborhoodSize(),3UL);
+    QCOMPARE(it6.neighborhood(0),x-1+y*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(1),x+(y-1)*sx+z*sxy);
+    QCOMPARE(it6.neighborhood(2),x+y*sx+(z-1)*sxy);
 }
 
 //void kiplMorphologyTest::testPixelIteratorHalfNeighborhood3D()
@@ -697,46 +751,75 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn4()
     size_t dims4[2]={11,5};
     kipl::base::PixelIterator it4(dims4,kipl::base::conn4);
 
-    QVERIFY2(it4.neighborhood(0) == 1,"Corner X0Y0");
-    QVERIFY2(it4.neighborhood(1) == 11,"Corner X0Y0");
+    QVERIFY2(it4.neighborhood(0) == 1L,"Corner X0Y0");
+    QVERIFY2(it4.neighborhood(1) == 11L,"Corner X0Y0");
+    QCOMPARE(it4.forwardNeighborhood(0), 1L);
+    QCOMPARE(it4.forwardNeighborhood(1), 11L);
+
 
     it4.setPosition(dims4[0]-1,0);
     QVERIFY2(it4.neighborhood(0) == 9,"Corner X1Y0");
     QVERIFY2(it4.neighborhood(1) == 21,"Corner X1Y0");
+    QCOMPARE(it4.forwardNeighborhood(0), 21L);
+    QCOMPARE(it4.backwardNeighborhood(0), 9L);
 
     it4.setPosition(0,dims4[1]-1);
     QVERIFY2(it4.neighborhood(0) == 45,"Corner X0Y1");
     QVERIFY2(it4.neighborhood(1) == 33,"Corner X0Y1");
+    QCOMPARE(it4.forwardNeighborhood(0), 45L);
+    QCOMPARE(it4.backwardNeighborhood(0), 33L);
 
     it4.setPosition(dims4[0]-1,dims4[1]-1);
     QVERIFY2(it4.neighborhood(0) == 53,"Corner X1Y1");
     QVERIFY2(it4.neighborhood(1) == 43,"Corner X1Y1");
+    QCOMPARE(it4.backwardNeighborhood(0), 43L);
+    QCOMPARE(it4.backwardNeighborhood(1), 53L);
 
     it4.setPosition(5,0);
     QVERIFY2(it4.neighborhood(0) == 4,"Edge Y0");
     QVERIFY2(it4.neighborhood(1) == 6,"Edge Y0");
     QVERIFY2(it4.neighborhood(2) == 16,"Edge Y0");
+    QCOMPARE(it4.forwardNeighborhood(0), 6L);
+    QCOMPARE(it4.forwardNeighborhood(1), 16L);
+    QCOMPARE(it4.backwardNeighborhood(0), 4L);
+
 
     it4.setPosition(5,4);
     QVERIFY2(it4.neighborhood(0) == 38,"Edge Y1");
     QVERIFY2(it4.neighborhood(1) == 48,"Edge Y1");
     QVERIFY2(it4.neighborhood(2) == 50,"Edge Y1");
+    QCOMPARE(it4.forwardNeighborhood(0), 50L);
+    QCOMPARE(it4.backwardNeighborhood(0), 38L);
+    QCOMPARE(it4.backwardNeighborhood(1), 48L);
+
 
     it4.setPosition(0,3);
     QVERIFY2(it4.neighborhood(0) == 22,"Edge Y0");
     QVERIFY2(it4.neighborhood(1) == 34,"Edge Y0");
     QVERIFY2(it4.neighborhood(2) == 44,"Edge Y0");
+    QCOMPARE(it4.forwardNeighborhood(0), 34L);
+    QCOMPARE(it4.forwardNeighborhood(1), 44L);
+    QCOMPARE(it4.backwardNeighborhood(0), 22L);
 
     it4.setPosition(dims4[0]-1,3);
     QVERIFY2(it4.neighborhood(0) == 32,"Edge X1");
     QVERIFY2(it4.neighborhood(1) == 42,"Edge X1");
     QVERIFY2(it4.neighborhood(2) == 54,"Edge X1");
+    QCOMPARE(it4.forwardNeighborhood(0), 54L);
+    QCOMPARE(it4.backwardNeighborhood(0), 32L);
+    QCOMPARE(it4.backwardNeighborhood(1), 42L);
 
     it4.setPosition(5,2);
     QVERIFY2(it4.neighborhood(0) == 16,"NoEdge");
     QVERIFY2(it4.neighborhood(1) == 26,"NoEdge");
     QVERIFY2(it4.neighborhood(2) == 28,"NoEdge");
     QVERIFY2(it4.neighborhood(3) == 38,"NoEdge");
+
+    QCOMPARE(it4.forwardNeighborhood(0), 28L);
+    QCOMPARE(it4.forwardNeighborhood(1), 38L);
+    QCOMPARE(it4.backwardNeighborhood(0), 16L);
+    QCOMPARE(it4.backwardNeighborhood(1), 26L);
+
 }
 
 void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
@@ -748,21 +831,33 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
     QVERIFY2(it8.neighborhood(0) == 1,"Corner X0Y0");
     QVERIFY2(it8.neighborhood(1) == 11,"Corner X0Y0");
     QVERIFY2(it8.neighborhood(2) == 12,"Corner X0Y0");
+    QCOMPARE(it8.forwardNeighborhood(0), 1L);
+    QCOMPARE(it8.forwardNeighborhood(1), 11L);
+    QCOMPARE(it8.forwardNeighborhood(2), 12L);
 
     it8.setPosition(dims4[0]-1,0);
     QVERIFY2(it8.neighborhood(0) == 9,"Corner X1Y0");
     QVERIFY2(it8.neighborhood(1) == 20,"Corner X1Y0");
     QVERIFY2(it8.neighborhood(2) == 21,"Corner X1Y0");
+    QCOMPARE(it8.forwardNeighborhood(0), 20L);
+    QCOMPARE(it8.forwardNeighborhood(1), 21L);
+    QCOMPARE(it8.backwardNeighborhood(0), 9L);
 
     it8.setPosition(0,dims4[1]-1);
     QVERIFY2(it8.neighborhood(0) == 45,"Corner X0Y1");
     QVERIFY2(it8.neighborhood(1) == 33,"Corner X0Y1");
     QVERIFY2(it8.neighborhood(2) == 34,"Corner X0Y1");
+    QCOMPARE(it8.forwardNeighborhood(0), 45L);
+    QCOMPARE(it8.backwardNeighborhood(0), 33L);
+    QCOMPARE(it8.backwardNeighborhood(1), 34L);
 
     it8.setPosition(dims4[0]-1,dims4[1]-1);
     QVERIFY2(it8.neighborhood(0) == 42,"Corner X1Y1");
     QVERIFY2(it8.neighborhood(1) == 43,"Corner X1Y1");
     QVERIFY2(it8.neighborhood(2) == 53,"Corner X1Y1");
+    QCOMPARE(it8.backwardNeighborhood(0), 42L);
+    QCOMPARE(it8.backwardNeighborhood(1), 43L);
+    QCOMPARE(it8.backwardNeighborhood(2), 53L);
 
     it8.setPosition(5,0);
     QVERIFY2(it8.neighborhood(0) == 4,"Edge Y0");
@@ -770,6 +865,11 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
     QVERIFY2(it8.neighborhood(2) == 15,"Edge Y0");
     QVERIFY2(it8.neighborhood(3) == 16,"Edge Y0");
     QVERIFY2(it8.neighborhood(4) == 17,"Edge Y0");
+    QCOMPARE(it8.forwardNeighborhood(0), 6L);
+    QCOMPARE(it8.forwardNeighborhood(1), 15L);
+    QCOMPARE(it8.forwardNeighborhood(2), 16L);
+    QCOMPARE(it8.forwardNeighborhood(3), 17L);
+    QCOMPARE(it8.backwardNeighborhood(0), 4L);
 
     it8.setPosition(5,4);
     QVERIFY2(it8.neighborhood(0) == 37,"Edge Y1");
@@ -777,6 +877,11 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
     QVERIFY2(it8.neighborhood(2) == 39,"Edge Y1");
     QVERIFY2(it8.neighborhood(3) == 48,"Edge Y1");
     QVERIFY2(it8.neighborhood(4) == 50,"Edge Y1");
+    QCOMPARE(it8.forwardNeighborhood(0), 50L);
+    QCOMPARE(it8.backwardNeighborhood(0), 37L);
+    QCOMPARE(it8.backwardNeighborhood(1), 38L);
+    QCOMPARE(it8.backwardNeighborhood(2), 39L);
+    QCOMPARE(it8.backwardNeighborhood(3), 48L);
 
     it8.setPosition(0,3);
     QVERIFY2(it8.neighborhood(0) == 22,"Edge X0");
@@ -784,6 +889,11 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
     QVERIFY2(it8.neighborhood(2) == 34,"Edge X0");
     QVERIFY2(it8.neighborhood(3) == 44,"Edge X0");
     QVERIFY2(it8.neighborhood(4) == 45,"Edge X0");
+    QCOMPARE(it8.forwardNeighborhood(0), 34L);
+    QCOMPARE(it8.forwardNeighborhood(1), 44L);
+    QCOMPARE(it8.forwardNeighborhood(2), 45L);
+    QCOMPARE(it8.backwardNeighborhood(0), 22L);
+    QCOMPARE(it8.backwardNeighborhood(1), 23L);
 
     it8.setPosition(dims4[0]-1,3);
     QVERIFY2(it8.neighborhood(0) == 31,"Edge X1");
@@ -791,6 +901,11 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
     QVERIFY2(it8.neighborhood(2) == 42,"Edge X1");
     QVERIFY2(it8.neighborhood(3) == 53,"Edge X1");
     QVERIFY2(it8.neighborhood(4) == 54,"Edge X1");
+    QCOMPARE(it8.forwardNeighborhood(0), 53L);
+    QCOMPARE(it8.forwardNeighborhood(1), 54L);
+    QCOMPARE(it8.backwardNeighborhood(0), 31L);
+    QCOMPARE(it8.backwardNeighborhood(1), 32L);
+    QCOMPARE(it8.backwardNeighborhood(2), 42L);
 
     it8.setPosition(5,2);
     QVERIFY2(it8.neighborhood(0) == 15,"NoEdge");
@@ -801,6 +916,14 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
     QVERIFY2(it8.neighborhood(5) == 37,"NoEdge");
     QVERIFY2(it8.neighborhood(6) == 38,"NoEdge");
     QVERIFY2(it8.neighborhood(7) == 39,"NoEdge");
+    QCOMPARE(it8.forwardNeighborhood(0), 28L);
+    QCOMPARE(it8.forwardNeighborhood(1), 37L);
+    QCOMPARE(it8.forwardNeighborhood(2), 38L);
+    QCOMPARE(it8.forwardNeighborhood(3), 39L);
+    QCOMPARE(it8.backwardNeighborhood(0), 15L);
+    QCOMPARE(it8.backwardNeighborhood(1), 16L);
+    QCOMPARE(it8.backwardNeighborhood(2), 17L);
+    QCOMPARE(it8.backwardNeighborhood(3), 26L);
 }
 
 //void kiplMorphologyTest::testPixelIteratorHalfNeighborhood2D()
