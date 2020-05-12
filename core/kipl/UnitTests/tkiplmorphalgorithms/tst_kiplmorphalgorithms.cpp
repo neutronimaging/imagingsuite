@@ -27,9 +27,10 @@ private slots:
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
     void test_pixdist();
+    void test_EuclideanDistance();
+
 
 private:
-    void test_EuclideanDistance();
     void test_EuclideanDistance2();
 
 private:
@@ -49,7 +50,7 @@ kiplmorphalgorithms::~kiplmorphalgorithms()
 
 void kiplmorphalgorithms::loadData()
 {
-#ifdef _NDEBUG
+#ifdef NDEBUG
     kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
 #else
     kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
@@ -91,7 +92,7 @@ void kiplmorphalgorithms::test_LabelImage()
 void kiplmorphalgorithms::test_LabelImageRealData()
 {
 
-#ifdef _NDEBUG
+#ifdef NDEBUG
     std::string fname="../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
 #else
     std::string fname="../../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
@@ -149,8 +150,28 @@ void kiplmorphalgorithms::test_pixdist()
     ptrdiff_t a=7;
     ptrdiff_t b=10;
     ptrdiff_t c=12;
-    ptrdiff_t p0=a+b*sx+c*sxy;
+    ptrdiff_t p0=a+b*sx;
     ptrdiff_t p1=0;
+
+    for (int y=0; y<dims[1]; ++y)
+        for (int x=0; x<dims[0]; ++x)
+        {
+            p1=x+y*sx;
+            ptrdiff_t result = kipl::morphology::pixdist_x(p0,p1,sx);
+            ptrdiff_t expected = std::abs(x-a);
+            msg.str(""); msg<<"X: x:"<<x<<", y:"<<y<<" result:"<<result<<", expected:"<<expected;
+            QVERIFY2(result==expected,msg.str().c_str());
+
+            result = kipl::morphology::pixdist_y(p0,p1,sx);
+            expected = std::abs(y-b);
+            msg.str(""); msg<<"Y: x:"<<x<<", y:"<<y<<" result:"<<result<<", expected:"<<expected;
+            QVERIFY2(result==expected,msg.str().c_str());
+
+            QCOMPARE(kipl::morphology::old::pixdist_x(p0,p1,sx),kipl::morphology::pixdist_x(p0,p1,sx));
+            QCOMPARE(kipl::morphology::old::pixdist_y(p0,p1,sx),kipl::morphology::pixdist_y(p0,p1,sx));
+        }
+
+    p0=a+b*sx+c*sxy;
 
     for (int z=0; z<dims[2]; ++z )
         for (int y=0; y<dims[1]; ++y)
@@ -171,6 +192,8 @@ void kiplmorphalgorithms::test_pixdist()
                 expected = std::abs(z-c);
                 msg.str(""); msg<<"Z: x:"<<x<<", y:"<<y<<", z:"<<z<<" result:"<<result<<", expected:"<<expected;
                 QVERIFY2(result==expected,msg.str().c_str());
+
+                QCOMPARE(kipl::morphology::old::pixdist_x(p0,p1,sx,sxy),kipl::morphology::pixdist_x(p0,p1,sx,sxy));
             }
 }
 

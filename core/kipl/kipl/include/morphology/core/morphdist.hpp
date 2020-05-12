@@ -13,6 +13,9 @@
 #include "../pixeliterator.h"
 #include "../morphdist.h"
 #include "../morphology.h"
+#include "../../io/io_tiff.h"
+
+#include <QDebug>
 
 namespace kipl { namespace morphology {
 
@@ -24,7 +27,7 @@ inline ptrdiff_t abs(ptrdiff_t x) { return x<0 ? -x : x;}
 /// \param z Displacement along the z-axis (only for 3D)
 ///
 /// \returns The squared Euclidean distance
-inline float eudist2(float x,float y, float z=0.0f) {return z ? x*x+y*y+z*z : x*x+y*y;}
+inline float eudist2(float x,float y, float z=0.0f) { return z ? x*x + y*y + z*z : x*x + y*y; }
 
 /// Computes the Euclidean distance for a displacement
 /// \param x Displacement along the x-axis
@@ -44,8 +47,8 @@ inline float eudist(float x,float y, float z=0.0f) {return std::sqrt(eudist2(x,y
 inline ptrdiff_t pixdist_x(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t sxy=0)
 {
     ptrdiff_t d=p0%sx - p1%sx;
-    if (d<0) d=-d;
-    return d;
+
+    return std::abs(d);
 }
 
 /// Computes the y displacement between two pixels
@@ -61,9 +64,9 @@ inline ptrdiff_t pixdist_y(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t s
     if (sxy!=0)
         d=((p0%sxy)/sx - (p1%sxy)/sx);
     else
-        d=((p0 - p1)/sx);
+        d=(p0/sx - p1/sx);
 
-    return d<0 ? -d : d;
+    return std::abs(d);
 }
 
 /// Computes the z displacement between two pixels
@@ -76,7 +79,7 @@ inline ptrdiff_t pixdist_y(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t s
 inline ptrdiff_t pixdist_z(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t sxy=0)
 {
     ptrdiff_t d=p0/sxy - p1/sxy;
-    return d<0 ? -d : d;
+    return std::abs(d);
 }
 
 /// Computes the fast Euclidean distance between two neighbor pixels
@@ -117,7 +120,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 {
     std::stringstream msg;
     kipl::logging::Logger logger("EuclideanDistance");
-//	logger(kipl::logging::Logger::LogWarning,"Warning, the algorithm is buggy...");
+
     size_t const * const dims=mask.Dims();
     const size_t sx=dims[0];
     const size_t sxy=dims[0]*dims[1];
@@ -127,7 +130,11 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     kipl::base::PixelIterator NG(dims,conn);
 
     const unsigned short max_dist=numeric_limits<unsigned short>::max();
-    const MaskType inqueue=static_cast<MaskType>(2);
+    //const MaskType inqueue=static_cast<MaskType>(2);
+    enum pixelStatus {background = 0,
+                      object     = 1,
+                      inqueue    = 2
+                        };
 
     // Initializing the priority queue
     deque<ptrdiff_t> fifoA,fifoB;
@@ -137,12 +144,14 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     MaskType *pMask=mask.GetDataPtr();
     if (complement)
         for (size_t i=0; i<mask.Size(); i++)
-            pMask[i]=(pMask[i]==0);
+            pMask[i]= (pMask[i]==0 ? object : background);
     else
         for (size_t i=0; i<mask.Size(); i++)
-            pMask[i]=(pMask[i]!=0);
+            pMask[i]= (pMask[i]==0 ? background : object);
 
     kipl::base::TImage<unsigned short,NDim> imx(dims), imy(dims), imz;
+    kipl::base::TImage<unsigned short,NDim> iterations(dims);
+    iterations=0;
     imx=0;
     imy=0;
     unsigned short *pImx=imx.GetDataPtr();
@@ -158,10 +167,10 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     size_t maskCnt=0;
 
     // Initialize queue
-    NG.setPosition(0UL);
-    for (ptrdiff_t i=0; i<mask.Size(); ++i)
+    NG.setPosition(0L);
+    for (ptrdiff_t i=0; i<static_cast<ptrdiff_t>(mask.Size()); ++i)
     {
-        if (pMask[i]!=0)
+        if (pMask[i]==object)
         {
             pImx[i]=max_dist;
             pImy[i]=max_dist;
@@ -172,7 +181,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
             for (const auto & p : NG.neighborhood())
             {
                 pos = p + i;
-                if (pMask[pos]==static_cast<MaskType>(0))
+                if (pMask[pos]==background)
                 {
                     fifoA.push_back(i);
                     pMask[i]=inqueue;
@@ -196,27 +205,37 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 
         for (const auto &p : *rFifoA)
         {
+
             if (pImx[p]!=max_dist)
             {// Distance has already been computed
-                continue;
+              continue;
             }
+
             dp=numeric_limits<float>::max();
+
+
+            iterations[p]=itcnt+1;
+
+
             NG.setPosition(p);
             if (NDim==2)
             {
+                dp=eudist2( static_cast<float>(pImx[p]),
+                            static_cast<float>(pImy[p]));
                 for (const auto &neighborPix : NG.neighborhood())
                 {
                     pos = p + neighborPix;
                     if (pImx[pos]!=max_dist)
                     {
-                        pdx=pixdist_x(pos,p,sx);
-                        pdy=pixdist_y(pos,p,sx);
-                        current_dist=eudist2(static_cast<float>(pImx[pos]+pdx),
-                            static_cast<float>(pImy[pos]+pdy));
+                        pdx = pImx[pos] + pixdist_x(pos,p,sx);
+                        pdy = pImy[pos] + pixdist_y(pos,p,sx);
+                        current_dist = eudist2( static_cast<float>(pdx),
+                                                static_cast<float>(pdy));
 
-                        if (current_dist<dp) {
-                            pImx[p]=pImx[pos]+pdx;
-                            pImy[p]=pImy[pos]+pdy;
+                        if (current_dist<dp)
+                        {
+                            pImx[p]=pdx;
+                            pImy[p]=pdy;
                             dp=current_dist;
                         }
                     }
@@ -224,6 +243,9 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
             }
             else
             {
+                dp=eudist2( static_cast<float>(pImx[p]),
+                            static_cast<float>(pImy[p]),
+                            static_cast<float>(pImz[p]));
                 for (const auto & neighborPix : NG.neighborhood())
                 {
                     pos= p + neighborPix;
@@ -259,8 +281,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 
             if ((NDim==2 ? eudist2(pImx[p],pImy[p]) : eudist2(pImx[p],pImy[p],pImz[p]))>dmin)
             {
-                // Delay the propagation for
-                // distances greater than dmin
+                // Delay the propagation for distances greater than dmin
                 rFifoB->push_back(p);
                 propCnt++;
             }
@@ -269,10 +290,17 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
                 procCnt++;
                 retCnt++;
                 NG.setPosition(p);
+
+                if (pMask[p]==object)
+                {
+                    rFifoB->push_back(p);
+                    pMask[p]=inqueue;
+                }
+
                 for (auto const & neighborPix : NG.neighborhood())
                 {
                     pos = p + neighborPix;
-                    if (pMask[pos]==1)
+                    if (pMask[pos]==object)
                     {
                         rFifoB->push_back(pos);
                         pMask[pos]=inqueue;
@@ -291,20 +319,22 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
             rFifoA=&fifoA;
             rFifoB=&fifoB;
         }
-        msg.str("");
-        msg<<"Processed "<<procCnt<<" of "<<maxCnt;
 
         itcnt++;
     }
-    //logger(kipl::logging::Logger::LogVerbose,"Calculating distances from coordinate fields");
+
+    kipl::io::WriteTIFF(mask,"newMask.tiff");
+    kipl::io::WriteTIFF(imx,"newX.tiff");
+    kipl::io::WriteTIFF(imy,"newY.tiff");
+    kipl::io::WriteTIFF(iterations,"newIter.tiff");
 
     dist.Resize(dims);
     DistType * pDist=dist.GetDataPtr();
     if (NDim==2)
-        for (p=0; p<imx.Size(); p++)
-                pDist[p]=eudist(pImx[p],pImy[p]);
+        for (p=0; p<imx.Size(); ++p)
+                pDist[p]=static_cast<DistType>(eudist(pImx[p],pImy[p]));
     else
-        for (p=0; p<imx.Size(); p++)
+        for (p=0; p<imx.Size(); ++p)
                 pDist[p]=static_cast<DistType>(eudist(pImx[p],pImy[p],pImz[p]));
 
     return 0;
@@ -500,9 +530,9 @@ inline ptrdiff_t pixdist_y(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t s
 	if (sxy!=0)
 		d=((p0%sxy)/sx - (p1%sxy)/sx);
 	else
-		d=((p0 - p1)/sx);
+        d=(p0/sx - p1/sx);
 
-	return d<0 ? -d : d;
+    return std::abs(d);
 }
 
 /// Computes the z displacement between two pixels
@@ -567,7 +597,8 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 	size_t Nng=NG.N();
 
 	kipl::base::TImage<unsigned short,NDim> imx(dims), imy(dims), imz;
-
+    kipl::base::TImage<unsigned short,NDim> iterations(dims);
+    iterations=0;
 
 	const unsigned short max_dist=numeric_limits<unsigned short>::max();
 	const MaskType inqueue=static_cast<MaskType>(2);
@@ -635,9 +666,13 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 	
 		for (it=rFifoA->begin(); it!=rFifoA->end(); it++) {
 			p=*it;
+
 			if (pImx[p]!=max_dist) {// Distance has already been computed
 				continue;
 			}
+
+            iterations[p]=itcnt+1;
+
 			dp=numeric_limits<float>::max();
 			if (NDim==2) {
 				for (j=0; j<Nng; j++) {
@@ -645,8 +680,8 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 						if (pImx[pos]!=max_dist) {
 							pdx=pixdist_x(pos,p,sx);
 							pdy=pixdist_y(pos,p,sx);
-							current_dist=eudist2(static_cast<float>(pImx[pos]+pdx),
-								static_cast<float>(pImy[pos]+pdy));
+                            current_dist=eudist2( static_cast<float>(pImx[pos]+pdx),
+                                                  static_cast<float>(pImy[pos]+pdy));
 
 							if (current_dist<dp) {
 								pImx[p]=pImx[pos]+pdx;
@@ -715,19 +750,21 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 			rFifoA=&fifoA;
 			rFifoB=&fifoB;
 		}
-		msg.str("");
-		msg<<"Processed "<<procCnt<<" of "<<maxCnt;
-	//	logger(kipl::logging::Logger::LogDebug,msg.str());
-		
+
 		itcnt++;
 	}
 	//logger(kipl::logging::Logger::LogVerbose,"Calculating distances from coordinate fields");
-	
+    kipl::io::WriteTIFF(mask,"oldMask.tiff");
+    kipl::io::WriteTIFF(imx,"oldX.tiff");
+    kipl::io::WriteTIFF(imy,"oldY.tiff");
+    kipl::io::WriteTIFF(iterations,"oldIter.tiff");
+
+
 	dist.Resize(dims);
 	DistType * pDist=dist.GetDataPtr();
 	if (NDim==2)
 		for (p=0; p<imx.Size(); p++)
-				pDist[p]=eudist(pImx[p],pImy[p]);
+                pDist[p]=static_cast<DistType>(eudist(pImx[p],pImy[p]));
 	else
 		for (p=0; p<imx.Size(); p++)
 				pDist[p]=static_cast<DistType>(eudist(pImx[p],pImy[p],pImz[p]));
