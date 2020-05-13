@@ -434,7 +434,7 @@ template<typename ImgType, typename DistType>
 int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
         kipl::base::TImage<DistType,2> &dist, CMetricBase &metric)
 {
-    int x,y;
+    size_t x,y;
     size_t const * const dims=img.Dims();
     dist.Resize(dims);
 
@@ -443,7 +443,7 @@ int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
 
 
     metric.initialize(dims);
-    int start=metric.start();
+    size_t start=metric.start();
     dist=numeric_limits<DistType>::max();
 
     for (y=start; y<dims[1]-start; y++) {

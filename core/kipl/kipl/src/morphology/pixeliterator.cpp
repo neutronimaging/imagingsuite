@@ -429,8 +429,8 @@ ptrdiff_t PixelIterator::setPosition(ptrdiff_t pos)
 
 const std::vector<ptrdiff_t> &PixelIterator::neighborhood()
 {
-
-    switch (edgeStatus()) {
+    auto es=edgeStatus();
+    switch (es) {
     case kipl::base::noEdge       : return m_neighborhoodIndex;
     case kipl::base::edgeX0       : return m_edgeX0;
     case kipl::base::edgeX1       : return m_edgeX1;
@@ -438,6 +438,8 @@ const std::vector<ptrdiff_t> &PixelIterator::neighborhood()
     case kipl::base::edgeY1       : return m_edgeY1;
     case kipl::base::cornerX0Y0   : return m_cornerX0Y0;
     case kipl::base::cornerX1Y1   : return m_cornerX1Y1;
+    case kipl::base::edgeZ0       : return m_edgeZ0;
+    case kipl::base::edgeZ1       : return m_edgeZ1;
     case kipl::base::cornerX1Y0   : return m_cornerX1Y0;
     case kipl::base::cornerX0Y1   : return m_cornerX0Y1;
     case kipl::base::cornerX0Z0   : return m_cornerX0Z0;
@@ -456,7 +458,12 @@ const std::vector<ptrdiff_t> &PixelIterator::neighborhood()
     case kipl::base::cornerX0Y1Z1 : return m_cornerX0Y1Z1;
     case kipl::base::cornerX1Y1Z0 : return m_cornerX1Y1Z0;
     case kipl::base::cornerX1Y1Z1 : return m_cornerX1Y1Z1;
-    default : throw kipl::base::KiplException("Unknown edge status in PixelIterator::neighborhood.",__FILE__,__LINE__);
+    default : throw kipl::base::KiplException("Unknown edge status "
+                                              +std::to_string(static_cast<int>(es))
+                                              + "@ ("+ std::to_string(m_currentX)+", "
+                                              + std::to_string(m_currentX)+", "
+                                              + std::to_string(m_currentX)
+                                              +") in PixelIterator::neighborhood.",__FILE__,__LINE__);
     }
 
     return m_neighborhoodIndex;
@@ -621,6 +628,8 @@ const std::vector<ptrdiff_t> & PixelIterator::forwardNeighborhood()
     case kipl::base::cornerX1Y1   : return m_fcornerX1Y1;
     case kipl::base::cornerX1Y0   : return m_fcornerX1Y0;
     case kipl::base::cornerX0Y1   : return m_fcornerX0Y1;
+    case kipl::base::edgeZ0       : return m_fedgeZ0;
+    case kipl::base::edgeZ1       : return m_fedgeZ1;
     case kipl::base::cornerX0Z0   : return m_fcornerX0Z0;
     case kipl::base::cornerX0Z1   : return m_fcornerX0Z0;
     case kipl::base::cornerX1Z0   : return m_fcornerX0Z0;
@@ -656,6 +665,8 @@ const std::vector<ptrdiff_t> & PixelIterator::backwardNeighborhood()
     case kipl::base::cornerX1Y1   : return m_bcornerX1Y1;
     case kipl::base::cornerX1Y0   : return m_bcornerX1Y0;
     case kipl::base::cornerX0Y1   : return m_bcornerX0Y1;
+    case kipl::base::edgeZ0       : return m_bedgeZ0;
+    case kipl::base::edgeZ1       : return m_bedgeZ1;
     case kipl::base::cornerX0Z0   : return m_bcornerX0Z0;
     case kipl::base::cornerX0Z1   : return m_bcornerX0Z0;
     case kipl::base::cornerX1Z0   : return m_bcornerX0Z0;

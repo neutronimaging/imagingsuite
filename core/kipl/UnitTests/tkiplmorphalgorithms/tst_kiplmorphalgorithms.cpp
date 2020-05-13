@@ -20,6 +20,7 @@ public:
     kiplmorphalgorithms();
     ~kiplmorphalgorithms();
     void loadData();
+    void makeBall(size_t size, float radius);
 
 private slots:
     void test_LabelImage();
@@ -27,14 +28,19 @@ private slots:
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
     void test_pixdist();
-    void test_EuclideanDistance();
+    void test_EuclideanDistance2D();
+    void test_EuclideanDistance3D();
+    void test_DistanceTransform2D();
+    void test_DistanceTransform3D();
 
 
 private:
     void test_EuclideanDistance2();
 
 private:
-    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> img2;
+    kipl::base::TImage<float,3> img3;
+    kipl::base::TImage<float,3> d3;
 
 };
 
@@ -53,8 +59,30 @@ void kiplmorphalgorithms::loadData()
 #ifdef NDEBUG
     kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
 #else
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+    kipl::io::ReadTIFF(img2,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
 #endif
+}
+
+void kiplmorphalgorithms::makeBall(size_t size, float radius)
+{
+    size_t dims[3]={size,size,size};
+    ptrdiff_t mid = size/2;
+    float r2 = radius * radius;
+
+    img3.Resize(dims);
+    d3.Resize(dims);
+    size_t idx=0;
+    for (ptrdiff_t z=0; z<size; ++z)
+        for (ptrdiff_t y=0; y<size; ++y)
+            for (ptrdiff_t x=0; x<size; ++x, ++idx)
+            {
+                d3[idx]=std::sqrt((z-mid)*(z-mid)+(y-mid)*(y-mid) + (x-mid)*(x-mid));
+                if (!(img3[idx] = (d3[idx]<radius)))
+                    d3[idx]=0.0f;
+                else
+                    d3[idx]=radius-d3[idx]+1;
+            }
+
 }
 
 void kiplmorphalgorithms::test_LabelImage()
@@ -62,9 +90,9 @@ void kiplmorphalgorithms::test_LabelImage()
     loadData();
     kipl::base::TImage<int,2> result;
     size_t lblCnt=0;
-    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
+    lblCnt=kipl::morphology::LabelImage(img2,result,kipl::base::conn4);
 
-    QCOMPARE(img.Size(),result.Size());
+    QCOMPARE(img2.Size(),result.Size());
     QCOMPARE(lblCnt,24UL);
 
     // Special cases
@@ -95,7 +123,7 @@ void kiplmorphalgorithms::test_LabelImageRealData()
 #ifdef NDEBUG
     std::string fname="../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
 #else
-    std::string fname="../../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
+    std::string fname="../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
 #endif
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::base::TImage<int,2> a;
@@ -118,9 +146,9 @@ void kiplmorphalgorithms::test_RemoveConnectedRegion()
     kipl::base::TImage<int,2> result;
     size_t lblCnt=0;
 
-    lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
+    lblCnt=kipl::morphology::LabelImage(img2,result,kipl::base::conn4);
 
-    QCOMPARE(img.Size(),result.Size());
+    QCOMPARE(img2.Size(),result.Size());
     QCOMPARE(lblCnt,24UL);
 
     std::vector< pair<size_t,size_t>> arealist;
@@ -197,15 +225,15 @@ void kiplmorphalgorithms::test_pixdist()
             }
 }
 
-void kiplmorphalgorithms::test_EuclideanDistance()
+void kiplmorphalgorithms::test_EuclideanDistance2D()
 {
     loadData();
 
     kipl::base::TImage<float,2> dist_dev,dist_ref;
 
-    kipl::morphology::EuclideanDistance(img,dist_dev,false,kipl::base::conn8);
+    kipl::morphology::EuclideanDistance(img2,dist_dev,false,kipl::base::conn8);
     loadData();
-    kipl::morphology::old::EuclideanDistance(img,dist_ref,false,kipl::morphology::conn8);
+    kipl::morphology::old::EuclideanDistance(img2,dist_ref,false,kipl::morphology::conn8);
 
     size_t cnt=0;
     for (size_t i =0; i< dist_dev.Size(); i++)
@@ -217,6 +245,61 @@ void kiplmorphalgorithms::test_EuclideanDistance()
     kipl::io::WriteTIFF32(dist_ref,"eucliddist_ref.tif");
 
     QCOMPARE(cnt,0UL);
+
+}
+
+void kiplmorphalgorithms::test_EuclideanDistance3D()
+{
+    makeBall(200,75);
+
+    kipl::base::TImage<float,3> dist3D_dev;
+    QBENCHMARK
+    {
+        kipl::morphology::EuclideanDistance(img3,dist3D_dev,false,kipl::base::conn6);
+    }
+
+
+    kipl::io::WriteTIFF32(dist3D_dev,"eudist3D_dev.tif");
+
+}
+
+void kiplmorphalgorithms::test_DistanceTransform2D()
+{
+    loadData();
+
+    kipl::base::TImage<float,2> dist2D_dev,dist2D_ref;
+    kipl::morphology::CMetricSvensson sm;
+    kipl::morphology::DistanceTransform2D(img2,dist2D_dev,sm);
+//    loadData();
+//    kipl::morphology::CMetricSvensson smo;
+//    kipl::morphology::old::DistanceTransform2D(img,dist_ref,smo);
+
+//    size_t cnt=0;
+//    for (size_t i =0; i< dist2D_dev.Size(); i++)
+//    {
+//        if (dist_dev[i]!=dist_ref[i])
+//            cnt++;
+//    }
+    kipl::io::WriteTIFF32(dist2D_dev,"dist2D_dev.tif");
+//    kipl::io::WriteTIFF32(dist_ref,"eucliddist_ref.tif");
+
+//    QCOMPARE(cnt,0UL);
+}
+
+void kiplmorphalgorithms::test_DistanceTransform3D()
+{
+    makeBall(200,75);
+
+    kipl::base::TImage<float,3> dist3D_dev;
+    kipl::morphology::CMetricSvensson sm;
+    QBENCHMARK
+    {
+        kipl::morphology::DistanceTransform3D(img3,dist3D_dev,sm);
+    }
+
+    kipl::io::WriteTIFF32(dist3D_dev,"dist3D_dev.tif");
+//    for (size_t i=0; i<d3.Size(); ++i)
+//        QCOMPARE(dist3D_dev[i],d3[i]);
 
 }
 
