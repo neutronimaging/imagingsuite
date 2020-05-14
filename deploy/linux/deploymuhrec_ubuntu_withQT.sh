@@ -1,3 +1,4 @@
+#!/bin/bash
 CPCMD="cp "
 REPOSPATH=$WORKSPACE
 

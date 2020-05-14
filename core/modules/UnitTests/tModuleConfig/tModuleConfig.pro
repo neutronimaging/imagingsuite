@@ -35,11 +35,14 @@ unix {
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -L/usr/local/lib64
+
+    LIBS += -ltiff -lxml2 -lNeXus -lNeXusCPP
     INCLUDEPATH += /usr/include/libxml2
 }
 

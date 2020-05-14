@@ -510,7 +510,7 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
     pf.process(sino);
 
     kipl::io::WriteTIFF32(sino,"projfilt_result.tif");
-    QCOMPARE(pf.currentFFTSize(),2048);
+    QCOMPARE(pf.currentFFTSize(),2048UL);
     QCOMPARE(pf.currentImageSize(),sino.Size(0));
 
 }
@@ -524,8 +524,8 @@ void TestImagingAlgorithms::StripeFilterParameters()
    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
 #endif
    ImagingAlgorithms::StripeFilter sf(sino.Dims(),"daub17",4,0.21f);
-   QCOMPARE(sf.dims()[0],sino.Size(0));
-   QCOMPARE(sf.dims()[1],sino.Size(1));
+   QCOMPARE(static_cast<size_t>(sf.dims()[0]),sino.Size(0));
+   QCOMPARE(static_cast<size_t>(sf.dims()[1]),sino.Size(1));
    QCOMPARE(sf.sigma(),0.21f);
    QCOMPARE(sf.decompositionLevels(),4);
    size_t dims[]={sino.Size(0),sino.Size(1)};
@@ -540,8 +540,8 @@ void TestImagingAlgorithms::StripeFilterParameters()
    std::vector<int> dims2={static_cast<int>(sino.Size(0)), static_cast<int>(sino.Size(1))};
 
    ImagingAlgorithms::StripeFilter sf2(dims2,"daub17",4,0.21f);
-   QCOMPARE(sf2.dims()[0],sino.Size(0));
-   QCOMPARE(sf2.dims()[1],sino.Size(1));
+   QCOMPARE(static_cast<size_t>(sf2.dims()[0]),sino.Size(0));
+   QCOMPARE(static_cast<size_t>(sf2.dims()[1]),sino.Size(1));
    QCOMPARE(sf2.sigma(),0.21f);
    QCOMPARE(sf2.decompositionLevels(),4);
    dims[0]=sino.Size(0);

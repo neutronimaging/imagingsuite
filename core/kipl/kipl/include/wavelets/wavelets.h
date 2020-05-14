@@ -20,14 +20,14 @@ template <typename T>
 		WaveletKernel(std::string name);
 		std::string name() const {return m_sName;}
 		int begin() const {return m_nBegin;}
-		int end() const {return m_nEnd;}
+                int end() const {return m_nEnd;}
 		int size() const {return m_nEnd-m_nBegin+1;}
 
-		T const * const transH() const {return m_tH-m_nBegin;}
-		T const * const transG() const {return m_tG-m_nBegin;}
+                T const * const transH() const {return m_tH-m_nBegin;}
+                T const * const transG() const {return m_tG-m_nBegin;}
 
-		T const * const synthH() const {return m_sH-m_nBegin;}
-		T const * const synthG() const {return m_sG-m_nBegin;}
+                T const * const synthH() const {return m_sH-m_nBegin;}
+                T const * const synthG() const {return m_sG-m_nBegin;}
 		std::list<std::string> NameList();
 
 	private:
