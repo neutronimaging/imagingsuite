@@ -20,7 +20,7 @@ public:
     kiplmorphalgorithms();
     ~kiplmorphalgorithms();
     void loadData();
-    void makeBall(size_t size, float radius);
+    void makeBall(size_t size=100UL, float radius=45.0f);
 
 private slots:
     void test_LabelImage();
@@ -250,7 +250,7 @@ void kiplmorphalgorithms::test_EuclideanDistance2D()
 
 void kiplmorphalgorithms::test_EuclideanDistance3D()
 {
-    makeBall(200,75);
+    makeBall();
 
     kipl::base::TImage<float,3> dist3D_dev;
     QBENCHMARK
@@ -288,7 +288,7 @@ void kiplmorphalgorithms::test_DistanceTransform2D()
 
 void kiplmorphalgorithms::test_DistanceTransform3D()
 {
-    makeBall(200,75);
+    makeBall();
 
     kipl::base::TImage<float,3> dist3D_dev;
     kipl::morphology::CMetricSvensson sm;
