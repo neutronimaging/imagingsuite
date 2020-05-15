@@ -27,6 +27,24 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     slice2vol.h
 
+unix {
+    INCLUDEPATH += $$PWD/../../../external/src/linalg
+    QMAKE_CXXFLAGS += -fPIC -O2
+    unix:!macx {
+        INCLUDEPATH += /usr/include/cfitsio
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+    }
+
+    unix:macx {
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
+    }
+
+    LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+}
+
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
