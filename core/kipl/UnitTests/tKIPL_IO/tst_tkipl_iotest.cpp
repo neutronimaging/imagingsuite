@@ -15,6 +15,9 @@ public:
 
 private Q_SLOTS:
     void testBasicReadWriteTIFF();
+    void testMultiFrameReadTIFF();
+    void testMultiFrameWriteTIFF();
+
 };
 
 tKIPL_IOTest::tKIPL_IOTest()
@@ -54,6 +57,16 @@ void tKIPL_IOTest::testBasicReadWriteTIFF()
     for (size_t i=0; i<fimg.Size(); i++) {
         QVERIFY2(fimg[i]==resimg[i],"Pixels not similar");
     }
+
+}
+
+void tKIPL_IOTest::testMultiFrameReadTIFF()
+{
+
+}
+
+void tKIPL_IOTest::testMultiFrameWriteTIFF()
+{
 
 }
 

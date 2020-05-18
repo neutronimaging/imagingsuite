@@ -33,6 +33,7 @@ private Q_SLOTS:
     void testSEQRead();
     void testTIFFBasicReadWrite();
     void testTIFFMultiFrame();
+    void testTIFFAdvancedMultiFrame();
     void testTIFF32();
     void testTIFFclamp();
     void testIOStack_enums();
@@ -159,16 +160,27 @@ void kiplIOTest::testTIFFBasicReadWrite()
 
 void kiplIOTest::testTIFFMultiFrame()
 {
-    std::string fname="../imagingsuite/core/kipl/UnitTests/data/multiframe.tif";
+#ifdef NDEBUG
+    std::string fname="../../TestData/3D/tiff/multiframe.tif";
+#else
+    std::string fname="../TestData/3D/tiff/multiframe.tif";
+#endif
     if (dir.exists(QString::fromStdString(fname))==false)
         QSKIP("Test data is missing");
 
     size_t dims[3]={0,0,0};
-    int nframes=kipl::io::GetTIFFDims(fname.c_str(),dims);
+    int nframes=kipl::io::GetTIFFDims(fname,dims);
 
     QCOMPARE(dims[0],145UL);
     QCOMPARE(dims[1],249UL);
     QCOMPARE(nframes,5);
+
+    auto dimsv=kipl::io::GetTIFFDims(fname);
+
+    QCOMPARE(dimsv.size(),3UL);
+    QCOMPARE(dimsv[0],145UL);
+    QCOMPARE(dimsv[1],249UL);
+    QCOMPARE(dimsv[2],5UL);
 
     float minvals[5]={4032.0f,4443.0f,5244.0f,5849.0f,3687.0f};
     float maxvals[5]={65192.0f,65534.0f,65534.0f,57957.0f,42548.0f};
@@ -244,6 +256,17 @@ void kiplIOTest::testTIFFMultiFrame()
         QCOMPARE(img3[i],img3ref[i]);
         QCOMPARE(img3[i+img3ref.Size()],img3ref2[i]);
     }
+}
+
+void kiplIOTest::testTIFFAdvancedMultiFrame()
+{
+#ifdef NDEBUG
+    std::string fname="../../TestData/3D/tiff/multiframe.tif";
+#else
+    std::string fname="../TestData/3D/tiff/multiframe.tif";
+#endif
+    if (dir.exists(QString::fromStdString(fname))==false)
+        QSKIP("Test data is missing");
 }
 
 void kiplIOTest::testTIFF32()
