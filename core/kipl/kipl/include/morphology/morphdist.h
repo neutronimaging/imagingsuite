@@ -51,7 +51,7 @@ class KIPLSHARED_EXPORT CMetricBase
 
      /// \brief Initializes the metric with the dimension of the image
      /// \param d array with image dimensions
-     virtual int initialize(size_t const * const d);
+     virtual int initialize(const std::vector<size_t> &d);
 
      /// returns the start index for a line (edge processing)
      int start();
@@ -69,7 +69,7 @@ class KIPLSHARED_EXPORT CMetricBase
      /// Size of the directed neighborhood
      int size;
      /// \brief Array containing the dimensions of the image to be processed
-     unsigned int dims[3];
+     std::vector<size_t> dims;
      /// Size of the neighborhood
      int ndata;
      /// \brief Array containing the weights for the forward scan
@@ -97,7 +97,7 @@ class KIPLSHARED_EXPORT CMetric8connect: public kipl::morphology::CMetricBase
 
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
 
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric8connect();
@@ -111,7 +111,7 @@ class KIPLSHARED_EXPORT CMetric3x3w: public kipl::morphology::CMetricBase
         CMetric3x3w();
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric3x3w();
 };
@@ -124,7 +124,7 @@ class KIPLSHARED_EXPORT CMetric26conn: public kipl::morphology::CMetricBase
         CMetric26conn();
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
 
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric26conn();
@@ -139,7 +139,7 @@ class KIPLSHARED_EXPORT CMetricSvensson: public kipl::morphology::CMetricBase
         CMetricSvensson();
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> & d);
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetricSvensson();
 };
@@ -153,7 +153,7 @@ class KIPLSHARED_EXPORT CMetric4connect: public kipl::morphology::CMetricBase
 
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric4connect();
 };
@@ -275,7 +275,7 @@ class KIPLSHARED_EXPORT CMetric8connect: public kipl::morphology::CMetricBase
         
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
         
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric8connect();
@@ -289,7 +289,7 @@ class KIPLSHARED_EXPORT CMetric3x3w: public kipl::morphology::CMetricBase
         CMetric3x3w();
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric3x3w();
 };
@@ -302,7 +302,7 @@ class KIPLSHARED_EXPORT CMetric26conn: public kipl::morphology::CMetricBase
         CMetric26conn();
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
 	
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric26conn();
@@ -317,7 +317,7 @@ class KIPLSHARED_EXPORT CMetricSvensson: public kipl::morphology::CMetricBase
         CMetricSvensson();
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetricSvensson();
 };
@@ -331,7 +331,7 @@ class KIPLSHARED_EXPORT CMetric4connect: public kipl::morphology::CMetricBase
         
         /// \brief Initialize the metric with the target image
         /// \param d array containing the dimension lengths
-        virtual int initialize(size_t const * const d);
+        virtual int initialize(const std::vector<size_t> &d);
         /// \brief Destructor to clean the allocated memory
         virtual ~CMetric4connect();
 };

@@ -269,8 +269,8 @@ eMorphCleanMethod MorphSpotClean::cleanMethod()
 
 void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded)
 {
-    size_t dims[2]={img.Size(0)+2*m_nPadMargin, img.Size(1)+2*m_nPadMargin};
-    padded.Resize(dims);
+    std::vector<size_t> dims={img.Size(0)+2*m_nPadMargin, img.Size(1)+2*m_nPadMargin};
+    padded.resize(dims);
     padded=0.0f;
     for (size_t i=0; i<img.Size(1); ++i)
     {
@@ -376,7 +376,7 @@ kipl::base::TImage<float,2> MorphSpotClean::detectionImage(kipl::base::TImage<fl
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float,2> img)
 {
-    kipl::base::TImage<float,2> padded,noholes, detection(img.Dims());
+    kipl::base::TImage<float,2> padded,noholes, detection(img.dims());
 
     PadEdges(img,padded);
 
@@ -399,7 +399,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectPeaks(kipl::base::TImage<float,2> img)
 {
-    kipl::base::TImage<float,2> padded, nopeaks, detection(img.Dims());
+    kipl::base::TImage<float,2> padded, nopeaks, detection(img.dims());
 
     PadEdges(img,padded);
 
@@ -423,7 +423,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectPeaks(kipl::base::TImage<float
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectBoth(kipl::base::TImage<float,2> img)
 {
-    kipl::base::TImage<float,2> padded,noholes,nopeaks, detection(img.Dims());
+    kipl::base::TImage<float,2> padded,noholes,nopeaks, detection(img.dims());
 
     PadEdges(img,padded);
 

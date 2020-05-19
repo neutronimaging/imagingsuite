@@ -36,7 +36,7 @@ kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3>
                                                      eAverageMethod method,
                                                      std::vector<float> weights)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
     kipl::base::TImage<float,3> wimg;
     if (!weights.empty()) {
         wimg=WeightImages(img,weights);
@@ -80,7 +80,7 @@ kipl::base::TImage<float,3> AverageImage::WeightImages(kipl::base::TImage<float,
 
 kipl::base::TImage<float,2> AverageImage::ComputeSum(kipl::base::TImage<float,3> &img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     res=0.0f;
 
@@ -108,7 +108,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeAverage(kipl::base::TImage<floa
 
 kipl::base::TImage<float,2> AverageImage::ComputeMedian(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
     size_t N=img.Size(2);
     size_t M=res.Size();
     float * buffer = new float[N];
@@ -124,10 +124,10 @@ kipl::base::TImage<float,2> AverageImage::ComputeMedian(kipl::base::TImage<float
 
 kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
-    kipl::base::TImage<float,2> tmp(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
+    kipl::base::TImage<float,2> tmp(img.dims());
 
-    kipl::base::TImage<float,3> weights(img.Dims());
+    kipl::base::TImage<float,3> weights(img.dims());
     kipl::filters::StdDevFilter stddev;
 
     float *pRes=nullptr;
@@ -173,7 +173,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TIm
 
 kipl::base::TImage<float,2> AverageImage::ComputeMin(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     const size_t N=res.Size();
     const size_t M=img.Size(2);
@@ -193,7 +193,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeMin(kipl::base::TImage<float,3>
 
 kipl::base::TImage<float,2> AverageImage::ComputeMax(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     memcpy(res.GetDataPtr(),img.GetDataPtr(),res.Size()*sizeof(float));
 

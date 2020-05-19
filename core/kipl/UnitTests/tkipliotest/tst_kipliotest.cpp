@@ -85,13 +85,11 @@ void kiplIOTest::testSEQHeader()
 
    kipl::io::GetViVaSEQHeader("/Users/kaestner/Desktop/Video1.seq",&header);
 
-   size_t dims[2]={0,0};
-   int numframes=0;
-   numframes=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims);
+   auto dims=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq");
 
    QVERIFY(dims[0]==header.imageWidth);
    QVERIFY(dims[1]==header.imageHeight);
-   QVERIFY(numframes==static_cast<int>(header.numberOfFrames));
+   QVERIFY(dims[2]==header.numberOfFrames);
 }
 
 void kiplIOTest::testSEQRead()

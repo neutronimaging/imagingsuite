@@ -3,6 +3,7 @@
 
 #include "../../base/timage.h"
 #include "../../base/roi.h"
+#include "../statistics.h"
 
 namespace kipl {
 namespace math {
@@ -11,7 +12,7 @@ template <typename T, size_t N>
 Statistics imageStatistics(kipl::base::TImage<T,N> &img, kipl::base::RectROI &roi)
 {
     Statistics stats;
-    const size_t *imgDims=img.Dims();
+    auto imgDims=img.dims();
     size_t roiDims[4];
     size_t last = (N==3) ? imgDims[2] : 1;
 

@@ -81,9 +81,9 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 //                 -10.0f/16.0f,0.0f,10.0f/16.0f,
 //                 -3.0f/16.0f,0,3.0f/16.0f};
 
-        size_t fdim[2]={3,1};
+        std::vector<size_t> fdim={3,1};
 
-        float diff[9]={-1.0f/2.0,0.0f,1.0f/2.0f};
+        std::vector<float> diff={-1.0f/2.0,0.0f,1.0f/2.0f};
 
         kipl::filters::TFilter<float,2> filt(diff,fdim);
 
@@ -91,7 +91,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
         float *profile=new float[N];
 
 
-        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.Dims(), profile, true);
+        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.dims(), profile, true);
 
         kipl::math::Statistics stats;
         for (int i=0; i<N; ++i) {

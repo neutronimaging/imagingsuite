@@ -12,8 +12,6 @@
 #include <strings/miscstring.h>
 #include <math/compleximage.h>
 #include <base/imagecast.h>
-#include <io/io_matlab.h>
-#include <visualization/GNUPlot.h>
 
 #include <vector>
 #include <sstream>
@@ -180,7 +178,7 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,3> & img)
         if ((img.Size(0) != nImageSize) || bParametersChanged)
             buildFilter(img.Size(0));
 
-        kipl::base::TImage<float,2> proj(img.Dims());
+        kipl::base::TImage<float,2> proj(img.dims());
 
         for (size_t i=0; (i<img.Size(2)) && (updateStatus(float(i)/img.Size(2),"ProjectionFilter")==false); ++i)
         {
@@ -351,7 +349,7 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 
     const size_t cnFilterLength=mFilter.size();
     const size_t cnLoopCnt=nFFTsize/2;
-    kipl::base::TImage<complex<float>,1> ft1Dimg(&nFFTsize);
+    kipl::base::TImage<complex<float>,1> ft1Dimg({nFFTsize});
 
   //  float *pFilter=mFilter.GetDataPtr();
     complex<float> *pFTLine=ft1Dimg.GetDataPtr();
@@ -407,7 +405,7 @@ void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
 {
     nInsert=(nFilter/2)-(nImage/2);
 
-    mPadData.Resize(&nInsert);
+    mPadData.resize({nInsert});
 
     for (size_t i=0; i<nInsert; i++)
     {

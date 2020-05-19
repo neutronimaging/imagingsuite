@@ -16,7 +16,7 @@
 namespace kipl { namespace filters {
 
 template <class T, size_t nDims>
-TMedianFilter<T,nDims>::TMedianFilter(size_t const * const Dims) : kipl::filters::TFilterBase<T,nDims>(Dims)
+TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) : kipl::filters::TFilterBase<T,nDims>(dims)
 {
 //	if (nDims!=2)
 //		throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
@@ -24,14 +24,14 @@ TMedianFilter<T,nDims>::TMedianFilter(size_t const * const Dims) : kipl::filters
 	quick_median=true;
 	
 	for (size_t i=0; i<nDims; i++)
-		nHalfKernel[i]=Dims[i]>>1;
+        nHalfKernel[i]=dims[i]>>1;
 }
 
 /// Implements a median filter
 template <class T, size_t nDims>
 kipl::base::TImage<T,nDims> TMedianFilter<T,nDims>::operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle)
 {
-	kipl::base::TImage<T,nDims> result(src.Dims());
+    kipl::base::TImage<T,nDims> result(src.dims());
 		
 	//QuickMedianFilter(src, result, edgeStyle);
 	HeapSortMedianFilter(src, result, edgeStyle);
@@ -340,9 +340,9 @@ void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDim
 }
 
 template <typename T, size_t N>
-TWeightedMedianFilter<T,N>::TWeightedMedianFilter(size_t const * const Dims, int *weights) :
-	TMedianFilter<T,N>(Dims),
-	m_nWeights(NULL),
+TWeightedMedianFilter<T,N>::TWeightedMedianFilter(const std::vector<size_t> &dims, const std::vector<int> &weights) :
+    TMedianFilter<T,N>(dims),
+    m_nWeights(weights),
 	m_nBufferLength(0)
 {
 		this->m_nWeights=new int[this->nKernel];

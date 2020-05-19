@@ -207,7 +207,7 @@ float TomoCenter::CorrelationCenter()
 
     size_t len=limg0.Size(0)/3;
 
-    size_t dims[2]={len*2,limg0.Size(1)};
+    std::vector<size_t> dims={len*2,limg0.Size(1)};
     kipl::base::TImage<float,2> corrimg(dims);
 
     for (size_t y=0; y<limg0.Size(1); y++) {
@@ -267,7 +267,7 @@ float TomoCenter::LeastSquareCenter()
 
     size_t len=limg0.Size(0)/3;
 
-    size_t dims[2]={len*2,limg0.Size(1)};
+    std::vector<size_t> dims={len*2,limg0.Size(1)};
     kipl::base::TImage<float,2> corrimg(dims);
     float diff=0.0f;
     for (size_t y=0; y<limg0.Size(1); y++)

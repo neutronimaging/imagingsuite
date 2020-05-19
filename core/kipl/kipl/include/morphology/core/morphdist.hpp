@@ -338,7 +338,7 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     msg<<"using metric "<<metric.getName();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    auto dims=img.Dims();
+    auto dims=img.dims();
 
     dist.resize(dims);
 
@@ -405,8 +405,8 @@ int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
         kipl::base::TImage<DistType,2> &dist, CMetricBase &metric)
 {
     int x,y;
-    size_t const * const dims=img.Dims();
-    dist.Resize(dims);
+    auto dims=img.dims();
+    dist.resize(dims);
 
     ImgType *pImg;
     DistType *pDist;

@@ -102,22 +102,22 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
 kipl::base::TImage<float, 2> ProfileExtractor::diffEdge(kipl::base::TImage<float, 2> &img)
 {
 
-    float kx[9]={-3,0,3,
-                -10,0,10,
-                -3,0,3};
-    size_t dims[2]={3,3};
+    std::vector<float> kx={-3.0f,0.0f,3.0f,
+                -10.0f,0.0f,10.0f,
+                -3.0f,0.0f,3.0f};
+    std::vector<size_t> dims={3,3};
     kipl::filters::TFilter<float,2> dx(kx,dims);
 
-    float ky[9]={-3,-10,-3,
-                0,0,0,
-                3,10,3};
+    std::vector<float> ky={-3.0f,-10.0f,-3.0f,
+                            0.0f,  0.0f, 0.0f,
+                            3.0f, 10.0f, 3.0f};
 
     kipl::filters::TFilter<float,2> dy(ky,dims);
 
     auto dximg=dx(img,kipl::filters::FilterBase::EdgeMirror);
     auto dyimg=dy(img,kipl::filters::FilterBase::EdgeMirror);
 
-    kipl::base::TImage<float,2> absgrad(img.Dims());
+    kipl::base::TImage<float,2> absgrad(img.dims());
 
     float *pA=absgrad.GetDataPtr();
     float *pX=dximg.GetDataPtr();

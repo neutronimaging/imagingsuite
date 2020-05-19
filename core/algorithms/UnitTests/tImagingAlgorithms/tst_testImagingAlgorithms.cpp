@@ -63,8 +63,8 @@ private:
 
 TestImagingAlgorithms::TestImagingAlgorithms()
 {
-    size_t dims[2]={7,7};
-    holes.Resize(dims);
+    std::vector<size_t> dims={7,7};
+    holes.resize(dims);
 
     for (size_t i=0; i<holes.Size(); i++) {
         holes[i]=i/10.0f;
@@ -254,7 +254,7 @@ void TestImagingAlgorithms::AverageImage_Processing()
 {
     ImagingAlgorithms::AverageImage avg;
 
-    size_t dims[3]={11,11,5};
+    std::vector<size_t> dims={11,11,5};
 
     kipl::base::TImage<float,3> stack(dims);
     kipl::base::TImage<float,2> res(dims);
@@ -296,7 +296,7 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 {
     ImagingAlgorithms::AverageImage avg;
 
-    size_t dims[3]={11,11,5};
+    std::vector<size_t> dims={11,11,5};
 
     kipl::base::TImage<float,3> stack(dims);
     kipl::base::TImage<float,2> res(dims);
@@ -337,7 +337,7 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
 void TestImagingAlgorithms::PiercingPoint_Processing()
 {
-    size_t dims[2]={386,256};
+    std::vector<size_t> dims={386,256};
     kipl::base::TImage<float,2> img(dims);
 
     float a =  80800.0f; //220*220+180*180;
@@ -500,9 +500,9 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 {
     kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-    kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,"../../TestData/2D/tiff/woodsino_0200.tif");
 #else
-    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,"../TestData/2D/tiff/woodsino_0200.tif");
 #endif
 
     ImagingAlgorithms::ProjectionFilter pf(nullptr);
@@ -519,11 +519,11 @@ void TestImagingAlgorithms::StripeFilterParameters()
 {
    kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-   kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+   kipl::io::ReadTIFF(sino,"../../TestData/2D/tiff/woodsino_0200.tif");
 #else
-   kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+   kipl::io::ReadTIFF(sino,"../TestData/2D/tiff/woodsino_0200.tif");
 #endif
-   ImagingAlgorithms::StripeFilter sf(sino.Dims(),"daub17",4,0.21f);
+   ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
    QCOMPARE(static_cast<size_t>(sf.dims()[0]),sino.Size(0));
    QCOMPARE(static_cast<size_t>(sf.dims()[1]),sino.Size(1));
    QCOMPARE(sf.sigma(),0.21f);
@@ -564,7 +564,7 @@ void TestImagingAlgorithms::StripeFilterProcessing2D()
 #else
     kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
 #endif
-    ImagingAlgorithms::StripeFilter sf(sino.Dims(),"daub17",4,0.21f);
+    ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
 
     sf.process(sino);
 

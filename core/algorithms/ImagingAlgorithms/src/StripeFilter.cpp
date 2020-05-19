@@ -16,7 +16,7 @@
 namespace ImagingAlgorithms {
 
 
-StripeFilter::StripeFilter(size_t const * const dims, const string &wname, int scale, float sigma) :
+StripeFilter::StripeFilter(const std::vector<size_t> &dims, const string &wname, int scale, float sigma) :
 	logger("StripeFilter"),
 	m_wt(wname),
     m_pLine(nullptr),

@@ -57,7 +57,7 @@ void BallAssemblyAnalysis::createLabelledMask(kipl::base::TImage<float,3> &img)
     int idx=kipl::segmentation::Threshold_Otsu(hist,nBins);
 
     float threshold=axis[idx];
-    mask.Resize(img.Dims());
+    mask.resize(img.dims());
 
     kipl::segmentation::Threshold(img.GetDataPtr(),mask.GetDataPtr(),img.Size(),threshold);
     kipl::base::setMarginValue(mask,3,0.0f);
@@ -75,7 +75,7 @@ void BallAssemblyAnalysis::createLabelledMask(kipl::base::TImage<float,3> &img)
 //    mask=dilate(tmp,kipl::filters::FilterBase::EdgeValid);
 //    logger(logger.LogMessage,"Morph opening to remove small miss classified pixels");
     kipl::morphology::CMetric26conn metric;
-    metric.initialize(mask.Dims());
+    metric.initialize(mask.dims());
     kipl::morphology::DistanceTransform3D(mask,tmp,metric,true);
 
     kipl::segmentation::Threshold(tmp.GetDataPtr(),mask.GetDataPtr(),tmp.Size(),strelRadius,kipl::segmentation::cmp_less);

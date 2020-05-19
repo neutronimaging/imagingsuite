@@ -284,7 +284,7 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 
 void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *dose)
 {
-	kipl::base::TImage<float, 2> slice(img.Dims());
+    kipl::base::TImage<float, 2> slice(img.dims());
 
 
     for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
@@ -332,7 +332,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
         if (m_bHaveExternalBlackBody){
 
-            m_BB_slice_ext.Resize(m_OB_BB_ext.Dims());
+            m_BB_slice_ext.resize(m_OB_BB_ext.dims());
 
             if (bExtSingleFile)
             {
@@ -367,7 +367,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     // 2.a compute histogram
 
 
-    kipl::base::TImage<float,2> norm(img.Dims());
+    kipl::base::TImage<float,2> norm(img.dims());
     memcpy(norm.GetDataPtr(), img.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
 
     std::vector<pair<float, size_t>> histo;
@@ -402,8 +402,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
     //2.c threshold image
 
-    kipl::base::TImage<float,2> maskOtsu(mask.Dims());
-    kipl::base::TImage<int,2> labelImage(mask.Dims());
+    kipl::base::TImage<float,2> maskOtsu(mask.dims());
+    kipl::base::TImage<int,2> labelImage(mask.dims());
 
  // now it works:
 //    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
@@ -423,7 +423,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
   // here: fillPeaks, as at this point the BBs are black in the binary mask
 
 //    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
-    kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
+    kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
 
     try {
         maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
@@ -511,8 +511,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         float *hor_profile = new float[maskOtsuFilled.Size(0)];
 
 
-        kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), vert_profile, true); // sum of rows
-        kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), hor_profile, true); // sum of columns
+        kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
+        kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
 
 
         //3.b create binary Signal
@@ -608,7 +608,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
           for (size_t bb_index=0; bb_index<pos; bb_index++){
 
-              const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+              std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                              size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
 
               kipl::base::TImage<float,2> roi(roi_dim);
               kipl::base::TImage<float,2> roi_im(roi_dim);
@@ -689,7 +690,7 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 {
     // 3. Compute mask within Otsu
     // 3.a sum of rows and columns and location of rois
-    kipl::base::TImage<float,2> maskOtsu(img.Dims());
+    kipl::base::TImage<float,2> maskOtsu(img.dims());
     maskOtsu= 0.0f;
 
     std::map<std::pair<int, int>, float> new_values;
@@ -705,13 +706,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
     float *vert_profile = new float[maskOtsu.Size(1)];
     float *hor_profile = new float[maskOtsu.Size(0)];
 
-
-//    kipl::io::WriteTIFF32(mask, "mask.tif");
-//    kipl::io::WriteTIFF32(img, "img.tif"); // they are correct
-//    kipl::io::WriteTIFF32(maskOtsu, "maskOtsu.tif");
-
-    kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), vert_profile, true); // sum of rows
-    kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.Dims(), hor_profile, true); // sum of columns
+    kipl::base::VerticalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.dims(), vert_profile, true); // sum of rows
+    kipl::base::HorizontalProjection2D(maskOtsu.GetDataPtr(), maskOtsu.dims(), hor_profile, true); // sum of columns
 
 
     //3.b create binary Signal
@@ -810,7 +806,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 //          msg.str(""); msg<<"bb_index= "<<bb_index;
 //          logger(kipl::logging::Logger::LogMessage,msg.str());
 
-          const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+          std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                          size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
           kipl::base::TImage<float,2> roi(roi_dim);
           kipl::base::TImage<float,2> roi_im(roi_dim);
 
@@ -930,7 +927,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
 {
     // 2. otsu threshold
     // 2.a compute histogram
-    kipl::base::TImage<float,2> norm(normimg.Dims());
+    kipl::base::TImage<float,2> norm(normimg.dims());
     memcpy(norm.GetDataPtr(), normimg.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
 
     std::vector<pair<float, size_t>> histo;
@@ -964,8 +961,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
 
     //2.c threshold image
 
-    kipl::base::TImage<float,2> maskOtsu(mask.Dims());
-    kipl::base::TImage<int,2> labelImage(mask.Dims());
+    kipl::base::TImage<float,2> maskOtsu(mask.dims());
+    kipl::base::TImage<int,2> labelImage(mask.dims());
 
  // now it works:
 //    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
@@ -982,7 +979,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
         }
     }
 
-    kipl::base::TImage<float,2> maskOtsuFilled(mask.Dims());
+    kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
     maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
 
     float bg = 1.0f;
@@ -1023,8 +1020,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
             float *hor_profile = new float[maskOtsuFilled.Size(0)];
 
 
-            kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), vert_profile, true); // sum of rows
-            kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.Dims(), hor_profile, true); // sum of columns
+            kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
+            kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
 
 
             //3.b create binary Signal
@@ -1117,7 +1114,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
 
               for (size_t bb_index=0; bb_index<pos; bb_index++){
 
-                  const size_t roi_dim[2] = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second), size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+                  std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                                  size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
                   kipl::base::TImage<float,2> roi(roi_dim);
                   kipl::base::TImage<float,2> roi_im(roi_dim);
 
@@ -1653,7 +1651,7 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagew
     size_t dimy = roi[3]-roi[1];
 
 
-    size_t dims[2] = {dimx,dimy};
+    std::vector<size_t> dims = {dimx,dimy};
     kipl::base::TImage <float,2> interpolated_img(dims);
     interpolated_img = 0.0f;
 
@@ -1695,7 +1693,7 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(
     size_t dimx = roi[2]-roi[0];
     size_t dimy = roi[3]-roi[1];
 
-    size_t dims[2] = {dimx,dimy};
+    std::vector<size_t> dims = {dimx,dimy};
     kipl::base::TImage <float,2> interpolated_img(dims);
     interpolated_img = 0.0f;
 
@@ -1733,8 +1731,8 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
     // 1. normalize image
 
-    kipl::base::TImage<float, 2> norm(bb.Dims());
-    kipl::base::TImage<float, 2> normdc(bb.Dims());
+    kipl::base::TImage<float, 2> norm(bb.dims());
+    kipl::base::TImage<float, 2> normdc(bb.dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
     memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
@@ -1742,11 +1740,6 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
     norm -=dark;
     norm /= (flat-=dark);
-
-//    std::map<std::pair<int, int>, float> values;
-//    kipl::io::WriteTIFF32(norm,"normBB.tif");
-//    kipl::io::WriteTIFF32(bb,"BB.tif");
-//    kipl::io::WriteTIFF32(flat,"openBB.tif");
 
     try{
         SegmentBlackBody(norm, mask);
@@ -1758,11 +1751,11 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
 //    kipl::io::WriteTIFF32(mask,"mask.tif");
 
-    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
 
-    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
+    kipl::base::TImage<float, 2> interpolated_BB(bb.dims());
     interpolated_BB = 0.0f;
 
     float * param = new float[6];
@@ -1775,11 +1768,8 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
 {
     // 1. normalize image
-
-
-
-    kipl::base::TImage<float, 2> norm(bb.Dims());
-    kipl::base::TImage<float, 2> normdc(bb.Dims());
+    kipl::base::TImage<float, 2> norm(bb.dims());
+    kipl::base::TImage<float, 2> normdc(bb.dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
     memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
@@ -1806,7 +1796,7 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TI
 float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
 {
 
-    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
     ComputeBlackBodyCentroids(BB_DC,mask, values);
@@ -1823,8 +1813,8 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
     // 1. normalize image
 
-    kipl::base::TImage<float, 2> norm(bb.Dims());
-    kipl::base::TImage<float, 2> normdc(bb.Dims());
+    kipl::base::TImage<float, 2> norm(bb.dims());
+    kipl::base::TImage<float, 2> normdc(bb.dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
     memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
@@ -1842,11 +1832,11 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     }
 
 
-    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
 
-    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
+    kipl::base::TImage<float, 2> interpolated_BB(bb.dims());
     interpolated_BB = 0.0f;
 
     float * param = new float[6];
@@ -1862,7 +1852,7 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
 float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask){
 
-    kipl::base::TImage<float,2> BB_DC(bb.Dims());
+    kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
 
@@ -2892,8 +2882,8 @@ float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
 void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s)
 {
-    m_OB_BB_ext.Resize(bb_ext.Dims());
-    m_BB_slice_ext.Resize(bb_sample_ext.Dims());
+    m_OB_BB_ext.resize(bb_ext.dims());
+    m_BB_slice_ext.resize(bb_sample_ext.dims());
     memcpy(m_OB_BB_ext.GetDataPtr(), bb_ext.GetDataPtr(), sizeof(float)*bb_ext.Size());
     memcpy(m_BB_slice_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
     fdoseOB_ext = dose;
@@ -2903,15 +2893,10 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
 
 void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist){
 
-    m_OB_BB_ext.Resize(bb_ext.Dims());
-    m_BB_sample_ext.Resize(bb_sample_ext.Dims());
+    m_OB_BB_ext.resize(bb_ext.dims());
+    m_BB_sample_ext.resize(bb_sample_ext.dims());
     memcpy(m_OB_BB_ext.GetDataPtr(), bb_ext.GetDataPtr(), sizeof(float)*bb_ext.Size());
     memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
-
-//    kipl::io::WriteTIFF32(m_OB_BB_ext,"m_OB_BB_ext.tif");
-//    kipl::base::TImage<float,2> slice(m_OB_BB_ext.Dims());
-//    memcpy(slice.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,0), sizeof(float)*bb_ext.Size());
-//    kipl::io::WriteTIFF32(slice,"slice.tif");
 
     fdoseOB_ext = dose;
     fdose_ext_list = new float[bb_sample_ext.Size(2)];

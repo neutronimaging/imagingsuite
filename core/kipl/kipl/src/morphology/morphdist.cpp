@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <cfloat>
-
+#include <numeric>
 #include "../../include/base/timage.h"
 //#include "image/imagemath.h"
 #include "../../include/morphology/morphdist.h"
@@ -178,11 +178,10 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 		return index_start;
 	}
 
-	int CMetricBase::initialize(size_t const * const d)
+    int CMetricBase::initialize(const std::vector<size_t> & d)
 	{
-		memcpy(dims,d,sizeof(int)*3);
-		ndata=d[0];
-		for (int i=1; i<NDim; i++) ndata*=d[i];
+        dims=d;
+        ndata=std::accumulate(dims.begin(),dims.end(),1UL,std::multiplies<size_t>());
 
 		return 0;
 	}
@@ -220,7 +219,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
 
       }
-      int CMetric26conn::initialize(size_t const * const dim)
+      int CMetric26conn::initialize(const std::vector<size_t> & dim)
       {
           CMetricBase::initialize(dim);
 
@@ -258,7 +257,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
       }
 
-      int CMetricSvensson::initialize(size_t const * const dim)
+      int CMetricSvensson::initialize(const std::vector<size_t> &dim)
       {
           CMetricBase::initialize(dim);
 
@@ -320,7 +319,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
 	}
 
-	int CMetric4connect::initialize(size_t const * const d)
+    int CMetric4connect::initialize(const std::vector<size_t> & d)
 	{
 		CMetricBase::initialize(d);
 		float w[3]={0.0f,1.0f,1.0f};
@@ -344,7 +343,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
 	}
 
-	int CMetric8connect::initialize(size_t const * const d)
+    int CMetric8connect::initialize(const std::vector<size_t> & d)
 	{
 		CMetricBase::initialize(d);
 		float w[5]={0.0f,1.0f,1.0f,1.0f,1.0f};
@@ -368,7 +367,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 
 	}
 
-	int CMetric3x3w::initialize(size_t const * const d)
+    int CMetric3x3w::initialize(const std::vector<size_t> & d)
 	{
 		CMetricBase::initialize(d);
 		float w[5]={0.0f,1.0f,1.0f,sqrt(2.0f),sqrt(2.0f)};
@@ -482,7 +481,7 @@ int CMetricBase::initialize(size_t const * const d)
 
 
   }
-  int CMetric26conn::initialize(size_t const * const dim)
+  int CMetric26conn::initialize(const std::vector<size_t> & dim)
   {
       CMetricBase::initialize(dim);
 
@@ -520,7 +519,7 @@ int CMetricBase::initialize(size_t const * const d)
 
   }
 
-  int CMetricSvensson::initialize(size_t const * const dim)
+  int CMetricSvensson::initialize(const std::vector<size_t> & dim)
   {
       CMetricBase::initialize(dim);
 
@@ -582,7 +581,7 @@ CMetric4connect::CMetric4connect() :
 
 }
 
-int CMetric4connect::initialize(size_t const * const d)
+int CMetric4connect::initialize(const std::vector<size_t> & d)
 {
     CMetricBase::initialize(d);
     float w[3]={0.0f,1.0f,1.0f};
@@ -606,7 +605,7 @@ CMetric8connect::CMetric8connect() :
 
 }
 
-int CMetric8connect::initialize(size_t const * const d)
+int CMetric8connect::initialize(const std::vector<size_t> & d)
 {
     CMetricBase::initialize(d);
     float w[5]={0.0f,1.0f,1.0f,1.0f,1.0f};
@@ -630,7 +629,7 @@ CMetric3x3w::CMetric3x3w() :
 
 }
 
-int CMetric3x3w::initialize(size_t const * const d)
+int CMetric3x3w::initialize(const std::vector<size_t> & d)
 {
     CMetricBase::initialize(d);
     float w[5]={0.0f,1.0f,1.0f,sqrt(2.0f),sqrt(2.0f)};

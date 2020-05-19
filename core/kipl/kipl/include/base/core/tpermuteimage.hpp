@@ -6,6 +6,8 @@
 #include "../timage.h"
 #include "../kiplenums.h"
 #include "../KiplException.h"
+#include "../tpermuteimage.h"
+
 namespace kipl { namespace base {
  
 template <typename T, size_t N>
@@ -19,7 +21,7 @@ TImage<T,N> Mirror(TImage<T,N> img, eImageAxes axis)
 	const size_t SizeY=img.Size(1);
 //	const size_t SizeZ=N<3 ? 1 : img.Size(2);
 	
-	TImage<T,N> result(img.Dims());
+    TImage<T,N> result(img.dims());
 	
 	if (axis==kipl::base::ImageAxisX) {
 		const size_t SizeXm1=SizeX-1; 

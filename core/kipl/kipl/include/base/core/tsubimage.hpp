@@ -10,9 +10,9 @@
 namespace kipl { namespace base {
 
 template <typename T, size_t NDims>
-TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const *const nStart, size_t const *const nLength)
+TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, const std::vector<size_t> & nStart, const std::vector<size_t> & nLength)
 {
-	size_t const * const dims=src.Dims();
+    auto dims=src.dims();
 	
 //	for (size_t i=0 ; i<NDims; i++)
 //		if (dims[i]<nStart[i]+nLength[i])
