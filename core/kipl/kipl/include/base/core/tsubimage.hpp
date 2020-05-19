@@ -5,6 +5,7 @@
 
 #include "../timage.h"
 #include "../KiplException.h"
+#include "../tsubimage.h"
 
 namespace kipl { namespace base {
 
@@ -61,7 +62,7 @@ TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const 
 template <typename T, size_t NDims>
 TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const * const roi, bool includeCoord)
 {
-    size_t dims[NDims];
+    std::vector<size_t> dims(NDims);
     size_t plusOne=includeCoord ? 1 : 0;
     switch (NDims){
     case 1 :

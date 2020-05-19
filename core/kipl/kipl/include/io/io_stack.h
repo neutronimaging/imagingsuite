@@ -176,7 +176,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 			WriteTIFF(tmp,filename.c_str(),lo,hi);
 			break;
 		case TIFFfloat :
-			ftmp.Resize(tmp.Dims());
+            ftmp.resize(tmp.dims());
 			for (size_t i=0; i<tmp.Size(); i++) 
 				ftmp[i]=tmp[i];
 			WriteTIFF32(ftmp,filename.c_str());

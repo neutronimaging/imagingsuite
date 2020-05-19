@@ -24,7 +24,7 @@ void TNoiseImageTest::testGauss()
 {
     QVERIFY2(true, "Failure");
 
-    size_t dims[2]={1000,1000};
+    std::vector<size_t> dims={1000,1000};
 
     kipl::base::TImage<float,2> img(dims);
 

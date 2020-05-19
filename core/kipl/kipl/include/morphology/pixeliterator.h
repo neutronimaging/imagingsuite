@@ -18,7 +18,7 @@ class KIPLSHARED_EXPORT PixelIterator
     kipl::logging::Logger logger;
 public:
     /// \brief Initializes the iterator
-    PixelIterator(const size_t *dims, kipl::base::eConnectivity conn=kipl::base::conn8);
+    PixelIterator(const std::vector<size_t> & dims, kipl::base::eConnectivity conn=kipl::base::conn8);
 
     /// \brief Copy constructor
     /// \param pi the iterator to copy

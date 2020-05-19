@@ -112,7 +112,7 @@ template <class ImgType,size_t N>
 int WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname)
 {
 	TIFF *image;
-    kipl::base::TImage<unsigned short,2> tmp(src.Dims());
+    kipl::base::TImage<unsigned short,2> tmp(src.dims());
 	std::stringstream msg;
 		
 	// Open the TIFF file
@@ -216,7 +216,7 @@ int WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgTyp
 template <class ImgType, size_t N>
 int AppendTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname) {
     TIFF *image;
-    kipl::base::TImage<unsigned short,2> tmp(src.Dims());
+    kipl::base::TImage<unsigned short,2> tmp(src.dims());
     std::stringstream msg;
 
     // Open the TIFF file
@@ -434,8 +434,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 	}
 
 	TIFFClose(image);
-	size_t dims[]={static_cast<size_t>(dimx), static_cast<size_t>(dimy)};
-	src.Resize(dims);
+    std::vector<size_t> dims={static_cast<size_t>(dimx), static_cast<size_t>(dimy)};
+    src.resize(dims);
 
 	const size_t cnSize=src.Size();
 	switch (bps) {
@@ -550,7 +550,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, size_t
 	if ((adjcrop[2]-adjcrop[0])==0) kipl::base::KiplException("Failed to crop image in X",__FILE__,__LINE__);
 	if ((adjcrop[3]-adjcrop[1])==0) kipl::base::KiplException("Failed to crop image in Y",__FILE__,__LINE__);
 	
-    size_t imgdims[2]={static_cast<size_t>(adjcrop[2]-adjcrop[0]),static_cast<size_t>(adjcrop[3]-adjcrop[1])};
+    std::vector<size_t> imgdims={static_cast<size_t>(adjcrop[2]-adjcrop[0]),
+                                 static_cast<size_t>(adjcrop[3]-adjcrop[1])};
 
 	bufferSize = TIFFScanlineSize(image);
 	try {
@@ -569,7 +570,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, size_t
 		throw E;
 	}
 
-	src.Resize(imgdims);
+    src.resize(imgdims);
 	for (int row=adjcrop[1]; row<adjcrop[3]; row++) {
         if (TIFFReadScanline(image,static_cast<tdata_t>(buffer), row, 0)!=1) {
 			msg.str("");
@@ -699,13 +700,10 @@ template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, size_t const * const crop=nullptr)
 {
     std::ostringstream msg;
-    size_t dims[3];
-    int nframes=GetTIFFDims(fname.c_str(),dims);
-
-    dims[2]=static_cast<size_t>(nframes);
+    std::vector<size_t> dims=GetTIFFDims(fname.c_str());
 
     try {
-        src.Resize(dims);
+        src.resize(dims);
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -724,7 +722,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, size_
     }
     kipl::base::TImage<float,2> img;
     int res=0;
-    for (size_t i=0; i< static_cast<size_t>(nframes); ++i) {
+    for (size_t i=0; i< dims[2]; ++i) {
         res=ReadTIFF(img,fname,crop,i);
         std::copy_n(img.GetDataPtr(),img.Size(),src.GetLinePtr(0,i));
     }

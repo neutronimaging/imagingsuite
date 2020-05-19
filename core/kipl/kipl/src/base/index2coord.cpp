@@ -5,7 +5,7 @@
 #include "../../include/base/index2coord.h"
 
 namespace kipl { namespace base {
-	Index2Coordinates::Index2Coordinates(size_t const * const dims, size_t N)
+    Index2Coordinates::Index2Coordinates(const std::vector<size_t> &dims, size_t N)
 	{
 		nSX=dims[0];
 		dInvSX=1.0/static_cast<double>(nSX);

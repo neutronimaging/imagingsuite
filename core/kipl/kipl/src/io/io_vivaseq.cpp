@@ -71,11 +71,11 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t cons
 
 
     if (roi == nullptr) {
-        size_t dims[3]={static_cast<size_t>(header.imageWidth),
+        std::vector<size_t> dims={static_cast<size_t>(header.imageWidth),
                         static_cast<size_t>(header.imageHeight),
                         static_cast<size_t>((last-first)/frame_step)};
 
-        img.Resize(dims);
+        img.resize(dims);
 
         char * buffer = new char[framesize];
         unsigned short *sbuffer = reinterpret_cast<unsigned short *>(buffer);
@@ -88,11 +88,11 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t cons
         delete [] buffer;
     }
     else {
-        size_t dims[3]={roi[2]-roi[0],
+        std::vector<size_t> dims={roi[2]-roi[0],
                         roi[3]-roi[0],
                         static_cast<size_t>((last-first)/frame_step)};
 
-        img.Resize(dims);
+        img.resize(dims);
 
         const size_t buffersize = img.Size(0) * header.bytesPerPixel;
         char * buffer = new char[buffersize];
@@ -137,8 +137,8 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, si
     unsigned short *sbuffer = reinterpret_cast<unsigned short *>(buffer);
 
     if (roi == nullptr) {
-        size_t dims[2]={header.imageWidth,header.imageHeight};
-        img.Resize(dims);
+        std::vector<size_t> dims={header.imageWidth,header.imageHeight};
+        img.resize(dims);
 
         file.seekg(static_cast<size_t>(idx)*framesize+header.headerSize,ios_base::beg);
         file.read(buffer,framesize);
@@ -147,8 +147,8 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, si
         std::copy(sbuffer,sbuffer+img.Size(),img.GetDataPtr());
     }
     else {
-        size_t dims[2]={roi[2]-roi[0],roi[3]-roi[0]};
-        img.Resize(dims);
+        std::vector<size_t> dims={roi[2]-roi[0],roi[3]-roi[0]};
+        img.resize(dims);
 
         for (size_t j=roi[1]; j<roi[3]; ++j ) {
             file.seekg(header.headerSize+                               // header offset
@@ -192,11 +192,11 @@ int WriteViVaSEQ(std::string fname, kipl::base::TImage<float,3> & img, float low
     }
 
     file.write(reinterpret_cast<char *>(&header), sizeof(ViVaSEQHeader));
-    kipl::base::TImage<unsigned short,2> tmp(img.Dims());
+    kipl::base::TImage<unsigned short,2> tmp(img.dims());
     char *pTmp = reinterpret_cast<char *>(tmp.GetDataPtr());
-    for (int i=0 ; i<img.Size(2); ++i) {
+    for (size_t i=0 ; i<img.Size(2); ++i) {
         float *pImg = img.GetLinePtr(0,i);
-        for (int j = 0; j<tmp.Size(); ++j) {
+        for (size_t j = 0; j<tmp.Size(); ++j) {
             if ((low<=pImg[j]) && (pImg[j]<=high))
                 tmp[j]=static_cast<unsigned short>((pImg[j]-intercept)*slope);
             else

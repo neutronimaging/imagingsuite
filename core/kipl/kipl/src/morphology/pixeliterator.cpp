@@ -14,9 +14,9 @@
 namespace kipl {
 namespace base {
 
-PixelIterator::PixelIterator(const size_t *dims, kipl::base::eConnectivity conn) :
+PixelIterator::PixelIterator(const std::vector<size_t> &dims, kipl::base::eConnectivity conn) :
     logger("PixelIterator"),
-    m_imageSize(std::accumulate(dims, dims+kipl::base::getConnectivityDims(conn), 1, std::multiplies<int>())),
+    m_imageSize(std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<int>())),
     m_ndims(kipl::base::getConnectivityDims(conn)),
     m_sx(static_cast<ptrdiff_t>(dims[0])),
     m_sxy(static_cast<ptrdiff_t>(dims[0]*dims[1])),
@@ -28,9 +28,8 @@ PixelIterator::PixelIterator(const size_t *dims, kipl::base::eConnectivity conn)
     m_rowStart(0),
     m_rowEnd(m_sx-1)
 {
-    m_dims.resize(kipl::base::getConnectivityDims(conn));
-
-    std::copy_n(dims,kipl::base::getConnectivityDims(conn),m_dims.begin());
+    m_dims = std::vector<ptrdiff_t>(dims.size(),0L);
+    std::copy(dims.begin(),dims.end(),m_dims.begin());
 
     setupNeighborhoods();
     setPosition(0L);

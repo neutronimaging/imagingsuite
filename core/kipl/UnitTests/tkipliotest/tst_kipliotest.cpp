@@ -45,7 +45,7 @@ kiplIOTest::kiplIOTest()
 
 void kiplIOTest::testFITSreadwrite()
 {
-    size_t dims[2]={100,256};
+    std::vector<size_t> dims={100,256};
     kipl::base::TImage<short,2> img(dims);
     kipl::base::TImage<short,2> res;
 
@@ -124,7 +124,7 @@ void kiplIOTest::testSEQRead()
 
 void kiplIOTest::testTIFFBasicReadWrite()
 {
-    size_t dims[2]={100,50};
+    std::vector<size_t> dims={100,50};
 
     kipl::base::TImage<float,2> fimg(dims);
     fimg.info.sArtist="UnitTest";
@@ -169,7 +169,7 @@ void kiplIOTest::testTIFFMultiFrame()
         QSKIP("Test data is missing");
 
     size_t dims[3]={0,0,0};
-    int nframes=kipl::io::GetTIFFDims(fname,dims);
+    size_t nframes = kipl::io::GetTIFFDims(fname,dims);
 
     QCOMPARE(dims[0],145UL);
     QCOMPARE(dims[1],249UL);
@@ -189,8 +189,7 @@ void kiplIOTest::testTIFFMultiFrame()
 
     kipl::base::TImage<float,2> img, img_crop;
 
-    dims[2]=nframes;
-    kipl::base::TImage<float,3> img3ref(dims);
+    kipl::base::TImage<float,3> img3ref(dimsv);
     for (int i = 0 ; i<nframes; ++i) {
         kipl::io::ReadTIFF(img,fname.c_str(),nullptr,i);
         std::copy_n(img.GetDataPtr(),img.Size(),img3ref.GetLinePtr(0,i));
@@ -271,7 +270,7 @@ void kiplIOTest::testTIFFAdvancedMultiFrame()
 
 void kiplIOTest::testTIFF32()
 {
-    size_t dims[3]={100,110,120};
+    std::vector<size_t> dims={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
     kipl::base::TImage<float,3> imgref3d(dims);
@@ -313,7 +312,7 @@ void kiplIOTest::testTIFFclamp()
     QSKIP("Seems to crash");
     QWARN("Test accepts a difference of +-1");
     std::ostringstream msg;
-    size_t dims[3]={100,110,120};
+    std::vector<size_t> dims={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
     kipl::base::TImage<float,3> imgref3d(dims);

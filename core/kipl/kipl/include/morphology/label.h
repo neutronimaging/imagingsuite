@@ -33,13 +33,13 @@ namespace kipl {namespace morphology {
         list<ptrdiff_t> stack;
 		
 		ImgType *pImg=img.GetDataPtr();
-		lbl.Resize(img.Dims());
+        lbl.resize(img.dims());
 		lbl=0;
 		
 		int *pLbl=lbl.GetDataPtr();
 		
 
-        kipl::base::PixelIterator NG(img.Dims(),conn);
+        kipl::base::PixelIterator NG(img.dims(),conn);
 
         int cnt=0;
         size_t N=img.Size();
@@ -129,7 +129,7 @@ namespace kipl {namespace morphology {
         kipl::base::TImage<ImgType,NDim> tmp;
         tmp.Clone(img);
 		
-        kipl::base::PixelIterator NG(img.Dims(),conn);
+        kipl::base::PixelIterator NG(img.dims(),conn);
 
         ptrdiff_t pos,p;
 		

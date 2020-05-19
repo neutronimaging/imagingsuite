@@ -4,6 +4,7 @@
 #define __INDEX2COORD_H	
 
 #include <iostream>
+#include <vector>
 
 #include "../kipl_global.h"
 
@@ -136,7 +137,7 @@ namespace kipl { namespace base {
         /// \brief C'tor to initialize converter with image size and number of dimensions
         /// \param dims array containing the image size
         /// \param N number of dimensions
-		Index2Coordinates(size_t const * const dims, size_t N);
+        Index2Coordinates(const std::vector<size_t> & dims, size_t N);
 
         /// \brief Converts a index position to a 3D coordinate
         /// \param pos the position index

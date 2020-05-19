@@ -225,18 +225,25 @@ void  TDirAnalysisTest::testDirAnalyzer()
 
 //    std::string path="\\P08062_wood\\raw_CCD";
 
-    std::string path="/";
+    QDir dir;
+    std::string path=dir.currentPath().toStdString();
     std::vector<std::string> dirlist=di.GetDirList(path);
 
     int cnt,first,last;
 
 
-    QDir dir("/");
+
 
     QStringList qdirlist=dir.entryList(QDir::AllEntries | QDir::Hidden);
+    std::sort(qdirlist.begin(),qdirlist.end());
     std::ostringstream msg;
     msg<<"di size="<<dirlist.size()<<", qdir size="<<qdirlist.size();
 
+//    for (auto & item : dirlist)
+//        qDebug() <<item.c_str();
+
+//    for (auto & item : qdirlist)
+//        qDebug() <<item;
     QVERIFY2(qdirlist.size()==static_cast<int>(dirlist.size()), msg.str().c_str());
 
     for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)

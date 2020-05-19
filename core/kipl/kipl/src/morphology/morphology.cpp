@@ -14,7 +14,7 @@
 namespace kipl { namespace morphology {
 
 
-CNeighborhood::CNeighborhood(size_t const * const Dims,size_t const NDim, MorphConnect const conn)
+CNeighborhood::CNeighborhood(const std::vector<size_t> &Dims, size_t const NDim, MorphConnect const conn)
 {
 	if (	(NDim==2) && 
 			(conn!=kipl::morphology::conn4) && 
@@ -27,7 +27,7 @@ CNeighborhood::CNeighborhood(size_t const * const Dims,size_t const NDim, MorphC
 			(conn!=kipl::morphology::conn26))
 			throw kipl::base::KiplException("Dimension does not match connectivity", __FILE__, __LINE__);
 	
-	memcpy(dims,Dims,NDim*sizeof(size_t));
+    dims = Dims;
 	ndim=NDim;
 	sx=dims[0];
 	nimg=dims[0];

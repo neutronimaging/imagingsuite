@@ -3,6 +3,8 @@
 #ifndef TPROFILE_H
 #define TPROFILE_H
 
+#include <vector>
+
 namespace kipl { namespace base {
 
 /// \brief Extracts a vertical projection from the image, ie the rows are summed
@@ -12,7 +14,7 @@ namespace kipl { namespace base {
 /// \param bMeanProjection switch to select if the average projection is to be computed instead of the sum
 /// \test TkiplbasetestTest::testProfiles() in tkiplbasetest.pro
 template <typename T, typename S>
-void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+void VerticalProjection2D(const T *pData, const std::vector<size_t> &dims, S *pProfile, bool bMeanProjection=false);
 
 /// \brief Extracts a horizontal projection from the image, the columns are summed
 /// \param pData pointer to the image
@@ -21,7 +23,7 @@ void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool 
 /// \param bMeanProjection switch to select if the average projection is to be computed instead of the sum
 /// \test TkiplbasetestTest::testProfiles() in tkiplbasetest.pro
 template <typename T, typename S>
-void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
+void HorizontalProjection2D(const T *pData, const std::vector<size_t> &dims, S *pProfile, bool bMeanProjection=false);
 
 
 }}

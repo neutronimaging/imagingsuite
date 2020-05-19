@@ -111,9 +111,9 @@ void TImageOperatorsTest::testCountInf()
 
 void TImageOperatorsTest::makeTestImage()
 {
-    size_t dims[]={4,4};
+    std::vector<size_t> dims={4,4};
 
-    img.Resize(dims);
+    img.resize(dims);
     for (size_t i=0; i<img.Size(); ++i)
         img[i]=i+1;
 

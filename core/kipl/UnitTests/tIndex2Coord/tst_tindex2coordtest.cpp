@@ -127,7 +127,7 @@ void TIndex2CoordTest::testCoord2D()
 
 void TIndex2CoordTest::testIndex2Coord2D()
 {
-    size_t dims[]={5,6};
+    std::vector<size_t> dims={5,6};
     kipl::base::Index2Coordinates i2c(dims,2);
     kipl::base::coords2D c2;
     kipl::base::coords3D c3;
@@ -151,7 +151,7 @@ void TIndex2CoordTest::testIndex2Coord2D()
 
 void TIndex2CoordTest::testIndex2Coord3D()
 {
-    size_t dims[]={5,6,9};
+    std::vector<size_t> dims={5,6,9};
     kipl::base::Index2Coordinates i2c(dims,3);
     kipl::base::coords2D c2;
     kipl::base::coords3D c3;

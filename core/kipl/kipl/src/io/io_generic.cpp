@@ -12,7 +12,7 @@ namespace kipl { namespace io {
 
 kipl::base::TImage<unsigned short,2> KIPLSHARED_EXPORT ReadDat(std::string fname, size_t x, size_t y, size_t idx)
 {
-    size_t dims[2]={x+(x%16),y};
+    std::vector<size_t> dims={x+(x%16),y};
     kipl::base::TImage<unsigned short,2> img(dims);
 
     ifstream datfile(fname.c_str(), ios_base::binary);

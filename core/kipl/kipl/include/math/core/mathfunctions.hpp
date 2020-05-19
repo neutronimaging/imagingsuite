@@ -26,7 +26,7 @@ kipl::base::TImage<T,N> abs(kipl::base::TImage<T,N> img)
 template <typename T, size_t N>
 kipl::base::TImage<T,N> sqr(const kipl::base::TImage<T,N> img)
 {
-	kipl::base::TImage<T,N> res(img.Dims());
+    kipl::base::TImage<T,N> res(img.dims());
 	
 
 	T *pRes=res.GetDataPtr();

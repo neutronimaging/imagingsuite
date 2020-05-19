@@ -69,7 +69,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 	}
 	
 
-	size_t dims[3];
+    std::vector<size_t> dims(3);
     long coord[3]={1,0,long(naxis == 3 ? idx +1: 1)};
     if (nCrop==nullptr) {
 		dims[0]=static_cast<size_t>(naxes[0]);
@@ -96,7 +96,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		dims[1]=nCrop[3]-nCrop[1];
 		coord[0]=static_cast<long>(nCrop[0]+1);
 	}
-	src.Resize(dims);
+    src.resize(dims);
 	
 
 	int datatype=FITSDataType(static_cast<ImgType>(0));
