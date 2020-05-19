@@ -65,7 +65,6 @@ SOURCES += \
     ../src/logging/logger.cpp \
     ../src/io/io_tiff.cpp \
     ../src/io/io_stack.cpp \
-    ../src/io/core/matlabio.cpp \
     ../src/io/core/io_fits.cpp \
     ../src/io/io_vivaseq.cpp \
     ../src/generators/Sine2D.cpp \
@@ -187,9 +186,7 @@ HEADERS +=\
     ../include/io/io_vtk.h \
     ../include/io/io_tiff.h \
     ../include/io/io_stack.h \
-    ../include/io/io_matlab.h \
     ../include/io/io_fits.h \
-    ../include/io/core/matlabio.h \
     ../include/io/core/io_fits.hpp \
     ../include/io/DirAnalyzer.h \
     ../include/morphology/core/morphextrema.hpp \

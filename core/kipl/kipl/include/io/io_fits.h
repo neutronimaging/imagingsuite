@@ -30,7 +30,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname);
 /// \param filename Name of the fits file containing the image
 /// \param dims Array to recieve the image dimensions.
 /// \returns number of dimensions
-int KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims);
+std::vector<size_t> KIPLSHARED_EXPORT GetFITSDims(const std::string & filename);
 
 
 }}

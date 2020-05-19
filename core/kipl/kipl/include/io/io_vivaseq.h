@@ -53,7 +53,7 @@ public:
 
 int KIPLSHARED_EXPORT GetViVaSEQHeader(std::string fname, ViVaSEQHeader *header);
 
-int KIPLSHARED_EXPORT GetViVaSEQDims(std::string fname,size_t *dims);
+std::vector<size_t> KIPLSHARED_EXPORT GetViVaSEQDims(const std::string &fname);
 
 int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, const size_t * const roi=nullptr, int first_frame=-1, int last_frame=0, int frame_step=1);
 

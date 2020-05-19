@@ -42,7 +42,7 @@ unix {
 
     LIBS += -L/usr/local/lib64
 
-    LIBS += -ltiff -lxml2 -lNeXus -lNeXusCPP
+    LIBS += -ltiff -lxml2 #-lNeXus -lNeXusCPP
     INCLUDEPATH += /usr/include/libxml2
 }
 

@@ -42,7 +42,6 @@ std::string READERCONFIGSHARED_EXPORT enum2string(readers::eExtensionTypes et)
     case readers::ExtensionPNG:   ext="png"; break;
     case readers::ExtensionJPG:   ext="jpg"; break;
     case readers::ExtensionTIFF:  ext="tif"; break;
-    case readers::ExtensionMAT:   ext="mat"; break;
     case readers::ExtensionHDF4:  ext="hd4"; break;
     case readers::ExtensionHDF5:  ext="hd5"; break;
     case readers::ExtensionHDF:   ext="hdf"; break;
@@ -80,11 +79,10 @@ void READERCONFIGSHARED_EXPORT string2enum(std::string ext, readers::eExtensionT
     extmap["jpeg"]  = readers::ExtensionJPG;
     extmap["tif"]   = readers::ExtensionTIFF;
     extmap["tiff"]  = readers::ExtensionTIFF;
-    extmap["mat"]   = readers::ExtensionMAT;
     extmap["hd4"]   = readers::ExtensionHDF4;
     extmap["hdf4"]  = readers::ExtensionHDF4;
     extmap["hd5"]   = readers::ExtensionHDF5;
-    extmap["hdf5"]   = readers::ExtensionHDF5;
+    extmap["hdf5"]  = readers::ExtensionHDF5;
     extmap["hdf"]   = readers::ExtensionHDF;
     extmap["seq"]   = readers::ExtensionSEQ;
 

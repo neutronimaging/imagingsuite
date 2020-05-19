@@ -223,7 +223,7 @@ int FileSet::ParseXML(xmlTextReaderPtr reader)
             ret=0;
     }
 
-
+    return ret;
 }
 
 std::string FileSet::makeFileName(int idx) const

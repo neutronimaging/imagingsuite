@@ -86,14 +86,14 @@ public:
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
     /// \returns number of dimensions
-    int GetImageSize(std::string path, std::string filemask, size_t number, float binning, size_t *dims);
+    std::vector<size_t> GetImageSize(std::string path, std::string filemask, size_t number, float binning);
 
     /// Get the image dimensions for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
     /// \returns number of dimensions
-    int GetImageSize(std::string filename, float binning, size_t * dims);
+    std::vector<size_t> GetImageSize(std::string filename, float binning);
 
     /// Get the projection dose for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
@@ -127,7 +127,8 @@ protected:
     /// \param dims Array with the image dimensions.
     /// \param nCrop ROI for the cropping (x0,y0,x1,y1).
     void UpdateCrop(kipl::base::eImageFlip flip,
-            kipl::base::eImageRotate rotate, size_t *dims, size_t *nCrop);
+                    kipl::base::eImageRotate rotate,
+                    std::vector<size_t> & dims, size_t *nCrop);
 
 
     /// Performs the rotation and flipping of the image
@@ -138,12 +139,6 @@ protected:
     kipl::base::TImage<float,2> RotateProjection(kipl::base::TImage<float,2> img,
             kipl::base::eImageFlip flip,
             kipl::base::eImageRotate rotate);
-
-    /// Read old matlab files. The newer hdf based are not supported.
-    /// \param filename The name of the file to read.
-    /// \param nCrop ROI to read.
-    /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadMAT(std::string filename,  size_t const * const nCrop=nullptr);
 
     /// Read FITS images.
     /// \param filename The name of the file to read.

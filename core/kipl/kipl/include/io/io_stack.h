@@ -14,7 +14,6 @@
 #include "../base/textractor.h"
 #include "../base/tpermuteimage.h"
 #include "io_tiff.h"
-#include "io_matlab.h"
 #include "io_fits.h"
 #include "io_nexus.h"
 #include "analyzefileext.h"

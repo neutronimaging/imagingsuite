@@ -32,16 +32,16 @@ int GetViVaSEQHeader(std::string fname,ViVaSEQHeader *header)
     return 0;
 }
 
-int GetViVaSEQDims(std::string fname,size_t *dims)
+std::vector<size_t> GetViVaSEQDims(const string &fname)
 {
     ViVaSEQHeader header;
     GetViVaSEQHeader(fname,&header);
 
-    dims[0] = header.imageWidth;
-    dims[1] = header.imageHeight;
-    dims[2] = header.numberOfFrames;
+    std::vector<size_t> dims({ header.imageWidth,
+                               header.imageHeight,
+                               header.numberOfFrames});
 
-    return dims[2]==1 ? 2 : 3;
+    return dims;
 }
 
 int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t const * const roi, int first_frame, int last_frame, int frame_step)
