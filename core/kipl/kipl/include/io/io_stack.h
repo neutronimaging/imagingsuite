@@ -160,14 +160,6 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		tmp.info=img.info;
 		switch (filetype)
 		{
-		case MatlabVolume : 
-			kipl::base::KiplException("Matlab volume is not supported by the slice writer",__FILE__,__LINE__); 
-			break;
-		case MatlabSlices :
-			varname=filename.substr(filename.rfind(slash)+1);
-			varname=varname.substr(0,varname.find('.'));
-			WriteMAT(tmp,filename.c_str(),varname.c_str());
-			break;
 		case TIFF8bits :
 			WriteTIFF(tmp,filename.c_str(),lo,hi);
 			break;

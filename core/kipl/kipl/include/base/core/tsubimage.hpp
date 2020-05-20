@@ -152,7 +152,7 @@ TImage<T,2> ExtractSlice(TImage<T,3> volume, size_t idx)
 	if (volume.Size(2)<=idx)
 		throw kipl::base::KiplException("ExtractSlice: Index out of range",__FILE__,__LINE__);
 
-	TImage<T,2> slice(volume.Dims());
+    TImage<T,2> slice(volume.dims());
 
 	memcpy(slice.GetDataPtr(),volume.GetLinePtr(0,idx),slice.Size()*sizeof(T));
 
