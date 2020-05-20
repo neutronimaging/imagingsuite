@@ -17,7 +17,7 @@ template<typename T>
 kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane,size_t *roi)
 {
 	kipl::logging::Logger logger("ExtractSlice");
-	size_t dims[2]={0,0};
+    std::vector<size_t> dims={0,0};
 	size_t offset[2]={0,0};
 	kipl::base::TImage<T,2> dest;
 	size_t sx=img.Size(0);
@@ -49,7 +49,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 			offset[1]=roi[1];
 		}
 
-		dest.Resize(dims);
+        dest.resize(dims);
 		for (size_t i=0; i<dims[1]; i++)
 			memcpy(dest.GetLinePtr(i),img.GetLinePtr(i+offset[1],index)+offset[0],dest.Size(0)*sizeof(T));
 
@@ -79,7 +79,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 			offset[1]=roi[1];
 		}
 		
-		dest.Resize(dims);
+        dest.resize(dims);
 		
 		for (size_t z=0; z<dims[1]; z++) {
 			memcpy(dest.GetLinePtr(z),img.GetLinePtr(index,z+offset[1])+offset[0],dims[0]*sizeof(T));
@@ -113,7 +113,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 			offset[1]=roi[1];
 		}
 		
-		dest.Resize(dims);
+        dest.resize(dims);
 		
 		for (size_t z=0; z<dims[1]; z++) {
 			T * pDest=dest.GetLinePtr(z);

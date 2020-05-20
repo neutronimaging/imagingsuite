@@ -40,7 +40,7 @@ protected:
     /// \param nKernelDims Size of the filter kernel
     /// \param nDims Number of image dimensions
     size_t PrepareIndex(const std::vector<size_t> & imgDims,
-        const std::vector<size_t> &  nKernelDims);
+                        const std::vector<size_t> &  nKernelDims);
 
     std::vector<ptrdiff_t> nKernelIndex;
 	size_t nKernel;

@@ -26,7 +26,7 @@ ImagePainter::ImagePainter(QWidget * parent) :
     m_currentROI(0,0,0,0)
 {
       const int N=16;
-      size_t dims[2]={N,N};
+      std::vector<size_t> dims={N,N};
       float data[N*N];
 
       for (int i=0; i<N*N; i++)
@@ -124,7 +124,7 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
 void ImagePainter::setImage(kipl::base::TImage<float, 2> &img)
 {
-    setImage(img.GetDataPtr(),img.Dims());
+    setImage(img.GetDataPtr(),img.dims());
 }
 
 kipl::base::TImage<float,2> ImagePainter::getImage()
@@ -132,18 +132,17 @@ kipl::base::TImage<float,2> ImagePainter::getImage()
     return m_OriginalImage;
 }
 
-void ImagePainter::setImage(float const * const data, size_t const * const dims)
+void ImagePainter::setImage(float const * const data, const std::vector<size_t> & dims)
 {
     setImage(data,dims,0.0f,0.0f);
 }
 
-void ImagePainter::setImage(float const * const data, size_t const * const dims, const float low, const float high)
+void ImagePainter::setImage(float const * const data, const std::vector<size_t> &dims, const float low, const float high)
 {
-    m_dims[0]=static_cast<int>(dims[0]);
-    m_dims[1]=static_cast<int>(dims[1]);
+    m_dims = dims;
     m_globalROI.setRect(0,0,dims[0],dims[1]);
 
-    m_OriginalImage.Resize(dims);
+    m_OriginalImage.resize(dims);
     std::copy_n(data,m_OriginalImage.Size(),m_OriginalImage.GetDataPtr());
 
     kipl::math::minmax(data,dims[0]*dims[1],&m_ImageMin, &m_ImageMax,true);
@@ -419,8 +418,9 @@ const QVector<QPointF> & ImagePainter::getImageHistogram()
 void ImagePainter::createZoomImage(QRect roi)
 {
     m_currentROI=roi.normalized();
-    size_t dims[2]={static_cast<size_t>(m_currentROI.width()),static_cast<size_t>(m_currentROI.height())};
-    m_ZoomedImage.Resize(dims);
+    std::vector<size_t> dims = { static_cast<size_t>(m_currentROI.width()),
+                                 static_cast<size_t>(m_currentROI.height()) };
+    m_ZoomedImage.resize(dims);
 
 
     for (size_t y=0; y<m_ZoomedImage.Size(1); y++)
@@ -429,7 +429,6 @@ void ImagePainter::createZoomImage(QRect roi)
     }
 
     preparePixbuf();
- //   qDebug() << "Create zoom image"<<getScale();
 }
 
 int ImagePainter::zoomIn(QRect *zoomROI)

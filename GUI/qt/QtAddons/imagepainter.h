@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <map>
+#include <vector>
 
 #include <QPixmap>
 #include <QWidget>
@@ -36,8 +37,8 @@ public:
 
     void setImage(kipl::base::TImage<float,2> &img);
     kipl::base::TImage<float,2> getImage();
-    void setImage(float const * const data, size_t const * const dims);
-    void setImage(float const * const data, size_t const * const dims, const float low, const float high);
+    void setImage(float const * const data, const std::vector<size_t> &dims);
+    void setImage(float const * const data, const std::vector<size_t> &dims, const float low, const float high);
     void setPlot(QVector<QPointF> data, QColor color, int idx);
     int clearPlot(int idx=-1);
     void setRectangle(QRect rect, QColor color, int idx);
@@ -51,7 +52,7 @@ public:
     void getLevels(float *level_low, float *level_high);
     void getImageMinMax(float *level_low, float *level_high);
     const QVector<QPointF> &getImageHistogram();
-    int const * imageDims() {return m_dims;}
+    const std::vector<size_t> & imageDims() {return m_dims;}
     void showClamped(bool show);
     float getScale();
     int getOffsetx() {return offset_x;}
@@ -69,7 +70,7 @@ protected:
     void preparePixbuf();
     void createZoomImage(QRect roi);
 
-    int m_dims[2];
+    std::vector<size_t> m_dims;
     size_t m_NData;
 
     float m_ImageMin;
