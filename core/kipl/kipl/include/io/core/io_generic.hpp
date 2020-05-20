@@ -9,7 +9,7 @@
 #include "../../base/kiplenums.h"
 #include "../../base/KiplException.h"
 #include "../../logging/logger.h"
-
+#include "../../base/timage.h"
 
 #include <list>
 namespace kipl { namespace io {
@@ -98,8 +98,8 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
 
     file.seekg(file_offset);
 
-    size_t dims[2]={size_x, size_y};
-    img.Resize(dims);
+    std::vector<size_t> dims={size_x, size_y};
+    img.resize(dims);
 
     img=(unsigned short)0;
     converter data[3];
