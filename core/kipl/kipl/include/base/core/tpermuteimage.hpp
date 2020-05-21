@@ -58,7 +58,7 @@ TImage<T,N> Mirror(TImage<T,N> img, eImageAxes axis)
 template <typename T>
 kipl::base::TImage<T,3> PermuteAxes<T>::operator() (kipl::base::TImage<T,3> src, const kipl::base::eAxisPermutations permutation)
 {
-	size_t dims[3]={0,0,0};
+    std::vector<size_t> dims(3,0UL);
 	
 	const size_t Nx=src.Size(0);
 	const size_t Ny=src.Size(1);

@@ -588,6 +588,7 @@ std::string ReconConfig::cSystem::WriteXML(int indent)
 
 //---------
 ReconConfig::cProjections::cProjections() :
+    nDims(2,2048),
     beamgeometry(BeamGeometry_Parallel),
     fBinning(1),
     nMargin(2), // modify to 0
@@ -619,7 +620,6 @@ ReconConfig::cProjections::cProjections() :
     eRotate(kipl::base::ImageRotateNone),
     eDirection(kipl::base::RotationDirCW) // default clockwise
 {
-nDims[0]=2048; nDims[1]=2048;
 fpPoint[0]= 500.0f; fpPoint[1]= 500.0f; // initialize pPoint
 fResolution[0]=0.01f; fResolution[1]=0.01f;
 roi[0]=0; roi[2]=2047;
@@ -638,6 +638,7 @@ fScanArc[0]=0; fScanArc[1]=360;
 }
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
+    nDims(a.nDims),
     beamgeometry(a.beamgeometry),
 	fBinning(a.fBinning),
     nMargin(a.nMargin),
@@ -668,8 +669,7 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	eFlip(a.eFlip),
     eRotate(a.eRotate),
     eDirection(a.eDirection)
-{
-	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
+{	
 	fResolution[0]=a.fResolution[0]; fResolution[1]=a.fResolution[1];
     std::copy_n(a.roi,4,roi);
 
@@ -719,7 +719,8 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nDCFirstIndex   = a.nDCFirstIndex;
     nDCCount        = a.nDCCount;
 
-	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
+    nDims = a.nDims;
+
 	fResolution[0]  = a.fResolution[0];
 	fResolution[1]  = a.fResolution[1];
 
@@ -847,6 +848,7 @@ std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eImageType
 //-----------------------------------------------
 
 ReconConfig::cMatrix::cMatrix() :
+    nDims(3,0UL),
 	fRotation(0.0f),
 	sDestinationPath(""),
 	bAutomaticSerialize(false),
@@ -856,7 +858,6 @@ ReconConfig::cMatrix::cMatrix() :
 //    bUseVOI(false),
 	FileType(kipl::io::TIFF16bits)
 {
-	nDims[2]=nDims[1]=nDims[0]=0;
     fVoxelSize[2]=fVoxelSize[1]=fVoxelSize[0]=0.0f;
 	fGrayInterval[0]=0;
 	fGrayInterval[1]=5;
@@ -868,6 +869,7 @@ ReconConfig::cMatrix::cMatrix() :
 }
 
 ReconConfig::cMatrix::cMatrix(const cMatrix &a) :
+    nDims(a.nDims),
 	fRotation(a.fRotation),
 	sDestinationPath(a.sDestinationPath),
 	bAutomaticSerialize(a.bAutomaticSerialize),
@@ -877,10 +879,6 @@ ReconConfig::cMatrix::cMatrix(const cMatrix &a) :
 //    bUseVOI(a.bUseVOI),
 	FileType(a.FileType)
 {
-	nDims[2] = a.nDims[2];
-	nDims[1] = a.nDims[1];
-	nDims[0] = a.nDims[0];
-
 	roi[0]= a.roi[0];
 	roi[1]= a.roi[1];
 	roi[2]= a.roi[2];
@@ -907,10 +905,8 @@ ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a)
 	sFileMask        = a.sFileMask;
 	nFirstIndex      = a.nFirstIndex;
 
-	nDims[2] = a.nDims[2];
-	nDims[1] = a.nDims[1];
-	nDims[0] = a.nDims[0];
-	fRotation = a.fRotation;
+    nDims     = a.nDims;
+    fRotation = a.fRotation;
 	fGrayInterval[0]    = a.fGrayInterval[0];
 	fGrayInterval[1]    = a.fGrayInterval[1];
 	FileType = a.FileType;

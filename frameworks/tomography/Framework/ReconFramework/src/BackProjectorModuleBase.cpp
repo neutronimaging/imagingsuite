@@ -58,7 +58,7 @@ kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 
     std::ostringstream msg;
 	size_t origin[2]={0,0};
-	size_t dims[2]={0,0};
+    std::vector<size_t> dims(2,0UL);
 	if (mConfig.MatrixInfo.bUseROI) {
 		dims[0]=mConfig.MatrixInfo.roi[2]-mConfig.MatrixInfo.roi[0]+1;
 		dims[1]=mConfig.MatrixInfo.roi[3]-mConfig.MatrixInfo.roi[1]+1;

@@ -14,9 +14,9 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 		kipl::base::TImage<ImgType,NDim> &result, 
 		size_t const * const nbin) {
 
-	size_t const * const imgDim=img.Dims();
+    auto imgDim=img.dims();
 	int bins[8]={1,1,1,1,1,1,1,1};
-	size_t dims[8]={1,1,1,1,1,1,1,1};
+    std::vector<size_t> dims(NDim,1);
 
 	double scale=1.0;
 	for (size_t i=0; i<NDim; i++) {
@@ -52,7 +52,7 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 	}
 	
 	try {
-		result.Resize(dims);
+        result.resize(dims);
 		result=static_cast<ImgType>(0);
 	}
 	catch (kipl::base::KiplException & E) {

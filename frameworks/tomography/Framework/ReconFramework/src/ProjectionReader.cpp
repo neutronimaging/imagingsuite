@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <base/timage.h>
 #include <base/tsubimage.h>
-#include <io/io_matlab.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>
 #include <io/analyzefileext.h>
@@ -36,19 +35,19 @@ ProjectionReader::~ProjectionReader(void)
 
 }
 
-void ProjectionReader::GetImageSize(std::string path,
-								   std::string filemask,
-								   size_t number,
-								   float binning,
-								   size_t * dims)
+std::vector<size_t> ProjectionReader::GetImageSize(std::string path,
+                                                   std::string filemask,
+                                                   size_t number,
+                                                   float binning)
 {
+
 	std::string filename;
 	std::string ext;
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
     size_t found = filemask.find("hdf");
     if (found!=std::string::npos) {
         try {
-            return GetImageSizeNexus(filemask, binning, dims);
+            return GetImageSizeNexus(filemask, binning);
         }
         catch (std::exception &e) {
             throw ReconException(e.what(),__FILE__,__LINE__);
@@ -58,23 +57,24 @@ void ProjectionReader::GetImageSize(std::string path,
         }
     }
     else {
-        return GetImageSize(filename,binning, dims);
+        return GetImageSize(filename,binning);
     }
 }
 
-void ProjectionReader::GetImageSizeNexus(string filename, float binning, size_t *dims){
+std::vector<size_t> ProjectionReader::GetImageSizeNexus(string filename, float binning)
+{
     #ifdef HAVE_NEXUS
-        kipl::io::GetNexusDims(filename.c_str(), dims);
+        std::vector<size_t> dims;
+        dims = kipl::io::GetNexusDims(filename);
         dims[0]/=binning;
         dims[1]/=binning;
     #else
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
-
 }
 
-void ProjectionReader::GetImageSize(std::string filename, float binning, size_t *dims)
+std::vector<size_t> ProjectionReader::GetImageSize(std::string filename, float binning)
 {
 	std::map<std::string, size_t> extensions;
 	extensions[".mat"]=0;
@@ -91,13 +91,13 @@ void ProjectionReader::GetImageSize(std::string filename, float binning, size_t 
 	size_t extpos=filename.find_last_of(".");
 	std::stringstream msg;
 
+    std::vector<size_t> dims;
 	try {
 		if (extpos!=filename.npos) {
 			std::string ext=filename.substr(extpos);
 			switch (extensions[ext]) {
-			case 0  : kipl::io::GetMATDims(filename.c_str(),dims);  break;
-			case 1  : kipl::io::GetFITSDims(filename.c_str(),dims); break;
-			case 2  : kipl::io::GetTIFFDims(filename.c_str(),dims);  break;
+            case 1  : dims=kipl::io::GetFITSDims(filename); break;
+            case 2  : dims=kipl::io::GetTIFFDims(filename);  break;
 			//case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
 
 			default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
@@ -115,11 +115,13 @@ void ProjectionReader::GetImageSize(std::string filename, float binning, size_t 
 	}
 	dims[0]/=binning;
 	dims[1]/=binning;
+
+    return dims;
 }
 
 void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
 		kipl::base::eImageRotate rotate,
-		size_t *dims,
+        std::vector<size_t>  &dims,
 		size_t *nCrop)
 {
     if (nCrop!=nullptr) {
@@ -212,9 +214,9 @@ Read(std::string filename,
     msg.str(""); msg<<"Reading : "<<filename<<", "<<flip<<", "<<rotate<<" "<<binning;
 //    logger(logger.LogVerbose,msg.str());
 
-    size_t dims[8];
+    std::vector<size_t> dims;
 	try {
-		GetImageSize(filename, binning,dims);
+        dims=GetImageSize(filename, binning);
 	}
 	catch (ReconException &e) {
 		throw ReconException(e.what(),__FILE__,__LINE__);
@@ -255,7 +257,6 @@ Read(std::string filename,
     try {
         kipl::io::eExtensionTypes ext=kipl::io::GetFileExtensionType(filename);
         switch (ext) {
-        case kipl::io::ExtensionMAT  : img=ReadMAT(filename,pCrop);   break;
         case kipl::io::ExtensionFITS : img=ReadFITS(filename,pCrop);  break;
         case kipl::io::ExtensionTIFF : img=ReadTIFF(filename,pCrop);  break;
         case kipl::io::ExtensionPNG  : img=ReadPNG(filename,pCrop);   break;
@@ -324,12 +325,12 @@ kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename){
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
-    kipl::base::TImage<float,3> img(tmp.Dims());
+    kipl::base::TImage<float,3> img(tmp.dims());
 
     float* pImg = img.GetDataPtr();
     int16_t *ptmp = tmp.GetDataPtr();
 
-    for (size_t i=0; i<tmp.Size(0)*tmp.Size(1)*tmp.Size(2); ++i) {
+    for (size_t i=0; i<tmp.Size(); ++i) {
         pImg[i] = static_cast<float>(ptmp[i]);
     }
 
@@ -386,9 +387,9 @@ kipl::base::TImage<float,2> ProjectionReader::GetNexusSlice(kipl::base::TImage<f
     kipl::base::TImage<float,2> binned;
     size_t num_slices = NexusTomo.Size(2);
     if (number< num_slices){
-        size_t img_size2D[2] = {NexusTomo.Size(0), NexusTomo.Size(1)};
-        img.Resize(img_size2D);
-        memcpy(img.GetDataPtr(), NexusTomo.GetLinePtr(0, number), sizeof(float)*img_size2D[0]*img_size2D[1]);
+        std::vector<size_t> img_size2D = {NexusTomo.Size(0), NexusTomo.Size(1)};
+        img.resize(img_size2D);
+        std::copy_n(NexusTomo.GetLinePtr(0,number),img.Size(),img.GetDataPtr());
     }
 
 
@@ -449,9 +450,9 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
 
            const char *fname = filename.c_str();
 
-            size_t dims[2];
+            std::vector<size_t> dims;
             try {
-                GetImageSizeNexus(filename, binning,dims);
+                dims = GetImageSizeNexus(filename, binning);
             }
             catch (ReconException &e) {
                 throw ReconException(e.what(),__FILE__,__LINE__);
@@ -504,7 +505,7 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
                 throw ReconException("Unhandled exception",__FILE__,__LINE__);
             }
 
-            kipl::base::TImage<float,2> binned(img.Dims());
+            kipl::base::TImage<float,2> binned(img.dims());
 
 
 
@@ -565,9 +566,9 @@ kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filena
 
             const char *fname = filename.c_str();
 
-             size_t dims[2];
+             std::vector<size_t> dims;
              try {
-                 GetImageSizeNexus(filename, binning,dims);
+                 dims=GetImageSizeNexus(filename, binning);
              }
              catch (ReconException &e) {
                  throw ReconException(e.what(),__FILE__,__LINE__);
@@ -603,19 +604,23 @@ kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filena
                      pCrop[i]*=binning;
              }
 
-             size_t dim_img[3] = {pCrop[2]-pCrop[0], pCrop[3]-pCrop[1], end-start}; // img size in original coordinate
-             img.Resize(dim_img);
+             std::vector<size_t> dim_img = { pCrop[2]-pCrop[0],
+                                             pCrop[3]-pCrop[1],
+                                             end-start}; // img size in original coordinate
+             img.resize(dim_img);
              kipl::io::ReadNexusStack(img, fname, start, end, pCrop);
 
              kipl::base::TImage<float,3> returnimg;
-             size_t dims_3D[3] = {nCrop[2]-nCrop[0], nCrop[3]-nCrop[1], end-start}; // img size in rotated and binned coordinate
-             returnimg.Resize(dims_3D);
+             std::vector<size_t> dims_3D = { nCrop[2]-nCrop[0],
+                                             nCrop[3]-nCrop[1],
+                                             end-start}; // img size in rotated and binned coordinate
+             returnimg.resize(dims_3D);
 
 
              for (size_t i=0; i<img.Size(2); ++i) {
 
                  kipl::base::TImage<float,2> slice = kipl::base::ExtractSlice(img, i);
-                 kipl::base::TImage<float,2> binned(slice.Dims());
+                 kipl::base::TImage<float,2> binned(slice.dims());
 
                  size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
 
@@ -675,13 +680,6 @@ kipl::base::TImage<float,2> ProjectionReader::Read(std::string path,
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
 
 	return Read(filename,flip,rotate, binning,nCrop);
-}
-
-kipl::base::TImage<float,2> ProjectionReader::ReadMAT(std::string filename, size_t const * const nCrop)
-{
-	kipl::base::TImage<float,2> img;
-	kipl::io::ReadMAT(img,filename.c_str(),nCrop);
-	return img;
 }
 
 kipl::base::TImage<float,2> ProjectionReader::ReadFITS(std::string filename, size_t const * const nCrop)
@@ -886,12 +884,16 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, size_t c
 	BuildFileList( &config, &ProjectionList);
 
 
-	size_t dims[3]={nCrop[2]-nCrop[0],nCrop[3]-nCrop[1],ProjectionList.size()};
+    std::vector<size_t> dims = { nCrop[2]-nCrop[0],
+                                 nCrop[3]-nCrop[1],
+                                 ProjectionList.size()};
 
     dims[1]=config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram ? nCrop[3] : dims[1];
+
 	kipl::base::TImage<float,3> img(dims);
-//	size_t roi[4]; memcpy(roi,config.ProjectionInfo.roi,4*sizeof(size_t));
-    size_t roi[4]; memcpy(roi,nCrop,4*sizeof(size_t));
+
+    size_t roi[4];
+    copy_n(nCrop,4,roi);
 
     msg.str(""); msg<<"ProjectionList="<<ProjectionList.size()<<", dims=["<<dims[0]<<", "<<dims[1]<<", "<<dims[2]<<"]";
     logger(logger.LogMessage,msg.str());

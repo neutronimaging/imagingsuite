@@ -40,9 +40,10 @@ int PreprocModuleBase::Configure(std::map<std::string, std::string> parameters)
 
 int PreprocModuleBase::ExtractSinogram(kipl::base::TImage<float,3> &projections, kipl::base::TImage<float,2> &sinogram, size_t idx)
 {
-	size_t dims[2]={projections.Size(0), projections.Size(2)};
+    std::vector<size_t> dims = { projections.Size(0),
+                                 projections.Size(2)};
 
-	sinogram.Resize(dims);
+    sinogram.resize(dims);
 
 	for (size_t i=0; i<dims[1]; i++)
 	{
@@ -54,7 +55,7 @@ int PreprocModuleBase::ExtractSinogram(kipl::base::TImage<float,3> &projections,
 
 int PreprocModuleBase::InsertSinogram(kipl::base::TImage<float,2> &sinogram, kipl::base::TImage<float,3> &projections, size_t idx)
 {
-	size_t const * const dims=sinogram.Dims();
+    auto dims=sinogram.dims();
 
 	for (size_t i=0; i<dims[1]; i++)
 	{

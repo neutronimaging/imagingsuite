@@ -83,7 +83,7 @@ public:
 
     /// \brief Writes the reconstructed image to disk. If the filename contains any # a sequence of slices will be written, otherwise the data will be written as a single matlab mat file (outdated format).
     /// \param dims The stored image dimensions will be copied to this argument if it is non-nullptr.
-	bool Serialize(size_t *dims);
+    bool Serialize(std::vector<size_t> &dims);
 
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
 	void GetMatrixDims(size_t *dims) {dims[0]=m_Volume.Size(0); dims[1]=m_Volume.Size(1); dims[2]=m_Volume.Size(2);}

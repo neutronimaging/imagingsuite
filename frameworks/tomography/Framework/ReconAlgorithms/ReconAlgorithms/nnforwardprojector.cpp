@@ -78,8 +78,9 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
     float Delta_x,betap,eps;
     double dXsinT, dXdsinT, dXcosT, dXdcosT;
 
-    size_t dims[2]={slice.Size(0), angles.size()};
-    proj.Resize(dims);
+
+    proj.resize( {slice.Size(0),
+                  angles.size()});
     proj=0.0f;
     eps=1e-4;
     T=proj.Size(1);

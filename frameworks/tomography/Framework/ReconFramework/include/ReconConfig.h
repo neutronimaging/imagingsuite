@@ -72,7 +72,7 @@ public:
         /// \param a the struct to copy.
 		cProjections & operator=(const cProjections &a);
 
-        size_t nDims[3];            ///< Dimensions of the projections.
+        std::vector<size_t> nDims;            ///< Dimensions of the projections.
         eBeamGeometry beamgeometry; ///< Selects beam geometry for the data
         float fResolution[2];       ///< Resolution of the projections in mm/pixel.
         float fBinning;             ///< Binning factor, currently only integers are valid.
@@ -135,7 +135,7 @@ public:
         /// \param a The configuration to copy
 		cMatrix & operator=(const cMatrix &a);
 
-        size_t nDims[3];                ///< Matrix dimensions (x,y,z);
+        std::vector<size_t> nDims;                ///< Matrix dimensions (x,y,z);
         float fRotation;                ///< Rotation offset of the data.
         std::string sDestinationPath;   ///< Destination path of the reconstructed slices
         bool bAutomaticSerialize;       ///< Indicates if the reconstructed data should be saved to disk or only used in the GUI.

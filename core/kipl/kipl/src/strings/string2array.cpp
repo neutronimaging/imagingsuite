@@ -159,9 +159,29 @@ size_t String2Array(std::string str, std::vector<float> &v)
     return 0;
 }
 
-size_t String2Array(std::string str, std::vector<size_t> &v)
+size_t String2Array(std::string str, std::vector<size_t> &v, size_t cnt)
 {
-    throw kipl::base::KiplException("String2Array is not implemented for vector<size_t>",__FILE__,__LINE__);
+    std::string data, element;
+    data=str;
+    bool status=true;
+    v.clear();
+    size_t i=0;
+    while (status)
+    {
+        status=GetElement(data,element);
+        if (!element.empty())
+        {
+            v.push_back(std::stoul(element));
+            ++i;
+        }
+    }
+
+    if (v.size()<cnt)
+        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+
+    if (cnt<v.size())
+        v=std::vector<size_t>(v.begin(),v.begin()+cnt);
+
     return 0;
 }
 

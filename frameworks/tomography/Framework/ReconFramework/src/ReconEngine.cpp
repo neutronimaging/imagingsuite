@@ -112,7 +112,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
     logger(logger.LogMessage,msg.str());
 
     try {
-        m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning,m_Config.ProjectionInfo.nDims);
+        m_Config.ProjectionInfo.nDims = m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning);
     }
     catch (ReconException &e) {
         logger(logger.LogError,"Failed to get image size while configuring recon engine.");
@@ -304,7 +304,7 @@ int ReconEngine::Run()
         m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1]+1;
         totalSlices=roi[3]-roi[1];
     }
-        m_Volume.Resize(m_Config.MatrixInfo.nDims);
+        m_Volume.resize(m_Config.MatrixInfo.nDims);
 
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
@@ -544,7 +544,7 @@ int ReconEngine::Process(size_t *roi)
     {
 		logger(kipl::logging::Logger::LogVerbose,"Reconstruction finished");
 
-		size_t dims[3];
+        std::vector<size_t> dims;
 
 
 		if (m_Config.MatrixInfo.bAutomaticSerialize==true)
@@ -603,10 +603,8 @@ bool ReconEngine::TransferMatrix(size_t *dims)
 	return bTransposed;
 }
 
-bool ReconEngine::Serialize(size_t *dims)
+bool ReconEngine::Serialize(std::vector<size_t> &dims)
 {
-
-
 	std::stringstream msg;
 
 	std::stringstream str;
@@ -735,11 +733,7 @@ bool ReconEngine::Serialize(size_t *dims)
 
 	}
 
-
-
-    if (dims!=nullptr)
-		memcpy(dims,img.Dims(),3*sizeof(size_t));
-
+    dims = img.dims();
 
     writePublicationList();
 	return bTransposed;
@@ -994,7 +988,7 @@ int ReconEngine::Run3DFull()
     {
         try
         {
-                m_Volume.Resize(m_Config.MatrixInfo.nDims);
+                m_Volume.resize(m_Config.MatrixInfo.nDims);
                 m_Volume = 0.0f;
 		}
         catch (kipl::base::KiplException &e)
@@ -1659,14 +1653,15 @@ int ReconEngine::Process3D(size_t *roi)
     }
 	
     kipl::base::TImage<float,3> projections;
-    size_t dims[3];
+
 
     if (m_ProjectionMargin!=0)
     { // Remove padding
-        dims[0]=ext_projections.Size(0);
-        dims[1]=ext_projections.Size(1)-(roi[1]!=extroi[1] ? m_ProjectionMargin : 0) - (roi[3]!=extroi[3] ? m_ProjectionMargin : 0);
-        dims[2]=ext_projections.Size(2);
-        projections.Resize(dims);
+        std::vector<size_t> dims = {    ext_projections.Size(0),
+                                        ext_projections.Size(1)-(roi[1]!=extroi[1] ? m_ProjectionMargin : 0) - (roi[3]!=extroi[3] ? m_ProjectionMargin : 0),
+                                        ext_projections.Size(2)};
+
+        projections.resize(dims);
 
         msg.str("");
         msg<<"ext: "<<ext_projections<<", proj: "<<projections;
@@ -1823,10 +1818,11 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections, size_t
     {
         logger(kipl::logging::Logger::LogMessage,"Reconstruction finished");
 
-        size_t dims[3];
+
 
         if (m_Config.MatrixInfo.bAutomaticSerialize==true)
         {
+            std::vector<size_t> dims;
             Serialize(dims);
         }
         else
