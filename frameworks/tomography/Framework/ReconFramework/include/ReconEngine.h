@@ -21,7 +21,7 @@ class RECONFRAMEWORKSHARED_EXPORT ProjectionBlock
 public:
     ProjectionBlock();
     ProjectionBlock(kipl::base::TImage<float,3> & projections,
-                    size_t *roi,
+                    const std::vector<size_t> &roi,
                     std::map<std::string,
                     std::string> parameters);
 
@@ -30,7 +30,7 @@ public:
     ~ProjectionBlock();
 
     kipl::base::TImage<float,3> projections;
-    size_t roi[4];
+    std::vector<size_t> roi;
     std::map<std::string, std::string> parameters;
 };
 
@@ -71,7 +71,7 @@ public:
     /// \brief Starts the preprocessing chain including loading the projection data. This function is called by the user interface to provide data to the configuration dialogs.
     /// \param roi The region of interest to process
     /// \param sLastModule The chain shall only process until this module is reached
-	kipl::base::TImage<float,3> RunPreproc(size_t * roi, std::string sLastModule);
+    kipl::base::TImage<float,3> RunPreproc(const std::vector<size_t> &roi, std::string sLastModule);
 
     /// \brief Set reconstruction configuration as preparation of geometry and number of files
     /// \param config The configuration data
@@ -97,15 +97,15 @@ protected:
     void ConfigSanityCheck(ReconConfig &config);
     int Run3DFull();
     int Run3DBackProjOnly();
-	int Process(size_t *roi);
-	int Process3D(size_t *roi);
-    int ProcessExistingProjections3D(size_t *roi);
-    int BackProject3D(kipl::base::TImage<float,3> & projections, size_t *roi,std::map<std::string, std::string> parameters);
+    int Process(const std::vector<size_t> &roi);
+    int Process3D(const std::vector<size_t> &roi);
+    int ProcessExistingProjections3D(const std::vector<size_t> &roi);
+    int BackProject3D(kipl::base::TImage<float,3> & projections, const std::vector<size_t> &roi, std::map<std::string, std::string> parameters);
 	bool UpdateProgress(float val, std::string msg);
     size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
 
-	bool TransferMatrix(size_t *dims);
+    bool TransferMatrix(const std::vector<size_t> &dims);
 
     void MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins);
     void UnpadProjections(kipl::base::TImage<float,3> &projections, size_t *roi, size_t *margins);
@@ -130,7 +130,7 @@ protected:
 	size_t nTotalProcessedProjections;				//!< Counts the total number of processed projections for the progress monitor
 	size_t nTotalBlocks;							//!< The total number of blocks to process
 	bool m_bCancel;									//!< Cancel flag if true the reconstruction process will terminate
-    size_t CBroi[4];                                //!< Additional ROI to be used for the cone beam case
+    std::vector<size_t> CBroi;                                //!< Additional ROI to be used for the cone beam case
 	//eReconstructorStatus status;
     kipl::interactors::InteractionBase *m_Interactor;
 };

@@ -99,7 +99,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		const size_t start, const size_t stop, const size_t count_start=0,
 		kipl::io::eFileType filetype=kipl::io::MatlabSlices,
 		const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
-        size_t *roi=nullptr)
+        const std::vector<size_t> & roi = {})
 {
 	if (stop<start)
 		kipl::base::KiplException("Stop index must be greater than start index.",__FILE__, __LINE__);

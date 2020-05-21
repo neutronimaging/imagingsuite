@@ -9,13 +9,15 @@
 #include "../timage.h"
 #include "../kiplenums.h"
 #include "../KiplException.h"
+#include "../textractor.h"
 
 
 namespace kipl { namespace base {
 
 template<typename T>
-kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane,size_t *roi)
+kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane,const std::vector<size_t> &roi)
 {
+    auto tmproi = roi;
 	kipl::logging::Logger logger("ExtractSlice");
     std::vector<size_t> dims={0,0};
 	size_t offset[2]={0,0};
@@ -27,26 +29,26 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 	case kipl::base::ImagePlaneXY :
 		if (img.Size(2)<=index)
 			throw kipl::base::KiplException("Index exceeds image dimension for PlaneXY.", __FILE__, __LINE__);
-        if (roi==nullptr) {
-			dims[0]=img.Size(0); dims[1]=img.Size(1);
+        if (roi.empty()) {
+            dims = img.dims();
 			offset[0]=0;
 			offset[1]=0;
 		}
 		else {
-			if (roi[2]<roi[0]) {
+            if (tmproi[2]<tmproi[0]) {
 				logger(kipl::logging::Logger::LogWarning,"roi2<roi0, swapped");
-				swap(roi[2],roi[0]);
+                swap(tmproi[2],tmproi[0]);
 			}
-			dims[0]=roi[2]-roi[0]+1;
+            dims[0]=tmproi[2]-tmproi[0]+1;
 
-			if (roi[3]<roi[1]) {
+            if (tmproi[3]<tmproi[1]) {
 				logger(kipl::logging::Logger::LogWarning,"roi3<roi1, swapped");
-				swap(roi[3],roi[1]);
+                swap(tmproi[3],tmproi[1]);
 			}
-			dims[1]=roi[3]-roi[1]+1;
+            dims[1]=tmproi[3]-tmproi[1]+1;
 
-			offset[0]=roi[0];
-			offset[1]=roi[1];
+            offset[0]=tmproi[0];
+            offset[1]=tmproi[1];
 		}
 
         dest.resize(dims);
@@ -58,25 +60,25 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 		if (img.Size(1)<=index)
 			throw kipl::base::KiplException("Index exceeds image dimension for PlaneXZ.", __FILE__, __LINE__);
 
-        if (roi==nullptr) {
-			dims[0]=img.Size(0); dims[1]=img.Size(2);
+        if (roi.empty()) {
+            dims= {img.Size(0),img.Size(2)};
 			offset[0]=0;
 			offset[1]=0;
 		}
 		else {
-			if (roi[2]<roi[0]) {
+            if (tmproi[2]<tmproi[0]) {
 				logger(kipl::logging::Logger::LogWarning,"roi2<roi0, swapped");
-				swap(roi[2],roi[0]);
+                swap(tmproi[2],tmproi[0]);
 			}
-			dims[0]=roi[2]-roi[0]+1;
+            dims[0]=tmproi[2]-tmproi[0]+1;
 
-			if (roi[3]<roi[1]) {
+            if (tmproi[3]<tmproi[1]) {
 				logger(kipl::logging::Logger::LogWarning,"roi3<roi1, swapped");
-				swap(roi[3],roi[1]);
+                swap(tmproi[3],tmproi[1]);
 			}
-			dims[1]=roi[3]-roi[1]+1;
-			offset[0]=roi[0];
-			offset[1]=roi[1];
+            dims[1]=tmproi[3]-tmproi[1]+1;
+            offset[0]=tmproi[0];
+            offset[1]=tmproi[1];
 		}
 		
         dest.resize(dims);
@@ -91,26 +93,26 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 		if (img.Size(0)<=index)
 			throw kipl::base::KiplException("Index exceeds image dimension for PlaneYZ.", __FILE__, __LINE__);
 
-        if (roi==nullptr) {
-			dims[0]=img.Size(1); dims[1]=img.Size(2);
+        if (roi.empty()) {
+            dims = {img.Size(1), img.Size(2)};
 			offset[0]=0;
 			offset[1]=0;
 
 		}
 		else {
-			if (roi[2]<roi[0]) {
+            if (tmproi[2]<tmproi[0]) {
 				logger(kipl::logging::Logger::LogWarning,"roi2<roi0, swapped");
-				swap(roi[2],roi[0]);
+                swap(tmproi[2],tmproi[0]);
 			}
-			dims[0]=roi[2]-roi[0]+1;
+            dims[0]=tmproi[2]-tmproi[0]+1;
 
-			if (roi[3]<roi[1]) {
+            if (tmproi[3]<tmproi[1]) {
 				logger(kipl::logging::Logger::LogWarning,"roi3<roi1, swapped");
-				swap(roi[3],roi[1]);
+                swap(tmproi[3],tmproi[1]);
 			}
-			dims[1]=roi[3]-roi[1]+1;
-			offset[0]=roi[0];
-			offset[1]=roi[1];
+            dims[1]=tmproi[3]-tmproi[1]+1;
+            offset[0]=tmproi[0];
+            offset[1]=tmproi[1];
 		}
 		
         dest.resize(dims);

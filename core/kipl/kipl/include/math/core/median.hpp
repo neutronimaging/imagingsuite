@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cstring>
 #include "../../algorithms/sortalg.h"
+#include "../median.h"
+
 namespace kipl { namespace math {
 
 template<class T, class S>
@@ -19,6 +21,21 @@ void median(T *v,const size_t n, S * med)
             *med=static_cast<T>(0.5*(tmp[(n/2)-1]+tmp[n/2]));
 
         delete [] tmp;
+}
+
+template<class T, class S>
+void median(const std::vector<T> &v, S * med)
+{
+   std::vector<T> tmp(v.begin(),v.end());
+
+   std::sort(tmp.begin(), tmp.end());
+
+   size_t n=v.size();
+
+   if ((n & 1) == 1)
+        *med=tmp[n/2];
+    else
+        *med=static_cast<T>(0.5*(tmp[(n/2)-1]+tmp[n/2]));
 }
 
 template<class T, class S>

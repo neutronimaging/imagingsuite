@@ -26,7 +26,7 @@ public:
     /// \param includeCoord include the end coordinate (e.g. x1-x0+1) on true or (x1-x0) on false
     /// \returns the extracted image
     /// \test Unit test is available
-    static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const * const roi, bool includeCoord=true);
+    static TImage<T,NDims> Get(TImage<T,NDims> const src, const std::vector<size_t> & roi, bool includeCoord=true);
 
     /// \brief Puts a sub image back into a larger image
     /// \param src The sub image to put

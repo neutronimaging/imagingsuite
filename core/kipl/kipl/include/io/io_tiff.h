@@ -285,7 +285,7 @@ int AppendTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname) {
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_t idx=0L)
+int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_t idx=0UL)
 {
     std::stringstream msg;
 	TIFF *image;
@@ -487,11 +487,11 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, size_t const * const crop, size_t idx=0L)
+int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const std::vector<size_t> &crop, size_t idx)
 {
     kipl::logging::Logger logger("ReadTIFF");
 
-    if (crop==nullptr) {
+    if (crop.empty()) {
         return ReadTIFF(src,fname.c_str(),idx);
 	}
 	std::stringstream msg;
@@ -697,7 +697,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, size_t
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, size_t const * const crop=nullptr)
+int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, const std::vector<size_t> &crop={})
 {
     std::ostringstream msg;
     std::vector<size_t> dims=GetTIFFDims(fname.c_str());

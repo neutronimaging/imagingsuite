@@ -12,6 +12,11 @@ namespace kipl { namespace base {
 template <typename T, size_t NDims>
 TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, const std::vector<size_t> & nStart, const std::vector<size_t> & nLength)
 {
+    if (nStart.size()<NDims)
+        throw kipl::base::KiplException("Too few start postions in Get subimage",__FILE__,__LINE__);
+    if (nLength.size()<NDims)
+        throw kipl::base::KiplException("Too few length postions in Get subimage",__FILE__,__LINE__);
+
     auto dims=src.dims();
 	
 //	for (size_t i=0 ; i<NDims; i++)
@@ -60,12 +65,17 @@ TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, const std::ve
 }
 
 template <typename T, size_t NDims>
-TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const * const roi, bool includeCoord)
+TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, const std::vector<size_t> &roi, bool includeCoord)
 {
+    if (roi.size()<2*NDims)
+        throw kipl::base::KiplException("Too few postions in Get subimage",__FILE__,__LINE__);
+
     std::vector<size_t> dims(NDims);
     size_t plusOne=includeCoord ? 1 : 0;
     switch (NDims){
     case 1 :
+
+
         dims[0]=roi[1]-roi[0]+plusOne; break;
     case 2 :
         dims[0]=roi[2]-roi[0]+plusOne;

@@ -183,13 +183,13 @@ void kiplIOTest::testTIFFMultiFrame()
     float minvals[5]={4032.0f,4443.0f,5244.0f,5849.0f,3687.0f};
     float maxvals[5]={65192.0f,65534.0f,65534.0f,57957.0f,42548.0f};
 
-    size_t crop[4]={10,10,100,100};
+    std::vector<size_t> crop={10,10,100,100};
 
     kipl::base::TImage<float,2> img, img_crop;
 
     kipl::base::TImage<float,3> img3ref(dimsv);
     for (int i = 0 ; i<nframes; ++i) {
-        kipl::io::ReadTIFF(img,fname.c_str(),nullptr,i);
+        kipl::io::ReadTIFF(img,fname,{},i);
         std::copy_n(img.GetDataPtr(),img.Size(),img3ref.GetLinePtr(0,i));
 
         QCOMPARE(img.Size(0),145UL);
@@ -215,7 +215,7 @@ void kiplIOTest::testTIFFMultiFrame()
     }
 
     kipl::base::TImage<float,3> img3;
-    kipl::io::ReadTIFF(img3,fname.c_str());
+    kipl::io::ReadTIFF(img3,fname);
 
     QCOMPARE(img3.Size(0),img3ref.Size(0));
     QCOMPARE(img3.Size(1),img3ref.Size(1));

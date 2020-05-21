@@ -14,6 +14,9 @@ namespace kipl { namespace math {
 template<class T, class S>
 void median(T *v, size_t n, S * med);
 
+template<class T, class S>
+void median(const std::vector<T> &v, S * med);
+
 /// \brief Median computed using the quickselect algorithm
 ///
 /// A median algorithm base on based on the quickselect algorithm described in

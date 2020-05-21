@@ -217,7 +217,7 @@ void TkiplbasetestTest::testSubImage()
     kipl::base::TImage<float,2> res;
 
     kipl::base::TSubImage<float,2> cropper;
-    size_t crop[4]={2,3,7,6};
+    std::vector<size_t> crop={2,3,7,6};
     float val_img;
     float val_res;
     // Test get with crop coordinates

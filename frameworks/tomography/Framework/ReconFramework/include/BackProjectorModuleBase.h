@@ -61,7 +61,7 @@ public:
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-	virtual void SetROI(size_t *roi)=0;
+    virtual void SetROI(const std::vector<size_t> &roi)=0;
 
     /// Get the reconstructed matrix
     /// \returns The matrix as TImage object

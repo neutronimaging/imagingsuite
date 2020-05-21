@@ -12,6 +12,7 @@
 
 #include "../../base/timage.h"
 #include "../../base/KiplException.h"
+#include "../io_fits.h"
 
 namespace kipl { namespace io {
 
@@ -31,13 +32,13 @@ int KIPLSHARED_EXPORT FITSDataType(double x);
 
 
 template <typename ImgType>
-int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop, size_t idx)
+int ReadFITS(kipl::base::TImage<ImgType,2> &src,const std::string & fname, const std::vector<size_t> & nCrop, size_t idx)
 {
     using namespace std;
     ostringstream msg;
 	fitsfile *fptr;
 	int status=0;
-	fits_open_image(&fptr, fname, READONLY, &status);
+    fits_open_image(&fptr, fname.c_str(), READONLY, &status);
     if (status!=0) {
         msg.str("");
         char errtext[2048];
@@ -69,14 +70,16 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 	}
 	
 
-    std::vector<size_t> dims(3);
+    std::vector<size_t> dims(naxis);
     long coord[3]={1,0,long(naxis == 3 ? idx +1: 1)};
-    if (nCrop==nullptr) {
+    if (nCrop.empty())
+    {
 		dims[0]=static_cast<size_t>(naxes[0]);
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
 	}
-	else {
-        if ((naxes[0]<=static_cast<long>(nCrop[0])) ||
+    else
+    {
+        if (    (naxes[0]<=static_cast<long>(nCrop[0])) ||
                 (naxes[0]<=static_cast<long>(nCrop[2])) ||
                 (naxes[1]<=static_cast<long>(nCrop[1])) ||
                 (naxes[1]<=static_cast<long>(nCrop[3])))
@@ -101,8 +104,8 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 
 	int datatype=FITSDataType(static_cast<ImgType>(0));
 	
-    const size_t cnStart = nCrop==nullptr ? 0 : min(static_cast<size_t>(naxes[1]),nCrop[1]);
-    const size_t cnStop  = nCrop==nullptr ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
+    const size_t cnStart = nCrop.empty() ? 0       : min(static_cast<size_t>(naxes[1]),nCrop[1]);
+    const size_t cnStop  = nCrop.empty() ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
 
     ImgType *pLine=new ImgType[naxes[0]+16];
 	for (size_t i=cnStart, j=0; i<cnStop; i++,j++) {
