@@ -64,3 +64,14 @@ int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::
 	kipl::strings::String2Array(str,arr,N);
 	return N;
 }
+
+int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters,
+                                                     std::string parameter,
+                                                     std::vector<size_t> &arr,
+                                                     int N)
+{
+    std::string str=GetStringParameter(parameters,parameter);
+
+    kipl::strings::String2Array(str,arr,N);
+    return N;
+}

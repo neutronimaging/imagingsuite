@@ -57,6 +57,14 @@ int MODULECONFIGSHARED_EXPORT GetFloatParameterVector(std::map<std::string, std:
  /// \param N number of numerical elements in the string
  /// \returns Number of elements retrieved.
  /// \throws ModuleException if the parameter is not found in the list or if there are too few values in the string.
-int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters, std::string parameter,size_t *arr, int N);
+int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters,
+                                                     std::string parameter,
+                                                     size_t *arr,
+                                                     int N);
+
+int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters,
+                                                     std::string parameter,
+                                                     std::vector<size_t> &arr,
+                                                     int N);
 
 #endif

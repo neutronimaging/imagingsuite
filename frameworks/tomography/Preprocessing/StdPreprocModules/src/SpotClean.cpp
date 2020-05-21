@@ -7,7 +7,6 @@
 #include <omp.h>
 #endif
 #include <base/timage.h>
-#include <io/io_matlab.h>
 #include <filters/filter.h>
 #include <filters/medianfilter.h>
 #include <math/mathfunctions.h>
@@ -111,8 +110,8 @@ int SpotClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 kipl::base::TImage<float,2> SpotClean::CleanIteration(kipl::base::TImage<float,2> img)
 {
 	const size_t nFilterSize=3;
-	size_t nMedFiltDims[]={nFilterSize, nFilterSize};
-	kipl::filters::TMedianFilter<float,2> medfilter(nMedFiltDims);
+
+    kipl::filters::TMedianFilter<float,2> medfilter({nFilterSize, nFilterSize});
 	
 	kipl::base::TImage<float,2> mimg=medfilter(img);
 	kipl::base::TImage<float,2> unbiased=img-mimg;
@@ -151,18 +150,15 @@ double SpotClean::ChangeStatistics(kipl::base::TImage<float,2> img)
 
 kipl::base::TImage<float,2> SpotClean::BoxFilter(kipl::base::TImage<float,2> img, size_t dim)
 {
-	size_t dimsU[]={dim,1};
-	size_t dimsV[]={1,dim};
+    std::vector<size_t> dimsU={dim,1};
+    std::vector<size_t> dimsV={1,dim};
 	size_t N=dim*dim;
-	float *fKernel=new float[N];
-	for (size_t i=0; i<N; i++)
-		fKernel[i]=1.0f;
+    std::vector<float> fKernel(9,1.0f);
 
 	kipl::filters::TFilter<float,2> filterU(fKernel,dimsU);
 	kipl::filters::TFilter<float,2> filterV(fKernel,dimsV);
 
 	kipl::base::TImage<float,2> imgU=filterU(img, eEdgeProcessingStyle);
-	delete [] fKernel;
 
 	return filterV(imgU, eEdgeProcessingStyle);
 }
@@ -219,7 +215,7 @@ kipl::base::TImage<float,2> SpotClean::ProcessPixelList(kipl::base::TImage<float
 	kipl::base::TImage<float,2> s=DetectionImage(img,mDetection,nWindowSize);
 	
 	// Make first threshold image
-	kipl::base::TImage<char,2> mask(s.Dims());
+    kipl::base::TImage<char,2> mask(s.dims());
 	for (size_t i=0; i< s.Size(); i++)
 		mask[i]=mLUT.Low()<s[i];
 
@@ -318,7 +314,7 @@ size_t SpotClean::ExtractLocalData(size_t pixel,
 kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img)
 {
 	// Make mask image
-	kipl::base::TImage<float,2> mask(img.Dims()),mask2;
+    kipl::base::TImage<float,2> mask(img.dims()),mask2;
 	float *pImg=img.GetDataPtr();
 	float *pMask=mask.GetDataPtr();
 
@@ -326,8 +322,8 @@ kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img
 		pMask[i]=(pImg[i]==0);
 
 	// Ensure that the detected regions are closed
-	float kernel[]={1,1,1,1,1,1,1,1,1};
-	size_t kdims[]={3,3};
+    std::vector<float> kernel(9,1.0f);
+    std::vector<size_t> kdims={3,3};
 	kipl::morphology::TDilate<float,2> dilate(kernel,kdims);
 	mask2=dilate(mask,kipl::filters::FilterBase::EdgeMirror);
 
@@ -346,7 +342,7 @@ kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img
 
 	map<float,vector<size_t> >::iterator it;
 	vector<size_t>::iterator pos;
-	kipl::morphology::CNeighborhood neighbor(img.Dims(),2,kipl::morphology::conn8);
+    kipl::morphology::CNeighborhood neighbor(img.dims(),2,kipl::morphology::conn8);
 
 	vector<pair<size_t, float> > corrections;
 	vector<pair<size_t, float> >::iterator cit;
@@ -413,15 +409,15 @@ kipl::base::TImage<float,2> SpotClean::DetectionImage(kipl::base::TImage<float,2
 
 kipl::base::TImage<float,2> SpotClean::UnbiasedImage(kipl::base::TImage<float,2> img, eSpotDetection method, size_t nFilterSize)
 {
-	size_t nFiltDimsV[]={1, nFilterSize};
-	size_t nFiltDimsH[]={nFilterSize, 1};
+    std::vector<size_t> nFiltDimsV = {1, nFilterSize};
+    std::vector<size_t> nFiltDimsH = {nFilterSize, 1};
+
 	kipl::filters::TMedianFilter<float,2> medianV(nFiltDimsV);
 	kipl::filters::TMedianFilter<float,2> medianH(nFiltDimsH);
 
-	float *kernel=new float[nFilterSize];
-	float val=1.0f/static_cast<float>(nFilterSize);
-	for (size_t i=0; i<nFilterSize; i++)
-		kernel[i]=val;
+    float val=1.0f/static_cast<float>(nFilterSize);
+    std::vector<float> kernel(nFilterSize,val);
+
 	kipl::filters::TFilter<float,2> meanV(kernel,nFiltDimsV);
 	kipl::filters::TFilter<float,2> meanH(kernel,nFiltDimsH);
 

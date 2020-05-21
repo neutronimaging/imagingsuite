@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <ios>
 #include <algorithm>
 #include "../../include/io/io_vivaseq.h"
@@ -44,7 +45,7 @@ std::vector<size_t> GetViVaSEQDims(const string &fname)
     return dims;
 }
 
-int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t const * const roi, int first_frame, int last_frame, int frame_step)
+int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, const std::vector<size_t> & roi, int first_frame, int last_frame, int frame_step)
 {
     std::ifstream file(fname.c_str(),ios::binary | ios::in);
     if (file.bad()) {
@@ -70,7 +71,7 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t cons
     }
 
 
-    if (roi == nullptr) {
+    if (roi.empty()) {
         std::vector<size_t> dims={static_cast<size_t>(header.imageWidth),
                         static_cast<size_t>(header.imageHeight),
                         static_cast<size_t>((last-first)/frame_step)};
@@ -118,7 +119,7 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, size_t cons
     return 0;
 }
 
-int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t  const * const roi)
+int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, const std::vector<size_t> &roi)
 {
     std::ifstream file(fname.c_str(),ios::binary | ios::in);
     if (file.bad()) {
@@ -136,7 +137,7 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, si
     char *buffer = new char[framesize];
     unsigned short *sbuffer = reinterpret_cast<unsigned short *>(buffer);
 
-    if (roi == nullptr) {
+    if (roi.empty()) {
         std::vector<size_t> dims={header.imageWidth,header.imageHeight};
         img.resize(dims);
 

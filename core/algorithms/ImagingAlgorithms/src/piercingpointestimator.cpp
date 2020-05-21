@@ -28,11 +28,11 @@ PiercingPointEstimator::PiercingPointEstimator() :
 
 }
 
-pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, size_t *roi)
+pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, const std::vector<size_t> &roi)
 {
-    size_t crop[4];
+    std::vector<size_t> crop;
 
-    if (roi==nullptr) {
+    if (roi.empty()) {
         logger(logger.LogMessage,"Using default crop (reduction by 10\%).");
         float marg=0.05;
         crop[0]=static_cast<size_t>(img.Size(0)*marg);
@@ -41,7 +41,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
         crop[3]=static_cast<size_t>(crop[1]+(1-2*marg)*img.Size(1));
     }
     else {
-        std::copy(roi,roi+4,crop);
+        crop = roi;
     }
 
     kipl::base::TImage<float,2> cimg=kipl::base::TSubImage<float,2>::Get(img,crop);
@@ -66,7 +66,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img,
                              kipl::base::TImage<float,2> &dc,
                              bool gaincorrection,
-                             size_t *roi)
+                             const std::vector<size_t> &roi)
 {
     std::ostringstream msg;
     correctedImage=img-dc;

@@ -46,9 +46,9 @@ FileSet::FileSet(const FileSet &cfg) :
     m_fBinning(cfg.m_fBinning),
     m_Flip(cfg.m_Flip),
     m_Rotate(cfg.m_Rotate),
-    m_bUseROI(cfg.m_bUseROI)
+    m_bUseROI(cfg.m_bUseROI),
+    m_ROI(cfg.m_ROI)
 {
-    std::copy_n(cfg.m_ROI,4,m_ROI);
 }
 
 FileSet::~FileSet()
@@ -69,8 +69,7 @@ const FileSet &FileSet::operator=(const FileSet &cfg)
     m_Flip          = cfg.m_Flip;
     m_Rotate        = cfg.m_Rotate;
     m_bUseROI       = cfg.m_bUseROI;
-
-    std::copy_n(cfg.m_ROI,4,m_ROI);
+    m_ROI           = cfg.m_ROI;
 
     return *this;
 }

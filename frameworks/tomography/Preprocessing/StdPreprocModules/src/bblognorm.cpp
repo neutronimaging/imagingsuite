@@ -40,6 +40,10 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     m_nWindow(5),
     tau(0.97f),
     bPBvariante(true),
+    nNormRegion({0,0,0,0}),
+    nOriginalNormRegion({0,0,0,0}),
+    BBroi({0,0,0,0}),
+    doseBBroi({0,0,0,0}),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
@@ -59,9 +63,6 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     m_Interactor(interactor),
     bExtSingleFile(true)
 {
-
-    doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
-    BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
     blackbodyname = "./";
     blackbodysamplename = "./";
     blackbodyexternalname = "./";
@@ -164,7 +165,7 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 
 
-    memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
+    nOriginalNormRegion = config.ProjectionInfo.dose_roi;
 
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
@@ -172,7 +173,7 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     // do i need this here?
     if (roi_bb_x>0 && roi_bb_y>0) {}
     else {
-        memcpy(BBroi, m_Config.ProjectionInfo.projection_roi, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+        BBroi = m_Config.ProjectionInfo.projection_roi;  // use the same as projections in case.. if i don't I got an Exception
     }
 
     //check on dose BB roi size
@@ -288,7 +289,7 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 
 
-    memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
+    nOriginalNormRegion = config.ProjectionInfo.dose_roi;
 
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
@@ -296,7 +297,7 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     // do i need this here?
     if (roi_bb_x>0 && roi_bb_y>0) {}
     else {
-        memcpy(BBroi, m_Config.ProjectionInfo.projection_roi, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
+        BBroi = m_Config.ProjectionInfo.projection_roi;
     }
 
     //check on dose BB roi size
@@ -356,14 +357,14 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     return 1;
 }
 
-bool BBLogNorm::SetROI(size_t *roi) {
+bool BBLogNorm::SetROI(const std::vector<size_t> &roi) {
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     LoadReferenceImages(roi);
-    memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t)); //nNormRegion seems not used
+    nNormRegion = nOriginalNormRegion; //nNormRegion seems not used
     return true;
 }
 
@@ -404,7 +405,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters() {
     return parameters;
 }
 
-void BBLogNorm::LoadReferenceImages(size_t *roi)
+void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
 {
 
     if (flatname.empty() && nOBCount!=0)
@@ -420,8 +421,19 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
     std::string flatmask=path+flatname;
     std::string darkmask=path+darkname;
 
-    mydark = ReferenceLoader(darkmask,m_Config.ProjectionInfo.nDCFirstIndex,m_Config.ProjectionInfo.nDCCount,roi,0.0f,0.0f,m_Config,fDarkDose);
-    myflat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,0.0f,m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
+    mydark = ReferenceLoader(darkmask,
+                             m_Config.ProjectionInfo.nDCFirstIndex,
+                             m_Config.ProjectionInfo.nDCCount,
+                             roi,
+                             0.0f,0.0f,
+                             m_Config,fDarkDose);
+    myflat = ReferenceLoader(flatmask,
+                             m_Config.ProjectionInfo.nOBFirstIndex,
+                             m_Config.ProjectionInfo.nOBCount,
+                             roi,
+                             1.0f,0.0f,
+                             m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
+
     SetReferenceImages(mydark,myflat);
 
 
@@ -436,11 +448,20 @@ void BBLogNorm::LoadReferenceImages(size_t *roi)
 
     }
 
-     m_corrector.SetReferenceImages(&mflat, &mdark, (bUseBB && nBBCount!=0 && nBBSampleCount!=0), (bUseExternalBB && nBBextCount!=0), bExtSingleFile, fFlatDose, fDarkDose, (bUseNormROIBB && bUseNormROI), roi, m_Config.ProjectionInfo.dose_roi);
+     m_corrector.SetReferenceImages(&mflat,
+                                    &mdark,
+                                    (bUseBB && nBBCount!=0 && nBBSampleCount!=0),
+                                    (bUseExternalBB && nBBextCount!=0),
+                                    bExtSingleFile,
+                                    fFlatDose,
+                                    fDarkDose,
+                                    (bUseNormROIBB && bUseNormROI),
+                                    roi,
+                                    m_Config.ProjectionInfo.dose_roi);
 
 }
 
-void BBLogNorm::LoadExternalBBData(size_t *roi){
+void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi){
 
 
     if (blackbodyexternalname.empty())
@@ -470,7 +491,7 @@ void BBLogNorm::LoadExternalBBData(size_t *roi){
     else
     {
         kipl::base::TImage<float,3> bb_sample_ext;
-        float *doselist = new float[nBBextCount];
+        std::vector<float> doselist(nBBextCount,0);
         bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, nBBextCount, roi, nBBextFirstIndex, m_Config, doselist);
         m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, doselist);
     }
@@ -493,7 +514,7 @@ void BBLogNorm::PrepareBBData(){
 
 
 
-    int diffroi[4] = {int(BBroi[0]), int(BBroi[1]), int(BBroi[2]), int(BBroi[3])};
+    std::vector<int> diffroi(BBroi.begin(),BBroi.end());
 
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
@@ -563,7 +584,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,fBlackDose); // this is for mask computation and dose correction (small roi)
 
-    kipl::base::TImage<float,2> obmask(bb.Dims());
+    kipl::base::TImage<float,2> obmask(bb.dims());
     std::ostringstream msg;
 
     try {
@@ -621,15 +642,12 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
 
-    float *doselist = new float[nProj];
+    std::vector<float> doselist(nProj);
     for (size_t i=0; i<nProj; i++) {
         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
     }
 
     m_corrector.SetDoseList(doselist);
-    delete [] doselist;
-
-
 
 // here Exceptions need to be added to veirfy if the selected module is compatible with the number of loaded images
          switch (m_BBOptions) {
@@ -662,7 +680,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
                              }
                              else {
                                  sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
-                                 kipl::base::TImage<float,2> mask(sample.Dims());
+                                 kipl::base::TImage<float,2> mask(sample.dims());
                                  mask = 0.0f;
                                  temp_parameters = m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
                                  mMaskBB = mask; // or memcpy
@@ -754,7 +772,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
                      if (bSameMask){
                         mMaskBB = obmask;}
                      else {
-                          kipl::base::TImage<float,2> mask(sample.Dims());
+                          kipl::base::TImage<float,2> mask(sample.dims());
                           mask = 0.0f;
                           mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
                           mMaskBB = mask; // or memcpy
@@ -816,7 +834,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
                            temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
                         }
                         else {
-                             kipl::base::TImage<float,2> mask(sample.Dims());
+                             kipl::base::TImage<float,2> mask(sample.dims());
                              mask = 0.0f;
                              temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
                              mMaskBB = mask; // or memcpy
@@ -909,7 +927,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
     flat = BBLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,1.0f,0.0f,m_Config,fFlatBBdose); //
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,fBlackDose);
 
-    kipl::base::TImage<float,2> obmask(bb.Dims());
+    kipl::base::TImage<float,2> obmask(bb.dims());
 
     float *bb_ob_param = new float[100]; // now they are not 6.. attention
     float *bb_sample_parameters;
@@ -976,14 +994,12 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
      float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
      m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
-     float *doselist = new float[nProj];
+     std::vector<float> doselist(nProj);
      for (size_t i=0; i<nProj; i++) {
          doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
      }
 
      m_corrector.SetDoseList(doselist);
-     delete [] doselist;
-
 
      // here Exceptions need to be added to veirfy if the selected module is compatible with the number of loaded images
               switch (m_BBOptions) {
@@ -1021,7 +1037,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
                                   }
                                   else {
                                       sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
-                                      kipl::base::TImage<float,2> mask(sample.Dims());
+                                      kipl::base::TImage<float,2> mask(sample.dims());
                                       mask = 0.0f;
                                       temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
                                       m_corrector.SetSplineSampleValues(values_bb);
@@ -1129,7 +1145,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 //
                           }
                           else {
-                               kipl::base::TImage<float,2> mask(sample.Dims());
+                               kipl::base::TImage<float,2> mask(sample.dims());
                                mask = 0.0f;
                                mask_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark, samplebb_temp, mask,values_bb);
 //                               mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
@@ -1199,7 +1215,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
                                 m_corrector.SetSplineSampleValues(values_bb);
                              }
                              else {
-                                  kipl::base::TImage<float,2> mask(sample.Dims());
+                                  kipl::base::TImage<float,2> mask(sample.dims());
                                   mask = 0.0f;
                                   temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
 //                                  temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
@@ -1345,10 +1361,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
 
 
-    int diffroi[4] = {static_cast<int>(BBroi[0]),
-                      static_cast<int>(BBroi[1]),
-                      static_cast<int>(BBroi[2]),
-                      static_cast<int>(BBroi[3])}; // it is now just the BBroi position, makes more sense
+    std::vector<int> diffroi(BBroi.begin(),BBroi.end()); // it is now just the BBroi position, makes more sense
 
 
     m_corrector.SetRadius(radius);
@@ -1363,7 +1376,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     float error;
-    kipl::base::TImage<float,2> obmask(bb.Dims());
+    kipl::base::TImage<float,2> obmask(bb.dims());
 
     try {
         bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, error);
@@ -1475,7 +1488,8 @@ void BBLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base:
 
 
 kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
-                                                      int firstIndex, int N, size_t *roi,
+                                                      int firstIndex, int N,
+                                                      const std::vector<size_t> &roi,
                                                       float initialDose,
                                                       float doseBias,
                                                       ReconConfig &config,
@@ -1538,7 +1552,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         dose      = tmpdose;
 
 
-        size_t obdims[]={img.Size(0), img.Size(1),static_cast<size_t>(N)};
+        std::vector<size_t> obdims={img.Size(0), img.Size(1),static_cast<size_t>(N)};
 
         kipl::base::TImage<float,3> img3D(obdims);
         memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
@@ -1587,7 +1601,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         logger(logger.LogMessage,msg.str());
 
         float *tempdata=new float[N];
-        refimg.Resize(img.Dims());
+        refimg.resize(img.dims());
 
         ImagingAlgorithms::AverageImage avg;
 
@@ -1675,7 +1689,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         dose      = tmpdose;
 
 
-        size_t obdims[]={img.Size(0), img.Size(1),static_cast<size_t>(N)};
+        std::vector<size_t> obdims={img.Size(0), img.Size(1),static_cast<size_t>(N)};
 
         kipl::base::TImage<float,3> img3D(obdims);
         memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
@@ -1722,7 +1736,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         msg.str(""); msg<<"Dose="<<dose;
         logger(logger.LogMessage,msg.str());
 
-        refimg.Resize(img.Dims());
+        refimg.resize(img.dims());
 
         ImagingAlgorithms::AverageImage avg;
 
@@ -1787,7 +1801,7 @@ float BBLogNorm::DoseBBLoader(std::string fname,
 
 }
 
-kipl::base::TImage <float,2> BBLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, size_t *roi, float &dose){
+kipl::base::TImage <float,2> BBLogNorm::BBExternalLoader(std::string fname, ReconConfig &config, const std::vector<size_t> &roi, float &dose){
 
 
     kipl::base::TImage<float,2> img;
@@ -1814,9 +1828,13 @@ kipl::base::TImage <float,2> BBLogNorm::BBExternalLoader(std::string fname, Reco
 
 }
 
-kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int N, size_t *roi, int firstIndex, ReconConfig &config, float *doselist){
-
-
+kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname,
+                                                         int N,
+                                                         const std::vector<size_t> &roi,
+                                                         int firstIndex,
+                                                         ReconConfig &config,
+                                                         std::vector<float> & doselist)
+{
     kipl::base::TImage <float, 2> tempimg;
     kipl::base::TImage<float, 3> img;
 
@@ -1825,7 +1843,7 @@ kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int 
     if (fname.empty() && N!=0)
         throw ReconException("The reference image file name mask is empty",__FILE__,__LINE__);
 
-    float *mylist = new float[N];
+    std::vector<float> mylist(N,0);
 
     std::string fmask=fname;
 
@@ -1835,9 +1853,9 @@ kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int 
     if (N!=0) {
 
 
-        for (int i=0; i<N; ++i) {
+        for (int i=0; i<N; ++i)
+        {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
-//            std::cout << filename << std::endl;
 
             tempimg=reader.Read(filename,
                     config.ProjectionInfo.eFlip,
@@ -1845,11 +1863,11 @@ kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int 
                     config.ProjectionInfo.fBinning,
                     roi);
 
-            if (i==0){
-                size_t dims[]={tempimg.Size(0), tempimg.Size(1),static_cast<size_t>(N)};
-                img.Resize(dims);
+            if (i==0)
+            {
+                std::vector<size_t> dims={tempimg.Size(0), tempimg.Size(1),static_cast<size_t>(N)};
+                img.resize(dims);
             }
-
 
             mylist[i] = bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
@@ -1857,11 +1875,10 @@ kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int 
                         config.ProjectionInfo.fBinning,
                         nOriginalNormRegion) : 0.0f;
 
-
             memcpy(img.GetLinePtr(0,i),tempimg.GetDataPtr(),tempimg.Size()*sizeof(float));
 
         }
-        memcpy(doselist, mylist, sizeof(float)*N);
+        doselist = mylist;
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
              float *pFlat=img.GetDataPtr();
@@ -1873,10 +1890,6 @@ kipl::base::TImage <float,3> BBLogNorm::BBExternalLoader(std::string fname, int 
 
 
     }
-
-
-     delete [] mylist;
-
 
     return img;
 

@@ -41,7 +41,7 @@ bool BasicRingClean::SetROI(size_t *roi)
 
 int BasicRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-	kipl::base::TImage<float,2> meanproj(img.Dims());
+    kipl::base::TImage<float,2> meanproj(img.dims());
 
 	float *pMean=meanproj.GetDataPtr();
 	float *pImg=img.GetDataPtr();
@@ -64,8 +64,7 @@ int BasicRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std:
 
 	kipl::io::WriteTIFF32(meanproj,"mean.tif");
 
-	size_t filtdims[2]={3,3};
-	kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
+    kipl::filters::TMedianFilter<float,2> medfilt({3,3});
 
 	kipl::base::TImage<float,2> medproj=medfilt(meanproj);
 	

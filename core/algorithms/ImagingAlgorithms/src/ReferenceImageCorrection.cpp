@@ -117,38 +117,38 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         float dose_OB,
         float dose_DC,
         bool normBB,
-        size_t *roi,
-        size_t *doseroi)
+        const std::vector<size_t> & roi,
+        const std::vector<size_t> &doseroi)
 {
 
-    if (ob!=nullptr) {
+    if (ob!=nullptr)
+    {
 		m_bHaveOpenBeam=true;
         m_OpenBeam=*ob;
-//        kipl::io::WriteTIFF32(m_OpenBeam,"roi_ob.tif");
 	}
 
-    if (dc!=nullptr) {
+    if (dc!=nullptr)
+    {
 		m_bHaveDarkCurrent=true;
         m_DarkCurrent=*dc;
-//        kipl::io::WriteTIFF32(m_DarkCurrent,"roi_dc.tif");
 	}
 
-    if(doseroi!=nullptr){
-
-        memcpy(m_nDoseROI,doseroi, sizeof(size_t)*4);
-    }
-    if (roi!=nullptr){
-        memcpy(m_nROI,roi, sizeof(size_t)*4);
-    }
-    else{
-        size_t fullroi[4];
-        fullroi[0] = fullroi[1]=0;
-        fullroi[2]= ob->Size(0);
-        fullroi[3]= ob->Size(1);
-        memcpy(m_nROI,fullroi, sizeof(size_t)*4);
+    if (!doseroi.empty())
+    {
+        m_nDoseROI = doseroi;
     }
 
-    if (dose_OB!=0) {
+    if (!roi.empty())
+    {
+        m_nROI = roi;
+    }
+    else
+    {
+        m_nROI = {0,0,ob->Size(0),ob->Size(1)};
+    }
+
+    if (dose_OB!=0)
+    {
         m_bHaveDoseROI=true;
         m_fOpenBeamDose = dose_OB;
     }
@@ -1214,21 +1214,19 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
       }
 }
 
-void ReferenceImageCorrection::SetBBInterpRoi(size_t *roi){
-
-    memcpy(m_nBlackBodyROI,roi,sizeof(size_t)*4);
-
+void ReferenceImageCorrection::SetBBInterpRoi(const std::vector<size_t> &roi)
+{
+    m_nBlackBodyROI = roi;
 }
 
-void ReferenceImageCorrection::SetBBInterpDoseRoi(size_t *roi){
-    memcpy(m_nDoseBBRoi, roi, sizeof(size_t)*4);
+void ReferenceImageCorrection::SetBBInterpDoseRoi(const std::vector<size_t> &roi)
+{
+    m_nDoseBBRoi = roi;
 }
 
-float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img){
-
-
+float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img)
+{
     std::map<std::pair<int,int>, float> values;
-
 
     float mean_value = 0.0f;
     int value_size = 0;
@@ -1643,7 +1641,7 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 
 }
 
-kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int, int>, float> &values, size_t *roi){
+kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int, int>, float> &values, const std::vector<size_t> &roi){
 
 
 
@@ -1687,7 +1685,7 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagew
 
 }
 
-kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, size_t *roi) {
+kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, const std::vector<size_t> &roi) {
 
 
     size_t dimx = roi[2]-roi[0];
@@ -1878,11 +1876,10 @@ void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
 
 }
 
-void ReferenceImageCorrection::SetDoseList(float *doselist){
+void ReferenceImageCorrection::SetDoseList(const std::vector<float> & doselist){
 
     if (m_nProj!=0) {
-        dosesamplelist = new float[m_nProj];
-        memcpy(dosesamplelist, doselist, sizeof(float)*m_nProj);
+        dosesamplelist = doselist;
     }
     else {
         throw ImagingException("m_nProj was not set before calling ReferenceImageCorrection::SetDoseList",__FILE__,__LINE__);
@@ -2891,7 +2888,7 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
 
 }
 
-void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, float *doselist){
+void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, const std::vector<float> & doselist){
 
     m_OB_BB_ext.resize(bb_ext.dims());
     m_BB_sample_ext.resize(bb_sample_ext.dims());
@@ -2899,8 +2896,8 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
 
     fdoseOB_ext = dose;
-    fdose_ext_list = new float[bb_sample_ext.Size(2)];
-    memcpy(fdose_ext_list, doselist, sizeof(float)*bb_sample_ext.Size(2));
+
+    fdose_ext_list = doselist;
 
 }
 

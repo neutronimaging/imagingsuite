@@ -33,10 +33,10 @@ private:
 
 FrameWorkTest::FrameWorkTest()
 {
-    size_t dims[2]={15, 20};
+    std::vector<size_t> dims={15, 20};
 
-    m_img.Resize(dims);
-    m_fimg.Resize(dims);
+    m_img.resize(dims);
+    m_fimg.resize(dims);
 
     for (size_t i=0; i<m_img.Size(); i++) {
         m_img[i]  = static_cast<int>(i);
@@ -61,7 +61,7 @@ void FrameWorkTest::testProjectionReader()
 {
     QString msg;
     ProjectionReader reader;
-    size_t dims[2];
+    std::vector<size_t> dims;
     kipl::base::TImage<float,2> res_tiff;
     kipl::base::TImage<float,2> res_fits;
     kipl::base::TImage<float,2> ref;
@@ -69,29 +69,29 @@ void FrameWorkTest::testProjectionReader()
     // ----------------------------------------
     // Basic read
     {
-    reader.GetImageSize("proj_0001.fits",1.0f,dims);
-    QVERIFY2(dims[0]==m_img.Size(0), "Reading fits size 0 error");
-    QVERIFY2(dims[1]==m_img.Size(1), "Reading fits size 1 error");
+        dims=reader.GetImageSize("proj_0001.fits",1.0f);
+        QVERIFY2(dims[0]==m_img.Size(0), "Reading fits size 0 error");
+        QVERIFY2(dims[1]==m_img.Size(1), "Reading fits size 1 error");
 
-    reader.GetImageSize("proj_0002.tif",1.0f,dims);
-    QVERIFY2(dims[0]==m_img.Size(0), "Reading tiff size 0 error");
-    QVERIFY2(dims[1]==m_img.Size(1), "Reading tiff size 1 error");
+        dims=reader.GetImageSize("proj_0002.tif",1.0f);
+        QVERIFY2(dims[0]==m_img.Size(0), "Reading tiff size 0 error");
+        QVERIFY2(dims[1]==m_img.Size(1), "Reading tiff size 1 error");
 
-    // Basic read fits
-    res_fits=reader.Read("proj_0001.fits");
-    for (size_t i=0; i<m_img.Size(); i++) {
-        QVERIFY2(res_fits[i]==m_fimg[i],"Data error in while reading");
-    }
+        // Basic read fits
+        res_fits=reader.Read("proj_0001.fits");
+        for (size_t i=0; i<m_img.Size(); i++) {
+            QVERIFY2(res_fits[i]==m_fimg[i],"Data error in while reading");
+        }
 
-    // Basic read tiff
-    res_tiff=reader.Read("proj_0002.tif");
-    for (size_t i=0; i<m_img.Size(); i++) {
-        QVERIFY2(res_tiff[i]==m_fimg[i],"Data error in while reading");
-    }
+        // Basic read tiff
+        res_tiff=reader.Read("proj_0002.tif");
+        for (size_t i=0; i<m_img.Size(); i++) {
+            QVERIFY2(res_tiff[i]==m_fimg[i],"Data error in while reading");
+        }
     }
     // ----------------------------------------
     // Crop  reference data
-    size_t crop[4]={2,3,7,9};
+    std::vector<size_t> crop={2,3,7,9};
     kipl::base::TImage<float,2> crop_ref;
     kipl::base::TSubImage<float,2> cropper;
 
@@ -133,7 +133,7 @@ void FrameWorkTest::testProjectionReader()
         kipl::base::TRotate<float> rot;
         kipl::base::TImage<float,2> rot_ref;
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotateNone,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotateNone,1.0f,{});
         rot_ref=rot.MirrorHorizontal(m_fimg);
 
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horizontal");
@@ -144,7 +144,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotateNone,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotateNone,1.0f,{});
         rot_ref=rot.MirrorVertical(m_fimg);
 
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with vertical");
@@ -155,7 +155,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontalVertical,kipl::base::ImageRotateNone,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontalVertical,kipl::base::ImageRotateNone,1.0f,{});
         rot_ref=rot.MirrorHorizontal(m_fimg);
         rot_ref=rot.MirrorVertical(rot_ref);
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horvert");
@@ -172,7 +172,7 @@ void FrameWorkTest::testProjectionReader()
     {
         kipl::base::TRotate<float> rot;
         kipl::base::TImage<float,2> rot_ref;
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate90,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate90,1.0f,{});
         rot_ref=rot.Rotate90(m_fimg);
 
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with rotate 90");
@@ -183,7 +183,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate180,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate180,1.0f,{});
 
         rot_ref=rot.Rotate180(m_fimg);
 
@@ -195,7 +195,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate270,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate270,1.0f,{});
 
         rot_ref=rot.Rotate270(m_fimg);
 
@@ -214,7 +214,7 @@ void FrameWorkTest::testProjectionReader()
         kipl::base::TRotate<float> rot;
         kipl::base::TImage<float,2> rot_ref;
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate90,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate90,1.0f,{});
 
         rot_ref=rot.Rotate90(m_fimg);
         rot_ref=rot.MirrorHorizontal(rot_ref);
@@ -227,7 +227,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate180,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate180,1.0f,{});
         rot_ref=rot.MirrorHorizontal(m_fimg);
         rot_ref=rot.Rotate180(rot_ref);
 
@@ -239,7 +239,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate270,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate270,1.0f,{});
         rot_ref=rot.Rotate270(m_fimg);
         rot_ref=rot.MirrorHorizontal(rot_ref);
 
@@ -251,7 +251,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotate90,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotate90,1.0f,{});
         rot_ref=rot.Rotate90(m_fimg);
         rot_ref=rot.MirrorVertical(rot_ref);
 
@@ -263,7 +263,7 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotate180,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotate180,1.0f,{});
         rot_ref=rot.Rotate180(m_fimg);
         rot_ref=rot.MirrorVertical(rot_ref);
 
@@ -275,10 +275,9 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
-        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotate270,1.0f,nullptr);
+        res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipVertical,kipl::base::ImageRotate270,1.0f,{});
         rot_ref=rot.Rotate270(m_fimg);
-        rot_ref=rot.MirrorVertical(rot_ref)
-                ;
+        rot_ref=rot.MirrorVertical(rot_ref);
 
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with vertical 270");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with vertical 270");

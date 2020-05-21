@@ -55,9 +55,9 @@ int KIPLSHARED_EXPORT GetViVaSEQHeader(std::string fname, ViVaSEQHeader *header)
 
 std::vector<size_t> KIPLSHARED_EXPORT GetViVaSEQDims(const std::string &fname);
 
-int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, const size_t * const roi=nullptr, int first_frame=-1, int last_frame=0, int frame_step=1);
+int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, const std::vector<size_t> & roi={}, int first_frame=-1, int last_frame=0, int frame_step=1);
 
-int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t const * const roi=nullptr);
+int KIPLSHARED_EXPORT ReadViVaSEQ(std::string fname, kipl::base::TImage<float,2> &img, int idx, const std::vector<size_t> & roi={});
 
 int KIPLSHARED_EXPORT WriteViVaSEQ(std::string fname, kipl::base::TImage<float,3> & img, float low=0.0f, float high=0.0f);
 

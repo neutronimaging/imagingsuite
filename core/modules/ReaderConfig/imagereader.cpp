@@ -88,10 +88,12 @@ std::vector<size_t> ImageReader::GetImageSize(std::string filename, float binnin
 void ImageReader::UpdateCrop(kipl::base::eImageFlip flip,
         kipl::base::eImageRotate rotate,
         std::vector<size_t> &dims,
-        size_t *nCrop)
+        std::vector<size_t> &nCrop)
 {
-    if (nCrop!=nullptr) {
-        switch (flip) {
+    if ( ! nCrop.empty())
+    {
+        switch (flip)
+        {
         case kipl::base::ImageFlipNone : break;
         case kipl::base::ImageFlipHorizontal :
             nCrop[0]=dims[0]-1-nCrop[0];
@@ -109,8 +111,8 @@ void ImageReader::UpdateCrop(kipl::base::eImageFlip flip,
             break;
         }
 
-        size_t nCropOrig[4];
-        memcpy(nCropOrig,nCrop,4*sizeof(size_t));
+        std::vector<size_t> nCropOrig = nCrop;
+
         switch (rotate) {
         case kipl::base::ImageRotateNone : break;
         case kipl::base::ImageRotate90   :
@@ -174,7 +176,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
         kipl::base::eImageFlip flip,
         kipl::base::eImageRotate rotate,
         float binning,
-        size_t const * const nCrop, size_t idx)
+        const std::vector<size_t> & nCrop, size_t idx)
 {
     std::vector<size_t> dims;
 
@@ -197,15 +199,11 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     {
         throw ReaderException("Unhandled exception",__FILE__,__LINE__);
     }
-    size_t local_crop[4];
-    size_t *pCrop=nullptr;
-    if (nCrop!=nullptr)
+    std::vector<size_t> local_crop;
+    std::vector<size_t> pCrop;
+    if (! nCrop.empty())
     {
-
-        local_crop[0]=nCrop[0];
-        local_crop[1]=nCrop[1];
-        local_crop[2]=nCrop[2];
-        local_crop[3]=nCrop[3];
+        local_crop = nCrop;
 
         UpdateCrop(flip,rotate,dims,local_crop);
         pCrop=local_crop;
@@ -285,7 +283,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string path,
                                                    kipl::base::eImageFlip flip,
                                                    kipl::base::eImageRotate rotate,
                                                    float binning,
-                                                   size_t const * const nCrop)
+                                                   const std::vector<size_t> & nCrop)
 {
     kipl::base::TImage<float,2> img;
 
@@ -298,7 +296,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string path,
         std::string filename;
         std::string ext;
         kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
-        img=Read(filename,flip,rotate, binning,nCrop);
+        img=Read(filename,flip,rotate, binning,nCrop,0UL);
     }
 
     return img;
@@ -308,7 +306,7 @@ kipl::base::TImage<float,3> ImageReader::Read(FileSet &loader,
                                   kipl::base::eImageFlip flip,
                                   kipl::base::eImageRotate rotate,
                                   float binning,
-                                  size_t const * const nCrop)
+                                  const std::vector<size_t> &nCrop)
 {
     return Read(loader.m_sFilemask,
                 loader.m_nFirst,
@@ -339,7 +337,7 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
                                               kipl::base::eImageFlip flip,
                                               kipl::base::eImageRotate rotate,
                                               float binning,
-                                              size_t const * const nCrop)
+                                              const std::vector<size_t> &nCrop)
 {
 
     kipl::base::TImage<float,3> img;
@@ -376,7 +374,7 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
     return img;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, size_t const * const nCrop,size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, const std::vector<size_t> & nCrop,size_t idx)
 {
     kipl::base::TImage<float,2> img;
     try
@@ -399,7 +397,7 @@ kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, size_t c
     return img;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadTIFF(std::string filename, size_t const * const nCrop, size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadTIFF(std::string filename, const std::vector<size_t> &nCrop, size_t idx)
 {
     kipl::base::TImage<float,2> img;
     try
@@ -422,14 +420,14 @@ kipl::base::TImage<float,2> ImageReader::ReadTIFF(std::string filename, size_t c
     return img;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadHDF(std::string filename, size_t const * const nCrop, size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadHDF(std::string filename, const std::vector<size_t> &nCrop, size_t idx)
 {
     kipl::base::TImage<float,2> img;
 
     return img;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadSEQ(std::string filename, size_t const * const nCrop, size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadSEQ(std::string filename, const std::vector<size_t> & nCrop, size_t idx)
 {
     kipl::base::TImage<float,2> img;
     kipl::io::ReadViVaSEQ(filename, img, idx, nCrop);
@@ -458,7 +456,7 @@ bool ImageReader::Aborted()
     return res;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadPNG(std::string filename, size_t const * const nCrop, size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadPNG(std::string filename, const std::vector<size_t> & nCrop, size_t idx)
 {
     throw ReaderException("ReadPNG is not implemented",__FILE__, __LINE__);
     return kipl::base::TImage<float,2>();
@@ -468,7 +466,7 @@ float ImageReader::GetProjectionDose(std::string filename,
         kipl::base::eImageFlip flip,
         kipl::base::eImageRotate rotate,
         float binning,
-        size_t const * const nDoseROI)
+        const std::vector<size_t> & nDoseROI)
 {
     kipl::base::TImage<float,2> img;
 
@@ -505,7 +503,7 @@ float ImageReader::GetProjectionDose(std::string path,
         kipl::base::eImageFlip flip,
         kipl::base::eImageRotate rotate,
         float binning,
-        size_t const * const nDoseROI)
+        const std::vector<size_t> & nDoseROI)
 {
     std::string filename;
     std::string ext;

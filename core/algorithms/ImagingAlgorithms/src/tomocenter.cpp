@@ -199,8 +199,8 @@ float TomoCenter::CorrelationCenter()
         cogfile.open(pointsFileName.c_str());
 
     kipl::base::TImage<float,2> limg0,limg180;
-    size_t start[2]={roi[0],roi[1]};
-    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    std::vector<size_t> start  = {roi[0],roi[1]};
+    std::vector<size_t> length = {roi[2]-roi[0],roi[3]-roi[1]};
     kipl::base::TSubImage<float,2> cropper;
     limg0=cropper.Get(m_Proj0Deg,start,length);
     limg180 = kipl::base::Mirror(cropper.Get(m_Proj180Deg,start,length),kipl::base::ImageAxisX);
@@ -250,8 +250,8 @@ float TomoCenter::LeastSquareCenter()
     msg<<"LS center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
     kipl::base::TImage<float,2> limg0,limg180;
-    size_t start[2]={roi[0],roi[1]};
-    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    std::vector<size_t> start  = {roi[0],roi[1]};
+    std::vector<size_t> length = {roi[2]-roi[0],roi[3]-roi[1]};
     kipl::base::TSubImage<float,2> cropper;
 
     msg.str("");

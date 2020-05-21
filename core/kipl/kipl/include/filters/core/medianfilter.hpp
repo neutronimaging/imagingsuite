@@ -4,6 +4,7 @@
 #define MEDIANFILTER_HPP_
 
 #include <iomanip>
+#include <numeric>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -343,28 +344,21 @@ template <typename T, size_t N>
 TWeightedMedianFilter<T,N>::TWeightedMedianFilter(const std::vector<size_t> &dims, const std::vector<int> &weights) :
     TMedianFilter<T,N>(dims),
     m_nWeights(weights),
-	m_nBufferLength(0)
+    m_nBufferLength(std::accumulate(weights.begin(),weights.end(),0))
 {
-		this->m_nWeights=new int[this->nKernel];
-		memcpy(this->m_nWeights,weights,this->nKernel*sizeof(int));
 
-		for (int i=0; i<this->nKernel; i++) {
-			m_nBufferLength+=weights[i];
-		}
 }
 
 template <typename T, size_t N>
 TWeightedMedianFilter<T,N>::~TWeightedMedianFilter()
 {
-	if (this->m_nWeights!=NULL)
-		delete [] this->m_nWeights;
 }
 
 template <typename T, size_t N>
 kipl::base::TImage<T,N> TWeightedMedianFilter<T,N>::operator() (kipl::base::TImage<T,N> &src,
 			const FilterBase::EdgeProcessingStyle edgeStyle)
 {
-	kipl::base::TImage<T,N> result(src.Dims());
+    kipl::base::TImage<T,N> result(src.dims());
 
 	const int startY = 1 < N ? this->nHalfKernel[1] : 0 ;
 	const int endY   = 1 < N ? src.Size(1) - (this->nKernelDims[1]-this->nHalfKernel[1]-1): 1 ;
