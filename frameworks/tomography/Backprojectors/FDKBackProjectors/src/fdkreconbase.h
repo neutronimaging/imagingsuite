@@ -52,7 +52,7 @@ public:
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-    virtual void SetROI(size_t *roi);
+    virtual void SetROI(const std::vector<size_t> &roi);
 
     /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
     /// \param x the bin values of the x axis
@@ -106,7 +106,7 @@ protected:
     size_t nProjectionBufferSize;
     size_t nSliceBlock;
     size_t nSubVolume[2];
-    size_t volume_size[3];
+    std::vector<size_t> volume_size;
     float spacing[3];
     float fRotation;
 

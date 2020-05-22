@@ -33,28 +33,27 @@ TImage<T,N>::TImage() :
 	
 template<typename T, size_t N>
 TImage<T,N>::TImage(const TImage<T,N> &img) :
+    m_Dims(img.m_Dims),
     m_NData(img.m_NData),
-    m_buffer(img.m_buffer),
-    m_Dims(img.m_Dims)
+    m_buffer(img.m_buffer)
 {
 	info=img.info;
 }
 
 template<typename T, size_t N>
 TImage<T,N>::TImage(const std::vector<size_t> & dims) :
-    m_NData(_ComputeNElements(dims)),
-    m_buffer(m_NData),
-    m_Dims(dims)
-
+    m_Dims(dims.begin(),dims.begin()+N),
+    m_NData(_ComputeNElements(m_Dims)),
+    m_buffer(m_NData)
 {
     std::fill_n(m_buffer.GetDataPtr(), m_NData,0);
 }
 
 template<typename T, size_t N>
 TImage<T,N>::TImage(T *pBuffer, const std::vector<size_t> & dims) :
+    m_Dims(dims.begin(),dims.begin()+N),
     m_NData(_ComputeNElements(dims)),
-    m_buffer(pBuffer,m_NData),
-    m_Dims(dims)
+    m_buffer(pBuffer,m_NData)
 {
 }
 

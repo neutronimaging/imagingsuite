@@ -125,7 +125,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 	if (volume.Size()==0)
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-	kipl::base::TImage<float,2> img(projections.Dims());
+    kipl::base::TImage<float,2> img(projections.dims());
 
 	size_t nProj=projections.Size(2);
 	// Extract the projection parameters
@@ -151,7 +151,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 	return 0;
 }
 
-void StdBackProjectorBase::SetROI(size_t *roi)
+void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 {
 	ClearAll();
 	ProjCenter    = mConfig.ProjectionInfo.fCenter;
@@ -161,10 +161,7 @@ void StdBackProjectorBase::SetROI(size_t *roi)
     else
         SizeV = roi[3]-roi[1];
 
-	mConfig.ProjectionInfo.roi[0]=roi[0];
-	mConfig.ProjectionInfo.roi[1]=roi[1];
-	mConfig.ProjectionInfo.roi[2]=roi[2];
-	mConfig.ProjectionInfo.roi[3]=roi[3];
+    mConfig.ProjectionInfo.roi=roi;
 
 	SizeProj      = SizeU*SizeV;
 	size_t rest=0;
@@ -172,29 +169,25 @@ void StdBackProjectorBase::SetROI(size_t *roi)
 	rest = SizeV & 3 ;
 	rest = rest !=0 ? 4 - rest : 0;
 #endif
-	size_t projDims[3]={SizeU, SizeV + rest, nProjectionBufferSize};
+    std::vector<size_t> projDims = { SizeU, SizeV + rest, nProjectionBufferSize };
 
 	if (MatrixAlignment==MatrixZXY) {
-		MatrixDims[0]=SizeV;
-		MatrixDims[1]=SizeU;
-		MatrixDims[2]=SizeU;
+        MatrixDims = { SizeV, SizeU, SizeU };
 
 		std::swap(projDims[0],   projDims[1]);
 	}
 	else {
-		MatrixDims[0]=SizeU;
-		MatrixDims[1]=SizeU;
-		MatrixDims[2]=SizeV;
+        MatrixDims = { SizeU, SizeU, SizeV };
 	}
 
-	volume.Resize(MatrixDims);
+    volume.resize(MatrixDims);
 	volume=0.0f;
 
 	stringstream msg;
 	
 	msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
 	msg<<"Matrix dimensions "<<volume<<std::endl;
-	projections.Resize(projDims);
+    projections.resize(projDims);
 	projections=0.0f;
 	msg<<"Projection buffer dimensions "<<projections<<std::endl;
 	logger(kipl::logging::Logger::LogVerbose,msg.str());

@@ -704,12 +704,13 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     unsigned int pad_factor = padwidth-width;
     unsigned int padheight = height;
 
-    size_t pad_dims[2] = {padwidth, height};
+    std::vector<size_t> pad_dims = {padwidth, height};
     kipl::base::TImage< float,2 > padImg(pad_dims);
     padImg = 0.0; // fill with zeros
 
     // do zero padding
-    for (size_t i=0; i<height; ++i){
+    for (size_t i=0; i<height; ++i)
+    {
         memcpy(padImg.GetLinePtr(i,0)+pad_factor/2, img.GetLinePtr(i,0), sizeof(float)*width);
     }
 
@@ -723,19 +724,21 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
     ramp = (float*) malloc (padwidth * sizeof(float));
 
 
-    if (!ramp) {
+    if (!ramp)
+    {
         printf ("Error allocating memory for ramp\n"); // to substitute with an exception
     }
 
     N = width * height;
     Npad = padwidth*padheight;
 
-    in = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-    fft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
+    in   = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
+    fft  = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
     ifft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
 
 
-    if (!in || !fft || !ifft) {
+    if (!in || !fft || !ifft)
+    {
         printf("Error allocating memory for fft\n");
     }
 
@@ -745,18 +748,23 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
 
     for (r = 0; r < MARGINF; ++r)
-        memcpy (paddata + r * padwidth, paddata + MARGINF * padwidth,
-        padwidth * sizeof(float));
+        memcpy (paddata + r * padwidth,
+                paddata + MARGINF * padwidth,
+                padwidth * sizeof(float));
 
     for (r = height - MARGINF; r < height; ++r)
-        memcpy (paddata + r * padwidth, paddata + (padheight - MARGINF - 1) * padwidth,
-        padwidth * sizeof(float));
+        memcpy (paddata + r * padwidth,
+                paddata + (padheight - MARGINF - 1) * padwidth,
+                padwidth * sizeof(float));
 
-    for (r = 0; r < padheight; ++r) {
-        for (c = 0; c < MARGINF; ++c){
+    for (r = 0; r < padheight; ++r)
+    {
+        for (c = 0; c < MARGINF; ++c)
+        {
             paddata[r * padwidth + c] = paddata[r * padwidth + MARGINF];
         }
-        for (c = padwidth - MARGINF; c < padwidth; ++c){
+        for (c = padwidth - MARGINF; c < padwidth; ++c)
+        {
             paddata[r * padwidth + c] = paddata[r * padwidth + padwidth - MARGINF - 1];
         }
     }
@@ -764,7 +772,8 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
 
     /* Fill in ramp filter in frequency space */
-    for (i = 0; i < Npad; ++i) {
+    for (i = 0; i < Npad; ++i)
+    {
         in[i][0] = (float)(paddata[i]);
         in[i][1] = 0.0;
     }
@@ -787,32 +796,33 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
     for (r = 0; r < padheight; ++r)
     {
-    fftp = fftw_plan_dft_1d (padwidth, in + r * padwidth, fft + r * padwidth,
-        FFTW_FORWARD, FFTW_ESTIMATE);
-    if (!fftp) {
-        printf ("Error creating fft plan\n");
-    }
+        fftp = fftw_plan_dft_1d (padwidth, in + r * padwidth, fft + r * padwidth,
+            FFTW_FORWARD, FFTW_ESTIMATE);
+        if (!fftp)
+        {
+            printf ("Error creating fft plan\n");
+        }
 
-    ifftp = fftw_plan_dft_1d (padwidth, fft + r * padwidth, ifft + r * padwidth,
-        FFTW_BACKWARD, FFTW_ESTIMATE);
-    if (!ifftp) {
-        printf ("Error creating ifft plan\n");
-    }
+        ifftp = fftw_plan_dft_1d (padwidth, fft + r * padwidth, ifft + r * padwidth,
+            FFTW_BACKWARD, FFTW_ESTIMATE);
+        if (!ifftp)
+        {
+            printf ("Error creating ifft plan\n");
+        }
 
         fftw_execute (fftp);
 
         // Apply ramp
-        for (c = 0; c < padwidth; ++c) {
+        for (c = 0; c < padwidth; ++c)
+        {
             fft[r * padwidth + c][0] *= ramp[c];
             fft[r * padwidth + c][1] *= ramp[c];
         }
 
-
-
         fftw_execute (ifftp);
 
-    fftw_destroy_plan (fftp);
-    fftw_destroy_plan (ifftp);
+        fftw_destroy_plan (fftp);
+        fftw_destroy_plan (ifftp);
     }
 
 
@@ -825,11 +835,10 @@ void FDKbp_single::ramp_filter(kipl::base::TImage<float, 2> &img)
 
     // go back to original dimension
 
-    for (i=0; i<height; ++i){
+    for (i=0; i<height; ++i)
+    {
         memcpy(img.GetLinePtr(i,0), padImg.GetLinePtr(i,0)+pad_factor/2, sizeof(float)*width);
     }
-
-
 
     fftw_free (in);
     fftw_free (fft);
@@ -856,7 +865,7 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     msg<<"Pad width="<<padwidth;
     logger(logger.LogDebug,msg.str());
 
-    size_t pad_dims[2] = {padwidth, height};
+    std::vector<size_t> pad_dims = {padwidth, height};
     kipl::base::TImage< float,2 > padImg(pad_dims);
     padImg = 0.0f; // fill with zeros
 
@@ -871,14 +880,16 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
 
     ramp = (float*) malloc (padwidth * sizeof(float));
 
-    if (!ramp) {
+    if (!ramp)
+    {
         throw ReconException("Error allocating memory for ramp",__FILE__,__LINE__);
     }
 
     N = width * height;
     Npad = padwidth*padheight;
 
-    if (!in || !fft || !ifft) {
+    if (!in || !fft || !ifft)
+    {
         throw ReconException("Error allocating memory for fft buffers",__FILE__,__LINE__);
     }
 
@@ -886,25 +897,32 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     float *paddata = padImg.GetDataPtr();
 
     for (r = 0; r < MARGINF; ++r)
-        memcpy (paddata + r * padwidth, paddata + MARGINF * padwidth,
-        padwidth * sizeof(float));
+        memcpy (paddata + r * padwidth,
+                paddata + MARGINF * padwidth,
+                padwidth * sizeof(float));
 
     for (r = height - MARGINF; r < height; ++r)
-        memcpy (paddata + r * padwidth, paddata + (padheight - MARGINF - 1) * padwidth,
-        padwidth * sizeof(float));
+        memcpy (paddata + r * padwidth,
+                paddata + (padheight - MARGINF - 1) * padwidth,
+                padwidth * sizeof(float));
 
-    for (r = 0; r < padheight; ++r) {
-        for (c = 0; c < MARGINF; ++c){
+    for (r = 0; r < padheight; ++r)
+    {
+        for (c = 0; c < MARGINF; ++c)
+        {
             paddata[r * padwidth + c] = paddata[r * padwidth + MARGINF];
         }
-        for (c = padwidth - MARGINF; c < padwidth; ++c){
+
+        for (c = padwidth - MARGINF; c < padwidth; ++c)
+        {
             paddata[r * padwidth + c] = paddata[r * padwidth + padwidth - MARGINF - 1];
         }
     }
 
 
     // Fill in ramp filter in frequency space
-    for (i = 0; i < Npad; ++i) {
+    for (i = 0; i < Npad; ++i)
+    {
         in[i][0] = (float)(paddata[i]);
         in[i][1] = 0.0;
     }
@@ -936,7 +954,8 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
         fftwf_execute (fftp);
 
         // Apply ramp
-        for (c = 0; c < padwidth; ++c) {
+        for (c = 0; c < padwidth; ++c)
+        {
             fft[c][0] *= ramp[c];
             fft[c][1] *= ramp[c];
         }
@@ -958,7 +977,8 @@ void FDKbp_single::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
 
     // fo back to original dimension
 
-    for (i=firstLine; i<lastLine; ++i){
+    for (i=firstLine; i<lastLine; ++i)
+    {
         memcpy(img.GetLinePtr(i,0), padImg.GetLinePtr(i,0)+pad_factor/2, sizeof(float)*width);
     }
 

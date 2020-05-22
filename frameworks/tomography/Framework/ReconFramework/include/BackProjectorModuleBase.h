@@ -121,7 +121,7 @@ protected:
     kipl::base::TImage<float,3> volume;          ///< The matrix where the back-projection is stored during the process.
     std::vector<std::pair<size_t,size_t> > mask; ///< List of start and stop positions forming a masked area where the data is reconstructed.
     kipl::profile::Timer timer;                  ///< A timer used to measure the exectution time of the back-projctor.
-    size_t MatrixDims[3];
+    std::vector<size_t> MatrixDims;
 
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.

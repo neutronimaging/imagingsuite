@@ -154,14 +154,14 @@ private:
   /// \brief Computes to number of elements to allocate for the image
   /// \param dims Array containing the dimensions of the image
     size_t _ComputeNElements(const std::vector<size_t> & dims);
-	
+    /// \brief Dimension array
+    std::vector<size_t> m_Dims;
 	size_t m_NData;
 	
 	/// \brief Buffer constaining the image data
 	kipl::base::core::buffer<T> m_buffer;
 
-	/// \brief Dimension array
-    std::vector<size_t> m_Dims;
+
 };
 
 /// \brief Computes the pixelwise sum between two images

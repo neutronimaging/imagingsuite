@@ -34,7 +34,7 @@ public:
 	virtual int Initialize() { return 0;}
 	virtual std::map<std::string, std::string> GetParameters();
 
-	virtual void SetROI(size_t *roi);
+    virtual void SetROI(const std::vector<size_t> &roi);
 
 	
 	void GetHistogram(float *axis, size_t *hist,size_t nBins);
