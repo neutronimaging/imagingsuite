@@ -36,7 +36,7 @@ void ModuleConfigProgressDialog::on_buttonBox_rejected()
     this->reject();
 }
 
-int ModuleConfigProgressDialog::exec(ReconEngine * engine,size_t *roi, std::string lastModule)
+int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size_t> &roi, std::string lastModule)
 {
     if (engine==nullptr)
     {
@@ -45,7 +45,7 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,size_t *roi, std::stri
     }
 
     m_Engine=engine;
-    std::copy_n(roi,4,mROI);
+    mROI = roi;
     mLastModule = lastModule;
 
     finish=false;

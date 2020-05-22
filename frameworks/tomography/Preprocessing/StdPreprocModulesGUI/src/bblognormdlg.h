@@ -74,8 +74,8 @@ private:
     size_t nBBSampleCount; /// number of sample images with BB
     size_t nBBSampleFirstIndex; /// first index in filename for sample images with BB
     std::string blackbodysamplename;
-    size_t BBroi[4];
-    size_t doseBBroi[4];
+    std::vector<size_t> BBroi;
+    std::vector<size_t> doseBBroi;
     size_t radius;
     size_t min_area;
 

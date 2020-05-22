@@ -86,7 +86,7 @@ public:
     bool Serialize(std::vector<size_t> &dims);
 
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
-	void GetMatrixDims(size_t *dims) {dims[0]=m_Volume.Size(0); dims[1]=m_Volume.Size(1); dims[2]=m_Volume.Size(2);}
+    const std::vector<size_t> & GetMatrixDims() {return m_Volume.dims();}
     kipl::base::TImage<float,2> GetSlice(size_t index, kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY);
     std::string citations();
     std::vector<Publication> publicationList();

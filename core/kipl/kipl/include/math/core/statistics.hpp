@@ -13,10 +13,10 @@ Statistics imageStatistics(kipl::base::TImage<T,N> &img, kipl::base::RectROI &ro
 {
     Statistics stats;
     auto imgDims=img.dims();
-    size_t roiDims[4];
+
     size_t last = (N==3) ? imgDims[2] : 1;
 
-    roi.getBox(roiDims);
+    auto roiDims = roi.box();
 
     for (size_t i=0; i<last; ++i)
     {

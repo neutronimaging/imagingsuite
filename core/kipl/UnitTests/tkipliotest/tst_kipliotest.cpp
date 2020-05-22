@@ -109,7 +109,7 @@ void kiplIOTest::testSEQRead()
     QVERIFY(img.Size(1)==header.imageHeight);
     QVERIFY(img.Size(2)==header.numberOfFrames);
 
-    size_t roi[]={100,100,300,200};
+    std::vector<size_t> roi={100,100,300,200};
 
     kipl::io::ReadViVaSEQ("/Users/kaestner/Desktop/Video1.seq",img,roi);
 

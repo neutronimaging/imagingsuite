@@ -129,7 +129,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 
 
 
-    m_oldROI[0]=0; m_oldROI[1]=0; m_oldROI[2]=1; m_oldROI[3]=1;
+    m_oldROI = {0,0,1,1};
 
     QSignalBlocker a(ui->spinSlicesFirst);
     QSignalBlocker b(ui->spinSlicesLast);
@@ -376,7 +376,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                         m_PreviewImage=reader.ReadNexus(fmask,static_cast<size_t>(ui->sliderProjections->value()),
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
+                                                        static_cast<float>(ui->spinProjectionBinning->value()),{});
 
 
                     }
@@ -385,7 +385,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                         m_PreviewImage=reader.Read(name,
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
                                         static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex()),
-                                        static_cast<float>(ui->spinProjectionBinning->value()),nullptr);
+                                                   static_cast<float>(ui->spinProjectionBinning->value()),{});
                     }
 
                     if ( m_PreviewImage.Size()==0)
@@ -430,11 +430,11 @@ void MuhRecMainWindow::PreviewProjection(int x)
                     kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
                     lo=axis[nLo];
                     hi=axis[nHi];
-                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.dims(),lo,hi);
                 }
                 else {
                     ui->projectionViewer->get_levels(&lo,&hi);
-                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.Dims(),lo,hi);
+                    ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.dims(),lo,hi);
                 }
                 msg.str("");
                 msg<<" ("<<std::fixed<<std::setprecision(2)<<sliderval * (ui->dspinAngleStop->value()-ui->dspinAngleStart->value())/
@@ -442,7 +442,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
                 ui->label_projindex->setText(QString::fromStdString(msg.str()));
 
-                SetImageDimensionLimits(m_PreviewImage.Dims());
+                SetImageDimensionLimits(m_PreviewImage.dims());
                 UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
             }
             else {
@@ -487,7 +487,7 @@ void MuhRecMainWindow::DisplaySlice()
     on_sliderSlices_sliderMoved(-1);
 }
 
-void MuhRecMainWindow::SetImageDimensionLimits(const size_t *const dims)
+void MuhRecMainWindow::SetImageDimensionLimits(const std::vector<size_t> & dims)
 {
     ui->spinSlicesFirst->setMaximum(static_cast<int>(dims[1])-1);
     ui->spinSlicesLast->setMaximum(static_cast<int>(dims[1])-1);
@@ -695,16 +695,13 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
         logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
 
-        size_t dims[2]={3000,3000};
-        kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings(dims,2.0f);
-        ui->projectionViewer->set_image(img.GetDataPtr(),img.Dims());
-        ui->sliceViewer->set_image(img.GetDataPtr(),img.Dims());
+        kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings({1000,1000},2.0f);
+        ui->projectionViewer->set_image(img.GetDataPtr(),img.dims());
+        ui->sliceViewer->set_image(img.GetDataPtr(),img.dims());
 
          UpdateDialog();
     }
-    std::copy_n(m_Config.ProjectionInfo.projection_roi,
-              4,
-              m_oldROI);
+    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
 //    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
@@ -1111,8 +1108,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                 // Store info about last recon
                 m_LastReconConfig     = m_Config;
                 m_bCurrentReconStored = false;
-                size_t dims[3];
-                m_pEngine->GetMatrixDims(dims);
+
+                auto dims = m_pEngine->GetMatrixDims();
                 m_LastMidSlice = m_pEngine->GetSlice(dims[2]/2);
 
                 // Prepare visualization
@@ -1135,7 +1132,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     }
 
 
-                    m_pEngine->GetMatrixDims(m_Config.MatrixInfo.nDims);
+                    m_Config.MatrixInfo.nDims = m_pEngine->GetMatrixDims();
                     msg.str("");
                     msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
                     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -1224,7 +1221,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
 }
 
 
-void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
+void MuhRecMainWindow::UpdateMemoryUsage(const std::vector<size_t> & roi)
 {
     ostringstream msg;
     try  {
@@ -1234,9 +1231,7 @@ void MuhRecMainWindow::UpdateMemoryUsage(size_t * roi)
         double nBufferMemory=0;
         // Matrix size
         double length = abs(static_cast<ptrdiff_t>(roi[2])-static_cast<ptrdiff_t>(roi[0]));
-        double height = 0;
-
-        height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
+        double height = abs(static_cast<ptrdiff_t>(roi[3])-static_cast<ptrdiff_t>(roi[1]));
         text.str("");
 
         nMatrixMemory = length*length*height*sizeof(float);
@@ -1324,8 +1319,7 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
-    std::copy_n(m_Config.ProjectionInfo.projection_roi,4,m_oldROI);
- //   qDebug("UpdateDialog");
+    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
@@ -1731,10 +1725,10 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
 {
     std::ostringstream msg;
     m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<index);
-    size_t dims[3];
+
     if (m_pEngine!=nullptr)
     {
-        m_pEngine->GetMatrixDims(dims);
+        auto dims = m_pEngine->GetMatrixDims();
         int maxslices=static_cast<int>(dims[2-index]);
         ui->sliderSlices->setMaximum(maxslices-1);
         ui->spinBoxSlices->setMaximum(maxslices-1);
@@ -1853,7 +1847,7 @@ void MuhRecMainWindow::SlicesChanged(int arg1)
     (void) arg1;
 
     QRect rect;
-    size_t * dims=m_Config.ProjectionInfo.roi;
+    auto dims=m_Config.ProjectionInfo.roi;
 
     size_t roi[4];
     ui->widgetProjectionROI->getROI(roi);
@@ -2211,16 +2205,12 @@ void MuhRecMainWindow::on_widgetProjectionROI_valueChanged(int x0, int y0, int x
     CenterOfRotationChanged();
     m_oldROI[0]=x0; m_oldROI[1]=y0; m_oldROI[2]=x1; m_oldROI[3]=y1;
 
-    size_t roi[4];
+    std::vector<size_t> roi;
     ui->widgetProjectionROI->getROI(roi);
     int width=abs(x1-x0-1);
     width = width < 1 ? 1 : width;
     ui->widgetMatrixROI->setBoundingBox(0,0,width,width);
     UpdateMemoryUsage(roi);
-
-//    if (ui->checkCBCT->isChecked()){
-//        ComputeVolumeSize(); // update the size of the output volume
-//    }
 }
 
 void MuhRecMainWindow::on_buttonProjectionPath_clicked()
@@ -2382,7 +2372,7 @@ void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
 
     try {
         kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
-        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
+        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
                                    static_cast<float>(ui->dspinGrayLow->value()),
                                    static_cast<float>(ui->dspinGrayHigh->value()));
         msg.str("");
@@ -2715,7 +2705,7 @@ void MuhRecMainWindow::on_spinBoxSlices_valueChanged(int arg1)
 
    try {
        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(static_cast<size_t>(nSelectedSlice),m_eSlicePlane);
-       ui->sliceViewer->set_image(slice.GetDataPtr(),slice.Dims(),
+       ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
                                   static_cast<float>(ui->dspinGrayLow->value()),
                                   static_cast<float>(ui->dspinGrayHigh->value()));
        msg.str("");

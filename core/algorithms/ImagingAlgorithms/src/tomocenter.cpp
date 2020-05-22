@@ -39,14 +39,14 @@ void TomoCenter::setFraction(double f)
 void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
                           kipl::base::TImage<float, 2> &img180,
                           ImagingAlgorithms::TomoCenter::eEstimator est,
-                          size_t *_roi,
+                          const std::vector<size_t> &_roi,
                           bool bTilt,
                           double &center,
                           double &tilt,
                           double &pivot)
 {
     std::ostringstream msg;
-    std::copy_n(_roi,4,roi);
+    roi = _roi;
     m_Proj0Deg   = img0;
     m_Proj180Deg = img180;
 
@@ -118,7 +118,7 @@ void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
 void TomoCenter::estimate(kipl::base::TImage<float,2> &img0,
               kipl::base::TImage<float,2> &img180,
               ImagingAlgorithms::TomoCenter::eEstimator est,
-              size_t *_roi, bool bTilt,
+              const std::vector<size_t> &_roi, bool bTilt,
               float &center,
               float &tilt,
               float &pivot)

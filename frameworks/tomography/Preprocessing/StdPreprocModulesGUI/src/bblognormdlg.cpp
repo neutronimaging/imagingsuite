@@ -27,6 +27,8 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     nBBFirstIndex(1),
     nBBSampleCount(0),
     nBBSampleFirstIndex(1),
+    BBroi(4,0UL),
+    doseBBroi(4,0UL),
     radius(2),
 //    bUseNormROI(true),
 //    bUseNormROIBB(false),
@@ -52,8 +54,6 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
 
     blackbodyname = "somename";
     blackbodysamplename = "somename";
-    doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3] = 0;
-    BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
 
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";

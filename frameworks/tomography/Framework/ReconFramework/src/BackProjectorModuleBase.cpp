@@ -141,7 +141,7 @@ bool BackProjectorModuleBase::UpdateStatus(float val, std::string msg)
 void BackProjectorModuleBase::ClearAll()
 {
     mask.clear();
-    memset(MatrixDims,0,3*sizeof(size_t));
+    MatrixDims = {0,0,0};
 }
 
 void BackProjectorModuleBase::BuildCircleMask()
