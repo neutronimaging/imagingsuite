@@ -57,7 +57,11 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-SOURCES += tst_configbasetest.cpp
+SOURCES += tst_configbasetest.cpp \
+           dummyconfig.cpp
+
+HEADERS += dummyconfig.h
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
