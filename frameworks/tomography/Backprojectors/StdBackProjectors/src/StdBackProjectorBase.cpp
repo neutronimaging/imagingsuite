@@ -15,6 +15,8 @@
 #include <base/tpermuteimage.h>
 #include <math/mathconstants.h>
 
+#include <QDebug>
+
 #define USE_PROJ_PADDING
 
 StdBackProjectorBase::StdBackProjectorBase(std::string name, eMatrixAlignment align,kipl::interactors::InteractionBase *interactor) :
@@ -317,13 +319,14 @@ float StdBackProjectorBase::Max()
 
 int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
+    qDebug()<<"b";
 	mConfig=config;
-
+qDebug()<<"b";
     nProjectionBufferSize = GetIntParameter(parameters,"ProjectionBufferSize");
     nSliceBlock           = GetIntParameter(parameters,"SliceBlock");
 	GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
     filter.setParameters(parameters);
-	
+    qDebug()<<"b";
 	return 0;
 }
 

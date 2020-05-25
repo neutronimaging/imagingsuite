@@ -621,12 +621,11 @@ ReconConfig::cProjections::cProjections() :
     roi({0,0,2047,2047}),
     projection_roi({0,2047,0,2047}),
     dose_roi({0,10,0,10}),
+    fScanArc({0.0f,360.0f}),
     eFlip(kipl::base::ImageFlipNone),
     eRotate(kipl::base::ImageRotateNone),
     eDirection(kipl::base::RotationDirCW) // default clockwise
 {
-
-fScanArc[0]=0; fScanArc[1]=360;
 }
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
@@ -663,12 +662,11 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
     roi(a.roi),
     projection_roi(a.projection_roi),
     dose_roi(a.dose_roi),
+    fScanArc(a.fScanArc),
 	eFlip(a.eFlip),
     eRotate(a.eRotate),
     eDirection(a.eDirection)
 {	
-
-	fScanArc[0]=a.fScanArc[0]; fScanArc[1]=a.fScanArc[1];
 	
 }
 
@@ -707,18 +705,16 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 
     fResolution = a.fResolution;
 
-    roi = a.roi;
+    roi         = a.roi;
+    fScanArc    = a.fScanArc;
 
-    fScanArc[0]     = a.fScanArc[0];
-	fScanArc[1]     = a.fScanArc[1];
-
-    fpPoint = a.fpPoint;
+    fpPoint     = a.fpPoint;
     projection_roi = a.projection_roi;
-    dose_roi = a.dose_roi;
+    dose_roi    = a.dose_roi;
 
-	eFlip = a.eFlip;
-	eRotate = a.eRotate;
-    eDirection = a.eDirection;
+    eFlip       = a.eFlip;
+    eRotate     = a.eRotate;
+    eDirection  = a.eDirection;
 
 	return *this;
 }

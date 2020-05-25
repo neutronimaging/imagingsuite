@@ -111,7 +111,7 @@ public:
         std::vector<size_t> roi;              ///< Region of interest to reconstruct (x0,y0,x1,y1).
         std::vector<size_t> projection_roi;   ///< Region of interest for the entire sample (x0,y0,x1,y1).
         std::vector<size_t> dose_roi;         ///< Region of interest to calculate the projection dose (x0,y0,x1,y1).
-        float fScanArc[2];          ///< Provides the first and last scan angles
+        std::vector<float>  fScanArc;          ///< Provides the first and last scan angles
         kipl::base::eImageFlip eFlip;   ///< Projection flip operation (horizontal, vertical, both).
         kipl::base::eImageRotate eRotate; ///< Projection rotation operation (90 cw,90 ccw, 180).
 

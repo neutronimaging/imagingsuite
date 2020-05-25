@@ -10,8 +10,9 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
 	MatrixAlignment(align),
     mConfig(""),
     m_sModuleName(name),
+    MatrixDims({0,0,0}),
 	m_sApplication(application),
-	m_Interactor(interactor)
+    m_Interactor(interactor)
 {
 	logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
     if (m_Interactor!=nullptr) {

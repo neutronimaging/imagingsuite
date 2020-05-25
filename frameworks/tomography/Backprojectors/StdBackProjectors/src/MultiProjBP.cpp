@@ -16,6 +16,7 @@
 MultiProjectionBP::MultiProjectionBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP",StdBackProjectorBase::MatrixZXY, interactor)
 {
+    logger(kipl::logging::Logger::LogMessage,"C'tor MultiProjectionBP");
     publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
                                        "MuhRec - a new tomography reconstructor",
                                        "Nuclear Instruments and Methods Section A",
@@ -30,7 +31,6 @@ MultiProjectionBP::~MultiProjectionBP(void)
 {
 }
 
- 
 void MultiProjectionBP::BackProject()
 {
 	std::stringstream msg;

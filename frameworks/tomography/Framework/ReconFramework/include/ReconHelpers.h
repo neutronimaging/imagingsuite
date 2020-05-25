@@ -24,7 +24,7 @@ bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(ReconConfig const * const config,
 
 bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(std::string sFileMask, std::string sPath,
                    int nFirstIndex, int nLastIndex, int nProjectionStep,
-                   float fScanArc[2], ReconConfig::cProjections::eScanType scantype, int goldenStartIdx,
+                   const std::vector<float> &fScanArc, ReconConfig::cProjections::eScanType scantype, int goldenStartIdx,
                    std::set<size_t> * nlSkipList,
                    std::map<float, ProjectionInfo>  * ProjectionList);
 
