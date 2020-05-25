@@ -135,13 +135,13 @@ void TIndex2CoordTest::testIndex2Coord2D()
     for (size_t y=0; y<dims[1]; ++y)
         for (size_t x=0; x<dims[0]; ++x)
     {
-        i2c(y*dims[0]+x,&c3);
+        i2c(y*dims[0]+x,c3);
 
         QCOMPARE(c3.x,short(x));
         QCOMPARE(c3.y,short(y));
         QCOMPARE(c3.z,short(0));
 
-        i2c(y*dims[0]+x,&c2);
+        i2c(y*dims[0]+x,c2);
 
         QCOMPARE(c2.x,short(x));
         QCOMPARE(c2.y,short(y));
@@ -160,13 +160,13 @@ void TIndex2CoordTest::testIndex2Coord3D()
         for (size_t y=0; y<dims[1]; ++y)
             for (size_t x=0; x<dims[0]; ++x)
     {
-        i2c(z*dims[0]*dims[1]+y*dims[0]+x,&c3);
+        i2c(z*dims[0]*dims[1]+y*dims[0]+x,c3);
 
         QCOMPARE(c3.x,short(x));
         QCOMPARE(c3.y,short(y));
         QCOMPARE(c3.z,short(z));
 
-        i2c(z*dims[0]*dims[1]+y*dims[0]+x,&c2);
+        i2c(z*dims[0]*dims[1]+y*dims[0]+x,c2);
 
         QCOMPARE(c2.x,short(x));
         QCOMPARE(c2.y,short(y));

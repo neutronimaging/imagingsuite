@@ -143,12 +143,12 @@ namespace kipl { namespace base {
         /// \param pos the position index
         /// \param c coordinate struct containing the 3D coordinates
         /// \returns always true
-		bool operator () (size_t pos, coords3D *c);
+        bool operator () (size_t pos, coords3D &c);
         /// \brief Converts a index position to a 2D coordinate
         /// \param pos the position index
         /// \param c coordinate struct containing the 2D coordinates
         /// \returns always true
-		bool operator () (size_t pos, coords2D *c);
+        bool operator () (size_t pos, coords2D &c);
 	private:
 		size_t nSX;
 		size_t nSXY;

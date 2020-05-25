@@ -16,23 +16,23 @@ namespace kipl { namespace base {
 		}
 
 	}
-	bool Index2Coordinates::operator () (size_t pos, coords3D *c){
+    bool Index2Coordinates::operator () (size_t pos, coords3D &c){
         size_t diff=0UL;
         if (pos<nSXY) {
-            c->z=0;
+            c.z=0;
             diff=pos;
         }
         else {
-            c->z=static_cast<size_t>(pos/ nSXY);
+            c.z=static_cast<size_t>(pos/ nSXY);
             diff=pos % nSXY;
         }
-        c->y=static_cast<size_t>(diff /nSX);
-        c->x=diff % nSX;
+        c.y=static_cast<size_t>(diff /nSX);
+        c.x=diff % nSX;
 
 		return true;
 	}
 		
-	bool Index2Coordinates::operator () (size_t pos, coords2D *c)
+    bool Index2Coordinates::operator () (size_t pos, coords2D &c)
 	{
         size_t diff=0UL;
 
@@ -43,8 +43,8 @@ namespace kipl { namespace base {
             diff=pos % nSXY;
         }
 
-        c->y=static_cast<size_t>(diff /nSX);
-        c->x=diff % nSX;
+        c.y=static_cast<size_t>(diff /nSX);
+        c.x=diff % nSX;
 
 		return true;
 	}
