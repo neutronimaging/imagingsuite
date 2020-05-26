@@ -6,4 +6,5 @@ SUBDIRS += \
     Backprojectors/IterativeBackProj/qt/IterativeBackProj \
     Backprojectors/FDKBackProjectors/qt/FDKBackProjectors \
     UnitTests/tFDKBackProjectors \
+    UnitTests/tIterativeBackProj \
     UnitTests/tStdBackProjectors
