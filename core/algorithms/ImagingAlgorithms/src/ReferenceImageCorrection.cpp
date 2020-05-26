@@ -38,54 +38,35 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     m_bHaveOpenBeam(false),
     m_bHaveDarkCurrent(false),
     m_bHaveBlackBody(false),
+    m_bHaveExternalBlackBody(false),
     m_bComputeLogarithm(true),
+    bUseManualThresh(false),
+    bSaveBG(false),
     m_fOpenBeamDose(1.0f),
     m_bHaveDoseROI(false),
-    m_bHaveBlackBodyROI(false),
     m_bHaveBBDoseROI(false),
-    tau(1.0f),
-    radius(0),
+    m_bHaveBlackBodyROI(false),
+    bExtSingleFile(true),
+    fdose_ext_slice(0.0f),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_IntMeth_x(SecondOrder_x),
     m_IntMeth_y(SecondOrder_y),
-    m_nProj(0),
+    m_nDoseROI(4,0UL),
+    m_nROI(4,0UL),
+    m_nBlackBodyROI(4,0UL),
+    m_diffBBroi(4,0),
+    m_nDoseBBRoi(4,0UL),
+
     m_nBBimages(0),
-    m_bHaveExternalBlackBody(false),
-    fdose_ext_slice(0.0f),
+    m_nProj(0),
+    angles(4,0UL),
+    radius(0),
+    tau(1.0f),
     min_area(0),
-    bUseManualThresh(false),
     thresh(0.0f),
-    bSaveBG(false),
-    m_Interactor(nullptr),
-    bExtSingleFile(true)
+    m_Interactor(nullptr)
 {
-    m_nDoseROI[0]=0;
-    m_nDoseROI[1]=0;
-    m_nDoseROI[2]=0;
-    m_nDoseROI[3]=0;
-
-    m_nROI[0]=0;
-    m_nROI[1]=0;
-    m_nROI[2]=0;
-    m_nROI[3]=0;
-
-    m_nBlackBodyROI[0]=0;
-    m_nBlackBodyROI[1]=0;
-    m_nBlackBodyROI[2]=0;
-    m_nBlackBodyROI[3]=0;
-
-    m_diffBBroi[0]=0;
-    m_diffBBroi[0]=0;
-    m_diffBBroi[0]=0;
-    m_diffBBroi[0]=0;
-
-    angles[0] = 0.0f;
-    angles[1] = 0.0f;
-    angles[2] = 0.0f;
-    angles[3] = 0.0f;
-
     a = b = c = d = e = f = 1;
-
 }
 
 ReferenceImageCorrection::~ReferenceImageCorrection()

@@ -6,3 +6,4 @@ SUBDIRS += \
     Preprocessing/GenericPreProc \
     Preprocessing/StdPreprocModulesGUI/qt/StdPreprocModulesGUI \
     Preprocessing/InspectorModulesGUI \
+    UnitTests/tStdPreprocModules

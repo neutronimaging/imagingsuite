@@ -30,7 +30,7 @@ PiercingPointEstimator::PiercingPointEstimator() :
 
 pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, const std::vector<size_t> &roi)
 {
-    std::vector<size_t> crop;
+    std::vector<size_t> crop(4,0UL);
 
     if (roi.empty()) {
         logger(logger.LogMessage,"Using default crop (reduction by 10\%).");
