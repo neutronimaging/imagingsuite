@@ -19,8 +19,6 @@
 
 FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor) :
     BackProjectorModuleBase("muhrec",name,alignment,interactor),
-    m_fp(nullptr),
- //   m_bp(nullptr),
     nProjCounter(0),
     SizeU(0),
     SizeV(0),

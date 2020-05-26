@@ -4,8 +4,6 @@
 
 #include <BackProjectorModuleBase.h>
 #include <ParameterHandling.h>
-#include <forwardprojectorbase.h>
-#include <backprojectorbase.h>
 #include <string>
 #include <list>
 //<LICENSE>
@@ -72,10 +70,6 @@ public:
 protected:
     virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;   
     virtual size_t ComputeGeometryMatrices(float *matrices);
-
-
-    ForwardProjectorBase *m_fp;
- //   BackProjectorBase    *m_bp;
 
     struct ProjectionInfo {
         ProjectionInfo(const float _angle, const float _weight) :
