@@ -115,21 +115,22 @@ void FdkReconBase::SetROI(const std::vector<size_t> &roi)
     #endif
     std::vector<size_t> projDims={SizeU, SizeV + rest, nProjectionBufferSize};
 
+    std::vector<size_t> matrixDims;
     if (MatrixAlignment==MatrixZXY)
     {
-        MatrixDims = { SizeV, SizeU, SizeU };
+        matrixDims = { SizeV, SizeU, SizeU };
 
         std::swap(projDims[0],   projDims[1]);
     }
     else
     {
-        MatrixDims = { SizeU, SizeU, SizeV };
+        matrixDims = { SizeU, SizeU, SizeV };
     }
 
-    volume.resize(MatrixDims);
+    volume.resize(matrixDims);
     volume=0.0f;
 
-    cbct_volume.resize(MatrixDims);
+    cbct_volume.resize(matrixDims);
     cbct_volume=0.0f;
 
 
@@ -270,18 +271,19 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
     return 0L;
 }
 
-void FdkReconBase::GetMatrixDims(size_t *dims)
+const std::vector<size_t> & FdkReconBase::GetMatrixDims()
 {
-    if (MatrixAlignment==MatrixZXY) {
-        dims[0]=volume.Size(1);
-        dims[1]=volume.Size(2);
-        dims[2]=volume.Size(0);
+    std::vector<size_t> dims;
+    if (MatrixAlignment==MatrixZXY)
+    {
+        dims= { volume.Size(1), volume.Size(2), volume.Size(0) };
     }
-    else {
-        dims[0]=volume.Size(0);
-        dims[1]=volume.Size(1);
-        dims[2]=volume.Size(2);
+    else
+    {
+        dims = volume.dims();
     }
+
+    return dims;
 }
 
 void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {
