@@ -5,6 +5,7 @@
 #include <cstring>
 #include "../../algorithms/sortalg.h"
 #include "../median.h"
+#include <vector>
 
 namespace kipl { namespace math {
 

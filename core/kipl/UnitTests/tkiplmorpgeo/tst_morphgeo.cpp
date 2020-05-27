@@ -339,6 +339,7 @@ void morphgeo::testhMin()
 
 void morphgeo::testExtendedMin()
 {
+    QSKIP("Function under development");
     loadData();
     kipl::base::TImage<float,2> ref,dev;
     //QBENCHMARK

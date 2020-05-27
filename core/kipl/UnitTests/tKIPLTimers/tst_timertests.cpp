@@ -93,8 +93,12 @@ void TimerTests::test_ThreadedTiming()
     std::clock_t c_end = std::clock();
     double t=timer.Toc();
 
-
-    QVERIFY(std::fabs(1000.0 * (c_end-c_start) / CLOCKS_PER_SEC/t-2) <0.05);
+#ifdef _MSC_VER
+    double rtime = std::fabs(1000.0 * (c_end-c_start) / CLOCKS_PER_SEC/t-1);
+#else
+    double rtime = std::fabs(1000.0 * (c_end-c_start) / CLOCKS_PER_SEC/t-2);
+#endif
+    QVERIFY(rtime <0.05);
     QVERIFY((timer.elapsedTime()-t)/t<0.1);
 
     QVERIFY(std::fabs(1-timer.elapsedTime(kipl::profile::Timer::nanoSeconds)*1e-6/t)<0.01);
