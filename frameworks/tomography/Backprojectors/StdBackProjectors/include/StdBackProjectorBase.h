@@ -14,7 +14,7 @@
 #include <logging/logger.h>
 #include <projectionfilter.h>
 
-class StdBackProjectorBase : public BackProjectorModuleBase
+class STDBACKPROJECTORS_EXPORT StdBackProjectorBase : public BackProjectorModuleBase
 {
 protected:
 	struct ProjectionInfo {

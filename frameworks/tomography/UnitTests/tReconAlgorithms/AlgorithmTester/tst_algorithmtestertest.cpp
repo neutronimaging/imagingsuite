@@ -28,6 +28,7 @@ AlgorithmTesterTest::AlgorithmTesterTest()
 
 void AlgorithmTesterTest::testNN()
 {
+    QSKIP("Under development");
     list<float> angles;
     int N=360;
 
@@ -60,6 +61,7 @@ void AlgorithmTesterTest::testNN()
 
 void AlgorithmTesterTest::testLinearFwd()
 {
+    QSKIP("Under development");
     list<float> angles;
     int N=360;
 

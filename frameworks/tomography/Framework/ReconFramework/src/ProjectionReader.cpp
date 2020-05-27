@@ -72,6 +72,7 @@ std::vector<size_t> ProjectionReader::GetImageSizeNexus(string filename, float b
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
+    return {};
 }
 
 std::vector<size_t> ProjectionReader::GetImageSize(std::string filename, float binning)

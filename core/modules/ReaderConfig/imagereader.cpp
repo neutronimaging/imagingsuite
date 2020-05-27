@@ -64,7 +64,7 @@ std::vector<size_t> ImageReader::GetImageSize(std::string filename, float binnin
             case readers::ExtensionPNG   : dims = kipl::io::GetPNGDims(filename);  break;
             case readers::ExtensionSEQ   : dims = kipl::io::GetViVaSEQDims(filename); break;
 #ifdef HAVE_NEXUS
-            case readers::ExtensionHDF5  : nDims = kipl::io::GetNexusDims(filename.c_str(),dims); break;
+            case readers::ExtensionHDF5  : dims = kipl::io::GetNexusDims(filename); break;
 #endif
 
             default : throw ReaderException("Unknown file type",__FILE__, __LINE__); break;

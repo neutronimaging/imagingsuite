@@ -186,11 +186,12 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     std::string name=mlnm.stripLibName(modulePath,kipl::base::OSMacOS);
 
-    QCOMPARE(name,"StdBackProjectors");
+    qDebug() << name.c_str();
+    QCOMPARE(name,std::string("StdBackProjectors"));
 
     name=mlnm.stripLibName(modulePath2,kipl::base::OSMacOS);
 
-    QCOMPARE(name,"StdBackProjectors");
+    QCOMPARE(name,std::string("StdBackProjectors"));
 
     name = mlnm.generateLibName("StdBackProjectors",kipl::base::OSMacOS);
 
@@ -213,9 +214,9 @@ void ConfigBaseTest::testLibNameManagerLinux()
 
     ModuleLibNameManger mlnm(appPath);
 
-    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),"StdBackProjectors");
+    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),std::string("StdBackProjectors"));
 
-    QCOMPARE(mlnm.stripLibName(modulePath3,kipl::base::OSLinux),"StdBackProjectors");
+    QCOMPARE(mlnm.stripLibName(modulePath3,kipl::base::OSLinux),std::string("StdBackProjectors"));
 
     QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSLinux),modulePath);
 

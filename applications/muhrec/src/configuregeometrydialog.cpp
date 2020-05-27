@@ -772,7 +772,6 @@ void ConfigureGeometryDialog::on_buttonFindCenter_clicked()
 
 //    msg.str("");
 //    msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<std::endl;
-//    qDebug() << QString::fromStdString(msg.str());
 //    logger(kipl::logging::Logger::LogMessage,msg.str());
     plot_data.clear();
     plot_data.append(QPointF(tomoCenter.center(0.0)+roi[0],0.0));
