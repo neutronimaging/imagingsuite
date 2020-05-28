@@ -38,7 +38,7 @@ public:
 		std::string sSourceFileMask;
 
 		bool bUseROI;
-		size_t nROI[4];
+                std::vector<size_t> nROI;
 		size_t nFirstFileIndex;
 		size_t nLastFileIndex;
         size_t nStepFileIndex;

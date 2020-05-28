@@ -15,13 +15,13 @@ void Slice2Vol::process(std::string filemask, size_t first, size_t last, size_t 
     std::cout<<filemask<<" "<<first<<" "<<last<<" "<<bin<<" "<<destname<<"\n";
     std::string fname,ext;
     kipl::strings::filenames::MakeFileName(filemask,static_cast<int>(first),fname,ext,'#','0');
-    size_t dims[3];
 
     std::cout<<filemask<<"\n";
-    kipl::io::GetTIFFDims(fname.c_str(),dims);
-    dims[0]=dims[0]/bin;
-    dims[1]=dims[1]/bin;
-    dims[2]=(last-first+1)/bin;
+    auto sliceDims = kipl::io::GetTIFFDims(fname);
+
+    std::vector<size_t> dims={  sliceDims[0]/bin,
+                                sliceDims[1]/bin,
+                                (last-first+1)/bin};
 
     kipl::base::TImage<float,2> slice;
     kipl::base::TImage<float,2> binned;
