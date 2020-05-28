@@ -348,7 +348,7 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
             updateRubberBandRegion();
 
             QRect r=rubberBandRect.normalized();
-            int const * const dims=m_ImagePainter.imageDims();
+        //    auto dims=m_ImagePainter.imageDims();
             int xpos = m_ImagePainter.globalPositionX(floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()));
             int ypos = m_ImagePainter.globalPositionY(floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
 
@@ -418,7 +418,7 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
 
 }
 
-void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)
+void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> & dims)
 {
     QMutexLocker locker(&m_ImageMutex);
     std::ostringstream msg;
@@ -443,7 +443,7 @@ QRect ImageViewerWidget::get_marked_roi()
     return roiRect;
 }
 
-void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)
+void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, const float low, const float high)
 {
     QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.setImage(data,dims,low,high);
@@ -459,7 +459,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 
 void ImageViewerWidget::getImageDims(int &x, int &y)
 {
-    const int *dims=m_ImagePainter.imageDims();
+    auto dims=m_ImagePainter.imageDims();
     x=dims[0];
     y=dims[1];
 }

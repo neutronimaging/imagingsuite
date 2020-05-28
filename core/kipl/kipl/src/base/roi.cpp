@@ -1,32 +1,34 @@
 #include "../../include/base/roi.h"
 #include <sstream>
+#include <vector>
 
 #include "../../include/strings/string2array.h"
+#include "../../include/base/KiplException.h"
 
 namespace kipl {
 namespace base {
 
 int RectROI::cnt=0;
 
-RectROI::RectROI(size_t *roi, const std::string &lbl) :
+RectROI::RectROI(const std::vector<size_t> &roi, const std::string &lbl) :
     logger("RectROI"),
     id(cnt++),
     roiLabel(lbl),
     dimensions(2)
 {
-    std::copy(roi,roi+4,coords);
+    if (roi.size()!=4)
+        throw kipl::base::KiplException("ROI vector does not have 4 elements",__FILE__,__LINE__);
+
+    coords = roi;
 }
 
 RectROI::RectROI(size_t x0, size_t y0, size_t x1, size_t y1, const std::string &lbl) :
     logger("RectROI"),
     id(cnt++),
     roiLabel(lbl),
-    dimensions(2)
+    dimensions(2),
+    coords({x0,y0,x1,y1})
 {
-    coords[0]=x0;
-    coords[1]=y0;
-    coords[2]=x1;
-    coords[3]=y1;
 }
 
 RectROI::RectROI(const RectROI &roi) :
@@ -35,7 +37,7 @@ RectROI::RectROI(const RectROI &roi) :
     roiLabel(roi.roiLabel),
     dimensions(roi.dimensions)
 {
-    std::copy_n(roi.coords,4,coords);
+    coords = roi.coords;
 }
 
 RectROI::~RectROI()
@@ -47,18 +49,18 @@ const RectROI & RectROI::operator=(const RectROI & roi)
 {
     roiLabel = roi.roiLabel;
     dimensions =roi.dimensions;
-    std::copy_n(roi.coords,4,coords);
+    coords = roi.coords;
 
     return *this;
 }
 
-int RectROI:: getBox(size_t *roi) const
+int RectROI::getBox(std::vector<size_t> &roi) const
 {
-    std::copy(coords,coords+4,roi);
+    roi = coords;
     return dimensions;
 }
 
-size_t const * RectROI::box() const
+const std::vector<size_t> & RectROI::box() const
 {
     return coords;
 }

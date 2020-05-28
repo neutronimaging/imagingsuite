@@ -10,7 +10,7 @@ using namespace std;
 namespace kipl { namespace morphology {
 kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img, vector<int> &lbl, bool keeplabel)
 {
-	kipl::base::TImage<int,2> tmp(img.Dims());
+    kipl::base::TImage<int,2> tmp(img.dims());
 	
 	deque<int> stack;
 	int *pImg=img.GetDataPtr();

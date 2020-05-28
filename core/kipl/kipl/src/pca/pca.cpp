@@ -94,7 +94,7 @@ void PCA::ComputeTransformMatrix(kipl::base::TImage<float,3> &img, int level)
     kipl::math::Covariance<float> cov;
 
     cov.setResultMatrixType(m_eCovType);
-    m_mCovariance=cov.compute(img.GetDataPtr(),img.Dims(),3);
+    m_mCovariance=cov.compute(img.GetDataPtr(),img.dims(),3);
 
     JAMA::Eigenvalue<double> eig(m_mCovariance);
 
@@ -119,7 +119,7 @@ void PCA::ComputeTransformMatrix(kipl::base::TImage<float,3> &img, int level)
 
 void PCA::ComputeTransform(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,3> &res)
 {
-    res.Resize(img.Dims());
+    res.resize(img.dims());
     res=0.0f;
 
     TNT::Array2D<double> &m=m_mTransformMatrix;
@@ -146,7 +146,7 @@ void PCA::NormalizeData(base::TImage<float,3> &img)
         size_t N=img.Size(0)*img.Size(1);
         int nSlices = static_cast<int>(img.Size(2));
 
-        kipl::math::statistics(img.GetDataPtr(),m_fMean, m_fStdDev, img.Dims(), 3, true);
+        kipl::math::statistics(img.GetDataPtr(),m_fMean, m_fStdDev, img.dims(), 3, true);
 
         for (int slice=0; slice<nSlices; slice++) {
             float *pSlice=img.GetLinePtr(0,slice);

@@ -5,6 +5,7 @@
 
 #include "../kipl_global.h"
 #include <tnt_array2d.h>
+#include <vector>
 
 #include "../logging/logger.h"
 
@@ -40,7 +41,7 @@ public:
     /// \param dims Dimensions of the entire data block. The last entry tells how many stochastic varibales the data set contains.
     /// \param nDims number of data dimensions.
     /// \param bCenter subtract the average value from each variable before computing the covariance matrix.
-    TNT::Array2D<double> compute(T *data, const size_t *dims, size_t Ndims, bool bCenter=true);
+    TNT::Array2D<double> compute(T *data, const std::vector<size_t> &dims, size_t Ndims, bool bCenter=true);
 
     /// \brief Setter for the covariance matrix type
     /// \param m Type value

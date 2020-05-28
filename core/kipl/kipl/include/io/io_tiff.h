@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstring>
 #include <sstream>
+#include <vector>
 
 #include <tiffio.h>
 
@@ -30,13 +31,13 @@ namespace kipl { namespace io {
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <size_t N>
-int WriteTIFF32(kipl::base::TImage<float,N> src,const char *fname)
+int WriteTIFF32(kipl::base::TImage<float,N> src, const std::string &fname)
 {
     TIFF *image;
     std::stringstream msg;
 
     // Open the TIFF file
-    if((image = TIFFOpen(fname, "w")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "w")) == nullptr){
         msg.str("");
         msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -81,7 +82,8 @@ int WriteTIFF32(kipl::base::TImage<float,N> src,const char *fname)
 /// \brief Gets the dimensions of a tiff image without reading the image
 /// \param fname file name of the image file
 /// \param dims array with the dimensions
-int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname, size_t *dims);
+int KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname, size_t *dims);
+std::vector<size_t> KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname);
 
 /// \brief Parses a string to find slope and offset.
 ///
@@ -107,14 +109,14 @@ bool KIPLSHARED_EXPORT GetSlopeOffset(std::string msg, float &slope, float &offs
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 	
 template <class ImgType,size_t N>
-int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname)
+int WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname)
 {
 	TIFF *image;
-    kipl::base::TImage<unsigned short,2> tmp(src.Dims());
+    kipl::base::TImage<unsigned short,2> tmp(src.dims());
 	std::stringstream msg;
 		
 	// Open the TIFF file
-    if((image = TIFFOpen(fname, "w")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "w")) == nullptr){
 		msg.str("");
 		msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -178,7 +180,7 @@ int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname)
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <class ImgType,size_t N>
-int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname, ImgType lo, ImgType hi)
+int WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgType lo, ImgType hi)
 {
     kipl::base::TImage<unsigned short,N> img;
 	try {
@@ -212,13 +214,13 @@ int WriteTIFF(kipl::base::TImage<ImgType,N> src,const char *fname, ImgType lo, I
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <class ImgType, size_t N>
-int AppendTIFF(kipl::base::TImage<ImgType,N> src,const char *fname) {
+int AppendTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname) {
     TIFF *image;
-    kipl::base::TImage<unsigned short,2> tmp(src.Dims());
+    kipl::base::TImage<unsigned short,2> tmp(src.dims());
     std::stringstream msg;
 
     // Open the TIFF file
-    if((image = TIFFOpen(fname, "a")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "a")) == nullptr){
         msg.str("");
         msg<<"WriteTIFF: Could not open "<<fname<<" for appending";
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -283,7 +285,7 @@ int AppendTIFF(kipl::base::TImage<ImgType,N> src,const char *fname) {
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L)
+int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_t idx=0UL)
 {
     std::stringstream msg;
 	TIFF *image;
@@ -297,7 +299,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 
 	TIFFSetWarningHandler(0);
 	// Open the TIFF image
-    if((image = TIFFOpen(fname, "r")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str();
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -432,8 +434,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 	}
 
 	TIFFClose(image);
-	size_t dims[]={static_cast<size_t>(dimx), static_cast<size_t>(dimy)};
-	src.Resize(dims);
+    std::vector<size_t> dims={static_cast<size_t>(dimx), static_cast<size_t>(dimy)};
+    src.resize(dims);
 
 	const size_t cnSize=src.Size();
 	switch (bps) {
@@ -485,12 +487,12 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t idx=0L
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful 
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const * const crop, size_t idx=0L)
+int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const std::vector<size_t> &crop, size_t idx)
 {
     kipl::logging::Logger logger("ReadTIFF");
 
-    if (crop==nullptr) {
-        return ReadTIFF(src,fname,idx);
+    if (crop.empty()) {
+        return ReadTIFF(src,fname.c_str(),idx);
 	}
 	std::stringstream msg;
 	TIFF *image;
@@ -504,7 +506,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 
     TIFFSetWarningHandler(nullptr);
 	// Open the TIFF image
-    if((image = TIFFOpen(fname, "r")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
         msg.str("");
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -548,7 +550,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 	if ((adjcrop[2]-adjcrop[0])==0) kipl::base::KiplException("Failed to crop image in X",__FILE__,__LINE__);
 	if ((adjcrop[3]-adjcrop[1])==0) kipl::base::KiplException("Failed to crop image in Y",__FILE__,__LINE__);
 	
-    size_t imgdims[2]={static_cast<size_t>(adjcrop[2]-adjcrop[0]),static_cast<size_t>(adjcrop[3]-adjcrop[1])};
+    std::vector<size_t> imgdims={static_cast<size_t>(adjcrop[2]-adjcrop[0]),
+                                 static_cast<size_t>(adjcrop[3]-adjcrop[1])};
 
 	bufferSize = TIFFScanlineSize(image);
 	try {
@@ -567,7 +570,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 		throw E;
 	}
 
-	src.Resize(imgdims);
+    src.resize(imgdims);
 	for (int row=adjcrop[1]; row<adjcrop[3]; row++) {
         if (TIFFReadScanline(image,static_cast<tdata_t>(buffer), row, 0)!=1) {
 			msg.str("");
@@ -694,16 +697,13 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const char *fname, size_t const 
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <class ImgType>
-int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const char *fname, size_t const * const crop=nullptr)
+int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, const std::vector<size_t> &crop={})
 {
     std::ostringstream msg;
-    size_t dims[3];
-    int nframes=GetTIFFDims(fname,dims);
-
-    dims[2]=static_cast<size_t>(nframes);
+    std::vector<size_t> dims=GetTIFFDims(fname.c_str());
 
     try {
-        src.Resize(dims);
+        src.resize(dims);
     }
     catch (kipl::base::KiplException &e) {
         msg.str("");
@@ -722,7 +722,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const char *fname, size_t const 
     }
     kipl::base::TImage<float,2> img;
     int res=0;
-    for (size_t i=0; i< static_cast<size_t>(nframes); ++i) {
+    for (size_t i=0; i< dims[2]; ++i) {
         res=ReadTIFF(img,fname,crop,i);
         std::copy_n(img.GetDataPtr(),img.Size(),src.GetLinePtr(0,i));
     }
@@ -735,13 +735,13 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const char *fname, size_t const 
 /// \param row indexes the line to read
 /// \param fname file name of the image file
 template <class ImgType>
-int ReadTIFFLine(ImgType *data,uint32 row, const char *fname) 
+int ReadTIFFLine(ImgType *data,uint32 row, const std::string & fname)
 {
 	std::stringstream msg;
 	TIFF *image;
 //	 TIFFErrorHandler warn = 
 //    TIFFSetWarningHandler(nullptr);
-    if((image = TIFFOpen(fname, "r")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
 		msg.str("");
 		msg<<"ReadTIFFLine: Could not open "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);

@@ -33,6 +33,7 @@ private Q_SLOTS:
     void testSEQRead();
     void testTIFFBasicReadWrite();
     void testTIFFMultiFrame();
+    void testTIFFAdvancedMultiFrame();
     void testTIFF32();
     void testTIFFclamp();
     void testIOStack_enums();
@@ -44,7 +45,7 @@ kiplIOTest::kiplIOTest()
 
 void kiplIOTest::testFITSreadwrite()
 {
-    size_t dims[2]={100,256};
+    std::vector<size_t> dims={100,256};
     kipl::base::TImage<short,2> img(dims);
     kipl::base::TImage<short,2> res;
 
@@ -84,13 +85,11 @@ void kiplIOTest::testSEQHeader()
 
    kipl::io::GetViVaSEQHeader("/Users/kaestner/Desktop/Video1.seq",&header);
 
-   size_t dims[2]={0,0};
-   int numframes=0;
-   numframes=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims);
+   auto dims=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq");
 
    QVERIFY(dims[0]==header.imageWidth);
    QVERIFY(dims[1]==header.imageHeight);
-   QVERIFY(numframes==static_cast<int>(header.numberOfFrames));
+   QVERIFY(dims[2]==header.numberOfFrames);
 }
 
 void kiplIOTest::testSEQRead()
@@ -110,7 +109,7 @@ void kiplIOTest::testSEQRead()
     QVERIFY(img.Size(1)==header.imageHeight);
     QVERIFY(img.Size(2)==header.numberOfFrames);
 
-    size_t roi[]={100,100,300,200};
+    std::vector<size_t> roi={100,100,300,200};
 
     kipl::io::ReadViVaSEQ("/Users/kaestner/Desktop/Video1.seq",img,roi);
 
@@ -123,7 +122,7 @@ void kiplIOTest::testSEQRead()
 
 void kiplIOTest::testTIFFBasicReadWrite()
 {
-    size_t dims[2]={100,50};
+    std::vector<size_t> dims={100,50};
 
     kipl::base::TImage<float,2> fimg(dims);
     fimg.info.sArtist="UnitTest";
@@ -159,28 +158,38 @@ void kiplIOTest::testTIFFBasicReadWrite()
 
 void kiplIOTest::testTIFFMultiFrame()
 {
-    std::string fname="../imagingsuite/core/kipl/UnitTests/data/multiframe.tif";
+#ifdef NDEBUG
+    std::string fname="../../TestData/3D/tiff/multiframe.tif";
+#else
+    std::string fname="../TestData/3D/tiff/multiframe.tif";
+#endif
     if (dir.exists(QString::fromStdString(fname))==false)
         QSKIP("Test data is missing");
 
     size_t dims[3]={0,0,0};
-    int nframes=kipl::io::GetTIFFDims(fname.c_str(),dims);
+    size_t nframes = kipl::io::GetTIFFDims(fname,dims);
 
     QCOMPARE(dims[0],145UL);
     QCOMPARE(dims[1],249UL);
     QCOMPARE(nframes,5);
 
+    auto dimsv=kipl::io::GetTIFFDims(fname);
+
+    QCOMPARE(dimsv.size(),3UL);
+    QCOMPARE(dimsv[0],145UL);
+    QCOMPARE(dimsv[1],249UL);
+    QCOMPARE(dimsv[2],5UL);
+
     float minvals[5]={4032.0f,4443.0f,5244.0f,5849.0f,3687.0f};
     float maxvals[5]={65192.0f,65534.0f,65534.0f,57957.0f,42548.0f};
 
-    size_t crop[4]={10,10,100,100};
+    std::vector<size_t> crop={10,10,100,100};
 
     kipl::base::TImage<float,2> img, img_crop;
 
-    dims[2]=nframes;
-    kipl::base::TImage<float,3> img3ref(dims);
+    kipl::base::TImage<float,3> img3ref(dimsv);
     for (int i = 0 ; i<nframes; ++i) {
-        kipl::io::ReadTIFF(img,fname.c_str(),nullptr,i);
+        kipl::io::ReadTIFF(img,fname,{},i);
         std::copy_n(img.GetDataPtr(),img.Size(),img3ref.GetLinePtr(0,i));
 
         QCOMPARE(img.Size(0),145UL);
@@ -206,7 +215,7 @@ void kiplIOTest::testTIFFMultiFrame()
     }
 
     kipl::base::TImage<float,3> img3;
-    kipl::io::ReadTIFF(img3,fname.c_str());
+    kipl::io::ReadTIFF(img3,fname);
 
     QCOMPARE(img3.Size(0),img3ref.Size(0));
     QCOMPARE(img3.Size(1),img3ref.Size(1));
@@ -246,9 +255,20 @@ void kiplIOTest::testTIFFMultiFrame()
     }
 }
 
+void kiplIOTest::testTIFFAdvancedMultiFrame()
+{
+#ifdef NDEBUG
+    std::string fname="../../TestData/3D/tiff/multiframe.tif";
+#else
+    std::string fname="../TestData/3D/tiff/multiframe.tif";
+#endif
+    if (dir.exists(QString::fromStdString(fname))==false)
+        QSKIP("Test data is missing");
+}
+
 void kiplIOTest::testTIFF32()
 {
-    size_t dims[3]={100,110,120};
+    std::vector<size_t> dims={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
     kipl::base::TImage<float,3> imgref3d(dims);
@@ -290,7 +310,7 @@ void kiplIOTest::testTIFFclamp()
     QSKIP("Seems to crash");
     QWARN("Test accepts a difference of +-1");
     std::ostringstream msg;
-    size_t dims[3]={100,110,120};
+    std::vector<size_t> dims={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
     kipl::base::TImage<float,3> imgref3d(dims);

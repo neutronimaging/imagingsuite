@@ -14,7 +14,6 @@
 #include "../base/textractor.h"
 #include "../base/tpermuteimage.h"
 #include "io_tiff.h"
-#include "io_matlab.h"
 #include "io_fits.h"
 #include "io_nexus.h"
 #include "analyzefileext.h"
@@ -100,7 +99,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		const size_t start, const size_t stop, const size_t count_start=0,
 		kipl::io::eFileType filetype=kipl::io::MatlabSlices,
 		const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
-        size_t *roi=nullptr)
+        const std::vector<size_t> & roi = {})
 {
 	if (stop<start)
 		kipl::base::KiplException("Stop index must be greater than start index.",__FILE__, __LINE__);
@@ -161,14 +160,6 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		tmp.info=img.info;
 		switch (filetype)
 		{
-		case MatlabVolume : 
-			kipl::base::KiplException("Matlab volume is not supported by the slice writer",__FILE__,__LINE__); 
-			break;
-		case MatlabSlices :
-			varname=filename.substr(filename.rfind(slash)+1);
-			varname=varname.substr(0,varname.find('.'));
-			WriteMAT(tmp,filename.c_str(),varname.c_str());
-			break;
 		case TIFF8bits :
 			WriteTIFF(tmp,filename.c_str(),lo,hi);
 			break;
@@ -176,7 +167,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 			WriteTIFF(tmp,filename.c_str(),lo,hi);
 			break;
 		case TIFFfloat :
-			ftmp.Resize(tmp.Dims());
+            ftmp.resize(tmp.dims());
 			for (size_t i=0; i<tmp.Size(); i++) 
 				ftmp[i]=tmp[i];
 			WriteTIFF32(ftmp,filename.c_str());

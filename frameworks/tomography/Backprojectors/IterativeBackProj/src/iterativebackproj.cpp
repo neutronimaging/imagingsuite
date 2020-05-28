@@ -12,10 +12,10 @@
 void * GetModule(const char *application, const char * name, void *vinteractor)
 {
     if (strcmp(application,"muhrecbp"))
-        return NULL;
+        return nullptr;
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
-    if (name!=NULL) {
+    if (name!=nullptr) {
         std::string sName=name;
 
         if (sName=="GenericBP")
@@ -25,7 +25,7 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
             return new SIRTbp(interactor);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int Destroy(const char *application,void *obj)

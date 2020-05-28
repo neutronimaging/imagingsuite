@@ -50,9 +50,9 @@ kiplmorphalgorithms::~kiplmorphalgorithms()
 void kiplmorphalgorithms::loadData()
 {
 #ifdef _NDEBUG
-    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/bilevel_ws.tif");
 #else
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/bilevel_ws.tif");
 #endif
 }
 
@@ -77,7 +77,7 @@ void kiplmorphalgorithms::test_LabelImage()
                    0,1,1,0,0,0,0,0
              };
 
-    size_t dims[2]={8,8};
+    std::vector<size_t> dims ={8,8};
     kipl::base::TImage<int,2> s(dims);
     std::copy_n(data,s.Size(),s.GetDataPtr());
     lblCnt=kipl::morphology::LabelImage(s,result,kipl::base::conn4);
@@ -92,9 +92,9 @@ void kiplmorphalgorithms::test_LabelImageRealData()
 {
 
 #ifdef _NDEBUG
-    std::string fname="../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
+    std::string fname="../../TestData/2D/tiff/maskOtsuFilled.tif";
 #else
-    std::string fname="../../imagingsuite/core/kipl/UnitTests/data/maskOtsuFilled.tif";
+    std::string fname="../TestData/2D/tiff/maskOtsuFilled.tif";
 #endif
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::base::TImage<int,2> a;
@@ -199,7 +199,7 @@ void kiplmorphalgorithms::test_EuclideanDistance()
 
 void kiplmorphalgorithms::test_EuclideanDistance2()
 {
-    size_t dims[]={2000,2000};
+    std::vector<size_t> dims ={2000,2000};
     kipl::base::TImage<float,2> bw(dims);
     bw=1.0f;
     bw[dims[0]*dims[1]/2+dims[0]/2]=0.0f;

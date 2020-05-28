@@ -12,8 +12,9 @@ BasicForwardProjector::BasicForwardProjector() :
 int BasicForwardProjector::project(kipl::base::TImage<float, 2> &slice, std::list<float> &angles, kipl::base::TImage<float, 2> &proj)
 {
     std::ostringstream msg;
-    size_t dims[2]={slice.Size(0), angles.size()};
-    proj.Resize(dims);
+
+    proj.resize( {slice.Size(0),
+                  angles.size()} );
 
     float C=slice.Size(0)/2;
 

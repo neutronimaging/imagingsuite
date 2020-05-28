@@ -19,7 +19,7 @@ public:
     ~ModuleConfigProgressDialog();
     int progress();
     int process();
-    int exec(ReconEngine *engine, size_t *roi, string lastModule);
+    int exec(ReconEngine *engine, const std::vector<size_t> &roi, string lastModule);
     kipl::base::TImage<float,3> getImage();
 
 private:
@@ -32,7 +32,7 @@ protected:
 
     float fraction;
     bool finish;
-    size_t mROI[4];
+    std::vector<size_t> mROI;
     std::string mLastModule;
     ReconEngine * m_Engine;
     kipl::interactors::InteractionBase * m_Interactor;

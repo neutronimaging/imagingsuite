@@ -15,6 +15,9 @@ public:
 
 private Q_SLOTS:
     void testBasicReadWriteTIFF();
+    void testMultiFrameReadTIFF();
+    void testMultiFrameWriteTIFF();
+
 };
 
 tKIPL_IOTest::tKIPL_IOTest()
@@ -23,7 +26,7 @@ tKIPL_IOTest::tKIPL_IOTest()
 
 void tKIPL_IOTest::testBasicReadWriteTIFF()
 {
-    size_t dims[2]={100,50};
+    std::vector<size_t> dims={100,50};
 
     kipl::base::TImage<float,2> fimg(dims);
     fimg.info.sArtist="UnitTest";
@@ -54,6 +57,16 @@ void tKIPL_IOTest::testBasicReadWriteTIFF()
     for (size_t i=0; i<fimg.Size(); i++) {
         QVERIFY2(fimg[i]==resimg[i],"Pixels not similar");
     }
+
+}
+
+void tKIPL_IOTest::testMultiFrameReadTIFF()
+{
+
+}
+
+void tKIPL_IOTest::testMultiFrameWriteTIFF()
+{
 
 }
 

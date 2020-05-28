@@ -44,7 +44,7 @@ public:
     kipl::base::eImageRotate m_Rotate;
 
     bool m_bUseROI;
-    size_t m_ROI[4];
+    std::vector<size_t> m_ROI;
 
     std::list<int> m_nSkipList; // list of indices of files to skip
 };

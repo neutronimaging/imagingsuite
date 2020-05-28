@@ -45,18 +45,15 @@ kipl::base::TImage<float,2> StdDevFilter::operator() (kipl::base::TImage<float,2
 
 kipl::base::TImage<float,2> StdDevFilter::BoxFilter(kipl::base::TImage<float,2> img)
 {
-    size_t dimsU[]={m_FilterSize,1};
-    size_t dimsV[]={1,m_FilterSize};
+    std::vector<size_t> dimsU={m_FilterSize,1};
+    std::vector<size_t> dimsV={1,m_FilterSize};
     size_t N=m_FilterSize*m_FilterSize;
-    float *fKernel=new float[N];
-    for (size_t i=0; i<N; i++)
-        fKernel[i]=1.0f;
+    std::vector<float> fKernel(N,1.0f);
 
     kipl::filters::TFilter<float,2> filterU(fKernel,dimsU);
     kipl::filters::TFilter<float,2> filterV(fKernel,dimsV);
 
     kipl::base::TImage<float,2> imgU=filterU(img, m_eEdgeProcessingStyle);
-    delete [] fKernel;
 
     return filterV(imgU, m_eEdgeProcessingStyle);
 }

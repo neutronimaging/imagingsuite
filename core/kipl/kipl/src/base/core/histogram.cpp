@@ -8,6 +8,7 @@
 #include <cstring>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 #include <map>
 #ifdef _OPENMP
 #include <omp.h>
@@ -269,8 +270,8 @@ void BivariateHistogram::Initialize(float loA, float hiA, size_t binsA,
     m_scalingB.first  = static_cast<float>(m_nbins.second) / (m_limitsB.second-m_limitsB.first);
     m_scalingB.second = m_limitsB.first;
 
-    size_t dims[2]={m_nbins.first,m_nbins.second};
-    m_bins.Resize(dims);
+    std::vector<size_t> dims={m_nbins.first,m_nbins.second};
+    m_bins.resize(dims);
 }
 
 /// \brief Initialize the histogram using data
@@ -358,9 +359,9 @@ kipl::base::TImage<size_t,2> & BivariateHistogram::Bins()
     return m_bins;
 }
 
-size_t const *   BivariateHistogram::Dims()
+const std::vector<size_t> & BivariateHistogram::Dims()
 {
-    return m_bins.Dims();
+    return m_bins.dims();
 }
 
 /// \brief Compute index to a histogram bin. This is the generic version.
@@ -428,7 +429,7 @@ std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl
 void BivariateHistogram::Write(string fname)
 {
 #ifndef NO_TIFF
-    kipl::base::TImage<float,2> img(m_bins.Dims());
+    kipl::base::TImage<float,2> img(m_bins.dims());
 
     float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
 

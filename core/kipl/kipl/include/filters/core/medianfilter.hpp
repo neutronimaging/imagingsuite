@@ -4,6 +4,7 @@
 #define MEDIANFILTER_HPP_
 
 #include <iomanip>
+#include <numeric>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -16,7 +17,7 @@
 namespace kipl { namespace filters {
 
 template <class T, size_t nDims>
-TMedianFilter<T,nDims>::TMedianFilter(size_t const * const Dims) : kipl::filters::TFilterBase<T,nDims>(Dims)
+TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) : kipl::filters::TFilterBase<T,nDims>(dims)
 {
 //	if (nDims!=2)
 //		throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
@@ -24,14 +25,14 @@ TMedianFilter<T,nDims>::TMedianFilter(size_t const * const Dims) : kipl::filters
 	quick_median=true;
 	
 	for (size_t i=0; i<nDims; i++)
-		nHalfKernel[i]=Dims[i]>>1;
+        nHalfKernel[i]=dims[i]>>1;
 }
 
 /// Implements a median filter
 template <class T, size_t nDims>
 kipl::base::TImage<T,nDims> TMedianFilter<T,nDims>::operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle)
 {
-	kipl::base::TImage<T,nDims> result(src.Dims());
+    kipl::base::TImage<T,nDims> result(src.dims());
 		
 	//QuickMedianFilter(src, result, edgeStyle);
 	HeapSortMedianFilter(src, result, edgeStyle);
@@ -340,31 +341,24 @@ void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDim
 }
 
 template <typename T, size_t N>
-TWeightedMedianFilter<T,N>::TWeightedMedianFilter(size_t const * const Dims, int *weights) :
-	TMedianFilter<T,N>(Dims),
-	m_nWeights(NULL),
-	m_nBufferLength(0)
+TWeightedMedianFilter<T,N>::TWeightedMedianFilter(const std::vector<size_t> &dims, const std::vector<int> &weights) :
+    TMedianFilter<T,N>(dims),
+    m_nWeights(weights),
+    m_nBufferLength(std::accumulate(weights.begin(),weights.end(),0))
 {
-		this->m_nWeights=new int[this->nKernel];
-		memcpy(this->m_nWeights,weights,this->nKernel*sizeof(int));
 
-		for (int i=0; i<this->nKernel; i++) {
-			m_nBufferLength+=weights[i];
-		}
 }
 
 template <typename T, size_t N>
 TWeightedMedianFilter<T,N>::~TWeightedMedianFilter()
 {
-	if (this->m_nWeights!=NULL)
-		delete [] this->m_nWeights;
 }
 
 template <typename T, size_t N>
 kipl::base::TImage<T,N> TWeightedMedianFilter<T,N>::operator() (kipl::base::TImage<T,N> &src,
 			const FilterBase::EdgeProcessingStyle edgeStyle)
 {
-	kipl::base::TImage<T,N> result(src.Dims());
+    kipl::base::TImage<T,N> result(src.dims());
 
 	const int startY = 1 < N ? this->nHalfKernel[1] : 0 ;
 	const int endY   = 1 < N ? src.Size(1) - (this->nKernelDims[1]-this->nHalfKernel[1]-1): 1 ;

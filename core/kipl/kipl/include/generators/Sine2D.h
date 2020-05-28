@@ -19,7 +19,7 @@ public:
     /// \param dims the dimensions of the generated image
     /// \param fScale Scales the spatial frequency of the ripple pattern. fScale=1 produce a single sine oscillation the number of oscillations are proportional to fScale.
     /// \returns a test image with sine pattern
-	static kipl::base::TImage<float,2> SineRings(size_t *dims, float fScale);
+    static kipl::base::TImage<float,2> SineRings(const std::vector<size_t> &dims, float fScale);
 
     /// \brief Concentric 2D sine oscillations with frequency increasing with the distance from the center.
     /// \todo The function currently behaves as SineRings. This must be fixed

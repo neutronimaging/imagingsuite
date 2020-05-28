@@ -54,7 +54,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,2> img)
    m_Img2D.Clone(img);
    if (1UL<filterSize)
    {
-       size_t fltdims[]={filterSize,filterSize};
+       std::vector<size_t> fltdims={filterSize,filterSize};
        kipl::filters::TMedianFilter<float,2> flt(fltdims);
        m_Img2D = flt(m_Img2D);
    }
@@ -69,7 +69,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
 
     logger(logger.LogMessage,"Average slice");
     qDebug() << "Start avg";
-    m_Img2D.Resize(m_Img3D.Dims());
+    m_Img2D.resize(m_Img3D.dims());
     m_Img2D=0.0f;
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
     {
@@ -181,7 +181,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         kipl::math::minmax(chmCrop.GetDataPtr(),chmCrop.Size(),&minVal,&maxVal,true);
         float threshold = (maxVal-minVal)*0.8f+minVal;
-        insetpeaks.Resize(chmCrop.Dims());
+        insetpeaks.resize(chmCrop.dims());
         for (size_t i=0; i<chmCrop.Size(); ++i)
             insetpeaks[i]=threshold < chmCrop[i];
 

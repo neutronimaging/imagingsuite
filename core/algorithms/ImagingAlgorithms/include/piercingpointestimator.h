@@ -6,6 +6,7 @@
 #include "ImagingAlgorithms_global.h"
 
 #include <tnt_array1d.h>
+#include <vector>
 
 #include <base/timage.h>
 #include <logging/logger.h>
@@ -17,12 +18,12 @@ class IMAGINGALGORITHMSSHARED_EXPORT PiercingPointEstimator
 public:
     PiercingPointEstimator();
 
-    pair<float,float> operator()(kipl::base::TImage<float,2> &img, size_t *roi=nullptr);
+    pair<float,float> operator()(kipl::base::TImage<float,2> &img,const std::vector<size_t> & roi = {});
 
     pair<float,float> operator()(kipl::base::TImage<float,2> &img,
                                  kipl::base::TImage<float,2> &dc,
                                  bool gaincorrection=true,
-                                 size_t *roi=nullptr);
+                                 const std::vector<size_t> &roi={});
 private:
 
     void ComputeEstimate(kipl::base::TImage<float, 2> &img);

@@ -25,14 +25,12 @@ public:
 
     kipl::base::RectROI roi;
     QRect rect() {
-        size_t roivec[4];
+        auto roivec=roi.box();
 
-        roi.getBox(roivec);
+        QRect rect;
+        rect.setCoords(roivec[0],roivec[1],roivec[2],roivec[3]);
 
-            QRect rect;
-            rect.setCoords(roivec[0],roivec[1],roivec[2],roivec[3]);
-
-            return rect;
+        return rect;
     }
 };
 
@@ -60,14 +58,13 @@ void ROIManager::setViewer(QtAddons::ImageViewerWidget *v)
 void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
 {
     ostringstream msg;
-    size_t roi[4];
 
     ui->listROI->clear();
-    for (auto it = rois.begin(); it!=rois.end(); ++it) {
+    for (const auto roiItem : rois) {
         ROIListItem *item = new ROIListItem;
 
-        item->roi=*it;
-        it->getBox(roi);
+        item->roi=roiItem;
+        auto roi = roiItem.box();
         msg.str("");
         if (bVisibleLabels)
             msg<<item->roi.label()<<": ";
@@ -140,13 +137,12 @@ void ROIManager::updateViewer()
         return ;
     }
     QRect rect;
-    size_t roi[4];
 
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
 
-        roiItem->roi.getBox(roi);
+        auto roi = roiItem->roi.box();
 
         rect.setCoords(roi[0],roi[1],roi[2],roi[3]);
         viewer->set_rectangle(rect,QColor("green"),roiItem->roi.getID());
@@ -250,14 +246,14 @@ void QtAddons::ROIManager::on_button_save_clicked()
     // store data in f
     out<<"{\n";
     out<<"  \"rois\" : [\n";
-    size_t roi[4];
+
     for (int i=0; i<ui->listROI->count(); ++i)
     {
 
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         out<<"    {\n";
         out<<"      \"label\" : \""<<roiItem->roi.label().c_str()<<"\",\n";
-        roiItem->roi.getBox(roi);
+        auto roi = roiItem->roi.box();
         out<<"      \"roi\" : \""<< roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3] <<"\"\n    }";
         if (i<ui->listROI->count()-1)
             out<<",\n";

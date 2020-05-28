@@ -5,29 +5,31 @@
 namespace kipl { namespace filters {
 
 FilterBase::~FilterBase() {		
-    if (nKernelIndex != nullptr)
-		delete [] nKernelIndex;
 }
 
-size_t FilterBase::PrepareIndex(size_t const * const imgDims, 
-								size_t const * const nKernelDims,  	
-								size_t const nDims)
+size_t FilterBase::PrepareIndex(const std::vector<size_t> &imgDims,
+                                const std::vector<size_t> &nKernelDims)
 {
+
 	size_t len=imgDims[0];
 	size_t klen=nKernelDims[0]-1;
-	for (size_t i=1; i<nDims; i++) {
+    for (size_t i=1; i<nKernelDims.size(); i++)
+    {
 		klen+=(nKernelDims[i]-1)*len;
 		len*=imgDims[i];
 	}
 	len-=klen;
 
-    memset(this->nKernelIndex,0, sizeof(ptrdiff_t)*nKernel);
+    nKernelIndex = std::vector<ptrdiff_t>(nKernel,0);
+
     size_t kProd=1;
     size_t imgProd=1;
-	for (size_t dim=0; dim<nDims; dim++) {
+    for (size_t dim=0; dim<nKernelDims.size(); dim++)
+    {
 		kProd*=nKernelDims[dim];
         const int cnCenter=static_cast<int>(nKernelDims[dim]/2);
-		for (int i=0; i<static_cast<int>(nKernel); i++) {
+        for (int i=0; i<static_cast<int>(nKernel); i++)
+        {
 			nKernelIndex[i] += ((i % kProd)*nKernelDims[dim]/kProd - cnCenter)*imgProd;
 		}
 		imgProd*=imgDims[dim];

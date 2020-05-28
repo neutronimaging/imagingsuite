@@ -4,8 +4,6 @@
 
 #include <BackProjectorModuleBase.h>
 #include <ParameterHandling.h>
-#include <forwardprojectorbase.h>
-#include <backprojectorbase.h>
 #include <string>
 #include <list>
 //<LICENSE>
@@ -52,7 +50,7 @@ public:
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-    virtual void SetROI(size_t *roi);
+    virtual void SetROI(const std::vector<size_t> &roi);
 
     /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
     /// \param x the bin values of the x axis
@@ -60,7 +58,7 @@ public:
     /// \param N number of bins
     virtual void GetHistogram(float *axis, size_t *hist,size_t nBins);
 
-    void GetMatrixDims(size_t *dims);
+    const std::vector<size_t> & GetMatrixDims();
 
     virtual float Min();
 
@@ -72,10 +70,6 @@ public:
 protected:
     virtual size_t reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)=0;   
     virtual size_t ComputeGeometryMatrices(float *matrices);
-
-
-    ForwardProjectorBase *m_fp;
- //   BackProjectorBase    *m_bp;
 
     struct ProjectionInfo {
         ProjectionInfo(const float _angle, const float _weight) :
@@ -106,7 +100,7 @@ protected:
     size_t nProjectionBufferSize;
     size_t nSliceBlock;
     size_t nSubVolume[2];
-    size_t volume_size[3];
+    std::vector<size_t> volume_size;
     float spacing[3];
     float fRotation;
 

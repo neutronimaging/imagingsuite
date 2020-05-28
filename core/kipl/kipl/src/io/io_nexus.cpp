@@ -85,10 +85,10 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 
 }
 
-int KIPLSHARED_EXPORT GetNexusDims(const char *fname, size_t *dims){
-//int GetNexusDims(const char *fname, size_t *dims){
-
-    NeXus::File file(fname);
+std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
+{
+    std::vector<size_t> dims;
+    NeXus::File file(fname.c_str());
 
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 
@@ -107,30 +107,31 @@ int KIPLSHARED_EXPORT GetNexusDims(const char *fname, size_t *dims){
             map<string, string> entries_data = file.getEntries();
 
             for (map<string,string>::const_iterator it_data = entries_data.begin();
-                 it_data != entries_data.end(); it_data++) {
+                 it_data != entries_data.end(); it_data++)
+            {
 
                 file.openData(it_data->first);
                 attr_infos = file.getAttrInfos();
 
                 for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin();
-                     it_att != attr_infos.end(); it_att++) {
-
-                                      if (it_att->name=="signal"){
-                                          dims[0]=static_cast<size_t>(file.getInfo().dims[2]);
-                                          dims[1]=static_cast<size_t>(file.getInfo().dims[1]);
-//                                          break;
-                                      }
+                     it_att != attr_infos.end(); it_att++)
+                {
+                          if (it_att->name=="signal")
+                          {
+                              dims = std::vector<size_t>({  static_cast<size_t>(file.getInfo().dims[2]),
+                                                            static_cast<size_t>(file.getInfo().dims[1])  });
+                          }
                 }
                 file.closeData();
-              }
+            }
 
             file.closeGroup();
-            }
+        }
 
     }
 
     file.close();
-    return 1;
+    return dims;
 
 }
 

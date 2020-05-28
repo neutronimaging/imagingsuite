@@ -36,7 +36,7 @@ TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
 
 kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, float sigma, float angle)
 {
-    size_t dims[2]={N,N};
+    std::vector<size_t> dims={N,N};
     kipl::base::TImage<float,2> img(dims);
 
     float center=dims[0]/2.0f;
@@ -58,7 +58,7 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
   //  QSKIP("Skipping due to save time");
     ImagingQAAlgorithms::ContrastSampleAnalysis csa;
     const size_t N=512;
-    size_t dims[2]={N,N};
+    std::vector<size_t> dims={N,N};
 
     kipl::base::TImage<float,2> orig(dims);
     const float resolution=0.05f;

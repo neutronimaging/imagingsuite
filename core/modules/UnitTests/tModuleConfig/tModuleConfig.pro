@@ -42,7 +42,7 @@ unix {
 
     LIBS += -L/usr/local/lib64
 
-    LIBS += -ltiff -lxml2 -lNeXus -lNeXusCPP
+    LIBS += -ltiff -lxml2 #-lNeXus -lNeXusCPP
     INCLUDEPATH += /usr/include/libxml2
 }
 
@@ -57,7 +57,11 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-SOURCES += tst_configbasetest.cpp
+SOURCES += tst_configbasetest.cpp \
+           dummyconfig.cpp
+
+HEADERS += dummyconfig.h
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework

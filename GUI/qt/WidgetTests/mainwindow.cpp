@@ -78,8 +78,8 @@ void MainWindow::on_ShowImageButton_clicked()
     m_fScale=fmod(m_fScale+1.0,10.0);
     kipl::base::TImage<float,2> img=kipl::generators::Sine2D::JaehneRings(100,m_fScale);
 
-    ui->ImageView->set_image(img.GetDataPtr(),img.Dims());
-    ui->ImageView_2->set_image(img.GetDataPtr(),img.Dims());
+    ui->ImageView->set_image(img.GetDataPtr(),img.dims());
+    ui->ImageView_2->set_image(img.GetDataPtr(),img.dims());
     int flip=static_cast<int>(m_fScale) & 1;
     if (flip) {
         ui->ImageView->set_rectangle(QRect(10,10,30,40),QColor(Qt::red),0);
@@ -179,10 +179,10 @@ void MainWindow::on_button_ListAllROIs_clicked()
     qDebug() << "got list "<<roilist.size();
     std::ostringstream msg;
     msg<<"All ROIs";
-    size_t coord[4];
+
     foreach (kipl::base::RectROI roi, roilist) {
         msg<<std::endl;
-        roi.getBox(coord);
+        auto coord = roi.box();
         msg<<roi.label()<<" ("<<roi.getID()
           <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
@@ -198,10 +198,10 @@ void MainWindow::on_button_ListSelectedROIs_clicked()
     qDebug() << "got list "<<roilist.size();
     std::ostringstream msg;
     msg<<"Selected ROIs";
-    size_t coord[4];
+
     foreach (kipl::base::RectROI roi, roilist) {
         msg<<std::endl;
-        roi.getBox(coord);
+        auto coord=roi.box();
         msg<<roi.label()<<" ("<<roi.getID()
           <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";

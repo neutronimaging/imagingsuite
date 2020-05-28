@@ -135,7 +135,7 @@ void PlotPainter::drawGrid(QPainter *painter)
 #ifdef _MSC_VER
     QPen quiteDark;// = palette.dark().color().light();
 #else
-    QPen quiteDark = palette.dark().color().light();
+    QPen quiteDark = palette.dark().color().lighter();
 #endif
     QPen light;
     QPen black;

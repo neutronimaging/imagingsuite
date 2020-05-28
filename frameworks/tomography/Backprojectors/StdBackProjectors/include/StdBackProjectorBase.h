@@ -14,7 +14,7 @@
 #include <logging/logger.h>
 #include <projectionfilter.h>
 
-class StdBackProjectorBase : public BackProjectorModuleBase
+class STDBACKPROJECTORS_EXPORT StdBackProjectorBase : public BackProjectorModuleBase
 {
 protected:
 	struct ProjectionInfo {
@@ -34,12 +34,11 @@ public:
 	virtual int Initialize() { return 0;}
 	virtual std::map<std::string, std::string> GetParameters();
 
-	virtual void SetROI(size_t *roi);
+    virtual void SetROI(const std::vector<size_t> &roi);
 
 	
 	void GetHistogram(float *axis, size_t *hist,size_t nBins);
-	void GetMatrixDims(size_t *dims);
-
+    const std::vector<size_t> &GetMatrixDims();
 
 	void ChangeMaskValue(float x);
 	float Min();

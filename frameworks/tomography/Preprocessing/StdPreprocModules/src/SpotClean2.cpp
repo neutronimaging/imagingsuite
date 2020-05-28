@@ -15,7 +15,6 @@
 
 
 #include <base/timage.h>
-#include <io/io_matlab.h>
 #include <filters/filter.h>
 #include <filters/medianfilter.h>
 #include <math/mathfunctions.h>

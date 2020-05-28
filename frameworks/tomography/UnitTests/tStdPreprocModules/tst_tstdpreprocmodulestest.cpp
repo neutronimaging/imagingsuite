@@ -10,6 +10,7 @@
 #include <strings/filenames.h>
 #include <io/io_tiff.h>
 #include <base/timage.h>
+#include <StdPreprocModules.h>
 
 class TStdPreprocModulesTest : public QObject
 {
@@ -19,6 +20,7 @@ public:
     TStdPreprocModulesTest();
 
 private Q_SLOTS:
+    void testGetModuleList();
     void testFullLogNorm();
     void testMorpSpotClean_Initialize();
     void testMorpSpotClean_Process();
@@ -26,6 +28,16 @@ private Q_SLOTS:
 
 TStdPreprocModulesTest::TStdPreprocModulesTest()
 {
+
+}
+
+void TStdPreprocModulesTest::testGetModuleList()
+{
+    std::map<std::string, std::map<std::string, std::string> > modulelist;
+    GetModuleList("muhrec", reinterpret_cast<void *>(&modulelist));
+    qDebug() << modulelist.size();
+
+    QCOMPARE(modulelist.size(),20UL);
 }
 
 void TStdPreprocModulesTest::testFullLogNorm()

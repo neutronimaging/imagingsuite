@@ -71,10 +71,10 @@ protected:
     void SetupCallBacks();
     void lookForReferences(std::string &path);
     void UpdateDoseROI();
-    void SetImageDimensionLimits(size_t const * const dims);
+    void SetImageDimensionLimits(const std::vector<size_t> &dims);
     void CenterOfRotationChanged();
     // Other methods
-    void UpdateMemoryUsage(size_t *roi);
+    void UpdateMemoryUsage(const std::vector<size_t> &roi);
     void SetImageSizeToAdjustment();
 
     void LoadDefaults(bool checkCurrent);
@@ -268,7 +268,7 @@ private:
     kipl::base::eImagePlanes m_eSlicePlane;
     size_t m_nSliceSizeX;
     size_t m_nSliceSizeY;
-    int m_oldROI[4];
+    std::vector<int> m_oldROI;
     int m_oldRotateDial;
     double m_oldRotateSpin;
 

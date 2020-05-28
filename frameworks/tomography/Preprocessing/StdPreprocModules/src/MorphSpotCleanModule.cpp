@@ -180,7 +180,7 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
     int i;
 
 
-    kipl::base::TImage<float,2> proj(img.Dims());
+    kipl::base::TImage<float,2> proj(img.dims());
     ImagingAlgorithms::MorphSpotClean cleaner;
     qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
@@ -220,7 +220,7 @@ int MorphSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & img)
     std::clog<<"Starting parallel processing"<<std::endl;
 #pragma omp parallel
     {
-        kipl::base::TImage<float,2> proj(img.Dims());
+        kipl::base::TImage<float,2> proj(img.dims());
         ImagingAlgorithms::MorphSpotClean cleaner;
         cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
         cleaner.setConnectivity(m_eConnectivity);
@@ -279,7 +279,7 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
     msg.str("");
     msg<<"Thread "<<tid<<" progress :";
 
-    kipl::base::TImage<float,2> proj(img->Dims());
+    kipl::base::TImage<float,2> proj(img->dims());
 
     kipl::base::Transpose<float> transpose;
     transpose.bUseReference=true;

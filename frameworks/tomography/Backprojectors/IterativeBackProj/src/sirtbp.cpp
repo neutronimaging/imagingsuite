@@ -116,7 +116,7 @@ std::map<std::string, std::string> SIRTbp::GetParameters()
 
 /// Sets the region of interest on the projections.
 /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-void SIRTbp::SetROI(size_t *roi)
+void SIRTbp::SetROI(const std::vector<size_t> &roi)
 {
     IterativeReconBase::SetROI(roi);
 }

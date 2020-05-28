@@ -15,6 +15,8 @@
 #include <base/tpermuteimage.h>
 #include <math/mathconstants.h>
 
+#include <QDebug>
+
 #define USE_PROJ_PADDING
 
 StdBackProjectorBase::StdBackProjectorBase(std::string name, eMatrixAlignment align,kipl::interactors::InteractionBase *interactor) :
@@ -86,26 +88,30 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 	kipl::base::TImage<float,2> img;
 	proj*=weight;
 	size_t N=0;
-	if (MatrixAlignment==MatrixZXY) {
+    if (MatrixAlignment==MatrixZXY)
+    {
 		kipl::base::Transpose<float,8> transpose;
 		img=transpose(proj);
 		pProj=img.GetDataPtr();
 		N=img.Size(0);
 	}
-	else {
+    else
+    {
 		pProj=proj.GetDataPtr();
 		N=proj.Size(0);
 	}
 
 #ifdef USE_PROJ_PADDING
-    for (int i=0; i<static_cast<int>(projections.Size(1)); i++) {
+    for (int i=0; i<static_cast<int>(projections.Size(1)); i++)
+    {
 		memcpy(projections.GetLinePtr(i,nProjCounter),pProj+i*N,N*sizeof(float));
 	}
 #else
 	memcpy(projections.GetLinePtr(0,nProjCounter),pProj,proj.Size()*sizeof(float));
 #endif
     nProjCounter++;
-    if (bLastProjection || (nProjectionBufferSize<=(nProjCounter))) {
+    if (bLastProjection || (nProjectionBufferSize<=(nProjCounter)))
+    {
         if (nProjectionBufferSize<=nProjCounter)
             nProjCounter--;
 
@@ -125,7 +131,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 	if (volume.Size()==0)
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-	kipl::base::TImage<float,2> img(projections.Dims());
+    kipl::base::TImage<float,2> img(projections.dims());
 
 	size_t nProj=projections.Size(2);
 	// Extract the projection parameters
@@ -140,7 +146,8 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 	float *pImg=img.GetDataPtr();
     float *pProj=nullptr;
 	size_t i=0;
-	for (i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj, "Back-projecting")); i++) {
+    for (i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj, "Back-projecting")); i++)
+    {
 		pProj=projections.GetLinePtr(0,i);
 		memcpy(pImg,pProj,sizeof(float)*img.Size());
 		Process(img,angles[i],weights[i],i==(nProj-1));
@@ -151,7 +158,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 	return 0;
 }
 
-void StdBackProjectorBase::SetROI(size_t *roi)
+void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 {
 	ClearAll();
 	ProjCenter    = mConfig.ProjectionInfo.fCenter;
@@ -161,10 +168,7 @@ void StdBackProjectorBase::SetROI(size_t *roi)
     else
         SizeV = roi[3]-roi[1];
 
-	mConfig.ProjectionInfo.roi[0]=roi[0];
-	mConfig.ProjectionInfo.roi[1]=roi[1];
-	mConfig.ProjectionInfo.roi[2]=roi[2];
-	mConfig.ProjectionInfo.roi[3]=roi[3];
+    mConfig.ProjectionInfo.roi=roi;
 
 	SizeProj      = SizeU*SizeV;
 	size_t rest=0;
@@ -172,29 +176,27 @@ void StdBackProjectorBase::SetROI(size_t *roi)
 	rest = SizeV & 3 ;
 	rest = rest !=0 ? 4 - rest : 0;
 #endif
-	size_t projDims[3]={SizeU, SizeV + rest, nProjectionBufferSize};
-
-	if (MatrixAlignment==MatrixZXY) {
-		MatrixDims[0]=SizeV;
-		MatrixDims[1]=SizeU;
-		MatrixDims[2]=SizeU;
+    std::vector<size_t> projDims = { SizeU, SizeV + rest, nProjectionBufferSize };
+    std::vector<size_t> matrixDims;
+    if (MatrixAlignment==MatrixZXY)
+    {
+        matrixDims = { SizeV, SizeU, SizeU };
 
 		std::swap(projDims[0],   projDims[1]);
 	}
-	else {
-		MatrixDims[0]=SizeU;
-		MatrixDims[1]=SizeU;
-		MatrixDims[2]=SizeV;
+    else
+    {
+        matrixDims = { SizeU, SizeU, SizeV };
 	}
 
-	volume.Resize(MatrixDims);
+    volume.resize(matrixDims);
 	volume=0.0f;
 
 	stringstream msg;
 	
 	msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
 	msg<<"Matrix dimensions "<<volume<<std::endl;
-	projections.Resize(projDims);
+    projections.resize(projDims);
 	projections=0.0f;
 	msg<<"Projection buffer dimensions "<<projections<<std::endl;
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -203,18 +205,19 @@ void StdBackProjectorBase::SetROI(size_t *roi)
     MatrixCenterX = volume.Size(1)/2;
 }
 
-void StdBackProjectorBase::GetMatrixDims(size_t *dims)
+const std::vector<size_t> & StdBackProjectorBase::GetMatrixDims()
 {
-	if (MatrixAlignment==MatrixZXY) {
-		dims[0]=volume.Size(1);
-		dims[1]=volume.Size(2);
-		dims[2]=volume.Size(0);
-	}
-	else {
-		dims[0]=volume.Size(0);
-		dims[1]=volume.Size(1);
-		dims[2]=volume.Size(2);
-	} 
+    std::vector<size_t> dims;
+    if (MatrixAlignment==MatrixZXY)
+    {
+        dims= { volume.Size(1), volume.Size(2), volume.Size(0) };
+    }
+    else
+    {
+        dims = volume.dims();
+    }
+
+    return dims;
 }
 
 void StdBackProjectorBase::ChangeMaskValue(float x)
@@ -222,22 +225,28 @@ void StdBackProjectorBase::ChangeMaskValue(float x)
 	const size_t N=std::max(std::max(volume.Size(0),volume.Size(1)),volume.Size(2));
 	
 	float *data=new float[N];
-	for (size_t i=0; i<N; i++) {
+    for (size_t i=0; i<N; i++)
+    {
 		data[i]=x;
 	}
 	
-	if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
+    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ)
+    {
 		logger(kipl::logging::Logger::LogWarning,"ChangeMaskValue is not implemented for MatrixXYZ");
 		throw ReconException("ChangeMaskValue is not implemented for MatrixXYZ",__FILE__,__LINE__);
 	}
-	else {
-		for (size_t y=0; y<mask.size(); y++) {
-			for (size_t x=0; x<mask[y].first; x++) {
+    else
+    {
+        for (size_t y=0; y<mask.size(); y++)
+        {
+            for (size_t x=0; x<mask[y].first; x++)
+            {
 				float *pLine=volume.GetLinePtr(x,y);
 				memcpy(pLine,data,volume.Size(0)*sizeof(float));
 			}
 			
-			for (size_t x=mask[y].second+1; x<volume.Size(1); x++) {
+            for (size_t x=mask[y].second+1; x<volume.Size(1); x++)
+            {
 				float *pLine=volume.GetLinePtr(x,y);
 				memcpy(pLine,data,volume.Size(0)*sizeof(float));
 			}
@@ -263,10 +272,13 @@ void StdBackProjectorBase::GetHistogram(float *axis, size_t *hist,size_t nBins)
 	float scale=(matrixMax-matrixMin)/(nBins+1);
 	float invScale=1.0f/scale;
 	size_t index=0;
-	for (size_t y=0; y<mask.size(); y++) {
-		for (size_t x=mask[y].first; x<mask[y].second; x++) {
+    for (size_t y=0; y<mask.size(); y++)
+    {
+        for (size_t x=mask[y].first; x<mask[y].second; x++)
+        {
 			float *pLine=volume.GetLinePtr(x,y);
-			for (size_t z=0; z<volume.Size(0); z++) { 
+            for (size_t z=0; z<volume.Size(0); z++)
+            {
 				index=static_cast<size_t>(invScale*(pLine[z]-matrixMin));
                 if (pLine[z]<matrixMin)
 					index=0;
@@ -286,13 +298,17 @@ float StdBackProjectorBase::Min()
 {
 	float minval=std::numeric_limits<float>::max();
 	
-    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
+    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ)
+    {
         logger(kipl::logging::Logger::LogWarning,"Min is not implemented for MatrixXYZ");
         throw ReconException("Min is not implemented for MatrixXYZ",__FILE__,__LINE__);
     }
-    else {
-		for (size_t y=0; y<mask.size(); y++) {
-			for (size_t x=mask[y].first; x<mask[y].second; x++) {
+    else
+    {
+        for (size_t y=0; y<mask.size(); y++)
+        {
+            for (size_t x=mask[y].first; x<mask[y].second; x++)
+            {
 				float *pLine=volume.GetLinePtr(x,y);
 				minval=min(minval,*min(pLine,pLine+volume.Size(0)));
 			}
@@ -306,13 +322,17 @@ float StdBackProjectorBase::Max()
 {
 	float maxval=-std::numeric_limits<float>::max();
 	
-    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ) {
+    if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ)
+    {
         logger(kipl::logging::Logger::LogWarning,"Max is not implemented for MatrixXYZ");
         throw ReconException("Max is not implemented for MatrixXYZ",__FILE__,__LINE__);
     }
-    else {
-		for (size_t y=0; y<mask.size(); y++) {
-			for (size_t x=mask[y].first; x<mask[y].second; x++) {
+    else
+    {
+        for (size_t y=0; y<mask.size(); y++)
+        {
+            for (size_t x=mask[y].first; x<mask[y].second; x++)
+            {
 				float *pLine=volume.GetLinePtr(x,y);
 				maxval=max(maxval,*min(pLine,pLine+volume.Size(0)));
 			}
@@ -324,13 +344,14 @@ float StdBackProjectorBase::Max()
 
 int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
+    qDebug()<<"b";
 	mConfig=config;
-
+qDebug()<<"b";
     nProjectionBufferSize = GetIntParameter(parameters,"ProjectionBufferSize");
     nSliceBlock           = GetIntParameter(parameters,"SliceBlock");
 	GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
     filter.setParameters(parameters);
-	
+    qDebug()<<"b";
 	return 0;
 }
 

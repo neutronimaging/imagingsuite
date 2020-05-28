@@ -115,10 +115,10 @@ void NonLocalMeans::SaveDebugImage(kipl::base::TImage<float,2> & img, std::strin
 void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImage<float,2> &g)
 {
     // Initialize result image
-    g.Resize(f.Dims());
+    g.resize(f.dims());
 
-    kipl::base::TImage<float,2> ff(f.Dims());
-    kipl::base::TImage<float,2> ff2(f.Dims());
+    kipl::base::TImage<float,2> ff(f.dims());
+    kipl::base::TImage<float,2> ff2(f.dims());
 
     NeighborhoodSums(f,ff,ff2);
 
@@ -158,8 +158,8 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
 {
     std::ostringstream msg;
     // Box filter
-    ff.Resize(f.Dims());
-    ff2.Resize(f.Dims());
+    ff.resize(f.dims());
+    ff2.resize(f.dims());
     kipl::base::TImage<float,2> g;
 
     for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
@@ -167,27 +167,22 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
     }
 
     // Preparing filter kernels
-    size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
-    size_t fdims_y[2]={1, static_cast<size_t>(m_nBoxSize)};
+    std::vector<size_t> fdims_x={static_cast<size_t>(m_nBoxSize), 1};
+    std::vector<size_t> fdims_y={1, static_cast<size_t>(m_nBoxSize)};
 
-    float *kernel=nullptr;
+    std::vector<float> kernel;
     switch (m_eWindow) {
     case NonLocalMeans::NLMwindows::NLM_window_sum :
         m_Kerneltype=kipl::filters::KernelType::Separable;
-        kernel=new float[m_nBoxSize+1];
-        for (int i=0; i<m_nBoxSize; i++)
-             kernel[i]=1.0f;
+        kernel=std::vector<float>(m_nBoxSize,1.0f);
         break;
     case NonLocalMeans::NLMwindows::NLM_window_avg :
         m_Kerneltype=kipl::filters::KernelType::Separable;
-        kernel=new float[m_nBoxSize+1];
-
-        for (int i=0; i<m_nBoxSize; i++)
-             kernel[i]=1.0f/static_cast<float>(m_nBoxSize);
+        kernel=std::vector<float>(m_nBoxSize,1.0f/static_cast<float>(m_nBoxSize));
         break;
     case NonLocalMeans::NLMwindows::NLM_window_gauss: {
         m_Kerneltype=kipl::filters::KernelType::Separable;
-        kernel=new float[m_nBoxSize+1];
+        kernel=std::vector<float>(m_nBoxSize+1);
 
         int mid=m_nBoxSize/2;
         const float sfactor=sqrt(-log(0.05));
@@ -205,7 +200,7 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
     case NonLocalMeans::NLMwindows::NLM_window_buades : {
             fdims_x[0]=fdims_x[1]=static_cast<size_t>(2*m_nBoxSize+1);
             size_t N=fdims_x[0]*fdims_x[1];
-            kernel=new float[N+1];
+            kernel=std::vector<float>(m_nBoxSize+1);
 
             int mid=m_nBoxSize;
 
@@ -256,7 +251,6 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
 
     SaveDebugImage(ff,"ff.tif");
     SaveDebugImage(ff2,"ff2.tif");
-    delete [] kernel;
 }
 
 size_t NonLocalMeans::GetNeighborhood(float *img, float *pNeighborhood, ptrdiff_t pos, ptrdiff_t nLine, ptrdiff_t N)

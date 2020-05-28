@@ -7,6 +7,8 @@
 #include "../morphology.h"
 #include "../morphgeo.h"
 #include "../../base/imageoperators.h"
+#include "../../math/image_statistics.h"
+
 #include <deque>
 
 /// Reconstruction based extrem operations
@@ -21,7 +23,7 @@ namespace morphology {
 template <typename ImgType,size_t N>
 int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, kipl::base::eConnectivity conn, bool bilevel)
 {
-    const size_t *dims=img.Dims();
+    auto dims=img.dims();
 
     ImgType maxVal=kipl::base::max(img);
     extremes.Clone(img);
@@ -91,7 +93,7 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
 template <typename ImgType,size_t N>
 int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, base::eConnectivity conn)
 {
-    const size_t *dims=img.Dims();
+    auto dims=img.dims();
 
     ImgType min=kipl::base::min(img);
     extremes=img;
@@ -275,7 +277,7 @@ template <typename T>
 kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConnectivity conn)
 {
     std::stringstream msg;
-    kipl::base::TImage<T,2> fm(img.Dims());
+    kipl::base::TImage<T,2> fm(img.dims());
 
     T maxval = kipl::base::max(img);
 //    T minval;
@@ -313,7 +315,7 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConn
 template <typename T>
 kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::base::eConnectivity conn)
 {
-    kipl::base::TImage<T,2> fm(img.Dims());
+    kipl::base::TImage<T,2> fm(img.dims());
     std::stringstream msg;
     T minval = kipl::base::min(img);
 
@@ -330,7 +332,7 @@ kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::base::eCon
         pB[last]=pA[last];
     }
 
-    kipl::base::TImage<T,2> tmp(img.Dims());
+    kipl::base::TImage<T,2> tmp(img.dims());
     try {
         tmp=kipl::morphology::RecByDilation(img,fm,conn);
     }
@@ -344,7 +346,7 @@ kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::base::eCon
 template <typename T>
 kipl::base::TImage<T,2> FillExtrema(kipl::base::TImage<T,2> &img)
 {
-    kipl::base::TImage<T,2> fm(img.Dims());
+    kipl::base::TImage<T,2> fm(img.dims());
 
     T maxval;
     T minval;
@@ -454,7 +456,7 @@ namespace old {
 template <typename ImgType,size_t N>
 int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, MorphConnect conn, bool bilevel)
 {
-    const size_t *dims=img.Dims();
+    auto dims=img.dims();
     //Statistics stats=ComputeImageStats(img);
     //ImgType max=(ImgType)stats.Max();
     ImgType maxVal=kipl::base::max(img);
@@ -516,7 +518,7 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
 template <typename ImgType,size_t N>
 int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N> &extremes, MorphConnect conn)
 {
-    const size_t *dims=img.Dims();
+    std::vector<size_t> dims =img.dims();
 
     ImgType minVal=kipl::base::min(img);
     extremes=img;
@@ -698,7 +700,7 @@ template <typename T>
 kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect conn)
 {
     std::stringstream msg;
-    kipl::base::TImage<T,2> fm(img.Dims());
+    kipl::base::TImage<T,2> fm(img.dims());
 
     T maxval;
     T minval;
@@ -715,7 +717,7 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::morphology:
         pB[0]=pA[0];
         pB[last]=pA[last];
     }
-    kipl::base::TImage<T,2> tmp(img.Dims());
+    kipl::base::TImage<T,2> tmp(img.dims());
     try {
         tmp=kipl::morphology::old::RecByErosion(img,fm,conn);
     }
@@ -730,7 +732,7 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::morphology:
 template <typename T>
 kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect conn)
 {
-    kipl::base::TImage<T,2> fm(img.Dims());
+    kipl::base::TImage<T,2> fm(img.dims());
     std::stringstream msg;
     T maxval;
     T minval;
@@ -748,7 +750,7 @@ kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::morphology
         pB[last]=pA[last];
     }
 
-    kipl::base::TImage<T,2> tmp(img.Dims());
+    kipl::base::TImage<T,2> tmp(img.dims());
     try {
         tmp=kipl::morphology::old::RecByDilation(img,fm,conn);
     }
@@ -762,7 +764,7 @@ kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::morphology
 template <typename T>
 kipl::base::TImage<T,2> FillExtrema(kipl::base::TImage<T,2> &img)
 {
-    kipl::base::TImage<T,2> fm(img.Dims());
+    kipl::base::TImage<T,2> fm(img.dims());
 
     T maxval;
     T minval;

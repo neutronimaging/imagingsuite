@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <list>
+#include <vector>
 
 #include "../base/timage.h"
 #include "../logging/logger.h"
@@ -50,8 +51,8 @@ template <typename T>
 	class WaveletQuad {
 	public:
 		WaveletQuad() : N(0) {}
-		WaveletQuad(size_t const * const dims) : N(0),a(dims), h(dims), v(dims), d(dims) {a=T(0); h=T(0); v=T(0); d=T(0);}
-		void Resize(size_t const * const dims) { a.Resize(dims); h.Resize(dims); v.Resize(dims); d.Resize(dims); }
+        WaveletQuad(const std::vector<size_t> & dims) : N(0),a(dims), h(dims), v(dims), d(dims) {a=T(0); h=T(0); v=T(0); d=T(0);}
+        void resize(const std::vector<size_t> & dims) { a.resize(dims); h.resize(dims); v.resize(dims); d.resize(dims); }
 		void SaveQuad(std::string fname);
 		int N;
 		kipl::base::TImage<T,2> a;
@@ -76,7 +77,7 @@ template <typename T>
 
 		const WaveletKernel<T> & Kernel() const {return kernel;}
 	protected:
-		size_t n_dims[2];
+        std::vector<size_t> n_dims;
 
 		WaveletQuad<T> transform(WaveletQuad<T> &q);
 		void transform(kipl::base::TImage<T,2> &src,

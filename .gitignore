@@ -7,6 +7,13 @@ build*
 *.user.4.10-pre1
 *.stash
 *.o
+*_wrapper.sh
+Makefile
+Makefile.Release
+Makefile.Debug
+ui_*.h
+cmake_install.cmake
+*.dylib
 *~
 *.autosave
 *.in

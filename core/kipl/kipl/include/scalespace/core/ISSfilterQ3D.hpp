@@ -63,13 +63,13 @@ int ISSfilterQ3D<T>::Process(kipl::base::TImage<T,3> &img, double dTau, double d
 
 	switch (eInitialImage) {
 		case InitialImageOriginal: m_f=img; m_f.Clone();break;
-		case InitialImageZero: m_f.Resize(img.Dims()); m_f=static_cast<T>(0); break;
+        case InitialImageZero: m_f.resize(img.dims()); m_f=static_cast<T>(0); break;
 	}
 
 	m_dTau=dTau; 
 	m_dLambda=dLambda;
 	m_dAlpha=dAlpha;
-	m_v.Resize(img.Dims());
+    m_v.resize(img.dims());
 	m_v=static_cast<T>(0);
 
 	std::ostringstream msg;
@@ -283,8 +283,8 @@ int ISSfilterQ3D<T>::_P(kipl::base::TImage<T,3> &img, kipl::base::TImage<T,3> &r
 
     kipl::base::TImage<T,2> dx,dy,dz, d2x, d2y,d2z;
 
-	res.Resize(img.Dims());
-    kipl::base::TImage<T,2> resslice(res.Dims());
+    res.resize(img.dims());
+    kipl::base::TImage<T,2> resslice(res.dims());
 	kipl::base::TImage<T,2> prev_dx;
 	kipl::base::TImage<T,2> prev_dy;
 	kipl::base::TImage<T,2> prev_dz;
@@ -294,7 +294,7 @@ int ISSfilterQ3D<T>::_P(kipl::base::TImage<T,3> &img, kipl::base::TImage<T,3> &r
 		//	kipl::base::TImage<T,2> slice=kipl::base::ExtractSlice(img,1);
 			kipl::base::TImage<T,2> slice=GetPaddedSlice(img,1,nMargin);
 			img_queue.push_back(slice);
-			resslice.Resize(slice.Dims());
+            resslice.resize(slice.dims());
 		}
 
 		//kipl::base::TImage<T,2> slice=kipl::base::ExtractSlice(img,i);
@@ -405,12 +405,15 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
 template <typename T>
 kipl::base::TImage<T,2> ISSfilterQ3D<T>::GetPaddedSlice(kipl::base::TImage<T,3> &vol, size_t nIdx, size_t nMargin)
 {
-	size_t dims[2]={vol.Size(0)+nMargin*2, vol.Size(1)+nMargin*2};
+    std::vector<size_t> dims = { vol.Size(0)+nMargin*2,
+                                 vol.Size(1)+nMargin*2};
+
 	kipl::base::TImage<T,2> slice(dims);
 
 
 	slice=static_cast<T>(0);
-	for (size_t i=0; i<vol.Size(1); i++) {
+    for (size_t i=0; i<vol.Size(1); i++)
+    {
 		memcpy(slice.GetLinePtr(i+nMargin)+nMargin,vol.GetLinePtr(i,nIdx),sizeof(T)*vol.Size(0));
 	}
 
@@ -420,7 +423,8 @@ kipl::base::TImage<T,2> ISSfilterQ3D<T>::GetPaddedSlice(kipl::base::TImage<T,3> 
 template <typename T>
 void ISSfilterQ3D<T>::InsertPaddedSlice(kipl::base::TImage<T,2> & slice, kipl::base::TImage<T,3> &vol, size_t nIdx, size_t nMargin)
 {
-	for (size_t i=0; i<vol.Size(1); i++) {
+    for (size_t i=0; i<vol.Size(1); i++)
+    {
 		memcpy(vol.GetLinePtr(i,nIdx),slice.GetLinePtr(i+nMargin)+nMargin,sizeof(T)*vol.Size(0));
 	}
 }
@@ -673,9 +677,9 @@ int ISSfilterQ3D<T>::_FirstDerivateSSE(std::list<kipl::base::TImage<T,2> > &img_
 									std::list<kipl::base::TImage<T,2> > &dy_queue,
 									std::list<kipl::base::TImage<T,2> > &dz_queue) // Lag difference
 {
-	kipl::base::TImage<T,2> dx(img_queue.front().Dims());
-	kipl::base::TImage<T,2> dy(img_queue.front().Dims());
-	kipl::base::TImage<T,2> dz(img_queue.front().Dims());
+    kipl::base::TImage<T,2> dx(img_queue.front().dims());
+    kipl::base::TImage<T,2> dy(img_queue.front().dims());
+    kipl::base::TImage<T,2> dz(img_queue.front().dims());
 
 	kipl::base::TImage<T,2> &img1=img_queue.back();
 	kipl::base::TImage<T,2> &img0=img_queue.front();

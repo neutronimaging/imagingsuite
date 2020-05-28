@@ -11,8 +11,6 @@
 #include <strings/miscstring.h>
 #include <math/compleximage.h>
 #include <base/imagecast.h>
-#include <io/io_matlab.h>
-#include <visualization/GNUPlot.h>
 
 #include <vector>
 #include <sstream>
