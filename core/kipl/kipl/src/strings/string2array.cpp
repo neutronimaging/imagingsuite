@@ -205,6 +205,32 @@ size_t String2Array(std::string str, std::vector<size_t> &v, size_t cnt)
     return 0;
 }
 
+size_t String2Array(std::string str, std::vector<int> &v, size_t cnt)
+{
+    std::string data, element;
+    data=str;
+    bool status=true;
+    v.clear();
+    size_t i=0;
+    while (status)
+    {
+        status=GetElement(data,element);
+        if (!element.empty())
+        {
+            v.push_back(std::stoi(element));
+            ++i;
+        }
+    }
+
+    if (v.size()<cnt)
+        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+
+    if (cnt<v.size())
+        v=std::vector<int>(v.begin(),v.begin()+cnt);
+
+    return 0;
+}
+
 size_t String2Array(std::string str, std::vector<std::string> &v)
 {
     v.clear();

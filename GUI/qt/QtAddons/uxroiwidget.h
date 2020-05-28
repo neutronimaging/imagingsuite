@@ -67,6 +67,9 @@ public:
     void getROI(int *roi);
 
     /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
+    void getROI(std::vector<int> &roi);
+
+    /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
     void getROI(size_t *roi);
 
     /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI

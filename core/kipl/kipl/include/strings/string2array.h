@@ -29,7 +29,7 @@ std::string KIPLSHARED_EXPORT Array2String(int *v, size_t N);
 
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<float> &v, size_t cnt=0);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<size_t> &v, size_t cnt=0);
-size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<int> &v);
+size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<int> &v, size_t cnt=0);
 size_t KIPLSHARED_EXPORT String2Array(std::string str, std::vector<std::string> &v);
 
 size_t KIPLSHARED_EXPORT String2Set(std::string str, std::set<size_t> &v);
