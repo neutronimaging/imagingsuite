@@ -1880,6 +1880,7 @@ ProjectionBlock::ProjectionBlock()
 
 ProjectionBlock::ProjectionBlock(kipl::base::TImage<float,3> & proj, const std::vector<size_t> &r, std::map<std::string, std::string> pars) :
     projections(proj),
+    roi(r),
     parameters(pars)
 {
     projections.Clone();
@@ -1888,13 +1889,10 @@ ProjectionBlock::ProjectionBlock(kipl::base::TImage<float,3> & proj, const std::
 
 ProjectionBlock::ProjectionBlock(const ProjectionBlock &b):
     projections(b.projections),
+    roi(b.roi),
     parameters(b.parameters)
 {
     projections.Clone();
-    roi[0]=b.roi[0];
-    roi[1]=b.roi[1];
-    roi[2]=b.roi[2];
-    roi[3]=b.roi[3];
 }
 
 ProjectionBlock & ProjectionBlock::operator=(const ProjectionBlock &b)
@@ -1904,10 +1902,7 @@ ProjectionBlock & ProjectionBlock::operator=(const ProjectionBlock &b)
 
     parameters=b.parameters;
 
-    roi[0]=b.roi[0];
-    roi[1]=b.roi[1];
-    roi[2]=b.roi[2];
-    roi[3]=b.roi[3];
+    roi = b.roi;
 
     return *this;
 }
