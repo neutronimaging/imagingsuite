@@ -898,6 +898,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
     try {
         msg.str(""); msg<<"run3d "<<m_Config.ProjectionInfo.beamgeometry;
         logger.message(msg.str());
+
         if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
             res=Run3DBackProjOnly();
         else
@@ -940,16 +941,6 @@ int ReconEngine::Run3DFull()
     auto roi = m_Config.ProjectionInfo.roi;
 
     CBroi = m_Config.ProjectionInfo.roi;
-
-    size_t voi[6] = {
-        m_Config.MatrixInfo.voi[0],
-        m_Config.MatrixInfo.voi[1],
-        m_Config.MatrixInfo.voi[2],
-        m_Config.MatrixInfo.voi[3],
-        m_Config.MatrixInfo.voi[4],
-        m_Config.MatrixInfo.voi[5]
-    };
-
 
     size_t totalSlices=0;
 
@@ -1127,7 +1118,6 @@ int ReconEngine::Run3DFull()
 
                     logger.message(msg.str());
 
-
                     result=Process3D(m_Config.ProjectionInfo.roi);
                     m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
             }
@@ -1210,7 +1200,6 @@ int ReconEngine::Run3DFull()
                     <<m_Config.ProjectionInfo.roi[3]<<"]";
 
                 logger(kipl::logging::Logger::LogMessage,msg.str());
-
                 result=Process3D(m_Config.ProjectionInfo.roi);
             }
 		}
@@ -1672,6 +1661,7 @@ int ReconEngine::Process3D(const std::vector<size_t> &roi)
                 m_ProjectionBlocks.push_back(ProjectionBlock(projections,roi,parameters));
                 break;
             case ReconConfig::cProjections::BeamGeometry_Cone:
+
                 m_ProjectionBlocks.push_back(ProjectionBlock(projections,CBroi,parameters));
                 break;
             case ReconConfig::cProjections::BeamGeometry_Helix:
@@ -1702,8 +1692,6 @@ int ReconEngine::Process3D(const std::vector<size_t> &roi)
                 logger(logger.LogError,"Unsupported geometry type.");
                 throw ReconException("Unsupported geometry type.",__FILE__,__LINE__);
         }
-
-
     }
     catch (ReconException &e)
     {
@@ -1884,7 +1872,6 @@ ProjectionBlock::ProjectionBlock(kipl::base::TImage<float,3> & proj, const std::
     parameters(pars)
 {
     projections.Clone();
-    roi = r;
 }
 
 ProjectionBlock::ProjectionBlock(const ProjectionBlock &b):

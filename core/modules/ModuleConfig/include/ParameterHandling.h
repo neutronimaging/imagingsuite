@@ -6,6 +6,7 @@
 #include "ModuleConfig_global.h"
 
 #include <map>
+#include <vector>
 #include <string>
 
 /// Get a string parameter from a list of parameters. This function is called by all parameter parsing functions.

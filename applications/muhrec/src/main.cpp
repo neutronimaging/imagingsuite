@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 int RunGUI(QApplication *app)
 {
     std::ostringstream msg;
-    kipl::logging::Logger logger("MuhRec3::RunGUI");
+    kipl::logging::Logger logger("MuhRec::RunGUI");
 
     QtAddons::setDarkFace(app);
     try {

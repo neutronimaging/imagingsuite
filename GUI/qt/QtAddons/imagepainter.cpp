@@ -25,11 +25,11 @@ ImagePainter::ImagePainter(QWidget * parent) :
     m_cdata(nullptr),
     m_currentROI(0,0,0,0)
 {
-      const int N=16;
+      const size_t N=16;
       std::vector<size_t> dims={N,N};
       float data[N*N];
 
-      for (int i=0; i<N*N; i++)
+      for (size_t i=0; i<N*N; i++)
           data[i]=static_cast<float>(i);
 
       setImage(data,dims);

@@ -209,6 +209,13 @@ void uxROIWidget::getROI(int *roi)
     getROI(roi[0],roi[1],roi[2],roi[3]);
 }
 
+void uxROIWidget::getROI(std::vector<int> &roi)
+{
+    roi = {0,0,0,0};
+
+    getROI(roi[0],roi[1],roi[2],roi[3]);
+}
+
 void uxROIWidget::getROI(std::vector<size_t> &roi)
 {
     std::vector<int> iroi(4,0);

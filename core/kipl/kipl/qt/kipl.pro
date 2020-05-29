@@ -348,7 +348,7 @@ HEADERS +=\
 unix:!mac {
 exists(/usr/lib/*NeXus*) {
 
-    message("-lNeXus exists")
+#    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
     LIBS += -lNeXus -lNeXusCPP
     SOURCES += ../src/io/io_nexus.cpp
@@ -363,7 +363,7 @@ message("-lNeXus does not exists $$HEADERS")
 unix:mac {
 exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
-    message("-lNeXus exists")
+#s    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
 
     INCLUDEPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5

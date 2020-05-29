@@ -77,13 +77,9 @@ void ReconFactory::SetBackProjector(ReconConfig& config, ReconEngine* engine, ki
     {
         BackProjItem* module = nullptr;
         try {
-            qDebug() << "a";
             module = new BackProjItem("muhrecbp", config.backprojector.m_sSharedObject, config.backprojector.m_sModule, interactor);
-qDebug() << "a";
             module->GetModule()->Configure(config, config.backprojector.parameters);
-            qDebug() << "a";
             engine->SetBackProjector(module);
-            qDebug() << "a";
         }
         catch (ReconException& e)
         {

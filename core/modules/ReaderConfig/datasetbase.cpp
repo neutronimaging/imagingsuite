@@ -25,13 +25,9 @@ FileSet::FileSet() :
     m_fBinning(1.0f),
     m_Flip(kipl::base::ImageFlipNone),
     m_Rotate(kipl::base::ImageRotateNone),
-
-    m_bUseROI(false)
+    m_bUseROI(false),
+    m_ROI({0,0,100,100})
 {
-    m_ROI[0]=0;
-    m_ROI[1]=0;
-    m_ROI[2]=100;
-    m_ROI[3]=100;
 }
 
 FileSet::FileSet(const FileSet &cfg) :

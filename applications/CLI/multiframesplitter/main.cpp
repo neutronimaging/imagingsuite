@@ -56,14 +56,14 @@ int process(int argc, char *argv[])
         return 0;
     }
 
-    size_t dims[10];
-    int nDims=0;
+    std::vector<size_t> dims;
+
     ImageReader reader;
 
     std::string srcfname=args["infile"];
     qDebug() << "Pre size check";
     try {
-        nDims=reader.GetImageSize(srcfname,1.0f,dims);
+        dims=reader.GetImageSize(srcfname,1.0f);
     } catch (ReaderException &e) {
         logger.error(e.what());
         exit(0);
@@ -73,8 +73,8 @@ int process(int argc, char *argv[])
         exit(0);
     }
 
-    qDebug() << "nDims:" <<nDims<<dims[0]<<dims[1]<<dims[2];
-    if (nDims<3) {
+    qDebug() << "nDims:" <<dims.size()<<dims[0]<<dims[1]<<dims[2];
+    if (dims.size()<3) {
         logger(logger.LogWarning,"This is a single frame image");
         return 0;
     }
@@ -124,7 +124,7 @@ int process(int argc, char *argv[])
     kipl::base::TImage<float,2> img;
     try {
         for (int i=first; i<=last; ++i) {
-            img=reader.Read(srcfname,kipl::base::ImageFlipNone,rotate,1.0,nullptr,i);
+            img=reader.Read(srcfname,kipl::base::ImageFlipNone,rotate,1.0,{},i);
             kipl::strings::filenames::MakeFileName(fmask,i,destname,ext,'#','0');
 
             writer.write(img,destname);

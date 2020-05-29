@@ -219,9 +219,14 @@ void  TDirAnalysisTest::testDirAnalyzer()
 
     QVERIFY(fi4.m_nIndex==567);
     QVERIFY(fi4.m_sExt=="xyz");
-    QVERIFY(fi4.m_sMask=="/home/data/hopp_###.xyz");
+    qDebug() << fi4.m_sMask.c_str() << " vs. /home/data/hopp_###.xyz";
+    std::string ref = "/home/data/hopp_###.xyz";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(fi4.m_sMask,ref);
     std::cout<<fi4.m_sPath<<std::endl;
-    QVERIFY(fi4.m_sPath=="/home/data/");
+    ref = "/home/data/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(fi4.m_sPath,ref);
 
 //    std::string path="\\P08062_wood\\raw_CCD";
 
