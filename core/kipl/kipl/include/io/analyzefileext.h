@@ -23,7 +23,6 @@ enum eExtensionTypes {
     ExtensionTIFF,  ///< Images are stored in the tiff format
     ExtensionPNG,   ///< Images are stored in the png format
     ExtensionJPG,   ///< Images are stored in the jpg format
-    ExtensionMAT,   ///< Images are stored in the matlab binary format (deprecated since a several years)
     ExtensionHDF,    ///< Images are stored using a HDF format
     ExtensionHDF4,    ///< Images are stored using a HDF4 format
     ExtensionHDF5,    ///< Images are stored using a HDF5 format
@@ -31,12 +30,11 @@ enum eExtensionTypes {
 };
 
 enum eFileType {
-    MatlabVolume,
-    MatlabSlices,
     TIFF8bits,
     TIFF16bits,
     TIFFfloat,
     TIFF16bitsMultiFrame,
+    TIFFfloatMultiFrame,
     NeXusfloat,
     NeXus16bits,
     PNG8bits,

@@ -375,12 +375,6 @@ void kiplIOTest::testIOStack_enums()
 {
     kipl::io::eFileType ft;
 
-    string2enum("MatlabVolume",ft);
-    QCOMPARE(ft, kipl::io::MatlabVolume);
-
-    string2enum("MatlabSlices",ft);
-    QCOMPARE(ft, kipl::io::MatlabSlices);
-
     string2enum("TIFF8bits",ft);
     QCOMPARE(ft, kipl::io::TIFF8bits);
 
@@ -392,6 +386,9 @@ void kiplIOTest::testIOStack_enums()
 
     string2enum("TIFF16bitsMultiFrame",ft);
     QCOMPARE(ft, kipl::io::TIFF16bitsMultiFrame);
+
+    string2enum("TIFFfloatMultiFrame",ft);
+    QCOMPARE(ft, kipl::io::TIFFfloatMultiFrame);
 
     string2enum("NeXusfloat",ft);
     QCOMPARE(ft, kipl::io::NeXusfloat);
@@ -407,19 +404,17 @@ void kiplIOTest::testIOStack_enums()
 
     // enum 2 string
 
-    QCOMPARE(enum2string(kipl::io::MatlabVolume), std::string("MatlabVolume"));
-    QCOMPARE(enum2string(kipl::io::MatlabSlices), std::string("MatlabSlices"));
-
-    QCOMPARE(enum2string(kipl::io::TIFF8bits),    std::string("TIFF8bits"));
-    QCOMPARE(enum2string(kipl::io::TIFF16bits),   std::string("TIFF16bits"));
-    QCOMPARE(enum2string(kipl::io::TIFFfloat),    std::string("TIFFfloat"));
+    QCOMPARE(enum2string(kipl::io::TIFF8bits),            std::string("TIFF8bits"));
+    QCOMPARE(enum2string(kipl::io::TIFF16bits),           std::string("TIFF16bits"));
+    QCOMPARE(enum2string(kipl::io::TIFFfloat),            std::string("TIFFfloat"));
     QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame), std::string("TIFF16bitsMultiFrame"));
+    QCOMPARE(enum2string(kipl::io::TIFFfloatMultiFrame),  std::string("TIFFfloatMultiFrame"));
 
-    QCOMPARE(enum2string(kipl::io::NeXusfloat),  std::string("NeXusfloat"));
-    QCOMPARE(enum2string(kipl::io::NeXus16bits), std::string("NeXus16bits"));
+    QCOMPARE(enum2string(kipl::io::NeXusfloat),           std::string("NeXusfloat"));
+    QCOMPARE(enum2string(kipl::io::NeXus16bits),          std::string("NeXus16bits"));
 
-    QCOMPARE(enum2string(kipl::io::PNG8bits),    std::string("PNG8bits"));
-    QCOMPARE(enum2string(kipl::io::PNG16bits),   std::string("PNG16bits"));
+    QCOMPARE(enum2string(kipl::io::PNG8bits),             std::string("PNG8bits"));
+    QCOMPARE(enum2string(kipl::io::PNG16bits),            std::string("PNG16bits"));
 
 }
 

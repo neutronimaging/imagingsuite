@@ -40,7 +40,7 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
         std::string fname=args.last().toStdString();
         kipl::base::TImage<float,2> img;
         LoadImage(fname,img);
-        ui->viewer->set_image(img.GetDataPtr(),img.Dims());
+        ui->viewer->set_image(img.GetDataPtr(),img.dims());
     }
 
     setAcceptDrops(true);
@@ -71,7 +71,6 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
             case kipl::io::ExtensionFITS: kipl::io::ReadFITS(img,fname.c_str()); break;
             case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(img,fname.c_str()); break;
             case kipl::io::ExtensionPNG: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionMAT: std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionHDF: std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionSEQ :
             {
@@ -108,7 +107,7 @@ void ViewerMainWindow::on_horizontalSlider_sliderMoved(int position)
     LoadImage(m_fname,img);
     float low,high;
     ui->viewer->get_levels(&low,&high);
-    ui->viewer->set_image(img.GetDataPtr(),img.Dims(),low,high);
+    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
 
 }
 
@@ -121,7 +120,7 @@ void ViewerMainWindow::on_spinBox_valueChanged(int arg1)
     LoadImage(m_fname,img);
     float low,high;
     ui->viewer->get_levels(&low,&high);
-    ui->viewer->set_image(img.GetDataPtr(),img.Dims(),low,high);
+    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
 }
 
 void ViewerMainWindow::dragEnterEvent(QDragEnterEvent *e)
@@ -142,7 +141,7 @@ void ViewerMainWindow::dropEvent(QDropEvent *e)
 
         kipl::base::TImage<float,2> img;
         LoadImage(fileName.toStdString(),img);
-        ui->viewer->set_image(img.GetDataPtr(),img.Dims());
+        ui->viewer->set_image(img.GetDataPtr(),img.dims());
     }
 }
 

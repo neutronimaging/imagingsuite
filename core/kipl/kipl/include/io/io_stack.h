@@ -97,7 +97,7 @@ template<class ImgType>
 int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		ImgType lo, ImgType hi, 
 		const size_t start, const size_t stop, const size_t count_start=0,
-		kipl::io::eFileType filetype=kipl::io::MatlabSlices,
+        kipl::io::eFileType filetype=kipl::io::TIFF16bits,
 		const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
         const std::vector<size_t> & roi = {})
 {
