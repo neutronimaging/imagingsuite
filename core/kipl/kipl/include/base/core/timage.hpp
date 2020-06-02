@@ -25,9 +25,9 @@ namespace kipl { namespace base {
 
 template<typename T, size_t N>
 TImage<T,N>::TImage() :
+    m_Dims(N,0UL),
     m_NData(0),
-    m_buffer(0),
-    m_Dims(N,0UL)
+    m_buffer(0)
 {
 }
 	
