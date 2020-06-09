@@ -95,7 +95,7 @@ kipl::base::TImage<std::complex<T>,N> conj(const kipl::base::TImage<std::complex
 	for (size_t i=0; i<ndata; i++)
 		pResult[i]._M_imag=-pResult[i]._M_imag;
 		
-		return result;
+    return result;
 }
 
 template <typename T, size_t N>
