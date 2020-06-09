@@ -20,9 +20,9 @@ namespace akipl {
 HistogramBin::HistogramBin() :
     cnt(0L),
     sum(0.0),
-    bin(0.0),
     local_avg(0.0),
-    local_avg2(0.0)
+    local_avg2(0.0),
+    bin(0.0)
 {
 
 }
@@ -30,9 +30,9 @@ HistogramBin::HistogramBin() :
 HistogramBin::HistogramBin(const HistogramBin &h) :
     cnt(h.cnt),
     sum(h.sum),
-    bin(h.bin),
     local_avg(h.local_avg),
-    local_avg2(h.local_avg2)
+    local_avg2(h.local_avg2),
+    bin(h.bin)
 {
 
 }

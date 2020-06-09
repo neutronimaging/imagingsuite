@@ -25,8 +25,8 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     m_RubberBandStatus(RubberBandHide),
     m_MouseMode(ViewerROI),
     m_PressedButton(Qt::NoButton),
-    m_CurrentScale(1.0),
-    m_infoDialog(this)
+    m_infoDialog(this),
+    m_CurrentScale(1.0)
 {
     QPalette palette;
     palette.setColor(QPalette::Background,Qt::black);

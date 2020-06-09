@@ -21,6 +21,7 @@
 
 NormBase::NormBase(std::string name) :
     PreprocModuleBase(name),
+    m_Config(""),
     nOBCount(0),
     nOBFirstIndex(1),
     nDCCount(0),
@@ -33,7 +34,6 @@ NormBase::NormBase(std::string name) :
     bUseNormROI(true),
     bUseLUT(false),
     bUseWeightedMean(false),
-    m_Config(""),
     nNormRegion(4,0UL),
     nOriginalNormRegion(4,0UL)
 {
