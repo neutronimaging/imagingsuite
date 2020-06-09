@@ -232,10 +232,10 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 // Bivariate histogram class
 BivariateHistogram::BivariateHistogram() :
     logger("BivariateHistogram"),
-    m_scalingA(1.0f,0.0f),
-    m_scalingB(1.0f,0.0f),
     m_limitsA(0.0f,1.0f),
-    m_limitsB(0.0f,1.0f)
+    m_limitsB(0.0f,1.0f),
+    m_scalingA(1.0f,0.0f),
+    m_scalingB(1.0f,0.0f)
 {
 
 }

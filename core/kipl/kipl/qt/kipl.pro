@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
-QT      += core
+QT        -= gui
+QT        += core
 
-TARGET = kipl
-TEMPLATE = lib
-CONFIG += c++11
+TARGET    = kipl
+TEMPLATE  = lib
+CONFIG   += c++11
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
