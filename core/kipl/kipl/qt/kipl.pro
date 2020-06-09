@@ -345,10 +345,11 @@ HEADERS +=\
     ../include/math/gradient.h
 
 unix:!mac {
-exists(/usr/lib/*NeXus*) {
+exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*){
 
 #    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
+    LIBS += -L/usr/local/lib64
     LIBS += -lNeXus -lNeXusCPP
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h

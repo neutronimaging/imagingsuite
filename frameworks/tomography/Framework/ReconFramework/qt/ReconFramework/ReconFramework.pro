@@ -77,9 +77,9 @@ unix:!symbian {
 }
 
 unix:!mac {
-    exists(/usr/lib/*NeXus*) {
+    exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*) {
         message("-lNeXus exists")
-        DEFINES *= HAVE_NEXUS
+        DEFINES += HAVE_NEXUS
         LIBS += -L/usr/local/lib64
         LIBS += -lNeXus -lNeXusCPP
     }
