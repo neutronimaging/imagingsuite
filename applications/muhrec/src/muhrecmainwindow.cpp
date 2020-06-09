@@ -50,12 +50,12 @@
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     QMainWindow(parent),
-    m_Config(""),
-    m_LastReconConfig(""),
     logger("MuhRecMainWindow"),
     ui(new Ui::MuhRecMainWindow),
     logdlg(new QtAddons::LoggingDialog(this)),
     m_QtApp(app),
+    m_Config(""),
+    m_LastReconConfig(""),
     m_ModuleConfigurator(&m_Config,&m_Interactor),
     m_pEngine(nullptr),
     m_nCurrentPage(0),
@@ -1178,11 +1178,6 @@ void MuhRecMainWindow::ExecuteReconstruction()
             }
         }
     }
-    catch (std::exception &e) {
-        msg<<"Reconstruction failed: "<<std::endl
-            <<e.what();
-        bRunFailure=true;
-    }
     catch (ModuleException &e) {
         msg<<"Reconstruction failed with a module exception: \n"
             <<e.what();
@@ -1194,6 +1189,11 @@ void MuhRecMainWindow::ExecuteReconstruction()
         bRunFailure=true;
     }
     catch (kipl::base::KiplException &e) {
+        msg<<"Reconstruction failed: "<<std::endl
+            <<e.what();
+        bRunFailure=true;
+    }
+    catch (std::exception &e) {
         msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;

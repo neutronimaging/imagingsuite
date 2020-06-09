@@ -594,12 +594,12 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(kipl::base::KiplException &e){
+    catch(ReconException &e){
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(ReconException &e){
+    catch(kipl::base::KiplException &e){
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
@@ -942,12 +942,12 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(kipl::base::KiplException &e){
+    catch(ReconException &e){
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(ReconException &e){
+    catch(kipl::base::KiplException &e){
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
@@ -1385,12 +1385,12 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(kipl::base::KiplException &e){
+    catch(ReconException &e){
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(ReconException &e){
+    catch(kipl::base::KiplException &e){
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
