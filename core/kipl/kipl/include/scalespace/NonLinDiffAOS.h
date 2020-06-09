@@ -125,15 +125,15 @@ template <typename T, size_t NDim>
 NonLinDiffusionFilter<T,NDim>::NonLinDiffusionFilter(kipl::interactors::InteractionBase *interactor):
   DiffusionBaseFilter<T,NDim>(1.0f,0.25f,10,interactor),
   lambdaest(nullptr),
-  a(nullptr),
-  b(nullptr),
-  d(nullptr),
   p(nullptr),
   q(nullptr),
+  d(nullptr),
+  a(nullptr),
+  b(nullptr),
   x(nullptr),
   y(nullptr),
-  m(nullptr),
-  l(nullptr)
+  l(nullptr),
+  m(nullptr)
 {
 
 

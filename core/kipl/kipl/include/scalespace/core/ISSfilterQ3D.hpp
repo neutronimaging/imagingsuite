@@ -34,8 +34,8 @@ inline __m128 sign(__m128 m) {
 template <typename T>
 ISSfilterQ3D<T>::ISSfilterQ3D(kipl::interactors::InteractionBase *interactor) :
 	logger("ISSfilterQ3D"),
+    eInitialImage(InitialImageOriginal),
     m_Interactor(interactor),
-	eInitialImage(InitialImageOriginal),
     error(nullptr),
     entropy(nullptr)
 {
