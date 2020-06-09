@@ -1020,13 +1020,6 @@ void MuhRecMainWindow::ExecuteReconstruction()
             m_Config.setAppPath(m_sApplicationPath);
             m_pEngine=m_Factory.BuildEngine(m_Config,&m_Interactor);
         }
-        catch (std::exception &e)
-        {
-            msg.str("");
-            msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
-                <<e.what();
-            bBuildFailure=true;
-        }
         catch (ModuleException &e)
         {
             msg.str("");
@@ -1045,6 +1038,13 @@ void MuhRecMainWindow::ExecuteReconstruction()
         {
             msg.str("");
             msg<<"Reconstructor initialization failed a Kipl exception: "<<std::endl
+                <<e.what();
+            bBuildFailure=true;
+        }
+        catch (std::exception &e)
+        {
+            msg.str("");
+            msg<<"Reconstructor initialization failed with an STL exception: "<<std::endl
                 <<e.what();
             bBuildFailure=true;
         }

@@ -52,12 +52,12 @@ int PiercingPointDialog::exec(ReconConfig &config)
         QMessageBox::critical(this,"Load error","Could not load open beam image");
         return 1;
     }
-    catch (std::exception &e)
+    catch (kipl::base::KiplException &e)
     {
         QMessageBox::critical(this,"Load error","Could not load open beam image");
         return 1;
     }
-    catch (kipl::base::KiplException &e)
+    catch (std::exception &e)
     {
         QMessageBox::critical(this,"Load error","Could not load open beam image");
         return 1;
