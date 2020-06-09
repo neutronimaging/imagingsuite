@@ -172,11 +172,11 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t end, const std::vector<size_t> & nCrop = {})
+int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const std::string &fname, size_t start, size_t end, const std::vector<size_t> & nCrop = {})
 {
     std::stringstream msg;
 
-    NeXus::File file(fname);
+    NeXus::File file(fname.c_str());
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 
 

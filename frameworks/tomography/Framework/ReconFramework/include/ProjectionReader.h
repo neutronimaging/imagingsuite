@@ -152,8 +152,8 @@ public:
     /// \param binning Binning factor
     /// \param doseroi The area were the dose is to be measured (x0,y0,x1,y1).
     /// \returns The dose value as the median of the row average intensity.
-    float GetProjectionDose(std::string path,
-                            std::string filemask,
+    float GetProjectionDose(const std::string & path,
+                            const std::string & filemask,
                             size_t number,
                             kipl::base::eImageFlip flip,
                             kipl::base::eImageRotate rotate,
@@ -161,14 +161,14 @@ public:
                             const std::vector<size_t> &nCrop);
 
 
-    float GetProjectionDoseNexus(std::string filename,
+    float GetProjectionDoseNexus(const std::string &filename,
                                  size_t number,
                                  kipl::base::eImageFlip flip,
                                  kipl::base::eImageRotate rotate,
                                  float binning ,
                                  const std::vector<size_t> &nDoseROI);
 
-    std::vector<float> GetProjectionDoseListNexus(string filename, size_t start, size_t end,
+    std::vector<float> GetProjectionDoseListNexus(const std::string &filename, size_t start, size_t end,
                                                          kipl::base::eImageFlip flip,
                                                          kipl::base::eImageRotate rotate,
                                                          float binning,
@@ -214,14 +214,14 @@ protected:
     /// \param nCrop ROI to read.
     /// \returns A floating point image
     /// \todo Implement PNG support
-    kipl::base::TImage<float,2> ReadPNG(std::string filename,  const std::vector<size_t> &nCrop={});
+    kipl::base::TImage<float,2> ReadPNG(const string &filename,  const std::vector<size_t> &nCrop={});
 
     /// Read HDF5 images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
     /// \todo Implement PNG support
-    kipl::base::TImage<float,2> ReadHDF(std::string filename,  const std::vector<size_t> &nCrop={});
+    kipl::base::TImage<float,2> ReadHDF(const std::string & filename,  const std::vector<size_t> &nCrop={});
 
 
 

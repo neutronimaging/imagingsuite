@@ -71,10 +71,10 @@ std::vector<size_t> ImageReader::GetImageSize(std::string filename, float binnin
         }
 
     }
-    catch (std::exception &e) {
+    catch (kipl::base::KiplException &e) {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (std::exception &e) {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
 
@@ -188,11 +188,11 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
-    catch (std::exception &e)
-    {
+    catch (kipl::base::KiplException &e) {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (std::exception &e)
+    {
         throw ReaderException(e.what(),__FILE__,__LINE__);
     }
     catch (...)
@@ -381,13 +381,13 @@ kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, const st
     {
         kipl::io::ReadFITS(img,filename.c_str(),nCrop,idx);
     }
-    catch (std::exception &e)
-    {
-        throw ReaderException(e.what(), __FILE__,__LINE__);
-    }
     catch (kipl::base::KiplException &e)
     {
         throw kipl::base::KiplException(e.what(), __FILE__,__LINE__);
+    }
+    catch (std::exception &e)
+    {
+        throw ReaderException(e.what(), __FILE__,__LINE__);
     }
     catch (...)
     {
@@ -404,13 +404,13 @@ kipl::base::TImage<float,2> ImageReader::ReadTIFF(std::string filename, const st
     {
         kipl::io::ReadTIFF(img,filename.c_str(), nCrop, idx);
     }
-    catch (std::exception &e)
-    {
-        throw ReaderException(e.what(), __FILE__,__LINE__);
-    }
     catch (kipl::base::KiplException &e)
     {
         throw kipl::base::KiplException(e.what(), __FILE__,__LINE__);
+    }
+    catch (std::exception &e)
+    {
+        throw ReaderException(e.what(), __FILE__,__LINE__);
     }
     catch (...)
     {
