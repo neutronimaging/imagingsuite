@@ -46,7 +46,8 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 
-    if (name!=nullptr) {
+    if (name!=nullptr)
+    {
 		std::string sName=name;
 
         if (sName=="BBLogNorm")
@@ -127,8 +128,10 @@ STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)
 	kipl::logging::Logger logger("StdPreprocModules::Destroy");
 	std::ostringstream msg;
 	std::string name="No name";
-	try {
-        if (obj!=nullptr) {
+    try
+    {
+        if (obj!=nullptr)
+        {
 			PreprocModuleBase *module=reinterpret_cast<PreprocModuleBase *>(obj);
 			name=module->ModuleName();
 			msg<<"Destroying "<<name;
@@ -137,30 +140,35 @@ STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)
 			delete module;
 		}
 	}
-	catch (std::exception & e) {
-		msg<<"Failed to destroy "<<name<<" with STL exception"<<e.what();
-
-		logger(kipl::logging::Logger::LogError,msg.str());
-		return -1;
-	}
-	catch (ModuleException & e) {
+    catch (ModuleException & e)
+    {
 		msg<<"Failed to destroy "<<name<<" with Module exception"<<e.what();
 
 		logger(kipl::logging::Logger::LogError,msg.str());
 		return -1;
 	}
-	catch (ReconException & e) {
+    catch (ReconException & e)
+    {
 		msg<<"Failed to destroy "<<name<<" with Recon exception"<<e.what();
 
 		logger(kipl::logging::Logger::LogError,msg.str());
 		return -1;
 	}
-	catch (kipl::base::KiplException & e) {
+    catch (kipl::base::KiplException & e)
+    {
 		msg<<"Failed to destroy "<<name<<" with KIPL exception"<<e.what();
 
 		logger(kipl::logging::Logger::LogError,msg.str());
 		return -1;
 	}
+    catch (std::exception & e)
+    {
+        msg<<"Failed to destroy "<<name<<" with STL exception"<<e.what();
+
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
+    }
+
 	return 0;
 }
 

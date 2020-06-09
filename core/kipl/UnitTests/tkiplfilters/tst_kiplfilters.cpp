@@ -57,16 +57,18 @@ void KiplFilters::test_SavGolFilter()
     kipl::filters::SavitzkyGolayFilter<double> sg;
     std::vector<double> res;
 
-    try {
+    try
+    {
         res = sg(x, 5, 2);
     }
-    catch (std::exception &e) {
-        QFAIL(e.what()) ;
-    }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         QFAIL(e.what());
     }
-
+    catch (std::exception &e)
+    {
+        QFAIL(e.what()) ;
+    }
     std::vector<double> expres= {1.65714285714, 3.17143, 3.54286, 2.85714, 0.657143, 0.171429, 1.  , 4.  , 9.};
 
     QCOMPARE(res.size(),expres.size());
