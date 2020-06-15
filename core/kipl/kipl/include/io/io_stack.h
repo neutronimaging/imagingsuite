@@ -105,7 +105,8 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		kipl::base::KiplException("Stop index must be greater than start index.",__FILE__, __LINE__);
 	
 	size_t nMaxSlices=0;
-	switch (imageplane) {
+    switch (imageplane)
+    {
 		case kipl::base::ImagePlaneXY : 
 			nMaxSlices=img.Size(2); break;
 		case kipl::base::ImagePlaneXZ : 
@@ -124,18 +125,12 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 	
 	kipl::base::TImage<ImgType,2> tmp;
 
-#ifdef __GNUC__
-	char slash='/';
-#else
-	char slash='\\';
-#endif	
-
 //    if (filetype==NeXus) {
 //        WriteNeXus(img, filename.c_str());
 //        return 1;
 //    }
 
-    if ( filetype == TIFF16bitsMultiFrame )
+    if ( (filetype == TIFF16bitsMultiFrame) || (filetype == TIFFfloatMultiFrame) )
     {
 
         auto pos=fname.find('#');
@@ -148,29 +143,35 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
         {
             filename=fname;
         }
-        std::cerr<<filename<<std::endl;
-        WriteTIFF(img,filename.c_str());
+
+        if ( filetype == TIFF16bitsMultiFrame )
+            WriteTIFF(img,filename);
+
+        if ( filetype == TIFFfloatMultiFrame )
+            WriteTIFFfloat(img,filename);
+
         return 1;
     }
 
 	kipl::base::TImage<float,2> ftmp;
-	for (size_t i=start; i<stop; i++) {
+    for (size_t i=start; i<stop; i++)
+    {
 		kipl::strings::filenames::MakeFileName(fname,static_cast<int>(i+count_start),filename,ext,'#','0');	
 		tmp=kipl::base::ExtractSlice(img,i,imageplane,roi);
 		tmp.info=img.info;
 		switch (filetype)
 		{
 		case TIFF8bits :
-			WriteTIFF(tmp,filename.c_str(),lo,hi);
+            WriteTIFF(tmp,filename,lo,hi);
 			break;
 		case TIFF16bits :
-			WriteTIFF(tmp,filename.c_str(),lo,hi);
+            WriteTIFF(tmp,filename,lo,hi);
 			break;
 		case TIFFfloat :
             ftmp.resize(tmp.dims());
 			for (size_t i=0; i<tmp.Size(); i++) 
 				ftmp[i]=tmp[i];
-			WriteTIFF32(ftmp,filename.c_str());
+            WriteTIFF32(ftmp,filename);
 			break;
         case NeXusfloat :
             break; // it is handled somewhere else
@@ -188,9 +189,6 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 			throw kipl::base::KiplException("Unknown file type in slice writer",__FILE__,__LINE__);
 		}
 	}
-
-
-	
 
 	return 1;
 }
