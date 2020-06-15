@@ -1391,7 +1391,19 @@ void MuhRecMainWindow::UpdateDialog()
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));
-    ui->comboDestFileType->setCurrentIndex(m_Config.MatrixInfo.FileType-3);
+    switch (m_Config.MatrixInfo.FileType)
+    {
+        case kipl::io::PNG8bits             :
+        case kipl::io::PNG16bits            :
+        case kipl::io::TIFF8bits            : ui->comboDestFileType->setCurrentIndex(0); break;
+        case kipl::io::TIFF16bits           : ui->comboDestFileType->setCurrentIndex(1); break;
+        case kipl::io::TIFFfloat            : ui->comboDestFileType->setCurrentIndex(2); break;
+        case kipl::io::TIFF8bitsMultiFrame  : ui->comboDestFileType->setCurrentIndex(3); break;
+        case kipl::io::TIFF16bitsMultiFrame : ui->comboDestFileType->setCurrentIndex(4); break;
+        case kipl::io::TIFFfloatMultiFrame  : ui->comboDestFileType->setCurrentIndex(5); break;
+        case kipl::io::NeXus16bits          : ui->comboDestFileType->setCurrentIndex(6); break;
+        case kipl::io::NeXusfloat           : ui->comboDestFileType->setCurrentIndex(7); break;
+    }
     // -2 to skip matlab types
 
     ui->editProjectName->setText(QString::fromStdString(m_Config.UserInformation.sProjectNumber));
@@ -1450,7 +1462,8 @@ void MuhRecMainWindow::UpdateConfig()
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sFileMask,false);
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
     m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
-    if (m_Config.ProjectionInfo.nLastIndex<m_Config.ProjectionInfo.nFirstIndex) {
+    if (m_Config.ProjectionInfo.nLastIndex<m_Config.ProjectionInfo.nFirstIndex)
+    {
         qDebug()<<"Update config: Last<First projection";
         std::swap(m_Config.ProjectionInfo.nLastIndex,m_Config.ProjectionInfo.nFirstIndex);
         ui->spinFirstProjection->setValue(m_Config.ProjectionInfo.nFirstIndex);
@@ -1507,14 +1520,16 @@ void MuhRecMainWindow::UpdateConfig()
 
     CenterOfRotationChanged();
 
-    if (ui->checkCBCT->isChecked()) {
+    if (ui->checkCBCT->isChecked())
+    {
         m_Config.ProjectionInfo.beamgeometry   = m_Config.ProjectionInfo.BeamGeometry_Cone;
         ComputeVolumeSizeSpacing();
 
         ui->groupBox_ConeBeamGeometry->show();
         SlicesChanged(0);
     }
-    else {
+    else
+    {
         m_Config.ProjectionInfo.beamgeometry   = m_Config.ProjectionInfo.BeamGeometry_Parallel;
         ui->groupBox_ConeBeamGeometry->hide();
         SlicesChanged(0);
@@ -1540,51 +1555,90 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.MatrixInfo.sDestinationPath = ui->editDestPath->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.MatrixInfo.sDestinationPath,true);
 
-    m_Config.MatrixInfo.FileType = static_cast<kipl::io::eFileType>(ui->comboDestFileType->currentIndex()+3);
-    m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
-
-   // ptrdiff_t pos;
-    size_t pos=0;
     switch (ui->comboDestFileType->currentIndex())
     {
+        case 0: m_Config.MatrixInfo.FileType = kipl::io::TIFF8bits; break;
+        case 1: m_Config.MatrixInfo.FileType = kipl::io::TIFF16bits; break;
+        case 2: m_Config.MatrixInfo.FileType = kipl::io::TIFFfloat; break;
+        case 3: m_Config.MatrixInfo.FileType = kipl::io::TIFF8bitsMultiFrame; break;
+        case 4: m_Config.MatrixInfo.FileType = kipl::io::TIFF16bitsMultiFrame; break;
+        case 5: m_Config.MatrixInfo.FileType = kipl::io::TIFFfloatMultiFrame; break;
+        case 6: m_Config.MatrixInfo.FileType = kipl::io::NeXus16bits; break;
+        case 7: m_Config.MatrixInfo.FileType = kipl::io::NeXusfloat; break;
+    }
 
-    case 0: case 1:
+    size_t pos=0;
+    switch (m_Config.MatrixInfo.FileType)
+    {
+    case kipl::io::PNG8bits:
+    case kipl::io::PNG16bits:
+    case kipl::io::TIFF8bits:
+    case kipl::io::TIFF16bits:
+    case kipl::io::TIFFfloat:
         // Validity test of the slice file mask
-        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
+        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos)
+        {
             logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
             m_Config.MatrixInfo.sFileMask.append(".tif");
         }
 
         pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
 
-        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) == "hdf") {
+        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) != "tif")
+        {
             logger(logger.LogWarning,"Changing file extension to .tif");
-            m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"tif");
+            m_Config.MatrixInfo.sFileMask.substr(0,pos+1).append("tif");
         }
 
 
-        if (m_Config.MatrixInfo.sFileMask.find('#')==std::string::npos) {
+        if (m_Config.MatrixInfo.sFileMask.find('#')==std::string::npos)
+        {
             logger(logger.LogWarning,"Destination file mask is missing an index mask. Adding '_####'' before file extension");
             m_Config.MatrixInfo.sFileMask.insert(pos,"_####");
         }
         break;
 
-    case 2: case 3:
+    case kipl::io::TIFF8bitsMultiFrame:
+    case kipl::io::TIFF16bitsMultiFrame:
+    case kipl::io::TIFFfloatMultiFrame :
+        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos)
+        {
+            logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .tif");
+            m_Config.MatrixInfo.sFileMask.append(".tif");
+        }
 
-        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos) {
+        pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
+
+        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) != "tif")
+        {
+            logger(logger.LogWarning,"Changing file extension to .tif");
+            m_Config.MatrixInfo.sFileMask.substr(0,pos+1).append("tif");
+        }
+        break;
+
+    case kipl::io::NeXus16bits:
+    case kipl::io::NeXusfloat:
+
+        if (m_Config.MatrixInfo.sFileMask.find_last_of('.')==std::string::npos)
+        {
             logger(logger.LogWarning,"Destination file mask is missing a file extension. Adding .hdf");
             m_Config.MatrixInfo.sFileMask.append(".hdf");
         }
 
         pos=m_Config.MatrixInfo.sFileMask.find_last_of('.');
 
-        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) == "tif") {
+        if (m_Config.MatrixInfo.sFileMask.substr(m_Config.MatrixInfo.sFileMask.find_last_of(".") + 1) != "hdf")
+        {
             logger(logger.LogWarning,"Changing file extension to .hdf");
-             m_Config.MatrixInfo.sFileMask.replace(pos+1,3,"hdf");
+            m_Config.MatrixInfo.sFileMask.substr(0,pos+1).append("hdf");
         }
         break;
 
     }
+    m_Config.MatrixInfo.sFileMask = ui->editSliceMask->text().toStdString();
+
+   // ptrdiff_t pos;
+
 
 
     ui->editSliceMask->setText(QString::fromStdString(m_Config.MatrixInfo.sFileMask));

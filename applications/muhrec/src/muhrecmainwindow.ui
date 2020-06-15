@@ -2029,70 +2029,6 @@
            <string>Output</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_48">
-             <property name="text">
-              <string>Destination path</string>
-             </property>
-             <property name="buddy">
-              <cstring>editDestPath</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="editDestPath">
-             <property name="toolTip">
-              <string>Path to the destination folder of the reconstructed slices.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_49">
-             <property name="text">
-              <string>Slice mask</string>
-             </property>
-             <property name="buddy">
-              <cstring>editSliceMask</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="editSliceMask">
-             <property name="toolTip">
-              <string>File mask for the reconstructed slices</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QComboBox" name="comboDestFileType">
-             <property name="toolTip">
-              <string>Selects the file format of the reconstructed slices.</string>
-             </property>
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <item>
-              <property name="text">
-               <string>16-bit TIFF</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Float TIFF (32-bit)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NeXus (32-bit)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NeXus (16-bit)</string>
-              </property>
-             </item>
-            </widget>
-           </item>
            <item row="2" column="0" colspan="2">
             <spacer name="horizontalSpacer_15">
              <property name="orientation">
@@ -2106,6 +2042,90 @@
              </property>
             </spacer>
            </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="editSliceMask">
+             <property name="toolTip">
+              <string>File mask for the reconstructed slices</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="editDestPath">
+             <property name="toolTip">
+              <string>Path to the destination folder of the reconstructed slices.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Destination path</string>
+             </property>
+             <property name="buddy">
+              <cstring>editDestPath</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QComboBox" name="comboDestFileType">
+             <property name="toolTip">
+              <string>Selects the file format of the reconstructed slices.</string>
+             </property>
+             <property name="currentIndex">
+              <number>1</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>8-bit TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>16-bit TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Float TIFF (32-bit)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>8-bit multi-frame TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>16-bit multi-frame TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Float multi-frame TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>NeXus (16-bit)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>NeXus (float)</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="buttonBrowseDestinationPath">
+             <property name="toolTip">
+              <string>Browse for destination path</string>
+             </property>
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
            <item row="2" column="2">
             <widget class="QPushButton" name="buttonSaveMatrix">
              <property name="toolTip">
@@ -2116,13 +2136,13 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="buttonBrowseDestinationPath">
-             <property name="toolTip">
-              <string>Browse for destination path</string>
-             </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_49">
              <property name="text">
-              <string>Browse</string>
+              <string>Slice mask</string>
+             </property>
+             <property name="buddy">
+              <cstring>editSliceMask</cstring>
              </property>
             </widget>
            </item>

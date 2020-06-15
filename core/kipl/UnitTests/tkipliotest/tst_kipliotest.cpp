@@ -384,6 +384,9 @@ void kiplIOTest::testIOStack_enums()
    string2enum("TIFFfloat",ft);
     QCOMPARE(ft, kipl::io::TIFFfloat);
 
+    string2enum("TIFF8bitsMultiFrame",ft);
+    QCOMPARE(ft, kipl::io::TIFF8bitsMultiFrame);
+
     string2enum("TIFF16bitsMultiFrame",ft);
     QCOMPARE(ft, kipl::io::TIFF16bitsMultiFrame);
 
@@ -407,6 +410,7 @@ void kiplIOTest::testIOStack_enums()
     QCOMPARE(enum2string(kipl::io::TIFF8bits),            std::string("TIFF8bits"));
     QCOMPARE(enum2string(kipl::io::TIFF16bits),           std::string("TIFF16bits"));
     QCOMPARE(enum2string(kipl::io::TIFFfloat),            std::string("TIFFfloat"));
+    QCOMPARE(enum2string(kipl::io::TIFF8bitsMultiFrame),  std::string("TIFF8bitsMultiFrame"));
     QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame), std::string("TIFF16bitsMultiFrame"));
     QCOMPARE(enum2string(kipl::io::TIFFfloatMultiFrame),  std::string("TIFFfloatMultiFrame"));
 

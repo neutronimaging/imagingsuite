@@ -33,6 +33,7 @@ enum eFileType {
     TIFF8bits,
     TIFF16bits,
     TIFFfloat,
+    TIFF8bitsMultiFrame,
     TIFF16bitsMultiFrame,
     TIFFfloatMultiFrame,
     NeXusfloat,

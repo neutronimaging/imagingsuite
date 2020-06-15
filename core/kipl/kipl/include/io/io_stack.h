@@ -44,8 +44,6 @@ int ReadImageStack(kipl::base::TImage<ImgType,3> & img,
 			kipl::strings::filenames::MakeFileName(filemask,start+i*nstep,filename,ext,'#','0');
 			if ((ext==".tif") || (ext==".TIF"))
 				bps=ReadTIFF(tmp,filename.c_str(),crop);
-			else if (ext==".mat")
-				ReadMAT(tmp,filename.c_str(),crop);
 			else if (ext==".fits")
 				ReadFITS(tmp,filename.c_str(),crop);
 			else {
@@ -130,7 +128,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 //        return 1;
 //    }
 
-    if ( (filetype == TIFF16bitsMultiFrame) || (filetype == TIFFfloatMultiFrame) )
+    if ( (filetype == TIFF8bitsMultiFrame) || (filetype == TIFF16bitsMultiFrame) || (filetype == TIFFfloatMultiFrame) )
     {
 
         auto pos=fname.find('#');
@@ -144,51 +142,56 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
             filename=fname;
         }
 
+        if ( filetype == TIFF8bitsMultiFrame )
+            WriteTIFF(img,filename,lo,hi,kipl::base::UInt8);
+
         if ( filetype == TIFF16bitsMultiFrame )
-            WriteTIFF(img,filename,kipl::base::UInt16);
+            WriteTIFF(img,filename,lo,hi,kipl::base::UInt16);
 
         if ( filetype == TIFFfloatMultiFrame )
             WriteTIFF(img,filename,kipl::base::Float32);
-
-        return 1;
     }
-
-	kipl::base::TImage<float,2> ftmp;
-    for (size_t i=start; i<stop; i++)
+    else
     {
-		kipl::strings::filenames::MakeFileName(fname,static_cast<int>(i+count_start),filename,ext,'#','0');	
-		tmp=kipl::base::ExtractSlice(img,i,imageplane,roi);
-		tmp.info=img.info;
-		switch (filetype)
-		{
-		case TIFF8bits :
-            WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt8);
-			break;
-		case TIFF16bits :
-            WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt16);
-			break;
-		case TIFFfloat :
-            ftmp.resize(tmp.dims());
-			for (size_t i=0; i<tmp.Size(); i++) 
-				ftmp[i]=tmp[i];
-            WriteTIFF(ftmp,filename,kipl::base::Float32);
-			break;
-        case NeXusfloat :
-            break; // it is handled somewhere else
-        case NeXus16bits :
-            break; // it is handled somewhere else
-		case PNG8bits :
-			throw kipl::base::KiplException("8-bit png is not supported by slice writer",__FILE__,__LINE__);
-			//WritePNG8(tmp,filename,lo,hi);
-			break;
-		case PNG16bits :
-			throw kipl::base::KiplException("16-bit png is not supported by slice writer",__FILE__,__LINE__);
-			//WritePNG16(tmp,filename,lo,hi);
-			break;
-		default:
-			throw kipl::base::KiplException("Unknown file type in slice writer",__FILE__,__LINE__);
-		}
-	}
+
+        kipl::base::TImage<float,2> ftmp;
+        for (size_t i=start; i<stop; i++)
+        {
+            kipl::strings::filenames::MakeFileName(fname,static_cast<int>(i+count_start),filename,ext,'#','0');
+            tmp=kipl::base::ExtractSlice(img,i,imageplane,roi);
+            tmp.info=img.info;
+            switch (filetype)
+            {
+            case TIFF8bits :
+                WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt8);
+                break;
+            case TIFF16bits :
+                WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt16);
+                break;
+            case TIFFfloat :
+                ftmp.resize(tmp.dims());
+                for (size_t i=0; i<tmp.Size(); i++)
+                    ftmp[i]=tmp[i];
+                WriteTIFF(ftmp,filename,kipl::base::Float32);
+                break;
+            case TIFF8bitsMultiFrame : break;
+            case TIFF16bitsMultiFrame : break;
+            case TIFFfloatMultiFrame  : break;
+            case NeXusfloat           : break; // it is handled somewhere else
+            case NeXus16bits          : break; // it is handled somewhere else
+            case PNG8bits :
+                throw kipl::base::KiplException("8-bit png is not supported by slice writer",__FILE__,__LINE__);
+                //WritePNG8(tmp,filename,lo,hi);
+                break;
+            case PNG16bits :
+                throw kipl::base::KiplException("16-bit png is not supported by slice writer",__FILE__,__LINE__);
+                //WritePNG16(tmp,filename,lo,hi);
+                break;
+            default:
+                throw kipl::base::KiplException("Unknown file type in slice writer",__FILE__,__LINE__);
+            }
+        }
+    }
 
 	return 1;
 }
