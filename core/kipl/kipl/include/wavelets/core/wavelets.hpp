@@ -415,20 +415,20 @@ void WaveletQuad<T>::SaveQuad(std::string fname)
 	namemaker.str("");
 	namemaker<<base<<"_a"<<N<<ext;
 
-	kipl::io::WriteTIFF32(a, namemaker.str().c_str());
+    kipl::io::WriteTIFF(a, namemaker.str(),kipl::base::Float32);
 
 	namemaker.str("");
 	namemaker<<base<<"_v"<<N<<ext;
-	kipl::io::WriteTIFF32(v, namemaker.str().c_str());
+    kipl::io::WriteTIFF(v, namemaker.str(),kipl::base::Float32);
 
 	namemaker.str("");
 	namemaker<<base<<"_h"<<N<<ext;
 
-	kipl::io::WriteTIFF32(h, namemaker.str().c_str());
+    kipl::io::WriteTIFF(h, namemaker.str(),kipl::base::Float32);
 	namemaker.str("");
 	namemaker<<base<<"_d"<<N<<ext;
 
-	kipl::io::WriteTIFF32(d, namemaker.str().c_str());
+    kipl::io::WriteTIFF(d, namemaker.str(),kipl::base::Float32);
 
 }
 
@@ -457,8 +457,6 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> img, int N)
 	WaveletQuad<T> quad;
 	quad.a=img;
     n_dims=img.dims();
-//	n_dims[0]=img.Size(0);
-//	n_dims[1]=img.Size(1);
 
 	for (int i=0; i<N; i++) {
 		quad=transform(quad);

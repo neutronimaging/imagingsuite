@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef ANALYZEFILEEXT_H
-#define ANALYZEFILEEXT_H
+#ifndef IOANALYZEFILEEXT_H
+#define IOANALYZEFILEEXT_H
 
 #include "../kipl_global.h"
 

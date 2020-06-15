@@ -199,7 +199,7 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
     cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,1.0f,0.05f);
 
-    kipl::io::WriteTIFF32(img,"spotcleaned.tif");
+    kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
 
 }
 
@@ -357,7 +357,7 @@ void TestImagingAlgorithms::PiercingPoint_Processing()
         }
     }
 
-//    kipl::io::WriteTIFF32(img,"/Users/kaestner/repos/lib/sq.tif");
+//    kipl::io::WriteTIFF(img,"/Users/kaestner/repos/lib/sq.tif",kipl::base::Float32);
 
     ImagingAlgorithms::PiercingPointEstimator pe;
 
@@ -512,7 +512,7 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 
     pf.process(sino);
 
-    kipl::io::WriteTIFF32(sino,"projfilt_result.tif");
+    kipl::io::WriteTIFF(sino,"projfilt_result.tif",kipl::base::Float32);
     QCOMPARE(pf.currentFFTSize(),2048UL);
     QCOMPARE(pf.currentImageSize(),sino.Size(0));
 

@@ -118,9 +118,9 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     float *pImg=padded.GetDataPtr();
     float *pHoles=noholes.GetDataPtr();
     float *pPeaks=nopeaks.GetDataPtr();
-//    kipl::io::WriteTIFF32(nopeaks,"nopeaks.tif");
-//    kipl::io::WriteTIFF32(noholes,"noholes.tif");
-//    kipl::io::WriteTIFF32(padded,"padded.tif");
+//    kipl::io::WriteTIFF(nopeaks,"nopeaks.tif",kipl::base::Float32);
+//    kipl::io::WriteTIFF(noholes,"noholes.tif",kipl::base::Float32);
+//    kipl::io::WriteTIFF(padded,"padded.tif",kipl::base::Float32);
     if ((m_fSigma[0]==0.0f) && (m_fSigma[1]==0.0f))
     {
         for (size_t i=0; i<N; i++) {

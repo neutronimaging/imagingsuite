@@ -52,7 +52,7 @@ std::vector<size_t> ImageReader::GetImageSize(std::string path,
 
 std::vector<size_t> ImageReader::GetImageSize(std::string filename, float binning)
 {
-    readers::eExtensionTypes ext=readers::GetFileExtensionType(filename);
+    auto ext=readers::GetFileExtensionType(filename);
 
     std::stringstream msg;
     std::vector<size_t> dims;

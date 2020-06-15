@@ -145,10 +145,10 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
         }
 
         if ( filetype == TIFF16bitsMultiFrame )
-            WriteTIFF(img,filename);
+            WriteTIFF(img,filename,kipl::base::UInt16);
 
         if ( filetype == TIFFfloatMultiFrame )
-            WriteTIFFfloat(img,filename);
+            WriteTIFF(img,filename,kipl::base::Float32);
 
         return 1;
     }
