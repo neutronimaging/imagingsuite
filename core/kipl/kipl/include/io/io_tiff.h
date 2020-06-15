@@ -31,7 +31,7 @@ namespace kipl { namespace io {
 ///
 ///	Setting both bounds to zero results in full dynamics rescaled in the interval [0,255].
 template <class ImgType,size_t N>
-void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,const std::string &fname, kipl::base::eDataType dt) //=kipl::base::UInt16)
+void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,const std::string &fname, kipl::base::eDataType dt = kipl::base::UInt16)
 {
     if ( (dt == kipl::base::UInt4) || (dt == kipl::base::UInt12))
         throw kipl::base::KiplException("WriteTIFF doesn't support 4- and 12-bit formats");
@@ -288,28 +288,55 @@ bool KIPLSHARED_EXPORT GetSlopeOffset(std::string msg, float &slope, float &offs
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <class ImgType,size_t N>
-int WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgType lo, ImgType hi)
+void WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgType lo, ImgType hi, kipl::base::eDataType dt = kipl::base::UInt16)
 {
-    kipl::base::TImage<unsigned short,N> img;
+    std::stringstream msg;
     try
     {
-        img=kipl::base::ImageCaster<unsigned short, ImgType, N>::cast(src,lo,hi);
-		if (src.info.sDescription.empty()) {
-			std::stringstream msg;
+        switch (dt)
+        {
+        case kipl::base::UInt4 : break;
+        case kipl::base::UInt8 :
+        {
+            kipl::base::TImage<unsigned char,N> img;
+            img=kipl::base::ImageCaster<unsigned char, ImgType, N>::cast(src,lo,hi);
+            if (src.info.sDescription.empty())
+            {
+                float slope = (static_cast<float>(hi)-static_cast<float>(lo))/std::numeric_limits<unsigned char>::max();
 
-			float slope = (static_cast<float>(hi)-static_cast<float>(lo))/std::numeric_limits<unsigned short>::max();
+                msg<<"slope = "<<scientific<<slope<<"\noffset = "<<scientific<<lo;
+                src.info.sDescription=msg.str();
+            }
 
-            //msg.precision(5);
-            msg<<"slope = "<<scientific<<slope<<"\noffset = "<<scientific<<lo;
-			src.info.sDescription=msg.str();
-		}
+            WriteTIFF(img,fname,kipl::base::UInt8);
+            break;
+        }
+        case kipl::base::UInt12 : break;
+        case kipl::base::UInt16 :
+        {
+            kipl::base::TImage<unsigned short,N> img;
+            img=kipl::base::ImageCaster<unsigned short, ImgType, N>::cast(src,lo,hi);
+            if (src.info.sDescription.empty())
+            {
+                float slope = (static_cast<float>(hi)-static_cast<float>(lo))/std::numeric_limits<unsigned short>::max();
+
+                msg<<"slope = "<<scientific<<slope<<"\noffset = "<<scientific<<lo;
+                src.info.sDescription=msg.str();
+            }
+
+            WriteTIFF(img,fname,kipl::base::UInt16);
+            break;
+        }
+        case kipl::base::Float32 :
+            WriteTIFF(src,fname,kipl::base::Float32);
+            break;
+        }
 	}
     catch (kipl::base::KiplException &E)
     {
 		throw kipl::base::KiplException(E.what(),__FILE__,__LINE__);
 	}
 
-	return WriteTIFF(img,fname);
 }
 
 /// \brief Writes an uncompressed TIFF image from any image data type (grayscale)

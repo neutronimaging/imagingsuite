@@ -107,7 +107,7 @@ void NonLocalMeans::SaveDebugImage(kipl::base::TImage<float,2> & img, std::strin
 {
     if (m_bSaveDebugData) {
 #ifndef NO_TIFF
-        kipl::io::WriteTIFF32(img,fname.c_str());
+        kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
 #endif
     }
 }

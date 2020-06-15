@@ -190,8 +190,8 @@ void kiplmorphalgorithms::test_EuclideanDistance()
         if (dist_dev[i]!=dist_ref[i])
             cnt++;
     }
-    kipl::io::WriteTIFF32(dist_dev,"eucliddist_dev.tif");
-    kipl::io::WriteTIFF32(dist_ref,"eucliddist_ref.tif");
+    kipl::io::WriteTIFF(dist_dev,"eucliddist_dev.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dist_ref,"eucliddist_ref.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 
@@ -217,9 +217,9 @@ void kiplmorphalgorithms::test_EuclideanDistance2()
         if (dist_dev[i]!=dist_ref[i])
             cnt++;
     }
-    kipl::io::WriteTIFF32(bw,"eucliddist2_bw.tif");
-    kipl::io::WriteTIFF32(dist_dev,"eucliddist2_dev.tif");
-    kipl::io::WriteTIFF32(dist_ref,"eucliddist2_ref.tif");
+    kipl::io::WriteTIFF(bw,"eucliddist2_bw.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dist_dev,"eucliddist2_dev.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dist_ref,"eucliddist2_ref.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 

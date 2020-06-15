@@ -950,8 +950,8 @@ void kiplMorphologyTest::testhMax()
     QVERIFY(img.Size(0)==res.Size(0));
     QVERIFY(img.Size(1)==res.Size(1));
 
-    kipl::io::WriteTIFF32(img,"hmax_orig.tif");
-    kipl::io::WriteTIFF32(res,"hmax_res.tif");
+    kipl::io::WriteTIFF(img,"hmax_orig.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(res,"hmax_res.tif",kipl::base::Float32);
 
 }
 

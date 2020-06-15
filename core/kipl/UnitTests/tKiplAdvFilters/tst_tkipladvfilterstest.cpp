@@ -129,7 +129,7 @@ void TKiplAdvFiltersTest::NLMeans_process()
         nlfilter(img,res);
     }
 
-    kipl::io::WriteTIFF32(res,"nl_test.tif");
+    kipl::io::WriteTIFF(res,"nl_test.tif",kipl::base::Float32);
 
 }
 

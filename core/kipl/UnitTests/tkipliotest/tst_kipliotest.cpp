@@ -276,12 +276,12 @@ void kiplIOTest::testTIFF32()
     float scale=1.0f/static_cast<float>(imgref2d.Size());
     for (size_t i=0; i<imgref2d.Size(); ++i)
         imgref2d[i]=static_cast<float>(i)*scale;
-    kipl::io::WriteTIFF32(imgref2d,"tiff32_2D.tif");
+    kipl::io::WriteTIFF(imgref2d,"tiff32_2D.tif",kipl::base::Float32);
 
     scale=1.0f/static_cast<float>(imgref3d.Size());
     for (size_t i=0; i<imgref3d.Size(); ++i)
         imgref3d[i]=static_cast<float>(i)*scale;
-    kipl::io::WriteTIFF32(imgref3d,"tiff32_3D.tif");
+    kipl::io::WriteTIFF(imgref3d,"tiff32_3D.tif",kipl::base::Float32);
 
     kipl::base::TImage<float,2> img2d(dims);
     kipl::io::ReadTIFF(img2d,"tiff32_2D.tif");

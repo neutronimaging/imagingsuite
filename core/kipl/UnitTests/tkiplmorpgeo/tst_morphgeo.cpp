@@ -94,8 +94,8 @@ void morphgeo::test_RecByDilation()
             cnt++;
     }
 
-    kipl::io::WriteTIFF32(ref,"recdil_ref.tif");
-    kipl::io::WriteTIFF32(dev,"recdil_dev.tif");
+    kipl::io::WriteTIFF(ref,"recdil_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"recdil_dev.tif",kipl::base::Float32);
     QCOMPARE(cnt,0UL);
 }
 
@@ -124,8 +124,8 @@ void morphgeo::test_RecByErosion()
             cnt++;
     }
 
-    kipl::io::WriteTIFF32(ref,"recero_ref.tif");
-    kipl::io::WriteTIFF32(dev,"recero_dev.tif");
+    kipl::io::WriteTIFF(ref,"recero_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"recero_dev.tif",kipl::base::Float32);
     QCOMPARE(cnt,0UL);
 }
 
@@ -164,8 +164,8 @@ void morphgeo::testSelfDualReconstruction()
 
     QCOMPARE(cnt,0UL);
 
-    kipl::io::WriteTIFF32(ref,"recself_ref.tif");
-    kipl::io::WriteTIFF32(dev,"recselg_dev.tif");
+    kipl::io::WriteTIFF(ref,"recself_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"recselg_dev.tif",kipl::base::Float32);
 }
 
 void morphgeo::testRemoveEdgeObjects()
@@ -193,8 +193,8 @@ void morphgeo::testRemoveEdgeObjects()
 
     QCOMPARE(cnt,0UL);
 
-    kipl::io::WriteTIFF32(ref,"removeedges_ref.tif");
-    kipl::io::WriteTIFF32(dev,"removeedges_dev.tif");
+    kipl::io::WriteTIFF(ref,"removeedges_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"removeedges_dev.tif",kipl::base::Float32);
 }
 
 void morphgeo::testRMin()
@@ -219,8 +219,8 @@ void morphgeo::testRMin()
             cnt++;
     }
 
-    kipl::io::WriteTIFF32(ref,"rmin_ref.tif");
-    kipl::io::WriteTIFF32(dev,"rmin_dev.tif");
+    kipl::io::WriteTIFF(ref,"rmin_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"rmin_dev.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 }
@@ -249,8 +249,8 @@ void morphgeo::testRMax()
 
     QCOMPARE(cnt,0UL);
 
-    kipl::io::WriteTIFF32(ref,"rmax_ref.tif");
-    kipl::io::WriteTIFF32(dev,"rmax_dev.tif");
+    kipl::io::WriteTIFF(ref,"rmax_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"rmax_dev.tif",kipl::base::Float32);
 }
 
 void morphgeo::testhMax()
@@ -277,8 +277,8 @@ void morphgeo::testhMax()
 
     QCOMPARE(cnt,0UL);
 
-    kipl::io::WriteTIFF32(ref,"hmax_ref.tif");
-    kipl::io::WriteTIFF32(dev,"hmax_dev.tif");
+    kipl::io::WriteTIFF(ref,"hmax_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"hmax_dev.tif",kipl::base::Float32);
 }
 
 void morphgeo::testExtendedMax()
@@ -305,8 +305,8 @@ void morphgeo::testExtendedMax()
 
     QCOMPARE(cnt,0UL);
 
-    kipl::io::WriteTIFF32(ref,"emax_ref.tif");
-    kipl::io::WriteTIFF32(dev,"emax_dev.tif");
+    kipl::io::WriteTIFF(ref,"emax_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"emax_dev.tif",kipl::base::Float32);
 }
 
 void morphgeo::testhMin()
@@ -333,8 +333,8 @@ void morphgeo::testhMin()
 
     QCOMPARE(cnt,0UL);
 
-    kipl::io::WriteTIFF32(ref,"hmin_ref.tif");
-    kipl::io::WriteTIFF32(dev,"hmin_dev.tif");
+    kipl::io::WriteTIFF(ref,"hmin_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"hmin_dev.tif",kipl::base::Float32);
 }
 
 void morphgeo::testExtendedMin()
@@ -360,8 +360,8 @@ void morphgeo::testExtendedMin()
         if (ref[i]!=dev[i])
             cnt++;
     }
-    kipl::io::WriteTIFF32(ref,"emin_ref.tif");
-    kipl::io::WriteTIFF32(dev,"emin_dev.tif");
+    kipl::io::WriteTIFF(ref,"emin_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"emin_dev.tif",kipl::base::Float32);
     QCOMPARE(cnt,0UL);
 }
 
@@ -393,8 +393,8 @@ void morphgeo::testFillHole()
             cnt++;
     }
 
-    kipl::io::WriteTIFF32(ref,"fillhole_ref.tif");
-    kipl::io::WriteTIFF32(dev,"fillhole_dev.tif");
+    kipl::io::WriteTIFF(ref,"fillhole_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"fillhole_dev.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 }
@@ -453,8 +453,8 @@ void morphgeo::testFillPeaks()
             cnt++;
     }
 
-    kipl::io::WriteTIFF32(ref,"fillpeaks_ref.tif");
-    kipl::io::WriteTIFF32(dev,"fillpeaks_dev.tif");
+    kipl::io::WriteTIFF(ref,"fillpeaks_ref.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dev,"fillpeaks_dev.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 }

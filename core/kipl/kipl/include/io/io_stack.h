@@ -162,16 +162,16 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		switch (filetype)
 		{
 		case TIFF8bits :
-            WriteTIFF(tmp,filename,lo,hi);
+            WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt8);
 			break;
 		case TIFF16bits :
-            WriteTIFF(tmp,filename,lo,hi);
+            WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt16);
 			break;
 		case TIFFfloat :
             ftmp.resize(tmp.dims());
 			for (size_t i=0; i<tmp.Size(); i++) 
 				ftmp[i]=tmp[i];
-            WriteTIFF32(ftmp,filename);
+            WriteTIFF(ftmp,filename,kipl::base::Float32);
 			break;
         case NeXusfloat :
             break; // it is handled somewhere else
