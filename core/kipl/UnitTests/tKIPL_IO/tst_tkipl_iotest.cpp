@@ -17,6 +17,7 @@ private Q_SLOTS:
     void testBasicReadWriteTIFF();
     void testMultiFrameReadTIFF();
     void testMultiFrameWriteTIFF();
+    void testDataTypesWriteTIFF();
 
 };
 
