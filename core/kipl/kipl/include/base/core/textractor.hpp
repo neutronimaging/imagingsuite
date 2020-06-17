@@ -14,9 +14,15 @@
 
 namespace kipl { namespace base {
 
-template<typename T>
-kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane,const std::vector<size_t> &roi)
+template<typename T,size_t N>
+kipl::base::TImage<T,2> ExtractSlice(const kipl::base::TImage<T, N> &img,
+                                     const size_t index,
+                                     const kipl::base::eImagePlanes plane,
+                                     const std::vector<size_t> &roi)
 {
+    if (N!=3)
+        kipl::base::KiplException("ExtractSlice only works for N=3",__FILE__,__LINE__);
+
     auto tmproi = roi;
 	kipl::logging::Logger logger("ExtractSlice");
     std::vector<size_t> dims={0,0};
@@ -119,7 +125,7 @@ kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t 
 		
 		for (size_t z=0; z<dims[1]; z++) {
 			T * pDest=dest.GetLinePtr(z);
-			T * pData=img.GetDataPtr()+index+(z+offset[1])*sxy+offset[0]*sx;
+            auto pData=img.GetDataPtr()+index+(z+offset[1])*sxy+offset[0]*sx;
 			for (size_t y=0; y<dims[0]; y++)
 				pDest[y]=pData[y*sx];
 		}

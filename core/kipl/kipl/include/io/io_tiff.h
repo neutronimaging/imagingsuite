@@ -15,6 +15,7 @@
 #include <tiffio.h>
 
 #include "../base/imagecast.h"
+#include "../base/textractor.h"
 #include "../base/timage.h"
 #include "../base/imageinfo.h"
 #include "../strings/filenames.h"
@@ -31,14 +32,45 @@ namespace kipl { namespace io {
 ///
 ///	Setting both bounds to zero results in full dynamics rescaled in the interval [0,255].
 template <class ImgType,size_t N>
-void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,const std::string &fname, kipl::base::eDataType dt = kipl::base::UInt16, bool append=false)
+void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
+               const std::string &fname,
+               kipl::base::eDataType dt = kipl::base::UInt16,
+               kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
+               bool append=false)
 {
     if ( (dt == kipl::base::UInt4) || (dt == kipl::base::UInt12))
         throw kipl::base::KiplException("WriteTIFF doesn't support 4- and 12-bit formats");
 
     TIFF *image;
     std::stringstream msg;
-    std::vector<size_t> sliceDims = {src.Size(0), src.Size(1)};
+    std::vector<size_t> sliceDims;
+    size_t nSlices=1;
+
+    if (N==2)
+    {
+        sliceDims = {src.Size(0), src.Size(1)};
+        nSlices = 1;
+    }
+    else
+    {
+        switch (plane)
+        {
+            case kipl::base::ImagePlaneXY :
+                sliceDims = {src.Size(0), src.Size(1)};
+                nSlices   = src.Size(2);
+                break;
+            case kipl::base::ImagePlaneXZ :
+                sliceDims = {src.Size(0), src.Size(2)};
+                nSlices   = src.Size(1);
+                break;
+            case kipl::base::ImagePlaneYZ :
+                sliceDims = {src.Size(1), src.Size(2)};
+                nSlices   = src.Size(0);
+                break;
+        }
+    }
+
+    size_t sliceSize = sliceDims[0] * sliceDims[1];
 
     // Open the TIFF file
     if (append)
@@ -65,14 +97,14 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,const std::string &fnam
         }
     }
 
-    size_t nSlices= N==2 ? 1 : src.Size(2);
-    size_t sliceSize=src.Size(0)*src.Size(1);
+
+    kipl::base::TImage<ImgType,2> slice(sliceDims);
 
     for (size_t i=0; i<nSlices; ++i)
     {
         // We need to set some values for basic tags before we can add any data
-        TIFFSetField(image, TIFFTAG_IMAGEWIDTH,         static_cast<int>(src.Size(0)));
-        TIFFSetField(image, TIFFTAG_IMAGELENGTH,        static_cast<int>(src.Size(1)));
+        TIFFSetField(image, TIFFTAG_IMAGEWIDTH,         static_cast<int>(sliceDims[0]));
+        TIFFSetField(image, TIFFTAG_IMAGELENGTH,        static_cast<int>(sliceDims[1]));
         TIFFSetField(image, TIFFTAG_BITSPERSAMPLE,      dt);
         TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL,    1);
         if ( dt == kipl::base::Float32 )
@@ -101,7 +133,17 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,const std::string &fnam
             TIFFSetField(image, TIFFTAG_IMAGEDESCRIPTION, src.info.sDescription.c_str());
 
         // Write the information to the file
-        auto *pSlice=src.GetLinePtr(0,i);
+
+        if (N==2)
+        {
+            std::copy_n(src.GetDataPtr(),sliceSize,slice.GetDataPtr());
+        }
+        else
+        {
+            slice=kipl::base::ExtractSlice(src,i,plane);
+        }
+
+        auto *pSlice=slice.GetLinePtr(0,i);
 
         switch (dt)
         {
@@ -173,7 +215,12 @@ bool KIPLSHARED_EXPORT GetSlopeOffset(std::string msg, float &slope, float &offs
 ///	\retval 0 The writing failed
 ///	\retval 1 Successful
 template <class ImgType,size_t N>
-void WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgType lo, ImgType hi, kipl::base::eDataType dt = kipl::base::UInt16, bool append=false)
+void WriteTIFF(kipl::base::TImage<ImgType,N> src,
+               const std::string &fname,
+               ImgType lo, ImgType hi,
+               kipl::base::eDataType dt = kipl::base::UInt16,
+               kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
+               bool append=false)
 {
     std::stringstream msg;
     try
@@ -193,7 +240,7 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgTy
                 src.info.sDescription=msg.str();
             }
 
-            WriteTIFF(img,fname,kipl::base::UInt8,append);
+            WriteTIFF(img,fname,kipl::base::UInt8,plane,append);
             break;
         }
         case kipl::base::UInt12 : break;
@@ -209,11 +256,11 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,const std::string &fname, ImgTy
                 src.info.sDescription=msg.str();
             }
 
-            WriteTIFF(img,fname,kipl::base::UInt16,append);
+            WriteTIFF(img,fname,kipl::base::UInt16,plane,append);
             break;
         }
         case kipl::base::Float32 :
-            WriteTIFF(src,fname,kipl::base::Float32,append);
+            WriteTIFF(src,fname,kipl::base::Float32,plane,append);
             break;
         }
 	}

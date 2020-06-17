@@ -683,7 +683,10 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane,m_Config.MatrixInfo.roi);
+                        0,nSlices,m_Config.ProjectionInfo.roi[1],
+                        m_Config.MatrixInfo.FileType,
+                        plane,m_Config.MatrixInfo.roi,
+                        m_Config.ProjectionInfo.roi[1]!=m_FirstSlice);
                 }
                 else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
                 {
@@ -701,7 +704,10 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices,m_Config.ProjectionInfo.roi[1],m_Config.MatrixInfo.FileType,plane);
+                        0,nSlices,m_Config.ProjectionInfo.roi[1],
+                        m_Config.MatrixInfo.FileType,plane,
+                        {},
+                        m_Config.ProjectionInfo.roi[1]!=m_FirstSlice);
                 }
                 else if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone)
                 {
@@ -876,12 +882,15 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 		msg<<"Serializing "<<nSlices<<" slices to "<<str.str();
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
-
-
 		kipl::io::WriteImageStack(m_Volume,
 				str.str(),
-				matrixconfig->fGrayInterval[0],matrixconfig->fGrayInterval[1],
-				0,nSlices,m_FirstSlice,matrixconfig->FileType,plane);
+                matrixconfig->fGrayInterval[0],
+                matrixconfig->fGrayInterval[1],
+                0,
+                nSlices,
+                m_FirstSlice,
+                matrixconfig->FileType,
+                plane);
 	}
 
 

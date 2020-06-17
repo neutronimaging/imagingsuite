@@ -240,7 +240,7 @@ void kiplIOTest::testTIFFMultiFrame()
     kipl::base::TImage<float,3> img3ref2=img3ref;
     img3ref2+=1.0f;
 
-    kipl::io::WriteTIFF(img3ref2,"test.tif",kipl::base::UInt16,true);
+    kipl::io::WriteTIFF(img3ref2,"test.tif",kipl::base::UInt16,kipl::base::ImagePlaneXY,true);
 
     img3.FreeImage();
     kipl::io::ReadTIFF(img3,"test.tif");

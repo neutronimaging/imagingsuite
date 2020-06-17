@@ -13,8 +13,8 @@ namespace kipl { namespace base {
 /// \param index The slice index along the chosen axis
 /// \param plane The chosen image plane
 /// \returns A 2D slice
-template<typename T>
-kipl::base::TImage<T,2> ExtractSlice(kipl::base::TImage<T,3> &img, const size_t index, const kipl::base::eImagePlanes plane, const std::vector<size_t> & roi={});
+template<typename T,size_t N>
+kipl::base::TImage<T,2> ExtractSlice(const kipl::base::TImage<T,N> &img, const size_t index, const kipl::base::eImagePlanes plane, const std::vector<size_t> & roi={});
 
 /// \brief Inserts a 2D slice into a 3D image
 /// \param slice The slice to insert

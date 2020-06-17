@@ -97,7 +97,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 		const size_t start, const size_t stop, const size_t count_start=0,
         kipl::io::eFileType filetype=kipl::io::TIFF16bits,
 		const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
-        const std::vector<size_t> & roi = {})
+        const std::vector<size_t> & roi = {}, bool append=false)
 {
 	if (stop<start)
 		kipl::base::KiplException("Stop index must be greater than start index.",__FILE__, __LINE__);
@@ -143,13 +143,13 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
         }
 
         if ( filetype == TIFF8bitsMultiFrame )
-            WriteTIFF(img,filename,lo,hi,kipl::base::UInt8);
+            WriteTIFF(img,filename,lo,hi,kipl::base::UInt8, imageplane,append);
 
         if ( filetype == TIFF16bitsMultiFrame )
-            WriteTIFF(img,filename,lo,hi,kipl::base::UInt16);
+            WriteTIFF(img,filename,lo,hi,kipl::base::UInt16, imageplane,append);
 
         if ( filetype == TIFFfloatMultiFrame )
-            WriteTIFF(img,filename,kipl::base::Float32);
+            WriteTIFF(img,filename,kipl::base::Float32, imageplane,append);
     }
     else
     {
