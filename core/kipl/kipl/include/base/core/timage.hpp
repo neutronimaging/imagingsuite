@@ -125,23 +125,15 @@ T & TImage<T,N>::operator()(int x, int y, int z)
     return this->operator()(static_cast<size_t>(x),static_cast<size_t>(y),static_cast<size_t>(z));
 }
 
-//template<typename T, size_t N>
-//size_t TImage<T,N>::Resize(size_t const * const dims)
-//{
-//	m_buffer.Resize(_ComputeNElements(dims));
-//	for (size_t i=0; i<N; i++)
-//		m_Dims[i]=dims[i];
-
-//	m_NData=m_buffer.Size();
-//	return m_buffer.Size();
-//}
-
 template<typename T, size_t N>
 size_t TImage<T,N>::resize(const std::vector<size_t> & dims)
 {
+    if (dims.size()<N)
+        throw kipl::base::KiplException("Too short dims vector in resize",__FILE__,__LINE__);
+
     m_buffer.Resize(_ComputeNElements(dims));
-    for (size_t i=0; i<N; i++)
-        m_Dims[i]=dims[i];
+
+    std::copy_n(dims.begin(),N,m_Dims.begin());
 
     m_NData=m_buffer.Size();
     return m_buffer.Size();
