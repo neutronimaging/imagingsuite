@@ -60,7 +60,7 @@ class QTMODULECONFIGURESHARED_EXPORT SingleModuleSettingsDialog : QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit SingleModuleSettingsDialog(std::string sApplicationName,std::string sDefaultModuleSource ,QWidget *parent);
+    explicit SingleModuleSettingsDialog(const std::string &sApplicationName, const std::string &sApplicationPath, const std::string & sDefaultModuleSource ,QWidget *parent);
 
     virtual int exec(ModuleConfig &config);
     ModuleConfig getModule();
@@ -80,6 +80,7 @@ private:
 
 
     std::string m_sApplication;
+    std::string m_sApplicationPath;
     std::string m_sDefaultModuleSource;
     QVBoxLayout m_LayoutMain;
     QHBoxLayout m_LayoutModule;

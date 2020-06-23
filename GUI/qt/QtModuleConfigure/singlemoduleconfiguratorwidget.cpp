@@ -12,6 +12,8 @@
 #include <ModuleException.h>
 #include <base/KiplException.h>
 
+#include <QDebug>
+
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
@@ -70,6 +72,7 @@ QSize SingleModuleConfiguratorWidget::sizeHint() const
 {
     return QSize(300, 50);
 }
+
 void SingleModuleConfiguratorWidget::SetModule(ModuleConfig &module)
 {
     m_ModuleConfig=module;
@@ -90,20 +93,25 @@ void SingleModuleConfiguratorWidget::SetDescription(QString name)
 
 void SingleModuleConfiguratorWidget::on_ButtonConfigure_Clicked()
 {
-    SingleModuleSettingsDialog dlg(m_sApplication,m_sDefaultModuleSource,this);
+    SingleModuleSettingsDialog dlg(m_sApplication, m_sApplicationPath,m_sDefaultModuleSource,this);
 
     int res=dlg.exec(m_ModuleConfig);
 
-    if (res==QDialog::Accepted) {
+    if (res==QDialog::Accepted)
+    {
         m_ModuleConfig=dlg.getModule();
         m_LabelModuleName.setText(QString::fromStdString(m_ModuleConfig.m_sModule));
     }
 }
 
-SingleModuleSettingsDialog::SingleModuleSettingsDialog(std::string sApplicationName, std::string sDefaultModuleSource, QWidget *parent) :
+SingleModuleSettingsDialog::SingleModuleSettingsDialog(const std::string &sApplicationName,
+                                                       const std::string &sApplicationPath,
+                                                       const std::string &sDefaultModuleSource,
+                                                       QWidget *parent) :
     QDialog(parent),
     logger("SingleModuleSettingsDialog"),
     m_sApplication(sApplicationName),
+    m_sApplicationPath(sApplicationPath),
     m_sDefaultModuleSource(sDefaultModuleSource),
     m_ModuleConfig("")
 {
@@ -122,7 +130,8 @@ int SingleModuleSettingsDialog::exec(ModuleConfig &config)
     m_ModuleConfig.setAppPath(QCoreApplication::applicationDirPath().toStdString());
 
     QDir dir;
-    if (dir.exists(QString::fromStdString(m_ModuleConfig.m_sSharedObject))) {
+    if (dir.exists(QString::fromStdString(m_ModuleConfig.m_sSharedObject)))
+    {
         UpdateModuleCombobox(QString::fromStdString(m_ModuleConfig.m_sSharedObject),false);
         msg<<"Index for "<<config.m_sModule<<" set to "<<m_ComboModules.findText(QString::fromStdString(config.m_sModule));
         logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -131,7 +140,8 @@ int SingleModuleSettingsDialog::exec(ModuleConfig &config)
         m_ModuleConfig=config;
         UpdateCurrentModuleParameters();
     }
-    else {
+    else
+    {
         UpdateModuleCombobox(QString::fromStdString(m_sDefaultModuleSource),false);
     }
 
@@ -147,7 +157,8 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 {
     std::ostringstream msg;
     QDialogButtonBox::StandardButton standardButton = m_Buttons.standardButton(button);
-    switch(standardButton) {
+    switch(standardButton)
+    {
         // Standard buttons:
         case QDialogButtonBox::Ok:
             accept();
@@ -164,11 +175,13 @@ void SingleModuleSettingsDialog::on_ButtonBox_Clicked(QAbstractButton *button)
 
            logger(kipl::logging::Logger::LogMessage,msg.str());
 
-           if (s_Value.toLower()=="add") {
+           if (s_Value.toLower()=="add")
+           {
                logger(kipl::logging::Logger::LogMessage,"Add parameter");
            }
 
-           if (s_Value.toLower()=="delete") {
+           if (s_Value.toLower()=="delete")
+           {
                logger(kipl::logging::Logger::LogMessage,"Delete parameter");
            }
 
@@ -189,14 +202,16 @@ void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
     #endif
     logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
-    if (fileName.isEmpty()) {
+    if (fileName.isEmpty())
+    {
         logger(kipl::logging::Logger::LogError,"No file selected");
         return;
     }
 
     logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
 
-    if (fileName.toStdString() == m_ModuleConfig.m_sSharedObject ) {
+    if (fileName.toStdString() == m_ModuleConfig.m_sSharedObject )
+    {
         logger(kipl::logging::Logger::LogMessage,"The same library file was selected.");
         return;
     }
@@ -236,28 +251,34 @@ int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname, bool bSetFir
 {
     std::ostringstream msg;
 
-    try {
-        m_ModuleList.clear();
-        m_ModuleList=GetModuleList(fname.toStdString());
-    }
-    catch (ModuleException &e) {
-        msg<<"Failed to generate module list from "<<fname.toStdString()<<"\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-    }
-    catch (kipl::base::KiplException &e) {
-        msg<<"Failed to generate module list from "<<fname.toStdString()<<" with a KiplException\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+    std::string currentFileName = fname.toStdString();
+
+    m_ModuleList.clear();
+    while (m_ModuleList.empty())
+    {
+        try
+        {
+
+            m_ModuleList=GetModuleList(currentFileName);
+        }
+        catch (ModuleException &e)
+        {
+            msg<<"Failed to generate module list from "<<fname.toStdString()<<"\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+        }
+        catch (kipl::base::KiplException &e)
+        {
+            msg<<"Failed to generate module list from "<<fname.toStdString()<<" with a KiplException\n"<<e.what();
+            logger(kipl::logging::Logger::LogError,msg.str());
+        }
+
+        if (m_ModuleList.empty())
+        {
+            currentFileName = QFileDialog::getOpenFileName(this,"Select a module file",QString::fromStdString(m_sApplicationPath)).toStdString();
+            m_ModuleConfig.m_sSharedObject = currentFileName;
+        }
     }
 
-    if (!msg.str().empty()) {
-        QMessageBox msgBox;
-
-        msgBox.setWindowTitle("Error");
-        msgBox.setText("Could not create a module list from the selected library.");
-        msgBox.setDetailedText(QString::fromStdString(msg.str()));
-        msgBox.exec();
-        return -1;
-    }
 
     m_ComboModules.clear();
     msg.str("");
@@ -323,7 +344,8 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
             throw ModuleException(msg.str(),__FILE__,__LINE__);
         }
     }
-    else {
+    else
+    {
         msg.str("");
         msg<<"Failed to open library file "<<filename;
         logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -370,15 +392,16 @@ void SingleModuleSettingsDialog::UpdateCurrentModuleParameters()
     QTreeWidgetItem *item = nullptr;
 
     m_ParameterListView.setColumnWidth(0,this->width()/2);
-    if (!m_ModuleConfig.m_sModule.empty()) {
-        std::map<std::string,std::string>::iterator it;
+    if (!m_ModuleConfig.m_sModule.empty())
+    {
+        std::map<std::string,std::string>::iterator parameters;
 
-        for (it=m_ModuleConfig.parameters.begin();
-             it!=m_ModuleConfig.parameters.end(); it++) {
+        for (const auto  & parameters : m_ModuleConfig.parameters)
+        {
             item=new QTreeWidgetItem(parent);
             item->setFlags(item->flags() | Qt::ItemIsEditable);
-            item->setText(0,QString::fromStdString(it->first));
-            item->setText(1,QString::fromStdString(it->second));
+            item->setText(0,QString::fromStdString(parameters.first));
+            item->setText(1,QString::fromStdString(parameters.second));
 
         }
     }
