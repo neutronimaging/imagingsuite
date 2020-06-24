@@ -72,7 +72,7 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
         float val=1.0f+i*0.1f;
         inset.Draw(orig,x,y,val);
     }
-    kipl::io::WriteTIFF32(orig,"csa_test_orig.tif");
+    kipl::io::WriteTIFF(orig,"csa_test_orig.tif",kipl::base::Float32);
 
     kipl::math::Statistics stats[6];
     kipl::base::coords3Df centers[6];
@@ -164,7 +164,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
     kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,3.0f);
 
-    kipl::io::WriteTIFF32(img,"slantededge.tif");
+    kipl::io::WriteTIFF(img,"slantededge.tif",kipl::base::Float32);
 
     ImagingQAAlgorithms::ProfileExtractor p;
 

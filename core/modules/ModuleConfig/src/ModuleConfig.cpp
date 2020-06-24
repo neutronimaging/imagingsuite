@@ -140,3 +140,27 @@ void ModuleConfig::setAppPath(const std::string &path)
 {
     m_NameManager.setAppPath(path);
 }
+
+std::string ModuleConfig::modulePath()
+{
+    return m_NameManager.generateLibName(m_sModule);
+}
+
+std::string ModuleConfig::moduleSummary()
+{
+   std::ostringstream summary;
+
+   summary << "path:"          << m_sSharedObject
+           <<", module:"       << m_sModule
+           <<", "              << (m_bActive ?    "active" : "disabled")
+           <<", threading is " << (m_bThreading ? "active" : "disabled");
+
+   return summary.str();
+}
+
+std::ostream &operator<<(std::ostream &s, ModuleConfig &mc)
+{
+    s << mc.moduleSummary();
+
+    return s;
+}

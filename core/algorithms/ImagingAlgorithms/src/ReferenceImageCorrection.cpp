@@ -171,7 +171,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         if (bSaveBG){
                 std::string fname=pathBG+"/"+flatname_BG;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
-                kipl::io::WriteTIFF32(m_OB_BB_Interpolated,fname.c_str()); // seem correct
+                kipl::io::WriteTIFF(m_OB_BB_Interpolated,fname,kipl::base::Float32); // seem correct
         }
 
         PrepareReferencesBB();
@@ -250,9 +250,7 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 {
     if (m_bComputeLogarithm)
     {
-//        kipl::io::WriteTIFF32(img,"prelogimg.tif");
         ComputeLogNorm(img,dose);
-//        kipl::io::WriteTIFF32(img,"img.tif");
     }
     else
     {
@@ -304,7 +302,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 kipl::strings::filenames::MakeFileName(filemask_BG,static_cast<int>(i),filename,ext,'#','0');
                 std::string fname=pathBG+"/"+filename;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
-                kipl::io::WriteTIFF32(m_BB_sample_Interpolated,fname.c_str()); // seem correct
+                kipl::io::WriteTIFF(m_BB_sample_Interpolated,fname,kipl::base::Float32); // seem correct
 
             }
 
@@ -403,7 +401,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
   // here: fillPeaks, as at this point the BBs are black in the binary mask
 
-//    kipl::io::WriteTIFF32(maskOtsu,"mask_Otsu.tif");
+//    kipl::io::WriteTIFF(maskOtsu,"mask_Otsu.tif",kipl::base::Float32);
     kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
 
     try {
@@ -415,7 +413,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
     }
 
-//    kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled_before.tif");
+//    kipl::io::WriteTIFF(maskOtsuFilled, "maskOtsuFilled_before.tif",kipl::base::Float32);
 
      float bg = 1.0f;
      size_t num_obj;
@@ -471,7 +469,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          }
      }
 
-//          kipl::io::WriteTIFF32(maskOtsuFilled, "maskOtsuFilled.tif");
+//          kipl::io::WriteTIFF(maskOtsuFilled, "maskOtsuFilled.tif",kipl::base::Float32);
 
 
      if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
@@ -662,7 +660,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 
 
-//          kipl::io::WriteTIFF32(mask,"mask.tif");
+//          kipl::io::WriteTIFF(mask,"mask.tif",kipl::base::Float32);
     }
 
 }
@@ -1728,7 +1726,7 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
 
-//    kipl::io::WriteTIFF32(mask,"mask.tif");
+//    kipl::io::WriteTIFF(mask,"mask.tif",kipl::base::Float32);
 
     kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
@@ -1758,7 +1756,7 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TI
 
     try{
         SegmentBlackBody(norm, normdc, mask, values);
-//         kipl::io::WriteTIFF32(mask, "maskSpline.tif");
+//         kipl::io::WriteTIFF(mask, "maskSpline.tif",kipl::base::Float32);
     }
     catch (...) {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
@@ -2303,8 +2301,8 @@ void ReferenceImageCorrection::PrepareReferences()
     float *pFlat=m_OpenBeam.GetDataPtr();
     float *pDark=m_DarkCurrent.GetDataPtr();
 
-//            kipl::io::WriteTIFF32(m_OpenBeam,"prepare_ob.tif");
-//            kipl::io::WriteTIFF32(m_DarkCurrent,"prepare_dc.tif");
+//            kipl::io::WriteTIFF(m_OpenBeam,"prepare_ob.tif",kipl::base::Float32);
+//            kipl::io::WriteTIFF(m_DarkCurrent,"prepare_dc.tif",kipl::base::Float32);
 
 
     if (!m_bHaveBlackBody) {
@@ -2348,7 +2346,7 @@ void ReferenceImageCorrection::PrepareReferences()
             }
             }
 
-//    kipl::io::WriteTIFF32(m_OpenBeam,"log_ob.tif");
+//    kipl::io::WriteTIFF(m_OpenBeam,"log_ob.tif",kipl::base::Float32);
 
 }
 

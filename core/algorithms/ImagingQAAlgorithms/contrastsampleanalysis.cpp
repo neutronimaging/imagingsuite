@@ -60,7 +60,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,2> img)
    }
    makeHistogram();
    if (saveIntermediateImages)
-       kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+       kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
 }
 
 void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
@@ -98,7 +98,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
 
     qDebug() << "save";
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+        kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
 
    qDebug() << "done";
 }
@@ -173,7 +173,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
         if (saveIntermediateImages)
-            kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
+            kipl::io::WriteTIFF(chmCrop,msg.str(),kipl::base::Float32);
 
 
         float minVal=0.0f;
@@ -232,18 +232,18 @@ void ContrastSampleAnalysis::findCenters()
     qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(peaks,"csa_hmax.tif");
+        kipl::io::WriteTIFF(peaks,"csa_hmax.tif",kipl::base::Float32);
 
     insetpeaks=chm-peaks;
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks.tif");
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks.tif",kipl::base::Float32);
 
     for (size_t i=0; i<insetpeaks.Size(); ++i)
         insetpeaks[i]=0.5f*threshold<insetpeaks[i];
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks_bi.tif");
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks_bi.tif",kipl::base::Float32);
     timer.reset();
     timer.Tic();
 
@@ -390,7 +390,7 @@ void ContrastSampleAnalysis::circleTransform(float pixelSize)
     qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(chm,"csa_cht.tif");
+        kipl::io::WriteTIFF(chm,"csa_cht.tif",kipl::base::Float32);
 }
 
 }

@@ -75,11 +75,11 @@ enum eRotationDirection {
 
 /// \brief Unsigned integer data type selector
 enum eDataType {
-    UInt4,      ///< 4bits unsigned integer
-    UInt8,      ///< 8bits unsigned integer
-    UInt12,     ///< 12bits unsigned integer
-    UInt16,     ///< 16bits unsigned integer
-    Float32     ///< 32bit float
+    UInt4   = 4,      ///< 4bits unsigned integer
+    UInt8   = 8,      ///< 8bits unsigned integer
+    UInt12  = 12,     ///< 12bits unsigned integer
+    UInt16  = 16,     ///< 16bits unsigned integer
+    Float32 = 32      ///< 32bit float
 };
 
 /// \brief Endian selector

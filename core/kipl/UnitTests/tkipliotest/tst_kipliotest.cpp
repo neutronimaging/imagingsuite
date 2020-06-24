@@ -188,7 +188,7 @@ void kiplIOTest::testTIFFMultiFrame()
     kipl::base::TImage<float,2> img, img_crop;
 
     kipl::base::TImage<float,3> img3ref(dimsv);
-    for (int i = 0 ; i<nframes; ++i) {
+    for (size_t i = 0 ; i<nframes; ++i) {
         kipl::io::ReadTIFF(img,fname,{},i);
         std::copy_n(img.GetDataPtr(),img.Size(),img3ref.GetLinePtr(0,i));
 
@@ -240,7 +240,7 @@ void kiplIOTest::testTIFFMultiFrame()
     kipl::base::TImage<float,3> img3ref2=img3ref;
     img3ref2+=1.0f;
 
-    kipl::io::AppendTIFF(img3ref2,"test.tif");
+    kipl::io::WriteTIFF(img3ref2,"test.tif",kipl::base::UInt16,kipl::base::ImagePlaneXY,true);
 
     img3.FreeImage();
     kipl::io::ReadTIFF(img3,"test.tif");
@@ -276,12 +276,12 @@ void kiplIOTest::testTIFF32()
     float scale=1.0f/static_cast<float>(imgref2d.Size());
     for (size_t i=0; i<imgref2d.Size(); ++i)
         imgref2d[i]=static_cast<float>(i)*scale;
-    kipl::io::WriteTIFF32(imgref2d,"tiff32_2D.tif");
+    kipl::io::WriteTIFF(imgref2d,"tiff32_2D.tif",kipl::base::Float32);
 
     scale=1.0f/static_cast<float>(imgref3d.Size());
     for (size_t i=0; i<imgref3d.Size(); ++i)
         imgref3d[i]=static_cast<float>(i)*scale;
-    kipl::io::WriteTIFF32(imgref3d,"tiff32_3D.tif");
+    kipl::io::WriteTIFF(imgref3d,"tiff32_3D.tif",kipl::base::Float32);
 
     kipl::base::TImage<float,2> img2d(dims);
     kipl::io::ReadTIFF(img2d,"tiff32_2D.tif");
@@ -384,6 +384,9 @@ void kiplIOTest::testIOStack_enums()
    string2enum("TIFFfloat",ft);
     QCOMPARE(ft, kipl::io::TIFFfloat);
 
+    string2enum("TIFF8bitsMultiFrame",ft);
+    QCOMPARE(ft, kipl::io::TIFF8bitsMultiFrame);
+
     string2enum("TIFF16bitsMultiFrame",ft);
     QCOMPARE(ft, kipl::io::TIFF16bitsMultiFrame);
 
@@ -407,6 +410,7 @@ void kiplIOTest::testIOStack_enums()
     QCOMPARE(enum2string(kipl::io::TIFF8bits),            std::string("TIFF8bits"));
     QCOMPARE(enum2string(kipl::io::TIFF16bits),           std::string("TIFF16bits"));
     QCOMPARE(enum2string(kipl::io::TIFFfloat),            std::string("TIFFfloat"));
+    QCOMPARE(enum2string(kipl::io::TIFF8bitsMultiFrame),  std::string("TIFF8bitsMultiFrame"));
     QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame), std::string("TIFF16bitsMultiFrame"));
     QCOMPARE(enum2string(kipl::io::TIFFfloatMultiFrame),  std::string("TIFFfloatMultiFrame"));
 

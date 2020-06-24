@@ -115,6 +115,7 @@ switch (ft) {
 case kipl::io::TIFF8bits    :           s="TIFF8bits";    break;
 case kipl::io::TIFF16bits   :           s="TIFF16bits";   break;
 case kipl::io::TIFFfloat    :           s="TIFFfloat";    break;
+case kipl::io::TIFF8bitsMultiFrame    : s="TIFF8bitsMultiFrame";    break;
 case kipl::io::TIFF16bitsMultiFrame   : s="TIFF16bitsMultiFrame";   break;
 case kipl::io::TIFFfloatMultiFrame    : s="TIFFfloatMultiFrame";    break;
 case kipl::io::NeXusfloat   :           s="NeXusfloat";   break;
@@ -133,6 +134,7 @@ void string2enum(const std::string &str, kipl::io::eFileType &ft)
      if (str=="TIFF8bits")              ft=kipl::io::TIFF8bits;
 else if (str=="TIFF16bits")             ft=kipl::io::TIFF16bits;
 else if (str=="TIFFfloat")              ft=kipl::io::TIFFfloat;
+else if (str=="TIFF8bitsMultiFrame")    ft=kipl::io::TIFF8bitsMultiFrame;
 else if (str=="TIFF16bitsMultiFrame")   ft=kipl::io::TIFF16bitsMultiFrame;
 else if (str=="TIFFfloatMultiFrame")    ft=kipl::io::TIFFfloatMultiFrame;
 else if (str=="NeXusfloat")             ft=kipl::io::NeXusfloat;

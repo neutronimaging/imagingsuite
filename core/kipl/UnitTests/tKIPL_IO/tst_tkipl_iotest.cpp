@@ -17,6 +17,7 @@ private Q_SLOTS:
     void testBasicReadWriteTIFF();
     void testMultiFrameReadTIFF();
     void testMultiFrameWriteTIFF();
+    void testDataTypesWriteTIFF();
 
 };
 
@@ -67,6 +68,45 @@ void tKIPL_IOTest::testMultiFrameReadTIFF()
 
 void tKIPL_IOTest::testMultiFrameWriteTIFF()
 {
+
+}
+
+void tKIPL_IOTest::testDataTypesWriteTIFF()
+{
+    std::vector<size_t> dims={100,50};
+
+    kipl::base::TImage<float,2> fimg(dims);
+    fimg.info.sArtist="UnitTest";
+    fimg.info.sCopyright="none";
+    fimg.info.sDescription="slope = 1.0E0 \noffset = 0.0E0";
+    fimg.info.SetDPCMX(123.0f);
+    fimg.info.SetDPCMY(321.0f);
+
+    for (size_t i=0; i<fimg.Size(); i++)
+        fimg[i]=static_cast<float>(i)*0.5;
+
+    kipl::io::WriteTIFF(fimg,"basicRW8.tif",kipl::base::UInt8);
+    kipl::io::WriteTIFF(fimg,"basicRW16.tif",kipl::base::UInt16);
+    kipl::io::WriteTIFF(fimg,"basicRWfloat.tif",kipl::base::Float32);
+
+    kipl::base::TImage<float,2> res;
+    kipl::io::ReadTIFF(res,"basicRWfloat.tif");
+    QCOMPARE(res.Size(0),fimg.Size(0));
+    QCOMPARE(res.Size(1),fimg.Size(1));
+    for (size_t i = 0 ; i<fimg.Size(); ++i)
+        QCOMPARE(res[i],fimg[i]);
+
+    kipl::io::ReadTIFF(res,"basicRW16.tif");
+    QCOMPARE(res.Size(0),fimg.Size(0));
+    QCOMPARE(res.Size(1),fimg.Size(1));
+    for (size_t i = 0 ; i<fimg.Size(); ++i)
+        QCOMPARE(res[i],floor(fimg[i]));
+
+    kipl::io::ReadTIFF(res,"basicRW8.tif");
+    QCOMPARE(res.Size(0),fimg.Size(0));
+    QCOMPARE(res.Size(1),fimg.Size(1));
+    for (size_t i = 0 ; i<fimg.Size(); ++i)
+        QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
 
 }
 

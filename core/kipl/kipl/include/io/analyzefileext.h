@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef ANALYZEFILEEXT_H
-#define ANALYZEFILEEXT_H
+#ifndef IOANALYZEFILEEXT_H
+#define IOANALYZEFILEEXT_H
 
 #include "../kipl_global.h"
 
@@ -33,6 +33,7 @@ enum eFileType {
     TIFF8bits,
     TIFF16bits,
     TIFFfloat,
+    TIFF8bitsMultiFrame,
     TIFF16bitsMultiFrame,
     TIFFfloatMultiFrame,
     NeXusfloat,
