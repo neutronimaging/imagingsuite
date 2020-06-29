@@ -342,11 +342,26 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
 
     kipl::base::TImage<float,3> img;
     std::vector<size_t> dims;
-    std::vector<size_t> imgdims(3,1UL);
 
     if (fname.find('#')==std::string::npos)
     { // Reading from single file
-        img.resize(imgdims);
+        kipl::base::TImage<float,2> tmpimg;
+
+        for (size_t i=first; i<=last; i+=step)
+        {
+            if (UpdateStatus(static_cast<float>(i-first)/static_cast<float>(last-first),"Reading image"))
+                break;
+
+            tmpimg=Read(fname,flip,rotate,binning,nCrop,i);
+
+            if (i==first) {
+                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),(last-first+1)/step});
+
+                img.resize(dims);
+            }
+            float *pImg=tmpimg.GetDataPtr();
+            std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
+        }
     }
     else
     {
@@ -363,7 +378,7 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
             tmpimg=Read(filename,flip,rotate,binning,nCrop);
 
             if (i==first) {
-                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),last-first+1});
+                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),(last-first+1)/step});
 
                 img.resize(dims);
             }
