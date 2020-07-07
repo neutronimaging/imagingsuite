@@ -25,8 +25,11 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     m_RubberBandStatus(RubberBandHide),
     m_MouseMode(ViewerROI),
     m_PressedButton(Qt::NoButton),
+    m_mouseMoved(false),
     m_infoDialog(this),
-    m_CurrentScale(1.0)
+    m_CurrentScale(1.0),
+    saveImageAct(nullptr),
+    copyImageAct(nullptr)
 {
     QPalette palette;
     palette.setColor(QPalette::Background,Qt::black);
@@ -46,6 +49,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
 //        this, SLOT(ShowContextMenu(const QPoint&)));
 
     connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
+    setupActions();
 }
 
 ImageViewerWidget::~ImageViewerWidget()
@@ -106,6 +110,39 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
 
 void ImageViewerWidget::on_levelsChanged(float lo, float hi)
 {
+}
+
+void ImageViewerWidget::saveImage()
+{
+
+}
+
+void ImageViewerWidget::copyImage()
+{
+
+}
+
+//void ImageViewerWidget::contextMenuEvent(QContextMenuEvent *event)
+//{
+//    QMenu menu(this);
+//    menu.addAction(saveImageAct);
+//    menu.addAction(copyImageAct);
+//    menu.exec(event->globalPos());
+//}
+
+void ImageViewerWidget::setupActions()
+{
+    copyImageAct = new QAction(tr("&Copy image"), this);
+    copyImageAct->setShortcuts(QKeySequence::Copy);
+    copyImageAct->setStatusTip(tr("Copy the current selection's contents to the "
+                             "clipboard"));
+    connect(copyImageAct, &QAction::triggered, this, &ImageViewerWidget::copyImage);
+
+    saveImageAct = new QAction(tr("&Save image"), this);
+    saveImageAct->setShortcuts(QKeySequence::Cut);
+    saveImageAct->setStatusTip(tr("Cut the current selection's contents to the "
+                            "clipboard"));
+    connect(saveImageAct, &QAction::triggered, this, &ImageViewerWidget::saveImage);
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
@@ -379,7 +416,9 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
 
     if (event->button() == Qt::RightButton )
+    {
         m_PressedButton = Qt::NoButton;
+    }
 
 
     QWidget::mouseReleaseEvent(event);
