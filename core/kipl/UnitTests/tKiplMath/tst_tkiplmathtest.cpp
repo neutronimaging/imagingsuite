@@ -202,11 +202,11 @@ void TKiplMathTest::testNonLinFit_enums()
 }
 void TKiplMathTest::testTNTNonLinFit_GaussianFunction()
 {
-    Nonlinear::SumOfGaussians sog(1);
+    Nonlinear::TNTfit::SumOfGaussians sog(1);
     QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
     QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
 
-    bool lv[]={false,true,true};
+    std::vector<bool> lv={false,true,true};
     sog.setLock(lv);
     for (int i=0; i<sog.getNpars(); ++i)
         QCOMPARE(sog.isFree(i),lv[i]);
@@ -219,7 +219,7 @@ void TKiplMathTest::testTNTNonLinFit_GaussianFunction()
     QCOMPARE(sog(0.0),(double)1.0);
     QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
 
-    Nonlinear::SumOfGaussians sog2(2);
+    Nonlinear::TNTfit::SumOfGaussians sog2(2);
     sog2[0]=1;
     sog2[1]=0;
     sog2[2]=1;
@@ -249,7 +249,7 @@ void TKiplMathTest::testTNTNonLinFit_fitter()
     Array1D<double> y(N);
     Array1D<double> sig(N);
 
-    Nonlinear::SumOfGaussians sog0(1),sog(1);
+    Nonlinear::TNTfit::SumOfGaussians sog0(1),sog(1);
     sog0[0]=2; //A
     sog0[1]=0; //m
     sog0[2]=1; //s
@@ -266,7 +266,7 @@ void TKiplMathTest::testTNTNonLinFit_fitter()
         sig[i]=1.0;
     }
 
-    Nonlinear::LevenbergMarquardt mrq(1e-15);
+    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
 
     mrq.fit(x,y,sig,sog);
 
@@ -278,11 +278,11 @@ void TKiplMathTest::testTNTNonLinFit_fitter()
 
 void TKiplMathTest::testARMANonLinFit_GaussianFunction()
 {
-    Nonlinear::armafit::SumOfGaussians sog(1);
+    Nonlinear::SumOfGaussians sog(1);
     QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
     QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
 
-    bool lv[]={false,true,true};
+    std::vector<bool> lv={false,true,true};
     sog.setLock(lv);
     for (int i=0; i<sog.getNpars(); ++i)
         QCOMPARE(sog.isFree(i),lv[i]);
@@ -295,15 +295,14 @@ void TKiplMathTest::testARMANonLinFit_GaussianFunction()
     QCOMPARE(sog(0.0),(double)1.0);
     QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
 
-    Nonlinear::armafit::SumOfGaussians sog2(2);
+    Nonlinear::SumOfGaussians sog2(2);
     sog2[0]=1;
     sog2[1]=0;
     sog2[2]=1;
     sog2[3]=2;
     sog2[4]=0.5;
     sog2[5]=0.5;
-//    qDebug() << (double)sog2(0);
-//    qDebug() << (double)sog2(1);
+
     QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
     QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
 
@@ -325,7 +324,7 @@ void TKiplMathTest::testARMANonLinFit_fitter()
     arma::vec y(N);
     arma::vec sig(N);
 
-    Nonlinear::armafit::SumOfGaussians sog0(1),sog(1);
+    Nonlinear::SumOfGaussians sog0(1),sog(1);
     sog0[0]=2; //A
     sog0[1]=0; //m
     sog0[2]=1; //s
@@ -342,7 +341,7 @@ void TKiplMathTest::testARMANonLinFit_fitter()
         sig[i]=1.0;
     }
 
-    Nonlinear::armafit::LevenbergMarquardt mrq(1e-15);
+    Nonlinear::LevenbergMarquardt mrq(1e-15);
 
     mrq.fit(x,y,sig,sog);
 
