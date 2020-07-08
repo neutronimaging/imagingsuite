@@ -777,6 +777,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, const
         res=ReadTIFF(img,fname,crop,i);
         std::copy_n(img.GetDataPtr(),img.Size(),src.GetLinePtr(0,i));
     }
+    src.info.nBitsPerSample = img.info.nBitsPerSample;
 
     return res;
 }

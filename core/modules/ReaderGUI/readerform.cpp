@@ -8,6 +8,7 @@
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
 
 #include <strings/filenames.h>
 #include <io/DirAnalyzer.h>
@@ -49,31 +50,24 @@ void ReaderForm::on_button_browse_clicked()
         std::string pdir=projdir.toStdString();
 
         auto dims = reader.GetImageSize(pdir,1.0f);
-        switch (dims.size())
+        qDebug() << "Dimensions in file" << dims.size();
+        if (dims[2]==1)
         {
-        case 2UL:
-            {
-                kipl::io::DirAnalyzer da;
-                kipl::io::FileItem fi=da.GetFileMask(pdir);
+            kipl::io::DirAnalyzer da;
+            kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-                ui->edit_fileMask->setText(QString::fromStdString(fi.m_sMask));
-                da.AnalyzeMatchingNames(fi.m_sMask,count,first,last);
-                msg<<"Found "<<count<<" files for mask "<<fi.m_sMask<<" in the interval "<<first<<" to "<<last;
-            }
-            break;
-        case 3UL:
-            {
-                first = 0;
-                last  = static_cast<int>(dims[2]-1);
-                count = static_cast<int>(dims[2]);
+            ui->edit_fileMask->setText(QString::fromStdString(fi.m_sMask));
+            da.AnalyzeMatchingNames(fi.m_sMask,count,first,last);
+            msg<<"Found "<<count<<" files for mask "<<fi.m_sMask<<" in the interval "<<first<<" to "<<last;
+        }
+        else
+        {
+            first = 0;
+            last  = static_cast<int>(dims[2]-1);
+            count = static_cast<int>(dims[2]);
 
-                ui->edit_fileMask->setText(projdir);
-                msg<<"Found "<<count<<" slices in file "<<pdir<<" in the interval "<<first<<" to "<<last;
-            }
-            break;
-        default :
-            QMessageBox::warning(this,"Image dimensions","Unsupported image dimensions");
-            return;
+            ui->edit_fileMask->setText(projdir);
+            msg<<"Found "<<count<<" slices in file "<<pdir<<" in the interval "<<first<<" to "<<last;
         }
 
 

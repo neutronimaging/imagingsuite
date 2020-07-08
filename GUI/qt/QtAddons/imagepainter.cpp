@@ -505,6 +505,16 @@ QRect ImagePainter::getCurrentZoomROI()
     return m_currentROI;
 }
 
+QSize ImagePainter::zoomedImageSize()
+{
+    return QSize(m_ZoomedImage.Size(0),m_ZoomedImage.Size(1));
+}
+
+QSize ImagePainter::imageSize()
+{
+    return QSize(m_OriginalImage.Size(0),m_OriginalImage.Size(1));
+}
+
 int ImagePainter::panImage(int dx, int dy)
 {
 

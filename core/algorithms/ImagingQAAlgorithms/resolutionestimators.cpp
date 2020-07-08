@@ -198,11 +198,11 @@ void ResolutionEstimator::analyzeLineSpread()
 {
     std::ostringstream msg;
 
-    TNT::Array1D<double> dataX(profileSize);
-    TNT::Array1D<double> dataY(profileSize);
-    TNT::Array1D<double> dataSig(profileSize);
+    arma::vec dataX(profileSize);
+    arma::vec dataY(profileSize);
+    arma::vec dataSig(profileSize);
 
-    for (int i=0; i<dataX.dim1(); ++i) {
+    for (int i=0; i<dataX.n_elem; ++i) {
         dataX[i]=mXaxis[i];
         dataY[i]=mDiffProfile[i];
         dataSig[i]=1.0;
@@ -214,7 +214,7 @@ void ResolutionEstimator::analyzeLineSpread()
     int maxpos=0;
     int minpos=0;
     int idx=0;
-    for (int i=0; i<dataY.dim1() ; ++i) {
+    for (int i=0; i<dataY.n_elem ; ++i) {
         if (maxval<dataY[i]) {
             maxval=dataY[i];
             maxpos=idx;
@@ -226,13 +226,13 @@ void ResolutionEstimator::analyzeLineSpread()
         idx++;
     }
 
-    if ((dataY.dim1()<=maxpos) || (dataY.dim1()<=minpos))
+    if ((dataY.n_elem<=maxpos) || (dataY.n_elem<=minpos))
         throw kipl::base::KiplException("Min/max search out of bounds",__FILE__,__LINE__);
 
     double halfmax=(maxval-minval)/2+minval;
     int HWHM=maxpos;
 
-    for (; HWHM<dataY.dim1(); ++HWHM) {
+    for (; HWHM<dataY.n_elem; ++HWHM) {
         if (dataY[HWHM]<halfmax)
             break;
     }

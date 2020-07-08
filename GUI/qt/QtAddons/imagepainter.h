@@ -65,6 +65,8 @@ public:
     int zoomOut();
     int panImage(int dx, int dy);
     QRect getCurrentZoomROI();
+    QSize zoomedImageSize();
+    QSize imageSize();
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
 protected:
     void preparePixbuf();
