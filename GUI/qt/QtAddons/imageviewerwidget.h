@@ -90,11 +90,10 @@ public slots:
     void on_levelsChanged(float lo, float hi);
 
 private slots:
-    void saveImage();
+    void saveCurrentView();
     void copyImage();
 
 protected:
-//    void contextMenuEvent(QContextMenuEvent *event) override;
     void setupActions();
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent * event);
@@ -108,6 +107,7 @@ protected:
 protected:
     void UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w);
     void UpdateLinkedViewers();
+    void saveImage(const QString &fname);
 
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
