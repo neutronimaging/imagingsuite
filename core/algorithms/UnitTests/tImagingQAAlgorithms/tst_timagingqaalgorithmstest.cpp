@@ -92,7 +92,7 @@ void TImagingQAAlgorithmsTest::testResEstAdmin()
     double s=1.0;
     re.setPixelSize(s);
     QCOMPARE(re.pixelSize(),s);
-    const int N=21;
+    const size_t N=21;
 
     double ddata[N]={0.00000000e+00,   0.00000000e+00,   0.00000000e+00,
                    0.00000000e+00,   0.00000000e+00,   1.93045414e-03,
@@ -105,29 +105,32 @@ void TImagingQAAlgorithmsTest::testResEstAdmin()
 \
     re.setProfile(ddata, N);
     QCOMPARE(re.size(),N);
-    double rdata[N];
-    int NN=0;
-    re.profile(rdata,NN);
-    QCOMPARE(NN,N);
 
-    for (int i=0; i<N; ++i)
+    auto rdata = re.profile();
+    QCOMPARE(rdata.size(),N);
+
+    for (size_t i=0; i<N; ++i)
         QCOMPARE(rdata[i],ddata[i]);
 
     re.clear();
     QCOMPARE(re.size(),0);
 
     std::copy_n(ddata,N,fdata);
-    std::fill_n(rdata,N,0.0);
+    std::fill_n(rdata.begin(),N,0.0);
 
     re.setProfile(fdata, N);
     QCOMPARE(re.size(),N);
-    NN=0;
-    re.profile(rdata,NN);
 
-    QCOMPARE(NN,N);
 
-    for (int i=0; i<N; ++i)
-        QCOMPARE(rdata[i],fdata[i]);
+    auto rdata2=re.profile();
+
+    QCOMPARE(rdata2.size(),N);
+
+    for (size_t i=0; i<N; ++i)
+    {
+//        qDebug() << i << rdata2[i] << fdata[i];
+        QCOMPARE(rdata2[i],fdata[i]);
+    }
 //    void   setProfile(double *p, int N, double d=1.0);
 //    void   setProfile(std::vector<double> &p, double d=1.0);
 //    void   setProfile(std::vector<float> &p, double d=1.0);
@@ -171,7 +174,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
     auto profile=p.getProfile(img);
 
     kipl::base::TImage<float,2> img2;
-    kipl::io::ReadTIFF(img2,"../imagingsuite/core/algorithms/UnitTests/data/raw_edge.tif");
+    kipl::io::ReadTIFF(img2,"../TestData/2D/tiff/raw_edge.tif");
 
 
     profile=p.getProfile(img2);
