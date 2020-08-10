@@ -776,6 +776,8 @@ void string2enum(const std::string str, ReconConfig::cProjections::eScanType &st
 		st=ReconConfig::cProjections::SequentialScan;
 	else if (str=="goldensection")
 		st=ReconConfig::cProjections::GoldenSectionScan;
+    else if (str=="invgoldensection")
+        st=ReconConfig::cProjections::InvGoldenSectionScan;
 	else
 		throw ReconException("Undefined enum in string2enum (scantype)", __FILE__,__LINE__);
 }
@@ -799,13 +801,9 @@ void string2enum(const std::string str, ReconConfig::cProjections::eImageType &i
 
 std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eScanType st)
 {
-	switch (st) {
-		case ReconConfig::cProjections::SequentialScan    : s<<"sequential"; break;
-		case ReconConfig::cProjections::GoldenSectionScan : s<<"goldensection"; break;
-		default : throw ReconException("Unknown scan type encountered in operator<<", __FILE__,__LINE__);
-	};
+    s<<st;
 
-	return s;
+    return s;
 }
 
 
@@ -959,6 +957,19 @@ std::string enum2string(ReconConfig::cProjections::eBeamGeometry &bg)
 std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eBeamGeometry bg)
 {
     s<<enum2string(bg);
+
+    return s;
+}
+
+std::string enum2string(const ReconConfig::cProjections::eScanType &st)
+{
+    std::string s;
+    switch (st) {
+        case ReconConfig::cProjections::SequentialScan    :    s="sequential"; break;
+        case ReconConfig::cProjections::GoldenSectionScan :    s="goldensection"; break;
+        case ReconConfig::cProjections::InvGoldenSectionScan : s="invgoldensection"; break;
+        default : throw ReconException("Unknown scan type encountered in operator<<", __FILE__,__LINE__);
+    };
 
     return s;
 }

@@ -18,16 +18,20 @@ class FrameWorkTest : public QObject
 
 public:
     FrameWorkTest();
-    std::vector<float> goldenAngles(int n, int start, float arc);
+    std::vector<float> goldenAngles1(int n, int start, float arc);
+    std::vector<float> goldenAngles2(int n, int start, float arc);
+
 private Q_SLOTS:
     void testConfigConstructor();
     void testConfigCopyConstructor();
     void testConfigAssignment();
     void testProjectionReader();
+    void testScanTypeEnum();
     void testBuildFileList_GeneratedSequence();
     void testBuildFileList_GeneratedGolden();
+    void testBuildFileList_GeneratedInvGolden();
     void testBuildFileList();
-    void testBuildFileList2();
+
 
 private:
     kipl::base::TImage<unsigned short,2> m_img;
@@ -50,10 +54,21 @@ FrameWorkTest::FrameWorkTest()
     kipl::io::WriteTIFF(m_img,"proj_0002.tif");
 }
 
-std::vector<float> FrameWorkTest::goldenAngles(int n, int start, float arc)
+std::vector<float> FrameWorkTest::goldenAngles1(int n, int start, float arc)
 {
    std::vector<float> gv;
    float phi=0.5f*(1.0f+sqrt(5.0f));
+
+   for (int i=0; i<n; ++i)
+       gv.push_back(static_cast<float>(fmod((i+start)*phi*arc,180)));
+
+   return gv;
+}
+
+std::vector<float> FrameWorkTest::goldenAngles2(int n, int start, float arc)
+{
+   std::vector<float> gv;
+   float phi=0.5f*(1.0f+sqrt(5.0f))-1;
 
    for (int i=0; i<n; ++i)
        gv.push_back(static_cast<float>(fmod((i+start)*phi*arc,180)));
@@ -927,6 +942,24 @@ void FrameWorkTest::testProjectionReader()
     }
 }
 
+void FrameWorkTest::testScanTypeEnum()
+{
+    std::map<std::string,ReconConfig::cProjections::eScanType> testData;
+    testData["sequential"]=ReconConfig::cProjections::SequentialScan;
+    testData["goldensection"]=ReconConfig::cProjections::GoldenSectionScan;
+    testData["invgoldensection"]=ReconConfig::cProjections::InvGoldenSectionScan;
+
+    ReconConfig::cProjections::eScanType st;
+
+    for (auto item : testData)
+    {
+        QCOMPARE(enum2string(item.second),item.first);
+
+        string2enum(item.first,st);
+        QCOMPARE(st,item.second);
+    }
+}
+
 void FrameWorkTest::testBuildFileList_GeneratedSequence()
 {
     std::ostringstream msg;
@@ -997,7 +1030,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     float sum=0.0f;
-    auto gv2=goldenAngles(N,0,180.0f);
+    auto gv2=goldenAngles1(N,0,180.0f);
     std::sort(gv2.begin(),gv2.end());
     auto git=gv2.begin();
 
@@ -1023,7 +1056,70 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
-    gv2=goldenAngles(N,1,180.0f);
+    gv2=goldenAngles1(N,1,180.0f);
+    std::sort(gv2.begin(),gv2.end());
+    git=gv2.begin();
+
+    for (auto &it: ProjectionList) {
+ //       std::cout<<(it.first)<<", "<<it.second.name<<", "<<it.second.angle<<", "<<it.second.weight<<std::endl;
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
+void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
+{
+    std::ostringstream msg;
+    size_t N=10;
+    size_t i=0;
+
+    ReconConfig config("");
+// Test even number
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=0;
+    config.ProjectionInfo.nLastIndex=18;
+    config.ProjectionInfo.fScanArc[0]=0.0f;
+    config.ProjectionInfo.fScanArc[1]=180.0f;
+    config.ProjectionInfo.scantype=config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx=0;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList);
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+    float sum=0.0f;
+    auto gv2=goldenAngles1(N,0,180.0f);
+    std::sort(gv2.begin(),gv2.end());
+    auto git=gv2.begin();
+
+    for (auto &it: ProjectionList) {
+ //       std::cout<<(it.first)<<", "<<it.second.name<<", "<<it.second.angle<<", "<<it.second.weight<<std::endl;
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+
+    // Test odd number
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=19;
+
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    BuildFileList(&config,&ProjectionList);
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+    sum=0.0f;
+    gv2=goldenAngles1(N,1,180.0f);
     std::sort(gv2.begin(),gv2.end());
     git=gv2.begin();
 
@@ -1051,9 +1147,6 @@ void FrameWorkTest::testBuildFileList()
     }
 
     listfile<<18*i<<", file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
-//    ++i;listfile<<18*i<<"\tfile_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
-//    ++i;listfile<<18*i<<"\t  file_"<<setfill('0') << setw(5) << i <<".fits"<<std::endl;
-    //++i;listfile<<"file_"<<setfill('0') << setw(5) << i <<".fits,"<<18*i<<std::endl;
 
     ReconConfig config("");
 
@@ -1083,21 +1176,6 @@ void FrameWorkTest::testBuildFileList()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 }
 
-void FrameWorkTest::testBuildFileList2()
-{
-//    size_t N=50;
-//    ReconConfig config;
-
-//    config.ProjectionInfo.sFileMask="ct2.csv";
-//    config.ProjectionInfo.nFirstIndex=1;
-//    config.ProjectionInfo.nLastIndex=N;
-
-//    std::map<float,ProjectionInfo> ProjectionList;
-//    BuildFileList(&config,&ProjectionList,'\r');
-
-//    QVERIFY(ProjectionList.size()==N);
-
-}
 QTEST_APPLESS_MAIN(FrameWorkTest)
 
 #include "tst_frameworktest.moc"
