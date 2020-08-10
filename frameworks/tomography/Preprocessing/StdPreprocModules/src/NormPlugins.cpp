@@ -8,6 +8,7 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 
 #include <ReconException.h>
 #include <ProjectionReader.h>
@@ -16,9 +17,11 @@
 #include <ParameterHandling.h>
 
 #include "../include/NormPlugins.h"
+#include <QDebug>
 
 NormBase::NormBase(std::string name) :
     PreprocModuleBase(name),
+    m_Config(""),
     nOBCount(0),
     nOBFirstIndex(1),
     nDCCount(0),
@@ -30,21 +33,38 @@ NormBase::NormBase(std::string name) :
     fBlackDose(1.0f),
     bUseNormROI(true),
     bUseLUT(false),
-    bUseWeightedMean(false)
+    bUseWeightedMean(false),
+    nNormRegion(4,0UL),
+    nOriginalNormRegion(4,0UL)
 {
-	memset(nNormRegion, 0, sizeof(size_t)*4);
-	memset(nOriginalNormRegion, 0, sizeof(size_t)*4);
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
+
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner","C. Carminati"}),
+                                       "MuhRec software",
+                                       "Zenodo",
+                                       2019,
+                                       1,
+                                       1,
+                                       "no pages",
+                                       "10.5281/zenodo.1117850"));
 }
 
 NormBase::~NormBase(void) {}
 
-bool NormBase::SetROI(size_t *roi)
+bool NormBase::SetROI(const std::vector<size_t> &roi)
 {
 	std::stringstream msg;
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	LoadReferenceImages(roi);
-	memcpy(nNormRegion,nOriginalNormRegion,4*sizeof(size_t));
+    nNormRegion = nOriginalNormRegion;
 
 	size_t roix=roi[2]-roi[0];
 	size_t roiy=roi[3]-roi[1];
@@ -67,7 +87,6 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
 	nDCFirstIndex = config.ProjectionInfo.nDCFirstIndex;
 
 	bUseNormROI = kipl::strings::string2bool(GetStringParameter(parameters,"usenormregion"));
-
     try {
         bUseLUT     = kipl::strings::string2bool(GetStringParameter(parameters,"uselut"));
     }
@@ -76,8 +95,15 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
         bUseLUT=false;
     }
 
-    string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
-	memcpy(nOriginalNormRegion,config.ProjectionInfo.dose_roi,4*sizeof(size_t));
+    try {
+        string2enum(GetStringParameter(parameters,"referenceaverage"),m_ReferenceAvagerage);
+    }
+    catch (...) {
+        logger(logger.LogWarning,"referenceaverage not found, using image average.");
+        m_ReferenceAvagerage = ImagingAlgorithms::AverageImage::ImageAverage;
+    }
+
+    nOriginalNormRegion = config.ProjectionInfo.dose_roi;
 
 	return 0;
 }
@@ -90,7 +116,7 @@ void NormBase::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::
 
 kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                                                       int firstIndex, int N,
-                                                      size_t *roi,
+                                                      const std::vector<size_t> &roi,
                                                       float initialDose,
                                                       float doseBias,
                                                       ReconConfig &config,
@@ -113,56 +139,59 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
     dose = initialDose; // A precaution in case no dose is calculated
 
-    if (N!=0) {
+    if (N!=0)
+    {
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
         float *fDoses=new float[N];
 
-       found = fmask.find("hdf");
-        if (found==std::string::npos ) {
+        found = fmask.find("hdf");
+        if (found==std::string::npos )
+        {
 
-        kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
-        img = reader.Read(filename,
-                config.ProjectionInfo.eFlip,
-                config.ProjectionInfo.eRotate,
-                config.ProjectionInfo.fBinning,
-                roi);
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+            img     = reader.Read(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
 
-        tmpdose=bUseNormROI ? reader.GetProjectionDose(filename,
-                    config.ProjectionInfo.eFlip,
-                    config.ProjectionInfo.eRotate,
-                    config.ProjectionInfo.fBinning,
-                    nOriginalNormRegion) : initialDose;
-        }
-        else {
-            img = reader.ReadNexus(fmask, firstIndex,
-                    config.ProjectionInfo.eFlip,
-                    config.ProjectionInfo.eRotate,
-                    config.ProjectionInfo.fBinning,
-                    roi);
-
-            tmpdose=bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
                         nOriginalNormRegion) : initialDose;
+        }
+        else
+        {
+            img     = reader.ReadNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
 
+            tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
         }
 
         tmpdose   = tmpdose - doseBias;
         dose      = tmpdose;
         fDoses[0] = tmpdose;
 
-        size_t obdims[]={img.Size(0), img.Size(1),static_cast<size_t>(N)};
+        std::vector<size_t> obdims={img.Size(0), img.Size(1),static_cast<size_t>(N)};
 
         kipl::base::TImage<float,3> img3D(obdims);
-        memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
+        memcpy(img3D.GetDataPtr(),img.GetDataPtr(),img.Size()*sizeof(float));
 
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (found==std::string::npos ) {
+            if (found==std::string::npos )
+            {
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
                         m_Config.ProjectionInfo.eRotate,
@@ -176,7 +205,8 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                             config.ProjectionInfo.fBinning,
                             nOriginalNormRegion) : initialDose;
             }
-            else{
+            else
+            {
                     img=reader.ReadNexus(fmask,i+firstIndex,
                             m_Config.ProjectionInfo.eFlip,
                             m_Config.ProjectionInfo.eRotate,
@@ -204,11 +234,11 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         logger(logger.LogMessage,msg.str());
 
         float *tempdata=new float[N];
-        refimg.Resize(img.Dims());
+        refimg.resize(img.dims());
 
         ImagingAlgorithms::AverageImage avg;
 
-        refimg = avg(img3D,m_ReferenceAvagerage,nullptr);
+        refimg = avg(img3D,m_ReferenceAvagerage);
 
         delete [] tempdata;
         delete [] fDoses;
@@ -257,7 +287,7 @@ int FullLogNorm::Configure(ReconConfig config, std::map<std::string, std::string
 	return 0;
 }
 
-void FullLogNorm::LoadReferenceImages(size_t *roi)
+void FullLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
 {
     std::ostringstream msg;
 
@@ -548,7 +578,8 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 	}
 
 	delete [] doselist;
-	return 0;
+
+    return 0;
 }
 
 //----------------------------------------------------
@@ -570,7 +601,7 @@ int FullNorm::Configure(ReconConfig config, std::map<std::string, std::string> p
     return 0;
 }
 
-void FullNorm::LoadReferenceImages(size_t *roi)
+void FullNorm::LoadReferenceImages(const std::vector<size_t> &roi)
 {
     std::ostringstream msg;
 
@@ -598,7 +629,7 @@ void FullNorm::LoadReferenceImages(size_t *roi)
     flat = ReferenceLoader(flatmask,m_Config.ProjectionInfo.nOBFirstIndex,m_Config.ProjectionInfo.nOBCount,roi,1.0f,fDarkDose,m_Config,fFlatDose);
 
     if (dark.Size()==0){
-        dark.Resize(flat.Dims());
+        dark.resize(flat.dims());
         dark = 0.0f;
     }
 
@@ -805,9 +836,18 @@ NegLogNorm::NegLogNorm() : NormBase("NegLogNorm")
 }
 
 NegLogNorm::~NegLogNorm() {}
-int NegLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters){ return 0;}
-void NegLogNorm::LoadReferenceImages(size_t *roi) {}
-int NegLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<string, string> &coeff) { return 0;}
+int NegLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+{
+    return 0;
+}
+
+void NegLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
+{}
+
+int NegLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<string, string> &coeff)
+{
+    return 0;
+}
 
 //------------------------------------------------------------------------------
 NegLogProjection::NegLogProjection() : NormBase("NegLogProjection")
@@ -832,7 +872,7 @@ int NegLogProjection::Configure(ReconConfig config, std::map<std::string, std::s
 	return 0;
 }
 
-void NegLogProjection::LoadReferenceImages(size_t *roi)
+void NegLogProjection::LoadReferenceImages(const std::vector<size_t> &roi)
 {
 	kipl::base::TImage<float,2> flat, dark;
 
@@ -893,7 +933,7 @@ std::map<std::string, std::string> LogProjection::GetParameters()
 	return parameters;
 }
 
-void LogProjection::LoadReferenceImages(size_t *roi) {}
+void LogProjection::LoadReferenceImages(const std::vector<size_t> &roi) {}
 
 int LogProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, string> & coeff)
 {

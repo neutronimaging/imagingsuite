@@ -2,71 +2,71 @@
 
 #include <iostream>
 #include <time.h>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-#ifdef _MSC_VER
-#else
-#include <unistd.h>
-#endif
+#include <chrono>
+//#ifdef _MSC_VER
+//#else
+//#include <unistd.h>
+//#endif
 
 #include "../../include/profile/Timer.h"
 
 namespace kipl { namespace profile {
 
-Timer::Timer() : 
-m_nTic(0), 
-m_nToc(0),
-m_fTic(0.0), 
-m_fToc(0.0),
-m_nDiff(0),
-m_nCumulative(0),
-m_fDiff(0.0),
-m_fCumulative(0.0)
-
+/// \brief Default c'tor which calibrates all timers upon first call
+Timer::Timer() :
+    m_nTic(std::chrono::high_resolution_clock::now()),
+    m_nToc(std::chrono::high_resolution_clock::now())
 {
 }
 
+/// \brief Starts the timer
 void Timer::Tic()
 {
-#ifdef _OPENMP
-	m_fTic=omp_get_wtime();
-#endif
-	m_nToc=m_nTic=clock();
-
+    std::chrono::high_resolution_clock::now();
+    m_nToc=m_nTic=std::chrono::high_resolution_clock::now();
+    m_fCumulative = 0.0;
 }
 
-clock_t Timer::Toc()
+/// \brief Stops the timer. Can be called multiple times, in this case the time from the most resent call to Tic() is measured.
+/// \returns Number of elapsed tics since the timer started.
+double Timer::Toc()
 {
-#ifdef _OPENMP
-	m_fToc=omp_get_wtime();
-#endif
-	m_nToc=clock();
-	
-	m_nDiff=_diff(m_nToc,m_nTic);
-	m_nCumulative+=m_nDiff;
+    m_nToc=std::chrono::high_resolution_clock::now();
+    double dt = std::chrono::duration<double,std::milli>(m_nToc-m_nTic).count();
+    m_fCumulative+=dt;
 
-	m_fDiff=m_fToc-m_fTic;
-	m_fCumulative+=m_fDiff;
-
-	return m_nDiff;
+    return dt;
 }
-
-inline clock_t Timer::_diff (clock_t v1, clock_t v2)
+/// \brief Resets the last time measurement
+void Timer::reset()
 {
-    return v1<v2 ? v2-v1 : v1-v2;
+    m_fCumulative = 0.0;
 }
 
-
+/// \returns The elapsed time in seconds. This time is computed using the timer calibration.
+double Timer::elapsedTime(kipl::profile::Timer::eTimerUnit tu)
+{
+    double dt=0.0;
+    switch (tu) {
+    case nanoSeconds  : dt = std::chrono::duration<double,std::nano>(m_nToc-m_nTic).count(); break;
+    case microSeconds : dt = std::chrono::duration<double,std::micro>(m_nToc-m_nTic).count(); break;
+    case milliSeconds : dt = std::chrono::duration<double,std::milli>(m_nToc-m_nTic).count(); break;
+    case seconds      : dt = std::chrono::duration<double,std::ratio<1, 1>>(m_nToc-m_nTic).count(); break;
+    case minutes      : dt = std::chrono::duration<double,std::ratio<60, 1>>(m_nToc-m_nTic).count(); break;
+    case hours        : dt = std::chrono::duration<double,std::ratio<3600, 1>>(m_nToc-m_nTic).count(); break;
+    }
+    return dt;
+}
+double Timer::cumulativeTime()
+{
+    return m_fCumulative;
+}
 
 }}
 
 std::ostream & operator<<(std::ostream &s, kipl::profile::Timer &t)
 {
-	if (t.CumulativeWallTime()==0.0)
-		s<<t.CumulativeElapsedSeconds()<<"s ("<<t.CumulativeElapsedTics()<<" tics)"<<std::flush;
-	else
-		s<<"Total time: "<<t.CumulativeElapsedSeconds()<<"s, Wall time: "<<t.CumulativeWallTime()<<"s"<<std::flush;
-	
-	return s;
+    s<<t.elapsedTime()<<"ms"<<std::flush;
+
+    return s;
 }

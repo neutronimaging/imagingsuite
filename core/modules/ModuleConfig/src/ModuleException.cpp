@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "stdafx.h"
+#include "../include/ModuleConfig_global.h"
 #include "../include/ModuleException.h"
 #include <string>
 #include <sstream>

@@ -1,10 +1,12 @@
 //<LICENCE>
 
-#ifndef _TPERMUTEIMAGE_H_
-#define _TPERMUTEIMAGE_H_
+#ifndef TPERMUTEIMAGE_H
+#define TPERMUTEIMAGE_H
 
 #include "timage.h"
 #include "kiplenums.h"
+#include <vector>
+
 
 namespace kipl { namespace base {
 /// \brief Mirrors the pixels in the specified direction
@@ -29,26 +31,26 @@ public:
     /// \param fDest reference to the destimation image
     /// \param nDims array containing the image dimensions
     /// \returns Always true
-    bool operator() (T const * const fSrc, T *fDest, size_t const * const nDims);
+    bool operator() (T const * const fSrc, T *fDest, const std::vector<size_t> & nDims);
 
     /// \brief Transposing a  TImage
     /// \param src The image to transpose
     ///
     /// \returns the transposed image
-    TImage<T,2> operator() (const TImage<T,2> src);
+    TImage<T,2> operator() (const TImage<T,2> & src);
 
     /// \var A switch to use the refence code for performance evaluation
     bool bUseReference;
 protected:
   void TransposeSubBlock(T const * const fSrc, 
                        T *block, 
-                       size_t const * const nDims);
+                       const std::vector<size_t> & nDims);
 
   void InsertSubBlock(T const * const block, 
                        T *fDest, 
-                       size_t const * const nDims);
+                       const std::vector<size_t> & nDims);
 
-  void TransposeRef(T const * const fSrc, T *fDest, size_t const * const nDims);
+  void TransposeRef(T const * const fSrc, T *fDest, const std::vector<size_t> & nDims);
 
 };
 

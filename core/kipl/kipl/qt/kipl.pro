@@ -4,23 +4,25 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
-QT      += core
+QT        -= gui
+QT        += core
 
-TARGET = kipl
-TEMPLATE = lib
-CONFIG += c++11
+TARGET    = kipl
+TEMPLATE  = lib
+CONFIG   += c++11
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 message("Destdir $$DESTDIR")
 
-unix {
-    INCLUDEPATH += "../../../../external/src/linalg"
-    QMAKE_CXXFLAGS += -fPIC -O2
 
+
+unix {
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+    QMAKE_CXXFLAGS += -fPIC -O2
     unix:!macx {
+        INCLUDEPATH += /usr/include/cfitsio
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
@@ -36,20 +38,18 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include ../../../../external/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+    INCLUDEPATH += $$PWD/../../../../external/include
+    INCLUDEPATH += ../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
     DEFINES += NOMINMAX
 }
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-
-
-
+win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
+else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
+else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 
 DEFINES += KIPL_LIBRARY
 
@@ -65,7 +65,6 @@ SOURCES += \
     ../src/logging/logger.cpp \
     ../src/io/io_tiff.cpp \
     ../src/io/io_stack.cpp \
-    ../src/io/core/matlabio.cpp \
     ../src/io/core/io_fits.cpp \
     ../src/io/io_vivaseq.cpp \
     ../src/generators/Sine2D.cpp \
@@ -125,10 +124,13 @@ SOURCES += \
     ../src/math/normalizeimage.cpp \
     ../src/stltools/stlvecmath.cpp \
     ../src/strings/xmlstrings.cpp
+#    ../src/math/gradient.cpp
 
 
 
 HEADERS +=\
+    ../include/filters/core/savitzkygolayfilter.hpp \
+    ../include/filters/savitzkygolayfilter.h \
     ../include/kipl_global.h \
     ../include/algorithms/sortalg.h \
     ../include/base/tsubimage.h \
@@ -183,11 +185,11 @@ HEADERS +=\
     ../include/io/io_vtk.h \
     ../include/io/io_tiff.h \
     ../include/io/io_stack.h \
-    ../include/io/io_matlab.h \
     ../include/io/io_fits.h \
-    ../include/io/core/matlabio.h \
     ../include/io/core/io_fits.hpp \
     ../include/io/DirAnalyzer.h \
+    ../include/morphology/core/morphextrema.hpp \
+    ../include/morphology/core/morphgeo.hpp \
     ../include/octree/octree.h \
     ../include/morphology/palagyi_skeleton.h \
     ../include/morphology/morphquantify.h \
@@ -339,13 +341,15 @@ HEADERS +=\
     ../include/strings/xmlstrings.h \
     ../include/morphology/repairhole.h \
     ../include/morphology/core/repairhole.hpp \
-    ../include/algorithms/datavalidator.h
+    ../include/algorithms/datavalidator.h \
+    ../include/math/gradient.h
 
 unix:!mac {
-exists(/usr/lib/*NeXus*) {
+exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*){
 
-    message("-lNeXus exists")
+#    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
+    LIBS += -L/usr/local/lib64
     LIBS += -lNeXus -lNeXusCPP
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
@@ -356,30 +360,10 @@ message("-lNeXus does not exists $$HEADERS")
 
 }
 
-#unix:mac {
-#exists(/usr/local/lib/*NeXus*) {
-
-#    message("-lNeXus exists")
-#    DEFINES += HAVE_NEXUS
-##    INCLUDEPATH += /usr/local/lib
-##    LIBS += -L/usr/local/lib/  -lNeXus -lNeXusCPP
-
-#    LIBS += -L$$PWD/../../../../../../../../usr/local/lib/ -lNeXusCPP.1.0.0 -lNeXus
-
-#    INCLUDEPATH += $$PWD/../../../../../../../../usr/local/include
-#    DEPENDPATH += $$PWD/../../../../../../../../usr/local/include
-
-#    SOURCES += ../src/io/io_nexus.cpp
-#    HEADERS += ../include/io/io_nexus.h
-#}
-#else {
-#message("-lNeXus does not exists $$HEADERS")
-#}
-
 unix:mac {
 exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
-    message("-lNeXus exists")
+#s    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
 
     INCLUDEPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
@@ -389,8 +373,6 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
 
-#    QMAKE_CXXFLAGS += --coverage
-#    QMAKE_LFLAGS += --coverage
 }
 else {
 message("-lNeXus does not exists $$HEADERS")

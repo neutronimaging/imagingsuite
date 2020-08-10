@@ -137,10 +137,10 @@ bool GNUPlot::plot(float const * const axis, float const * const data, size_t co
 
 bool GNUPlot::image(const kipl::base::TImage<float,2> img)
 {
-	return image(img.GetDataPtr(), img.Dims());
+    return image(img.GetDataPtr(), img.dims());
 }
 
-bool GNUPlot::image(float const * const data, size_t const * const dims)
+bool GNUPlot::image(float const * const data, const std::vector<size_t> & dims)
 {
 	ostringstream cmd;
 	
@@ -167,7 +167,7 @@ bool GNUPlot::image(const kipl::base::TImage<short,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=pImg[i];
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -182,7 +182,7 @@ bool GNUPlot::image(const kipl::base::TImage<int,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -197,7 +197,7 @@ bool GNUPlot::image(const kipl::base::TImage<unsigned char,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -212,7 +212,7 @@ bool GNUPlot::image(const kipl::base::TImage<char,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	

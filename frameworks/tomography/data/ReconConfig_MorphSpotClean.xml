@@ -1,0 +1,130 @@
+<reconstructor>
+    <userinformation>
+        <operator>unknown</operator>
+        <instrument>beamline</instrument>
+        <projectnumber>P20yyxxxx</projectnumber>
+        <sample>Unknown item</sample>
+        <comment>No comment</comment>
+    </userinformation>
+    <system>
+        <memory>8000</memory>
+        <loglevel>message</loglevel>
+        <validate>false</validate>
+    </system>
+    <projections>
+        <dims>100 100</dims>
+        <beamgeometry>parallel</beamgeometry>
+        <resolution>0.1 0.1</resolution>
+        <binning>1</binning>
+        <margin>2</margin>
+        <firstindex>0</firstindex>
+        <lastindex>625</lastindex>
+        <projectionstep>1</projectionstep>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <goldenstartidx>0</goldenstartidx>
+        <imagetype>projections</imagetype>
+        <center>267</center>
+        <sod>100</sod>
+        <sdd>100</sdd>
+        <direction>RotationDirCW</direction>
+        <pPoint>500 500</pPoint>
+        <translation>false</translation>
+        <tiltangle>0.3589</tiltangle>
+        <tiltpivot>361</tiltpivot>
+        <correcttilt>true</correcttilt>
+        <filemask>C:\Data\wood\projections\wood_####.tif</filemask>
+        <path></path>
+        <referencepath></referencepath>
+        <obfilemask>C:\Data\wood\projections\ob_####.tif</obfilemask>
+        <obfirstindex>0</obfirstindex>
+        <obcount>5</obcount>
+        <dcfilemask>C:\Data\wood\projections\dc_####.tif</dcfilemask>
+        <dcfirstindex>0</dcfirstindex>
+        <dccount>5</dccount>
+        <roi>37 500 576 532</roi>
+        <projroi>37 40 576 762</projroi>
+        <doseroi>21 26 80 104</doseroi>
+        <scanarc>0 360</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipnone</flip>
+    </projections>
+    <matrix>
+        <dims>0 0 0</dims>
+        <rotation>0</rotation>
+        <serialize>false</serialize>
+        <path>C:\Users\kaestner\</path>
+        <matrixname>slice_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>0 2</grayinterval>
+        <useroi>false</useroi>
+        <roi>0 0 99 99 </roi>
+        <voxelsize>0 0 0 </voxelsize>
+        <voi>0 539 0 539 0 32</voi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>PreprocModules</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <referenceaverage>ImageWeightedAverage</referenceaverage>
+                    <uselut>false</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>MorphSpotClean</modulename>
+                <sharedobject>PreprocModules</sharedobject>
+                <active>false</active>
+                <parameters>
+                    <clampdata>false</clampdata>
+                    <cleanmethod>morphcleanreplace</cleanmethod>
+                    <connectivity>conn4</connectivity>
+                    <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <edgesmooth>5</edgesmooth>
+                    <maxarea>30</maxarea>
+                    <maxlevel>7</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <removeinfnan>false</removeinfnan>
+                    <sigma>0.01 0.01</sigma>
+                    <threading>false</threading>
+                    <threshold>0.1 0.1</threshold>
+                    <transpose>false</transpose>
+                </parameters>
+            </module>
+            <module>
+                <modulename>WaveletRingClean</modulename>
+                <sharedobject>StdPreprocModules</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <decnum>2</decnum>
+                    <method>verticalfft</method>
+                    <parallel>false</parallel>
+                    <sigma>0.05</sigma>
+                    <wname>daub15</wname>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBP</modulename>
+                <sharedobject>StdBackProjectors</sharedobject>
+                <active>true</active>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1 1</SubVolume>
+                    <biasweight>0.1</biasweight>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
+                    <usebias>true</usebias>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>

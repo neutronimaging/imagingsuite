@@ -1,12 +1,12 @@
-//<LICENCE>
+//<LICENSE>
 
-#ifndef __DRAWING_HPP
-#define __DRAWING_HPP
+#ifndef DRAWING_HPP
+#define DRAWING_HPP
 
 namespace kipl { namespace drawing {
 
 template <typename T>
-void Circle<T>::Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaintMethod paintmethod)
+void Circle<T>::Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaintMethod UNUSED(paintmethod))
 {
     int sx=img.Size(0);
     int sy=img.Size(1);
@@ -31,7 +31,7 @@ void Circle<T>::Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaint
 }
 
 template <typename T>
-void Sphere<T>::Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod)
+void Sphere<T>::Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod UNUSED(paintmethod))
 {
 	int sx=img.Size(0);
 	int sy=img.Size(1);
@@ -63,7 +63,7 @@ void Sphere<T>::Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value,
 }
 
 template <typename T>
-void Cube<T>::Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod)
+void Cube<T>::Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod UNUSED(paintmethod))
 {
 	int half=m_nSide>>1;
 

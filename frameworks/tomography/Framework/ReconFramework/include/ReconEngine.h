@@ -1,18 +1,7 @@
-//
-// This file is part of the recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef __RECONENGINE_H
-#define __RECONENGINE_H
+#ifndef RECONENGINE_H
+#define RECONENGINE_H
 #include "ReconFramework_global.h"
 
 #include <list>
@@ -32,7 +21,7 @@ class RECONFRAMEWORKSHARED_EXPORT ProjectionBlock
 public:
     ProjectionBlock();
     ProjectionBlock(kipl::base::TImage<float,3> & projections,
-                    size_t *roi,
+                    const std::vector<size_t> &roi,
                     std::map<std::string,
                     std::string> parameters);
 
@@ -41,7 +30,7 @@ public:
     ~ProjectionBlock();
 
     kipl::base::TImage<float,3> projections;
-    size_t roi[4];
+    std::vector<size_t> roi;
     std::map<std::string, std::string> parameters;
 };
 
@@ -82,7 +71,7 @@ public:
     /// \brief Starts the preprocessing chain including loading the projection data. This function is called by the user interface to provide data to the configuration dialogs.
     /// \param roi The region of interest to process
     /// \param sLastModule The chain shall only process until this module is reached
-	kipl::base::TImage<float,3> RunPreproc(size_t * roi, std::string sLastModule);
+    kipl::base::TImage<float,3> RunPreproc(const std::vector<size_t> &roi, std::string sLastModule);
 
     /// \brief Set reconstruction configuration as preparation of geometry and number of files
     /// \param config The configuration data
@@ -94,36 +83,40 @@ public:
 
     /// \brief Writes the reconstructed image to disk. If the filename contains any # a sequence of slices will be written, otherwise the data will be written as a single matlab mat file (outdated format).
     /// \param dims The stored image dimensions will be copied to this argument if it is non-nullptr.
-	bool Serialize(size_t *dims);
+    bool Serialize(std::vector<size_t> &dims);
 
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
-	void GetMatrixDims(size_t *dims) {dims[0]=m_Volume.Size(0); dims[1]=m_Volume.Size(1); dims[2]=m_Volume.Size(2);}
+    const std::vector<size_t> & GetMatrixDims() {return m_Volume.dims();}
     kipl::base::TImage<float,2> GetSlice(size_t index, kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY);
+    std::string citations();
+    std::vector<Publication> publicationList();
+    void writePublicationList(const std::string &fname = "");
 
 	virtual ~ReconEngine(void);
 protected:
     void ConfigSanityCheck(ReconConfig &config);
     int Run3DFull();
     int Run3DBackProjOnly();
-	int Process(size_t *roi);
-	int Process3D(size_t *roi);
-    int ProcessExistingProjections3D(size_t *roi);
-    int BackProject3D(kipl::base::TImage<float,3> & projections, size_t *roi,std::map<std::string, std::string> parameters);
+    int Process(const std::vector<size_t> &roi);
+    int Process3D(const std::vector<size_t> &roi);
+    int ProcessExistingProjections3D(const std::vector<size_t> &roi);
+    int BackProject3D(kipl::base::TImage<float,3> & projections, const std::vector<size_t> &roi, std::map<std::string, std::string> parameters);
 	bool UpdateProgress(float val, std::string msg);
     size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
 
-	bool TransferMatrix(size_t *dims);
+    bool TransferMatrix(const std::vector<size_t> &dims);
 
     void MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins);
     void UnpadProjections(kipl::base::TImage<float,3> &projections, size_t *roi, size_t *margins);
 	ReconConfig m_Config;
+    std::vector<Publication> publications;
 
 	size_t m_FirstSlice;
     size_t m_ProjectionMargin;
 	ProjectionReader m_ProjectionReader;             //!< Instance of the projection reader
 	
-	std::list<ModuleItem *> m_PreprocList;
+    std::vector<ModuleItem *> m_PreprocList;
 	BackProjItem * m_BackProjector;
 
 	kipl::base::TImage<float,3> m_Volume;
@@ -137,7 +130,7 @@ protected:
 	size_t nTotalProcessedProjections;				//!< Counts the total number of processed projections for the progress monitor
 	size_t nTotalBlocks;							//!< The total number of blocks to process
 	bool m_bCancel;									//!< Cancel flag if true the reconstruction process will terminate
-    size_t CBroi[4];                                //!< Additional ROI to be used for the cone beam case
+    std::vector<size_t> CBroi;                                //!< Additional ROI to be used for the cone beam case
 	//eReconstructorStatus status;
     kipl::interactors::InteractionBase *m_Interactor;
 };

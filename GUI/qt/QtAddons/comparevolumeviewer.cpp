@@ -86,23 +86,24 @@ void CompareVolumeViewer::updateViews(int idx)
 
             kipl::base::TImage<float,2> orig = kipl::base::ExtractSlice(*pOriginal,idx,plane);
 
-            ui->originalImage->set_image(orig.GetDataPtr(),orig.Dims());
+            ui->originalImage->set_image(orig.GetDataPtr(),orig.dims());
 
             if ((pProcessed!=nullptr) && (pOriginal->Size()==pProcessed->Size())) {
                 kipl::base::TImage<float,2> proc = kipl::base::ExtractSlice(*pProcessed,idx,plane);
 
-                ui->processedImage->set_image(proc.GetDataPtr(),proc.Dims());
+                ui->processedImage->set_image(proc.GetDataPtr(),proc.dims());
 
                 if (bShowDifference == true)
                 {
                     kipl::base::TImage<float,2> diffimg=proc-orig;
 
-                    ui->differenceImage->set_image(diffimg.GetDataPtr(),diffimg.Dims());
+                    ui->differenceImage->set_image(diffimg.GetDataPtr(),diffimg.dims());
                 }
             }
         }
         catch (kipl::base::KiplException & e) {
-            QMessageBox::warning(this,"Display problems",QString::fromStdString(e.what()));
+            QMessageBox::warning(this,"Display problems",e.what());
+
         }
     }
 }

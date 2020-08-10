@@ -10,6 +10,8 @@
 #include <tnt.h>
 #include <jama_qr.h>
 
+#include <armadillo>
+
 #include "../../include/math/nonlinfit.h"
 #include "../../include/math/jama_inverses.h"
 #include "../../include/math/mathconstants.h"
@@ -27,6 +29,22 @@ LevenbergMarquardt::LevenbergMarquardt(const double TOL, int iterations) :
     tol(TOL)
 {
     // Constructor.
+}
+
+void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
+                             arma::vec &sig,
+                             Nonlinear::FitFunctionBase &fn)
+{
+    Array1D<double> xx(x.size());
+    std::copy(x.begin(),x.end(),&xx[0]);
+
+    Array1D<double> yy(y.size());
+    std::copy(y.begin(),y.end(),&yy[0]);
+
+    Array1D<double> sigma(sig.size());
+    std::copy(sig.begin(),sig.end(),&sigma[0]);
+
+    fit(xx,yy,sigma,fn);
 }
 
 void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,

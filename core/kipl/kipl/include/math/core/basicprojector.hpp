@@ -4,6 +4,7 @@
 #include "../../base/timage.h"
 #include "../../base/kiplenums.h"
 #include <iostream>
+#include "../basicprojector.h"
 
 namespace kipl { namespace math {
 
@@ -29,7 +30,7 @@ kipl::base::TImage<T, 2> BasicProjector<T>::project(kipl::base::TImage<T, 3> img
 template <typename T>
 kipl::base::TImage<T, 2> BasicProjector<T>::ProjectOnPlaneXY(kipl::base::TImage<T, 3> img)
 {
-	kipl::base::TImage<T,2> proj(img.Dims());
+    kipl::base::TImage<T,2> proj(img.dims());
 	T* pProj = proj.GetDataPtr();
 	T* pImg  = img.GetDataPtr();
 	for (size_t z=0, i=0; z<img.Size(2); z++) {
@@ -46,7 +47,7 @@ kipl::base::TImage<T, 2> BasicProjector<T>::ProjectOnPlaneXY(kipl::base::TImage<
 template <typename T>
 kipl::base::TImage<T, 2> BasicProjector<T>::ProjectOnPlaneXZ(kipl::base::TImage<T, 3> img)
 {
-	size_t dims[]={img.Size(0), img.Size(2)};
+    std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	kipl::base::TImage<T,2> proj(dims);
 	T* pProj = proj.GetDataPtr();
 	T* pImg  = img.GetDataPtr();
@@ -64,7 +65,7 @@ kipl::base::TImage<T, 2> BasicProjector<T>::ProjectOnPlaneXZ(kipl::base::TImage<
 template <typename T>
 kipl::base::TImage<T, 2> BasicProjector<T>::ProjectOnPlaneYZ(kipl::base::TImage<T, 3> img)
 {
-	size_t dims[]={img.Size(1), img.Size(2)};
+    std::vector<size_t> dims={img.Size(1), img.Size(2)};
 	kipl::base::TImage<T,2> proj(dims);
 	T* pProj = proj.GetDataPtr();
 	T* pImg  = img.GetDataPtr();

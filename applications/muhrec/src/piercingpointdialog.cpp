@@ -1,8 +1,11 @@
 //<LICENSE>
+
 #include "piercingpointdialog.h"
 #include "ui_piercingpointdialog.h"
 
+#include <QMessageBox>
 #include <ProjectionReader.h>
+#include <ReconException.h>
 
 #include <qmarker.h>
 
@@ -28,30 +31,75 @@ PiercingPointDialog::~PiercingPointDialog()
 
 int PiercingPointDialog::exec(ReconConfig &config)
 {
-    std::copy(config.ProjectionInfo.projection_roi,config.ProjectionInfo.projection_roi+4,roi);
+    roi = config.ProjectionInfo.projection_roi;
+
     position.first = config.ProjectionInfo.fpPoint[0];
     position.second = config.ProjectionInfo.fpPoint[1];
 
     ProjectionReader reader;
 
-    ob=reader.Read(config.ProjectionInfo.sReferencePath,
-                   config.ProjectionInfo.sOBFileMask,
-                   config.ProjectionInfo.nOBFirstIndex,
-                   config.ProjectionInfo.eFlip,
-                   config.ProjectionInfo.eRotate,
-                   1,
-                   nullptr);
+    try {
+        ob=reader.Read(config.ProjectionInfo.sReferencePath,
+                       config.ProjectionInfo.sOBFileMask,
+                       config.ProjectionInfo.nOBFirstIndex,
+                       config.ProjectionInfo.eFlip,
+                       config.ProjectionInfo.eRotate,
+                       1,
+                       {});
+    }
+    catch (ReconException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
+    catch (std::exception &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this,"Load error","Could not load open beam image");
+        return 1;
+    }
 
-    dc=reader.Read(config.ProjectionInfo.sReferencePath,
-                   config.ProjectionInfo.sDCFileMask,
-                   config.ProjectionInfo.nDCFirstIndex,
-                   config.ProjectionInfo.eFlip,
-                   config.ProjectionInfo.eRotate,
-                   1,
-                   nullptr);
+    try {
+        dc=reader.Read(config.ProjectionInfo.sReferencePath,
+                       config.ProjectionInfo.sDCFileMask,
+                       config.ProjectionInfo.nDCFirstIndex,
+                       config.ProjectionInfo.eFlip,
+                       config.ProjectionInfo.eRotate,
+                       1,
+                       {});
+    }
+    catch (ReconException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
+    catch (std::exception &e)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this,"Load error","Could not load dark current image");
+        return 1;
+    }
 
     UpdateDialog();
-    ui->viewer->set_image(ob.GetDataPtr(),ob.Dims());
+    ui->viewer->set_image(ob.GetDataPtr(),ob.dims());
 
     int res=QDialog::exec();
 
@@ -95,7 +143,12 @@ void PiercingPointDialog::on_pushButton_estimate_clicked()
 
     UpdateConfig();
     logger(logger.LogMessage,"Pre estimate");
-    position=pe(ob,dc,correctGain,useROI ? roi : nullptr );
+
+    if (useROI)
+        position=pe(ob,dc,correctGain, roi );
+    else
+        position=pe(ob,dc,correctGain, {} );
+
     logger(logger.LogMessage,"post estimate");
     std::ostringstream msg;
     msg<<"Found pp at ["<<position.first<<", "<<position.second<<"]";

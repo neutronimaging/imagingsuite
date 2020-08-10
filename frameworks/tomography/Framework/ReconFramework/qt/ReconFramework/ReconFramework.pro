@@ -38,7 +38,8 @@ HEADERS += \
     ../../include/PreprocModuleBase.h \
     ../../include/ModuleItem.h \
     ../../include/ReconFramework_global.h \
-    ../../include/BackProjectorModuleBase.h
+    ../../include/BackProjectorModuleBase.h \
+    ../../src/stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -68,6 +69,7 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio/
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
@@ -75,9 +77,10 @@ unix:!symbian {
 }
 
 unix:!mac {
-    exists(/usr/lib/*NeXus*) {
+    exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*) {
         message("-lNeXus exists")
-        DEFINES *= HAVE_NEXUS
+        DEFINES += HAVE_NEXUS
+        LIBS += -L/usr/local/lib64
         LIBS += -lNeXus -lNeXusCPP
     }
     else {

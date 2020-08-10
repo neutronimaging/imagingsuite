@@ -32,3 +32,4 @@ PixelInfo & PixelInfo::operator=(const PixelInfo & info)
 }
 
 }
+

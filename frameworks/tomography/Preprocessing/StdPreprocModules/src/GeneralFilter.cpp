@@ -1,9 +1,4 @@
-/*
- * GeneralFilter.cpp
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 #include "../include/StdPreprocModules_global.h"
 
 #include <algorithm>
@@ -55,7 +50,7 @@ bool GeneralFilter::SetROI(size_t *roi)
 
 int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
-    float *kernel=nullptr;
+    std::vector<float> kernel;
     size_t N  = 0;
     size_t N2 = 0;
     float w   = 0.0f;
@@ -64,15 +59,14 @@ int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::
     switch (filterType) {
     case FilterBox:
         N=static_cast<size_t>(filterSize);
-        kernel=new float[N];
         w=1.0f/N;
-        for (size_t i=0; i<N; ++i)
-            kernel[i]=w;
+        kernel=std::vector<float>(N,w);
+
         break;
     case FilterGauss:
         N=2*ceil(2.5*filterSize)+1;
         N2=N/2;
-        kernel=new float[N];
+        kernel=std::vector<float>(N,0.0f);
         sum = kernel[N2] = 1.0f;
         for (size_t i=1; i<=N2; ++i)
         {
@@ -87,10 +81,10 @@ int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::
         throw ReconException("Unknown filter type selected",__FILE__,__LINE__);
     }
 
-    size_t dims[2]={N,1};
+    std::vector<size_t> dims={N,1};
     kipl::filters::TFilter<float,2> fltH(kernel,dims);
 
-    dims[0]=1; dims[1]=N;
+    dims={1,N};
     kipl::filters::TFilter<float,2> fltV(kernel,dims);
 
     kipl::base::TImage<float,2> tmp=fltH(img,kipl::filters::FilterBase::EdgeMirror);
@@ -102,7 +96,7 @@ int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::
 
 int GeneralFilter::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-    kipl::base::TImage<float,2> slice(img.Dims());
+    kipl::base::TImage<float,2> slice(img.dims());
 
     for (size_t i=0; i<img.Size(2); ++i) {
         std::copy(img.GetLinePtr(0,i),img.GetLinePtr(0,i)+slice.Size(),slice.GetDataPtr());

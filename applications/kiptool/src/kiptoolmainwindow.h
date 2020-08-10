@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #ifndef KIPTOOLMAINWINDOW_H
 #define KIPTOOLMAINWINDOW_H
@@ -112,11 +103,10 @@ private:
     std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,float> > > m_PlotList;
     std::map<std::string, kipl::containers::PlotData<float,size_t> > m_HistogramList;
     kipl::containers::PlotData<float,size_t> m_OriginalHistogram;
-
+    KiplProcessConfig m_config;
     ImagingModuleConfigurator m_ModuleConfigurator;
 
     QString m_sFileName;
-    KiplProcessConfig m_config;
     kipl::base::TImage<float,3> m_OriginalImage;
     bool m_bRescaleViewers;
     bool m_bJustLoaded;
@@ -127,6 +117,7 @@ private:
     int m_nSliceSizeY;
 
     QApplication *m_QtApp;
+    std::string m_sApplicationPath;
 
     std::list<std::pair<KiplProcessConfig, kipl::base::TImage<float,2> > >  m_configHistory;
 };

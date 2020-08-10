@@ -8,13 +8,13 @@
 namespace kipl { namespace math {
 
 template <typename T, size_t N>
-double RegionMean(kipl::base::TImage<T,N> img, size_t const * const region);
+double RegionMean(kipl::base::TImage<T,N> img, const std::vector<size_t> & region);
 
 template <typename T>
 double RegionMean(T const * const data, size_t width, size_t height, size_t stride);
 
 template <typename T>
-void minmax(T const * const data, const size_t N, T *minval, T *maxval);
+void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool finiteSafe=true);
 
 template <typename T>
 T sum(T * const begin, T const * const end);

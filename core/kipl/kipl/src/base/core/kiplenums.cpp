@@ -7,6 +7,63 @@
 #include "../../../include/base/kiplenums.h"
 #include "../../../include/base/KiplException.h"
 
+namespace kipl { namespace base {
+KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn)
+{
+    int dims=0;
+
+    switch (conn) {
+    case kipl::base::conn4  : dims=2; break;
+    case kipl::base::conn8  : dims=2; break;
+    case kipl::base::conn6  : dims=3; break;
+    case kipl::base::conn18 : dims=3; break;
+    case kipl::base::conn26 : dims=3; break;
+
+    default :
+        throw kipl::base::KiplException("Could not transform a Connectivity enum to a string", __FILE__, __LINE__);
+    }
+    return dims;
+}
+
+int connectivityNeighbors(kipl::base::eConnectivity conn)
+{
+    switch (conn) {
+    case conn4  : return 4;
+    case conn8  : return 8;
+    case conn6  : return 6;
+    case conn18 : return 18;
+    case conn26 : return 26;
+    case euclid : return 0;
+    default :
+        throw kipl::base::KiplException("Unknown connectivity enum value encountered", __FILE__, __LINE__);
+    };
+}
+
+kipl::base::eOperatingSystem getOperatingSystem()
+{
+#ifdef _WIN32
+    return kipl::base::OSWindows;
+#elif __APPLE__
+    #include "TargetConditionals.h"
+    #if TARGET_OS_MAC
+        return kipl::base::OSMacOS;
+    #else
+        return kipl::base::OSUnknown;
+    #endif
+#elif __linux__
+    return kipl::base::OSLinux;
+#elif __unix__ // all unices not caught above
+    return kipl::base::OSLinux;
+#elif defined(_POSIX_VERSION)
+    return kipl::base::OSLinux;
+#else
+    return kipl::base::OSUnknown;
+#endif
+}
+
+}
+
+}
 std::string enum2string(kipl::base::eImagePlanes plane) {
 	std::string s;
 	switch (plane) {
@@ -270,6 +327,8 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eConnectivity &
         throw kipl::base::KiplException("Could not transform string to an Connectivity enum", __FILE__, __LINE__);
 }
 
+
+
 /// \brief Stream output operator for eConnectivity
 /// \param s the stream that handles the enum
 /// \param rotdir the value to send to the stream
@@ -291,16 +350,34 @@ KIPLSHARED_EXPORT std::string enum2string(kipl::base::eEdgeStatus edge)
     std::string str;
 
     switch (edge) {
-        case kipl::base::edgeX0 : str="edgeX0"; break;
-        case kipl::base::edgeX1 : str="edgeX1"; break;
-        case kipl::base::edgeY0 : str="edgeY0"; break;
-        case kipl::base::edgeY1 : str="edgeY1"; break;
-        case kipl::base::edgeZ0 : str="edgeZ0"; break;
-        case kipl::base::edgeZ1 : str="edgeZ1"; break;
-        case kipl::base::cornerX0Y0 : str="cornerX0Y0"; break;
-        case kipl::base::cornerX1Y0 : str="cornerX1Y0"; break;
-        case kipl::base::cornerX0Y1 : str="cornerX0Y1"; break;
-        case kipl::base::cornerX1Y1 : str="cornerX1Y1"; break;
+        case kipl::base::noEdge       : str="noEdge"; break;
+        case kipl::base::edgeX0       : str="edgeX0"; break;
+        case kipl::base::edgeX1       : str="edgeX1"; break;
+        case kipl::base::edgeY0       : str="edgeY0"; break;
+        case kipl::base::edgeY1       : str="edgeY1"; break;
+        case kipl::base::cornerX0Y0   : str="cornerX0Y0"; break;
+        case kipl::base::cornerX1Y0   : str="cornerX1Y0"; break;
+        case kipl::base::cornerX0Y1   : str="cornerX0Y1"; break;
+        case kipl::base::cornerX1Y1   : str="cornerX1Y1"; break;
+        case kipl::base::edgeZ0       : str="edgeZ0"; break;
+        case kipl::base::edgeZ1       : str="edgeZ1"; break;
+        case kipl::base::cornerX0Y0Z0 : str="cornerX0Y0Z0"; break;
+        case kipl::base::cornerX1Y0Z0 : str="cornerX1Y0Z0"; break;
+        case kipl::base::cornerX0Y1Z0 : str="cornerX0Y1Z0"; break;
+        case kipl::base::cornerX1Y1Z0 : str="cornerX1Y1Z0"; break;
+        case kipl::base::cornerX0Y0Z1 : str="cornerX0Y0Z1"; break;
+        case kipl::base::cornerX1Y0Z1 : str="cornerX1Y0Z1"; break;
+        case kipl::base::cornerX0Y1Z1 : str="cornerX0Y1Z1"; break;
+        case kipl::base::cornerX1Y1Z1 : str="cornerX1Y1Z1"; break;
+        case kipl::base::cornerX0Z0   : str="cornerX0Z0"; break;
+        case kipl::base::cornerX0Z1   : str="cornerX0Z1"; break;
+        case kipl::base::cornerX1Z0   : str="cornerX1Z0"; break;
+        case kipl::base::cornerX1Z1   : str="cornerX1Z1"; break;
+        case kipl::base::cornerY0Z0   : str="cornerY0Z0"; break;
+        case kipl::base::cornerY0Z1   : str="cornerY0Z1"; break;
+        case kipl::base::cornerY1Z0   : str="cornerY1Z0"; break;
+        case kipl::base::cornerY1Z1   : str="cornerY1Z1"; break;
+
     default :
         throw kipl::base::KiplException("Could not transform a edge status enum to a string", __FILE__, __LINE__);
     }
@@ -324,6 +401,22 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eEdgeStatus & e
     values["cornerX1Y0"] = kipl::base::cornerX1Y0;
     values["cornerX0Y1"] = kipl::base::cornerX0Y1;
     values["cornerX1Y1"] = kipl::base::cornerX1Y1;
+    values["cornerX0Z0"] = kipl::base::cornerX0Z0;
+    values["cornerX1Z0"] = kipl::base::cornerX1Z0;
+    values["cornerX0Z1"] = kipl::base::cornerX0Z1;
+    values["cornerX1Z1"] = kipl::base::cornerX1Z1;
+    values["cornerY0Z0"] = kipl::base::cornerY0Z0;
+    values["cornerY0Z0"] = kipl::base::cornerY1Z0;
+    values["cornerY1Z1"] = kipl::base::cornerY0Z1;
+    values["cornerY1Z1"] = kipl::base::cornerY1Z1;
+    values["cornerX0Y0Z0"] = kipl::base::cornerX0Y0Z0;
+    values["cornerX1Y0Z0"] = kipl::base::cornerX1Y0Z0;
+    values["cornerX0Y1Z0"] = kipl::base::cornerX0Y1Z0;
+    values["cornerX1Y1Z0"] = kipl::base::cornerX1Y1Z0;
+    values["cornerX0Y0Z1"] = kipl::base::cornerX0Y0Z1 ;
+    values["cornerX1Y0Z1"] = kipl::base::cornerX1Y0Z1 ;
+    values["cornerX0Y1Z1"] = kipl::base::cornerX0Y1Z1 ;
+    values["cornerX1Y1Z1"] = kipl::base::cornerX1Y1Z1 ;
 
     auto it=values.find(str);
 
@@ -347,11 +440,11 @@ KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eEdgeSt
 std::string enum2string(kipl::base::eImageRotate &rot)
 {
     switch (rot) {
-    case kipl::base::ImageRotateNone: return "imagerotatenone"; break;
-    case kipl::base::ImageRotate90: return "imagerotate90"; break;
-    case kipl::base::ImageRotate180: return "imagerotate180"; break;
-    case kipl::base::ImageRotate270: return "imagerotate270"; break;
-    case kipl::base::ImageRotateDefault: return "imagerotatedefault"; break;
+    case kipl::base::ImageRotateNone:    return "imagerotatenone";
+    case kipl::base::ImageRotate90:      return "imagerotate90";
+    case kipl::base::ImageRotate180:     return "imagerotate180";
+    case kipl::base::ImageRotate270:     return "imagerotate270";
+    case kipl::base::ImageRotateDefault: return "imagerotatedefault";
     default: throw kipl::base::KiplException("Unknown rotate type", __FILE__, __LINE__);
     }
 
@@ -361,13 +454,47 @@ std::string enum2string(kipl::base::eImageRotate &rot)
 std::string enum2string(kipl::base::eImageFlip flip)
 {
     switch (flip) {
-    case kipl::base::ImageFlipNone: return "imageflipnone"; break;
-    case kipl::base::ImageFlipHorizontal: return "imagefliphorizontal"; break;
-    case kipl::base::ImageFlipVertical: return "imageflipvertical"; break;
-    case kipl::base::ImageFlipHorizontalVertical: return "imagefliphorizontalvertical"; break;
-    case kipl::base::ImageFlipDefault: return "imageflipdefault"; break;
+    case kipl::base::ImageFlipNone:               return "imageflipnone";
+    case kipl::base::ImageFlipHorizontal:         return "imagefliphorizontal";
+    case kipl::base::ImageFlipVertical:           return "imageflipvertical";
+    case kipl::base::ImageFlipHorizontalVertical: return "imagefliphorizontalvertical";
+    case kipl::base::ImageFlipDefault:            return "imageflipdefault";
     default: throw kipl::base::KiplException("Unknown rotate type", __FILE__, __LINE__);
     }
 
     return "imageflipnone";
+}
+
+std::ostream &operator<<(std::ostream &s, kipl::base::eOperatingSystem &os)
+{
+    s<<enum2string(os);
+
+    return s;
+}
+
+std::string enum2string(const kipl::base::eOperatingSystem &os)
+{
+   switch (os) {
+   case kipl::base::OSUnknown     : return "OSUnknown";
+       case kipl::base::OSWindows : return "OSWindows";
+       case kipl::base::OSMacOS   : return "OSMacOS";
+       case kipl::base::OSLinux   : return "OSLinux";
+   }
+}
+
+void string2enum(const std::string &str, kipl::base::eOperatingSystem &os)
+{
+    std::map<std::string,kipl::base::eOperatingSystem> osMap;
+
+    osMap["OSUnknown"] = kipl::base::OSUnknown;
+    osMap["OSWindows"] = kipl::base::OSWindows;
+    osMap["OSMacOS"]   = kipl::base::OSMacOS;
+    osMap["OSLinux"]   = kipl::base::OSLinux;
+
+    auto it=osMap.find(str);
+
+    if (it!=osMap.end())
+        os=it->second;
+    else
+        throw kipl::base::KiplException("Could not transform string to an operating system enum", __FILE__, __LINE__);
 }

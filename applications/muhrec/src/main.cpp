@@ -16,6 +16,7 @@
 
 #include <facestyles.h>
 #include <strings/miscstring.h>
+#include <strings/filenames.h>
 #include <utilities/nodelocker.h>
 
 #include <ReconException.h>
@@ -30,9 +31,9 @@ void TestConfig();
 
 int main(int argc, char *argv[])
 {
-    std::cout<<"Starting MuhRec"<<std::endl;
     kipl::logging::Logger logger("MuhRec");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
+    logger.message("Starting MuhRec");
 
     std::ostringstream msg;
 
@@ -42,18 +43,19 @@ int main(int argc, char *argv[])
     std::string homedir = QDir::homePath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(homedir,true);
-    std::cout<<"home dir="<<homedir<<std::endl;
+    msg.str(""); msg<<"Home dir: "<<homedir;
+    logger.message(msg.str());
 
     std::string application_path=app.applicationDirPath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
 
     if (app.arguments().size()==1) {
-        std::cout<<"Running MuhRec in GUI mode."<<std::endl;
+        logger.message("Running MuhRec in GUI mode.");
         return RunGUI(&app);
     }
     else {
-        std::cout<<"Running MuhRec in CLI mode."<<std::endl;
+        logger.message("Running MuhRec in CLI mode.");
         return RunOffline(&app);
     }
 
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
 int RunGUI(QApplication *app)
 {
     std::ostringstream msg;
-    kipl::logging::Logger logger("MuhRec3::RunGUI");
+    kipl::logging::Logger logger("MuhRec::RunGUI");
 
     QtAddons::setDarkFace(app);
     try {
@@ -125,7 +127,7 @@ int RunOffline(QApplication *app)
           try {
                   ReconFactory factory;
                   logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
-                  ReconConfig config;
+                  ReconConfig config("");
                   config.LoadConfigFile(args[2],"reconstructor");
                   config.GetCommandLinePars(args);
                   config.MatrixInfo.bAutomaticSerialize=true;

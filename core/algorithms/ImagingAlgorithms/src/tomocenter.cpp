@@ -5,8 +5,11 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <numeric>
 
+#if !defined(NO_QT)
 #include <QDebug>
+#endif
 
 #include <math/linfit.h>
 #include <base/tsubimage.h>
@@ -36,14 +39,14 @@ void TomoCenter::setFraction(double f)
 void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
                           kipl::base::TImage<float, 2> &img180,
                           ImagingAlgorithms::TomoCenter::eEstimator est,
-                          size_t *_roi,
+                          const std::vector<size_t> &_roi,
                           bool bTilt,
                           double &center,
                           double &tilt,
                           double &pivot)
 {
     std::ostringstream msg;
-    std::copy_n(_roi,4,roi);
+    roi = _roi;
     m_Proj0Deg   = img0;
     m_Proj180Deg = img180;
 
@@ -87,7 +90,6 @@ void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
 
         msg.str("");
         msg<<"Estimated center="<<tiltM<<", tilt="<<tiltK<<", N="<<N<<", fraction="<<fraction<<std::endl;
-        qDebug() << QString::fromStdString(msg.str());
         logger(kipl::logging::Logger::LogMessage,msg.str());
     }
     else
@@ -102,7 +104,7 @@ void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
         }
         std::vector<double> tmpCoG;
         auto it=cogMap.begin();
-        qDebug() << "N="<<N<<"fraction="<<fraction<<"cogMap="<<cogMap.size();
+   //     qDebug() << "N="<<N<<"fraction="<<fraction<<"cogMap="<<cogMap.size();
         for (size_t i=0; i<N*fraction; ++i,++it)
             tmpCoG.push_back(it->second.second);
 
@@ -116,7 +118,7 @@ void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
 void TomoCenter::estimate(kipl::base::TImage<float,2> &img0,
               kipl::base::TImage<float,2> &img180,
               ImagingAlgorithms::TomoCenter::eEstimator est,
-              size_t *_roi, bool bTilt,
+              const std::vector<size_t> &_roi, bool bTilt,
               float &center,
               float &tilt,
               float &pivot)
@@ -197,15 +199,15 @@ float TomoCenter::CorrelationCenter()
         cogfile.open(pointsFileName.c_str());
 
     kipl::base::TImage<float,2> limg0,limg180;
-    size_t start[2]={roi[0],roi[1]};
-    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    std::vector<size_t> start  = {roi[0],roi[1]};
+    std::vector<size_t> length = {roi[2]-roi[0],roi[3]-roi[1]};
     kipl::base::TSubImage<float,2> cropper;
     limg0=cropper.Get(m_Proj0Deg,start,length);
     limg180 = kipl::base::Mirror(cropper.Get(m_Proj180Deg,start,length),kipl::base::ImageAxisX);
 
     size_t len=limg0.Size(0)/3;
 
-    size_t dims[2]={len*2,limg0.Size(1)};
+    std::vector<size_t> dims={len*2,limg0.Size(1)};
     kipl::base::TImage<float,2> corrimg(dims);
 
     for (size_t y=0; y<limg0.Size(1); y++) {
@@ -248,8 +250,8 @@ float TomoCenter::LeastSquareCenter()
     msg<<"LS center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
     kipl::base::TImage<float,2> limg0,limg180;
-    size_t start[2]={roi[0],roi[1]};
-    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    std::vector<size_t> start  = {roi[0],roi[1]};
+    std::vector<size_t> length = {roi[2]-roi[0],roi[3]-roi[1]};
     kipl::base::TSubImage<float,2> cropper;
 
     msg.str("");
@@ -265,7 +267,7 @@ float TomoCenter::LeastSquareCenter()
 
     size_t len=limg0.Size(0)/3;
 
-    size_t dims[2]={len*2,limg0.Size(1)};
+    std::vector<size_t> dims={len*2,limg0.Size(1)};
     kipl::base::TImage<float,2> corrimg(dims);
     float diff=0.0f;
     for (size_t y=0; y<limg0.Size(1); y++)

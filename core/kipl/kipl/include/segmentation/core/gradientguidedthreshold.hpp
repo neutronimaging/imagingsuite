@@ -28,17 +28,18 @@ void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(T0 val)
 }
 
 template <typename T0, typename T1,size_t N>
-void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(std::set<T0> val)
+void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(const std::set<T0> & val)
 {
     m_threshold.clear();
-    m_threshold=val;
+    m_threshold(val.begin(),val.end());
+    std::sort(m_threshold.begin(),m_threshold.end());
 }
 
 template <typename T0, typename T1,size_t N>
-void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(std::vector<T0> val)
+void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(const std::vector<T0> &val)
 {
-    m_threshold.clear();
-    std::copy(val.begin(),val.end(),val.begin());
+    m_threshold=val;
+    std::sort(m_threshold.begin(),m_threshold.end());
 }
 
 template <typename T0, typename T1,size_t N>
@@ -47,7 +48,9 @@ void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(T0 *val, size_t Nelement
     m_threshold.clear();
 
     for (size_t i=0; i<N; ++i)
-        m_threshold.insert(val[i]);
+        m_threshold.push_back(val[i]);
+
+    std::sort(m_threshold.begin(),m_threshold.end());
 }
 
 template <typename T0, typename T1,size_t N>
@@ -71,29 +74,23 @@ void gradientGuidedThreshold<T0,T1,N>::setParameters(std::map<std::string,std::s
 template <typename T0, typename T1,size_t N>
 int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img, kipl::base::TImage<T1,N> &seg)
 {
-    seg.Resize(img.Dims());
+    seg.resize(img.dims());
 
-    T0 *th=new T0[m_threshold.size()];
+    kipl::segmentation::MultiThreshold(img,seg,m_threshold);
 
-    copy(m_threshold.begin(),m_threshold.end(),th);
-    kipl::segmentation::MultiThreshold(img,seg,th,m_threshold.size());
-    delete [] th;
+    std::vector<size_t> dims(2,m_filterWidth);
 
-    size_t dims[2];
-    dims[0]=dims[1]=m_filterWidth;
     int Nf=dims[0]*dims[1];
-    float *k=new T0[Nf];
+
     float w=1.0f/Nf;
 
-    for (int i=0; i<Nf; ++i) {
-        k[i]=w;
-    }
+    std::vector<T0> k(Nf,w);
 
     kipl::filters::TFilter<float,N> box(k,dims);
-    size_t gdims[2]={3,3};
+    std::vector<size_t> gdims={3,3};
 
-    float gx[9]={-3, 0, 3, -10, 0, 10, -3, 0, 3 };
-    float gy[9]={-3, -10, -3, 0, 0, 0, 3, 10, 3 };
+    std::vector<float> gx={-3.0f, 0.0f, 3.0f, -10.0f, 0.0f, 10.0f, -3.0f, 0.0f, 3.0f };
+    std::vector<float> gy={-3.0f, -10.0f, -3.0f, 0.0f, 0.0f, 0.0f, 3.0f, 10.0f, 3.0f };
     kipl::filters::TFilter<float,N> fgx(gx,gdims);
     kipl::filters::TFilter<float,N> fgy(gy,gdims);
 
@@ -103,7 +100,7 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
 
     std::set<ptrdiff_t> edgelist0,edgelist1;
 
-    kipl::base::PixelIterator pit(img.Dims(), kipl::base::conn8);
+    kipl::base::PixelIterator pit(img.dims(), kipl::base::conn8);
 
     T1 edgeLabel = m_threshold.size()+1;
 
@@ -122,7 +119,7 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
         {
             pit.setPosition(i);
 
-            for (int j=0; j<pit.neighborhoodSize(); ++j)
+            for (size_t j=0; j<pit.neighborhoodSize(); ++j)
             {
                 pos=pit.neighborhood(j);
                 if (seg[pos]!=edgeLabel) {
@@ -136,8 +133,7 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
     // Grow from the edge
     std::set<ptrdiff_t> &edge0=edgelist0;
     std::set<ptrdiff_t> &edge1=edgelist1;
-    std::set<ptrdiff_t> &edgetmp=edgelist0;
-  //  cout<<"Entering with "<<edge0.size()<<endl;
+
     while (!edge0.empty())
     {
         edge1.clear();
@@ -145,7 +141,7 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
         {
             pit.setPosition(*it);
 
-            for (int j=0; j<pit.neighborhoodSize(); ++j)
+            for (size_t j=0; j<pit.neighborhoodSize(); ++j)
             {
                 pos=pit.neighborhood(j);
                 if (seg[pos]!=edgeLabel) { // todo Make this a majority voter
@@ -156,10 +152,8 @@ int gradientGuidedThreshold<T0,T1,N>::operator()(kipl::base::TImage<T0,N> & img,
                 }
             }
         }
-//            cout<<"Iterated with e0="<<edge0.size()<<", e1="<<edge1.size()<<endl;
+
         std::swap(edge0,edge1);
-
-
     }
     return 0;
 }

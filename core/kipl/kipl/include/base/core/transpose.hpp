@@ -5,12 +5,13 @@
 
 #include <memory.h>
 #include "../timage.h"
+#include "../tpermuteimage.h"
 
 namespace kipl { namespace base {
 template <class T, size_t N>
 inline void Transpose<T,N>::TransposeSubBlock(T const * const fSrc, 
                        T *block, 
-                       size_t const * const nDims)
+                       const std::vector<size_t> & nDims)
 {
   const size_t sizeU=nDims[0];
   const size_t nU=sizeU*N;
@@ -23,9 +24,9 @@ inline void Transpose<T,N>::TransposeSubBlock(T const * const fSrc,
 }
 
 template <class T, size_t N>
-inline void Transpose<T,N>::InsertSubBlock(T const * const block, 
-                       T *fDest, 
-                       size_t const * const nDims)
+inline void Transpose<T,N>::InsertSubBlock(T const * const block,
+                       T *fDest,
+                       const std::vector<size_t> &nDims)
 {
   const size_t M=N*sizeof(T);
 
@@ -36,21 +37,21 @@ inline void Transpose<T,N>::InsertSubBlock(T const * const block,
 }
 
 template <class T, size_t N>
-TImage<T,2> Transpose<T,N>::operator()(TImage<T,2> src)
+TImage<T,2> Transpose<T,N>::operator()(const TImage<T,2> &src)
 {
-	size_t dims[2]={src.Size(1), src.Size(0)};
+    std::vector<size_t> dims={src.Size(1), src.Size(0)};
 	TImage<T,2> dest(dims);
 
 	if (bUseReference==false)
-		this->operator()(src.GetDataPtr(),dest.GetDataPtr(),src.Dims());
+        this->operator()(src.GetDataPtr(),dest.GetDataPtr(),src.dims());
 	else
-		this->TransposeRef(src.GetDataPtr(),dest.GetDataPtr(),src.Dims());
+        this->TransposeRef(src.GetDataPtr(),dest.GetDataPtr(),src.dims());
 
 	return dest;
 }
 
 template <class T, size_t N>
-bool Transpose<T,N>::operator()(T const * const fSrc, T *fDest, size_t const * const nDims)
+bool Transpose<T,N>::operator()(T const * const fSrc, T *fDest, const std::vector<size_t> & nDims)
 {
   T * block = new T[N*N];
 
@@ -90,7 +91,7 @@ bool Transpose<T,N>::operator()(T const * const fSrc, T *fDest, size_t const * c
 }
 
 template <class T, size_t N>
-void Transpose<T,N>::TransposeRef(T const * const fSrc, T *fDest, size_t const * const nDims)
+void Transpose<T,N>::TransposeRef(T const * const fSrc, T *fDest, const std::vector<size_t> & nDims)
 {
   for (size_t v=0, i=0; v<nDims[1]; v++) {
 	for (size_t u=0; u<nDims[0]; u++,i++) {

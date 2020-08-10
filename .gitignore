@@ -2,10 +2,18 @@
 core/algorithms/ImagingAlgorithms/.DS_Store
 build*
 *.user
-*.pro.user.4.8-pre1
-*.pro.user.4.9-pre1
+*.user.4.8-pre1
+*.user.4.9-pre1
+*.user.4.10-pre1
 *.stash
 *.o
+*_wrapper.sh
+Makefile
+Makefile.Release
+Makefile.Debug
+ui_*.h
+cmake_install.cmake
+*.dylib
 *~
 *.autosave
 *.in
@@ -24,3 +32,6 @@ CMakeCache.txt
 CMakeFiles
 CMakeLists.txt
 _deps
+*.png
+moc_*
+*.moc

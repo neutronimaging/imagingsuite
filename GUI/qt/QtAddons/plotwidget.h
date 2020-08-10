@@ -10,6 +10,7 @@
 
 #include "callout.h"
 #include "plotcursor.h"
+#include <logging/logger.h>
 
 
 namespace Ui {
@@ -19,7 +20,7 @@ namespace QtAddons {
 class QTADDONSSHARED_EXPORT PlotWidget : public QWidget
 {
     Q_OBJECT
-
+    kipl::logging::Logger logger;
 public:
     explicit PlotWidget(QWidget *parent = nullptr);
     ~PlotWidget();
@@ -32,6 +33,7 @@ public:
     /// \param series the plot data
     /// \param deleteData A flag to indicate that the series container shall be deleted in the method. This is in particular necessary for the update case.
     void setCurveData(int id, QtCharts::QLineSeries *series, bool deleteData=true);
+    void setDataSeries(int id, QtCharts::QAbstractSeries *series, bool deleteData=true);
     void clearCurve(int id);
     void clearAllCurves();
     void setPointsVisible(int n=-1);
@@ -42,6 +44,9 @@ public:
     void setTitle(QString title);
     void hideTitle();
     void updateAxes();
+    void setXLabel(const QString & lbl="");
+    void setYLabel(const QString & lbl="");
+
 
     void setCursor(int id, PlotCursor *c);
     void clearCursor(int id);
@@ -72,10 +77,10 @@ private:
     std::map<int, QtCharts::QLineSeries *> cursormap;
 
     int m_nPointsVisible;
-    double minX=std::numeric_limits<double>::max();
-    double maxX=-std::numeric_limits<double>::max();
-    double minY=std::numeric_limits<double>::max();
-    double maxY=-std::numeric_limits<double>::max();
+    double minX;
+    double maxX;
+    double minY;
+    double maxY;
 
     QAction *savePlotAct;
     QAction *copyAct;

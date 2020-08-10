@@ -1,9 +1,4 @@
-/*
- * DataScaler.cpp
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 //#include "stdafx.h"
 #include "BasicThreshold.h"
 
@@ -14,7 +9,8 @@
 
 BasicThreshold::BasicThreshold(kipl::interactors::InteractionBase *interactor) :
 KiplProcessModuleBase("BasicThreshold", false,interactor),
-	m_fThreshold(0.0f)
+    m_fThreshold(0.0f),
+    m_Config("")
 {
 
 }

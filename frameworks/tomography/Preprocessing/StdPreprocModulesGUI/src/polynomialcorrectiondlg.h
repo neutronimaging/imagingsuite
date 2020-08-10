@@ -21,7 +21,7 @@ class PolynomialCorrectionDlg : public ConfiguratorDialogBase
     Q_OBJECT
 
 public:
-    explicit PolynomialCorrectionDlg(QWidget *parent = 0);
+    explicit PolynomialCorrectionDlg(QWidget *parent = nullptr);
     ~PolynomialCorrectionDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);

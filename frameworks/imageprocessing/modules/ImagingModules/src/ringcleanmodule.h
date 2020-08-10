@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef RINGCLEANMODULE_H
 #define RINGCLEANMODULE_H
 
@@ -27,7 +28,7 @@ protected:
     std::string wname;
     size_t scale;
     float sigma;
-    ImagingAlgorithms::StripeFilterOperation op;
+    ImagingAlgorithms::eStripeFilterOperation op;
     kipl::base::eImagePlanes plane;
 };
 #endif // WAVELETRINGCLEANMODULE_H

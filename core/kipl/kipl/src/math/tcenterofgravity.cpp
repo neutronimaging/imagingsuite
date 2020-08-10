@@ -12,7 +12,7 @@ CenterOfGravity::CenterOfGravity() :
     profileY(nullptr),
     profileZ(nullptr)
 {
-    std::fill(dims, dims+3,0UL);
+    dims = std::vector<size_t>(3,0UL);
 }
 
 CenterOfGravity::~CenterOfGravity()
@@ -42,7 +42,7 @@ kipl::base::coords3Df CenterOfGravity::findCenter(kipl::base::TImage<float,3> im
 {
     float threshold=0.0f;
 
-    std::copy(img.Dims(),img.Dims()+3,dims);
+    dims = img.dims();
 
     if (applythreshold)
     {
@@ -86,7 +86,7 @@ float CenterOfGravity::computeCOG(float *profile,int N)
 
 void CenterOfGravity::computeProfiles(kipl::base::TImage<float,3> img, bool applythreshold, float threshold)
 {
-    const size_t *dims = img.Dims();
+    auto  &dims = img.dims();
 
     clearAllocation();
 

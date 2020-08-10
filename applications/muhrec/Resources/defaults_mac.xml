@@ -68,7 +68,7 @@
         <preprocessing>
             <module>
                 <modulename>FullLogNorm</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.1.0.0.dylib</sharedobject>
+                <sharedobject>StdPreprocModules</sharedobject>
                 <active>true</active>
                 <parameters>
                     <referenceaverage>ImageWeightedAverage</referenceaverage>
@@ -80,7 +80,7 @@
             </module>
             <module>
                 <modulename>MorphSpotClean</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
                 <parameters>
                     <removeinfnan>false</removeinfnan>
@@ -93,13 +93,14 @@
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
                     <sigma>0.01 0.01</sigma>
-                    <threading>false</threading>
+                    <threading>true</threading>
                     <threshold>0.1 0.1</threshold>
+                    <transpose>false</transpose>
                 </parameters>
             </module>
             <module>
                 <modulename>WaveletRingClean</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
+                <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
                 <parameters>
                     <decnum>4</decnum>
@@ -109,29 +110,22 @@
                     <wname>daub25</wname>
                 </parameters>
             </module>
-            <module>
-                <modulename>ProjectionFilterSingle</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdPreprocModules.dylib</sharedobject>
-                <active>true</active>
-                <parameters>
-                    <biasweight>0.1</biasweight>
-                    <cutoff>0.5</cutoff>
-                    <filtertype>Hamming</filtertype>
-                    <order>1</order>
-                    <paddingdoubler>2</paddingdoubler>
-                    <usebias>true</usebias>
-                </parameters>
-            </module>
         </preprocessing>
         <backprojector>
             <module>
                 <modulename>MultiProjBP</modulename>
-                <sharedobject>@executable_path/Frameworks/libStdBackProjectors.1.0.0.dylib</sharedobject>
+                <sharedobject>StdBackProjectors</sharedobject>
                 <active>true</active>
                 <parameters>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>
                     <SubVolume>1 1</SubVolume>
+                    <biasweight>0.1</biasweight>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
+                    <usebias>false</usebias>
                 </parameters>
             </module>
         </backprojector>

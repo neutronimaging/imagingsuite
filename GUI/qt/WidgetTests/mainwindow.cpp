@@ -78,8 +78,8 @@ void MainWindow::on_ShowImageButton_clicked()
     m_fScale=fmod(m_fScale+1.0,10.0);
     kipl::base::TImage<float,2> img=kipl::generators::Sine2D::JaehneRings(100,m_fScale);
 
-    ui->ImageView->set_image(img.GetDataPtr(),img.Dims());
-    ui->ImageView_2->set_image(img.GetDataPtr(),img.Dims());
+    ui->ImageView->set_image(img.GetDataPtr(),img.dims());
+    ui->ImageView_2->set_image(img.GetDataPtr(),img.dims());
     int flip=static_cast<int>(m_fScale) & 1;
     if (flip) {
         ui->ImageView->set_rectangle(QRect(10,10,30,40),QColor(Qt::red),0);
@@ -98,13 +98,12 @@ void MainWindow::on_ShowImageButton_clicked()
 
 void MainWindow::GetModulesClicked()
 {
-    std::list<ModuleConfig> modules=ui->ModuleConf->GetModules();
+    auto modules=ui->ModuleConf->GetModules();
 
-    std::list<ModuleConfig>::iterator it;
     std::ostringstream msg;
     msg<<"Got "<<modules.size()<<" modules from the widget\n";
-    for (it=modules.begin(); it!=modules.end(); it++) {
-        msg<<(it->m_sModule)<<"("<<(it->m_bActive ? "Active": "Disabled")<<"), has "<<(it->parameters.size())<<" parameters\n";
+    for (auto & module : modules) {
+        msg<<(module.m_sModule)<<"("<<(module.m_bActive ? "Active": "Disabled")<<"), has "<<(module.parameters.size())<<" parameters\n";
     }
 
     logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -135,18 +134,26 @@ void MainWindow::on_pushButton_listdata_clicked()
 {
     std::list<FileSet> loaderlist;
 
+    std::ostringstream msg;
+
     loaderlist=ui->ImageLoaders->GetList();
+    msg.str("");
+    msg<<"Getting files from loader:\n";
     for (auto it=loaderlist.begin(); it!=loaderlist.end(); it++) {
-        std::cout<<*it<<std::endl;
+         msg<<*it<<"\n";
     }
+
+    logger.message(msg.str());
 
     std::list<std::string> flist=BuildFileList(loaderlist);
 
+    msg.str("");
+    msg<<"Build file list:\n";
     for (auto it=flist.begin(); it!=flist.end(); it++) {
-        std::cout<<*it<<std::endl;
+        msg<<*it<<"\n";
     }
 
-
+    logger.message(msg.str());
 }
 
 void MainWindow::on_roiwidget_getROIclicked()
@@ -172,11 +179,11 @@ void MainWindow::on_button_ListAllROIs_clicked()
     qDebug() << "got list "<<roilist.size();
     std::ostringstream msg;
     msg<<"All ROIs";
-    size_t coord[4];
+
     foreach (kipl::base::RectROI roi, roilist) {
         msg<<std::endl;
-        roi.getBox(coord);
-        msg<<roi.getName()<<" ("<<roi.getID()
+        auto coord = roi.box();
+        msg<<roi.label()<<" ("<<roi.getID()
           <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
     }
@@ -191,11 +198,11 @@ void MainWindow::on_button_ListSelectedROIs_clicked()
     qDebug() << "got list "<<roilist.size();
     std::ostringstream msg;
     msg<<"Selected ROIs";
-    size_t coord[4];
+
     foreach (kipl::base::RectROI roi, roilist) {
         msg<<std::endl;
-        roi.getBox(coord);
-        msg<<roi.getName()<<" ("<<roi.getID()
+        auto coord=roi.box();
+        msg<<roi.label()<<" ("<<roi.getID()
           <<"): [x0: "<<coord[0]<<", y0: "<<coord[1]
           <<", x1: "<<coord[2]<<", y1: "<<coord[3]<<"]";
     }

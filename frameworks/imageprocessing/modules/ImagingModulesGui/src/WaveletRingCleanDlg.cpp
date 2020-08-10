@@ -48,7 +48,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
     m_Config=dynamic_cast<KiplProcessConfig *>(config);
 
     try {
-        m_nLevels = GetFloatParameter(parameters,"decnum");
+        m_nLevels = GetIntParameter(parameters,"decnum");
         m_fSigma  = GetFloatParameter(parameters,"sigma");
         m_sWaveletName = GetStringParameter(parameters, "waveletname");
         string2enum(GetStringParameter(parameters,"filtertype"),op);
@@ -173,7 +173,7 @@ void WaveletRingCleanDlg::UpdateParameters()
     m_nLevels         = ui->entry_levels->value();
     m_fSigma          = ui->entry_cutoff->value();
     m_bParallel       = false;
-    op = static_cast<ImagingAlgorithms::StripeFilterOperation>(ui->combo_filtertype->currentIndex());
+    op = static_cast<ImagingAlgorithms::eStripeFilterOperation>(ui->combo_filtertype->currentIndex());
     plane = ui->volumeviewer->getImagePlane();
 }
 

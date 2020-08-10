@@ -1,9 +1,8 @@
 //<LICENSE>
 
-#ifndef __MODULEITEM_H
-#define __MODULEITEM_H
+#ifndef MODULEITEM_H
+#define MODULEITEM_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 
 #include <string>
 

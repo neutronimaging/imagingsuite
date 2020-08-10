@@ -20,7 +20,7 @@
 MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),
     ui(new Ui::MorphSpotCleanDlg),
-    m_eConnectivity(kipl::morphology::conn4),
+    m_eConnectivity(kipl::base::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold{0.1f,0.1f},
@@ -52,7 +52,7 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -90,7 +90,7 @@ void MorphSpotCleanDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.dims(),axis[nLo],axis[nHi]);
 
     on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
 }
@@ -127,7 +127,6 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
     if (m_fSigma[det]!=0.0f)
     { // In case of sigmoid mixing
         float endPoint = axis[N99] < m_fThreshold[det]+5*m_fSigma[det] ? m_fThreshold[det]+5*m_fSigma[det] : axis[N99];
-        qDebug() <<"axis0"<<axis[0]<< "N99=" <<axis[N99]<<",endPoint="<<endPoint<<", diff="<<endPoint-axis[0];
 
         for (size_t i=0; i<N; i++) {
             thaxis[i]=axis[0]+i*(endPoint-axis[0])/N;
@@ -234,7 +233,7 @@ void MorphSpotCleanDlg::UpdateParameters()
 {
     m_eCleanMethod      = static_cast<ImagingAlgorithms::eMorphCleanMethod>(ui->comboCleanMethod->currentIndex());
     m_eDetectionMethod  = static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboDetectionMethod->currentIndex());
-    m_eConnectivity     = static_cast<kipl::morphology::MorphConnect>(ui->comboConnectivity->currentIndex());
+    m_eConnectivity     = static_cast<kipl::base::eConnectivity>(ui->comboConnectivity->currentIndex());
     m_fThreshold[0]     = static_cast<float>(ui->spinThresholdHoles->value());
     m_fSigma[0]         = static_cast<float>(ui->spinSigmaHoles->value());
     m_fThreshold[1]     = static_cast<float>(ui->spinThresholdPeaks->value());
@@ -338,7 +337,7 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
     kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.dims(),axis[nLo],axis[nHi]);
 }
 
 void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)

@@ -1,13 +1,4 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-09-27 15:20:52 +0200 (Mo, 27 Sep 2010) $
-// $Rev: 726 $
-//
+//<LICENSE>
 
 #include "../include/MultiProjBPparallel.h"
 #include "../include/ReconException.h"
@@ -28,7 +19,14 @@
 MultiProjectionBPparallel::MultiProjectionBPparallel(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP parallel",StdBackProjectorBase::MatrixZXY, interactor)
 {
-
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
 }
 
 MultiProjectionBPparallel::~MultiProjectionBPparallel(void)
@@ -39,8 +37,8 @@ MultiProjectionBPparallel::~MultiProjectionBPparallel(void)
 void MultiProjectionBPparallel::BackProject()
 {
 	std::stringstream msg;
-	const ptrdiff_t SizeY         = mask.size();		 // The mask size is used since there may be less elements than the matrix size.
-	const size_t SizeZ         = volume.Size(0)/4; // Already adjusted by a factor 4
+    const ptrdiff_t SizeY      = mask.size();	   // The mask size is used since there may be less elements per row than the matrix size.
+    const size_t SizeZ         = volume.Size(0)/4; // Already adjusted to be a multiple of 4
 	const size_t SizeV4		   = projections.Size(0)/4;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
 	const size_t NProjections  = nProjectionBufferSize;
@@ -67,7 +65,8 @@ void MultiProjectionBPparallel::BackProject()
 
 				const float centeroffset = (mConfig.ProjectionInfo.roi[1]-mConfig.ProjectionInfo.fTiltPivotPosition)
 												*tan(mConfig.ProjectionInfo.fTiltAngle*fPi/180);
-				for (size_t i=0; i<nProjCounter; i++) {
+                for (size_t i=0; i<nProjCounter; i++)
+                {
 					fLocalStartUp[i]=fStartU[i] + fCos[i]*y-centeroffset;
 				}
 
@@ -126,7 +125,8 @@ void MultiProjectionBPparallel::BackProject()
 				const size_t cfStartX = mask[y-1].first;
 				const size_t cfStopX  = mask[y-1].second;
 
-				for (size_t i=0; i<nProjCounter; i++) {
+                for (size_t i=0; i<nProjCounter; i++)
+                {
 					fLocalStartUp[i]=fStartU[i] + fCos[i]*y;
 				}
 
@@ -139,7 +139,8 @@ void MultiProjectionBPparallel::BackProject()
 						fPosU  = fLocalStartUp[i]-fSin[i]*x;
 						int nPosU=static_cast<int>(fPosU);				// Compute position
 
-						if ((nPosU<0) || ((SizeUm2)<nPosU)) {
+                        if ((nPosU<0) || ((SizeUm2)<nPosU))
+                        {
 							continue;
 						}
 

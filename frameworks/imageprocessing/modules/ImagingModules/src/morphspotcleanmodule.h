@@ -1,9 +1,11 @@
+//<LICENSE>
 #ifndef MORPHSPOTCLEANMODULE_H
 #define MORPHSPOTCLEANMODULE_H
 
 #include "ImagingModules_global.h"
 #include <string>
 #include <map>
+#include <vector>
 
 #include <base/timage.h>
 #include <base/kiplenums.h>
@@ -31,12 +33,12 @@ protected:
 //    int ProcessParallelStd(kipl::base::TImage<float,3> & img);
 //    int ProcessParallelStd(size_t tid, float *pImg, const size_t *dims, size_t N);
 
-    kipl::morphology::MorphConnect m_eConnectivity;
+    kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
 
-    float m_fThreshold[2];
-    float m_fSigma[2];
+    std::vector<float> m_fThreshold;
+    std::vector<float> m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
     bool m_bRemoveInfNan;
