@@ -69,7 +69,7 @@ bool ReconConfig::SanityAnglesCheck()
 {
     std::ostringstream msg;
 
-    if ( ((ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan) || (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan))
+    if ( ((ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan) || (ProjectionInfo.scantype==ProjectionInfo.InvGoldenSectionScan))
             && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f))
     {
         msg<<"Incorrect angles configuration " ;
