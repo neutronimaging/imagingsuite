@@ -2677,7 +2677,7 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
 
 void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
 {
-    if (index==m_Config.ProjectionInfo.GoldenSectionScan)
+    if ( (index==m_Config.ProjectionInfo.GoldenSectionScan) || (index==m_Config.ProjectionInfo.InvGoldenSectionScan) )
     {
         if  (ui->radioButton_customTurn->isChecked()) {
             ui->radioButton_customTurn->setCheckable(false);

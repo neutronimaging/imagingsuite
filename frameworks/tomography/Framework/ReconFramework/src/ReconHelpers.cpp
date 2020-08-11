@@ -12,6 +12,7 @@
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
+#include <QDebug>
 
 //#define EQUIDISTANT_WEIGHTS
 
@@ -110,8 +111,12 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 				}
 				break;
             case ReconConfig::cProjections::GoldenSectionScan :
+            case ReconConfig::cProjections::InvGoldenSectionScan :
                 {
-                    const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+                    float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+                    if (config->ProjectionInfo.scantype == ReconConfig::cProjections::InvGoldenSectionScan)
+                        fGoldenSection = 1.0f/fGoldenSection;
+
 					float arc=config->ProjectionInfo.fScanArc[1];
 					if ((arc!=180.0f) && (arc!=360.0f))
 						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
@@ -150,7 +155,11 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
                         size_t found = config->ProjectionInfo.sFileMask.find("hdf");
                         kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-                        float angle=static_cast<float>(fmod(static_cast<float>(i-config->ProjectionInfo.nGoldenStartIdx-skip)*fGoldenSection*arc,arc));
+                        int idx = i - config->ProjectionInfo.nFirstIndex
+                                    - config->ProjectionInfo.nGoldenStartIdx
+                                    - skip ;
+
+                        float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans
 
                         if (found==std::string::npos )
                         {
@@ -410,7 +419,9 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
         // Compute first weight
         q0=q1;
         q1=q2++;
-        if (repeatedLast || config->ProjectionInfo.scantype==config->ProjectionInfo.GoldenSectionScan)
+        if (repeatedLast
+                || config->ProjectionInfo.scantype==config->ProjectionInfo.GoldenSectionScan
+                || config->ProjectionInfo.scantype==config->ProjectionInfo.InvGoldenSectionScan)
         {
             q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
         }
