@@ -89,7 +89,12 @@ public slots:
     void ShowContextMenu(const QPoint& pos);
     void on_levelsChanged(float lo, float hi);
 
+private slots:
+    void saveCurrentView();
+    void copyImage();
+
 protected:
+    void setupActions();
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent * event);
     void mousePressEvent(QMouseEvent *event);
@@ -102,6 +107,7 @@ protected:
 protected:
     void UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w);
     void UpdateLinkedViewers();
+    void saveImage(const QString &fname);
 
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
@@ -114,6 +120,7 @@ protected:
     QRect roiRect;
     eViewerMouseModes m_MouseMode;
     Qt::MouseButton m_PressedButton;
+    bool m_mouseMoved;
     QPoint m_LastMotionPosition;
     QSize widgetSize;
     QSet<ImageViewerWidget *> m_LinkedViewers;
@@ -122,6 +129,8 @@ protected:
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
     double m_CurrentScale;
+    QAction *saveImageAct;
+    QAction *copyImageAct;
 
 signals:
     void newImageDims(const QRect &rect);

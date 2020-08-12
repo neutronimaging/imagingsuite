@@ -362,6 +362,7 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
             float *pImg=tmpimg.GetDataPtr();
             std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
         }
+        img.info.nBitsPerSample = tmpimg.info.nBitsPerSample;
     }
     else
     {
@@ -385,6 +386,7 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
             float *pImg=tmpimg.GetDataPtr();
             std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
         }
+        img.info.nBitsPerSample = tmpimg.info.nBitsPerSample;
     }
     return img;
 }

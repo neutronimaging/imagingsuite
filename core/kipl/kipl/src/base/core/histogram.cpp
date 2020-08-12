@@ -125,7 +125,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         {
             #pragma omp for
             for (i=0; i<snData; i++) {
-                if (data[i]!=0.0f)
+                if ( (data[i]!=0.0f) && std::isfinite(data[i]))
                 {
                     index=static_cast<int>((data[i]-start)*scale);
                     if ((index<snBins) && (0<=index))

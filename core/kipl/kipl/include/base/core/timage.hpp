@@ -93,6 +93,7 @@ void TImage<T,N>::Clone(const kipl::base::TImage<T,N> &img)
 {
     this->resize(img.dims());
     std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),this->GetDataPtr());
+    info = img.info;
 }
 
 template<typename T, size_t N>

@@ -37,8 +37,10 @@ private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
     void testNonLinFit_enums();
-    void testNonLinFit_GaussianFunction();
-    void testNonLinFit_fitter();
+    void testTNTNonLinFit_GaussianFunction();
+    void testTNTNonLinFit_fitter();
+    void testARMANonLinFit_GaussianFunction();
+    void testARMANonLinFit_fitter();
     void testFindPeaks();
 
     void testStatistics();
@@ -198,13 +200,13 @@ void TKiplMathTest::testNonLinFit_enums()
     QCOMPARE(msg.str(),std::string("VoightProfile"));
 
 }
-void TKiplMathTest::testNonLinFit_GaussianFunction()
+void TKiplMathTest::testTNTNonLinFit_GaussianFunction()
 {
-    Nonlinear::SumOfGaussians sog(1);
+    Nonlinear::TNTfit::SumOfGaussians sog(1);
     QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
     QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
 
-    bool lv[]={false,true,true};
+    std::vector<bool> lv={false,true,true};
     sog.setLock(lv);
     for (int i=0; i<sog.getNpars(); ++i)
         QCOMPARE(sog.isFree(i),lv[i]);
@@ -217,7 +219,7 @@ void TKiplMathTest::testNonLinFit_GaussianFunction()
     QCOMPARE(sog(0.0),(double)1.0);
     QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
 
-    Nonlinear::SumOfGaussians sog2(2);
+    Nonlinear::TNTfit::SumOfGaussians sog2(2);
     sog2[0]=1;
     sog2[1]=0;
     sog2[2]=1;
@@ -239,13 +241,88 @@ void TKiplMathTest::testNonLinFit_GaussianFunction()
     QCOMPARE(y0,y1);
 }
 
-void TKiplMathTest::testNonLinFit_fitter()
+void TKiplMathTest::testTNTNonLinFit_fitter()
 {
     int N=100;
 
     Array1D<double> x(N);
     Array1D<double> y(N);
     Array1D<double> sig(N);
+
+    Nonlinear::TNTfit::SumOfGaussians sog0(1),sog(1);
+    sog0[0]=2; //A
+    sog0[1]=0; //m
+    sog0[2]=1; //s
+
+    sog[0]=1; //A
+    sog[1]=0.5; //m
+    sog[2]=1.5; //s
+
+    for (int i=0; i<N; ++i)
+    {
+        x[i]=(i-N/2)*0.2;
+        y[i]=sog0(x[i]);
+      //  qDebug() << "Data: x="<<x[i]<<", y="<<y[i];
+        sig[i]=1.0;
+    }
+
+    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
+
+    mrq.fit(x,y,sig,sog);
+
+    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
+    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
+    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
+
+}
+
+void TKiplMathTest::testARMANonLinFit_GaussianFunction()
+{
+    Nonlinear::SumOfGaussians sog(1);
+    QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
+    QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
+
+    std::vector<bool> lv={false,true,true};
+    sog.setLock(lv);
+    for (int i=0; i<sog.getNpars(); ++i)
+        QCOMPARE(sog.isFree(i),lv[i]);
+
+    QCOMPARE(sog.getNpars2fit(),1);
+    sog[0]=1;
+    sog[1]=0;
+    sog[2]=1;
+
+    QCOMPARE(sog(0.0),(double)1.0);
+    QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
+
+    Nonlinear::SumOfGaussians sog2(2);
+    sog2[0]=1;
+    sog2[1]=0;
+    sog2[2]=1;
+    sog2[3]=2;
+    sog2[4]=0.5;
+    sog2[5]=0.5;
+
+    QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
+    QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
+
+    double x=1;
+    double y0=0;
+    double y1=0;
+    arma::vec dyda(3);
+
+    y0=sog(x);
+    sog(x,y1,dyda);
+    QCOMPARE(y0,y1);
+}
+
+void TKiplMathTest::testARMANonLinFit_fitter()
+{
+    int N=100;
+
+    arma::vec x(N);
+    arma::vec y(N);
+    arma::vec sig(N);
 
     Nonlinear::SumOfGaussians sog0(1),sog(1);
     sog0[0]=2; //A
@@ -273,7 +350,6 @@ void TKiplMathTest::testNonLinFit_fitter()
     QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
 
 }
-
 void TKiplMathTest::testFindPeaks()
 {
     const size_t N=100;
