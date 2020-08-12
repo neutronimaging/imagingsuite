@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __TRANSPOSE_HPP
-#define __TRANSPOSE_HPP
+#ifndef TRANSPOSE_HPP
+#define TRANSPOSE_HPP
 
 #include <memory.h>
 #include "../timage.h"
