@@ -44,7 +44,8 @@ public:
         /// Enumeration of acquistion strategy
 		enum eScanType {
             SequentialScan,                             ///< Tradiational linear increments uniformly distributed.
-            GoldenSectionScan                           ///< Increments determined by the golden ratio.
+            GoldenSectionScan,                          ///< Increments determined by the golden ratio.
+            InvGoldenSectionScan                        ///< Increments determined by the inverse golden ratio.
 		};
 
         /// Enumeration of input image types
@@ -219,6 +220,11 @@ protected:
 /// \param str The string to convert
 /// \param st a scan type variable
 RECONFRAMEWORKSHARED_EXPORT void string2enum(const std::string str, ReconConfig::cProjections::eScanType &st);
+
+/// Converts a string to a scan type enum
+/// \param str The string to convert
+/// \param st a scan type variable
+RECONFRAMEWORKSHARED_EXPORT std::string enum2string(const ReconConfig::cProjections::eScanType &st);
 
 /// Converts a string to a image type enum
 /// \param str The string to convert
