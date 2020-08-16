@@ -90,8 +90,8 @@ void bindMorphSpotClean(py::module &m)
 
         py::buffer_info buf1 = x.request();
 
-        size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                       static_cast<size_t>(buf1.shape[0])};
+        std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
+                                    static_cast<size_t>(buf1.shape[0])};
         kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
         kipl::base::TImage<float,2> res=msc.detectionImage(img);
@@ -113,8 +113,8 @@ void bindMorphSpotClean(py::module &m)
             {
                 py::buffer_info buf1 = x.request();
 
-                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                               static_cast<size_t>(buf1.shape[0])};
+                std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
                 kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
                 msc.process(img,th,sigma);
@@ -133,7 +133,7 @@ void bindMorphSpotClean(py::module &m)
             {
                 py::buffer_info buf1 = x.request();
 
-                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
+                std::vector<size_t> dims={static_cast<size_t>(buf1.shape[1]),
                                static_cast<size_t>(buf1.shape[0])};
                 kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
@@ -153,8 +153,8 @@ void bindMorphSpotClean(py::module &m)
     {
         py::buffer_info buf1 = x.request();
 
-        size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                       static_cast<size_t>(buf1.shape[0])};
+        std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
+                                        static_cast<size_t>(buf1.shape[0])};
         double *data=static_cast<double*>(buf1.ptr);
 
         kipl::base::TImage<float,2> img(dims);
@@ -179,8 +179,9 @@ void bindMorphSpotClean(py::module &m)
     {
         py::buffer_info buf1 = x.request();
 
-        size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                       static_cast<size_t>(buf1.shape[0])};
+        std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
+                                        static_cast<size_t>(buf1.shape[0])};
+
         double *data=static_cast<double*>(buf1.ptr);
 
         kipl::base::TImage<float,2> img(dims);

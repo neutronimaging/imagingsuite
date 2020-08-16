@@ -45,7 +45,7 @@ public:
     virtual ~StripeFilter();
 
     std::vector<int> dims();
-    bool checkDims(const size_t *dims);
+    bool checkDims(const std::vector<size_t> &dims);
     std::string waveletName();
     int decompositionLevels();
     float sigma();
