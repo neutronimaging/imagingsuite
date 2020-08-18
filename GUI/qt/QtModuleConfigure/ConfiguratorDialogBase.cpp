@@ -25,7 +25,7 @@ int ConfiguratorDialogBase::exec(ConfigBase * config, std::map<std::string, std:
 
 kipl::base::TImage<float,2> ConfiguratorDialogBase::GetProjection(kipl::base::TImage<float,3> img, size_t n)
 {
-	kipl::base::TImage<float,2> proj(img.Dims());
+    kipl::base::TImage<float,2> proj(img.dims());
 
 	memcpy(proj.GetDataPtr(), img.GetLinePtr(0,n), sizeof(float)*proj.Size());
 
@@ -34,7 +34,7 @@ kipl::base::TImage<float,2> ConfiguratorDialogBase::GetProjection(kipl::base::TI
 
 kipl::base::TImage<float,2> ConfiguratorDialogBase::GetSinogram(kipl::base::TImage<float,3> img, size_t n)
 {
-	size_t dims[2]={img.Size(0),img.Size(2)};
+    std::vector<size_t> dims={img.Size(0),img.Size(2)};
 	kipl::base::TImage<float,2> sino(dims);
 
     if (img.Size(1)<n)

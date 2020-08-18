@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <map>
+#include <vector>
 
 #include <QPixmap>
 #include <QWidget>
@@ -34,40 +35,45 @@ public:
     ~ImagePainter();
     void Render(QPainter &painter, int x, int y, int w, int h);
 
-    void set_image(kipl::base::TImage<float,2> &img);
-    kipl::base::TImage<float,2> get_image();
-    void set_image(float const * const data, size_t const * const dims);
-    void set_image(float const * const data, size_t const * const dims, const float low, const float high);
-    void set_plot(QVector<QPointF> data, QColor color, int idx);
-    int clear_plot(int idx=-1);
-    void set_rectangle(QRect rect, QColor color, int idx);
-    int  clear_rectangle(int idx=-1);
-    void set_marker(QMarker marker, int idx);
-    int clear_marker(int idx=-1);
-    void hold_annotations(bool hold);
+    void setImage(kipl::base::TImage<float,2> &img);
+    kipl::base::TImage<float,2> getImage();
+    void setImage(float const * const data, const std::vector<size_t> &dims);
+    void setImage(float const * const data, const std::vector<size_t> &dims, const float low, const float high);
+    void setPlot(QVector<QPointF> data, QColor color, int idx);
+    int clearPlot(int idx=-1);
+    void setRectangle(QRect rect, QColor color, int idx);
+    int  clearRectangle(int idx=-1);
+    void setMarker(QMarker marker, int idx);
+    int clearMarker(int idx=-1);
+    void holdAnnotations(bool hold);
 
     int  clear();
-    void set_levels(const float level_low, const float level_high);
-    void get_levels(float *level_low, float *level_high);
-    void get_image_minmax(float *level_low, float *level_high);
+    void setLevels(const float level_low, const float level_high);
+    void getLevels(float *level_low, float *level_high);
+    void getImageMinMax(float *level_low, float *level_high);
     const QVector<QPointF> &getImageHistogram();
-    int const * get_image_dims() {return m_dims;}
-    void show_clamped(bool show);
-    float get_scale() {return m_fScale;}
-    int get_offsetX() {return offset_x;}
-    int get_offsetY() {return offset_y;}
+    const std::vector<size_t> & imageDims() {return m_dims;}
+    void showClamped(bool show);
+    float getScale();
+    int getOffsetx() {return offset_x;}
+    int getOffsety() {return offset_y;}
     float getValue(int x, int y);
+    void globalPosition(int &x,int &y);
+    int globalPositionX(int x);
+    int globalPositionY(int y);
     int zoomIn(QRect *zoomROI=nullptr);
     int zoomOut();
     int panImage(int dx, int dy);
     QRect getCurrentZoomROI();
+    QSize zoomedImageSize();
+    QSize imageSize();
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
 protected:
-    void prepare_pixbuf();
+    void preparePixbuf();
     void createZoomImage(QRect roi);
 
-    int m_dims[2];
-    int m_NData;
+    std::vector<size_t> m_dims;
+    size_t m_NData;
 
     float m_ImageMin;
     float m_ImageMax;
@@ -83,16 +89,16 @@ protected:
     float m_fScale;
     bool m_bHold_annotations;
 
-    float * m_data;  //<! float pixel buffer
+    float * m_data;  ///<! float pixel buffer
     kipl::base::TImage<float,2> m_OriginalImage;
     kipl::base::TImage<float,2> m_ZoomedImage;
-    uchar * m_cdata;   //<! RGB Pixel buffer
+    uchar * m_cdata;   ///<! RGB Pixel buffer
 
-    QVector<QRect> m_ZoomList; //<! Stack of zoom ROIs
-    QMap<int,QPair<QRect, QColor> > m_BoxList; //<! List of Rectangles to draw on the image
-    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList; //<! List of plot data to draw on the image
+    QVector<QRect> m_ZoomList; ///<! Stack of zoom ROIs
+    QMap<int,QPair<QRect, QColor> > m_BoxList; ///<! List of Rectangles to draw on the image
+    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList; ///<! List of plot data to draw on the image
     QMap<int,QMarker > m_MarkerList;
-    QVector<QPointF> m_Histogram; //<! Histogram of the full image
+    QVector<QPointF> m_Histogram; ///<! Histogram of the full image
 
     QPixmap m_pixmap_full;
     QRect m_currentROI;

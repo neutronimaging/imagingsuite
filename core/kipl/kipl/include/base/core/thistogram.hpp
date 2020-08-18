@@ -3,12 +3,14 @@
 #ifndef THISTOGRAM_HPP
 #define THISTOGRAM_HPP
 
+#include "../thistogram.h"
+
 namespace kipl { namespace base {
 template<typename T>
 THistogram<T>::THistogram(size_t nbins, T low, T high) :
     m_nBins(nbins),
-    m_pHistogram(NULL),
-    m_pAxis(NULL),
+    m_pHistogram(nullptr),
+    m_pAxis(nullptr),
     m_fSlope(1),
     m_fIntercept(0),
     m_LowValue(low),
@@ -20,10 +22,10 @@ THistogram<T>::THistogram(size_t nbins, T low, T high) :
 template<typename T>
 THistogram<T>::~THistogram()
 {
-    if (m_pHistogram!=NULL)
+    if (m_pHistogram!=nullptr)
         delete [] m_pHistogram;
 
-    if (m_pAxis!=NULL)
+    if (m_pAxis!=nullptr)
         delete [] m_pAxis;
 }
 
@@ -31,12 +33,12 @@ template<typename T>
 void THistogram<T>::SetInterval(size_t length, T low, T high)
 {
     m_nBins=length;
-    if (m_pHistogram!=NULL)
+    if (m_pHistogram!=nullptr)
         delete [] m_pHistogram;
 
     m_pHistogram = new size_t[m_nBins];
 
-    if (m_pAxis!=NULL)
+    if (m_pAxis!=nullptr)
         delete [] m_pAxis;
 
     m_pAxis = new float[m_nBins];

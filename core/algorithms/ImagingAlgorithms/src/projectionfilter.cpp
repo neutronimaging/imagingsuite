@@ -12,8 +12,6 @@
 #include <strings/miscstring.h>
 #include <math/compleximage.h>
 #include <base/imagecast.h>
-#include <io/io_matlab.h>
-#include <visualization/GNUPlot.h>
 
 #include <vector>
 #include <sstream>
@@ -89,8 +87,12 @@ ProjectionFilterBase::ProjectionFilterBase(std::string name,kipl::interactors::I
 
 void ProjectionFilterBase::setFilter(ImagingAlgorithms::ProjectionFilterType ft, float cutOff, float _order)
 {
+    std::ostringstream msg;
     if ((cutOff<0.0f) || (0.5f<cutOff))
-        throw ImagingException("The cut-off frequency must be in the interval [0,0.5]",__FILE__,__LINE__);
+    {
+        msg<<"The cut-off frequency is "<<cutOff<<", it must be in the interval [0,0.5]";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 
     m_FilterType = ft;
     m_fCutOff    = cutOff;
@@ -176,7 +178,7 @@ int ProjectionFilterBase::process(kipl::base::TImage<float,3> & img)
         if ((img.Size(0) != nImageSize) || bParametersChanged)
             buildFilter(img.Size(0));
 
-        kipl::base::TImage<float,2> proj(img.Dims());
+        kipl::base::TImage<float,2> proj(img.dims());
 
         for (size_t i=0; (i<img.Size(2)) && (updateStatus(float(i)/img.Size(2),"ProjectionFilter")==false); ++i)
         {
@@ -218,8 +220,10 @@ void ProjectionFilterBase::setParameters(const std::map<std::string, std::string
 
     if (params.count("cutoff"))
         m_fCutOff = std::stof(params.at("cutoff"));
+    else
+        m_fCutOff = 0.5f;
 
-    if (0.5f<m_fCutOff)
+    if ((m_fCutOff<0.0f) || (0.5f<m_fCutOff))
         throw ImagingException("The cut-off frequency must be in the interval [0,0.5]",__FILE__,__LINE__);
 
     if (params.count("order"))
@@ -284,8 +288,11 @@ void ProjectionFilter::buildFilter(const size_t N)
     msg<<"Filter :"<<m_FilterType<<" filter size="<<mFilter.size();
     logger(kipl::logging::Logger::LogVerbose, msg.str());
 
-    if (!((0<m_fCutOff) && (m_fCutOff<=0.5f)))
-        throw ImagingException("Cut off frequency is not in valid range",__FILE__,__LINE__);
+    if ((m_fCutOff<0.0f) || (0.5f<m_fCutOff))
+    {
+        msg<<"The cut-off frequency is "<<m_fCutOff<<", it must be in the interval [0,0.5]";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 
     float FilterOrder=0.0;
     if (m_FilterType==ProjectionFilterType::ProjectionFilterButterworth)
@@ -342,7 +349,7 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 
     const size_t cnFilterLength=mFilter.size();
     const size_t cnLoopCnt=nFFTsize/2;
-    kipl::base::TImage<complex<float>,1> ft1Dimg(&nFFTsize);
+    kipl::base::TImage<complex<float>,1> ft1Dimg({nFFTsize});
 
   //  float *pFilter=mFilter.GetDataPtr();
     complex<float> *pFTLine=ft1Dimg.GetDataPtr();
@@ -398,7 +405,7 @@ void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
 {
     nInsert=(nFilter/2)-(nImage/2);
 
-    mPadData.Resize(&nInsert);
+    mPadData.resize({nInsert});
 
     for (size_t i=0; i<nInsert; i++)
     {
@@ -408,156 +415,3 @@ void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
 }
 }
 
-#ifdef HAVEPYBIND11
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-#include <typeinfo>
-
-namespace py = pybind11;
-
-void bindProjectionFilter(py::module &m)
-{
-    py::class_<ImagingAlgorithms::ProjectionFilter> pfClass(m, "ProjectionFilter");
-    pfClass.def(py::init());
-    pfClass.def("filterWeights",&ImagingAlgorithms::ProjectionFilter::filterWeights,"Returns an array with the filter weights.");
-
-    pfClass.def("parameters",
-                &ImagingAlgorithms::ProjectionFilter::parameters,
-                "Returns a list with the filter parameters");
-
-    pfClass.def("setParameters",
-                 [](ImagingAlgorithms::ProjectionFilter &pf,
-                 py::dict & pars)
-    {
-        std::map<std::string, std::string> mpars;
-        for (auto item : pars) {
-            mpars.insert(std::make_pair(py::str(item.first),py::str(item.second)));
-            py::print("key: ",typeid(item.first).name(),", value=",typeid(item.second).name());
-        }
-        pf.setParameters(mpars);
-    }, "Sets the filter parameters using a dictionary",py::arg("pars"));
-
-    pfClass.def("setFilter",
-                &ImagingAlgorithms::ProjectionFilter::setFilter,
-                "Set filter type and parameters",
-                py::arg("ft"), py::arg("cutOff"), py::arg("order")=0.0f);
-    pfClass.def("filterType",
-                &ImagingAlgorithms::ProjectionFilter::filterType,
-                "Returns the current filter type");
-    pfClass.def("cutOff",
-                &ImagingAlgorithms::ProjectionFilter::cutOff,
-                "Returns the current filter cut-off frequency");
-
-    pfClass.def("order",
-                &ImagingAlgorithms::ProjectionFilter::order,
-                "Returns the current filter order (only relevant for the Butterworth filter).");
-
-    pfClass.def("setBiasBehavior",
-                &ImagingAlgorithms::ProjectionFilter::setBiasBehavior,
-                "Defines how the DC component should be handled.",
-                py::arg("useBias"), py::arg("biasWeight"));
-    pfClass.def("useBias",
-                &ImagingAlgorithms::ProjectionFilter::useBias,
-                "Returns true if the bias is used.");
-    pfClass.def("biasWeight",
-                &ImagingAlgorithms::ProjectionFilter::biasWeight,
-                "Returns the fraction of the first non-DC frequency to be used as bias.");
-
-    pfClass.def("setPaddingDoubler",
-                &ImagingAlgorithms::ProjectionFilter::setPaddingDoubler,
-                "Sets the how many time the spectrum length is doubled and filled with zeros as padding.",
-                py::arg("N"));
-    pfClass.def("paddingDoubler",
-                &ImagingAlgorithms::ProjectionFilter::paddingDoubler,
-                "Returns the padding doubler value.");
-
-    pfClass.def("currentFFTSize",
-                &ImagingAlgorithms::ProjectionFilter::currentFFTSize,
-                "Returns the size of the current FFT buffer.");
-    pfClass.def("currentImageSize",
-                &ImagingAlgorithms::ProjectionFilter::currentImageSize,
-                "Returns width of the current image.");
-
-
-    pfClass.def("process",
-                 [](ImagingAlgorithms::ProjectionFilter &pf,
-                 py::array_t<float> &x)
-    {
-        py::buffer_info buf1 = x.request();
-
-        float *data=static_cast<float*>(buf1.ptr);
-
-        if (buf1.ndim==3)
-        {
-            size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                           static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
-            kipl::base::TImage<float,3> img(data,dims);
-
-            pf.process(img);
-            std::copy_n(img.GetDataPtr(),img.Size(),data);
-        }
-        else if (buf1.ndim==2)
-        {
-            size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
-
-
-            kipl::base::TImage<float,2> img(data,dims);
-            pf.process(img);
-            std::copy_n(img.GetDataPtr(),img.Size(),data);
-        }
-    },
-    "Applies the projection filter inplace on the rows in the array.",
-    py::arg("data"));
-
-    pfClass.def("process",
-                 [](ImagingAlgorithms::ProjectionFilter &pf,
-                 py::array_t<double> &x)
-    {
-        py::buffer_info buf1 = x.request();
-
-        double *data=static_cast<double*>(buf1.ptr);
-
-        if (buf1.ndim==3)
-        {
-            size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                           static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
-            kipl::base::TImage<float,3> img(dims);
-            std::copy_n(data,img.Size(),img.GetDataPtr());
-
-            pf.process(img);
-
-            std::copy_n(img.GetDataPtr(),img.Size(),data);
-        }
-        else if (buf1.ndim==2)
-        {
-            size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
-
-
-            kipl::base::TImage<float,2> img(dims);
-            std::copy_n(data,img.Size(),img.GetDataPtr());
-
-            pf.process(img);
-
-            std::copy_n(img.GetDataPtr(),img.Size(),data);
-        }
-    },
-    "Applies the projection filter inplace on the rows in the array.",
-    py::arg("data"));
-
-    py::enum_<ImagingAlgorithms::ProjectionFilterType>(m,"eProjectionFilterType")
-            .value("ProjectionFilterNone",         ImagingAlgorithms::ProjectionFilterNone)
-            .value("ProjectionFilterRamLak",       ImagingAlgorithms::ProjectionFilterRamLak)
-            .value("ProjectionFilterSheppLogan",   ImagingAlgorithms::ProjectionFilterSheppLogan)
-            .value("ProjectionFilterHanning",      ImagingAlgorithms::ProjectionFilterHanning)
-            .value("ProjectionFilterHamming",      ImagingAlgorithms::ProjectionFilterHamming)
-            .value("ProjectionFilterButterworth",  ImagingAlgorithms::ProjectionFilterButterworth)
-            .value("ProjectionFilterParzen",       ImagingAlgorithms::ProjectionFilterParzen)
-            .export_values();
-
-}
-#endif

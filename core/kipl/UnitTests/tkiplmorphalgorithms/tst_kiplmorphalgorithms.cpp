@@ -23,9 +23,12 @@ public:
 
 private slots:
     void test_LabelImage();
+    void test_LabelImageRealData();
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
     void test_pixdist();
+
+private:
     void test_EuclideanDistance();
     void test_EuclideanDistance2();
 
@@ -46,10 +49,10 @@ kiplmorphalgorithms::~kiplmorphalgorithms()
 
 void kiplmorphalgorithms::loadData()
 {
-#if defined DEBUG
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+#ifdef _NDEBUG
+    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/bilevel_ws.tif");
 #else
-    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/bilevel_ws.tif");
+    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/bilevel_ws.tif");
 #endif
 }
 
@@ -61,14 +64,56 @@ void kiplmorphalgorithms::test_LabelImage()
     lblCnt=kipl::morphology::LabelImage(img,result,kipl::base::conn4);
 
     QCOMPARE(img.Size(),result.Size());
-    QCOMPARE(lblCnt,24);
+    QCOMPARE(lblCnt,24UL);
 
-    kipl::io::WriteTIFF(result,"lblresult.tif");
+    // Special cases
+    int data[]={   0,0,0,0,0,1,1,0,
+                   1,1,0,0,0,1,1,0,
+                   1,1,0,0,0,0,0,0,
+                   0,0,0,1,1,0,0,0,
+                   0,0,0,1,1,0,0,0,
+                   0,0,0,0,0,0,1,1,
+                   0,1,1,0,0,0,1,1,
+                   0,1,1,0,0,0,0,0
+             };
 
+    std::vector<size_t> dims ={8,8};
+    kipl::base::TImage<int,2> s(dims);
+    std::copy_n(data,s.Size(),s.GetDataPtr());
+    lblCnt=kipl::morphology::LabelImage(s,result,kipl::base::conn4);
+    kipl::io::WriteTIFF(result,"lblresult_4x4blocks_4connect.tif");
+
+    lblCnt=kipl::morphology::LabelImage(s,result,kipl::base::conn8);
+    kipl::io::WriteTIFF(result,"lblresult_4x4blocks_8connect.tif");
+
+}
+
+void kiplmorphalgorithms::test_LabelImageRealData()
+{
+
+#ifdef _NDEBUG
+    std::string fname="../../TestData/2D/tiff/maskOtsuFilled.tif";
+#else
+    std::string fname="../TestData/2D/tiff/maskOtsuFilled.tif";
+#endif
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::base::TImage<int,2> a;
+    kipl::base::TImage<int,2> result;
+
+    kipl::io::ReadTIFF(a,fname.c_str());
+
+    size_t lblCnt=0;
+
+    lblCnt=kipl::morphology::LabelImage(a,result,kipl::base::conn4);
+    qDebug() << lblCnt;
+    lblCnt=kipl::morphology::LabelImage(a,result,kipl::base::conn8);
+    qDebug() << lblCnt;
+    kipl::io::WriteTIFF(result,"lblrealresult_8connect.tif");
 }
 
 void kiplmorphalgorithms::test_RemoveConnectedRegion()
 {
+    loadData();
     kipl::base::TImage<int,2> result;
     size_t lblCnt=0;
 
@@ -145,8 +190,8 @@ void kiplmorphalgorithms::test_EuclideanDistance()
         if (dist_dev[i]!=dist_ref[i])
             cnt++;
     }
-    kipl::io::WriteTIFF32(dist_dev,"eucliddist_dev.tif");
-    kipl::io::WriteTIFF32(dist_ref,"eucliddist_ref.tif");
+    kipl::io::WriteTIFF(dist_dev,"eucliddist_dev.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dist_ref,"eucliddist_ref.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 
@@ -154,7 +199,7 @@ void kiplmorphalgorithms::test_EuclideanDistance()
 
 void kiplmorphalgorithms::test_EuclideanDistance2()
 {
-    size_t dims[]={2000,2000};
+    std::vector<size_t> dims ={2000,2000};
     kipl::base::TImage<float,2> bw(dims);
     bw=1.0f;
     bw[dims[0]*dims[1]/2+dims[0]/2]=0.0f;
@@ -172,9 +217,9 @@ void kiplmorphalgorithms::test_EuclideanDistance2()
         if (dist_dev[i]!=dist_ref[i])
             cnt++;
     }
-    kipl::io::WriteTIFF32(bw,"eucliddist2_bw.tif");
-    kipl::io::WriteTIFF32(dist_dev,"eucliddist2_dev.tif");
-    kipl::io::WriteTIFF32(dist_ref,"eucliddist2_ref.tif");
+    kipl::io::WriteTIFF(bw,"eucliddist2_bw.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dist_dev,"eucliddist2_dev.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dist_ref,"eucliddist2_ref.tif",kipl::base::Float32);
 
     QCOMPARE(cnt,0UL);
 

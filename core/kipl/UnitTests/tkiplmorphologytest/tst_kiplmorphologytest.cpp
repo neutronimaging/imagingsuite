@@ -51,17 +51,17 @@ kiplMorphologyTest::kiplMorphologyTest()
 void kiplMorphologyTest::testPixelIteratorSetup2D_conn4()
 {
     // Tests with 4-connectivity
-    size_t dims4[2]={11,5};
+    std::vector<size_t> dims4={11,5};
 
     kipl::base::PixelIterator it4(dims4,kipl::base::conn4);
 
-    QVERIFY2(it4.currentPosition() == 0,"Initialize to wrong start position");
-    QVERIFY2(it4.edgeStatus()      == kipl::base::cornerX0Y0,"Wrong edge status at init");
+    QVERIFY2(it4.currentPosition()    == 0,"Initialize to wrong start position");
+    QVERIFY2(it4.edgeStatus()         == kipl::base::cornerX0Y0,"Wrong edge status at init");
     QVERIFY2(it4.neighborhoodSize()   == 2, "Wrong neighborhood size for corner x0y0 (conn4)");
 
-//    QVERIFY2(it4.forwardSize()        == 2, "Wrong sub neighborhood size (conn4)");
-    QVERIFY2(it4.connectivity()    == kipl::base::conn4, "Wrong connectivity (conn4)");
-    QVERIFY2(it4.end()==static_cast<ptrdiff_t>(dims4[0]*dims4[1]), "Wrong end position");
+    QVERIFY2(it4.forwardSize()        == 2, "Wrong sub neighborhood size (conn4)");
+    QVERIFY2(it4.connectivity()       == kipl::base::conn4, "Wrong connectivity (conn4)");
+    QVERIFY2(it4.end()                ==static_cast<ptrdiff_t>(dims4[0]*dims4[1]), "Wrong end position");
     QVERIFY2(it4.begin()              == 0UL,"Wrong start position");
 
     // Test copying
@@ -69,7 +69,7 @@ void kiplMorphologyTest::testPixelIteratorSetup2D_conn4()
     kipl::base::PixelIterator itcpctor(it4);
 
     QVERIFY2(itcpctor.neighborhoodSize() == it4.neighborhoodSize(), "Neighborhood size miss match");
-//    QVERIFY2(itcpctor.forwardSize()      == it8.forwardSize()     , "Neighborhood size miss match");
+    QVERIFY2(itcpctor.forwardSize()      == it4.forwardSize()     , "Neighborhood size miss match");
     QVERIFY2(itcpctor.connectivity()     == it4.connectivity() , "Copy connectivity failed");
     QVERIFY2(itcpctor.currentPosition()  == it4.currentPosition(), "Copy position failed");
 
@@ -78,7 +78,7 @@ void kiplMorphologyTest::testPixelIteratorSetup2D_conn4()
     iteq=it4;
 
     QVERIFY2(iteq.neighborhoodSize() == it4.neighborhoodSize(),"Neighborhood size miss match");
-//    QVERIFY2(iteq.forwardSize()      == it8.forwardSize(),"Neighborhood size miss match");
+    QVERIFY2(iteq.forwardSize()      == it4.forwardSize(),"Neighborhood size miss match");
     QVERIFY2(iteq.connectivity()     == it4.connectivity(),"Copy connectivity failed");
     QVERIFY2(iteq.currentPosition()  == it4.currentPosition(),"Copy position failed");
 
@@ -88,12 +88,12 @@ void kiplMorphologyTest::testPixelIteratorSetup2D_conn4()
 void kiplMorphologyTest::testPixelIteratorSetup2D_conn8()
 {
     // Tests with 8-connectivity
-    size_t dims8[2]={9,7};
+    std::vector<size_t> dims8={9,7};
 
     kipl::base::PixelIterator it8(dims8,kipl::base::conn8);
 
     QVERIFY2(it8.neighborhoodSize()   == 3, "Wrong neighborhood size (conn8)");
-//   QVERIFY2(it8.forwardSize()        == 3, "Wrong sub neighborhood size (conn8)");
+    QVERIFY2(it8.forwardSize()        == 3, "Wrong sub neighborhood size (conn8)");
     QVERIFY2(it8.connectivity()       == kipl::base::conn8, "Wrong connectivity (conn8)");
     QVERIFY2(it8.end()                == static_cast<ptrdiff_t>(dims8[0]*dims8[1]), "Wrong end position");
     QVERIFY2(it8.begin()              == 0UL,"Wrong start position");
@@ -104,7 +104,7 @@ void kiplMorphologyTest::testPixelIteratorSetup2D_conn8()
     kipl::base::PixelIterator itcpctor(it8);
 
     QVERIFY2(itcpctor.neighborhoodSize() == it8.neighborhoodSize(), "Neighborhood size miss match");
-//    QVERIFY2(itcpctor.forwardSize()      == it8.forwardSize()     , "Neighborhood size miss match");
+    QVERIFY2(itcpctor.forwardSize()      == it8.forwardSize()     , "Neighborhood size miss match");
     QVERIFY2(itcpctor.connectivity()     == it8.connectivity() , "Copy connectivity failed");
     QVERIFY2(itcpctor.currentPosition()  == it8.currentPosition(), "Copy position failed");
 
@@ -113,19 +113,18 @@ void kiplMorphologyTest::testPixelIteratorSetup2D_conn8()
     iteq=it8;
 
     QVERIFY2(iteq.neighborhoodSize() == it8.neighborhoodSize(),"Neighborhood size miss match");
-//    QVERIFY2(iteq.forwardSize()      == it8.forwardSize(),"Neighborhood size miss match");
+    QVERIFY2(iteq.forwardSize()      == it8.forwardSize(),"Neighborhood size miss match");
     QVERIFY2(iteq.connectivity()     == it8.connectivity(),"Copy connectivity failed");
     QVERIFY2(iteq.currentPosition()  == it8.currentPosition(),"Copy position failed");
 
     QVERIFY_EXCEPTION_THROWN(it8.setPosition(-1,0),kipl::base::KiplException);
-
 }
 
 void kiplMorphologyTest::testPixelIteratorMoving2D_conn4()
 {
-    size_t dims4u[2]={11,5};
-    ptrdiff_t dims4[2];
-    std::copy(dims4u,dims4u+2,dims4);
+    std::vector<size_t> dims4u={11,5};
+    std::vector<ptrdiff_t> dims4(dims4u.begin(),dims4u.end());
+
     kipl::base::PixelIterator it4(dims4u,kipl::base::conn4);
     ++it4;
     QVERIFY2(it4.currentPosition()  == 1,"Initialize to wrong start position");
@@ -166,10 +165,10 @@ void kiplMorphologyTest::testPixelIteratorMoving2D_conn4()
 
 void kiplMorphologyTest::testPixelIteratorMoving2D_conn8()
 {
-    size_t dims4u[2]={11,5};
-    ptrdiff_t dims4[2];
+    std::vector<size_t> dims4u={11,5};
+    std::vector<ptrdiff_t> dims4(dims4u.begin(),dims4u.end());
     kipl::base::PixelIterator it8(dims4u,kipl::base::conn8);
-    std::copy(dims4u,dims4u+2,dims4);
+
     ++it8;
     QVERIFY2(it8.currentPosition()  == 1,"Initialize to wrong start position");
     QVERIFY2(it8.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
@@ -210,7 +209,7 @@ void kiplMorphologyTest::testPixelIteratorMoving2D_conn8()
 void kiplMorphologyTest::testPixelIteratorSetup3D_conn6()
 {
     // Tests with 6-connectivity
-    size_t dims6[3]={11,5,7};
+    std::vector<size_t> dims6={11,5,7};
 
     kipl::base::PixelIterator it6(dims6,kipl::base::conn6);
 
@@ -244,153 +243,152 @@ void kiplMorphologyTest::testPixelIteratorSetup3D_conn6()
 
 void kiplMorphologyTest::testPixelIteratorMoving3D_conn6()
 {
-    size_t dims4u[3]={11,9,5};
-    ptrdiff_t dims4[3];
-    std::copy(dims4u,dims4u+3,dims4);
+    std::vector<size_t> dims4u={11,9,5};
+    std::vector<ptrdiff_t> dims4(dims4u.begin(),dims4u.end());
+
     kipl::base::PixelIterator it4(dims4u,kipl::base::conn6);
 
-
     it4.setPosition(0,0,0);
-    QVERIFY2(it4.currentPosition()  == 0,"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 0L,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,0,0);
-    QVERIFY2(it4.currentPosition()  == 10,"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 10L,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,8,0);
-    QVERIFY2(it4.currentPosition()  == 0+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 0L+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,8,0);
-    QVERIFY2(it4.currentPosition()  == 10+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
+    QVERIFY2(it4.currentPosition()  == 10L+8*dims4[0]+0*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,0,4);
     QVERIFY2(it4.currentPosition()  == 4*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,0,4);
     QVERIFY2(it4.currentPosition()  == 10+0*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,8,4);
     QVERIFY2(it4.currentPosition()  == 0+8*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,0,4);
     QVERIFY2(it4.currentPosition()  == 10+0*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,8,4);
     QVERIFY2(it4.currentPosition()  == 10+8*dims4[0]+4*dims4[1]*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 3, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 3UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,0,1);
     QVERIFY2(it4.currentPosition()  == 0+0*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,8,1);
     QVERIFY2(it4.currentPosition()  == 0+8*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Y1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,0,1);
     QVERIFY2(it4.currentPosition()  == 10+0*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,8,1);
     QVERIFY2(it4.currentPosition()  == 10+8*dims4[0]+1*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Y1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,3,0);
     QVERIFY2(it4.currentPosition()  == 3*dims4[0],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(0,3,4);
     QVERIFY2(it4.currentPosition()  == 3*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,3,0);
     QVERIFY2(it4.currentPosition()  == 3*dims4[0]+10,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,3,4);
     QVERIFY2(it4.currentPosition()  == 3*dims4[0]+4*dims4[0]*dims4[1]+10,"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerX1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(1,0,0);
     QVERIFY2(it4.currentPosition()  == 1+0*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY0Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(1,8,0);
     QVERIFY2(it4.currentPosition()  == 1+8*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY1Z0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(1,0,4);
     QVERIFY2(it4.currentPosition()  == 1+0*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY0Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(1,8,4);
     QVERIFY2(it4.currentPosition()  == 1+8*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::cornerY1Z1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 4, "Wrong neighborhood size for edge y0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 4UL, "Wrong neighborhood size for edge y0 (conn4)");
 
     it4.setPosition(0,3,3);
     QVERIFY2(it4.currentPosition()  == 0+3*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeX0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(10,3,3);
     QVERIFY2(it4.currentPosition()  == 10+3*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeX1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(3,0,3);
     QVERIFY2(it4.currentPosition()  == 3+0*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeY0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(3,8,3);
     QVERIFY2(it4.currentPosition()  == 3+8*dims4[0]+3*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeY1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(3,3,0);
     QVERIFY2(it4.currentPosition()  == 3+3*dims4[0]+0*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeZ0,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
 
     it4.setPosition(3,3,4);
     QVERIFY2(it4.currentPosition()  == 3+3*dims4[0]+4*dims4[0]*dims4[1],"Initialize to wrong start position");
     QVERIFY2(it4.edgeStatus()       == kipl::base::edgeZ1,"Wrong edge status at init");
-    QVERIFY2(it4.neighborhoodSize() == 5, "Wrong neighborhood size for edge x0 (conn4)");
+    QVERIFY2(it4.neighborhoodSize() == 5UL, "Wrong neighborhood size for edge x0 (conn4)");
 }
 
 void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
 {
-    size_t dims4u[3]={11,9,5};
-    int dims4[3];
-    std::copy(dims4u,dims4u+3,dims4);
+    std::vector<size_t> dims4u={11,9,5};
+    std::vector<int> dims4(dims4u.begin(),dims4u.end());
+
     kipl::base::PixelIterator it4(dims4u,kipl::base::conn6);
 
     ptrdiff_t sx=dims4[0];
@@ -400,7 +398,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     // Bulk
     x=dims4[0]/2; y=dims4[1]/2; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),6);
+    QCOMPARE(it4.neighborhoodSize(),6UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
@@ -411,7 +409,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_edgeX0 = { -m_sxy, -m_sx,  1, m_sx, m_sxy};
     x=0; y=dims4[1]/2; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhoodSize(),5UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
@@ -421,7 +419,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_edgeX1 = { -m_sxy, -m_sx, -1, m_sx, m_sxy};
     x=dims4[0]-1; y=dims4[1]/2; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhoodSize(),5UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
@@ -431,7 +429,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_edgeY0 = {-m_sxy, -1, 1, m_sx, m_sxy};
     x=dims4[0]/2; y=0; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhoodSize(),5UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),(x-1)+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),(x+1)+y*sx+z*sxy);
@@ -441,7 +439,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_edgeY1 = {-m_sxy, -m_sx, -1, 1, m_sxy};
     x=dims4[0]/2; y=dims4[1]-1; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhoodSize(),5UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),(x-1)+y*sx+z*sxy);
@@ -451,7 +449,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_edgeZ0 = {-m_sx, -1, 1, m_sx, m_sxy};
     x=dims4[0]/2; y=dims4[1]/2; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhoodSize(),5UL);
     QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x-1+(y)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),(x+1)+y*sx+z*sxy);
@@ -461,7 +459,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_edgeZ1 = {-m_sxy, -m_sx, -1, 1,m_sx};
     x=dims4[0]/2; y=dims4[1]/2; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),5);
+    QCOMPARE(it4.neighborhoodSize(),5UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x-1+(y)*sx+z*sxy);
@@ -471,7 +469,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX0Y0 = {-m_sxy, 1,  m_sx, m_sxy};
     x=0; y=0; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+1+(y)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
@@ -480,7 +478,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX1Y0 = {-m_sxy,-1,  m_sx, m_sxy};
     x=dims4[0]-1; y=0; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
@@ -489,7 +487,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX0Y1 = {-m_sxy,  -m_sx,1, m_sxy};
     x=0; y=dims4[1]-1; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
@@ -498,7 +496,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX1Y1 = {-m_sxy, -m_sx ,-1, m_sxy};
     x=dims4[0]-1; y=dims4[1]-1; z=dims4[2]/2;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
@@ -507,7 +505,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX0Z0 = {-m_sx,1,  m_sx,m_sxy};
     x=0; y=dims4[1]/2; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
@@ -516,7 +514,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX1Z0 = {-m_sx,-1, m_sx,m_sxy};
     x=dims4[0]-1; y=dims4[1]/2; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
@@ -525,7 +523,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX0Z1 = {-m_sx,1,  m_sx,m_sxy};
     x=0; y=dims4[1]/2; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
@@ -534,7 +532,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerX1Z1 = {-m_sxy,-m_sx,-1, m_sx};
     x=dims4[0]-1; y=dims4[1]/2; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
@@ -542,7 +540,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerY0Z0 = {-1,1,m_sx,m_sxy};
     x=dims4[0]/2; y=0; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x-1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(y+1)*sx+z*sxy);
@@ -551,7 +549,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerY1Z0 = {-m_sx,-1,1,m_sxy};
     x=dims4[0]/2; y=dims4[1]-1; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
@@ -560,7 +558,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerY0Z1 = {-m_sxy,-1,1, m_sx};
     x=dims4[0]/2; y=0; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x-1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+1+y*sx+z*sxy);
@@ -569,7 +567,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //    m_cornerY1Z1 = {-m_sxy,-m_sx,-1,1};
     x=dims4[0]/2; y=dims4[1]-1; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),4);
+    QCOMPARE(it4.neighborhoodSize(),4UL);
     QCOMPARE(it4.neighborhood(0),x+y*sx+(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x-1+y*sx+z*sxy);
@@ -578,7 +576,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX0Y0Z0
     x=0;y=0;z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),1L);
     QCOMPARE(it4.neighborhood(1),11L);
     QCOMPARE(it4.neighborhood(2),99L);
@@ -586,7 +584,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX1Y0Z0
     x=10; y=0; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),(x-1));
     QCOMPARE(it4.neighborhood(1),x+(y+1)*sx);
     QCOMPARE(it4.neighborhood(2),x+(z+1)*sxy);
@@ -594,7 +592,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX0Y1Z0
     x=0; y=8; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),1+(y)*sx);
     QCOMPARE(it4.neighborhood(1),(y-1)*sx);
     QCOMPARE(it4.neighborhood(2),y*sx+sxy);
@@ -602,7 +600,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX0Y0Z1
     x=0; y=0; z=4;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),(z-1)*sxy);
     QCOMPARE(it4.neighborhood(1),1+z*sxy);
     QCOMPARE(it4.neighborhood(2),sx+z*sxy);
@@ -610,7 +608,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX1Y1Z0
     x=dims4[0]-1L; y=dims4[1]-1L; z=0;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),x-1+y*sx);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx);
     QCOMPARE(it4.neighborhood(2),x+y*sx+(z+1)*sxy);
@@ -618,7 +616,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX1Y0Z1
     x=dims4[0]-1; y=0; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),x-1+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y+1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(z-1)*sxy);
@@ -626,7 +624,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX1Y0Z1
     x=dims4[0]-1; y=0; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),x-1+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y+1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+(z-1)*sxy);
@@ -634,7 +632,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX0Y1Z1
     x=0; y=dims4[1]-1; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),x+1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+y*sx+(z-1)*sxy);
@@ -642,7 +640,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
     //m_cornerX1Y1Z1
     x=dims4[0]-1; y=dims4[1]-1; z=dims4[2]-1;
     it4.setPosition(x,y,z);
-    QCOMPARE(it4.neighborhoodSize(),3);
+    QCOMPARE(it4.neighborhoodSize(),3UL);
     QCOMPARE(it4.neighborhood(0),x-1+y*sx+z*sxy);
     QCOMPARE(it4.neighborhood(1),x+(y-1)*sx+z*sxy);
     QCOMPARE(it4.neighborhood(2),x+y*sx+(z-1)*sxy);
@@ -655,7 +653,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood3D_conn6()
 
 void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn4()
 {
-    size_t dims4[2]={11,5};
+    std::vector<size_t> dims4={11,5};
     kipl::base::PixelIterator it4(dims4,kipl::base::conn4);
 
     QVERIFY2(it4.neighborhood(0) == 1,"Corner X0Y0");
@@ -702,7 +700,7 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn4()
 
 void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
 {
-    size_t dims4[2]={11,5};
+    std::vector<size_t> dims4={11,5};
 
     kipl::base::PixelIterator it8(dims4,kipl::base::conn8);
 
@@ -936,11 +934,11 @@ void kiplMorphologyTest::testPixelIteratorNeighborhood2D_conn8()
 
 void kiplMorphologyTest::testhMax()
 {
-    size_t dims[2]={11,13};
+    std::vector<size_t> dims={11,13};
     kipl::base::TImage<float,2> img(dims);
     int idx=0;
-    for (int y=0;y<dims[1]; ++y)
-        for (int x=0; x<dims[0]; ++x,++idx) {
+    for (size_t y=0;y<dims[1]; ++y)
+        for (size_t x=0; x<dims[0]; ++x,++idx) {
             img[idx]=sqrt((x-dims[0]/2)*(x-dims[0]/2)+(y-dims[1]/2)*(y-dims[1]/2));
         }
 
@@ -952,26 +950,30 @@ void kiplMorphologyTest::testhMax()
     QVERIFY(img.Size(0)==res.Size(0));
     QVERIFY(img.Size(1)==res.Size(1));
 
-    kipl::io::WriteTIFF32(img,"hmax_orig.tif");
-    kipl::io::WriteTIFF32(res,"hmax_res.tif");
+    kipl::io::WriteTIFF(img,"hmax_orig.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(res,"hmax_res.tif",kipl::base::Float32);
 
 }
 
 void kiplMorphologyTest::testErosion2D()
 {
-    size_t dims[]={7,7};
+    std::vector<size_t> dims={7,7};
     kipl::base::TImage<float,2> orig(dims);
     for (int i=2; i<5; ++i)
         std::fill(orig.GetLinePtr(i)+2,orig.GetLinePtr(i)+5,1);
 
+    qDebug() <<'\n'<< kipl::base::renderImgAsString(orig).c_str();
     // Simple case
-    float se4[]={0,1,0,1,1,1,0,1,0};
-    size_t sedims[2]={3,3};
+    std::vector<float> se4={0,1,0,1,1,1,0,1,0};
+    std::vector<size_t> sedims={3,3};
     kipl::morphology::TErode<float,2> er4(se4,sedims);
 
     kipl::base::TImage<float,2> res;
 
     res=er4(orig,kipl::filters::FilterBase::EdgeMirror);
+
+    qDebug() << kipl::base::renderImgAsString(res).c_str();
+
     for (size_t i=0; i<res.Size(); ++i) {
     //    qDebug() << i<<" -> "<<res[i];
         QVERIFY(res[i]== (i==24 ? 1.0f :0.0f));
@@ -1008,7 +1010,7 @@ void kiplMorphologyTest::testDilation3D()
 
 void kiplMorphologyTest::testRepairHoles()
 {
-    size_t dims[2]={10,10};
+    std::vector<size_t> dims={10,10};
     kipl::base::TImage<float,2> img(dims);
 
     for (size_t i=0; i<dims[1]; ++i)

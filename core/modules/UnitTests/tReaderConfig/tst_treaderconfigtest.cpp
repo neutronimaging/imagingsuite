@@ -66,7 +66,6 @@ void TReaderConfigTest::testAnalyzeFileExt()
     string2enum("jpeg", et); QCOMPARE(et,readers::ExtensionJPG);
     string2enum("tif", et);  QCOMPARE(et,readers::ExtensionTIFF);
     string2enum("tiff", et); QCOMPARE(et,readers::ExtensionTIFF);
-    string2enum("mat", et);  QCOMPARE(et,readers::ExtensionMAT);
     string2enum("hdf", et);  QCOMPARE(et,readers::ExtensionHDF);
     string2enum("hdf4", et); QCOMPARE(et,readers::ExtensionHDF4);
     string2enum("hd4", et);  QCOMPARE(et,readers::ExtensionHDF4);
@@ -85,7 +84,6 @@ void TReaderConfigTest::testAnalyzeFileExt()
     QCOMPARE(enum2string(readers::ExtensionPNG),std::string("png"));
     QCOMPARE(enum2string(readers::ExtensionJPG),std::string("jpg"));
     QCOMPARE(enum2string(readers::ExtensionTIFF),std::string("tif"));
-    QCOMPARE(enum2string(readers::ExtensionMAT),std::string("mat"));
     QCOMPARE(enum2string(readers::ExtensionHDF),std::string("hdf"));
     QCOMPARE(enum2string(readers::ExtensionHDF4),std::string("hd4"));
     QCOMPARE(enum2string(readers::ExtensionHDF5),std::string("hd5"));

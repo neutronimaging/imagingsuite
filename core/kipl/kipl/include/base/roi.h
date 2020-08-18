@@ -3,7 +3,7 @@
 
 #include "../kipl_global.h"
 #include <string>
-
+#include <vector>
 #include "../logging/logger.h"
 
 namespace kipl {
@@ -15,15 +15,15 @@ class KIPLSHARED_EXPORT RectROI
 {
         kipl::logging::Logger logger;
     public:
-        RectROI(size_t *roi, const std::string &lbl="0");
+        RectROI(const std::vector<size_t> &roi, const std::string &lbl="0");
         RectROI(size_t x0, size_t y0, size_t x1, size_t y1,const std::string &lbl="0");
 
         RectROI(const RectROI &roi);
         virtual ~RectROI();
 
         virtual const RectROI & operator=(const RectROI & roi);
-        virtual int getBox(size_t *roi) const;
-        size_t const * box() const;
+        virtual int getBox(std::vector<size_t> &roi) const;
+        const std::vector<size_t> & box() const;
         int getDimensions();
         int getID();
         std::string toString();
@@ -35,7 +35,7 @@ class KIPLSHARED_EXPORT RectROI
         int id;
         std::string roiLabel;
         int dimensions;
-        size_t coords[4];
+        std::vector<size_t> coords;
 
 };
 

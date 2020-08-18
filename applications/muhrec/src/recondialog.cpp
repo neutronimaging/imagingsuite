@@ -54,11 +54,12 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     QFuture<int> proc_thread=QtConcurrent::run(this,&ReconDialog::process);
     QFuture<int> progress_thread=QtConcurrent::run(this,&ReconDialog::progress);
 
+    qDebug() << "a0";
     int res=exec();
-
+    qDebug() << "b0";
     finish=true;
     if (res==QDialog::Rejected) {
-        std::cout<<"calling abort process"<<std::endl;
+        logger.message("calling abort process");
         logger(kipl::logging::Logger::LogVerbose,"Cancel requested by user");
         Abort();
     }
@@ -67,7 +68,6 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     progress_thread.waitForFinished();
     logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
     return res;
-
 }
 
 int ReconDialog::progress()

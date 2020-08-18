@@ -53,13 +53,14 @@ void MainWindow::on_buttonProcess_clicked()
         ui->spinStride->setValue(stride);
     }
 
-    kipl::io::ReadGeneric(imgs,fname.c_str(),
-                         sizeX,sizeY,
-                         0,stride,
-                         1,
-                         static_cast<kipl::base::eDataType>(type),
-                         kipl::base::BigEndian,
-                         nullptr);
+    kipl::io::ReadGeneric(  imgs,
+                            fname,
+                            sizeX, sizeY,
+                            0,  stride,
+                            1,
+                            static_cast<kipl::base::eDataType>(type),
+                            kipl::base::BigEndian,
+                            {});
 
     kipl::base::TImage<float,2> img;
 
@@ -72,9 +73,9 @@ void MainWindow::on_buttonProcess_clicked()
     }
 
     if (customlevels)
-        ui->viewer->set_image(img.GetDataPtr(),img.Dims(),levelLo,levelHi);
+        ui->viewer->set_image(img.GetDataPtr(),img.dims(),levelLo,levelHi);
     else
-        ui->viewer->set_image(img.GetDataPtr(),img.Dims());
+        ui->viewer->set_image(img.GetDataPtr(),img.dims());
 
     std::ostringstream text;
 

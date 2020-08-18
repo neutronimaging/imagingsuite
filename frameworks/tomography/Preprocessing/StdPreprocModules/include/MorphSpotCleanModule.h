@@ -25,7 +25,7 @@ protected:
     int ProcessSingle(kipl::base::TImage<float,3> & img);
     int ProcessParallel(kipl::base::TImage<float,3> & img);
     int ProcessParallelStd(kipl::base::TImage<float,3> & img);
-    int ProcessParallelStd(size_t tid, float *pImg, const size_t *dims, size_t N);
+    int ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N);
     kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
@@ -37,7 +37,7 @@ protected:
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    bool m_bThreading;
+    bool m_bTranspose;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H

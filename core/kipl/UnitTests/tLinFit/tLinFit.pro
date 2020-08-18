@@ -11,6 +11,8 @@ QT       -= gui
 TARGET = tst_tlinfittest
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += c++11
+
 
 TEMPLATE = app
 
@@ -28,12 +30,15 @@ unix {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        LIBS += -L/opt/usr/lib
     }
 
     unix:macx {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
+
+    LIBS += -lblas -llapack
 }
 
 win32 {
@@ -42,10 +47,10 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -llibblas -lliblapack
+else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -llibblas -lliblapack
 else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
+else:unix: LIBS +=  -lm -lz   -ltiff  -lcfitsio
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/

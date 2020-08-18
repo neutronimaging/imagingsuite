@@ -40,6 +40,7 @@ unix {
         LIBS += -lgomp
         QMAKE_LIBDIR += -L/opt/usr/lib
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio
     }
 
 

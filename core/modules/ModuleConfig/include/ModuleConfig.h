@@ -7,6 +7,7 @@
 #include <list>
 #include <array>
 #include <string>
+#include <iostream>
 
 #include <libxml/xmlreader.h>
 #include <logging/logger.h>
@@ -22,10 +23,11 @@ protected:
     kipl::logging::Logger logger; ///< Logging for the Module config objects
 
 public:
-    ModuleConfig(const std::string &appPath);           ///< Default constructor
+    ModuleConfig(const std::string &modulePath);           ///< Default constructor
     std::string m_sSharedObject;  ///< File name of the shared object file containing the module
     std::string m_sModule;        ///< Name of the module
 	bool m_bActive;
+    bool m_bThreading;
 
     std::map<std::string,std::string> parameters; ///< List of parameters to configure the module
 
@@ -39,9 +41,14 @@ public:
     /// Dumps the module parameters on the console.
 	std::string PrintParameters();
     void setAppPath(const std::string &path);
+    std::string modulePath();
+    std::string moduleSummary();
 protected:
 
     ModuleLibNameManger m_NameManager;
 };
+
+
+std::ostream & operator<<(std::ostream &s, ModuleConfig &mc);
 
 #endif /* MODULECONFIG_H_ */

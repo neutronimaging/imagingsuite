@@ -12,6 +12,7 @@ namespace kipl { namespace morphology {
 template<typename T>
 void ErodeInnerLoop(T const * const src, T * dest, T value, size_t N)
 {
+    (void)value;
 	for (size_t j=0; j<N; j++) {
 		dest[j]=min(dest[j],src[j]);
 	} 
@@ -37,8 +38,8 @@ void DilateInnerLoop(T const * const src, T * dest, T value, size_t N)
 //}
 
 template <typename T, size_t nDims>
-TErode<T,nDims>::TErode(T const * const kernel, 
-		size_t const * const kDims) 
+TErode<T,nDims>::TErode(const std::vector<T> & kernel,
+        const std::vector<size_t> & kDims)
 			: kipl::filters::TFilterBase<T,nDims>(kernel, kDims)
 {
 
@@ -47,7 +48,8 @@ TErode<T,nDims>::TErode(T const * const kernel,
 template <typename T, size_t nDims>
 void TErode<T,nDims>::InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
 {
-	dest=std::numeric_limits<T>::max();
+    (void)src;
+    dest=std::numeric_limits<T>::max();
 	//memcpy(pRes,img+nCenter,len*sizeof(float));	
 }
 
@@ -64,8 +66,8 @@ void TErode<T,nDims>::InnerLoop(T const * const src, T *dest, T value, size_t N)
 
 // Dilation
 template <typename T, size_t nDims>
-TDilate<T,nDims>::TDilate(T const * const kernel, 
-			size_t const * const kDims) 
+TDilate<T,nDims>::TDilate(const std::vector<T> &kernel,
+            const std::vector<size_t> &kDims)
 			: kipl::filters::TFilterBase<T,nDims>(kernel, kDims)
 {
 

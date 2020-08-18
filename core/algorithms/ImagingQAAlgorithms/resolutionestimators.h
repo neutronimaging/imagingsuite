@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <tnt.h>
+//#include <tnt.h>
 
 
 #include <base/timage.h>
@@ -27,13 +27,13 @@ public:
 
     void   setPixelSize(double s);
     double pixelSize();
-    int    size();
+    size_t size();
     void   setProfile(float *p, int N);
     void   setProfile(double *p, int N);
-    void   setProfile(std::vector<double> &p);
-    void   setProfile(std::vector<float> &p);
+    void   setProfile(const std::vector<double> &p);
+    void   setProfile(const std::vector<float> &p);
     void   setProfile(TNT::Array1D<double> &p);
-    void   profile(double *p, int &N);
+    const std::vector<double> &profile();
     void   clear();
 
     double FWHM();
@@ -52,9 +52,9 @@ protected:
     void diffProfile();
     int profileSize;
     double mPixelSize;
-    double *mProfile;
-    double *mDiffProfile;
-    double *mXaxis;
+    std::vector<double> mProfile;
+    std::vector<double> mDiffProfile;
+    std::vector<double> mXaxis;
     double mfwhm;
     Nonlinear::SumOfGaussians mFitFunction;
 };

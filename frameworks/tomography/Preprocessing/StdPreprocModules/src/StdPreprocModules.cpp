@@ -37,6 +37,8 @@
 #include <sstream>
 #include <map>
 
+#include <QDebug>
+
 STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
@@ -44,7 +46,8 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
     kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
 
-    if (name!=nullptr) {
+    if (name!=nullptr)
+    {
 		std::string sName=name;
 
         if (sName=="BBLogNorm")
@@ -125,8 +128,10 @@ STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)
 	kipl::logging::Logger logger("StdPreprocModules::Destroy");
 	std::ostringstream msg;
 	std::string name="No name";
-	try {
-        if (obj!=nullptr) {
+    try
+    {
+        if (obj!=nullptr)
+        {
 			PreprocModuleBase *module=reinterpret_cast<PreprocModuleBase *>(obj);
 			name=module->ModuleName();
 			msg<<"Destroying "<<name;
@@ -135,30 +140,35 @@ STDPREPROCMODULESSHARED_EXPORT int Destroy(const char * application, void *obj)
 			delete module;
 		}
 	}
-	catch (std::exception & e) {
-		msg<<"Failed to destroy "<<name<<" with STL exception"<<e.what();
-
-		logger(kipl::logging::Logger::LogError,msg.str());
-		return -1;
-	}
-	catch (ModuleException & e) {
+    catch (ModuleException & e)
+    {
 		msg<<"Failed to destroy "<<name<<" with Module exception"<<e.what();
 
 		logger(kipl::logging::Logger::LogError,msg.str());
 		return -1;
 	}
-	catch (ReconException & e) {
+    catch (ReconException & e)
+    {
 		msg<<"Failed to destroy "<<name<<" with Recon exception"<<e.what();
 
 		logger(kipl::logging::Logger::LogError,msg.str());
 		return -1;
 	}
-	catch (kipl::base::KiplException & e) {
+    catch (kipl::base::KiplException & e)
+    {
 		msg<<"Failed to destroy "<<name<<" with KIPL exception"<<e.what();
 
 		logger(kipl::logging::Logger::LogError,msg.str());
 		return -1;
 	}
+    catch (std::exception & e)
+    {
+        msg<<"Failed to destroy "<<name<<" with STL exception"<<e.what();
+
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
+    }
+
 	return 0;
 }
 
@@ -184,47 +194,47 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
     modulelist->operator[]("BBLogNorm")=bbnorm.GetParameters();
 
 
-	LogProjection lproj;
-	modulelist->operator []("LogProjection")=lproj.GetParameters();
+    LogProjection lproj;
+    modulelist->operator []("LogProjection")=lproj.GetParameters();
 
     ProjectionFilterSingle filter(nullptr);
-	modulelist->operator []("ProjectionFilterSingle")=filter.GetParameters();
+    modulelist->operator []("ProjectionFilterSingle")=filter.GetParameters();
 	
-	SpotClean2 sc2;
-	modulelist->operator []("SpotClean2")=sc2.GetParameters();
+    SpotClean2 sc2;
+    modulelist->operator []("SpotClean2")=sc2.GetParameters();
 
-//	SpotRingClean srcl;
-//	modulelist->operator []("SpotRingClean")=srcl.GetParameters();
+////	SpotRingClean srcl;
+////	modulelist->operator []("SpotRingClean")=srcl.GetParameters();
 
-	TranslatedProjectionWeighting tpw;
-	modulelist->operator []("TranslatedProjectionWeighting")=tpw.GetParameters();
+    TranslatedProjectionWeighting tpw;
+    modulelist->operator []("TranslatedProjectionWeighting")=tpw.GetParameters();
 
-	GeneralFilter gf;
-	modulelist->operator []("GeneralFilter")=gf.GetParameters();
+    GeneralFilter gf;
+    modulelist->operator []("GeneralFilter")=gf.GetParameters();
 
-	AdaptiveFilter af;
-	modulelist->operator []("AdaptiveFilter")=af.GetParameters();
+    AdaptiveFilter af;
+    modulelist->operator []("AdaptiveFilter")=af.GetParameters();
 
-	BasicRingClean brc;
-	modulelist->operator []("BasicRingClean")=brc.GetParameters();
+    BasicRingClean brc;
+    modulelist->operator []("BasicRingClean")=brc.GetParameters();
 
-	MedianMixRingClean mmrc;
-	modulelist->operator []("MedianMixRingClean")=mmrc.GetParameters();
+    MedianMixRingClean mmrc;
+    modulelist->operator []("MedianMixRingClean")=mmrc.GetParameters();
 
-	DataScaler ds;
-	modulelist->operator []("DataScaler")=ds.GetParameters();
+    DataScaler ds;
+    modulelist->operator []("DataScaler")=ds.GetParameters();
 
-	ISSfilter iss;
-	modulelist->operator []("ISSfilter")=iss.GetParameters();
+    ISSfilter iss;
+    modulelist->operator []("ISSfilter")=iss.GetParameters();
 
-	WaveletRingClean wrc;
-	modulelist->operator []("WaveletRingClean")=wrc.GetParameters();
+    WaveletRingClean wrc;
+    modulelist->operator []("WaveletRingClean")=wrc.GetParameters();
 
-	PolynomialCorrection pc;
-	modulelist->operator []("PolynomialCorrection")=pc.GetParameters();
+    PolynomialCorrection pc;
+    modulelist->operator []("PolynomialCorrection")=pc.GetParameters();
 
-	SinoSpotClean ssc;
-	modulelist->operator []("SinoSpotClean")=ssc.GetParameters();
+    SinoSpotClean ssc;
+    modulelist->operator []("SinoSpotClean")=ssc.GetParameters();
 
     TranslateProjectionsModule tpm;
     modulelist->operator []("TranslateProjections")=tpm.GetParameters();

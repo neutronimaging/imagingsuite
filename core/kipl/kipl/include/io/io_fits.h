@@ -16,7 +16,7 @@ namespace kipl { namespace io {
 /// \param nCrop optional crop region. The entire image will be read if the value is set to nullptr.
 /// \returns Always 0.
 template <typename ImgType>
-int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop=nullptr, size_t idx=0L);
+int ReadFITS(kipl::base::TImage<ImgType,2> &src,const std::string & fname, const std::vector<size_t> & nCrop={}, size_t idx=0L);
 
 
 /// \brief Write a 2D image to a .fits file.
@@ -30,7 +30,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname);
 /// \param filename Name of the fits file containing the image
 /// \param dims Array to recieve the image dimensions.
 /// \returns number of dimensions
-int KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims);
+std::vector<size_t> KIPLSHARED_EXPORT GetFITSDims(const std::string & filename);
 
 
 }}

@@ -55,7 +55,7 @@ kipl::base::TImage<T,N> arg(const kipl::base::TImage<std::complex<T>,N> cimg)
 template <typename T, size_t N>
 kipl::base::TImage<T,N> real(const kipl::base::TImage<std::complex<T>,N> cimg)
 {
-	kipl::base::TImage<T,N> result(cimg.Dims());
+    kipl::base::TImage<T,N> result(cimg.dims());
 	
 	const size_t n=cimg.Size();
 	const std::complex<T> * pImg=cimg.GetDataPtr();
@@ -70,7 +70,7 @@ kipl::base::TImage<T,N> real(const kipl::base::TImage<std::complex<T>,N> cimg)
 template <typename T, size_t N>
 kipl::base::TImage<T,N> imag(const kipl::base::TImage<std::complex<T>,N> cimg)
 {
-	kipl::base::TImage<T,N> result(cimg.Dims());
+    kipl::base::TImage<T,N> result(cimg.dims());
 	
 	const size_t n=cimg.Size();
 	const std::complex<T> * pImg=cimg.GetDataPtr();
@@ -95,7 +95,7 @@ kipl::base::TImage<std::complex<T>,N> conj(const kipl::base::TImage<std::complex
 	for (size_t i=0; i<ndata; i++)
 		pResult[i]._M_imag=-pResult[i]._M_imag;
 		
-		return result;
+    return result;
 }
 
 template <typename T, size_t N>

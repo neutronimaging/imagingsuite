@@ -50,7 +50,7 @@ public:
 
     /// Initializes the module for processing.
     /// \returns It returns a zero.
-	virtual int Initialize() {timer.Reset(); return 0;}
+	virtual int Initialize() {timer.reset(); return 0;}
 
     /// Provides a list of parameters that the module requires. This method is used by the module creation method as a guide.
 	virtual std::map<std::string, std::string> GetParameters()=0;
@@ -61,7 +61,7 @@ public:
 
     /// The time used to process data wth the module.
     /// \returns The elapsed time in seconds.
-	double ExecTime() {return timer.ElapsedSeconds();}
+    double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds);}
 
     /// The repository verision of the module base and its module instance.
     /// \returns A string containing the version.
@@ -95,6 +95,7 @@ protected:
 
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
+    bool m_bThreading;
 };
 
 

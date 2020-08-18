@@ -75,7 +75,7 @@ int WaveletRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<st
 
 int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-	size_t dims[2]={img.Size(0), img.Size(2)};
+    std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	bool fail=false;
 		kipl::base::TImage<float,2> sinogram;
         ImagingAlgorithms::StripeFilter *filter=nullptr;
@@ -109,7 +109,7 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 
 int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-	size_t dims[2]={img.Size(0), img.Size(2)};
+    std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	bool fail=false;
     int N=static_cast<int>(img.Size(1));
 	#pragma omp parallel

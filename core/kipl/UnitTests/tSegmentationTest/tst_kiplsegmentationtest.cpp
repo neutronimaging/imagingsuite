@@ -37,7 +37,7 @@ kiplSegmentationTest::kiplSegmentationTest()
 
 void kiplSegmentationTest::testThreshold()
 {
-    size_t dims[2]={100,100};
+    std::vector<size_t> dims = {100,100};
     kipl::base::TImage<float,2> img(dims);
     kipl::base::TImage<float,2> res(dims);
 
@@ -87,14 +87,13 @@ void kiplSegmentationTest::testMultiThreshold()
     kipl::base::TImage<float,2> res;
 
 #ifdef QT_DEBUG
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/multi_class_reference.tif");
+    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/multi_class_reference.tif");
 #else
-    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/multi_class_reference.tif");
+    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/multi_class_reference.tif");
 #endif
-    //kipl::io::ReadTIFF(img,"../kipl/trunk/UnitTests/data/multi_class_smooth.tif");
-    float th[2]={80.0f,150.0f};
+    std::vector<float> th={80.0f,150.0f};
 
-    kipl::segmentation::MultiThreshold(img, res, th,2);
+    kipl::segmentation::MultiThreshold(img, res, th);
 
     QVERIFY2(img.Size(0)==res.Size(0),"x-size error");
     QVERIFY2(img.Size(1)==res.Size(1),"y-size error");
@@ -119,14 +118,14 @@ void kiplSegmentationTest::testMultiThreshold()
 void kiplSegmentationTest::testGradientGuidedThreshold()
 {
 //    QFETCH(QString, data);
-    size_t dims[2]={100,100};
+    std::vector<size_t> dims={100,100};
     kipl::base::TImage<float,2> img(dims);
     kipl::base::TImage<float,2> res(dims);
 
 #ifdef QT_DEBUG
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/kipl/UnitTests/data/multi_class_smooth.tif");
+    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/multi_class_smooth.tif");
 #else
-    kipl::io::ReadTIFF(img,"../imagingsuite/core/kipl/UnitTests/data/multi_class_smooth.tif");
+    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/multi_class_smooth.tif");
 #endif
 
     kipl::segmentation::gradientGuidedThreshold<float,float,2> gs;

@@ -57,7 +57,7 @@ int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> 
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
                 size_t imageindex,
-                size_t const * const nCrop=nullptr);
+                const std::vector<size_t> & nCrop = {});
 
 /// \brief Read a binary file as 2D image (unsigned short)
 /// \param img Destination image
@@ -74,7 +74,7 @@ int  KIPLSHARED_EXPORT ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> 
 /// \returns 0
 template <typename ImgType>
 int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
-                char const * const fname,
+                const std::string & fname,
                 size_t size_x,
                 size_t size_y,
                 size_t offset,
@@ -83,7 +83,7 @@ int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
                 size_t imageindex,
-                size_t const * const nCrop=nullptr);
+                const std::vector<size_t> & nCrop = {});
 
 /// \brief Read all images from binary file as a list of 2D images
 /// \param img Destination image
@@ -99,7 +99,7 @@ int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
 /// \returns 0
 template <typename ImgType>
 int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
-                char const * const fname,
+                const std::string & fname,
                 size_t size_x,
                 size_t size_y,
                 size_t offset,
@@ -107,7 +107,7 @@ int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
                 size_t imagesperfile,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
-                size_t const * const nCrop=nullptr);
+                const std::vector<size_t> & nCrop = {});
 
 }}
 

@@ -62,7 +62,7 @@ private:
 //    int m_nFirst;
 //    int m_nLast;
     int m_nMaxNumberProjections;
-    size_t m_nROI[4];
+    std::vector<size_t> m_nROI;
     QRect m_DoseROI;
     QVector<QPointF> m_DoseData;
     std::multimap<float,int > m_SortedDoses;

@@ -44,6 +44,7 @@ unix {
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp -lxml2
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio
     }
 
     unix:macx {

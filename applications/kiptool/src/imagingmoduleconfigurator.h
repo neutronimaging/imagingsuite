@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef IMAGINGMODULECONFIGURATOR_H
 #define IMAGINGMODULECONFIGURATOR_H
 
@@ -10,7 +11,7 @@ public:
     ImagingModuleConfigurator(KiplProcessConfig *config);
     virtual ~ImagingModuleConfigurator();
 protected:
-    virtual int GetImage(std::string sSelectedModule);
+    virtual int GetImage(std::string sSelectedModule, kipl::interactors::InteractionBase *interactor=nullptr);
 
 };
 

@@ -83,8 +83,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
 
 void WaveletRingCleanDlg::ApplyParameters()
 {
-    size_t dims[3]={m_Projections.Size(0), 1,m_Projections.Size(2)};
-    kipl::base::TImage<float,3> img(dims);
+    kipl::base::TImage<float,3> img({m_Projections.Size(0), 1,m_Projections.Size(2)});
 
     const size_t N=512;
     size_t hist[N];
@@ -98,7 +97,7 @@ void WaveletRingCleanDlg::ApplyParameters()
     kipl::base::Histogram(m_OriginalSino.GetDataPtr(), m_OriginalSino.Size(), hist, N, 0.0f, 0.0f, axis);
 
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewer_original->set_image(m_OriginalSino.GetDataPtr(),m_OriginalSino.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_original->set_image(m_OriginalSino.GetDataPtr(),m_OriginalSino.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -118,21 +117,20 @@ void WaveletRingCleanDlg::ApplyParameters()
         return ;
     }
 
-    m_ProcessedSino.Resize(m_OriginalSino.Dims());
-    memcpy(m_ProcessedSino.GetDataPtr(),img.GetDataPtr(), m_ProcessedSino.Size()*sizeof(float));
+    m_ProcessedSino = m_OriginalSino;
 
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewer_result->set_image(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_result->set_image(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.dims(),axis[nLo],axis[nHi]);
 
     m_DifferenceSino=m_ProcessedSino-m_OriginalSino;
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
-    ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Dims());
+    ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.dims());
     double sum2=0.0;
     float *pDiff=m_DifferenceSino.GetDataPtr();
     for (size_t i=0; i<m_DifferenceSino.Size(); i++)

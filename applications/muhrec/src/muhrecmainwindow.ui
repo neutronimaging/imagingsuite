@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1126</width>
+    <width>1128</width>
     <height>856</height>
    </rect>
   </property>
@@ -1213,6 +1213,11 @@
                    <string>Golden ratio</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>Inverse golden ratio</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="2" column="0">
@@ -2029,70 +2034,6 @@
            <string>Output</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_48">
-             <property name="text">
-              <string>Destination path</string>
-             </property>
-             <property name="buddy">
-              <cstring>editDestPath</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="editDestPath">
-             <property name="toolTip">
-              <string>Path to the destination folder of the reconstructed slices.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_49">
-             <property name="text">
-              <string>Slice mask</string>
-             </property>
-             <property name="buddy">
-              <cstring>editSliceMask</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="editSliceMask">
-             <property name="toolTip">
-              <string>File mask for the reconstructed slices</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QComboBox" name="comboDestFileType">
-             <property name="toolTip">
-              <string>Selects the file format of the reconstructed slices.</string>
-             </property>
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <item>
-              <property name="text">
-               <string>16-bit TIFF</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Float TIFF (32-bit)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NeXus (32-bit)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NeXus (16-bit)</string>
-              </property>
-             </item>
-            </widget>
-           </item>
            <item row="2" column="0" colspan="2">
             <spacer name="horizontalSpacer_15">
              <property name="orientation">
@@ -2106,6 +2047,90 @@
              </property>
             </spacer>
            </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="editSliceMask">
+             <property name="toolTip">
+              <string>File mask for the reconstructed slices</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="editDestPath">
+             <property name="toolTip">
+              <string>Path to the destination folder of the reconstructed slices.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Destination path</string>
+             </property>
+             <property name="buddy">
+              <cstring>editDestPath</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QComboBox" name="comboDestFileType">
+             <property name="toolTip">
+              <string>Selects the file format of the reconstructed slices.</string>
+             </property>
+             <property name="currentIndex">
+              <number>1</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>8-bit TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>16-bit TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Float TIFF (32-bit)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>8-bit multi-frame TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>16-bit multi-frame TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Float multi-frame TIFF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>NeXus (16-bit)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>NeXus (float)</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="buttonBrowseDestinationPath">
+             <property name="toolTip">
+              <string>Browse for destination path</string>
+             </property>
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
            <item row="2" column="2">
             <widget class="QPushButton" name="buttonSaveMatrix">
              <property name="toolTip">
@@ -2116,13 +2141,13 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="buttonBrowseDestinationPath">
-             <property name="toolTip">
-              <string>Browse for destination path</string>
-             </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_49">
              <property name="text">
-              <string>Browse</string>
+              <string>Slice mask</string>
+             </property>
+             <property name="buddy">
+              <cstring>editSliceMask</cstring>
              </property>
             </widget>
            </item>
@@ -2143,22 +2168,25 @@
         <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="projectionviewerLayout">
           <item>
-           <widget class="QLabel" name="label_38">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <widget class="QComboBox" name="comboBox_projectionViewer">
+            <property name="toolTip">
+             <string>Select with type of images you want to inspect.</string>
             </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Projections</string>
-            </property>
+            <item>
+             <property name="text">
+              <string>Projections</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Open beam</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dark current</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
@@ -2350,7 +2378,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1126</width>
+     <width>1128</width>
      <height>22</height>
     </rect>
    </property>
@@ -2373,7 +2401,6 @@
     <addaction name="actionVideo_tutorials"/>
     <addaction name="actionShow_repository"/>
     <addaction name="actionReport_a_bug"/>
-    <addaction name="actionRegister_for_news_letter"/>
    </widget>
    <widget class="QMenu" name="menuReconstruct">
     <property name="title">
@@ -2381,7 +2408,6 @@
     </property>
     <addaction name="actionStartReconstruction"/>
     <addaction name="actionReconstruct_to_disk"/>
-    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuGeometry">
     <property name="title">
@@ -2545,12 +2571,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QtAddons::PlotWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">plotwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QtAddons::ImageViewerWidget</class>
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
@@ -2558,6 +2578,12 @@
    <slots>
     <signal>levelsChanged(float,float)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>QtAddons::uxROIWidget</class>

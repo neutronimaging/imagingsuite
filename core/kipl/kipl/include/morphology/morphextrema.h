@@ -55,7 +55,7 @@ int hMax(const kipl::base::TImage<ImgType,N> &img,kipl::base::TImage<ImgType,N> 
 ///
 ///	The method computes \f$RMAX(hMAX_h(img)\f$
 ///	\todo Fix edge processing
-template <typename ImgType, int NDim>
+template <typename ImgType, size_t NDim>
 int ExtendedMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &res, ImgType h, kipl::base::eConnectivity conn);
 
 /// \brief Computes the h minimum image
@@ -146,7 +146,7 @@ int hMax(const kipl::base::TImage<ImgType,N> &img,kipl::base::TImage<ImgType,N> 
 ///
 ///	The method computes \f$RMAX(hMAX_h(img)\f$
 ///	\todo Fix edge processing
-template <typename ImgType, int NDim>
+template <typename ImgType, size_t NDim>
 int ExtendedMax(const kipl::base::TImage<ImgType,NDim> &img, kipl::base::TImage<ImgType,NDim> &res, ImgType h, MorphConnect conn=conn4);
 
 /// \brief Computes the h minimum image

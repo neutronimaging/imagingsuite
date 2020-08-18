@@ -67,10 +67,10 @@ int MedianMixRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<
 	mLUT.InPlace(pWeights,weights.Size());
 
 
-	kipl::base::TImage<float,2> proj(img.Dims());
-	kipl::base::TImage<float,2> med(img.Dims());
+    kipl::base::TImage<float,2> proj(img.dims());
+    kipl::base::TImage<float,2> med(img.dims());
 
-    size_t filtdims[2]={5UL, img.Size(1)<5UL ? 1UL : 5UL};
+    std::vector<size_t> filtdims={5UL, img.Size(1)<5UL ? 1UL : 5UL};
 
 	kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
 	size_t N=proj.Size();
@@ -92,7 +92,7 @@ int MedianMixRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<
 
 int MedianMixRingClean::ComputeProfile(kipl::base::TImage<float,3> &img)
 {
-	kipl::base::TImage<float,2> meanproj(img.Dims());
+    kipl::base::TImage<float,2> meanproj(img.dims());
 
 	float *pMean=meanproj.GetDataPtr();
 	float *pImg=img.GetDataPtr();
@@ -114,15 +114,12 @@ int MedianMixRingClean::ComputeProfile(kipl::base::TImage<float,3> &img)
 		pMean[j]*=scale;
 	}
 
-    size_t filtdims[2]={meanproj.Size(1)<3UL ? 5UL: 3UL,meanproj.Size(1)<3UL ? 1UL : 3UL};
+    std::vector<size_t> filtdims={meanproj.Size(1)<3UL ? 5UL: 3UL,meanproj.Size(1)<3UL ? 1UL : 3UL};
 	kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
-
 
 	profile=medfilt(meanproj);
 
-
 	float *pWeights=profile.GetDataPtr();
-
 
 	for (size_t i=0 ; i<N; i++) {
 		pWeights[i] = fabs(pMean[i]-pWeights[i]);

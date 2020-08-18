@@ -1,7 +1,7 @@
 //<LICENSE>
-
-#include <string>
+#include "stdafx.h"
 #include <sstream>
+#include <string>
 #include <strings/miscstring.h>
 #ifndef _MSC_VER
 #include <dlfcn.h>
@@ -12,157 +12,156 @@
 
 //--------------------------------------------------
 // Module item
-ModuleItem::ModuleItem(std::string application,std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor):
-	ModuleItemBase(application,sharedobject,modulename,interactor)
+ModuleItem::ModuleItem(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase* interactor)
+    : ModuleItemBase(application, sharedobject, modulename, interactor)
 {
 }
 
 ModuleItem::~ModuleItem()
 {
-	logger(kipl::logging::Logger::LogVerbose,"Destroying");
+    logger(kipl::logging::Logger::LogVerbose, "Destroying");
 }
 
 ///-------------------------------------------------------
 
-BackProjItem::BackProjItem(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase *interactor)	:
-	logger("BackProjItem"),
-    hinstLib(nullptr),
-    m_fnModuleFactory(nullptr),
-    m_fnDestroyer(nullptr),
-    m_Module(nullptr)
+BackProjItem::BackProjItem(std::string application, std::string sharedobject, std::string modulename, kipl::interactors::InteractionBase* interactor)
+    : logger("BackProjItem")
+    , hinstLib(nullptr)
+    , m_fnModuleFactory(nullptr)
+    , m_fnDestroyer(nullptr)
+    , m_Module(nullptr)
 {
-	m_sApplication=application;
-	m_sModuleName=modulename;
-	m_sSharedObject=sharedobject;
+    m_sApplication  = application;
+    m_sModuleName   = modulename;
+    m_sSharedObject = sharedobject;
 
-	LoadModuleObject(interactor);
+    LoadModuleObject(interactor);
 }
 
-BackProjItem::BackProjItem(BackProjItem & item):
-	logger("ModuleItem")
+BackProjItem::BackProjItem(BackProjItem& item)
+    : logger("ModuleItem")
 {
-	hinstLib=item.hinstLib;
-	m_fnModuleFactory=item.m_fnModuleFactory; 
-	m_fnDestroyer=item.m_fnDestroyer;
+    hinstLib          = item.hinstLib;
+    m_fnModuleFactory = item.m_fnModuleFactory;
+    m_fnDestroyer     = item.m_fnDestroyer;
 
-	m_sApplication=item.m_sApplication;
-	m_sSharedObject=item.m_sSharedObject;
-	m_sModuleName=item.m_sModuleName;
+    m_sApplication    = item.m_sApplication;
+    m_sSharedObject   = item.m_sSharedObject;
+    m_sModuleName     = item.m_sModuleName;
 
-	m_Module=item.m_Module;
+    m_Module          = item.m_Module;
 }
 
-BackProjItem & BackProjItem::operator=(BackProjItem & item)
+BackProjItem& BackProjItem::operator=(BackProjItem& item)
 {
-	hinstLib=item.hinstLib;
-	m_fnModuleFactory=item.m_fnModuleFactory; 
-	m_fnDestroyer=item.m_fnDestroyer;
+    hinstLib = item.hinstLib;
+    m_fnModuleFactory = item.m_fnModuleFactory;
+    m_fnDestroyer = item.m_fnDestroyer;
 
-	m_sApplication=item.m_sApplication;
-	m_sSharedObject=item.m_sSharedObject;
-	m_sModuleName=item.m_sModuleName;
+    m_sApplication = item.m_sApplication;
+    m_sSharedObject = item.m_sSharedObject;
+    m_sModuleName = item.m_sModuleName;
 
-	m_Module=item.m_Module;
+    m_Module = item.m_Module;
 
-	return *this;
+    return *this;
 }
 
-BackProjectorModuleBase * BackProjItem::GetModule()
+BackProjectorModuleBase* BackProjItem::GetModule()
 {
-	return m_Module;
+    return m_Module;
 }
 
-	
 BackProjItem::~BackProjItem()
 {
-	logger(kipl::logging::Logger::LogVerbose,"D'tor");
-	Destroy();
+    logger(kipl::logging::Logger::LogVerbose, "D'tor");
+    Destroy();
 }
 
-void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase *interactor)
+void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase* interactor)
 {
-	std::ostringstream msg;
-
+    std::ostringstream msg;
 
 #ifdef _MSC_VER
-	std::wstring so(m_sSharedObject.length(),' ');
+    std::wstring so(m_sSharedObject.length(), ' ');
 
-	copy(m_sSharedObject.begin(),m_sSharedObject.end(),so.begin());
-	hinstLib = LoadLibrary(so.c_str());
+    copy(m_sSharedObject.begin(), m_sSharedObject.end(), so.begin());
+    hinstLib = LoadLibrary(so.c_str());
 #else
-	hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
+    hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif
 
-    if (hinstLib != nullptr)
-    { 
+    if (hinstLib != nullptr) {
 #ifdef _MSC_VER
-		m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(GetProcAddress(hinstLib, "GetModule"));
+        m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(GetProcAddress(hinstLib, "GetModule"));
 #else
-		m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(dlsym(hinstLib, "GetModule"));
+        m_fnModuleFactory = reinterpret_cast<BP_FACTORY>(dlsym(hinstLib, "GetModule"));
 #endif
-		 // If the function address is valid, call the function.
+        // If the function address is valid, call the function.
         if (nullptr != m_fnModuleFactory)
         {
-			m_Module=reinterpret_cast<BackProjectorModuleBase *>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void *>(interactor)));
-            if (m_Module==nullptr) {
-				msg.str("");
-				msg<<"Failed to create "<<m_sModuleName<<" from "<<m_sSharedObject;
-				throw ReconException(msg.str(),__FILE__,__LINE__);
-			}
+            m_Module = reinterpret_cast<BackProjectorModuleBase*>(m_fnModuleFactory(m_sApplication.c_str(), m_sModuleName.c_str(), reinterpret_cast<void*>(interactor)));
+            if (m_Module == nullptr)
+            {
+                msg.str("");
+                msg << "Failed to create " << m_sModuleName << " from " << m_sSharedObject;
+                throw ReconException(msg.str(), __FILE__, __LINE__);
+            }
         }
-		else
-		{
-			msg.str("");
-			msg<<"Failed to get the factory from "<<m_sSharedObject<<" (Error: "
+        else
+        {
+            msg.str("");
+            msg << "Failed to get the factory from " << m_sSharedObject << " (Error: "
 #ifdef _MSC_VER
-					<<GetLastError()<<")";
+                << GetLastError() << ")";
 #else
-					<<dlerror()<<")";
+                << dlerror() << ")";
 #endif
 
-			throw ReconException(msg.str(),__FILE__,__LINE__);
-		}
-
+            throw ReconException(msg.str(), __FILE__, __LINE__);
+        }
 
 #ifdef _MSC_VER
-		m_fnDestroyer = reinterpret_cast<DESTROYER>(GetProcAddress(hinstLib, "Destroy"));
+        m_fnDestroyer = reinterpret_cast<DESTROYER>(GetProcAddress(hinstLib, "Destroy"));
 #else
-		m_fnDestroyer = reinterpret_cast<DESTROYER>(dlsym(hinstLib, "Destroy"));
+        m_fnDestroyer = reinterpret_cast<DESTROYER>(dlsym(hinstLib, "Destroy"));
 #endif
 
-        if (m_fnDestroyer==nullptr) {
-			msg.str("");
-			msg<<"Failed to get the destroyer from "<<m_sSharedObject<<" (Error: "
+        if (m_fnDestroyer == nullptr)
+        {
+            msg.str("");
+            msg << "Failed to get the destroyer from " << m_sSharedObject << " (Error: "
 #ifdef _MSC_VER
-					<<GetLastError()<<")";
+                << GetLastError() << ")";
 #else
-					<<dlerror()<<")";
+                << dlerror() << ")";
 #endif
-			throw ReconException(msg.str(),__FILE__,__LINE__);
-		}
-	}
-	else {
-		msg.str("");
-		msg<<"Failed to open object file "<<m_sSharedObject<<" to load module "<<m_sModuleName<<" (Error: "
+            throw ReconException(msg.str(), __FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        msg.str("");
+        msg << "Failed to open object file " << m_sSharedObject << " to load module " << m_sModuleName << " (Error: "
 #ifdef _MSC_VER
-					<<GetLastError()<<")";
+            << GetLastError() << ")";
 #else
-					<<dlerror()<<")";
+            << dlerror() << ")";
 #endif
 
-		throw ReconException(msg.str(),__FILE__,__LINE__);
-	}
+        throw ReconException(msg.str(), __FILE__, __LINE__);
+    }
 }
 
 void BackProjItem::Destroy()
 {
-	logger(kipl::logging::Logger::LogVerbose,"Destroying");
-	
-	m_fnDestroyer(m_sApplication.c_str(),reinterpret_cast<void *>(m_Module));
+    logger(kipl::logging::Logger::LogVerbose, "Destroying");
+
+    m_fnDestroyer(m_sApplication.c_str(), reinterpret_cast<void*>(m_Module));
 
 #ifdef _MSC_VER
-	FreeLibrary(hinstLib);
+    FreeLibrary(hinstLib);
 #else
-	 dlclose(hinstLib);
+    dlclose(hinstLib);
 #endif
 }

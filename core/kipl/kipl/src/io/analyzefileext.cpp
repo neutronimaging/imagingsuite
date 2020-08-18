@@ -41,7 +41,6 @@ std::string KIPLSHARED_EXPORT enum2string(kipl::io::eExtensionTypes et)
     case kipl::io::ExtensionPNG:   ext="png"; break;
     case kipl::io::ExtensionJPG:   ext="jpg"; break;
     case kipl::io::ExtensionTIFF:  ext="tif"; break;
-    case kipl::io::ExtensionMAT:   ext="mat"; break;
     case kipl::io::ExtensionHDF4:  ext="hd4"; break;
     case kipl::io::ExtensionHDF5:  ext="hd5"; break;
     case kipl::io::ExtensionHDF:   ext="hdf"; break;
@@ -79,7 +78,6 @@ void KIPLSHARED_EXPORT string2enum(std::string ext, kipl::io::eExtensionTypes &e
     extmap["jpeg"]  = kipl::io::ExtensionJPG;
     extmap["tif"]   = kipl::io::ExtensionTIFF;
     extmap["tiff"]  = kipl::io::ExtensionTIFF;
-    extmap["mat"]   = kipl::io::ExtensionMAT;
     extmap["hd4"]   = kipl::io::ExtensionHDF4;
     extmap["hd5"]   = kipl::io::ExtensionHDF5;
     extmap["hdf"]   = kipl::io::ExtensionHDF;
@@ -114,12 +112,12 @@ std::string enum2string(const kipl::io::eFileType & ft)
 {
 std::string s;
 switch (ft) {
-case kipl::io::MatlabVolume :           s="MatlabVolume"; break;
-case kipl::io::MatlabSlices :           s="MatlabSlices"; break;
 case kipl::io::TIFF8bits    :           s="TIFF8bits";    break;
 case kipl::io::TIFF16bits   :           s="TIFF16bits";   break;
 case kipl::io::TIFFfloat    :           s="TIFFfloat";    break;
+case kipl::io::TIFF8bitsMultiFrame    : s="TIFF8bitsMultiFrame";    break;
 case kipl::io::TIFF16bitsMultiFrame   : s="TIFF16bitsMultiFrame";   break;
+case kipl::io::TIFFfloatMultiFrame    : s="TIFFfloatMultiFrame";    break;
 case kipl::io::NeXusfloat   :           s="NeXusfloat";   break;
 case kipl::io::NeXus16bits  :           s="NeXus16bits";  break;
 case kipl::io::PNG8bits     :           s="PNG8bits";     break;
@@ -133,12 +131,12 @@ return s;
 
 void string2enum(const std::string &str, kipl::io::eFileType &ft)
 {
-if      (str=="MatlabVolume")           ft=kipl::io::MatlabVolume;
-else if (str=="MatlabSlices")           ft=kipl::io::MatlabSlices;
-else if (str=="TIFF8bits")              ft=kipl::io::TIFF8bits;
+     if (str=="TIFF8bits")              ft=kipl::io::TIFF8bits;
 else if (str=="TIFF16bits")             ft=kipl::io::TIFF16bits;
 else if (str=="TIFFfloat")              ft=kipl::io::TIFFfloat;
+else if (str=="TIFF8bitsMultiFrame")    ft=kipl::io::TIFF8bitsMultiFrame;
 else if (str=="TIFF16bitsMultiFrame")   ft=kipl::io::TIFF16bitsMultiFrame;
+else if (str=="TIFFfloatMultiFrame")    ft=kipl::io::TIFFfloatMultiFrame;
 else if (str=="NeXusfloat")             ft=kipl::io::NeXusfloat;
 else if (str=="NeXus16bits")            ft=kipl::io::NeXus16bits;
 else if (str=="PNG8bits")               ft=kipl::io::PNG8bits;

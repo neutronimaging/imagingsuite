@@ -5,13 +5,19 @@
 
 #include "../timage.h"
 #include "../KiplException.h"
+#include "../tsubimage.h"
 
 namespace kipl { namespace base {
 
 template <typename T, size_t NDims>
-TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const *const nStart, size_t const *const nLength)
+TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, const std::vector<size_t> & nStart, const std::vector<size_t> & nLength)
 {
-	size_t const * const dims=src.Dims();
+    if (nStart.size()<NDims)
+        throw kipl::base::KiplException("Too few start postions in Get subimage",__FILE__,__LINE__);
+    if (nLength.size()<NDims)
+        throw kipl::base::KiplException("Too few length postions in Get subimage",__FILE__,__LINE__);
+
+    auto dims=src.dims();
 	
 //	for (size_t i=0 ; i<NDims; i++)
 //		if (dims[i]<nStart[i]+nLength[i])
@@ -59,12 +65,17 @@ TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const 
 }
 
 template <typename T, size_t NDims>
-TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, size_t const * const roi, bool includeCoord)
+TImage<T,NDims> TSubImage<T,NDims>::Get(TImage<T,NDims> const src, const std::vector<size_t> &roi, bool includeCoord)
 {
-    size_t dims[NDims];
+    if (roi.size()<2*NDims)
+        throw kipl::base::KiplException("Too few postions in Get subimage",__FILE__,__LINE__);
+
+    std::vector<size_t> dims(NDims);
     size_t plusOne=includeCoord ? 1 : 0;
     switch (NDims){
     case 1 :
+
+
         dims[0]=roi[1]-roi[0]+plusOne; break;
     case 2 :
         dims[0]=roi[2]-roi[0]+plusOne;
@@ -151,7 +162,7 @@ TImage<T,2> ExtractSlice(TImage<T,3> volume, size_t idx)
 	if (volume.Size(2)<=idx)
 		throw kipl::base::KiplException("ExtractSlice: Index out of range",__FILE__,__LINE__);
 
-	TImage<T,2> slice(volume.Dims());
+    TImage<T,2> slice(volume.dims());
 
 	memcpy(slice.GetDataPtr(),volume.GetLinePtr(0,idx),slice.Size()*sizeof(T));
 
