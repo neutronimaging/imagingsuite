@@ -31,6 +31,8 @@ add_library(imgio
   pyBinder.cpp
   pyMiscIOFunctions.cpp
   pyFileSet.cpp
+  pyImageReader.cpp
+  pyImageWriter.cpp
 
   pyBinder.h
   )
