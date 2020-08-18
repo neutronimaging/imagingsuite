@@ -10,11 +10,13 @@ namespace py = pybind11;
 
 //void bindAverageImage(py::module &m);
 void bindMiscFunctions(py::module &m);
+void bindFileSet(py::module &m);
 
 PYBIND11_MODULE(imgio,m)
 {
     // bindAverageImage(m);
     bindMiscFunctions(m);
+    bindFileSet(m);
 
    py::register_exception<ReaderException>(m, "ReaderException");
 }
