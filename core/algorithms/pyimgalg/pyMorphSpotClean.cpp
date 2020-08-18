@@ -70,8 +70,7 @@ void bindMorphSpotClean(py::module &m)
 
     mscClass.def("cleanInfNan",
                  &ImagingAlgorithms::MorphSpotClean::cleanInfNan,
-                 "Makes a check and replaces possible Inf and Nan values in the image before cleaning.",
-                 py::arg("activate"));
+                 "Makes a check and replaces possible Inf and Nan values in the image before cleaning.");
 
     mscClass.def("setEdgeConditioning",
                  &ImagingAlgorithms::MorphSpotClean::setEdgeConditioning,

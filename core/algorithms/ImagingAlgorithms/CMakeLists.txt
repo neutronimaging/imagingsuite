@@ -72,3 +72,6 @@ set_target_properties(imagalg
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
+
+#install(DIRECTORY "src/scipp" DESTINATION ".")
+install(TARGETS imagalg DESTINATION ".")
