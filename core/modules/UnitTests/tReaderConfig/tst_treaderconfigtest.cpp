@@ -11,7 +11,7 @@
 
 #include <base/KiplException.h>
 #include <analyzefileext.h>
-#include <datasetbase.h>
+#include <fileset.h>
 #include <buildfilelist.h>
 
 class TReaderConfigTest : public QObject
@@ -155,7 +155,7 @@ void TReaderConfigTest::testDataSetBase()
 
 void TReaderConfigTest::testBuildFileListAngles()
 {
-    std::list<FileSet> il;
+    std::vector<FileSet> il;
     FileSet fs;
     fs.m_nFirst=0;
     fs.m_nLast=10;
@@ -184,7 +184,7 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Pick sequence from 10 to 20 with start index 0
 
-    std::list<FileSet> il3;
+    std::vector<FileSet> il3;
     FileSet fs3;
     fs3.m_nFirst=10;
     fs3.m_nLast=20;
@@ -202,7 +202,7 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Starting from index 10
 
-    std::list<FileSet> il2;
+    std::vector<FileSet> il2;
     FileSet fs2;
     fs2.m_nFirst=10;
     fs2.m_nLast=20;
@@ -218,7 +218,7 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Pick sequence from 20 to 30 with start index 10
 
-    std::list<FileSet> il4;
+    std::vector<FileSet> il4;
     FileSet fs4;
     fs4.m_nFirst=20;
     fs4.m_nLast=30;

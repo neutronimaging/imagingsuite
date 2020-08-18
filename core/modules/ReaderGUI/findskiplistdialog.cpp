@@ -12,7 +12,7 @@
 #include <plotcursor.h>
 #include <imagereader.h>
 #include <buildfilelist.h>
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include <set>
 #include <sstream>
@@ -44,7 +44,7 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
 
 }
 
-int FindSkipListDialog::exec(std::list<std::string> &filelist)
+int FindSkipListDialog::exec(std::vector<std::string> &filelist)
 {
     std::ostringstream msg;
     m_FileList=filelist;
@@ -94,9 +94,9 @@ int FindSkipListDialog::exec(std::string path, std::string fmask, int first, int
     il.m_nFirst=first;
     il.m_nLast=last;
     il.m_nStep=1;
-    std::list<FileSet> ll;
+    std::vector<FileSet> ll;
     ll.push_back(il);
-    std::list<std::string> flist=BuildFileList(ll);
+    std::vector<std::string> flist=BuildFileList(ll);
 
     return exec(flist);
 }
@@ -184,12 +184,12 @@ void FindSkipListDialog::ChangedNumberOfProjections(int x)
     ui->skip_edit_skiplist->setText(QString::fromStdString(skipstr.str()));
 }
 
-std::list<int> FindSkipListDialog::getSkipList()
+std::vector<int> FindSkipListDialog::getSkipList()
 {
-    std::list<int> slist;
+    std::vector<int> slist;
 
     std::string skipstr = ui->skip_edit_skiplist->text().toStdString();
-    kipl::strings::String2List(skipstr,slist);
+    kipl::strings::string2vector(skipstr,slist);
 
     return slist;
 }
