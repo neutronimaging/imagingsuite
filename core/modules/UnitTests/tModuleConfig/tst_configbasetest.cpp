@@ -3,11 +3,13 @@
 #include <QString>
 #include <QtTest>
 #include <QDebug>
+#include <QDir>
 
 #include <ModuleException.h>
 #include <ReconConfig.h>
 #include <modulelibnamemanger.h>
 #include <strings/filenames.h>
+#include "dummyconfig.h"
 
 class ConfigBaseTest : public QObject
 {
@@ -17,6 +19,9 @@ public:
     ConfigBaseTest();
 
 private Q_SLOTS:
+    void testConstructor();
+    void testCopyConstructor();
+    void testAssignment();
     void testConfigChanged();
     void testEvalArg();
     void testGetCommandLinePars();
@@ -27,6 +32,72 @@ private Q_SLOTS:
 
 ConfigBaseTest::ConfigBaseTest()
 {
+}
+
+void ConfigBaseTest::testConstructor()
+{
+    DummyConfig config;
+
+    QCOMPARE(config.m_sName,"DummyConfig");
+    QCOMPARE(config.m_sApplicationPath,"");
+    QCOMPARE(config.UserInformation.sSample,"Unknown item");
+    QCOMPARE(config.UserInformation.sComment,"No comment");
+    QCOMPARE(config.UserInformation.sVersion,"0");
+    QCOMPARE(config.UserInformation.sOperator,"Anders Kaestner");
+    QCOMPARE(config.UserInformation.sInstrument,"ICON");
+    QCOMPARE(config.UserInformation.sProjectNumber,"P11001");
+}
+
+void ConfigBaseTest::testCopyConstructor()
+{
+    DummyConfig config;
+
+    config.m_sName                        = "NewConfig";
+    config.m_sApplicationPath             = "/home/sweet/home";
+    config.UserInformation.sSample        = "Known item";
+    config.UserInformation.sComment       = "A good comment";
+    config.UserInformation.sVersion       = "1.0";
+    config.UserInformation.sOperator      = "Pelle Jons";
+    config.UserInformation.sInstrument    = "NEUTRA";
+    config.UserInformation.sProjectNumber = "P2020001";
+
+    auto c2(config);
+
+    QCOMPARE(c2.m_sName,"NewConfig");
+    QCOMPARE(c2.m_sApplicationPath,"/home/sweet/home");
+    QCOMPARE(c2.UserInformation.sSample,"Known item");
+    QCOMPARE(c2.UserInformation.sComment,"A good comment");
+    QCOMPARE(c2.UserInformation.sVersion,"1.0");
+    QCOMPARE(c2.UserInformation.sOperator,"Pelle Jons");
+    QCOMPARE(c2.UserInformation.sInstrument,"NEUTRA");
+    QCOMPARE(c2.UserInformation.sProjectNumber,"P2020001");
+}
+
+void ConfigBaseTest::testAssignment()
+{
+    DummyConfig config;
+
+    config.m_sName                        = "NewConfig";
+    config.m_sApplicationPath             = "/home/sweet/home";
+    config.UserInformation.sSample        = "Known item";
+    config.UserInformation.sComment       = "A good comment";
+    config.UserInformation.sVersion       = "1.0";
+    config.UserInformation.sOperator      = "Pelle Jons";
+    config.UserInformation.sInstrument    = "NEUTRA";
+    config.UserInformation.sProjectNumber = "P2020001";
+
+    DummyConfig c2;
+
+    c2 = config;
+
+    QCOMPARE(c2.m_sName,"NewConfig");
+    QCOMPARE(c2.m_sApplicationPath,"/home/sweet/home");
+    QCOMPARE(c2.UserInformation.sSample,"Known item");
+    QCOMPARE(c2.UserInformation.sComment,"A good comment");
+    QCOMPARE(c2.UserInformation.sVersion,"1.0");
+    QCOMPARE(c2.UserInformation.sOperator,"Pelle Jons");
+    QCOMPARE(c2.UserInformation.sInstrument,"NEUTRA");
+    QCOMPARE(c2.UserInformation.sProjectNumber,"P2020001");
 }
 
 void ConfigBaseTest::testConfigChanged()
@@ -115,11 +186,12 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     std::string name=mlnm.stripLibName(modulePath,kipl::base::OSMacOS);
 
-    QCOMPARE(name,"StdBackProjectors");
+    qDebug() << name.c_str();
+    QCOMPARE(name,std::string("StdBackProjectors"));
 
     name=mlnm.stripLibName(modulePath2,kipl::base::OSMacOS);
 
-    QCOMPARE(name,"StdBackProjectors");
+    QCOMPARE(name,std::string("StdBackProjectors"));
 
     name = mlnm.generateLibName("StdBackProjectors",kipl::base::OSMacOS);
 
@@ -142,9 +214,9 @@ void ConfigBaseTest::testLibNameManagerLinux()
 
     ModuleLibNameManger mlnm(appPath);
 
-    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),"StdBackProjectors");
+    QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSLinux),std::string("StdBackProjectors"));
 
-    QCOMPARE(mlnm.stripLibName(modulePath3,kipl::base::OSLinux),"StdBackProjectors");
+    QCOMPARE(mlnm.stripLibName(modulePath3,kipl::base::OSLinux),std::string("StdBackProjectors"));
 
     QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSLinux),modulePath);
 

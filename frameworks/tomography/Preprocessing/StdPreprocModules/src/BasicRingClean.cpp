@@ -41,7 +41,7 @@ bool BasicRingClean::SetROI(size_t *roi)
 
 int BasicRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-	kipl::base::TImage<float,2> meanproj(img.Dims());
+    kipl::base::TImage<float,2> meanproj(img.dims());
 
 	float *pMean=meanproj.GetDataPtr();
 	float *pImg=img.GetDataPtr();
@@ -62,21 +62,20 @@ int BasicRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std:
 		pMean[j]*=scale;
 	}
 
-	kipl::io::WriteTIFF32(meanproj,"mean.tif");
+    kipl::io::WriteTIFF(meanproj,"mean.tif",kipl::base::Float32);
 
-	size_t filtdims[2]={3,3};
-	kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
+    kipl::filters::TMedianFilter<float,2> medfilt({3,3});
 
 	kipl::base::TImage<float,2> medproj=medfilt(meanproj);
 	
 	float *pMed=medproj.GetDataPtr();
-	kipl::io::WriteTIFF32(medproj,"med.tif");
+    kipl::io::WriteTIFF(medproj,"med.tif",kipl::base::Float32);
 
 	for (size_t i=0 ; i<N; i++) {
 		pMed[i] = pMean[i]-pMed[i];
 	}
 
-	kipl::io::WriteTIFF32(medproj,"diff.tif");
+    kipl::io::WriteTIFF(medproj,"diff.tif",kipl::base::Float32);
 
 	for (size_t i=0; i<img.Size(2); i++) {
 		pImg=img.GetLinePtr(0,i);

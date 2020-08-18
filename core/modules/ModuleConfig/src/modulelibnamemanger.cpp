@@ -108,7 +108,7 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
         !libInAppPath(path,m_sApplicationPath+"../Frameworks")   )
     {
         msg << path.c_str()<<" is not in lib path";
-        logger.message(msg.str());
+        logger.verbose(msg.str());
         return path;
     }
 
@@ -116,7 +116,7 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 
     libName = path.substr(path.find_last_of('/')+1);
     libName = libName.substr(3,libName.find_first_of('.')-3);
-    logger.message(std::string("result: ")+path+" "+libName);
+    logger.verbose(std::string("result: ")+path+" "+libName);
 
     return libName;
 }
@@ -129,7 +129,7 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
         !libInAppPath(path,m_sApplicationPath+"../Frameworks/")   )
     {
         msg << path.c_str()<<" is not in lib path";
-        logger.message(msg.str());
+        logger.verbose(msg.str());
         return path;
     }
 
@@ -143,7 +143,6 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 
 bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::string &appPath)
 {
-    logger.message(path+" vs.  "+appPath);
     if (path.size()<appPath.size())
         return false;
 

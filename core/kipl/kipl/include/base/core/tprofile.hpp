@@ -3,10 +3,11 @@
 #ifndef TPROFILE_HPP
 #define TPROFILE_HPP
 
+#include "../tprofile.h"
 namespace kipl { namespace base {
 
 template <typename T, typename S>
-void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection)
+void VerticalProjection2D(const T *pData, const std::vector<size_t> &dims, S *pProfile, bool bMeanProjection)
 {
 
     memset(pProfile,0,dims[1]*sizeof(S));
@@ -24,7 +25,7 @@ void VerticalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool 
 }
 
 template <typename T, typename S>
-void HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection)
+void HorizontalProjection2D(const T *pData, const std::vector<size_t> &dims, S *pProfile, bool bMeanProjection)
 {
     memset(pProfile,0,dims[0]*sizeof(S));
     for (size_t y=0; y<dims[1]; y++) {

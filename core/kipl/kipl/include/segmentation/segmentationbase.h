@@ -10,8 +10,8 @@
 #include "../base/timage.h"
 #include "../base/textractor.h"
 #include "../strings/parenc.h"
-#include "../io/io_matlab.h"
 #include "../logging/logger.h"
+#include "../io/io_tiff.h"
 
 /// \brief Grouping classification and segmentation related classes
 namespace kipl { namespace segmentation {
@@ -85,7 +85,7 @@ protected:
 			
 			slice=kipl::base::ExtractSlice(img,kipl::base::ImagePlaneXY,img.Size(2)>>1);
 			
-			kipl::io::WriteMAT(slice,outname.c_str(),vname.c_str());
+            kipl::io::WriteTIFF(slice,outname);
 		}
 		return 0;
 	}

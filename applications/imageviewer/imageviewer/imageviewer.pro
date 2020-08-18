@@ -38,6 +38,7 @@ unix:!symbian {
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio

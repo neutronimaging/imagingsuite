@@ -19,8 +19,6 @@
 
 FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor) :
     BackProjectorModuleBase("muhrec",name,alignment,interactor),
-    m_fp(nullptr),
- //   m_bp(nullptr),
     nProjCounter(0),
     SizeU(0),
     SizeV(0),
@@ -88,7 +86,7 @@ std::map<std::string, std::string> FdkReconBase::GetParameters()
 
 /// Sets the region of interest on the projections.
 /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-void FdkReconBase::SetROI(size_t *roi)
+void FdkReconBase::SetROI(const std::vector<size_t> &roi)
 {
 
     // now here i Get the CBCT roi! here it should be the small one
@@ -101,14 +99,10 @@ void FdkReconBase::SetROI(size_t *roi)
     else
         SizeV = roi[3]-roi[1];
 
-    mConfig.ProjectionInfo.roi[0]=roi[0];
-    mConfig.ProjectionInfo.roi[1]=roi[1];
-    mConfig.ProjectionInfo.roi[2]=roi[2];
-    mConfig.ProjectionInfo.roi[3]=roi[3];
+    mConfig.ProjectionInfo.roi=roi;
 
-    volume_size[0] = mConfig.MatrixInfo.nDims[0];
-    volume_size[1] = mConfig.MatrixInfo.nDims[1];
-    volume_size[1] = mConfig.MatrixInfo.nDims[2];
+    volume_size = mConfig.MatrixInfo.nDims;
+    // original code had this line ... volume_size[1] = mConfig.MatrixInfo.nDims[2];
 
 
         SizeProj      = SizeU*SizeV;
@@ -117,32 +111,31 @@ void FdkReconBase::SetROI(size_t *roi)
         rest = SizeV & 3 ;
         rest = rest !=0 ? 4 - rest : 0;
     #endif
-    size_t projDims[3]={SizeU, SizeV + rest, nProjectionBufferSize};
+    std::vector<size_t> projDims={SizeU, SizeV + rest, nProjectionBufferSize};
 
-    if (MatrixAlignment==MatrixZXY) {
-        MatrixDims[0]=SizeV;
-        MatrixDims[1]=SizeU;
-        MatrixDims[2]=SizeU;
+    std::vector<size_t> matrixDims;
+    if (MatrixAlignment==MatrixZXY)
+    {
+        matrixDims = { SizeV, SizeU, SizeU };
 
         std::swap(projDims[0],   projDims[1]);
     }
-    else {
-        MatrixDims[0]=SizeU;
-        MatrixDims[1]=SizeU;
-        MatrixDims[2]=SizeV;
+    else
+    {
+        matrixDims = { SizeU, SizeU, SizeV };
     }
 
-    volume.Resize(MatrixDims);
+    volume.resize(matrixDims);
     volume=0.0f;
 
-    cbct_volume.Resize(MatrixDims);
+    cbct_volume.resize(matrixDims);
     cbct_volume=0.0f;
 
 
     stringstream msg;
     msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
     msg<<"Matrix dimensions "<<volume<<std::endl;
-    projections.Resize(projDims); // this is wrong, but I don-t use the projection buffer size anyway.. so at this point I don't mind
+    projections.resize(projDims); // this is wrong, but I don-t use the projection buffer size anyway.. so at this point I don't mind
     projections=0.0f;
     msg<<"Projection buffer dimensions "<<projections<<std::endl;
     logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -221,7 +214,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
        if (volume.Size()==0)
            throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-       kipl::base::TImage<float,2> img(projections.Dims());
+       kipl::base::TImage<float,2> img(projections.dims());
 
        size_t nProj=projections.Size(2);
 
@@ -259,9 +252,9 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
          // go into the parallel case reference system
          kipl::base::TRotate<float> rotate;
          kipl::base::TImage<float,2> ori, rotated;
-         size_t dims2d[2] = {cbct_volume.Size(0), cbct_volume.Size(1)};
-         ori.Resize(dims2d);
-         rotated.Resize(dims2d);
+         std::vector<size_t> dims2d = {cbct_volume.Size(0), cbct_volume.Size(1)};
+         ori.resize(dims2d);
+         rotated.resize(dims2d);
 
          for (int k=0; k<volume.Size(2); ++k){
              memcpy(ori.GetDataPtr(), cbct_volume.GetLinePtr(0,k), sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
@@ -276,18 +269,19 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
     return 0L;
 }
 
-void FdkReconBase::GetMatrixDims(size_t *dims)
+const std::vector<size_t> & FdkReconBase::GetMatrixDims()
 {
-    if (MatrixAlignment==MatrixZXY) {
-        dims[0]=volume.Size(1);
-        dims[1]=volume.Size(2);
-        dims[2]=volume.Size(0);
+    std::vector<size_t> dims;
+    if (MatrixAlignment==MatrixZXY)
+    {
+        dims= { volume.Size(1), volume.Size(2), volume.Size(0) };
     }
-    else {
-        dims[0]=volume.Size(0);
-        dims[1]=volume.Size(1);
-        dims[2]=volume.Size(2);
+    else
+    {
+        dims = volume.dims();
     }
+
+    return dims;
 }
 
 void FdkReconBase::GetHistogram(float *axis, size_t *hist,size_t nBins) {

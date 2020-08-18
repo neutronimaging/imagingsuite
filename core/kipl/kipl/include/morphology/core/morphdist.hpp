@@ -118,7 +118,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     std::stringstream msg;
     kipl::logging::Logger logger("EuclideanDistance");
 //	logger(kipl::logging::Logger::LogWarning,"Warning, the algorithm is buggy...");
-    size_t const * const dims=mask.Dims();
+    const auto dims=mask.dims();
     const size_t sx=dims[0];
     const size_t sxy=dims[0]*dims[1];
 
@@ -150,7 +150,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     unsigned short *pImz=nullptr;
 
     if (NDim==3) {
-        imz.Resize(dims);
+        imz.resize(dims);
         imz=0;
         pImz=imz.GetDataPtr();
     }
@@ -298,7 +298,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     }
     //logger(kipl::logging::Logger::LogVerbose,"Calculating distances from coordinate fields");
 
-    dist.Resize(dims);
+    dist.resize(dims);
     DistType * pDist=dist.GetDataPtr();
     if (NDim==2)
         for (p=0; p<imx.Size(); p++)
@@ -338,9 +338,9 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     msg<<"using metric "<<metric.getName();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    size_t const * const dims=img.Dims();
+    auto dims=img.dims();
 
-    dist.Resize(dims);
+    dist.resize(dims);
 
     MaskType *pImg;
     float *pDist;
@@ -405,8 +405,8 @@ int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
         kipl::base::TImage<DistType,2> &dist, CMetricBase &metric)
 {
     int x,y;
-    size_t const * const dims=img.Dims();
-    dist.Resize(dims);
+    auto dims=img.dims();
+    dist.resize(dims);
 
     ImgType *pImg;
     DistType *pDist;
@@ -557,7 +557,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 	std::stringstream msg;
 	kipl::logging::Logger logger("EuclideanDistance");
 //	logger(kipl::logging::Logger::LogWarning,"Warning, the algorithm is buggy...");
-	size_t const * const dims=mask.Dims();
+    auto dims=mask.dims();
 	const size_t sx=dims[0];
 	const size_t sxy=dims[0]*dims[1];
 
@@ -592,7 +592,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 	unsigned short *pImy=imy.GetDataPtr();
 	unsigned short *pImz=NULL;
 	if (NDim==3) {
-		imz.Resize(dims);
+        imz.resize(dims);
 		imz=0;
 		pImz=imz.GetDataPtr();
 	}
@@ -723,7 +723,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 	}
 	//logger(kipl::logging::Logger::LogVerbose,"Calculating distances from coordinate fields");
 	
-	dist.Resize(dims);
+    dist.resize(dims);
 	DistType * pDist=dist.GetDataPtr();
 	if (NDim==2)
 		for (p=0; p<imx.Size(); p++)
@@ -763,9 +763,9 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     msg<<"using metric "<<metric.getName();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    size_t const * const dims=img.Dims();
+    auto dims=img.dims();
 
-    dist.Resize(dims);
+    dist.resize(dims);
 
     MaskType *pImg;
     float *pDist;

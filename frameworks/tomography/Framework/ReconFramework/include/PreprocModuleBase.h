@@ -32,7 +32,7 @@ public:
     /// Sets the region of interest for the current processing block
     /// \param roi vector with the roi coordinates (x0,y0,x1,y1)
     /// \returns True if the roi information was used.
-    virtual bool SetROI(size_t * roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 
     /// Destructor to clean up
 	virtual ~PreprocModuleBase(void);

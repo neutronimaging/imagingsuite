@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "stdafx.h"
+#include "../include/ModuleConfig_global.h"
 #include "../include/ModuleConfig.h"
 #include "../include/ModuleException.h"
 #include "../include/modulelibnamemanger.h"
@@ -17,6 +17,7 @@ ModuleConfig::ModuleConfig(const std::string &appPath) :
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
     m_bActive(true),
+    m_bThreading(false),
     m_NameManager(appPath)
 {
 }
@@ -29,7 +30,9 @@ const std::string ModuleConfig::WriteXML(int indent)
 	str<<std::setw(indent)<<" "<<"<module>\n"
 		<<std::setw(indent+4)<<" "<<"<modulename>"<<m_sModule<<"</modulename>\n"
         <<std::setw(indent+4)<<" "<<"<sharedobject>"<<m_NameManager.stripLibName(m_sSharedObject)<<"</sharedobject>\n"
-		<<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n";
+        <<std::setw(indent+4)<<" "<<"<active>"<<(m_bActive ? "true":"false")<<"</active>\n"
+        <<std::setw(indent+4)<<" "<<"<threading>"<<(m_bThreading ? "true":"false")<<"</threading>\n";
+
 	if (!parameters.empty()) {
 		str<<std::setw(indent+4)<<" "<<"<parameters>\n";
 		std::map<std::string,std::string>::iterator it;
@@ -85,6 +88,10 @@ void ModuleConfig::ParseModule(xmlTextReaderPtr reader)
 			if (sName=="active") {
 				m_bActive=kipl::strings::string2bool(sValue);
 			}
+
+            if (sName=="threading") {
+                m_bThreading=kipl::strings::string2bool(sValue);
+            }
 			if (sName=="parameters") {
 				int depth2=xmlTextReaderDepth(reader);
 				while (ret == 1) {
@@ -132,4 +139,28 @@ std::string ModuleConfig::PrintParameters()
 void ModuleConfig::setAppPath(const std::string &path)
 {
     m_NameManager.setAppPath(path);
+}
+
+std::string ModuleConfig::modulePath()
+{
+    return m_NameManager.generateLibName(m_sModule);
+}
+
+std::string ModuleConfig::moduleSummary()
+{
+   std::ostringstream summary;
+
+   summary << "path:"          << m_sSharedObject
+           <<", module:"       << m_sModule
+           <<", "              << (m_bActive ?    "active" : "disabled")
+           <<", threading is " << (m_bThreading ? "active" : "disabled");
+
+   return summary.str();
+}
+
+std::ostream &operator<<(std::ostream &s, ModuleConfig &mc)
+{
+    s << mc.moduleSummary();
+
+    return s;
 }

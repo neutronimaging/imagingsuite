@@ -12,11 +12,12 @@
 #endif
 #include <limits>
 #include "../../base/timage.h"
+#include "../image_statistics.h"
 
 namespace kipl { namespace math {
 
 template <typename T, size_t N>
-double RegionMean(kipl::base::TImage<T,N> img, size_t const * const region)
+double RegionMean(kipl::base::TImage<T,N> img, const std::vector<size_t> & region)
 {
 	double sum=0.0;
 	T *pImg=NULL;
@@ -226,7 +227,7 @@ std::pair<double,double> statistics(T const * const x, const size_t N)
 }
 
 template <typename T>
-void statistics(T const * const x,double *m, double *s, const size_t *dims, size_t nDims, bool bAllocate)
+void statistics(T const * const x,double *m, double *s, const std::vector<size_t> & dims, size_t nDims, bool bAllocate)
 {
     ptrdiff_t nSlices=static_cast<ptrdiff_t>(dims[nDims-1]);
     size_t N=dims[0];

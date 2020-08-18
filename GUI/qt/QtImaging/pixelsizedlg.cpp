@@ -135,7 +135,7 @@ float PixelSizeDlg::getDistance2(kipl::base::TImage<float, 2> &im, size_t *roi)
         qDebug() << "Vertical (N="<<N<<",w="<<w<<", h="<<h<<")";
         axis = kipl::base::ImageAxisY;
 
-        kipl::base::VerticalProjection2D(dimg.GetDataPtr(),dimg.Dims(),profile);
+        kipl::base::VerticalProjection2D(dimg.GetDataPtr(),dimg.dims(),profile);
         stat.reset();
         stat.put(profile+roi[1],roi[3]-roi[1]);
         kipl::math::findPeaks(profile+roi[1],roi[3]-roi[1],stat.E(),stat.s(),peaks);
@@ -159,7 +159,7 @@ float PixelSizeDlg::getDistance2(kipl::base::TImage<float, 2> &im, size_t *roi)
         logger(logger.LogMessage,"Using horizontal profile");
         qDebug() << "Horizontal (N="<<N<<", w="<<w<<", h="<<h<<")";
         axis = kipl::base::ImageAxisX;
-        kipl::base::HorizontalProjection2D(dimg.GetDataPtr(),dimg.Dims(),profile);
+        kipl::base::HorizontalProjection2D(dimg.GetDataPtr(),dimg.dims(),profile);
 
         kipl::io::serializeContainer(profile,profile+dimg.Size(0),"diff_profile.txt");
         stat.reset();
@@ -242,10 +242,18 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
 
         return;
     }
+    if ((roi[2]-roi[0])<25 || (roi[3]-roi[1])<25)
+    {
+        QMessageBox::warning(this,"Too small ROI selected","You have to provide a sufficiently large (>25 pixels) ROI before you can analyse.",QMessageBox::Ok);
+        logger.message("Too small ROI.");
+
+        return;
+    }
+
     pixelDistance=getDistance2(img,roi);
     mPixelSize=ui->doubleSpinBox_Distance->value()/pixelDistance;
     std::ostringstream msg;
-    msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<"mm/"<<pixelDistance<<"px, pixelSize: "<<mPixelSize;
+    msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<" mm/"<<pixelDistance<<" px, pixelSize: "<<mPixelSize<<" mm/pixel";
     QString str;
     str.setNum(pixelDistance,'g',4);
     ui->label_edgeDistance->setText(str);
@@ -275,10 +283,10 @@ void PixelSizeDlg::loadImage(QString fn)
         return;
     }
 
-    size_t dims[2]={3,3};
+    std::vector<size_t> dims={3,3};
     kipl::filters::TMedianFilter<float,2> medfilt(dims);
     img=medfilt(img);
-    ui->viewer->set_image(img.GetDataPtr(),img.Dims());
+    ui->viewer->set_image(img.GetDataPtr(),img.dims());
 }
 
 void PixelSizeDlg::plotEdge(std::vector<std::pair<float, float> > &ep, QColor c, int idx)
@@ -303,13 +311,13 @@ void PixelSizeDlg::computeEdgeEquation(std::vector<std::pair<float,float>> edgeP
 kipl::base::TImage<float, 2> PixelSizeDlg::diffEdge(kipl::base::TImage<float, 2> &img)
 {
 
-    float kx[9]={-3,0,3,
+    std::vector<float> kx={-3,0,3,
                 -10,0,10,
                 -3,0,3};
-    size_t dims[2]={3,3};
+    std::vector<size_t> dims={3,3};
     kipl::filters::TFilter<float,2> dx(kx,dims);
 
-    float ky[9]={-3,-10,-3,
+    std::vector<float> ky={-3,-10,-3,
                 0,0,0,
                 3,10,3};
 
@@ -318,7 +326,7 @@ kipl::base::TImage<float, 2> PixelSizeDlg::diffEdge(kipl::base::TImage<float, 2>
     auto dximg=dx(img,kipl::filters::FilterBase::EdgeMirror);
     auto dyimg=dy(img,kipl::filters::FilterBase::EdgeMirror);
 
-    kipl::base::TImage<float,2> absgrad(img.Dims());
+    kipl::base::TImage<float,2> absgrad(img.dims());
 
     float *pA=absgrad.GetDataPtr();
     float *pX=dximg.GetDataPtr();

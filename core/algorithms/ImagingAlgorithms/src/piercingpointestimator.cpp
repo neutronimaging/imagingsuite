@@ -28,11 +28,11 @@ PiercingPointEstimator::PiercingPointEstimator() :
 
 }
 
-pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, size_t *roi)
+pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, const std::vector<size_t> &roi)
 {
-    size_t crop[4];
+    std::vector<size_t> crop(4,0UL);
 
-    if (roi==nullptr) {
+    if (roi.empty()) {
         logger(logger.LogMessage,"Using default crop (reduction by 10\%).");
         float marg=0.05;
         crop[0]=static_cast<size_t>(img.Size(0)*marg);
@@ -41,7 +41,7 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
         crop[3]=static_cast<size_t>(crop[1]+(1-2*marg)*img.Size(1));
     }
     else {
-        std::copy(roi,roi+4,crop);
+        crop = roi;
     }
 
     kipl::base::TImage<float,2> cimg=kipl::base::TSubImage<float,2>::Get(img,crop);
@@ -66,8 +66,9 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img,
                              kipl::base::TImage<float,2> &dc,
                              bool gaincorrection,
-                             size_t *roi)
+                             const std::vector<size_t> &roi)
 {
+    std::ostringstream msg;
     correctedImage=img-dc;
 
     if (gaincorrection) {
@@ -80,9 +81,9 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 //                 -10.0f/16.0f,0.0f,10.0f/16.0f,
 //                 -3.0f/16.0f,0,3.0f/16.0f};
 
-        size_t fdim[2]={3,1};
+        std::vector<size_t> fdim={3,1};
 
-        float diff[9]={-1.0f/2.0,0.0f,1.0f/2.0f};
+        std::vector<float> diff={-1.0f/2.0,0.0f,1.0f/2.0f};
 
         kipl::filters::TFilter<float,2> filt(diff,fdim);
 
@@ -90,14 +91,15 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
         float *profile=new float[N];
 
 
-        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.Dims(), profile, true);
+        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.dims(), profile, true);
 
         kipl::math::Statistics stats;
         for (int i=0; i<N; ++i) {
             stats.put(profile[i]);
         }
         profile[0]= m_gainThreshold < abs(profile[0]-stats.E())/stats.s()? 0 : profile[0];
-        std::cout<<stats<<std::endl;
+        msg.str(""); msg<<"Piercing point stats "<<stats<<"\n";
+        logger.message(msg.str());
         for (int i=1; i<N; ++i) {
             profile[i]= m_gainThreshold < abs(profile[i]-stats.E())/stats.s() ? profile[i] : 0;
             profile[i]+=profile[i-1];

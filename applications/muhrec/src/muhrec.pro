@@ -7,7 +7,7 @@
 QT       += core widgets printsupport charts concurrent
 
 TARGET = muhrec
-VERSION = 4.1
+VERSION = 4.2
 TEMPLATE = app
 CONFIG += c++11
 
@@ -58,7 +58,8 @@ ICON = muh4_icon.icns
 RC_ICONS = muh4_icon.ico
 
 SOURCES += main.cpp\
-        muhrecmainwindow.cpp \
+    moduleconfigprogressdialog.cpp \
+    muhrecmainwindow.cpp \
     MuhrecInteractor.cpp \
     configuregeometrydialog.cpp \
     findskiplistdialog.cpp \
@@ -76,6 +77,7 @@ HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
     configuregeometrydialog.h \
     findskiplistdialog.h \
+    moduleconfigprogressdialog.h \
     recondialog.h \
     PreProcModuleConfigurator.h \
     stdafx.h \
@@ -89,6 +91,7 @@ HEADERS  += muhrecmainwindow.h \
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
     findskiplistdialog.ui \
+    moduleconfigprogressdialog.ui \
     recondialog.ui \
     viewgeometrylistdialog.ui \
     preferencesdialog.ui \
@@ -130,3 +133,8 @@ INCLUDEPATH += $$PWD/../../../external/mac/include
 DEPENDPATH += $$PWD/../../../external/mac/include
 LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
+
+DISTFILES += \
+    ../Resources/defaults_linux.xml \
+    ../Resources/defaults_mac.xml \
+    ../Resources/defaults_windows.xml

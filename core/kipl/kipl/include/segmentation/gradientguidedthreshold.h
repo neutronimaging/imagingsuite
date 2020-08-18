@@ -3,7 +3,7 @@
 #ifndef GRADIENTGUIDEDTHRESHOLD_H
 #define GRADIENTGUIDEDTHRESHOLD_H
 
-#include <set>
+#include <vector>
 
 #include "../base/timage.h"
 #include "segmentationbase.h"
@@ -17,8 +17,8 @@ public:
     ~gradientGuidedThreshold();
 
     void setDataThreshold(T0 val);
-    void setDataThreshold(std::set<T0> val);
-    void setDataThreshold(std::vector<T0> val);
+    void setDataThreshold(const std::set<T0> & val);
+    void setDataThreshold(const std::vector<T0> & val);
     void setDataThreshold(T0 *val, size_t Nelement);
 
     void setEdgeThreshold(float val);
@@ -27,7 +27,7 @@ public:
     virtual int operator()(kipl::base::TImage<T0,N> & img, kipl::base::TImage<T1,N> &seg);
 
 private:
-    std::set<T0> m_threshold;
+    std::vector<T0> m_threshold;
     float m_edgeThreshold;
     int m_filterWidth;
 };

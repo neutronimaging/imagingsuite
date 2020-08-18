@@ -45,7 +45,7 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
-    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio
+    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff  -lcfitsio -larmadillo -llapack -lblas
 }
 
 
@@ -54,11 +54,10 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
     INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
-    # INCLUDEPATH += $$PWD/../../../../external/src/armadillo-9.800.2/include/
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
-    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
  }
 
 
@@ -71,7 +70,7 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -larmadillo -llapack -lblas
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src

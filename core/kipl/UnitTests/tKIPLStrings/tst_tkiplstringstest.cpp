@@ -66,66 +66,100 @@ void TKIPLStringsTest::testStripFileName()
 
     fname="file01.txt";
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("./"));
+    #ifndef _MSC_VER
+        std::string ref="./";
+    #else
+        std::string ref= "";
+    #endif
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="file01.txt.csv";
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("./"));
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("w/"));
+    ref = "w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="/w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/w/"));
+    ref = "/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="q/w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("q/w/"));
+    ref = "q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    qDebug() << path.c_str() <<", "<< ref.c_str();
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="/q/w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/q/w/"));
+    ref = "/q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
 
     fname="w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("w/"));
+    ref = "w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="/w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/w/"));
+    ref = "/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="q/w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("q/w/"));
+    ref = "q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="/q/w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/q/w/"));
+    ref = "/q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));

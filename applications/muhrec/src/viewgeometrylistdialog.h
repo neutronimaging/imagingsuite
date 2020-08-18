@@ -34,7 +34,7 @@ public:
     void setList(std::list<std::pair<ReconConfig, kipl::base::TImage<float,2> > >  &reconList);
     int changedConfigFields();
     void getTilt(float &center, float &tilt, float &pivot);
-    void getROI(size_t *roi);
+    void getROI(std::vector<size_t> &roi);
     
     // Collection of call-backs
 protected slots:
@@ -63,7 +63,7 @@ private:
     double m_fTilt;
     double m_fPivot;
     double m_fCenter;
-    size_t m_nMatrixROI[4];
+    std::vector<size_t> m_nMatrixROI;
 };
 
 #endif // VIEWGEOMETRYLISTDIALOG_H

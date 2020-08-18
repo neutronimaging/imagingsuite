@@ -13,10 +13,10 @@ namespace math {
 template<typename T>
 Covariance<T>::Covariance() :
     logger("Covariance"),
-    m_pData(NULL),
+    m_pData(nullptr),
     m_nVars(0),
     m_nElements(0),
-    m_fMean(NULL),
+    m_fMean(nullptr),
     m_eResultMatrixType(CovarianceMatrix)
 {}
 
@@ -47,7 +47,7 @@ TNT::Array2D<double> Covariance<T>::compute(T *data, size_t nElements, size_t nV
 }
 
 template<typename T>
-TNT::Array2D<double> Covariance<T>::compute(T *data, const size_t *dims, size_t Ndims, bool bCenter)
+TNT::Array2D<double> Covariance<T>::compute(T *data, const std::vector<size_t> &dims, size_t Ndims, bool bCenter)
 {
     m_nVars=dims[Ndims-1];
     m_pData=data;

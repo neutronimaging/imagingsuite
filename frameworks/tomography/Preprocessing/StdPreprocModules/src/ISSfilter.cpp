@@ -94,7 +94,7 @@ int ISSfilter::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 	{
 		akipl::scalespace::ISSfilter<float> filter;
 
-		kipl::base::TImage<float,2> slice(img.Dims());
+        kipl::base::TImage<float,2> slice(img.dims());
 
 		int N=static_cast<int>(img.Size(2));
 		#pragma omp for

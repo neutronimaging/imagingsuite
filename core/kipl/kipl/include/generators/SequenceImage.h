@@ -18,7 +18,7 @@ public:
 	/// \param dims Array containing the image dimensions
 	/// \param start Bias of the sequence
 	/// \returns The generated image
-	static kipl::base::TImage<float,2> MakeSequenceImage2D(size_t const * const dims, float start=0.0f);
+    static kipl::base::TImage<float,2> MakeSequenceImage2D(const std::vector<size_t> & dims, float start=0.0f);
 
     /// \brief Creates symmetric a modula image. The remainder of the division of the
 	/// index sequence and a number M is computed
@@ -35,7 +35,7 @@ public:
 	/// \param dims Array containing the image dimensions
 	/// \param start Bias of the sequence
 	/// \returns The generated image
-	static kipl::base::TImage<float,3> MakeSequenceImage3D(size_t const * const dims, float start=0.0f);
+    static kipl::base::TImage<float,3> MakeSequenceImage3D(const std::vector<size_t> & dims, float start=0.0f);
 };
 
 }}

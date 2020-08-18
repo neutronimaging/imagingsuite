@@ -37,7 +37,7 @@ void ReferenceFileDlg::setPath(const QString &_path)
     ui->comboBox_openBeam->setCurrentIndex(pos);
 
     fillComboBox(ui->comboBox_darkCurrent);
-    names<<"dc"<<"dark";
+    names<<"dc"<<"dark"<<"di";
     pos = suggestSelection(names);
     ui->comboBox_darkCurrent->setCurrentIndex(pos);
 }

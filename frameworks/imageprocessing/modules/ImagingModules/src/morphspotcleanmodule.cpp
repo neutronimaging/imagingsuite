@@ -112,7 +112,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setEdgeConditioning(m_nEdgeSmoothLength);
-    cleaner.cleanInfNan(m_bRemoveInfNan);
+    cleaner.cleanInfNan();
     cleaner.setLimits(m_bUseClamping,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
 
     kipl::base::TImage<float,2> slice;

@@ -236,6 +236,13 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="pushButton_ext_sample_back">
+           <property name="text">
+            <string>filename</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLineEdit" name="edit_BB_external"/>
          </item>
          <item>
@@ -245,6 +252,13 @@
            </property>
            <property name="text">
             <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="check_singleext">
+           <property name="text">
+            <string>Single File</string>
            </property>
           </widget>
          </item>
@@ -288,6 +302,9 @@
            </property>
            <property name="maximum">
             <number>9999</number>
+           </property>
+           <property name="value">
+            <number>1</number>
            </property>
           </widget>
          </item>
@@ -338,6 +355,13 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_ext_back">
+           <property name="text">
+            <string>filename</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="edit_OBBB_ext"/>

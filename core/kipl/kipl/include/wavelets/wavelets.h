@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <list>
+#include <vector>
 
 #include "../base/timage.h"
 #include "../logging/logger.h"
@@ -20,14 +21,14 @@ template <typename T>
 		WaveletKernel(std::string name);
 		std::string name() const {return m_sName;}
 		int begin() const {return m_nBegin;}
-		int end() const {return m_nEnd;}
+                int end() const {return m_nEnd;}
 		int size() const {return m_nEnd-m_nBegin+1;}
 
-		T const * const transH() const {return m_tH-m_nBegin;}
-		T const * const transG() const {return m_tG-m_nBegin;}
+                T const * const transH() const {return m_tH-m_nBegin;}
+                T const * const transG() const {return m_tG-m_nBegin;}
 
-		T const * const synthH() const {return m_sH-m_nBegin;}
-		T const * const synthG() const {return m_sG-m_nBegin;}
+                T const * const synthH() const {return m_sH-m_nBegin;}
+                T const * const synthG() const {return m_sG-m_nBegin;}
 		std::list<std::string> NameList();
 
 	private:
@@ -50,8 +51,8 @@ template <typename T>
 	class WaveletQuad {
 	public:
 		WaveletQuad() : N(0) {}
-		WaveletQuad(size_t const * const dims) : N(0),a(dims), h(dims), v(dims), d(dims) {a=T(0); h=T(0); v=T(0); d=T(0);}
-		void Resize(size_t const * const dims) { a.Resize(dims); h.Resize(dims); v.Resize(dims); d.Resize(dims); }
+        WaveletQuad(const std::vector<size_t> & dims) : N(0),a(dims), h(dims), v(dims), d(dims) {a=T(0); h=T(0); v=T(0); d=T(0);}
+        void resize(const std::vector<size_t> & dims) { a.resize(dims); h.resize(dims); v.resize(dims); d.resize(dims); }
 		void SaveQuad(std::string fname);
 		int N;
 		kipl::base::TImage<T,2> a;
@@ -76,7 +77,7 @@ template <typename T>
 
 		const WaveletKernel<T> & Kernel() const {return kernel;}
 	protected:
-		size_t n_dims[2];
+        std::vector<size_t> n_dims;
 
 		WaveletQuad<T> transform(WaveletQuad<T> &q);
 		void transform(kipl::base::TImage<T,2> &src,

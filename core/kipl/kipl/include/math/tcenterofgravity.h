@@ -6,6 +6,8 @@
 #include "../base/index2coord.h"
 #include "../logging/logger.h"
 
+#include <vector>
+
 namespace kipl {
 namespace math {
 
@@ -26,7 +28,7 @@ private:
    float *profileX;
    float *profileY;
    float *profileZ;
-   int dims[3];
+   std::vector<size_t> dims;
 };
 
 }

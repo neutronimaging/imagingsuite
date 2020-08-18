@@ -18,11 +18,11 @@ kipl::base::TImage<float,2> LaplacianOfGaussian(kipl::base::TImage<T,2> & img, f
     // g(x) = Gauss x
     // g(y) = Gauss y
     // g_xx(x) = 1/s^2 (1-x/s^2) exp(-(x^2+y^2)/(2 s^2))
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     int N=ceil(sigma*2);
     int N2=2*N+1;
-    float *klog=new float[N2*N2];
+    std::vector<float> klog(N2*N2);
     float s2=1.0f/(sigma*sigma);
 
     for (int y=-N; y<=N; y++) {
@@ -37,13 +37,13 @@ kipl::base::TImage<float,2> LaplacianOfGaussian(kipl::base::TImage<T,2> & img, f
 //        k[N+i]=exp(-i*i/(2*sigma*sigma));
 //        k[N-i]=k[N+i];
 //    }
-    const float d[3]={-1,2,-1};
-    size_t LoGDims[2]={size_t(N2), size_t(N2)};
+    std::vector<float> d={-1,2,-1};
+    std::vector<size_t> LoGDims={size_t(N2), size_t(N2)};
     kipl::filters::TFilter<float,2> LoG(klog,LoGDims);
     kipl::base::TImage<float,2> fimg;
     fimg=kipl::base::ImageCaster<T,float,2>::cast(img);
     res=LoG(fimg,kipl::filters::FilterBase::EdgeMirror);
-    delete [] klog;
+
     return res;
 }
 

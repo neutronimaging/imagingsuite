@@ -50,7 +50,7 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
     if (res<0)
         return QDialog::Rejected;
 
-    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims());
+    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.dims());
     ui->groupBoxSlices->setVisible(false);
     ui->comboROISelection->setCurrentIndex(0);
 
@@ -93,18 +93,20 @@ void ConfigureGeometryDialog::ROIChanged(int y0, int y1)
 {
     QRect rect;
 
-    size_t * dims=m_Config.ProjectionInfo.roi;
-    if (0<=y0) {
+    auto dims=m_Config.ProjectionInfo.roi;
+    if (0<=y0)
+    {
         rect.setCoords(static_cast<int>(dims[0]),
                        y0,
                        static_cast<int>(dims[2]),
                        y1);
     }
-    else {
-        rect.setCoords(static_cast<int>(dims[0]),
-                static_cast<int>(dims[1]),
-                static_cast<int>(dims[2]),
-                static_cast<int>(dims[3]));
+    else
+    {
+        rect.setCoords( static_cast<int>(dims[0]),
+                        static_cast<int>(dims[1]),
+                        static_cast<int>(dims[2]),
+                        static_cast<int>(dims[3]));
     }
 
     on_comboROISelection_currentIndexChanged(ui->comboROISelection->currentIndex());
@@ -112,12 +114,13 @@ void ConfigureGeometryDialog::ROIChanged(int y0, int y1)
 
 kipl::base::TImage<float,2> ConfigureGeometryDialog::ThresholdProjection(const kipl::base::TImage<float,2> img, float level)
 {
-    kipl::base::TImage<float,2> result(img.Dims());
+    kipl::base::TImage<float,2> result(img.dims());
 
     float const * const pImg=img.GetDataPtr();
     float *pRes=result.GetDataPtr();
 
-    for (size_t i=0; i<img.Size(); i++) {
+    for (size_t i=0; i<img.Size(); i++)
+    {
         pRes[i]=static_cast<float>(level<pImg[i]);
     }
 
@@ -131,32 +134,34 @@ float ConfigureGeometryDialog::CorrelationCenter(	kipl::base::TImage<float,2> pr
     std::ostringstream msg;
     logger(kipl::logging::Logger::LogMessage,"Center estimation using correlation");
 
- //   size_t *roi = m_Config.ProjectionInfo.roi;
     msg<<"Corr center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     std::ofstream cogfile("cog_corr.txt");
 
     kipl::base::TImage<float,2> limg0,limg180;
-    size_t start[2]={roi[0],roi[1]};
-    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+
+    std::vector<size_t> start  = {roi[0],roi[1]};
+    std::vector<size_t> length = {roi[2]-roi[0],roi[3]-roi[1]};
+
     kipl::base::TSubImage<float,2> cropper;
     limg0=cropper.Get(proj_0,start,length);
     limg180 = kipl::base::Mirror(cropper.Get(m_Proj180Deg,start,length),kipl::base::ImageAxisX);
 
     size_t len=limg0.Size(0)/3;
 
-    size_t dims[2]={len*2,limg0.Size(1)};
-    kipl::base::TImage<float,2> corrimg(dims);
+    kipl::base::TImage<float,2> corrimg({len*2,limg0.Size(1)});
 
     for (size_t y=0; y<limg0.Size(1); y++) {
-        float *corr=corrimg.GetLinePtr(y);
+        float       *       corr = corrimg.GetLinePtr(y);
         const float * const p0   = limg0.GetLinePtr(y)+len;
         const float * const p180 = limg180.GetLinePtr(y);
 
-        for (size_t idx=0; idx<2*len; idx++ ) {
+        for (size_t idx=0; idx<2*len; idx++ )
+        {
             corr[idx]=0.0f;
-            for (size_t x=0; x<len; x++) {
+            for (size_t x=0; x<len; x++)
+            {
                 corr[idx]+=p0[x]*p180[idx+x];
             }
         }
@@ -182,8 +187,8 @@ float ConfigureGeometryDialog::LeastSquareCenter(	kipl::base::TImage<float,2> pr
     msg<<"LS center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
     kipl::base::TImage<float,2> limg0,limg180;
-    size_t start[2]={roi[0],roi[1]};
-    size_t length[2]={roi[2]-roi[0],roi[3]-roi[1]};
+    std::vector<size_t> start  = {roi[0],roi[1]};
+    std::vector<size_t> length = {roi[2]-roi[0],roi[3]-roi[1]};
     kipl::base::TSubImage<float,2> cropper;
 
     msg.str("");
@@ -197,17 +202,19 @@ float ConfigureGeometryDialog::LeastSquareCenter(	kipl::base::TImage<float,2> pr
 
     size_t len=limg0.Size(0)/3;
 
-    size_t dims[2]={len*2,limg0.Size(1)};
-    kipl::base::TImage<float,2> corrimg(dims);
+    kipl::base::TImage<float,2> corrimg({len*2,limg0.Size(1)});
     float diff=0.0f;
-    for (size_t y=0; y<limg0.Size(1); y++) {
+    for (size_t y=0; y<limg0.Size(1); y++)
+    {
         float *corr=corrimg.GetLinePtr(y);
         const float * const p0   = limg0.GetLinePtr(y)+len;
         const float * const p180 = limg180.GetLinePtr(y);
 
-        for (size_t idx=0; idx<2*len; idx++ ) {
+        for (size_t idx=0; idx<2*len; idx++ )
+        {
             corr[idx]=0.0f;
-            for (size_t x=0; x<len; x++) {
+            for (size_t x=0; x<len; x++)
+            {
                 diff=p0[x]-p180[idx+x];
                 corr[idx]+=diff*diff;
             }
@@ -228,16 +235,18 @@ float ConfigureGeometryDialog::LeastSquareCenter(	kipl::base::TImage<float,2> pr
 float ConfigureGeometryDialog::CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end)
 {
     m_vCoG.clear();
-    size_t *roi = m_Config.ProjectionInfo.roi;
+    auto roi = m_Config.ProjectionInfo.roi;
     for (size_t y=roi[1]; y<roi[3]; y++) {
         double sum=0.0;
         double cogsum=0.0;
         float const * const pLine=img.GetLinePtr(y);
-        for (size_t x=start; x<end; x++) {
+        for (size_t x=start; x<end; x++)
+        {
             cogsum+=pLine[x]*(x-start);
             sum+=pLine[x];
         }
-        if (sum!=0) {
+        if (sum!=0)
+        {
             m_vCoG.push_back(static_cast<float>(start+cogsum/sum));
         }
     }
@@ -254,14 +263,14 @@ void ConfigureGeometryDialog::CumulateProjection(const kipl::base::TImage<float,
         pCumImg[i]+=pImg[i];
     }
 
-    float kernel[9]={1,1,1,1,1,1,1,1,1};
-    size_t dims[2]={3,3};
+    std::vector<float> kernel(9,1.0f);
+    std::vector<size_t> dims={3,3};
     kipl::morphology::TErode<float,2> erode(kernel,dims);
-
 
     float const * const pBiImg=biimg.GetDataPtr();
     pCumImg=m_biCumulate.GetDataPtr();
-    for (size_t i=0; i<img.Size(); i++) {
+    for (size_t i=0; i<img.Size(); i++)
+    {
         pCumImg[i]+=pBiImg[i];
     }
 }
@@ -271,7 +280,8 @@ pair<size_t, size_t> ConfigureGeometryDialog::FindBoundary(const kipl::base::TIm
     float *profile=new float[img.Size(0)];
     memset(profile,0, sizeof(float)*img.Size(0));
 
-    for (size_t y=0; y<img.Size(1); y++) {
+    for (size_t y=0; y<img.Size(1); y++)
+    {
         float const * const pLine=img.GetLinePtr(y);
         for (size_t x=0; x<img.Size(0); x++) {
             profile[x]+=pLine[x];
@@ -312,8 +322,7 @@ int ConfigureGeometryDialog::LoadImages()
 
     ProjectionReader reader;
 
-    size_t filtdims[]={3,3};
-    kipl::filters::TMedianFilter<float,2> medfilt(filtdims);
+    kipl::filters::TMedianFilter<float,2> medfilt({3,3});
 
     msg.str("");
     QMessageBox loaderror_dlg;
@@ -321,36 +330,36 @@ int ConfigureGeometryDialog::LoadImages()
     loaderror_dlg.setWindowTitle("Error");
     loaderror_dlg.setText("Failed to load images.");
 
-    m_Proj0Deg=kipl::base::TImage<float,2>();
-    m_Proj180Deg=kipl::base::TImage<float,2>();
-    m_ProjOB=kipl::base::TImage<float,2>();
-    m_ProjCumulative=kipl::base::TImage<float,2>();
+    m_Proj0Deg       = kipl::base::TImage<float,2>();
+    m_Proj180Deg     = kipl::base::TImage<float,2>();
+    m_ProjOB         = kipl::base::TImage<float,2>();
+    m_ProjCumulative = kipl::base::TImage<float,2>();
 
     // Load references
     try {
-        if (m_Config.ProjectionInfo.nOBCount!=0) {
+        if (m_Config.ProjectionInfo.nOBCount!=0)
+        {
             size_t found = m_Config.ProjectionInfo.sOBFileMask.find("hdf");
 
-            if (found==std::string::npos) {
+            if (found==std::string::npos)
+            {
                 m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
                 m_Config.ProjectionInfo.sOBFileMask,
                 m_Config.ProjectionInfo.nOBFirstIndex,
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                nullptr);
+                {});
             }
-            else{
+            else
+            {
                 m_ProjOB = reader.ReadNexus(m_Config.ProjectionInfo.sOBFileMask,
                                    m_Config.ProjectionInfo.nOBFirstIndex,
                                    m_Config.ProjectionInfo.eFlip,
                                    m_Config.ProjectionInfo.eRotate,
                                    m_Config.ProjectionInfo.fBinning,
-                                   nullptr );
+                                   {});
             }
-
-        //    m_ProjOB=medfilt(m_ProjOB);
-
         }
 
     }
@@ -400,8 +409,10 @@ int ConfigureGeometryDialog::LoadImages()
         {
             marked=projlist.begin();
             float diff=abs(marked->first);
-            for (it=projlist.begin(); it!=projlist.end(); it++) {
-                if (abs(it->first)<diff) {
+            for (it=projlist.begin(); it!=projlist.end(); it++)
+            {
+                if (abs(it->first)<diff)
+                {
                     marked=it;
                     diff=abs(marked->first);
                 }
@@ -417,22 +428,27 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    nullptr);
-            if (m_Config.ProjectionInfo.nOBCount!=0) {
-                if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                    {} );
+            if (m_Config.ProjectionInfo.nOBCount!=0)
+            {
+                if (m_Proj0Deg.Size()==m_ProjOB.Size())
+                {
                     float *pProj=m_Proj0Deg.GetDataPtr();
                     float *pOB=m_ProjOB.GetDataPtr();
 
-                    for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                    for (size_t i=0; i<m_Proj0Deg.Size(); i++)
+                    {
                         pProj[i]=pProj[i]/pOB[i];
                         pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
                     }
                 }
-                else {
+                else
+                {
                     logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection at 0 deg.");
                 }
             }
-            else {
+            else
+            {
                 logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
             }
             m_Proj0Deg=medfilt(m_Proj0Deg);
@@ -469,8 +485,10 @@ int ConfigureGeometryDialog::LoadImages()
         try {
             marked=projlist.begin();
             float diff=abs(180.0f-marked->first);
-            for (it=projlist.begin(); it!=projlist.end(); it++) {
-                if (abs(180.0f-it->first)<diff) {
+            for (it=projlist.begin(); it!=projlist.end(); it++)
+            {
+                if (abs(180.0f-it->first)<diff)
+                {
                     marked=it;
                     diff=abs(180.0f-marked->first);
                 }
@@ -483,28 +501,38 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
-                    nullptr);
+                    {});
 
-            if (m_Config.ProjectionInfo.nOBCount!=0) {
-                if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
+            if (m_Config.ProjectionInfo.nOBCount!=0)
+            {
+                if (m_Proj180Deg.Size()==m_ProjOB.Size())
+                {
                     float *pProj=m_Proj180Deg.GetDataPtr();
                     float *pOB=m_ProjOB.GetDataPtr();
-                    for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+                    for (size_t i=0; i<m_Proj180Deg.Size(); i++)
+                    {
                         pProj[i]=pProj[i]/pOB[i];
-                        pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+
+                        if ( std::isfinite(pProj[i]) && 0.0f<pProj[i] )
+                            pProj[i] = -log(pProj[i]);
+                        else
+                            pProj[i] = 0.0f;
                     }
                 }
-                else {
+                else
+                {
                     logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection at 180deg");
                 }
             }
-            else {
+            else
+            {
                 logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
             }
 
             m_Proj180Deg=medfilt(m_Proj180Deg);
         }
-        catch (ReconException & e) {
+        catch (ReconException & e)
+        {
             msg<<"Failed to load projection 180 degrees (ReconException): "<<e.what();
             logger(kipl::logging::Logger::LogError,msg.str());
             loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
@@ -530,30 +558,35 @@ int ConfigureGeometryDialog::LoadImages()
             return -1;
         }
     }
-
-    else { // read the hfd file
+    else
+    { // read the hfd file
 
         m_Proj0Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
                 m_Config.ProjectionInfo.nFirstIndex, // to be automatized
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                nullptr);
-        if (m_Config.ProjectionInfo.nOBCount!=0) {
-            if (m_Proj0Deg.Size()==m_ProjOB.Size()) {
+                {});
+        if (m_Config.ProjectionInfo.nOBCount!=0)
+        {
+            if (m_Proj0Deg.Size()==m_ProjOB.Size())
+            {
                 float *pProj=m_Proj0Deg.GetDataPtr();
                 float *pOB=m_ProjOB.GetDataPtr();
 
-                for (size_t i=0; i<m_Proj0Deg.Size(); i++) {
+                for (size_t i=0; i<m_Proj0Deg.Size(); i++)
+                {
                     pProj[i]=pProj[i]/pOB[i];
                     pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
                 }
             }
-            else {
+            else
+            {
                 logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
             }
         }
-        else {
+        else
+        {
             logger(kipl::logging::Logger::LogWarning,"No open beam images were provided, using raw projection.");
         }
         m_Proj0Deg=medfilt(m_Proj0Deg);
@@ -565,18 +598,27 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.eFlip,
                 m_Config.ProjectionInfo.eRotate,
                 m_Config.ProjectionInfo.fBinning,
-                nullptr);
+                {});
 
-        if (m_Config.ProjectionInfo.nOBCount!=0) {
-            if (m_Proj180Deg.Size()==m_ProjOB.Size()) {
-                float *pProj=m_Proj180Deg.GetDataPtr();
-                float *pOB=m_ProjOB.GetDataPtr();
-                for (size_t i=0; i<m_Proj180Deg.Size(); i++) {
+        if (m_Config.ProjectionInfo.nOBCount!=0)
+        {
+            if (m_Proj180Deg.Size()==m_ProjOB.Size())
+            {
+                float *pProj = m_Proj180Deg.GetDataPtr();
+                float *pOB   = m_ProjOB.GetDataPtr();
+                for (size_t i=0; i<m_Proj180Deg.Size(); i++)
+                {
                     pProj[i]=pProj[i]/pOB[i];
-                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+
+                    if ( std::isfinite(pProj[i]) && 0.0f<pProj[i] )
+                        pProj[i] = -log(pProj[i]);
+                    else
+                        pProj[i] = 0.0f;
+
                 }
             }
-            else {
+            else
+            {
                 logger(kipl::logging::Logger::LogWarning,"Open beam image does not have the same size as the projection");
             }
         }
@@ -587,7 +629,7 @@ int ConfigureGeometryDialog::LoadImages()
 
         m_Proj180Deg=medfilt(m_Proj180Deg);
 
-        }
+    }
 
     return 0;
 }
@@ -600,7 +642,8 @@ void ConfigureGeometryDialog::UpdateConfig()
     m_Config.ProjectionInfo.fScanArc[1]  = static_cast<float>(ui->dspinAngleLast->value());
     m_Config.ProjectionInfo.fCenter      = static_cast<float>(ui->dspinCenterRotation->value());
     m_Config.ProjectionInfo.bCorrectTilt = ui->groupUseTilt->isChecked();
-    if (ui->groupUseTilt->isChecked()) {
+    if (ui->groupUseTilt->isChecked())
+    {
         m_Config.ProjectionInfo.fTiltAngle         = static_cast<float>(ui->dspinTiltAngle->value());
         m_Config.ProjectionInfo.fTiltPivotPosition = static_cast<int>(ui->dspinTiltPivot->value());
     }
@@ -695,19 +738,19 @@ void ConfigureGeometryDialog::on_buttonFindCenter_clicked()
     ostringstream msg;
     UpdateConfig();
 
-    size_t sub_roi[4] = {m_Config.ProjectionInfo.projection_roi[0],
-                         static_cast<size_t>(ui->spinSliceFirst->value()),
-                         m_Config.ProjectionInfo.projection_roi[2],
-                         static_cast<size_t>(ui->spinSliceLast->value())};
+    std::vector<size_t> sub_roi = {  m_Config.ProjectionInfo.projection_roi[0],
+                                     static_cast<size_t>(ui->spinSliceFirst->value()),
+                                     m_Config.ProjectionInfo.projection_roi[2],
+                                     static_cast<size_t>(ui->spinSliceLast->value())};
 
-    size_t *roi=ui->comboROISelection->currentIndex() == 0 ? m_Config.ProjectionInfo.projection_roi : sub_roi;
+    auto roi=ui->comboROISelection->currentIndex() == 0 ? m_Config.ProjectionInfo.projection_roi : sub_roi;
     msg.str("");
     msg<<"Find center: Current ROI ["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]";
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     float fMin,fMax;
     ui->viewerProjection->get_levels(&fMin,&fMax);
-    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.Dims(),fMin, fMax);
+    ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.dims(),fMin, fMax);
 
 
 
@@ -727,10 +770,9 @@ void ConfigureGeometryDialog::on_buttonFindCenter_clicked()
                             m_Config.ProjectionInfo.fTiltPivotPosition);
 
 
-    msg.str("");
- //   msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<std::endl;
-    qDebug() << QString::fromStdString(msg.str());
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+//    msg.str("");
+//    msg<<"Estimated center="<<m<<", tilt="<<k<<", N="<<N<<", fraction="<<fraction<<std::endl;
+//    logger(kipl::logging::Logger::LogMessage,msg.str());
     plot_data.clear();
     plot_data.append(QPointF(tomoCenter.center(0.0)+roi[0],0.0));
     plot_data.append(QPointF(tomoCenter.center(m_Proj0Deg.Size(1)-1.0)+roi[0],m_Proj0Deg.Size(1)-1.0));
@@ -741,8 +783,12 @@ void ConfigureGeometryDialog::on_buttonFindCenter_clicked()
 
     m_vCoG=tomoCenter.centers();
     plot_data.clear();
-    for (size_t i=0; i<m_vCoG.size(); i++) {
-        plot_data.append(QPointF(m_vCoG[i]+roi[0],static_cast<double>(i+roi[1])));
+    //for (size_t i=0; i<m_vCoG.size(); i++)
+    int i=0;
+    for (auto &cog : m_vCoG)
+    {
+        plot_data.append(QPointF(cog+roi[0],static_cast<double>(i+roi[1])));
+        ++i;
     }
 
     ui->viewerProjection->set_plot(plot_data,QColor("red"),0);

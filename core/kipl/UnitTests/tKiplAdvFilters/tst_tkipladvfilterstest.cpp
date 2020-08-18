@@ -106,6 +106,7 @@ void TAdvancedFiltersTest::NLMeans_AlgorithmEnum()
 
 void TAdvancedFiltersTest::NLMeans_process()
 {
+    QSKIP("Development test");
     kipl::base::TImage<float,2> img, res;
     kipl::io::ReadTIFF(img,"../data/scroll_256.tif");
 //    kipl::io::ReadTIFF(img,"../data/lena256x256_8bit.tif");
@@ -128,7 +129,7 @@ void TAdvancedFiltersTest::NLMeans_process()
         nlfilter(img,res);
     }
 
-    kipl::io::WriteTIFF32(res,"nl_test.tif");
+    kipl::io::WriteTIFF(res,"nl_test.tif",kipl::base::Float32);
 
 }
 

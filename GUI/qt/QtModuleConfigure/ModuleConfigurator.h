@@ -15,6 +15,7 @@
 #include <ConfigBase.h>
 #include <base/timage.h>
 #include <logging/logger.h>
+#include <interactors/interactionbase.h>
 
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef void * (__cdecl *FACTORY)(const char *, const char *, void *);
@@ -31,7 +32,7 @@ protected:
 	kipl::logging::Logger logger;
 
 public:
-	ModuleConfigurator();
+    ModuleConfigurator(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~ModuleConfigurator();
 	void SetCurrentChain(std::list<ModuleConfig> &chain);
 	bool configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters);
@@ -40,7 +41,7 @@ protected:
     void loadDialog(std::string application, std::string sharedobjectname, std::string objectname);
 
     void destroy();
-    virtual int GetImage(std::string sSelectedModule)=0;
+    virtual int GetImage(std::string sSelectedModule, kipl::interactors::InteractionBase *interactor=nullptr)=0;
 	HINSTANCE hinstLib;
     FACTORY m_fnModuleFactory;
 	DESTROYER m_fnDestroyer;
@@ -52,6 +53,7 @@ protected:
 	int m_nCurrentItem;
 	ConfigBase  *m_Config;
 
+    kipl::interactors::InteractionBase *m_Interactor;
 	kipl::base::TImage<float,3> m_Image;
     kipl::base::TImage<float,3> m_OriginalImage;
 };
