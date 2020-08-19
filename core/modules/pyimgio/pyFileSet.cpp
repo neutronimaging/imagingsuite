@@ -45,8 +45,8 @@ void bindFileSet(py::module &m)
     fsClass.def_readwrite("skipList",     &FileSet::m_nSkipList); // list of indices of files to skip
 
     m.def("buildFileList", py::overload_cast<FileSet &>(&BuildFileList));
-    m.def("buildFileList", py::overload_cast<std::vector<FileSet> &>(&BuildFileList));
-    m.def("buildFileList", py::overload_cast<std::vector<FileSet> &, std::vector<int> &>(&BuildFileList));
-    m.def("buildProjectionFileList", py::overload_cast<std::vector<FileSet> &, int, int, double>(&BuildProjectionFileList));
-    m.def("buildProjectionFileList", py::overload_cast<std::vector<FileSet> &, std::vector<int> &, int, int, double>(&BuildProjectionFileList));
+    // m.def("buildFileList", py::overload_cast<std::vector<FileSet> &>(&BuildFileList));
+    // m.def("buildFileList", py::overload_cast<std::vector<FileSet> &, std::vector<int> &>(&BuildFileList));
+    // m.def("buildProjectionFileList", py::overload_cast<std::vector<FileSet> &, int, int, double>(&BuildProjectionFileList));
+    // m.def("buildProjectionFileList", py::overload_cast<std::vector<FileSet> &, std::vector<int> &, int, int, double>(&BuildProjectionFileList));
 }

@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 
+#include <base/kiplenums.h>
 #include <analyzefileext.h>
 
 #include <pybind11/pybind11.h>
@@ -11,7 +12,7 @@
 
 namespace py = pybind11;
 
-void bindMiscIOFunctions(py::module &m)
+void bindMiscFunctions(py::module &m)
 {
     m.def("GetFileExtensionType", &readers::GetFileExtensionType);
 
@@ -29,4 +30,22 @@ void bindMiscIOFunctions(py::module &m)
         .value("ExtensionHDF4", readers::ExtensionHDF4)   ///< Images are stored using a HDF4 format
         .value("ExtensionHDF5", readers::ExtensionHDF5)   ///< Images are stored using a HDF5 format
         .value("ExtensionSEQ",  readers::ExtensionSEQ);    ///< Images are stored in the Varian ViVa SEQ format
+
+    py::enum_<kipl::base::eImageFlip>(m,"eImageFlip")
+        .value("ImageFlipNone",               kipl::base::ImageFlipNone)               ///< No flipping
+        .value("ImageFlipHorizontal",         kipl::base::ImageFlipHorizontal)         ///< Flip about the vertical axis
+        .value("ImageFlipVertical",           kipl::base::ImageFlipVertical)           ///< Flip about the horizontal axis
+        .value("ImageFlipHorizontalVertical", kipl::base::ImageFlipHorizontalVertical) ///< Flip both horizontal and vertial
+        .value("ImageFlipDefault",            kipl::base::ImageFlipDefault);           ///< Use default Flip operation
+
+
+/// \brief Image rotation selector
+    py::enum_<kipl::base::eImageRotate>(m,"eImageRotate")
+        .value("ImageRotateNone",       kipl::base::ImageRotateNone)///< No rotation
+        .value("ImageRotate90",         kipl::base::ImageRotate90)///< Rotate 90 degrees clockwise
+        .value("ImageRotate180",        kipl::base::ImageRotate180)///< Rotate 180 degrees clockwise
+        .value("ImageRotate270",        kipl::base::ImageRotate270)///< Rotate 270 degrees clockwise
+        .value("ImageRotateDefault",    kipl::base::ImageRotateDefault);  ///< Use default rotation operation
+
+
 }

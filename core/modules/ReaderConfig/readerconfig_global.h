@@ -10,7 +10,7 @@
 #  define READERCONFIGSHARED_EXPORT Q_DECL_IMPORT
 #endif
 #else
-#  define READERCONFIGSHARED_EXPORT
+#  define READERCONFIGSHARED_EXPORT __attribute__((visibility("default")))
 #endif
 
 #ifdef __GNUC__
