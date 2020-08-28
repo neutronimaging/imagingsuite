@@ -1,14 +1,4 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-05-21 16:24:22 +0200 (Mon, 21 May 2012) $
-// $Rev: 1318 $
-// $Id: ModuleConfigurator.h 1318 2012-05-21 14:24:22Z kaestner $
-//
+//<LICENSE>
 
 
 // The following ifdef block is the standard way of creating macros which make exporting
@@ -25,6 +15,7 @@
 #include <ConfigBase.h>
 #include <base/timage.h>
 #include <logging/logger.h>
+#include <interactors/interactionbase.h>
 
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef void * (__cdecl *FACTORY)(const char *, const char *, void *);
@@ -41,16 +32,16 @@ protected:
 	kipl::logging::Logger logger;
 
 public:
-	ModuleConfigurator();
+    ModuleConfigurator(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~ModuleConfigurator();
 	void SetCurrentChain(std::list<ModuleConfig> &chain);
 	bool configure(std::string application, std::string SharedObjectName, std::string ModuleName, std::map<std::string, std::string> &parameters);
 
 protected:
-	void GetDialog(std::string application, std::string sharedobjectname, std::string objectname);
+    void loadDialog(std::string application, std::string sharedobjectname, std::string objectname);
 
-	void Destroy();
-	virtual int GetImage(std::string sSelectedModule)=0;
+    void destroy();
+    virtual int GetImage(std::string sSelectedModule, kipl::interactors::InteractionBase *interactor=nullptr)=0;
 	HINSTANCE hinstLib;
     FACTORY m_fnModuleFactory;
 	DESTROYER m_fnDestroyer;
@@ -62,7 +53,9 @@ protected:
 	int m_nCurrentItem;
 	ConfigBase  *m_Config;
 
+    kipl::interactors::InteractionBase *m_Interactor;
 	kipl::base::TImage<float,3> m_Image;
+    kipl::base::TImage<float,3> m_OriginalImage;
 };
 
 #endif

@@ -13,8 +13,8 @@
 #include <scalespace/NonLinDiffAOS.h>
 #include <containers/PlotData.h>
 
-NonLinDiffusionModule::NonLinDiffusionModule() :
-KiplProcessModuleBase("NonLinDiffusionModule", true),
+NonLinDiffusionModule::NonLinDiffusionModule(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("NonLinDiffusion", true,interactor),
     m_bAutoScale(false),
     m_fSlope(1.0f),
     m_fIntercept(0.0f),
@@ -25,6 +25,34 @@ KiplProcessModuleBase("NonLinDiffusionModule", true),
     m_sIterationPath("./issiteration_####.tif"),
     m_bSaveIterations(false)
 {
+    publications.push_back(Publication(std::vector<std::string>({"P. Perona","J. Malik"}),
+                                       "Scale-Space and Edge Detection using Anisotropic Diffusion",
+                                       "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+                                       1990,
+                                       12,
+                                       7,
+                                       "629-639",
+                                       "10.1109/34.56205"));
+
+    publications.push_back(Publication(std::vector<std::string>({"F. Catte","P-L. Lions","J-M. Morel","T. Coll"}),
+                                       "Image selective smoothing and edge detection by nonlinear diffusion",
+                                       "SIAM journal on Numerical Analysis",
+                                       1992,
+                                       29,
+                                       1,
+                                       "182-193",
+                                       "10.1137/0729012"));
+
+
+    publications.push_back(Publication(std::vector<std::string>({"J. Weickert","K.J. Zuiderveld","B.M. ter Haar Romeny","W.J. Niessen"}),
+                           "Parallel implementations of AOS schemes: a fast way of nonlinear diffusion filtering",
+                           "Proceedings of International Conference on Image Processing",
+                           1997,
+                           3,
+                           1,
+                           "396--399",
+                           "10.1109/icip.1997.632133"
+                           ));
 
 }
 
@@ -32,11 +60,14 @@ NonLinDiffusionModule::~NonLinDiffusionModule() {
 }
 
 
-int NonLinDiffusionModule::Configure(std::map<std::string, std::string> parameters)
+int NonLinDiffusionModule::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
     m_bAutoScale      = kipl::strings::string2bool(GetStringParameter(parameters,"autoscale"));;
     m_fSlope          = GetFloatParameter(parameters,"slope") ;
     m_fIntercept      = GetFloatParameter(parameters,"intercept")  ;
+
+    m_fSigma          = GetFloatParameter(parameters,"sigma");
+    m_fLambda         = GetFloatParameter(parameters,"lambda");
 
     m_fTau            = GetFloatParameter(parameters,"tau");
     m_nIterations     = GetIntParameter(parameters,"iterations");
@@ -50,10 +81,12 @@ std::map<std::string, std::string> NonLinDiffusionModule::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
-    parameters["autoscale"]   = kipl::strings::value2string(m_bAutoScale);
+    parameters["autoscale"]   = kipl::strings::bool2string(m_bAutoScale);
     parameters["slope"]       = kipl::strings::value2string(m_fSlope);
     parameters["intercept"]   = kipl::strings::value2string(m_fIntercept);
 
+    parameters["sigma"]       = kipl::strings::value2string(m_fSigma);
+    parameters["lambda"]      = kipl::strings::value2string(m_fLambda);
     parameters["tau"]         = kipl::strings::value2string(m_fTau);
     parameters["iterations"]  = kipl::strings::value2string(m_nIterations);
 
@@ -67,19 +100,14 @@ int NonLinDiffusionModule::ProcessCore(kipl::base::TImage<float,3> & img, std::m
 {
     logger(kipl::logging::Logger::LogMessage,"Processing");
 
-    akipl::scalespace::NonLinDiffusionFilter<float,3> nld(m_fSigma, m_fTau, m_fLambda, m_nIterations=10);;
+    akipl::scalespace::NonLinDiffusionFilter<float,3> nld(m_fSigma, m_fTau, m_fLambda, m_nIterations,m_Interactor);
 
+
+    ScaleImage(img,true);
     nld(img);
-//    ScaleImage(img,true);
+    ScaleImage(img,false);
 
-//    akipl::scalespace::ISSfilterQ3D<float> filter;
 
-//    filter.eInitialImage = m_eInitialImage;
-//    filter.m_eRegularization = m_eRegularization;
-
-//    filter.Process(img,m_fTau,m_fLambda,m_fAlpha,m_nIterations,m_bSaveIterations,m_sIterationPath);
-
-//    ScaleImage(img,false);
 //    kipl::containers::PlotData<float,float> errplot(m_nIterations);
 //    for (int i=0; i<m_nIterations; i++) {
 //        errplot.GetX()[i]=i;
@@ -96,42 +124,5 @@ void NonLinDiffusionModule::ScaleImage(kipl::base::TImage<float,3> & img, bool f
 
     std::ostringstream msg;
 
-    if (forward) {
-        if (m_bAutoScale) {
-            std::pair<double,double> stats=kipl::math::statistics(img.GetDataPtr(),img.Size());
 
-            m_fIntercept=static_cast<float>(stats.first);
-            m_fSlope=1.0f/static_cast<float>(stats.second);
-        }
-
-        msg<<"Scaling image with slope="<<m_fSlope<<" and intercept="<<m_fIntercept;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-        #pragma omp parallel
-        {
-            float *pImg = img.GetDataPtr();
-            ptrdiff_t N=static_cast<ptrdiff_t>(img.Size());
-
-            #pragma omp for
-            for (ptrdiff_t i=0; i<N; i++) {
-                pImg[i]=m_fSlope*(pImg[i]-m_fIntercept);
-            }
-        }
-
-    }
-    else {
-        slope=1.0f/m_fSlope;
-        intercept=m_fIntercept;
-
-        #pragma omp parallel
-        {
-            float *pImg = img.GetDataPtr();
-            ptrdiff_t N=static_cast<ptrdiff_t>(img.Size());
-
-            #pragma omp for
-            for (ptrdiff_t i=0; i<N; i++) {
-                pImg[i]=slope*pImg[i]+intercept;
-            }
-        }
-
-    }
 }

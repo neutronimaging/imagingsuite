@@ -1,10 +1,5 @@
-/*
- * PreProcModuleConfigurator.cpp
- *
- *  Created on: Jan 21, 2012
- *      Author: anders
- */
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "PreProcModuleConfigurator.h"
 #include <sstream>
 #include <ConfigBase.h>
@@ -13,9 +8,12 @@
 #include <base/KiplException.h>
 #include <ReconFactory.h>
 #include <ReconEngine.h>
+#include "moduleconfigprogressdialog.h"
 
+#include <QDebug>
 
-PreProcModuleConfigurator::PreProcModuleConfigurator(ReconConfig *config)
+PreProcModuleConfigurator::PreProcModuleConfigurator(ReconConfig *config, kipl::interactors::InteractionBase *interactor) :
+    ModuleConfigurator(interactor)
 {
 	ModuleConfigurator::m_Config=dynamic_cast<ConfigBase *>(config);
 }
@@ -23,15 +21,15 @@ PreProcModuleConfigurator::PreProcModuleConfigurator(ReconConfig *config)
 PreProcModuleConfigurator::~PreProcModuleConfigurator() {
 }
 
-int PreProcModuleConfigurator::GetImage(std::string sSelectedModule)
+int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::interactors::InteractionBase *interactor)
 {
-	ReconEngine *engine=NULL;
+    ReconEngine *engine=nullptr;
 	ReconFactory factory;
 
 	ReconConfig * config=dynamic_cast<ReconConfig *>(m_Config);
 	std::ostringstream msg;
 	try {
-		engine=factory.BuildEngine(*dynamic_cast<ReconConfig *>(m_Config),NULL);
+        engine=factory.BuildEngine(*dynamic_cast<ReconConfig *>(m_Config),m_Interactor);
 	}
 	catch (ReconException &e) {
 		msg<<"Failed to build the configuration engine with a ReconException: "<<e.what();
@@ -54,11 +52,68 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule)
 	}
 
 	logger(kipl::logging::Logger::LogMessage,"Engine successfully built");
-	size_t *r=config->ProjectionInfo.roi;
-	size_t roi[4]={r[0],r[1],r[2],r[3]};
-	m_Image=engine->RunPreproc(roi,sSelectedModule);
 
-	if (engine!=NULL)
+    auto roi = config->ProjectionInfo.roi;
+    bool bRunFailure=false;
+    try {
+        if (interactor==nullptr)
+        {
+            qDebug() <<"Get image without dialog";
+            m_Image=engine->RunPreproc(roi,sSelectedModule);
+        }
+        else
+        {
+            ModuleConfigProgressDialog dlg(interactor);
+
+
+            if (engine!=nullptr) {
+                int res=0;
+                qDebug() <<"Get image with dialog";
+                res=dlg.exec(engine,roi,sSelectedModule);
+
+                if (res == QDialog::Accepted)
+                {
+                    m_Image = dlg.getImage();
+                }
+                else
+                    bRunFailure = true;
+            }
+        }
+    }
+    catch (ReconException &e)
+    {
+        msg<<"ReconException with message: "<<e.what();
+        bRunFailure =true;
+    }
+    catch (ModuleException &e) {
+        msg<<"ModuleException with message: "<<e.what();
+        bRunFailure = true;
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        msg<<"KiplException with message: "<<e.what();
+        bRunFailure = true ;
+    }
+    catch (std::exception &e)
+    {
+        msg<<"STL exception with message: "<<e.what();
+        bRunFailure = true;
+    }
+    catch (...)
+    {
+        msg<<"An unknown exception";
+        bRunFailure =true;
+    }
+
+    if (bRunFailure==true)
+    {
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+        return 0;
+    }
+    logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
+
+
+    if (engine!=nullptr)
 		delete engine;
-	return 0;
+    return 1;
 }

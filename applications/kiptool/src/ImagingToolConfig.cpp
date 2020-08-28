@@ -1,13 +1,5 @@
-//
-// This file is part of the MuhRec reconstruction application by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-09-05 15:55:11 +0200 (So, 05 Sep 2010) $
-// $Rev: 694 $
-//
+//<LICENSE>
+
 #include "stdafx.h"
 #include <sstream>
 #include <iomanip>
@@ -356,7 +348,8 @@ ImagingToolConfig::FileConversionConfig::FileConversionConfig() :
     sDestMask("dest_####.tif"),
     nFirstDest(1),
     bSortGoldenScan(false),
-    nGoldenScanArc(0)
+    nGoldenScanArc(0),
+    nGoldenFirstIdx(1)
 {
 	nCrop[0]=0;
 	nCrop[1]=0;
@@ -454,13 +447,17 @@ void ImagingToolConfig::FileConversionConfig::ParseXML(xmlTextReaderPtr reader)
                 bUseSpotClean=kipl::strings::string2bool(sValue);
             }
             if (sName=="spotthreshold") {
-                fSpotThreshold = atof(sValue.c_str());
+                fSpotThreshold = std::stof(sValue);
             }
             if (sName=="sortgoldenscan") {
                 bSortGoldenScan = kipl::strings::string2bool(sValue);
             }
             if (sName=="goldenscanarc") {
                 nGoldenScanArc = atoi(sValue.c_str());
+            }
+            if (sName=="goldenfirstidx")
+            {
+                nGoldenFirstIdx = std::stoi(sValue);
             }
 		}
         ret = xmlTextReaderRead(reader);
@@ -469,11 +466,11 @@ void ImagingToolConfig::FileConversionConfig::ParseXML(xmlTextReaderPtr reader)
     }
 }
 
-std::string ImagingToolConfig::FileConversionConfig::WriteXML(size_t indent)
+std::string ImagingToolConfig::FileConversionConfig::WriteXML(int indent)
 {
 	std::ostringstream xml;
 
-	size_t blockindent=3;
+    int blockindent=3;
 	xml<<std::setw(indent-1)<<" "<<"<fits2tif>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<srcpath>"<<sSourcePath<<"</srcpath>\n";
 		xml<<std::setw(indent+blockindent)<<" "<<"<srcmask>"<<sSourceMask<<"</srcmask>\n";
@@ -506,6 +503,7 @@ std::string ImagingToolConfig::FileConversionConfig::WriteXML(size_t indent)
         xml<<std::setw(indent+blockindent)<<" "<<"<spotthreshold>"<<fSpotThreshold<<"</spotthreshold>\n";
         xml<<std::setw(indent+blockindent)<<" "<<"<sortgoldenscan>"<< (bSortGoldenScan ? "true" : "false")<<"</sortgoldenscan>";
         xml<<std::setw(indent+blockindent)<<" "<<"<goldenscanarc>"<<nGoldenScanArc<<"</goldenscanarc>";
+        xml<<std::setw(indent+blockindent)<<" "<<"<goldenfirstidx>"<<nGoldenFirstIdx<<"</goldenfirstidx>";
     xml<<std::setw(indent-1)<<" "<<"</fits2tif>\n";
 
 	return xml.str();

@@ -1,19 +1,11 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008,2009,2010,2011,2012,2013 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2013-08-15 21:58:23 +0200 (Thu, 15 Aug 2013) $
-// $Rev: 1481 $
-//
+//<LICENSE>
 
 #include "translateprojectionmodule.h"
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>
 
 TranslateProjectionModule::TranslateProjectionModule() : KiplProcessModuleBase("TranslateProjectionModule",false),
+    m_Config(""),
     m_fSlope(1.0f),
     m_fIntercept(0.0f),
     m_eSampler(ImagingAlgorithms::TranslateLinear),
@@ -24,7 +16,7 @@ TranslateProjectionModule::TranslateProjectionModule() : KiplProcessModuleBase("
 TranslateProjectionModule::~TranslateProjectionModule()
 {}
 
-int TranslateProjectionModule::Configure(std::map<std::string, std::string> parameters)
+int TranslateProjectionModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
     m_fSlope          = GetFloatParameter(parameters,"slope");
     m_fIntercept      = GetFloatParameter(parameters,"intercept");

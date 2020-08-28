@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef MUHRECMAINWINDOW_H
 #define MUHRECMAINWINDOW_H
 
@@ -43,6 +44,8 @@ private:
     // Collection of call-backs
     void PreviewProjection(int x);
     void ProjectionIndexChanged(int x);
+    void UpdateCBCTDistances();
+    void UpdatePiercingPoint();
 
 protected slots:
     void StoreGeometrySetting();
@@ -68,10 +71,10 @@ protected:
     void SetupCallBacks();
     void lookForReferences(std::string &path);
     void UpdateDoseROI();
-    void SetImageDimensionLimits(size_t const * const dims);
+    void SetImageDimensionLimits(const std::vector<size_t> &dims);
     void CenterOfRotationChanged();
     // Other methods
-    void UpdateMemoryUsage(size_t *roi);
+    void UpdateMemoryUsage(const std::vector<size_t> &roi);
     void SetImageSizeToAdjustment();
 
     void LoadDefaults(bool checkCurrent);
@@ -170,8 +173,6 @@ private slots:
 
     void on_button_FindCenter_clicked();
 
-    void on_checkUseMatrixROI_toggled(bool checked);
-
     void on_dspinRotateRecon_valueChanged(double arg1);
 
     void on_dialRotateRecon_sliderMoved(int position);
@@ -198,9 +199,49 @@ private slots:
 
     void on_spinBox_projPerView_valueChanged(int arg1);
 
+    void on_actionGlobal_settings_triggered();
+
+    void on_pushButton_measurePixelSize_clicked();
+
+    void on_spinBoxSlices_valueChanged(int arg1);
+
+    void on_spinBoxProjections_valueChanged(int arg1);
+
+    void on_radioButton_SOD_toggled(bool checked);
+
+    void on_radioButton_SDD_toggled(bool checked);
+
+    void on_radioButton_Magnification_toggled(bool checked);
+
+    void on_dspinSOD_valueChanged(double arg1);
+
+    void on_dspinSDD_valueChanged(double arg1);
+
+    void on_doubleSpinBox_magnification_valueChanged(double arg1);
+
+    void on_dspinPiercPointX_valueChanged(double arg1);
+
+    void on_dspinPiercPointY_valueChanged(double arg1);
+
+    void on_comboBox_projectionViewer_currentIndexChanged(int index);
+
+    void on_spinFirstOpenBeam_valueChanged(int arg1);
+
+    void on_spinOpenBeamCount_valueChanged(int arg1);
+
+    void on_editOpenBeamMask_editingFinished();
+
+    void on_editProjectionMask_editingFinished();
+
+    void on_editDarkMask_editingFinished();
+
+    void on_spinFirstDark_valueChanged(int arg1);
+
+    void on_spinDarkCount_valueChanged(int arg1);
+
 private:
     // Data members
-    ReconConfig      m_Config;    //<! Current configuration data
+    ReconConfig      m_Config;    ///<! Current configuration data
     ReconConfig      m_LastReconConfig;
 
     MuhrecInteractor m_Interactor;
@@ -214,7 +255,10 @@ private:
     std::string      m_sApplicationPath;
     std::string      m_sHomePath;
     std::string      m_sConfigPath;
-    std::string      m_sConfigFilename; //<! Name of the configuration file
+    std::string      m_sConfigFilename; ///<! Name of the configuration file
+    std::string      m_sPreviewMask;
+    int              m_nPreviewFirst;
+    int              m_nPreviewLast;
     std::map<float, ProjectionInfo> m_ProjectionList;
 
     kipl::base::TImage<float,2>     m_PreviewImage;
@@ -225,7 +269,7 @@ private:
     kipl::base::eImagePlanes m_eSlicePlane;
     size_t m_nSliceSizeX;
     size_t m_nSliceSizeY;
-    int m_oldROI[4];
+    std::vector<int> m_oldROI;
     int m_oldRotateDial;
     double m_oldRotateSpin;
 

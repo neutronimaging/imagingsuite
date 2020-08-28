@@ -1,9 +1,4 @@
-/*
- * DataScaler.cpp
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 //#include "stdafx.h"
 #include "BasicThreshold.h"
 
@@ -12,9 +7,10 @@
 #endif
 #include <ParameterHandling.h>
 
-BasicThreshold::BasicThreshold() :
-KiplProcessModuleBase("BasicThreshold"),
-	m_fThreshold(0.0f)
+BasicThreshold::BasicThreshold(kipl::interactors::InteractionBase *interactor) :
+KiplProcessModuleBase("BasicThreshold", false,interactor),
+    m_fThreshold(0.0f),
+    m_Config("")
 {
 
 }
@@ -23,7 +19,7 @@ BasicThreshold::~BasicThreshold() {
 }
 
 
-int BasicThreshold::Configure(std::map<std::string, std::string> parameters)
+int BasicThreshold::Configure(KiplProcessConfig m_Config, std::map<std::string, std::string> parameters)
 {
 	m_fThreshold = GetFloatParameter(parameters,"threshold");
 
@@ -41,16 +37,24 @@ std::map<std::string, std::string> BasicThreshold::GetParameters()
 
 int BasicThreshold::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-	#pragma omp parallel
+//	#pragma omp parallel
 	{
 		float *pImg = img.GetDataPtr();
 		ptrdiff_t N=static_cast<ptrdiff_t>(img.Size());
 	
-		#pragma omp for
-		for (ptrdiff_t i=0; i<N; i++) {
+//		#pragma omp for
+        for (ptrdiff_t i=0; (i<N && (updateStatus(float(i)/N,"Processing BasicThreshold")==false)); i++) {
 			pImg[i]=m_fThreshold<pImg[i];
 		}
 	}
 
 	return 0;
+}
+
+bool BasicThreshold::updateStatus(float val, string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+    return false;
 }

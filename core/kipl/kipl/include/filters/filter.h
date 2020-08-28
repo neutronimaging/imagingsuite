@@ -28,7 +28,7 @@ public:
     /// \brief Initializes the filter with weights and filter dimensions
     /// \param kernel Array containing the kernel weights
     /// \param kDims array with the kernel dimensions
-	TFilter(T const * const kernel, size_t const * const kDims);
+    TFilter(const std::vector<T> & kernel, const std::vector<size_t> & kDims);
 	virtual ~TFilter(void);
 protected:
     /// \brief implements the inner convloution loop

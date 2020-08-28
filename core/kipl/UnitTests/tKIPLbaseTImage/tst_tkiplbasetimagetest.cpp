@@ -19,6 +19,7 @@ private Q_SLOTS:
     void testScalarArithmetics();
     void testDataAccess();
     void testClones();
+    void testExternalBuffer();
 };
 
 TKIPLbaseTImageTest::TKIPLbaseTImageTest()
@@ -30,7 +31,7 @@ void TKIPLbaseTImageTest::testSharedBuffer()
     // Constructors
     kipl::base::core::buffer<float> a(10);
 
-    QVERIFY(a.Size()==10);
+    QCOMPARE(a.Size(),10UL);
     QVERIFY(a.References()==1);
     QVERIFY(reinterpret_cast<size_t>(a.GetDataPtr()) % 32 == 0UL); // Memory alignment on 4x4 bytes
 
@@ -38,7 +39,7 @@ void TKIPLbaseTImageTest::testSharedBuffer()
         a[i]=static_cast<float>(i);
 
     for (size_t i=0; i<a.Size(); ++i) {
-        QVERIFY(a[i]==static_cast<float>(i));
+        QCOMPARE(a[i],static_cast<float>(i));
     }
 
     kipl::base::core::buffer<float> b=a;
@@ -51,7 +52,7 @@ void TKIPLbaseTImageTest::testSharedBuffer()
     for (size_t i=0; i<a.Size(); ++i)
         a[i]=static_cast<float>(i);
 
-    QVERIFY(a.GetDataPtr()==b.GetDataPtr());
+    QCOMPARE(a.GetDataPtr(),b.GetDataPtr());
     b.Clone();
     QVERIFY(a.Size()==10);
     QVERIFY(b.Size()==10);
@@ -64,7 +65,7 @@ void TKIPLbaseTImageTest::testSharedBuffer()
     QVERIFY((a!=b)==true);
 
     for (size_t i=0; i<a.Size(); i++)
-        QVERIFY(a[i]==b[i]);
+        QCOMPARE(a[i],b[i]);
 
     b=a;
     QVERIFY(a.Size()==10);
@@ -94,7 +95,6 @@ void TKIPLbaseTImageTest::testSharedBuffer()
 
 void TKIPLbaseTImageTest::testConstructors()
 {
-    size_t dims[]={3,4,5,6};
     { // Empty image
     kipl::base::TImage<float,1> img1D;
     QVERIFY(img1D.Size()==0);
@@ -107,22 +107,26 @@ void TKIPLbaseTImageTest::testConstructors()
     }
 
     // Set dimensions
-    kipl::base::TImage<float,1> img1D(dims);
-    QVERIFY(img1D.Size()==dims[0]);
-    QVERIFY(img1D.Size(0)==dims[0]);
+
+    std::vector<size_t> dims1={3};
+    kipl::base::TImage<float,1> img1D(dims1);
+    QVERIFY(img1D.Size()==dims1[0]);
+    QVERIFY(img1D.Size(0)==dims1[0]);
     QVERIFY_EXCEPTION_THROWN(img1D.Size(1),kipl::base::KiplException);
 
-    kipl::base::TImage<float,2> img2D(dims);
-    QVERIFY(img2D.Size()==dims[0]*dims[1]);
-    QVERIFY(img2D.Size(0)==dims[0]);
-    QVERIFY(img2D.Size(1)==dims[1]);
+    std::vector<size_t> dims2={3,4};
+    kipl::base::TImage<float,2> img2D(dims2);
+    QVERIFY(img2D.Size()==dims2[0]*dims2[1]);
+    QVERIFY(img2D.Size(0)==dims2[0]);
+    QVERIFY(img2D.Size(1)==dims2[1]);
     QVERIFY_EXCEPTION_THROWN(img2D.Size(2),kipl::base::KiplException);
 
-    kipl::base::TImage<float,3> img3D(dims);
-    QVERIFY(img3D.Size()==dims[0]*dims[1]*dims[2]);
-    QVERIFY(img3D.Size(0)==dims[0]);
-    QVERIFY(img3D.Size(1)==dims[1]);
-    QVERIFY(img3D.Size(2)==dims[2]);
+    std::vector<size_t> dims3={3,4,5};
+    kipl::base::TImage<float,3> img3D(dims3);
+    QVERIFY(img3D.Size()==dims3[0]*dims3[1]*dims3[2]);
+    QVERIFY(img3D.Size(0)==dims3[0]);
+    QVERIFY(img3D.Size(1)==dims3[1]);
+    QVERIFY(img3D.Size(2)==dims3[2]);
     QVERIFY_EXCEPTION_THROWN(img2D.Size(3),kipl::base::KiplException);
 
 
@@ -144,20 +148,20 @@ void TKIPLbaseTImageTest::testConstructors()
     QVERIFY(img2D.GetDataPtr()!=img2Db.GetDataPtr());
 
     for (size_t i=0; i<img2D.Size(); ++i)
-        QVERIFY(img2Db[i]==img2D[i]);
+        QCOMPARE(img2Db[i],img2D[i]);
 
-    dims[0]=6; dims[1]=7; dims[2]=8;
-    img3D.Resize(dims);
-    QVERIFY(img3D.Size()==dims[0]*dims[1]*dims[2]);
-    QVERIFY(img3D.Size(0)==dims[0]);
-    QVERIFY(img3D.Size(1)==dims[1]);
-    QVERIFY(img3D.Size(2)==dims[2]);
+    dims3[0]=6; dims3[1]=7; dims3[2]=8;
+    img3D.resize(dims3);
+    QVERIFY(img3D.Size()==dims3[0]*dims3[1]*dims3[2]);
+    QVERIFY(img3D.Size(0)==dims3[0]);
+    QVERIFY(img3D.Size(1)==dims3[1]);
+    QVERIFY(img3D.Size(2)==dims3[2]);
 
 }
 
 void TKIPLbaseTImageTest::testAssignment()
 {
-    size_t dims[]={3,4};
+    std::vector<size_t> dims={3,4};
     kipl::base::TImage<float,2> a(dims);
 
     a=0.0f;
@@ -166,7 +170,7 @@ void TKIPLbaseTImageTest::testAssignment()
 
     a=3.1415f;
     for (size_t i=0; i<a.Size(); ++i)
-        QVERIFY(a[i]==3.1415f);
+        QCOMPARE(a[i],3.1415f);
 
     QVERIFY(a.References()==1);
     kipl::base::TImage<float,2> b;
@@ -182,7 +186,7 @@ void TKIPLbaseTImageTest::testAssignment()
 
 void TKIPLbaseTImageTest::testScalarArithmetics()
 {
-    size_t dims[2]={4,4};
+    std::vector<size_t> dims={4,4};
 
     kipl::base::TImage<float,2> img(dims);
 
@@ -198,7 +202,7 @@ void TKIPLbaseTImageTest::testScalarArithmetics()
     QVERIFY(res.Size()==img.Size());
 
     for (size_t i=0; i<img.Size(); ++i)
-        QVERIFY(res[i]==i+2.0f);
+        QCOMPARE(res[i],i+2.0f);
 
     res=img-2.0f;
 
@@ -207,7 +211,7 @@ void TKIPLbaseTImageTest::testScalarArithmetics()
     QVERIFY(res.Size()==img.Size());
 
     for (size_t i=0; i<img.Size(); ++i)
-        QVERIFY(res[i]==i-2.0f);
+        QCOMPARE(res[i],i-2.0f);
 
     res=img*2.0f;
 
@@ -216,7 +220,7 @@ void TKIPLbaseTImageTest::testScalarArithmetics()
     QVERIFY(res.Size()==img.Size());
 
     for (size_t i=0; i<img.Size(); ++i)
-        QVERIFY(res[i]==i*2.0f);
+        QCOMPARE(res[i],i*2.0f);
 
     res=img/2.0f;
 
@@ -225,17 +229,17 @@ void TKIPLbaseTImageTest::testScalarArithmetics()
     QVERIFY(res.Size()==img.Size());
 
     for (size_t i=0; i<img.Size(); ++i)
-        QVERIFY(res[i]==i/2.0f);
+        QCOMPARE(res[i],i/2.0f);
 
 }
 
 void TKIPLbaseTImageTest::testClones()
 {
-    size_t dims[]={100,110};
+    std::vector<size_t> dims={100,110};
 
     kipl::base::TImage<float,2> a(dims),b,c;
-    for (int i=0; i<a.Size(); i++)
-        a[i]=float(i);
+    for (size_t i=0; i<a.Size(); i++)
+        a[i]=static_cast<float>(i);
 
     a=b;
 
@@ -243,8 +247,8 @@ void TKIPLbaseTImageTest::testClones()
     b.Clone();
     QVERIFY(a.GetDataPtr()!=b.GetDataPtr());
 
-    for (int i=0; i<a.Size(); i++)
-        QVERIFY(a[i]==b[i]);
+    for (size_t i=0; i<a.Size(); i++)
+        QCOMPARE(a[i],b[i]);
 
     c.Clone(a);
 
@@ -253,9 +257,84 @@ void TKIPLbaseTImageTest::testClones()
     QVERIFY(a.Size(0)==c.Size(0));
     QVERIFY(a.Size(1)==c.Size(1));
 
-    for (int i=0; i<a.Size(); i++)
-        QVERIFY(a[i]==c[i]);
+    for (size_t i=0; i<a.Size(); i++)
+        QCOMPARE(a[i],c[i]);
 
+}
+
+void TKIPLbaseTImageTest::testExternalBuffer()
+{
+    std::vector<size_t> dims1={3,4,5};
+    std::vector<size_t> dims2={6,7,8};
+
+    kipl::base::TImage<float,3> img1(dims1);
+    QCOMPARE(img1.haveExternalBuffer(),false);
+
+    const size_t N=dims2[0]*dims2[1]*dims2[2];
+    float *buffer = new float[N];
+    kipl::base::TImage<float,3> img2(buffer,dims2);
+    QCOMPARE(img2.haveExternalBuffer(),true);
+    QCOMPARE(img2.Size(),N);
+    QCOMPARE(img2.Size(0),dims2[0]);
+    QCOMPARE(img2.Size(1),dims2[1]);
+    QCOMPARE(img2.Size(2),dims2[2]);
+
+    for (size_t i=0; i<N; ++i)
+    {
+        img2[i]=static_cast<float>(i);
+        QCOMPARE(img2[i],buffer[i]);
+
+    }
+
+    img2=img1;
+
+    QCOMPARE(img2.haveExternalBuffer(),false);
+    QCOMPARE(img2.Size(),img1.Size());
+
+    kipl::base::TImage<float,3> img3(buffer,dims2);
+    for (size_t i=0; i<N; ++i)
+    {
+        QCOMPARE(img3[i],buffer[i]);
+    }
+
+    std::vector<size_t> dims3={3,2,1};
+    QCOMPARE(img3.haveExternalBuffer(),true);
+    QCOMPARE(img3.References(),1);
+    kipl::base::TImage<float,3> img4=img3;
+    QCOMPARE(img3.References(),2);
+    QCOMPARE(img4.References(),2);
+    QCOMPARE(img3.Size(),N);
+    img3.resize(dims3);
+    QCOMPARE(img3.References(),1);
+    QCOMPARE(img4.References(),1);
+
+    for (size_t i=0; i<N; ++i)
+    {
+        QCOMPARE(img4[i],buffer[i]);
+    }
+
+    QCOMPARE(img3.Size(),6UL);
+    QCOMPARE(img3.haveExternalBuffer(),false);
+
+    kipl::base::TImage<float,3> img5=img4;
+    QCOMPARE(img5.References(),2);
+    QCOMPARE(img4.References(),2);
+
+    img5.Clone();
+    QCOMPARE(img5.References(),1);
+    QCOMPARE(img4.References(),1);
+    QVERIFY(img4.GetDataPtr()!=img5.GetDataPtr());
+
+    img3.Clone(img4);
+    QCOMPARE(img3.Size(),img4.Size());
+    QVERIFY(img3.GetDataPtr()!=img4.GetDataPtr());
+
+    for (size_t i=0; i<N; ++i)
+    {
+        QCOMPARE(img4[i],img3[i]);
+    }
+
+    delete [] buffer;
 }
 
 void TKIPLbaseTImageTest::testDataAccess()

@@ -17,6 +17,8 @@ ImageViewerInfoDialog::ImageViewerInfoDialog(QWidget *parent) :
     ui(new Ui::ImageViewerInfoDialog)
 {
     ui->setupUi(this);
+    ui->histogramplot->hideTitle();
+    ui->histogramplot->showLegend();
 }
 
 ImageViewerInfoDialog::~ImageViewerInfoDialog()
@@ -26,10 +28,10 @@ ImageViewerInfoDialog::~ImageViewerInfoDialog()
 
 void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect roi)
 {
-    size_t nroi[4]={static_cast<size_t>(roi.x()),
-                    static_cast<size_t>(roi.y()),
-                    static_cast<size_t>(roi.x()+roi.width()),
-                    static_cast<size_t>(roi.y()+roi.height())};
+    std::vector<size_t> nroi = {static_cast<size_t>(roi.x()),
+                                static_cast<size_t>(roi.y()),
+                                static_cast<size_t>(roi.x()+roi.width()),
+                                static_cast<size_t>(roi.y()+roi.height())};
 
     m_roiImage = kipl::base::TSubImage<float,2>::Get(img,nroi);
 
@@ -68,17 +70,22 @@ void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect ro
     size_t hist[nHist];
 
     memset(hist,0,nHist*sizeof(size_t));
-    kipl::base::Histogram(m_roiImage.GetDataPtr(),m_roiImage.Size(),hist,nHist,0.0f,0.0f,axis);
+    kipl::base::Histogram(m_roiImage.GetDataPtr(),m_roiImage.Size(),hist,nHist,0.0f,0.0f,axis,true);
 
     auto maxit=std::max_element(hist,hist+nHist);
-    maxval=static_cast<float>(*maxit);
+    maxval=static_cast<double>(*maxit);
 
     m_LocalHistogram.clear();
     for (size_t i=0; i<nHist; i++) {
-        m_LocalHistogram.append(QPointF(axis[i],static_cast<float>(hist[i])/(maxval)));
+        m_LocalHistogram.append(QPointF(static_cast<double>(axis[i]),static_cast<double>(hist[i])/(maxval)));
     }
 
+    ui->histogramplot->setCurveData(1,m_LocalHistogram,"Local");
+
     on_check_showglobal_toggled(ui->check_showglobal->isChecked());
+
+    ui->histogramplot->setXLabel("Levels");
+    ui->histogramplot->setYLabel("Relative frequency");
 }
 
 
@@ -93,16 +100,17 @@ void ImageViewerInfoDialog::setHistogram(const QVector<QPointF> &hist)
     for (auto it=hist.begin(); it!=hist.end(); it++) {
         m_GlobalHistogram.append(QPointF(it->x(),it->y()/maxval));
     }
+
+    ui->histogramplot->setCurveData(0,m_GlobalHistogram,"Global");
+    on_check_showglobal_toggled(ui->check_showglobal->isChecked());
 }
 
 void ImageViewerInfoDialog::on_check_showglobal_toggled(bool checked)
 {
     if (checked) {
-        ui->histogramplot->setCurveData(1,m_GlobalHistogram,QColor("lightgreen"));
+        ui->histogramplot->showCurve(0);
     }
     else {
-        ui->histogramplot->clearCurve(1);
+        ui->histogramplot->hideCurve(0);
     }
-
-    ui->histogramplot->setCurveData(0,m_LocalHistogram,QColor("red"));
 }

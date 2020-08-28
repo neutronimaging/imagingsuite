@@ -1,6 +1,9 @@
 //<LICENCE>
 
+
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <tiffio.h>
 
@@ -9,7 +12,7 @@
 
 namespace kipl { namespace io {
 
-bool GetSlopeOffset(std::string msg, float &slope, float &offset)
+bool KIPLSHARED_EXPORT GetSlopeOffset(std::string msg, float &slope, float &offset)
 {
 	slope=1.0f;
 	offset=0.0f;
@@ -26,13 +29,12 @@ bool GetSlopeOffset(std::string msg, float &slope, float &offset)
 	return true;
 }
 
-
-int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname,size_t *dims)
+int KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname,size_t *dims)
 {
 	TIFF *image;
 	//TIFFErrorHandler warn = TIFFSetWarningHandler(0);
 	// Open the TIFF image
-    if((image = TIFFOpen(fname, "r")) == nullptr){
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
         std::stringstream msg;
         msg.str("");
         msg<<"GetTIFFDims: Could not open "<<fname;
@@ -46,50 +48,43 @@ int KIPLSHARED_EXPORT GetTIFFDims(char const * const fname,size_t *dims)
 	
 	dims[0]=static_cast<size_t>(nWidth);
 	dims[1]=static_cast<size_t>(nLength);
+    int frames=0;
+    do {
+            frames++;
+    } while (TIFFReadDirectory(image));
 	TIFFClose(image);
 
-	return 0;
+    return frames;
 }
 
-int KIPLSHARED_EXPORT WriteTIFF32(kipl::base::TImage<float,2> src,const char *fname)
+std::vector<size_t> KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname)
 {
-	TIFF *image;
-	std::stringstream msg;
+    TIFF *image;
+    //TIFFErrorHandler warn = TIFFSetWarningHandler(0);
+    // Open the TIFF image
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
+        std::stringstream msg;
+        msg.str("");
+        msg<<"GetTIFFDims: Could not open "<<fname;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+    // We need to set some values for basic tags before we can add any data
+    int nWidth=0;
+    int nLength=0;
+    TIFFGetField(image, TIFFTAG_IMAGEWIDTH,&nWidth);
+    TIFFGetField(image, TIFFTAG_IMAGELENGTH, &nLength);
 
-	// Open the TIFF file
-    if((image = TIFFOpen(fname, "w")) == nullptr){
-		msg.str("");
-		msg<<"WriteTIFF: Could not open "<<fname<<" for writing";
-		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
-	}
+    int frames=0;
+    do {
+            frames++;
+    } while (TIFFReadDirectory(image));
 
-	// We need to set some values for basic tags before we can add any data
-	TIFFSetField(image, TIFFTAG_IMAGEWIDTH, static_cast<int>(src.Size(0)));
-	TIFFSetField(image, TIFFTAG_IMAGELENGTH, static_cast<int>(src.Size(1)));
-	TIFFSetField(image, TIFFTAG_BITSPERSAMPLE, 32); // 32bits
-	TIFFSetField(image, TIFFTAG_SAMPLEFORMAT, 3);   // IEEE floating point
-	TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL, 1);
-	TIFFSetField(image, TIFFTAG_ROWSPERSTRIP, src.Size(1));
+    TIFFClose(image);
+    std::vector<size_t> dims = {static_cast<size_t>(nWidth),
+                                static_cast<size_t>(nLength),
+                                static_cast<size_t>(frames)};
 
-	TIFFSetField(image, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
-	TIFFSetField(image, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
-	TIFFSetField(image, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
-	TIFFSetField(image, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-
-	TIFFSetField(image, TIFFTAG_XRESOLUTION, src.info.GetDPCMX());
-	TIFFSetField(image, TIFFTAG_YRESOLUTION, src.info.GetDPCMY());
-	TIFFSetField(image, TIFFTAG_RESOLUTIONUNIT, RESUNIT_CENTIMETER);
-	if (!src.info.sDescription.empty()) {
-		TIFFSetField(image, 270, src.info.sDescription.c_str());
-	}
-
-	// Write the information to the file
-	TIFFWriteEncodedStrip(image, 0, src.GetDataPtr(), src.Size()*sizeof(float));
-
-	// Close the file
-	TIFFClose(image);
-
-	return 1;
+    return dims;
 }
 
 

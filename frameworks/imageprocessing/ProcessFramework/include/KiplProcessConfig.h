@@ -1,22 +1,13 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
+//<LICENSE>
 
-#ifndef __KIPLPROCESSCONFIG_H
-#define __KIPLPROCESSCONFIG_H
+#ifndef KIPLPROCESSCONFIG_H
+#define KIPLPROCESSCONFIG_H
 #include "ProcessFramework_global.h"
 #include <list>
 #include <string>
 
 #include <logging/logger.h>
-#include <io/io_stack.h>
+#include <io/analyzefileext.h>
 
 #include <ModuleConfig.h>
 #include <ConfigBase.h>
@@ -33,31 +24,36 @@ public:
 
 		size_t nMemory;
 		kipl::logging::Logger::LogLevel eLogLevel;
-		std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 	};
 
     struct PROCESSFRAMEWORKSHARED_EXPORT cImageInformation {
 		cImageInformation();
 		cImageInformation(const cImageInformation &a);
 		cImageInformation & operator=(const cImageInformation &a);
-		std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 		void ParseXML(xmlTextReaderPtr reader);
 
 		std::string sSourcePath;
 		std::string sSourceFileMask;
 
 		bool bUseROI;
-		size_t nROI[4];
+                std::vector<size_t> nROI;
 		size_t nFirstFileIndex;
 		size_t nLastFileIndex;
         size_t nStepFileIndex;
+        size_t nStride;
+        size_t nRepeat;
+
+        kipl::base::eImageFlip eFlip;
+        kipl::base::eImageRotate eRotate;
 	};
 
     struct PROCESSFRAMEWORKSHARED_EXPORT cOutImageInformation {
 		cOutImageInformation();
 		cOutImageInformation(const cOutImageInformation &a);
 		cOutImageInformation & operator=(const cOutImageInformation &a);
-		std::string WriteXML(size_t indent=0);
+        std::string WriteXML(int indent=0);
 		void ParseXML(xmlTextReaderPtr reader);
 
 		bool bRescaleResult;
@@ -67,7 +63,7 @@ public:
 		std::string sDestinationFileMask;
 	};
 
-	KiplProcessConfig(void);
+    KiplProcessConfig(const std::string &appPath);
 	~KiplProcessConfig(void);
 	std::string WriteXML();
 

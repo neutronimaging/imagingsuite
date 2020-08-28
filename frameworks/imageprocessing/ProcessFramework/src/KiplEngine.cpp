@@ -1,14 +1,4 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
-
+//<LICENSE>
 
 #include "stdafx.h"
 
@@ -24,20 +14,30 @@
 
 #include <ModuleException.h>
 
-KiplEngine::KiplEngine(std::string name) : 
- logger(name),
-	 m_InputImage(NULL)
+KiplEngine::KiplEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
+    logger(name),
+    m_Interactor(interactor),
+    m_Config(""),
+    m_InputImage(nullptr)
 {
+    publications.push_back(Publication(std::vector<std::string>({"Chiara Carminati","Markus Strobl","Anders Kaestner"}),
+                                       "KipTool, a general purpose processing tool for neutron imaging data",
+                                       "SoftwareX",
+                                       2019,
+                                       10,
+                                       1,
+                                       "100279",
+                                       "10.1016/j.softx.2019.100279"));
 }
 
 KiplEngine::~KiplEngine(void)
 {
-	while (!m_ProcessList.empty()) {
-		if (m_ProcessList.front()!=NULL) {
-			delete m_ProcessList.front();
-		}
-		m_ProcessList.pop_front();
-	}
+    for (auto &module: m_ProcessList)
+    {
+        delete module;
+    }
+
+    m_ProcessList.clear();
 }
 
 void KiplEngine::SetConfig(KiplProcessConfig &config)
@@ -47,7 +47,8 @@ void KiplEngine::SetConfig(KiplProcessConfig &config)
 
 size_t KiplEngine::AddProcessingModule(KiplModuleItem *module) 
 {
-	if (module!=NULL) {
+    if (module!=nullptr)
+    {
 		if (module->Valid())
 			m_ProcessList.push_back(module);
 	}
@@ -67,19 +68,29 @@ int KiplEngine::Run(kipl::base::TImage<float,3> * img)
 
 	std::map<std::string, std::string> parameters;
 
-	std::list<KiplModuleItem *>::iterator it_Module;
+//	std::list<KiplModuleItem *>::iterator it_Module;
+    float cnt=0.0;
+    float fNumberOfModules=static_cast<float>(m_ProcessList.size());
 	try {
-		for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
+        //for (it_Module=m_ProcessList.begin(); (it_Module!=m_ProcessList.end()) && (updateStatus(float(cnt)/nModules)==false) ; ++cnt,++it_Module) {
+        for (auto &module : m_ProcessList)
+        {
 			msg.str("");
-			msg<<"Module "<<(*it_Module)->GetModule()->ModuleName();
+            msg<<"Module " << module->GetModule()->ModuleName();
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-			(*it_Module)->GetModule()->Process(m_ResultImage,parameters);
+            cnt++;
+            if (!(m_bCancel=updateStatus(cnt/fNumberOfModules)))
+            {
+                module->GetModule()->Process(m_ResultImage,parameters);
+            }
+            else
+                break;
 		}
 		
 		msg.str("");
 		msg<<"Execution times :\n";
-		for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
-			msg<<"Module "<<(*it_Module)->GetModule()->ModuleName()<<": "<<(*it_Module)->GetModule()->ExecTime()<<"s\n";
+        for (auto &module : m_ProcessList) {
+            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
 		}
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 	}
@@ -121,12 +132,14 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 	std::ostringstream msg;
 	std::string fname;
 
-	KiplProcessConfig::cOutImageInformation *config= info==NULL ? &m_Config.mOutImageInformation : info;
+    KiplProcessConfig::cOutImageInformation *config= info==nullptr ? &m_Config.mOutImageInformation : info;
 
     m_Config.mOutImageInformation=*config;
 
 	kipl::strings::filenames::CheckPathSlashes(config->sDestinationPath,true);
 		fname=config->sDestinationPath+config->sDestinationFileMask;
+
+    writePublicationList(config->sDestinationPath+"citations.txt");
 
 	try {
 		std::stringstream msg;
@@ -135,14 +148,17 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 
 		float maxval=0.0f;
 		float minval=0.0f;
-		switch (config->eResultImageType) {
-			case kipl::io::TIFF8bits : maxval=255.0f; minval=0.0f; break;
+        switch (config->eResultImageType)
+        {
+            case kipl::io::TIFF8bits  : maxval=255.0f;   minval=0.0f; break;
 			case kipl::io::TIFF16bits : maxval=65535.0f; minval=0.0f; break;
-			case kipl::io::TIFFfloat: maxval=65535.0f; minval=0.0f; break;
+            case kipl::io::TIFFfloat  : maxval=65535.0f; minval=0.0f; break;
+            case kipl::io::TIFF16bitsMultiFrame : maxval=65535.0f; minval=0.0f; break;
 			default : throw KiplFrameworkException("Trying to save unsupported file type",__FILE__,__LINE__);
 		}
 
-		if (config->bRescaleResult) {
+        if (config->bRescaleResult)
+        {
 			maxval=*std::max_element(m_ResultImage.GetDataPtr(),m_ResultImage.GetDataPtr()+m_ResultImage.Size());
 			minval=*std::min_element(m_ResultImage.GetDataPtr(),m_ResultImage.GetDataPtr()+m_ResultImage.Size());
 		}
@@ -167,14 +183,15 @@ bool KiplEngine::SaveImage(KiplProcessConfig::cOutImageInformation * info)
 		kipl::io::WriteImageStack(m_ResultImage,
 				fname,
 				minval,maxval,
-				0,m_ResultImage.Size(2),m_Config.mImageInformation.nFirstFileIndex,
+                0,m_ResultImage.Size(2)-1,m_Config.mImageInformation.nFirstFileIndex,
 				config->eResultImageType,plane);
 
         std::string confname = config->sDestinationPath + "kiplscript.xml";
 
         std::ofstream conffile(confname.c_str());
 
-        if (conffile.is_open()) {
+        if (conffile.is_open())
+        {
             conffile<<m_Config.WriteXML();
             conffile.flush();
         }
@@ -204,19 +221,20 @@ std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,flo
 {
 	std::map<std::string, std::map<std::string, kipl::containers::PlotData<float,float> > > plotlist;
 	std::ostringstream msg;
-	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
-	KiplProcessModuleBase *module=NULL;
+    KiplProcessModuleBase *module=nullptr;
 
-	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
-		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
+    for (auto &moduleItem : m_ProcessList)
+    {
+        module=dynamic_cast<KiplProcessModuleBase *>(moduleItem->GetModule());
 		sName=module->ModuleName();
 		msg.str("");
 		size_t N=module->Plots().size();
 		msg<<"Module "<<sName<<" has "<<N<<" plots";
 		logger(kipl::logging::Logger::LogVerbose,msg.str());
-		if (N!=0) {
+        if (N!=0)
+        {
             plotlist[sName]=module->Plots();
 		}
 	}
@@ -232,14 +250,15 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	std::list<KiplModuleItem *>::iterator it_Module;
 	std::string sName;
 
-	KiplProcessModuleBase *module=NULL;
+    KiplProcessModuleBase *module=nullptr;
 
-	for (it_Module=m_ProcessList.begin(); it_Module!=m_ProcessList.end(); it_Module++) {
-		module=dynamic_cast<KiplProcessModuleBase *>((*it_Module)->GetModule());
+    for (auto &moduleItem : m_ProcessList)
+    {
+        module=dynamic_cast<KiplProcessModuleBase *>(moduleItem->GetModule());
 		sName=module->ModuleName();
-		
-		
-		if (module->HaveHistogram()) {
+				
+        if (module->HaveHistogram())
+        {
 			msg.str("");
 			msg<<"Module "<<sName<<" has a histogram";
 			logger(kipl::logging::Logger::LogVerbose,msg.str());
@@ -249,4 +268,143 @@ std::map<std::string, kipl::containers::PlotData<float,size_t> > KiplEngine::Get
 	}
 
 	return histlist;
+}
+
+
+kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> * img, std::string sLastModule)
+{
+
+    std::ostringstream msg;
+    m_InputImage=img;
+    m_ResultImage.Clone(*m_InputImage);
+
+    std::map<std::string, std::string> parameters;
+
+    try {
+        msg.str("");
+        msg<<"Last module: "<<sLastModule;
+        logger.message(msg.str());
+
+        for (auto &module : m_ProcessList)
+        {
+            std::string moduleName=module->GetModule()->ModuleName();
+
+            if (moduleName==sLastModule)
+                break;
+
+            msg.str("");
+            msg<<"Module "<< moduleName;
+            logger(kipl::logging::Logger::LogMessage,msg.str());
+
+            module->GetModule()->Process(m_ResultImage,parameters);
+        }
+
+
+        msg.str("");
+        msg<<"Execution times :\n";
+
+        for (auto &module : m_ProcessList)
+        {
+            std::string moduleName=module->GetModule()->ModuleName();
+
+            if (moduleName==sLastModule)
+                break;
+
+            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
+        }
+        logger(kipl::logging::Logger::LogMessage,msg.str());
+    }
+    catch (KiplFrameworkException &e) {
+        throw KiplFrameworkException(e.what(),__FILE__,__LINE__);
+    }
+    catch (ModuleException &e) {
+        msg.str("");
+        msg<<"Got a ModuleException during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (kipl::base::KiplException &e) {
+        msg.str("");
+        msg<<"Got a KiplException during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+        msg.str("");
+        msg<<"Got a STL Exception during execution of the process chain\n"<<e.what();
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+        msg.str("");
+        msg<<"Got an unknown exception during execution of the process chain\n";
+        throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+
+    }
+
+    return m_ResultImage;
+}
+
+
+bool KiplEngine::updateStatus(float val)
+{
+    if (m_Interactor!=nullptr)
+    {
+        return m_Interactor->SetOverallProgress(val);
+    }
+
+    return false;
+}
+
+std::string KiplEngine::citations()
+{
+    std::ostringstream cites;
+
+    cites<<"KipTool\n=============================\n";
+    for (const auto &pub : publications)
+    {
+        cites<<pub<<"\n";
+    }
+    cites<<"\n";
+
+    cites<<"\nProcessing modules\n=============================\n";
+    for (const auto & module : m_ProcessList)
+    {
+        cites<<module->GetModule()->ModuleName()<<"\n";
+        for (const auto &pub : module->GetModule()->publicationList())
+        {
+            cites<<pub<<"\n";
+        }
+        cites<<"\n";
+    }
+
+    return cites.str();
+}
+
+std::vector<Publication> KiplEngine::publicationList()
+{
+    std::vector<Publication> pubList;
+
+    pubList = publications;
+    for (const auto & module : m_ProcessList)
+    {
+        for (const auto &pub : module->GetModule()->publicationList())
+        {
+            pubList.push_back(pub);
+        }
+    }
+
+    return pubList;
+}
+
+void KiplEngine::writePublicationList(const string &fname)
+{
+    std::string destName=fname;
+    if (fname.empty())
+    {
+        destName = m_Config.mOutImageInformation.sDestinationPath + "citations.txt";
+    }
+
+    logger.message(std::string("Writing citations to ")+destName);
+    kipl::strings::filenames::CheckPathSlashes(destName,false);
+    std::ofstream citefile(destName.c_str());
+
+    citefile<<citations();
 }

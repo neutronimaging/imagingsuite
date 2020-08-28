@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -11,6 +13,7 @@
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
 #include <base/timage.h>
+#include <imagereader.h>
 
 #include "mergevolumesdialog.h"
 #include "ImagingToolConfig.h"
@@ -22,7 +25,9 @@ MergeVolumesDialog::MergeVolumesDialog(QWidget *parent) :
     ui(new Ui::MergeVolumesDialog)
 {
     ui->setupUi(this);
-    UpdateDialog();
+    loadConfig();
+    updateDialog();
+    ui->widget_cropROI->useROIDialog(true);
 }
 
 MergeVolumesDialog::~MergeVolumesDialog()
@@ -30,108 +35,67 @@ MergeVolumesDialog::~MergeVolumesDialog()
     delete ui;
 }
 
-void MergeVolumesDialog::UpdateDialog()
+void MergeVolumesDialog::updateDialog()
 {
-    ui->spinBox_firstA->setValue(m_merger.m_nFirstA);
-    ui->spinBox_lastA->setValue(m_merger.m_nLastA);
+    FileSet loader;
+    loader.m_nFirst=m_merger.m_nFirstA;
+    loader.m_nLast = m_merger.m_nLastA;
+    loader.m_sFilemask = m_merger.m_sPathA;
 
-    ui->spinBox_firstB->setValue(m_merger.m_nFirstB);
-    ui->spinBox_lastB->setValue(m_merger.m_nLastB);
+    ui->widget_readerFormA->setReaderConfig(loader);
+
+    loader.m_nFirst=m_merger.m_nFirstB;
+    loader.m_nLast = m_merger.m_nLastB;
+    loader.m_sFilemask = m_merger.m_sPathB;
+    ui->widget_readerFormB->setReaderConfig(loader);
 
     ui->spinBox_firstout->setValue(m_merger.m_nFirstDest);
 
-    ui->lineEdit_pathA->setText(QString::fromStdString(m_merger.m_sPathA));
-    ui->lineEdit_pathB->setText(QString::fromStdString(m_merger.m_sPathB));
     ui->lineEdit_pathout->setText(QString::fromStdString(m_merger.m_sPathOut));
+    ui->lineEdit_OutMask->setText(QString::fromStdString(m_merger.m_sMaskOut));
 
     ui->spinBox_mixstart->setValue(m_merger.m_nStartOverlapA);
     ui->spinBox_mixlength->setValue(m_merger.m_nOverlapLength);
 
-    ui->checkBox_crop->setChecked(m_merger.m_bCropSlices);
-    on_checkBox_crop_toggled(m_merger.m_bCropSlices);
+    ui->groupBox_cropImages->setChecked(m_merger.m_bCropSlices);
     ui->spinBox_offsetx->setValue(m_merger.m_nCropOffset[0]);
     ui->spinBox_offsety->setValue(m_merger.m_nCropOffset[1]);
 
-    ui->spinBox_crop0->setValue(m_merger.m_nCrop[0]);
-    ui->spinBox_crop1->setValue(m_merger.m_nCrop[1]);
-    ui->spinBox_crop2->setValue(m_merger.m_nCrop[2]);
-    ui->spinBox_crop3->setValue(m_merger.m_nCrop[3]);
+    ui->widget_cropROI->setROI(m_merger.m_nCrop[0],m_merger.m_nCrop[1],m_merger.m_nCrop[2],m_merger.m_nCrop[3]);
     ui->comboBox_mixorder->setCurrentIndex(m_merger.m_nMergeOrder);
+
+
 }
 
-void MergeVolumesDialog::UpdateConfig()
+void MergeVolumesDialog::updateConfig()
 {
-        m_merger.m_nFirstA = ui->spinBox_firstA->value();
-        m_merger.m_nLastA = ui->spinBox_lastA->value();
+    FileSet loader;
+    loader=ui->widget_readerFormA->getReaderConfig();
 
-        m_merger.m_nFirstB = ui->spinBox_firstB->value();
-        m_merger.m_nLastB = ui->spinBox_lastB->value();
+    m_merger.m_nFirstA = loader.m_nFirst;
+    m_merger.m_nLastA  = loader.m_nLast;
+    m_merger.m_sPathA  = loader.m_sFilemask;
 
-        m_merger.m_nFirstDest = ui->spinBox_firstout->value();
+    loader=ui->widget_readerFormB->getReaderConfig();
 
-        m_merger.m_sPathA = ui->lineEdit_pathA->text().toStdString();
-        m_merger.m_sPathB = ui->lineEdit_pathB->text().toStdString();
-        m_merger.m_sPathOut = ui->lineEdit_pathout->text().toStdString();
-        m_merger.m_sMaskOut = ui->lineEdit_OutMask->text().toStdString();
+    m_merger.m_nFirstB = loader.m_nFirst;
+    m_merger.m_nLastB  = loader.m_nLast;
+    m_merger.m_sPathB  = loader.m_sFilemask;
 
-        m_merger.m_nStartOverlapA = ui->spinBox_mixstart->value();
-        m_merger.m_nOverlapLength = ui->spinBox_mixlength->value();
-        m_merger.m_nMergeOrder = ui->comboBox_mixorder->currentIndex();
+    m_merger.m_nFirstDest = ui->spinBox_firstout->value();
 
-        m_merger.m_bCropSlices = ui->checkBox_crop->isChecked();
-        m_merger.m_nCropOffset[0] = ui->spinBox_offsetx->value();
-        m_merger.m_nCropOffset[1] = ui->spinBox_offsety->value();
+    m_merger.m_sPathOut = ui->lineEdit_pathout->text().toStdString();
+    m_merger.m_sMaskOut = ui->lineEdit_OutMask->text().toStdString();
 
-        m_merger.m_nCrop[0] = ui->spinBox_crop0->value();
-        m_merger.m_nCrop[1] = ui->spinBox_crop1->value();
-        m_merger.m_nCrop[2] = ui->spinBox_crop2->value();
-        m_merger.m_nCrop[3] = ui->spinBox_crop3->value();
-}
+    m_merger.m_nStartOverlapA = ui->spinBox_mixstart->value();
+    m_merger.m_nOverlapLength = ui->spinBox_mixlength->value();
+    m_merger.m_nMergeOrder = ui->comboBox_mixorder->currentIndex();
 
-void MergeVolumesDialog::on_pushButton_browseA_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of date set A",
-                                      ui->lineEdit_pathA->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
+    m_merger.m_bCropSlices = ui->groupBox_cropImages->isChecked();
+    m_merger.m_nCropOffset[0] = ui->spinBox_offsetx->value();
+    m_merger.m_nCropOffset[1] = ui->spinBox_offsety->value();
 
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->lineEdit_pathA->setText(QString::fromStdString(fi.m_sMask));
-    }
-}
-
-void MergeVolumesDialog::on_pushButton_browseB_clicked()
-{
-    QString projdir=QFileDialog::getOpenFileName(this,
-                                      "Select location of date set B",
-                                      ui->lineEdit_pathB->text());
-    if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        #ifdef _MSC_VER
-        const char slash='\\';
-        #else
-        const char slash='/';
-        #endif
-        ptrdiff_t pos=pdir.find_last_of(slash);
-
-        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->lineEdit_pathB->setText(QString::fromStdString(fi.m_sMask));
-    }
+    ui->widget_cropROI->getROI(m_merger.m_nCrop);
 }
 
 void MergeVolumesDialog::on_pushButton_loaddata_clicked()
@@ -143,12 +107,10 @@ void MergeVolumesDialog::on_pushButton_loaddata_clicked()
 void MergeVolumesDialog::on_pushButton_loadA_clicked()
 {
     std::ostringstream msg;
-    int first=ui->spinBox_firstA->value();
-    int last=ui->spinBox_lastA->value();
-    std::string fmask=ui->lineEdit_pathA->text().toStdString();
+    FileSet loader=ui->widget_readerFormA->getReaderConfig();
 
     try {
-        m_merger.LoadVerticalSlice(fmask,first,last,&m_VerticalImgA);
+        m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgA);
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
@@ -159,18 +121,24 @@ void MergeVolumesDialog::on_pushButton_loadA_clicked()
         dlg.exec();
         return;
     }
+
     ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.Dims());
+    on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
+
+    ImageReader reader;
+
+    kipl::base::TImage<float,2> img=reader.Read(loader.makeFileName((loader.m_nLast+loader.m_nFirst)/2));
+    ui->widget_cropROI->setSelectionImage(img);
 }
 
 void MergeVolumesDialog::on_pushButton_loadB_clicked()
 {
     std::ostringstream msg;
-    int first=ui->spinBox_firstB->value();
-    int last=ui->spinBox_lastB->value();
-    std::string fmask=ui->lineEdit_pathB->text().toStdString();
+
+    FileSet loader=ui->widget_readerFormB->getReaderConfig();
 
     try {
-        m_merger.LoadVerticalSlice(fmask,first,last,&m_VerticalImgB);
+        m_merger.LoadVerticalSlice(loader.m_sFilemask,loader.m_nFirst,loader.m_nLast,&m_VerticalImgB);
     }
     catch (kipl::base::KiplException &e) {
         QMessageBox dlg;
@@ -183,29 +151,22 @@ void MergeVolumesDialog::on_pushButton_loadB_clicked()
         return;
     }
     ui->viewer_dataB->set_image(m_VerticalImgB.GetDataPtr(),m_VerticalImgB.Dims());
+    on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
 }
 
 void MergeVolumesDialog::on_comboBox_mixorder_currentIndexChanged(int index)
 {
+    FileSet loader;
+    switch (index) {
+    case 0:
+        loader=ui->widget_readerFormA->getReaderConfig();
+        break;
+    case 1:
+        loader=ui->widget_readerFormB->getReaderConfig();
+    }
 
-}
-
-void MergeVolumesDialog::on_checkBox_crop_toggled(bool checked)
-{
-    ui->spinBox_crop0->setVisible(checked);
-    ui->spinBox_crop1->setVisible(checked);
-    ui->spinBox_crop2->setVisible(checked);
-    ui->spinBox_crop3->setVisible(checked);
-    ui->spinBox_offsetx->setVisible(checked);
-    ui->spinBox_offsety->setVisible(checked);
-    ui->label_cropA->setVisible(checked);
-    ui->label_crop0->setVisible(checked);
-    ui->label_crop1->setVisible(checked);
-    ui->label_crop2->setVisible(checked);
-    ui->label_crop3->setVisible(checked);
-    ui->label_offsetB->setVisible(checked);
-    ui->label_offsetx->setVisible(checked);
-    ui->label_offsety->setVisible(checked);
+    ui->spinBox_mixstart->setMinimum(loader.m_nFirst);
+    ui->spinBox_mixstart->setMaximum(loader.m_nLast);
 }
 
 void MergeVolumesDialog::on_pushButton_browseout_clicked()
@@ -217,25 +178,17 @@ void MergeVolumesDialog::on_pushButton_browseout_clicked()
         std::string pdir=projdir.toStdString();
         kipl::strings::filenames::CheckPathSlashes(pdir,true);
 
-//        #ifdef _MSC_VER
-//        const char slash='\\';
-//        #else
-//        const char slash='/';
-//        #endif
-//        ptrdiff_t pos=pdir.find_last_of(slash);
-
-//        QString path(QString::fromStdString(pdir.substr(0,pos+1)));
-//        kipl::io::DirAnalyzer da;
-//        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
         ui->lineEdit_pathout->setText(QString::fromStdString(pdir));
     }
 }
 
 void MergeVolumesDialog::on_pushButton_startmerge_clicked()
 {
-    UpdateConfig();
-    SaveConfig();
+    updateConfig();
+    saveConfig();
+    if (!checkImageSizes())
+        return ;
+
     try {
         m_merger.Process();
     }
@@ -250,6 +203,12 @@ void MergeVolumesDialog::on_pushButton_startmerge_clicked()
 
 void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
 {
+    if (m_VerticalImgResult.Size()==0)
+    {
+        logger.warning("No image is available");
+        return;
+    }
+
     switch (index) {
     case 0 :
         logger(kipl::logging::Logger::LogMessage,"Display local vertical");
@@ -274,8 +233,12 @@ void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
 
 void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 {
-    UpdateConfig();
-    SaveConfig();
+    updateConfig();
+    saveConfig();
+
+    if (!checkImageSizes())
+        return ;
+
     std::ostringstream msg;
 
     logger(logger.LogMessage,"on_testmix");
@@ -284,6 +247,8 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
         msg.str("");
         msg<<"Indexing error in data A: FirstA="<<m_merger.m_nFirstA<<", StartOverlapA="<<m_merger.m_nStartOverlapA<<", OverlapLength="<<m_merger.m_nOverlapLength;
         logger(logger.LogError,msg.str());
+
+        QMessageBox::critical(this,"Indexing error",QString::fromStdString(msg.str()));
         return;
     }
 
@@ -291,11 +256,15 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
             ((m_merger.m_nLastB-m_merger.m_nFirstB)<m_merger.m_nOverlapLength))
     {
         logger(logger.LogError,"Overlap length is greater than the number of slices");
+        QMessageBox::critical(this,"Too few slices","Overlap length is greater than the number of slices");
+
         return;
     }
 
     if (!m_VerticalImgA.Size() || !m_VerticalImgB.Size()) {
         logger(logger.LogError,"Data is not loaded");
+        QMessageBox::critical(this,"No data","At least one data set is not loaded.");
+
         return;
     }
 
@@ -303,6 +272,7 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
         size_t dims[2]={static_cast<size_t>(m_VerticalImgA.Size(0)),
                         static_cast<size_t>(m_merger.m_nStartOverlapA+m_merger.m_nLastB+1-m_merger.m_nFirstA-m_merger.m_nFirstB)};
         m_VerticalImgResult.Resize(dims);
+        m_VerticalImgResult=0.0f;
         memcpy(m_VerticalImgResult.GetDataPtr(),
             m_VerticalImgA.GetDataPtr(),
             (m_merger.m_nStartOverlapA-m_merger.m_nFirstA)*m_VerticalImgA.Size(0)*sizeof(float));
@@ -325,11 +295,10 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
         }
 
         if (m_VerticalImgResult.Size(0)<m_VerticalImgResult.Size(1)) {
-            int half=m_VerticalImgResult.Size(0)/2;
-            int idx_start=idxa-half;
-            idx_start=idx_start < 0 ? 0 : idx_start;
+            size_t half=m_VerticalImgResult.Size(0)/2;
+            size_t idx_start = idxa < half ? 0 : idxa-half;
+            size_t idx_stop=idxa+half;
 
-            int idx_stop=idxa+half;
             idx_stop=m_VerticalImgResult.Size(1) < idx_stop  ? m_VerticalImgResult.Size(1) : idx_stop;
 
             size_t dims[2]={m_VerticalImgResult.Size(0),static_cast<size_t>(idx_stop-idx_start)};
@@ -354,12 +323,18 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 
 }
 
-void MergeVolumesDialog::SaveConfig()
+void MergeVolumesDialog::saveConfig()
 {
     QDir dir;
-    //QString qfname=
-    std::string fname=dir.homePath().toStdString();
 
+    QString qfname=dir.homePath()+"/"+".imagingtools";
+    if (dir.exists(qfname))
+    {
+        dir.mkdir(qfname);
+        logger.message("Created .imagingtools folder");
+    }
+
+    std::string fname = (qfname+"/").toStdString();
     kipl::strings::filenames::CheckPathSlashes(fname,true);
     fname+="volumemerge.xml";
 
@@ -370,9 +345,40 @@ void MergeVolumesDialog::SaveConfig()
     conffile<<m_merger.WriteXML(0);
 }
 
-void MergeVolumesDialog::LoadConfig()
+void MergeVolumesDialog::loadConfig()
 {
-
+    QDir dir;
+     QString confname=dir.homePath()+"/"+".imagingtools/volumemerge.xml" ;
+    if (dir.exists(confname)) {
+        m_merger.ParseXML(confname.toStdString());
+    }
 }
 
+bool MergeVolumesDialog::checkImageSizes()
+{
+
+    FileSet loaderA=ui->widget_readerFormA->getReaderConfig();
+    FileSet loaderB=ui->widget_readerFormB->getReaderConfig();
+
+    std::string fname;
+    size_t sizeA[4];
+    fname=loaderA.makeFileName(loaderA.m_nFirst);
+    kipl::io::GetTIFFDims(fname.c_str(),sizeA);
+
+    size_t sizeB[4];
+    fname=loaderB.makeFileName(loaderB.m_nFirst);
+    kipl::io::GetTIFFDims(fname.c_str(),sizeB);
+
+    bool sameSize = (sizeB[0]==sizeA[0]) && (sizeB[1]==sizeA[1]);
+    if (!sameSize)
+    {
+        std::ostringstream msg;
+        msg.str("");
+        msg<<"Image A ("<<sizeA[0]<<", "<<sizeA[1]<<") is not same size as Image B ("<<sizeB[0]<<", "<<sizeB[1]<<")";
+        logger.warning(msg.str());
+        QMessageBox::warning(this,"Not same image size",QString::fromStdString(msg.str()));
+    }
+
+    return sameSize;
+}
 

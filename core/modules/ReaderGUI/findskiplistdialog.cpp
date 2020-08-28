@@ -9,6 +9,7 @@
 #include <base/kiplenums.h>
 #include <strings/string2array.h>
 
+#include <plotcursor.h>
 #include <imagereader.h>
 #include <buildfilelist.h>
 #include <datasetbase.h>
@@ -26,14 +27,11 @@ FindSkipListDialog::FindSkipListDialog(QWidget *parent) :
     QDialog(parent),
     logger("FindSkipListDialog"),
     ui(new Ui::FindSkipListDialog),
-    m_nMaxNumberProjections(0)
+    m_nMaxNumberProjections(0),
+    m_nROI({0,0,10,10})
 {
     ui->setupUi(this);
 
-    m_nROI[0]=0;
-    m_nROI[1]=0;
-    m_nROI[2]=10;
-    m_nROI[3]=10;
     ui->skip_spin_x0->setValue(0);
     ui->skip_spin_y0->setValue(0);
     ui->skip_spin_x1->setValue(10);
@@ -64,9 +62,9 @@ int FindSkipListDialog::exec(std::list<std::string> &filelist)
         kipl::base::TImage<float,2> img;
         ImageReader reader;
 
-        img=reader.Read(fname,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,nullptr);
-        //kipl::io::ReadFITS(img,fname.c_str(),NULL);
-        ui->skip_imageviewer->set_image(img.GetDataPtr(),img.Dims());
+        img=reader.Read(fname,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f,{});
+
+        ui->skip_imageviewer->set_image(img.GetDataPtr(),img.dims());
         ui->skip_spin_x0->setMaximum(img.Size(0)-1);
         ui->skip_spin_x1->setMaximum(img.Size(0)-1);
         ui->skip_spin_y0->setMaximum(img.Size(1)-1);
@@ -89,14 +87,14 @@ int FindSkipListDialog::exec(std::list<std::string> &filelist)
 
 int FindSkipListDialog::exec(std::string path, std::string fmask, int first, int last)
 {
-    ImageLoader il;
+    FileSet il;
     il.m_sFilemask=path;
     kipl::strings::filenames::CheckPathSlashes(il.m_sFilemask,true);
     il.m_sFilemask+=fmask;
     il.m_nFirst=first;
     il.m_nLast=last;
     il.m_nStep=1;
-    std::list<ImageLoader> ll;
+    std::list<FileSet> ll;
     ll.push_back(il);
     std::list<std::string> flist=BuildFileList(ll);
 
@@ -113,9 +111,9 @@ void FindSkipListDialog::LoadDoseList()
     float fDose=0.0f;
     int i=0;
     try {
-        for (auto it=m_FileList.begin(); it!=m_FileList.end(); it++,i++) {
-
-                   fDose=reader.GetProjectionDose(*it,
+        for (const auto &fname : m_FileList)
+        {
+                   fDose=reader.GetProjectionDose(fname,
                                         kipl::base::ImageFlipNone,
                                         kipl::base::ImageRotateNone,
                                         1.0f,
@@ -123,6 +121,7 @@ void FindSkipListDialog::LoadDoseList()
 
                    m_DoseData.append(QPoint(static_cast<float>(i),fDose));
                    m_SortedDoses.insert(std::make_pair(fDose,i));
+                   i++;
         }
         ui->skip_plot->setCurveData(0,m_DoseData);
         if (m_SortedDoses.size()!=m_DoseData.size()) {
@@ -167,14 +166,14 @@ void FindSkipListDialog::ChangedNumberOfProjections(int x)
 {
     std::ostringstream skipstr;
     int nSkipCnt=m_nMaxNumberProjections-x;
-    ui->skip_plot->clearAllPlotCursors();
+    ui->skip_plot->clearAllCursors();
     std::multimap<float,int>::iterator it=m_SortedDoses.begin();
 
     m_sortedSkip.clear();
 
     for (int i=0; i<nSkipCnt; i++, it++) {
         m_sortedSkip.insert(it->second);
-        ui->skip_plot->setPlotCursor(i,QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
+        ui->skip_plot->setCursor(i,new QtAddons::PlotCursor(it->second,QColor("green"),QtAddons::PlotCursor::Vertical));
     }
     // Todo: Sort the list
    std::set<int>::iterator it2;

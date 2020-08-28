@@ -10,7 +10,9 @@
 
 #include <fitsio.h>
 
+#include "../../base/timage.h"
 #include "../../base/KiplException.h"
+#include "../io_fits.h"
 
 namespace kipl { namespace io {
 
@@ -30,14 +32,13 @@ int KIPLSHARED_EXPORT FITSDataType(double x);
 
 
 template <typename ImgType>
-int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t const * const nCrop, size_t idx)
+int ReadFITS(kipl::base::TImage<ImgType,2> &src,const std::string & fname, const std::vector<size_t> & nCrop, size_t idx)
 {
-    (void) idx;
-	using namespace std; 
+    using namespace std;
     ostringstream msg;
 	fitsfile *fptr;
 	int status=0;
-	fits_open_image(&fptr, fname, READONLY, &status);
+    fits_open_image(&fptr, fname.c_str(), READONLY, &status);
     if (status!=0) {
         msg.str("");
         char errtext[2048];
@@ -68,14 +69,17 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 	
-	size_t dims[3];
-	long coord[3]={1,0,1};
-    if (nCrop==nullptr) {
+
+    std::vector<size_t> dims(naxis);
+    long coord[3]={1,0,long(naxis == 3 ? idx +1: 1)};
+    if (nCrop.empty())
+    {
 		dims[0]=static_cast<size_t>(naxes[0]);
 		dims[1]=naxis < 2 ? 1 : static_cast<size_t>(naxes[1]);
 	}
-	else {
-        if ((naxes[0]<=static_cast<long>(nCrop[0])) ||
+    else
+    {
+        if (    (naxes[0]<=static_cast<long>(nCrop[0])) ||
                 (naxes[0]<=static_cast<long>(nCrop[2])) ||
                 (naxes[1]<=static_cast<long>(nCrop[1])) ||
                 (naxes[1]<=static_cast<long>(nCrop[3])))
@@ -95,29 +99,28 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,char const * const fname, size_t
 		dims[1]=nCrop[3]-nCrop[1];
 		coord[0]=static_cast<long>(nCrop[0]+1);
 	}
-	src.Resize(dims);
+    src.resize(dims);
 	
 
 	int datatype=FITSDataType(static_cast<ImgType>(0));
 	
-    const size_t cnStart = nCrop==nullptr ? 0 : min(static_cast<size_t>(naxes[1]),nCrop[1]);
-    const size_t cnStop  = nCrop==nullptr ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
-	
+    const size_t cnStart = nCrop.empty() ? 0       : min(static_cast<size_t>(naxes[1]),nCrop[1]);
+    const size_t cnStop  = nCrop.empty() ? dims[1] : min(static_cast<size_t>(naxes[1]),nCrop[3]);
+
     ImgType *pLine=new ImgType[naxes[0]+16];
 	for (size_t i=cnStart, j=0; i<cnStop; i++,j++) {
-		coord[1]=i+1;
+        coord[1]=static_cast<int>(i+1);
 
 		if (fits_read_pix(fptr, datatype, coord, static_cast<int>(dims[0]), 
                 nullptr, pLine, nullptr, &status))
 		{
 			char err_text[512];
-					fits_get_errstatus(status, err_text);
-					std::stringstream msg;
-					msg<<"ReadFITS: "<<err_text<<" ("<<fname<<")";
-					throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+            fits_get_errstatus(status, err_text);
+            std::stringstream msg;
+            msg<<"ReadFITS: "<<err_text<<" ("<<fname<<")";
+            throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 		}
-		
-        //memcpy(src.GetLinePtr(j),pLine,src.Size(0)*sizeof(ImgType));
+
         std::copy(pLine, pLine+src.Size(0), src.GetLinePtr(j));
 	}
 
@@ -132,9 +135,9 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 {
 
     fitsfile *fptr;                  // pointer to the FITS file, defined in fitsio.h
-    int status, ii;
+    int status;
     long  fpixel, nelements, exposure;
-    ImgType *array[200];
+
     char err_msg[128];
 
     // initialize FITS image parameters
@@ -144,9 +147,10 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
     naxes[0]= static_cast<long>(src.Size(0)); // Set image dimensions
     naxes[1]= static_cast<long>(src.Size(1)); // Set image dimensions
 
-    // initialize pointers to the start of each row of the image
-    for( ii=1; ii<naxes[1]; ii++ )
-      array[ii] = array[ii-1] + naxes[0];
+//    ImgType *array=new ImgType[naxes[1]];
+//    // initialize pointers to the start of each row of the image
+//    for( ii=1; ii<naxes[1]; ii++ )
+//      array[ii] = array[ii-1] + naxes[0];
 
     remove(filename);                               // Delete old file if it already exists
 
@@ -166,7 +170,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
 //     and BZERO keywords will be automatically written by cfitsio
 //     in this case.
 
-    if ( fits_create_img(fptr,  bitpix, naxis, naxes, &status) ) {
+    if ( fits_create_img(fptr,  bitpix, static_cast<int>(naxis), naxes, &status) ) {
         fits_get_errstatus(status, err_msg);
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
     }
@@ -198,6 +202,7 @@ int WriteFITS(kipl::base::TImage<ImgType,2> & src,char const * const filename)
         throw kipl::base::KiplException(err_msg,__FILE__,__LINE__);
     }
 
+//   delete [] array;
 	return 0;
 }
 

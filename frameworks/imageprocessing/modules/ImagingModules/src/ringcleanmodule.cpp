@@ -1,3 +1,4 @@
+//<LICENSE>
 #include <string>
 #include <map>
 
@@ -9,6 +10,7 @@
 
 RingCleanModule::RingCleanModule() : KiplProcessModuleBase("RingCleanModule",false),
     m_StripeFilter(nullptr),
+    m_Config(""),
     wname("daub15"),
     scale(3),
     sigma(0.05),
@@ -21,8 +23,9 @@ RingCleanModule::RingCleanModule() : KiplProcessModuleBase("RingCleanModule",fal
 RingCleanModule::~RingCleanModule()
 {}
 
-int RingCleanModule::Configure(std::map<std::string, std::string> parameters)
+int RingCleanModule::Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters)
 {
+    m_Config=config;
     wname=GetStringParameter(parameters,"waveletname");
     scale=GetIntParameter(parameters,"scale");
     sigma=GetFloatParameter(parameters,"sigma");
@@ -70,7 +73,7 @@ int RingCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
 
     for (size_t i=0; i<Nslices; i++) {
         slice=kipl::base::ExtractSlice(img,i,plane,nullptr);
-        m_StripeFilter->Process(slice,op);
+        m_StripeFilter->process(slice,op);
         kipl::base::InsertSlice(slice,img,i,plane);
     }
 

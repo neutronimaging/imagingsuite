@@ -83,7 +83,7 @@ std::string BuildVTKheader(size_t const * const dims, size_t ndims, float const 
 	}
 	header<<"\nSPACING ";
 
-	if (res!=NULL) {
+    if (res!=nullptr) {
 		for (size_t i=0; i<ndims; i++) {
 			header<<res[i]<<" ";
 		}

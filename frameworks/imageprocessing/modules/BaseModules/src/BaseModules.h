@@ -6,13 +6,13 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // BASEMODULES_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#ifndef __BASEMODULES_H
-#define __BASEMODULES_H
+#ifndef BASEMODULES_H
+#define BASEMODULES_H
 
 #include "BaseModules_global.h"
 
 extern "C" {
-BASEMODULES_EXPORT void * GetModule(const char *application, const char * name);
+BASEMODULES_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor);
 BASEMODULES_EXPORT int Destroy(const char *application, void *obj);
 BASEMODULES_EXPORT int LibVersion();
 BASEMODULES_EXPORT int GetModuleList(const char *application, void *listptr);

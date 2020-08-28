@@ -15,7 +15,7 @@ CONFIG   += c++11
 
 TEMPLATE = app
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 
@@ -42,7 +42,6 @@ unix {
     }
 
     unix:macx {
-     #   QMAKE_MAC_SDK = macosx10.11
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
@@ -54,15 +53,20 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += ../../../../external/src/linalg ../../../../external/include ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += ../../../../external/lib64
+    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../external/lib64
+
+    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+
     QMAKE_CXXFLAGS += /openmp /O2
+
+
 }
 
 SOURCES += tst_timagingqaalgorithmstest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
 LIBS += -lkipl -lImagingQAAlgorithms

@@ -1,13 +1,4 @@
-//
-// This file is part of the MuhRec reconstruction application by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-09-05 15:55:11 +0200 (So, 05 Sep 2010) $
-// $Rev: 694 $
-//
+//<LICENSE>
 #include "stdafx.h"
 
 #include <map>
@@ -169,9 +160,9 @@ int Fits2Tif::GetImage(std::list<kipl::base::TImage<float,2> > &imglist, std::st
 
         if (config.bUseSpotClean) {
             ImagingAlgorithms::MorphSpotClean cleaner;
-            cleaner.setConnectivity(kipl::morphology::conn4);
+            cleaner.setConnectivity(kipl::base::conn4);
             cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks,ImagingAlgorithms::MorphCleanReplace);
-            cleaner.Process(dst2,config.fSpotThreshold,config.fSpotSigma);
+            cleaner.process(dst2,config.fSpotThreshold,config.fSpotSigma);
         }
         imglist.push_back(dst2);
     }
@@ -199,7 +190,7 @@ std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &con
         const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
 
         int cnt=0;
-        for (size_t i=config.nFirstSrc; i<=config.nLastSrc; i++) {
+        for (int i=config.nFirstSrc; i<=config.nLastSrc; i++) {
            // if (config.skip_list.find(i)==config.skip_list.end()) {
                 kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0',bReversedIndex);
 
@@ -221,7 +212,7 @@ std::string Fits2Tif::BuildFileList(ImagingToolConfig::FileConversionConfig &con
     }
     else {
         logger(kipl::logging::Logger::LogMessage,"Building file list");
-        for (size_t i=config.nFirstSrc; i<=config.nLastSrc; i++) {
+        for (int i=config.nFirstSrc; i<=config.nLastSrc; i++) {
             if (config.skip_list.find(i)==config.skip_list.end()) {
                 kipl::strings::filenames::MakeFileName(srcmask,i,srcname,ext,'#','0');
                 filelist.push_back(srcname);

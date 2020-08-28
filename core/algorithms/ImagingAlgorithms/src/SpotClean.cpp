@@ -19,7 +19,7 @@
 
 namespace ImagingAlgorithms {
 
-SpotClean::SpotClean() :
+SpotClean::SpotClean(kipl::interactors::InteractionBase *interactor) :
 	logger("ImagingAlgorithms::SpotClean"),
     mark(std::numeric_limits<float>::max()),
 	m_fGamma(0.1f),
@@ -30,7 +30,8 @@ SpotClean::SpotClean() :
 	m_nMaxArea(100),
 	m_eDetectionMethod(Detection_Ring),
 	mLUT(1<<15,0.1f,0.0075f),
-	eEdgeProcessingStyle(kipl::filters::FilterBase::EdgeMirror)
+    eEdgeProcessingStyle(kipl::filters::FilterBase::EdgeMirror),
+    m_Interactor(interactor)
 {
 }
 
@@ -89,7 +90,7 @@ int SpotClean::Process(kipl::base::TImage<float,3> & img)
 		{
 			kipl::base::TImage<float,2> res;
 
-			kipl::base::TImage<float,2> proj(img.Dims());
+            kipl::base::TImage<float,2> proj(img.dims());
 			kipl::containers::ArrayBuffer<PixelInfo> spots(proj.Size());
             int nSlices=static_cast<int>(img.Size(2));
 			#pragma omp for
@@ -242,7 +243,7 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 		pTh[i]= pTh[i]!=0.0f;
 
 	kipl::base::TImage<int,2> lbl;
-	size_t N=LabelImage(thimg, lbl,kipl::morphology::conn8);
+    size_t N=kipl::morphology::LabelImage(thimg, lbl,kipl::base::conn8);
 
 	vector<pair<size_t,size_t> > area;
 	vector<size_t> removelist;
@@ -257,7 +258,7 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 	msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-	RemoveConnectedRegion(lbl, removelist, kipl::morphology::conn8);
+    kipl::morphology::RemoveConnectedRegion(lbl, removelist, kipl::base::conn8);
 
 	int *pLbl=lbl.GetDataPtr();
 	float *pImg=img.GetDataPtr();
@@ -271,7 +272,7 @@ void SpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
 kipl::base::TImage<float,2> SpotClean::CleanByArray(kipl::base::TImage<float,2> img,
 													 kipl::containers::ArrayBuffer<PixelInfo> *pixels)
 {
-	PrepareNeighborhood(img.Size(0),img.Size());
+    PrepareNeighborhood(static_cast<int>(img.Size(0)),static_cast<int>(img.Size()));
 
 	kipl::containers::ArrayBuffer<PixelInfo > toProcess(img.Size()), corrected(img.Size()), remaining(img.Size());
 
@@ -360,7 +361,16 @@ int SpotClean::Neighborhood(float * pImg, int idx, float * neigborhood)
 		}
 	}
 
-	return cnt;
+    return cnt;
+}
+
+bool SpotClean::UpdateStatus(float val, string msg)
+{
+    if (m_Interactor!=nullptr) {
+        return m_Interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
 
 double SpotClean::ChangeStatistics(kipl::base::TImage<float,2> img)
@@ -400,14 +410,14 @@ kipl::base::TImage<float,2> SpotClean::RingDetection(kipl::base::TImage<float,2>
 	const float c=-1.0f;
 	const float z=0.0f;
 
-	float k[25]={
+    std::vector<float> k={
 			z, w, w, w, z,
 			w, z, z, z, w,
 			w, z, c, z, w,
 			w, z, z, z, w,
 			z, w, w, w, z};
 
-	size_t kdims[2]={5,5};
+    std::vector<size_t> kdims={5,5};
 
 	kipl::filters::TFilter<float,2> ring2(k,kdims);
 
@@ -422,8 +432,8 @@ kipl::base::TImage<float,2> SpotClean::MedianDetection(kipl::base::TImage<float,
 {
 	size_t nFilterSize = 5;
 
-	size_t nFiltDimsV[]={1, nFilterSize};
-	size_t nFiltDimsH[]={nFilterSize, 1};
+    std::vector<size_t> nFiltDimsV={1, nFilterSize};
+    std::vector<size_t> nFiltDimsH={nFilterSize, 1};
 	kipl::filters::TMedianFilter<float,2> medianV(nFiltDimsV);
 	kipl::filters::TMedianFilter<float,2> medianH(nFiltDimsH);
 
@@ -438,9 +448,9 @@ kipl::base::TImage<float,2> SpotClean::MinMaxDetection(kipl::base::TImage<float,
 {
 	size_t nFilterSize = 5;
 
-	size_t nFiltDimsV[]={1, nFilterSize};
-	size_t nFiltDimsH[]={nFilterSize, 1};
-	float se[]={1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f};
+    std::vector<size_t> nFiltDimsV={1, nFilterSize};
+    std::vector<size_t> nFiltDimsH={nFilterSize, 1};
+    std::vector<float> se(nFilterSize,1.0f);
 	kipl::morphology::TErode<float,2> minV(se,nFiltDimsV);
 	kipl::morphology::TErode<float,2> minH(se,nFiltDimsH);
 
@@ -460,25 +470,23 @@ kipl::base::TImage<float,2> SpotClean::MinMaxDetection(kipl::base::TImage<float,
 
 kipl::base::TImage<float,2> SpotClean::BoxFilter(kipl::base::TImage<float,2> img, size_t dim)
 {
-	size_t dimsU[]={dim,1};
-	size_t dimsV[]={1,dim};
+    std::vector<size_t> dimsU={dim,1};
+    std::vector<size_t> dimsV={1,dim};
 	size_t N=dim*dim;
-	float *fKernel=new float[N];
-	for (size_t i=0; i<N; i++)
-		fKernel[i]=1.0f;
+    std::vector<float> fKernel(N,1.0f);
+
 
 	kipl::filters::TFilter<float,2> filterU(fKernel,dimsU);
 	kipl::filters::TFilter<float,2> filterV(fKernel,dimsV);
 
 	kipl::base::TImage<float,2> imgU=filterU(img, eEdgeProcessingStyle);
-	delete [] fKernel;
 
 	return filterV(imgU, eEdgeProcessingStyle);
 }
 
 kipl::base::TImage<float,2> SpotClean::TriKernel(kipl::base::TImage<float,2> img)
 {
-    kipl::base::TImage<float,2> dimg(img.Dims());
+    kipl::base::TImage<float,2> dimg(img.dims());
     dimg=0.0f;
 
     OneKernel(img,3,m_fGamma,dimg);
@@ -503,11 +511,11 @@ void SpotClean::OneKernel(kipl::base::TImage<float,2> img, size_t size, float si
 
     pair<double,double> stats=kipl::math::statistics(pFImg,fimg.Size());
 
-    float level=stats.first+sigma*stats.second;
+    float level=static_cast<float>(stats.first+sigma*stats.second);
 
     float *pDImg = dimg.GetDataPtr();
     for (size_t i=0; i<dimg.Size(); i++) {
-        pDImg[i]=pDImg[i] || (level < pFImg[i]);
+        pDImg[i]= (pDImg[i]!=0) || (level < pFImg[i]);
     }
 }
 

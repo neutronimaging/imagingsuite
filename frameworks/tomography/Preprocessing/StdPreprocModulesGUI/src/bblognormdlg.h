@@ -11,6 +11,7 @@
 #include <ReconConfig.h>
 #include <imageviewerwidget.h>
 #include <plotter.h>
+#include <roiwidget.h>
 
 #include <bblognorm.h>
 
@@ -31,18 +32,8 @@ public:
 private slots:
     void on_button_OBBBpath_clicked();
     void on_buttonPreviewOBBB_clicked();
-    void on_button_BBroi_clicked();
-    void on_spinx0BBroi_valueChanged(int arg1);
-    void on_spiny0BBroi_valueChanged(int arg1);
-    void on_spinx1BBroi_valueChanged(int arg1);
-    void on_spiny1BBroi_valueChanged(int arg1);
     void on_button_sampleBBpath_clicked();
     void on_buttonPreviewsampleBB_clicked();
-    void on_button_BBdose_clicked();
-    void on_spinx0BBdose_valueChanged(int arg1);
-    void on_spinx1BBdose_valueChanged(int arg1);
-    void on_spiny0BBdose_valueChanged(int arg1);
-    void on_spiny1BBdose_valueChanged(int arg1);
     void on_errorButton_clicked();
     void on_combo_BBoptions_activated(const QString &arg1);
     void on_button_OB_BB_ext_clicked();
@@ -53,6 +44,12 @@ private slots:
     void on_checkBox_thresh_stateChanged(int arg1);
     void on_pushButton_filenameOBBB_clicked();
     void on_pushButton_filenameBB_clicked();
+    void on_check_singleext_clicked(bool checked);
+    void on_check_singleext_stateChanged(int arg1);
+
+    void on_pushButton_ext_OB_back_clicked();
+
+    void on_pushButton_ext_sample_back_clicked();
 
 private:
     virtual void ApplyParameters();
@@ -77,8 +74,8 @@ private:
     size_t nBBSampleCount; /// number of sample images with BB
     size_t nBBSampleFirstIndex; /// first index in filename for sample images with BB
     std::string blackbodysamplename;
-    size_t BBroi[4];
-    size_t doseBBroi[4];
+    std::vector<size_t> BBroi;
+    std::vector<size_t> doseBBroi;
     size_t radius;
     size_t min_area;
 
@@ -98,6 +95,7 @@ private:
     bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
     bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
     bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
+    bool bExtSingleFile; /// boolean value on the use of single external file for sample background
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;

@@ -1,4 +1,5 @@
 //<LICENCE>
+#include <vector>
 
 #ifndef MEDIAN_H_
 #define MEDIAN_H_
@@ -13,6 +14,9 @@ namespace kipl { namespace math {
 /// \param med The median value of the array
 template<class T, class S>
 void median(T *v, size_t n, S * med);
+
+template<class T, class S>
+void median(const std::vector<T> &v, S * med);
 
 /// \brief Median computed using the quickselect algorithm
 ///

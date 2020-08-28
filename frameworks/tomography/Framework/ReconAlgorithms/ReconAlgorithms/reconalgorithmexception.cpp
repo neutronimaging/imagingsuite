@@ -17,14 +17,3 @@ ReconAlgorithmException::ReconAlgorithmException(std::string msg, std::string fi
 {
 
 }
-
-std::string ReconAlgorithmException::what()
-{
-    if (sFileName.empty())
-        return sMessage;
-    else {
-        std::ostringstream str;
-        str<<"ReconAlgorithm exception in "<<sFileName<<" on line "<<nLineNumber<<": \n"<<sMessage;
-        return str.str();
-    }
-}

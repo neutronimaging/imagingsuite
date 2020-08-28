@@ -1,13 +1,16 @@
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+//<LICENSE>
 
+#ifndef ALGBACKPROJECTORBASE_H
+#define ALGBACKPROJECTORBASE_H
+
+#include "reconalgorithms_global.h"
 #include <string>
 #include <list>
 
 #include <logging/logger.h>
 #include <base/timage.h>
 
-class BackProjectorBase
+class RECONALGORITHMSSHARED_EXPORT BackProjectorBase
 {
 protected:
     kipl::logging::Logger logger;

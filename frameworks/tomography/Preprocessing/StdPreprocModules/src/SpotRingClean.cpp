@@ -1,15 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
-//#include "stdafx.h"
+//<LICENSE>
 #include "../include/StdPreprocModules_global.h"
 #include <map>
 #include <string>
@@ -30,7 +19,7 @@
 //SpotRingClean::SpotRingClean(std::string name) :
 //	SpotClean2(name),
 //	mRingList(0),
-//	mNorm(NULL)
+//	mNorm(nullptr)
 //{
 //
 //}

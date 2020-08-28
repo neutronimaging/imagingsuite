@@ -1,8 +1,9 @@
 //<LICENCE>
 
-#ifndef __PCA_H
-#define __PCA_H
+#ifndef PCA_H
+#define PCA_H
 
+#include "../kipl_global.h"
 #include <iostream>
 #include <string>
 
@@ -22,11 +23,11 @@ typedef enum {
     PCA_SVD
 } ePCA_DecompositionType;
 
-class PCA {
+class KIPLSHARED_EXPORT PCA {
     kipl::logging::Logger logger;
 public:
     PCA();
-    ~PCA();
+    virtual ~PCA();
 
     void eigenimages(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,3> &eig);
     void filter(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,3> &filt, int level);
@@ -66,7 +67,7 @@ protected:
 }
 }
 
-std::string enum2string(kipl::pca::ePCA_DecompositionType dt);
-void string2enum(std::string str, kipl::pca::ePCA_DecompositionType &dt);
-std::ostream & operator<<(std::ostream &s, kipl::pca::ePCA_DecompositionType dt);
+std::string KIPLSHARED_EXPORT enum2string(kipl::pca::ePCA_DecompositionType dt);
+void KIPLSHARED_EXPORT string2enum(std::string str, kipl::pca::ePCA_DecompositionType &dt);
+std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream &s, kipl::pca::ePCA_DecompositionType dt);
 #endif

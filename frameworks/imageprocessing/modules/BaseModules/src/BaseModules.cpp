@@ -13,32 +13,31 @@
 #include "ScaleData.h"
 #include "DoseCorrection.h"
 #include "ClampData.h"
-#include "VolumeProject.h"
+//#include "VolumeProject.h"
 
 #include <KiplProcessModuleBase.h>
 
-
-
-
-BASEMODULES_EXPORT void * GetModule(const char *application, const char * name)
+BASEMODULES_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {
 	if (strcmp(application,"kiptool")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="scaledata")
-			return new ScaleData;
+            return new ScaleData(interactor);
 		if (sName=="DoseCorrection")
-			return new DoseCorrection;
+            return new DoseCorrection(interactor);
 		if (sName=="ClampData")
-			return new ClampData;
-		if (sName=="VolumeProject")
-			return new VolumeProject;
+            return new ClampData(interactor);
+//		if (sName=="VolumeProject")
+//            return new VolumeProject(interactor);
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 BASEMODULES_EXPORT int Destroy(const char *application, void *obj)
@@ -71,8 +70,8 @@ BASEMODULES_EXPORT int GetModuleList(const char *application, void *listptr)
 	ClampData cd;
 	modulelist->operator []("ClampData")=cd.GetParameters();
 
-	VolumeProject vp;
-	modulelist->operator []("VolumeProject")=vp.GetParameters();
+//	VolumeProject vp;
+//	modulelist->operator []("VolumeProject")=vp.GetParameters();
 
 	return 0;
 }

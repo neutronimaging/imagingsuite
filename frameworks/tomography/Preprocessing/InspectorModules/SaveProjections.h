@@ -2,16 +2,18 @@
 
 #ifndef SAVEPROJECTIONS_H_
 #define SAVEPROJECTIONS_H_
-
+#include "inspectormodules_global.h"
 #include <string>
 
 #include <PreprocModuleBase.h>
 #include <ReconConfig.h>
 
-class SaveProjections : public PreprocModuleBase
+#include <interactors/interactionbase.h>
+
+class INSPECTORMODULESSHARED_EXPORT SaveProjections : public PreprocModuleBase
 {
 public:
-	SaveProjections();
+    SaveProjections(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~SaveProjections();
 
 	virtual std::map<std::basic_string<char>, std::basic_string<char> > GetParameters();

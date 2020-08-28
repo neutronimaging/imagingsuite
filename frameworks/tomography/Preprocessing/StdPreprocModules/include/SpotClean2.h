@@ -14,7 +14,6 @@
 #ifndef _SPOTCLEAN2_H_
 #define _SPOTCLEAN2_H_
 
-//#include "../src/stdafx.h"
 #include "StdPreprocModules_global.h"
 #include <PreprocModuleBase.h>
 #include <base/timage.h>
@@ -26,14 +25,15 @@
 #include "PreprocEnums.h"
 #include <ReconConfig.h>
 #include <SpotClean.h>
+#include <interactors/interactionbase.h>
 
 
 class STDPREPROCMODULESSHARED_EXPORT SpotClean2 :
 	public PreprocModuleBase
 {
 public:
-		const float mark;
-	SpotClean2(std::string name="SpotClean2");
+    const float mark;
+    SpotClean2(std::string name="SpotClean2", kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~SpotClean2(void);
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 
@@ -52,7 +52,7 @@ public:
 
 	virtual std::string Version() {
 		ostringstream s;
-		s<<m_sModuleName<<" ("<<std::max(kipl::strings::VersionNumber("$Rev$"), SourceVersion())<<"), "<<PreprocModuleBase::Version();
+        s<<m_sModuleName<<" ("<<SourceVersion()<<"), "<<PreprocModuleBase::Version();
 
 		return s.str();
 	}

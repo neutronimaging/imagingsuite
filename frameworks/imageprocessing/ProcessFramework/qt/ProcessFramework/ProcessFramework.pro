@@ -13,6 +13,31 @@ CONFIG += c++11
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 
+
+DEFINES += PROCESSFRAMEWORK_LIBRARY
+
+SOURCES += \
+    ../../src/stdafx.cpp \
+    ../../src/KiplProcessModuleBase.cpp \
+    ../../src/KiplProcessConfig.cpp \
+    ../../src/KiplModuleItem.cpp \
+    ../../src/KiplFrameworkException.cpp \
+    ../../src/KiplFactory.cpp \
+    ../../src/KiplEngine.cpp \
+    ../../src/dllmain.cpp
+
+HEADERS += \
+    ../../include/KiplProcessModuleBase.h \
+    ../../include/KiplProcessConfig.h \
+    ../../include/KiplModuleItem.h \
+    ../../include/KiplFrameworkException.h \
+    ../../include/KiplFactory.h \
+    ../../include/KiplEngine.h \
+    ../../src/targetver.h \
+    ../../src/stdafx.h \
+    ../../include/ProcessFramework_global.h
+
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -22,7 +47,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
@@ -51,6 +75,17 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
+unix:!mac {
+    exists(/usr/lib/*NeXus*) {
+        message("-lNeXus exists")
+        DEFINES *= HAVE_NEXUS
+        LIBS += -lNeXus -lNeXusCPP
+    }
+    else {
+        message("-lNeXus does not exists $$LIBS")
+    }
+}
+
 unix:mac {
 exists($$PWD/../../../../../external/mac/lib/*NeXus*) {
 
@@ -71,28 +106,6 @@ message("-lNeXus does not exists $$HEADERS")
 
 }
 
-DEFINES += PROCESSFRAMEWORK_LIBRARY
-
-SOURCES += \
-    ../../src/stdafx.cpp \
-    ../../src/KiplProcessModuleBase.cpp \
-    ../../src/KiplProcessConfig.cpp \
-    ../../src/KiplModuleItem.cpp \
-    ../../src/KiplFrameworkException.cpp \
-    ../../src/KiplFactory.cpp \
-    ../../src/KiplEngine.cpp \
-    ../../src/dllmain.cpp
-
-HEADERS += \
-    ../../include/KiplProcessModuleBase.h \
-    ../../include/KiplProcessConfig.h \
-    ../../include/KiplModuleItem.h \
-    ../../include/KiplFrameworkException.h \
-    ../../include/KiplFactory.h \
-    ../../include/KiplEngine.h \
-    ../../src/targetver.h \
-    ../../src/stdafx.h \
-    ../../include/ProcessFramework_global.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -111,6 +124,25 @@ unix:!symbian {
         target.path = /usr/lib
     }
     INSTALLS += target
+}
+
+unix:mac {
+exists($$PWD/../../../../../../external/mac/lib/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES *= HAVE_NEXUS
+
+    INCLUDEPATH += $$PWD/../../../../../../external/mac/include/ $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../../../external/mac/include/ $$PWD/../../../../../../external/mac/include/nexus $$PWD/../../../../../../external/mac/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/mac/lib/
+
+    LIBS += -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+
+
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
 }
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/

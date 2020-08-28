@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport
+QT       += core widgets charts printsupport
 
 TARGET = QtAddons
 TEMPLATE = lib
@@ -20,7 +20,6 @@ unix:!macx {
 }
 
 unix:macx {
-    QMAKE_MAC_SDK = macosx10.12
     QMAKE_CXXFLAGS += -fPIC -O2
     INCLUDEPATH += /opt/local/include
     QMAKE_LIBDIR += /opt/local/lib
@@ -38,37 +37,51 @@ win32 {
 DEFINES += QTADDONS_LIBRARY
 
 SOURCES += plotter.cpp \
+    plotpainter.cpp \
     imagepainter.cpp \
     imageviewerwidget.cpp \
     qglyphs.cpp \
-    plotpainter.cpp \
-    plotwidget.cpp \
     reportgeneratorbase.cpp \
     imageviewerinfodialog.cpp \
     qmarker.cpp \
     qtlogviewer.cpp \
+    roiitemdlg.cpp \
     roiwidget.cpp \
     roimanager.cpp \
     uxroiwidget.cpp \
-    loggingdialog.cpp
+    loggingdialog.cpp \
+    comparevolumeviewer.cpp \
+    plotwidget.cpp \
+    setgraylevelsdlg.cpp \
+    callout.cpp \
+    facestyles.cpp \
+    plotcursor.cpp \
+    roidialog.cpp
 
 
 
 HEADERS += QtAddons_global.h \
     plotter.h \
+    plotpainter.h \
     imagepainter.h \
     imageviewerwidget.h \
     qglyphs.h \
-    plotpainter.h \
-    plotwidget.h \
     reportgeneratorbase.h \
     imageviewerinfodialog.h \
     qmarker.h \
     qtlogviewer.h \
+    roiitemdlg.h \
     roiwidget.h \
     roimanager.h \
     uxroiwidget.h \
-    loggingdialog.h
+    loggingdialog.h \
+    comparevolumeviewer.h \
+    plotwidget.h \
+    setgraylevelsdlg.h \
+    callout.h \
+    facestyles.h \
+    plotcursor.h \
+    roidialog.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -98,7 +111,12 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 FORMS += \
     imageviewerinfodialog.ui \
     qtlogviewer.ui \
+    roiitemdlg.ui \
     roiwidget.ui \
     roimanager.ui \
     uxroiwidget.ui \
-    loggingdialog.ui
+    loggingdialog.ui \
+    comparevolumeviewer.ui \
+    plotwidget.ui \
+    setgraylevelsdlg.ui \
+    roidialog.ui

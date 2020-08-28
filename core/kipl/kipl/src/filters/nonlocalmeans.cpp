@@ -20,9 +20,9 @@ namespace akipl {
 HistogramBin::HistogramBin() :
     cnt(0L),
     sum(0.0),
-    bin(0.0),
     local_avg(0.0),
-    local_avg2(0.0)
+    local_avg2(0.0),
+    bin(0.0)
 {
 
 }
@@ -30,9 +30,9 @@ HistogramBin::HistogramBin() :
 HistogramBin::HistogramBin(const HistogramBin &h) :
     cnt(h.cnt),
     sum(h.sum),
-    bin(h.bin),
     local_avg(h.local_avg),
-    local_avg2(h.local_avg2)
+    local_avg2(h.local_avg2),
+    bin(h.bin)
 {
 
 }
@@ -107,7 +107,7 @@ void NonLocalMeans::SaveDebugImage(kipl::base::TImage<float,2> & img, std::strin
 {
     if (m_bSaveDebugData) {
 #ifndef NO_TIFF
-        kipl::io::WriteTIFF32(img,fname.c_str());
+        kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
 #endif
     }
 }
@@ -115,10 +115,10 @@ void NonLocalMeans::SaveDebugImage(kipl::base::TImage<float,2> & img, std::strin
 void NonLocalMeans::operator()(kipl::base::TImage<float,2> &f, kipl::base::TImage<float,2> &g)
 {
     // Initialize result image
-    g.Resize(f.Dims());
+    g.resize(f.dims());
 
-    kipl::base::TImage<float,2> ff(f.Dims());
-    kipl::base::TImage<float,2> ff2(f.Dims());
+    kipl::base::TImage<float,2> ff(f.dims());
+    kipl::base::TImage<float,2> ff2(f.dims());
 
     NeighborhoodSums(f,ff,ff2);
 
@@ -158,8 +158,8 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
 {
     std::ostringstream msg;
     // Box filter
-    ff.Resize(f.Dims());
-    ff2.Resize(f.Dims());
+    ff.resize(f.dims());
+    ff2.resize(f.dims());
     kipl::base::TImage<float,2> g;
 
     for (size_t i=0; i<f.Size(); i++) { // Compute the squared pixel values of f as preparation for the L2 norm
@@ -167,27 +167,22 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
     }
 
     // Preparing filter kernels
-    size_t fdims_x[2]={static_cast<size_t>(m_nBoxSize), 1};
-    size_t fdims_y[2]={1, static_cast<size_t>(m_nBoxSize)};
+    std::vector<size_t> fdims_x={static_cast<size_t>(m_nBoxSize), 1};
+    std::vector<size_t> fdims_y={1, static_cast<size_t>(m_nBoxSize)};
 
-    float *kernel=nullptr;
+    std::vector<float> kernel;
     switch (m_eWindow) {
     case NonLocalMeans::NLMwindows::NLM_window_sum :
         m_Kerneltype=kipl::filters::KernelType::Separable;
-        kernel=new float[m_nBoxSize+1];
-        for (int i=0; i<m_nBoxSize; i++)
-             kernel[i]=1.0f;
+        kernel=std::vector<float>(m_nBoxSize,1.0f);
         break;
     case NonLocalMeans::NLMwindows::NLM_window_avg :
         m_Kerneltype=kipl::filters::KernelType::Separable;
-        kernel=new float[m_nBoxSize+1];
-
-        for (int i=0; i<m_nBoxSize; i++)
-             kernel[i]=1.0f/static_cast<float>(m_nBoxSize);
+        kernel=std::vector<float>(m_nBoxSize,1.0f/static_cast<float>(m_nBoxSize));
         break;
     case NonLocalMeans::NLMwindows::NLM_window_gauss: {
         m_Kerneltype=kipl::filters::KernelType::Separable;
-        kernel=new float[m_nBoxSize+1];
+        kernel=std::vector<float>(m_nBoxSize+1);
 
         int mid=m_nBoxSize/2;
         const float sfactor=sqrt(-log(0.05));
@@ -205,7 +200,7 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
     case NonLocalMeans::NLMwindows::NLM_window_buades : {
             fdims_x[0]=fdims_x[1]=static_cast<size_t>(2*m_nBoxSize+1);
             size_t N=fdims_x[0]*fdims_x[1];
-            kernel=new float[N+1];
+            kernel=std::vector<float>(m_nBoxSize+1);
 
             int mid=m_nBoxSize;
 
@@ -256,7 +251,6 @@ void NonLocalMeans::NeighborhoodSums(kipl::base::TImage<float,2> &f,
 
     SaveDebugImage(ff,"ff.tif");
     SaveDebugImage(ff2,"ff2.tif");
-    delete [] kernel;
 }
 
 size_t NonLocalMeans::GetNeighborhood(float *img, float *pNeighborhood, ptrdiff_t pos, ptrdiff_t nLine, ptrdiff_t N)
@@ -443,6 +437,8 @@ void NonLocalMeans::nlm_hist_sum_single(float *f, float *ff, float *ff2, float *
 /// \param N number of pixels
 void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *ff2, float *g, size_t N)
 {
+
+    throw kipl::base::KiplException("threaded histogram is not implemented",__FILE__,__LINE__);
     std::ostringstream msg;
 
     ComputeHistogramSum(f,ff,ff2,N);
@@ -466,9 +462,9 @@ void NonLocalMeans::nlm_hist_sum_threaded(float *f, float *ff, float *ff2, float
                                                              M + rest); }));
     }
 
-    // call join() on each thread in turn
-    for_each(threads.begin(), threads.end(),
-        std::mem_fn(&std::thread::join));
+    // call join() on each thread in turn this doesn't compile on ubuntu 18.04
+//    for_each(threads.begin(), threads.end(),
+//        std::mem_fn(&std::thread::join));
 }
 
 void NonLocalMeans::nlm_core_hist_sum(float *f, float *ff, float *ff2, float *g, size_t N)

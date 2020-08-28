@@ -39,11 +39,11 @@ const QMarker & QMarker::operator=(const QMarker &m)
     return *this;
 }
 
- const QMarker & QMarker::operator=(const QMarker &m) const
- {
+// const QMarker & QMarker::operator=(const QMarker &m) const
+// {
 
-     return *this;
- }
+//     return *this;
+// }
 
 QMarker::~QMarker()
 {

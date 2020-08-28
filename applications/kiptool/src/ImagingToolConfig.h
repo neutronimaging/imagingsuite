@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef __MERGECONFIG_H
 #define __MERGECONFIG_H
 
@@ -68,7 +70,7 @@ public:
     class FileConversionConfig {
 	public:
         FileConversionConfig();
-		std::string WriteXML(size_t indent=4);
+        std::string WriteXML(int indent=4);
 		void ParseXML(xmlTextReaderPtr reader);
 
 		std::string sSourcePath;
@@ -104,6 +106,7 @@ public:
 
         bool bSortGoldenScan;
         int nGoldenScanArc;
+        int nGoldenFirstIdx;
 	};
 
 	ImagingToolConfig() : logger("TomoMergeConfig") {}

@@ -33,7 +33,7 @@ class QTADDONSSHARED_EXPORT ImageViewerWidget : public QWidget
     Q_OBJECT
 
     kipl::logging::Logger logger;
-    static QList<ImageViewerWidget *> s_ViewerList;
+ //   static QList<ImageViewerWidget *> s_ViewerList;
     static int m_nViewerCounter;
     QString m_sViewerName;
 public:
@@ -53,11 +53,11 @@ public:
     };
 
    // explicit ImageViewerWidget(QWidget *parent = 0);
-    ImageViewerWidget(QWidget *parent = 0);
+    ImageViewerWidget(QWidget *parent = nullptr);
     ~ImageViewerWidget();
 
-    void set_image(float const * const data, size_t const * const dims);
-    void set_image(float const * const data, size_t const * const dims, const float low, const float high);
+    void set_image(float const * const data, const std::vector<size_t> &dims);
+    void set_image(float const * const data, const std::vector<size_t> & dims, const float low, const float high);
     void getImageDims(int &x, int &y);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
     void clear_plot(int idx=-1);
@@ -82,14 +82,19 @@ public:
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
     void LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect=true);
-    void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=NULL);
+    void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=nullptr);
 public slots:
 //    void zoomIn();
 //    void zoomOut();
     void ShowContextMenu(const QPoint& pos);
     void on_levelsChanged(float lo, float hi);
 
+private slots:
+    void saveCurrentView();
+    void copyImage();
+
 protected:
+    void setupActions();
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent * event);
     void mousePressEvent(QMouseEvent *event);
@@ -102,6 +107,7 @@ protected:
 protected:
     void UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w);
     void UpdateLinkedViewers();
+    void saveImage(const QString &fname);
 
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
@@ -114,6 +120,7 @@ protected:
     QRect roiRect;
     eViewerMouseModes m_MouseMode;
     Qt::MouseButton m_PressedButton;
+    bool m_mouseMoved;
     QPoint m_LastMotionPosition;
     QSize widgetSize;
     QSet<ImageViewerWidget *> m_LinkedViewers;
@@ -121,36 +128,15 @@ protected:
     ImageViewerInfoDialog m_infoDialog;
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
+    double m_CurrentScale;
+    QAction *saveImageAct;
+    QAction *copyImageAct;
 
 signals:
     void newImageDims(const QRect &rect);
     void levelsChanged(float lo, float hi);
 };
 
-class SetGrayLevelsDialog : public QDialog
-{
-    Q_OBJECT
-    kipl::logging::Logger logger;
-
-public:
-    SetGrayLevelsDialog(QWidget *parent);
-
-protected slots:
-    void GrayLevelsChanged(double x);
-
-protected:
-    QtAddons::Plotter m_Plotter;
-    QDoubleSpinBox m_spinLow;
-    QDoubleSpinBox m_spinHigh;
-    QLabel m_label1;
-    QLabel m_label2;
-    QVBoxLayout m_VerticalLayout;
-    QHBoxLayout m_HorizontalLayout;
-    QPushButton m_buttonClose;
-
-    ImageViewerWidget *m_pParent;
-
-};
 
 }
 

@@ -32,13 +32,13 @@ ConfigBase::ConfigBase(const ConfigBase &config) :
 
 }
 
-
 const ConfigBase & ConfigBase::operator=(const ConfigBase &config)
 {
-	m_sName=config.m_sName;
-    m_sApplicationPath=config.m_sApplicationPath;
-	modules=config.modules;
-    UserInformation=config.UserInformation;
+    logger             = config.logger;
+    m_sName            = config.m_sName;
+    m_sApplicationPath = config.m_sApplicationPath;
+    modules            = config.modules;
+    UserInformation    = config.UserInformation;
 
 	return *this;
 }
@@ -52,13 +52,13 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
     std::ostringstream msg;
 
     modules.clear();
-    reader = xmlReaderForFile(configfile.c_str(), NULL, 0);
-    if (reader != NULL) {
+    reader = xmlReaderForFile(configfile.c_str(), nullptr, 0);
+    if (reader != nullptr) {
     	ret = xmlTextReaderRead(reader);
         name = xmlTextReaderConstName(reader);
 
 
-        if (name==NULL) {
+        if (name==nullptr) {
             throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
         }
 
@@ -80,7 +80,7 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
         	if (xmlTextReaderNodeType(reader)==1) {
 	            name = xmlTextReaderConstName(reader);
 	            
-	            if (name==NULL) {
+                if (name==nullptr) {
 	                throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	            }
 	            sName=reinterpret_cast<const char *>(name);
@@ -125,10 +125,10 @@ void ConfigBase::ParseUserInformation(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -151,16 +151,16 @@ void ConfigBase::ParseUserInformation(xmlTextReaderPtr reader)
 	        }
 
 			if (sName=="comment") {
-				if (value!=NULL)
+                if (value!=nullptr)
 					UserInformation.sComment=reinterpret_cast<const char *>(value);
 	        }
             if (sName=="date") {
-                if (value!=NULL)
+                if (value!=nullptr)
                     UserInformation.sDate=reinterpret_cast<const char *>(value);
             }
 
             if (sName=="version") {
-                if (value!=NULL)
+                if (value!=nullptr)
                     UserInformation.sVersion=reinterpret_cast<const char *>(value);
             }
 		}
@@ -210,7 +210,7 @@ ConfigBase::cUserInformation & ConfigBase::cUserInformation::operator = (const c
 	return * this;
 }
 
-std::string ConfigBase::cUserInformation::WriteXML(size_t indent)
+std::string ConfigBase::cUserInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -300,21 +300,32 @@ void ConfigBase::GetCommandLinePars(std::vector<std::string> &args)
     ParseArgv(args);             // The arguments from the refined class
 }
 
+void ConfigBase::setAppPath(const std::string &path)
+{
+    m_sApplicationPath = path;
+}
+
+std::string ConfigBase::appPath()
+{
+    return m_sApplicationPath;
+}
+
 void ConfigBase::ParseArgv(std::vector<std::string> &args)
 {
     std::ostringstream msg;
-    logger(kipl::logging::Logger::LogMessage,"Base class argvparse");
+    logger.message("Base class argvparse");
     std::string group;
     std::string var;
     std::string value;
 
-    std::vector<std::string>::iterator it;//=args.begin(); it++;it++; it++;
+    std::vector<std::string>::iterator it;
     for (it=args.begin()+3 ; it!=args.end(); it++) {
-        std::clog<<*it<<std::endl;
+        logger.message(*it);
         try {
             EvalArg(*it,group,var,value);
         }
         catch (ModuleException &e) {
+            msg.str("");
             msg<<"Failed to parse argument "<<e.what();
             logger(kipl::logging::Logger::LogWarning,msg.str());
         }

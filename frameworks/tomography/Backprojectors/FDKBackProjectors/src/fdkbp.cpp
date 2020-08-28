@@ -36,7 +36,23 @@ static const unsigned int MARGIN = 5;
 FDKbp::FDKbp(kipl::interactors::InteractionBase *interactor) :
     FdkReconBase("muhrec","FDKbp",BackProjectorModuleBase::MatrixXYZ,interactor)
 {
+    publications.push_back(Publication(std::vector<std::string>({"L. A. Feldkamp","L. C. Davis","J. W. Kress"}),
+                                       "Practical cone-beam algorithm",
+                                       "J. Opt. Soc. Am. A",
+                                       1984,
+                                       1,
+                                       6,
+                                       "612-619",
+                                       "10.1364/JOSAA.1.000612"));
 
+    publications.push_back(Publication(std::vector<std::string>({"Gregory Sharp", "Nagarajan Kandasamy", "Harman Singh", "Michael Folkert"}),
+                                       "GPU-based streaming architectures for fast cone-beam CT image reconstruction and demons deformable registration",
+                                       "Physics in Medicine and Biology",
+                                       2007,
+                                       52,
+                                       19,
+                                       "5771-5783",
+                                       "10.1088/0031-9155/52/19/003"));
 
 }
 
@@ -332,7 +348,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         double *xip, *yip, *zip;
         double sad_sid_2;
 
-        float scale = mConfig.ProjectionInfo.fSOD/mConfig.ProjectionInfo.fSDD/nProj; // compensate for resolution that is already included in weights
+        float scale = mConfig.ProjectionInfo.fSDD/mConfig.ProjectionInfo.fSOD; // compensate for resolution that is already included in weights
 
         // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
         // magnification = SDD/SOD
@@ -352,9 +368,6 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
         origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing[2]-spacing[2]/2;
 
-//        origin[0] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[0])*spacing[0]-spacing[0]/2;
-//        origin[1] = -(U-mConfig.ProjectionInfo.fCenter-mConfig.MatrixInfo.voi[2])*spacing[1]-spacing[1]/2;
-//        origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1])-mConfig.MatrixInfo.voi[4])*spacing[2]-spacing[2]/2;
 
         float radius = static_cast<float>(volume.Size(1))*mConfig.MatrixInfo.fVoxelSize[0]/2;
 
@@ -657,17 +670,7 @@ float FDKbp::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, doub
 
  }
 
-//! In-place ramp filter for greyscale images
-//! \param data The pixel data of the image
-//! \param width The width of the image
-//! \param height The height of the image
-//! \template_param T The type of pixel in the image
-//void
-//ramp_filter (
-//    float *data,
-//    unsigned int width,
-//    unsigned int height
-//)
+
 
 
 void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
@@ -680,76 +683,49 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
     unsigned int height = img.Size(1);
     unsigned int padwidth = 2*pow(2, ceil(log(width)/log(2)));
     unsigned int pad_factor = padwidth-width;
-//    unsigned int padheight = 2*pow(2, ceil(log(height)/log(2)));
     unsigned int padheight = height;
-//    width = pow(2, ceil(log(width)/log(2)));
-//    width *=2;
-//    height = pow(2, ceil(log(height)/log(2)));
-//    height *=2; // much more padding
 
 
-//    std::cout << "width and height: " << width << " " << height << std::endl;
-
-    size_t pad_dims[2] = {padwidth, height};
+    std::vector<size_t> pad_dims = {padwidth, height};
     kipl::base::TImage< float,2 > padImg(pad_dims);
     padImg = 0.0; // fill with zeros
 
     // do zero padding
-    for (size_t i=0; i<height; ++i){
+    for (size_t i=0; i<height; ++i)
+    {
         memcpy(padImg.GetLinePtr(i,0)+pad_factor/2, img.GetLinePtr(i,0), sizeof(float)*width);
     }
-
-//    kipl::io::WriteTIFF32(padImg,"padImg.tif");
-//    kipl::io::WriteTIFF32(img,"img.tif");
-
 
     fftw_complex *in;
     fftw_complex *fft;
     fftw_complex *ifft;
-    fftw_plan fftp;
-    fftw_plan ifftp;
+    fftw_plan     fftp;
+    fftw_plan     ifftp;
     double *ramp;
-//    ramp = (double*) malloc (width * sizeof(double));
     ramp = (double*) malloc (padwidth * sizeof(double));
 
 
-    if (!ramp) {
+    if (!ramp)
+    {
         printf ("Error allocating memory for ramp\n"); // to substitute with an exception
     }
 
     N = width * height;
     Npad = padwidth*padheight;
-//    in = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * N);
-//    fft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * N);
-//    ifft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * N);
-    in = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-    fft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
+
+    in   = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
+    fft  = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
     ifft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
 
 
-    if (!in || !fft || !ifft) {
+    if (!in || !fft || !ifft)
+    {
         printf("Error allocating memory for fft\n");
     }
 
-    float *data = img.GetDataPtr();
+    float *data    = img.GetDataPtr();
     float *paddata = padImg.GetDataPtr();
 
-//    for (r = 0; r < MARGIN; ++r)
-//        memcpy (data + r * width, data + MARGIN * width,
-//        width * sizeof(float));
-
-//    for (r = height - MARGIN; r < height; ++r)
-//        memcpy (data + r * width, data + (height - MARGIN - 1) * width,
-//        width * sizeof(float));
-
-//    for (r = 0; r < height; ++r) {
-//        for (c = 0; c < MARGIN; ++c){
-//            data[r * width + c] = data[r * width + MARGIN];
-//        }
-//        for (c = width - MARGIN; c < width; ++c){
-//            data[r * width + c] = data[r * width + width - MARGIN - 1];
-//        }
-//    }
 
     for (r = 0; r < MARGIN; ++r)
         memcpy (paddata + r * padwidth, paddata + MARGIN * padwidth,
@@ -759,66 +735,28 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
         memcpy (paddata + r * padwidth, paddata + (padheight - MARGIN - 1) * padwidth,
         padwidth * sizeof(float));
 
-    for (r = 0; r < padheight; ++r) {
-        for (c = 0; c < MARGIN; ++c){
+    for (r = 0; r < padheight; ++r)
+    {
+        for (c = 0; c < MARGIN; ++c)
+        {
             paddata[r * padwidth + c] = paddata[r * padwidth + MARGIN];
         }
-        for (c = padwidth - MARGIN; c < padwidth; ++c){
+        for (c = padwidth - MARGIN; c < padwidth; ++c)
+        {
             paddata[r * padwidth + c] = paddata[r * padwidth + padwidth - MARGIN - 1];
         }
     }
 
-//    kipl::io::WriteTIFF32(padImg,"AfterStuff.tif");
-
-//    /* Fill in ramp filter in frequency space */
-//    for (i = 0; i < N; ++i) {
-//        in[i][0] = (double)(data[i]);
-//        // comment from here, check what happens here to understand the attenuation coefficients....
-////        in[i][0] /= 65535;
-////        in[i][0] = (in[i][0] == 0 ? 1 : in[i][0]);
-////        in[i][0] = -log (in[i][0]);
-//        // to here, to erase -log operation on projections
-//        in[i][1] = 0.0;
-//    }
 
     /* Fill in ramp filter in frequency space */
     for (i = 0; i < Npad; ++i) {
         in[i][0] = (double)(paddata[i]);
-        // comment from here, check what happens here to understand the attenuation coefficients....
-//        in[i][0] /= 65535;
-//        in[i][0] = (in[i][0] == 0 ? 1 : in[i][0]);
-//        in[i][0] = -log (in[i][0]);
-        // to here, to erase -log operation on projections
         in[i][1] = 0.0;
     }
 
 
 
-//    /* Add padding */
-//    for (i = 0; i < width / 2; ++i)
-//        ramp[i] = i;
 
-
-//    for (i = width / 2; i < (unsigned int) width; ++i)
-//        ramp[i] = width - i;
-
-//    /* Roll off ramp filter */
-//    for (i = 0; i < width; ++i)
-//        ramp[i] *= (cos (i * DEGTORAD * 360 / width) + 1) / 2;
-
-//    for (r = 0; r < height; ++r)
-//    {
-//    fftp = fftw_plan_dft_1d (width, in + r * width, fft + r * width,
-//        FFTW_FORWARD, FFTW_ESTIMATE);
-//    if (!fftp) {
-//        printf ("Error creating fft plan\n");
-//    }
-
-//    ifftp = fftw_plan_dft_1d (width, fft + r * width, ifft + r * width,
-//        FFTW_BACKWARD, FFTW_ESTIMATE);
-//    if (!ifftp) {
-//        printf ("Error creating ifft plan\n");
-//    }
 
     /* Add padding */
     for (i = 0; i < padwidth / 2; ++i)
@@ -830,32 +768,34 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
 
     /* Roll off ramp filter */
     for (i = 0; i < padwidth; ++i)
-        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+    {
+//        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORAD * 360 / padwidth) + 1));
+        ramp[i] /= padwidth*0.5;
+    }
 
     for (r = 0; r < padheight; ++r)
     {
-    fftp = fftw_plan_dft_1d (padwidth, in + r * padwidth, fft + r * padwidth,
-        FFTW_FORWARD, FFTW_ESTIMATE);
-    if (!fftp) {
-        printf ("Error creating fft plan\n");
-    }
+        fftp = fftw_plan_dft_1d (padwidth, in + r * padwidth, fft + r * padwidth,
+            FFTW_FORWARD, FFTW_ESTIMATE);
+        if (!fftp)
+        {
+            printf ("Error creating fft plan\n");
+        }
 
-    ifftp = fftw_plan_dft_1d (padwidth, fft + r * padwidth, ifft + r * padwidth,
-        FFTW_BACKWARD, FFTW_ESTIMATE);
-    if (!ifftp) {
-        printf ("Error creating ifft plan\n");
-    }
+        ifftp = fftw_plan_dft_1d (padwidth, fft + r * padwidth, ifft + r * padwidth,
+            FFTW_BACKWARD, FFTW_ESTIMATE);
+
+        if (!ifftp)
+        {
+            printf ("Error creating ifft plan\n");
+        }
 
         fftw_execute (fftp);
 
-//        // Apply ramp
-//        for (c = 0; c < width; ++c) {
-//            fft[r * width + c][0] *= ramp[c];
-//            fft[r * width + c][1] *= ramp[c];
-//        }
-
         // Apply ramp
-        for (c = 0; c < padwidth; ++c) {
+        for (c = 0; c < padwidth; ++c)
+        {
             fft[r * padwidth + c][0] *= ramp[c];
             fft[r * padwidth + c][1] *= ramp[c];
         }
@@ -864,15 +804,10 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
 
         fftw_execute (ifftp);
 
-    fftw_destroy_plan (fftp);
-    fftw_destroy_plan (ifftp);
+        fftw_destroy_plan (fftp);
+        fftw_destroy_plan (ifftp);
     }
 
-//    for (i = 0; i < N; ++i)
-//        ifft[i][0] /= width;
-
-//    for (i = 0; i < N; ++i)
-//        data[i] = (float)(ifft[i][0]);
 
     for (i = 0; i < Npad; ++i)
         ifft[i][0] /= padwidth;
@@ -882,11 +817,10 @@ void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
 
     // fo back to original dimension
 
-    for (i=0; i<height; ++i){
+    for (i=0; i<height; ++i)
+    {
         memcpy(img.GetLinePtr(i,0), padImg.GetLinePtr(i,0)+pad_factor/2, sizeof(float)*width);
     }
-
-
 
     fftw_free (in);
     fftw_free (fft);
@@ -915,7 +849,7 @@ void FDKbp::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
     msg<<"Pad width="<<padwidth;
     logger(logger.LogDebug,msg.str());
 
-    size_t pad_dims[2] = {padwidth, height};
+    std::vector<size_t> pad_dims = {padwidth, height};
     kipl::base::TImage< float,2 > padImg(pad_dims);
     padImg = 0.0f; // fill with zeros
 
@@ -979,7 +913,11 @@ void FDKbp::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
 
     // Roll off ramp filter
     for (i = 0; i < padwidth; ++i)
-        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+    {
+//        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
+        ramp[i] *= (0.54+0.46*(cos (i * DEGTORAD * 360 / padwidth) + 1));
+        ramp[i] /= padwidth*0.5;
+    }
 
 
 

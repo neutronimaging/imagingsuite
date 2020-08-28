@@ -1,5 +1,16 @@
 # Release history
-## Release note MuhRec 3.15 - June 2018
+## Release note MuhRec 4.0.1 - September 2018
+Bug fix release.
+
+### Fixed issues
+1. Issue 100: MuhRec - configure geometry dialog first and last slices
+2. Issue 123: Add BB instruction in the manual wiki
+3. Issue 125: Problems with ROI handling in MuhRec bug
+4. Issue 144: CBCT crashes when running from CLI bug
+5. Issue 150: Add support for multi-frame tiff in the core library
+6. Issue 157: MuhRec - improvements on the BB plugin enhancement
+
+## Release note MuhRec 4.0 - June 2018
 In this release we have revised the graphical user interface and added a new module for scattering correction.
 
 ### New features:

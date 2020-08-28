@@ -24,11 +24,10 @@ unix {
     }
 
     unix:macx {
-    #    QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         QMAKE_LIBDIR += /opt/local/lib
         LIBS += -L/opt/local/lib -lxml2
-        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
+        INCLUDEPATH += /opt/local/include /opt/local/include/libxml2/libxml /opt/local/include/libxml2/
     }
 }
 
@@ -45,18 +44,21 @@ win32 {
 DEFINES += MODULECONFIG_LIBRARY
 
 SOURCES += \
+    ../../src/publication.cpp \
     ../../src/stdafx.cpp \
     ../../src/ProcessModuleBase.cpp \
     ../../src/ParameterHandling.cpp \
     ../../src/ModuleItemBase.cpp \
     ../../src/ModuleException.cpp \
     ../../src/ModuleConfig.cpp \
-    ../../src/dllmain.cpp \
+#    ../../src/dllmain.cpp \
     ../../src/ConfigBase.cpp \
-    ../../src/datamodulebase.cpp
+    ../../src/datamodulebase.cpp \
+    ../../src/modulelibnamemanger.cpp
 
 HEADERS +=\
      ../../include/ModuleConfig_global.h \
+    ../../include/publication.h \
     ../../include/targetver.h \
     ../../include/ProcessModuleBase.h \
     ../../include/ParameterHandling.h \
@@ -64,7 +66,8 @@ HEADERS +=\
     ../../include/ModuleException.h \
     ../../include/ModuleConfig.h \
     ../../include/ConfigBase.h \
-    ../../include/datamodulebase.h
+    ../../include/datamodulebase.h \
+    ../../include/modulelibnamemanger.h \
     ../../src/stdafx.h
 
 symbian {

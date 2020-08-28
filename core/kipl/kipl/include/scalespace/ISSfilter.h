@@ -13,8 +13,8 @@ class ISSfilter {
 	std::ostream & logstream;
 public:
 	
-  ISSfilter(std::ostream &os=std::cout) :logstream(os),error(NULL) {m_dEpsilon=1e-7;}
-  ~ISSfilter() {if (error!=NULL) delete [] error;}
+  ISSfilter(std::ostream &os=std::cout) :logstream(os),error(nullptr) {m_dEpsilon=1e-7;}
+  ~ISSfilter() {if (error!=nullptr) delete [] error;}
   int Process(kipl::base::TImage<ImgType,NDims> &img, double dTau, double dLambda, double dAlpha, int nN);
 
    ImgType const * const GetErrorArray() {return error;}

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+#include <iterator>
 
 #include "../../include/strings/string2array.h"
 #include "../../include/base/KiplException.h"
@@ -152,22 +153,95 @@ size_t String2List(std::string str, std::list<int> &v)
     return i;
 }
 
-size_t String2Array(std::string str, std::vector<float> &v)
+size_t String2Array(std::string str, std::vector<float> &v, size_t cnt)
 {
-    throw kipl::base::KiplException("String2Array is not implemented for vector<float>",__FILE__,__LINE__);
+    std::string data, element;
+    data=str;
+    bool status=true;
+    v.clear();
+    size_t i=0;
+    while (status)
+    {
+        status=GetElement(data,element);
+        if (!element.empty())
+        {
+            v.push_back(std::stof(element));
+            ++i;
+        }
+    }
+
+    if (v.size()<cnt)
+        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+
+    if (cnt<v.size())
+        v=std::vector<float>(v.begin(),v.begin()+cnt);
+
     return 0;
 }
 
-size_t String2Array(std::string str, std::vector<size_t> &v)
+size_t String2Array(std::string str, std::vector<size_t> &v, size_t cnt)
 {
-    throw kipl::base::KiplException("String2Array is not implemented for vector<size_t>",__FILE__,__LINE__);
+    std::string data, element;
+    data=str;
+    bool status=true;
+    v.clear();
+    size_t i=0;
+    while (status)
+    {
+        status=GetElement(data,element);
+        if (!element.empty())
+        {
+            v.push_back(std::stoul(element));
+            ++i;
+        }
+    }
+
+    if (v.size()<cnt)
+        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+
+    if (cnt<v.size())
+        v=std::vector<size_t>(v.begin(),v.begin()+cnt);
+
     return 0;
 }
 
-size_t String2Array(std::string str, std::vector<int> &v)
+size_t String2Array(std::string str, std::vector<int> &v, size_t cnt)
 {
-    throw kipl::base::KiplException("String2Array is not implemented for vector<int>",__FILE__,__LINE__);
+    std::string data, element;
+    data=str;
+    bool status=true;
+    v.clear();
+    size_t i=0;
+    while (status)
+    {
+        status=GetElement(data,element);
+        if (!element.empty())
+        {
+            v.push_back(std::stoi(element));
+            ++i;
+        }
+    }
+
+    if (v.size()<cnt)
+        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+
+    if (cnt<v.size())
+        v=std::vector<int>(v.begin(),v.begin()+cnt);
+
     return 0;
+}
+
+size_t String2Array(std::string str, std::vector<std::string> &v)
+{
+    v.clear();
+
+    std::istringstream iss(str);
+    std::vector<std::string> tokens{std::istream_iterator<std::string>{iss},
+                      std::istream_iterator<std::string>{}};
+
+    v=tokens;
+
+    return v.size();
 }
 
 
@@ -223,6 +297,27 @@ std::string Array2String(int *v, size_t N)
     return s.str();
 }
 
+size_t String2List(std::string str, std::list<std::string> &slist)
+{
+    slist.clear();
 
+    std::istringstream iss(str);
+    std::list<std::string> tokens{std::istream_iterator<std::string>{iss},
+                      std::istream_iterator<std::string>{}};
+
+    slist=tokens;
+
+    return slist.size();
+}
+
+std::string List2String(std::list<int> &v)
+{
+    std::ostringstream s;
+    int i=0;
+    for (auto it=v.begin(); it!=v.end(); ++it, ++i) {
+        s<<(*it)<<(i<(v.size()-1) ? " " : "");
+    }
+    return s.str();
+}
 
 }}

@@ -1,14 +1,21 @@
 //<LICENCE>
 
-#ifndef KIPLENUMS_H_
-#define KIPLENUMS_H_
+#ifndef KIPLENUMS_H
+#define KIPLENUMS_H
 #include "../kipl_global.h"
 
 #include <iostream>
 
-
-
 namespace kipl { namespace base {
+
+/// \brief Operating system selector
+enum eOperatingSystem {
+    OSUnknown,
+    OSWindows,
+    OSMacOS,
+    OSLinux
+};
+
 /// \brief Image plane selection enum
 enum eImagePlanes {
     ImagePlaneXY = 1, ///< selects the XY plane
@@ -34,10 +41,11 @@ enum ePadType {
 
 /// \brief Image flip selector
 enum eImageFlip {
-    ImageFlipNone=0,            ///< No flipping
-    ImageFlipHorizontal,        ///< Flip about the vertical axis
-    ImageFlipVertical,          ///< Flip about the horizontal axis
-    ImageFlipHorizontalVertical ///< Flip both horizontal and vertial
+    ImageFlipNone=0,             ///< No flipping
+    ImageFlipHorizontal,         ///< Flip about the vertical axis
+    ImageFlipVertical,           ///< Flip about the horizontal axis
+    ImageFlipHorizontalVertical, ///< Flip both horizontal and vertial
+    ImageFlipDefault             ///< Use default Flip operation
 };
 
 /// \brief Image axis permutation selector
@@ -55,22 +63,23 @@ enum eImageRotate {
     ImageRotateNone=0,  ///< No rotation
     ImageRotate90,      ///< Rotate 90 degrees clockwise
     ImageRotate180,     ///< Rotate 180 degrees clockwise
-    ImageRotate270      ///< Rotate 270 degrees clockwise
+    ImageRotate270,     ///< Rotate 270 degrees clockwise
+    ImageRotateDefault  ///< Use default rotation operation
 };
 
 ///< Selector for the rotation direction
 enum eRotationDirection {
-    RotationDirCW = 0,  ///< Rotation clock wise
-    RotationDirCCW      ///< Rotation counter clock wise
+    RotationDirCW  = 0,  ///< Rotation clock wise
+    RotationDirCCW = 1     ///< Rotation counter clock wise
 };
 
 /// \brief Unsigned integer data type selector
 enum eDataType {
-    UInt4,      ///< 4bits unsigned integer
-    UInt8,      ///< 8bits unsigned integer
-    UInt12,     ///< 12bits unsigned integer
-    UInt16,     ///< 16bits unsigned integer
-    Float32     ///< 32bit float
+    UInt4   = 4,      ///< 4bits unsigned integer
+    UInt8   = 8,      ///< 8bits unsigned integer
+    UInt12  = 12,     ///< 12bits unsigned integer
+    UInt16  = 16,     ///< 16bits unsigned integer
+    Float32 = 32      ///< 32bit float
 };
 
 /// \brief Endian selector
@@ -81,12 +90,12 @@ enum eEndians {
 
 /// \brief selector for neighborhood connectivity
 enum eConnectivity {
-    conn4=4,
-    conn8=8,
-    conn6=6,
-    conn18=18,
-    conn26=26,
-    euclid=0
+    conn4,
+    conn8,
+    conn6,
+    conn18,
+    conn26,
+    euclid
 };
 
 enum eEdgeStatus {
@@ -94,16 +103,53 @@ enum eEdgeStatus {
     edgeX0 = 1,
     edgeX1 = 2,
     edgeY0 = 4,
-    cornerX0Y0 = edgeX0+edgeY0,//1+4,
-    cornerX1Y0 = edgeX1+edgeY0,//2+4,
+    cornerX0Y0 = edgeX0+edgeY0,//1+4 = 5
+    cornerX1Y0 = edgeX1+edgeY0,//2+4 = 6
     edgeY1 = 8,
-    cornerX0Y1 = edgeX0+edgeY1,//1+8,
-    cornerX1Y1 = edgeX1+edgeY1,//2+8,
+    cornerX0Y1 = edgeX0+edgeY1,//1+8 = 9
+    cornerX1Y1 = edgeX1+edgeY1,//2+8 = 10
     edgeZ0 = 16,
-    edgeZ1 = 32
+    edgeZ1 = 32,
+    cornerX0Y0Z0 = edgeX0+edgeY0+edgeZ0, // 1+4+16 = 21
+    cornerX1Y0Z0 = edgeX1+edgeY0+edgeZ0, // 2+4+16 = 22
+    cornerX0Y1Z0 = edgeX0+edgeY1+edgeZ0, // 1+8+16 = 25
+    cornerX1Y1Z0 = edgeX1+edgeY1+edgeZ0, // 2+8+16 = 26
+    cornerX0Y0Z1 = edgeX0+edgeY0+edgeZ1, // 1+4+32 = 37
+    cornerX1Y0Z1 = edgeX1+edgeY0+edgeZ1, // 2+4+32 = 38
+    cornerX0Y1Z1 = edgeX0+edgeY1+edgeZ1, // 1+8+32 = 41
+    cornerX1Y1Z1 = edgeX1+edgeY1+edgeZ1, // 2+8+32 = 42
+    cornerX0Z0   = edgeZ0 + edgeX0,      // 16+1   = 17
+    cornerX0Z1   = edgeZ1 + edgeX0,      // 32+1   = 33
+    cornerX1Z0   = edgeX1 + edgeZ0,      // 16+2   = 18
+    cornerX1Z1   = edgeX1 + edgeZ1,      // 32+2   = 34
+    cornerY0Z0   = edgeY0 + edgeZ0,      // 16+4   = 20
+    cornerY0Z1   = edgeY0 + edgeZ1,      // 32+4   = 36
+    cornerY1Z0   = edgeY1 + edgeZ0,      // 16+8   = 24
+    cornerY1Z1   = edgeY1 + edgeZ1       // 32+8   = 40
+
 };
 
+KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn);
+KIPLSHARED_EXPORT int connectivityNeighbors(kipl::base::eConnectivity conn);
+KIPLSHARED_EXPORT kipl::base::eOperatingSystem getOperatingSystem();
 }}
+
+/// \brief Stream output operator for eOperatingSystem
+/// \param s the stream that handles the enum
+/// \param plane the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream & s, kipl::base::eOperatingSystem &os);
+
+/// \brief Converts an operating system enum to a string
+/// \param plane the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the image plane name
+KIPLSHARED_EXPORT std::string enum2string(const kipl::base::eOperatingSystem &os);
+
+/// \brief Converts a string to an operating system enum
+/// \param str a string containing the name to convert
+/// \param plane the enum result
+KIPLSHARED_EXPORT void  string2enum(const std::string &str, kipl::base::eOperatingSystem &os);
 
 /// \brief Stream output operator for eImagePlanes
 /// \param s the stream that handles the enum
@@ -138,6 +184,17 @@ KIPLSHARED_EXPORT std::ostream &operator<<(std::ostream & s, kipl::base::eImageR
 /// \param str a string containing the name to convert
 /// \param flip the enum result
 KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eImageFlip &flip);
+
+/// \brief Converts an image rotation enum to a string
+/// \param str a string containing the name to convert
+/// \param rot the enum result
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eImageFlip flip);
+
+/// \brief Converts an image rotation enum to a string
+/// \param str a string containing the name to convert
+/// \param rot the enum result
+KIPLSHARED_EXPORT std::string enum2string(kipl::base::eImageRotate &rot);
+
 
 /// \brief Converts a string to an image rotation enum
 /// \param str a string containing the name to convert

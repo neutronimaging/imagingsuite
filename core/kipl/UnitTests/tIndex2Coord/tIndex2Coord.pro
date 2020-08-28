@@ -11,6 +11,10 @@ QT       -= gui
 TARGET = tst_tindex2coordtest
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += c++11
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
@@ -32,8 +36,9 @@ SOURCES += \
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 
-
-unix|win32: LIBS += -L$$PWD/../../../../../lib/ -lkipl.1.0.0
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/include

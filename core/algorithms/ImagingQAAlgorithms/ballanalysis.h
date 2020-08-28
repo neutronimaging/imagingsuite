@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef BALLANALYSIS_H
 #define BALLANALYSIS_H
 

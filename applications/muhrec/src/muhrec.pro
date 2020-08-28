@@ -4,10 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport concurrent
+QT       += core widgets printsupport charts concurrent
 
-TARGET = MuhRec
-VERSION = 4.0.0
+TARGET = muhrec
+VERSION = 4.2
 TEMPLATE = app
 CONFIG += c++11
 
@@ -58,7 +58,8 @@ ICON = muh4_icon.icns
 RC_ICONS = muh4_icon.ico
 
 SOURCES += main.cpp\
-        muhrecmainwindow.cpp \
+    moduleconfigprogressdialog.cpp \
+    muhrecmainwindow.cpp \
     MuhrecInteractor.cpp \
     configuregeometrydialog.cpp \
     findskiplistdialog.cpp \
@@ -69,12 +70,14 @@ SOURCES += main.cpp\
     preferencesdialog.cpp \
     dialogtoobig.cpp \
     piercingpointdialog.cpp \
-    referencefiledlg.cpp
+    referencefiledlg.cpp \
+    globalsettingsdialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
     configuregeometrydialog.h \
     findskiplistdialog.h \
+    moduleconfigprogressdialog.h \
     recondialog.h \
     PreProcModuleConfigurator.h \
     stdafx.h \
@@ -82,20 +85,23 @@ HEADERS  += muhrecmainwindow.h \
     preferencesdialog.h \
     dialogtoobig.h \
     piercingpointdialog.h \
-    referencefiledlg.h
+    referencefiledlg.h \
+    globalsettingsdialog.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
     findskiplistdialog.ui \
+    moduleconfigprogressdialog.ui \
     recondialog.ui \
     viewgeometrylistdialog.ui \
     preferencesdialog.ui \
     dialogtoobig.ui \
     piercingpointdialog.ui \
-    referencefiledlg.ui
+    referencefiledlg.ui \
+    globalsettingsdialog.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
@@ -106,11 +112,17 @@ DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtImaging
+DEPENDPATH += $$PWD/../../../GUI/qt/QtImaging
+
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
+
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig/include
+DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig/include
 
 INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
 DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
@@ -121,3 +133,8 @@ INCLUDEPATH += $$PWD/../../../external/mac/include
 DEPENDPATH += $$PWD/../../../external/mac/include
 LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
+
+DISTFILES += \
+    ../Resources/defaults_linux.xml \
+    ../Resources/defaults_mac.xml \
+    ../Resources/defaults_windows.xml

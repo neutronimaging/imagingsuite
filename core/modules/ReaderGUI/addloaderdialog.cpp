@@ -1,5 +1,6 @@
 #include <QFileDialog>
 #include <QString>
+#include <QMessageBox>
 
 #include <io/DirAnalyzer.h>
 
@@ -39,9 +40,19 @@ void AddLoaderDialog::on_pushButton_Browse_clicked()
         int nFiles;
         int nFirstIndex;
         int nLastIndex;
-        da.AnalyzeMatchingNames(fi.m_sMask,nFiles,nFirstIndex,nLastIndex);
+        std::string fname=fi.m_sMask;
+        try
+        {
+            da.AnalyzeMatchingNames(fi.m_sMask,nFiles,nFirstIndex,nLastIndex);
+        }
+        catch (...) {
+            QMessageBox::warning(this,"Warning", "The file name couldn't be analyzed.");
+            fname=projdir.toStdString();
+            nFirstIndex=1;
+            nLastIndex=1;
+        }
+        ui->lineEdit_FileMask->setText(QString::fromStdString(fname));
 
-        ui->lineEdit_FileMask->setText(QString::fromStdString(fi.m_sMask));
         ui->spinBox_First->setValue(nFirstIndex);
         ui->spinBox_Last->setValue(nLastIndex);
 

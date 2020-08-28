@@ -18,8 +18,8 @@ PCA::PCA() :
     logger("PCA"),
     m_bCenterData(false),
     m_bNormalizeData(false),
-    m_fMean(NULL),
-    m_fStdDev(NULL),
+    m_fMean(nullptr),
+    m_fStdDev(nullptr),
     m_eCovType(kipl::math::CorrelationMatrix),
     m_eDecompositionType(kipl::pca::PCA_Eigen)
 {
@@ -28,10 +28,10 @@ PCA::PCA() :
 
 PCA::~PCA()
 {
-    if (m_fMean!=NULL)
+    if (m_fMean!=nullptr)
         delete [] m_fMean;
 
-    if (m_fStdDev!=NULL)
+    if (m_fStdDev!=nullptr)
         delete [] m_fStdDev;
 }
 
@@ -94,7 +94,7 @@ void PCA::ComputeTransformMatrix(kipl::base::TImage<float,3> &img, int level)
     kipl::math::Covariance<float> cov;
 
     cov.setResultMatrixType(m_eCovType);
-    m_mCovariance=cov.compute(img.GetDataPtr(),img.Dims(),3);
+    m_mCovariance=cov.compute(img.GetDataPtr(),img.dims(),3);
 
     JAMA::Eigenvalue<double> eig(m_mCovariance);
 
@@ -119,7 +119,7 @@ void PCA::ComputeTransformMatrix(kipl::base::TImage<float,3> &img, int level)
 
 void PCA::ComputeTransform(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,3> &res)
 {
-    res.Resize(img.Dims());
+    res.resize(img.dims());
     res=0.0f;
 
     TNT::Array2D<double> &m=m_mTransformMatrix;
@@ -146,7 +146,7 @@ void PCA::NormalizeData(base::TImage<float,3> &img)
         size_t N=img.Size(0)*img.Size(1);
         int nSlices = static_cast<int>(img.Size(2));
 
-        kipl::math::statistics(img.GetDataPtr(),m_fMean, m_fStdDev, img.Dims(), 3, true);
+        kipl::math::statistics(img.GetDataPtr(),m_fMean, m_fStdDev, img.dims(), 3, true);
 
         for (int slice=0; slice<nSlices; slice++) {
             float *pSlice=img.GetLinePtr(0,slice);

@@ -16,8 +16,8 @@ class ISSfilterQ3Dp {
 	kipl::logging::Logger logger;
 public:
 	
-  ISSfilterQ3Dp() :logger("ISSfilterQ3Dp"), eInitialImage(InitialImageOriginal),error(NULL) {m_dEpsilon=1e-7;}
-  ~ISSfilterQ3Dp() {if (error!=NULL) delete [] error;}
+  ISSfilterQ3Dp() :logger("ISSfilterQ3Dp"), eInitialImage(InitialImageOriginal),error(nullptr) {m_dEpsilon=1e-7;}
+  ~ISSfilterQ3Dp() {if (error!=nullptr) delete [] error;}
   int Process(kipl::base::TImage<T,3> &img,
 		  double dTau,
 		  double dLambda,

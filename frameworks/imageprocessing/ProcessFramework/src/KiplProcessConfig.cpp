@@ -1,29 +1,24 @@
-//
-// This file is part of the i KIPL image processing library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2008-11-11 21:09:49 +0100 (Di, 11 Nov 2008) $
-// $Rev: 13 $
-//
+//<LICENSE>
 
 #include "stdafx.h"
 
 #include <sstream>
 #include <iomanip>
+#include <string>
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+#include <strings/xmlstrings.h>
 
 #include "../include/KiplProcessConfig.h"
 #include "../include/KiplFrameworkException.h"
 
+#include <io/analyzefileext.h>
+
 // Main config class
 
-KiplProcessConfig::KiplProcessConfig(void) :
-    ConfigBase("KiplProcessConfig")
+KiplProcessConfig::KiplProcessConfig(const std::string &appPath) :
+    ConfigBase("KiplProcessConfig",appPath)
 {
 }
 
@@ -46,10 +41,11 @@ std::string KiplProcessConfig::WriteXML()
 
 		if (!modules.empty()) {
 			str<<std::setw(indent)<<" "<<"<processchain>\n";
-			std::list<ModuleConfig>::iterator it;
 
-			for (it=modules.begin(); it!=modules.end(); it++) {
-				str<<it->WriteXML(indent+4);
+            for (auto &module : modules)
+            {
+                module.setAppPath(m_sApplicationPath);
+                str<<module.WriteXML(indent+4);
 			}
 			str<<std::setw(indent)<<" "<<"</processchain>\n";
 		}
@@ -85,10 +81,10 @@ void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 				throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -97,7 +93,7 @@ void KiplProcessConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			
 			int depth2=xmlTextReaderDepth(reader);
 			if (sName=="module") {
-				ModuleConfig module;
+                ModuleConfig module(m_sApplicationPath);
 				module.ParseModule(reader);
 				modules.push_back(module);
 			}
@@ -132,7 +128,7 @@ KiplProcessConfig::cSystemInformation & KiplProcessConfig::cSystemInformation::o
 	return *this;
 }
 
-std::string KiplProcessConfig::cSystemInformation::WriteXML(size_t indent)
+std::string KiplProcessConfig::cSystemInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -158,10 +154,10 @@ void KiplProcessConfig::cSystemInformation::ParseXML(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -190,7 +186,11 @@ KiplProcessConfig::cImageInformation::cImageInformation() :
 		bUseROI(false),
 		nFirstFileIndex(1),
         nLastFileIndex(100),
-        nStepFileIndex(1)
+        nStepFileIndex(1),
+        nStride(1),
+        nRepeat(1),
+        eFlip(kipl::base::ImageFlipNone),
+        eRotate(kipl::base::ImageRotateNone)
 {
 	nROI[0]=nROI[1]=0;
 	nROI[2]=nROI[3]=100;
@@ -202,7 +202,11 @@ KiplProcessConfig::cImageInformation::cImageInformation(const cImageInformation 
 	bUseROI(a.bUseROI),
 	nFirstFileIndex(a.nFirstFileIndex),
     nLastFileIndex(a.nLastFileIndex),
-    nStepFileIndex(a.nStepFileIndex)
+    nStepFileIndex(a.nStepFileIndex),
+    nStride(a.nStride),
+    nRepeat(a.nRepeat),
+    eFlip(a.eFlip),
+    eRotate(a.eRotate)
 {
 	nROI[0]=a.nROI[0];
 	nROI[1]=a.nROI[1];
@@ -217,6 +221,10 @@ KiplProcessConfig::cImageInformation & KiplProcessConfig::cImageInformation::ope
 	bUseROI              = a.bUseROI;
 	nFirstFileIndex      = a.nFirstFileIndex;
 	nLastFileIndex       = a.nLastFileIndex;
+    nStride              = a.nStride;
+    nRepeat              = a.nRepeat;
+    eFlip                = a.eFlip;
+    eRotate              = a.eRotate;
 
 	nROI[0]=a.nROI[0];
 	nROI[1]=a.nROI[1];
@@ -226,7 +234,7 @@ KiplProcessConfig::cImageInformation & KiplProcessConfig::cImageInformation::ope
 	return *this;
 }
 
-std::string KiplProcessConfig::cImageInformation::WriteXML(size_t indent)
+std::string KiplProcessConfig::cImageInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -236,7 +244,12 @@ std::string KiplProcessConfig::cImageInformation::WriteXML(size_t indent)
 	str<<setw(indent+4)<<"  "<<"<srcfilemask>"<<sSourceFileMask<<"</srcfilemask>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<firstfileindex>"<<nFirstFileIndex<<"</firstfileindex>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<lastfileindex>"<<nLastFileIndex<<"</lastfileindex>"<<std::endl;
-	str<<setw(indent+4)<<"  "<<"<useroi>"<<kipl::strings::bool2string(bUseROI)<<"</useroi>"<<std::endl;
+    str<<kipl::strings::xmlString("useroi", bUseROI,              indent+4);
+    str<<kipl::strings::xmlString("stride", nStride,              indent+4);
+    str<<kipl::strings::xmlString("repeat", nRepeat,              indent+4);
+    str<<kipl::strings::xmlString("flip",   enum2string(eFlip),   indent+4);
+    str<<kipl::strings::xmlString("rotate", enum2string(eRotate), indent+4);
+
 	str<<setw(indent+4)<<"  "<<"<roi>"<<nROI[0]<<" "<<nROI[1]<<" "<<nROI[2]<<" "<<nROI[3]<<"</roi>"<<std::endl;
 	str<<setw(indent)  <<"  "<<"</image>"<<std::endl;
 
@@ -256,10 +269,10 @@ void KiplProcessConfig::cImageInformation::ParseXML(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 	        
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -289,6 +302,24 @@ void KiplProcessConfig::cImageInformation::ParseXML(xmlTextReaderPtr reader)
 			if (sName=="lastfileindex") {
 				nLastFileIndex=atoi(sValue.c_str());
 			}
+
+            if (sName=="stride")
+            {
+                nStride=std::stoul(sValue);
+            }
+
+            if (sName=="repeat")
+            {
+                nRepeat=std::stoul(sValue);
+            }
+
+            if (sName=="flip")
+            {
+                string2enum(sValue,eFlip);
+            }
+            if (sName=="rotate"){
+                string2enum(sValue,eRotate);
+            }
 
 		}
         ret = xmlTextReaderRead(reader);
@@ -323,7 +354,7 @@ KiplProcessConfig::cOutImageInformation & KiplProcessConfig::cOutImageInformatio
 	return *this;
 }
 
-std::string KiplProcessConfig::cOutImageInformation::WriteXML(size_t indent)
+std::string KiplProcessConfig::cOutImageInformation::WriteXML(int indent)
 {
 	using namespace std;
 	ostringstream str;
@@ -352,10 +383,10 @@ void KiplProcessConfig::cOutImageInformation::ParseXML(xmlTextReaderPtr reader)
 	        ret=xmlTextReaderRead(reader);
 
 	        value = xmlTextReaderConstValue(reader);
-	        if (name==NULL) {
+            if (name==nullptr) {
 	            throw KiplFrameworkException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	        }
-	        if (value!=NULL)
+            if (value!=nullptr)
 	        	sValue=reinterpret_cast<const char *>(value);
 	        else
 	        	sValue="Empty";
@@ -374,7 +405,7 @@ void KiplProcessConfig::cOutImageInformation::ParseXML(xmlTextReaderPtr reader)
 			}
 
 			if (sName=="imagetype") {
-				kipl::io::string2enum(sValue,eResultImageType);
+                string2enum(sValue,eResultImageType);
 			}
 		}
         ret = xmlTextReaderRead(reader);

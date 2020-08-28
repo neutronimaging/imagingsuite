@@ -2,6 +2,7 @@
 
 #ifndef FILTER_HPP_
 #define FILTER_HPP_
+#include "../filter.h"
 
 namespace kipl { namespace filters {
 
@@ -14,7 +15,7 @@ void FilterInnerLoop(T const * const src, T * dest, T value, size_t N)
 }
 
 template <typename T, size_t nDims>
-TFilter<T,nDims>::TFilter(T const * const kernel, size_t const * const kDims) 
+TFilter<T,nDims>::TFilter(const std::vector<T> & kernel, const std::vector<size_t> & kDims)
 	: kipl::filters::TFilterBase<T,nDims>(kernel,kDims)
 {}
 	
@@ -31,7 +32,7 @@ void TFilter<T,nDims>::InnerLoop(T const * const src, T *dest, T value, size_t N
 template <typename T, size_t nDims>
 void TFilter<T,nDims>::InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
 {
-    dest.Resize(src.Dims());
+    dest.resize(src.dims());
 	dest=static_cast<T>(0);
 }
 

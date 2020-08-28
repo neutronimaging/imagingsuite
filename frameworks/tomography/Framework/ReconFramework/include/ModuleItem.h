@@ -1,9 +1,8 @@
 //<LICENSE>
 
-#ifndef __MODULEITEM_H
-#define __MODULEITEM_H
+#ifndef MODULEITEM_H
+#define MODULEITEM_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 
 #include <string>
 
@@ -67,7 +66,7 @@ public:
 
     /// The status of the created module.
     /// \returns true if there is an allocated module in the item.
-	bool Valid() {return m_Module!=NULL;}
+    bool Valid() {return m_Module!=nullptr;}
 	
     /// Unloads the back-projection module
 	virtual ~BackProjItem();

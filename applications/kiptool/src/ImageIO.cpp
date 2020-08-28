@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-//
+//<LICENSE>
 
 #include <KiplProcessConfig.h>
 #include <KiplFrameworkException.h>
@@ -15,42 +6,55 @@
 #include <sstream>
 #include <string>
 #include <base/timage.h>
+#include <imagereader.h>
+#include <interactors/interactionbase.h>
 
-kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config)
+kipl::base::TImage<float,3> LoadVolumeImage(KiplProcessConfig & config, kipl::interactors::InteractionBase *interactor)
 {
 
 	std::ostringstream msg;
-	std::string fname=config.mImageInformation.sSourcePath+config.mImageInformation.sSourceFileMask;
+    std::string fname=config.mImageInformation.sSourceFileMask;
 
-	kipl::base::TImage<float,3> img;
-	try {	
-		if (config.mImageInformation.bUseROI==true) {
-			kipl::io::ReadImageStack(img,fname,
-				config.mImageInformation.nFirstFileIndex,
-                config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
+    kipl::base::TImage<float,3> img;
+    ImageReader reader(interactor);
+    try
+    {
+       if (config.mImageInformation.bUseROI==true)
+       {
+            img=reader.Read(fname,
+                config.mImageInformation.nFirstFileIndex,
+                config.mImageInformation.nLastFileIndex,
                 config.mImageInformation.nStepFileIndex,
-				config.mImageInformation.nROI);
-		}
-		else {
-			kipl::io::ReadImageStack(img,fname,
-				config.mImageInformation.nFirstFileIndex,
-                config.mImageInformation.nLastFileIndex-config.mImageInformation.nFirstFileIndex+1,
+                config.mImageInformation.eFlip,
+                config.mImageInformation.eRotate,
+                1.0f,
+                config.mImageInformation.nROI);
+        }
+        else
+       {
+            img=reader.Read(fname,
+                config.mImageInformation.nFirstFileIndex,
+                config.mImageInformation.nLastFileIndex,
                 config.mImageInformation.nStepFileIndex,
-				NULL);
-		}
-	}
-	catch (kipl::base::KiplException &e) {
-		msg<<"KiplException with message: "<<e.what();
-		throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
-	}
-	catch (std::exception &e) {
-		msg<<"STL Exception with message: "<<e.what();
-		throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);	
-	}
-	catch (...) {
-		msg<<"Unknown exception thrown while reading image";
-		throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
-	}
+                config.mImageInformation.eFlip,
+                config.mImageInformation.eRotate,
+                1.0f,
+                {},0);
+        }
+
+    }
+    catch (kipl::base::KiplException &e) {
+            msg<<"KiplException with message: "<<e.what();
+            throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (std::exception &e) {
+            msg<<"STL Exception with message: "<<e.what();
+            throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
+    catch (...) {
+            msg<<"Unknown exception thrown while reading image";
+            throw KiplFrameworkException(msg.str(),__FILE__,__LINE__);
+    }
 
 	return img;
 }

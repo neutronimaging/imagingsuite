@@ -1,19 +1,8 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
 #include "../include/StdPreprocModules_global.h"
 #include "../include/TranslatedProjectionWeighting.h"
 #include "../include/ReconException.h"
-#include <io/io_matlab.h>
 #include <math/mathfunctions.h>
 
 #include <math/mathconstants.h>
@@ -22,7 +11,8 @@
 
 
 TranslatedProjectionWeighting::TranslatedProjectionWeighting() : 
-	PreprocModuleBase("TranslatedProjectionWeighting")
+    PreprocModuleBase("TranslatedProjectionWeighting"),
+    mConfig("")
 {
 }
 
@@ -68,8 +58,9 @@ bool TranslatedProjectionWeighting::SetROI(size_t *roi)
 	mROI[2]=roi[2];
 	mROI[3]=roi[3];
 
-	size_t dims[2]={mROI[2]-mROI[0],mROI[3]-mROI[1]};
-	fWeights.Resize(dims);
+    std::vector<size_t> dims = { mROI[2]-mROI[0],
+                                 mROI[3]-mROI[1]};
+    fWeights.resize(dims);
 
 	switch (eWeightFunction) {
 	case WeightFunction_Sigmoid : ComputeSigmoidWeights(); break;

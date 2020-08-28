@@ -19,6 +19,7 @@ SpotClean2Dlg::SpotClean2Dlg(QWidget *parent) :
     ui(new Ui::SpotClean2Dlg)
 {
     ui->setupUi(this);
+   // ui->plot_detection->hideLegend();
 }
 
 SpotClean2Dlg::~SpotClean2Dlg()
@@ -71,7 +72,7 @@ void SpotClean2Dlg::ApplyParameters()
     kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
 
-    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -100,13 +101,13 @@ void SpotClean2Dlg::ApplyParameters()
     }
 
     size_t N99=ii;
-    ui->plot_detection->setCurveData(0,axis,fcumhist,N99);
+    ui->plot_detection->setCurveData(0,axis,fcumhist,N99,"Detection histogram");
     float threshold[N];
 
     for (size_t i=0; i<N; i++) {
         threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
     }
-    ui->plot_detection->setCurveData(1,axis,threshold,N99);
+    ui->plot_detection->setCurveData(1,axis,threshold,N99,"Threshold weight");
 
     std::map<std::string,std::string> pars;
     m_ProcessedImage=m_OriginalImage;
@@ -121,7 +122,7 @@ void SpotClean2Dlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewer_result->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_result->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.dims(),axis[nLo],axis[nHi]);
 
     on_combo_detection_display_currentIndexChanged(ui->combo_detection_display->currentIndex());
 }
@@ -214,7 +215,7 @@ void SpotClean2Dlg::on_combo_detection_display_currentIndexChanged(int index)
     kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewer_difference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_difference->set_image(dimg.GetDataPtr(),dimg.dims(),axis[nLo],axis[nHi]);
 }
 
 void SpotClean2Dlg::on_buttonBox_clicked(QAbstractButton *button)

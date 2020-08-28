@@ -1,14 +1,5 @@
-//
-// This file is part of the ModuleConfigurator library by Anders Kaestner
-// (c) 2010 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2012-11-11 13:54:35 +0100 (Sun, 11 Nov 2012) $
-// $Rev: 1400 $
-// $Id: AddModuleDialog.h 1400 2012-11-11 12:54:35Z kaestner $
-//
+//<LICENSE>
+
 #ifndef __ADDMODULEDIALOG_H
 #define __ADDMODULEDIALOG_H
 
@@ -36,7 +27,7 @@ class AddModuleDialog : public QDialog
     Q_OBJECT
 	kipl::logging::Logger logger;
 public:
-    explicit AddModuleDialog(QWidget *parent = NULL);
+    explicit AddModuleDialog(QWidget *parent = nullptr);
     virtual ~AddModuleDialog() {}
 
     int configure(std::string application, std::string defaultsource="", std::string application_path="");
@@ -49,7 +40,7 @@ protected slots:
     virtual void reject();
 
 protected:
-    int UpdateModuleCombobox(QString fname);
+    int UpdateModuleCombobox(QString &fname);
     std::map<std::string, std::map<std::string, std::string> > GetModuleList(std::string filename);
 
     QVBoxLayout m_Dlg_layout;

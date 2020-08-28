@@ -1,57 +1,62 @@
-//<LICENCE>
+//<LICENSE>
 
-#ifndef __stlvecmath_h
-#define __stlvecmath_h
+#ifndef STLVECMATH_H
+#define STLVECMATH_H
 
 #include <vector>
+#include <map>
 #include <iostream>
+#include <algorithm>
+#include <stddef.h>
+#include <numeric>
 
 #include "../math/median.h"
+#include "../kipl_global.h"
+
+#include <QDebug>
 //#include "statistics.h"
 //#include "../misc/sortalg.h"
 //#include "../image/imagethres.h"
 
-using namespace std;
+// /// \brief Median filters the data in a vector
+// ///
+// /// \b Parameter:
+// /// - data : vector containing the data to be filtered
+// /// - out  : vector containing the result of the filter
+// /// - len  : length of the filter window
+//template<class T>
+//int MedianFilter(std::vector<T> & data,std::vector<T> &out, size_t len)
+//{
+//    int len2=static_cast<int>(len)/2;
+//	int l=0;
+//	T *base=new T[len];
+//	out.resize(data.size());
 
-/// \brief Median filters the data in a vector
-///
-/// \b Parameter:
-/// - data : vector containing the data to be filtered
-/// - out  : vector containing the result of the filter
-/// - len  : length of the filter window
-template<class T>
-int MedianFilter(vector<T> & data,vector<T> &out, size_t len)
-{
-    int len2=static_cast<int>(len)/2;
-	int l=0;
-	T *base=new T[len];
-	out.resize(data.size());
+//    int sd=data.size();
+//    int len2e=len2-(1-len%2);
 
-    int sd=data.size();
-    int len2e=len2-(1-len%2);
-
-    for (int i=0; i<sd; i++) {
-		l=0;
-        for (ptrdiff_t j=-len2; j<len2e; j++) {
-            if ((j+i>=0) && (j+i)<sd) {
-				base[l++]=data[i+j];
-			}
-		}
-		T val=0;
-	//	kipl::math::median(base,len,&val);
-		// todo: Check the problems with median
-		out[i]=val;
-	}
+//    for (int i=0; i<sd; i++) {
+//		l=0;
+//        for (ptrdiff_t j=-len2; j<len2e; j++) {
+//            if ((j+i>=0) && (j+i)<sd) {
+//				base[l++]=data[i+j];
+//			}
+//		}
+//		T val=0;
+//	//	kipl::math::median(base,len,&val);
+//		// todo: Check the problems with median
+//		out[i]=val;
+//	}
 	
-	delete [] base;
-	return 1;
-}
+//	delete [] base;
+//	return 1;
+//}
 
 /// Subtracts vector b from vector a
 template<class T>
-vector<T> operator-(vector<T> &a, vector<T> &b)
+std::vector<T> operator-(std::vector<T> &a, std::vector<T> &b)
 {
-	vector<T> diff(a.size());
+    std::vector<T> diff(a.size());
 
 	for (size_t i=0; i<a.size(); i++) 
 		diff[i]=a[i]-b[i];
@@ -61,9 +66,9 @@ vector<T> operator-(vector<T> &a, vector<T> &b)
 
 /// Adds vector a to vector b
 template<class T>
-vector<T> operator+(vector<T> &a, vector<T> &b)
+std::vector<T> operator+(std::vector<T> &a, std::vector<T> &b)
 {
-	vector<T> s(a.size());
+    std::vector<T> s(a.size());
 
 	for (size_t i=0; i<a.size(); i++) 
 		s[i]=a[i]+b[i];
@@ -73,9 +78,9 @@ vector<T> operator+(vector<T> &a, vector<T> &b)
 
 /// Elementwise multiplication  vector a to vector b
 template<class T>
-vector<T> operator*(vector<T> &a, vector<T> &b)
+std::vector<T> operator*(std::vector<T> &a, std::vector<T> &b)
 {
-	vector<T> s(a.size());
+    std::vector<T> s(a.size());
 
 	for (size_t i=0; i<a.size(); i++) 
 		s[i]=a[i]*b[i];
@@ -85,9 +90,9 @@ vector<T> operator*(vector<T> &a, vector<T> &b)
 
 /// Divides the vector by a constant
 template<class T>
-vector<double> operator/(vector<T> & a, double x)
+std::vector<double> operator/(std::vector<T> & a, double x)
 {
-	vector<double> tmp(a.size());
+    std::vector<double> tmp(a.size());
 	
 	for (size_t i=0; i<a.size(); i++) 
 		tmp[i]=a[i]/x;
@@ -98,20 +103,19 @@ vector<double> operator/(vector<T> & a, double x)
 
 /// Divides the vector by another vector with the same size
 template<class T1, class T2>
-vector<double> operator/(vector<T1> & a, vector<T2> &b)
+std::vector<double> operator/(std::vector<T1> & a, std::vector<T2> &b)
 {
 	if (a.size() != b.size()) {
-		cerr<<"stlvec math op/ : Vector size miss match"<<endl;
-		exit(0);
+        throw std::length_error("stlvec math op/ : Vector size miss match");
 	}
 
-	vector<double> tmp(a.size());
+    std::vector<double> tmp(a.size());
 	
 	for (size_t i=0; i<a.size(); i++) 
 		if (b[i])
-			tmp[i]=a[i]/(double)b[i];
+            tmp[i]=a[i]/static_cast<double>(b[i]);
 		else {
-			cerr<<"stlvec math op/ : div by zero at i="<<i<<endl;
+            std::cerr<<"stlvec math op/ : div by zero at i="<<i<<std::endl;
 		}
 
 	return tmp;
@@ -119,9 +123,9 @@ vector<double> operator/(vector<T1> & a, vector<T2> &b)
 
 /// Divides the vector by a constant
 template<class T >
-vector<double> operator-(vector<T> & a, double x )
+std::vector<double> operator-(std::vector<T> & a, double x )
 {
-	vector<double> tmp(a.size());
+    std::vector<double> tmp(a.size());
 	
 	for (size_t i=0; i<a.size(); i++) 
 		tmp[i]=a[i]-x;
@@ -131,22 +135,25 @@ vector<double> operator-(vector<T> & a, double x )
 
 /// Computes the sum of the elements in vector v
 template<class T>
-T sum(vector<T> v)
+T sum(std::vector<T> v)
 {
-	T sum=(T) 0;
-	for (size_t i=0; i<v.size(); i++)
-		sum+=v[i];
+    T sum=static_cast<T>(0);
+    for (const auto &item : v)
+        sum+=item;
 
 	return sum;
 }
 
 /// Convolves the vector x with the filter kernel in H
-template<class T>
-vector<T> filter(vector<T> &x, vector<double> &H)
+template<typename T, typename S>
+std::vector<T> filter(const std::vector<T> &x, const std::vector<S> &H)
 {
-	vector<T> tmp(x.size());
-    ptrdiff_t sx=x.size();
-    ptrdiff_t sH=H.size();
+    static_assert(std::is_floating_point<S>::value,
+                     "STL convolution can only be called with floating point kernel types");
+
+    std::vector<T> tmp(x.size());
+    ptrdiff_t sx=static_cast<ptrdiff_t>(x.size());
+    ptrdiff_t sH=static_cast<ptrdiff_t>(H.size());
 
     for (ptrdiff_t i=0; i<sx; i++) {
 		tmp[i]=0;
@@ -158,39 +165,81 @@ vector<T> filter(vector<T> &x, vector<double> &H)
 	
 	return tmp;
 }
-/*
-/// Computes the statistics of vector v
-template<class T>
-Math::Statistics vecstats(vector<T> v) 
+
+template<typename T, typename S>
+std::vector<T> convolve1d(const std::vector<T> &x, const std::vector<S> &H)
 {
-	Math::Statistics stat;
+    static_assert(std::is_floating_point<S>::value,
+                     "STL convolution can only be called with floating point kernel types");
 
-	for (size_t i=0; i<v.size(); i++)
-		stat.add(v[i]);
+    std::vector<T> y(x.size());
+    size_t pos = H.size()/2;
+    auto itY = y.begin();
+    std::advance(itY,pos);
 
-	return stat;
+    for (auto itX = x.begin(); itX!=x.end()-pos; ++itX, ++itY)
+    {
+        *itY = std::inner_product(H.begin(),H.end(),itX,0.0);
+     //   qDebug() << *itX, *itY;
+    }
+    return y;
 }
-*/
-/// Returns a vector with n elements having value val
+
+/// Convolves the vector x with the filter kernel in H
 template<class T>
-vector<T> FillVec(int n, T val=0)
+std::vector<T> medianFilter(const std::vector<T> &x, size_t len)
 {
-	vector<T> tmp(n);
+    std::vector<T> res(x.size());
+    std::vector<T> buffer(len);
+    size_t oddLen = len % 2;
+    size_t w = len/2 + oddLen;
 
-	for (size_t i=0; i<n; i++) {
-		tmp[i]=val;
-	}
+    auto itX = x.begin();
+    auto itR = res.begin()+w-1;
+    for ( ; itX!=(x.end()-len+1); ++itX,++itR)
+    {
+        std::copy(itX,itX+len,buffer.begin());
+        std::sort(buffer.begin(),buffer.end());
+        if (oddLen)
+            *itR=buffer[w-1];
+        else
+            *itR = (buffer[w]+buffer[w-1])/2;
+    }
 
-	return tmp;
+    std::fill(res.begin(),res.begin()+w,res[w-1]);
+    std::fill(res.end()-(len-w),res.end(),*(res.end()-(len-w+1)));
+    return res;
 }
+
+template <class T>
+void medianFilter(T * x, size_t N, size_t len)
+{
+    std::vector<T> xx(N);
+    std::copy_n(x,N,xx.begin());
+    auto res=medianFilter(xx,len);
+    std::copy_n(res.begin(),res.size(),x);
+}
+
+///// Computes the statistics of vector v
+//template<class T>
+//Math::Statistics vecstats(vector<T> v)
+//{
+//	Math::Statistics stat;
+
+//	for (size_t i=0; i<v.size(); i++)
+//		stat.add(v[i]);
+
+//	return stat;
+//}
+
 
 /// Returns a vector with n elements having data in an increasing series
 template<class T>
-vector<T> FillVecSeries(T start, T stop, T step=(T)1)
+std::vector<T> FillVecSeries(T start, T stop, T step=static_cast<T>(1))
 {
-	int n=1+(stop-start)/step;
+    size_t n=1+(stop-start)/step;
 
-	vector<T> tmp(n);
+    std::vector<T> tmp(n);
 	size_t i;
 	T val;
 	for (i=0, val=start; i<n; i++, val+=step) {
@@ -202,7 +251,7 @@ vector<T> FillVecSeries(T start, T stop, T step=(T)1)
 
 /// \brief Returns a vector with n-1 elements containing v[i]-v[i-1]
 template<class T>
-vector<T> DiffVec(vector<T> &v)
+std::vector<T> DiffVec(std::vector<T> &v)
 {
     std::vector<T> res;
     auto i0=v.begin();
@@ -216,51 +265,12 @@ vector<T> DiffVec(vector<T> &v)
 }
 
 template <class T>
-T Min(vector<T> &v,int *pos=NULL)
-{
-	T m=v[0];
-	int ptmp=0;
-
-	for (size_t i=0; i<v.size(); i++) {
-		if (v[i]<m) {
-			m=v[i];
-			ptmp=i;
-		}
-	}
-
-	if (pos)
-		*pos=ptmp;
-
-	return m;
-}
-
-template <class T>
-T Max(vector<T> &v,int *pos=NULL)
-{
-	T m=v[0];
-	int ptmp=0;
-
-	for (size_t i=0; i<v.size(); i++) {
-		if (v[i]>m) {
-			m=v[i];
-			ptmp=i;
-		}
-	}
-
-	if (pos)
-		*pos=ptmp;
-
-
-	return m;
-}
-
-template <class T>
-double median(vector<T> &v)
+double median(std::vector<T> &v)
 {
 	double m;
 	double *tmp;
 	
-	int N=v.size();
+    size_t N=v.size();
 	tmp=new double[N];
 
 
@@ -280,10 +290,10 @@ double median(vector<T> &v)
 }
 
 template <class T>
-double mean(vector<T> &v)
+double mean(std::vector<T> &v)
 {
 	double sum=0;
-	int N=v.size();
+    size_t N=v.size();
 	
 	for (size_t i=0; i<N; i++)
 		sum+=v[i];
@@ -292,17 +302,15 @@ double mean(vector<T> &v)
 }
 
 template <class T>
-vector<T> vecabs(vector<T> &v)
+std::vector<T> vecabs(std::vector<T> &v)
 {
-  vector<T> tmp;
-  tmp=v;
+    std::vector<T> tmp;
+    tmp=v;
 
-//  vector<T>::iterator it;
-  
-  for (size_t i=0; i<tmp.size(); i++)
-    tmp[i]= tmp[i]<0 ? -tmp[i] : tmp[i];
+    for (auto & val : tmp)
+        val = val<0 ? -val : val;
 
-	return tmp;
+    return tmp;
 }
 
 
@@ -314,15 +322,12 @@ vector<T> vecabs(vector<T> &v)
 	\retval The contents of the output vector (x) is computed as x[i]=x[i-1]+v[i].
 */
 template <class T>
-vector<T> cumsum(vector<T> &v, bool norm=false)
+std::vector<T> cumsum(std::vector<T> &v, bool norm=false)
 {
 	T tmp=0;
-	vector<T> tv;
+    std::vector<T> tv;
 	tv.resize(v.size());
-  /*
-	vector<T>::iterator it_v=v.begin();
-	vector<T>::iterator it_tmp=tv.begin();
-*/
+
 	tv[0]=v[0];
 	
 	for (size_t i=1; i<v.size(); i++) {
@@ -330,24 +335,23 @@ vector<T> cumsum(vector<T> &v, bool norm=false)
 	}
 
 	if (norm) {
-	double scale=1/ tv[tv.size()-1];
-	for (size_t i=0; i<tv.size(); i++)
-	tv[i]=(T)(tv[i]*scale);
+        double scale=1/ tv[tv.size()-1];
+        for (size_t i=0; i<tv.size(); i++)
+        tv[i]=static_cast<T>(tv[i]*scale);
 	}
 
 	return tv;
 }
 
-/** \brief The method computes the cumulative sum of the contents of the vector
-
-	\param begin Start position Iterator
-	\param end End position iterator
-	\param tv Resulting cum sum vector
-	
-	\returns The last sum value
-*/
+/// \brief The method computes the cumulative sum of the contents of the vector
+///
+///	\param begin Start position Iterator
+///	\param end End position iterator
+///	\param tv Resulting cum sum vector
+///
+///	\returns The last sum value
 template <class ForwardIterator, class T>
-T cumsum(const ForwardIterator &begin,const ForwardIterator &end, vector<T> &tv)
+T cumsum(const ForwardIterator &begin,const ForwardIterator &end, std::vector<T> &tv)
 {
 	T prev,sum;
 	tv.clear();
@@ -363,48 +367,49 @@ T cumsum(const ForwardIterator &begin,const ForwardIterator &end, vector<T> &tv)
 	return tv.back();
 }
 
-/*
-/// \brief Find the first occurance of the test becoming true
-///
-///	\param v Input vector
-///	\param val Test value
-///	\param cmp Type of comparison
-template<class  T>
-int Find(vector<T> &v,T val, CmpType cmp)
-{
-//  int i;
+std::map<float,float> KIPLSHARED_EXPORT diff(std::map<float,float> data);
 
-  typedef T tmptype;
+// /// \brief Find the first occurance of the test becoming true
+// ///
+// ///	\param v Input vector
+// ///	\param val Test value
+// ///	\param cmp Type of comparison
+//template<class  T>
+//int Find(vector<T> &v,T val, CmpType cmp)
+//{
+// //  int i;
+
+//  typedef T tmptype;
   
-  T it;
+//  T it;
 
-	for (size_t i=0; i<v.size(); i++) {
-    it=v[i];
-		switch(cmp){
-		case cmp_less:
-			if (it<val) return i;
-			break;
-		case cmp_greater:
-			if (it>val) return i;
-			break;
-		case cmp_lesseq:
-			if (it<=val) return i;
-			break;
-		case cmp_greatereq:
-			if (it>=val) return i;
-			break;
-		case cmp_eq:
-			if (it==val) return i;
-			break;
-		case cmp_noteq:
-			if (it!=val) return i;
-			break;
-		}
-	}
+//	for (size_t i=0; i<v.size(); i++) {
+//    it=v[i];
+//		switch(cmp){
+//		case cmp_less:
+//			if (it<val) return i;
+//			break;
+//		case cmp_greater:
+//			if (it>val) return i;
+//			break;
+//		case cmp_lesseq:
+//			if (it<=val) return i;
+//			break;
+//		case cmp_greatereq:
+//			if (it>=val) return i;
+//			break;
+//		case cmp_eq:
+//			if (it==val) return i;
+//			break;
+//		case cmp_noteq:
+//			if (it!=val) return i;
+//			break;
+//		}
+//	}
 
-	return -1;
-}
-*/
+//	return -1;
+//}
+
 
 /*
 template <class T>
@@ -451,40 +456,5 @@ int vechist(vector<T> &data, vector<int> &hist, vector<T> & interval, int N)
     	return 0;
 }
 
-template<class T>
-Math::Statistics vecstats(vector<T> &v, double outliers, int N=256) 
-{
-	Math::Statistics stat;
-	if ((outliers>=1) || (outliers<0)) 
-		outliers=0;
-	
-//	Gnuplot fig("test");
-	
-	if (outliers) {
-		vector<int> hist;
-		vector<double> interval;
-		vector<double> cumhist;
-		int a,b;	
-		vechist(v,hist,interval,N);
-		//fig.plot(hist);
-		hist=cumsum(hist);
-		//fig.plot(hist);
-		double low_tail, high_tail;
-		a=Find(hist,int(outliers*0.5*v.size()),cmp_greater);
-		low_tail=interval[a];
-		b=Find(hist,int((1-outliers*0.5)*v.size()),cmp_greater);
-		high_tail=interval[b];
-		
-		for (size_t i=0; i<v.size(); i++)
-			if ((v[i]>=low_tail) && (v[i]<=high_tail))
-				stat.add(v[i]);
-	}
-	else {
-		for (size_t i=0; i<v.size(); i++)
-			stat.add(v[i]);
-	}
-
-	return stat;
-}
 */
 #endif

@@ -15,15 +15,17 @@
 #include "ImagingModules_global.h"
 #include <KiplProcessModuleBase.h>
 #include <TranslateProjections.h>
+#include <KiplProcessConfig.h>
 
 class IMAGINGMODULESSHARED_EXPORT TranslateProjectionModule: public KiplProcessModuleBase {
 public:
     TranslateProjectionModule();
     virtual ~TranslateProjectionModule();
 
-    virtual int Configure(std::map<std::string, std::string> parameters);
+    virtual int Configure(KiplProcessConfig config,std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
 protected:
+    KiplProcessConfig m_Config;
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
     float m_fSlope;
     float m_fIntercept;

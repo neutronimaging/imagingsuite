@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstring>
 #include <xmmintrin.h>
+#include <algorithm>
 
 #include "../KiplException.h"
 
@@ -21,16 +22,37 @@ class buffer {
 	class cref {
 		public:
 		/// \brief C'Tor that allocates the buffer
-		cref(size_t N) : cnt(1), m_nData(N) {_Allocate(N);}
+        cref(size_t N) :
+            cnt(1),
+            m_nData(N),
+            bExternalBuffer(false)
+        {
+            _Allocate(N);
+        }
+
+        /// \brief C'tor making the link to an external buffer. I.e. no new memory will be allocated.
+        cref(T * buffer, size_t N) :
+            cnt(1),
+            data(buffer),
+            m_nData(N),
+            m_pRawPointer(nullptr),
+            bExternalBuffer(true)
+        {
+
+        }
 		/// \brief reference counter
 		int cnt;
 		/// \brief Pointer to the allocated buffer
 		T *data;
 		/// \brief D'tor deallocated the buffer
-		~cref() { _mm_free(m_pRawPointer); }
-		//~cref() { delete [] m_pRawPointer; }
+        ~cref()
+        {
+            if (m_pRawPointer!=nullptr) _mm_free(m_pRawPointer);
+        }
+
 		/// \returns The size of the allocated buffer 
 		size_t Size() { return m_nData; }
+        bool haveExternalBuffer() {return bExternalBuffer;}
         /// \returns True is the buffer pointer is adjusted to fit better into 32 byte blocks
 		bool AdjustedPointer() { return m_pRawPointer!=data; }
 		
@@ -39,6 +61,8 @@ class buffer {
 			size_t m_nData;
 			/// \brief Pointer to the allocated buffer
 			char *m_pRawPointer;
+
+            bool bExternalBuffer;
 			/// \brief Does the allocation and adjusts the data pointer to the beginning of the next 32 block
 			void _Allocate(size_t N) {
 				m_pRawPointer=reinterpret_cast<char *>(_mm_malloc((N+16)*sizeof(T),32));               
@@ -57,12 +81,19 @@ class buffer {
 
 	public:
 		///\brief C'Tor that creates a new data buffer with the instance itself as only owner 
-		buffer(size_t N) : m_cref(new cref(N)) {}
+        buffer(size_t N) :
+            m_cref(new cref(N))
+        {}
 		///\brief Copy c'tor. Manages the refence counting (cheap execution)
-		buffer(const buffer &a) {
-			m_cref=a.m_cref; 
+        buffer(const buffer &a) :
+            m_cref(a.m_cref)
+        {;
             ++m_cref->cnt;
 		}
+
+        buffer(T *pBuffer, size_t N) :
+            m_cref(new cref(pBuffer,N))
+        {}
 		
 		///\brief Assignment operator. Manages reference counting (cheap execution)
 		buffer & operator=(const buffer &a) {
@@ -74,8 +105,10 @@ class buffer {
 			return *this;
 		}
 
+        ///\brief Resizes the buffer. The link external buffers will be dropped and a new buffer will be allocated.
+        /// \param N number of elements in the buffer
 		buffer & Resize(size_t N) {
-			if (N!=this->m_cref->Size()) {
+            if ( N!=this->m_cref->Size() ) {
                 if (!(--m_cref->cnt))
                     delete m_cref;
 
@@ -84,6 +117,7 @@ class buffer {
 
 			return *this;
 		}
+
 		/// \returns The size of the data buffer
 		size_t Size() const { return m_cref->Size(); }
 
@@ -117,18 +151,20 @@ class buffer {
 		/// \param i index in the buffer.
 		T & operator[](const size_t index) { return m_cref->data[index];}
 		T operator[](const size_t index) const { return m_cref->data[index];}
+        /// Returns true if the shared buffer holds an external buffer.
+        bool haveExternalBuffer() {return this->m_cref->haveExternalBuffer();}
 	private:
 		/// \brief The Actual clone method that performs that cloning operation
 		/// \param c internal buffer to clone
 		void Clone(cref *c) {
 			this->m_cref=new cref(c->Size());
-			memcpy(this->m_cref->data,c->data,c->Size()*sizeof(T));
+            std::copy_n(c->data,c->Size(),this->m_cref->data);
 			int n=--c->cnt;
 			if (n==0) {
 				delete c;
 			}	
 		}
-		
+
 };
 
 }}}

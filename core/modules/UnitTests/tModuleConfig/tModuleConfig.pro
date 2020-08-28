@@ -12,12 +12,14 @@ TARGET = tst_tModuleConfig
 CONFIG   += console
 CONFIG   -= app_bundle
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
+CONFIG += c++11
+
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
-unix:!symbian {
+unix {
     maemo5 {
         target.path = /opt/usr/lib
     } else {
@@ -27,18 +29,20 @@ unix:!symbian {
 
     unix:macx {
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /usr/local/include
-        QMAKE_LIBDIR += /usr/local/lib
-        QMAKE_INFO_PLIST = Info.plist
-        ICON = muhrec3.icns
+        INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += /opt/local/include/libxml2
+        QMAKE_LIBDIR += /opt/local/lib
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -L/usr/local/lib64
+
+    LIBS += -ltiff -lxml2 #-lNeXus -lNeXusCPP
     INCLUDEPATH += /usr/include/libxml2
 }
 
@@ -53,28 +57,22 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-SOURCES += tst_configbasetest.cpp
+SOURCES += tst_configbasetest.cpp \
+           dummyconfig.cpp
+
+HEADERS += dummyconfig.h
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lModuleConfig -lReconFramework
 
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/src
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/release/ -lReconFramework
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/debug/ -lReconFramework
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Release/ -lReconFramework
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../src/libs/recon2/trunk/ReconFramework/build-ReconFramework-Qt5-Debug/ -lReconFramework
+INCLUDEPATH += $$PWD/../../../kipl/kipl/include
+DEPENDPATH += $$PWD/../../../kipl/kipl/src
 
-INCLUDEPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../src/libs/recon2/trunk/ReconFramework/src
+INCLUDEPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/include
+DEPENDPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/include
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/release/ -lModuleConfig
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/debug/ -lModuleConfig
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Release/ -lModuleConfig
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../build-ModuleConfig-Qt5-Debug/ -lModuleConfig
-INCLUDEPATH += $$PWD/../include
-DEPENDPATH += $$PWD/../src
+INCLUDEPATH += $$PWD/../../ModuleConfig/include
+DEPENDPATH += $$PWD/../../ModuleConfig/src

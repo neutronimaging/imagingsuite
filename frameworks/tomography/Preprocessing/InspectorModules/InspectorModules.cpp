@@ -10,20 +10,24 @@
 #include <cstdlib>
 #include <string>
 
+#include <interactors/interactionbase.h>
+
 
 INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name,void *vinteractor)
 {
 	if (strcmp(application,"muhrec")!=0)
-		return NULL;
+        return nullptr;
 
-	if (name!=NULL) {
+    kipl::interactors::InteractionBase *interactor=reinterpret_cast<kipl::interactors::InteractionBase *>(vinteractor);
+
+    if (name!=nullptr) {
 		std::string sName=name;
 
 		if (sName=="ProjectionInspector")
 			return new ProjectionInspector;
 
 		if (sName=="SaveProjections")
-			return new SaveProjections;
+            return new SaveProjections(interactor);
 
 		if (sName=="CountNANs")
 			return new CountNANs;
@@ -32,7 +36,7 @@ INSPECTORMODULESSHARED_EXPORT void * GetModule(const char *application, const ch
             return new GetImageSize;
 	}
 
-	return NULL;
+    return nullptr;
 }
 
 INSPECTORMODULESSHARED_EXPORT int Destroy(const char *application, void *obj)
@@ -40,7 +44,7 @@ INSPECTORMODULESSHARED_EXPORT int Destroy(const char *application, void *obj)
 	if (strcmp(application,"muhrec")!=0)
 		return -1;
 
-	if (obj!=NULL)
+    if (obj!=nullptr)
 		delete reinterpret_cast<PreprocModuleBase *>(obj);
 
 	return 0;

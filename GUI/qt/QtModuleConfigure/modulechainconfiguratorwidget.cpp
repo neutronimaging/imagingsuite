@@ -1,13 +1,4 @@
-//
-// This file is part of the i KIPL image processing tool by Anders Kaestner
-// (c) 2008,2009,2010,2011,2012,2013 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2013-08-15 21:58:23 +0200 (Thu, 15 Aug 2013) $
-// $Rev: 1481 $
-//
+//<LICENSE>
 
 #include "modulechainconfiguratorwidget.h"
 #include "QListWidgetModuleItem.h"
@@ -20,16 +11,18 @@
 #include <string>
 #include <ModuleException.h>
 
+#include <strings/filenames.h>
+
 
 
 ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     QWidget(parent),
     logger("ModuleChainConfiguratorWidget"),
-    m_pCurrentModule(NULL),
+    m_pCurrentModule(nullptr),
     m_sApplication("muhrec"),
     m_sApplicationPath(""),
-    m_pApplication(NULL),
-    m_pConfigurator(NULL)
+    m_pApplication(nullptr),
+    m_pConfigurator(nullptr)
 {
     this->setLayout(&m_MainBox);
     m_MainBox.addLayout(&m_ModuleBox);
@@ -54,7 +47,6 @@ void ModuleChainConfiguratorWidget::configure(std::string application, std::stri
     m_sApplication     = application;
     m_sApplicationPath = applicationpath;
     m_pConfigurator    = pConfigurator;
-
 }
 
 QSize ModuleChainConfiguratorWidget::minimumSizeHint() const
@@ -73,13 +65,10 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
     AddModuleDialog dlg(this);
 
-    ModuleConfig mcfg;
-//    msg.str(""); msg<<"Add:Preconf: "<<m_sDefaultModuleSource;
-//    logger(kipl::logging::Logger::LogMessage,msg.str());
-
     dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath);
-    if (dlg.exec()==QDialog::Accepted) {
-        mcfg=dlg.GetModuleConfig();
+    if (dlg.exec()==QDialog::Accepted)
+    {
+        auto mcfg=dlg.GetModuleConfig();
         msg.str("");
         msg<<"Got module "<<mcfg.m_sModule<<" from library "<<mcfg.m_sSharedObject;
         logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -95,13 +84,15 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
     msg<<"Current row="<<currentRow;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    if (0<=currentRow) {
+    if (0<=currentRow)
+    {
         msg.str("");
         msg<<"Deleting row "<<currentRow;
         logger(kipl::logging::Logger::LogMessage,msg.str());
         delete m_ModuleListView.takeItem(currentRow);
     }
-    else {
+    else
+    {
         logger(kipl::logging::Logger::LogMessage,"No module selected");
     }
 
@@ -111,40 +102,54 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleDelete()
 
 void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
 {
-    logger(kipl::logging::Logger::LogMessage,"Configure module");
-    std::ostringstream msg;
 
-    if (m_pConfigurator!=nullptr) {
-        if (m_pCurrentModule!=nullptr) {
+    if (m_pConfigurator!=nullptr)
+    {
+        if (m_pCurrentModule!=nullptr)
+        {
+            std::ostringstream msg;
             QListWidgetModuleItem *pCurrentModule=dynamic_cast<QListWidgetModuleItem *>(m_pCurrentModule);
             //UpdateCurrentModuleParameters();
 
             m_pApplication->UpdateConfig();
             std::string modulename = pCurrentModule->m_Module.m_sModule;
             std::string soname     = pCurrentModule->m_Module.m_sSharedObject;
-            size_t      pos        = soname.find_last_of('.');
-            pos = soname.find_last_not_of("0123456789.",pos);
-            std::string guisoname  = soname.substr(0,pos+1)+"GUI"+soname.substr(pos+1);
+
+            std::string path;
+            std::string fname;
+            std::vector<std::string> ext;
+
+            kipl::strings::filenames::StripFileName(soname,path,fname,ext);
+
+            std::string guisoname = path+fname+"GUI";
+            for (const auto & e : ext)
+                guisoname+=e;
 
             msg.str(""); msg<<"Configuring "<<modulename<<" from "<<soname<<" with "<<guisoname<<std::endl;
             logger(kipl::logging::Logger::LogMessage,msg.str());
 
-            try {
+            try
+            {
                 std::map<std::string, std::string> parameters=GetParameterList();
-                //std::map<std::string, std::string> parameters=pCurrentModule->m_Module.parameters;
 
                 int res=m_pConfigurator->configure(m_sApplication,guisoname,modulename,parameters);
-                if (res==QDialog::Accepted) {
+                if (res==QDialog::Accepted)
+                {
                     logger(kipl::logging::Logger::LogMessage,"using parameters");
                     pCurrentModule->m_Module.parameters=parameters;
                     UpdateCurrentModuleParameters();
                 }
             }
-            catch (ModuleException &e) {
+            catch (ModuleException &e)
+            {
                 msg.str("");
                 msg<<"Failed to open dialog: "<<e.what();
                 logger(kipl::logging::Logger::LogWarning,msg.str());
             }
+        }
+        else
+        {
+            logger.warning("Current module variable void.");
         }
     }
 }
@@ -153,9 +158,10 @@ void ModuleChainConfiguratorWidget::on_Button_ParameterAdd()
 {
     logger(kipl::logging::Logger::LogMessage,"Add parameter");
 
-    if (m_ModuleListView.currentItem()!=NULL) {
+    if (m_ModuleListView.currentItem()!=nullptr)
+    {
         QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
-        QTreeWidgetItem *item = NULL;
+        QTreeWidgetItem *item = nullptr;
 
         item=new QTreeWidgetItem(parent);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -168,45 +174,50 @@ void ModuleChainConfiguratorWidget::on_Button_ParameterDelete()
 {
     logger(kipl::logging::Logger::LogMessage,"Delete parameter");
     QTreeWidgetItem *item=m_ParameterListView.currentItem();
-    if (item) {
+    if (item)
+    {
         delete m_ParameterListView.takeTopLevelItem(m_ParameterListView.indexOfTopLevelItem(item));
     }
 }
 
 void ModuleChainConfiguratorWidget::on_Selected_Module(QListWidgetItem* current,QListWidgetItem* previous)
 {
-    if (previous!=NULL) {
+    if (previous!=nullptr)
+    {
         dynamic_cast<QListWidgetModuleItem *>(previous)->m_Module.parameters=GetParameterList();
         m_pCurrentModule=current;
     }
     UpdateCurrentModuleParameters();
 }
 
-void ModuleChainConfiguratorWidget::SetModules(std::list<ModuleConfig> &modules)
+void ModuleChainConfiguratorWidget::SetModules(std::vector<ModuleConfig> &modules)
 {
   std::list<ModuleConfig>::iterator it;
 
   m_ModuleListView.clear();
 
-  for (it=modules.begin(); it!=modules.end(); it++) {
-    InsertModuleAfter(*it);
+  for (auto &module: modules)
+  {
+    InsertModuleAfter(module);
   }
 }
 
-std::list<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
+std::vector<ModuleConfig> ModuleChainConfiguratorWidget::GetModules()
 {
-    std::list<ModuleConfig> modulelist;
+    std::vector<ModuleConfig> modulelist;
 
     QListWidgetModuleItem *item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.currentItem());
-    if (item!=NULL)
+    if (item!=nullptr)
         item->m_Module.parameters=GetParameterList();
 
-    for (int i=0; i<m_ModuleListView.count(); i++) {
+    for (int i=0; i<m_ModuleListView.count(); ++i)
+    {
         item=dynamic_cast<QListWidgetModuleItem *>(m_ModuleListView.item(i));
 
         item->m_Module.m_bActive=item->checkState();
         modulelist.push_back(item->m_Module);
     }
+
     return modulelist;
 }
 
@@ -221,6 +232,7 @@ void ModuleChainConfiguratorWidget::InsertModuleAfter(ModuleConfig &module)
     m_ModuleListView.setCurrentItem(item);
 
     UpdateCurrentModuleParameters();
+    m_pCurrentModule=item;
 }
 
 void ModuleChainConfiguratorWidget::SetApplicationObject(ApplicationBase * app )
@@ -280,11 +292,13 @@ void ModuleChainConfiguratorWidget::UpdateCurrentModuleParameters()
     QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
     QTreeWidgetItem *item = nullptr;
 
-    if (moduleitem!=nullptr) {
+    if (moduleitem!=nullptr)
+    {
         std::map<std::string,std::string>::iterator it;
 
         for (it=moduleitem->m_Module.parameters.begin();
-             it!=moduleitem->m_Module.parameters.end(); it++) {
+             it!=moduleitem->m_Module.parameters.end(); ++it)
+        {
             item=new QTreeWidgetItem(parent);
             item->setFlags(item->flags() | Qt::ItemIsEditable);
             item->setText(0,QString::fromStdString(it->first));

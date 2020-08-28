@@ -38,7 +38,8 @@ HEADERS += \
     ../../include/PreprocModuleBase.h \
     ../../include/ModuleItem.h \
     ../../include/ReconFramework_global.h \
-    ../../include/BackProjectorModuleBase.h
+    ../../include/BackProjectorModuleBase.h \
+    ../../src/stdafx.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -59,7 +60,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-      #  QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include/libxml2
         INCLUDEPATH += /opt/local/include/
@@ -69,6 +69,7 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio/
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
@@ -76,9 +77,10 @@ unix:!symbian {
 }
 
 unix:!mac {
-    exists(/usr/lib/*NeXus*) {
+    exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*) {
         message("-lNeXus exists")
-        DEFINES *= HAVE_NEXUS
+        DEFINES += HAVE_NEXUS
+        LIBS += -L/usr/local/lib64
         LIBS += -lNeXus -lNeXusCPP
     }
     else {
@@ -153,15 +155,13 @@ exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 }
 
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl  -lImagingAlgorithms -lModuleConfig
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl  -lImagingAlgorithms -lModuleConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig
 
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
-INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include/
-DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include/
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include

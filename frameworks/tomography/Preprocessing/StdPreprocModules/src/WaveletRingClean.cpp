@@ -1,10 +1,5 @@
-/*
- * WaveletRingClean.cpp
- *
- *  Created on: Aug 9, 2011
- *      Author: anders
- */
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 #include "../include/WaveletRingClean.h"
 
@@ -24,7 +19,14 @@ WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interacto
 	m_bParallelProcessing(false),
 	m_eCleanMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
-
+    publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
+                                        "Stripe and ring artifact removal with combined wavelet-Fourier filtering",
+                                        "Optics express",
+                                        2009,
+                                        17,
+                                        10,
+                                        "8567--8591",
+                                        "10.1364/oe.17.008567"));
 }
 
 WaveletRingClean::~WaveletRingClean() 
@@ -73,10 +75,10 @@ int WaveletRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<st
 
 int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-	size_t dims[2]={img.Size(0), img.Size(2)};
+    std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	bool fail=false;
 		kipl::base::TImage<float,2> sinogram;
-		ImagingAlgorithms::StripeFilter *filter=NULL;
+        ImagingAlgorithms::StripeFilter *filter=nullptr;
 		try {
 			filter=new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
 		}
@@ -90,7 +92,7 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 			{
 				ExtractSinogram(img,sinogram,j);
 
-				filter->Process(sinogram);
+                filter->process(sinogram);
 
 				InsertSinogram(sinogram,img,j);
 			}
@@ -107,13 +109,13 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 
 int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
 {
-	size_t dims[2]={img.Size(0), img.Size(2)};
+    std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	bool fail=false;
     int N=static_cast<int>(img.Size(1));
 	#pragma omp parallel
 	{
 		kipl::base::TImage<float,2> sinogram;
-		ImagingAlgorithms::StripeFilter *filter=NULL;
+        ImagingAlgorithms::StripeFilter *filter=nullptr;
 		try {
 			filter=new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
 		}
@@ -131,7 +133,7 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
 				std::cout<<"Processing sinogram "<<j<<std::endl;
 				ExtractSinogram(img,sinogram,j);
 
-				filter->Process(sinogram);
+                filter->process(sinogram);
 
 				InsertSinogram(sinogram,img,j);
 			}

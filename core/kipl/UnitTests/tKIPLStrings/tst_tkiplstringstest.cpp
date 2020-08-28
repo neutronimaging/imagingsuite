@@ -20,6 +20,8 @@ private Q_SLOTS:
     void testExtractWildCard();
     void testCheckPathSlashes();
     void testGetFileExtension();
+    void testString2List_strings();
+    void testString2Array_strings();
 };
 
 TKIPLStringsTest::TKIPLStringsTest()
@@ -64,66 +66,100 @@ void TKIPLStringsTest::testStripFileName()
 
     fname="file01.txt";
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("./"));
+    #ifndef _MSC_VER
+        std::string ref="./";
+    #else
+        std::string ref= "";
+    #endif
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="file01.txt.csv";
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("./"));
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("w/"));
+    ref = "w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="/w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/w/"));
+    ref = "/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="q/w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("q/w/"));
+    ref = "q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    qDebug() << path.c_str() <<", "<< ref.c_str();
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
     fname="/q/w/file01.txt";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/q/w/"));
+    ref = "/q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
 
 
     fname="w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("w/"));
+    ref = "w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="/w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/w/"));
+    ref = "/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="q/w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("q/w/"));
+    ref = "q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
 
     fname="/q/w/file01.txt.csv";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::strings::filenames::StripFileName(fname,path,name,ext);
-    QCOMPARE(path,std::string("/q/w/"));
+    ref = "/q/w/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(path,ref);
     QCOMPARE(name,std::string("file01"));
     QCOMPARE(ext[0],std::string(".txt"));
     QCOMPARE(ext[1],std::string(".csv"));
@@ -145,6 +181,40 @@ void TKIPLStringsTest::testGetFileExtension()
 {
 
 
+}
+
+void TKIPLStringsTest::testString2List_strings()
+{
+    std::string str="hej hopp hopsan testing";
+
+    std::list<std::string> sl;
+
+    size_t n=kipl::strings::String2List(str,sl);
+
+    QCOMPARE(n,4UL);
+    auto it=sl.begin();
+    QCOMPARE(*it,std::string("hej")); ++it;
+    QCOMPARE(*it,std::string("hopp")); ++it;
+    QCOMPARE(*it,std::string("hopsan")); ++it;
+    QCOMPARE(*it,std::string("testing"));
+
+
+}
+
+void TKIPLStringsTest::testString2Array_strings()
+{
+    std::string str="hej hopp hopsan testing";
+
+    std::vector<std::string> sl;
+
+    size_t n=kipl::strings::String2Array(str,sl);
+
+    QCOMPARE(n,4UL);
+    auto it=sl.begin();
+    QCOMPARE(*it,std::string("hej")); ++it;
+    QCOMPARE(*it,std::string("hopp")); ++it;
+    QCOMPARE(*it,std::string("hopsan")); ++it;
+    QCOMPARE(*it,std::string("testing"));
 }
 
 QTEST_APPLESS_MAIN(TKIPLStringsTest)

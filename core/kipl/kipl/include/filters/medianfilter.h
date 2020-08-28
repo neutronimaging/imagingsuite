@@ -4,6 +4,7 @@
 #define _MEDIANFILTER_H_
 
 #include <iostream>
+#include <vector>
 
 #include "../base/timage.h"
 #include "filterbase.h"
@@ -25,7 +26,7 @@ namespace kipl { namespace filters {
 
 		/// \brief Creates a median filter 
 		/// \param Dims Array constaining the dimensions of the filter
-		TMedianFilter(size_t const * const Dims) ;
+        TMedianFilter(const std::vector<size_t> & dims) ;
 		/// Speed-up switch for bilevel images (majority counting)
 		bool bilevel;
 		/// Switch to select a quick median implementation
@@ -51,8 +52,8 @@ namespace kipl { namespace filters {
 		
 		int ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
 		
-		virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) {};
-		virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) {}; // Dummy 
+        virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) {}
+        virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) {} // Dummy
 	
 		void RunningWindowLineInit(T const * const src, T *dest,size_t const * const dims);
 		void RunningWindowLine(T const * const src, T *dest, size_t);
@@ -70,7 +71,7 @@ namespace kipl { namespace filters {
 	class TWeightedMedianFilter : public TMedianFilter<T,N>
 	{
 	public:
-		TWeightedMedianFilter(size_t const * const Dims, int *weights);
+        TWeightedMedianFilter(const std::vector<size_t> & dims, const std::vector<int> &weights);
 		virtual ~TWeightedMedianFilter();
 
 		virtual kipl::base::TImage<T,N> operator() (kipl::base::TImage<T,N> &src,
@@ -78,7 +79,7 @@ namespace kipl { namespace filters {
 
 	protected:
 		void ExpandData(T * src, T * buffer);
-		int *m_nWeights;
+        std::vector<int> m_nWeights;
 		int m_nBufferLength;
 	};
 

@@ -66,22 +66,22 @@ FactoryWorker<ImgType>::FactoryWorker(mxml_node_t *xmltree, std::ostream & os) :
 	mxml_node_t *node;
 	workerCnt=-1;
 	workerTotal=0;
-	this->procTree = mxmlFindElement(xmltree, xmltree, "processing", NULL, NULL, MXML_DESCEND);
+    this->procTree = mxmlFindElement(xmltree, xmltree, "processing", nullptr, nullptr, MXML_DESCEND);
 	this->workerNode=this->procTree;
 	
 	if (this->procTree) {
 	
 		// Count number of defined workers
-		for( node = mxmlFindElement(this->procTree, this->procTree, "worker", NULL, NULL, MXML_DESCEND);
-         node != NULL;
-         node = mxmlFindElement(node, this->procTree, "worker", NULL, NULL, MXML_DESCEND))
+        for( node = mxmlFindElement(this->procTree, this->procTree, "worker", nullptr, nullptr, MXML_DESCEND);
+         node != nullptr;
+         node = mxmlFindElement(node, this->procTree, "worker", nullptr, nullptr, MXML_DESCEND))
 			workerTotal++;
 	}
 	
-	this->currentworker=NULL;
-	this->updater=NULL;
-	this->topseg=NULL;
-	this->seg=NULL;
+    this->currentworker=nullptr;
+    this->updater=nullptr;
+    this->topseg=nullptr;
+    this->seg=nullptr;
 	
 	this->workername="FactoryWorker";
  	this->isfactory=true;
@@ -109,7 +109,7 @@ int FactoryWorker<ImgType>::GetNextWorker(BaseQueueWorker<ImgType> ** worker)
 {
 	workerCnt++;
 
-	if ((workerNode = mxmlFindElement(workerNode, procTree, "worker", NULL, NULL, MXML_DESCEND))==NULL) {
+    if ((workerNode = mxmlFindElement(workerNode, procTree, "worker", nullptr, nullptr, MXML_DESCEND))==nullptr) {
 		this->logstream<<"Worker "<<workerCnt<<" could not be created, using current worker"<<endl;
 		return GetCurrentWorker(worker);
 	}
@@ -153,7 +153,7 @@ int FactoryWorker<ImgType>::ProduceWorker()
 	classmap["distance"]=10;
 	
 	//cout<<"Description string: "<<description<<endl;
-	BaseQueueWorker<ImgType> * tmpworker=NULL;
+    BaseQueueWorker<ImgType> * tmpworker=nullptr;
 	
 	int filtdims[3]={3,3,3}, rank;
 	float kernel[256];
@@ -384,7 +384,7 @@ int FactoryWorker<ImgType>::ProduceWorker()
 		
 		case 10 : CreateDistanceWorker(&tmpworker); break;
 		
-		default : this->logstream<<"Unknown worker, keeping previous"<<endl;tmpworker=NULL; 
+        default : this->logstream<<"Unknown worker, keeping previous"<<endl;tmpworker=nullptr;
 	}
 	
 	if (tmpworker) {

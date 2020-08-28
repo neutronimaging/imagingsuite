@@ -46,7 +46,7 @@ size_t GNUPlot::figure(size_t n)
 #else 
 		FILE *tmp=_popen(cm_GPpath.c_str(),"w");
 #endif
-		if (tmp==NULL)
+        if (tmp==nullptr)
 			kipl::base::KiplException("Failed to open figure",__FILE__, __LINE__);
 		else {
 			figures[n] = tmp;
@@ -137,10 +137,10 @@ bool GNUPlot::plot(float const * const axis, float const * const data, size_t co
 
 bool GNUPlot::image(const kipl::base::TImage<float,2> img)
 {
-	return image(img.GetDataPtr(), img.Dims());
+    return image(img.GetDataPtr(), img.dims());
 }
 
-bool GNUPlot::image(float const * const data, size_t const * const dims)
+bool GNUPlot::image(float const * const data, const std::vector<size_t> & dims)
 {
 	ostringstream cmd;
 	
@@ -167,7 +167,7 @@ bool GNUPlot::image(const kipl::base::TImage<short,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=pImg[i];
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -182,7 +182,7 @@ bool GNUPlot::image(const kipl::base::TImage<int,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -197,7 +197,7 @@ bool GNUPlot::image(const kipl::base::TImage<unsigned char,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -212,7 +212,7 @@ bool GNUPlot::image(const kipl::base::TImage<char,2> img)
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
 	
-	bool status=image(pData, img.Dims());
+    bool status=image(pData, img.dims());
 	
 	delete [] pData;
 	
@@ -247,7 +247,7 @@ string GNUPlot::OpenBinaryPlotFile(ofstream &outfile)
 //	//
 //
 //#ifdef _MSC_VER
-//	if (_mktemp(name) == NULL)
+//	if (_mktemp(name) == nullptr)
 //#else
 //    if (mkstemp(name) == -1)
 //#endif    
@@ -333,8 +333,8 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	}
 //	else {
 //		
-//		FILE *tmp=NULL; //popen(cm_GPpath.c_str(),"w");
-//		if (tmp==NULL)
+//		FILE *tmp=nullptr; //popen(cm_GPpath.c_str(),"w");
+//		if (tmp==nullptr)
 //			cerr<<"Failed to open figure"<<endl;
 //		else {
 //			figures[n] = tmp;

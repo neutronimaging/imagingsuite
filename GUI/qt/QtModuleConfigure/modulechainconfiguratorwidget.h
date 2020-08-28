@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef MODULECHAINCONFIGURATORWIDGET_H
 #define MODULECHAINCONFIGURATORWIDGET_H
 
@@ -27,12 +29,12 @@ class QTMODULECONFIGURESHARED_EXPORT ModuleChainConfiguratorWidget : public QWid
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit ModuleChainConfiguratorWidget(QWidget *parent = 0);
-    void configure(std::string application, std::string applicationpath="", ModuleConfigurator *pConfigurator=NULL);
+    explicit ModuleChainConfiguratorWidget(QWidget *parent = nullptr);
+    void configure(std::string application, std::string applicationpath="", ModuleConfigurator *pConfigurator=nullptr);
     void SetApplicationObject(ApplicationBase * app );
     void SetDefaultModuleSource(std::string file);
-    std::list<ModuleConfig> GetModules();
-    void SetModules(std::list<ModuleConfig> &modules);
+    std::vector<ModuleConfig> GetModules();
+    void SetModules(std::vector<ModuleConfig> &modules);
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
 signals:

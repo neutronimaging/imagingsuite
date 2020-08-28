@@ -5,9 +5,9 @@
 
 PreferencesDialog::PreferencesDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PreferencesDialog),
     m_MemoryLimit(1500),
-    m_LogLevel(kipl::logging::Logger::LogMessage)
+    m_LogLevel(kipl::logging::Logger::LogMessage),
+    ui(new Ui::PreferencesDialog)
 {
     ui->setupUi(this);
 }

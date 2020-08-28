@@ -63,8 +63,37 @@ kipl::base::TImage<float,2> Unwrap(kipl::base::TImage<float,2> img);
 
 int pow(float *data, size_t N, float exponent);
 
+template <typename T>
+T factorial(T n)
+{
+  return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+}
+
+template<int X, int P>
+struct Pow
+{
+    enum { result = X*Pow<X,P-1>::result };
+};
+
+template<int X>
+struct Pow<X,0>
+{
+    enum { result = 1 };
+};
+
+template<int X>
+struct Pow<X,1>
+{
+    enum { result = X };
+};
 
 
+template <int PRECISION>
+float roundP(float f)
+{
+    const int temp = Pow<10,PRECISION>::result;
+    return roundf(f*temp)/temp;
+}
 }}
 
 #include "core/mathfunctions.hpp"

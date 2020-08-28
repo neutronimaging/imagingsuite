@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __THISTOGRAM_H
-#define __THISTOGRAM_H
+#ifndef THISTOGRAM_H
+#define THISTOGRAM_H
 #include "../kipl_global.h"
 
 #include <vector>
@@ -13,7 +13,7 @@
 #include "kiplenums.h"
 
 namespace kipl { namespace base {
-//int KIPLSHARED_EXPORT Histogram(float const * const data, size_t Ndata, size_t  * const hist, const size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=NULL);
+//int KIPLSHARED_EXPORT Histogram(float const * const data, size_t Ndata, size_t  * const hist, const size_t nBins, float lo=0.0f, float hi=0.0f, float  * const pAxis=nullptr);
 
 /// \brief Computes a histogram from the data present in an array
 /// \param data The data array
@@ -23,9 +23,27 @@ namespace kipl { namespace base {
 /// \param lo Lower bound of the bins. Values less than this bound are counted in the first bin
 /// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
 /// \note If lo==hi the histogram will be using min and max intensity as interval.
-/// \param pAxis optional bin axis value array, must be preallocated. Not considered if NULL
+/// \param pAxis optional bin axis value array, must be preallocated. Not considered if nullptr
 /// \returns Always 0
-int KIPLSHARED_EXPORT Histogram(float * data, size_t Ndata, size_t  * hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * pAxis=NULL);
+int KIPLSHARED_EXPORT Histogram(const float * const data, size_t Ndata, size_t  * hist, size_t nBins, float lo=0.0f, float hi=0.0f, float  * pAxis=nullptr, bool avoidZeros=false);
+
+/// \brief Computes a histogram from the data present in an array
+/// \param data The data array
+/// \param Ndata number of data points in the array
+/// \param hist the histogram counts, array must be preallocated
+/// \param nBins Number of bins in the histogram
+/// \param lo Lower bound of the bins. Values less than this bound are counted in the first bin
+/// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
+/// \note If lo==hi the histogram will be using min and max intensity as interval.
+/// \param pAxis optional bin axis value array, must be preallocated. Not considered if nullptr
+/// \returns Always 0
+int KIPLSHARED_EXPORT Histogram(const float * const data,
+                                size_t Ndata,
+                                size_t nBIns,
+                                std::vector<size_t> &hist,
+                                std::vector<float> &axis,
+                                float lo=0.0f, float hi=0.0f,
+                                bool avoidZeros=false);
 
 /// \brief Computes an exact histogram from the data present in an array
 /// \param data The data array
@@ -118,6 +136,7 @@ private:
 };
 
 /// \brief Computes a bivariate histogram from two data sets and provides access methods
+/// \test TkiplbasetestTest::testBivariateHistogramInitialize() in tkiplbasetest.pro
 class KIPLSHARED_EXPORT BivariateHistogram
 {
     kipl::logging::Logger logger;
@@ -214,7 +233,7 @@ public:
 
     /// \brief The number of bins for each class in an array
     /// \test Tested in the initialization tests.
-    const size_t *Dims();
+    const std::vector<size_t> & Dims();
 
     /// \brief Provides the limits for each class
     /// \param n Selects data set A or B using 0 or 1

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
+QT       -= gui charts
 
 TARGET = StdPreprocModules
 TEMPLATE = lib
@@ -68,17 +68,8 @@ HEADERS += \
     ../../include/bblognorm.h
 
 
-symbian {
-    MMP_RULES += EXPORTUNFROZEN
-    TARGET.UID3 = 0xE2EC73DA
-    TARGET.CAPABILITY = 
-    TARGET.EPOCALLOWDLLDATA = 1
-    addFiles.sources = StdPreprocModules.dll
-    addFiles.path = !:/sys/bin
-    DEPLOYMENT += addFiles
-}
 
-unix:!symbian {
+unix {
     maemo5 {
         target.path = /opt/usr/lib
     } else {
@@ -87,7 +78,6 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-#        QMAKE_MAC_SDK = macosx10.12
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2

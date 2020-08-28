@@ -30,8 +30,8 @@ public:
 	NormBase(std::string name);
 	virtual ~NormBase(void);
 	
-	virtual void LoadReferenceImages(size_t *roi) = 0;
-	virtual bool SetROI(size_t *roi);
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi) = 0;
+    virtual bool SetROI(const std::vector<size_t> &roi);
 	virtual std::map<std::string, std::string> GetParameters();
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 
@@ -39,7 +39,7 @@ protected:
 	virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat);
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
-                                                        int N, size_t *roi,
+                                                        int N, const std::vector<size_t> &roi,
                                                         float initialDose,
                                                         float doseBias,
                                                         ReconConfig &config, float &dose);
@@ -75,8 +75,8 @@ protected:
 	bool bUseLUT;
     bool bUseWeightedMean;
 
-	size_t nNormRegion[4];
-	size_t nOriginalNormRegion[4];
+    std::vector<size_t> nNormRegion;
+    std::vector<size_t> nOriginalNormRegion;
 };
 
 class  STDPREPROCMODULESSHARED_EXPORT FullLogNorm : public NormBase
@@ -87,7 +87,7 @@ public:
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 
-	virtual void LoadReferenceImages(size_t *roi);
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi);
 
 protected:
 	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
@@ -106,7 +106,7 @@ public:
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 
-    virtual void LoadReferenceImages(size_t *roi);
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi);
 
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
@@ -122,7 +122,7 @@ public:
 	NegLogNorm();
 	virtual ~NegLogNorm();
 
-	virtual void LoadReferenceImages(size_t *roi);
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi);
 
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
@@ -135,7 +135,7 @@ class  STDPREPROCMODULESSHARED_EXPORT NegLogProjection : public NormBase
 public:
 	NegLogProjection();
 	virtual ~NegLogProjection();
-	virtual void LoadReferenceImages(size_t *roi);
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi);
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 protected:
@@ -149,7 +149,7 @@ class  STDPREPROCMODULESSHARED_EXPORT LogProjection : public NormBase
 public:
 	LogProjection();
 	virtual ~LogProjection();
-	virtual void LoadReferenceImages(size_t *roi);
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi);
 	virtual std::map<std::string, std::string> GetParameters();
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 
