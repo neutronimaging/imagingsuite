@@ -62,7 +62,7 @@ void bindImageReader(py::module &m)
                 py::arg("flip")    = kipl::base::ImageFlipNone ,
                 py::arg("rotate")  = kipl::base::ImageRotateNone,
                 py::arg("binning") = 1.0f,
-                py::arg("nCrop")   = std::vector<size_t>(0),
+                py::arg("roi")   = std::vector<size_t>(0),
                 py::arg("idx")     = 0L);     
     // /// Reading a single file with file name given by a file mask and an index number.
     // /// \param path Path to the location where the file is saved
@@ -81,15 +81,32 @@ void bindImageReader(py::module &m)
     //         float binning,
     //         const std::vector<size_t> &nCrop);
 
-    irClass.def("read", py::overload_cast<std::string,std::string, size_t, kipl::base::eImageFlip, kipl::base::eImageRotate, float, const std::vector<size_t> & >(&ImageReader::Read),
+    irClass.def("read",  [](ImageReader &reader,std::string path, std::string filename, size_t number,
+                                                kipl::base::eImageFlip flip, 
+                                                kipl::base::eImageRotate rotate, 
+                                                float binning, 
+                                                const std::vector<size_t> &roi)
+    {
+        for (auto & i: roi)
+            std::cout<<i<<" ";
+        std::cout<<"\n";
+        auto img=reader.Read(path,filename,number,flip,rotate,binning,roi);
+        std::cout<<img<<"\n";
+
+        py::array_t<float> pyimg = py::array_t<float>(img.Size());
+        pyimg.resize({img.Size(1),img.Size(0)});
+
+        std::copy_n(img.GetDataPtr(),img.Size(), static_cast<float *>(pyimg.request().ptr));
+        return pyimg;
+    },
                 "Reading a single file with explicitly defined file name\n param filename The name of the file to read.\n param flip Should the image be flipped horizontally or vertically.\n param rotate Should the file be rotated, steps of 90deg. \n param binning Binning factor. \n param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.\n returns The 2D image stored in the specified file.",
-                py::arg("path"),
+                py::arg("path") = "",
                 py::arg("filemask"),
                 py::arg("number"), 
                 py::arg("flip")    = kipl::base::ImageFlipNone ,
                 py::arg("rotate")  = kipl::base::ImageRotateNone,
                 py::arg("binning") = 1.0f,
-                py::arg("nCrop")   = std::vector<size_t>(0));
+                py::arg("roi")   = std::vector<size_t>(0));
 
     // /// Reading a block of images into a volume with file name given by a file mask and an index number.
     // /// \param path Path to the location where the file is saved
