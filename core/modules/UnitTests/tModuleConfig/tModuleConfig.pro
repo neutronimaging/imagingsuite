@@ -76,3 +76,6 @@ DEPENDPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/i
 
 INCLUDEPATH += $$PWD/../../ModuleConfig/include
 DEPENDPATH += $$PWD/../../ModuleConfig/src
+
+INCLUDEPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../algorithms/ImagingAlgorithms/include

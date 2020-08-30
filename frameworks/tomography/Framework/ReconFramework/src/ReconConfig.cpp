@@ -601,6 +601,8 @@ ReconConfig::cProjections::cProjections() :
     nFirstIndex(1),
     nLastIndex(625),
     nProjectionStep(1),
+    nRepeatedView(1),
+    averageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     bRepeatLine(false),
     scantype(SequentialScan),
     nGoldenStartIdx(0),

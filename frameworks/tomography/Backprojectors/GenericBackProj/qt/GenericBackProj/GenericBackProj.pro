@@ -92,10 +92,13 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
+LIBS += -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig -lReconFramework -lReconAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src

@@ -68,11 +68,13 @@ HEADERS += \
     muhreccli.h \
     stdafx.h
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
+
+LIBS += -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../core/kipl/kipl/include
 
 #INCLUDEPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
 #DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
@@ -81,10 +83,10 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 #DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
+DEPENDPATH  += $$PWD/../../../core/modules/ModuleConfig/include
 
-#INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
-#DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
