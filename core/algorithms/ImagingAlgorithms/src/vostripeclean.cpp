@@ -2,13 +2,20 @@
 #include "../include/vostripeclean.h"
 #include <base/timage.h>
 #include <list>
+#include <vector>
+#include <numeric>
+
+#include <base/tpermuteimage.h>
+namespace ImagingAlgorithms
+{
+
 
 VoStripeClean::VoStripeClean()
 {
 
 }
 
-kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedSorting(kipl::base::TImage<float,2> &sinogram, size_t size)
+kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedSorting(kipl::base::TImage<float,2> &sinogram, size_t size, bool doTranspose)
 {
 //    """
 //    Algorithm 3 in the paper. Remove stripes using the sorting technique.
@@ -32,12 +39,12 @@ kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedSorting(kipl::base::
 //        [row[row[:, 0].argsort()] for row in matsort])
 //    sino_corrected = matsortback[:, :, 1]
 //    return np.transpose(sino_corrected)
-   kipl::base::TImage<float,2> res;
+   auto res = transpose(sinogram,doTranspose);
 
-   return res;
+   return transpose(res,doTranspose);
 }
 
-kipl::base::TImage<float,2> VoStripeClean::remove_stripe_based_filtering(kipl::base::TImage<float,2> &sinogram, float sigma, size_t size)
+kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedFiltering(kipl::base::TImage<float,2> &sinogram, float sigma, size_t size, bool doTranspose)
 {
 //    """
 //    Algorithm 2 in the paper. Remove stripes using the filtering technique.
@@ -64,16 +71,16 @@ kipl::base::TImage<float,2> VoStripeClean::remove_stripe_based_filtering(kipl::b
 //    sinosharp = sinogram - sinosmooth
 //    sinosmooth_cor = median_filter(sinosmooth,(size,1))
 //    return np.transpose(sinosmooth_cor + sinosharp)
-    kipl::base::TImage<float,2> res;
+    auto res = transpose(sinogram,doTranspose);
 
-    return res;
+    return transpose(res,doTranspose);
 }
 
 
-kipl::base::TImage<float,2> VoStripeClean::_2d_window_ellipse(size_t height, size_t width, float sigmax, float sigmay)
+kipl::base::TImage<float,2> VoStripeClean::_2dWindowEllipse(size_t height, size_t width, float sigmax, float sigmay)
 {
 //    """
-//    Create a 2D Gaussian window.
+//    Create a 2D Gaussian window for Fourier filtering.
 //    ---------
 //    Parameters: - height, width: shape of the window.
 //                - sigmax, sigmay: sigmas of the window.
@@ -87,12 +94,30 @@ kipl::base::TImage<float,2> VoStripeClean::_2d_window_ellipse(size_t height, siz
 //    numy = 2.0*sigmay*sigmay
 //    win2d = np.exp(-(x*x/numx+y*y/numy))
 //    return win2d
-    kipl::base::TImage<float,2> res;
+//    std::vector<size_t> dims={static_cast<size_t>(ceil(sigmax*2.5)*2+1),
+//                              static_cast<size_t>(ceil(sigmay*2.5)*2+1)};
 
-    return res;
+    std::vector<size_t> dims={width,
+                              height};
+    kipl::base::TImage<float,2> win2d(dims);
+    float centerx   = dims[0]/2.0f;
+    float centery   = dims[1]/2.0f;
+
+    float sigmax2 = 2.0f * sigmax * sigmax ;
+    float sigmay2 = 2.0f * sigmay * sigmay ;
+
+    for (size_t y = 0; y<dims[1]; ++y)
+        for (size_t x = 0 ; x<dims[0]; ++x)
+        {
+            float xx = x-centerx;
+            float yy = y-centery;
+            win2d(x,y) = exp(-( xx*xx/sigmax2 + yy*yy/sigmay2 ));
+        }
+
+    return win2d;
 }
 
-kipl::base::TImage<float,2> VoStripeClean::_2d_filter(kipl::base::TImage<float,2> mat, float sigmax, float sigmay, size_t pad)
+kipl::base::TImage<float,2> VoStripeClean::_2dFilter(kipl::base::TImage<float,2> mat, float sigmax, float sigmay, size_t pad)
 {
 //    """
 //    Filtering an image using 2D Gaussian window.
@@ -119,18 +144,29 @@ kipl::base::TImage<float,2> VoStripeClean::_2d_filter(kipl::base::TImage<float,2
     return res;
 }
 
-kipl::base::TImage<float,2> VoStripeClean::remove_stripe_based_fitting(kipl::base::TImage<float, 2> &sinogram, int order, float sigmax, float sigmay)
+kipl::base::TImage<float, 2> VoStripeClean::transpose(kipl::base::TImage<float,2> &img,bool doIt)
 {
-//    """
+
+    kipl::base::TImage<float,2> res;
+
+    if (doIt)
+    {
+        kipl::base::Transpose<float> tr;
+
+        res = tr(img);
+    }
+    else
+        res = img;
+
+    return res;
+}
+
+
+kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedFitting(kipl::base::TImage<float, 2> &sinogram, int order, float sigmax, float sigmay, bool doTranspose)
+{
 //    Algorithm 1 in the paper. Remove stripes using the fitting technique.
 //    Angular direction is along the axis 0
-//    ---------
-//    Parameters: - sinogram: 2D array.
-//                - order: polynomical fit order.
-//                - sigmax, sigmay: sigmas of the Gaussian window.
-//    ---------
-//    Return:     - stripe-removed sinogram.
-//    """
+
 //    (nrow, _) = sinogram.shape
 //    nrow1 = nrow
 //    if nrow1%2==0:
@@ -141,12 +177,12 @@ kipl::base::TImage<float,2> VoStripeClean::remove_stripe_based_fitting(kipl::bas
 //    num2 = np.mean(sinofitsmooth)
 //    sinofitsmooth = num1*sinofitsmooth/num2
 //    return sinogram/sinofit*sinofitsmooth
-    kipl::base::TImage<float,2> res;
+    auto res = transpose(sinogram,doTranspose);
 
     return res;
 }
 
-std::list<size_t> VoStripeClean::detect_stripe(listdata, snr)
+std::vector<float> VoStripeClean::detectStripe(std::vector<float> &listdata, float snr)
 {
 //    """
 //    Algorithm 4 in the paper. Used to locate stripe positions.
@@ -157,7 +193,14 @@ std::list<size_t> VoStripeClean::detect_stripe(listdata, snr)
 //    ---------
 //    Return:     - 1D binary mask.
 //    """
-//    numdata = len(listdata)
+   size_t numdata = listdata.size();
+   auto listsorted = listdata;
+   std::sort(listsorted.begin(),listsorted.end(), greater<float>());
+   auto xlist = std::vector<float>(numdata,0.0f);
+   std::iota(xlist.begin(),xlist.end(),0.0f);
+   size_t ndrop = numdata / 4;
+
+
 //    listsorted = np.sort(listdata)[::-1]
 //    xlist = np.arange(0, numdata, 1.0)
 //    ndrop = np.int16(0.25 * numdata)
@@ -175,29 +218,19 @@ std::list<size_t> VoStripeClean::detect_stripe(listdata, snr)
 //        lower_thresh = numt1 - noiselevel * snr * 0.5
 //        listmask[listdata <= lower_thresh] = 1.0
 //    return listmask
-    std::list<size_t> listmask;
+    std::vector<size_t> listmask;
 
     return listmask;
 }
 
-kipl::base::TImage<float,2> VoStripeClean::remove_large_stripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size)
+kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size, bool doTranspose)
 {
-//    """
 //    Algorithm 5 in the paper. Remove large stripes by: locating stripes,
 //    normalizing to remove full stripes, using the sorting technique to
 //    remove partial stripes.
 //    Angular direction is along the axis 0.
-//    ---------
-//    Parameters: - sinogram: 2D array.
-//                - snr: ratio used to discriminate between useful
-//                    information and noise.
-//                - size: window size of the median filter.
-//    ---------
-//    Return:     - stripe-removed sinogram.
-//    """
-//    badpixelratio = 0.05
-//    (nrow, ncol) = sinogram.shape
-//    ndrop = np.int16(badpixelratio * nrow)
+
+
 //    sinosorted = np.sort(sinogram, axis=0)
 //    sinosmoothed = median_filter(sinosorted, (1, size))
 //    list1 = np.mean(sinosorted[ndrop:nrow - ndrop], axis=0)
@@ -220,12 +253,17 @@ kipl::base::TImage<float,2> VoStripeClean::remove_large_stripe(kipl::base::TImag
 //    listxmiss = np.where(listmask > 0.0)[0]
 //    sinogram[:, listxmiss] = sino_corrected[:, listxmiss]
 //    return sinogram
-    kipl::base::TImage<float,2> res;
+    auto res = transpose(sinogram,doTranspose);
+    float  badpixelratio = 0.05f;
+    size_t nrow  = res.Size(0);
+    size_t ncol  = res.Size(1);
+    int    ndrop = static_cast<int>(badpixelratio * nrow);
 
-    return res;
+
+    return transpose(res,doTranspose);
 }
 
-kipl::base::TImage<float,2> VoStripeClean::remove_unresponsive_and_fluctuating_stripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size)
+kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size, bool doTranspose)
 {
 //    """
 //    Algorithm 6 in the paper. Remove unresponsive or fluctuating stripes by:
@@ -262,34 +300,21 @@ kipl::base::TImage<float,2> VoStripeClean::remove_unresponsive_and_fluctuating_s
 //    # Use algorithm 5 to remove residual stripes
 //    #sinogram = remove_large_stripe(sinogram, snr, size)
 //    return sinogram
-    kipl::base::TImage<float,2> res;
 
-    return res;
+    auto res = transpose(sinogram,doTranspose);
+
+    return transpose(res,doTranspose);
 }
 
-kipl::base::TImage<float,2> VoStripeClean::remove_all_stripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t la_size, size_t sm_size):
+kipl::base::TImage<float,2> VoStripeClean::removeAllStripes(kipl::base::TImage<float,2> &sinogram, float snr, size_t la_size, size_t sm_size, bool doTranspose)
 {
-//    """
-//    Remove all types of stripe artifacts by combining algorithm 6, 5, and 3.
-//    Angular direction is along the axis 0.
-//    ---------
-//    Parameters: - sinogram: 2D array.
-//                - snr: ratio used to discriminate between useful
-//                    information and noise
-//                - la_size: window size of the median filter to remove
-//                    large stripes.
-//                - sm_size: window size of the median filter to remove
-//                    small-to-medium stripes.
-//    ---------
-//    Return:     - stripe-removed sinogram.
-//    """
-//    sinogram = remove_unresponsive_and_fluctuating_stripe(sinogram, snr, la_size)
-//    sinogram = remove_large_stripe(sinogram, snr, la_size)
-//    sinogram = remove_stripe_based_sorting(sinogram, sm_size)
-//    return sinogram
-    kipl::base::TImage<float,2> res;
+    auto res = transpose(sinogram,doTranspose);
 
-    return res;
+    res = removeUnresponsiveAndFluctuatingStripe(sinogram, snr, la_size,false);
+    res = removeLargeStripe(res, snr, la_size,false);
+    res = removeStripeBasedSorting(res, sm_size,false);
+
+    return transpose(res,doTranspose);
 }
 
 //# ----------------------------------------------------------------------------
@@ -300,3 +325,4 @@ kipl::base::TImage<float,2> VoStripeClean::remove_all_stripe(kipl::base::TImage<
 //# sinogram = remove_unresponsive_and_fluctuating_stripe(sinogram1, 3, 81)
 //# sinogram = remove_large_stripe(sinogram1, 3, 81)
 //# sinogram = remove_all_stripe(sinogram, 3, 81, 31)
+}

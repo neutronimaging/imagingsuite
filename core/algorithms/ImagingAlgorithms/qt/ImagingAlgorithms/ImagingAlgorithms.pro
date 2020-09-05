@@ -67,8 +67,7 @@ SOURCES += \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/tomocenter.cpp \
     ../../src/vostripeclean.cpp \
-    ../../src/projectionfilter.cpp \
-    ../../src/tomocenter.cpp
+    ../../src/projectionfilter.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -85,8 +84,7 @@ HEADERS += \
     ../../include/ReferenceImageCorrection.h \
     ../../include/tomocenter.h \
     ../../include/vostripeclean.h \
-    ../../include/projectionfilter.h \
-    ../../include/tomocenter.h
+    ../../include/projectionfilter.h
 
 
 unix:!symbian {
