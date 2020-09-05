@@ -3,7 +3,7 @@
 #include "readergui_global.h"
 #include <QDialog>
 
-#include <datasetbase.h>
+#include <fileset.h>
 
 namespace Ui {
 class AddLoaderDialog;

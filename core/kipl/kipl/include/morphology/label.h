@@ -14,8 +14,6 @@
 #include "pixeliterator.h"
 #include "../base/kiplenums.h"
 
-#include <QDebug>
-
 namespace kipl {namespace morphology {
 	/// \brief Creates a labelled image from a bi level image
 	/// \param img Input image
@@ -72,7 +70,6 @@ namespace kipl {namespace morphology {
                         qq = q + neighborPix;
                         if ((qq < 0) || (img.Size()<=qq))
                         {
-                            qDebug() << NG.reportStatus().c_str();
                             return 0;
                         }
 

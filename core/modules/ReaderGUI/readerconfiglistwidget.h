@@ -8,7 +8,7 @@
 #include <QListWidget>
 
 #include <logging/logger.h>
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include "readergui_global.h"
 

@@ -10,7 +10,7 @@
 #include <buildfilelist.h>
 
 #include <loggingdialog.h>
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"

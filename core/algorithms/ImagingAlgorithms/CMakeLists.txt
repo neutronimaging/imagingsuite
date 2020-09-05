@@ -1,5 +1,7 @@
 include(FetchContent)
 
+set(TARGET_NAME "imagalg")
+
 FetchContent_Declare(
   pybind11_sources
   GIT_REPOSITORY https://github.com/pybind/pybind11.git
@@ -72,3 +74,6 @@ set_target_properties(imagalg
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
+
+#install(DIRECTORY "src/scipp" DESTINATION ".")
+install(TARGETS pyimagalg DESTINATION ".")
