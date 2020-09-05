@@ -12,7 +12,6 @@
 #include <strings/miscstring.h>
 #include <math/compleximage.h>
 #include <base/imagecast.h>
-#include <io/io_matlab.h>
 #include <visualization/GNUPlot.h>
 
 #include <vector>
@@ -104,9 +103,9 @@ void bindProjectionFilter(py::module &m)
 
         if (buf1.ndim==3)
         {
-            size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                           static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
+            std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[2]),
+                                        static_cast<size_t>(buf1.shape[1]),
+                                        static_cast<size_t>(buf1.shape[0])};
             kipl::base::TImage<float,3> img(data,dims);
 
             pf.process(img);
@@ -114,8 +113,8 @@ void bindProjectionFilter(py::module &m)
         }
         else if (buf1.ndim==2)
         {
-            size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
+            std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
+                                        static_cast<size_t>(buf1.shape[0])};
 
 
             kipl::base::TImage<float,2> img(data,dims);
@@ -136,9 +135,9 @@ void bindProjectionFilter(py::module &m)
 
         if (buf1.ndim==3)
         {
-            size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                           static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
+                                            static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
             kipl::base::TImage<float,3> img(dims);
             std::copy_n(data,img.Size(),img.GetDataPtr());
 
@@ -148,8 +147,8 @@ void bindProjectionFilter(py::module &m)
         }
         else if (buf1.ndim==2)
         {
-            size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                           static_cast<size_t>(buf1.shape[0])};
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
 
 
             kipl::base::TImage<float,2> img(dims);

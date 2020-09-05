@@ -13,7 +13,7 @@
 #include <profile/Timer.h>
 #include <interactors/interactionbase.h>
 
-#include "datasetbase.h"
+#include "fileset.h"
 
 class READERCONFIGSHARED_EXPORT ImageReader
 {
@@ -37,7 +37,7 @@ public:
             kipl::base::eImageFlip flip=kipl::base::ImageFlipNone,
             kipl::base::eImageRotate rotate=kipl::base::ImageRotateNone,
             float binning=1.0f,
-                                     const std::vector<size_t> &nCrop={}, size_t idx=0L);
+            const std::vector<size_t> &nCrop={}, size_t idx=0L);
 
     /// Reading a single file with file name given by a file mask and an index number.
     /// \param path Path to the location where the file is saved

@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <qmessagebox.h>
 
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include "readerconfiglistwidget.h"
 #include "addloaderdialog.h"

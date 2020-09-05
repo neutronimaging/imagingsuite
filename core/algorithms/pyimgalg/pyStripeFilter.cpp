@@ -36,12 +36,12 @@ void bindStripeFilter(py::module &m)
             {
                 py::buffer_info buf1 = x.request();
 
-                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-                               static_cast<size_t>(buf1.shape[0])};
+                std::vector<size_t> dims={static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
 
                 sf.checkDims(dims);
 
-                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+                kipl::base::TImage<float,2> img(static_cast<float *>(buf1.ptr),dims);
 
                 sf.process(img,op);
 

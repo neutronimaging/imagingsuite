@@ -164,7 +164,7 @@ std::vector<int> StripeFilter::dims()
     return wdims;
 }
 
-bool StripeFilter::checkDims(const size_t *dims)
+bool StripeFilter::checkDims(const std::vector<size_t> &dims)
 {
     if ((static_cast<int>(dims[0])!=wdims[0]) || (static_cast<int>(dims[1])!=wdims[1]))
         throw ImagingException("Image size check failed",__FILE__,__LINE__);

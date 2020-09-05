@@ -9,7 +9,7 @@
 #include <strings/xmlstrings.h>
 
 #include "readerexception.h"
-#include "datasetbase.h"
+#include "fileset.h"
 
 int FileSet::cnt=0;
 
