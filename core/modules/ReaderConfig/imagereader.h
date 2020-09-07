@@ -122,8 +122,8 @@ public:
     /// \returns The dose value as the median of the row average intensity.
     float projectionDose(   std::string path,
                             std::string filemask,
-                            const std::vector<size_t> &nDoseROI,
                             size_t number,
+                            const std::vector<size_t> &nDoseROI,
                             kipl::base::eImageFlip flip     = kipl::base::ImageFlipNone,
                             kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
                             float binning                   = 1.0f

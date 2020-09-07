@@ -158,7 +158,7 @@ void bindImageReader(py::module &m)
     // /// \param dims A preallocated array to store the image dimensions.
     // /// \returns number of dimensions
     // std::vector<size_t> GetImageSize(std::string path, std::string filemask, size_t number, float binning);
-    irClass.def("imageSize", py::overload_cast<std::string , std::string, size_t, float >(&ImageReader::GetImageSize),
+    irClass.def("imageSize", py::overload_cast<std::string , std::string, size_t, float >(&ImageReader::imageSize),
         "Reading a single file with explicitly defined file name\n param filename The name of the file to read.\n param flip Should the image be flipped horizontally or vertically.\n param rotate Should the file be rotated, steps of 90deg. \n param binning Binning factor. \n param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.\n returns The 2D image stored in the specified file.",
         py::arg("path") = "",
         py::arg("filemask"),
@@ -171,7 +171,7 @@ void bindImageReader(py::module &m)
     // /// \param dims A preallocated array to store the image dimensions.
     // /// \returns number of dimensions
     // std::vector<size_t> GetImageSize(std::string filename, float binning);
-    irClass.def("imageSize", py::overload_cast<std::string, float >(&ImageReader::GetImageSize),
+    irClass.def("imageSize", py::overload_cast<std::string, float >(&ImageReader::imageSize),
     "Get the image dimensions for an image file using an explicit file name \nparam filename File name of the of the image to read.\nparam binning Binning factor\nparam dims A preallocated array to store the image dimensions.\nreturns number of dimensions",
     py::arg("filemask"),
     py::arg("binning") = 1.0f);
@@ -188,13 +188,14 @@ void bindImageReader(py::module &m)
     //                         kipl::base::eImageRotate rotate,
     //                         float binning,
     //                         const std::vector<size_t> &nDoseROI);
-    irClass.def("projectionDose", py::overload_cast<std::string, kipl::base::eImageFlip, kipl::base::eImageRotate, float, const std::vector<size_t> &  >(&ImageReader::GetProjectionDose),
+    irClass.def("projectionDose", py::overload_cast<std::string, const std::vector<size_t> & ,kipl::base::eImageFlip, kipl::base::eImageRotate, float >(&ImageReader::projectionDose),
         "Get the image dimensions for an image file using an explicit file name \nparam filename File name of the of the image to read.\nparam binning Binning factor\nparam dims A preallocated array to store the image dimensions.\nreturns number of dimensions",
-        py::arg("filemask"),
+        py::arg("filename"),
+        py::arg("nDoseROI"),
         py::arg("flip")    = kipl::base::ImageFlipNone ,
         py::arg("rotate")  = kipl::base::ImageRotateNone,
-        py::arg("binning") = 1.0f,
-        py::arg("nCrop"));
+        py::arg("binning") = 1.0f
+        );
 
     // /// Get the projection dose for an image file using an explicit file name
     // /// \param path The path where image is stored
@@ -212,7 +213,7 @@ void bindImageReader(py::module &m)
     //                         kipl::base::eImageRotate rotate,
     //                         float binning,
     //                         const std::vector<size_t> &nCrop);
-    irClass.def("projectionDose", py::overload_cast<std::string, std::string, size_t, kipl::base::eImageFlip, kipl::base::eImageRotate, float, const std::vector<size_t> &  >(&ImageReader::GetProjectionDose),
+    irClass.def("projectionDose", py::overload_cast<std::string, std::string, size_t, const std::vector<size_t> &, kipl::base::eImageFlip, kipl::base::eImageRotate, float  >(&ImageReader::projectionDose),
         "Get the projection dose for an image file using an explicit file name\n" 
         "param path The path where image is stored\n" 
         "param filemask Mask of the images, # are used as placeholders for the index numbers.\n" 
@@ -225,8 +226,9 @@ void bindImageReader(py::module &m)
         py::arg("path")    = "",
         py::arg("filemask"),
         py::arg("number"),
+        py::arg("nCrop"),
         py::arg("flip")    = kipl::base::ImageFlipNone ,
         py::arg("rotate")  = kipl::base::ImageRotateNone,
-        py::arg("binning") = 1.0f,
-        py::arg("nCrop"));
+        py::arg("binning") = 1.0f
+        );
 }

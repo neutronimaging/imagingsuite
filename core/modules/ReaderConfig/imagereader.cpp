@@ -510,10 +510,10 @@ float ImageReader::projectionDose(  std::string filename,
     return dose;
 }
 
-float ImageReader::projectionDose(   std::string path,
+float ImageReader::projectionDose(std::string path,
                                         std::string filemask,
-                                        const std::vector<size_t> &nDoseROI,
                                         size_t number,
+                                        const std::vector<size_t> &nDoseROI,
                                         kipl::base::eImageFlip flip,
                                         kipl::base::eImageRotate rotate,
                                         float binning)

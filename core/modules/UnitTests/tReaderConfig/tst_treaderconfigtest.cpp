@@ -258,14 +258,18 @@ void TReaderConfigTest::testImageSize()
     ImageReader reader;
 
     auto dimstiff = reader.imageSize("testread.tif");
+    qDebug() << dimstiff[0] << dimstiff[1] << dimstiff[2];
     QCOMPARE(dimstiff[0],gradimg.Size(0));
     QCOMPARE(dimstiff[1],gradimg.Size(1));
-    QCOMPARE(dimstiff.size(),gradimg.dims().size());
+    QCOMPARE(dimstiff[2],1UL);
+    QCOMPARE(dimstiff.size(),3UL);
 
     auto dimsfits = reader.imageSize("testread.fits");
+    qDebug() << dimsfits[0] << dimsfits[1] << dimsfits[2];
     QCOMPARE(dimsfits[0],gradimg.Size(0));
     QCOMPARE(dimsfits[1],gradimg.Size(1));
-    QCOMPARE(dimsfits.size(),gradimg.dims().size());
+    QCOMPARE(dimsfits[2],1UL);
+    QCOMPARE(dimsfits.size(),3UL);
 
 
     QVERIFY_EXCEPTION_THROWN(reader.imageSize("dfgdgdfbvxssrgsxdf.fits"),ReaderException);
@@ -298,21 +302,33 @@ void TReaderConfigTest::testCroppedRead()
 { 
     ImageReader reader;
 
-    auto tmp = reader.Read("testread.tif");
+    std::vector<size_t> roi={20,20,30,30};
 
-    QCOMPARE(tmp.Size(0),gradimg.Size(0));
-    QCOMPARE(tmp.Size(1),gradimg.Size(1));
+    auto tmp = reader.Read("testread.tif", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi);
 
-    for (size_t i=0; i<gradimg.Size(); ++i)
-        QCOMPARE(tmp[i],gradimg[i]);
+    QCOMPARE(tmp.Size(0),roi[2]-roi[0]);
+    QCOMPARE(tmp.Size(1),roi[3]-roi[1]);
 
-    auto tmpfits = reader.Read("testread.fits");
+    size_t idx=0UL;
+    for (size_t  y = roi[1]; y < roi[3]; ++y)
+        for (size_t x = roi[0]; x < roi[2]; ++x, ++idx)
+            QCOMPARE(tmp[idx],gradimg(x,y));
 
-    QCOMPARE(tmpfits.Size(0),gradimg.Size(0));
-    QCOMPARE(tmpfits.Size(1),gradimg.Size(1));
+    std::vector<size_t> roi2={200,20,30,30};
+    QVERIFY_EXCEPTION_THROWN({
+                                 auto t=reader.Read("testread.tif", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi2);
+                             },
+                             kipl::base::KiplException);
 
-    for (size_t i=0; i<gradimg.Size(); ++i)
-        QCOMPARE(tmpfits[i],gradimg[i]);
+    auto tmpfits = reader.Read("testread.fits", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi);
+
+    QCOMPARE(tmpfits.Size(0),roi[2]-roi[0]);
+    QCOMPARE(tmpfits.Size(1),roi[3]-roi[1]);
+
+    idx=0UL;
+    for (size_t  y = roi[1]; y < roi[3]; ++y)
+        for (size_t x = roi[0]; x < roi[2]; ++x, ++idx)
+            QCOMPARE(tmpfits[idx],gradimg(x,y));
 }
 
 void TReaderConfigTest::testGetDose()
