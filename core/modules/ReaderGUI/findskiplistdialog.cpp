@@ -113,7 +113,7 @@ void FindSkipListDialog::LoadDoseList()
     try {
         for (const auto &fname : m_FileList)
         {
-                   fDose=reader.GetProjectionDose(fname,
+                   fDose=reader.getProjectionDose(fname,
                                         kipl::base::ImageFlipNone,
                                         kipl::base::ImageRotateNone,
                                         1.0f,

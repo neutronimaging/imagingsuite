@@ -10,9 +10,13 @@
 #include <algorithm>
 
 #include <base/KiplException.h>
+#include <math/median.h>
 #include <analyzefileext.h>
 #include <fileset.h>
 #include <buildfilelist.h>
+#include <imagereader.h>
+#include <imagewriter.h>
+#include <readerexception.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -27,10 +31,25 @@ private Q_SLOTS:
     void testAnalyzeFileExt();
     void testDataSetBase();
     void testBuildFileListAngles();
+    void testImageSize();
+    void testRead();
+    void testCroppedRead();
+    void testGetDose();
+
+private:
+    kipl::base::TImage<float> gradimg;
 };
 
-TReaderConfigTest::TReaderConfigTest()
+TReaderConfigTest::TReaderConfigTest() :
+    gradimg({100,120})
 {
+
+    std::iota(gradimg.GetDataPtr(),gradimg.GetDataPtr()+gradimg.Size(),0);
+
+    ImageWriter writer;
+
+    writer.write(gradimg,"testread.tif");
+    writer.write(gradimg,"testread.fits");
 }
 
 std::vector<float> TReaderConfigTest::goldenAngles(int n, int start, float arc)
@@ -233,6 +252,90 @@ void TReaderConfigTest::testBuildFileListAngles()
         ++git;
     }
 }
+
+void TReaderConfigTest::testImageSize()
+{
+    ImageReader reader;
+
+    auto dimstiff = reader.imageSize("testread.tif");
+    QCOMPARE(dimstiff[0],gradimg.Size(0));
+    QCOMPARE(dimstiff[1],gradimg.Size(1));
+    QCOMPARE(dimstiff.size(),gradimg.dims().size());
+
+    auto dimsfits = reader.imageSize("testread.fits");
+    QCOMPARE(dimsfits[0],gradimg.Size(0));
+    QCOMPARE(dimsfits[1],gradimg.Size(1));
+    QCOMPARE(dimsfits.size(),gradimg.dims().size());
+
+
+    QVERIFY_EXCEPTION_THROWN(reader.imageSize("dfgdgdfbvxssrgsxdf.fits"),ReaderException);
+
+}
+
+void TReaderConfigTest::testRead()
+{
+
+    ImageReader reader;
+
+    auto tmp = reader.Read("testread.tif");
+
+    QCOMPARE(tmp.Size(0),gradimg.Size(0));
+    QCOMPARE(tmp.Size(1),gradimg.Size(1));
+
+    for (size_t i=0; i<gradimg.Size(); ++i)
+        QCOMPARE(tmp[i],gradimg[i]);
+
+    auto tmpfits = reader.Read("testread.fits");
+
+    QCOMPARE(tmpfits.Size(0),gradimg.Size(0));
+    QCOMPARE(tmpfits.Size(1),gradimg.Size(1));
+
+    for (size_t i=0; i<gradimg.Size(); ++i)
+        QCOMPARE(tmpfits[i],gradimg[i]);
+}
+
+void TReaderConfigTest::testCroppedRead()
+{ 
+    ImageReader reader;
+
+    auto tmp = reader.Read("testread.tif");
+
+    QCOMPARE(tmp.Size(0),gradimg.Size(0));
+    QCOMPARE(tmp.Size(1),gradimg.Size(1));
+
+    for (size_t i=0; i<gradimg.Size(); ++i)
+        QCOMPARE(tmp[i],gradimg[i]);
+
+    auto tmpfits = reader.Read("testread.fits");
+
+    QCOMPARE(tmpfits.Size(0),gradimg.Size(0));
+    QCOMPARE(tmpfits.Size(1),gradimg.Size(1));
+
+    for (size_t i=0; i<gradimg.Size(); ++i)
+        QCOMPARE(tmpfits[i],gradimg[i]);
+}
+
+void TReaderConfigTest::testGetDose()
+{
+    ImageReader reader;
+    std::vector<size_t> doseROI={20,20,30,30};
+    float dose=reader.projectionDose("testread.tif",doseROI);
+    std::vector<float> means(doseROI[3]-doseROI[1],0.0f);
+
+    for (size_t y=doseROI[1]; y<doseROI[3]; ++y)
+    {
+        for (size_t x=doseROI[0]; x<doseROI[2]; ++x)
+            means[y-doseROI[1]] += gradimg(x,y);
+        means[y-doseROI[1]]/=doseROI[2]-doseROI[0];
+    }
+    float refDose = 0.0f;
+    kipl::math::median(means,&refDose);
+
+    QCOMPARE(dose,refDose);
+
+}
+
+
 
 QTEST_APPLESS_MAIN(TReaderConfigTest)
 

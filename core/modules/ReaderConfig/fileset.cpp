@@ -25,6 +25,7 @@ FileSet::FileSet() :
     m_fBinning(1.0f),
     m_Flip(kipl::base::ImageFlipNone),
     m_Rotate(kipl::base::ImageRotateNone),
+    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_bUseROI(false),
     m_ROI({0,0,100,100})
 {
@@ -42,6 +43,7 @@ FileSet::FileSet(const FileSet &cfg) :
     m_fBinning(cfg.m_fBinning),
     m_Flip(cfg.m_Flip),
     m_Rotate(cfg.m_Rotate),
+    m_AverageMethod(cfg.m_AverageMethod),
     m_bUseROI(cfg.m_bUseROI),
     m_ROI(cfg.m_ROI)
 {
@@ -64,6 +66,7 @@ const FileSet &FileSet::operator=(const FileSet &cfg)
     m_fBinning      = cfg.m_fBinning;
     m_Flip          = cfg.m_Flip;
     m_Rotate        = cfg.m_Rotate;
+    m_AverageMethod = cfg.m_AverageMethod;
     m_bUseROI       = cfg.m_bUseROI;
     m_ROI           = cfg.m_ROI;
 
@@ -78,17 +81,19 @@ std::string FileSet::WriteXML(int indent)
 {
     ostringstream xml;
 
-    xml<<kipl::strings::xmlString("filemask",     m_sFilemask,           indent+4);
-    xml<<kipl::strings::xmlString("variablename", m_sVariableName,       indent+4);
-    xml<<kipl::strings::xmlString("first",        m_nFirst,              indent+4);
-    xml<<kipl::strings::xmlString("last",         m_nLast,               indent+4);
-    xml<<kipl::strings::xmlString("repeat",       m_nRepeat,             indent+4);
-    xml<<kipl::strings::xmlString("stride",       m_nStride,             indent+4);
-    xml<<kipl::strings::xmlString("step",         m_nStep,               indent+4);
-    xml<<kipl::strings::xmlString("binning",      m_fBinning,            indent+4);
-    xml<<kipl::strings::xmlString("flip",         enum2string(m_Flip),   indent+4);
-    xml<<kipl::strings::xmlString("rotate",       enum2string(m_Rotate), indent+4);
-    xml<<kipl::strings::xmlString("useroi",       m_bUseROI,             indent+4);
+    xml<<kipl::strings::xmlString("filemask",      m_sFilemask,                 indent+4);
+    xml<<kipl::strings::xmlString("variablename",  m_sVariableName,             indent+4);
+    xml<<kipl::strings::xmlString("first",         m_nFirst,                    indent+4);
+    xml<<kipl::strings::xmlString("last",          m_nLast,                     indent+4);
+    xml<<kipl::strings::xmlString("repeat",        m_nRepeat,                   indent+4);
+    xml<<kipl::strings::xmlString("stride",        m_nStride,                   indent+4);
+    xml<<kipl::strings::xmlString("step",          m_nStep,                     indent+4);
+    xml<<kipl::strings::xmlString("binning",       m_fBinning,                  indent+4);
+    xml<<kipl::strings::xmlString("flip",          enum2string(m_Flip),         indent+4);
+    xml<<kipl::strings::xmlString("rotate",        enum2string(m_Rotate),       indent+4);
+    xml<<kipl::strings::xmlString("averagemethod", enum2string(m_AverageMethod), indent+4);
+
+    xml<<kipl::strings::xmlString("useroi",        m_bUseROI,                   indent+4);
 
     xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
 
@@ -143,13 +148,14 @@ int FileSet::ParseXML(std::string xml)
             string2enum(value.c_str(),m_Rotate);
          }
 
+         if (tag=="averagemethod") {
+            string2enum(value.c_str(),m_AverageMethod);
+         }
+
          if (tag=="useroi") {
             m_bUseROI=kipl::strings::string2bool(value.c_str());
          }
-//         xml<<std::setw(indent+4)<<"<flip>"<< m_Flip<<"</flip>\n";
-//         xml<<std::setw(indent+4)<<"<rotate>"<< m_Rotate<<"</flip>\n";
-//         xml<<std::setw(indent+4)<<"<useroi>"<< kipl::strings::bool2string(m_bUseROI)<<"</useroi>\n";
-//         xml<<std::setw(indent+4)<<"<roi>"<< m_ROI[0]<<" "<< m_ROI[1]<<" "<< m_ROI[2]<<" "<< m_ROI[3]<<" "<<"</roi>\n";
+
          if (tag=="skiplist") {
             kipl::strings::String2List(value,m_nSkipList);
          }
@@ -207,6 +213,10 @@ int FileSet::ParseXML(xmlTextReaderPtr reader)
 
             if (sName=="rotate") {
                string2enum(sValue.c_str(),m_Rotate);
+            }
+
+            if (sName=="averagemethod") {
+               string2enum(sValue.c_str(),m_AverageMethod);
             }
 
             if (sName=="useroi") {

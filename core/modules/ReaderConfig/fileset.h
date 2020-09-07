@@ -12,6 +12,8 @@
 #include <base/kiplenums.h>
 #include <base/timage.h>
 
+#include <averageimage.h>
+
 #include "readerconfig_global.h"
 
 
@@ -42,6 +44,7 @@ public:
 
     kipl::base::eImageFlip m_Flip;
     kipl::base::eImageRotate m_Rotate;
+    ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod;
 
     bool m_bUseROI;
     std::vector<size_t> m_ROI;
