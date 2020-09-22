@@ -136,7 +136,7 @@ void MainWindow::on_pushButton_listdata_clicked()
 
     std::ostringstream msg;
 
-    loaderlist=ui->ImageLoaders->GetList();
+    loaderlist=ui->ImageLoaders->getList();
     msg.str("");
     msg<<"Getting files from loader:\n";
     for (auto it=loaderlist.begin(); it!=loaderlist.end(); it++) {

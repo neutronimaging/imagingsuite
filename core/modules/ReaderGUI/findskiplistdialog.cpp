@@ -113,11 +113,11 @@ void FindSkipListDialog::LoadDoseList()
     try {
         for (const auto &fname : m_FileList)
         {
-                   fDose=reader.getProjectionDose(fname,
+                   fDose=reader.projectionDose(fname,
+                                               m_nROI,
                                         kipl::base::ImageFlipNone,
                                         kipl::base::ImageRotateNone,
-                                        1.0f,
-                                        m_nROI);
+                                        1.0f);
 
                    m_DoseData.append(QPoint(static_cast<float>(i),fDose));
                    m_SortedDoses.insert(std::make_pair(fDose,i));
