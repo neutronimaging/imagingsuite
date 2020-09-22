@@ -54,3 +54,5 @@ DEPENDPATH += $$PWD/../QtAddons
 
 INCLUDEPATH += $$PWD/../QtImaging
 DEPENDPATH += $$PWD/../QtImaging
+
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
