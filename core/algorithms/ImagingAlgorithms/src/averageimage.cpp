@@ -220,17 +220,17 @@ void AverageImage::GetColumn(kipl::base::TImage<float,3> &img, size_t idx, float
 
 }
 
-void string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMethod &eam)
+void string2enum(const string &str, ImagingAlgorithms::AverageImage::eAverageMethod &eam)
 {
     std::map<std::string,ImagingAlgorithms::AverageImage::eAverageMethod> methods;
 
-    methods["ImageSelectSingle"]=ImagingAlgorithms::AverageImage::ImageSelectSingle;
-    methods["ImageSum"]=ImagingAlgorithms::AverageImage::ImageSum;
-    methods["ImageAverage"]=ImagingAlgorithms::AverageImage::ImageAverage;
-    methods["ImageMedian"]=ImagingAlgorithms::AverageImage::ImageMedian;
-    methods["ImageWeightedAverage"]=ImagingAlgorithms::AverageImage::ImageWeightedAverage;
-    methods["ImageMin"]=ImagingAlgorithms::AverageImage::ImageMin;
-    methods["ImageMax"]=ImagingAlgorithms::AverageImage::ImageMax;
+    methods["ImageSelectSingle"]    = ImagingAlgorithms::AverageImage::ImageSelectSingle;
+    methods["ImageSum"]             = ImagingAlgorithms::AverageImage::ImageSum;
+    methods["ImageAverage"]         = ImagingAlgorithms::AverageImage::ImageAverage;
+    methods["ImageMedian"]          = ImagingAlgorithms::AverageImage::ImageMedian;
+    methods["ImageWeightedAverage"] = ImagingAlgorithms::AverageImage::ImageWeightedAverage;
+    methods["ImageMin"]             = ImagingAlgorithms::AverageImage::ImageMin;
+    methods["ImageMax"]             = ImagingAlgorithms::AverageImage::ImageMax;
 
     if (methods.count(str)==0)
         throw ImagingException("The key string does not exist for eAverageMethod",__FILE__,__LINE__);
@@ -255,7 +255,7 @@ std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam)
     return  str;
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod eam)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod & eam)
 {
     s<<enum2string(eam);
 

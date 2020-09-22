@@ -86,10 +86,13 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 LIBS += -lkipl -lModuleConfig -lReconFramework
 
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+DEPENDPATH  += $$PWD/../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../Framework/ReconFramework/src
+
+INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include

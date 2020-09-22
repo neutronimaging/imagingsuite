@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1128</width>
-    <height>856</height>
+    <width>1343</width>
+    <height>847</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,7 +68,200 @@
                <string>Projection images</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_2">
-               <item row="1" column="2" colspan="3">
+               <item row="2" column="3">
+                <widget class="QPushButton" name="pushButton_measurePixelSize">
+                 <property name="toolTip">
+                  <string>A tool to estimate the pixel size. &lt;br /&gt;Requires an image of an object with known dimensions.</string>
+                 </property>
+                 <property name="text">
+                  <string>Measure</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="8">
+                <widget class="QComboBox" name="comboProjectionStyle">
+                 <property name="toolTip">
+                  <string>Data representation in the images</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Projection</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Sinogram</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Same projection</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Same slice</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QSpinBox" name="spinProjectionBinning">
+                 <property name="toolTip">
+                  <string>Binning factor of the projections</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>8</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="5">
+                <widget class="QComboBox" name="comboFlipProjection">
+                 <property name="toolTip">
+                  <string>Mirror the projection in different directions</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>No flip</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Horizontal flip</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Vertical flip</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Horizontal and vertical flip</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="4" column="8">
+                <widget class="QPushButton" name="buttonGetSkipList">
+                 <property name="toolTip">
+                  <string>Find the retake images in the projection data set</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Get skip list</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="7">
+                <widget class="QComboBox" name="comboRotateProjection">
+                 <property name="toolTip">
+                  <string>Rotate the projection</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>No rotation</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>90 degrees CW</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>180 degrees CW</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>90 degrees CCW</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="2" colspan="6">
+                <widget class="QLineEdit" name="editProjectionMask">
+                 <property name="toolTip">
+                  <string>File mask of the projection images (Format: file_####.ext)</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_37">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Pixel size (mm)</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>dspinResolution</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2" colspan="6">
+                <widget class="QLineEdit" name="editProjectionSkipList">
+                 <property name="toolTip">
+                  <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_10">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Binning</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinProjectionBinning</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2" colspan="6">
                 <layout class="QHBoxLayout" name="layoutFileIndex">
                  <item>
                   <widget class="QLabel" name="label_11">
@@ -178,39 +371,74 @@
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>Count</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="spinBox_projPerView">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </item>
-               <item row="3" column="4">
-                <widget class="QComboBox" name="comboRotateProjection">
-                 <property name="toolTip">
-                  <string>Rotate the projection</string>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="styleSheet">
+                  <string notr="true"/>
                  </property>
-                 <property name="whatsThis">
-                  <string/>
+                 <property name="text">
+                  <string>Projections</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>editProjectionMask</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="5">
+                <spacer name="verticalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="2" column="2">
+                <widget class="QDoubleSpinBox" name="dspinResolution">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>No rotation</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>90 degrees CW</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>180 degrees CW</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>90 degrees CCW</string>
-                  </property>
-                 </item>
+                 <property name="decimals">
+                  <number>5</number>
+                 </property>
+                 <property name="maximum">
+                  <double>10.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.100000000000000</double>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="0">
@@ -229,7 +457,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="5">
+               <item row="5" column="8">
                 <widget class="QPushButton" name="buttonPreview">
                  <property name="toolTip">
                   <string>Preview the projection</string>
@@ -248,20 +476,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="4" column="3">
-                <spacer name="verticalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="0" column="5">
+               <item row="0" column="8">
                 <widget class="QPushButton" name="buttonProjectionPath">
                  <property name="toolTip">
                   <string>Browse for the projection path</string>
@@ -277,157 +492,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="2">
-                <widget class="QSpinBox" name="spinProjectionBinning">
-                 <property name="toolTip">
-                  <string>Binning factor of the projections</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="minimum">
-                  <number>1</number>
-                 </property>
-                 <property name="maximum">
-                  <number>8</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_10">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Binning</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinProjectionBinning</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Projections</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>editProjectionMask</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2" colspan="3">
-                <widget class="QLineEdit" name="editProjectionMask">
-                 <property name="toolTip">
-                  <string>File mask of the projection images (Format: file_####.ext)</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QComboBox" name="comboFlipProjection">
-                 <property name="toolTip">
-                  <string>Mirror the projection in different directions</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>No flip</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Horizontal flip</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Vertical flip</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Horizontal and vertical flip</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="1" column="5">
-                <widget class="QComboBox" name="comboProjectionStyle">
-                 <property name="toolTip">
-                  <string>Data representation in the images</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Projection</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Sinogram</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Same projection</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Same slice</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="2" column="2" colspan="3">
-                <widget class="QLineEdit" name="editProjectionSkipList">
-                 <property name="toolTip">
-                  <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="5">
-                <widget class="QPushButton" name="buttonGetSkipList">
-                 <property name="toolTip">
-                  <string>Find the retake images in the projection data set</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Get skip list</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
+               <item row="4" column="0">
                 <widget class="QCheckBox" name="checkBoxUseSkipList">
                  <property name="toolTip">
                   <string>The skip list allows you sort out bad projections that were retaken but remained in the image sequence.</string>
@@ -436,6 +501,9 @@
                   <string>Use skip list</string>
                  </property>
                 </widget>
+               </item>
+               <item row="2" column="7">
+                <widget class="QComboBox" name="comboBox_projectionCominationMethod"/>
                </item>
               </layout>
              </widget>
@@ -714,91 +782,12 @@
               </property>
              </spacer>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+            </item>
            </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_5">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>70</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QGroupBox {font: bold 1.75em}</string>
-          </property>
-          <property name="title">
-           <string>Pixels</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_9">
-           <item>
-            <widget class="QLabel" name="label_37">
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="text">
-              <string>Projection pixel size (mm)</string>
-             </property>
-             <property name="buddy">
-              <cstring>dspinResolution</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dspinResolution">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="decimals">
-              <number>5</number>
-             </property>
-             <property name="maximum">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.010000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.100000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_measurePixelSize">
-             <property name="toolTip">
-              <string>A tool to estimate the pixel size. &lt;br /&gt;Requires an image of an object with known dimensions.</string>
-             </property>
-             <property name="text">
-              <string>Measure</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer_8">
@@ -2378,7 +2367,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1128</width>
+     <width>1343</width>
      <height>22</height>
     </rect>
    </property>

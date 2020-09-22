@@ -11,3 +11,9 @@ do
         echo $d
 	rm -rf $d
 done
+
+for f in `find . -type f | grep .qmake.stash`;
+do 
+	echo $f
+	rm $f
+done

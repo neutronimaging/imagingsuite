@@ -20,7 +20,7 @@ endif()
 
 add_definitions(-DNO_QT)
 
-include_directories(../../kipl/kipl/include ../ReaderConfig /opt/local/include /opt/local/include/libxml2 ../../../external/pylinalg)
+include_directories(../../kipl/kipl/include ../../algorithms/ImagingAlgorithms/include ../ReaderConfig /opt/local/include /opt/local/include/libxml2 ../../../external/pylinalg)
 link_directories(../../../../lib /opt/local/lib )
 
 # add_definitions(-DVERSION="1.6.0")

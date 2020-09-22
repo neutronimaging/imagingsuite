@@ -93,17 +93,22 @@ HEADERS += ../../src/fdkbackproj.h \
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
 
+LIBS += -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig -lReconFramework
+
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/src
+DEPENDPATH  += $$PWD/../../../../../../core/kipl/kipl/src
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/src
+DEPENDPATH  += $$PWD/../../../../../../core/modules/ModuleConfig/src
+
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
-DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
+DEPENDPATH  += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../../../Framework/ReconFramework/src
 
 macx: {
 INCLUDEPATH += $$PWD/../../../../../../external/mac/include

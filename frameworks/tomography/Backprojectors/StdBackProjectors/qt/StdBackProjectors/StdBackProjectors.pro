@@ -112,6 +112,9 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 

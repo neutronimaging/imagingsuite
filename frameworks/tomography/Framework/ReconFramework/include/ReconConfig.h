@@ -5,6 +5,9 @@
 
 #include "ReconFramework_global.h"
 
+#include <QThread>
+#include <QDebug>
+
 #include <map>
 #include <list>
 #include <set>
@@ -14,6 +17,8 @@
 
 #include <ModuleConfig.h>
 #include <ConfigBase.h>
+
+#include <averageimage.h>
 
 #include <logging/logger.h>
 #include <io/analyzefileext.h>
@@ -81,6 +86,8 @@ public:
         size_t nFirstIndex;         ///< The index number of the first projection in the data set
         size_t nLastIndex;          ///< The index number of the last projection in the data set
         size_t nProjectionStep;     ///< Increment of the projection index during read
+        size_t nRepeatedView;       ///< Same view has repeated projections
+        ImagingAlgorithms::AverageImage::eAverageMethod averageMethod;
         std::set<size_t> nlSkipList;///< List of projection indices that are retakes and will be skipped. This is not a missing angle.
         bool bRepeatLine;           ///< Repeat line this is a part of the repeat sinogram reconstruction
         eScanType scantype;         ///< Indicates how the data was acquired

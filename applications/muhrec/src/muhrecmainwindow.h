@@ -197,6 +197,8 @@ private slots:
 
     void on_actionShow_repository_triggered();
 
+    void on_spinBox_projPerView_valueChanged(int arg1);
+
     void on_actionGlobal_settings_triggered();
 
     void on_pushButton_measurePixelSize_clicked();
@@ -204,7 +206,6 @@ private slots:
     void on_spinBoxSlices_valueChanged(int arg1);
 
     void on_spinBoxProjections_valueChanged(int arg1);
-
 
     void on_radioButton_SOD_toggled(bool checked);
 

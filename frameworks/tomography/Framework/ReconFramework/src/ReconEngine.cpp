@@ -903,6 +903,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
 
     int res=0;
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
+
     logger(kipl::logging::Logger::LogMessage,msg.str());
     try {
         msg.str(""); msg<<"run3d "<<m_Config.ProjectionInfo.beamgeometry;
@@ -999,9 +1000,7 @@ int ReconEngine::Run3DFull()
     msg<<": ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-
-     m_FirstSlice=roi[1];
-
+    m_FirstSlice=roi[1];
 
 	kipl::profile::Timer totalTimer;
 

@@ -58,7 +58,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lReconAlgorithms -lIterativeBackProj
+LIBS += -lkipl -lImagingAlgorithms -lReconFramework -lModuleConfig -lReconAlgorithms -lIterativeBackProj
 
 INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
