@@ -89,7 +89,7 @@ FileSet ReaderForm::getReaderConfig()
     cfg.m_nFirst = ui->spinBox_first->value();
     cfg.m_nLast  = ui->spinBox_last->value();
     cfg.m_nStep  = ui->spinBox_step->value();
-    cfg.m_nRepeat = ui->spinBox_repeat->value();
+    cfg.m_nCount = ui->spinBox_repeat->value();
     cfg.m_nStride = ui->spinBox_stride->value();
 
     cfg.m_Rotate = static_cast<kipl::base::eImageRotate>(ui->comboBox_rotate->currentIndex());
@@ -108,7 +108,7 @@ void ReaderForm::setReaderConfig(FileSet &cfg)
     ui->spinBox_first->setValue(cfg.m_nFirst);
     ui->spinBox_last->setValue(cfg.m_nLast);
     ui->spinBox_step->setValue(cfg.m_nStep);
-    ui->spinBox_repeat->setValue(cfg.m_nRepeat);
+    ui->spinBox_repeat->setValue(cfg.m_nCount);
     ui->spinBox_stride->setValue(cfg.m_nStride);
     ui->comboBox_mirror->setCurrentIndex(static_cast<int>(cfg.m_Flip));
     ui->comboBox_rotate->setCurrentIndex(static_cast<int>(cfg.m_Rotate));

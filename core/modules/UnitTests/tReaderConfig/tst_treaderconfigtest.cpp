@@ -126,7 +126,7 @@ void TReaderConfigTest::testDataSetBase()
     QCOMPARE(l1.m_nLast,99);
     QCOMPARE(l1.m_nStep,1);
     QCOMPARE(l1.m_nStride,1);
-    QCOMPARE(l1.m_nRepeat,1);
+    QCOMPARE(l1.m_nCount,1);
     QCOMPARE(l1.getId(),0);
     QCOMPARE(l2.getId(),1);
     QCOMPARE(l1.m_sFilemask,std::string("image_####.tif"));
@@ -148,7 +148,7 @@ void TReaderConfigTest::testDataSetBase()
     QCOMPARE(l1.m_nLast,200);
     QCOMPARE(l1.m_nStep,11);
     QCOMPARE(l1.m_nStride,20);
-    QCOMPARE(l1.m_nRepeat,5);
+    QCOMPARE(l1.m_nCount,5);
 
     QCOMPARE(l1.m_sFilemask,std::string("new_####.tif"));
     QCOMPARE(l1.m_sVariableName,std::string("new"));
@@ -161,7 +161,7 @@ void TReaderConfigTest::testDataSetBase()
     QCOMPARE(l1.m_nLast,   l2.m_nLast);
     QCOMPARE(l1.m_nStep,   l2.m_nStep);
     QCOMPARE(l1.m_nStride, l2.m_nStride);
-    QCOMPARE(l1.m_nRepeat, l2.m_nRepeat);
+    QCOMPARE(l1.m_nCount, l2.m_nCount);
 
     QCOMPARE(l1.m_sFilemask, l2.m_sFilemask);
     QCOMPARE(l1.m_sVariableName, l2.m_sVariableName);

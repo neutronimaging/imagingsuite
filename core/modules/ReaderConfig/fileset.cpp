@@ -19,7 +19,7 @@ FileSet::FileSet() :
     m_sVariableName("image"),
     m_nFirst(0),
     m_nLast(99),
-    m_nRepeat(1),
+    m_nCount(1),
     m_nStride(1),
     m_nStep(1),
     m_fBinning(1.0f),
@@ -37,7 +37,7 @@ FileSet::FileSet(const FileSet &cfg) :
     m_sVariableName(cfg.m_sVariableName),
     m_nFirst(cfg.m_nFirst),
     m_nLast(cfg.m_nLast),
-    m_nRepeat(cfg.m_nRepeat),
+    m_nCount(cfg.m_nCount),
     m_nStride(cfg.m_nStride),
     m_nStep(cfg.m_nStep),
     m_fBinning(cfg.m_fBinning),
@@ -60,7 +60,7 @@ const FileSet &FileSet::operator=(const FileSet &cfg)
     m_sVariableName = cfg.m_sVariableName;
     m_nFirst        = cfg.m_nFirst;
     m_nLast         = cfg.m_nLast;
-    m_nRepeat       = cfg.m_nRepeat;
+    m_nCount       = cfg.m_nCount;
     m_nStride       = cfg.m_nStride;
     m_nStep         = cfg.m_nStep;
     m_fBinning      = cfg.m_fBinning;
@@ -85,7 +85,7 @@ std::string FileSet::WriteXML(int indent)
     xml<<kipl::strings::xmlString("variablename",  m_sVariableName,             indent+4);
     xml<<kipl::strings::xmlString("first",         m_nFirst,                    indent+4);
     xml<<kipl::strings::xmlString("last",          m_nLast,                     indent+4);
-    xml<<kipl::strings::xmlString("repeat",        m_nRepeat,                   indent+4);
+    xml<<kipl::strings::xmlString("repeat",        m_nCount,                   indent+4);
     xml<<kipl::strings::xmlString("stride",        m_nStride,                   indent+4);
     xml<<kipl::strings::xmlString("step",          m_nStep,                     indent+4);
     xml<<kipl::strings::xmlString("binning",       m_fBinning,                  indent+4);
@@ -131,7 +131,7 @@ int FileSet::ParseXML(std::string xml)
             m_nLast=std::atoi(value.c_str());
          }
          if (tag=="repeat") {
-            m_nRepeat=std::atoi(value.c_str());
+            m_nCount=std::atoi(value.c_str());
          }
          if (tag=="stride") {
             m_nStride=std::atoi(value.c_str());
@@ -198,7 +198,7 @@ int FileSet::ParseXML(xmlTextReaderPtr reader)
                m_nLast=std::atoi(sValue.c_str());
             }
             if (sName=="repeat") {
-               m_nRepeat=std::atoi(sValue.c_str());
+               m_nCount=std::atoi(sValue.c_str());
             }
             if (sName=="stride") {
                m_nStride=std::atoi(sValue.c_str());
@@ -240,6 +240,17 @@ std::string FileSet::makeFileName(int idx) const
 
     return name;
 }
+
+int FileSet::lastIndex() const
+{
+    return (m_nLast - m_nFirst) / (m_nStep *m_nStride);
+}
+
+int FileSet::fileIndex(int idx, int cntIdx) const
+{
+    return m_nFirst + idx * m_nStep * m_nStride + cntIdx;
+}
+
 
 std::ostream & operator<<(std::ostream &s, FileSet &il)
 {
