@@ -9,7 +9,7 @@
 #include <base/timage.h>
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
-#include <base/trotate.h>   kipl::base::TRotate<unsigned short> rot;
+#include <base/trotate.h>
 
 #include <io/io_generic.h>
 #include <strings/filenames.h>
@@ -52,12 +52,13 @@ void Process(ConvertConfig & config)
     if (config.src_mask.find('#')==std::string::npos) // single file
     {
         std::cout<<"Reading "<<config.src_mask<<std::endl;
-        kipl::io::ReadGeneric(imgs,config.src_mask.c_str(),
-                             config.size[0],config.size[1],
-                             config.offset,config.stride,
-                             config.imagesperfile,
-                             config.dt,config.endian,
-                             NULL);
+        kipl::io::ReadGeneric(  imgs,
+                                config.src_mask,
+                                config.size[0],config.size[1],
+                                config.offset,config.stride,
+                                config.imagesperfile,
+                                config.dt,config.endian,
+                                {});
 
        std::list<kipl::base::TImage<unsigned short,2> >::iterator it;
        int cnt=0;
@@ -82,12 +83,13 @@ void Process(ConvertConfig & config)
             kipl::strings::filenames::MakeFileName(config.src_mask,i,inname,ext,'#','0',config.reverseindex);
 
             std::cout<<"Reading "<<inname<<std::endl;
-            kipl::io::ReadGeneric(imgs,inname.c_str(),
-                                 config.size[0],config.size[1],
-                                 config.offset,config.stride,
-                                 config.imagesperfile,
-                                 config.dt,config.endian,
-                                 NULL);
+            kipl::io::ReadGeneric(  imgs,
+                                    inname,
+                                    config.size[0],config.size[1],
+                                    config.offset,config.stride,
+                                    config.imagesperfile,
+                                    config.dt,config.endian,
+                                    {});
 
            std::list<kipl::base::TImage<unsigned short,2> >::iterator it;
 

@@ -9,7 +9,7 @@ namespace kipl { namespace math {
 template <typename T, size_t N>
 kipl::base::TImage<T,N> abs(kipl::base::TImage<T,N> img)
 {
-	kipl::base::TImage<T,N> result(img.Dims());
+    kipl::base::TImage<T,N> result(img.dims());
 	
 	const size_t n=img.Size();
 	T * pImg=img.GetDataPtr();
@@ -26,7 +26,7 @@ kipl::base::TImage<T,N> abs(kipl::base::TImage<T,N> img)
 template <typename T, size_t N>
 kipl::base::TImage<T,N> sqr(const kipl::base::TImage<T,N> img)
 {
-	kipl::base::TImage<T,N> res(img.Dims());
+    kipl::base::TImage<T,N> res(img.dims());
 	
 
 	T *pRes=res.GetDataPtr();

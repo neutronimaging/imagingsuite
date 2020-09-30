@@ -40,7 +40,6 @@ unix:!symbian {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
         ICON = muhrec3.icns
     }
     else {
@@ -68,16 +67,19 @@ win32 {
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
+LIBS += -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig -lReconFramework -lReconAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+DEPENDPATH  += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../../../Framework/ReconFramework/src
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
 DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms

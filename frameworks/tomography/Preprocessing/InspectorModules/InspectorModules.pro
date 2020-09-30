@@ -48,6 +48,7 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
         QMAKE_LFLAGS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio
     }
 
     LIBS += -ltiff -lxml2
@@ -70,7 +71,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug
 
-LIBS += -lkipl -lModuleConfig -lReconFramework
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
@@ -81,7 +82,8 @@ DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
 
-
+INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../core//algorithms/ImagingAlgorithms/src
 
 macx: {
 

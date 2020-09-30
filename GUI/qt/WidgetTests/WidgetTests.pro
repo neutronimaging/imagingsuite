@@ -61,6 +61,8 @@ DEPENDPATH += $$PWD/../QtModuleConfigure
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
 
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
+
 INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig
 DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig
 

@@ -125,15 +125,15 @@ template <typename T, size_t NDim>
 NonLinDiffusionFilter<T,NDim>::NonLinDiffusionFilter(kipl::interactors::InteractionBase *interactor):
   DiffusionBaseFilter<T,NDim>(1.0f,0.25f,10,interactor),
   lambdaest(nullptr),
-  a(nullptr),
-  b(nullptr),
-  d(nullptr),
   p(nullptr),
   q(nullptr),
+  d(nullptr),
+  a(nullptr),
+  b(nullptr),
   x(nullptr),
   y(nullptr),
-  m(nullptr),
-  l(nullptr)
+  l(nullptr),
+  m(nullptr)
 {
 
 
@@ -275,11 +275,11 @@ int NonLinDiffusionFilter<T,NDim>::operator()(kipl::base::TImage<float,NDim> &im
     this->u.Clone(img);
     img.FreeImage();
 
-    this->v.Resize(this->u.Dims());
+    this->v.resize(this->u.dims());
 //    //g.resize(u.Dims()); // Don't forget to allocate g or (dx,dy,dz)
 
     this->InitFilters(this->u.Size(0), this->u.Size(0)*this->u.Size(1));
-    const size_t *dims=this->u.Dims();
+    auto dims=this->u.dims();
 
     kipl::profile::Timer timer;
     std::ostringstream msg;

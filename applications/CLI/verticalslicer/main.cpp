@@ -51,29 +51,27 @@ int process(int argc, char *argv[])
         return 0;
     }
 
-    size_t dims[10];
-    int nDims=0;
     ImageReader reader;
 
     std::string srcfname=args["infile"];
     size_t first=std::stoi(args["first"]);
     size_t last=std::stoi(args["last"]);
 
-    nDims=reader.GetImageSize("",srcfname,first,1.0,dims);
+    auto dims=reader.imageSize("",srcfname,first,1.0);
 
     size_t slicex=dims[1]/2;
     size_t slicey=dims[0]/2;
 
     kipl::base::TImage<float,2> img;
 
-    size_t dimsXZ[2]={dims[0],last-first+1};
+    std::vector<size_t> dimsXZ={dims[0],last-first+1};
     kipl::base::TImage<float,2> sliceXZ(dimsXZ);
 
-    size_t dimsYZ[2]={dims[1],last-first+1};
+    std::vector<size_t> dimsYZ={dims[1],last-first+1};
     kipl::base::TImage<float,2> sliceYZ(dimsYZ);
 
     for (size_t i=first; i<=last; ++i) {
-        img=reader.Read("",srcfname,i,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0,nullptr);
+        img=reader.Read("",srcfname,i,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0,{});
         std::copy_n(img.GetLinePtr(slicex),img.Size(0),sliceXZ.GetLinePtr(i-first));
 
         float *pLine=sliceYZ.GetLinePtr(i-first);

@@ -57,7 +57,7 @@ int QtKipToolCLI::exec()
         logger(kipl::logging::Logger::LogMessage,"KipTool is running in CLI mode");
 //        std::string fname(args[2].toStdString());
 
-        KiplProcessConfig config;
+        KiplProcessConfig config("");
         KiplEngine *engine=nullptr;
         KiplFactory factory;
 

@@ -1,5 +1,7 @@
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+//<LICENSE>
+
+#ifndef ALGBACKPROJECTORBASE_H
+#define ALGBACKPROJECTORBASE_H
 
 #include "reconalgorithms_global.h"
 #include <string>

@@ -17,16 +17,16 @@ TEMPLATE = lib
 DEFINES += READERCONFIG_LIBRARY
 
 SOURCES += readerconfig.cpp \
-    datasetbase.cpp \
     buildfilelist.cpp \
+    fileset.cpp \
     imagereader.cpp \
     readerexception.cpp \
     imagewriter.cpp \
     analyzefileext.cpp
 
 HEADERS += readerconfig.h\
+    fileset.h \
         readerconfig_global.h \
-    datasetbase.h \
     buildfilelist.h \
     imagereader.h \
     readerexception.h \
@@ -43,6 +43,7 @@ unix {
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
+        INCLUDEPATH += /usr/include/cfitsio/
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp

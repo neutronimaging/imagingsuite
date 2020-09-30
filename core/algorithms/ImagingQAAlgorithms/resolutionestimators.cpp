@@ -7,7 +7,8 @@
 
 #include "resolutionestimators.h"
 
-#include <tnt.h>
+#include <armadillo>
+//#include <tnt.h>
 #include <strings/miscstring.h>
 #include <math/nonlinfit.h>
 #include <fft/fftbase.h>
@@ -20,11 +21,10 @@ ResolutionEstimator::ResolutionEstimator() :
     logger("ResolutionEstimator"),
     profileFunction(Nonlinear::fnSumOfGaussians),
     profileSize(0),
-    mPixelSize(1),
+    mPixelSize(0.1),
     mfwhm(-1.0),
     mFitFunction(1)
 {
-
 }
 
 ResolutionEstimator::~ResolutionEstimator()
@@ -42,57 +42,46 @@ double ResolutionEstimator::pixelSize()
     return mPixelSize;
 }
 
-int ResolutionEstimator::size()
+size_t ResolutionEstimator::size()
 {
-    return profileSize;
+    return mProfile.size();
 }
 
 void ResolutionEstimator::setProfile(float *p, int N)
 {
-    mProfile.resize(N);
+    createAllocation(N);
     std::copy_n(p,N,mProfile.begin());
     analysis();
 }
 
 void ResolutionEstimator::setProfile(double *p, int N)
 {
-    profileSize = N;
-    mProfile.resize(N);
+    createAllocation(N);
     std::copy_n(p,N,mProfile.begin());
     analysis();
 }
 
 void ResolutionEstimator::setProfile(const std::vector<double> &p)
 {
-    profileSize = p.size();
+    int N=static_cast<int>(p.size());
+    createAllocation(N);
     mProfile = p;
+    std::copy_n(p.begin(),N,mProfile.begin());
 
     analysis();
 }
 
 void ResolutionEstimator::setProfile(const std::vector<float> &p)
 {
-    profileSize = p.size();
-    mProfile.resize(p.size());
+    createAllocation(p.size());
     std::copy(p.begin(),p.end(),mProfile.begin());
-    analysis();
-}
-
-void ResolutionEstimator::setProfile(TNT::Array1D<double> &p)
-{
-    int N=p.dim1();
-    createAllocation(N);
-    for (int i=0; i<N; ++i)
-        mProfile[i]=p[i];
-
 
     analysis();
 }
 
-void ResolutionEstimator::profile(double *p, size_t &N)
+const std::vector<double> & ResolutionEstimator::profile()
 {
-    N=profileSize;
-    std::copy(mProfile.begin(),mProfile.end(),p);
+    return mProfile;
 }
 
 void ResolutionEstimator::clear()
@@ -156,14 +145,17 @@ Nonlinear::SumOfGaussians ResolutionEstimator::fitFunction()
 
 void ResolutionEstimator::createAllocation(int N)
 {
-    removeAllocation();
-
+    mProfile.resize(N);
+    mDiffProfile.resize(N);
+    mXaxis.resize(N);
     profileSize=N;
 }
 
 void ResolutionEstimator::removeAllocation()
 {
-
+    mProfile.clear();
+    mDiffProfile.clear();
+    mXaxis.clear();
     profileSize=0;
 }
 
@@ -187,41 +179,44 @@ void ResolutionEstimator::analyzeLineSpread()
 {
     std::ostringstream msg;
 
-    TNT::Array1D<double> dataX(profileSize);
-    TNT::Array1D<double> dataY(profileSize);
-    TNT::Array1D<double> dataSig(profileSize);
+    arma::vec dataX(profileSize);
+    arma::vec dataY(profileSize);
+    arma::vec dataSig(profileSize);
 
-    for (int i=0; i<dataX.dim1(); ++i) {
-        dataX[i]=mXaxis[i];
-        dataY[i]=mDiffProfile[i];
-        dataSig[i]=1.0;
-    }
+    std::copy(mXaxis.begin(),mXaxis.end(),dataX.begin());
+    std::copy(mDiffProfile.begin(),mDiffProfile.end(),dataY.begin());
+    std::fill(dataSig.begin(),dataSig.end(),1.0);
+
 
     double maxval=-std::numeric_limits<double>::max();
     double minval=std::numeric_limits<double>::max();
 
-    int maxpos=0;
-    int minpos=0;
+    arma::uword maxpos=0;
+    arma::uword minpos=0;
     int idx=0;
-    for (int i=0; i<dataY.dim1() ; ++i) {
-        if (maxval<dataY[i]) {
+    for (auto i=0; i<dataY.n_elem ; ++i)
+    {
+        if (maxval<dataY[i])
+        {
             maxval=dataY[i];
             maxpos=idx;
         }
-        if (dataY[i]< minval) {
+        if (dataY[i]< minval)
+        {
             minval=dataY[i];
             minpos=idx;
         }
         idx++;
     }
 
-    if ((dataY.dim1()<=maxpos) || (dataY.dim1()<=minpos))
+    if ((dataY.n_elem<=maxpos) || (dataY.n_elem<=minpos))
         throw kipl::base::KiplException("Min/max search out of bounds",__FILE__,__LINE__);
 
     double halfmax=(maxval-minval)/2+minval;
     int HWHM=maxpos;
 
-    for (; HWHM<dataY.dim1(); ++HWHM) {
+    for (; HWHM < dataY.n_elem; ++HWHM)
+    {
         if (dataY[HWHM]<halfmax)
             break;
     }
@@ -230,23 +225,25 @@ void ResolutionEstimator::analyzeLineSpread()
     mFitFunction[1]=dataX[maxpos];
     mFitFunction[2]=(dataX[HWHM]-dataX[maxpos])*2;
 
-//    qDebug() <<dataX[HWHM]<<dataX[maxpos] << mFitFunction[0] << mFitFunction[1] << mFitFunction[2];
-
     double d=dataX[1]-dataX[0];
-    if (mFitFunction[2]<mPixelSize) {
+    if (mFitFunction[2]<mPixelSize)
+    {
         logger.warning("Could not find FWHM, using constant 3*dx");
         mFitFunction[2]=3*mPixelSize;
     }
 
     Nonlinear::LevenbergMarquardt mrqfit(0.001,5000);
-    try {
+    try
+    {
         mrqfit.fit(dataX,dataY,dataSig,mFitFunction);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         logger.error(e.what());
         return ;
     }
-    catch (std::exception &e) {
+    catch (std::exception &e)
+    {
         logger.error(e.what());
         return ;
     }
@@ -255,6 +252,7 @@ void ResolutionEstimator::analyzeLineSpread()
 
     logger.message(msg.str());
     mfwhm=2*sqrt(log(2))*mFitFunction[2];
+
 }
 
 void ResolutionEstimator::analyzeMTF()

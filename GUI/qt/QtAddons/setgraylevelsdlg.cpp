@@ -43,16 +43,12 @@ SetGrayLevelsDlg::SetGrayLevelsDlg(QWidget *parent) :
     double c99lo=0.005*cumsum;
     double c99hi=0.995*cumsum;
 
-//    qDebug() << "quantile counts "<<c95lo<<", "<<c95hi<<" and "<<c99lo<<", "<<c99hi;
-
     foreach (QPointF p, cumhist) {
         q95lo=p.y() <= c95lo ? p.x() : q95lo;
         q95hi=p.y() <= c95hi ? p.x() : q95hi;
         q99lo=p.y() <= c99lo ? p.x() : q99lo;
         q99hi=p.y() <= c99hi ? p.x() : q99hi;
     }
-
-//    qDebug() << "quantile limits "<<q95lo<<", "<<q95hi<<" and "<<q99lo<<", "<<q99hi;
 
     ui->histogram->setCurveData(0,hist,"Histogram");
     ui->histogram->setPointsVisible(0);
@@ -99,10 +95,11 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
     double lo=0;
     double hi=0;
 
+
     if (interval)
     {
-        lo=a;
-        hi=b;
+        lo=isfinite(a) ? a : -1e6;
+        hi=isfinite(b) ? b : 1e6;
         ui->doubleSpinBox_levelCenter->setValue((b+a)/2.0);
         ui->doubleSpinBox_levelWindow->setValue(fabs(b-a));
 

@@ -28,6 +28,7 @@ AlgorithmTesterTest::AlgorithmTesterTest()
 
 void AlgorithmTesterTest::testNN()
 {
+    QSKIP("Under development");
     list<float> angles;
     int N=360;
 
@@ -43,23 +44,24 @@ void AlgorithmTesterTest::testNN()
     kipl::io::ReadTIFF(slice,"../../data/simple_sample.tif");
     nnfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
-    kipl::io::WriteTIFF32(proj,"resultNN_simplesample.tif");
+    kipl::io::WriteTIFF(proj,"resultNN_simplesample.tif",kipl::base::Float32);
 
     kipl::io::ReadTIFF(slice,"../../data/disk256.tif");
     nnfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
-    kipl::io::WriteTIFF32(proj,"resultNN_disk256.tif");
+    kipl::io::WriteTIFF(proj,"resultNN_disk256.tif",kipl::base::Float32);
 
     kipl::io::ReadTIFF(slice,"../../data/twodisks256.tif");
     nnfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
-    kipl::io::WriteTIFF32(proj,"resultNN_twodisks256.tif");
+    kipl::io::WriteTIFF(proj,"resultNN_twodisks256.tif",kipl::base::Float32);
 
   //  QVERIFY2(true, "Failure");
 }
 
 void AlgorithmTesterTest::testLinearFwd()
 {
+    QSKIP("Under development");
     list<float> angles;
     int N=360;
 
@@ -75,17 +77,17 @@ void AlgorithmTesterTest::testLinearFwd()
     kipl::io::ReadTIFF(slice,"../../data/simple_sample.tif");
     linfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
-    kipl::io::WriteTIFF32(proj,"resultLin_simplesample.tif");
+    kipl::io::WriteTIFF(proj,"resultLin_simplesample.tif",kipl::base::Float32);
 
     kipl::io::ReadTIFF(slice,"../../data/disk256.tif");
     linfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
-    kipl::io::WriteTIFF32(proj,"resultLin_disk256.tif");
+    kipl::io::WriteTIFF(proj,"resultLin_disk256.tif",kipl::base::Float32);
 
     kipl::io::ReadTIFF(slice,"../../data/twodisks256.tif");
     linfp.project(slice,angles,proj);
     QVERIFY(angles.size()==proj.Size(1));
-    kipl::io::WriteTIFF32(proj,"resultLin_twodisks256.tif");
+    kipl::io::WriteTIFF(proj,"resultLin_twodisks256.tif",kipl::base::Float32);
 
   //  QVERIFY2(true, "Failure");
 }

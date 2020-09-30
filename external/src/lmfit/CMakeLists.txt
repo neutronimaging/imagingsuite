@@ -47,7 +47,8 @@ if(LIB_INSTALL)
     set(destination ${CMAKE_INSTALL_PREFIX})
     configure_file("lmfit.pc.in" "lmfit.pc" @ONLY)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lmfit.pc"
-        DESTINATION "${destination}/lib/pkgconfig/")
+	DESTINATION "${destination}/lib/")
+#        DESTINATION "${destination}/lib/pkgconfig/")
 endif()
 
 add_subdirectory(lib)

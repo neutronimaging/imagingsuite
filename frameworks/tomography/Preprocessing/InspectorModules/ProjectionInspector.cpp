@@ -1,6 +1,5 @@
 //<LICENSE>
 
-#include "stdafx.h"
 #include "ProjectionInspector.h"
 
 ProjectionInspector::ProjectionInspector() :

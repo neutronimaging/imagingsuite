@@ -1,16 +1,18 @@
 //<LICENSE>
 
-#include "stdafx.h"
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cmath>
 #include <map>
 
 #include <strings/string2array.h>
+#include <strings/filenames.h>
 
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
+#include <QDebug>
 
 //#define EQUIDISTANT_WEIGHTS
 
@@ -19,7 +21,7 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 	kipl::logging::Logger logger("BuildFileList");
 	std::ostringstream msg;
     msg<<config->ProjectionInfo.nlSkipList.size()<<" projections will be skipped";
-    logger(logger.LogDebug,msg.str());
+    logger.debug(msg.str());
 	ProjectionList->clear();
 
     std::multimap<float, ProjectionInfo> multiProjectionList;
@@ -32,9 +34,8 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
     if ((ext==".lst") || (ext==".txt") || (ext==".csv"))
     {
         logger(logger.LogMessage,"Using list file");
-        std::cout<<"Using list file"<<std::endl;
         fname=config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask;
-        ifstream listfile(fname.c_str());
+        std::ifstream listfile(fname.c_str());
 
         if (listfile.fail())
             throw ReconException("Could not open projection list file",__FILE__,__LINE__);
@@ -57,8 +58,8 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
             line=cline;
             float angle=static_cast<float>(atof(line.c_str()));
 
-            std::string fname=line.substr(line.find_first_of(",\t")+1);
-            fname=fname.substr(fname.find_first_not_of(" "));
+            std::string fname=line.substr(line.find_first_of(",\t;")+1);
+            fname=fname.substr(fname.find_first_not_of("\t "));
             fname=fname.substr(0,fname.find_first_of("\n\r"));
 
             multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sPath+fname,angle)));
@@ -110,8 +111,12 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 				}
 				break;
             case ReconConfig::cProjections::GoldenSectionScan :
+            case ReconConfig::cProjections::InvGoldenSectionScan :
                 {
-					const float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+                    float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
+                    if (config->ProjectionInfo.scantype == ReconConfig::cProjections::InvGoldenSectionScan)
+                        fGoldenSection = 1.0f/fGoldenSection;
+
 					float arc=config->ProjectionInfo.fScanArc[1];
 					if ((arc!=180.0f) && (arc!=360.0f))
 						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
@@ -150,7 +155,11 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
                         size_t found = config->ProjectionInfo.sFileMask.find("hdf");
                         kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-                        float angle=static_cast<float>(fmod(static_cast<float>(i-config->ProjectionInfo.nGoldenStartIdx-skip)*fGoldenSection*arc,arc));
+                        int idx = i - config->ProjectionInfo.nFirstIndex
+                                    - config->ProjectionInfo.nGoldenStartIdx
+                                    - skip ;
+
+                        float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans
 
                         if (found==std::string::npos )
                         {
@@ -171,14 +180,14 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 
     ComputeWeights(config,multiProjectionList,ProjectionList);
     msg.str(""); msg<<"proj list size="<<ProjectionList->size();
-    logger(logger.LogMessage,msg.str());
+    logger.verbose(msg.str());
 
 	return sequence;
 }
 
 bool BuildFileList(std::string sFileMask, std::string sPath,
                    int nFirstIndex, int nLastIndex, int nProjectionStep,
-                   float fScanArc[2], ReconConfig::cProjections::eScanType scantype, int goldenStartIdx,
+                   const std::vector<float> &fScanArc, ReconConfig::cProjections::eScanType scantype, int goldenStartIdx,
                    std::set<size_t> * nlSkipList,
                    std::map<float, ProjectionInfo>  * ProjectionList)
 {
@@ -200,7 +209,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
     if ((ext==".lst") || (ext==".txt"))
     {
         fname=sPath+sFileMask;
-        ifstream listfile(fname.c_str());
+        std::ifstream listfile(fname.c_str());
 
         if (listfile.fail())
             throw ReconException("Could not open projection list file",__FILE__,__LINE__);
@@ -370,7 +379,7 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
         {
             ProjectionInfo info=(*it).second;
             info.weight=1.0/multiProjectionList.size();
-            ProjectionList->insert(make_pair((*it).first,info));
+            ProjectionList->insert(std::make_pair((*it).first,info));
         }
         return 0;
     }
@@ -410,7 +419,9 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
         // Compute first weight
         q0=q1;
         q1=q2++;
-        if (repeatedLast || config->ProjectionInfo.scantype==config->ProjectionInfo.GoldenSectionScan)
+        if (repeatedLast
+                || config->ProjectionInfo.scantype==config->ProjectionInfo.GoldenSectionScan
+                || config->ProjectionInfo.scantype==config->ProjectionInfo.InvGoldenSectionScan)
         {
             q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
         }

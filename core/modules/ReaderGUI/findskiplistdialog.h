@@ -5,7 +5,7 @@
 
 #include <map>
 #include <set>
-#include <list>
+#include <vector>
 #include <string>
 
 #include <QDialog>
@@ -32,8 +32,8 @@ public:
     ~FindSkipListDialog();
     
     virtual int exec(std::string path, std::string fmask, int first, int last);
-    virtual int exec(std::list<std::string> &filelist);
-    std::list<int> getSkipList();
+    virtual int exec(std::vector<std::string> &filelist);
+    std::vector<int> getSkipList();
     QString getSkipListString();
 
 protected slots:
@@ -56,13 +56,13 @@ private:
     Ui::FindSkipListDialog *ui;
     void UpdateParameters();
 
-    std::list<std::string> m_FileList;
+    std::vector<std::string> m_FileList;
 //    std::string m_sPath;
 //    std::string m_sFileMask;
 //    int m_nFirst;
 //    int m_nLast;
     int m_nMaxNumberProjections;
-    size_t m_nROI[4];
+    std::vector<size_t> m_nROI;
     QRect m_DoseROI;
     QVector<QPointF> m_DoseData;
     std::multimap<float,int > m_SortedDoses;

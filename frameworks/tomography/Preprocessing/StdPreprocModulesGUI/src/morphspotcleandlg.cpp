@@ -52,7 +52,7 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -90,7 +90,7 @@ void MorphSpotCleanDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.dims(),axis[nLo],axis[nHi]);
 
     on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
 }
@@ -337,7 +337,7 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
     kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.dims(),axis[nLo],axis[nHi]);
 }
 
 void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)

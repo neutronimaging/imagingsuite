@@ -5,11 +5,14 @@
 #include <string>
 #include <vector>
 
-#include <qstring.h>
-#include <qfiledialog.h>
+#include <QString>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QDebug>
 
 #include <strings/filenames.h>
 #include <io/DirAnalyzer.h>
+#include <imagereader.h>
 
 #include <uxroiwidget.h>
 
@@ -38,27 +41,41 @@ void ReaderForm::on_button_browse_clicked()
                                       "Select a file",
                                       QString::fromStdString(sPath));
     if (!projdir.isEmpty()) {
-        std::string pdir=projdir.toStdString();
-
-        kipl::io::DirAnalyzer da;
-        kipl::io::FileItem fi=da.GetFileMask(pdir);
-
-        ui->edit_fileMask->setText(QString::fromStdString(fi.m_sMask));
-
         int count=0;
         int first=0;
         int last=0;
 
-        da.AnalyzeMatchingNames(fi.m_sMask,count,first,last);
+        ImageReader reader;
 
-        msg<<"Found "<<count<<" files for mask "<<fi.m_sMask<<" in the interval "<<first<<" to "<<last;
+        std::string pdir=projdir.toStdString();
+
+        auto dims = reader.imageSize(pdir,1.0f);
+        qDebug() << "Dimensions in file" << dims.size();
+        if (dims[2]==1)
+        {
+            kipl::io::DirAnalyzer da;
+            kipl::io::FileItem fi=da.GetFileMask(pdir);
+
+            ui->edit_fileMask->setText(QString::fromStdString(fi.m_sMask));
+            da.AnalyzeMatchingNames(fi.m_sMask,count,first,last);
+            msg<<"Found "<<count<<" files for mask "<<fi.m_sMask<<" in the interval "<<first<<" to "<<last;
+        }
+        else
+        {
+            first = 0;
+            last  = static_cast<int>(dims[2]-1);
+            count = static_cast<int>(dims[2]);
+
+            ui->edit_fileMask->setText(projdir);
+            msg<<"Found "<<count<<" slices in file "<<pdir<<" in the interval "<<first<<" to "<<last;
+        }
+
+
         logger(logger.LogMessage,msg.str());
-//        ui->spinBox_first->setMinimun(first);
-//        ui->spinBox_first->setMaximum(first);
-//        ui->spinBox_last->setMinimun(first);
-//        ui->spinBox_last->setMaximum(first);
+
         ui->spinBox_first->setValue(first);
         ui->spinBox_last->setValue(last);
+
         emit fileMaskChanged(getReaderConfig());
     }
 }

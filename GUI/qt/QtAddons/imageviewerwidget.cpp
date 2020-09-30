@@ -6,16 +6,21 @@
 #include <cmath>
 
 #include <QMenu>
+#include <QMessageBox>
 #include <QToolTip>
 #include <QStylePainter>
 #include <QSignalBlocker>
 #include <QDebug>
+#include <QApplication>
+#include <QClipboard>
+#include <QFileDialog>
+#include <QDir>
 
 #include "setgraylevelsdlg.h"
 namespace QtAddons {
 
 int ImageViewerWidget::m_nViewerCounter = -1;
-QList<ImageViewerWidget *> ImageViewerWidget::s_ViewerList;
+//QList<ImageViewerWidget *> ImageViewerWidget::s_ViewerList = QList<ImageViewerWidget *>();
 
 ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
@@ -25,7 +30,11 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     m_RubberBandStatus(RubberBandHide),
     m_MouseMode(ViewerROI),
     m_PressedButton(Qt::NoButton),
-    m_infoDialog(this)
+    m_mouseMoved(false),
+    m_infoDialog(this),
+    m_CurrentScale(1.0),
+    saveImageAct(nullptr),
+    copyImageAct(nullptr)
 {
     QPalette palette;
     palette.setColor(QPalette::Background,Qt::black);
@@ -37,19 +46,16 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     this->setMouseTracking(true);
     m_nViewerCounter++;
     m_sViewerName = QString("ImageViewer ")+QString::number(m_nViewerCounter);
-    s_ViewerList.push_back(this);
+    //s_ViewerList.push_back(this);
     m_infoDialog.setModal(false);
 
-//    setContextMenuPolicy(Qt::CustomContextMenu);
-//    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-//        this, SLOT(ShowContextMenu(const QPoint&)));
-
-        connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
+    connect(this,&ImageViewerWidget::levelsChanged,this,&ImageViewerWidget::on_levelsChanged);
+    setupActions();
 }
 
 ImageViewerWidget::~ImageViewerWidget()
 {
-    s_ViewerList.removeOne(this);
+    //s_ViewerList.removeOne(this);
     m_infoDialog.close();
 }
 
@@ -81,30 +87,99 @@ void ImageViewerWidget::ShowContextMenu(const QPoint& pos) // this is a slot
     // for QAbstractScrollArea and derived classes you would use:
     // QPoint globalPos = myWidget->viewport()->mapToGlobal(pos);
 
-    QMenu viewerMenu;
-    viewerMenu.addAction("Full Image");
-    viewerMenu.addAction("Set Levels");
-    // ...
+    QMenu viewerMenu(this);
 
-    QAction* selectedItem = viewerMenu.exec(globalPos);
-    if (selectedItem)
-    {
-        if (selectedItem->text() == "Full Image") {
-            logger(kipl::logging::Logger::LogMessage,"Full Image");
-        }
-        if (selectedItem->text() == "Set Levels") {
-            logger(kipl::logging::Logger::LogMessage,"Set Levels");
-        }
-    }
-    else
-    {
-        // nothing was chosen
-        logger(kipl::logging::Logger::LogMessage,"Menu was canceled");
-    }
+    viewerMenu.addAction(saveImageAct);
+    viewerMenu.addAction(copyImageAct);
+    viewerMenu.exec(globalPos);
+//    viewerMenu.addAction("Full Image");
+//    viewerMenu.addAction("Set Levels");
+//    // ...
+
+//    QAction* selectedItem = viewerMenu.exec(globalPos);
+//    if (selectedItem)
+//    {
+//        if (selectedItem->text() == "Full Image") {
+//            logger(kipl::logging::Logger::LogMessage,"Full Image");
+//        }
+//        if (selectedItem->text() == "Set Levels") {
+//            logger(kipl::logging::Logger::LogMessage,"Set Levels");
+//        }
+//    }
+//    else
+//    {
+//        // nothing was chosen
+//        logger(kipl::logging::Logger::LogMessage,"Menu was canceled");
+//    }
 }
 
 void ImageViewerWidget::on_levelsChanged(float lo, float hi)
 {
+}
+
+void ImageViewerWidget::saveCurrentView()
+{
+    QString destname=QFileDialog::getSaveFileName(this,"Where should the image be saved?",QDir::homePath()+"/image.png");
+
+    saveImage(destname);
+}
+
+void ImageViewerWidget::copyImage()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    auto wsize = m_ImagePainter.zoomedImageSize();
+    const int w=1024;
+    if (wsize.width()<w)
+    {
+        wsize = QSize(w,static_cast<int>(w*static_cast<float>(wsize.height())/static_cast<float>(wsize.width())));
+    }
+
+    QPixmap p( wsize );
+    QPainter painter(&p);
+    painter.fillRect(QRect(0,0,wsize.width(),wsize.height()),QColor("lightgray"));
+    m_ImagePainter.Render(painter,0,0,wsize.width(),wsize.height());
+
+    clipboard->setPixmap(p);
+
+}
+
+void ImageViewerWidget::saveImage(const QString &fname)
+{
+    if (!fname.isEmpty())
+    {
+        auto wsize = m_ImagePainter.zoomedImageSize();
+        const int w=1024;
+        if (wsize.width()<w)
+        {
+            wsize = QSize(w,static_cast<int>(w*static_cast<float>(wsize.height())/static_cast<float>(wsize.width())));
+        }
+
+        QPixmap p( wsize );
+        QPainter painter(&p);
+        painter.fillRect(QRect(0,0,wsize.width(),wsize.height()),QColor("lightgray"));
+        m_ImagePainter.Render(painter,0,0,wsize.width(),wsize.height());
+        p.save(fname,"PNG");
+    }
+    else
+    {
+        QMessageBox::warning(this,"No file name","Please provide a file name to save the image.");
+    }
+}
+
+void ImageViewerWidget::setupActions()
+{
+    copyImageAct = new QAction(tr("&Copy image"), this);
+    copyImageAct->setShortcuts(QKeySequence::Copy);
+    copyImageAct->setStatusTip(tr("Copy the current selection's contents to the "
+                             "clipboard"));
+    connect(copyImageAct, &QAction::triggered, this, &ImageViewerWidget::copyImage);
+
+    saveImageAct = new QAction(tr("&Save image"), this);
+    saveImageAct->setShortcuts(QKeySequence::Cut);
+    saveImageAct->setStatusTip(tr("Cut the current selection's contents to the "
+                            "clipboard"));
+
+    connect(saveImageAct,&QAction::triggered, this, &ImageViewerWidget::saveCurrentView );
 }
 
 void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
@@ -115,7 +190,8 @@ void ImageViewerWidget::paintEvent(QPaintEvent * ) // event
 
     m_ImagePainter.Render(painter,0,0,s.width(),s.height());
 
-    if (m_RubberBandStatus != RubberBandHide) {
+    if (m_RubberBandStatus != RubberBandHide)
+    {
         painter.setPen(palette().light().color());
         painter.drawRect(rubberBandRect.normalized()
                                        .adjusted(0, 0, -1, -1));
@@ -137,17 +213,11 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
 
     ostringstream msg;
 
-    msg<<"Got key "<<keyvalue;
-    qDebug() <<msg.str().c_str();
-
-  //  logger(kipl::logging::Logger::LogMessage,msg.str());
-
-    switch (keyvalue) {
+    switch (keyvalue)
+    {
     case 'm':
     case 'M':
-//        logger(kipl::logging::Logger::LogMessage,"got m");
-//        //ShowContextMenu(this->mouseGrabber()->pos());
-//        ShowContextMenu(QPoint(100,100));
+        ShowContextMenu(QPoint(100,100));
         break;
 //    case 'z':
 //    case 'Z':
@@ -177,7 +247,8 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
         SetGrayLevelsDlg dlg(this);
         int res=dlg.exec();
 
-        if (res==QDialog::Rejected) {
+        if (res==QDialog::Rejected)
+        {
             set_levels(lo,hi);
         }
         break;
@@ -213,20 +284,24 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
     QRect rect(Margin, Margin,
                width() - 2 * Margin, height() - 2 * Margin);
 
-    if (m_RubberBandStatus != RubberBandHide) {
+    if (m_RubberBandStatus != RubberBandHide)
+    {
         m_RubberBandStatus = RubberBandHide;
         updateRubberBandRegion();
     }
 
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton)
+    {
         if (m_MouseMode==ViewerROI)
             if (rect.contains(event->pos())) {
-                if (rubberBandRect.contains(event->pos())) {
+                if (rubberBandRect.contains(event->pos()))
+                {
                     logger(logger.LogMessage,"Moving ROI");
                     m_RubberBandStatus = RubberBandMove;
                     updateRubberBandRegion();
                 }
-                else {
+                else
+                {
                     m_RubberBandStatus = RubberBandDrag;
                     rubberBandRect.setTopLeft(event->pos());
                     rubberBandRect.setBottomRight(event->pos());
@@ -234,16 +309,19 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
                     setCursor(Qt::CrossCursor);
                 }
             }
-        if (m_MouseMode==ViewerProfile) {
+        if (m_MouseMode==ViewerProfile)
+        {
                 m_rubberBandOrigin = event->pos();
                 m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, QSize()));
                 m_rubberBandLine.show();
         }
-        if (m_MouseMode==ViewerPan) {
+        if (m_MouseMode==ViewerPan)
+        {
 
         }
     }
-    if (event->button() == Qt::RightButton) {
+    if (event->button() == Qt::RightButton)
+    {
         m_PressedButton=event->button();
     }
 
@@ -261,13 +339,15 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     int dx= x - m_LastMotionPosition.x();
     int dy= y - m_LastMotionPosition.y();
 
-    if (m_RubberBandStatus == RubberBandDrag) {
+    if (m_RubberBandStatus == RubberBandDrag)
+    {
 
         updateRubberBandRegion();
         rubberBandRect.setBottomRight(event->pos());
         updateRubberBandRegion();
     }
-    else if (m_RubberBandStatus == RubberBandMove) {
+    else if (m_RubberBandStatus == RubberBandMove)
+    {
         updateRubberBandRegion();
         const int w=10;
         QRect r0 = QRect(rubberBandRect.x()-w,
@@ -279,7 +359,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
                          rubberBandRect.width()-2*w,
                          rubberBandRect.height()-2*w);
 
-        if ((r0.contains(event->pos())==true) && (r1.contains(event->pos())==false)) {
+        if ((r0.contains(event->pos())==true) && (r1.contains(event->pos())==false))
+        {
             rubberBandRect.translate(dx,dy);
             updateRubberBandRegion();
         }
@@ -288,13 +369,15 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     if (m_MouseMode==ViewerProfile)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, event->pos()).normalized());
 
-    if (m_MouseMode==ViewerPan) {
-        m_ImagePainter.panImage(dx/m_ImagePainter.get_scale(),dy/m_ImagePainter.get_scale());
+    if (m_MouseMode==ViewerPan)
+    {
+        m_ImagePainter.panImage(dx/m_ImagePainter.getScale(),dy/m_ImagePainter.getScale());
     }
 
 
     QPoint tooltipOffset(0,0);
-    if (m_PressedButton == Qt::RightButton) {
+    if (m_PressedButton == Qt::RightButton)
+    {
         float minlevel, maxlevel;
 
         get_levels(&minlevel, &maxlevel);
@@ -316,15 +399,15 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
-    else {
+    else
+    {
         QRect roi=m_ImagePainter.getCurrentZoomROI();
 
-        QPoint pos(static_cast<int>((event->pos().x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale()),
-                   static_cast<int>((event->pos().y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale()));
+        QPoint pos(static_cast<int>( m_ImagePainter.globalPositionX((event->pos().x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()) ),
+                   static_cast<int>( m_ImagePainter.globalPositionY((event->pos().y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()) ) );
 
-        pos+=roi.topLeft();
-
-        if(roi.contains(pos)==true) {
+        if(roi.contains(pos)==true)
+        {
             msg.str("");
 
             msg<<m_ImagePainter.getValue(pos.x(),pos.y())<<" @ ("<<pos.x()<<", "<<pos.y()<<")";
@@ -341,40 +424,49 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     std::ostringstream msg;
-    if ((event->button() == Qt::LeftButton)) {
-        if ((m_RubberBandStatus == RubberBandDrag) || (m_RubberBandStatus == RubberBandMove)){
+    if ((event->button() == Qt::LeftButton))
+    {
+        if ((m_RubberBandStatus == RubberBandDrag) || (m_RubberBandStatus == RubberBandMove))
+        {
             updateRubberBandRegion();
 
             QRect r=rubberBandRect.normalized();
-            int const * const dims=m_ImagePainter.get_image_dims();
-            int xpos = floor((r.x()-m_ImagePainter.get_offsetX())/m_ImagePainter.get_scale());
-            int ypos = floor((r.y()-m_ImagePainter.get_offsetY())/m_ImagePainter.get_scale());
+        //    auto dims=m_ImagePainter.imageDims();
+            int xpos = m_ImagePainter.globalPositionX(floor((r.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()));
+            int ypos = m_ImagePainter.globalPositionY(floor((r.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
 
-            int w    = floor(r.width()/m_ImagePainter.get_scale());
-            int h    = floor(r.height()/m_ImagePainter.get_scale());
+            int w    = floor(r.width()/m_ImagePainter.getScale());
+            int h    = floor(r.height()/m_ImagePainter.getScale());
 
             xpos = xpos < 0 ? 0 : xpos;
             ypos = ypos < 0 ? 0 : ypos;
-            w = dims[0] <= xpos + w ? dims[0]-xpos-1 : w;
-            h = dims[1] <= ypos + h ? dims[1]-ypos-1 : h;
+            auto currentZoomROI = m_ImagePainter.getCurrentZoomROI();
+            w = currentZoomROI.width()+currentZoomROI.x()  <= xpos + w ? currentZoomROI.width()  + currentZoomROI.x() - xpos-1 : w;
+            h = currentZoomROI.height()+currentZoomROI.y() <= ypos + h ? currentZoomROI.height() + currentZoomROI.y() - ypos-1 : h;
 
-            roiRect.setRect(xpos,ypos,w,h);
+            roiRect.setRect(xpos, ypos, w, h);
+
+            roiRect=roiRect.normalized();
 
             m_RubberBandStatus = RubberBandFreeze;
-
-            m_infoDialog.updateInfo(m_ImagePainter.get_image(), roiRect);
+//             qDebug() << "Mouse released:" <<roiRect<< m_ImagePainter.getScale();
+            m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
         }
-        if (m_MouseMode==ViewerProfile) {
+        if (m_MouseMode==ViewerProfile)
+        {
             m_rubberBandLine.hide();
         }
-        if (m_MouseMode==ViewerPan) {
+        if (m_MouseMode==ViewerPan)
+        {
             m_MouseMode=ViewerROI;
         }
     }
 
 
     if (event->button() == Qt::RightButton )
+    {
         m_PressedButton = Qt::NoButton;
+    }
 
 
     QWidget::mouseReleaseEvent(event);
@@ -384,7 +476,8 @@ void ImageViewerWidget::updateRubberBandRegion()
 {
     QRect rect = rubberBandRect.normalized();
 
-    if (m_MouseMode==ViewerROI)  {
+    if (m_MouseMode==ViewerROI)
+    {
         update(rect.left(), rect.top(), rect.width(), 1);
         update(rect.left(), rect.top(), 1, rect.height());
         update(rect.left(), rect.bottom(), rect.width(), 1);
@@ -413,17 +506,17 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
 
 }
 
-void ImageViewerWidget::set_image(float const * const data, size_t const * const dims)
+void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> & dims)
 {
     QMutexLocker locker(&m_ImageMutex);
     std::ostringstream msg;
-    m_ImagePainter.set_image(data,dims);
+    m_ImagePainter.setImage(data,dims);
     roiRect.setRect(0,0,1,1);
     rubberBandRect.setRect(0,0,1,1);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
     float mi,ma;
-    m_ImagePainter.get_image_minmax(&mi,&ma);
+    m_ImagePainter.getImageMinMax(&mi,&ma);
 
     QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
 
@@ -438,10 +531,10 @@ QRect ImageViewerWidget::get_marked_roi()
     return roiRect;
 }
 
-void ImageViewerWidget::set_image(float const * const data, size_t const * const dims, const float low, const float high)
+void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, const float low, const float high)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_image(data,dims,low,high);
+    m_ImagePainter.setImage(data,dims,low,high);
     roiRect.setRect(0,0,1,1);
     rubberBandRect.setRect(0,0,1,1);
 
@@ -454,7 +547,7 @@ void ImageViewerWidget::set_image(float const * const data, size_t const * const
 
 void ImageViewerWidget::getImageDims(int &x, int &y)
 {
-    const int *dims=m_ImagePainter.get_image_dims();
+    auto dims=m_ImagePainter.imageDims();
     x=dims[0];
     y=dims[1];
 }
@@ -462,42 +555,42 @@ void ImageViewerWidget::getImageDims(int &x, int &y)
 void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_plot(data,color,idx);
+    m_ImagePainter.setPlot(data,color,idx);
 }
 
 void ImageViewerWidget::clear_plot(int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.clear_plot(idx);
+    m_ImagePainter.clearPlot(idx);
 }
 
 void ImageViewerWidget::set_rectangle(QRect rect, QColor color, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_rectangle(rect,color,idx);
+    m_ImagePainter.setRectangle(rect,color,idx);
 }
 
 void ImageViewerWidget::clear_rectangle(int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.clear_rectangle(idx);
+    m_ImagePainter.clearRectangle(idx);
 }
 
 void ImageViewerWidget::set_marker(QMarker marker, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_marker(marker,idx);
+    m_ImagePainter.setMarker(marker,idx);
 }
 
 void ImageViewerWidget::clear_marker(int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.clear_marker(idx);
+    m_ImagePainter.clearMarker(idx);
 }
 
 void ImageViewerWidget::hold_annotations(bool hold)
 {
-    m_ImagePainter.hold_annotations(hold);
+    m_ImagePainter.holdAnnotations(hold);
 }
 
 void ImageViewerWidget::clear_viewer()
@@ -509,8 +602,9 @@ void ImageViewerWidget::clear_viewer()
 void ImageViewerWidget::set_levels(const float level_low, const float level_high, bool updatelinked)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.set_levels(level_low,level_high);
-    if (updatelinked) {
+    m_ImagePainter.setLevels(level_low,level_high);
+    if (updatelinked)
+    {
         UpdateLinkedViewers();
     }
 
@@ -519,17 +613,17 @@ void ImageViewerWidget::set_levels(const float level_low, const float level_high
 
 void ImageViewerWidget::get_levels(float *level_low, float *level_high)
 {
-    m_ImagePainter.get_levels(level_low,level_high);
+    m_ImagePainter.getLevels(level_low,level_high);
 }
 
 void ImageViewerWidget::get_minmax(float *level_low, float *level_high)
 {
-    m_ImagePainter.get_image_minmax(level_low,level_high);
+    m_ImagePainter.getImageMinMax(level_low,level_high);
 }
 
 void ImageViewerWidget::show_clamped(bool show)
 {
-    m_ImagePainter.show_clamped(show);
+    m_ImagePainter.showClamped(show);
 }
 
 const QVector<QPointF> & ImageViewerWidget::get_histogram()
@@ -540,7 +634,8 @@ const QVector<QPointF> & ImageViewerWidget::get_histogram()
 void ImageViewerWidget::LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect)
 {
     m_LinkedViewers.insert(w);
-    if (connect) {
+    if (connect)
+    {
         w->LinkImageViewer(this,false);
     }
 }
@@ -552,7 +647,8 @@ void ImageViewerWidget::ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w)
         QSet<ImageViewerWidget *>::iterator i=m_LinkedViewers.find(w);
         m_LinkedViewers.erase(i);
     }
-    else {
+    else
+    {
         QSetIterator<ImageViewerWidget *> i(m_LinkedViewers);
         while (i.hasNext())
              i.next()->ClearLinkedImageViewers(this);
@@ -570,7 +666,8 @@ void ImageViewerWidget::UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w)
 
 void ImageViewerWidget::UpdateLinkedViewers()
 {
-    if (!m_LinkedViewers.empty()) {
+    if (!m_LinkedViewers.empty())
+    {
         QSetIterator<ImageViewerWidget *> i(m_LinkedViewers);
          while (i.hasNext())
              i.next()->UpdateFromLinkedViewer(this);
@@ -580,3 +677,4 @@ void ImageViewerWidget::UpdateLinkedViewers()
 
 
 }
+

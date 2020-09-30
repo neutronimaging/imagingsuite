@@ -233,7 +233,7 @@ public:
 
     /// \brief The number of bins for each class in an array
     /// \test Tested in the initialization tests.
-    const size_t *Dims();
+    const std::vector<size_t> & Dims();
 
     /// \brief Provides the limits for each class
     /// \param n Selects data set A or B using 0 or 1

@@ -12,7 +12,7 @@ TranslateProjections::TranslateProjections()
 void TranslateProjections::translate(kipl::base::TImage<float, 3> &img, float slope, float intercept, eTranslateSampling sampler, float parameter)
 {
     int N=static_cast<int>(img.Size(2));
-    kipl::base::TImage<float,2> proj(img.Dims());
+    kipl::base::TImage<float,2> proj(img.dims());
 
     for (int i=0; i<N; i++) {
         memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i), proj.Size()*sizeof(float));
@@ -39,7 +39,7 @@ void TranslateProjections::translateLinear(kipl::base::TImage<float,2> &img, flo
     if (shift==0.0f)
         return ;
 
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
     res=0.0f;
     int nShift      = floor(shift);
     int nStart      = 0;

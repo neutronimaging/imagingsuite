@@ -3,9 +3,10 @@
 #ifndef PROJECTIONINSPECTOR_H_
 #define PROJECTIONINSPECTOR_H_
 
+#include "inspectormodules_global.h"
 #include <PreprocModuleBase.h>
 
-class ProjectionInspector : public PreprocModuleBase
+class INSPECTORMODULESSHARED_EXPORT ProjectionInspector : public PreprocModuleBase
 {
 public:
 	ProjectionInspector();

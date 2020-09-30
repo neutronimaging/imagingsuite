@@ -19,6 +19,10 @@ PlotWidget::PlotWidget(QWidget *parent) :
     logger("PlotWidget"),
     ui(new Ui::PlotWidget),
     m_nPointsVisible(25),
+    minX(std::numeric_limits<double>::max()),
+    maxX(-std::numeric_limits<double>::max()),
+    minY(std::numeric_limits<double>::max()),
+    maxY(-std::numeric_limits<double>::max()),
     m_tooltip(nullptr)
 {
     ui->setupUi(this);

@@ -12,12 +12,14 @@ TARGET = tst_tModuleConfig
 CONFIG   += console
 CONFIG   -= app_bundle
 
+CONFIG += c++11
+
 CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 TEMPLATE = app
 
-unix:!symbian {
+unix {
     maemo5 {
         target.path = /opt/usr/lib
     } else {
@@ -29,16 +31,18 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
-        QMAKE_LIBDIR += /usr/local/lib
-        QMAKE_INFO_PLIST = Info.plist
+        QMAKE_LIBDIR += /opt/local/lib
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
+
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -L/usr/local/lib64
+
+    LIBS += -ltiff -lxml2 #-lNeXus -lNeXusCPP
     INCLUDEPATH += /usr/include/libxml2
 }
 
@@ -53,7 +57,11 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-SOURCES += tst_configbasetest.cpp
+SOURCES += tst_configbasetest.cpp \
+           dummyconfig.cpp
+
+HEADERS += dummyconfig.h
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
@@ -68,3 +76,6 @@ DEPENDPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/i
 
 INCLUDEPATH += $$PWD/../../ModuleConfig/include
 DEPENDPATH += $$PWD/../../ModuleConfig/src
+
+INCLUDEPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../algorithms/ImagingAlgorithms/include

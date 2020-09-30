@@ -145,16 +145,16 @@ namespace kipl { namespace segmentation {
     template <typename T0, typename T1, size_t N>
     int MultiThreshold(kipl::base::TImage<T0,N> & img,
                        kipl::base::TImage<T1,N> & res,
-                       T0 *th, size_t Nthres)
+                       const std::vector<T0> &th)
 	{
-        res.Resize(img.Dims());
+        res.resize(img.dims());
         T0 *imgdata=img.GetDataPtr();
         T1 *resdata=res.GetDataPtr();
 
         for (size_t i=0; i<img.Size(); ++i)
         {
-            resdata[i]=Nthres;
-            for (size_t j=0; j<Nthres; ++j)
+            resdata[i]=th.size();
+            for (size_t j=0; j<th.size(); ++j)
             {
                 if ( imgdata[i] < th[j] ) {
                         resdata[i]=static_cast<T1>(j);
@@ -189,15 +189,12 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 	kipl::logging::Logger logger("kipl::segmentation::DoubleThreshold");
 	std::ostringstream msg;
 
-	size_t const * const dims=img.Dims();
-	bilevel.Resize(dims);
+    auto dims=img.dims();
+    bilevel.resize(dims);
 	bilevel=char(0);
 	const char th_inque=-1;
 	const char th_false=0;
 	const char th_true=1;
-
-	int x,y,j,dx,dy,s;
-	long n=1;
 
 	msg<<"Starting double threshold (lo="<<lo<<", hi="<<hi<<")";
 	logger(kipl::logging::Logger::LogMessage,msg.str());
@@ -217,7 +214,7 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 		if (kipl::base::CheckEqualSize(img,*mask))
 			maskscope=img.Size();
 		else {
-			size_t const * const mdims=mask->Dims();
+            auto mdims=mask->dims();
 			if ((mdims[0]==dims[0]) && (mdims[1]==dims[1]))
 				maskscope=mdims[0]*mdims[1];
 		}

@@ -3,6 +3,7 @@
 #include <exception>
 #include <sstream>
 #include <stdint.h>
+#include <vector>
 
 #include <fitsio.h>
 
@@ -32,12 +33,12 @@ int KIPLSHARED_EXPORT FITSPixelSize(float x)            { (void)x; return    FLO
 int KIPLSHARED_EXPORT FITSPixelSize(double x)           { (void)x; return   DOUBLE_IMG; }    // 64-bit double precision floating point
 
 
-int KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
+std::vector<size_t> KIPLSHARED_EXPORT GetFITSDims(const std::string &filename)
 {
 	fitsfile *fptr;
 	int status=0;
 	std::ostringstream msg;
-	fits_open_image(&fptr, filename, READONLY, &status);
+    fits_open_image(&fptr, filename.c_str(), READONLY, &status);
 	if (status!=0) {
 		msg<<"Failed to open '"<<filename<<"' in GetFITSDims";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
@@ -66,11 +67,11 @@ int KIPLSHARED_EXPORT GetFITSDims(char const * const filename,size_t * dims)
 		msg<<"ReadFITS: "<<err_text<<" ("<<filename<<")";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
-
-	for (int i=0; i<naxis; i++)
-		dims[i]=naxes[i];
+    std::vector<size_t> dims = {static_cast<size_t>(naxes[0]),
+                                static_cast<size_t>(naxes[1]),
+                                naxis < 3 ? 1 : static_cast<size_t>(naxes[2])};
 
 	fits_close_file(fptr, &status);
-    return naxis;
+    return dims;
 }
 }}

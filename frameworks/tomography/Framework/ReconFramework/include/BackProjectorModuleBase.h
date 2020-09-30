@@ -1,15 +1,16 @@
 //<LICENSE>
 
-#ifndef __BACKPROJECTORBASE_H
-#define __BACKPROJECTORBASE_H
+#ifndef BACKPROJECTORMODULEBASE_H
+#define BACKPROJECTORMODULEBASE_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
-#include <string>
 
+#include <string>
+#include <vector>
 #include <base/timage.h>
 #include <logging/logger.h>
 #include <profile/Timer.h>
 #include <interactors/interactionbase.h>
+#include <publication.h>
 
 #include "ReconConfig.h"
 
@@ -60,7 +61,7 @@ public:
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-	virtual void SetROI(size_t *roi)=0;
+    virtual void SetROI(const std::vector<size_t> &roi)=0;
 
     /// Get the reconstructed matrix
     /// \returns The matrix as TImage object
@@ -81,7 +82,7 @@ public:
 
     /// Get the size of the matrix
     /// \param dims a three-element array to store the size of the matrix
-	virtual void GetMatrixDims(size_t *dims) {dims[0]=volume.Size(0); dims[1]=volume.Size(1); dims[2]=volume.Size(2);}
+    virtual const vector<size_t> & GetMatrixDims() {return volume.dims();}
 
     /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
     /// \param x the bin values of the x axis
@@ -97,7 +98,9 @@ public:
 
     /// Execution time of the latest back-projection run.
     /// \returns The execution time in seconds.
-	double ExecTime() {return timer.ElapsedSeconds(); }
+    double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds); }
+
+    const std::vector<Publication> & publicationList();
 
 protected:
     /// \brief Clears circle mask and matrix dimensions
@@ -118,10 +121,11 @@ protected:
     kipl::base::TImage<float,3> volume;          ///< The matrix where the back-projection is stored during the process.
     std::vector<std::pair<size_t,size_t> > mask; ///< List of start and stop positions forming a masked area where the data is reconstructed.
     kipl::profile::Timer timer;                  ///< A timer used to measure the exectution time of the back-projctor.
-    size_t MatrixDims[3];
+//    std::vector<size_t> MatrixDims;
 
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
+    std::vector<Publication> publications;
 };
 
 #endif

@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef __CONFIGBASE_H
-#define __CONFIGBASE_H
+#ifndef CONFIGBASE_H
+#define CONFIGBASE_H
 
 #include "ModuleConfig_global.h"
 
@@ -71,7 +71,7 @@ public:
 	virtual ~ConfigBase(void);
 
     cUserInformation UserInformation;  ///< Instance of the configuration information
-    std::list<ModuleConfig> modules;   ///< List of processing module descriptions. Used to set up a processing engine.
+    std::vector<ModuleConfig> modules;   ///< List of processing module descriptions. Used to set up a processing engine.
     virtual std::string WriteXML()=0;  ///< Virtual method to used to stream an XML formatted string
                                        ///< \returns A string with an XML formatted configuration
     /// Loads an XML formatted configuration file. It calls a set of virutal parsing methods.
@@ -99,7 +99,8 @@ public:
     /// Sanity check on the number of slices to be reconstruct during Config
     virtual std::string SanitySlicesCheck()=0;
 
-
+    void setAppPath(const std::string & path);
+    std::string appPath();
 protected:
     /// Parser for an opened XML formatted input file.
     /// \param reader Reference to an xml reader struct for the opened configuration file.

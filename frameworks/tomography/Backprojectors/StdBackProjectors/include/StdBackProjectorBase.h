@@ -1,7 +1,8 @@
 //<LICENSE>
 
-#ifndef BACKPROJECTORBASE_H
-#define BACKPROJECTORBASE_H
+#ifndef STDBACKPROJECTORBASE_H
+#define STDBACKPROJECTORBASE_H
+#include "StdBackProjectors_global.h"
 
 #include <string>
 #include <list>
@@ -13,7 +14,7 @@
 #include <logging/logger.h>
 #include <projectionfilter.h>
 
-class StdBackProjectorBase : public BackProjectorModuleBase
+class STDBACKPROJECTORS_EXPORT StdBackProjectorBase : public BackProjectorModuleBase
 {
 protected:
 	struct ProjectionInfo {
@@ -25,7 +26,7 @@ protected:
 		float weight;
 	};
 public:
-    StdBackProjectorBase(std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor=nullptr);
+    StdBackProjectorBase(std::string name, BackProjectorModuleBase::eMatrixAlignment align, kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~StdBackProjectorBase(void);
 	virtual size_t Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection);
 	virtual size_t Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters);
@@ -33,12 +34,11 @@ public:
 	virtual int Initialize() { return 0;}
 	virtual std::map<std::string, std::string> GetParameters();
 
-	virtual void SetROI(size_t *roi);
+    virtual void SetROI(const std::vector<size_t> &roi);
 
 	
 	void GetHistogram(float *axis, size_t *hist,size_t nBins);
-	void GetMatrixDims(size_t *dims);
-
+    const std::vector<size_t> &GetMatrixDims();
 
 	void ChangeMaskValue(float x);
 	float Min();

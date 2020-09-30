@@ -12,6 +12,10 @@ TARGET = dat2tif
 
 TEMPLATE = app
 
+
+CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../Applications
+else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../Applications/debug
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -21,10 +25,11 @@ unix:!symbian {
     INSTALLS += target
 
     unix:macx {
-        QMAKE_MAC_SDK = macosx10.11
         QMAKE_CXXFLAGS += -fPIC -O2
-        INCLUDEPATH += /usr/local/include
-        QMAKE_LIBDIR += /usr/local/lib
+        INCLUDEPATH += /opt/local/include
+        QMAKE_LIBDIR += /opt/local/lib
+
+        LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
     }
     else {
         QMAKE_CXXFLAGS += -fPIC -fopenmp -O2
@@ -51,13 +56,8 @@ SOURCES += main.cpp \
     convertconfig.cpp \
     mainwindow.cpp
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/release/ -lkipl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/debug/ -lkipl
-else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Release/ -lkipl
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../kipl/trunk/kipl/build-kipl-Qt5-Debug/ -lkipl
-
-INCLUDEPATH += $$PWD/../../../../kipl/trunk/kipl/include
-DEPENDPATH += $$PWD/../../../../kipl/trunk/kipl/include
+INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 
 HEADERS += \
     convertconfig.h \
@@ -67,9 +67,10 @@ FORMS += \
     mainwindow.ui
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/release/ -lQtAddons
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/debug/ -lQtAddons
-else:unix: LIBS += -L$$PWD/../../../../gui/trunk/qt/build-QtAddons-Qt5-Release/ -lQtAddons
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-INCLUDEPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../gui/trunk/qt/QtAddons
+LIBS += -lkipl -lQtAddons
+
+INCLUDEPATH += $$PWD/../../../../GUI/qt/QtAddons
+DEPENDPATH += $$PWD/../../../../GUI/qt/QtAddons

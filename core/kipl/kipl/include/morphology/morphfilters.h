@@ -10,7 +10,7 @@ template <typename T, size_t nDims>
 class TErode : public kipl::filters::TFilterBase<T,nDims>
 {
 public:
-	TErode(T const * const kernel, size_t const * const kDims);
+    TErode(const std::vector<T> & kernel, const std::vector<size_t> & kDims);
 	virtual ~TErode(void);
 protected:
 	virtual void InnerLoop(T const * const src, T *dest, T value, size_t N);
@@ -21,7 +21,7 @@ template <typename T, size_t nDims>
 class TDilate : public kipl::filters::TFilterBase<T,nDims>
 {
 public:
-	TDilate(T const * const kernel, size_t const * const kDims);
+    TDilate(const std::vector<T> & kernel, const std::vector<size_t> & kDims);
 	virtual ~TDilate(void);
 protected:
 	virtual void InnerLoop(T const * const src, T *dest, T value, size_t N);

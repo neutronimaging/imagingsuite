@@ -1,9 +1,4 @@
-/*
- * RemoveBackground.cpp
- *
- *  Created on: Nov 11, 2012
- *      Author: anders
- */
+//<LICENSE>
 
 #include "RemoveBackground.h"
 

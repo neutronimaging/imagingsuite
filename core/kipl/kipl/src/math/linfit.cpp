@@ -3,7 +3,7 @@
 #include <armadillo>
 #include <jama_qr.h>
 #include "../../include/math/linfit.h"
-
+#include <armadillo>
 using namespace TNT;
 
 namespace kipl {
@@ -29,14 +29,16 @@ void weightedLSFit(TNT::Array2D<double> &H, TNT::Array2D<double> &C, TNT::Array2
 
 }
 
-void weightedLSFit(const arma::mat &H, const arma::mat &C, const arma::vec &y, arma::vec &param)
+void weightedLSFit(arma::mat &H, arma::mat &C, arma::vec &y, arma::vec &param)
 {
-    arma::mat HtCH = H.t()*C*H;
+    arma::mat Ht=H.t();
 
-    arma::mat HtCy = H.t()*C*y;
 
-    param = arma::solve(HtCH,HtCy);
+    arma::mat HtC=Ht*C;
+    arma::mat Ch=HtC*H;
+    arma::mat Cy=HtC*y;
+
+    param=arma::solve(Ch,Cy);
 }
-
 }
 }

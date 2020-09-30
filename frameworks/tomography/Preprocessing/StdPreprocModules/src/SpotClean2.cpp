@@ -1,15 +1,5 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 
 #ifdef _OPENMP
@@ -25,7 +15,6 @@
 
 
 #include <base/timage.h>
-#include <io/io_matlab.h>
 #include <filters/filter.h>
 #include <filters/medianfilter.h>
 #include <math/mathfunctions.h>
@@ -50,6 +39,7 @@ SpotClean2::SpotClean2(std::string name, kipl::interactors::InteractionBase *int
     PreprocModuleBase(name,interactor),
 	mark(std::numeric_limits<float>::max()),
     m_SpotClean(interactor),
+    m_Config(""),
 	m_fGamma(0.1f),
 	m_fSigma(0.001f),
 	m_nIterations(1),

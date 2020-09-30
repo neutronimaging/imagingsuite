@@ -54,13 +54,13 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,2> img)
    m_Img2D.Clone(img);
    if (1UL<filterSize)
    {
-       size_t fltdims[]={filterSize,filterSize};
+       std::vector<size_t> fltdims={filterSize,filterSize};
        kipl::filters::TMedianFilter<float,2> flt(fltdims);
        m_Img2D = flt(m_Img2D);
    }
    makeHistogram();
    if (saveIntermediateImages)
-       kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+       kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
 }
 
 void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
@@ -68,7 +68,8 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
     m_Img3D.Clone(img);
 
     logger(logger.LogMessage,"Average slice");
-    m_Img2D.Resize(m_Img3D.Dims());
+    qDebug() << "Start avg";
+    m_Img2D.resize(m_Img3D.dims());
     m_Img2D=0.0f;
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
     {
@@ -79,21 +80,27 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
         }
     }
 
+    qDebug()<< "Summing done";
     for (size_t pix=0; pix<m_Img2D.Size(); ++pix)
     {
         m_Img2D[pix]/=m_Img3D.Size(2);
     }
 
-    if (1UL<filterSize)
-    {
-        size_t fltdims[]={filterSize,filterSize};
-        kipl::filters::TMedianFilter<float,2> flt(fltdims);
-        m_Img2D = flt(m_Img2D);
-    }
+    qDebug() << "Pre filter"<< filterSize;
+//    if (1UL<filterSize)
+//    {
+//        size_t fltdims[]={filterSize,filterSize};
+//        kipl::filters::TMedianFilter<float,2> flt(fltdims);
+//        m_Img2D = flt(m_Img2D);
+//    }
+    qDebug() << "Histogram";
     makeHistogram();
 
+    qDebug() << "save";
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+        kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
+
+   qDebug() << "done";
 }
 
 void ContrastSampleAnalysis::analyzeContrast(float pixelSize, const std::list<kipl::base::RectROI> &ROIs)
@@ -156,7 +163,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     dots.clear();
     std::vector<pair<float, float> > roiDots;
     std::ofstream dotfile("dots.csv");
-    timer.Reset();
+    timer.reset();
     timer.Tic();
     int loopidx=0;
     for (const auto &roi : ROIs)
@@ -166,7 +173,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
         if (saveIntermediateImages)
-            kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
+            kipl::io::WriteTIFF(chmCrop,msg.str(),kipl::base::Float32);
 
 
         float minVal=0.0f;
@@ -174,7 +181,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         kipl::math::minmax(chmCrop.GetDataPtr(),chmCrop.Size(),&minVal,&maxVal,true);
         float threshold = (maxVal-minVal)*0.8f+minVal;
-        insetpeaks.Resize(chmCrop.Dims());
+        insetpeaks.resize(chmCrop.dims());
         for (size_t i=0; i<chmCrop.Size(); ++i)
             insetpeaks[i]=threshold < chmCrop[i];
 
@@ -225,19 +232,19 @@ void ContrastSampleAnalysis::findCenters()
     qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(peaks,"csa_hmax.tif");
+        kipl::io::WriteTIFF(peaks,"csa_hmax.tif",kipl::base::Float32);
 
     insetpeaks=chm-peaks;
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks.tif");
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks.tif",kipl::base::Float32);
 
     for (size_t i=0; i<insetpeaks.Size(); ++i)
         insetpeaks[i]=0.5f*threshold<insetpeaks[i];
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks_bi.tif");
-    timer.Reset();
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks_bi.tif",kipl::base::Float32);
+    timer.reset();
     timer.Tic();
 
     size_t idx=0;
@@ -359,7 +366,7 @@ void ContrastSampleAnalysis::makeHistogram()
     msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
     qDebug() << msg.str().c_str();
     logger(logger.LogMessage,msg.str());
-    kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,false);
+    kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,true);
 
     hist_bins = medianFilter(hist_bins,5UL);
 
@@ -383,7 +390,7 @@ void ContrastSampleAnalysis::circleTransform(float pixelSize)
     qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(chm,"csa_cht.tif");
+        kipl::io::WriteTIFF(chm,"csa_cht.tif",kipl::base::Float32);
 }
 
 }

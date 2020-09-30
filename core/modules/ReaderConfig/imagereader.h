@@ -4,12 +4,16 @@
 
 #include "readerconfig_global.h"
 
+#include <string>
+#include <vector>
+
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <base/kiplenums.h>
 #include <profile/Timer.h>
+#include <interactors/interactionbase.h>
 
-#include "datasetbase.h"
+#include "fileset.h"
 
 class READERCONFIGSHARED_EXPORT ImageReader
 {
@@ -17,7 +21,7 @@ class READERCONFIGSHARED_EXPORT ImageReader
 
 public:
     /// Constructor to initialize the reader
-    ImageReader();
+    ImageReader(kipl::interactors::InteractionBase *interactor=nullptr);
 
     /// Cleaning up and closing files.
     ~ImageReader(void);
@@ -33,7 +37,7 @@ public:
             kipl::base::eImageFlip flip=kipl::base::ImageFlipNone,
             kipl::base::eImageRotate rotate=kipl::base::ImageRotateNone,
             float binning=1.0f,
-            size_t const * const nCrop=nullptr, size_t idx=0L);
+            const std::vector<size_t> &nCrop={}, size_t idx=0L);
 
     /// Reading a single file with file name given by a file mask and an index number.
     /// \param path Path to the location where the file is saved
@@ -50,7 +54,7 @@ public:
             kipl::base::eImageFlip flip,
             kipl::base::eImageRotate rotate,
             float binning,
-            size_t const * const nCrop);
+            const std::vector<size_t> &nCrop);
 
     /// Reading a block of images into a volume with file name given by a file mask and an index number.
     /// \param path Path to the location where the file is saved
@@ -68,13 +72,13 @@ public:
                                       kipl::base::eImageFlip flip,
                                       kipl::base::eImageRotate rotate,
                                       float binning,
-                                      size_t const * const nCrop);
+                                      const std::vector<size_t> & nCrop);
 
     kipl::base::TImage<float,3> Read(FileSet &loader,
                                       kipl::base::eImageFlip flip,
                                       kipl::base::eImageRotate rotate,
                                       float binning=1.0f,
-                                      size_t const * const nCrop=nullptr);
+                                     const std::vector<size_t> & nCrop = {});
 
     kipl::base::TImage<float,3> Read(FileSet &loader);
 
@@ -85,14 +89,14 @@ public:
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
     /// \returns number of dimensions
-    int GetImageSize(std::string path, std::string filemask, size_t number, float binning, size_t *dims);
+    std::vector<size_t> imageSize(std::string path, std::string filemask, size_t number, float binning=1.0f);
 
     /// Get the image dimensions for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
     /// \returns number of dimensions
-    int GetImageSize(std::string filename, float binning, size_t * dims);
+    std::vector<size_t> imageSize(std::string filename, float binning=1.0f);
 
     /// Get the projection dose for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
@@ -101,7 +105,11 @@ public:
     /// \param binning Binning factor
     /// \param doseroi The area were the dose is to be measured (x0,y0,x1,y1).
     /// \returns The dose value as the median of the row average intensity.
-    float GetProjectionDose(std::string filename,kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning, size_t const * const nDoseROI);
+    float projectionDose(   std::string filename,
+                            const std::vector<size_t> &nDoseROI,
+                            kipl::base::eImageFlip flip     = kipl::base::ImageFlipNone,
+                            kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                            float binning                   = 1.0f);
 
     /// Get the projection dose for an image file using an explicit file name
     /// \param path The path where image is stored
@@ -112,13 +120,20 @@ public:
     /// \param binning Binning factor
     /// \param doseroi The area were the dose is to be measured (x0,y0,x1,y1).
     /// \returns The dose value as the median of the row average intensity.
-    float GetProjectionDose(std::string path, std::string filemask, size_t number, kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning ,size_t const * const nCrop);
+    float projectionDose(   std::string path,
+                            std::string filemask,
+                            size_t number,
+                            const std::vector<size_t> &nDoseROI,
+                            kipl::base::eImageFlip flip     = kipl::base::ImageFlipNone,
+                            kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                            float binning                   = 1.0f
+                            );
 
     /// Initializes the reading timer
-    void Initialize() {timer.Reset();}
+    void Initialize() {timer.reset();}
 
     /// \returns The elapsed reading time.
-    double ExecTime() {return timer.ElapsedSeconds();}
+    double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds);}
 protected:
     /// Recomputes the crop ROI based on flipping and rotation into real image coordinates.
     /// \param flip How should the image be flipped.
@@ -126,7 +141,8 @@ protected:
     /// \param dims Array with the image dimensions.
     /// \param nCrop ROI for the cropping (x0,y0,x1,y1).
     void UpdateCrop(kipl::base::eImageFlip flip,
-            kipl::base::eImageRotate rotate, size_t *dims, size_t *nCrop);
+                    kipl::base::eImageRotate rotate,
+                    std::vector<size_t> & dims, std::vector<size_t> &nCrop);
 
 
     /// Performs the rotation and flipping of the image
@@ -138,34 +154,28 @@ protected:
             kipl::base::eImageFlip flip,
             kipl::base::eImageRotate rotate);
 
-    /// Read old matlab files. The newer hdf based are not supported.
-    /// \param filename The name of the file to read.
-    /// \param nCrop ROI to read.
-    /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadMAT(std::string filename,  size_t const * const nCrop=nullptr);
-
     /// Read FITS images.
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadFITS(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
+    kipl::base::TImage<float,2> ReadFITS(std::string filename, const std::vector<size_t> & nCrop= {}, size_t idx=0L);
 
     /// Read TIFF images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
-    kipl::base::TImage<float,2> ReadTIFF(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
+    kipl::base::TImage<float,2> ReadTIFF(std::string filename, const std::vector<size_t> & nCrop =  {}, size_t idx=0L);
 
     /// Read PNG images
     /// \param filename The name of the file to read.
     /// \param nCrop ROI to read.
     /// \returns A floating point image
     /// \todo Implement PNG support
-    kipl::base::TImage<float,2> ReadPNG(std::string filename,  size_t const * const nCrop=nullptr, size_t idx=0L);
+    kipl::base::TImage<float,2> ReadPNG(std::string filename, const std::vector<size_t> & nCrop = {}, size_t idx=0L);
 
-    kipl::base::TImage<float,2> ReadHDF(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
+    kipl::base::TImage<float,2> ReadHDF(std::string filename, const std::vector<size_t> & nCrop = {}, size_t idx=0L);
 
-    kipl::base::TImage<float,2> ReadSEQ(std::string filename, size_t const * const nCrop=nullptr, size_t idx=0L);
+    kipl::base::TImage<float,2> ReadSEQ(std::string filename, const std::vector<size_t> & nCrop = {}, size_t idx=0L);
 
     /// Interface to the interactor that updates the message and progress.
     /// \param val Progress, a value between 0.0 and 1.0.
@@ -177,6 +187,7 @@ protected:
     bool Aborted();
 
     kipl::profile::Timer timer; ///< Timer to measure the execution time for the reading.
+    kipl::interactors::InteractionBase *m_Interactor;
 };
 
 #endif

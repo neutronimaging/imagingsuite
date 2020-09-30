@@ -5,7 +5,7 @@
 
 #include <limits>
 #include "../../logging/logger.h"
-
+#include "../imagecast.h"
 
 namespace kipl { namespace base {
 
@@ -19,7 +19,7 @@ kipl::base::TImage<T1,N> ImageCaster<T1,T2,N>::cast(const kipl::base::TImage<T2,
 
 	const size_t nData=img.Size();
 
-	TImage<T1,N> res(img.Dims());
+    TImage<T1,N> res(img.dims());
 	const T2 * pImg=img.GetDataPtr();
 	T1 * pRes=res.GetDataPtr();
 	
@@ -35,7 +35,7 @@ TImage<T1,N> ImageCaster<T1,T2,N>::cast(const TImage<T2,N> & img, T2 lo, T2 hi)
 {
 	const size_t nData=img.Size();
 
-	TImage<T1,N> res(img.Dims());
+    TImage<T1,N> res(img.dims());
 	const T2 * pImg=img.GetDataPtr();
 	T1 * pRes=res.GetDataPtr();
 	T2 val;

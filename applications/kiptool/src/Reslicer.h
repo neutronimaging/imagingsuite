@@ -1,9 +1,4 @@
-/*
- * Reslicer.h
- *
- *  Created on: Oct 31, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef RESLICER_H_
 #define RESLICER_H_

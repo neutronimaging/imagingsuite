@@ -1,20 +1,8 @@
-//
-// This file is part of the Inspector library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $File$
-// $Date$
-// $Rev$
-// $Id$
-//
+//<LICENSE>
 
-#ifndef __PREPROCMODULEBASE_H
-#define __PREPROCMODULEBASE_H
+#ifndef PREPROCMODULEBASE_H
+#define PREPROCMODULEBASE_H
 #include "ReconFramework_global.h"
-//#include "stdafx.h"
 
 #include <logging/logger.h>
 #include <base/timage.h>
@@ -44,7 +32,7 @@ public:
     /// Sets the region of interest for the current processing block
     /// \param roi vector with the roi coordinates (x0,y0,x1,y1)
     /// \returns True if the roi information was used.
-    virtual bool SetROI(size_t * roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 
     /// Destructor to clean up
 	virtual ~PreprocModuleBase(void);

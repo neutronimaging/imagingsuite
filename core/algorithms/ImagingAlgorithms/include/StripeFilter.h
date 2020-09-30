@@ -32,7 +32,7 @@ public:
     /// \param wname Name of the wavelet base
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
-    StripeFilter(size_t const * const dims, const std::string &wname, int scale, float sigma);
+    StripeFilter(const std::vector<size_t> & dims, const std::string &wname, int scale, float sigma);
 
     /// \brief The constructor initializes the filter
     /// \note The filter is initialized for one image size only.
@@ -45,7 +45,7 @@ public:
     virtual ~StripeFilter();
 
     std::vector<int> dims();
-    bool checkDims(const size_t *dims);
+    bool checkDims(const std::vector<size_t> &dims);
     std::string waveletName();
     int decompositionLevels();
     float sigma();

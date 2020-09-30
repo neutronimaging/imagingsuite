@@ -63,7 +63,7 @@ int ISSfilter<T>::Process(kipl::base::TImage<T,2> &img, float dTau, float dLambd
 	m_fTau=dTau;
 	m_fLambda=dLambda;
 	m_fAlpha=dAlpha;
-	m_v.Resize(img.Dims());
+    m_v.resize(img.dims());
 	m_v=static_cast<T>(0);
 	if (m_bErrorPlot) {
         if (m_fErrorPlot!=nullptr)
@@ -113,7 +113,7 @@ int ISSfilter<T>::_Gradient(	    kipl::base::TImage<T,2> &img,
 									kipl::base::TImage<T,2> &diff,
 									Direction dir)
 {
-	float kernel[9];
+    std::vector<float> kernel(9,0.0f);
 	switch (dir) {
 		case dirX : 
 			kernel[0] = -3.0f/16.0f;  kernel[1] = 0.0f; kernel[2] = 3.0f/16.0f;
@@ -128,9 +128,7 @@ int ISSfilter<T>::_Gradient(	    kipl::base::TImage<T,2> &img,
 			break;
 	}
 
-	size_t dims[2]={3,3};
-
-	kipl::filters::TFilter<float,2> grad(kernel,dims);
+    kipl::filters::TFilter<float,2> grad(kernel,{3,3});
 
 	diff=grad(img,kipl::filters::FilterBase::EdgeMirror);
 
@@ -142,13 +140,13 @@ int ISSfilter<T>::_LeadDiff(	kipl::base::TImage<T,2> &img,
 									kipl::base::TImage<T,2> &diff,
 									Direction dir)
 {
-	diff.Resize(img.Dims());
+    diff.resize(img.dims());
 	diff=static_cast<T>(0);
 	T *pDiff;
 	T *pA, *pB;
     int x,y;
 
-    size_t const * const dims=img.Dims();
+    auto dims=img.dims();
     int sx=dims[0]-1;
     int sy=dims[1]-1;
     int d0=dims[0];
@@ -190,14 +188,14 @@ int ISSfilter<T>::_LagDiff( 	kipl::base::TImage<T,2> &img,
 									kipl::base::TImage<T,2> &diff,
 									Direction dir)
 {
-	diff.Resize(img.Dims());
+    diff.resize(img.dims());
 	diff=static_cast<T>(0);
 
 	T *pDiff;
 	T *pA, *pB;
 	size_t x,y;
 
-	size_t const * const dims=img.Dims();
+    auto dims=img.dims();
 	int sx=dims[0]-1;	
 	int sy=dims[1]-1;	
 	switch (dir) {
@@ -266,7 +264,7 @@ int ISSfilter<T>::_P(kipl::base::TImage<T,2> &img, kipl::base::TImage<T,2> &res)
 	pX=d2x.GetDataPtr();
 	pY=d2y.GetDataPtr();
 
-	res.Resize(img.Dims());
+    res.resize(img.dims());
 	T *pRes=res.GetDataPtr();
 	for (size_t i=0; i< res.Size(); i++)
 		pRes[i]=pX[i]+pY[i];

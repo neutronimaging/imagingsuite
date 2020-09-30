@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef MORPHGEO_HPP
 #define MORPHGEO_HPP
 
@@ -10,7 +12,6 @@
 #include "../morphfilters.h"
 #include "../pixeliterator.h"
 
-#include <QDebug>
 using namespace std;
 
 namespace kipl { namespace morphology {
@@ -35,8 +36,8 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
 
     ptrdiff_t i;
 
-    const size_t *pDimsF=f.Dims();
-    const size_t *pDimsG=g.Dims();
+    auto pDimsF=f.dims();
+    auto pDimsG=g.dims();
 
     for (i=0; i<NDim; i++)
     {
@@ -50,7 +51,7 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
     ImgType *pG=g.GetDataPtr();
     // Set up indexing arrays
 
-    kipl::base::PixelIterator NG(f.Dims(), conn);
+    kipl::base::PixelIterator NG(f.dims(), conn);
     ptrdiff_t ipos;
     ptrdiff_t pos;
     ImgType maxVal,minVal;
@@ -176,8 +177,8 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 
     ptrdiff_t i;
 
-    const size_t *pDimsF=f.Dims();
-    const size_t *pDimsG=g.Dims();
+    const std::vector<size_t> & pDimsF=f.dims();
+    const std::vector<size_t> & pDimsG=g.dims();
 
     if (NDimG!=NDimF)
     {
@@ -198,7 +199,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     }
 
 
-    temp.Resize(g.Dims());
+    temp.resize(g.dims());
     temp=static_cast<ImgType>(0);
     ImgType const * const pg=g.GetDataPtr();
     ImgType const * const pf=f.GetDataPtr();
@@ -222,7 +223,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     ptrdiff_t pos;
     ImgType max;
     const ptrdiff_t N=g.Size();
-    kipl::base::PixelIterator NG(f.Dims(),conn);
+    kipl::base::PixelIterator NG(f.dims(),conn);
     // Forward scan
     NG.setPosition(0L);
     for (pos=0; pos< static_cast<ptrdiff_t>(f.Size()); ++pos, ++NG)
@@ -274,7 +275,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         {
             ipos=pos+neighborPix;
 
-            if (static_cast<size_t>(ipos)<N)
+            if (ipos<N)
             {
                 if ((ptemp[ipos]<tmppos) && (pg[ipos]!=ptemp[ipos]))
                 {
@@ -316,8 +317,8 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
 
     size_t i;
 
-    size_t const * const pDimsF=f.Dims();
-    size_t const * const pDimsG=g.Dims();
+    const std::vector<size_t> & pDimsF=f.dims();
+    const std::vector<size_t> & pDimsG=g.dims();
     if (NDimG!=NDimF) {
         throw kipl::base::KiplException("RecByErosion: NDimG!=NDimF",__FILE__,__LINE__);
 
@@ -340,7 +341,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
     ImgType * pf=temp.GetDataPtr();
 
     size_t errcnt=0L;
-    for (i=0; i<static_cast<ptrdiff_t>(f.Size()); i++)
+    for (i=0; i<f.Size(); i++)
     {
         if (pf[i]<pg[i])
         {
@@ -360,7 +361,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
     ptrdiff_t pos;
     ImgType minVal;
     ptrdiff_t N=static_cast<ptrdiff_t>(g.Size());
-    kipl::base::PixelIterator NG(f.Dims(),conn);
+    kipl::base::PixelIterator NG(f.dims(),conn);
 
     // Forward scan
     NG.setPosition(0L);
@@ -438,7 +439,7 @@ template <typename ImgType, size_t NDim>
 kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> &img,
         kipl::base::eConnectivity conn)
 {
-    size_t const *const dims=img.Dims();
+    auto dims=img.dims();
     kipl::base::TImage<ImgType,NDim> edge(dims);
     edge=kipl::base::min(img);
 
@@ -545,8 +546,8 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
 
     ptrdiff_t i;
 
-    const size_t *pDimsF=f.Dims();
-    const size_t *pDimsG=g.Dims();
+    auto pDimsF=f.dims();
+    auto pDimsG=g.dims();
 
     for (i=0; i<NDim; i++)
         if (pDimsF[i]!=pDimsG[i]) {
@@ -558,7 +559,7 @@ kipl::base::TImage<ImgType,NDim> SelfDualReconstruction(kipl::base::TImage<ImgTy
     ImgType *pG=g.GetDataPtr();
     // Set up indexing arrays
 
-    CNeighborhood NG(g.Dims(), NDim, conn);
+    CNeighborhood NG(g.dims(), NDim, conn);
     const ptrdiff_t cNG=NG.N();
     const ptrdiff_t cNGpm=NG.Nfb();
     int ipos;
@@ -668,8 +669,8 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
 
     ptrdiff_t i;
 
-    const size_t *pDimsF=f.Dims();
-    const size_t *pDimsG=g.Dims();
+    auto pDimsF=f.dims();
+    auto pDimsG=g.dims();
 
     for (i=0; i<static_cast<ptrdiff_t>(NDimF); i++) {
         if (pDimsF[i]!=pDimsG[i]) {
@@ -685,7 +686,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
         }
     }
 
-    temp.Resize(g.Dims());
+    temp.resize(g.dims());
     temp=static_cast<ImgType>(0);
 
     ImgType const * const pg=g.GetDataPtr();
@@ -711,7 +712,7 @@ kipl::base::TImage<ImgType,NDimG> RecByDilation(const kipl::base::TImage<ImgType
     ptrdiff_t pos;
     ImgType max;
     const ptrdiff_t N=g.Size();
-    CNeighborhood NG(g.Dims(),NDimG,conn);
+    CNeighborhood NG(g.dims(),NDimG,conn);
     // Forward scan
     cNGpm=static_cast<ptrdiff_t>(NG.Nfb());
     cNG=static_cast<ptrdiff_t>(NG.N());
@@ -792,8 +793,8 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
 
     size_t i;
 
-    size_t const * const pDimsF=f.Dims();
-    size_t const * const pDimsG=g.Dims();
+    auto pDimsF=f.dims();
+    auto pDimsG=g.dims();
     if (NDimG!=NDimF) {
         throw kipl::base::KiplException("RecByErosion: NDimG!=NDimF",__FILE__,__LINE__);
 
@@ -820,7 +821,7 @@ kipl::base::TImage<ImgType,NDimG> RecByErosion(const kipl::base::TImage<ImgType,
     ptrdiff_t pos;
     ImgType min;
     ptrdiff_t N=static_cast<ptrdiff_t>(g.Size());
-    CNeighborhood NG(g.Dims(),NDimG,conn);
+    CNeighborhood NG(g.dims(),NDimG,conn);
     // Forward scan
     const size_t cNGpm=NG.Nfb();
     const size_t cNG=NG.N();
@@ -888,7 +889,7 @@ template <typename ImgType, size_t NDim>
 kipl::base::TImage<ImgType,NDim> RemoveEdgeObj(kipl::base::TImage<ImgType,NDim> &img,
         kipl::morphology::MorphConnect conn)
 {
-    size_t const *const dims=img.Dims();
+    auto dims=img.dims();
     kipl::base::TImage<ImgType,NDim> edge(dims);
     edge=kipl::base::min(img);
 

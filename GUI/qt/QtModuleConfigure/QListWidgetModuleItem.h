@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef QLISTWIDGETMODULEITEM_H
 #define QLISTWIDGETMODULEITEM_H
 #include <QListWidgetItem>

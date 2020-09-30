@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef RESOLUTIONESTIMATORS_H
 #define RESOLUTIONESTIMATORS_H
 #include "imagingqaalgorithms_global.h"
@@ -5,7 +7,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <tnt.h>
+//#include <tnt.h>
 
 
 #include <base/timage.h>
@@ -25,13 +27,13 @@ public:
 
     void   setPixelSize(double s);
     double pixelSize();
-    int    size();
+    size_t size();
     void   setProfile(float *p, int N);
     void   setProfile(double *p, int N);
     void   setProfile(const std::vector<double> &p);
     void   setProfile(const std::vector<float> &p);
     void   setProfile(TNT::Array1D<double> &p);
-    void   profile(double *p, size_t &N);
+    const std::vector<double> &profile();
     void   clear();
 
     double FWHM();

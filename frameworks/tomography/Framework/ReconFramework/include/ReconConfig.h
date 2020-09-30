@@ -1,9 +1,12 @@
-// LICENSE
+//<LICENSE>
 
 #ifndef RECONCONFIG_H
 #define RECONCONFIG_H
 
 #include "ReconFramework_global.h"
+
+#include <QThread>
+#include <QDebug>
 
 #include <map>
 #include <list>
@@ -15,8 +18,10 @@
 #include <ModuleConfig.h>
 #include <ConfigBase.h>
 
+#include <averageimage.h>
+
 #include <logging/logger.h>
-#include <io/io_stack.h>
+#include <io/analyzefileext.h>
 #include <base/kiplenums.h>
 
 /// The reconstruction configuration structure. Used to set up the reconstruction process.
@@ -44,7 +49,8 @@ public:
         /// Enumeration of acquistion strategy
 		enum eScanType {
             SequentialScan,                             ///< Tradiational linear increments uniformly distributed.
-            GoldenSectionScan                           ///< Increments determined by the golden ratio.
+            GoldenSectionScan,                          ///< Increments determined by the golden ratio.
+            InvGoldenSectionScan                        ///< Increments determined by the inverse golden ratio.
 		};
 
         /// Enumeration of input image types
@@ -72,14 +78,16 @@ public:
         /// \param a the struct to copy.
 		cProjections & operator=(const cProjections &a);
 
-        size_t nDims[3];            ///< Dimensions of the projections.
+        std::vector<size_t> nDims;            ///< Dimensions of the projections.
         eBeamGeometry beamgeometry; ///< Selects beam geometry for the data
-        float fResolution[2];       ///< Resolution of the projections in mm/pixel.
+        std::vector<float> fResolution;       ///< Resolution of the projections in mm/pixel.
         float fBinning;             ///< Binning factor, currently only integers are valid.
         size_t nMargin;             ///< Width of the image margin to relax the boundary processing criteria
         size_t nFirstIndex;         ///< The index number of the first projection in the data set
         size_t nLastIndex;          ///< The index number of the last projection in the data set
         size_t nProjectionStep;     ///< Increment of the projection index during read
+        size_t nRepeatedView;       ///< Same view has repeated projections
+        ImagingAlgorithms::AverageImage::eAverageMethod averageMethod;
         std::set<size_t> nlSkipList;///< List of projection indices that are retakes and will be skipped. This is not a missing angle.
         bool bRepeatLine;           ///< Repeat line this is a part of the repeat sinogram reconstruction
         eScanType scantype;         ///< Indicates how the data was acquired
@@ -88,7 +96,7 @@ public:
         float fCenter;              ///< Center of rotation
         float fSOD;                 ///< Source object distance, relevant for divergent beam only
         float fSDD;                 ///< Source detector distance, relevant for divergent beam only
-        float fpPoint[2];           ///< Piercing point, relevant for divergent beam only
+        std::vector<float> fpPoint;           ///< Piercing point, relevant for divergent beam only
                                     ///< 2D coordinates, in pixel coordinates of the point on the image which is closest to the source: a pair of floating point number, in units of pixel
                                     ///< The first number is the column (x-coordinate) and the second number is the row  (y-coordinate)
                                     ///< The first pixel of the image is to be considered to be coordinate (0,0)
@@ -108,10 +116,10 @@ public:
         size_t nDCFirstIndex;       ///< Index number of the first dark image.
         size_t nDCCount;            ///< Number of dark image.
 
-        size_t roi[4];              ///< Region of interest to reconstruct (x0,y0,x1,y1).
-        size_t projection_roi[4];   ///< Region of interest for the entire sample (x0,y0,x1,y1).
-        size_t dose_roi[4];         ///< Region of interest to calculate the projection dose (x0,y0,x1,y1).
-        float fScanArc[2];          ///< Provides the first and last scan angles
+        std::vector<size_t> roi;              ///< Region of interest to reconstruct (x0,y0,x1,y1).
+        std::vector<size_t> projection_roi;   ///< Region of interest for the entire sample (x0,y0,x1,y1).
+        std::vector<size_t> dose_roi;         ///< Region of interest to calculate the projection dose (x0,y0,x1,y1).
+        std::vector<float>  fScanArc;          ///< Provides the first and last scan angles
         kipl::base::eImageFlip eFlip;   ///< Projection flip operation (horizontal, vertical, both).
         kipl::base::eImageRotate eRotate; ///< Projection rotation operation (90 cw,90 ccw, 180).
 
@@ -135,19 +143,19 @@ public:
         /// \param a The configuration to copy
 		cMatrix & operator=(const cMatrix &a);
 
-        size_t nDims[3];                ///< Matrix dimensions (x,y,z);
+        std::vector<size_t> nDims;                ///< Matrix dimensions (x,y,z);
         float fRotation;                ///< Rotation offset of the data.
         std::string sDestinationPath;   ///< Destination path of the reconstructed slices
         bool bAutomaticSerialize;       ///< Indicates if the reconstructed data should be saved to disk or only used in the GUI.
         std::string sFileMask;          ///< File mask for the reconstructed slices. It should be formatted using #'s as place holders for the index number.
         size_t nFirstIndex;             ///< First index of the reconstructed slices, this is mostly set to the line index in the reconstructed projection.
-        float fGrayInterval[2];         ///< Interval in which the graylevels are represented.
+        std::vector<float> fGrayInterval;         ///< Interval in which the graylevels are represented.
         bool bUseROI;                   ///< Reconstruct the data in the defined region of interest.
-        size_t roi[4];                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1). Relevant for parallel beam
-        size_t voi[6];                  ///< Subvolume to reconstruct (volume coordinates x0, x1, y0, y1, z0, z1). Relevant for divergent beam NOT USED ANYMORE
+        std::vector<size_t> roi;                  ///< Region of interest to reconstruct (slice coordinates x0,y0,x1,y1). Relevant for parallel beam
+        std::vector<size_t> voi;                  ///< Subvolume to reconstruct (volume coordinates x0, x1, y0, y1, z0, z1). Relevant for divergent beam NOT USED ANYMORE
 //        bool bUseVOI;                   ///< Reconstruct the data in the defined volume of interest. Relevant for divergent beam
         kipl::io::eFileType FileType;   ///< File type of the reconstructed slices.
-        float fVoxelSize[3];            ///< Voxel size of the reconstructed volume, relevant for divergent beam only
+        std::vector<float> fVoxelSize;            ///< Voxel size of the reconstructed volume, relevant for divergent beam only
 
 
         /// Writes the configuration to a string with XML formatting.
@@ -156,7 +164,7 @@ public:
 	};
 
     /// Base constructor of the reonstruction configation.
-	ReconConfig(void);
+    ReconConfig(const std::string &appPath);
 
     /// Copy constructor of the reconstructor configuration.
     /// \param config The configuration to copy.
@@ -187,9 +195,9 @@ protected:
     /// \param cName Name of the main block.
 	virtual void ParseConfig(xmlTextReaderPtr reader, std::string cName);
 
-    virtual string SanitySlicesCheck();
+    virtual std::string SanitySlicesCheck();
 
-    virtual string SanityMessage(bool mess);
+    virtual std::string SanityMessage(bool mess);
 
     /// Parse a list of arguments provided by the CLI
     /// \param args A list of arguments as they come from the CLI.
@@ -219,6 +227,11 @@ protected:
 /// \param str The string to convert
 /// \param st a scan type variable
 RECONFRAMEWORKSHARED_EXPORT void string2enum(const std::string str, ReconConfig::cProjections::eScanType &st);
+
+/// Converts a string to a scan type enum
+/// \param str The string to convert
+/// \param st a scan type variable
+RECONFRAMEWORKSHARED_EXPORT std::string enum2string(const ReconConfig::cProjections::eScanType &st);
 
 /// Converts a string to a image type enum
 /// \param str The string to convert

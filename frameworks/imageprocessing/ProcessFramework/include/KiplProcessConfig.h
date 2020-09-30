@@ -7,7 +7,7 @@
 #include <string>
 
 #include <logging/logger.h>
-#include <io/io_stack.h>
+#include <io/analyzefileext.h>
 
 #include <ModuleConfig.h>
 #include <ConfigBase.h>
@@ -38,7 +38,7 @@ public:
 		std::string sSourceFileMask;
 
 		bool bUseROI;
-		size_t nROI[4];
+                std::vector<size_t> nROI;
 		size_t nFirstFileIndex;
 		size_t nLastFileIndex;
         size_t nStepFileIndex;
@@ -63,7 +63,7 @@ public:
 		std::string sDestinationFileMask;
 	};
 
-	KiplProcessConfig(void);
+    KiplProcessConfig(const std::string &appPath);
 	~KiplProcessConfig(void);
 	std::string WriteXML();
 

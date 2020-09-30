@@ -44,6 +44,7 @@ unix {
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp -lxml2
         INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio
     }
 
     unix:macx {
@@ -76,6 +77,8 @@ DEPENDPATH += $$PWD/../ReaderConfig
 
 INCLUDEPATH += $$PWD/../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons

@@ -13,6 +13,7 @@
 #include <io/io_tiff.h>
 #include <strings/filenames.h>
 #include <io/io_stack.h>
+#include <io/analyzefileext.h>
 
 class kiplIOTest : public QObject
 {
@@ -32,6 +33,7 @@ private Q_SLOTS:
     void testSEQRead();
     void testTIFFBasicReadWrite();
     void testTIFFMultiFrame();
+    void testTIFFAdvancedMultiFrame();
     void testTIFF32();
     void testTIFFclamp();
     void testIOStack_enums();
@@ -43,7 +45,7 @@ kiplIOTest::kiplIOTest()
 
 void kiplIOTest::testFITSreadwrite()
 {
-    size_t dims[2]={100,256};
+    std::vector<size_t> dims={100,256};
     kipl::base::TImage<short,2> img(dims);
     kipl::base::TImage<short,2> res;
 
@@ -83,13 +85,11 @@ void kiplIOTest::testSEQHeader()
 
    kipl::io::GetViVaSEQHeader("/Users/kaestner/Desktop/Video1.seq",&header);
 
-   size_t dims[2]={0,0};
-   int numframes=0;
-   numframes=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq",dims);
+   auto dims=kipl::io::GetViVaSEQDims("/Users/kaestner/Desktop/Video1.seq");
 
    QVERIFY(dims[0]==header.imageWidth);
    QVERIFY(dims[1]==header.imageHeight);
-   QVERIFY(numframes==static_cast<int>(header.numberOfFrames));
+   QVERIFY(dims[2]==header.numberOfFrames);
 }
 
 void kiplIOTest::testSEQRead()
@@ -109,7 +109,7 @@ void kiplIOTest::testSEQRead()
     QVERIFY(img.Size(1)==header.imageHeight);
     QVERIFY(img.Size(2)==header.numberOfFrames);
 
-    size_t roi[]={100,100,300,200};
+    std::vector<size_t> roi={100,100,300,200};
 
     kipl::io::ReadViVaSEQ("/Users/kaestner/Desktop/Video1.seq",img,roi);
 
@@ -122,7 +122,7 @@ void kiplIOTest::testSEQRead()
 
 void kiplIOTest::testTIFFBasicReadWrite()
 {
-    size_t dims[2]={100,50};
+    std::vector<size_t> dims={100,50};
 
     kipl::base::TImage<float,2> fimg(dims);
     fimg.info.sArtist="UnitTest";
@@ -158,28 +158,38 @@ void kiplIOTest::testTIFFBasicReadWrite()
 
 void kiplIOTest::testTIFFMultiFrame()
 {
-    std::string fname="../imagingsuite/core/kipl/UnitTests/data/multiframe.tif";
+#ifdef NDEBUG
+    std::string fname="../../TestData/3D/tiff/multiframe.tif";
+#else
+    std::string fname="../TestData/3D/tiff/multiframe.tif";
+#endif
     if (dir.exists(QString::fromStdString(fname))==false)
         QSKIP("Test data is missing");
 
     size_t dims[3]={0,0,0};
-    int nframes=kipl::io::GetTIFFDims(fname.c_str(),dims);
+    size_t nframes = kipl::io::GetTIFFDims(fname,dims);
 
     QCOMPARE(dims[0],145UL);
     QCOMPARE(dims[1],249UL);
     QCOMPARE(nframes,5);
 
+    auto dimsv=kipl::io::GetTIFFDims(fname);
+
+    QCOMPARE(dimsv.size(),3UL);
+    QCOMPARE(dimsv[0],145UL);
+    QCOMPARE(dimsv[1],249UL);
+    QCOMPARE(dimsv[2],5UL);
+
     float minvals[5]={4032.0f,4443.0f,5244.0f,5849.0f,3687.0f};
     float maxvals[5]={65192.0f,65534.0f,65534.0f,57957.0f,42548.0f};
 
-    size_t crop[4]={10,10,100,100};
+    std::vector<size_t> crop={10,10,100,100};
 
     kipl::base::TImage<float,2> img, img_crop;
 
-    dims[2]=nframes;
-    kipl::base::TImage<float,3> img3ref(dims);
-    for (int i = 0 ; i<nframes; ++i) {
-        kipl::io::ReadTIFF(img,fname.c_str(),nullptr,i);
+    kipl::base::TImage<float,3> img3ref(dimsv);
+    for (size_t i = 0 ; i<nframes; ++i) {
+        kipl::io::ReadTIFF(img,fname,{},i);
         std::copy_n(img.GetDataPtr(),img.Size(),img3ref.GetLinePtr(0,i));
 
         QCOMPARE(img.Size(0),145UL);
@@ -205,7 +215,7 @@ void kiplIOTest::testTIFFMultiFrame()
     }
 
     kipl::base::TImage<float,3> img3;
-    kipl::io::ReadTIFF(img3,fname.c_str());
+    kipl::io::ReadTIFF(img3,fname);
 
     QCOMPARE(img3.Size(0),img3ref.Size(0));
     QCOMPARE(img3.Size(1),img3ref.Size(1));
@@ -230,7 +240,7 @@ void kiplIOTest::testTIFFMultiFrame()
     kipl::base::TImage<float,3> img3ref2=img3ref;
     img3ref2+=1.0f;
 
-    kipl::io::AppendTIFF(img3ref2,"test.tif");
+    kipl::io::WriteTIFF(img3ref2,"test.tif",kipl::base::UInt16,kipl::base::ImagePlaneXY,true);
 
     img3.FreeImage();
     kipl::io::ReadTIFF(img3,"test.tif");
@@ -245,9 +255,20 @@ void kiplIOTest::testTIFFMultiFrame()
     }
 }
 
+void kiplIOTest::testTIFFAdvancedMultiFrame()
+{
+#ifdef NDEBUG
+    std::string fname="../../TestData/3D/tiff/multiframe.tif";
+#else
+    std::string fname="../TestData/3D/tiff/multiframe.tif";
+#endif
+    if (dir.exists(QString::fromStdString(fname))==false)
+        QSKIP("Test data is missing");
+}
+
 void kiplIOTest::testTIFF32()
 {
-    size_t dims[3]={100,110,120};
+    std::vector<size_t> dims={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
     kipl::base::TImage<float,3> imgref3d(dims);
@@ -255,12 +276,12 @@ void kiplIOTest::testTIFF32()
     float scale=1.0f/static_cast<float>(imgref2d.Size());
     for (size_t i=0; i<imgref2d.Size(); ++i)
         imgref2d[i]=static_cast<float>(i)*scale;
-    kipl::io::WriteTIFF32(imgref2d,"tiff32_2D.tif");
+    kipl::io::WriteTIFF(imgref2d,"tiff32_2D.tif",kipl::base::Float32);
 
     scale=1.0f/static_cast<float>(imgref3d.Size());
     for (size_t i=0; i<imgref3d.Size(); ++i)
         imgref3d[i]=static_cast<float>(i)*scale;
-    kipl::io::WriteTIFF32(imgref3d,"tiff32_3D.tif");
+    kipl::io::WriteTIFF(imgref3d,"tiff32_3D.tif",kipl::base::Float32);
 
     kipl::base::TImage<float,2> img2d(dims);
     kipl::io::ReadTIFF(img2d,"tiff32_2D.tif");
@@ -289,7 +310,7 @@ void kiplIOTest::testTIFFclamp()
     QSKIP("Seems to crash");
     QWARN("Test accepts a difference of +-1");
     std::ostringstream msg;
-    size_t dims[3]={100,110,120};
+    std::vector<size_t> dims={100,110,120};
 
     kipl::base::TImage<float,2> imgref2d(dims);
     kipl::base::TImage<float,3> imgref3d(dims);
@@ -354,51 +375,50 @@ void kiplIOTest::testIOStack_enums()
 {
     kipl::io::eFileType ft;
 
-    kipl::io::string2enum("MatlabVolume",ft);
-    QCOMPARE(ft, kipl::io::MatlabVolume);
-
-    kipl::io::string2enum("MatlabSlices",ft);
-    QCOMPARE(ft, kipl::io::MatlabSlices);
-
-    kipl::io::string2enum("TIFF8bits",ft);
+    string2enum("TIFF8bits",ft);
     QCOMPARE(ft, kipl::io::TIFF8bits);
 
-    kipl::io::string2enum("TIFF16bits",ft);
+    string2enum("TIFF16bits",ft);
     QCOMPARE(ft, kipl::io::TIFF16bits);
 
-    kipl::io::string2enum("TIFFfloat",ft);
+   string2enum("TIFFfloat",ft);
     QCOMPARE(ft, kipl::io::TIFFfloat);
 
-    kipl::io::string2enum("TIFF16bitsMultiFrame",ft);
+    string2enum("TIFF8bitsMultiFrame",ft);
+    QCOMPARE(ft, kipl::io::TIFF8bitsMultiFrame);
+
+    string2enum("TIFF16bitsMultiFrame",ft);
     QCOMPARE(ft, kipl::io::TIFF16bitsMultiFrame);
 
-    kipl::io::string2enum("NeXusfloat",ft);
+    string2enum("TIFFfloatMultiFrame",ft);
+    QCOMPARE(ft, kipl::io::TIFFfloatMultiFrame);
+
+    string2enum("NeXusfloat",ft);
     QCOMPARE(ft, kipl::io::NeXusfloat);
 
-    kipl::io::string2enum("NeXus16bits",ft);
+    string2enum("NeXus16bits",ft);
     QCOMPARE(ft, kipl::io::NeXus16bits);
 
-    kipl::io::string2enum("PNG8bits",ft);
+    string2enum("PNG8bits",ft);
     QCOMPARE(ft, kipl::io::PNG8bits);
 
-    kipl::io::string2enum("PNG16bits",ft);
+    string2enum("PNG16bits",ft);
     QCOMPARE(ft, kipl::io::PNG16bits);
 
     // enum 2 string
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::MatlabVolume),"MatlabVolume");
-    QCOMPARE(kipl::io::enum2string(kipl::io::MatlabSlices),"MatlabSlices");
+    QCOMPARE(enum2string(kipl::io::TIFF8bits),            std::string("TIFF8bits"));
+    QCOMPARE(enum2string(kipl::io::TIFF16bits),           std::string("TIFF16bits"));
+    QCOMPARE(enum2string(kipl::io::TIFFfloat),            std::string("TIFFfloat"));
+    QCOMPARE(enum2string(kipl::io::TIFF8bitsMultiFrame),  std::string("TIFF8bitsMultiFrame"));
+    QCOMPARE(enum2string(kipl::io::TIFF16bitsMultiFrame), std::string("TIFF16bitsMultiFrame"));
+    QCOMPARE(enum2string(kipl::io::TIFFfloatMultiFrame),  std::string("TIFFfloatMultiFrame"));
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFF8bits),"TIFF8bits");
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFF16bits),"TIFF16bits");
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFFfloat),"TIFFfloat");
-    QCOMPARE(kipl::io::enum2string(kipl::io::TIFF16bitsMultiFrame),"TIFF16bitsMultiFrame");
+    QCOMPARE(enum2string(kipl::io::NeXusfloat),           std::string("NeXusfloat"));
+    QCOMPARE(enum2string(kipl::io::NeXus16bits),          std::string("NeXus16bits"));
 
-    QCOMPARE(kipl::io::enum2string(kipl::io::NeXusfloat),"NeXusfloat");
-    QCOMPARE(kipl::io::enum2string(kipl::io::NeXus16bits),"NeXus16bits");
-
-    QCOMPARE(kipl::io::enum2string(kipl::io::PNG8bits),"PNG8bits");
-    QCOMPARE(kipl::io::enum2string(kipl::io::PNG16bits),"PNG16bits");
+    QCOMPARE(enum2string(kipl::io::PNG8bits),             std::string("PNG8bits"));
+    QCOMPARE(enum2string(kipl::io::PNG16bits),            std::string("PNG16bits"));
 
 }
 
