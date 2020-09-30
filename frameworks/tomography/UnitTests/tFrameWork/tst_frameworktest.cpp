@@ -1013,13 +1013,13 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
 
     ReconConfig config("");
 // Test even number
-    config.ProjectionInfo.sFileMask="test_####.fits";
-    config.ProjectionInfo.nFirstIndex=0;
-    config.ProjectionInfo.nLastIndex=18;
-    config.ProjectionInfo.fScanArc[0]=0.0f;
-    config.ProjectionInfo.fScanArc[1]=180.0f;
-    config.ProjectionInfo.scantype=config.ProjectionInfo.GoldenSectionScan;
-    config.ProjectionInfo.nGoldenStartIdx=0;
+    config.ProjectionInfo.sFileMask       = "test_####.fits";
+    config.ProjectionInfo.nFirstIndex     = 0;
+    config.ProjectionInfo.nLastIndex      = 18;
+    config.ProjectionInfo.fScanArc[0]     = 0.0f;
+    config.ProjectionInfo.fScanArc[1]     = 180.0f;
+    config.ProjectionInfo.scantype        = config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx = 0;
 
     std::map<float,ProjectionInfo> ProjectionList;
     BuildFileList(&config,&ProjectionList);
