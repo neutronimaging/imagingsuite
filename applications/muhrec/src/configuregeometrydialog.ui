@@ -206,6 +206,11 @@
                 <string>Golden ratio</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>Inverse golden ratio</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>

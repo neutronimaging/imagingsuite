@@ -1288,7 +1288,7 @@
                <item row="1" column="1">
                 <widget class="QSpinBox" name="spinBox_goldenFirstIdx">
                  <property name="toolTip">
-                  <string>File index of the the first projection in a golden ratio sequence. This is needed to generate the correct angle sequence. Mostly this is '0' or '1'.</string>
+                  <string>File index of the the first projection in a golden ratio sequence. This is needed to generate the correct angle sequence. This value is '0' when the first projection is the first file index.</string>
                  </property>
                 </widget>
                </item>
