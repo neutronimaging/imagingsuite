@@ -8,7 +8,6 @@
 #include "resolutionestimators.h"
 
 #include <armadillo>
-//#include <tnt.h>
 #include <strings/miscstring.h>
 #include <math/nonlinfit.h>
 #include <fft/fftbase.h>
