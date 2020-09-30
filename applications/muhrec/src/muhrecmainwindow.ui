@@ -502,8 +502,47 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="7">
-                <widget class="QComboBox" name="comboBox_projectionCominationMethod"/>
+               <item row="1" column="8">
+                <widget class="QComboBox" name="comboBox_projectionCominationMethod">
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Single</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Sum</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Average</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Median</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Weighted average</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Min</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Max</string>
+                  </property>
+                 </item>
+                </widget>
                </item>
               </layout>
              </widget>
